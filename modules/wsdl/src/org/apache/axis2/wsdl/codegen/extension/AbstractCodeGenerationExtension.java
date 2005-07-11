@@ -20,9 +20,8 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public abstract class AbstractCodeGenerationExtension implements CodeGenExtension{
+public abstract class AbstractCodeGenerationExtension implements CodeGenExtension {
 
-	protected CodeGenConfiguration configuration;
+    protected CodeGenConfiguration configuration;
 }

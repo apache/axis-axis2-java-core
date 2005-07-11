@@ -21,7 +21,7 @@ import java.io.UnsupportedEncodingException;
  * HTTP protocol and message context constants.
  */
 public class HTTPConstants {
- 
+
     public static final String PROTOCOL_VERSION = "PROTOCOL";
 
     /**
@@ -73,11 +73,11 @@ public class HTTPConstants {
      * Field HEADER_POST
      */
     public static final String HEADER_POST = "POST";
-    
+
     /**
      * Field HEADER_GET
      */
-    public static final String HEADER_GET = "GET";    
+    public static final String HEADER_GET = "GET";
 
     /**
      * Field HEADER_HOST
@@ -349,67 +349,68 @@ public class HTTPConstants {
             "transport.http.plugin.exceptionLog";
 
     /**
-         * Field OK[]
-         */
+     * Field OK[]
+     */
     public static final char OK[] = ("200 OK").toCharArray();
 
     /**
-         * Field NOCONTENT[]
-         */
+     * Field NOCONTENT[]
+     */
     public static final byte NOCONTENT[] = ("202 OK\n\n").getBytes();
 
     /**
-         * Field UNAUTH[]
-         */
+     * Field UNAUTH[]
+     */
     public static final byte UNAUTH[] = ("401 Unauthorized").getBytes();
 
     /**
-         * Field SENDER[]
-         */
+     * Field SENDER[]
+     */
     public static final byte SENDER[] = "400".getBytes();
 
     /**
-         * Field ISE[]
-         */
+     * Field ISE[]
+     */
     public static final byte ISE[] = ("500 Internal server error").getBytes();
 
     // HTTP prefix
 
     /**
-         * Field HTTP[]
-         */
+     * Field HTTP[]
+     */
     public static char HTTP[] = "HTTP/1.0 ".toCharArray();
-    
+
     /**
      * Field HTTP_REQ_TYPE
      */
     public static final String HTTP_REQ_TYPE = "HTTP_REQ_TYPE";
-    
+
     public static final String HTTPOutTransportInfo = "HTTPOutTransportInfo";
     public static final String MTOM_RECIVED_CONTENT_TYPE = "MTOM_RECEIVED";
 
-       /**
-        * Default content encoding chatset
-        */
-         public static final String HTTP_ELEMENT_CHARSET = "US-ASCII";
+    /**
+     * Default content encoding chatset
+     */
+    public static final String HTTP_ELEMENT_CHARSET = "US-ASCII";
 
     /**
-       * Method getBytes
-       * @param data
-       * @return
-       */
-       public static byte[] getBytes(final String data) {
-          if (data == null) {
-              throw new IllegalArgumentException("Parameter may not be null");
-          }
+     * Method getBytes
+     *
+     * @param data
+     * @return
+     */
+    public static byte[] getBytes(final String data) {
+        if (data == null) {
+            throw new IllegalArgumentException("Parameter may not be null");
+        }
 
-          try {
-              return data.getBytes(HTTP_ELEMENT_CHARSET);
-          } catch (UnsupportedEncodingException e){
+        try {
+            return data.getBytes(HTTP_ELEMENT_CHARSET);
+        } catch (UnsupportedEncodingException e) {
 
-          }
-              return data.getBytes();
-          }
+        }
+        return data.getBytes();
+    }
 
-    
+
 }

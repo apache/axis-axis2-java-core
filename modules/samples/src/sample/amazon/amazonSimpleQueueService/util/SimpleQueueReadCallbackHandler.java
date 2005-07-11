@@ -23,28 +23,35 @@ import org.apache.axis2.soap.SOAPBody;
 
 import javax.swing.*;
 import java.util.Iterator;
+
 /**
  * Callback class which deals with the outcome of the operation
- * @author Saminda Abeyruwan <saminda@opensource.lk>
  *
+ * @author Saminda Abeyruwan <saminda@opensource.lk>
  */
 public class SimpleQueueReadCallbackHandler extends Callback {
     private String returnString = "";
     JTextField queueCode;
     JTextArea results;
-    public SimpleQueueReadCallbackHandler(){}//defalut handler
-    public SimpleQueueReadCallbackHandler(JTextField queueCode, JTextArea results){
+
+    public SimpleQueueReadCallbackHandler() {
+    }//defalut handler
+
+    public SimpleQueueReadCallbackHandler(JTextField queueCode, JTextArea results) {
         super();
         this.queueCode = queueCode;
         this.results = results;
     }
+
     public void onComplete(AsyncResult result) {
         SOAPBody body = result.getResponseEnvelope().getBody();
         this.getQueueEntryBody(body);
     }
+
     public void reportError(Exception e) {
 
     }
+
     private void getQueueEntryBody(OMElement element) {
         Iterator iterator = element.getChildren();
         while (iterator.hasNext()) {
@@ -53,12 +60,13 @@ public class SimpleQueueReadCallbackHandler extends Callback {
                 OMElement omElement = (OMElement) omNode;
                 if (omElement.getLocalName().equals("QueueEntryBody")) {
                     this.readTheQueue(omElement);
-                }else{
+                } else {
                     getQueueEntryBody(omElement);
                 }
             }
         }
     }
+
     private void readTheQueue(OMElement element) {
         returnString = returnString + element.getText() + "\n";
         this.results.setText(returnString + "\n");

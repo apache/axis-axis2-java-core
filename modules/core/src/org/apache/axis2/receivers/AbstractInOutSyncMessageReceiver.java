@@ -28,43 +28,39 @@ import org.apache.axis2.transport.http.HTTPConstants;
  * protected abstract methods are only for the sake of breaking down the logic
  */
 public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageReceiver {
-    public abstract void invokeBusinessLogic(
-        MessageContext inMessage,
-        MessageContext outMessage)
-        throws AxisFault;
+    public abstract void invokeBusinessLogic(MessageContext inMessage,
+                                             MessageContext outMessage)
+            throws AxisFault;
 
     public final void recieve(MessageContext messgeCtx) throws AxisFault {
         MessageContext newmsgCtx =
-            new MessageContext(messgeCtx.getSystemContext(),
-                messgeCtx.getSessionContext(),
-                messgeCtx.getTransportIn(),
-                messgeCtx.getTransportOut());
+                new MessageContext(messgeCtx.getSystemContext(),
+                                   messgeCtx.getSessionContext(),
+                                   messgeCtx.getTransportIn(),
+                                   messgeCtx.getTransportOut());
 
         newmsgCtx.setMessageInformationHeaders(new MessageInformationHeadersCollection());
         MessageInformationHeadersCollection oldMessageInfoHeaders =
-        messgeCtx.getMessageInformationHeaders();
+                messgeCtx.getMessageInformationHeaders();
         MessageInformationHeadersCollection messageInformationHeaders =
-            new MessageInformationHeadersCollection();
+                new MessageInformationHeadersCollection();
         messageInformationHeaders.setTo(oldMessageInfoHeaders.getReplyTo());
         messageInformationHeaders.setFaultTo(oldMessageInfoHeaders.getFaultTo());
         messageInformationHeaders.setFrom(oldMessageInfoHeaders.getTo());
-        messageInformationHeaders.setRelatesTo(
-            new RelatesTo(
-                oldMessageInfoHeaders.getMessageId(),
-                AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
-        newmsgCtx.setMessageInformationHeaders(messageInformationHeaders);                
+        messageInformationHeaders.setRelatesTo(new RelatesTo(oldMessageInfoHeaders.getMessageId(),
+                                                             AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
+        newmsgCtx.setMessageInformationHeaders(messageInformationHeaders);
         newmsgCtx.setOperationContext(messgeCtx.getOperationContext());
         newmsgCtx.setServiceContext(messgeCtx.getServiceContext());
-        newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT,messgeCtx.getProperty(MessageContext.TRANSPORT_OUT));
-        newmsgCtx.setProperty(HTTPConstants.HTTPOutTransportInfo,messgeCtx.getProperty(HTTPConstants.HTTPOutTransportInfo));
+        newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT, messgeCtx.getProperty(MessageContext.TRANSPORT_OUT));
+        newmsgCtx.setProperty(HTTPConstants.HTTPOutTransportInfo, messgeCtx.getProperty(HTTPConstants.HTTPOutTransportInfo));
         newmsgCtx.setDoingREST(messgeCtx.isDoingREST());
         newmsgCtx.setDoingMTOM(messgeCtx.isDoingMTOM());
-        
-        invokeBusinessLogic(messgeCtx,newmsgCtx);
+
+        invokeBusinessLogic(messgeCtx, newmsgCtx);
 
         AxisEngine engine =
-            new AxisEngine(
-                messgeCtx.getOperationContext().getServiceContext().getEngineContext());
+                new AxisEngine(messgeCtx.getOperationContext().getServiceContext().getEngineContext());
         engine.send(newmsgCtx);
     }
 }

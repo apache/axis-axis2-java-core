@@ -19,7 +19,7 @@
     <inflow>
         <handler name="h2" ref="h1"/>
         <handler name="h3" ref="h1"/>
-     </inflow>
+    </inflow>
 
     <outflow>
         <handler name="h3" class="org.apache.axis2.engine.registry.SpeakingHandler">
@@ -50,7 +50,7 @@
             <parameter name="para9" locked="xsd:true">456</parameter>
             <parameter name="para10" locked="xsd:true">789</parameter>
         </handler>
-   </INfaultflow>
+    </INfaultflow>
 
 
     <operation name="opname" qname="opqname" style="anyStyle" use="anyUse">

@@ -38,18 +38,15 @@ import org.apache.wsdl.WSDLService;
 import javax.xml.stream.XMLStreamReader;
 
 
-
 /**
  * @author chathura@opensource.lk
- *
  */
 public abstract class Stub {
 
     protected ConfigurationContext _configurationContext;
     protected static ServiceDescription _service;
     protected ServiceContext _serviceContext;
-    protected EndpointReference toEPR ;
-
+    protected EndpointReference toEPR;
 
 
     /**
@@ -61,7 +58,7 @@ public abstract class Stub {
     protected String _currentSessionId = null;
 
 
-    protected Stub()throws DeploymentException, AxisFault{
+    protected Stub() throws DeploymentException, AxisFault {
 
     }
 
@@ -69,8 +66,8 @@ public abstract class Stub {
 //
 //	public abstract Object _getSessionInfo(Object key) throws Exception ;
 
-    public void _setSessionInfo(String key, Object value)throws java.lang.Exception{
-        if(!_maintainSession){
+    public void _setSessionInfo(String key, Object value) throws java.lang.Exception {
+        if (!_maintainSession) {
             //TODO Comeup with a Exception
             throw new java.lang.Exception("Client is running the session OFF mode: Start session before saving to a session ");
         }
@@ -78,31 +75,31 @@ public abstract class Stub {
     }
 
 
-    public Object _getSessionInfo(String key) throws java.lang.Exception{
-        if(!_maintainSession){
+    public Object _getSessionInfo(String key) throws java.lang.Exception {
+        if (!_maintainSession) {
             //TODO Comeup with a Exception
             throw new java.lang.Exception("Client is running the session OFF mode: Start session before saving to a session ");
         }
         return _configurationContext.getServiceContext(_currentSessionId).getProperty(key);
     }
 
-    public void _startSession(){
+    public void _startSession() {
         _maintainSession = true;
-        _currentSessionId = getID() ;
+        _currentSessionId = getID();
     }
 
-    public void _endSession(){
+    public void _endSession() {
         _maintainSession = false;
     }
 
-    protected String _getServiceContextID(){
-        if(_maintainSession)
+    protected String _getServiceContextID() {
+        if (_maintainSession)
             return _currentSessionId;
         else
             return getID();
     }
 
-    private String getID(){
+    private String getID() {
         //TODO Get the UUID generator to generate values
         return Long.toString(System.currentTimeMillis());
     }
@@ -113,21 +110,21 @@ public abstract class Stub {
         return env;
     }
 
-    protected void setValueRPC(SOAPEnvelope env,String methodNamespaceURI,String methodName,String[] paramNames,Object[] values){
+    protected void setValueRPC(SOAPEnvelope env, String methodNamespaceURI, String methodName, String[] paramNames, Object[] values) {
         SOAPBody body = env.getBody();
         OMFactory fac = this.getFactory();
 
-        OMNamespace methodNamespace = fac.createOMNamespace(methodNamespaceURI,"ns1");
-        OMElement elt =  fac.createOMElement(methodName,methodNamespace);
-        if (paramNames!=null){
+        OMNamespace methodNamespace = fac.createOMNamespace(methodNamespaceURI, "ns1");
+        OMElement elt = fac.createOMElement(methodName, methodNamespace);
+        if (paramNames != null) {
             //find the relevant object here, convert it and add it to the elt
             for (int i = 0; i < paramNames.length; i++) {
                 String paramName = paramNames[i];
-                Object value  = values[i];
+                Object value = values[i];
                 elt.addChild(StubSupporter.createRPCMappedElement(paramName,
-                        fac.createOMNamespace("",null),//empty namespace
-                        value,
-                        fac));
+                                                                  fac.createOMNamespace("", null), //empty namespace
+                                                                  value,
+                                                                  fac));
             }
         }
         body.addChild(elt);
@@ -135,26 +132,26 @@ public abstract class Stub {
 
 
     protected OMElement getElementFromReader(XMLStreamReader reader) {
-        StAXOMBuilder builder = OMXMLBuilderFactory.createStAXOMBuilder(OMAbstractFactory.getOMFactory(),reader) ;
+        StAXOMBuilder builder = OMXMLBuilderFactory.createStAXOMBuilder(OMAbstractFactory.getOMFactory(), reader);
         return builder.getDocumentElement();
     }
 
-    protected void setValueDoc(SOAPEnvelope env,OMElement value){
-        if (value!=null){
+    protected void setValueDoc(SOAPEnvelope env, OMElement value) {
+        if (value != null) {
             SOAPBody body = env.getBody();
             body.addChild(value);
         }
     }
 
-    protected OMElement getElement(SOAPEnvelope env,String type){
+    protected OMElement getElement(SOAPEnvelope env, String type) {
         SOAPBody body = env.getBody();
         OMElement element = body.getFirstElement();
 
-        if (WSDLService.STYLE_RPC.equals(type)){
+        if (WSDLService.STYLE_RPC.equals(type)) {
             return element.getFirstElement(); //todo this needs to be fixed
-        }else if (WSDLService.STYLE_DOC.equals(type)){
+        } else if (WSDLService.STYLE_DOC.equals(type)) {
             return element;
-        }else {
+        } else {
             throw new UnsupportedOperationException("Unsupported type");
         }
 
@@ -181,7 +178,7 @@ public abstract class Stub {
     }
 
 
-    private SOAPFactory getFactory(){
+    private SOAPFactory getFactory() {
         return OMAbstractFactory.getSOAP11Factory();
     }
 }

@@ -20,17 +20,17 @@ import org.apache.axis2.om.OMTestCase;
 
 public class OMChildrenWithSpecificAttributeIteratorTest extends OMTestCase implements OMConstants {
     private String sampleSOAPMessage = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/03/addressing\">\n" +
-                    "    <soapenv:Header>\n" +
-                    "        <wsa:MessageID soapenv:mustUnderstand=\"1\">uuid:920C5190-0B8F-11D9-8CED-F22EDEEBF7E5</wsa:MessageID>\n" +
-                    "        <wsa:To soapenv:mustUnderstand=\"0\">http://localhost:8081/axis/services/BankPort</wsa:To>\n" +
-                    "        <wsa:From soapenv:mustUnderstand=\"1\">\n" +
-                    "            <Address xmlns=\"http://schemas.xmlsoap.org/ws/2004/03/addressing\">http://schemas.xmlsoap.org/ws/2004/03/addressing/role/anonymous</Address>\n" +
-                    "        </wsa:From>\n" +
-                    "    </soapenv:Header>\n" +
-                    "    <soapenv:Body>\n" +
-                    "        <axis2:echoVoid xmlns:axis2=\"http://ws.apache.org/axis2\" ></axis2:echoVoid>\n" +
-                    "    </soapenv:Body>\n" +
-                    "</soapenv:Envelope>";
+            "    <soapenv:Header>\n" +
+            "        <wsa:MessageID soapenv:mustUnderstand=\"1\">uuid:920C5190-0B8F-11D9-8CED-F22EDEEBF7E5</wsa:MessageID>\n" +
+            "        <wsa:To soapenv:mustUnderstand=\"0\">http://localhost:8081/axis/services/BankPort</wsa:To>\n" +
+            "        <wsa:From soapenv:mustUnderstand=\"1\">\n" +
+            "            <Address xmlns=\"http://schemas.xmlsoap.org/ws/2004/03/addressing\">http://schemas.xmlsoap.org/ws/2004/03/addressing/role/anonymous</Address>\n" +
+            "        </wsa:From>\n" +
+            "    </soapenv:Header>\n" +
+            "    <soapenv:Body>\n" +
+            "        <axis2:echoVoid xmlns:axis2=\"http://ws.apache.org/axis2\" ></axis2:echoVoid>\n" +
+            "    </soapenv:Body>\n" +
+            "</soapenv:Envelope>";
 
     public OMChildrenWithSpecificAttributeIteratorTest(String testName) {
         super(testName);
@@ -38,7 +38,7 @@ public class OMChildrenWithSpecificAttributeIteratorTest extends OMTestCase impl
 
     public static void main(String[] args) {
         junit.textui.TestRunner
-        .run(OMChildrenWithSpecificAttributeIteratorTest.class);
+                .run(OMChildrenWithSpecificAttributeIteratorTest.class);
     }
 
     /*

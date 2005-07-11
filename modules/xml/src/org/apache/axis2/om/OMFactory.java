@@ -37,8 +37,8 @@ public interface OMFactory {
      * @return
      */
     public OMElement createOMElement(String localName, OMNamespace ns,
-                                              OMContainer parent,
-                                              OMXMLParserWrapper builder);
+                                     OMContainer parent,
+                                     OMXMLParserWrapper builder);
 
     /**
      * This is almost the same as as createOMElement(localName,OMNamespace) method above.
@@ -52,8 +52,8 @@ public interface OMFactory {
      * @return
      */
     public OMElement createOMElement(String localName,
-                                              String namespaceURI,
-                                              String namespacePrefix);
+                                     String namespaceURI,
+                                     String namespacePrefix);
 
     /**
      * QName(localPart),
@@ -87,10 +87,13 @@ public interface OMFactory {
      * @return
      */
     public OMText createText(String s);
+
     public OMText createText(String s, String mimeType, boolean optimize);
+
     public OMText createText(DataHandler dataHandler, boolean optimize);
+
     public OMText createText(OMElement parent, String s, String mimeType,
-			boolean optimize);
+                             boolean optimize);
 
     public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value);
 
@@ -99,5 +102,4 @@ public interface OMFactory {
     // make the constructor protected
 
 
-    
 }

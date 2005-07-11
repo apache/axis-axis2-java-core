@@ -33,10 +33,11 @@ import java.io.OutputStream;
 public class JDK13IO extends Component implements ImageIO {
     /**
      * Save an image.
+     *
      * @param mimeType the mime-type of the format to save the image
-     * @param image the image to save
-     * @param os the stream to write to
-     * @exception Exception if an error prevents image encoding
+     * @param image    the image to save
+     * @param os       the stream to write to
+     * @throws Exception if an error prevents image encoding
      */
     public void saveImage(String mimeType, Image image, OutputStream os)
             throws Exception {
@@ -59,24 +60,23 @@ public class JDK13IO extends Component implements ImageIO {
         if ("image/jpeg".equals(mimeType)) {
             JPEGImageEncoderImpl j = new JPEGImageEncoderImpl(os);
             j.encode(rendImage);
-        }
-        else {
+        } else {
             throw new IOException("Supports Jpeg Only");
         }
     } // saveImage
 
     /**
      * Load an Image.
+     *
      * @param in the stream to load the image
      * @return the Image
      */
     public Image loadImage(InputStream in) throws Exception {
         if (in.available() <= 0) {
             return null;
-        }
-        else {
+        } else {
             byte[] bytes = new byte[in.available()];
-            org.apache.axis2.attachments.IOUtils.readFully(in,bytes);
+            org.apache.axis2.attachments.IOUtils.readFully(in, bytes);
             return Toolkit.getDefaultToolkit().createImage(bytes);
         }
     } // loadImage

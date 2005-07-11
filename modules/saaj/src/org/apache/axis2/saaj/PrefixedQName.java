@@ -20,13 +20,15 @@ import javax.xml.soap.Name;
 
 /**
  * Class Prefixed QName
- * 
+ * <p/>
  * Took this implementation from Axis 1.2 code
  */
 public class PrefixedQName implements Name {
-    /** comment/shared empty string */
+    /**
+     * comment/shared empty string
+     */
     private static final String emptyString = "".intern();
-    
+
     /**
      * Field prefix
      */
@@ -35,9 +37,10 @@ public class PrefixedQName implements Name {
      * Field qName
      */
     private QName qName;
-    
+
     /**
      * Constructor PrefixedQName
+     *
      * @param uri
      * @param localName
      * @param pre
@@ -45,12 +48,13 @@ public class PrefixedQName implements Name {
     public PrefixedQName(String uri, String localName, String pre) {
         qName = new QName(uri, localName);
         prefix = (pre == null)
-                            ? emptyString
-                            : pre.intern();
+                ? emptyString
+                : pre.intern();
     }
 
     /**
      * Constructor qname
+     *
      * @param qname
      * @return
      */
@@ -61,42 +65,47 @@ public class PrefixedQName implements Name {
 
     /**
      * Method getLocalName
+     *
      * @return
      */
     public String getLocalName() {
         return qName.getLocalPart();
     }
-    
+
     /**
      * Method getQualifiedName
+     *
      * @return
      */
     public String getQualifiedName() {
         StringBuffer buf = new StringBuffer(prefix);
-        if(prefix != emptyString)
+        if (prefix != emptyString)
             buf.append(':');
         buf.append(qName.getLocalPart());
         return buf.toString();
     }
-    
+
     /**
      * Method getURI
+     *
      * @return
      */
     public String getURI() {
         return qName.getNamespaceURI();
     }
-    
+
     /**
      * Method getPrefix
+     *
      * @return
      */
     public String getPrefix() {
         return prefix;
     }
-   
+
     /**
      * Method equals
+     *
      * @param obj
      * @return
      */
@@ -107,7 +116,7 @@ public class PrefixedQName implements Name {
         if (!(obj instanceof PrefixedQName)) {
             return false;
         }
-        if (!qName.equals(((PrefixedQName)obj).qName)) {
+        if (!qName.equals(((PrefixedQName) obj).qName)) {
             return false;
         }
         if (prefix == ((PrefixedQName) obj).prefix) {
@@ -118,14 +127,16 @@ public class PrefixedQName implements Name {
 
     /**
      * Method hasCode
+     *
      * @return
      */
     public int hashCode() {
         return prefix.hashCode() + qName.hashCode();
     }
-    
+
     /**
      * Method toString
+     *
      * @return
      */
     public String toString() {

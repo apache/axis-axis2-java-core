@@ -22,38 +22,38 @@ import javax.wsdl.Definition;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class WSDLVersionWrapper {
-	
-	private Definition definition;
-	
-	private WSDLDescription description;
-	
-	
 
-	/**
-	 * 
-	 * @param description WSDL 2.0 WOM description
-	 * @param definition WSDL 1.1 WSDL4J based <code>Definition</code>
-	 */
-	public WSDLVersionWrapper(WSDLDescription description, Definition definition) {
-		this.definition = definition;
-		this.description = description;
-	}
-	
-	/**
-	 * Returns the WSDL 1.1 Definition
-	 * @return <code>DEfinition</code>
-	 */
-	public Definition getDefinition() {
-		return definition;
-	}
-	/**
-	 * Returns a WOM description
-	 * @return <code>WSDLDescription</code>
-	 */
-	public WSDLDescription getDescription() {
-		return description;
-	}
+    private Definition definition;
+
+    private WSDLDescription description;
+
+
+    /**
+     * @param description WSDL 2.0 WOM description
+     * @param definition  WSDL 1.1 WSDL4J based <code>Definition</code>
+     */
+    public WSDLVersionWrapper(WSDLDescription description, Definition definition) {
+        this.definition = definition;
+        this.description = description;
+    }
+
+    /**
+     * Returns the WSDL 1.1 Definition
+     *
+     * @return <code>DEfinition</code>
+     */
+    public Definition getDefinition() {
+        return definition;
+    }
+
+    /**
+     * Returns a WOM description
+     *
+     * @return <code>WSDLDescription</code>
+     */
+    public WSDLDescription getDescription() {
+        return description;
+    }
 }

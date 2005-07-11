@@ -54,14 +54,11 @@ public class TCPWorker implements AxisWorker {
         try {
             Reader in = new InputStreamReader(socket.getInputStream());
             TransportOutDescription transportOut =
-                configurationContext.getAxisConfiguration().getTransportOut(
-                    new QName(Constants.TRANSPORT_TCP));
+                    configurationContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_TCP));
             msgContext =
-                new MessageContext(
-                    configurationContext,
-                    configurationContext.getAxisConfiguration().getTransportIn(
-                        new QName(Constants.TRANSPORT_TCP)),
-                    transportOut);
+                    new MessageContext(configurationContext,
+                                       configurationContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_TCP)),
+                                       transportOut);
             msgContext.setServerSide(true);
             OutputStream out = socket.getOutputStream();
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);

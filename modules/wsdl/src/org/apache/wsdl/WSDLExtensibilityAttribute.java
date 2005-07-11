@@ -20,15 +20,14 @@ import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public interface WSDLExtensibilityAttribute {
-	
-	public abstract QName getKey();
 
-	public abstract QName getValue();
-	
-	public void setKey(QName key);
-	
-	public void setValue(QName value);
+    public abstract QName getKey();
+
+    public abstract QName getValue();
+
+    public void setKey(QName key);
+
+    public void setValue(QName value);
 }

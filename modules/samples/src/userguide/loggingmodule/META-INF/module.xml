@@ -1,9 +1,9 @@
 <module name="logging" class="userguide.loggingmodule.LoggingModule">
     <inflow>
         <handler name="InFlowLogHandler" class="userguide.loggingmodule.LogHandler">
-            <order phase="loggingPhase" />
+            <order phase="loggingPhase"/>
         </handler>
-        </inflow>
+    </inflow>
 
     <outflow>
         <handler name="OutFlowLogHandler" class="userguide.loggingmodule.LogHandler">
@@ -13,13 +13,13 @@
 
     <Outfaultflow>
         <handler name="FaultOutFlowLogHandler" class="userguide.loggingmodule.LogHandler">
-             <order phase="loggingPhase"/>
+            <order phase="loggingPhase"/>
         </handler>
     </Outfaultflow>
 
     <INfaultflow>
         <handler name="FaultInFlowLogHandler" class="userguide.loggingmodule.LogHandler">
-             <order phase="loggingPhase"/>
+            <order phase="loggingPhase"/>
         </handler>
     </INfaultflow>
 </module>

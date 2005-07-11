@@ -19,7 +19,7 @@ import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
  * the License.
  * <p/>
  */
-public interface SOAPFaultCode extends OMElement{
+public interface SOAPFaultCode extends OMElement {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */

@@ -26,7 +26,7 @@ import javax.xml.stream.XMLStreamException;
  * author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-public class SOAP11SerializerTest extends OMTestCase{
+public class SOAP11SerializerTest extends OMTestCase {
     private OMOutput omOutput;
 
     public SOAP11SerializerTest(String testName) {
@@ -41,10 +41,10 @@ public class SOAP11SerializerTest extends OMTestCase{
         super.setUp();
         soapEnvelope = (SOAPEnvelope) getOMBuilder("soap/soap11/soap11fault.xml").getDocumentElement();
         omOutput = new OMOutput(XMLOutputFactory.newInstance().
-                createXMLStreamWriter(System.out));
+                                createXMLStreamWriter(System.out));
     }
 
-    public void testSerialize(){
+    public void testSerialize() {
         try {
             soapEnvelope.serializeWithCache(omOutput);
             omOutput.flush();

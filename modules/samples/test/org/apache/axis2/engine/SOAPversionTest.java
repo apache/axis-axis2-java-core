@@ -42,9 +42,9 @@ import javax.xml.stream.XMLStreamException;
 public class SOAPversionTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                    "http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoOMElement");
+                                  "http://127.0.0.1:"
+                                  + (UtilServer.TESTING_PORT)
+                                  + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -63,8 +63,8 @@ public class SOAPversionTest extends TestCase {
         UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
-        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
         serviceContext =
                 UtilServer.getConfigurationContext().createServiceContext(service.getName());
@@ -81,7 +81,7 @@ public class SOAPversionTest extends TestCase {
         inOutMEPClient.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
 
         SOAPEnvelope result =
-                 inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), payload);
+                inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), payload);
         assertEquals("SOAP Version received is not compatible", SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, result.getNamespace().getName());
         inOutMEPClient.close();
     }
@@ -96,7 +96,7 @@ public class SOAPversionTest extends TestCase {
         inOutMEPClient.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
 
         SOAPEnvelope result =
-                 inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), payload);
+                inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), payload);
         assertEquals("SOAP Version received is not compatible", SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, result.getNamespace().getName());
 
 
@@ -114,7 +114,7 @@ public class SOAPversionTest extends TestCase {
         inOutMEPClient.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
 
         SOAPEnvelope result =
-                 inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), payload);
+                inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), payload);
 //        assertEquals("SOAP Version received is not compatible", SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, result.getNamespace().getName());
         try {
             OMOutput output = new OMOutput(System.out, false);

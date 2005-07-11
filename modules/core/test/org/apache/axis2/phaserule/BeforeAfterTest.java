@@ -110,20 +110,20 @@ public class BeforeAfterTest extends TestCase {
             }
 
             Handler handler = (Handler) handlers.get(0);
-            if(!handler.getName().equals(new QName("First"))){
+            if (!handler.getName().equals(new QName("First"))) {
                 fail("Computed Hnadler order is wrong ");
             }
             handler = (Handler) handlers.get(1);
-            if(!handler.getName().equals(new QName("Third"))){
+            if (!handler.getName().equals(new QName("Third"))) {
                 fail("Computed Hnadler order is wrong ");
             }
             handler = (Handler) handlers.get(2);
-            if(!handler.getName().equals(new QName("Second"))){
+            if (!handler.getName().equals(new QName("Second"))) {
                 fail("Computed Hnadler order is wrong ");
             }
 
             handler = (Handler) handlers.get(3);
-            if(!handler.getName().equals(new QName("Forth"))){
+            if (!handler.getName().equals(new QName("Forth"))) {
                 fail("Computed Hnadler order is wrong ");
             }
 

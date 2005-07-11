@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
  *
  * 
  */
+
 public class URLProcessor {
     public static final String DEFAULT_PACKAGE = "axis2";
 
@@ -27,27 +28,28 @@ public class URLProcessor {
      * Breaks a given url to a package
      * e.g. http://www.google.com/test will become
      * com.google.www
+     *
      * @param url
      * @return
      */
-    public static String getNameSpaceFromURL(String url){
-           String returnPackageName = "";
-           String regularExpression = "//[\\w\\.]*";
-           Pattern urlBreaker =Pattern.compile(regularExpression);
-           Matcher matcher = urlBreaker.matcher(url);
-           if (matcher.find()) {
-               String s = matcher.group();
-               s = s.replaceAll("//","");
-               String[] arrayOfItems = s.split("\\.");
-               int length = arrayOfItems.length;
-               for (int i = length; i > 0; i--) {
-                   returnPackageName = returnPackageName.concat((i==length?"":".") + arrayOfItems[i-1]);
-               }
-           }else{
-               returnPackageName = DEFAULT_PACKAGE;
-           }
+    public static String getNameSpaceFromURL(String url) {
+        String returnPackageName = "";
+        String regularExpression = "//[\\w\\.]*";
+        Pattern urlBreaker = Pattern.compile(regularExpression);
+        Matcher matcher = urlBreaker.matcher(url);
+        if (matcher.find()) {
+            String s = matcher.group();
+            s = s.replaceAll("//", "");
+            String[] arrayOfItems = s.split("\\.");
+            int length = arrayOfItems.length;
+            for (int i = length; i > 0; i--) {
+                returnPackageName = returnPackageName.concat((i == length ? "" : ".") + arrayOfItems[i - 1]);
+            }
+        } else {
+            returnPackageName = DEFAULT_PACKAGE;
+        }
 
-           return returnPackageName;
-       }
+        return returnPackageName;
+    }
 
 }

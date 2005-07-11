@@ -1,8 +1,6 @@
 package org.apache.axis2.wsdl.databinding;
 
 
-
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -40,10 +38,11 @@ package org.apache.axis2.wsdl.databinding;
  * QName	xsd:QName
 
  */
-public class JavaTypeMapper extends TypeMappingAdapter{
+
+public class JavaTypeMapper extends TypeMappingAdapter {
 
     public JavaTypeMapper() {
-       //add the basic types to the table 
+        //add the basic types to the table
 //       this.map.put(new QName(XSD_SCHEMA_URL,"string"),String.class.getName());
 //       this.map.put(new QName(XSD_SCHEMA_URL,"boolean"),Boolean.class.getName());
 //       this.map.put(new QName(XSD_SCHEMA_URL,"double"),Double.class.getName());

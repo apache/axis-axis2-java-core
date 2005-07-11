@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis2.transport;
 
 
@@ -51,9 +51,9 @@ public class HTTPTrasportHeaderParsingTest extends AbstractTestCase {
         Map map = receiver.parseTheHeaders(reader, true);
         assertEquals(map.get(HTTPConstants.PROTOCOL_VERSION), "HTTP/1.0");
         assertEquals(map.get(HTTPConstants.REQUEST_URI),
-                "/axis2/services/echo");
+                     "/axis2/services/echo");
         assertEquals(map.get("Accept"),
-                "application/soap+xml, application/dime, multipart/related, text/*");
+                     "application/soap+xml, application/dime, multipart/related, text/*");
         assertEquals(map.get("User-Agent"), "Axis/1.2RC1");
         assertEquals(map.get("Host"), "127.0.0.1:8081");
         assertEquals(map.get("Cache-Control"), "no-cache");

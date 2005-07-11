@@ -1,18 +1,14 @@
 package org.apache.axis.tool.service.swing.ui;
 
+import org.apache.axis.tool.service.bean.Page1Bean;
+import org.apache.axis.tool.service.bean.WizardBean;
+import org.apache.axis.tool.util.Constants;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-
-import org.apache.axis.tool.service.bean.Page1Bean;
-import org.apache.axis.tool.service.bean.WizardBean;
-import org.apache.axis.tool.util.Constants;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -29,7 +25,8 @@ import org.apache.axis.tool.util.Constants;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class WizardPane1 extends WizardPane{
+
+public class WizardPane1 extends WizardPane {
 
     private Page1Bean myBean = null;
 
@@ -43,10 +40,10 @@ public class WizardPane1 extends WizardPane{
 
         init();
 
-        if (wizardBean.getPage1bean()!= null){
+        if (wizardBean.getPage1bean() != null) {
             myBean = wizardBean.getPage1bean();
             this.classFileLocationTextBox.setText(myBean.getFileLocation());
-        }else{
+        } else {
             myBean = new Page1Bean();
             wizardBean.setPage1bean(myBean);
         }
@@ -56,12 +53,12 @@ public class WizardPane1 extends WizardPane{
 
     public boolean validateValues() {
         String text = myBean.getFileLocation();
-        return (text!=null && text.trim().length()>0);
+        return (text != null && text.trim().length() > 0);
     }
 
-    private void init(){
+    private void init() {
         this.setLayout(null);
-        this.setSize(width,height);
+        this.setSize(width, height);
 
         initDescription("Welcome to the new AXIS Service packager Wizard Interface.\n\n " +
                         "Insert the location for the class files here.This should be a folder with \n" +
@@ -70,26 +67,32 @@ public class WizardPane1 extends WizardPane{
 
         this.classFileLocationLabel = new JLabel("class file location");
         this.add(this.classFileLocationLabel);
-        this.classFileLocationLabel.setBounds(hgap,descHeight,Constants.UIConstants.LABEL_WIDTH,Constants.UIConstants.GENERAL_COMP_HEIGHT);
+        this.classFileLocationLabel.setBounds(hgap, descHeight, Constants.UIConstants.LABEL_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
 
         this.classFileLocationTextBox = new JTextField();
         this.add(this.classFileLocationTextBox);
-        this.classFileLocationTextBox.setBounds(Constants.UIConstants.LABEL_WIDTH + 2*hgap ,descHeight,Constants.UIConstants.TEXT_BOX_WIDTH,Constants.UIConstants.GENERAL_COMP_HEIGHT);
-        this.classFileLocationTextBox.addActionListener(new ActionListener(){
+        this.classFileLocationTextBox.setBounds(Constants.UIConstants.LABEL_WIDTH + 2 * hgap, descHeight, Constants.UIConstants.TEXT_BOX_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+        this.classFileLocationTextBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 handleTextBoxChange();
             }
         });
-        this.classFileLocationTextBox.addKeyListener(new KeyListener(){
-            public void keyTyped(KeyEvent e) { }
-            public void keyPressed(KeyEvent e) { }
-            public void keyReleased(KeyEvent e) { handleTextBoxChange();}
+        this.classFileLocationTextBox.addKeyListener(new KeyListener() {
+            public void keyTyped(KeyEvent e) {
+            }
+
+            public void keyPressed(KeyEvent e) {
+            }
+
+            public void keyReleased(KeyEvent e) {
+                handleTextBoxChange();
+            }
         });
 
         this.browseButton = new JButton(".");
         this.add(this.browseButton);
-        this.browseButton.setBounds(Constants.UIConstants.LABEL_WIDTH + 2*hgap +Constants.UIConstants.TEXT_BOX_WIDTH,descHeight,Constants.UIConstants.BROWSE_BUTTON_WIDTH,Constants.UIConstants.GENERAL_COMP_HEIGHT);
-        this.browseButton.addActionListener(new ActionListener(){
+        this.browseButton.setBounds(Constants.UIConstants.LABEL_WIDTH + 2 * hgap + Constants.UIConstants.TEXT_BOX_WIDTH, descHeight, Constants.UIConstants.BROWSE_BUTTON_WIDTH, Constants.UIConstants.GENERAL_COMP_HEIGHT);
+        this.browseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 classFileLocationTextBox.setText(browseForAFolder());
                 handleTextBoxChange();
@@ -100,7 +103,7 @@ public class WizardPane1 extends WizardPane{
 
     private void handleTextBoxChange() {
         String text = classFileLocationTextBox.getText();
-        if (text!=null){
+        if (text != null) {
             this.myBean.setFileLocation(text);
         }
     }

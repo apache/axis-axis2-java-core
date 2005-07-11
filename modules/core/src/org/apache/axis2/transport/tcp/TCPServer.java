@@ -44,6 +44,7 @@ public class TCPServer extends TransportListener implements Runnable {
     private ConfigurationContext configContext;
 
     protected Log log = LogFactory.getLog(SimpleHTTPServer.class.getName());
+
     public TCPServer() {
     }
 
@@ -107,9 +108,8 @@ public class TCPServer extends TransportListener implements Runnable {
      * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
      */
     public EndpointReference replyToEPR(String serviceName) throws AxisFault {
-        return new EndpointReference(
-            AddressingConstants.WSA_REPLY_TO,
-            "tcp://127.0.0.1:" + (serversocket.getLocalPort()) + "/axis/services/" + serviceName);
+        return new EndpointReference(AddressingConstants.WSA_REPLY_TO,
+                                     "tcp://127.0.0.1:" + (serversocket.getLocalPort()) + "/axis/services/" + serviceName);
     }
 
     /* (non-Javadoc)
@@ -125,7 +125,7 @@ public class TCPServer extends TransportListener implements Runnable {
     }
 
     public void init(ConfigurationContext axisConf, TransportInDescription transprtIn)
-        throws AxisFault {
+            throws AxisFault {
         this.configContext = axisConf;
         Parameter param = transprtIn.getParameter(PARAM_PORT);
         if (param != null) {
@@ -133,17 +133,17 @@ public class TCPServer extends TransportListener implements Runnable {
         }
 
     }
+
     public static void main(String[] args) throws AxisFault, NumberFormatException {
         if (args.length != 2) {
             System.out.println("TCPServer repositoryLocation port");
         } else {
             File repository = new File(args[0]);
-            if(!repository.exists()){
+            if (!repository.exists()) {
                 System.out.print("Repository file does not exists .. initializing repository");
             }
             TCPServer tcpServer = new TCPServer(Integer.parseInt(args[1]), repository.getAbsolutePath());
-            System.out.println(
-                "[Axis2] Using the Repository " + repository.getAbsolutePath());
+            System.out.println("[Axis2] Using the Repository " + repository.getAbsolutePath());
             System.out.println("[Axis2] Starting the TCP Server on port " + args[1]);
             tcpServer.start();
         }

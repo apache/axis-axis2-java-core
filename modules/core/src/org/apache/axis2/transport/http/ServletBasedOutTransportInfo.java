@@ -21,10 +21,12 @@ import javax.servlet.http.HttpServletResponse;
 
 public class ServletBasedOutTransportInfo implements HTTPOutTransportInfo {
     private HttpServletResponse response;
-    public ServletBasedOutTransportInfo(HttpServletResponse response){
+
+    public ServletBasedOutTransportInfo(HttpServletResponse response) {
         this.response = response;
     }
-    public void setContentType(String contentType){
+
+    public void setContentType(String contentType) {
         response.setContentType(contentType);
     }
 }

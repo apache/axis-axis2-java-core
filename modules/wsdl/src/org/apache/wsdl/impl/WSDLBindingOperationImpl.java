@@ -33,8 +33,8 @@ public class WSDLBindingOperationImpl extends ExtensibleComponentImpl
      * Field name
      */
     private QName name;
-    
-    
+
+
     /**
      * Field infaults
      */
@@ -131,34 +131,39 @@ public class WSDLBindingOperationImpl extends ExtensibleComponentImpl
     public void setName(QName name) {
         this.name = name;
     }
-    
+
     /**
      * Add the InFault to the Components InFaults
+     *
      * @param inFault
      */
-    public void addInFault(WSDLBindingFault inFault){
-    	this.infaults.add(inFault);
+    public void addInFault(WSDLBindingFault inFault) {
+        this.infaults.add(inFault);
     }
-    
+
     /**
      * Add the OutFault to the Component OutFaults
+     *
      * @param outFault
      */
-    public void addOutFault(WSDLBindingFault outFault){
-    	this.outfaults.add(outFault);
+    public void addOutFault(WSDLBindingFault outFault) {
+        this.outfaults.add(outFault);
     }
-    
-    
-	public List getInfaults() {
-		return infaults;
-	}
-	public void setInfaults(List infaults) {
-		this.infaults = infaults;
-	}
-	public List getOutfaults() {
-		return outfaults;
-	}
-	public void setOutfaults(List outfaults) {
-		this.outfaults = outfaults;
-	}
+
+
+    public List getInfaults() {
+        return infaults;
+    }
+
+    public void setInfaults(List infaults) {
+        this.infaults = infaults;
+    }
+
+    public List getOutfaults() {
+        return outfaults;
+    }
+
+    public void setOutfaults(List outfaults) {
+        this.outfaults = outfaults;
+    }
 }

@@ -18,32 +18,32 @@ package javax.xml.soap;
 /**
  * <code>SOAPFactory</code> is a factory for creating various objects
  * that exist in the SOAP XML tree.
- *
+ * <p/>
  * <code>SOAPFactory</code> can be
  * used to create XML fragments that will eventually end up in the
  * SOAP part. These fragments can be inserted as children of the
  * <code>SOAPHeaderElement</code> or <code>SOAPBodyElement</code> or
  * <code>SOAPEnvelope</code>.
- *
+ * <p/>
  * <code>SOAPFactory</code> also has methods to create
  * <code>javax.xml.soap.Detail</code> objects as well as
  * <code>java.xml.soap.Name</code> objects.
- *
  */
 public abstract class SOAPFactory {
 
-    public SOAPFactory() {}
+    public SOAPFactory() {
+    }
 
     /**
      * Create a <code>SOAPElement</code> object initialized with the
      * given <code>Name</code> object.
      *
      * @param name a <code>Name</code> object with the XML name for
-     *        the new element
-     * @return  the new <code>SOAPElement</code> object that was
-     *    created
+     *             the new element
+     * @return the new <code>SOAPElement</code> object that was
+     *         created
      * @throws SOAPException if there is an error in creating the
-     *       <code>SOAPElement</code> object
+     *                       <code>SOAPElement</code> object
      */
     public abstract SOAPElement createElement(Name name) throws SOAPException;
 
@@ -52,11 +52,11 @@ public abstract class SOAPFactory {
      * given local name.
      *
      * @param localName a <code>String</code> giving the local name for
-     *       the new element
+     *                  the new element
      * @return the new <code>SOAPElement</code> object that was
-     *    created
+     *         created
      * @throws SOAPException if there is an error in creating the
-     *       <code>SOAPElement</code> object
+     *                       <code>SOAPElement</code> object
      */
     public abstract SOAPElement createElement(String localName) throws SOAPException;
 
@@ -65,22 +65,22 @@ public abstract class SOAPFactory {
      * local name, prefix and uri.
      *
      * @param localName a <code>String</code> giving the local name
-     *            for the new element
-     * @param prefix the prefix for this <code>SOAPElement</code>
-     * @param uri a <code>String</code> giving the URI of the
-     *      namespace to which the new element belongs
+     *                  for the new element
+     * @param prefix    the prefix for this <code>SOAPElement</code>
+     * @param uri       a <code>String</code> giving the URI of the
+     *                  namespace to which the new element belongs
      * @return the new <code>SOAPElement</code> object that was
-     *    created
+     *         created
      * @throws SOAPException if there is an error in creating the
-     *      <code>SOAPElement</code> object
+     *                       <code>SOAPElement</code> object
      */
     public abstract SOAPElement createElement(String localName, String prefix, String uri)
-        throws SOAPException;
+            throws SOAPException;
 
     /**
      * Creates a new <code>Detail</code> object which serves as a container
      * for <code>DetailEntry</code> objects.
-     * <p>
+     * <p/>
      * This factory method creates <code>Detail</code> objects for use in
      * situations where it is not practical to use the <code>SOAPFault</code>
      * abstraction.
@@ -93,32 +93,32 @@ public abstract class SOAPFactory {
     /**
      * Creates a new <code>Name</code> object initialized with the
      * given local name, namespace prefix, and namespace URI.
-     * <p>
+     * <p/>
      * This factory method creates <code>Name</code> objects for use in
      * situations where it is not practical to use the <code>SOAPEnvelope</code>
      * abstraction.
      *
      * @param localName a <code>String</code> giving the local name
-     * @param prefix a <code>String</code> giving the prefix of the namespace
-     * @param uri a <code>String</code> giving the URI of the namespace
+     * @param prefix    a <code>String</code> giving the prefix of the namespace
+     * @param uri       a <code>String</code> giving the URI of the namespace
      * @return a <code>Name</code> object initialized with the given
-     *   local name, namespace prefix, and namespace URI
+     *         local name, namespace prefix, and namespace URI
      * @throws SOAPException if there is a SOAP error
      */
     public abstract Name createName(String localName, String prefix, String uri)
-        throws SOAPException;
+            throws SOAPException;
 
     /**
      * Creates a new <code>Name</code> object initialized with the
      * given local name.
-     * <p>
+     * <p/>
      * This factory method creates <code>Name</code> objects for use in
      * situations where it is not practical to use the <code>SOAPEnvelope</code>
      * abstraction.
      *
      * @param localName a <code>String</code> giving the local name
      * @return a <code>Name</code> object initialized with the given
-     *    local name
+     *         local name
      * @throws SOAPException if there is a SOAP error
      */
     public abstract Name createName(String localName) throws SOAPException;
@@ -128,7 +128,7 @@ public abstract class SOAPFactory {
      *
      * @return a new instance of a <code>SOAPFactory</code>
      * @throws SOAPException if there was an error creating the
-     *       default <code>SOAPFactory</code>
+     *                       default <code>SOAPFactory</code>
      */
     public static SOAPFactory newInstance() throws SOAPException {
 
@@ -143,5 +143,5 @@ public abstract class SOAPFactory {
     private static final String SF_PROPERTY = "javax.xml.soap.SOAPFactory";
 
     private static final String DEFAULT_SF =
-        "org.apache.axis2.saaj.SOAPFactoryImpl";
+            "org.apache.axis2.saaj.SOAPFactoryImpl";
 }

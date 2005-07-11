@@ -22,31 +22,32 @@ import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class WSDLExtensibilityAttributeImpl implements WSDLExtensibilityAttribute {
-	
-	private QName key;
-	
-	private QName value;
-	
-	
-	
-	public WSDLExtensibilityAttributeImpl() {
-		
-	}
-	public QName getKey() {
-		return key;
-	}
-	public QName getValue() {
-		return value;
-	}
-	
-	
-	public void setKey(QName key) {
-		this.key = key;
-	}
-	public void setValue(QName value) {
-		this.value = value;
-	}
+
+    private QName key;
+
+    private QName value;
+
+
+    public WSDLExtensibilityAttributeImpl() {
+
+    }
+
+    public QName getKey() {
+        return key;
+    }
+
+    public QName getValue() {
+        return value;
+    }
+
+
+    public void setKey(QName key) {
+        this.key = key;
+    }
+
+    public void setValue(QName value) {
+        this.value = value;
+    }
 }

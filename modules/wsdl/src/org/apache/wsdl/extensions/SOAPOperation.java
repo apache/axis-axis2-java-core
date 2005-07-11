@@ -20,15 +20,14 @@ import org.apache.wsdl.WSDLExtensibilityElement;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public interface SOAPOperation extends WSDLExtensibilityElement {
-	public String getSoapAction();
+    public String getSoapAction();
 
-	public void setSoapAction(String soapAction);
-	
-	public String getStyle();	
-	
-	public void setStyle(String style) ;
-	
+    public void setSoapAction(String soapAction);
+
+    public String getStyle();
+
+    public void setStyle(String style);
+
 }

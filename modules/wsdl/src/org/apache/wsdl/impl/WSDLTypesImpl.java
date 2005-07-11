@@ -46,12 +46,12 @@ public class WSDLTypesImpl extends ComponentImpl implements WSDLTypes {
      */
     public WSDLExtensibilityElement getFirstElement(QName qName) {
         Iterator iterator = this.getExtensibilityElements().iterator();
-		while(iterator.hasNext()){
-			WSDLExtensibilityElement temp =(WSDLExtensibilityElement)iterator.next();
-			if(temp.getType().equals(qName))
-				return temp;        	
+        while (iterator.hasNext()) {
+            WSDLExtensibilityElement temp = (WSDLExtensibilityElement) iterator.next();
+            if (temp.getType().equals(qName))
+                return temp;
         }
-		
-		return null;
+
+        return null;
     }
 }

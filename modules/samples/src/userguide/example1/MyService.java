@@ -23,6 +23,6 @@ public class MyService {
     }
 
     public void ping(OMElement element) throws XMLStreamException {
-    //Do some processing
+        //Do some processing
     }
 }

@@ -19,11 +19,12 @@ import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
  * the License.
  * <p/>
  */
-public interface SOAPFaultReason extends OMElement{
+public interface SOAPFaultReason extends OMElement {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
 
     public void setSOAPText(SOAPFaultText soapFaultText) throws SOAPProcessingException;
+
     public SOAPFaultText getSOAPText();
 }

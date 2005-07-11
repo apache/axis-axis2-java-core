@@ -121,7 +121,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
      * this is the actual method that is call from scheduler
      */
     public void startListent() {
-       // checkModules();
+        // checkModules();
         checkServices();
         update();
     }
@@ -169,7 +169,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
         return false;
     }
 
-     private boolean isModuleArchiveFile(String filename) {
+    private boolean isModuleArchiveFile(String filename) {
         if (filename.endsWith(".jar") || filename.endsWith(".mar")) {
             return true;
         }

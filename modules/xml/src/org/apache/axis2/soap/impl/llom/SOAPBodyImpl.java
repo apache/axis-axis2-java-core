@@ -59,7 +59,8 @@ public abstract class SOAPBodyImpl extends SOAPElement
      *
      * @param e
      * @return the new <code>SOAPFault</code> object
-     * @throws org.apache.axis2.om.OMException if there is a SOAP error
+     * @throws org.apache.axis2.om.OMException
+     *                     if there is a SOAP error
      * @throws OMException
      */
     public abstract SOAPFault addFault(Exception e) throws OMException;
@@ -80,7 +81,7 @@ public abstract class SOAPBodyImpl extends SOAPElement
             if (element != null
                     && SOAPConstants.SOAPFAULT_LOCAL_NAME.equals(element.getLocalName())
                     && (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName())
-                        || SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName()))) {  //added this line
+                    || SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName()))) {  //added this line
                 hasSOAPFault = true;
                 return true;
             } else {
@@ -103,7 +104,7 @@ public abstract class SOAPBodyImpl extends SOAPElement
         } else if (element != null
                 && SOAPConstants.SOAPFAULT_LOCAL_NAME.equals(element.getLocalName())
                 && (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName())
-                    || SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName()))) {     //added this line
+                || SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(element.getNamespace().getName()))) {     //added this line
             hasSOAPFault = true;
             return (SOAPFault) element;
         } else {
@@ -115,6 +116,7 @@ public abstract class SOAPBodyImpl extends SOAPElement
     /**
      * @param soapFault
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     public void addFault(SOAPFault soapFault) throws OMException {

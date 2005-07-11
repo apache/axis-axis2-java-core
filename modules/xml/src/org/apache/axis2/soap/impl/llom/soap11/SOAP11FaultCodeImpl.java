@@ -32,7 +32,7 @@ import javax.xml.stream.XMLStreamWriter;
  * author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl{
+public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl {
     /**
      * Constructor OMElementImpl
      *
@@ -68,13 +68,13 @@ public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl{
         super.setValue(value);
     }
 
-     protected void checkParent(OMElement parent) throws SOAPProcessingException {
+    protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP11FaultImpl)) {
             throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault as the parent. But received some other implementation");
         }
     }
 
-     protected void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
+    protected void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
 
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
@@ -88,11 +88,11 @@ public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl{
 
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         if (this.getNamespace() != null) {
-           String prefix = this.getNamespace().getPrefix();
-        String nameSpaceName = this.getNamespace().getName();
-        writer.writeStartElement(prefix, SOAP11Constants.SOAP_FAULT_CODE_LOCAL_NAME,
-                                nameSpaceName);
-        }else{
+            String prefix = this.getNamespace().getPrefix();
+            String nameSpaceName = this.getNamespace().getName();
+            writer.writeStartElement(prefix, SOAP11Constants.SOAP_FAULT_CODE_LOCAL_NAME,
+                                     nameSpaceName);
+        } else {
             writer.writeStartElement(SOAP11Constants.SOAP_FAULT_CODE_LOCAL_NAME);
         }
 
@@ -105,16 +105,16 @@ public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl{
         writer.writeEndElement();
 
         //serilize siblings
-            if (this.nextSibling != null) {
-                nextSibling.serialize(omOutput);
-            } else if (this.parent != null) {
-                if (!this.parent.isComplete()) {
-                    builder.setCache(cache);
-                    builder.next();
-                }
+        if (this.nextSibling != null) {
+            nextSibling.serialize(omOutput);
+        } else if (this.parent != null) {
+            if (!this.parent.isComplete()) {
+                builder.setCache(cache);
+                builder.next();
             }
+        }
 
     }
 
-    
+
 }

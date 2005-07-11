@@ -15,12 +15,7 @@
  */
 package javax.xml.soap;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
+import java.io.*;
 import java.util.Properties;
 
 /**
@@ -51,7 +46,8 @@ class FactoryFinder {
             } else {
                 try {
                     factory = classloader.loadClass(factoryClassName);
-                } catch (ClassNotFoundException cnfe) {}
+                } catch (ClassNotFoundException cnfe) {
+                }
             }
             if (factory == null) {
                 classloader = FactoryFinder.class.getClassLoader();
@@ -80,12 +76,13 @@ class FactoryFinder {
             if (factoryClassName != null) {
                 return newInstance(factoryClassName);
             }
-        } catch (SecurityException securityexception) {}
+        } catch (SecurityException securityexception) {
+        }
 
         try {
             String propertiesFileName = System.getProperty("java.home")
-                                        + File.separator + "lib"
-                                        + File.separator + "jaxm.properties";
+                    + File.separator + "lib"
+                    + File.separator + "jaxm.properties";
             File file = new File(propertiesFileName);
             if (file.exists()) {
                 FileInputStream fileInput = new FileInputStream(file);
@@ -95,7 +92,8 @@ class FactoryFinder {
                 String factoryClassName = properties.getProperty(factoryPropertyName);
                 return newInstance(factoryClassName);
             }
-        } catch (Exception exception1) {}
+        } catch (Exception exception1) {
+        }
 
         String factoryResource = "META-INF/services/" + factoryPropertyName;
 
@@ -109,7 +107,8 @@ class FactoryFinder {
                     return newInstance(factoryClassName);
                 }
             }
-        } catch (Exception exception2) {}
+        } catch (Exception exception2) {
+        }
 
         if (defaultFactoryClassName == null) {
             throw new SOAPException("Provider for " + factoryPropertyName + " cannot be found", null);
@@ -120,7 +119,7 @@ class FactoryFinder {
 
     /**
      * Returns an input stream for the specified resource.
-     *
+     * <p/>
      * <p>This method will firstly try
      * <code>ClassLoader.getSystemResourceAsStream()</code> then
      * the class loader of the current thread with
@@ -128,15 +127,16 @@ class FactoryFinder {
      * <code>getResourceAsStream()</code> on
      * <code>FactoryFinder.class.getClassLoader()</code>.
      *
-     * @param factoryResource  the resource name
-     * @return  an InputStream that can be used to read that resource, or
-     *              <code>null</code> if the resource could not be resolved
+     * @param factoryResource the resource name
+     * @return an InputStream that can be used to read that resource, or
+     *         <code>null</code> if the resource could not be resolved
      */
     private static InputStream getResource(String factoryResource) {
         ClassLoader classloader = null;
         try {
             classloader = Thread.currentThread().getContextClassLoader();
-        } catch (SecurityException securityexception) {}
+        } catch (SecurityException securityexception) {
+        }
 
         InputStream inputstream;
         if (classloader == null) {

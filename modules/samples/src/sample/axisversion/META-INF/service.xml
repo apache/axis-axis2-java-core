@@ -5,4 +5,4 @@
     <parameter name="ServiceClass" locked="xsd:false">sample.axisversion.Version</parameter>
     <operation name="getVersion">
     </operation>
-  </service>
+</service>

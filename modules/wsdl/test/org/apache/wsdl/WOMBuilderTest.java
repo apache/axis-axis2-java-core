@@ -23,8 +23,6 @@ import javax.wsdl.Definition;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
-
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -44,12 +42,12 @@ public class WOMBuilderTest extends AbstractTestCase {
 
     private void initialize() throws Exception {
 
-    	WSDLVersionWrapper wsdlVersionWrapper = null;
+        WSDLVersionWrapper wsdlVersionWrapper = null;
         if (null == this.womDescription) {
             InputStream in = new FileInputStream(getTestResourceFile("InteropTest.wsdl"));
 //            InputStream in = new FileInputStream(new File("E:/temp/service.wsdl"));
             wsdlVersionWrapper = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
-			this.womDescription = wsdlVersionWrapper.getDescription();
+            this.womDescription = wsdlVersionWrapper.getDescription();
         }
         if (null == wsdl4jDefinition) {
             this.wsdl4jDefinition = wsdlVersionWrapper.getDefinition();
@@ -63,7 +61,7 @@ public class WOMBuilderTest extends AbstractTestCase {
         ;
         assertEquals(womDescription.getServices().size(), wsdl4jDefinition.getServices().size());
         assertEquals(womDescription.getBindings().size(), wsdl4jDefinition.getBindings().size());
-        
+
     }
 
     public void testInterfacesComponent() throws Exception {
@@ -81,11 +79,11 @@ public class WOMBuilderTest extends AbstractTestCase {
             //Will only work if the order is retained in the iteration
             while (wsdl4jOprationIterator.hasNext()) {
                 Operation wsdl4jOperation = (Operation) wsdl4jOprationIterator.next();
-				this.operationsWaliking(wsdlInterface.getOperation(wsdl4jOperation.getName()), wsdl4jOperation);
+                this.operationsWaliking(wsdlInterface.getOperation(wsdl4jOperation.getName()), wsdl4jOperation);
             }
-            while(womOperationIterator.hasNext() ){
-            	WSDLOperation womOperation = (WSDLOperation)womOperationIterator.next();
-            	this.operationsWaliking(womOperation, porttype.getOperation(womOperation.getName().getLocalPart(), null,null));
+            while (womOperationIterator.hasNext()) {
+                WSDLOperation womOperation = (WSDLOperation) womOperationIterator.next();
+                this.operationsWaliking(womOperation, porttype.getOperation(womOperation.getName().getLocalPart(), null, null));
             }
 
         }
@@ -108,8 +106,8 @@ public class WOMBuilderTest extends AbstractTestCase {
     private void operationsWaliking(WSDLOperation womOperation, Operation wsdl4jOperation) {
         assertEquals(womOperation.getName().getLocalPart(), wsdl4jOperation.getName());
         //System.out.println(womOperation.getMessageExchangePattern());
-        
-      
+
+
     }
 
 

@@ -43,7 +43,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     private final FlowInclude flowInclude = new FlowIncludeImpl();
 
     //to store module opeartions , which are suppose to be added to a service if it is engaged to a service
-    private HashMap opeartions ;
+    private HashMap opeartions;
 
     /**
      * Field parameters
@@ -148,6 +148,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     public void setName(QName name) {
         this.name = name;
     }
+
     /**
      * @return
      */
@@ -162,11 +163,11 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
         this.module = module;
     }
 
-    public void addOperation(OperationDescription operation){
-        opeartions.put(operation.getName(),operation);
+    public void addOperation(OperationDescription operation) {
+        opeartions.put(operation.getName(), operation);
     }
-    
-    public HashMap getOperations(){
+
+    public HashMap getOperations() {
         return opeartions;
     }
 

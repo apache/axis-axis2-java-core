@@ -22,19 +22,18 @@ import java.util.Iterator;
 
 /**
  * @author Ashutosh Shahi ashutosh.shahi@gmail.com
- *
  */
 public class HeadersTest extends TestCase {
-	
+
     private final String actor = "ACTOR#1";
     private final String localName = "Local1";
     private final String namespace = "http://ws.apache.org";
     private final String prefix = "P1";
-	
+
     public HeadersTest(String name) {
         super(name);
     }
-    
+
     public void testAddingHeaderElements() throws Exception {
         javax.xml.soap.SOAPMessage soapMessage = javax.xml.soap.MessageFactory.newInstance().createMessage();
         javax.xml.soap.SOAPEnvelope soapEnv = soapMessage.getSOAPPart().getEnvelope();
@@ -48,12 +47,12 @@ public class HeadersTest extends TestCase {
         
         Iterator it = header.getChildElements();
         boolean b = false;
-        while(it.hasNext()){
+        while (it.hasNext()) {
             SOAPElement el = (SOAPElement) it.next();
             String lName = el.getNodeName();
-            if(lName.equalsIgnoreCase("ebxmlms")){
-            	b = true;
-            	break;
+            if (lName.equalsIgnoreCase("ebxmlms")) {
+                b = true;
+                break;
             }
         }
         assertTrue(b);

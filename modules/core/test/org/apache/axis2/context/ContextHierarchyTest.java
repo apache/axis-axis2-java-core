@@ -27,9 +27,9 @@ import javax.xml.namespace.QName;
 
 /**
  * @author srinath
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         <p/>
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class ContextHierarchyTest extends TestCase {
     private OperationDescription operationDescription;
@@ -50,16 +50,14 @@ public class ContextHierarchyTest extends TestCase {
 
     public void testCompleteHiracy() throws AxisFault {
         ConfigurationContext configurationContext =
-            new ConfigurationContext(axisConfiguration);
+                new ConfigurationContext(axisConfiguration);
         ServiceContext serviceCOntext =
-            configurationContext.createServiceContext(
-                serviceDescription.getName());
+                configurationContext.createServiceContext(serviceDescription.getName());
         MessageContext msgctx =
-            new MessageContext(configurationContext);
+                new MessageContext(configurationContext);
         OperationContext opContext =
-            operationDescription.findOperationContext(
-                msgctx,
-                serviceCOntext);
+                operationDescription.findOperationContext(msgctx,
+                                                          serviceCOntext);
         msgctx.setServiceContext(serviceCOntext);
 
         //test the complte Hisracy built
@@ -86,10 +84,10 @@ public class ContextHierarchyTest extends TestCase {
 
     public void testDisconntectedHiracy() throws AxisFault {
         ConfigurationContext configurationContext =
-            new ConfigurationContext(axisConfiguration);
-  
+                new ConfigurationContext(axisConfiguration);
+
         MessageContext msgctx =
-            new MessageContext(configurationContext);
+                new MessageContext(configurationContext);
   
         //test the complte Hisracy built
         assertEquals(msgctx.getParent(), null);

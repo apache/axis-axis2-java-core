@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Iterator;
+
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -39,22 +40,22 @@ public class ServiceDescriptionBuilderTest extends TestCase {
     private void initialize() throws Exception {
 
         if (null == this.service) {
-           InputStream in = new FileInputStream(new File("./test-resources/service.wsdl")) ;
-            if(in == null){
-                throw new Exception("Input Stream is null , fileNot Found") ;
+            InputStream in = new FileInputStream(new File("./test-resources/service.wsdl"));
+            if (in == null) {
+                throw new Exception("Input Stream is null , fileNot Found");
             }
             WSDLDescription womDescription = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in, new AxisDescWSDLComponentFactory()).getDescription();
             Iterator iterator = womDescription.getServices().keySet().iterator();
-            if(iterator.hasNext()){
-                this.service = (ServiceDescription)iterator.next();
+            if (iterator.hasNext()) {
+                this.service = (ServiceDescription) iterator.next();
             }
             //todo fix me ajith , deepal
-           // assertNotNull(this.service);
+            // assertNotNull(this.service);
         }
 
     }
 
-    public void test(){
+    public void test() {
         try {
             this.initialize();
         } catch (Exception e) {

@@ -39,9 +39,9 @@ import javax.xml.namespace.QName;
 public class EchoRawXMLChunckedTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                    "http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoOMElement");
+                                  "http://127.0.0.1:"
+                                  + (UtilServer.TESTING_PORT)
+                                  + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -50,7 +50,7 @@ public class EchoRawXMLChunckedTest extends TestCase {
     private AxisConfiguration engineRegistry;
     private MessageContext mc;
     //private Thread thisThread;
-   // private SimpleHTTPServer sas;
+    // private SimpleHTTPServer sas;
     private ServiceContext serviceContext;
     private ServiceDescription service;
 
@@ -68,12 +68,12 @@ public class EchoRawXMLChunckedTest extends TestCase {
         UtilServer.start(Constants.TESTING_PATH + "chuncked-enabledRepository");
         service =
                 Utils.createSimpleService(serviceName,
-        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
         serviceContext =
                 UtilServer.getConfigurationContext().createServiceContext(service.getName());
-                
+
 
     }
 

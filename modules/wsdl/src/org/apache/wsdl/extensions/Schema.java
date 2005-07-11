@@ -21,18 +21,17 @@ import org.w3c.dom.Element;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public interface Schema extends WSDLExtensibilityElement {
-	/**
-	 * 
-	 * @return The schema Element as a DOM element
-	 */
-	public Element getElelment();
+    /**
+     * @return The schema Element as a DOM element
+     */
+    public Element getElelment();
 
-	/**
-	 * Sets the Schema Element as a DOM Element.
-	 * @param elelment
-	 */
-	public void setElelment(Element elelment);
+    /**
+     * Sets the Schema Element as a DOM Element.
+     *
+     * @param elelment
+     */
+    public void setElelment(Element elelment);
 }

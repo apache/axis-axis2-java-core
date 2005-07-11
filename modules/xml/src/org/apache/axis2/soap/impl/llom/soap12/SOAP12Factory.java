@@ -156,7 +156,7 @@ public class SOAP12Factory extends SOAPLinkedListImplFactory {
     public SOAPEnvelope getDefaultEnvelope() throws SOAPProcessingException {
         OMNamespace ns =
                 new OMNamespaceImpl(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                        SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
+                                    SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
         SOAPEnvelopeImpl env = new SOAPEnvelopeImpl(ns);
         SOAPHeader headerImpl = createSOAPHeader(env);
         SOAPBody bodyImpl = createSOAPBody(env);

@@ -16,7 +16,7 @@
 
 package org.apache.axis2.soap;
 
-public class SOAPFaultReasonTestCase extends SOAPFaultTestCase{
+public class SOAPFaultReasonTestCase extends SOAPFaultTestCase {
 
     protected SOAPFaultReason soap11FaultReason;
     protected SOAPFaultReason soap12FaultReason;

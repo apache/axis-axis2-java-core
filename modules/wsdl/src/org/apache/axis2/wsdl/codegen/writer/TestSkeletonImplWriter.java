@@ -22,22 +22,21 @@ import java.io.File;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class TestSkeletonImplWriter extends ClassWriter {
 
-	  public TestSkeletonImplWriter(String outputFileLocation) {
+    public TestSkeletonImplWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
-    public TestSkeletonImplWriter(File outputFileLocation,int language) {
+    public TestSkeletonImplWriter(File outputFileLocation, int language) {
         this.outputFileLocation = outputFileLocation;
         this.language = language;
     }
 
     public void loadTemplate() {
         Class clazz = this.getClass();
-        switch (language){
+        switch (language) {
             case XSLTConstants.LanguageTypes.JAVA:
                 this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTTestSkeletonImplTemplates.JAVA_TEMPLATE);
                 break;

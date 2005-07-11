@@ -78,11 +78,11 @@ public class MailWorker implements AxisWorker {
         try {
             TransportInDescription transportIn = reg.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL));
             TransportOutDescription transportOut = reg.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL));
-            
-            msgContext = new MessageContext(reg,transportIn,transportOut);
+
+            msgContext = new MessageContext(reg, transportIn, transportOut);
             msgContext.setServerSide(true);
             msgContext.setProperty(MailConstants.CONTENT_TYPE, mimeMessage.getContentType());
-            String soapAction  = getMailHeader(MailConstants.HEADER_SOAP_ACTION);
+            String soapAction = getMailHeader(MailConstants.HEADER_SOAP_ACTION);
             msgContext.setWSAAction(soapAction);
             msgContext.setSoapAction(soapAction);
 
@@ -93,22 +93,21 @@ public class MailWorker implements AxisWorker {
 
             String replyTo = ((InternetAddress) mimeMessage.getReplyTo()[0]).getAddress();
             if (replyTo != null) {
-                msgContext.setReplyTo(
-                    new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo));
+                msgContext.setReplyTo(new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo));
             }
-            
+
             String recepainets = ((InternetAddress) mimeMessage.getAllRecipients()[0]).getAddress();
             if (recepainets != null) {
-                msgContext.setTo(new EndpointReference(AddressingConstants.WSA_FROM, recepainets+ "/"+serviceURL));
-            }else{
+                msgContext.setTo(new EndpointReference(AddressingConstants.WSA_FROM, recepainets + "/" + serviceURL));
+            } else {
                 throw new AxisFault("No receptineist found in the Email");
             }
 
             // add the SOAPEnvelope
             String message = mimeMessage.getContent().toString();
-            System.out.println("message["+message+"]");
+            System.out.println("message[" + message + "]");
             ByteArrayInputStream bais =
-                new ByteArrayInputStream(message.getBytes());
+                    new ByteArrayInputStream(message.getBytes());
             XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
             StAXBuilder builder = new StAXSOAPModelBuilder(reader);
             msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());

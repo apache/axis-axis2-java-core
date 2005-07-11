@@ -29,8 +29,7 @@ import org.apache.axis2.soap.SOAPFactory;
 public class OMElementCreator {
     public static OMElement creatQueueElement(String createQueueElement, String key) {
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
-        OMNamespace opN = factory.createOMNamespace(
-                "http://webservices.amazon.com/AWSSimpleQueueService/2005-01-01", "nsQ");
+        OMNamespace opN = factory.createOMNamespace("http://webservices.amazon.com/AWSSimpleQueueService/2005-01-01", "nsQ");
         OMElement createQueue = factory.createOMElement("CreateQueue", opN);
         OMElement subID = factory.createOMElement("SubscriptionId", opN);
         OMElement request = factory.createOMElement("Request", opN);
@@ -45,10 +44,10 @@ public class OMElementCreator {
         createQueue.addChild(request);
         return createQueue;
     }
+
     public static OMElement deleteQueueElement(String deleteQueueName, String key) {
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
-        OMNamespace opN = factory.createOMNamespace(
-                "http://webservices.amazon.com/AWSSimpleQueueService/2005-01-01", "nsQ");
+        OMNamespace opN = factory.createOMNamespace("http://webservices.amazon.com/AWSSimpleQueueService/2005-01-01", "nsQ");
         OMElement enque = factory.createOMElement("DeleteQueue", opN);
         OMElement subID = factory.createOMElement("SubscriptionId", opN);
         OMElement request = factory.createOMElement("Request", opN);
@@ -63,10 +62,10 @@ public class OMElementCreator {
         enque.addChild(request);
         return enque;
     }
+
     public static OMElement enqueueElement(String queueEntyBody, String queueIden, String key) {
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
-        OMNamespace opN = factory.createOMNamespace(
-                "http://webservices.amazon.com/AWSSimpleQueueService/2005-01-01", "nsQ");
+        OMNamespace opN = factory.createOMNamespace("http://webservices.amazon.com/AWSSimpleQueueService/2005-01-01", "nsQ");
         OMElement enque = factory.createOMElement("Enqueue", opN);
         OMElement subID = factory.createOMElement("SubscriptionId", opN);
         OMElement request = factory.createOMElement("Request", opN);
@@ -86,11 +85,11 @@ public class OMElementCreator {
         enque.addChild(request);
         return enque;
     }
+
     public static OMElement queueListElement(String key) {
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
-        OMNamespace opN = factory.createOMNamespace(
-                "http://webservices.amazon.com/AWSSimpleQueueService/2005-01-01",
-                "nsQ");
+        OMNamespace opN = factory.createOMNamespace("http://webservices.amazon.com/AWSSimpleQueueService/2005-01-01",
+                                                    "nsQ");
         OMElement listMyQueues = factory.createOMElement("ListMyQueues", opN);
         OMElement subID = factory.createOMElement("SubscriptionId", opN);
         OMElement request = factory.createOMElement("Request", opN);
@@ -99,10 +98,10 @@ public class OMElementCreator {
         listMyQueues.addChild(request);
         return listMyQueues;
     }
-    public static OMElement read(String requiredQueueName,String key) {
+
+    public static OMElement read(String requiredQueueName, String key) {
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
-        OMNamespace opN = factory.createOMNamespace(
-                "http://webservices.amazon.com/AWSSimpleQueueService/2005-01-01", "nsQ");
+        OMNamespace opN = factory.createOMNamespace("http://webservices.amazon.com/AWSSimpleQueueService/2005-01-01", "nsQ");
         OMElement read = factory.createOMElement("Read", opN);
         OMElement subID = factory.createOMElement("SubscriptionId", opN);
         OMElement request = factory.createOMElement("Request", opN);

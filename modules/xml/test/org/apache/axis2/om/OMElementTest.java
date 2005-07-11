@@ -37,7 +37,7 @@ public class OMElementTest extends OMTestCase implements OMConstants {
 
     }
 
-    public void testGetText(){
+    public void testGetText() {
         try {
             StAXSOAPModelBuilder soapBuilder = getOMBuilder("soap/OMElementTest.xml");
             SOAPEnvelope soapEnvelope = (SOAPEnvelope) soapBuilder.getDocumentElement();

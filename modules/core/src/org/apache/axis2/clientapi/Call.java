@@ -38,8 +38,10 @@ public class Call extends InOutMEPClient {
     private HashMap properties;
     protected static OperationDescription operationTemplate;
     private MessageContext lastResponseMessage;
+
     /**
      * this is a convenience Class, here the Call will assume a Annoynmous Service.
+     *
      * @throws AxisFault
      */
 
@@ -50,16 +52,17 @@ public class Call extends InOutMEPClient {
     /**
      * This is used to create call object with client home , using onky this constructor it can
      * able to engage modules  , addning client side parameters
+     *
      * @param clientHome
      * @throws AxisFault
      */
     public Call(String clientHome) throws AxisFault {
-      super(assumeServiceContext(clientHome));
+        super(assumeServiceContext(clientHome));
     }
 
     /**
-     * @see InOutMEPClient constructer
      * @param service
+     * @see InOutMEPClient constructer
      */
     public Call(ServiceContext service) {
         super(service);
@@ -67,6 +70,7 @@ public class Call extends InOutMEPClient {
 
     /**
      * Invoke the blocking/Synchronous call
+     *
      * @param axisop
      * @param toSend - This should be OM Element (payload)
      * @return
@@ -76,8 +80,8 @@ public class Call extends InOutMEPClient {
     public OMElement invokeBlocking(String axisop, OMElement toSend) throws AxisFault {
 
         OperationDescription axisConfig =
-            serviceContext.getServiceConfig().getOperation(new QName(axisop));
-         if (axisConfig == null) {
+                serviceContext.getServiceConfig().getOperation(new QName(axisop));
+        if (axisConfig == null) {
             axisConfig = new OperationDescription(new QName(axisop));
             axisConfig.setRemainingPhasesInFlow(operationTemplate.getRemainingPhasesInFlow());
             axisConfig.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
@@ -96,19 +100,21 @@ public class Call extends InOutMEPClient {
         SOAPEnvelope resEnvelope = lastResponseMessage.getEnvelope();
         return resEnvelope.getBody().getFirstElement();
     }
+
     /**
      * Invoke the nonblocking/Asynchronous call
+     *
      * @param axisop
-     * @param toSend -  This should be OM Element (payload)
-     * invocation behaves accordingly
+     * @param toSend   -  This should be OM Element (payload)
+     *                 invocation behaves accordingly
      * @param callback
      * @throws AxisFault
      */
 
     public void invokeNonBlocking(String axisop, OMElement toSend, Callback callback)
-        throws AxisFault {
+            throws AxisFault {
         OperationDescription axisConfig =
-            serviceContext.getServiceConfig().getOperation(new QName(axisop));
+                serviceContext.getServiceConfig().getOperation(new QName(axisop));
         if (axisConfig == null) {
             axisConfig = new OperationDescription(new QName(axisop));
             axisConfig.setRemainingPhasesInFlow(operationTemplate.getRemainingPhasesInFlow());
@@ -124,6 +130,7 @@ public class Call extends InOutMEPClient {
 
     /**
      * Assume the values for the ConfigurationContext and ServiceContext to make the NON WSDL cases simple.
+     *
      * @return ServiceContext that has a ConfigurationContext set in and has assumed values.
      * @throws AxisFault
      */
@@ -132,7 +139,7 @@ public class Call extends InOutMEPClient {
         if (ListenerManager.configurationContext == null) {
             ConfigurationContextFactory efac = new ConfigurationContextFactory();
             sysContext = efac.buildClientConfigurationContext(clinetHome);
-        }else{
+        } else {
             sysContext = ListenerManager.configurationContext;
         }
 
@@ -162,6 +169,7 @@ public class Call extends InOutMEPClient {
     public void set(String key, Object value) {
         serviceContext.getEngineContext().setProperty(key, value);
     }
+
     /**
      * @return
      */

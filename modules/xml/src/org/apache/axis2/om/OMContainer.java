@@ -20,21 +20,21 @@ import java.util.Iterator;
 
 public interface OMContainer {
 
-	public void addChild (OMNode omNode);
+    public void addChild(OMNode omNode);
 
-	public Iterator getChildrenWithName (QName elementQName) throws OMException;
+    public Iterator getChildrenWithName(QName elementQName) throws OMException;
 
-	public OMElement getFirstChildWithName (QName elementQName) throws OMException;
+    public OMElement getFirstChildWithName(QName elementQName) throws OMException;
 
-	public Iterator getChildren();
+    public Iterator getChildren();
 
-	public void setFirstChild(OMNode omNode);
+    public void setFirstChild(OMNode omNode);
 
-	public OMNode getFirstChild();
+    public OMNode getFirstChild();
 
-	public boolean isComplete();
+    public boolean isComplete();
 
-	public void setComplete(boolean state);
+    public void setComplete(boolean state);
 
-	public void buildNext();
+    public void buildNext();
 }

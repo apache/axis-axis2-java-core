@@ -21,20 +21,21 @@ import java.io.File;
  *
  * 
  */
-public class TestClassWriter extends ClassWriter{
+
+public class TestClassWriter extends ClassWriter {
 
     public TestClassWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
-    public TestClassWriter(File outputFileLocation,int language) {
+    public TestClassWriter(File outputFileLocation, int language) {
         this.outputFileLocation = outputFileLocation;
         this.language = language;
     }
 
     public void loadTemplate() {
         Class clazz = this.getClass();
-        switch (language){
+        switch (language) {
             case XSLTConstants.LanguageTypes.JAVA:
                 this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTTestClassTemplates.JAVA_TEMPLATE);
                 break;

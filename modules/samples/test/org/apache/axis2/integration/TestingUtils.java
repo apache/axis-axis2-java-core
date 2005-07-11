@@ -33,12 +33,12 @@ public class TestingUtils {
         method.addChild(value);
         return method;
     }
-    
-    public static void campareWithCreatedOMElement(OMElement element){
+
+    public static void campareWithCreatedOMElement(OMElement element) {
         OMElement firstChild = element.getFirstElement();
         TestCase.assertNotNull(firstChild);
         String textValue = firstChild.getText();
-        TestCase.assertEquals(textValue,"Isaac Assimov, the foundation Sega");
+        TestCase.assertEquals(textValue, "Isaac Assimov, the foundation Sega");
     }
 
 }

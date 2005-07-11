@@ -22,28 +22,30 @@ import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class SOAPBindingImpl extends WSDLExtensibilityElementImpl implements ExtensionConstants, SOAPBinding {
 
-	protected String style;
-	protected String transportURI;
-	
-	public SOAPBindingImpl(){
-		this.type = SOAP_BINDING;
-	}
-	
-	
-	public String getStyle() {
-		return style;
-	}
-	public void setStyle(String style) {
-		this.style = style;
-	}
-	public String getTransportURI() {
-		return transportURI;
-	}
-	public void setTransportURI(String transportURI) {
-		this.transportURI = transportURI;
-	}
+    protected String style;
+    protected String transportURI;
+
+    public SOAPBindingImpl() {
+        this.type = SOAP_BINDING;
+    }
+
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
+    public String getTransportURI() {
+        return transportURI;
+    }
+
+    public void setTransportURI(String transportURI) {
+        this.transportURI = transportURI;
+    }
 }

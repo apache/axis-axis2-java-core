@@ -25,61 +25,59 @@
     <description>AXIOM, The Object Model of Axis 2.0. This helps Axis 2.0 to have a light weight, efficient object model on StAX</description>
 
 
-<build>
-    <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
-    <sourceDirectory>src</sourceDirectory>
-    <unitTestSourceDirectory>test</unitTestSourceDirectory>
+    <build>
+        <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
+        <sourceDirectory>src</sourceDirectory>
+        <unitTestSourceDirectory>test</unitTestSourceDirectory>
 
-    <unitTest>
-	<excludes>
-		<exclude>**/*OMOutputTest.java</exclude>
-		<exclude>**/*MTOMStAXSOAPModelBuilderTest.java</exclude> 
-		<exclude>**/*ImageSampleTest.java</exclude> 
-		<exclude>**/*MIMEHelperTest.java</exclude> 
-		<exclude>**/*MIMEOutputUtilsTest.java</exclude>
-      	</excludes>
-      	<includes>
-        	<include>**/*Test.java</include>
-      	</includes> 
-      
-    	<resources>
-         	<resource>
-             		<directory>${basedir}/test-resources</directory>
-          	</resource>
-          	<resource>
-        		<directory>conf</directory>
-       			<includes>
-          			<include>**/*.properties</include>
-        		</includes>
-      		</resource>
-      		<resource>
-       	 		<directory>src</directory>
-        		<includes>
-          			<include>**/*.properties</include>
-          			<include>**/*.xml</include>
-        		</includes>
-      		</resource>
-     	</resources>
-    </unitTest>
-    
-    <resources>
-      <resource>
-        <directory>conf</directory>
-        <includes>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src</directory>
-        <includes>
-          <include>**/*.properties</include>
-          <include>**/*.xml</include>
-        </includes>
-      </resource>
-    </resources>
-  </build>
+        <unitTest>
+            <excludes>
+                <exclude>**/*OMOutputTest.java</exclude>
+                <exclude>**/*MTOMStAXSOAPModelBuilderTest.java</exclude>
+                <exclude>**/*ImageSampleTest.java</exclude>
+                <exclude>**/*MIMEHelperTest.java</exclude>
+                <exclude>**/*MIMEOutputUtilsTest.java</exclude>
+            </excludes>
+            <includes>
+                <include>**/*Test.java</include>
+            </includes>
 
+            <resources>
+                <resource>
+                    <directory>${basedir}/test-resources</directory>
+                </resource>
+                <resource>
+                    <directory>conf</directory>
+                    <includes>
+                        <include>**/*.properties</include>
+                    </includes>
+                </resource>
+                <resource>
+                    <directory>src</directory>
+                    <includes>
+                        <include>**/*.properties</include>
+                        <include>**/*.xml</include>
+                    </includes>
+                </resource>
+            </resources>
+        </unitTest>
 
+        <resources>
+            <resource>
+                <directory>conf</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
 
 
     <dependencies>
@@ -92,44 +90,44 @@
                 <module>true</module>
             </properties>
         </dependency>
-        
-	<dependency>
+
+        <dependency>
             <groupId>stax</groupId>
             <artifactId>stax</artifactId>
             <version>1.1.1-dev</version>
             <properties>
                 <module>true</module>
             </properties>
-		<url>http://dist.codehaus.org/stax/jars/</url>
+            <url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
-	<dependency>
+        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.8</version>
             <properties>
                 <module>true</module>
             </properties>
-		<url>http://dist.codehaus.org/stax/jars/</url>
+            <url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
 
-	    <dependency>
+        <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
             <version>1.1-beta-6</version>
             <properties>
                 <module>true</module>
             </properties>
-		<url>http://www.ibiblio.org/maven/jaxen/jars/</url>
+            <url>http://www.ibiblio.org/maven/jaxen/jars/</url>
         </dependency>
 
-	    <dependency>
+        <dependency>
             <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
             <version>1.0</version>
             <properties>
                 <module>true</module>
             </properties>
-		<url>http://dist.codehaus.org/stax/jars/</url>
+            <url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
         <dependency>
             <groupId>geronimo-spec</groupId>
@@ -139,7 +137,7 @@
                 <module>true</module>
             </properties>
         </dependency>
-	<dependency>
+        <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-activation</artifactId>
             <version>1.0.2-rc3</version>
@@ -148,6 +146,6 @@
             </properties>
         </dependency>
     </dependencies>
-    
+
     <reports/>
 </project>

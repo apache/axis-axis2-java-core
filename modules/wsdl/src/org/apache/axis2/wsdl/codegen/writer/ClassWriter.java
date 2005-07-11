@@ -28,6 +28,7 @@ import java.io.InputStream;
 * methods in order
 * ususally it is setLanguage() ->loadTemplate() ->createOutFile() ->WriteOutFile()
 */
+
 public abstract class ClassWriter {
 
     protected File outputFileLocation = null;
@@ -37,6 +38,7 @@ public abstract class ClassWriter {
 
     /**
      * Sets the language
+     *
      * @param language
      */
     public void setLanguage(int language) {
@@ -50,22 +52,24 @@ public abstract class ClassWriter {
 
     /**
      * Creates the output file
+     *
      * @param packageName
      * @param fileName
      * @throws Exception
      */
-    public void createOutFile(String packageName,String fileName) throws Exception{
-        File outputFile = FileWriter.createClassFile(outputFileLocation,packageName,fileName,language);
+    public void createOutFile(String packageName, String fileName) throws Exception {
+        File outputFile = FileWriter.createClassFile(outputFileLocation, packageName, fileName, language);
         this.stream = new FileOutputStream(outputFile);
     }
 
     /**
      * Writes the output file
+     *
      * @param documentStream
      * @throws Exception
      */
-    public void writeOutFile(InputStream documentStream) throws Exception{
-        XSLTTemplateProcessor.parse(this.stream,documentStream,this.xsltStream);
+    public void writeOutFile(InputStream documentStream) throws Exception {
+        XSLTTemplateProcessor.parse(this.stream, documentStream, this.xsltStream);
         this.stream.flush();
         this.stream.close();
 

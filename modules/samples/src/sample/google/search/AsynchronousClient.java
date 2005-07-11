@@ -1,4 +1,3 @@
-
 package sample.google.search;
 
 import org.apache.axis2.Constants;
@@ -53,13 +52,13 @@ public class AsynchronousClient {
      */
     protected String key;
 
-    /** maximum results per page */
+    /**
+     * maximum results per page
+     */
     protected String maxResults = String.valueOf(10);
 
 
     private GUIHandler gui;
-
-
 
 
     public static void main(String[] args) {
@@ -86,8 +85,8 @@ public class AsynchronousClient {
         Call call = new Call();
         URL url = null;
         try {
-                url = new URL("http", "api.google.com", "/search/beta2");
-          //  url = new URL("http://127.0.0.1:8080/axis2/services/axisversion/viewVersion");
+            url = new URL("http", "api.google.com", "/search/beta2");
+            //  url = new URL("http://127.0.0.1:8080/axis2/services/axisversion/viewVersion");
         } catch (MalformedURLException e) {
             e.printStackTrace();
             System.exit(0);
@@ -100,7 +99,7 @@ public class AsynchronousClient {
             call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
             QName opName = new QName("urn:GoogleSearch", "doGoogleSearch");
             OperationDescription opdesc = new OperationDescription(opName);
-         //   OperationDescription opdesc = new OperationDescription(new QName("viewVersion"));
+            //   OperationDescription opdesc = new OperationDescription(new QName("viewVersion"));
             call.invokeNonBlocking(opdesc, requestContext, new ClientCallbackHandler(this.gui));
 
         } catch (AxisFault e1) {
@@ -127,7 +126,6 @@ public class AsynchronousClient {
     public String getMaxResults() {
         return maxResults;
     }
-
 
 
     public void setSearch(String search) {

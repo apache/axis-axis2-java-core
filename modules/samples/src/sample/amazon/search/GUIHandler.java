@@ -65,7 +65,7 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
         SpringLayout layout;
         JMenuBar menuBar;
         JMenu setMenu;
-        Spring hSpring,wSpring,xSpring,ySpring;
+        Spring hSpring, wSpring, xSpring, ySpring;
 
         frame = new JFrame("Amazon Web Search");
         layout = new SpringLayout();
@@ -91,7 +91,7 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
         Dimension wndSize = theKit.getScreenSize(); // Get screen size
         // Set the position to screen center and appropriate size
         frame.setBounds(wndSize.width / 6, wndSize.height / 10, // Position
-                wndSize.width * 3 / 5, wndSize.height * 3 / 4); // Size
+                        wndSize.width * 3 / 5, wndSize.height * 3 / 4); // Size
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         text = new JEditorPane();
@@ -100,7 +100,7 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
         text.addHyperlinkListener(new LinkFollower());
 
         JScrollPane scroll = new JScrollPane(text, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                                             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         pane.add(scroll);
 
         textBox = new JTextField();
@@ -154,7 +154,7 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
         try {
             String workingDir = System.getProperty("user.dir");
             File propertyFile = new File(workingDir + File.separator + "samples" + File.separator +
-                    "/key.properties");
+                                         "/key.properties");
             propOut = new FileOutputStream(propertyFile);
 
             AsynchronousClient.prop.setProperty("amazonKey", AsynchronousClient.amazonkey);
@@ -196,6 +196,7 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
     /**
      * method actionPerformed
      * Detects menu click events
+     *
      * @param e
      */
     public void actionPerformed(ActionEvent e) {
@@ -204,7 +205,7 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
                 System.out.println("come to the place");
                 AsynchronousClient.maxResults =
                         JOptionPane.showInputDialog(null,
-                          "Enter the number of maximum results per page (Maximum allowed is 1000)");
+                                                    "Enter the number of maximum results per page (Maximum allowed is 1000)");
                 //JOptionPane.get
 
             } while (Integer.parseInt(AsynchronousClient.maxResults) > 1000 ||

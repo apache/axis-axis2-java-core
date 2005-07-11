@@ -151,11 +151,11 @@ public class OperationContext extends AbstractContext {
             return outMessageContext;
         } else {
             throw new AxisFault("Unrecognized message label: '" + messageLabel
-                    + "'");
+                                + "'");
         }
     }
 
-   /**
+    /**
      * Checks to see if the MEP is complete. i.e. whether all the messages that
      * are associated with the MEP has arrived and MEP is complete.
      *

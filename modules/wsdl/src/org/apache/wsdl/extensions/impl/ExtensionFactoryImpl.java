@@ -24,28 +24,28 @@ import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public class ExtensionFactoryImpl implements ExtensionFactory , ExtensionConstants{
-	/**
-	 * Returns the correct "Specific" ExtensibilityElement given the 
-	 * <code>QName</code> 
-	 * @param qName QName of the ExtensibilityElement found in the WSDL
-	 * @return the Specific implementation for the particular QName given.
-	 */
-	 public WSDLExtensibilityElement getExtensionElement(QName qName){
-	 	if(qName.equals(SOAP_ADDRESS))
-	 		return new SOAPAddressImpl();
-	 	if(qName.equals(SCHEMA))
-	 		return new SchemaImpl();
-	 	if(qName.equals(SOAP_OPERATION))
-	 		return new SOAPOperationImpl();
-	 	if(SOAP_BODY.equals(qName))
-	 		return new SOAPBodyImpl();
-	 	if(SOAP_BINDING.equals(qName))
-	 		return new SOAPBindingImpl();
-	 	
-	 	return new DefaultExtensibilityElementImpl();
-	 }
+public class ExtensionFactoryImpl implements ExtensionFactory, ExtensionConstants {
+    /**
+     * Returns the correct "Specific" ExtensibilityElement given the
+     * <code>QName</code>
+     *
+     * @param qName QName of the ExtensibilityElement found in the WSDL
+     * @return the Specific implementation for the particular QName given.
+     */
+    public WSDLExtensibilityElement getExtensionElement(QName qName) {
+        if (qName.equals(SOAP_ADDRESS))
+            return new SOAPAddressImpl();
+        if (qName.equals(SCHEMA))
+            return new SchemaImpl();
+        if (qName.equals(SOAP_OPERATION))
+            return new SOAPOperationImpl();
+        if (SOAP_BODY.equals(qName))
+            return new SOAPBodyImpl();
+        if (SOAP_BINDING.equals(qName))
+            return new SOAPBindingImpl();
+
+        return new DefaultExtensibilityElementImpl();
+    }
 
 }

@@ -55,7 +55,7 @@ public class TCPTransportTest extends TestCase {
 //        
 //        msgctx.setEnvelope(createSOAPEnvelope(Thread.currentThread().getContextClassLoader().getResourceAsStream("org/apache/axis2/transport/sample.xml")));
 //        ts.invoke(msgctx);
-        
+
 
     }
     
@@ -70,7 +70,7 @@ public class TCPTransportTest extends TestCase {
     public SOAPEnvelope createSOAPEnvelope(InputStream in) throws AxisFault {
         try {
             XMLStreamReader xmlreader =
-                XMLInputFactory.newInstance().createXMLStreamReader(in);
+                    XMLInputFactory.newInstance().createXMLStreamReader(in);
             StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
             return (SOAPEnvelope) builder.getDocumentElement();
         } catch (Exception e) {

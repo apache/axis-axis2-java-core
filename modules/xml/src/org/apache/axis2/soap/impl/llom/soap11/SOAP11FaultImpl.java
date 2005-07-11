@@ -68,6 +68,7 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
         }
         super.setCode(soapFaultCode);
     }
+
     public void setReason(SOAPFaultReason reason) throws SOAPProcessingException {
         if (!(reason instanceof SOAP11FaultReasonImpl)) {
             throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault Reason. But received some other implementation");
@@ -81,6 +82,7 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
         }
         super.setNode(node);
     }
+
     public void setRole(SOAPFaultRole role) throws SOAPProcessingException {
         if (!(role instanceof SOAP11FaultRoleImpl)) {
             throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault Role. But received some other implementation");

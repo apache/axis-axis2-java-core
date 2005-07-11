@@ -30,7 +30,7 @@ import java.io.StringWriter;
 
 public class ClientForWebServiceWithModule {
     private static EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
-            "http://127.0.0.1:8080/axis2/services/MyServiceWithModule/echo");
+                                                                       "http://127.0.0.1:8080/axis2/services/MyServiceWithModule/echo");
 
     public static void main(String[] args) {
         try {

@@ -78,7 +78,7 @@ public class SingleHandlerPhaseTest extends TestCase {
             ph.addHandler(hm1);
             p1.invoke(msg);
             fail("This should fail with : can only have one handler, since there is a " +
-                       "handler with both phaseFirst and PhaseLast true ");
+                 "handler with both phaseFirst and PhaseLast true ");
         } catch (AxisFault axisFault) {
             return;
         }

@@ -20,17 +20,17 @@ import java.io.Serializable;
  *
  * 
  */
+
 public class AxisFileStorageTest extends AbstractStorageTest {
 
     protected void setUp() throws Exception {
         File file = new File("temp.properties");
         storage = new AxisFileStorage(file);
-        testValueObject = new TestBean("me",25);
+        testValueObject = new TestBean("me", 25);
     }
 
 
-
-    private class TestBean implements Serializable{
+    private class TestBean implements Serializable {
         private String name;
         private int age;
 

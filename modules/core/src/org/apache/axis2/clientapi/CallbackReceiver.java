@@ -25,6 +25,7 @@ public class CallbackReceiver implements MessageReceiver {
     public void invoke(String MsgID, SOAPEnvelope result) {
 
     }
+
     /* (non-Javadoc)
      * @see org.apache.axis2.engine.MessageReceiver#recieve(org.apache.axis2.context.MessageContext)
      */
@@ -38,8 +39,8 @@ public class CallbackReceiver implements MessageReceiver {
         if (callback != null) {
             callback.onComplete(result);
             callback.setComplete(true);
-        }else{
-            throw new AxisFault("The Callback realtes to MessageID "+ messageID + " is not found");
+        } else {
+            throw new AxisFault("The Callback realtes to MessageID " + messageID + " is not found");
         }
     }
 

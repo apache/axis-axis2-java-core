@@ -27,7 +27,7 @@ import javax.xml.namespace.QName;
  * author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-public class HTTPTransportUtilTest extends TestCase{
+public class HTTPTransportUtilTest extends TestCase {
     private HTTPTransportUtils httpTransportUtils;
     private SOAPFactory factory;
 
@@ -37,7 +37,7 @@ public class HTTPTransportUtilTest extends TestCase{
         factory = OMAbstractFactory.getSOAP11Factory();
     }
 
-    public void testOptimizedEnvelope(){
+    public void testOptimizedEnvelope() {
         SOAPEnvelope soapEnvelope = factory.getDefaultEnvelope();
 
         OMElement element = factory.createOMElement(new QName("MyFirstBodyElement"), soapEnvelope.getBody());
@@ -47,7 +47,7 @@ public class HTTPTransportUtilTest extends TestCase{
         assertTrue("optmization check has not performed correctly in SOAPEnvelope", httpTransportUtils.checkEnvelopeForOptimise(soapEnvelope));
     }
 
-    public void testNonOptimizedEnvelope(){
+    public void testNonOptimizedEnvelope() {
         SOAPEnvelope soapEnvelope = factory.getDefaultEnvelope();
 
         OMElement element = factory.createOMElement(new QName("MyFirstBodyElement"), soapEnvelope.getBody());
@@ -56,7 +56,6 @@ public class HTTPTransportUtilTest extends TestCase{
         element11.addChild(optimizedText);
         assertFalse("optmization check has not performed correctly in SOAPEnvelope", httpTransportUtils.checkEnvelopeForOptimise(soapEnvelope));
     }
-
 
 
 }

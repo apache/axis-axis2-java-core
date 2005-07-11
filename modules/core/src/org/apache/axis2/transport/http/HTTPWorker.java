@@ -55,14 +55,11 @@ public class HTTPWorker implements AxisWorker {
                 InputStream inStream = socket.getInputStream();
 
                 TransportOutDescription transportOut =
-                    configurationContext.getAxisConfiguration().getTransportOut(
-                        new QName(Constants.TRANSPORT_HTTP));
+                        configurationContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_HTTP));
                 msgContext =
-                    new MessageContext(
-                        configurationContext,
-                        configurationContext.getAxisConfiguration().getTransportIn(
-                            new QName(Constants.TRANSPORT_HTTP)),
-                        transportOut);
+                        new MessageContext(configurationContext,
+                                           configurationContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
+                                           transportOut);
                 msgContext.setServerSide(true);
 
                 //parse the Transport Headers
@@ -73,7 +70,7 @@ public class HTTPWorker implements AxisWorker {
 
                 String transferEncoding = (String) map.get(HTTPConstants.HEADER_TRANSFER_ENCODING);
                 if (transferEncoding != null
-                    && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(transferEncoding)) {
+                        && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(transferEncoding)) {
                     inStream = new ChunkedInputStream(inStream);
                     out = new SimpleHTTPOutputStream(socket.getOutputStream(), true);
                 } else {
@@ -82,39 +79,34 @@ public class HTTPWorker implements AxisWorker {
                 msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
 
                 //This is way to provide Accsess to the transport information to the transport Sender
-                msgContext.setProperty(
-                    HTTPConstants.HTTPOutTransportInfo,
-                    new SimpleHTTPOutTransportInfo(out));
+                msgContext.setProperty(HTTPConstants.HTTPOutTransportInfo,
+                                       new SimpleHTTPOutTransportInfo(out));
 
                 if (HTTPConstants.HEADER_GET.equals(map.get(HTTPConstants.HTTP_REQ_TYPE))) {
                     //It is GET handle the Get request 
                     boolean processed =
-                        HTTPTransportUtils.processHTTPGetRequest(
-                            msgContext,
-                            inStream,
-                            out,
-                            (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
-                            (String) map.get(HTTPConstants.HEADER_SOAP_ACTION),
-                            (String) map.get(HTTPConstants.REQUEST_URI),
-                            configurationContext,
-                            HTTPTransportReceiver.getGetRequestParameters(
-                                (String) map.get(HTTPConstants.REQUEST_URI)));
+                            HTTPTransportUtils.processHTTPGetRequest(msgContext,
+                                                                     inStream,
+                                                                     out,
+                                                                     (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
+                                                                     (String) map.get(HTTPConstants.HEADER_SOAP_ACTION),
+                                                                     (String) map.get(HTTPConstants.REQUEST_URI),
+                                                                     configurationContext,
+                                                                     HTTPTransportReceiver.getGetRequestParameters((String) map.get(HTTPConstants.REQUEST_URI)));
 
                     if (!processed) {
-                        out.write(
-                            HTTPTransportReceiver.getServicesHTML(configurationContext).getBytes());
+                        out.write(HTTPTransportReceiver.getServicesHTML(configurationContext).getBytes());
                         out.flush();
                     }
                 } else {
                     //It is POST, handle it
-                    HTTPTransportUtils.processHTTPPostRequest(
-                        msgContext,
-                        inStream,
-                        out,
-                        (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
-                        (String) map.get(HTTPConstants.HEADER_SOAP_ACTION),
-                        (String) map.get(HTTPConstants.REQUEST_URI),
-                        configurationContext);
+                    HTTPTransportUtils.processHTTPPostRequest(msgContext,
+                                                              inStream,
+                                                              out,
+                                                              (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
+                                                              (String) map.get(HTTPConstants.HEADER_SOAP_ACTION),
+                                                              (String) map.get(HTTPConstants.REQUEST_URI),
+                                                              configurationContext);
                 }
 
                 out.finalize();

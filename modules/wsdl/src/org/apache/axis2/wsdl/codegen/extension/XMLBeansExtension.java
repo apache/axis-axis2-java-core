@@ -29,6 +29,7 @@ import java.util.List;
 *
 *
 */
+
 public class XMLBeansExtension extends AbstractCodeGenerationExtension {
     private static final String DEFUALT_STS_NAME = "foo";
 
@@ -39,62 +40,62 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
 
     public void engage() {
         WSDLTypes typesList = configuration.getWom().getTypes();
-        if (typesList==null){
+        if (typesList == null) {
             //there are no types to be code generated
             return;
         }
         List typesArray = typesList.getExtensibilityElements();
         WSDLExtensibilityElement extensiblityElt = null;
-        XmlObject[] xmlObjects=new XmlObject[typesArray.size()];
+        XmlObject[] xmlObjects = new XmlObject[typesArray.size()];
 
         for (int i = 0; i < typesArray.size(); i++) {
-            extensiblityElt =  (WSDLExtensibilityElement)typesArray.get(i);
+            extensiblityElt = (WSDLExtensibilityElement) typesArray.get(i);
             if (ExtensionConstants.SCHEMA.equals(extensiblityElt.getType())) {
                 try {
-                    Element schemaElement = ((Schema)extensiblityElt).getElelment();
+                    Element schemaElement = ((Schema) extensiblityElt).getElelment();
 //                    //add the namespaces
                     XmlOptions options = new XmlOptions();
                     options.setCompileDownloadUrls();
                     options.setLoadAdditionalNamespaces(configuration.getWom().getNamespaces());
                     //options.
-                    xmlObjects[i] = XmlObject.Factory.parse(schemaElement,options);
+                    xmlObjects[i] = XmlObject.Factory.parse(schemaElement, options);
                 } catch (XmlException e) {
                     throw new RuntimeException(e);
                 }
             }
         }
 
-        final File outputFolder =  configuration.getOutputLocation();
+        final File outputFolder = configuration.getOutputLocation();
 
         try {
-        	
-            SchemaTypeSystem sts = XmlBeans.compileXmlBeans(DEFUALT_STS_NAME, null,
-                    xmlObjects,
-                    new BindingConfig(), XmlBeans.getContextTypeLoader(),
-                    new Filer() {
-                        public OutputStream createBinaryFile(String typename)
-                                throws IOException {
-                            File file = new File(outputFolder,typename);
-                            file.getParentFile().mkdirs();
-                            file.createNewFile();
-                            return new FileOutputStream(file);
-                        }
 
-                        public Writer createSourceFile(String typename)
-                                throws IOException {
-                            typename = typename.replace('.',File.separatorChar);
-                            File file = new File(outputFolder,typename+".java");
-                            file.getParentFile().mkdirs();
-                            file.createNewFile();
-                            return new FileWriter(file);
-                        }
-                    }, null);
+            SchemaTypeSystem sts = XmlBeans.compileXmlBeans(DEFUALT_STS_NAME, null,
+                                                            xmlObjects,
+                                                            new BindingConfig(), XmlBeans.getContextTypeLoader(),
+                                                            new Filer() {
+                                                                public OutputStream createBinaryFile(String typename)
+                                                                        throws IOException {
+                                                                    File file = new File(outputFolder, typename);
+                                                                    file.getParentFile().mkdirs();
+                                                                    file.createNewFile();
+                                                                    return new FileOutputStream(file);
+                                                                }
+
+                                                                public Writer createSourceFile(String typename)
+                                                                        throws IOException {
+                                                                    typename = typename.replace('.', File.separatorChar);
+                                                                    File file = new File(outputFolder, typename + ".java");
+                                                                    file.getParentFile().mkdirs();
+                                                                    file.createNewFile();
+                                                                    return new FileWriter(file);
+                                                                }
+                                                            }, null);
 
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
-            SchemaType[] types= sts.documentTypes();
+            SchemaType[] types = sts.documentTypes();
 
-            for (int i= 0; i < types.length; i++){
+            for (int i = 0; i < types.length; i++) {
                 //System.out.println("type name = " + types[i].getFullJavaImplName()+" "+types[i].getDocumentElementName());
                 mapper.addTypeMapping(types[i].getDocumentElementName(), types[i].getFullJavaName());
             }
@@ -105,7 +106,6 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             throw new RuntimeException(e);
         }
     }
-
 
 
 }

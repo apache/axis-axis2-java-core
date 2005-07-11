@@ -26,7 +26,7 @@ import java.util.Iterator;
  * author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-public abstract class SOAPFaultDetailImpl extends SOAPElement implements SOAPFaultDetail{
+public abstract class SOAPFaultDetailImpl extends SOAPElement implements SOAPFaultDetail {
 
     protected SOAPFaultDetailImpl(SOAPFault parent, boolean extractNamespaceFromParent) throws SOAPProcessingException {
         super(parent, SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, extractNamespaceFromParent);
@@ -41,6 +41,6 @@ public abstract class SOAPFaultDetailImpl extends SOAPElement implements SOAPFau
     }
 
     public Iterator getAllDetailEntries() {
-        return this.getChildren();  
+        return this.getChildren();
     }
 }

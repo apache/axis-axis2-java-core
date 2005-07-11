@@ -24,24 +24,23 @@ import java.util.List;
 
 /**
  * @author Ashutosh Shahi
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ *         <p/>
+ *         TODO To change the template for this generated type comment go to
+ *         Window - Preferences - Java - Code Style - Code Templates
  */
 public class NodeListImpl implements NodeList {
-	
-	List mNodes;
-	
-	public static final NodeList EMPTY_NODELIST = new NodeListImpl(Collections.EMPTY_LIST);
-	
-	/**
+
+    List mNodes;
+
+    public static final NodeList EMPTY_NODELIST = new NodeListImpl(Collections.EMPTY_LIST);
+
+    /**
      * Constructor and Setter is intensionally made package access only.
-     *  
      */
     NodeListImpl() {
         mNodes = new ArrayList();
     }
-    
+
     NodeListImpl(List nodes) {
         this();
         mNodes.addAll(nodes);
@@ -56,10 +55,10 @@ public class NodeListImpl implements NodeList {
             mNodes.add(nodes.item(i));
         }
     }
-    
+
     /**
      * Interface Implemented
-     * 
+     *
      * @param index
      * @return
      */

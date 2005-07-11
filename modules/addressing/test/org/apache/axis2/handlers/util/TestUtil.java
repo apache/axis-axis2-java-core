@@ -23,7 +23,7 @@ import java.io.FileReader;
  * the License.
  * <p/>
  */
-public class TestUtil{
+public class TestUtil {
 
     /**
      * Eran Chinthaka (chinthaka@apache.org)
@@ -43,7 +43,7 @@ public class TestUtil{
         return builder;
     }
 
-     protected File getTestResourceFile(String relativePath) {
+    protected File getTestResourceFile(String relativePath) {
         return new File(testResourceDir, relativePath);
     }
 }

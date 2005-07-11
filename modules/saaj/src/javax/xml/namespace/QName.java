@@ -23,7 +23,7 @@ import java.io.Serializable;
  * <code>QName</code> class represents the value of a qualified name
  * as specified in <a href="http://www.w3.org/TR/xmlschema-2/#QName">XML
  * Schema Part2: Datatypes specification</a>.
- * <p>
+ * <p/>
  * The value of a QName contains a <b>namespaceURI</b>, a <b>localPart</b> and a
  * <b>prefix</b>. The localPart provides the local part of the qualified name.
  * The namespaceURI is a URI reference identifying the namespace.
@@ -32,7 +32,9 @@ import java.io.Serializable;
  */
 public class QName implements Serializable {
 
-    /** Comment/shared empty <code>String</code>. */
+    /**
+     * Comment/shared empty <code>String</code>.
+     */
     private static final String emptyString = "".intern();
 
     private String namespaceURI;
@@ -54,7 +56,7 @@ public class QName implements Serializable {
      * Constructor for the QName.
      *
      * @param namespaceURI namespace URI for the QName
-     * @param localPart local part of the QName.
+     * @param localPart    local part of the QName.
      */
     public QName(String namespaceURI, String localPart) {
         this(namespaceURI, localPart, emptyString);
@@ -64,8 +66,8 @@ public class QName implements Serializable {
      * Constructor for the QName.
      *
      * @param namespaceURI Namespace URI for the QName
-     * @param localPart Local part of the QName.
-     * @param prefix Prefix of the QName.
+     * @param localPart    Local part of the QName.
+     * @param prefix       Prefix of the QName.
      */
     public QName(String namespaceURI, String localPart, String prefix) {
         this.namespaceURI = (namespaceURI == null)
@@ -114,7 +116,7 @@ public class QName implements Serializable {
     /**
      * Returns a string representation of this QName.
      *
-     * @return  a string representation of the QName
+     * @return a string representation of the QName
      */
     public String toString() {
 
@@ -125,22 +127,21 @@ public class QName implements Serializable {
 
     /**
      * Tests this QName for equality with another object.
-     * <p>
+     * <p/>
      * If the given object is not a QName or is null then this method
      * returns <tt>false</tt>.
-     * <p>
+     * <p/>
      * For two QNames to be considered equal requires that both
      * localPart and namespaceURI must be equal. This method uses
      * <code>String.equals</code> to check equality of localPart
      * and namespaceURI. Any class that extends QName is required
      * to satisfy this equality contract.
-     * <p>
+     * <p/>
      * This method satisfies the general contract of the <code>Object.equals</code> method.
      *
      * @param obj the reference object with which to compare
-     *
      * @return <code>true</code> if the given object is identical to this
-     *      QName: <code>false</code> otherwise.
+     *         QName: <code>false</code> otherwise.
      */
     public boolean equals(Object obj) {
 
@@ -162,19 +163,20 @@ public class QName implements Serializable {
 
     /**
      * Returns a QName holding the value of the specified String.
-     * <p>
+     * <p/>
      * The string must be in the form returned by the QName.toString()
      * method, i.e. "{namespaceURI}localPart", with the "{namespaceURI}"
      * part being optional.
-     * <p>
+     * <p/>
      * This method doesn't do a full validation of the resulting QName.
      * In particular, it doesn't check that the resulting namespace URI
      * is a legal URI (per RFC 2396 and RFC 2732), nor that the resulting
      * local part is a legal NCName per the XML Namespaces specification.
      *
      * @param s the string to be parsed
-     * @throws java.lang.IllegalArgumentException If the specified String cannot be parsed as a QName
      * @return QName corresponding to the given String
+     * @throws java.lang.IllegalArgumentException
+     *          If the specified String cannot be parsed as a QName
      */
     public static QName valueOf(String s) {
 
@@ -213,10 +215,11 @@ public class QName implements Serializable {
 
     /**
      * Ensure that deserialization properly interns the results.
+     *
      * @param in the ObjectInputStream to be read
-     * @throws IOException  if there was a failure in the object input stream
-     * @throws ClassNotFoundException   if the class of any sub-objects could
-     *              not be found
+     * @throws IOException            if there was a failure in the object input stream
+     * @throws ClassNotFoundException if the class of any sub-objects could
+     *                                not be found
      */
     private void readObject(ObjectInputStream in) throws
             IOException, ClassNotFoundException {

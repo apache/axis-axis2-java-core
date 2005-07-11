@@ -23,11 +23,10 @@ import javax.wsdl.OperationType;
 
 /**
  * @author chathura@opensource.lk
- * 
  */
 public class WSDL11MEPFinder {
 
-	public static String getMEP(Operation operation){
+    public static String getMEP(Operation operation) {
 //		boolean inMessageExist = false, outMessageExist = false;
 //		if(null != operation.getInput()){
 //			inMessageExist = true;
@@ -47,9 +46,9 @@ public class WSDL11MEPFinder {
 //		if(!inMessageExist && outMessageExist){
 //			return WSDLConstants.MEP_URI_OUT_ONLY;
 //		}
-//		
-		OperationType operationType = operation.getStyle();
-		 if (null != operationType) {
+//
+        OperationType operationType = operation.getStyle();
+        if (null != operationType) {
 
             if (operationType.equals(OperationType.REQUEST_RESPONSE))
                 return WSDLConstants.MEP_URI_IN_OUT;
@@ -63,7 +62,7 @@ public class WSDL11MEPFinder {
             if (operationType.equals(OperationType.SOLICIT_RESPONSE))
                 return WSDLConstants.MEP_URI_OUT_IN;
         }
-		throw new WSDLProcessingException("Cannot Determine the MEP");
-		
-	}
+        throw new WSDLProcessingException("Cannot Determine the MEP");
+
+    }
 }

@@ -163,7 +163,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         if (lastNode == null) {
             node = constructNode(null, elementName, true);
         } else if (lastNode.isComplete()) {
-            node = constructNode((OMElement)lastNode.getParent(), elementName, false);
+            node = constructNode((OMElement) lastNode.getParent(), elementName, false);
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
         } else {
@@ -191,7 +191,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         if (parent == null) {
             if (!elementName.equalsIgnoreCase(SOAPConstants.SOAPENVELOPE_LOCAL_NAME)) {
                 throw new OMException("First Element must contain the local name, "
-                        + SOAPConstants.SOAPENVELOPE_LOCAL_NAME);
+                                      + SOAPConstants.SOAPENVELOPE_LOCAL_NAME);
             }
             envelope =
                     (SOAPEnvelopeImpl) soapFactory.createSOAPEnvelope(this);
@@ -213,7 +213,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                 headerPresent = true;
                 element =
                         soapFactory.createSOAPHeader((SOAPEnvelope) parent,
-                                this);
+                                                     this);
 
                 // envelope.setHeader((SOAPHeader)element);
                 processNamespaceData(element, true);
@@ -226,7 +226,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                 bodyPresent = true;
                 element =
                         soapFactory.createSOAPBody((SOAPEnvelope) parent,
-                                this);
+                                                   this);
 
                 // envelope.setBody((SOAPBody)element);
                 processNamespaceData(element, true);
@@ -234,7 +234,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
 
             } else {
                 throw new OMBuilderException(elementName
-                        + " is not supported here. Envelope can not have elements other than Header and Body.");
+                                             + " is not supported here. Envelope can not have elements other than Header and Body.");
             }
         } else if ((elementLevel == 3)
                 && parent.getLocalName().equalsIgnoreCase(SOAPConstants.HEADER_LOCAL_NAME)) {
@@ -242,7 +242,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
             // this is a headerblock
             try {
                 element = soapFactory.createSOAPHeaderBlock(elementName, null,
-                        (SOAPHeader) parent, this);
+                                                            (SOAPHeader) parent, this);
             } catch (SOAPProcessingException e) {
                 throw new OMBuilderException(e);
             }
@@ -273,7 +273,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
 
             // this is neither of above. Just create an element
             element = soapFactory.createOMElement(elementName, null,
-                    parent, this);
+                                                  parent, this);
             processNamespaceData(element, false);
             processAttributes(element);
 
@@ -306,7 +306,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                     break;
                 case XMLStreamConstants.END_ELEMENT:
                     if (lastNode.isComplete()) {
-                        OMElement parent = (OMElement)lastNode.getParent();
+                        OMElement parent = (OMElement) lastNode.getParent();
 
 //                        //added
 //                        /*check whether all mandatory fault elements are present
@@ -365,7 +365,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         int namespaceCount = parser.getNamespaceCount();
         for (int i = 0; i < namespaceCount; i++) {
             node.declareNamespace(parser.getNamespaceURI(i),
-                    parser.getNamespacePrefix(i));
+                                  parser.getNamespacePrefix(i));
         }
 
         // set the own namespace

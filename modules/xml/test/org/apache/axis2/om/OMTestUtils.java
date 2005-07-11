@@ -38,7 +38,7 @@ public class OMTestUtils {
         if (attibIt != null) {
             while (attibIt.hasNext()) {
                 TestCase.assertNotNull("once the has next is not null, the " +
-                        "element should not be null", attibIt.next());
+                                       "element should not be null", attibIt.next());
             }
         }
         Iterator it = omEle.getChildren();
@@ -46,7 +46,7 @@ public class OMTestUtils {
             while (it.hasNext()) {
                 OMNode ele = (OMNode) it.next();
                 TestCase.assertNotNull("once the has next is not null, the " +
-                        "element should not be null", ele);
+                                       "element should not be null", ele);
                 if (ele instanceof OMElement) {
                     walkThrough((OMElement) ele);
                 }

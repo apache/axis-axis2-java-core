@@ -23,19 +23,19 @@ import java.io.FileOutputStream;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class TestServiceXMLWriter extends ServiceXMLWriter {
 
-	public TestServiceXMLWriter(String outputFileLocation){
-		super(outputFileLocation);
-	}
-	public TestServiceXMLWriter(File outputFileLocation,int language){
-		super(outputFileLocation, language);
-	}
-	
-	public void createOutFile(String packageName, String fileName) throws Exception {
-        File outputFile = FileWriter.createClassFile(outputFileLocation,packageName,"testservice",".xml");
+    public TestServiceXMLWriter(String outputFileLocation) {
+        super(outputFileLocation);
+    }
+
+    public TestServiceXMLWriter(File outputFileLocation, int language) {
+        super(outputFileLocation, language);
+    }
+
+    public void createOutFile(String packageName, String fileName) throws Exception {
+        File outputFile = FileWriter.createClassFile(outputFileLocation, packageName, "testservice", ".xml");
         this.stream = new FileOutputStream(outputFile);
     }
 }

@@ -20,10 +20,11 @@ import java.util.Properties;
 *
 *
 */
+
 public class QueueManager {
     private static String key = null;
 
-    static{
+    static {
         Class clazz = new Object().getClass();
         InputStream stream = clazz.getResourceAsStream("/sample/amazon/common/conf/key.properties");
         Properties properties = new Properties();
@@ -40,7 +41,7 @@ public class QueueManager {
         return key;
     }
 
-    public synchronized static void setKey(String tkey){
+    public synchronized static void setKey(String tkey) {
         key = tkey;
     }
 }

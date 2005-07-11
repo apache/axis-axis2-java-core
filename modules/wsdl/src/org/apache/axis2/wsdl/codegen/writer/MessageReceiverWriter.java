@@ -22,28 +22,27 @@ import java.io.File;
 
 /**
  * @author chathura@opensource.lk
- *  
  */
 public class MessageReceiverWriter extends ClassWriter {
 
-	public MessageReceiverWriter(String outputFileLocation) {
-		this.outputFileLocation = new File(outputFileLocation);
-	}
+    public MessageReceiverWriter(String outputFileLocation) {
+        this.outputFileLocation = new File(outputFileLocation);
+    }
 
-	public MessageReceiverWriter(File outputFileLocation, int language) {
-		this.outputFileLocation = outputFileLocation;
-		this.language = language;
-	}
+    public MessageReceiverWriter(File outputFileLocation, int language) {
+        this.outputFileLocation = outputFileLocation;
+        this.language = language;
+    }
 
-	public void loadTemplate() {
-		Class clazz = this.getClass();
-        switch (language){
+    public void loadTemplate() {
+        Class clazz = this.getClass();
+        switch (language) {
             case XSLTConstants.LanguageTypes.JAVA:
                 this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTMessageReceiverTemplates.JAVA_TEMPLATE);
                 break;
             default:
                 throw new UnsupportedOperationException();
         }
-	}
+    }
 
 }

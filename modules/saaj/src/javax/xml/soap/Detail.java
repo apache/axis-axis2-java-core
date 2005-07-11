@@ -38,11 +38,11 @@ import java.util.Iterator;
  * The variable <i>se</i>, used to create the <code>Name</code> object,
  * is a <code>SOAPEnvelope</code> object.
  * <PRE>
- *    Detail d = sf.getDetail();
- *    Name name = se.createName("GetLastTradePrice", "WOMBAT",
- *                                "http://www.wombat.org/trader");
- *    d.addDetailEntry(name);
- *    Iterator it = d.getDetailEntries();
+ * Detail d = sf.getDetail();
+ * Name name = se.createName("GetLastTradePrice", "WOMBAT",
+ * "http://www.wombat.org/trader");
+ * d.addDetailEntry(name);
+ * Iterator it = d.getDetailEntries();
  * </PRE>
  */
 public interface Detail extends SOAPFaultElement {
@@ -50,16 +50,18 @@ public interface Detail extends SOAPFaultElement {
     /**
      * Creates a new <code>DetailEntry</code> object with the given
      * name and adds it to this <code>Detail</code> object.
-     * @param   name a <code>Name</code> object identifying the new <code>DetailEntry</code> object
+     *
+     * @param name a <code>Name</code> object identifying the new <code>DetailEntry</code> object
      * @return DetailEntry.
-     * @throws SOAPException  thrown when there is a problem in adding a DetailEntry object to this Detail object.
+     * @throws SOAPException thrown when there is a problem in adding a DetailEntry object to this Detail object.
      */
     public abstract DetailEntry addDetailEntry(Name name) throws SOAPException;
 
     /**
      * Gets a list of the detail entries in this <code>Detail</code> object.
-     * @return  an <code>Iterator</code> object over the <code>DetailEntry</code>
-     *        objects in this <code>Detail</code> object
+     *
+     * @return an <code>Iterator</code> object over the <code>DetailEntry</code>
+     *         objects in this <code>Detail</code> object
      */
     public abstract Iterator getDetailEntries();
 }

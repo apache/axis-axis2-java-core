@@ -75,7 +75,7 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
     private Text bindingTextBox;
 
     private Combo modeSelectionCombo;
-    
+
     private Combo styleSelectionCombo;
 
 
@@ -87,12 +87,12 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
      * @see org.apache.axis.tool.codegen.eclipse.ui.AbstractWizardPage#initializeDefaultSettings()
      */
     protected void initializeDefaultSettings() {
-       settings.put(PREF_JAVA_INPUT_WSDL_NAME,"");
-       settings.put(PREF_JAVA_LOCATION,"http://localhost:8080");
-       settings.put(PREF_JAVA_BINDING_NAME,"");
-       settings.put(PREF_JAVA_PORTYPE_NAME,"");
-       settings.put(PREF_JAVA_MODE_INDEX,0);
-       settings.put(PREF_JAVA_STYLE_INDEX,0);
+        settings.put(PREF_JAVA_INPUT_WSDL_NAME, "");
+        settings.put(PREF_JAVA_LOCATION, "http://localhost:8080");
+        settings.put(PREF_JAVA_BINDING_NAME, "");
+        settings.put(PREF_JAVA_PORTYPE_NAME, "");
+        settings.put(PREF_JAVA_MODE_INDEX, 0);
+        settings.put(PREF_JAVA_STYLE_INDEX, 0);
     }
 
     /**
@@ -127,7 +127,7 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         Label label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
-                .getResourceString("page5.inputwsdl.label"));
+                      .getResourceString("page5.inputwsdl.label"));
 
         inputWSDLNameTextBox = new Text(container, SWT.BORDER | SWT.SINGLE);
         inputWSDLNameTextBox.setLayoutData(gd);
@@ -141,7 +141,7 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
 
         label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
-                .getResourceString("page5.servicelocation.label"));
+                      .getResourceString("page5.servicelocation.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         serviceLocationURLTextBox = new Text(container, SWT.BORDER);
@@ -153,10 +153,10 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
                 //dialogChanged();
             }
         });
-        
+
         label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
-                .getResourceString("page5.binding.label"));
+                      .getResourceString("page5.binding.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         bindingTextBox = new Text(container, SWT.BORDER);
@@ -168,10 +168,10 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
                 //dialogChanged();
             }
         });
-        
+
         label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
-                .getResourceString("page5.porttype.label"));
+                      .getResourceString("page5.porttype.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         portTypeNameTextBox = new Text(container, SWT.BORDER);
@@ -188,38 +188,42 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         label = new Label(container, SWT.NULL);
         label
                 .setText(CodegenWizardPlugin
-                        .getResourceString("page5.mode.label"));
+                         .getResourceString("page5.mode.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         modeSelectionCombo = new Combo(container, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
         modeSelectionCombo.setLayoutData(gd);
-       // modeSelectionCombo.
+        // modeSelectionCombo.
         populateModeCombo();
-        modeSelectionCombo.addSelectionListener(new SelectionListener(){
-            public void widgetSelected(SelectionEvent e){
-                settings.put(PREF_JAVA_MODE_INDEX,modeSelectionCombo.getSelectionIndex());
+        modeSelectionCombo.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {
+                settings.put(PREF_JAVA_MODE_INDEX, modeSelectionCombo.getSelectionIndex());
             }
-            public void widgetDefaultSelected(SelectionEvent e){}
+
+            public void widgetDefaultSelected(SelectionEvent e) {
+            }
         });
         
         // #####################################################
         label = new Label(container, SWT.NULL);
         label
                 .setText(CodegenWizardPlugin
-                        .getResourceString("page5.style.label"));
+                         .getResourceString("page5.style.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         styleSelectionCombo = new Combo(container, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
         styleSelectionCombo.setLayoutData(gd);
         populateStyleCombo();
-        styleSelectionCombo.addSelectionListener(new SelectionListener(){
-            public void widgetSelected(SelectionEvent e){
-                settings.put(PREF_JAVA_STYLE_INDEX,styleSelectionCombo.getSelectionIndex());
+        styleSelectionCombo.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {
+                settings.put(PREF_JAVA_STYLE_INDEX, styleSelectionCombo.getSelectionIndex());
             }
-            public void widgetDefaultSelected(SelectionEvent e){}
+
+            public void widgetDefaultSelected(SelectionEvent e) {
+            }
         });
-        
-        
+
+
         setControl(container);
 
     }
@@ -239,24 +243,25 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
 
         styleSelectionCombo.select(settings.getInt(PREF_JAVA_STYLE_INDEX));
     }
-    public int getMode(){
+
+    public int getMode() {
         String selectedOption = modeSelectionCombo.getItem(modeSelectionCombo.getSelectionIndex());
-        if (WSDL_ALL.equals(selectedOption)){
+        if (WSDL_ALL.equals(selectedOption)) {
             return Emitter.MODE_ALL;
-        }else if (WSDL_INTERFACE_ONLY.equals(selectedOption)){
+        } else if (WSDL_INTERFACE_ONLY.equals(selectedOption)) {
             return Emitter.MODE_INTERFACE;
-        }else if (WSDL_IMPLEMENTATION_ONLY.equals(selectedOption)){
+        } else if (WSDL_IMPLEMENTATION_ONLY.equals(selectedOption)) {
             return Emitter.MODE_IMPLEMENTATION;
-        }else{
+        } else {
             throw new RuntimeException("Unknown Exception");
         }
     }
-    
 
-    
-    public String getStyle(){
+
+    public String getStyle() {
         return this.styleSelectionCombo.getItem(styleSelectionCombo.getSelectionIndex()).toUpperCase();
     }
+
     public String getLocationURL() {
         return this.serviceLocationURLTextBox.getText();
     }
@@ -272,11 +277,10 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
     public String getBindingName() {
         return this.bindingTextBox.getText();
     }
-    
-   private String getgetClassFileLocation(){
-       return null;
-   }
-    
-   
- 
+
+    private String getgetClassFileLocation() {
+        return null;
+    }
+
+
 }

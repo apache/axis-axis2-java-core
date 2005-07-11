@@ -26,16 +26,17 @@ import java.util.Iterator;
  * specific error information related to the SOAP Body .
  * <p/>
  * The Detail element information item has:
- *      A [local name] of Detail .
- *      A [namespace name] of http://www.w3.org/2003/05/soap-envelope .
- *      Zero or more attribute information items in its [attributes] property.
- *      Zero or more child element information items in its [children] property.
+ * A [local name] of Detail .
+ * A [namespace name] of http://www.w3.org/2003/05/soap-envelope .
+ * Zero or more attribute information items in its [attributes] property.
+ * Zero or more child element information items in its [children] property.
  */
 public interface SOAPFaultDetail extends OMElement {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
     public void addDetailEntry(OMElement detailElement);
+
     public Iterator getAllDetailEntries();
-    
+
 }

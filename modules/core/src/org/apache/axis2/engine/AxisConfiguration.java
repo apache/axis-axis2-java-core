@@ -28,7 +28,7 @@ import java.util.Hashtable;
  * Service states kept in the <code>MessageContext</code>. Other runtime
  * artifacts does not keep states foward from the execution.
  */
-public interface AxisConfiguration extends ParameterInclude{
+public interface AxisConfiguration extends ParameterInclude {
     /**
      * Field INFLOW
      */
@@ -87,23 +87,25 @@ public interface AxisConfiguration extends ParameterInclude{
      * @throws AxisFault
      */
     public void addMdoule(ModuleDescription module) throws AxisFault;
-    
+
     public boolean isEngaged(QName moduleName);
 
-     /**
-      * To engage a module at the run time it can be used this method
-      * @param moduleref
-      * @throws AxisFault
-      */
-     public void engageModule(QName moduleref) throws AxisFault ;
+    /**
+     * To engage a module at the run time it can be used this method
+     *
+     * @param moduleref
+     * @throws AxisFault
+     */
+    public void engageModule(QName moduleref) throws AxisFault;
 
 
     /**
-     *  This returns 
+     * This returns
      */
     public ArrayList getInPhasesUptoAndIncludingPostDispatch();
 
     public ArrayList getInFaultFlow();
+
     /**
      * Method getServices
      *
@@ -112,13 +114,19 @@ public interface AxisConfiguration extends ParameterInclude{
     public HashMap getServices();
 
     public Hashtable getFaulytServices();
+
     public Hashtable getFaulytModules();
 
     public TransportInDescription getTransportIn(QName name) throws AxisFault;
+
     public void addTransportIn(TransportInDescription transport) throws AxisFault;
+
     public TransportOutDescription getTransportOut(QName name) throws AxisFault;
+
     public void addTransportOut(TransportOutDescription transport) throws AxisFault;
+
     public HashMap getTransportsIn();
+
     public HashMap getTransportsOut();
 
 }

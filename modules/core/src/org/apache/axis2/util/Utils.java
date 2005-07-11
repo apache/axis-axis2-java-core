@@ -72,11 +72,10 @@ public class Utils {
     //            AxisConfiguration.FAULT_IN_FLOW);
     //    }
 
-    public static ServiceDescription createSimpleService(
-        QName serviceName,
-        MessageReceiver messageReceiver,
-        String className,
-        QName opName) {
+    public static ServiceDescription createSimpleService(QName serviceName,
+                                                         MessageReceiver messageReceiver,
+                                                         String className,
+                                                         QName opName) {
         ServiceDescription service = new ServiceDescription(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS, className));
@@ -97,15 +96,13 @@ public class Utils {
     //        return serviceContext;
     //    }
 
-    public static ServiceDescription createSimpleService(
-        QName serviceName,
-        String className,
-        QName opName) {
-        return createSimpleService(
-            serviceName,
-            new RawXMLINOutMessageReceiver(),
-            className,
-            opName);
+    public static ServiceDescription createSimpleService(QName serviceName,
+                                                         String className,
+                                                         QName opName) {
+        return createSimpleService(serviceName,
+                                   new RawXMLINOutMessageReceiver(),
+                                   className,
+                                   opName);
     }
 
     //    public static void addHandlers(Flow flow, Phase phase) throws AxisFault {
@@ -117,7 +114,7 @@ public class Utils {
     //        }
     //    }
     public static void resolvePhases(AxisConfiguration axisconfig, ServiceDescription serviceDesc)
-        throws AxisFault, PhaseException {
+            throws AxisFault, PhaseException {
         PhaseResolver pr = new PhaseResolver(axisconfig, serviceDesc);
         pr.buildchains();
     }
@@ -130,7 +127,6 @@ public class Utils {
         }
     }
 
- 
 
     public static String[] parseRequestURLForServiceAndOperation(String filePart) {
         String[] values = new String[2];
@@ -142,9 +138,9 @@ public class Utils {
             if ((index = serviceStr.indexOf('/')) > 0) {
                 values[0] = serviceStr.substring(0, index);
                 int lastIndex = serviceStr.indexOf('?');
-                if(lastIndex >= 0){
-                    values[1] = serviceStr.substring(index + 1,lastIndex);
-                }else{
+                if (lastIndex >= 0) {
+                    values[1] = serviceStr.substring(index + 1, lastIndex);
+                } else {
                     values[1] = serviceStr.substring(index + 1);
                 }
             } else {

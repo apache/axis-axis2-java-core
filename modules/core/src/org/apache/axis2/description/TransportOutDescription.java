@@ -42,17 +42,17 @@ public class TransportOutDescription
      */
     private Flow faultFlow;
 
-   private Phase outPhase;
-   private  Phase faultPhase;
+    private Phase outPhase;
+    private Phase faultPhase;
 
     /**
      * Field name
      */
     protected QName name;
-    
-    
+
+
     protected TransportSender sender;
-    
+
     /**
      * Constructor AxisTransport
      *

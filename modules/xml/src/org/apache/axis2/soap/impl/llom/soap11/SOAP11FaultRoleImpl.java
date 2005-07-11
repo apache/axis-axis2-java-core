@@ -62,11 +62,11 @@ public class SOAP11FaultRoleImpl extends SOAPFaultRoleImpl {
             String prefix = this.getNamespace().getPrefix();
             String nameSpaceName = this.getNamespace().getName();
             writer.writeStartElement(prefix, SOAP11Constants.SOAP_FAULT_ACTOR_LOCAL_NAME,
-                    nameSpaceName);
+                                     nameSpaceName);
         } else {
             writer.writeStartElement(SOAP11Constants.SOAP_FAULT_ACTOR_LOCAL_NAME);
         }
-        OMSerializerUtil.serializeAttributes(this,omOutput);
+        OMSerializerUtil.serializeAttributes(this, omOutput);
         OMSerializerUtil.serializeNamespaces(this, omOutput);
 
         String text = this.getText();
@@ -85,5 +85,5 @@ public class SOAP11FaultRoleImpl extends SOAPFaultRoleImpl {
 
     }
 
-   
+
 }

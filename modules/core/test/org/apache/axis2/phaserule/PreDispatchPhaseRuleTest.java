@@ -34,7 +34,7 @@ import java.util.ArrayList;
  * Date: May 10, 2005
  * Time: 4:28:27 PM
  */
-public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
+public class PreDispatchPhaseRuleTest extends AbstractTestCase {
 
     PreDispatchPhaseRuleTest phaserul;
     AxisConfiguration axisSytem;
@@ -115,7 +115,7 @@ public class PreDispatchPhaseRuleTest  extends AbstractTestCase{
 
         HandlerDescription hm3 = new HandlerDescription();
         hm3.setClassName("org.apache.axis2.handlers.AbstractHandler");
-        Handler h6 =new PhaseRuleHandlers();
+        Handler h6 = new PhaseRuleHandlers();
         h6.init(hm3);
         hm3.setHandler(h6);
         hm3.setName(new QName("H4"));

@@ -124,8 +124,7 @@ public class EnginePausingTest extends TestCase {
     }
 
     public void testReceive() throws Exception {
-        mc.setTo(
-            new EndpointReference(AddressingConstants.WSA_TO, "axis/services/NullService/DummyOp"));
+        mc.setTo(new EndpointReference(AddressingConstants.WSA_TO, "axis/services/NullService/DummyOp"));
         AxisEngine engine = new AxisEngine(engineContext);
         engine.receive(mc);
         assertEquals(executedHandlers.size(), 14);
@@ -161,7 +160,7 @@ public class EnginePausingTest extends TestCase {
             if (pause && msgContext.getProperty(paused) == null) {
                 msgContext.setProperty(paused, "true");
                 msgContext.setPausedTrue(getName());
-            }else{
+            } else {
                 executedHandlers.add(index);
             }
         }

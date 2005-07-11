@@ -21,10 +21,10 @@ import java.util.ArrayList;
 */
 
 public class ServiceFileCreator {
-    public File createServiceFile(String providerClassName,String serviceClass,ArrayList methodList) throws Exception {
-        
+    public File createServiceFile(String providerClassName, String serviceClass, ArrayList methodList) throws Exception {
 
-        String content = this.getFileString(providerClassName,serviceClass,methodList);
+
+        String content = this.getFileString(providerClassName, serviceClass, methodList);
         File serviceFile = new File("service.xml");
 
         FileWriter fileWriter = new FileWriter(serviceFile);
@@ -34,16 +34,14 @@ public class ServiceFileCreator {
         return serviceFile;
 
 
-
-
     }
 
-    private String getFileString(String providerClassName,String serviceClass,ArrayList methodList){
+    private String getFileString(String providerClassName, String serviceClass, ArrayList methodList) {
         String str = "<service provider=\"" +
                 providerClassName + "\" >" +
                 "    <java:implementation class=\"" +
                 serviceClass + "\" " +
-                "xmlns:java=\"http://ws.apache.org/axis2/deployment/java\"/>\n" ;
+                "xmlns:java=\"http://ws.apache.org/axis2/deployment/java\"/>\n";
         for (int i = 0; i < methodList.size(); i++) {
             str = str + "    <operation name=\"" +
                     methodList.get(i).toString() +

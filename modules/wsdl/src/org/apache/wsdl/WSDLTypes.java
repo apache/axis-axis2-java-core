@@ -21,23 +21,22 @@ import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface WSDLTypes extends Component{
-	/**
-	 * Adds the <code>ExtensionElement</code> to the map keyed with the <code>QName</code>
-	 *
-	 * @param qName
-	 * @param element
-	 */
-	public void addElement(WSDLExtensibilityElement element);
+public interface WSDLTypes extends Component {
+    /**
+     * Adds the <code>ExtensionElement</code> to the map keyed with the <code>QName</code>
+     *
+     * @param qName
+     * @param element
+     */
+    public void addElement(WSDLExtensibilityElement element);
 
-	/**
-	 * Will return the first Element with the given <code>QName</code>
-	 * Returns null if not found.
-	 *
-	 * @param qName
-	 * @return
-	 */
-	public WSDLExtensibilityElement getFirstElement(QName qName);
+    /**
+     * Will return the first Element with the given <code>QName</code>
+     * Returns null if not found.
+     *
+     * @param qName
+     * @return
+     */
+    public WSDLExtensibilityElement getFirstElement(QName qName);
 }

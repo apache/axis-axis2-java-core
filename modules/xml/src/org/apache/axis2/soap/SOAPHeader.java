@@ -36,10 +36,10 @@ public interface SOAPHeader extends OMElement {
      * @return the new <CODE>SOAPHeaderBlock</CODE> object that
      *         was inserted into this <CODE>SOAPHeader</CODE>
      *         object
-     * @throws org.apache.axis2.om.OMException if a SOAP error occurs
+     * @throws org.apache.axis2.om.OMException
+     *          if a SOAP error occurs
      */
-    public abstract SOAPHeaderBlock addHeaderBlock(
-            String localName, OMNamespace ns) throws OMException;
+    public abstract SOAPHeaderBlock addHeaderBlock(String localName, OMNamespace ns) throws OMException;
 
     /**
      * Returns a list of all the <CODE>SOAPHeaderBlock</CODE>
@@ -53,7 +53,7 @@ public interface SOAPHeader extends OMElement {
      * sent to its ultimate destination.
      *
      * @param role a <CODE>String</CODE> giving the
-     *              URI of the role for which to search
+     *             URI of the role for which to search
      * @return an <CODE>Iterator</CODE> object over all the <CODE>
      *         SOAPHeaderBlock</CODE> objects that contain the
      *         specified role
@@ -72,7 +72,7 @@ public interface SOAPHeader extends OMElement {
      * role.
      *
      * @param role a <CODE>String</CODE> giving the
-     *              URI of the role for which to search
+     *             URI of the role for which to search
      * @return an <CODE>Iterator</CODE> object over all the <CODE>
      *         SOAPHeaderBlock</CODE> objects that contain the
      *         specified role
@@ -87,7 +87,7 @@ public interface SOAPHeader extends OMElement {
      * attribute whose value is equivalent to <code>true</code>.
      *
      * @param role a <code>String</code> giving the URI of the role for which
-     *              to search
+     *             to search
      * @return an <code>Iterator</code> object over all the
      *         <code>SOAPHeaderBlock</code> objects that contain the
      *         specified role and are marked as MustUnderstand
@@ -115,9 +115,10 @@ public interface SOAPHeader extends OMElement {
      *         <code>SOAPHeader</code>
      */
     public abstract Iterator extractAllHeaderBlocks();
-    
+
     /**
-     * Return all the Headers that has the Namespace URI to given NS URI 
+     * Return all the Headers that has the Namespace URI to given NS URI
+     *
      * @param nsURI
      * @return
      */

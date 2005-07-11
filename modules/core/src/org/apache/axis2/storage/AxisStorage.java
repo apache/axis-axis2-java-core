@@ -17,10 +17,12 @@ package org.apache.axis2.storage;
  *
  * 
  */
+
 public interface AxisStorage {
 
     /**
      * puts a value to the storage
+     *
      * @param value
      * @return the key as an Object
      */
@@ -28,6 +30,7 @@ public interface AxisStorage {
 
     /**
      * get a value from the storage. The value is not removed
+     *
      * @param key
      * @return the value as an Object
      */
@@ -35,6 +38,7 @@ public interface AxisStorage {
 
     /**
      * Removes an object from the storage given the key.
+     *
      * @param key
      * @return the value being removed as an object
      */
@@ -42,6 +46,7 @@ public interface AxisStorage {
 
     /**
      * Cleans the whole storage.
+     *
      * @return a boolean saying whether the clean was successful or not
      */
     boolean clean();

@@ -41,7 +41,7 @@ public class NoNamespaceSerializerTest extends TestCase {
             "      <accountNo href=\"#id0\"/>\n" +
             "   </ns1:getBalance>\n" +
             " </soapenv:Body></soapenv:Envelope>";
-                                                                     
+
     private String xmlText2 = "<purchase-order xmlns=\"http://openuri.org/easypo\">\n" +
             "  <customer>\n" +
             "    <name>Gladys Kravitz</name>\n" +
@@ -61,7 +61,7 @@ public class NoNamespaceSerializerTest extends TestCase {
     private XMLStreamReader readerTwo;
     private OMOutput omOutput;
 
-   // private OMXMLParserWrapper builder;
+    // private OMXMLParserWrapper builder;
     // private File tempFile;
 
     private OMXMLParserWrapper builderOne;
@@ -76,7 +76,7 @@ public class NoNamespaceSerializerTest extends TestCase {
         readerTwo = XMLInputFactory.newInstance().
                 createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlTextTwo.getBytes())));
         omOutput = new OMOutput(XMLOutputFactory.newInstance().
-                createXMLStreamWriter(System.out));
+                                createXMLStreamWriter(System.out));
         builderOne = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), readerOne);
         builderTwo = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), readerTwo);
     }
@@ -112,28 +112,29 @@ public class NoNamespaceSerializerTest extends TestCase {
             throws Exception {
         SOAPFactory omFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope env = omFactory.getDefaultEnvelope();
-        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(omFactory,XMLInputFactory.newInstance().
-                createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlText2.getBytes()))));
+        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(omFactory, XMLInputFactory.newInstance().
+                                                                                        createXMLStreamReader(new InputStreamReader(new ByteArrayInputStream(xmlText2.getBytes()))));
         env.getBody().addChild(builder.getDocumentElement());
 
-        OMOutput omOutput =  new OMOutput(System.out,false);
+        OMOutput omOutput = new OMOutput(System.out, false);
         //env.getBody().addChild(builder.getDocumentElement());
         
         env.serializeWithCache(omOutput);
-       // env.serializeWithCache(xmlStreamWriter, true);
+        // env.serializeWithCache(xmlStreamWriter, true);
 
         omOutput.flush();
 
     }
-    public void testSerilizationWithCacheOn() throws Exception{
-       SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-       env.serializeWithCache(omOutput);
-       omOutput.flush();
+
+    public void testSerilizationWithCacheOn() throws Exception {
+        SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
+        env.serializeWithCache(omOutput);
+        omOutput.flush();
     }
 
-     public void testSerilizationWithCacheOff() throws Exception{
-       SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-       env.serializeWithCache(omOutput);
-       omOutput.flush();
+    public void testSerilizationWithCacheOff() throws Exception {
+        SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
+        env.serializeWithCache(omOutput);
+        omOutput.flush();
     }
-    }
+}

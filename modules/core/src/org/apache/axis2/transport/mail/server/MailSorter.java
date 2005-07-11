@@ -28,6 +28,7 @@ import java.util.ArrayList;
  * being sent to the Axis engine. If a mail is to be sent to the engine then a
  * new Axis engine is created using the configuration in the MailServer class
  * and the receive method is called.
+ *
  * @author Chamil Thanthrimudalige
  */
 public class MailSorter {
@@ -35,22 +36,22 @@ public class MailSorter {
     private ArrayList sUsers = new ArrayList(); // Special users. They are hard coded for the time being to axis2-server@localhost and axis2-server@127.0.0.1
     private ConfigurationContext configurationContext = null;
     protected static Log log = LogFactory.getLog(MailSorter.class.getName());
-    
-    public MailSorter(Storage st,ConfigurationContext configurationContext){
+
+    public MailSorter(Storage st, ConfigurationContext configurationContext) {
         this.st = st;
         sUsers.add("axis2-server@localhost");
         sUsers.add("axis2-server@127.0.0.1");
         this.configurationContext = configurationContext;
     }
 
-    public void sort(String user, MimeMessage msg){
-        if (sUsers.contains(user)){
+    public void sort(String user, MimeMessage msg) {
+        if (sUsers.contains(user)) {
             processMail(configurationContext, msg);
         } else {
             st.addMail(user, msg);
         }
     }
-   
+
     public void processMail(ConfigurationContext confContext, MimeMessage mimeMessage) {
         // create an Axis server
         AxisEngine engine = new AxisEngine(confContext);
@@ -58,9 +59,9 @@ public class MailSorter {
         // create and initialize a message context
         try {
             msgContext =
-                new MessageContext(confContext,
-                    confContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL)),
-                    confContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL)));
+                    new MessageContext(confContext,
+                                       confContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL)),
+                                       confContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL)));
             msgContext.setServerSide(true);
 
             msgContext.setProperty(MailConstants.CONTENT_TYPE, mimeMessage.getContentType());
@@ -73,22 +74,21 @@ public class MailSorter {
 
             String replyTo = ((InternetAddress) mimeMessage.getReplyTo()[0]).getAddress();
             if (replyTo != null) {
-                msgContext.setReplyTo(
-                    new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo));
+                msgContext.setReplyTo(new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo));
             }
- 
+
             String recepainets = ((InternetAddress) mimeMessage.getAllRecipients()[0]).getAddress();
-            
-            
+
+
             if (recepainets != null) {
-                msgContext.setTo(new EndpointReference(AddressingConstants.WSA_FROM, recepainets+ "/"+serviceURL));
+                msgContext.setTo(new EndpointReference(AddressingConstants.WSA_FROM, recepainets + "/" + serviceURL));
             }
 
             // add the SOAPEnvelope
             String message = mimeMessage.getContent().toString();
-            System.out.println("message["+message+"]");
+            System.out.println("message[" + message + "]");
             ByteArrayInputStream bais =
-                new ByteArrayInputStream(message.getBytes());
+                    new ByteArrayInputStream(message.getBytes());
             XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
             StAXBuilder builder = new StAXSOAPModelBuilder(reader);
             msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());

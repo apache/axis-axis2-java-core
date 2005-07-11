@@ -58,7 +58,7 @@
         </inflow>
         <outflow>
             <handler name="h8" class="org.apache.axis2.engine.registry.SpeakingHandler">
-                <order  phase="anyhase" />
+                <order phase="anyhase"/>
                 <parameter name="para8" locked="xsd:true">123</parameter>
                 <parameter name="para9" locked="xsd:true">456</parameter>
                 <parameter name="para10" locked="xsd:true">789</parameter>

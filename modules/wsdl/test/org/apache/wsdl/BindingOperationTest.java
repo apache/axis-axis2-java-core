@@ -24,35 +24,34 @@ import java.io.InputStream;
 
 /**
  * @author chathura@opensource.lk
- *  
  */
 public class BindingOperationTest extends AbstractTestCase {
 
-	public BindingOperationTest(String arg) {
-		super(arg);
-	}
+    public BindingOperationTest(String arg) {
+        super(arg);
+    }
 
-	/**
-	 * The WSDL should be passed properly and the WOM should be built if 
-	 * everything is allright
-	 * @throws Exception
-	 */
-	public void testBindingOperation() throws Exception {
-		WSDLDescription womDescription;
+    /**
+     * The WSDL should be passed properly and the WOM should be built if
+     * everything is allright
+     *
+     * @throws Exception
+     */
+    public void testBindingOperation() throws Exception {
+        WSDLDescription womDescription;
 
-		InputStream in = new FileInputStream(
-				getTestResourceFile("BookQuote.wsdl"));
-		womDescription = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11)
-				.build(in).getDescription();
-		
-		assertNotNull(womDescription);
-		if(null !=womDescription){
-			String ns = "http://www.Monson-Haefel.com/jwsbook/BookQuote";
-			WSDLBinding binding = womDescription.getBinding(new QName(ns,"BookQuoteBinding"));
-			WSDLBindingOperation bindingOperation = binding.getBindingOperation(new QName(ns, "getBookPrice"));
-			assertNotNull(bindingOperation.getInput());
-			assertNull(bindingOperation.getOutput());
-		}
+        InputStream in = new FileInputStream(getTestResourceFile("BookQuote.wsdl"));
+        womDescription = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11)
+                .build(in).getDescription();
 
-	}
+        assertNotNull(womDescription);
+        if (null != womDescription) {
+            String ns = "http://www.Monson-Haefel.com/jwsbook/BookQuote";
+            WSDLBinding binding = womDescription.getBinding(new QName(ns, "BookQuoteBinding"));
+            WSDLBindingOperation bindingOperation = binding.getBindingOperation(new QName(ns, "getBookPrice"));
+            assertNotNull(bindingOperation.getInput());
+            assertNull(bindingOperation.getOutput());
+        }
+
+    }
 }

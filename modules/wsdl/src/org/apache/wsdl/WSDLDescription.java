@@ -289,10 +289,11 @@ public interface WSDLDescription extends Component, WSDLComponentFactory {
      * @return
      */
     public WSDLProperty createProperty();
-    
+
     /**
-     * Will return the first binding component the collection returned by the 
+     * Will return the first binding component the collection returned by the
      * <code>Map</code>.
+     *
      * @return
      */
     public WSDLBinding getFirstBinding();

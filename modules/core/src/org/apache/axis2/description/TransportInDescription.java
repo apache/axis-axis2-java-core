@@ -54,12 +54,9 @@ public class TransportInDescription
     protected TransportListener reciever;
 
     //to store handler in inFlow
-    private Phase inPhase ;
+    private Phase inPhase;
     //to store handler Fault in inFlow
-    private Phase faultPhase ;
-
-
-
+    private Phase faultPhase;
 
 
     /**
@@ -122,6 +119,7 @@ public class TransportInDescription
     public void setFaultFlow(Flow faultFlow) {
         this.faultFlow = faultFlow;
     }
+
     /**
      * @return
      */

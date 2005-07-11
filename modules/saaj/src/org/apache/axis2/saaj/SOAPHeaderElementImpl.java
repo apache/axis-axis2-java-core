@@ -21,69 +21,70 @@ import javax.xml.soap.SOAPHeaderElement;
 
 /**
  * Class SOAPHeaderImpl
- * 
+ *
  * @author Ashutosh Shahi
- * ashutosh.shahi@gmail.com
+ *         ashutosh.shahi@gmail.com
  */
 public class SOAPHeaderElementImpl extends SOAPElementImpl implements
-		SOAPHeaderElement {
-	
-	/**
-	 * Field omHeaderElement
-	 */
-	SOAPHeaderBlock omHeaderElement;
-	
-	/**
-	 * Constructor SOAPHeaderElementImpl
-	 * @param headerElement
-	 */
-	public SOAPHeaderElementImpl(org.apache.axis2.soap.SOAPHeaderBlock headerElement){
-		super(headerElement);
-		this.omHeaderElement = headerElement;
-	}
+        SOAPHeaderElement {
 
-	/**
-	 * method setActor
-	 * 
-	 * @param actorURI
-	 * @see javax.xml.soap.SOAPHeaderElement#setActor(java.lang.String)
-	 */
-	public void setActor(String actorURI) {
-	
-		omHeaderElement.setRole(actorURI);
-	}
+    /**
+     * Field omHeaderElement
+     */
+    SOAPHeaderBlock omHeaderElement;
 
-	/**
-	 * method getActor
-	 * 
-	 * @return
-	 * @see javax.xml.soap.SOAPHeaderElement#getActor()
-	 */
-	public String getActor() {
+    /**
+     * Constructor SOAPHeaderElementImpl
+     *
+     * @param headerElement
+     */
+    public SOAPHeaderElementImpl(org.apache.axis2.soap.SOAPHeaderBlock headerElement) {
+        super(headerElement);
+        this.omHeaderElement = headerElement;
+    }
 
-		return omHeaderElement.getRole();
-	}
+    /**
+     * method setActor
+     *
+     * @param actorURI
+     * @see javax.xml.soap.SOAPHeaderElement#setActor(java.lang.String)
+     */
+    public void setActor(String actorURI) {
 
-	/**
-	 * method setMustUnderstand
-	 * 
-	 * @param mustUnderstand
-	 * @see javax.xml.soap.SOAPHeaderElement#setMustUnderstand(boolean)
-	 */
-	public void setMustUnderstand(boolean mustUnderstand) {
-		
-		omHeaderElement.setMustUnderstand(mustUnderstand);
-	}
+        omHeaderElement.setRole(actorURI);
+    }
 
-	/**
-	 * method getMustUnderstand
-	 * 
-	 * @return
-	 * @see javax.xml.soap.SOAPHeaderElement#getMustUnderstand()
-	 */
-	public boolean getMustUnderstand() {
-		
-		return omHeaderElement.getMustUnderstand();
-	}
+    /**
+     * method getActor
+     *
+     * @return
+     * @see javax.xml.soap.SOAPHeaderElement#getActor()
+     */
+    public String getActor() {
+
+        return omHeaderElement.getRole();
+    }
+
+    /**
+     * method setMustUnderstand
+     *
+     * @param mustUnderstand
+     * @see javax.xml.soap.SOAPHeaderElement#setMustUnderstand(boolean)
+     */
+    public void setMustUnderstand(boolean mustUnderstand) {
+
+        omHeaderElement.setMustUnderstand(mustUnderstand);
+    }
+
+    /**
+     * method getMustUnderstand
+     *
+     * @return
+     * @see javax.xml.soap.SOAPHeaderElement#getMustUnderstand()
+     */
+    public boolean getMustUnderstand() {
+
+        return omHeaderElement.getMustUnderstand();
+    }
 
 }

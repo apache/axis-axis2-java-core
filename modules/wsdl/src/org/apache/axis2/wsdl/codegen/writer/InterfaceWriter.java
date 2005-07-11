@@ -21,14 +21,15 @@ import java.io.File;
 *
 *
 */
-public class InterfaceWriter extends ClassWriter{
+
+public class InterfaceWriter extends ClassWriter {
 
 
     public InterfaceWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
-    public InterfaceWriter(File outputFileLocation,int language) {
+    public InterfaceWriter(File outputFileLocation, int language) {
         this.outputFileLocation = outputFileLocation;
         this.language = language;
     }
@@ -36,9 +37,9 @@ public class InterfaceWriter extends ClassWriter{
     /**
      * @see org.apache.axis2.wsdl.codegen.writer.ClassWriter#loadTemplate()
      */
-     public void loadTemplate(){
+    public void loadTemplate() {
         Class clazz = this.getClass();
-        switch (language){
+        switch (language) {
             case XSLTConstants.LanguageTypes.JAVA:
                 this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTInterfaceTemplates.JAVA_TEMPLATE);
                 break;

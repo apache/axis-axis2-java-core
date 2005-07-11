@@ -29,9 +29,9 @@ import javax.xml.namespace.QName;
 
 /**
  * @author hemapani
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         <p/>
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class MessageSender extends InOnlyMEPClient {
     public MessageSender(ServiceContext service) {
@@ -41,9 +41,10 @@ public class MessageSender extends InOnlyMEPClient {
     public MessageSender() throws AxisFault {
         super(assumeServiceContext());
     }
+
     public void send(String opName, OMElement toSend) throws AxisFault {
         OperationDescription axisOp = serviceContext.getServiceConfig().getOperation(opName);
-        if(axisOp == null){
+        if (axisOp == null) {
             axisOp = new OperationDescription(new QName(opName));
             serviceContext.getServiceConfig().addOperation(axisOp);
         }

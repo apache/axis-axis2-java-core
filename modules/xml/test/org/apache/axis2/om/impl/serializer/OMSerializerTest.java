@@ -45,7 +45,7 @@ public class OMSerializerTest extends AbstractTestCase {
                 createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage.xml")));
         tempFile = File.createTempFile("temp", "xml");
         omOutput = new OMOutput(XMLOutputFactory.newInstance().
-                createXMLStreamWriter(new FileOutputStream(tempFile)));
+                                createXMLStreamWriter(new FileOutputStream(tempFile)));
         //        writer = XMLOutputFactory.newInstance().
         //                createXMLStreamWriter(System.out);
     }
@@ -59,7 +59,7 @@ public class OMSerializerTest extends AbstractTestCase {
 
     public void testElementPullStream1() throws Exception {
         OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(),
-                reader);
+                                                                                    reader);
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         StreamingOMSerializer serializer = new StreamingOMSerializer();
         serializer.serialize(env.getXMLStreamReaderWithoutCaching(), omOutput);
@@ -67,7 +67,7 @@ public class OMSerializerTest extends AbstractTestCase {
 
     public void testElementPullStream1WithCacheOff() throws Exception {
         OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(),
-                reader);
+                                                                                    reader);
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         StreamingOMSerializer serializer = new StreamingOMSerializer();
         serializer.serialize(env.getXMLStreamReader(), omOutput);
@@ -75,7 +75,7 @@ public class OMSerializerTest extends AbstractTestCase {
 
     public void testElementPullStream2() throws Exception {
         OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(),
-                reader);
+                                                                                    reader);
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         SOAPBody body = env.getBody();
         StreamingOMSerializer serializer = new StreamingOMSerializer();

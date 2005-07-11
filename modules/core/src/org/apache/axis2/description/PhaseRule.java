@@ -57,12 +57,12 @@ public class PhaseRule {
         this.after = "";
         this.phaseName = "";
     }
-    
+
     public PhaseRule(String phaseName) {
-           this.before = "";
-           this.after = "";
-           this.phaseName = phaseName;
-       }
+        this.before = "";
+        this.after = "";
+        this.phaseName = phaseName;
+    }
 
     /**
      * Method getBefore

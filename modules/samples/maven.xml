@@ -11,48 +11,48 @@
     <postGoal name="test:compile">
         <mkdir dir="target/test-resources/samples/modules"/>
         <mkdir dir="target/test-resources/repository-client/modules"/>
-        <copy file="../addressing/target/addressing.mar" 
-		tofile="target/test-resources/samples/modules/addressing.mar"/>
-        <copy file="../addressing/target/addressing.mar" 
-		tofile="target/test-resources/repository-client/modules/addressing.mar"/>
+        <copy file="../addressing/target/addressing.mar"
+            tofile="target/test-resources/samples/modules/addressing.mar"/>
+        <copy file="../addressing/target/addressing.mar"
+            tofile="target/test-resources/repository-client/modules/addressing.mar"/>
         <mkdir dir="target/toWar/services/"/>
         
         <!-- Create Chuncked enabled Repository -->
         <mkdir dir="target/test-resources/chuncked-enabledRepository"/>
         <copy file="test/org/apache/axis2/engine/chuncking-enabled-axis2.xml"
-        tofile="target/test-resources/chuncked-enabledRepository/axis2.xml"/>
+            tofile="target/test-resources/chuncked-enabledRepository/axis2.xml"/>
         
         <!-- Create Mail transport enabled Repository -->
         <mkdir dir="target/test-resources/mail-transport-enabledRepository"/>
-         <mkdir dir="target/test-resources/mail-transport-enabledRepository/modules"/>
+        <mkdir dir="target/test-resources/mail-transport-enabledRepository/modules"/>
         <copy file="test/org/apache/axis2/mail/mail-enabled-axis2.xml"
-        tofile="target/test-resources/mail-transport-enabledRepository/axis2.xml"/>
-        <copy file="../addressing/target/addressing.mar" 
-		tofile="target/test-resources/mail-transport-enabledRepository/modules/addressing.mar"/>
-        
-      <!-- Commons transport enabled enabled Repository -->
+            tofile="target/test-resources/mail-transport-enabledRepository/axis2.xml"/>
+        <copy file="../addressing/target/addressing.mar"
+            tofile="target/test-resources/mail-transport-enabledRepository/modules/addressing.mar"/>
+
+        <!-- Commons transport enabled enabled Repository -->
         <mkdir dir="target/test-resources/commons-http-enabledRepository"/>
         <copy file="test/org/apache/axis2/engine/commons-http-enabled-axis2.xml"
-        tofile="target/test-resources/commons-http-enabledRepository/axis2.xml"/>       
+            tofile="target/test-resources/commons-http-enabledRepository/axis2.xml"/>
         
         <!-- MTOM enabled Repository -->
         <mkdir dir="target/test-resources/MTOM-enabledRepository"/>
         <copy file="test/org/apache/axis2/mtom/MTOM-enabled-axis2.xml"
-        tofile="target/test-resources/MTOM-enabledRepository/axis2.xml"/>         
+            tofile="target/test-resources/MTOM-enabledRepository/axis2.xml"/>
     </postGoal>
 
     <postGoal name="test:test">
         <attainGoal name="create-samples"/>
-         <!-- <attainGoal name="doInterop-test"/>   -->
+        <!-- <attainGoal name="doInterop-test"/>   -->
     </postGoal>
 
     <goal name="create-samples">
-	     <mkdir dir="target/samples"/>
-         <mkdir dir="${samples.dir}/userguide"/>
-         <mkdir dir="target/samples/wsdl"/>
-         <copy todir="target/samples/wsdl">
-			<ant:fileset dir="wsdl"/>
-		</copy>
+        <mkdir dir="target/samples"/>
+        <mkdir dir="${samples.dir}/userguide"/>
+        <mkdir dir="target/samples/wsdl"/>
+        <copy todir="target/samples/wsdl">
+            <ant:fileset dir="wsdl"/>
+        </copy>
         <attainGoal name="userguide"/>
         <attainGoal name="amazonQS"/>
         <attainGoal name="googleSearch"/>
@@ -61,278 +61,278 @@
         <attainGoal name="mtomSample"/>
     </goal>
 
-  <!-- ================================================================ -->
-   <!--- Version Sample -->
-  <!-- ================================================================ -->
-  <goal name="version">
-	<mkdir dir="target/samples"/>
+    <!-- ================================================================ -->
+    <!--- Version Sample -->
+    <!-- ================================================================ -->
+    <goal name="version">
+        <mkdir dir="target/samples"/>
         <mkdir dir="${samples.dir}/version"/>
         <mkdir dir="${samples.dir}/version/src"/>
         <ant:copy todir="${samples.dir}/version/src">
-        	<ant:fileset dir="src">
-        		<ant:include name="sample/axisversion/**"/>
-        	</ant:fileset> 
-	</ant:copy> 
+            <ant:fileset dir="src">
+                <ant:include name="sample/axisversion/**"/>
+            </ant:fileset>
+        </ant:copy>
         <jar destfile="${samples.dir}/version/version.jar">
             <fileset dir="target/classes">
                 <include name="sample/axisversion/**"/>
-            </fileset>           
-           <fileset dir="src/sample/axisversion/">
-               <include name="META-INF/**"/>
-           </fileset> 
+            </fileset>
+            <fileset dir="src/sample/axisversion/">
+                <include name="META-INF/**"/>
+            </fileset>
         </jar>
         <copy file="${samples.dir}/version/version.jar"
-		tofile="target/toWar/services/version.aar"/>
+            tofile="target/toWar/services/version.aar"/>
     </goal>
-  <!-- ================================================================ -->
-   <!--- User Guide Sample -->
-  <!-- ================================================================ -->
+    <!-- ================================================================ -->
+    <!--- User Guide Sample -->
+    <!-- ================================================================ -->
 
 
     <goal name="userguide">
-	<mkdir dir="target/samples"/>
+        <mkdir dir="target/samples"/>
         <mkdir dir="${samples.dir}/userguide"/>
         <mkdir dir="${samples.dir}/userguide/src"/>
         <ant:copy todir="${samples.dir}/userguide/src">
-        	<ant:fileset dir="src">
-        		<ant:include name="userguide/**"/>
-        	</ant:fileset> 
-	</ant:copy> 
+            <ant:fileset dir="src">
+                <ant:include name="userguide/**"/>
+            </ant:fileset>
+        </ant:copy>
         <jar destfile="${samples.dir}/userguide/sample.jar">
             <fileset dir="target/classes">
                 <include name="userguide/**"/>
-            </fileset>           
+            </fileset>
         </jar>
         <jar destfile="${samples.dir}/userguide/MyService.aar">
             <fileset dir="src/userguide/example1/">
                 <include name="META-INF/**"/>
-            </fileset>           
+            </fileset>
             <fileset dir="target/classes">
                 <include name="userguide/example1/**/*.class"/>
-            </fileset>           
+            </fileset>
         </jar>
         <jar destfile="${samples.dir}/userguide/MyServiceWithModule.aar">
             <fileset dir="src/userguide/example2/">
                 <include name="META-INF/**"/>
-            </fileset>           
+            </fileset>
             <fileset dir="target/classes">
                 <include name="userguide/example2/**/*.class"/>
-            </fileset>           
+            </fileset>
         </jar>
         <jar destfile="${samples.dir}/userguide/LoggingModule.mar">
             <fileset dir="src/userguide/loggingmodule/">
                 <include name="META-INF/**"/>
-            </fileset>           
+            </fileset>
             <fileset dir="target/classes">
                 <include name="userguide/loggingmodule/**/*.class"/>
-            </fileset>           
+            </fileset>
         </jar>
     </goal>
-  <!-- ================================================================ -->
+    <!-- ================================================================ -->
     <!--- Amazon Qaueing Service Sample -->
-  <!-- ================================================================ -->
+    <!-- ================================================================ -->
 
     <goal name="amazonQS">
         <mkdir dir="${samples.dir}/amazonQS"/>
         <mkdir dir="${samples.dir}/amazonQS/src"/>
         <ant:copy todir="${samples.dir}/amazonQS/src">
-        	<ant:fileset dir="src">
-        		<ant:include name="sample/amazon/amazonSimpleQueueService/**"/>
-        		<ant:include name="sample/amazon/common/**"/>
-        	</ant:fileset> 
-	</ant:copy> 
+            <ant:fileset dir="src">
+                <ant:include name="sample/amazon/amazonSimpleQueueService/**"/>
+                <ant:include name="sample/amazon/common/**"/>
+            </ant:fileset>
+        </ant:copy>
         <mkdir dir="${samples.dir}/amazonQS/docs"/>
         <ant:copy todir="${samples.dir}/amazonQS/docs">
-        	<ant:fileset dir="xdocs/amazonQS"/>
-	</ant:copy> 
-	<ant:copy file="xdocs/readme.txt" tofile="${samples.dir}/amazonQS/readme.txt" />
-     	<ant:copy todir="${samples.dir}/amazonQS">
-        	<ant:fileset dir="script/amazonQS"/>
-	</ant:copy>
+            <ant:fileset dir="xdocs/amazonQS"/>
+        </ant:copy>
+        <ant:copy file="xdocs/readme.txt" tofile="${samples.dir}/amazonQS/readme.txt"/>
+        <ant:copy todir="${samples.dir}/amazonQS">
+            <ant:fileset dir="script/amazonQS"/>
+        </ant:copy>
         <jar destfile="${samples.dir}/amazonQS/amazonQS.jar">
             <fileset dir="target/classes">
                 <include name="sample/amazon/amazonSimpleQueueService/**"/>
                 <include name="sample/amazon/common/**"/>
-            </fileset>           
+            </fileset>
         </jar>
     </goal>
-  <!-- ================================================================ -->
-  <!--- Google Search Sample -->
-  <!-- ================================================================ -->
+    <!-- ================================================================ -->
+    <!--- Google Search Sample -->
+    <!-- ================================================================ -->
 
     <goal name="googleSearch">
         <mkdir dir="${samples.dir}/googleSearch"/>
         <mkdir dir="${samples.dir}/googleSearch/src"/>
         <ant:copy todir="${samples.dir}/googleSearch/src">
-        	<ant:fileset dir="src">
-        		<ant:include name="sample/google/search/**"/>
-        		<ant:include name="sample/google/common/**"/>
-        	</ant:fileset> 
-	</ant:copy> 
+            <ant:fileset dir="src">
+                <ant:include name="sample/google/search/**"/>
+                <ant:include name="sample/google/common/**"/>
+            </ant:fileset>
+        </ant:copy>
         <mkdir dir="${samples.dir}/googleSearch/docs"/>
         <ant:copy todir="${samples.dir}/googleSearch/docs">
-        	<ant:fileset dir="xdocs/googleSearch"/>
-	</ant:copy> 
-	<ant:copy file="xdocs/readme.txt" tofile="${samples.dir}/googleSearch/readme.txt" />
-	<ant:copy todir="${samples.dir}/googleSearch">
-        	<ant:fileset dir="script/googleSearch"/>
-	</ant:copy> 
+            <ant:fileset dir="xdocs/googleSearch"/>
+        </ant:copy>
+        <ant:copy file="xdocs/readme.txt" tofile="${samples.dir}/googleSearch/readme.txt"/>
+        <ant:copy todir="${samples.dir}/googleSearch">
+            <ant:fileset dir="script/googleSearch"/>
+        </ant:copy>
         <jar destfile="${samples.dir}/googleSearch/googleSearch.jar">
             <fileset dir="target/classes">
                 <include name="sample/google/search/**"/>
                 <include name="sample/google/common/**"/>
-            </fileset>           
+            </fileset>
         </jar>
     </goal>
-  <!-- ================================================================ -->
-  <!--- Google SpellCheck Sample -->
-  <!-- ================================================================ -->
+    <!-- ================================================================ -->
+    <!--- Google SpellCheck Sample -->
+    <!-- ================================================================ -->
 
     <goal name="googleSpellcheck">
         <mkdir dir="${samples.dir}/googleSpellcheck"/>
         <mkdir dir="${samples.dir}/googleSpellcheck/src"/>
         <ant:copy todir="${samples.dir}/googleSpellcheck/src">
-        	<ant:fileset dir="src">
-        		<ant:include name="sample/google/spellcheck/**"/>
-        		<ant:include name="sample/google/common/**"/>
-        	</ant:fileset> 
-	</ant:copy> 
+            <ant:fileset dir="src">
+                <ant:include name="sample/google/spellcheck/**"/>
+                <ant:include name="sample/google/common/**"/>
+            </ant:fileset>
+        </ant:copy>
         <mkdir dir="${samples.dir}/googleSpellcheck/docs"/>
         <ant:copy todir="${samples.dir}/googleSpellcheck/docs">
-        	<ant:fileset dir="xdocs/googleSpellcheck"/>
-	</ant:copy> 
-    	<ant:copy file="xdocs/readme.txt" tofile="${samples.dir}/googleSpellcheck/readme.txt" />
-    <ant:copy todir="${samples.dir}/googleSpellcheck">
-        	<ant:fileset dir="script/googleSpellcheck"/>
-	</ant:copy> 
+            <ant:fileset dir="xdocs/googleSpellcheck"/>
+        </ant:copy>
+        <ant:copy file="xdocs/readme.txt" tofile="${samples.dir}/googleSpellcheck/readme.txt"/>
+        <ant:copy todir="${samples.dir}/googleSpellcheck">
+            <ant:fileset dir="script/googleSpellcheck"/>
+        </ant:copy>
         <jar destfile="${samples.dir}/googleSpellcheck/googleSpellcheck.jar">
             <fileset dir="target/classes">
                 <include name="sample/google/spellcheck/**"/>
                 <include name="sample/google/common/**"/>
-            </fileset>           
+            </fileset>
         </jar>
     </goal>
-    
-  <!-- ================================================================ -->
-  <!--- Google MTOM Sample -->
-  <!-- ================================================================ -->
+
+    <!-- ================================================================ -->
+    <!--- Google MTOM Sample -->
+    <!-- ================================================================ -->
 
     <goal name="mtomSample">
         <mkdir dir="${samples.dir}/mtom"/>
         <mkdir dir="${samples.dir}/mtom/src"/>
         <ant:copy todir="${samples.dir}/mtom/src">
-        	<ant:fileset dir="src">
-        		<ant:include name="sample/mtom/**"/>
-        	</ant:fileset> 
-	</ant:copy> 
-	 <jar destfile="${samples.dir}/mtom/mtomSample.aar">
+            <ant:fileset dir="src">
+                <ant:include name="sample/mtom/**"/>
+            </ant:fileset>
+        </ant:copy>
+        <jar destfile="${samples.dir}/mtom/mtomSample.aar">
             <fileset dir="src/sample/mtom/">
                 <include name="META-INF/**"/>
-            </fileset>           
+            </fileset>
             <fileset dir="target/classes">
                 <include name="sample/mtom/*.class"/>
-            </fileset>           
+            </fileset>
         </jar>
         <jar destfile="${samples.dir}/mtom/mtomClient.jar">
             <fileset dir="target/classes">
                 <include name="sample/mtom/**"/>
-            </fileset>           
+            </fileset>
         </jar>
     </goal>
-    
+
     <goal name="test-mtom">
-    		<echo message="running MTOM tests"/>
-    		<echo message="${maven.repo.local}"/>
-			<junit printsummary="yes" haltonfailure="yes">
-					<classpath>
-					      <fileset dir="${maven.repo.local}">
-        						<include name="j2ee/jars/***.jar"/>
-        						<include name="axis/jars/axis2-core-0.9.jar"/>
-        						<include name="axis/jars/axis2-xml-0.9.jar"/>
-        						<include name="axis/jars/axis2-wsdl-0.9.jar"/>
-        						<include name="axis/jars/axis-wsdl4j-1.2.jar"/>
-        						<include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
-        						<include name="stax/jars/stax-1.1.1-dev.jar"/>
-        						<include name="stax/jars/stax-api-1.0.jar"/>
-					      </fileset>
-					      <pathelement location="target/test-classes" />
-				          <path refid="maven.dependency.classpath"/>
-					 </classpath>
-				   <formatter type="plain"/>
-				   <test name="org.apache.axis2.engine.EchoRawMTOMToBase64Test" />
-  				   <test name="org.apache.axis2.engine.EchoRawMTOMTest" />
-			</junit>
+        <echo message="running MTOM tests"/>
+        <echo message="${maven.repo.local}"/>
+        <junit printsummary="yes" haltonfailure="yes">
+            <classpath>
+                <fileset dir="${maven.repo.local}">
+                    <include name="j2ee/jars/***.jar"/>
+                    <include name="axis/jars/axis2-core-0.9.jar"/>
+                    <include name="axis/jars/axis2-xml-0.9.jar"/>
+                    <include name="axis/jars/axis2-wsdl-0.9.jar"/>
+                    <include name="axis/jars/axis-wsdl4j-1.2.jar"/>
+                    <include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
+                    <include name="stax/jars/stax-1.1.1-dev.jar"/>
+                    <include name="stax/jars/stax-api-1.0.jar"/>
+                </fileset>
+                <pathelement location="target/test-classes"/>
+                <path refid="maven.dependency.classpath"/>
+            </classpath>
+            <formatter type="plain"/>
+            <test name="org.apache.axis2.engine.EchoRawMTOMToBase64Test"/>
+            <test name="org.apache.axis2.engine.EchoRawMTOMTest"/>
+        </junit>
     </goal>
 
     <goal name="test-mail">
-    		<echo message="running Mail tests"/>
-    		<echo message="${maven.repo.local}"/>
-			<junit printsummary="yes" haltonfailure="yes">
-					<classpath>
-					      <fileset dir="${maven.repo.local}">
-        						<include name="j2ee/jars/***.jar"/>
-        						<include name="axis/jars/axis2-core-0.9.jar"/>
-        						<include name="axis/jars/axis2-xml-0.9.jar"/>
-        						<include name="axis/jars/axis2-wsdl-0.9.jar"/>
-        						<include name="axis/jars/axis-wsdl4j-1.2.jar"/>
-        						<include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
-        						<include name="stax/jars/stax-1.1.1-dev.jar"/>
-        						<include name="stax/jars/stax-api-1.0.jar"/>
-					      </fileset>
-					      <pathelement location="target/test-classes" />
-				          <path refid="maven.dependency.classpath"/>
-					 </classpath>
-				   <formatter type="plain"/>
-				   <test name="org.apache.axis2.mail.MailetRequestResponceRawXMLTest" />
-  				   <test name="org.apache.axis2.mail.MailOneWayRawXMLTest" />
-  				   <test name="org.apache.axis2.mail.MailRequestResponseRawXMLTest" />  				   
-			</junit>
+        <echo message="running Mail tests"/>
+        <echo message="${maven.repo.local}"/>
+        <junit printsummary="yes" haltonfailure="yes">
+            <classpath>
+                <fileset dir="${maven.repo.local}">
+                    <include name="j2ee/jars/***.jar"/>
+                    <include name="axis/jars/axis2-core-0.9.jar"/>
+                    <include name="axis/jars/axis2-xml-0.9.jar"/>
+                    <include name="axis/jars/axis2-wsdl-0.9.jar"/>
+                    <include name="axis/jars/axis-wsdl4j-1.2.jar"/>
+                    <include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
+                    <include name="stax/jars/stax-1.1.1-dev.jar"/>
+                    <include name="stax/jars/stax-api-1.0.jar"/>
+                </fileset>
+                <pathelement location="target/test-classes"/>
+                <path refid="maven.dependency.classpath"/>
+            </classpath>
+            <formatter type="plain"/>
+            <test name="org.apache.axis2.mail.MailetRequestResponceRawXMLTest"/>
+            <test name="org.apache.axis2.mail.MailOneWayRawXMLTest"/>
+            <test name="org.apache.axis2.mail.MailRequestResponseRawXMLTest"/>
+        </junit>
     </goal>
 
-    
+
     <goal name="doInterop-test">
-             <taskdef name="wsdl2java"
-                classname="org.apache.axis2.tool.ant.AntCodegenTask"
-                    classpathref="maven.dependency.classpath"/>
-               <j:set var="interop3.dir" value="target/interop3"/>
-               <j:set var="work.dir" value="${interop3.dir}/work"/>
-               <j:set var="calss.dir" value="${interop3.dir}/classes"/>
-                 <j:set var="wsdl.dir" value="${basedir}/../wsdl/test-resources/"/>
-                     
-                 <mkdir dir="${interop3.dir}"/>  
-				<mkdir dir="${work.dir}"/>  
-				<mkdir dir="${calss.dir}"/>                       
-				
-		       <wsdl2java WSDLFileName="${wsdl.dir}compound2.wsdl" output="${work.dir}"/> 
-		       <!--
-		       <java classname="org.apache.axis2.wsdl.WSDL2Java">
-                  <classpath refid="maven.dependency.classpath"/>
-                  <arg value="-uri"/>
-                  <arg file="${wsdl.dir}/compound2.wsdl"/>
-                  <arg value="-o"/>
-                   <arg file="${work.dir}"/>
-               </java>
-               -->
-		       <copy file="${wsdl.dir}/InteropClient2.java" todir="${work.dir}" overwrite="true" />
-               <copy file="${wsdl.dir}/echoEmployeeDatabindingSupporter.java" todir="${work.dir}/org/soapinterop/databinding" overwrite="true" />
-               
-                <move todir="${classes.dir}/schema">
-            		<fileset dir="${work.dir}/schema"/>
-               </move>   
-    	
-              <javac srcdir="${work.dir}" destdir="${classes.dir}" debug="on">
-                  <classpath refid="maven.dependency.classpath" />
-              </javac>
-    	
-    	     <!-- Run the interop test -->
-    	     <java classname="Client">
-                <classpath refid="maven.dependency.classpath" />
-   		     </java>
-    	
-		    <junit dir="${classes.dir}" printsummary="yes" haltonfailure="yes">
-			    <classpath refid="maven.dependency.classpath" />
-			    <formatter type="plain"/>
-			    <test name="InteropClient2" />
-		    </junit>
+        <taskdef name="wsdl2java"
+            classname="org.apache.axis2.tool.ant.AntCodegenTask"
+            classpathref="maven.dependency.classpath"/>
+        <j:set var="interop3.dir" value="target/interop3"/>
+        <j:set var="work.dir" value="${interop3.dir}/work"/>
+        <j:set var="calss.dir" value="${interop3.dir}/classes"/>
+        <j:set var="wsdl.dir" value="${basedir}/../wsdl/test-resources/"/>
+
+        <mkdir dir="${interop3.dir}"/>
+        <mkdir dir="${work.dir}"/>
+        <mkdir dir="${calss.dir}"/>
+
+        <wsdl2java WSDLFileName="${wsdl.dir}compound2.wsdl" output="${work.dir}"/>
+        <!--
+        <java classname="org.apache.axis2.wsdl.WSDL2Java">
+<classpath refid="maven.dependency.classpath"/>
+<arg value="-uri"/>
+<arg file="${wsdl.dir}/compound2.wsdl"/>
+<arg value="-o"/>
+<arg file="${work.dir}"/>
+</java>
+        -->
+        <copy file="${wsdl.dir}/InteropClient2.java" todir="${work.dir}" overwrite="true"/>
+        <copy file="${wsdl.dir}/echoEmployeeDatabindingSupporter.java" todir="${work.dir}/org/soapinterop/databinding" overwrite="true"/>
+
+        <move todir="${classes.dir}/schema">
+            <fileset dir="${work.dir}/schema"/>
+        </move>
+
+        <javac srcdir="${work.dir}" destdir="${classes.dir}" debug="on">
+            <classpath refid="maven.dependency.classpath"/>
+        </javac>
+
+        <!-- Run the interop test -->
+        <java classname="Client">
+            <classpath refid="maven.dependency.classpath"/>
+        </java>
+
+        <junit dir="${classes.dir}" printsummary="yes" haltonfailure="yes">
+            <classpath refid="maven.dependency.classpath"/>
+            <formatter type="plain"/>
+            <test name="InteropClient2"/>
+        </junit>
     </goal>
- </project>
+</project>

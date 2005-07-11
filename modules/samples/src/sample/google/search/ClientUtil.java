@@ -60,12 +60,12 @@ public class ClientUtil {
         envelope.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         envelope.declareNamespace("http://www.w3.org/1999/XMLSchema-instance/", "xsi");
         envelope.declareNamespace("http://www.w3.org/1999/XMLSchema",
-                "xsd");
+                                  "xsd");
 
         operation = omFactory.createOMElement("doGoogleSearch", "urn:GoogleSearch", "ns1");
         envelope.getBody().addChild(operation);
         operation.addAttribute("SOAP-ENV:encordingStyle",
-                "http://schemas.xmlsoap.org/soap/encoding/", null);
+                               "http://schemas.xmlsoap.org/soap/encoding/", null);
 
         operation.addChild(getOMElement(omFactory, defNs, "key", "xsd:string", asyncClient.getKey()));
         operation.addChild(getOMElement(omFactory, defNs, "q", "xsd:string", asyncClient.getSearch()));

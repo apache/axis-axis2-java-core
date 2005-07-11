@@ -22,14 +22,14 @@ import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public interface ExtensionFactory {
-	/**
-	 * Returns the correct "Specific" ExtensibilityElement given the 
-	 * <code>QName</code> 
-	 * @param qName QName of the ExtensibilityElement found in the WSDL
-	 * @return the Specific implementation for the particular QName given.
-	 */
-	public WSDLExtensibilityElement getExtensionElement(QName qName);
+    /**
+     * Returns the correct "Specific" ExtensibilityElement given the
+     * <code>QName</code>
+     *
+     * @param qName QName of the ExtensibilityElement found in the WSDL
+     * @return the Specific implementation for the particular QName given.
+     */
+    public WSDLExtensibilityElement getExtensionElement(QName qName);
 }

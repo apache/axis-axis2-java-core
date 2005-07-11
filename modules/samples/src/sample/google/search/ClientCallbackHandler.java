@@ -66,12 +66,12 @@ public class ClientCallbackHandler extends Callback {
     public ClientCallbackHandler(GUIHandler handler) {
         this.handler = handler;
     }
-    
+
     /**
-         * method onComplete
-         *
-         * @param result
-         */
+     * method onComplete
+     *
+     * @param result
+     */
 
     public void onComplete(AsyncResult result) {
         AsyncResult myResult = result;
@@ -87,7 +87,7 @@ public class ClientCallbackHandler extends Callback {
      * @param result
      */
     private void extractDetails(AsyncResult result) {
-        Iterator iterator,iterator2;
+        Iterator iterator, iterator2;
         OMNode node;
         SOAPBody body;
         OMElement operation, elem;
@@ -111,7 +111,7 @@ public class ClientCallbackHandler extends Callback {
         resEnvelope = result.getResponseEnvelope();
         body = resEnvelope.getBody();
         operation = body.getFirstElement();
-        if (body.hasFault()){
+        if (body.hasFault()) {
             snippet =
                     snippet +
                     "A Fault message recieved, Check your Licence key. Else you have reached the" +

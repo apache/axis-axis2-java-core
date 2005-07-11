@@ -52,7 +52,7 @@ public class ListenersOut implements KeyListener, ActionListener, MouseMotionLis
             this.result.setText("");
             this.createQueue.setEditable(false);
             this.runableCodeListMyQueues = new RunnableReadQueue(this.createQueue,
-                    this.queueCode, this.read, this.result);
+                                                                 this.queueCode, this.read, this.result);
             Thread thread = new Thread(this.runableCodeListMyQueues);
             thread.start();
         }
@@ -69,7 +69,7 @@ public class ListenersOut implements KeyListener, ActionListener, MouseMotionLis
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("1")) {
             this.runableCodeListMyQueues = new RunnableListMyQueues(this.createQueue, this.queueCode, this.read,
-                    this.result, this.buttonLoad);
+                                                                    this.result, this.buttonLoad);
             Thread thread1 = new Thread(this.runableCodeListMyQueues);
             thread1.start();
             this.createQueue.setEditable(true);
@@ -78,7 +78,7 @@ public class ListenersOut implements KeyListener, ActionListener, MouseMotionLis
         if (e.getActionCommand().equals("2")) {
             this.buttonDelete.setText("Running");
             this.runnableCodeDequeue = new RunnableDeleteQueue(this.createQueue, this.queueCode, this.read,
-                    this.result, this.buttonDelete);
+                                                               this.result, this.buttonDelete);
             Thread thread2 = new Thread(this.runnableCodeDequeue);
             thread2.start();
         }

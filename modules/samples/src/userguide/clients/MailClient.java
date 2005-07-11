@@ -26,7 +26,7 @@ import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 
 /**
- * This is a Client progam that accesses 'MyService' web service in Axis2 samples 
+ * This is a Client progam that accesses 'MyService' web service in Axis2 samples
  */
 public class MailClient {
 

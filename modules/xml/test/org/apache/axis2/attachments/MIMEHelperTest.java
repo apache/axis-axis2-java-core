@@ -25,16 +25,16 @@ import junit.framework.TestCase;
 public class MIMEHelperTest extends TestCase {
 
 
-	public void testMIMEHelper() {
-	}
+    public void testMIMEHelper() {
+    }
 
-	public void testGetAttachmentSpecType() {
-	}
+    public void testGetAttachmentSpecType() {
+    }
 
-	public void testGetSOAPPartInputStream() {
-	}
+    public void testGetSOAPPartInputStream() {
+    }
 
-	public void testGetDataHandler() {
-	}
+    public void testGetDataHandler() {
+    }
 
 }

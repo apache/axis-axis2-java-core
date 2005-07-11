@@ -42,7 +42,7 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
      * @param builder
      */
     public SOAPHeaderImpl(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
-        super(envelope,  SOAPConstants.HEADER_LOCAL_NAME, builder);
+        super(envelope, SOAPConstants.HEADER_LOCAL_NAME, builder);
     }
 
     /**
@@ -53,7 +53,8 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
      * @param ns
      * @return the new <CODE>SOAPHeaderBlock</CODE> object that was inserted
      *         into this <CODE>SOAPHeader</CODE> object
-     * @throws org.apache.axis2.om.OMException if a SOAP error occurs
+     * @throws org.apache.axis2.om.OMException
+     *                     if a SOAP error occurs
      * @throws OMException
      */
     public abstract SOAPHeaderBlock addHeaderBlock(String localName, OMNamespace ns)
@@ -119,7 +120,7 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
      *         <code>SOAPHeaderBlock</code> objects that contain the specified
      *         actor and are marked as MustUnderstand
      */
-    public Iterator examineMustUnderstandHeaderBlocks(String actor){
+    public Iterator examineMustUnderstandHeaderBlocks(String actor) {
         Iterator headerBlocksIter = this.getChildren();
         ArrayList mustUnderstandHeadersWithGivenActor = new ArrayList();
         while (headerBlocksIter.hasNext()) {

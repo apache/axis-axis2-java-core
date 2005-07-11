@@ -1,11 +1,11 @@
 package org.apache.axis2.deployment;
 
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
-import java.io.*;
+import java.util.zip.ZipInputStream;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -30,7 +30,7 @@ import java.io.*;
  * Date: Jul 11, 2005
  * Time: 1:07:03 PM
  */
-public class DeploymentClassLoader extends URLClassLoader{
+public class DeploymentClassLoader extends URLClassLoader {
 
     //urls which gives to create the classLoader
     private URL[] urls;
@@ -43,8 +43,9 @@ public class DeploymentClassLoader extends URLClassLoader{
      * DeploymentClassLoader is exetend form URLClassLoader , and the constructor
      * has not overide the super constroctor , but has done some stuff to find out
      * jar fils inside /lib director
-     * @param urls <code>URL</code>
-     * @param parent  parent classloader <code>ClassLoader</code>
+     *
+     * @param urls   <code>URL</code>
+     * @param parent parent classloader <code>ClassLoader</code>
      */
     public DeploymentClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
@@ -57,7 +58,7 @@ public class DeploymentClassLoader extends URLClassLoader{
      * This just search for jar files inside /lib dirctory and if there are any then those
      * will be added to the arraylit (only the name of the jar file)
      */
-    private void findLibJars(){
+    private void findLibJars() {
         /**
          * though the URL array can contains one or more urls , I have only consider the
          * first one , that is this classLoader is only for Axis2 stuff and the classloader
@@ -81,31 +82,28 @@ public class DeploymentClassLoader extends URLClassLoader{
                 }
             }
             zin.close();
-        }catch(Exception e){
-            throw new RuntimeException(e) ;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
     /**
-     *
      * @param name <code>String</code>  Name of the file to be loaded
-     * @return  <code>Class</code> return a class object if it found else
-     * will return null or classNotfoun exeption
-     *
-     * The method has ovride in the following way
-     *  1. called the super class and check to see wether the class is there
-     *     if the class is found then return that , else if super returns ClassNotfoundExeption
-     *  2. Check wether the entry corresponding to the class name exsit in one of jar files
-     *     in /lib director
-     *  3. If it is there get the byte array out of that and creat a Class object out of that
-     *     by calling "defineClass()" , if it sucssed then return that else
-     *  4. Throw classNotfound exeption
-     *
+     * @return <code>Class</code> return a class object if it found else
+     *         will return null or classNotfoun exeption
+     *         <p/>
+     *         The method has ovride in the following way
+     *         1. called the super class and check to see wether the class is there
+     *         if the class is found then return that , else if super returns ClassNotfoundExeption
+     *         2. Check wether the entry corresponding to the class name exsit in one of jar files
+     *         in /lib director
+     *         3. If it is there get the byte array out of that and creat a Class object out of that
+     *         by calling "defineClass()" , if it sucssed then return that else
+     *         4. Throw classNotfound exeption
      * @throws ClassNotFoundException
      */
     protected Class findClass(final String name)
-            throws ClassNotFoundException
-    {
+            throws ClassNotFoundException {
         Class cla = null;
         try {
             boolean foundClass = false;
@@ -116,17 +114,17 @@ public class DeploymentClassLoader extends URLClassLoader{
             } catch (ClassNotFoundException e) {
                 foundClass = false;
             }
-            if(!foundClass){
-                byte raw[] = getBytes( name );
-                cla = defineClass( name, raw, 0, raw.length );
+            if (!foundClass) {
+                byte raw[] = getBytes(name);
+                cla = defineClass(name, raw, 0, raw.length);
                 foundClass = true;
                 return cla;
             }
-            if(!foundClass){
+            if (!foundClass) {
                 throw new ClassNotFoundException("Class Not found : " + name);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         return null;
@@ -137,13 +135,14 @@ public class DeploymentClassLoader extends URLClassLoader{
      * that and check to see wether there is any entry eith given name if it found then
      * Creat ByteArrayOutPutStream and get the class bytes to that .
      * after goning throgh each and evry jar file if there is no entry with given name
-     *  will throug a ClassNotFound execption
-     * @param filename   <code>String</code>  Name of the file to be loaded (Class Name)
+     * will throug a ClassNotFound execption
+     *
+     * @param filename <code>String</code>  Name of the file to be loaded (Class Name)
      * @return bytt[]
-     * @throws java.io.IOException  <code>Exception</code>
+     * @throws java.io.IOException <code>Exception</code>
      */
-    private byte[] getBytes( String filename ) throws Exception {
-        String completeFileName =  filename;
+    private byte[] getBytes(String filename) throws Exception {
+        String completeFileName = filename;
         /**
          * Replacing org.apache. -> org/apache/...
          */
@@ -168,7 +167,7 @@ public class DeploymentClassLoader extends URLClassLoader{
                         raw = out.toByteArray();
                         out.close();
                         zin.close();
-                        return  raw;
+                        return raw;
                     }
                 }
             } catch (IOException e) {

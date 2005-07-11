@@ -23,7 +23,7 @@ import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
  * the License.
  * <p/>
  */
-public class SOAP12FaultReasonImpl extends SOAPFaultReasonImpl{
+public class SOAP12FaultReasonImpl extends SOAPFaultReasonImpl {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */

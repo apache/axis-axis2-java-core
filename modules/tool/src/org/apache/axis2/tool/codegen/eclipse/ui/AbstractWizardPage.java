@@ -21,18 +21,18 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.WizardPage;
 
 public abstract class AbstractWizardPage extends WizardPage implements SettingsConstants {
-    
+
     protected IDialogSettings settings;
     protected boolean restoredFromPreviousSettings = false;
-    
-    public AbstractWizardPage(String pageName){
-        super(pageName+".name");
+
+    public AbstractWizardPage(String pageName) {
+        super(pageName + ".name");
         init(pageName);
     }
-    
-    protected void init(String pageName){
-        setTitle(CodegenWizardPlugin.getResourceString(pageName+".title"));
-        setDescription(CodegenWizardPlugin.getResourceString(pageName+".desc"));
+
+    protected void init(String pageName) {
+        setTitle(CodegenWizardPlugin.getResourceString(pageName + ".title"));
+        setDescription(CodegenWizardPlugin.getResourceString(pageName + ".desc"));
         setImageDescriptor(CodegenWizardPlugin.getWizardImageDescriptor());
         
         /*
@@ -42,13 +42,13 @@ public abstract class AbstractWizardPage extends WizardPage implements SettingsC
         IDialogSettings rootSettings = CodegenWizardPlugin.getDefault()
                 .getDialogSettings();
         IDialogSettings section = rootSettings.getSection(this.getClass()
-                .getName());
+                                                          .getName());
         if (section == null) {
             settings = rootSettings.addNewSection(this.getClass().getName());
             restoredFromPreviousSettings = false;
             initializeDefaultSettings();
         } else {
-            restoredFromPreviousSettings=true;
+            restoredFromPreviousSettings = true;
             settings = section;
         }
     }
@@ -58,7 +58,7 @@ public abstract class AbstractWizardPage extends WizardPage implements SettingsC
         setPageComplete(message == null);
     }
 
-    protected abstract void initializeDefaultSettings(); 
-   
-    public abstract int getPageType() ;
+    protected abstract void initializeDefaultSettings();
+
+    public abstract int getPageType();
 }

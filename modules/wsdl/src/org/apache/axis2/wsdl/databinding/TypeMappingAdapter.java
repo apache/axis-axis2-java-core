@@ -20,25 +20,25 @@ import java.util.HashMap;
 *
 * Default abstract implementation of the type mapper
 */
-public abstract class  TypeMappingAdapter implements TypeMapper{
+
+public abstract class TypeMappingAdapter implements TypeMapper {
     protected static final String XSD_SCHEMA_URL = "http://www.w3.org/2001/XMLSchema";
     //hashmap that contains the type mappings
-    protected  HashMap map = new HashMap();
+    protected HashMap map = new HashMap();
     //counter variable to generate unique parameter ID's
-    protected int counter=0;
+    protected int counter = 0;
     //Upper limit for the paramete count
     protected static final int UPPER_PARAM_LIMIT = 1000;
 
     /**
-     *
      * @see TypeMapper#getTypeMapping(javax.xml.namespace.QName)
      */
     public String getTypeMapping(QName qname) {
-        if ((qname!=null)){
+        if ((qname != null)) {
             Object o = map.get(qname);
-            if (o!=null){
-               return (String)o;
-            }else{
+            if (o != null) {
+                return (String) o;
+            } else {
                 return "org.apache.axis2.om.OMElement";
             }
         }
@@ -50,8 +50,8 @@ public abstract class  TypeMappingAdapter implements TypeMapper{
      * @see TypeMapper#getParameterName(javax.xml.namespace.QName)
      */
     public String getParameterName(QName qname) {
-        if (counter==UPPER_PARAM_LIMIT){
-            counter=0;
+        if (counter == UPPER_PARAM_LIMIT) {
+            counter = 0;
         }
         return "param" + counter++;
     }
@@ -60,6 +60,6 @@ public abstract class  TypeMappingAdapter implements TypeMapper{
      * @see TypeMapper#addTypeMapping(javax.xml.namespace.QName, Object)
      */
     public void addTypeMapping(QName qname, Object value) {
-        map.put(qname,value);
+        map.put(qname, value);
     }
 }

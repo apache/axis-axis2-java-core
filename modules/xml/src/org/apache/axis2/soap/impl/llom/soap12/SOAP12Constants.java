@@ -18,10 +18,9 @@ import org.apache.axis2.soap.impl.llom.SOAPConstants;
  * the License.
  * <p/>
  */
-public interface SOAP12Constants extends SOAPConstants{
+public interface SOAP12Constants extends SOAPConstants {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
-     *
      */
 
     public String SOAP_ENVELOPE_NAMESPACE_URI =
@@ -57,7 +56,7 @@ public interface SOAP12Constants extends SOAPConstants{
 
     // SOAP Fault Role
     public static final String SOAP_FAULT_ROLE_LOCAL_NAME = "Role";
-    
+
     //SOAP 1.2 Content Type
     public static final String SOAP_12_CONTENT_TYPE = "application/soap+xml";
 }

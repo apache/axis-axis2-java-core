@@ -109,16 +109,14 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
     private void extractAddressingFinalInformationFromHeaders(SOAPHeader header,
                                                               MessageInformationHeadersCollection messageInformationHeaders,
                                                               ArrayList addressingHeaders)
-            throws AddressingException
-    {
+            throws AddressingException {
         extractCommonAddressingParameters(header, messageInformationHeaders, addressingHeaders, Final.WSA_NAMESPACE);
     }
 
     private void extractAddressingSubmissionInformationFromHeaders(SOAPHeader header,
                                                                    MessageInformationHeadersCollection messageInformationHeaders,
                                                                    ArrayList addressingHeaders)
-            throws AddressingException
-    {
+            throws AddressingException {
         extractCommonAddressingParameters(header, messageInformationHeaders, addressingHeaders, Submission.WSA_NAMESPACE);
     }
 
@@ -126,8 +124,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                                                                                  MessageInformationHeadersCollection messageInformationHeadersCollection,
                                                                                  ArrayList addressingHeaders,
                                                                                  String addressingNamespace)
-            throws AddressingException
-    {
+            throws AddressingException {
         if (messageInformationHeadersCollection == null) {
             messageInformationHeadersCollection = new MessageInformationHeadersCollection();
         }

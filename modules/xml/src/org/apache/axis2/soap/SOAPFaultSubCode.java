@@ -19,23 +19,27 @@ import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
  * the License.
  * <p/>
  */
-public interface SOAPFaultSubCode extends OMElement{
+public interface SOAPFaultSubCode extends OMElement {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
 
     /**
      * Fault SubCode contain only one mandatory Value child. This value child contains a QName
+     *
      * @param soapFaultSubCodeValue
      */
     public void setValue(SOAPFaultValue soapFaultSubCodeValue) throws SOAPProcessingException;
+
     public SOAPFaultValue getValue();
 
 
     /**
      * Fault SubCode can contain an optional SubCode
+     *
      * @param subCode
      */
     public void setSubCode(SOAPFaultSubCode subCode) throws SOAPProcessingException;
+
     public SOAPFaultSubCode getSubCode();
 }

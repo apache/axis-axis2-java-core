@@ -17,8 +17,9 @@ package org.apache.axis2.wsdl;
  *
  * 
  */
+
 public class WSDL2Java {
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         WSDL2Code.main(args);
     }
 }

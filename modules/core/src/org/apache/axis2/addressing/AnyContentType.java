@@ -60,7 +60,7 @@ public class AnyContentType {
         return (String) valueHolder.get(name);
     }
 
-    public Iterator getKeys(){
+    public Iterator getKeys() {
         return valueHolder.keySet().iterator();
     }
 }

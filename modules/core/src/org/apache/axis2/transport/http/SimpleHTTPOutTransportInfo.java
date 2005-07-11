@@ -17,9 +17,10 @@
  */
 package org.apache.axis2.transport.http;
 
-public class SimpleHTTPOutTransportInfo implements HTTPOutTransportInfo{
+public class SimpleHTTPOutTransportInfo implements HTTPOutTransportInfo {
     private SimpleHTTPOutputStream outInfo;
-    public SimpleHTTPOutTransportInfo(SimpleHTTPOutputStream outInfo){
+
+    public SimpleHTTPOutTransportInfo(SimpleHTTPOutputStream outInfo) {
         this.outInfo = outInfo;
     }
 

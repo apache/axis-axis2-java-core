@@ -1,35 +1,30 @@
 package sample.google.spellcheck;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
 /**
- *  class sample.google.spellcheck.AsyncPanel
+ * class sample.google.spellcheck.AsyncPanel
  * This Impements its own GUI of the Asynchronous Client and it updates the string after getting the response to textarea
- * @author Nadana Gunarathna
  *
+ * @author Nadana Gunarathna
  */
-public class AsyncPanel extends javax.swing.JPanel implements Observer,KeyListener{
+public class AsyncPanel extends javax.swing.JPanel implements Observer, KeyListener {
     FormModel formModel;
     JTextArea writingTextArea;
     JTextArea displayTextArea;
     JTextField errorMessageField;
-    public AsyncPanel()
-    {
+
+    public AsyncPanel() {
         GridBagLayout gbLayout = new GridBagLayout();
         GridBagConstraints constraint = new GridBagConstraints();
         this.setLayout(gbLayout);
 
-        formModel  = new FormModel(this);
+        formModel = new FormModel(this);
 
-        writingTextArea  = new JTextArea();
+        writingTextArea = new JTextArea();
         writingTextArea.setLineWrap(true);
 
         displayTextArea = new JTextArea();
@@ -48,22 +43,21 @@ public class AsyncPanel extends javax.swing.JPanel implements Observer,KeyListen
         writingTextArea.addKeyListener(this);
 
         constraint.fill = GridBagConstraints.BOTH;
-        constraint.gridx=0;
-        constraint.weightx=1;
-        constraint.weighty=8;
-        gbLayout.setConstraints(scrollPaneGet,constraint);
+        constraint.gridx = 0;
+        constraint.weightx = 1;
+        constraint.weighty = 8;
+        gbLayout.setConstraints(scrollPaneGet, constraint);
         this.add(scrollPaneGet);
-        gbLayout.setConstraints(scrollPaneSet,constraint);
+        gbLayout.setConstraints(scrollPaneSet, constraint);
         this.add(scrollPaneSet);
-        constraint.weighty=1;
-        gbLayout.setConstraints(errorMessageField,constraint);
+        constraint.weighty = 1;
+        gbLayout.setConstraints(errorMessageField, constraint);
         this.add(errorMessageField);
 
 
     }
 
-    public void update(String message)
-    {
+    public void update(String message) {
         displayTextArea.setText(displayTextArea.getText() + " " + message);
     }
 
@@ -74,11 +68,11 @@ public class AsyncPanel extends javax.swing.JPanel implements Observer,KeyListen
 
 
     public void keyPressed(KeyEvent e) {
-        int key=e.getKeyChar();
-        if((key==KeyEvent.VK_SPACE)||(key==KeyEvent.VK_ENTER)){
-            String[] words=writingTextArea.getText().split("\\s");
+        int key = e.getKeyChar();
+        if ((key == KeyEvent.VK_SPACE) || (key == KeyEvent.VK_ENTER)) {
+            String[] words = writingTextArea.getText().split("\\s");
             if (words.length > 0)
-            formModel.doAsyncSpellingSuggestion(words[words.length-1]);
+                formModel.doAsyncSpellingSuggestion(words[words.length - 1]);
         }
     }
 

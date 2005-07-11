@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AbstractTestCase;
@@ -49,15 +49,15 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
         assertNotNull(cl);
         Class.forName("Echo2", true, cl);
         assertNotNull(service.getName());
-       //no style for the service 
-     //   assertEquals(service.getStyle(),"rpc");
+        //no style for the service
+        //   assertEquals(service.getStyle(),"rpc");
 
         Flow flow = service.getFaultInFlow();
         assertTrue(flow.getHandlerCount() > 0);
         flow = service.getInFlow();
         assertTrue(flow.getHandlerCount() > 0);
         flow = service.getOutFlow();
-        assertTrue( flow.getHandlerCount() > 0);
+        assertTrue(flow.getHandlerCount() > 0);
         assertNotNull(service.getParameter("para2"));
 
         OperationDescription op = service.getOperation(new QName("opname"));

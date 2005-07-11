@@ -47,7 +47,7 @@ public class SOAP12HeaderBlockImpl extends SOAPHeaderBlockImpl {
      */
     public SOAP12HeaderBlockImpl(String localName, OMNamespace ns, SOAPHeader parent, OMXMLParserWrapper builder) {
         super(localName, ns, parent, builder);
-        
+
     }
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
@@ -78,16 +78,16 @@ public class SOAP12HeaderBlockImpl extends SOAPHeaderBlockImpl {
         }
     }
 
-    public boolean getMustUnderstand() throws SOAPProcessingException{
+    public boolean getMustUnderstand() throws SOAPProcessingException {
         String mustUnderstand = "";
         if ((mustUnderstand = getAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI))
                 != null) {
             if (SOAPConstants.ATTR_MUSTUNDERSTAND_TRUE.equalsIgnoreCase(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_1.equalsIgnoreCase(mustUnderstand)) {
                 return true;
-            }else if (SOAPConstants.ATTR_MUSTUNDERSTAND_FALSE.equalsIgnoreCase(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_0.equalsIgnoreCase(mustUnderstand)) {
+            } else if (SOAPConstants.ATTR_MUSTUNDERSTAND_FALSE.equalsIgnoreCase(mustUnderstand) || SOAPConstants.ATTR_MUSTUNDERSTAND_0.equalsIgnoreCase(mustUnderstand)) {
                 return false;
-            }else{
-                throw new SOAPProcessingException("Invalid value found in mustUnderstand value of "+this.getLocalName() + " header block");
+            } else {
+                throw new SOAPProcessingException("Invalid value found in mustUnderstand value of " + this.getLocalName() + " header block");
             }
         }
         return false;

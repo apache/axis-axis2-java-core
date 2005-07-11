@@ -28,9 +28,9 @@ import java.util.Properties;
 
 /**
  * @author hemapani
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         <p/>
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class EMailSender {
     private String user;
@@ -48,7 +48,7 @@ public class EMailSender {
     public void send(String subject, String targetEmail, String message) throws AxisFault {
         try {
             final PasswordAuthentication authentication =
-                new PasswordAuthentication(user, password);
+                    new PasswordAuthentication(user, password);
             Properties props = new Properties();
             props.put("mail.user", user);
             props.put("mail.host", host);
@@ -65,9 +65,9 @@ public class EMailSender {
             msg.setFrom(new InternetAddress((user)));
             msg.addRecipient(Message.RecipientType.TO, new InternetAddress(targetEmail));
             msg.setSubject(subject);
-            
+
             msg.addHeaderLine("Content-Type: text/plain; charset=us-ascii");
-            
+
             msg.setText(message);
             msg.setHeader("Content-Transfer-Encoding", "7bit");
             Transport.send(msg);

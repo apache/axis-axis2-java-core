@@ -21,27 +21,27 @@ import javax.xml.soap.SOAPBodyElement;
 
 /**
  * Class SOAPBodeElementImpl
- * 
+ *
  * @author Ashutosh Shahi
- * ashutosh.shahi@gmail.com
+ *         ashutosh.shahi@gmail.com
  */
 public class SOAPBodyElementImpl extends SOAPElementImpl implements
-		SOAPBodyElement {
-	
-	/**
-	 * Constructor SOAPBodeElementImpl
-	 *
-	 */
-	public SOAPBodyElementImpl(){
-		super();
-	}
-	
-	/**
-	 * Constructor SOAPBodeElementImpl
-	 * @param bodyElement
-	 */
-	public SOAPBodyElementImpl(OMElement bodyElement){
-		super(bodyElement);
-	}
+        SOAPBodyElement {
+
+    /**
+     * Constructor SOAPBodeElementImpl
+     */
+    public SOAPBodyElementImpl() {
+        super();
+    }
+
+    /**
+     * Constructor SOAPBodeElementImpl
+     *
+     * @param bodyElement
+     */
+    public SOAPBodyElementImpl(OMElement bodyElement) {
+        super(bodyElement);
+    }
 
 }

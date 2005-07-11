@@ -22,33 +22,34 @@ public class URL {
     private String host;
     private int port = -1;
     private String fileName;
-    
-    public URL(String url){
+
+    public URL(String url) {
         int start = 0;
         int end = 0;
         end = url.indexOf("://");
-        if(end > 0){
-            protocol = url.substring(0,end);
+        if (end > 0) {
+            protocol = url.substring(0, end);
             start = end + 3;
         }
-        
-        end = url.indexOf('/',start);
-        if(end > 0){
-            String hostAndPort = url.substring(start,end);
-            fileName =  url.substring(end);
+
+        end = url.indexOf('/', start);
+        if (end > 0) {
+            String hostAndPort = url.substring(start, end);
+            fileName = url.substring(end);
             int index = hostAndPort.indexOf(':');
-            if(index>0){
-                host = hostAndPort.substring(0,index);
-                port = Integer.parseInt(hostAndPort.substring(index+1));
-            }else{
+            if (index > 0) {
+                host = hostAndPort.substring(0, index);
+                port = Integer.parseInt(hostAndPort.substring(index + 1));
+            } else {
                 host = hostAndPort;
             }
-        }else{
+        } else {
             host = url;
         }
-         
-        
+
+
     }
+
     /**
      * @return
      */

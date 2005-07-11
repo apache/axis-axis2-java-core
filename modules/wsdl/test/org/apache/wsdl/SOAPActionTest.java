@@ -29,56 +29,51 @@ import java.util.Iterator;
 
 /**
  * @author chathura@opensource.lk
- *  
  */
 public class SOAPActionTest extends AbstractTestCase {
 
-	private WSDLDescription womDescription = null;
+    private WSDLDescription womDescription = null;
 
-	private Definition wsdl4jDefinition = null;
+    private Definition wsdl4jDefinition = null;
 
-	public SOAPActionTest(String args) {
-		super(args);
-	}
+    public SOAPActionTest(String args) {
+        super(args);
+    }
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		WSDLVersionWrapper wsdlVersionWrapper = null;
-		if (null == this.womDescription) {
-			InputStream in = new FileInputStream(
-					getTestResourceFile("InteropTestDocLit2.wsdl"));
-			wsdlVersionWrapper = WOMBuilderFactory.getBuilder(
-					WOMBuilderFactory.WSDL11).build(in);
-			this.womDescription = wsdlVersionWrapper.getDescription();
+    protected void setUp() throws Exception {
+        super.setUp();
+        WSDLVersionWrapper wsdlVersionWrapper = null;
+        if (null == this.womDescription) {
+            InputStream in = new FileInputStream(getTestResourceFile("InteropTestDocLit2.wsdl"));
+            wsdlVersionWrapper = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
+            this.womDescription = wsdlVersionWrapper.getDescription();
 
-		}
-		if (null == wsdl4jDefinition) {
-			this.wsdl4jDefinition = wsdlVersionWrapper.getDefinition();
-		}
-	}
+        }
+        if (null == wsdl4jDefinition) {
+            this.wsdl4jDefinition = wsdlVersionWrapper.getDefinition();
+        }
+    }
 
-	public void testSOAPActionPopulation() {
-		WSDLBindingOperation bindingOperation = womDescription
-				.getFirstBinding().getBindingOperation(
-						new QName(
-								"http://soapinterop.org/WSDLInteropTestDocLit",
-								"echoVoid"));
-		Iterator iterator = bindingOperation.getExtensibilityElements()
-				.iterator();
-		while (iterator.hasNext()) {
-			WSDLExtensibilityElement element = (WSDLExtensibilityElement) iterator
-					.next();
-			SOAPOperation soapOperation = null;
-			if (ExtensionConstants.SOAP_OPERATION.equals(element.getType())) {
-				soapOperation = (SOAPOperation) element;
-			}
-			if (soapOperation == null) {
-				fail();
-			} else {
-				assertEquals(soapOperation.getSoapAction(),
-						"http://soapinterop.org/");
-			}
-		}
-	}
+    public void testSOAPActionPopulation() {
+        WSDLBindingOperation bindingOperation = womDescription
+                .getFirstBinding().getBindingOperation(new QName("http://soapinterop.org/WSDLInteropTestDocLit",
+                                                                 "echoVoid"));
+        Iterator iterator = bindingOperation.getExtensibilityElements()
+                .iterator();
+        while (iterator.hasNext()) {
+            WSDLExtensibilityElement element = (WSDLExtensibilityElement) iterator
+                    .next();
+            SOAPOperation soapOperation = null;
+            if (ExtensionConstants.SOAP_OPERATION.equals(element.getType())) {
+                soapOperation = (SOAPOperation) element;
+            }
+            if (soapOperation == null) {
+                fail();
+            } else {
+                assertEquals(soapOperation.getSoapAction(),
+                             "http://soapinterop.org/");
+            }
+        }
+    }
 
 }

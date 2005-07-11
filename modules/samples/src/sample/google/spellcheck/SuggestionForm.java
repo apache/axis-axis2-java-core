@@ -1,30 +1,16 @@
 package sample.google.spellcheck;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.HeadlessException;
-import java.awt.Toolkit;
+import sample.google.common.util.PropertyLoader;
+
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
-
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
-import javax.swing.WindowConstants;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-
-import sample.google.common.util.PropertyLoader;
 
 /**
  * class sample.google.spellcheck.SuggestionForm
@@ -119,7 +105,7 @@ public class SuggestionForm extends javax.swing.JFrame implements HyperlinkListe
         SuggestionForm form = new SuggestionForm();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         form.setLocation(screenSize.width / 4,
-                screenSize.height / 4);
+                         screenSize.height / 4);
         form.setSize(screenSize.width / 2, screenSize.height / 2);
         form.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         //form.setResizable(false);
@@ -150,7 +136,7 @@ public class SuggestionForm extends javax.swing.JFrame implements HyperlinkListe
 
     private void setKey() {
         String key = JOptionPane.showInputDialog(this, "Set the Google Key",
-                PropertyLoader.getGoogleKey());
+                                                 PropertyLoader.getGoogleKey());
         if (key != null && !key.trim().equals("")) {
             PropertyLoader.setGoogleKey(key);
         }
@@ -164,7 +150,7 @@ public class SuggestionForm extends javax.swing.JFrame implements HyperlinkListe
         JFrame frame = new JFrame();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation(screenSize.width / 5,
-                screenSize.height / 5);
+                          screenSize.height / 5);
         frame.setSize(screenSize.width / 2, screenSize.height / 2);
 
         BorderLayout layout = new BorderLayout();
@@ -188,7 +174,7 @@ public class SuggestionForm extends javax.swing.JFrame implements HyperlinkListe
             helpDisplayPane.setPage(new File(helpDoc).toURL());
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Help file not detected", "Help file error",
-                    JOptionPane.ERROR_MESSAGE);
+                                          JOptionPane.ERROR_MESSAGE);
             return;
         }
         frame.setVisible(true);
@@ -203,7 +189,7 @@ public class SuggestionForm extends javax.swing.JFrame implements HyperlinkListe
 //                
             } catch (Exception err) {
                 JOptionPane.showMessageDialog(this, "Help file not detected", err.getMessage(),
-                        JOptionPane.ERROR_MESSAGE);
+                                              JOptionPane.ERROR_MESSAGE);
                 return;
             }
 

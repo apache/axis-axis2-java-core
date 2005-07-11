@@ -32,67 +32,65 @@ import java.util.Iterator;
 
 /**
  * @author chathura@opensource.lk
- *  
  */
 public class MessageReuseTest extends AbstractTestCase {
 
-	private WSDLDescription womDescription;
+    private WSDLDescription womDescription;
 
-	private Definition wsdl4jDefinition;
+    private Definition wsdl4jDefinition;
 
-	public MessageReuseTest(String arg) {
-		super(arg);
-	}
+    public MessageReuseTest(String arg) {
+        super(arg);
+    }
 
-	protected void setUp() throws Exception {
+    protected void setUp() throws Exception {
 
-		WSDLVersionWrapper wsdlVersionWrapper = null;
+        WSDLVersionWrapper wsdlVersionWrapper = null;
         if (null == this.womDescription) {
             InputStream in = new FileInputStream(getTestResourceFile("BookQuote.wsdl"));
             wsdlVersionWrapper = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
-			this.womDescription = wsdlVersionWrapper.getDescription();
+            this.womDescription = wsdlVersionWrapper.getDescription();
         }
         if (null == wsdl4jDefinition) {
             this.wsdl4jDefinition = wsdlVersionWrapper.getDefinition();
         }
 
-	}
+    }
 
-	public void testMultipartmessageReuse() throws Exception {
+    public void testMultipartmessageReuse() throws Exception {
 
-		WSDLInterface interface1 = this.womDescription.getInterface(
-				new QName("http://www.Monson-Haefel.com/jwsbook/BookQuote",
-						"BookQuote"));
-		WSDLOperation operation1 = (WSDLOperation) interface1.getAllOperations()
-				.get("getBookPrice");
-		QName element1 = operation1.getInputMessage().getElement();
-		WSDLOperation operation2 = (WSDLOperation)interface1.getAllOperations().get("getBookPriceNonRobust");
-		QName element2 = operation2.getInputMessage().getElement();
-		assertEquals(element1, element2);
-		
-		Iterator iterator = womDescription.getTypes().getExtensibilityElements().iterator();
-		Schema types= null;
-		while(iterator.hasNext()){
-			WSDLExtensibilityElement temp = (WSDLExtensibilityElement)iterator.next();
-			if(ExtensionConstants.SCHEMA.equals(temp.getType())){
-				types = (Schema)temp;
-			}
-		}
-		int numberOfBookQuote_getBookPrice = 0;
-		NodeList childNodes = types.getElelment().getChildNodes();
-		for(int i=0; i< childNodes.getLength(); i++){
-			Node item = childNodes.item(i);
-			if(item instanceof Element){
-				Element temp = (Element)item;
-				if("complexType".equals(temp.getNodeName()) && 
-						"BookQuote_getBookPrice".equals(temp.getAttribute("name"))){
-					numberOfBookQuote_getBookPrice++;
-				}
-				
-			}
-		}
-		assertEquals(numberOfBookQuote_getBookPrice, 1);
-		
+        WSDLInterface interface1 = this.womDescription.getInterface(new QName("http://www.Monson-Haefel.com/jwsbook/BookQuote",
+                                                                              "BookQuote"));
+        WSDLOperation operation1 = (WSDLOperation) interface1.getAllOperations()
+                .get("getBookPrice");
+        QName element1 = operation1.getInputMessage().getElement();
+        WSDLOperation operation2 = (WSDLOperation) interface1.getAllOperations().get("getBookPriceNonRobust");
+        QName element2 = operation2.getInputMessage().getElement();
+        assertEquals(element1, element2);
 
-	}
+        Iterator iterator = womDescription.getTypes().getExtensibilityElements().iterator();
+        Schema types = null;
+        while (iterator.hasNext()) {
+            WSDLExtensibilityElement temp = (WSDLExtensibilityElement) iterator.next();
+            if (ExtensionConstants.SCHEMA.equals(temp.getType())) {
+                types = (Schema) temp;
+            }
+        }
+        int numberOfBookQuote_getBookPrice = 0;
+        NodeList childNodes = types.getElelment().getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (item instanceof Element) {
+                Element temp = (Element) item;
+                if ("complexType".equals(temp.getNodeName()) &&
+                        "BookQuote_getBookPrice".equals(temp.getAttribute("name"))) {
+                    numberOfBookQuote_getBookPrice++;
+                }
+
+            }
+        }
+        assertEquals(numberOfBookQuote_getBookPrice, 1);
+
+
+    }
 }

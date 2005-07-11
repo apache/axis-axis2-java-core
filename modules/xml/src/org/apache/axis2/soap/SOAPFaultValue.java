@@ -18,7 +18,7 @@ import org.apache.axis2.om.OMElement;
  * the License.
  * <p/>
  */
-public interface SOAPFaultValue extends OMElement{
+public interface SOAPFaultValue extends OMElement {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */

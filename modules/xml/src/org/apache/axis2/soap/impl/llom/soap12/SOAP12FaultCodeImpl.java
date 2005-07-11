@@ -24,7 +24,7 @@ import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
  * the License.
  * <p/>
  */
-public class SOAP12FaultCodeImpl extends SOAPFaultCodeImpl{
+public class SOAP12FaultCodeImpl extends SOAPFaultCodeImpl {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
@@ -48,7 +48,6 @@ public class SOAP12FaultCodeImpl extends SOAPFaultCodeImpl{
         super(parent, true);
     }
 
-   
 
     public void setSubCode(SOAPFaultSubCode subCode) throws SOAPProcessingException {
         if (!(subCode instanceof SOAP12FaultSubCodeImpl)) {
@@ -64,7 +63,7 @@ public class SOAP12FaultCodeImpl extends SOAPFaultCodeImpl{
         super.setValue(value);
     }
 
-     protected void checkParent(OMElement parent) throws SOAPProcessingException {
+    protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP12FaultImpl)) {
             throw new SOAPProcessingException("Expecting SOAP 1.2 implementation of SOAP Fault as the parent. But received some other implementation");
         }

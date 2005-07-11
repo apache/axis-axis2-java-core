@@ -31,56 +31,55 @@ import java.util.Iterator;
 
 /**
  * @author chathura@opensource.lk
- *  
  */
 public class CreateSchemaTest extends AbstractTestCase {
 
-	private WSDLDescription womDescription;
+    private WSDLDescription womDescription;
 
-	private Definition wsdl4jDefinition;
+    private Definition wsdl4jDefinition;
 
-	public CreateSchemaTest(String arg) {
-		super(arg);
-	}
+    public CreateSchemaTest(String arg) {
+        super(arg);
+    }
 
-	protected void setUp() throws Exception {
-		WSDLVersionWrapper wsdlVersionWrapper = null;
+    protected void setUp() throws Exception {
+        WSDLVersionWrapper wsdlVersionWrapper = null;
         if (null == this.womDescription) {
             InputStream in = new FileInputStream(getTestResourceFile("BookQuote.wsdl"));
             wsdlVersionWrapper = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
-			this.womDescription = wsdlVersionWrapper.getDescription();
+            this.womDescription = wsdlVersionWrapper.getDescription();
         }
         if (null == wsdl4jDefinition) {
             this.wsdl4jDefinition = wsdlVersionWrapper.getDefinition();
         }
-	}
+    }
 
-	public void testInsertedMultipartType() {
-		WSDLTypes types = womDescription.getTypes();
-		assertNotNull(types);
-		Iterator iterator = types.getExtensibilityElements().iterator();
-		WSDLExtensibilityElement element = null;
-		while (iterator.hasNext()) {
-			element = (WSDLExtensibilityElement) iterator.next();
-			if (ExtensionConstants.SCHEMA.equals(element.getType()))
-				break;
-		}
-		assertNotNull(element);
-		Schema schema = (Schema) element;
-		NodeList childNodes = schema.getElelment().getChildNodes();
-		Element insertedElementForMessageReference = null;
-		for (int i = 0; i < childNodes.getLength(); i++) {
-			Node item = childNodes.item(i);
-			if (item instanceof Element
-					&& "complexType".equals(((Element) item).getTagName())
-					&& "BookQuote_getBookPrice".equals(((Element) item)
-							.getAttribute("name"))) {
-				insertedElementForMessageReference = (Element) item;
-			}
-		}
+    public void testInsertedMultipartType() {
+        WSDLTypes types = womDescription.getTypes();
+        assertNotNull(types);
+        Iterator iterator = types.getExtensibilityElements().iterator();
+        WSDLExtensibilityElement element = null;
+        while (iterator.hasNext()) {
+            element = (WSDLExtensibilityElement) iterator.next();
+            if (ExtensionConstants.SCHEMA.equals(element.getType()))
+                break;
+        }
+        assertNotNull(element);
+        Schema schema = (Schema) element;
+        NodeList childNodes = schema.getElelment().getChildNodes();
+        Element insertedElementForMessageReference = null;
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node item = childNodes.item(i);
+            if (item instanceof Element
+                    && "complexType".equals(((Element) item).getTagName())
+                    && "BookQuote_getBookPrice".equals(((Element) item)
+                                                       .getAttribute("name"))) {
+                insertedElementForMessageReference = (Element) item;
+            }
+        }
 
-		assertNotNull(insertedElementForMessageReference);
+        assertNotNull(insertedElementForMessageReference);
 
-	}
+    }
 
 }

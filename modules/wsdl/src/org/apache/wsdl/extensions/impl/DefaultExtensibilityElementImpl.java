@@ -22,29 +22,28 @@ import org.w3c.dom.Element;
 
 /**
  * @author chathura@opensource.lk
- * This would be the default Extension class in case that the Extensibility Element
- * in the WSDL file could not be mapped to a particular Extensibility Element. In 
- * which case the entire Extensibility Element will be kept as a DOM Element
- *  
+ *         This would be the default Extension class in case that the Extensibility Element
+ *         in the WSDL file could not be mapped to a particular Extensibility Element. In
+ *         which case the entire Extensibility Element will be kept as a DOM Element
  */
 public class DefaultExtensibilityElementImpl extends
-		WSDLExtensibilityElementImpl implements DefaultExtensibilityElement {
+        WSDLExtensibilityElementImpl implements DefaultExtensibilityElement {
 
-	private Element element;
+    private Element element;
 
-	/**
-	 * @return The Extensibility Element as a DOM Element
-	 */
-	public Element getElement() {
-		return element;
-	}
+    /**
+     * @return The Extensibility Element as a DOM Element
+     */
+    public Element getElement() {
+        return element;
+    }
 
-	/**
-	 * Sets the DOM Element as the extensibility Elements 
-	 * Content.
-	 */
-	public void setElement(Element element) {
-		this.element = element;
-	}
+    /**
+     * Sets the DOM Element as the extensibility Elements
+     * Content.
+     */
+    public void setElement(Element element) {
+        this.element = element;
+    }
 
 }

@@ -22,29 +22,30 @@ import org.apache.axis2.soap.SOAPEnvelope;
  * Class AsyncResult
  */
 public class AsyncResult {
-    
-    public AsyncResult(MessageContext result){
+
+    public AsyncResult(MessageContext result) {
         this.result = result;
     }
+
     /**
      * Field result
      */
     private MessageContext result;
 
- 
 
     /**
      * @return SOAPEnvelope
      */
     public SOAPEnvelope getResponseEnvelope() {
-        if(result != null){
+        if (result != null) {
             return result.getEnvelope();
-        }else{
+        } else {
             return null;
         }
-        
+
     }
-    public MessageContext getResponseMessageContext(){
+
+    public MessageContext getResponseMessageContext() {
         return result;
     }
 }

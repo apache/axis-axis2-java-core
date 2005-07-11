@@ -92,11 +92,10 @@ public interface OMElement extends OMNode, OMContainer {
             throws OMException;
 
     /**
-     *
      * @return
      * @throws OMException
      */
-    public Iterator getAllDeclaredNamespaces()  throws OMException;
+    public Iterator getAllDeclaredNamespaces() throws OMException;
 
 
     /**
@@ -116,7 +115,6 @@ public interface OMElement extends OMNode, OMContainer {
     public Iterator getAttributes();
 
     /**
-     *
      * @param qname
      * @return
      */
@@ -139,7 +137,7 @@ public interface OMElement extends OMNode, OMContainer {
      * @return
      */
     public OMAttribute addAttribute(String attributeName, String value,
-                                       OMNamespace ns);
+                                    OMNamespace ns);
 
     /**
      * Method removeAttribute
@@ -178,11 +176,11 @@ public interface OMElement extends OMNode, OMContainer {
 
     /**
      * Convenience extension of the getFirstChild
+     *
      * @return
      */
 
     public OMElement getFirstElement();
-
 
 
     /**
@@ -197,18 +195,18 @@ public interface OMElement extends OMNode, OMContainer {
      * Returns the pull parser that will generate the pull
      * events relevant to THIS element.caching is off
      *
-     *
      * @return
      */
     public XMLStreamReader getXMLStreamReaderWithoutCaching();
 
     /**
-     * 
      * @param text
      */
     public void setText(String text);
+
     /**
      * This will return the non-empty text children as a String
+     *
      * @return
      */
     public String getText();
@@ -235,12 +233,14 @@ public interface OMElement extends OMNode, OMContainer {
 
     /**
      * sets the Namespace
+     *
      * @param namespace
      */
     public void setNamespace(OMNamespace namespace);
 
     /**
      * Get the Qname of this node
+     *
      * @return
      */
     public QName getQName();

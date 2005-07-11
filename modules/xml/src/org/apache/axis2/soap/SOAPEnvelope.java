@@ -31,8 +31,9 @@ public interface SOAPEnvelope extends OMElement {
      *
      * @return the <CODE>SOAPHeader</CODE> object or <CODE>
      *         null</CODE> if there is none
-     * @throws org.apache.axis2.om.OMException if there is a problem
-     *                     obtaining the <CODE>SOAPHeader</CODE> object
+     * @throws org.apache.axis2.om.OMException
+     *          if there is a problem
+     *          obtaining the <CODE>SOAPHeader</CODE> object
      */
     public abstract SOAPHeader getHeader() throws OMException;
 

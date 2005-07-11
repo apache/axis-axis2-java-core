@@ -24,8 +24,8 @@ import org.apache.axis2.description.AxisDescWSDLComponentFactory;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
-import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
+import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLDescription;
@@ -77,19 +77,19 @@ public class ArchiveReader implements DeploymentConstants {
 
     public ServiceDescription createService(ArchiveFileData file) throws DeploymentException {
         ServiceDescription service = null;
-        InputStream in= file.getClassLoader().getResourceAsStream(SERVICEWSDL);
+        InputStream in = file.getClassLoader().getResourceAsStream(SERVICEWSDL);
         boolean foundservice = false;
         try {
-            if(in!= null){
+            if (in != null) {
                 WOMBuilder builder = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11);
                 WSDLVersionWrapper wsdlVersionWrapper = builder.build(in, new AxisDescWSDLComponentFactory());
-                WSDLDescription  womDescription = wsdlVersionWrapper.getDescription();
+                WSDLDescription womDescription = wsdlVersionWrapper.getDescription();
                 Iterator iterator = womDescription.getServices().keySet().iterator();
-                if(iterator.hasNext()){
+                if (iterator.hasNext()) {
                     foundservice = true;
-                    service = (ServiceDescription)womDescription.getServices().get(iterator.next());
+                    service = (ServiceDescription) womDescription.getServices().get(iterator.next());
                 }
-                if(!foundservice){
+                if (!foundservice) {
                     service = new ServiceDescription();
                 }
                 service.setWSDLDefinition(wsdlVersionWrapper.getDefinition());
@@ -168,16 +168,17 @@ public class ArchiveReader implements DeploymentConstants {
      * This method first check whether the given module is there in the user home dirctory if so return
      * that , else try to read the given module form classpath (from resources ) if found first get the module.mar
      * file from the resourceStream and write that into user home/axis2home/nodule directory
+     *
      * @param moduleName
      * @return
      * @throws DeploymentException
      */
-    public File creatModuleArchivefromResource(String moduleName , String axis2repository) throws DeploymentException {
+    public File creatModuleArchivefromResource(String moduleName, String axis2repository) throws DeploymentException {
         File modulearchiveFile = null;
         File modules = null;
         try {
             int BUFFER = 2048;
-            if(axis2repository == null ){
+            if (axis2repository == null) {
                 String userHome = System.getProperty("user.home");
                 File userHomedir = new File(userHome);
                 File repository = new File(userHomedir, ".axis2home");
@@ -187,14 +188,14 @@ public class ArchiveReader implements DeploymentConstants {
                     modules.mkdirs();
                 }
             } else {
-                modules = new File(axis2repository , "modules");
-                if(!modules.exists()){
+                modules = new File(axis2repository, "modules");
+                if (!modules.exists()) {
                     modules = new File(axis2repository, "modules");
                     modules.mkdirs();
                 }
             }
-            String modulearchiveName =moduleName + ".mar";
-            modulearchiveFile = new File(modules,modulearchiveName);
+            String modulearchiveName = moduleName + ".mar";
+            modulearchiveFile = new File(modules, modulearchiveName);
             if (modulearchiveFile.exists()) {
                 return modulearchiveFile;
             } else {
@@ -208,11 +209,11 @@ public class ArchiveReader implements DeploymentConstants {
 
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             InputStream in = cl.getResourceAsStream("modules/" + moduleName + ".mar");
-            if(in == null ){
+            if (in == null) {
                 in = cl.getResourceAsStream("modules/" + moduleName + ".jar");
             }
-            if(in == null){
-                throw new DeploymentException( moduleName + " module is not found");
+            if (in == null) {
+                throw new DeploymentException(moduleName + " module is not found");
             }
             ZipInputStream zin = null;
             zin = new ZipInputStream(in);
@@ -230,7 +231,7 @@ public class ArchiveReader implements DeploymentConstants {
         } catch (Exception e) {
             throw new DeploymentException(e.getMessage());
         }
-        return  modulearchiveFile;
+        return modulearchiveFile;
     }
 
 }

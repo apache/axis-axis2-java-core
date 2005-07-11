@@ -21,20 +21,21 @@ package javax.xml.soap;
  * fragments can be inserted as children of the <CODE>
  * SOAPHeader</CODE> or <CODE>SOAPBody</CODE> or <CODE>
  * SOAPEnvelope</CODE>.</P>
- *
+ * <p/>
  * <P>Elements created using this factory do not have the
  * properties of an element that lives inside a SOAP header
  * document. These elements are copied into the XML document tree
  * when they are inserted.</P>
- * @deprecated - Use javax.xml.soap.SOAPFactory for creating SOAPElements.
+ *
  * @see SOAPFactory SOAPFactory
+ * @deprecated - Use javax.xml.soap.SOAPFactory for creating SOAPElements.
  */
 public class SOAPElementFactory {
 
     /**
      * Create a new <code>SOAPElementFactory from a <code>SOAPFactory</code>.
      *
-     * @param soapfactory  the <code>SOAPFactory</code> to use
+     * @param soapfactory the <code>SOAPFactory</code> to use
      */
     private SOAPElementFactory(SOAPFactory soapfactory) {
         sf = soapfactory;
@@ -43,14 +44,15 @@ public class SOAPElementFactory {
     /**
      * Create a <CODE>SOAPElement</CODE> object initialized with
      * the given <CODE>Name</CODE> object.
-     * @param   name a <CODE>Name</CODE> object with
-     *     the XML name for the new element
+     *
+     * @param name a <CODE>Name</CODE> object with
+     *             the XML name for the new element
      * @return the new <CODE>SOAPElement</CODE> object that was
-     *     created
-     * @throws  SOAPException if there is an error in
-     *     creating the <CODE>SOAPElement</CODE> object
-     * @deprecated Use javax.xml.soap.SOAPFactory.createElement(javax.xml.soap.Name) instead
+     *         created
+     * @throws SOAPException if there is an error in
+     *                       creating the <CODE>SOAPElement</CODE> object
      * @see SOAPFactory#createElement(javax.xml.soap.Name) SOAPFactory.createElement(javax.xml.soap.Name)
+     * @deprecated Use javax.xml.soap.SOAPFactory.createElement(javax.xml.soap.Name) instead
      */
     public SOAPElement create(Name name) throws SOAPException {
         return sf.createElement(name);
@@ -59,14 +61,15 @@ public class SOAPElementFactory {
     /**
      * Create a <CODE>SOAPElement</CODE> object initialized with
      * the given local name.
-     * @param   localName a <CODE>String</CODE> giving
-     *     the local name for the new element
+     *
+     * @param localName a <CODE>String</CODE> giving
+     *                  the local name for the new element
      * @return the new <CODE>SOAPElement</CODE> object that was
-     *     created
-     * @throws  SOAPException if there is an error in
-     *     creating the <CODE>SOAPElement</CODE> object
-     * @deprecated Use javax.xml.soap.SOAPFactory.createElement(String localName) instead
+     *         created
+     * @throws SOAPException if there is an error in
+     *                       creating the <CODE>SOAPElement</CODE> object
      * @see SOAPFactory#createElement(java.lang.String) SOAPFactory.createElement(java.lang.String)
+     * @deprecated Use javax.xml.soap.SOAPFactory.createElement(String localName) instead
      */
     public SOAPElement create(String localName) throws SOAPException {
         return sf.createElement(localName);
@@ -75,19 +78,20 @@ public class SOAPElementFactory {
     /**
      * Create a new <CODE>SOAPElement</CODE> object with the
      * given local name, prefix and uri.
-     * @param   localName a <CODE>String</CODE> giving
-     *     the local name for the new element
-     * @param   prefix the prefix for this <CODE>
-     *     SOAPElement</CODE>
-     * @param   uri a <CODE>String</CODE> giving the
-     *     URI of the namespace to which the new element
-     *     belongs
+     *
+     * @param localName a <CODE>String</CODE> giving
+     *                  the local name for the new element
+     * @param prefix    the prefix for this <CODE>
+     *                  SOAPElement</CODE>
+     * @param uri       a <CODE>String</CODE> giving the
+     *                  URI of the namespace to which the new element
+     *                  belongs
      * @return the new <CODE>SOAPElement</CODE> object that was
-     *     created
-     * @throws  SOAPException if there is an error in
-     *     creating the <CODE>SOAPElement</CODE> object
-     * @deprecated Use javax.xml.soap.SOAPFactory.createElement(String localName, String prefix, String uri) instead
+     *         created
+     * @throws SOAPException if there is an error in
+     *                       creating the <CODE>SOAPElement</CODE> object
      * @see SOAPFactory#createElement(java.lang.String, java.lang.String, java.lang.String) SOAPFactory.createElement(java.lang.String, java.lang.String, java.lang.String)
+     * @deprecated Use javax.xml.soap.SOAPFactory.createElement(String localName, String prefix, String uri) instead
      */
     public SOAPElement create(String localName, String prefix, String uri)
             throws SOAPException {
@@ -98,9 +102,9 @@ public class SOAPElementFactory {
      * Creates a new instance of <CODE>SOAPElementFactory</CODE>.
      *
      * @return a new instance of a <CODE>
-     *     SOAPElementFactory</CODE>
-     * @throws  SOAPException if there was an error creating
-     *     the default <CODE>SOAPElementFactory
+     *         SOAPElementFactory</CODE>
+     * @throws SOAPException if there was an error creating
+     *                       the default <CODE>SOAPElementFactory
      */
     public static SOAPElementFactory newInstance() throws SOAPException {
 

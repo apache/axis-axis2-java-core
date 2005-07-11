@@ -27,20 +27,20 @@ import org.apache.axis2.engine.AxisConfiguration;
  * Date: May 14, 2005
  * Time: 3:30:53 PM
  */
-public class SystemPhasesremovedTest extends TestCase{
+public class SystemPhasesremovedTest extends TestCase {
 
     AxisConfiguration er;
 
-        public void testPhaseOrderchage() {
-            try {
-                String filename = "./test-resources/deployment/SystemPhaseRemove";
-                ConfigurationContextFactory builder = new ConfigurationContextFactory();
-                er = builder.buildConfigurationContext(filename).getAxisConfiguration();
-                fail("this must failed gracefully with DeploymentException \"Invalid System predefined " +
-                        "inphases , phase order dose not\" +\n support\\n recheck axis2.xml\"");
-            } catch (DeploymentException e) {
-                e.printStackTrace();
-            }
+    public void testPhaseOrderchage() {
+        try {
+            String filename = "./test-resources/deployment/SystemPhaseRemove";
+            ConfigurationContextFactory builder = new ConfigurationContextFactory();
+            er = builder.buildConfigurationContext(filename).getAxisConfiguration();
+            fail("this must failed gracefully with DeploymentException \"Invalid System predefined " +
+                 "inphases , phase order dose not\" +\n support\\n recheck axis2.xml\"");
+        } catch (DeploymentException e) {
+            e.printStackTrace();
         }
+    }
 
 }

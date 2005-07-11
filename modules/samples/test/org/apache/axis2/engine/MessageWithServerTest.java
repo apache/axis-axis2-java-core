@@ -40,7 +40,7 @@ public class MessageWithServerTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("", "EchoService");
     private QName operationName =
-        new QName("http://ws.apache.org/axis2", "echoVoid");
+            new QName("http://ws.apache.org/axis2", "echoVoid");
     private QName transportName = new QName("", "NullTransport");
 
     private AxisConfiguration engineRegistry;
@@ -56,9 +56,9 @@ public class MessageWithServerTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        ServiceDescription service = Utils.createSimpleService(serviceName,Echo.class.getName(),operationName);
-        
-        
+        ServiceDescription service = Utils.createSimpleService(serviceName, Echo.class.getName(), operationName);
+
+
         service.setInFlow(new MockFlow("service inflow", 4));
         service.setOutFlow(new MockFlow("service outflow", 5));
         //service.setFaultInFlow(new MockFlow("service faultflow", 1));

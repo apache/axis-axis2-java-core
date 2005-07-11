@@ -17,30 +17,32 @@ package org.apache.axis2.wsdl.codegen;
 *
 *   Constants for the XSLT related items
 */
+
 public interface XSLTConstants {
     String DEFAULT_PACKAGE_NAME = "codegen";
 
     /**
      * Language constants
      */
-    public interface LanguageTypes{
+    public interface LanguageTypes {
 
-        public static final int JAVA=1;
-        public static final int C_SHARP=2;
-        public static final int C_PLUS_PLUS=3;
-        public static final int VB_DOT_NET=4;
+        public static final int JAVA = 1;
+        public static final int C_SHARP = 2;
+        public static final int C_PLUS_PLUS = 3;
+        public static final int VB_DOT_NET = 4;
     }
 
-      public interface DataBindingTypes{
+    public interface DataBindingTypes {
 
-        public static final int XML_BEANS=1;
-        public static final int JAXB=2;
+        public static final int XML_BEANS = 1;
+        public static final int JAXB = 2;
 
     }
+
     /**
      * Interface templates
      */
-    public interface XSLTInterfaceTemplates{
+    public interface XSLTInterfaceTemplates {
         public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/InterfaceTemplate.xsl";
         public static final String CSHARP_TEMPLATE = "/org/apache/axis2/wsdl/template/csharp/InterfaceTemplate.xsl";
     }
@@ -48,7 +50,7 @@ public interface XSLTConstants {
     /**
      * Interface implementation templates
      */
-    public interface XSLTInterfaceImplementationTemplates{
+    public interface XSLTInterfaceImplementationTemplates {
         public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/InterfaceImplementationTemplate.xsl";
         public static final String CSHARP_TEMPLATE = "/org/apache/axis2/wsdl/template/csharp/InterfaceImplementationTemplate.xsl";
     }
@@ -56,55 +58,53 @@ public interface XSLTConstants {
     /**
      * Interface bean templates
      */
-    public interface XSLTBeanTemplates{
+    public interface XSLTBeanTemplates {
         public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/BeanTemplate.xsl";
         public static final String CSHARP_TEMPLATE = "/org/apache/axis2/wsdl/template/csharp/BeanTemplate.xsl";
     }
-    
+
     /**
-     * 
      * Interface CallbackHanlder Template
      */
-    public interface XSLTCallbackHandlerTemplates{
-    	public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/CallbackHandlerTemplate.xsl";
-    	public static final String CSHARP_TEMPLATE = "/org/apache/axis2/wsdl/template/csharp/CallbackHandlerTemplate.xsl";
+    public interface XSLTCallbackHandlerTemplates {
+        public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/CallbackHandlerTemplate.xsl";
+        public static final String CSHARP_TEMPLATE = "/org/apache/axis2/wsdl/template/csharp/CallbackHandlerTemplate.xsl";
     }
 
-     /**
-     *
+    /**
      * Interface skeletons
      */
-    public interface XSLTSkeletonTemplates{
-    	public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/SkeletonTemplate.xsl";
-    	public static final String CSHARP_TEMPLATE = "/org/apache/axis2/wsdl/template/csharp/SkeletonTemplate.xsl";
+    public interface XSLTSkeletonTemplates {
+        public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/SkeletonTemplate.xsl";
+        public static final String CSHARP_TEMPLATE = "/org/apache/axis2/wsdl/template/csharp/SkeletonTemplate.xsl";
     }
 
-    public interface XSLTTestClassTemplates{
-    	public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/TestClassTemplate.xsl";
-    	public static final String CSHARP_TEMPLATE = "/org/apache/axis2/wsdl/template/csharp/TestClassTemplate.xsl";
+    public interface XSLTTestClassTemplates {
+        public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/TestClassTemplate.xsl";
+        public static final String CSHARP_TEMPLATE = "/org/apache/axis2/wsdl/template/csharp/TestClassTemplate.xsl";
     }
 
-     public interface XSLTDatabindingSupporterTemplates{
-    	public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/XMLBeansSupporterTemplate.xsl";
-    	//public static final String CSHARP_TEMPLATE = "/org/apache/axis2/wsdl/template/csharp/TestClassTemplate.xsl";
+    public interface XSLTDatabindingSupporterTemplates {
+        public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/XMLBeansSupporterTemplate.xsl";
+        //public static final String CSHARP_TEMPLATE = "/org/apache/axis2/wsdl/template/csharp/TestClassTemplate.xsl";
     }
 
-    public interface XSLTLocalTestClassTemplates{
-    	public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/TestClassTemplate.xsl";
-    	public static final String CSHARP_TEMPLATE = "/org/apache/axis2/wsdl/template/csharp/LocalTestClassTemplate.xsl";
+    public interface XSLTLocalTestClassTemplates {
+        public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/TestClassTemplate.xsl";
+        public static final String CSHARP_TEMPLATE = "/org/apache/axis2/wsdl/template/csharp/LocalTestClassTemplate.xsl";
     }
 
-    public interface XSLTTestSkeletonImplTemplates{
-    	public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/TestSkeletonImplTemplate.xsl";
+    public interface XSLTTestSkeletonImplTemplates {
+        public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/TestSkeletonImplTemplate.xsl";
     }
 
-     public interface XSLTServiceXMLTemplates{
-    	public static final String GENERAL_SERVICE_TEMPLATE = "/org/apache/axis2/wsdl/template/general/ServiceXMLTemplate.xsl";
+    public interface XSLTServiceXMLTemplates {
+        public static final String GENERAL_SERVICE_TEMPLATE = "/org/apache/axis2/wsdl/template/general/ServiceXMLTemplate.xsl";
     }
-     
-     public interface XSLTMessageReceiverTemplates{
-     	public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/MessageReceiverTemplate.xsl";
-     }
-     
-     
+
+    public interface XSLTMessageReceiverTemplates {
+        public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/MessageReceiverTemplate.xsl";
+    }
+
+
 }

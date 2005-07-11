@@ -24,29 +24,29 @@ import java.io.InputStream;
 
 /**
  * @author Ashutosh Shahi ashutosh.shahi@gmail.com
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ *         <p/>
+ *         TODO To change the template for this generated type comment go to
+ *         Window - Preferences - Java - Code Style - Code Templates
  */
 public class MessageFactoryImpl extends MessageFactory {
 
-	/* (non-Javadoc)
-	 * @see javax.xml.soap.MessageFactory#createMessage()
-	 */
-	public SOAPMessage createMessage() throws SOAPException {
-		SOAPEnvelopeImpl env = new SOAPEnvelopeImpl();
-		SOAPMessageImpl message = new SOAPMessageImpl(env);
-		return message;
-	}
+    /* (non-Javadoc)
+     * @see javax.xml.soap.MessageFactory#createMessage()
+     */
+    public SOAPMessage createMessage() throws SOAPException {
+        SOAPEnvelopeImpl env = new SOAPEnvelopeImpl();
+        SOAPMessageImpl message = new SOAPMessageImpl(env);
+        return message;
+    }
 
-	/* (non-Javadoc)
-	 * @see javax.xml.soap.MessageFactory#createMessage(javax.xml.soap.MimeHeaders, java.io.InputStream)
-	 */
-	public SOAPMessage createMessage(MimeHeaders mimeheaders,
-			InputStream inputstream) throws IOException, SOAPException {
-		// TODO Auto-generated method stub
-		SOAPMessageImpl message = new SOAPMessageImpl(inputstream, false,mimeheaders);
-		return message;
-	}
+    /* (non-Javadoc)
+     * @see javax.xml.soap.MessageFactory#createMessage(javax.xml.soap.MimeHeaders, java.io.InputStream)
+     */
+    public SOAPMessage createMessage(MimeHeaders mimeheaders,
+                                     InputStream inputstream) throws IOException, SOAPException {
+        // TODO Auto-generated method stub
+        SOAPMessageImpl message = new SOAPMessageImpl(inputstream, false, mimeheaders);
+        return message;
+    }
 
 }

@@ -20,15 +20,16 @@ import org.apache.axis2.storage.AxisStorage;
  *
  * 
  */
-public abstract class AbstractStorageTest extends TestCase{
-    protected AxisStorage storage;
-    protected Object testValueObject; 
 
-    public void testPutAndGet(){
+public abstract class AbstractStorageTest extends TestCase {
+    protected AxisStorage storage;
+    protected Object testValueObject;
+
+    public void testPutAndGet() {
         try {
-            Object key  = storage.put(testValueObject);
-            assertEquals(testValueObject,storage.get(key));
-            assertEquals(testValueObject,storage.remove(key));
+            Object key = storage.put(testValueObject);
+            assertEquals(testValueObject, storage.get(key));
+            assertEquals(testValueObject, storage.remove(key));
             assertNull(storage.get(key));
         } catch (Exception e) {
             fail(e.getMessage());

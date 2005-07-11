@@ -23,14 +23,15 @@ import java.io.FileOutputStream;
 *
 *
 */
-public class ServiceXMLWriter extends ClassWriter{
+
+public class ServiceXMLWriter extends ClassWriter {
 
 
     public ServiceXMLWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
-    public ServiceXMLWriter(File outputFileLocation,int language) {
+    public ServiceXMLWriter(File outputFileLocation, int language) {
         this.outputFileLocation = outputFileLocation;
         this.language = language;
     }
@@ -38,13 +39,13 @@ public class ServiceXMLWriter extends ClassWriter{
     /**
      * @see org.apache.axis2.wsdl.codegen.writer.ClassWriter#loadTemplate()
      */
-    public void loadTemplate(){
+    public void loadTemplate() {
         Class clazz = this.getClass();
         this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTServiceXMLTemplates.GENERAL_SERVICE_TEMPLATE);
     }
 
     public void createOutFile(String packageName, String fileName) throws Exception {
-        File outputFile = FileWriter.createClassFile(outputFileLocation,packageName,"service",".xml");
+        File outputFile = FileWriter.createClassFile(outputFileLocation, packageName, "service", ".xml");
         this.stream = new FileOutputStream(outputFile);
     }
 }

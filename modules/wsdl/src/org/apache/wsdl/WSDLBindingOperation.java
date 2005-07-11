@@ -77,39 +77,42 @@ public interface WSDLBindingOperation extends ExtensibleComponent {
      * @param name
      */
     public void setName(QName name);
-    
+
     /**
      * Add the InFault to the Components InFaults
+     *
      * @param inFault
      */
     public void addInFault(WSDLBindingFault inFault);
-    
+
     /**
      * Add the OutFault to the Component OutFaults
+     *
      * @param outFault
      */
     public void addOutFault(WSDLBindingFault outFault);
-    
+
     /**
-     * 
      * @return The list of infault <code>WSDLBindingFault</code>s
      */
-	public List getInfaults() ;
-	/**
-	 * Sets the list of infault <code>WSDLBindingFault</code>s
-	 * @param infaults
-	 */
-	public void setInfaults(List infaults) ;
-	
-	/**
-	 * 
-	 * @return The list of Outfaults <code>WSDLBindingFault</code>s
-	 */
-	public List getOutfaults() ;
-	
-	/**
-	 * Sets the list of outfault <code>WSDLBindingFault</code>s
-	 * @param outfaults
-	 */
-	public void setOutfaults(List outfaults) ;
+    public List getInfaults();
+
+    /**
+     * Sets the list of infault <code>WSDLBindingFault</code>s
+     *
+     * @param infaults
+     */
+    public void setInfaults(List infaults);
+
+    /**
+     * @return The list of Outfaults <code>WSDLBindingFault</code>s
+     */
+    public List getOutfaults();
+
+    /**
+     * Sets the list of outfault <code>WSDLBindingFault</code>s
+     *
+     * @param outfaults
+     */
+    public void setOutfaults(List outfaults);
 }

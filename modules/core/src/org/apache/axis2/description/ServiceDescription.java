@@ -31,7 +31,6 @@ import org.apache.wsdl.impl.WSDLInterfaceImpl;
 import org.apache.wsdl.impl.WSDLServiceImpl;
 
 import javax.wsdl.*;
-import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
@@ -64,12 +63,12 @@ public class ServiceDescription
     public ServiceDescription() {
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
-        this.setServiceInterface( new WSDLInterfaceImpl());
+        this.setServiceInterface(new WSDLInterfaceImpl());
     }
 
     /**
      * Constructor ServiceDescription
-     * 
+     *
      * @param qName
      */
     public ServiceDescription(QName qName) {
@@ -85,6 +84,7 @@ public class ServiceDescription
 
     /**
      * To ebgage a module it is reuired to use this method
+     *
      * @param moduleref
      * @throws AxisFault
      */
@@ -95,37 +95,38 @@ public class ServiceDescription
         if (moduleref != null) {
             Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
             for (Iterator iterator = collectionModule.iterator(); iterator.hasNext();) {
-                ModuleDescription   modu = (ModuleDescription) iterator.next();
-                if(modu.getName().equals(moduleref.getName())){
-                    throw new AxisFault(moduleref.getName().getLocalPart()+ " module has alredy engaged to the seevice" +
-                            "  operation terminated !!!");
+                ModuleDescription modu = (ModuleDescription) iterator.next();
+                if (modu.getName().equals(moduleref.getName())) {
+                    throw new AxisFault(moduleref.getName().getLocalPart() + " module has alredy engaged to the seevice" +
+                                        "  operation terminated !!!");
                 }
 
             }
         }
-        new PhaseResolver().engageModuleToService(this,moduleref);
+        new PhaseResolver().engageModuleToService(this, moduleref);
         Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
         collectionModule.add(moduleref);
     }
 
     /**
      * To add a opeartion to a service if a module requird to do so
+     *
      * @param module
      */
-    public void addModuleOperations(ModuleDescription module){
+    public void addModuleOperations(ModuleDescription module) {
         HashMap map = module.getOperations();
-        Collection col =  map.values();
+        Collection col = map.values();
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             OperationDescription operation = (OperationDescription) iterator.next();
             this.addOperation(operation);
         }
     }
 
-    public void addToEngagModuleList(ModuleDescription moduleName){
+    public void addToEngagModuleList(ModuleDescription moduleName) {
         Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
         for (Iterator iterator = collectionModule.iterator(); iterator.hasNext();) {
             ModuleDescription moduleDescription = (ModuleDescription) iterator.next();
-            if(moduleName.getName().equals(moduleDescription.getName())){
+            if (moduleName.getName().equals(moduleDescription.getName())) {
                 return;
             }
         }
@@ -140,7 +141,7 @@ public class ServiceDescription
 
     /**
      * Method getEngadgedModules
-     * 
+     *
      * @return
      */
     public Collection getEngagedModules() {
@@ -149,13 +150,13 @@ public class ServiceDescription
 
     /**
      * Method getOperation
-     * 
+     *
      * @param operationName
      * @return
      */
     public OperationDescription getOperation(QName operationName) {
         String opStr = operationName.getLocalPart();
-        
+
         HashMap allOperations = this.getServiceInterface().getAllOperations();
         return (OperationDescription) allOperations.get(opStr);
     }
@@ -168,7 +169,7 @@ public class ServiceDescription
 
     /**
      * Method addOperation
-     * 
+     *
      * @param operation
      */
     public void addOperation(OperationDescription operation) {
@@ -184,7 +185,7 @@ public class ServiceDescription
 
     /**
      * Method setClassLoader
-     * 
+     *
      * @param classLoader
      */
     public void setClassLoader(ClassLoader classLoader) {
@@ -201,7 +202,7 @@ public class ServiceDescription
 
     /**
      * Method getClassLoader
-     * 
+     *
      * @return
      */
     public ClassLoader getClassLoader() {
@@ -216,7 +217,7 @@ public class ServiceDescription
 
     /**
      * Method setContextPath
-     * 
+     *
      * @param contextPath
      */
     public void setContextPath(String contextPath) {
@@ -233,7 +234,7 @@ public class ServiceDescription
 
     /**
      * Method getContextPath
-     * 
+     *
      * @return
      */
     public String getContextPath() {
@@ -248,7 +249,7 @@ public class ServiceDescription
 
     /**
      * Method setStyle
-     * 
+     *
      * @param style
      */
     public void setStyle(String style) {
@@ -265,7 +266,7 @@ public class ServiceDescription
 
     /**
      * Method getStyle
-     * 
+     *
      * @return
      */
     public String getStyle() {
@@ -287,7 +288,7 @@ public class ServiceDescription
 
     /**
      * Method addParameter
-     * 
+     *
      * @param param
      */
     public void addParameter(Parameter param) {
@@ -307,7 +308,7 @@ public class ServiceDescription
 
     /**
      * Method getParameter
-     * 
+     *
      * @param name
      * @return
      */
@@ -325,7 +326,7 @@ public class ServiceDescription
 
     /**
      * Method getInFlow
-     * 
+     *
      * @return
      */
     public Flow getInFlow() {
@@ -340,7 +341,7 @@ public class ServiceDescription
 
     /**
      * Method setInFlow
-     * 
+     *
      * @param inFlow
      */
     public void setInFlow(Flow inFlow) {
@@ -357,7 +358,7 @@ public class ServiceDescription
 
     /**
      * Method getOutFlow
-     * 
+     *
      * @return
      */
     public Flow getOutFlow() {
@@ -372,7 +373,7 @@ public class ServiceDescription
 
     /**
      * Method setOutFlow
-     * 
+     *
      * @param outFlow
      */
     public void setOutFlow(Flow outFlow) {
@@ -389,7 +390,7 @@ public class ServiceDescription
 
     /**
      * Method getFaultInFlow
-     * 
+     *
      * @return
      */
     public Flow getFaultInFlow() {
@@ -404,7 +405,7 @@ public class ServiceDescription
 
     /**
      * Method setFaultInFlow
-     * 
+     *
      * @param faultFlow
      */
     public void setFaultInFlow(Flow faultFlow) {
@@ -425,32 +426,33 @@ public class ServiceDescription
 
     /**
      * Method getOperations
-     * 
+     *
      * @return
      */
     public HashMap getOperations() {
         return this.getServiceInterface().getOperations();
     }
 
-    public OperationDescription getOperation(String ncName){
-        return (OperationDescription)this.getServiceInterface().getOperations().get(ncName);
+    public OperationDescription getOperation(String ncName) {
+        return (OperationDescription) this.getServiceInterface().getOperations().get(ncName);
     }
 
     /**
-     * This method will return the operation given particular SOAP Action. 
+     * This method will return the operation given particular SOAP Action.
      * This method should only be called if there is only one Endpoint is defined
      * for this Service. If more than one Endpoint exists one of them will be picked.
-     * If more than one Operation is found with the given 
-     * SOAP Action; null will be ruturned. If no particular Operation is found with 
+     * If more than one Operation is found with the given
+     * SOAP Action; null will be ruturned. If no particular Operation is found with
      * the given SOAP Action; null will be returned.
-     * @param soapAction SOAP Action defined for the particular Operation 
+     *
+     * @param soapAction SOAP Action defined for the particular Operation
      * @return A OperationDescription if a unque Operation can be found with the given SOAP Action
-     * otherwise will return null.
+     *         otherwise will return null.
      */
-    public OperationDescription getOperationBySOAPAction(String soapAction){
+    public OperationDescription getOperationBySOAPAction(String soapAction) {
         Iterator iterator = this.getEndpoints().keySet().iterator();
-        if(iterator.hasNext()){
-            WSDLEndpoint endpoint = (WSDLEndpoint)this.getEndpoints().get(iterator.next());
+        if (iterator.hasNext()) {
+            WSDLEndpoint endpoint = (WSDLEndpoint) this.getEndpoints().get(iterator.next());
             return this.getOperationBySOAPAction(soapAction, endpoint.getName());
         }
 
@@ -461,35 +463,36 @@ public class ServiceDescription
 
 
     /**
-     * This method will return the operation given the particular endpoing and the 
-     * particular SOAP Action. If more than one Operation is found with the given 
-     * SOAP Action; null will be ruturned. If no particular Operation is found with 
+     * This method will return the operation given the particular endpoing and the
+     * particular SOAP Action. If more than one Operation is found with the given
+     * SOAP Action; null will be ruturned. If no particular Operation is found with
      * the given SOAP Action; null will be returned
-     * @param endpoint Particular Enpoint in which the bining is defined with the particular SOAP
-     * Action.
-     * @param soapAction SOAP Action defined for the particular Operation 
+     *
+     * @param endpoint   Particular Enpoint in which the bining is defined with the particular SOAP
+     *                   Action.
+     * @param soapAction SOAP Action defined for the particular Operation
      * @return A OperationDescription if a unque Operation can be found with the given SOAP Action
-     * otherwise will return null.
+     *         otherwise will return null.
      */
-    public OperationDescription getOperationBySOAPAction(String soapAction, QName endpoint){
+    public OperationDescription getOperationBySOAPAction(String soapAction, QName endpoint) {
         HashMap bindingOperations = this.getEndpoint(endpoint).getBinding().getBindingOperations();
         Iterator operationKeySetIterator = bindingOperations.keySet().iterator();
         OperationDescription operation = null;
         int count = 0;
-        while(operationKeySetIterator.hasNext()){
-            WSDLBindingOperation bindingOperation = (WSDLBindingOperation)bindingOperations.get(operationKeySetIterator.next());
+        while (operationKeySetIterator.hasNext()) {
+            WSDLBindingOperation bindingOperation = (WSDLBindingOperation) bindingOperations.get(operationKeySetIterator.next());
             Iterator extIterator = bindingOperation.getExtensibilityElements().iterator();
-            while(extIterator.hasNext()){
-            	WSDLExtensibilityElement element = (WSDLExtensibilityElement)extIterator.next();
-                if(element.getType().equals(ExtensionConstants.SOAP_OPERATION)){
-                    if(((SOAPOperation)element).getSoapAction().equals(soapAction)){
-                        operation = (OperationDescription)bindingOperation.getOperation();
+            while (extIterator.hasNext()) {
+                WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
+                if (element.getType().equals(ExtensionConstants.SOAP_OPERATION)) {
+                    if (((SOAPOperation) element).getSoapAction().equals(soapAction)) {
+                        operation = (OperationDescription) bindingOperation.getOperation();
                         count++;
                     }
                 }
             }
         }
-        if(1 == count){
+        if (1 == count) {
             return operation;
         }
         return null;
@@ -500,7 +503,7 @@ public class ServiceDescription
      * This finds the ServiceContext provided that the incomming message that
      * has have some serviceInstanceID. Currently this will not be added to the
      * EngineContext's ServiceContextMap.
-     * 
+     *
      * @param msgContext
      * @return
      */
@@ -513,8 +516,7 @@ public class ServiceDescription
             // serviceContext);
         } else {
             serviceContext =
-                    (ServiceContext) msgContext.getSystemContext().getServiceContext(
-                            msgContext.getServiceInstanceID());
+                    (ServiceContext) msgContext.getSystemContext().getServiceContext(msgContext.getServiceInstanceID());
         }
 
         return serviceContext;
@@ -523,6 +525,7 @@ public class ServiceDescription
 
     /**
      * To get the description about the service
+     *
      * @return
      */
     public String getServiceDescription() {
@@ -531,6 +534,7 @@ public class ServiceDescription
 
     /**
      * Set the description about the service
+     *
      * @param serviceDescription
      */
     public void setServiceDescription(String serviceDescription) {
@@ -545,16 +549,16 @@ public class ServiceDescription
         this.difDefinition = difDefinition;
     }
 
-    public void printWSDL(Writer out, String PortURL)throws AxisFault{
+    public void printWSDL(Writer out, String PortURL) throws AxisFault {
         try {
             Definition wsdlDefinition = this.getWSDLDefinition();
-            if(wsdlDefinition !=null){
-                Iterator sreviceitr =  wsdlDefinition.getServices().keySet().iterator();
+            if (wsdlDefinition != null) {
+                Iterator sreviceitr = wsdlDefinition.getServices().keySet().iterator();
                 while (sreviceitr.hasNext()) {
-                     wsdlDefinition.removeService((QName)sreviceitr.next());
+                    wsdlDefinition.removeService((QName) sreviceitr.next());
                 }
 
-              //  wsdlDefinition.removeService(this.getName());
+                //  wsdlDefinition.removeService(this.getName());
 
                 Service service = wsdlDefinition.createService();
                 service.setQName(this.getName());
@@ -576,14 +580,13 @@ public class ServiceDescription
                 service.addPort(port);
 
                 wsdlDefinition.addService(service);
-                WSDLFactory.newInstance().newWSDLWriter().writeWSDL(wsdlDefinition,out);
+                WSDLFactory.newInstance().newWSDLWriter().writeWSDL(wsdlDefinition, out);
                 out.flush();
-            }   else {
-                WSDLFactory.newInstance().newWSDLWriter().writeWSDL(wsdlDefinition,out);
+            } else {
+                WSDLFactory.newInstance().newWSDLWriter().writeWSDL(wsdlDefinition, out);
                 out.write("<wsdl>WSDL is NOT found</wsdl>");
                 out.flush();
             }
-
 
 
         } catch (WSDLException e) {

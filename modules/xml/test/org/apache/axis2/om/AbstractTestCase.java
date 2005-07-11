@@ -25,7 +25,7 @@ import java.io.File;
 public abstract class AbstractTestCase
         extends TestCase {
     protected String testDir = "test" + File.separator;
-    protected String sampleDir =  "samples" + File.separator;
+    protected String sampleDir = "samples" + File.separator;
     protected String outDir = "target" + File.separator + "generated" + File.separator + "samples" + File.separator;
     protected String tempDir = "target" + File.separator + "generated" + File.separator + "temp";
     protected String testResourceDir = "test-resources";

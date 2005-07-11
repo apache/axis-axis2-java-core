@@ -139,12 +139,12 @@ public class AddressingOutHandler
         if (relatesToHeader != null)
             if ("".equals(relatesTo.getRelationshipType())) {
                 relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
-                        Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE,
-                        addressingNamespaceObject);
+                                             Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE,
+                                             addressingNamespaceObject);
             } else {
                 relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
-                        relatesTo.getRelationshipType(),
-                        addressingNamespaceObject);
+                                             relatesTo.getRelationshipType(),
+                                             addressingNamespaceObject);
             }
     }
 
@@ -175,7 +175,7 @@ public class AddressingOutHandler
         if (!"".equals(address) && address != null) {
             OMElement addressElement =
                     OMAbstractFactory.getOMFactory().createOMElement(EPR_ADDRESS,
-                            addressingNamespaceObject);
+                                                                     addressingNamespaceObject);
             soapHeaderBlock.addChild(addressElement);
             addressElement.setText(address);
         }
@@ -220,13 +220,13 @@ public class AddressingOutHandler
         if (serviceName != null) {
             OMElement serviceNameElement =
                     OMAbstractFactory.getOMFactory().createOMElement(EPR_SERVICE_NAME,
-                            addressingNamespaceObject);
+                                                                     addressingNamespaceObject);
             serviceNameElement.addAttribute(addressingNamespace.equals(Submission.WSA_NAMESPACE) ? Submission.EPR_SERVICE_NAME_PORT_NAME : Final.WSA_SERVICE_NAME_ENDPOINT_NAME,
-                    serviceName.getEndpointName(),
-                    addressingNamespaceObject);
+                                            serviceName.getEndpointName(),
+                                            addressingNamespaceObject);
             serviceNameElement.addChild(OMAbstractFactory.getOMFactory().createText(serviceName.getName().getPrefix()
-                    + ":"
-                    + serviceName.getName().getLocalPart()));
+                                                                                    + ":"
+                                                                                    + serviceName.getName().getLocalPart()));
             parentElement.addChild(serviceNameElement);
         }
 

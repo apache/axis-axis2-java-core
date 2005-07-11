@@ -16,7 +16,6 @@
 package sample.amazon.amazonSimpleQueueService;
 
 
-
 /**
  * @author Saminda Abeyruwan <saminda@opensource.lk>
  */
@@ -25,5 +24,5 @@ public class RunGUICQ {
         AmazonSimpleQueueServiceIn queue = new AmazonSimpleQueueServiceIn();
         queue.show();
     }
-    
+
 }

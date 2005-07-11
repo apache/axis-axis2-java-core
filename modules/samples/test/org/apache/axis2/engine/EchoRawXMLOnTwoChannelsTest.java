@@ -40,11 +40,10 @@ import javax.xml.namespace.QName;
 
 public class EchoRawXMLOnTwoChannelsTest extends TestCase {
     private EndpointReference targetEPR =
-        new EndpointReference(
-            AddressingConstants.WSA_TO,
-            "http://127.0.0.1:"
-                + (UtilServer.TESTING_PORT)
-                + "/axis/services/EchoXMLService/echoOMElement");
+            new EndpointReference(AddressingConstants.WSA_TO,
+                                  "http://127.0.0.1:"
+                                  + (UtilServer.TESTING_PORT)
+                                  + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -68,17 +67,15 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        UtilServer.getConfigurationContext().getAxisConfiguration().engageModule(
-            new QName("addressing"));
+        UtilServer.getConfigurationContext().getAxisConfiguration().engageModule(new QName("addressing"));
 
         ServiceDescription service =
-            Utils.createSimpleService(
-                serviceName,
-        Echo.class.getName(),
-                operationName);
+                Utils.createSimpleService(serviceName,
+                                          Echo.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
         serviceContext =
-            UtilServer.getConfigurationContext().createServiceContext(service.getName());
+                UtilServer.getConfigurationContext().createServiceContext(service.getName());
 
     }
 
@@ -87,14 +84,12 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
         UtilServer.stop();
     }
 
- 
 
     public void testEchoXMLCompleteASync() throws Exception {
         ServiceDescription service =
-            Utils.createSimpleService(
-                serviceName,
-        Echo.class.getName(),
-                operationName);
+                Utils.createSimpleService(serviceName,
+                                          Echo.class.getName(),
+                                          operationName);
 
         ServiceContext serviceContext = UtilServer.createAdressedEnabledClientSide(service);
 
@@ -140,4 +135,4 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
         }
 
     }
- }
+}

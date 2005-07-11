@@ -22,4 +22,5 @@ package javax.xml.soap;
  * object that contains it, is application-specific.
  * <P>
  */
-public interface DetailEntry extends SOAPElement {}
+public interface DetailEntry extends SOAPElement {
+}

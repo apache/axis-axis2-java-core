@@ -16,7 +16,6 @@
 package sample.amazon.amazonSimpleQueueService;
 
 
-
 /**
  * @author Saminda Abeyruwan <saminda@opensource.lk>
  */

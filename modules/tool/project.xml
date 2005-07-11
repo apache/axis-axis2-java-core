@@ -17,28 +17,28 @@
  */
  -->
 <project>
-	<pomVersion>3</pomVersion>
-	<extend>../../etc/project.xml</extend>
-	<id>axis2-tools</id>
-	<name>tool</name>
-	<description>Tools available for Axis 2.0.</description>
+    <pomVersion>3</pomVersion>
+    <extend>../../etc/project.xml</extend>
+    <id>axis2-tools</id>
+    <name>tool</name>
+    <description>Tools available for Axis 2.0.</description>
 
-	<dependencies>
-		<!-- external JARs -->
-		<dependency>
-			<groupId>ant</groupId>
-			<artifactId>ant</artifactId>
-			<version>1.6.2</version>
-			<properties>
-				<module>true</module>
-			</properties>
-		</dependency>
-		 <dependency>
+    <dependencies>
+        <!-- external JARs -->
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.6.2</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
             <groupId>axis</groupId>
             <artifactId>axis2-wsdl</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
-		 <dependency>
+        <dependency>
             <groupId>axis</groupId>
             <artifactId>axis-wsdl4j</artifactId>
             <version>1.2</version>
@@ -46,46 +46,46 @@
                 <module>true</module>
             </properties>
         </dependency>
-	</dependencies>
-	
-	  <build>
-    <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
-    <sourceDirectory>src</sourceDirectory>
-    <unitTestSourceDirectory>test</unitTestSourceDirectory>
+    </dependencies>
 
-    <sourceModifications>
-		<sourceModification>
-			<className>fakeClass</className>
-			<excludes>
-				<exclude>**/codegen/**/*.java</exclude>
-				<exclude>**/core/**/*.java</exclude>
-				<exclude>**/service/**/*.java</exclude>
-			</excludes>
-		</sourceModification>
-	</sourceModifications>
-	
-    <unitTest>
-     <includes>
-        <include>**/*Test.java</include>
-      </includes>
-    </unitTest>
+    <build>
+        <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
+        <sourceDirectory>src</sourceDirectory>
+        <unitTestSourceDirectory>test</unitTestSourceDirectory>
 
-    <resources>
-      <resource>
-        <directory>conf</directory>
-        <includes>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src</directory>
-        <includes>
-          <include>**/*.properties</include>
-          <include>**/*.xml</include>
-        </includes>
-      </resource>
+        <sourceModifications>
+            <sourceModification>
+                <className>fakeClass</className>
+                <excludes>
+                    <exclude>**/codegen/**/*.java</exclude>
+                    <exclude>**/core/**/*.java</exclude>
+                    <exclude>**/service/**/*.java</exclude>
+                </excludes>
+            </sourceModification>
+        </sourceModifications>
+
+        <unitTest>
+            <includes>
+                <include>**/*Test.java</include>
+            </includes>
+        </unitTest>
+
+        <resources>
+            <resource>
+                <directory>conf</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
         </resources>
-  </build>
-	<reports/>
-	
+    </build>
+    <reports/>
+
 </project>

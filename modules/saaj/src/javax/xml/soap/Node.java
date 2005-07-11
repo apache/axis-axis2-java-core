@@ -26,33 +26,37 @@ public interface Node extends org.w3c.dom.Node {
     /**
      * Returns the the value of the immediate child of this <code>Node</code>
      * object if a child exists and its value is text.
-     * @return  a <code>String</code> with the text of the immediate child of
-     *    this <code>Node</code> object if (1) there is a child and
-     *    (2) the child is a <code>Text</code> object;
-     *      <code>null</code> otherwise
+     *
+     * @return a <code>String</code> with the text of the immediate child of
+     *         this <code>Node</code> object if (1) there is a child and
+     *         (2) the child is a <code>Text</code> object;
+     *         <code>null</code> otherwise
      */
     public abstract String getValue();
 
     /**
      * Sets the parent of this <code>Node</code> object to the given
      * <code>SOAPElement</code> object.
+     *
      * @param parent the <code>SOAPElement</code> object to be set as
-     *  the parent of this <code>Node</code> object
+     *               the parent of this <code>Node</code> object
      * @throws SOAPException if there is a problem in setting the
-     *                     parent to the given element
+     *                       parent to the given element
      * @see #getParentElement() getParentElement()
      */
     public abstract void setParentElement(SOAPElement parent)
-        throws SOAPException;
+            throws SOAPException;
 
     /**
      * Returns the parent element of this <code>Node</code> object.
      * This method can throw an <code>UnsupportedOperationException</code>
      * if the tree is not kept in memory.
-     * @return  the <code>SOAPElement</code> object that is the parent of
-     *    this <code>Node</code> object or <code>null</code> if this
-     *    <code>Node</code> object is root
-     * @throws java.lang.UnsupportedOperationException if the whole tree is not kept in memory
+     *
+     * @return the <code>SOAPElement</code> object that is the parent of
+     *         this <code>Node</code> object or <code>null</code> if this
+     *         <code>Node</code> object is root
+     * @throws java.lang.UnsupportedOperationException
+     *          if the whole tree is not kept in memory
      * @see #setParentElement(javax.xml.soap.SOAPElement) setParentElement(javax.xml.soap.SOAPElement)
      */
     public abstract SOAPElement getParentElement();
@@ -83,9 +87,9 @@ public interface Node extends org.w3c.dom.Node {
      * case a child Text node will be created.
      *
      * @param value the text to set
-     * @throws IllegalStateException   if the node is not a Text  node and
-     *              either has more than one child node or has a child node that
-     *              is not a Text node
+     * @throws IllegalStateException if the node is not a Text  node and
+     *                               either has more than one child node or has a child node that
+     *                               is not a Text node
      */
 
     public abstract void setValue(String value);

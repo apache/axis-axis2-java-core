@@ -34,10 +34,9 @@ public class ListenerManager {
     public static HashMap listeners = new HashMap();
     public static ConfigurationContext configurationContext;
 
-    public static final void makeSureStarted(
-        String transport,
-        ConfigurationContext configurationContext)
-        throws AxisFault {
+    public static final void makeSureStarted(String transport,
+                                             ConfigurationContext configurationContext)
+            throws AxisFault {
         if (ListenerManager.configurationContext != null && configurationContext != ListenerManager.configurationContext) {
             throw new AxisFault("Only One ConfigurationContext Instance we support at the Client Side");
         }
@@ -46,12 +45,12 @@ public class ListenerManager {
         TransportListnerState tsState = (TransportListnerState) listeners.get(transport);
         if (tsState == null) {
             TransportInDescription tranportIn =
-                configurationContext.getAxisConfiguration().getTransportIn(new QName(transport));
+                    configurationContext.getAxisConfiguration().getTransportIn(new QName(transport));
             TransportListener listener = tranportIn.getReciever();
 //            listener.init(configurationContext, tranportIn);
             listener.start();
             tsState = new TransportListnerState(listener);
-            listeners.put(transport,tsState);
+            listeners.put(transport, tsState);
         }
         tsState.waitingCalls++;
     }
@@ -67,14 +66,13 @@ public class ListenerManager {
     }
 
     public static EndpointReference replyToEPR(String serviceName, String transport)
-        throws AxisFault {
+            throws AxisFault {
         TransportListnerState tsState = (TransportListnerState) listeners.get(transport);
         if (tsState != null) {
             return tsState.listener.replyToEPR(serviceName);
         } else {
-            throw new AxisFault(
-                "Calling method before starting the with makeSureStarted(..) Listener transport =  "
-                    + transport);
+            throw new AxisFault("Calling method before starting the with makeSureStarted(..) Listener transport =  "
+                                + transport);
 
         }
 
@@ -89,11 +87,12 @@ public class ListenerManager {
         public TransportListnerState(TransportListener listener) {
             this.listener = listener;
         }
+
         public int waitingCalls = 0;
         public TransportListener listener;
     }
 
-    public static ServerSocket openSocket(int port) throws AxisFault  {
+    public static ServerSocket openSocket(int port) throws AxisFault {
         for (int i = 0; i < 5; i++) {
             try {
                 return new ServerSocket(port + i);

@@ -23,29 +23,36 @@ import org.apache.axis2.soap.SOAPBody;
 
 import javax.swing.*;
 import java.util.Iterator;
+
 /**
  * Callback class which deals with the outcome of the operation
- * @author Saminda Abeyruwan <saminda@opensource.lk>
  *
+ * @author Saminda Abeyruwan <saminda@opensource.lk>
  */
 public class SimpleQueueDeleteQueueCallbackHandler extends Callback {
     private String returnString = "";
     JTextArea results;
     JButton button;
-    public SimpleQueueDeleteQueueCallbackHandler(){}//defalut handler
-    public SimpleQueueDeleteQueueCallbackHandler(JTextArea results,JButton button){
+
+    public SimpleQueueDeleteQueueCallbackHandler() {
+    }//defalut handler
+
+    public SimpleQueueDeleteQueueCallbackHandler(JTextArea results, JButton button) {
         super();
         this.results = results;
         this.button = button;
     }
+
     public void onComplete(AsyncResult result) {
         SOAPBody body = result.getResponseEnvelope().getBody();
         this.getQueueDeleteStatus(body);
         this.button.setText("Delete Queue");
     }
+
     public void reportError(Exception e) {
 
     }
+
     private void getQueueDeleteStatus(OMElement element) {
         Iterator iterator = element.getChildren();
         while (iterator.hasNext()) {
@@ -54,18 +61,18 @@ public class SimpleQueueDeleteQueueCallbackHandler extends Callback {
                 OMElement omElement = (OMElement) omNode;
                 if (omElement.getLocalName().equals("Status")) {
                     this.readTheQueue(omElement);
-                }else{
+                } else {
                     getQueueDeleteStatus(omElement);
                 }
             }
         }
     }
+
     private void readTheQueue(OMElement element) {
         if (element.getText().equals("Errors")) {
             returnString += "Queue can't be deleted, it has to be dequeued first" + "\n";
-        }
-        else{
-           returnString += "Queue is deleted" + "\n";
+        } else {
+            returnString += "Queue is deleted" + "\n";
         }
         this.results.setText(returnString + "\n");
     }

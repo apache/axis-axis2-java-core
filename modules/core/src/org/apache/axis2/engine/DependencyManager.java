@@ -24,23 +24,24 @@ import java.lang.reflect.Method;
 
 public class DependencyManager {
     private final static String MESSAGE_CONTEXT_INJECTION_METHOD = "init";
+
     public static void configureBusinussLogicProvider(Object obj, MessageContext msgctx)
-        throws AxisFault {
+            throws AxisFault {
         try {
             Class classToLoad = obj.getClass();
-            Method[] methods = classToLoad.getMethods(); 
-            
-            for(int i = 0;i< methods.length ; i++){
-                if(MESSAGE_CONTEXT_INJECTION_METHOD.equals(methods[i].getName()) && methods[i].getParameterTypes().length == 1 &&
-                methods[i].getParameterTypes()[0] == MessageContext.class){
-                    methods[i].invoke(obj, new Object[] { msgctx });
+            Method[] methods = classToLoad.getMethods();
+
+            for (int i = 0; i < methods.length; i++) {
+                if (MESSAGE_CONTEXT_INJECTION_METHOD.equals(methods[i].getName()) && methods[i].getParameterTypes().length == 1 &&
+                        methods[i].getParameterTypes()[0] == MessageContext.class) {
+                    methods[i].invoke(obj, new Object[]{msgctx});
                 }
             }
         } catch (SecurityException e) {
             throw new AxisFault(e);
         } catch (IllegalArgumentException e) {
             throw new AxisFault(e);
-        }catch (IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             throw new AxisFault(e);
         } catch (InvocationTargetException e) {
             throw new AxisFault(e);

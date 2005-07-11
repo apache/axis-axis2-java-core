@@ -20,15 +20,9 @@ import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.wsdl.codegen.emitter.CSharpEmitter;
 import org.apache.axis2.wsdl.codegen.emitter.Emitter;
 import org.apache.axis2.wsdl.codegen.emitter.JavaEmitter;
-import org.apache.axis2.wsdl.codegen.extension.AxisBindingBuilder;
-import org.apache.axis2.wsdl.codegen.extension.CodeGenExtension;
-import org.apache.axis2.wsdl.codegen.extension.PackageFinder;
-import org.apache.axis2.wsdl.codegen.extension.WSDLValidatorExtension;
-import org.apache.axis2.wsdl.codegen.extension.XMLBeansExtension;
+import org.apache.axis2.wsdl.codegen.extension.*;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.wsdl.WSDLDescription;
-import org.apache.wsdl.extensions.Schema;
-import org.w3c.dom.NamedNodeMap;
 
 import javax.wsdl.WSDLException;
 import java.io.File;
@@ -40,24 +34,21 @@ import java.util.List;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class CodeGenerationEngine {
 
     private List moduleEndpoints = new ArrayList();
 
     private CodeGenConfiguration configuration;
-   
 
-    public CodeGenerationEngine(CommandLineOptionParser parser) throws CodeGenerationException{
-        WSDLDescription wom ;
+
+    public CodeGenerationEngine(CommandLineOptionParser parser) throws CodeGenerationException {
+        WSDLDescription wom;
         try {
-            wom = this.getWOM(parser);            
-        }
-        catch (WSDLException e) {
+            wom = this.getWOM(parser);
+        } catch (WSDLException e) {
             throw new CodeGenerationException("Error parsing WSDL", e);
-        }
-        catch(IOException e1){
+        } catch (IOException e1) {
             throw new CodeGenerationException("Invalid WSDL Location ", e1);
         }
 
@@ -69,12 +60,11 @@ public class CodeGenerationEngine {
         WSDLValidatorExtension validatorExtension = new WSDLValidatorExtension();
         validatorExtension.init(this.configuration);
         this.moduleEndpoints.add(validatorExtension);
-        
+
         PackageFinder packageFinder = new PackageFinder();
         packageFinder.init(this.configuration);
         this.moduleEndpoints.add(packageFinder);
-        
-        
+
 
         XMLBeansExtension xmlBeanExtension = new XMLBeansExtension();
         xmlBeanExtension.init(this.configuration);
@@ -82,21 +72,21 @@ public class CodeGenerationEngine {
     }
 
 
-    public void generate()throws CodeGenerationException{
+    public void generate() throws CodeGenerationException {
 
-        for(int i = 0; i< this.moduleEndpoints.size(); i++){
-            ((CodeGenExtension)this.moduleEndpoints.get(i)).engage();
+        for (int i = 0; i < this.moduleEndpoints.size(); i++) {
+            ((CodeGenExtension) this.moduleEndpoints.get(i)).engage();
         }
 
         Emitter emitter = null;
         TypeMapper mapper = configuration.getTypeMapper();
 
-        switch (configuration.getOutputLanguage()){
+        switch (configuration.getOutputLanguage()) {
             case XSLTConstants.LanguageTypes.JAVA:
-                emitter =  new JavaEmitter(this.configuration,mapper);
+                emitter = new JavaEmitter(this.configuration, mapper);
                 break;
             case XSLTConstants.LanguageTypes.C_SHARP:
-                emitter = new CSharpEmitter(this.configuration,mapper);
+                emitter = new CSharpEmitter(this.configuration, mapper);
                 break;
             case XSLTConstants.LanguageTypes.C_PLUS_PLUS:
             case XSLTConstants.LanguageTypes.VB_DOT_NET:
@@ -119,7 +109,6 @@ public class CodeGenerationEngine {
         InputStream in = new FileInputStream(new File(uri));
         return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in).getDescription();
     }
-
 
 
 }

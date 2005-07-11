@@ -26,141 +26,141 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SAXOMBuilder extends DefaultHandler {
-	OMElement root = null;
+    OMElement root = null;
 
-	OMNode lastNode = null;
+    OMNode lastNode = null;
 
-	OMElement nextElem = null;
+    OMElement nextElem = null;
 
-	OMFactory factory = OMAbstractFactory.getOMFactory();
+    OMFactory factory = OMAbstractFactory.getOMFactory();
 
-	List prefixMappings = new ArrayList();
+    List prefixMappings = new ArrayList();
 
-	public void setDocumentLocator(Locator arg0) {
-	}
+    public void setDocumentLocator(Locator arg0) {
+    }
 
-	public void startDocument() throws SAXException {
+    public void startDocument() throws SAXException {
 
-	}
+    }
 
-	public void endDocument() throws SAXException {
-	}
+    public void endDocument() throws SAXException {
+    }
 
-	protected OMElement createNextElement(String localName) throws OMException {
-		OMElement e;
-		if (lastNode == null) {
-			root = e = factory.createOMElement(localName, null, null, null);
-		} else if (lastNode.isComplete()) {
-			e = factory.createOMElement(localName, null, lastNode.getParent(),
-					null);
-			lastNode.setNextSibling(e);
-			e.setPreviousSibling(lastNode);
-		} else {
-			OMElement parent = (OMElement) lastNode;
-			e = factory.createOMElement(localName, null, (OMElement) lastNode,
-					null);
-			parent.setFirstChild(e);
-		}
-		return e;
-	}
+    protected OMElement createNextElement(String localName) throws OMException {
+        OMElement e;
+        if (lastNode == null) {
+            root = e = factory.createOMElement(localName, null, null, null);
+        } else if (lastNode.isComplete()) {
+            e = factory.createOMElement(localName, null, lastNode.getParent(),
+                                        null);
+            lastNode.setNextSibling(e);
+            e.setPreviousSibling(lastNode);
+        } else {
+            OMElement parent = (OMElement) lastNode;
+            e = factory.createOMElement(localName, null, (OMElement) lastNode,
+                                        null);
+            parent.setFirstChild(e);
+        }
+        return e;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xml.sax.ContentHandler#startPrefixMapping(java.lang.String,
-	 *      java.lang.String)
-	 */
-	public void startPrefixMapping(String prefix, String uri)
-			throws SAXException {
-		if (nextElem == null)
-			nextElem = createNextElement(null);
-		nextElem.declareNamespace(uri, prefix);
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.xml.sax.ContentHandler#startPrefixMapping(java.lang.String,
+     *      java.lang.String)
+     */
+    public void startPrefixMapping(String prefix, String uri)
+            throws SAXException {
+        if (nextElem == null)
+            nextElem = createNextElement(null);
+        nextElem.declareNamespace(uri, prefix);
+    }
 
-	public void endPrefixMapping(String arg0) throws SAXException {
-	}
+    public void endPrefixMapping(String arg0) throws SAXException {
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xml.sax.ContentHandler#startElement(java.lang.String,
-	 *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
-	 */
-	public void startElement(String namespaceURI, String localName,
-			String qName, Attributes atts) throws SAXException {
-		if (localName == null || localName.trim().equals(""))
-			localName = qName.substring(qName.indexOf(':') + 1);
-		if (nextElem == null)
-			nextElem = createNextElement(localName);
-		else
-			nextElem.setLocalName(localName);
-		nextElem
-				.setNamespace(nextElem.findNamespace(namespaceURI, null));
-		int j = atts.getLength();
-		for (int i = 0; i < j; i++)
-			nextElem.addAttribute(atts.getLocalName(i), atts.getValue(i),
-					nextElem.findNamespace(atts.getURI(i), null));
-		lastNode = nextElem;
-		nextElem = null;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.xml.sax.ContentHandler#startElement(java.lang.String,
+     *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
+     */
+    public void startElement(String namespaceURI, String localName,
+                             String qName, Attributes atts) throws SAXException {
+        if (localName == null || localName.trim().equals(""))
+            localName = qName.substring(qName.indexOf(':') + 1);
+        if (nextElem == null)
+            nextElem = createNextElement(localName);
+        else
+            nextElem.setLocalName(localName);
+        nextElem
+                .setNamespace(nextElem.findNamespace(namespaceURI, null));
+        int j = atts.getLength();
+        for (int i = 0; i < j; i++)
+            nextElem.addAttribute(atts.getLocalName(i), atts.getValue(i),
+                                  nextElem.findNamespace(atts.getURI(i), null));
+        lastNode = nextElem;
+        nextElem = null;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xml.sax.ContentHandler#endElement(java.lang.String,
-	 *      java.lang.String, java.lang.String)
-	 */
-	public void endElement(String arg0, String arg1, String arg2)
-			throws SAXException {
-		if (lastNode.isComplete()) {
-			OMContainer parent = lastNode.getParent();
-			parent.setComplete(true);
-			lastNode = (OMNode)parent;
-		} else {
-			OMElement e = (OMElement) lastNode;
-			e.setComplete(true);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.xml.sax.ContentHandler#endElement(java.lang.String,
+     *      java.lang.String, java.lang.String)
+     */
+    public void endElement(String arg0, String arg1, String arg2)
+            throws SAXException {
+        if (lastNode.isComplete()) {
+            OMContainer parent = lastNode.getParent();
+            parent.setComplete(true);
+            lastNode = (OMNode) parent;
+        } else {
+            OMElement e = (OMElement) lastNode;
+            e.setComplete(true);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xml.sax.ContentHandler#characters(char[], int, int)
-	 */
-	public void characters(char[] ch, int start, int length)
-			throws SAXException {
-		if (lastNode == null) {
-			throw new SAXException("");
-		}
-		OMNode node;
-		if (lastNode.isComplete()) {
-			node = factory.createText((OMElement)lastNode.getParent(), new String(ch,
-					start, length));
-			lastNode.setNextSibling(node);
-			node.setPreviousSibling(lastNode);
-		} else {
-			OMElement e = (OMElement) lastNode;
-			node = factory.createText(e, new String(ch, start, length));
-			e.setFirstChild(node);
-		}
-		lastNode = node;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.xml.sax.ContentHandler#characters(char[], int, int)
+     */
+    public void characters(char[] ch, int start, int length)
+            throws SAXException {
+        if (lastNode == null) {
+            throw new SAXException("");
+        }
+        OMNode node;
+        if (lastNode.isComplete()) {
+            node = factory.createText((OMElement) lastNode.getParent(), new String(ch,
+                                                                                   start, length));
+            lastNode.setNextSibling(node);
+            node.setPreviousSibling(lastNode);
+        } else {
+            OMElement e = (OMElement) lastNode;
+            node = factory.createText(e, new String(ch, start, length));
+            e.setFirstChild(node);
+        }
+        lastNode = node;
+    }
 
-	public void ignorableWhitespace(char[] arg0, int arg1, int arg2)
-			throws SAXException {
-	}
+    public void ignorableWhitespace(char[] arg0, int arg1, int arg2)
+            throws SAXException {
+    }
 
-	public void processingInstruction(String arg0, String arg1)
-			throws SAXException {
-	}
+    public void processingInstruction(String arg0, String arg1)
+            throws SAXException {
+    }
 
-	public void skippedEntity(String arg0) throws SAXException {
-	}
+    public void skippedEntity(String arg0) throws SAXException {
+    }
 
-	/**
-	 * @return Returns the root.
-	 */
-	public OMElement getRootElement() {
-		return root;
-	}
+    /**
+     * @return Returns the root.
+     */
+    public OMElement getRootElement() {
+        return root;
+    }
 }

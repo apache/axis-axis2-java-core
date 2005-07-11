@@ -24,7 +24,7 @@ import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
  * author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-public class SOAP11FaultTextImpl extends SOAPFaultTextImpl{
+public class SOAP11FaultTextImpl extends SOAPFaultTextImpl {
     public SOAP11FaultTextImpl(SOAPFaultReason parent) throws SOAPProcessingException {
         super(parent);
     }

@@ -33,13 +33,13 @@ public abstract class AbstractDispatcher extends AbstractHandler implements Hand
      * Field NAME
      */
     public static final QName NAME =
-        new QName("http://axis.ws.apache.org", "AddressingBasedDispatcher");
+            new QName("http://axis.ws.apache.org", "AddressingBasedDispatcher");
 
     /**
      * Constructor Dispatcher
      */
     private ConfigurationContext engineContext;
-    
+
     public AbstractDispatcher() {
         init(new HandlerDescription(NAME));
     }
@@ -51,25 +51,26 @@ public abstract class AbstractDispatcher extends AbstractHandler implements Hand
      * @throws AxisFault
      */
     public final void invoke(MessageContext msgctx) throws AxisFault {
-  
-        if(msgctx.getServiceContext() == null){
+
+        if (msgctx.getServiceContext() == null) {
             ServiceDescription axisService = findService(msgctx);
-            if(axisService != null){
+            if (axisService != null) {
                 msgctx.setServiceContext(axisService.findServiceContext(msgctx));
             }
         }
 
         if (msgctx.getServiceContext() != null && msgctx.getOperationContext() == null) {
-            OperationDescription axisOperation = findOperation(msgctx.getServiceContext().getServiceConfig(),msgctx);
-            if(axisOperation != null){
-                OperationContext operationContext = axisOperation.findOperationContext(msgctx,msgctx.getServiceContext());
+            OperationDescription axisOperation = findOperation(msgctx.getServiceContext().getServiceConfig(), msgctx);
+            if (axisOperation != null) {
+                OperationContext operationContext = axisOperation.findOperationContext(msgctx, msgctx.getServiceContext());
                 msgctx.setOperationContext(operationContext);
             }
         }
 
     }
-    
-    public abstract ServiceDescription findService(MessageContext messageContext)throws AxisFault;
-    public abstract OperationDescription findOperation(ServiceDescription service,MessageContext messageContext)throws AxisFault;
-    
+
+    public abstract ServiceDescription findService(MessageContext messageContext) throws AxisFault;
+
+    public abstract OperationDescription findOperation(ServiceDescription service, MessageContext messageContext) throws AxisFault;
+
 }

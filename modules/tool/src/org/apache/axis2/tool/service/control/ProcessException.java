@@ -15,7 +15,8 @@ package org.apache.axis.tool.service.control;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class ProcessException extends Exception{
+
+public class ProcessException extends Exception {
     public ProcessException() {
     }
 

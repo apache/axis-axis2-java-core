@@ -26,7 +26,7 @@ import org.apache.axis2.engine.AxisFault;
  * be in the "available" state. If some service indicates a dependency on this
  * module then the module is initialized (once for the life of the system) and
  * the state changes to "initialized".
- * 
+ * <p/>
  * <p/>Any module which is in the "initialized" state can be engaged as needed
  * by the engine to respond to a message. Currently module engagement is done
  * via deployment (using module.xml). In the future we may engage modules

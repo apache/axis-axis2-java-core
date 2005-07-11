@@ -27,27 +27,26 @@ import java.io.ObjectOutputStream;
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
  */
 public class Base64Test extends TestCase {
-	
-	Object expectedObject;
-	
-	ByteArrayInputStream byteStream;
-	
-	/*
-	 * Class under test for String encode(byte[])
-	 */
-	
-	public void testEncodebyteArray() throws Exception {
-		Object actualObject;
-		String expectedBase64;
-		expectedObject = new String("Lanka Software Foundation");
-		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-		ObjectOutputStream objectOutStream = new ObjectOutputStream(byteStream);
-		objectOutStream.writeObject(expectedObject);
-		expectedBase64 = Base64.encode(byteStream.toByteArray());
-		byte[] tempa = Base64.decode(expectedBase64);
-		ObjectInputStream objectInStream = new ObjectInputStream(
-				new ByteArrayInputStream(tempa));
-		actualObject = objectInStream.readObject();
-		assertEquals("Base64 Encoding Check", expectedObject, actualObject);
-	}
+
+    Object expectedObject;
+
+    ByteArrayInputStream byteStream;
+
+    /*
+     * Class under test for String encode(byte[])
+     */
+
+    public void testEncodebyteArray() throws Exception {
+        Object actualObject;
+        String expectedBase64;
+        expectedObject = new String("Lanka Software Foundation");
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutStream = new ObjectOutputStream(byteStream);
+        objectOutStream.writeObject(expectedObject);
+        expectedBase64 = Base64.encode(byteStream.toByteArray());
+        byte[] tempa = Base64.decode(expectedBase64);
+        ObjectInputStream objectInStream = new ObjectInputStream(new ByteArrayInputStream(tempa));
+        actualObject = objectInStream.readObject();
+        assertEquals("Base64 Encoding Check", expectedObject, actualObject);
+    }
 }

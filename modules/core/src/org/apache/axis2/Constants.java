@@ -78,20 +78,20 @@ public class Constants {
      * Field TRANSPORT_HTTP
      */
     public static final String TRANSPORT_HTTP = "http";
-    
+
     public static final String TRANSPORT_COMMONS_HTTP = "commons-http";
-    
+
     public static final String TRANSPORT_MAIL = "mail";
 
     public static final String TRANSPORT_JMS = "jms";
-    
+
     public static final String TRANSPORT_LOCAL = "local";
 
     /**
      * Field LISTSERVICES
      */
     public static final String REQUEST_URL_PREFIX = "/services";
-    
+
     public static final String LISTSERVICES = "listServices";
 
     public static final String LIST_SERVICE_FOR_MODULE_ENGAMNET = "listoperation";
@@ -165,31 +165,30 @@ public class Constants {
     public static final String LOGGED = "Logged";
 
 
-   public static interface Configuration {
+    public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
-        // globally enable MTOM 
+        // globally enable MTOM
         public static final String ENABLE_MTOM = "enableMTOM";
         public static final String ATTACHMENT_TEMP_DIR = "attachmentDIR";
         public static final String CACHE_ATTACHMENTS = "cacheAttachments";
     }
+
     public static final String VALUE_TRUE = "true";
     public static final String VALUE_FALSE = "false";
     public static final String CONTAINER_MANAGED = "ContainerManaged";
     public static final String RESPONSE_WRITTEN = "CONTENT_WRITTEN";
-    
-    
-    public static final String TESTING_PATH = "target/test-resources/"; 
+
+
+    public static final String TESTING_PATH = "target/test-resources/";
     //public static final String TESTING_PATH = "modules/samples/target/test-resources/";
-   
-   public static final String TESTING_REPOSITORY = TESTING_PATH+ "samples";
-   
-   
-    
-    
-    public static interface REST_WITH_GET{
+
+    public static final String TESTING_REPOSITORY = TESTING_PATH + "samples";
+
+
+    public static interface REST_WITH_GET {
         public static final String GET_PARAMETER_OPERATION = "operation";
         public static final String GET_PARAMETER_URL = "http://ws.apache.org/goGetWithREST";
-    
+
     }
 
 

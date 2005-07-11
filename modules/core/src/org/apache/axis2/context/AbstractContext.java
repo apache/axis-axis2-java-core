@@ -82,14 +82,15 @@ public abstract class AbstractContext implements Serializable {
         if (persistent) {
             obj = persistentMap.get(key);
         }
-        if(obj == null){
-            obj =  nonPersistentMap.get(key);
+        if (obj == null) {
+            obj = nonPersistentMap.get(key);
         }
         if (obj == null && parent != null) {
             obj = parent.getProperty(key, persistent);
         }
         return obj;
     }
+
     /**
      * @param context
      */

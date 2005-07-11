@@ -47,8 +47,8 @@ public class OMChildrenQNameIteratorTest extends AbstractTestCase {
     private QName getBodyQname() {
 
         return new QName(stAXSOAPModelBuilder.getEnvelopeNamespace().getName(),
-                SOAPConstants.BODY_LOCAL_NAME,
-                stAXSOAPModelBuilder.getEnvelopeNamespace().getPrefix());
+                         SOAPConstants.BODY_LOCAL_NAME,
+                         stAXSOAPModelBuilder.getEnvelopeNamespace().getPrefix());
     }
 
     public void testIterator() {

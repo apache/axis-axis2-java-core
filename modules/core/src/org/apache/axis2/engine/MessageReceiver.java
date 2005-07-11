@@ -20,6 +20,6 @@ import org.apache.axis2.context.MessageContext;
 /**
  * Interface Receiver
  */
-public interface MessageReceiver{
-    public void recieve(MessageContext messgeCtx)throws AxisFault;
+public interface MessageReceiver {
+    public void recieve(MessageContext messgeCtx) throws AxisFault;
 }

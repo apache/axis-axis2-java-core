@@ -6,9 +6,9 @@ package org.apache.axis2.transport.mail.server;
  */
 
 public interface MailConstants {
-	public final int SMTP_SERVER_PORT = (1024 + 25);
-	public final String SERVER_DOMAIN = "localhost";
-	public final int POP_SERVER_PORT = (1024 + 110);
+    public final int SMTP_SERVER_PORT = (1024 + 25);
+    public final String SERVER_DOMAIN = "localhost";
+    public final int POP_SERVER_PORT = (1024 + 110);
 
     public final String COMMAND_UNKNOWN = "550 Unknown command";
     public final String COMMAND_EXIT = "EXIT";

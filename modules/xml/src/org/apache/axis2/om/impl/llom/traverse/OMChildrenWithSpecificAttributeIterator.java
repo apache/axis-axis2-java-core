@@ -77,8 +77,7 @@ public class OMChildrenWithSpecificAttributeIterator
             // check the current node for the criteria
             if (currentChild instanceof OMElement) {
                 OMAttribute attr =
-                        ((OMElement) currentChild).getFirstAttribute(
-                        attributeName);
+                        ((OMElement) currentChild).getFirstAttribute(attributeName);
                 if ((attr != null)
                         && attr.getValue().equalsIgnoreCase(attributeValue)) {
                     isMatchingNodeFound = true;

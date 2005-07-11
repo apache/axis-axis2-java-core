@@ -142,7 +142,7 @@ public abstract class SOAPFaultImpl extends SOAPElement
         if (myElement != null) {
             myElement.discard();
         }
-        if(newElement != null && newElement.getParent() != null){
+        if (newElement != null && newElement.getParent() != null) {
             newElement.discard();
         }
         this.addChild(newElement);

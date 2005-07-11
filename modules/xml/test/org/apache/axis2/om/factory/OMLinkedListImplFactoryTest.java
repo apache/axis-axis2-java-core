@@ -31,7 +31,7 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
         super(testName);
     }
 
-   SOAPFactory omFactory;
+    SOAPFactory omFactory;
     OMNamespace namespace;
     String nsUri = "http://www.apache.org/~chinthaka";
     String nsPrefix = "myhome";

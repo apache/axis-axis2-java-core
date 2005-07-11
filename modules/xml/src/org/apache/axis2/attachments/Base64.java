@@ -1,18 +1,18 @@
- /*
- * Copyright 2001-2004 The Apache Software Foundation.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+/*
+* Copyright 2001-2004 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis2.attachments;
 
 import java.io.IOException;
@@ -23,12 +23,12 @@ import java.io.Writer;
  * @author TAMURA Kent &lt;kent@trl.ibm.co.jp&gt;
  */
 public class Base64 {
-    private static final char[] S_BASE64CHAR = { 'A', 'B', 'C', 'D', 'E', 'F',
-            'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-            'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
-            'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
-            't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5',
-            '6', '7', '8', '9', '+', '/' };
+    private static final char[] S_BASE64CHAR = {'A', 'B', 'C', 'D', 'E', 'F',
+                                                'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
+                                                'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+                                                'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+                                                't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5',
+                                                '6', '7', '8', '9', '+', '/'};
 
     private static final char S_BASE64PAD = '=';
 
@@ -38,7 +38,7 @@ public class Base64 {
         for (int i = 0; i < S_DECODETABLE.length; i++)
             S_DECODETABLE[i] = Byte.MAX_VALUE; // 127
         for (int i = 0; i < S_BASE64CHAR.length; i++)
-            // 0 to 63
+                // 0 to 63
             S_DECODETABLE[S_BASE64CHAR[i]] = (byte) i;
     }
 
@@ -53,20 +53,20 @@ public class Base64 {
         int b2 = S_DECODETABLE[ibuf[2]];
         int b3 = S_DECODETABLE[ibuf[3]];
         switch (outlen) {
-        case 1:
-            obuf[wp] = (byte) (b0 << 2 & 0xfc | b1 >> 4 & 0x3);
-            return 1;
-        case 2:
-            obuf[wp++] = (byte) (b0 << 2 & 0xfc | b1 >> 4 & 0x3);
-            obuf[wp] = (byte) (b1 << 4 & 0xf0 | b2 >> 2 & 0xf);
-            return 2;
-        case 3:
-            obuf[wp++] = (byte) (b0 << 2 & 0xfc | b1 >> 4 & 0x3);
-            obuf[wp++] = (byte) (b1 << 4 & 0xf0 | b2 >> 2 & 0xf);
-            obuf[wp] = (byte) (b2 << 6 & 0xc0 | b3 & 0x3f);
-            return 3;
-        default:
-            throw new RuntimeException("internalError00");
+            case 1:
+                obuf[wp] = (byte) (b0 << 2 & 0xfc | b1 >> 4 & 0x3);
+                return 1;
+            case 2:
+                obuf[wp++] = (byte) (b0 << 2 & 0xfc | b1 >> 4 & 0x3);
+                obuf[wp] = (byte) (b1 << 4 & 0xf0 | b2 >> 2 & 0xf);
+                return 2;
+            case 3:
+                obuf[wp++] = (byte) (b0 << 2 & 0xfc | b1 >> 4 & 0x3);
+                obuf[wp++] = (byte) (b1 << 4 & 0xf0 | b2 >> 2 & 0xf);
+                obuf[wp] = (byte) (b2 << 6 & 0xc0 | b3 & 0x3f);
+                return 3;
+            default:
+                throw new RuntimeException("internalError00");
         }
     }
 
@@ -126,7 +126,7 @@ public class Base64 {
      *  
      */
     public static void decode(char[] data, int off, int len,
-            OutputStream ostream) throws IOException {
+                              OutputStream ostream) throws IOException {
         char[] ibuf = new char[4];
         int ibufcount = 0;
         byte[] obuf = new byte[3];
@@ -215,7 +215,7 @@ public class Base64 {
      * stream.
      */
     public static void encode(byte[] data, int off, int len,
-            OutputStream ostream) throws IOException {
+                              OutputStream ostream) throws IOException {
         if (len <= 0)
             return;
         byte[] out = new byte[4];

@@ -64,7 +64,7 @@ public interface SOAPConstants {
      * Field SOAPFAULT_DETAIL_LOCAL_NAME
      */
     public static final String SOAPFAULT_DETAIL_LOCAL_NAME = "detail";
-    
+
     /**
      * Field SOAPFAULT_NAMESPACE_PREFIX
      */

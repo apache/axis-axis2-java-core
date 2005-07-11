@@ -22,22 +22,21 @@ import java.io.File;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class CallbackHandlerWriter extends ClassWriter {
-	
-	 public CallbackHandlerWriter(String outputFileLocation) {
+
+    public CallbackHandlerWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
-    public CallbackHandlerWriter(File outputFileLocation,int language) {
+    public CallbackHandlerWriter(File outputFileLocation, int language) {
         this.outputFileLocation = outputFileLocation;
         this.language = language;
     }
 
     public void loadTemplate() {
         Class clazz = this.getClass();
-        switch (language){
+        switch (language) {
             case XSLTConstants.LanguageTypes.JAVA:
                 this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTCallbackHandlerTemplates.JAVA_TEMPLATE);
                 break;

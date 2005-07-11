@@ -6,7 +6,7 @@
     <operation name="echo">
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
     </operation>
-     <operation name="ping">
+    <operation name="ping">
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
     </operation>
-  </service>
+</service>

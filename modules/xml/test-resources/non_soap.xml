@@ -1,5 +1,5 @@
 <ns1:Root xmlns:ns1="http://www.apache.org"
-          xmlns:ns2="http://www.opensource.lk">
+    xmlns:ns2="http://www.opensource.lk">
     <ns2:developers xmlns:ns3="http://www.whatever.com">
         <ns3:developer>
             <name>Davanum Srinivas</name>

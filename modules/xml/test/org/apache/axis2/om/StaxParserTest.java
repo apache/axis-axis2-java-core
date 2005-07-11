@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 *
 *  Aim of this test is to check the compatibilty of the stax parser implementation
 */
+
 public class StaxParserTest extends AbstractTestCase {
 
     XMLStreamReader parser1;
@@ -45,55 +46,56 @@ public class StaxParserTest extends AbstractTestCase {
         parser1 = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(xmlDocument.getBytes()));
 
         OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(OMAbstractFactory.getSOAP11Factory(),
-                XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(xmlDocument.getBytes())));
+                                                                             XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(xmlDocument.getBytes())));
         parser2 = builder.getDocumentElement().getXMLStreamReader();
 
         OMXMLParserWrapper builder2 = OMXMLBuilderFactory.createStAXOMBuilder(OMAbstractFactory.getSOAP11Factory(),
-                XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(xmlDocument.getBytes())));
+                                                                              XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(xmlDocument.getBytes())));
         parser3 = builder2.getDocumentElement().getXMLStreamReaderWithoutCaching();
 
     }
 
-    public void testParserEventsWithCache() throws Exception{
+    public void testParserEventsWithCache() throws Exception {
 
-        assertEquals(parser1.getEventType(),parser2.getEventType());
+        assertEquals(parser1.getEventType(), parser2.getEventType());
 
-        while(parser1.hasNext()){
+        while (parser1.hasNext()) {
 
-                int parser1Event = parser1.next();
-                int parser2Event = parser2.next();
-                assertEquals(parser1Event,parser2Event);
+            int parser1Event = parser1.next();
+            int parser2Event = parser2.next();
+            assertEquals(parser1Event, parser2Event);
 
         }
 
 
     }
 
-     public void testParserEventsWithoutCache() throws Exception{
+    public void testParserEventsWithoutCache() throws Exception {
 
-        assertEquals(parser1.getEventType(),parser3.getEventType());
+        assertEquals(parser1.getEventType(), parser3.getEventType());
 
-        while(parser1.hasNext()){
+        while (parser1.hasNext()) {
             int parser1Event = parser1.next();
             int parser2Event = parser3.next();
-            assertEquals(parser1Event,parser2Event);
+            assertEquals(parser1Event, parser2Event);
         }
 
 
     }
 
-    public void testParserEvents2WithCache() throws Exception{
-        while(parser1.hasNext()){
+    public void testParserEvents2WithCache() throws Exception {
+        while (parser1.hasNext()) {
             int parser1Event = parser1.getEventType();
             int parser2Event = parser2.getEventType();
             parser1.next();
             parser2.next();
-            assertEquals(parser1Event,parser2Event);
+            assertEquals(parser1Event, parser2Event);
         }
 
 
     }
 }
+
 //     public void testParserEvents2() throws Exception{
 //
 //        System.out.println("parser2 initial = " + parser2.getEventType());

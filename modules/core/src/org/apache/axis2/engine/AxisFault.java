@@ -29,16 +29,17 @@ import java.lang.reflect.InvocationTargetException;
  * </ol>
  */
 public class AxisFault extends java.rmi.RemoteException {
- 
+
     public AxisFault(Throwable arg1) {
-         super(arg1.getMessage(), arg1);
-     }
+        super(arg1.getMessage(), arg1);
+    }
+
     /**
      * @param arg0
      */
     public AxisFault(String arg0) {
         super(arg0);
-   }
+    }
 
     /**
      * @param arg0

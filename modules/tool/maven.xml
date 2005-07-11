@@ -9,17 +9,17 @@
     xmlns:ant="jelly:ant">
     <postGoal name="jar">
         <!--<attainGoal name="jar-tool"/>-->
-    </postGoal> 
+    </postGoal>
     <goal name="jar-tool">
-    	<!-- make the jar tool-->
-		<mkdir  dir="target/jar-tool"/>
-		<mkdir  dir="target/jar-tool"/>
-		<copy todir="target/jar-tool">
-			<fileset dir="target">
-				<include name="axis2*.jar"/>
-			</fileset>
-		</copy>
-		<copy file="${maven.repo.local}/ant/jars/ant-1.6.2.jar" todir="target/jar-tool"/>
+        <!-- make the jar tool-->
+        <mkdir dir="target/jar-tool"/>
+        <mkdir dir="target/jar-tool"/>
+        <copy todir="target/jar-tool">
+            <fileset dir="target">
+                <include name="axis2*.jar"/>
+            </fileset>
+        </copy>
+        <copy file="${maven.repo.local}/ant/jars/ant-1.6.2.jar" todir="target/jar-tool"/>
         <copy file="src/script/jar-tool-UI.bat" todir="target/jar-tool"></copy>
-	    </goal>
- </project>
+    </goal>
+</project>

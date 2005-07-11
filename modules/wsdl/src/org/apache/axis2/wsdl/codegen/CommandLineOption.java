@@ -20,7 +20,6 @@ import java.util.ArrayList;
 
 /**
  * @author chathura@opensource.lk
- *  
  */
 public class CommandLineOption implements CommandLineOptionConstants {
 
@@ -28,17 +27,17 @@ public class CommandLineOption implements CommandLineOptionConstants {
     private ArrayList optionValues;
     private boolean invalid = false;
 
-    public CommandLineOption(String type, String[] values){
+    public CommandLineOption(String type, String[] values) {
         updateType(type);
         ArrayList arrayList = new ArrayList(values.length);
-        for(int i =0; i< values.length; i++){
+        for (int i = 0; i < values.length; i++) {
             arrayList.add(values[i]);
         }
         this.optionValues = arrayList;
     }
 
     private void updateType(String type) {
-        if (type.startsWith("-")) type = type.replaceFirst("-","");
+        if (type.startsWith("-")) type = type.replaceFirst("-", "");
         type = type.toLowerCase();
         this.type = type;
     }
@@ -50,13 +49,11 @@ public class CommandLineOption implements CommandLineOptionConstants {
         updateType(type);
         this.validate(this.type);
 
-        if (null !=  values) {
-            this.optionValues = values ;
+        if (null != values) {
+            this.optionValues = values;
         }
     }
 
-
-		
 
     /**
      * @return Returns the type.
@@ -71,8 +68,8 @@ public class CommandLineOption implements CommandLineOptionConstants {
      * @return Returns the optionValues.
      */
     public String getOptionValue() {
-        if (optionValues!=null)
-            return (String)optionValues.get(0);
+        if (optionValues != null)
+            return (String) optionValues.get(0);
         else
             return null;
     }
@@ -92,15 +89,15 @@ public class CommandLineOption implements CommandLineOptionConstants {
         return optionValues;
     }
 
-    private void validate(String optionType){
-        invalid =  !((WSDL_LOCATION_URI_OPTION).equalsIgnoreCase(optionType) ||
-            (OUTPUT_LOCATION_OPTION).equalsIgnoreCase(optionType) ||
-            (SERVER_SIDE_CODE_OPTION).equalsIgnoreCase(optionType) ||
-            (CODEGEN_ASYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
-            (CODEGEN_SYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
-            (PACKAGE_OPTION).equalsIgnoreCase(optionType)||
-            (GENERATE_SERVICE_DESCRIPTION_OPTION).equalsIgnoreCase(optionType)||
-            (GENERATE_TEST_CASE_OPTION).equalsIgnoreCase(optionType)||
-            (STUB_LANGUAGE_OPTION).equalsIgnoreCase(optionType));
+    private void validate(String optionType) {
+        invalid = !((WSDL_LOCATION_URI_OPTION).equalsIgnoreCase(optionType) ||
+                (OUTPUT_LOCATION_OPTION).equalsIgnoreCase(optionType) ||
+                (SERVER_SIDE_CODE_OPTION).equalsIgnoreCase(optionType) ||
+                (CODEGEN_ASYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
+                (CODEGEN_SYNC_ONLY_OPTION).equalsIgnoreCase(optionType) ||
+                (PACKAGE_OPTION).equalsIgnoreCase(optionType) ||
+                (GENERATE_SERVICE_DESCRIPTION_OPTION).equalsIgnoreCase(optionType) ||
+                (GENERATE_TEST_CASE_OPTION).equalsIgnoreCase(optionType) ||
+                (STUB_LANGUAGE_OPTION).equalsIgnoreCase(optionType));
     }
 }

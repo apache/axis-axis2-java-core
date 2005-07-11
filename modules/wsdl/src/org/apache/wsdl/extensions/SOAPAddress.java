@@ -20,18 +20,18 @@ import org.apache.wsdl.WSDLExtensibilityElement;
 
 /**
  * @author chathura@opensource.lk
- * This Extensibility Element is extended to handle particularly the
- * SOAP Adress or the Endpoint URL.
+ *         This Extensibility Element is extended to handle particularly the
+ *         SOAP Adress or the Endpoint URL.
  */
 public interface SOAPAddress extends WSDLExtensibilityElement {
-	
-	/**
-	 * Gets the Endpoint adress
-	 */
-	public String getLocationURI();
 
-	/**
-	 * Sets the Endpoint Address
-	 */
-	public void setLocationURI(String locationURI);
+    /**
+     * Gets the Endpoint adress
+     */
+    public String getLocationURI();
+
+    /**
+     * Sets the Endpoint Address
+     */
+    public void setLocationURI(String locationURI);
 }

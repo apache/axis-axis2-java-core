@@ -30,42 +30,41 @@ import java.net.URL;
 
 /**
  * Class SOAPConnectionImpl
- * 
- * @author Ashutosh Shahi (ashutosh.shahi@gmail.com)
  *
+ * @author Ashutosh Shahi (ashutosh.shahi@gmail.com)
  */
 public class SOAPConnectionImpl extends SOAPConnection {
-	
-	/* (non-Javadoc)
-	 * @see javax.xml.soap.SOAPConnection#call(javax.xml.soap.SOAPMessage, java.lang.Object)
-	 */
-	public SOAPMessage call(SOAPMessage request, Object endpoint)
-			throws SOAPException {
-		try{
-			org.apache.axis2.soap.SOAPEnvelope envelope = ((SOAPEnvelopeImpl)request.getSOAPPart().getEnvelope()).getOMEnvelope();
-			
-			Call call = new Call();
-			URL url = new URL(endpoint.toString());
-			call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP, true);
-			call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
-			org.apache.axis2.soap.SOAPEnvelope responseEnv = (org.apache.axis2.soap.SOAPEnvelope)call.invokeBlocking("echo", envelope);
-			SOAPEnvelopeImpl response = new SOAPEnvelopeImpl(responseEnv);
-			return new SOAPMessageImpl(response);
-			
-			}catch (MalformedURLException mue) {
-				throw new SOAPException(mue);
-			}catch (AxisFault af){
-				throw new SOAPException(af);
-			}
-	}
 
-	
-	/* (non-Javadoc)
-	 * @see javax.xml.soap.SOAPConnection#close()
-	 */
-	public void close() throws SOAPException {
-		// TODO Auto-generated method stub
+    /* (non-Javadoc)
+     * @see javax.xml.soap.SOAPConnection#call(javax.xml.soap.SOAPMessage, java.lang.Object)
+     */
+    public SOAPMessage call(SOAPMessage request, Object endpoint)
+            throws SOAPException {
+        try {
+            org.apache.axis2.soap.SOAPEnvelope envelope = ((SOAPEnvelopeImpl) request.getSOAPPart().getEnvelope()).getOMEnvelope();
 
-	}
+            Call call = new Call();
+            URL url = new URL(endpoint.toString());
+            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, true);
+            call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url.toString()));
+            org.apache.axis2.soap.SOAPEnvelope responseEnv = (org.apache.axis2.soap.SOAPEnvelope) call.invokeBlocking("echo", envelope);
+            SOAPEnvelopeImpl response = new SOAPEnvelopeImpl(responseEnv);
+            return new SOAPMessageImpl(response);
+
+        } catch (MalformedURLException mue) {
+            throw new SOAPException(mue);
+        } catch (AxisFault af) {
+            throw new SOAPException(af);
+        }
+    }
+
+
+    /* (non-Javadoc)
+     * @see javax.xml.soap.SOAPConnection#close()
+     */
+    public void close() throws SOAPException {
+        // TODO Auto-generated method stub
+
+    }
 
 }

@@ -18,7 +18,8 @@ package org.apache.axis2.storage.impl;
  *
  * 
  */
-public class AxisMemoryStorageTest extends AbstractStorageTest{
+
+public class AxisMemoryStorageTest extends AbstractStorageTest {
 
     protected void setUp() throws Exception {
         storage = new AxisMemoryStorage();

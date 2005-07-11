@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AbstractTestCase;
@@ -40,9 +40,9 @@ public class TransportDeploymentTest extends AbstractTestCase {
         AxisConfiguration er = engine.getAxisConfig();
         TransportInDescription transport = er.getTransportIn(new QName("http"));
         assertNotNull(transport);
-      //  assertNotNull(transport.getInFlow());
+        //  assertNotNull(transport.getInFlow());
         TransportOutDescription transport1 = er.getTransportOut(new QName("http"));
         assertNotNull(transport1);
-      //  assertNotNull(transport1.getOutFlow());
+        //  assertNotNull(transport1.getOutFlow());
     }
 }

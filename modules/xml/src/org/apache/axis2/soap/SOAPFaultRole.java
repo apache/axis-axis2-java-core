@@ -24,8 +24,8 @@ import org.apache.axis2.om.OMElement;
  * in at the point the fault occurred.
  * <p/>
  * The Role element information item has:
- *      A [local name] of Role .
- *      A [namespace name] of http://www.w3.org/2003/05/soap-envelope .
+ * A [local name] of Role .
+ * A [namespace name] of http://www.w3.org/2003/05/soap-envelope .
  */
 public interface SOAPFaultRole extends OMElement {
     /**

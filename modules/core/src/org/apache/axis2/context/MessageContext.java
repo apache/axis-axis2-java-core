@@ -41,8 +41,7 @@ public class MessageContext extends AbstractContext {
      * Field TRANSPORT_READER
      */
     public static final String TRANSPORT_IN = "TRANSPORT_IN";
-    
-    
+
 
     /**
      * Field TRANSPORT_SUCCEED
@@ -115,21 +114,22 @@ public class MessageContext extends AbstractContext {
     public boolean outPutWritten = false;
 
     private String serviceInstanceID;
-    
+
     private String pausedPhaseName;
-    
+
     private QName pausedHandlerName;
-    
+
     private String soapAction;
-    
-    
+
+
     //Are we doing MTOM now?
     private boolean doingMTOM = false;
     //Are we doing REST now?
     private boolean doingREST = false;
-    
+
     /**
      * Conveniance Method, but before call engine.send() or  engine.receive() one must send transport in/out
+     *
      * @param engineContext
      * @throws AxisFault
      */
@@ -138,11 +138,10 @@ public class MessageContext extends AbstractContext {
         this(engineContext, null, null, null);
     }
 
-    public MessageContext(
-        ConfigurationContext engineContext,
-        TransportInDescription transportIn,
-        TransportOutDescription transportOut)
-        throws AxisFault {
+    public MessageContext(ConfigurationContext engineContext,
+                          TransportInDescription transportIn,
+                          TransportOutDescription transportOut)
+            throws AxisFault {
         this(engineContext, null, transportIn, transportOut);
     }
 
@@ -154,12 +153,11 @@ public class MessageContext extends AbstractContext {
      * @throws AxisFault
      */
 
-    public MessageContext(
-        ConfigurationContext engineContext,
-        SessionContext sessionContext,
-        TransportInDescription transportIn,
-        TransportOutDescription transportOut)
-        throws AxisFault {
+    public MessageContext(ConfigurationContext engineContext,
+                          SessionContext sessionContext,
+                          TransportInDescription transportIn,
+                          TransportOutDescription transportOut)
+            throws AxisFault {
         super(null);
 
         if (sessionContext == null) {
@@ -389,10 +387,10 @@ public class MessageContext extends AbstractContext {
         paused = true;
         this.pausedHandlerName = handlerName;
     }
-    
+
     public void setPausedFalse() {
-          paused = false;
-      }
+        paused = false;
+    }
 
     /**
      * @return
@@ -536,6 +534,7 @@ public class MessageContext extends AbstractContext {
         }
         return obj;
     }
+
     /**
      * @return
      */

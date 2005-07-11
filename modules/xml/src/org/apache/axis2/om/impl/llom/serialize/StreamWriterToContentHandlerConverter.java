@@ -201,12 +201,11 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
      * @param atts
      * @throws SAXException
      */
-    public void startElement(
-            String namespaceURI, String localName, String qName, Attributes atts)
+    public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
             throws SAXException {
         try {
             log.info("writing element {" + namespaceURI + '}' + localName
-                            + " directly to stream ");
+                     + " directly to stream ");
             String prefix = getPrefix(qName);
 
             // it is only the prefix we want to learn from the QName! so we can get rid of the
@@ -220,7 +219,7 @@ public class StreamWriterToContentHandlerConverter implements ContentHandler {
                 int attCount = atts.getLength();
                 for (int i = 0; i < attCount; i++) {
                     writer.writeAttribute(atts.getURI(i), localName,
-                            atts.getValue(i));
+                                          atts.getValue(i));
                 }
             }
         } catch (XMLStreamException e) {

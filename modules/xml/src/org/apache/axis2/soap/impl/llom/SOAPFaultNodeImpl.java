@@ -23,7 +23,7 @@ import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
  * author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-public abstract class SOAPFaultNodeImpl extends SOAPElement implements SOAPFaultNode{
+public abstract class SOAPFaultNodeImpl extends SOAPElement implements SOAPFaultNode {
 
     public SOAPFaultNodeImpl(SOAPFault parent) throws SOAPProcessingException {
         super(parent, SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME, true);
@@ -38,6 +38,6 @@ public abstract class SOAPFaultNodeImpl extends SOAPElement implements SOAPFault
     }
 
     public String getNodeValue() {
-       return this.getText();
+        return this.getText();
     }
 }

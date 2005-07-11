@@ -35,7 +35,7 @@ public class SOAPFaultTest extends AbstractTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         omOutput = new OMOutput(XMLOutputFactory.newInstance().
-                createXMLStreamWriter(System.out));
+                                createXMLStreamWriter(System.out));
     }
 
     public void testSOAPFault() throws Exception {
@@ -46,7 +46,6 @@ public class SOAPFaultTest extends AbstractTestCase {
 //        soapFault.setCode(null);
 //        assertEquals("faultcode returned is incorrect", soapFault.getCode().getLocalName(), "Axis");
 //        assertEquals("faultcode returned is incorrect", soapFault.getCode().getNamespace().getPrefix(), "SOAP-ENV");
-
 
 
     }

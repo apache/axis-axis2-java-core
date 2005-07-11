@@ -20,21 +20,20 @@ import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public interface ExtensionConstants {
-	
-	/**
-	 * The Type name for the SOAP Address defined in the Port/Endpoint
-	 */
-	public static final QName SOAP_ADDRESS =  new QName("http://schemas.xmlsoap.org/wsdl/soap/", "address");
-	
-	public static final QName SOAP_OPERATION = new QName("http://schemas.xmlsoap.org/wsdl/soap/", "operation");
-	
-	public static final QName SCHEMA = new QName("http://www.w3.org/2001/XMLSchema", "schema");
-	
-	public static final QName SOAP_BODY = new QName("http://schemas.xmlsoap.org/wsdl/soap/", "body");
-	
-	public static final QName SOAP_BINDING = new QName("http://schemas.xmlsoap.org/wsdl/soap/", "binding");
+
+    /**
+     * The Type name for the SOAP Address defined in the Port/Endpoint
+     */
+    public static final QName SOAP_ADDRESS = new QName("http://schemas.xmlsoap.org/wsdl/soap/", "address");
+
+    public static final QName SOAP_OPERATION = new QName("http://schemas.xmlsoap.org/wsdl/soap/", "operation");
+
+    public static final QName SCHEMA = new QName("http://www.w3.org/2001/XMLSchema", "schema");
+
+    public static final QName SOAP_BODY = new QName("http://schemas.xmlsoap.org/wsdl/soap/", "body");
+
+    public static final QName SOAP_BINDING = new QName("http://schemas.xmlsoap.org/wsdl/soap/", "binding");
 
 }

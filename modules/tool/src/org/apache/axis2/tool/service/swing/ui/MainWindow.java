@@ -1,18 +1,13 @@
 package org.apache.axis.tool.service.swing.ui;
 
-import java.awt.HeadlessException;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import org.apache.axis.tool.service.bean.WizardBean;
 import org.apache.axis.tool.service.control.Controller;
 import org.apache.axis.tool.service.control.ProcessException;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -40,9 +35,9 @@ public class MainWindow extends JFrame {
     private int currentPage;
     private WizardPane currentWizardPane;
 
-    private static final int PAGE_1=1;
-    private static final int PAGE_2=2;
-    private static final int PAGE_3=3;
+    private static final int PAGE_1 = 1;
+    private static final int PAGE_2 = 2;
+    private static final int PAGE_3 = 3;
     //private static final int PAGE_4=4;
 
 
@@ -54,12 +49,12 @@ public class MainWindow extends JFrame {
 
     }
 
-    private void init(){
+    private void init() {
         this.getContentPane().setLayout(null);
 
-        this.setBounds((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2 - 400/2,
-                (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2 - 360/2,
-                400,360);
+        this.setBounds((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2 - 400 / 2,
+                       (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2 - 360 / 2,
+                       400, 360);
         this.setResizable(false);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -70,120 +65,120 @@ public class MainWindow extends JFrame {
 
         this.wizardPaneContainer = new JPanel(null);
         this.getContentPane().add(this.wizardPaneContainer);
-        this.wizardPaneContainer.setBounds(0,0,400,300);
+        this.wizardPaneContainer.setBounds(0, 0, 400, 300);
 
         this.previousButton = new JButton("Previous");
         this.getContentPane().add(this.previousButton);
-        this.previousButton.setBounds(hgap,300+vgap,bWidth,bHeight);
-        this.previousButton.addActionListener(new ActionListener(){
+        this.previousButton.setBounds(hgap, 300 + vgap, bWidth, bHeight);
+        this.previousButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 moveBackWard();
             }
 
         });
 //
-        this.nextButton= new JButton("Next");
+        this.nextButton = new JButton("Next");
         this.getContentPane().add(this.nextButton);
-        this.nextButton.setBounds(hgap +bWidth + hgap,300 + vgap,bWidth,bHeight);
-        this.nextButton.addActionListener(new ActionListener(){
+        this.nextButton.setBounds(hgap + bWidth + hgap, 300 + vgap, bWidth, bHeight);
+        this.nextButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 moveForward();
             }
         });
 
-        this.cancelButton= new JButton("Close");
-        this.getContentPane().add(this.cancelButton) ;
-        this.cancelButton.setBounds(hgap + (bWidth + hgap)*2,300 + vgap,bWidth,bHeight);
-        this.cancelButton.addActionListener(new ActionListener(){
+        this.cancelButton = new JButton("Close");
+        this.getContentPane().add(this.cancelButton);
+        this.cancelButton.setBounds(hgap + (bWidth + hgap) * 2, 300 + vgap, bWidth, bHeight);
+        this.cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (confirmExit())
                     System.exit(0);
             }
         });
 
-        this.finishButton= new JButton("Finish");
-        this.getContentPane().add(this.finishButton) ;
-        this.finishButton.setBounds(hgap + (bWidth + hgap)*3,300 + vgap,bWidth,bHeight);
-        this.finishButton.addActionListener(new ActionListener(){
+        this.finishButton = new JButton("Finish");
+        this.getContentPane().add(this.finishButton);
+        this.finishButton.setBounds(hgap + (bWidth + hgap) * 3, 300 + vgap, bWidth, bHeight);
+        this.finishButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 processFinish();
             }
         });
 
 
-
         this.currentPage = PAGE_1;
         moveToPage(currentPage); //add the first page as default
     }
 
-    private void showErrorMessage(){
-       JOptionPane.showMessageDialog(this,"Required Value Not set!!!","Error",JOptionPane.ERROR_MESSAGE);
+    private void showErrorMessage() {
+        JOptionPane.showMessageDialog(this, "Required Value Not set!!!", "Error", JOptionPane.ERROR_MESSAGE);
     }
 
-    private void showErrorMessage(String message){
-       JOptionPane.showMessageDialog(this,message,"Error",JOptionPane.ERROR_MESSAGE);
+    private void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
-    private void showSuccessMessage(String message){
-       JOptionPane.showMessageDialog(this,message,"Error",JOptionPane.INFORMATION_MESSAGE);
+    private void showSuccessMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private boolean confirmExit(){
+    private boolean confirmExit() {
         int returnType = JOptionPane.showOptionDialog(this,
-                "Are you sure you want to exit?",
-                "Exit service builder",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE,
-                null,null,null);
-        return (returnType==JOptionPane.YES_OPTION);
+                                                      "Are you sure you want to exit?",
+                                                      "Exit service builder",
+                                                      JOptionPane.YES_NO_OPTION,
+                                                      JOptionPane.WARNING_MESSAGE,
+                                                      null, null, null);
+        return (returnType == JOptionPane.YES_OPTION);
     }
 
-    private void moveForward(){
-        if (currentWizardPane.validateValues()){
-            this.currentPage ++;
+    private void moveForward() {
+        if (currentWizardPane.validateValues()) {
+            this.currentPage++;
             moveToPage(this.currentPage);
-        }else{
+        } else {
             showErrorMessage();
         }
     }
 
-    private void moveBackWard(){
-            this.currentPage --;
-            moveToPage(this.currentPage);
+    private void moveBackWard() {
+        this.currentPage--;
+        moveToPage(this.currentPage);
 
     }
 
-    private void moveToPage(int page){
-        switch(page){
+    private void moveToPage(int page) {
+        switch (page) {
             case PAGE_1:
-                processPage(new WizardPane1(this.wizardBean, this),false,true,false);
+                processPage(new WizardPane1(this.wizardBean, this), false, true, false);
                 break;
             case PAGE_2:
-                processPage(new WizardPane2(this.wizardBean, this),true,true,false);
+                processPage(new WizardPane2(this.wizardBean, this), true, true, false);
                 break;
             case PAGE_3:
-                processPage(new WizardPane3(this.wizardBean, this),true,false,true);
+                processPage(new WizardPane3(this.wizardBean, this), true, false, true);
                 break;
             default:
                 return;
         }
     }
-    private void processFinish(){
-        if (currentWizardPane.validateValues()){
+
+    private void processFinish() {
+        if (currentWizardPane.validateValues()) {
             try {
                 new Controller().process(wizardBean);
                 showSuccessMessage(" jar file creation successful! ");
             } catch (ProcessException e) {
                 showErrorMessage(e.getMessage());
             } catch (Exception e) {
-                showErrorMessage("Unknown Error! " +e.getMessage() );
+                showErrorMessage("Unknown Error! " + e.getMessage());
             }
-        }else{
+        } else {
             showErrorMessage();
         }
     }
 
-    private void processPage(WizardPane pane,boolean prevButtonState,boolean nextButtonState,boolean finishButtonState){
+    private void processPage(WizardPane pane, boolean prevButtonState, boolean nextButtonState, boolean finishButtonState) {
         this.wizardPaneContainer.removeAll();
         currentWizardPane = pane;
         this.wizardPaneContainer.add(pane);

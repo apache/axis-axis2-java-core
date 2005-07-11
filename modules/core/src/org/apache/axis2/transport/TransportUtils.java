@@ -45,13 +45,13 @@ public class TransportUtils {
     }
 
     public static SOAPEnvelope createSOAPMessage(MessageContext msgContext, InputStream inStream)
-        throws AxisFault {
+            throws AxisFault {
         try {
             Object contentType = null;
             OperationContext opContext = msgContext.getOperationContext();
             if (opContext != null) {
                 contentType = opContext.getProperty(HTTPConstants.MTOM_RECIVED_CONTENT_TYPE);
-            }else{
+            } else {
                 throw new AxisFault("Operation Context can not be Null");
             }
 
@@ -60,12 +60,12 @@ public class TransportUtils {
 
             if (contentType != null) {
                 msgContext.setDoingMTOM(true);
-                builder = HTTPTransportUtils.selectBuilderForMIME(msgContext, inStream, (String)contentType);
+                builder = HTTPTransportUtils.selectBuilderForMIME(msgContext, inStream, (String) contentType);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
-            }else if (msgContext.isDoingREST()) {
+            } else if (msgContext.isDoingREST()) {
                 Reader reader = new InputStreamReader(inStream);
                 XMLStreamReader xmlreader =
-                    XMLInputFactory.newInstance().createXMLStreamReader(reader);
+                        XMLInputFactory.newInstance().createXMLStreamReader(reader);
                 SOAPFactory soapFactory = new SOAP11Factory();
                 builder = new StAXOMBuilder(xmlreader);
                 builder.setOmbuilderFactory(soapFactory);
@@ -74,7 +74,7 @@ public class TransportUtils {
             } else {
                 Reader reader = new InputStreamReader(inStream);
                 XMLStreamReader xmlreader =
-                    XMLInputFactory.newInstance().createXMLStreamReader(reader);
+                        XMLInputFactory.newInstance().createXMLStreamReader(reader);
                 builder = new StAXSOAPModelBuilder(xmlreader);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             }

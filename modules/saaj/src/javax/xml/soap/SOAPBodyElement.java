@@ -26,7 +26,8 @@ package javax.xml.soap;
  * <code>sb</code> is a <code>SOAPBody</code> object, and
  * <code>myName</code> is a <code>Name</code> object.
  * <PRE>
- *   SOAPBodyElement sbe = sb.addBodyElement(myName);
+ * SOAPBodyElement sbe = sb.addBodyElement(myName);
  * </PRE>
  */
-public interface SOAPBodyElement extends SOAPElement {}
+public interface SOAPBodyElement extends SOAPElement {
+}

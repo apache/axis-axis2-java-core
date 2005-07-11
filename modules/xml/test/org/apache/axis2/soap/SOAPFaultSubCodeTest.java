@@ -43,7 +43,7 @@ public class SOAPFaultSubCodeTest extends SOAPFaultSubCodeTestCase {
     public void testGetValueInFaultCode() {
         assertTrue("After creating SOAP12FaultSubCode In Fault Code, it has a FaultValue", soap12FaultSubCodeInCode.getValue() == null);
         soap12FaultSubCodeInCode.setValue(soap12Factory.createSOAPFaultValue(soap12FaultSubCodeInCode));
-        assertFalse("SOAP 1.2 SOAPFaultSubCode Test In FaultCode : - After calling setValue method, getValue method returns null", soap12FaultSubCodeInCode.getValue() == null);        
+        assertFalse("SOAP 1.2 SOAPFaultSubCode Test In FaultCode : - After calling setValue method, getValue method returns null", soap12FaultSubCodeInCode.getValue() == null);
     }
 
     public void testsetSubCodeInFaultCode() {

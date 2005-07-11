@@ -22,47 +22,48 @@ import org.apache.axis2.om.OMNamespace;
  *  A utility class for the use of the stub
  *  Not visible outside
  */
+
 class StubSupporter {
 
-    public static OMElement createRPCMappedElement(String elementName,OMNamespace ns,Object value, OMFactory fac){
-       OMElement returnElement = fac.createOMElement(elementName,ns);
-       Class inputParamClass = value.getClass();
+    public static OMElement createRPCMappedElement(String elementName, OMNamespace ns, Object value, OMFactory fac) {
+        OMElement returnElement = fac.createOMElement(elementName, ns);
+        Class inputParamClass = value.getClass();
 
-       if (inputParamClass.equals(String.class)){
-           returnElement.addChild(fac.createText(returnElement,value.toString()));
-       }else if (inputParamClass.equals(Integer.class)){
-            returnElement.addChild(fac.createText(returnElement,String.valueOf(((Integer)value).intValue())));
-       }else if (inputParamClass.equals(Float.class)){
-            returnElement.addChild(fac.createText(returnElement,String.valueOf(((Float)value).floatValue())));
-       }else if (inputParamClass.equals(Double.class)){
-            returnElement.addChild(fac.createText(returnElement,String.valueOf(((Double)value).doubleValue())));
-       //todo this seems to be a long list... need to complete this
-       }else if (inputParamClass.equals(OMElement.class)){
-           returnElement.addChild((OMElement)value);
-       }else{
-           returnElement.addChild(fac.createText(returnElement,value.toString()));
-       }
+        if (inputParamClass.equals(String.class)) {
+            returnElement.addChild(fac.createText(returnElement, value.toString()));
+        } else if (inputParamClass.equals(Integer.class)) {
+            returnElement.addChild(fac.createText(returnElement, String.valueOf(((Integer) value).intValue())));
+        } else if (inputParamClass.equals(Float.class)) {
+            returnElement.addChild(fac.createText(returnElement, String.valueOf(((Float) value).floatValue())));
+        } else if (inputParamClass.equals(Double.class)) {
+            returnElement.addChild(fac.createText(returnElement, String.valueOf(((Double) value).doubleValue())));
+            //todo this seems to be a long list... need to complete this
+        } else if (inputParamClass.equals(OMElement.class)) {
+            returnElement.addChild((OMElement) value);
+        } else {
+            returnElement.addChild(fac.createText(returnElement, value.toString()));
+        }
         return returnElement;
     }
 
-    public static Object getRPCMappedElementValue(OMElement elt, Class outputTypeClass){
-       Object outputObj = null;
-       if (outputTypeClass.equals(String.class)){
-           outputObj = elt.getText();
-       }else if (outputTypeClass.equals(Integer.class)){
+    public static Object getRPCMappedElementValue(OMElement elt, Class outputTypeClass) {
+        Object outputObj = null;
+        if (outputTypeClass.equals(String.class)) {
+            outputObj = elt.getText();
+        } else if (outputTypeClass.equals(Integer.class)) {
             outputObj = new Integer(elt.getText());
-       }else if (outputTypeClass.equals(Float.class)){
+        } else if (outputTypeClass.equals(Float.class)) {
             outputObj = new Float(elt.getText());
-       }else if (outputTypeClass.equals(Double.class)){
+        } else if (outputTypeClass.equals(Double.class)) {
             outputObj = new Double(elt.getText());
 
-       //todo this seems to be a long list... need to complete this
+            //todo this seems to be a long list... need to complete this
 
-       }else if (outputTypeClass.equals(OMElement.class)){
-           outputObj = elt;
-       }else{
-           outputObj = elt.toString();
-       }
+        } else if (outputTypeClass.equals(OMElement.class)) {
+            outputObj = elt;
+        } else {
+            outputObj = elt.toString();
+        }
 
         return outputObj;
     }

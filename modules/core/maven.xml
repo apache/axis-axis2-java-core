@@ -9,13 +9,13 @@
     xmlns:ant="jelly:ant">
     <postGoal name="test:compile">
         <j:jelly xmlns="jelly:ant">
-		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/service2"/>
+            <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/service2"/>
             <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/echo"/>
-           <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/invalidservice"/>
-        <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/outservice"/>
-		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/module1"/>
+            <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/invalidservice"/>
+            <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/outservice"/>
+            <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/module1"/>
             <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/serviceModule"/>
-	</j:jelly>
-      <ant:copy file="${basedir}/test-resources/deployment/axis2.xml" tofile="${basedir}/target/test-resources/deployment/axis2.xml"/>
-    </postGoal> 
- </project>
+        </j:jelly>
+        <ant:copy file="${basedir}/test-resources/deployment/axis2.xml" tofile="${basedir}/target/test-resources/deployment/axis2.xml"/>
+    </postGoal>
+</project>

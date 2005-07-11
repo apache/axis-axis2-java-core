@@ -26,7 +26,7 @@ import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
  * author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-public class SOAP12FaultSubCodeImpl extends SOAPFaultSubCodeImpl{
+public class SOAP12FaultSubCodeImpl extends SOAPFaultSubCodeImpl {
     //changed
     public SOAP12FaultSubCodeImpl(SOAPFaultCode parent) throws SOAPProcessingException {
         super(parent, SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME);

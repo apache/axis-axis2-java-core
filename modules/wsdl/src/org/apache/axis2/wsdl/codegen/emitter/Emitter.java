@@ -21,15 +21,14 @@ import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public interface Emitter {
-	
-	public void setCodeGenConfiguration(CodeGenConfiguration configuration);	
-	
-	public void emitStub() throws CodeGenerationException;
-	
-	public void emitSkeleton() throws CodeGenerationException;
-	
+
+    public void setCodeGenConfiguration(CodeGenConfiguration configuration);
+
+    public void emitStub() throws CodeGenerationException;
+
+    public void emitSkeleton() throws CodeGenerationException;
+
 
 }

@@ -92,7 +92,7 @@ public class AsynchronousClient {
         try {
             String workingDir = System.getProperty("user.dir");
             propertyFile = new File(workingDir + File.separator + "samples" + File.separator +
-                    "key.properties");
+                                    "key.properties");
             propertyFile.createNewFile();
             prop.load(new FileInputStream(propertyFile));
             amazonkey = prop.getProperty("amazonKey");
@@ -155,8 +155,8 @@ public class AsynchronousClient {
 
             System.out.println("Sending the Async message ....");
 
-           OMOutput omOutput = new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter
-                    (System.out));
+            OMOutput omOutput = new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter
+                                             (System.out));
             requestContext.getEnvelope().serialize(omOutput);
             omOutput.flush();
 

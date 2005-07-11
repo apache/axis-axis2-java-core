@@ -4,19 +4,19 @@
     xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing">
     <soapenv:Header>
         <wsa:From soapenv:mustUnderstand="0"
-                  soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next">
+            soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next">
             <Address xmlns="http://schemas.xmlsoap.org/ws/2004/03/addressing">
                 http://schemas.xmlsoap.org/ws/2004/03/addressing/role/anonymous
             </Address>
         </wsa:From>
         <test:MessageID xmlns:test="http://example.org/ts-tests"
-                       soapenv:mustUnderstand="1"
-                       soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next"
-                       soapenv:anyAttribute="any value">
+            soapenv:mustUnderstand="1"
+            soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next"
+            soapenv:anyAttribute="any value">
             uuid:920C5190-0B8F-11D9-8CED-F22EDEEBF7E5
         </test:MessageID>
         <wsa:To soapenv:mustUnderstand="0"
-                soapenv:anyAttribute="any value">
+            soapenv:anyAttribute="any value">
             http://localhost:8081/axis/services/BankPort
         </wsa:To>
     </soapenv:Header>

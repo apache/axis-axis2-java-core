@@ -22,7 +22,7 @@
     <phaseOrder type="outflow">
         <!--      user can add his own phases to this area  -->
         <phase name="userphase1"/>
-<!--        This is temporray solution will be change soon-->
+        <!--        This is temporray solution will be change soon-->
         <phase name="addressing"/>
     </phaseOrder>
     <phaseOrder type="INfaultflow">

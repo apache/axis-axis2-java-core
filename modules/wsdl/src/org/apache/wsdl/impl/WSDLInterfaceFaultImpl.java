@@ -22,30 +22,31 @@ import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class WSDLInterfaceFaultImpl extends ComponentImpl implements WSDLInterfaceFault {
-	
-	/**
-	 * Consist of the NCName and the namespace as the target namespace of the 
-	 * Description Component.
-	 */
-	private QName name;
-	
-	private QName element;
-	
-	
 
-	public QName getElement() {
-		return element;
-	}
-	public void setElement(QName element) {
-		this.element = element;
-	}
-	public QName getName() {
-		return name;
-	}
-	public void setName(QName name) {
-		this.name = name;
-	}
+    /**
+     * Consist of the NCName and the namespace as the target namespace of the
+     * Description Component.
+     */
+    private QName name;
+
+    private QName element;
+
+
+    public QName getElement() {
+        return element;
+    }
+
+    public void setElement(QName element) {
+        this.element = element;
+    }
+
+    public QName getName() {
+        return name;
+    }
+
+    public void setName(QName name) {
+        this.name = name;
+    }
 }

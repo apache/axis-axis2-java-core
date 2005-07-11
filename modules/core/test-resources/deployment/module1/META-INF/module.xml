@@ -1,10 +1,10 @@
 <module name="module1" class="org.apache.module.Module1Impl">
     <inflow>
         <handler name="h1" class="org.apache.axis2.registry.Handler3">
-            <order phase="userphase1" />
+            <order phase="userphase1"/>
         </handler>
         <handler name="h2" class="org.apache.axis2.registry.Handler3">
-             <order phase="userphase1"/>
+            <order phase="userphase1"/>
         </handler>
     </inflow>
 
@@ -16,13 +16,13 @@
 
     <Outfaultflow>
         <handler name="h4" class="org.apache.axis2.registry.Handler3">
-             <order phase="userphase1"/>
+            <order phase="userphase1"/>
         </handler>
     </Outfaultflow>
 
     <INfaultflow>
         <handler name="h5" class="org.apache.axis2.registry.Handler3">
-             <order phase="userphase1"/>
+            <order phase="userphase1"/>
         </handler>
     </INfaultflow>
 

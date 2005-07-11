@@ -25,12 +25,11 @@ import org.apache.axis2.storage.AxisStorage;
 import org.apache.axis2.util.threadpool.ThreadPool;
 
 import javax.xml.namespace.QName;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ConfigurationContext extends AbstractContext{
+public class ConfigurationContext extends AbstractContext {
 
     private AxisConfiguration axisConfiguration;
     private AxisStorage storage;
@@ -39,7 +38,7 @@ public class ConfigurationContext extends AbstractContext{
     private Map moduleContextMap;
     private ThreadPool threadPool;
     private File rootDir;
-    
+
 
     /**
      * Map containing <code>MessageID</code> to
@@ -86,7 +85,7 @@ public class ConfigurationContext extends AbstractContext{
         axisConfiguration = configuration;
     }
 
-     public synchronized void registerOperationContext(String messageID, OperationContext mepContext) {
+    public synchronized void registerOperationContext(String messageID, OperationContext mepContext) {
         this.operationContextMap.put(messageID, mepContext);
     }
 
@@ -116,11 +115,11 @@ public class ConfigurationContext extends AbstractContext{
 
     public ServiceContext createServiceContext(QName serviceName) throws AxisFault {
         ServiceDescription service = axisConfiguration.getService(serviceName);
-        if(service != null){
+        if (service != null) {
             ServiceContext serviceContext = new ServiceContext(service, this);
             return serviceContext;
-        }else{
-            throw new AxisFault("Service not found service name = "+serviceName );
+        } else {
+            throw new AxisFault("Service not found service name = " + serviceName);
         }
     }
 
@@ -128,18 +127,20 @@ public class ConfigurationContext extends AbstractContext{
      * @return
      */
     public ThreadPool getThreadPool() {
-        if(threadPool == null){
+        if (threadPool == null) {
             threadPool = new ThreadPool();
         }
         return threadPool;
     }
-    public File getRealPath(String path){
-        if(rootDir == null){
+
+    public File getRealPath(String path) {
+        if (rootDir == null) {
             return new File(path);
-        }else{
-            return new File(rootDir,path);
+        } else {
+            return new File(rootDir, path);
         }
     }
+
     /**
      * @param file
      */

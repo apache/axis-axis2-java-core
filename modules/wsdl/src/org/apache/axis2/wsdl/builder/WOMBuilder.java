@@ -26,6 +26,6 @@ import java.io.InputStream;
 public interface WOMBuilder {
 
     public WSDLVersionWrapper build(InputStream in) throws WSDLException;
-    
-    public WSDLVersionWrapper build (InputStream in, WSDLComponentFactory wsdlComponentFactory) throws WSDLException;
+
+    public WSDLVersionWrapper build(InputStream in, WSDLComponentFactory wsdlComponentFactory) throws WSDLException;
 }

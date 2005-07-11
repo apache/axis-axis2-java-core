@@ -227,34 +227,34 @@ public class StAXSOAPModelBuilderTest extends TestCase {
             assertTrue("SOAP 1.2 :- Fault detail local name mismatch", detail.getLocalName().equals(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME));
             assertTrue("SOAP 1.2 :- Fault detail namespace uri mismatch", detail.getNamespace().getName().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI));
 
-            assertTrue("SOAP 1.2 :- Text in detail mismatch",detail.getText().equals("Details of error"));
+            assertTrue("SOAP 1.2 :- Text in detail mismatch", detail.getText().equals("Details of error"));
 
             Iterator iteratorInDetail = detail.getChildren();
 
             iteratorInDetail.next();
-            OMElement element1 = (OMElement)iteratorInDetail.next();
-            assertTrue("SOAP 1.2 :- MaxTime element mismatch",element1.getLocalName().equals("MaxTime"));
-            assertTrue("SOAP 1.2 :- MaxTime element namespace mismatch",element1.getNamespace().getName().equals("http:www.sample.org"));
-            assertTrue("SOAP 1.2 :- Text value in MaxTime element mismatch",element1.getText().equals("P5M"));
+            OMElement element1 = (OMElement) iteratorInDetail.next();
+            assertTrue("SOAP 1.2 :- MaxTime element mismatch", element1.getLocalName().equals("MaxTime"));
+            assertTrue("SOAP 1.2 :- MaxTime element namespace mismatch", element1.getNamespace().getName().equals("http:www.sample.org"));
+            assertTrue("SOAP 1.2 :- Text value in MaxTime element mismatch", element1.getText().equals("P5M"));
 
             Iterator attributeIterator = element1.getAttributes();
-            OMAttribute attributeInMaxTime = (OMAttribute)attributeIterator.next();
-            assertTrue("SOAP 1.2 :- Attribute local name mismatch",attributeInMaxTime.getLocalName().equals("detail"));
-            assertTrue("SOAP 1.2 :- Attribute namespace mismatch",attributeInMaxTime.getNamespace().getName().equals("http:www.sample.org"));
-            assertTrue("SOAP 1.2 :- Attribute value mismatch",attributeInMaxTime.getValue().equals("This is only a test"));
+            OMAttribute attributeInMaxTime = (OMAttribute) attributeIterator.next();
+            assertTrue("SOAP 1.2 :- Attribute local name mismatch", attributeInMaxTime.getLocalName().equals("detail"));
+            assertTrue("SOAP 1.2 :- Attribute namespace mismatch", attributeInMaxTime.getNamespace().getName().equals("http:www.sample.org"));
+            assertTrue("SOAP 1.2 :- Attribute value mismatch", attributeInMaxTime.getValue().equals("This is only a test"));
 
             iteratorInDetail.next();
-            OMElement element2 = (OMElement)iteratorInDetail.next();
-            assertTrue("SOAP 1.2 :- AveTime element mismatch",element2.getLocalName().equals("AveTime"));
-            assertTrue("SOAP 1.2 :- AveTime element namespace mismatch",element2.getNamespace().getName().equals("http:www.sample.org"));
+            OMElement element2 = (OMElement) iteratorInDetail.next();
+            assertTrue("SOAP 1.2 :- AveTime element mismatch", element2.getLocalName().equals("AveTime"));
+            assertTrue("SOAP 1.2 :- AveTime element namespace mismatch", element2.getNamespace().getName().equals("http:www.sample.org"));
 
             Iterator iteratorInAveTimeElement = element2.getChildren();
 
             iteratorInAveTimeElement.next();
-            OMElement element21 = (OMElement)iteratorInAveTimeElement.next();
-            assertTrue("SOAP 1.2 :- Time element mismatch",element21.getLocalName().equals("Time"));
-            assertTrue("SOAP 1.2 :- Time element namespace mismatch",element21.getNamespace().getName().equals("http:www.sample.org"));
-            assertTrue("SOAP 1.2 :- Text value in Time element mismatch",element21.getText().equals("P3M"));
+            OMElement element21 = (OMElement) iteratorInAveTimeElement.next();
+            assertTrue("SOAP 1.2 :- Time element mismatch", element21.getLocalName().equals("Time"));
+            assertTrue("SOAP 1.2 :- Time element namespace mismatch", element21.getNamespace().getName().equals("http:www.sample.org"));
+            assertTrue("SOAP 1.2 :- Text value in Time element mismatch", element21.getText().equals("P3M"));
 
             XMLStreamReader sopa11Parser = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(soap11Message));
             OMXMLParserWrapper soap11Builder = new StAXSOAPModelBuilder(sopa11Parser);
@@ -301,13 +301,13 @@ public class StAXSOAPModelBuilderTest extends TestCase {
             code = (SOAPFaultCode) iteratorInFault.next();
             assertEquals("SOAP Fault code local name mismatch", code.getLocalName(), (SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME));
             assertTrue("SOAP 1.1 :- Fault code namespace uri mismatch", code.getNamespace().getName().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI));
-            assertEquals("SOAP 1.1 :- Fault code value mismatch",code.getValue().getText().trim(), "env:Sender");
+            assertEquals("SOAP 1.1 :- Fault code value mismatch", code.getValue().getText().trim(), "env:Sender");
 
             iteratorInFault.next();
             reason = (SOAPFaultReason) iteratorInFault.next();
             assertTrue("SOAP 1.1 :- Fault string local name mismatch", reason.getLocalName().equals(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME));
             assertTrue("SOAP 1.2 :- Fault string namespace uri mismatch", reason.getNamespace().getName().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI));
-            assertTrue("SOAP 1.1 :- Fault string value mismatch",reason.getSOAPText().getText().equals("Sender Timeout"));
+            assertTrue("SOAP 1.1 :- Fault string value mismatch", reason.getSOAPText().getText().equals("Sender Timeout"));
 
             iteratorInFault.next();
             role = (SOAPFaultRole) iteratorInFault.next();
@@ -319,51 +319,51 @@ public class StAXSOAPModelBuilderTest extends TestCase {
             detail = (SOAPFaultDetail) iteratorInFault.next();
             assertTrue("SOAP 1.1 :- Fault detail local name mismatch", detail.getLocalName().equals(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME));
             assertTrue("SOAP 1.1 :- Fault detail namespace uri mismatch", detail.getNamespace().getName().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI));
-            assertTrue("SOAP 1.2 :- Text in detail mismatch",detail.getText().equals("Details of error"));
+            assertTrue("SOAP 1.2 :- Text in detail mismatch", detail.getText().equals("Details of error"));
 
             iteratorInDetail = detail.getChildren();
 
             iteratorInDetail.next();
-            element1 = (OMElement)iteratorInDetail.next();
-            assertTrue("SOAP 1.1 :- MaxTime element mismatch",element1.getLocalName().equals("MaxTime"));
-            assertTrue("SOAP 1.1 :- MaxTime element namespace mismatch",element1.getNamespace().getName().equals("http:www.sample.org"));
-            assertTrue("SOAP 1.1 :- Text value in MaxTime element mismatch",element1.getText().equals("P5M"));
+            element1 = (OMElement) iteratorInDetail.next();
+            assertTrue("SOAP 1.1 :- MaxTime element mismatch", element1.getLocalName().equals("MaxTime"));
+            assertTrue("SOAP 1.1 :- MaxTime element namespace mismatch", element1.getNamespace().getName().equals("http:www.sample.org"));
+            assertTrue("SOAP 1.1 :- Text value in MaxTime element mismatch", element1.getText().equals("P5M"));
 
             attributeIterator = element1.getAttributes();
-            attributeInMaxTime = (OMAttribute)attributeIterator.next();
-            assertTrue("SOAP 1.1 :- Attribute local name mismatch",attributeInMaxTime.getLocalName().equals("detail"));
-            assertTrue("SOAP 1.1 :- Attribute namespace mismatch",attributeInMaxTime.getNamespace().getName().equals("http:www.sample.org"));
-            assertTrue("SOAP 1.1 :- Attribute value mismatch",attributeInMaxTime.getValue().equals("This is only a test"));
+            attributeInMaxTime = (OMAttribute) attributeIterator.next();
+            assertTrue("SOAP 1.1 :- Attribute local name mismatch", attributeInMaxTime.getLocalName().equals("detail"));
+            assertTrue("SOAP 1.1 :- Attribute namespace mismatch", attributeInMaxTime.getNamespace().getName().equals("http:www.sample.org"));
+            assertTrue("SOAP 1.1 :- Attribute value mismatch", attributeInMaxTime.getValue().equals("This is only a test"));
 
             iteratorInDetail.next();
-            element2 = (OMElement)iteratorInDetail.next();
-            assertTrue("SOAP 1.1 :- AveTime element mismatch",element2.getLocalName().equals("AveTime"));
-            assertTrue("SOAP 1.1 :- AveTime element namespace mismatch",element2.getNamespace().getName().equals("http:www.sample.org"));
+            element2 = (OMElement) iteratorInDetail.next();
+            assertTrue("SOAP 1.1 :- AveTime element mismatch", element2.getLocalName().equals("AveTime"));
+            assertTrue("SOAP 1.1 :- AveTime element namespace mismatch", element2.getNamespace().getName().equals("http:www.sample.org"));
 
             iteratorInAveTimeElement = element2.getChildren();
 
             iteratorInAveTimeElement.next();
-            element21 = (OMElement)iteratorInAveTimeElement.next();
-            assertTrue("SOAP 1.1 :- Time element mismatch",element21.getLocalName().equals("Time"));
-            assertTrue("SOAP 1.1 :- Time element namespace mismatch",element21.getNamespace().getName().equals("http:www.sample.org"));
-            assertTrue("SOAP 1.1 :- Text value in Time element mismatch",element21.getText().equals("P3M"));
+            element21 = (OMElement) iteratorInAveTimeElement.next();
+            assertTrue("SOAP 1.1 :- Time element mismatch", element21.getLocalName().equals("Time"));
+            assertTrue("SOAP 1.1 :- Time element namespace mismatch", element21.getNamespace().getName().equals("http:www.sample.org"));
+            assertTrue("SOAP 1.1 :- Text value in Time element mismatch", element21.getText().equals("P3M"));
 
-           iteratorInFault.next();
-            OMElement testElement = (OMElement)iteratorInFault.next();
-            assertTrue("SOAP 1.1 :- Test element mismatch",testElement.getLocalName().equals("Test"));
-            assertTrue("SOAP 1.1 :- Test element namespace mismatch",testElement.getNamespace().getName().equals("http:www.Test.org"));
+            iteratorInFault.next();
+            OMElement testElement = (OMElement) iteratorInFault.next();
+            assertTrue("SOAP 1.1 :- Test element mismatch", testElement.getLocalName().equals("Test"));
+            assertTrue("SOAP 1.1 :- Test element namespace mismatch", testElement.getNamespace().getName().equals("http:www.Test.org"));
 
             OMElement childOfTestElement = testElement.getFirstElement();
-            assertTrue("SOAP 1.1 :- Test element child local name mismatch",childOfTestElement.getLocalName().equals("TestElement"));
-            assertTrue("SOAP 1.1 :- Test element child namespace mismatch",childOfTestElement.getNamespace().getName().equals("http:www.Test.org"));
-            assertTrue("SOAP 1.1 :- Test element child value mismatch",childOfTestElement.getText().equals("This is only a test"));
+            assertTrue("SOAP 1.1 :- Test element child local name mismatch", childOfTestElement.getLocalName().equals("TestElement"));
+            assertTrue("SOAP 1.1 :- Test element child namespace mismatch", childOfTestElement.getNamespace().getName().equals("http:www.Test.org"));
+            assertTrue("SOAP 1.1 :- Test element child value mismatch", childOfTestElement.getText().equals("This is only a test"));
 
         } catch (XMLStreamException e) {
             e.printStackTrace();
-            fail("Test failed. Reason -> "+e.getMessage());
+            fail("Test failed. Reason -> " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Test failed. Reason -> "+e.getMessage());
+            fail("Test failed. Reason -> " + e.getMessage());
 
         }
     }

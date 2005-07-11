@@ -99,12 +99,13 @@ public abstract class AbstractHandler implements Handler {
     public HandlerDescription getHandlerDesc() {
         return handlerDesc;
     }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     public String toString() {
         QName name = this.getName();
-        return (name!=null)?name.toString():null;
+        return (name != null) ? name.toString() : null;
     }
 
 }

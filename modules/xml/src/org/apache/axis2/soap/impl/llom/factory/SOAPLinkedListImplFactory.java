@@ -29,7 +29,7 @@ public class SOAPLinkedListImplFactory extends OMLinkedListImplFactory implement
      */
 
 
-    public SOAPEnvelope createSOAPEnvelope(OMXMLParserWrapper builder){
+    public SOAPEnvelope createSOAPEnvelope(OMXMLParserWrapper builder) {
         return new SOAPEnvelopeImpl(builder);
     }
 

@@ -37,9 +37,9 @@ import java.util.ArrayList;
  * Date: May 20, 2005
  * Time: 2:50:44 PM
  */
-public class PhaseLastTest extends TestCase{
+public class PhaseLastTest extends TestCase {
 
-     public void testPhaseLast() throws AxisFault {
+    public void testPhaseLast() throws AxisFault {
         ArrayList phases = new ArrayList();
         Phase p1 = new Phase("PhaseA");
         phases.add(p1);
@@ -77,11 +77,11 @@ public class PhaseLastTest extends TestCase{
 
         ArrayList handlers = p1.getHandlers();
         Handler handler = (Handler) handlers.get(0);
-        if(!handler.getName().equals(new QName("Second Handler"))){
+        if (!handler.getName().equals(new QName("Second Handler"))) {
             fail("Computed Hnadler order is wrong ");
         }
         handler = (Handler) handlers.get(1);
-        if(!handler.getName().equals(new QName("PhaseLast"))){
+        if (!handler.getName().equals(new QName("PhaseLast"))) {
             fail("Computed Hnadler order is wrong ");
         }
 

@@ -20,7 +20,7 @@ import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
  * the License.
  * <p/>
  */
-public class XMLComparatorTest extends OMTestCase{
+public class XMLComparatorTest extends OMTestCase {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */

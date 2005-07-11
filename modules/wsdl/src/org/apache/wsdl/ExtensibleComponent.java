@@ -52,6 +52,6 @@ public interface ExtensibleComponent extends Component {
      * @return
      */
     public List getProperties();
-    
-        
+
+
 }

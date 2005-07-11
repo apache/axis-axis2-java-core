@@ -18,10 +18,7 @@ package org.apache.axis2.engine;
 
 //todo
 
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -38,13 +35,14 @@ import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
+
 public class ServiceDispatchingTest extends TestCase {
     private EndpointReference targetEPR =
-        new EndpointReference(
-            AddressingConstants.WSA_TO,
-            "http://127.0.0.1:"
-                + (UtilServer.TESTING_PORT)
-                + "/axis/services/EchoXMLService/echoOMElement");
+            new EndpointReference(AddressingConstants.WSA_TO,
+                                  "http://127.0.0.1:"
+                                  + (UtilServer.TESTING_PORT)
+                                  + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -72,7 +70,7 @@ public class ServiceDispatchingTest extends TestCase {
         service = Utils.createSimpleService(serviceName, Echo.class.getName(), operationName);
         UtilServer.deployService(service);
         serviceContext =
-            UtilServer.getConfigurationContext().createServiceContext(service.getName());
+                UtilServer.getConfigurationContext().createServiceContext(service.getName());
 
     }
 
@@ -85,15 +83,14 @@ public class ServiceDispatchingTest extends TestCase {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
         OMElement payload = TestingUtils.createDummyOMElement();
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
-        call.setTo(
-            new EndpointReference(
-                AddressingConstants.WSA_TO,
-                "http://127.0.0.1:5555/axis/services/EchoXMLService/echoOMElement"));
+        call.setTo(new EndpointReference(AddressingConstants.WSA_TO,
+                                         "http://127.0.0.1:5555/axis/services/EchoXMLService/echoOMElement"));
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
         OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
         TestingUtils.campareWithCreatedOMElement(result);
         call.close();
     }
+
     public void testDispatchWithURLAndSOAPAction() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
         OMNamespace omNs = fac.createOMNamespace("http://dummyURL", "my");
@@ -102,10 +99,8 @@ public class ServiceDispatchingTest extends TestCase {
         value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
         payload.addChild(value);
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
-        call.setTo(
-            new EndpointReference(
-                AddressingConstants.WSA_TO,
-                "http://127.0.0.1:5555/axis/services/EchoXMLService/"));
+        call.setTo(new EndpointReference(AddressingConstants.WSA_TO,
+                                         "http://127.0.0.1:5555/axis/services/EchoXMLService/"));
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
         call.setSoapAction("echoOMElement");
         OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
@@ -122,12 +117,10 @@ public class ServiceDispatchingTest extends TestCase {
         value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
         payload.addChild(value);
 
-        
+
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
-        call.setTo(
-            new EndpointReference(
-                AddressingConstants.WSA_TO,
-                "http://127.0.0.1:5555/axis/services/"));
+        call.setTo(new EndpointReference(AddressingConstants.WSA_TO,
+                                         "http://127.0.0.1:5555/axis/services/"));
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
         OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
         TestingUtils.campareWithCreatedOMElement(result);

@@ -37,49 +37,49 @@ import java.util.ArrayList;
  * Date: May 20, 2005
  * Time: 2:40:30 PM
  */
-public class InvalidPhaseFirstTest extends TestCase{
+public class InvalidPhaseFirstTest extends TestCase {
 
-     public void testInvalidPhaseFirst1()  {
-         try {
-             ArrayList phases = new ArrayList();
-             Phase p1 = new Phase("PhaseA");
-             phases.add(p1);
-             Phase p2 = new Phase("PhaseB");
-             phases.add(p2);
+    public void testInvalidPhaseFirst1() {
+        try {
+            ArrayList phases = new ArrayList();
+            Phase p1 = new Phase("PhaseA");
+            phases.add(p1);
+            Phase p2 = new Phase("PhaseB");
+            phases.add(p2);
 
-             MessageContext msg = new MessageContext(new ConfigurationContext(new AxisConfigurationImpl()));
+            MessageContext msg = new MessageContext(new ConfigurationContext(new AxisConfigurationImpl()));
 
-             PhaseHolder ph = new PhaseHolder(phases);
-             HandlerDescription hm = new HandlerDescription();
-             hm.setClassName("org.apache.axis2.phaserule.PhaseRuleHandlers");
-             Handler h1 = new PhaseRuleHandlers();
-             h1.init(hm);
-             ((PhaseRuleHandlers) h1).setName(new QName("PhaseFirstHnadler"));
-             hm.setHandler(h1);
-             hm.setName(new QName("H1"));
-             PhaseRule rule = new PhaseRule();
-             rule.setPhaseName("PhaseA");
-             rule.setPhaseFirst(true);
-             hm.setRules(rule);
-             ph.addHandler(hm);
+            PhaseHolder ph = new PhaseHolder(phases);
+            HandlerDescription hm = new HandlerDescription();
+            hm.setClassName("org.apache.axis2.phaserule.PhaseRuleHandlers");
+            Handler h1 = new PhaseRuleHandlers();
+            h1.init(hm);
+            ((PhaseRuleHandlers) h1).setName(new QName("PhaseFirstHnadler"));
+            hm.setHandler(h1);
+            hm.setName(new QName("H1"));
+            PhaseRule rule = new PhaseRule();
+            rule.setPhaseName("PhaseA");
+            rule.setPhaseFirst(true);
+            hm.setRules(rule);
+            ph.addHandler(hm);
 
-             HandlerDescription hm1 = new HandlerDescription();
-             hm1.setClassName("org.apache.axis2.phaserule.PhaseRuleHandlers");
-             Handler h2 = new PhaseRuleHandlers();
-             ((PhaseRuleHandlers) h2).setName(new QName("Second Handler"));
-             h2.init(hm1);
-             hm1.setHandler(h2);
-             hm1.setName(new QName("H2"));
-             PhaseRule rule1 = new PhaseRule();
-             rule1.setPhaseName("PhaseA");
-             rule1.setPhaseFirst(true);
-             hm1.setRules(rule1);
-             ph.addHandler(hm1);
-             fail("This should be faild with PhaseFirst alredy has been set, cannot have two " +
-                     "phaseFirst Handler for same phase ");
-         } catch (AxisFault axisFault) {
-             return;
-         }
+            HandlerDescription hm1 = new HandlerDescription();
+            hm1.setClassName("org.apache.axis2.phaserule.PhaseRuleHandlers");
+            Handler h2 = new PhaseRuleHandlers();
+            ((PhaseRuleHandlers) h2).setName(new QName("Second Handler"));
+            h2.init(hm1);
+            hm1.setHandler(h2);
+            hm1.setName(new QName("H2"));
+            PhaseRule rule1 = new PhaseRule();
+            rule1.setPhaseName("PhaseA");
+            rule1.setPhaseFirst(true);
+            hm1.setRules(rule1);
+            ph.addHandler(hm1);
+            fail("This should be faild with PhaseFirst alredy has been set, cannot have two " +
+                 "phaseFirst Handler for same phase ");
+        } catch (AxisFault axisFault) {
+            return;
+        }
 
-     }
+    }
 }

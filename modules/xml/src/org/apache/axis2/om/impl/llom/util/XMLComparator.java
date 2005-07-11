@@ -82,7 +82,7 @@ public class XMLComparator {
             OMNode omNode = (OMNode) elementOneChildren.next();
             if (omNode instanceof OMElement) {
                 OMElement elementOneChild = (OMElement) omNode;
-                if("Reference4".equals(elementOneChild.getLocalName())){
+                if ("Reference4".equals(elementOneChild.getLocalName())) {
                     System.out.println("Reference4");
                 }
                 OMElement elementTwoChild = elementTwo.getFirstChildWithName(elementOneChild.getQName());

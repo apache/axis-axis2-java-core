@@ -65,7 +65,7 @@ public class ClientCallbackHandler extends Callback {
      * @param result
      */
     public void onComplete(AsyncResult result) {
-         System.out.println("Responce message received to the ClientCallbackHandler ...");
+        System.out.println("Responce message received to the ClientCallbackHandler ...");
         try {
             OMOutput omOutput = new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out));
             result.getResponseEnvelope().serialize(omOutput);
@@ -128,7 +128,7 @@ public class ClientCallbackHandler extends Callback {
                                     System.out.println("Got Alexa");
                                     elem = elem.getFirstElement(); //elem -> websearch
                                     System.out.println("Should be WebSearch " +
-                                            elem.getLocalName());
+                                                       elem.getLocalName());
                                     iterator2 = elem.getChildren();
                                     while (iterator2.hasNext()) {
                                         node = (OMNode) iterator2.next();

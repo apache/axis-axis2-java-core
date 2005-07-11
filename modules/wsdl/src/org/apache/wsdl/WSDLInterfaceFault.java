@@ -21,14 +21,13 @@ import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface WSDLInterfaceFault extends Component{
-	public QName getElement();
+public interface WSDLInterfaceFault extends Component {
+    public QName getElement();
 
-	public void setElement(QName element);
+    public void setElement(QName element);
 
-	public QName getName();
+    public QName getName();
 
-	public void setName(QName name);
+    public void setName(QName name);
 }

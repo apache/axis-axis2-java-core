@@ -23,14 +23,14 @@ package javax.xml.soap;
  * <P>
  * The following is an example of a namespace declaration in an element.
  * <PRE>
- *  &lt;wombat:GetLastTradePrice xmlns:wombat="http://www.wombat.org/trader"&gt;
+ * &lt;wombat:GetLastTradePrice xmlns:wombat="http://www.wombat.org/trader"&gt;
  * </PRE>
  * ("xmlns" stands for "XML namespace".)
  * The following
  * shows what the methods in the <code>Name</code> interface will return.
  * <UL>
  * <LI><code>getQualifiedName</code> will return "prefix:LocalName" =
- *     "WOMBAT:GetLastTradePrice"
+ * "WOMBAT:GetLastTradePrice"
  * <LI><code>getURI</code> will return "http://www.wombat.org/trader"
  * <LI><code>getLocalName</code> will return "GetLastTracePrice"
  * <LI><code>getPrefix</code> will return "WOMBAT"
@@ -48,15 +48,15 @@ package javax.xml.soap;
  * code, in which <i>se</i> is a <code>SOAPEnvelope</code> object, creates a new
  * <code>Name</code> object with all three.
  * <PRE>
- *    Name name = se.createName("GetLastTradePrice", "WOMBAT",
- *                               "http://www.wombat.org/trader");
+ * Name name = se.createName("GetLastTradePrice", "WOMBAT",
+ * "http://www.wombat.org/trader");
  * </PRE>
  * The following line of code gives an example of how a <code>Name</code> object
  * can be used. The variable <i>element</i> is a <code>SOAPElement</code> object.
  * This code creates a new <code>SOAPElement</code> object with the given name and
  * adds it to <i>element</i>.
  * <PRE>
- *    element.addChildElement(name);
+ * element.addChildElement(name);
  * </PRE>
  */
 public interface Name {
@@ -64,28 +64,32 @@ public interface Name {
     /**
      * Gets the local name part of the XML name that this <code>Name</code>
      * object represents.
-     * @return  a string giving the local name
+     *
+     * @return a string giving the local name
      */
     public abstract String getLocalName();
 
     /**
      * Gets the namespace-qualified name of the XML name that this
      * <code>Name</code> object represents.
-     * @return  the namespace-qualified name as a string
+     *
+     * @return the namespace-qualified name as a string
      */
     public abstract String getQualifiedName();
 
     /**
      * Returns the prefix associated with the namespace for the XML
      * name that this <code>Name</code> object represents.
-     * @return  the prefix as a string
+     *
+     * @return the prefix as a string
      */
     public abstract String getPrefix();
 
     /**
      * Returns the URI of the namespace for the XML
      * name that this <code>Name</code> object represents.
-     * @return  the URI as a string
+     *
+     * @return the URI as a string
      */
     public abstract String getURI();
 }

@@ -16,8 +16,8 @@
 package org.apache.axis.tool.codegen.eclipse.util;
 
 public interface UIConstants {
-    public static final String JAVA = "Java" ;
-    public static final String C_SHARP = "C#" ;
-    public static final String C_PLUS_PLUS = "C++" ;
+    public static final String JAVA = "Java";
+    public static final String C_SHARP = "C#";
+    public static final String C_PLUS_PLUS = "C++";
 
 }

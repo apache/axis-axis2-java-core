@@ -22,28 +22,31 @@ import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class SOAPOperationImpl extends WSDLExtensibilityElementImpl implements
-		ExtensionConstants, SOAPOperation {
-	
-	private String soapAction;
-	
-	private String style;
-	
-	public SOAPOperationImpl(){
-		this.type = SOAP_OPERATION;
-	}
-	public String getStyle() {
-		return style;
-	}
-	public void setStyle(String style) {
-		this.style = style;
-	}
-	public String getSoapAction() {
-		return soapAction;
-	}
-	public void setSoapAction(String soapAction) {
-		this.soapAction = soapAction;
-	}
+        ExtensionConstants, SOAPOperation {
+
+    private String soapAction;
+
+    private String style;
+
+    public SOAPOperationImpl() {
+        this.type = SOAP_OPERATION;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
+    public String getSoapAction() {
+        return soapAction;
+    }
+
+    public void setSoapAction(String soapAction) {
+        this.soapAction = soapAction;
+    }
 }

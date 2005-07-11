@@ -103,6 +103,7 @@ public interface OMNode {
      * This will remove this information item and its children, from the model completely.
      * Important  to note that this method will detach the OMNode once it is fully built.
      * Half built nodes are not to be detached!
+     *
      * @throws OMException
      */
     public OMNode detach() throws OMException;
@@ -110,12 +111,14 @@ public interface OMNode {
     /**
      * Discards a Node. Discrad goes to the parser level and if the element is not
      * completely built, then it will be completely skipped at the parser level
+     *
      * @throws OMException
      */
     public void discard() throws OMException;
 
     /**
      * This will insert a sibling just after the current information item.
+     *
      * @param sibling
      * @throws OMException
      */
@@ -131,6 +134,7 @@ public interface OMNode {
 
     /**
      * This is to get the type of node, as this is the super class of all the nodes
+     *
      * @return
      * @throws OMException
      */
@@ -138,6 +142,7 @@ public interface OMNode {
 
     /**
      * Method setType
+     *
      * @param nodeType
      * @throws OMException
      */
@@ -145,30 +150,34 @@ public interface OMNode {
 
     /**
      * get the previous sibling
+     *
      * @return
      */
     public OMNode getPreviousSibling();
 
     /**
      * Set the previous sibling
+     *
      * @param previousSibling
      */
     public void setPreviousSibling(OMNode previousSibling);
 
     /**
      * Serialize the node with caching
-     * @see #serializeWithCache(javax.xml.stream.XMLStreamWriter)
+     *
      * @param writer
      * @throws XMLStreamException
+     * @see #serializeWithCache(javax.xml.stream.XMLStreamWriter)
      */
     public void serializeWithCache(OMOutput omOutput)
-        throws XMLStreamException;
+            throws XMLStreamException;
 
     /**
      * Serilaize the node without caching
-     * @see #serialize(javax.xml.stream.XMLStreamWriter)
+     *
      * @param writer
      * @throws XMLStreamException
+     * @see #serialize(javax.xml.stream.XMLStreamWriter)
      */
     public void serialize(OMOutput omOutput) throws XMLStreamException;
 

@@ -42,7 +42,7 @@ public class ElementSerializerTest extends AbstractTestCase {
                 createXMLStreamReader(new FileReader(getTestResourceFile("soap/soapmessage.xml")));
         tempFile = File.createTempFile("temp", "xml");
         omOutput = new OMOutput(XMLOutputFactory.newInstance().
-                createXMLStreamWriter(new FileOutputStream(tempFile)));
+                                createXMLStreamWriter(new FileOutputStream(tempFile)));
         builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(OMAbstractFactory.getSOAP11Factory(), reader);
     }
 

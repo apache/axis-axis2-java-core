@@ -53,34 +53,32 @@ public class TCPTransportSender extends AbstractTransportSender {
      * @param msgContext
      * @throws IOException
      */
-    protected void writeTransportHeaders(
-        Writer out,
-        URL url,
-        MessageContext msgContext,
-        int contentLength)
-        throws IOException {
+    protected void writeTransportHeaders(Writer out,
+                                         URL url,
+                                         MessageContext msgContext,
+                                         int contentLength)
+            throws IOException {
         //TCP no headers   :)
     }
 
-    public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,OutputStream out) {
+    public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext, OutputStream out) {
     }
 
-    public void finalizeSendWithToAddress(MessageContext msgContext,OutputStream out) throws AxisFault {
+    public void finalizeSendWithToAddress(MessageContext msgContext, OutputStream out) throws AxisFault {
         try {
             socket.shutdownOutput();
-            msgContext.setProperty(
-                MessageContext.TRANSPORT_IN,socket.getInputStream());
+            msgContext.setProperty(MessageContext.TRANSPORT_IN, socket.getInputStream());
         } catch (IOException e) {
             throw new AxisFault(e);
         }
     }
 
-    protected OutputStream openTheConnection(EndpointReference toURL,MessageContext msgContext) throws AxisFault {
+    protected OutputStream openTheConnection(EndpointReference toURL, MessageContext msgContext) throws AxisFault {
         if (toURL != null) {
             try {
                 URL url = new URL(toURL.getAddress());
                 SocketAddress add =
-                    new InetSocketAddress(url.getHost(), url.getPort() == -1 ? 80 : url.getPort());
+                        new InetSocketAddress(url.getHost(), url.getPort() == -1 ? 80 : url.getPort());
                 socket = new Socket();
                 socket.connect(add);
                 return socket.getOutputStream();
@@ -94,11 +92,10 @@ public class TCPTransportSender extends AbstractTransportSender {
         }
     }
 
-    public OutputStream startSendWithOutputStreamFromIncomingConnection(
-        MessageContext msgContext,
-        OutputStream out)
-        throws AxisFault {
-            return out;
+    public OutputStream startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
+                                                                        OutputStream out)
+            throws AxisFault {
+        return out;
     }
 
     public OutputStream startSendWithToAddress(MessageContext msgContext, OutputStream out) {

@@ -36,8 +36,8 @@ import java.lang.reflect.Method;
  * This is a Simple java Provider.
  */
 public class RawXMLINOnlyMessageReceiver
-    extends AbstractInMessageReceiver
-    implements MessageReceiver {
+        extends AbstractInMessageReceiver
+        implements MessageReceiver {
     /**
      * Field log
      */
@@ -66,7 +66,7 @@ public class RawXMLINOnlyMessageReceiver
     }
 
     public void invokeBusinessLogic(MessageContext msgContext)
-        throws AxisFault {
+            throws AxisFault {
         try {
 
             // get the implementation class for the Web Service
@@ -74,7 +74,7 @@ public class RawXMLINOnlyMessageReceiver
 
             // find the WebService method
             Class ImplClass = obj.getClass();
-            DependencyManager.configureBusinussLogicProvider(obj,msgContext);
+            DependencyManager.configureBusinussLogicProvider(obj, msgContext);
 
             OperationDescription op = msgContext.getOperationContext().getAxisOperation();
             if (op == null) {
@@ -90,8 +90,8 @@ public class RawXMLINOnlyMessageReceiver
             }
             Class[] parameters = method.getParameterTypes();
             if ((parameters != null)
-                && (parameters.length == 1)
-                && OMElement.class.getName().equals(parameters[0].getName())) {
+                    && (parameters.length == 1)
+                    && OMElement.class.getName().equals(parameters[0].getName())) {
                 OMElement methodElement = msgContext.getEnvelope().getBody().getFirstElement();
 
                 OMElement parmeter = null;
@@ -101,7 +101,7 @@ public class RawXMLINOnlyMessageReceiver
 
                 if (WSDLService.STYLE_DOC.equals(style)) {
                     parmeter = methodElement;
-                    Object[] parms = new Object[] { parmeter };
+                    Object[] parms = new Object[]{parmeter};
 
                     // invoke the WebService
                     OMElement result = (OMElement) method.invoke(obj, parms);
@@ -110,7 +110,7 @@ public class RawXMLINOnlyMessageReceiver
 
                 } else if (WSDLService.STYLE_RPC.equals(style)) {
                     parmeter = methodElement.getFirstElement();
-                    Object[] parms = new Object[] { parmeter };
+                    Object[] parms = new Object[]{parmeter};
 
                     // invoke the WebService
                     OMElement result = (OMElement) method.invoke(obj, parms);
@@ -129,9 +129,8 @@ public class RawXMLINOnlyMessageReceiver
                     throw new AxisFault("Unknown style ");
                 }
             } else {
-                throw new AxisFault(
-                    "Raw Xml provider supports only the methods bearing the signature public OMElement "
-                        + "&lt;method-name&gt;(OMElement) where the method name is anything");
+                throw new AxisFault("Raw Xml provider supports only the methods bearing the signature public OMElement "
+                                    + "&lt;method-name&gt;(OMElement) where the method name is anything");
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);

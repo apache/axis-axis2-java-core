@@ -1,4 +1,3 @@
-
 package userguide.clients;
 
 import org.apache.axis2.om.OMAbstractFactory;
@@ -25,8 +24,8 @@ import org.apache.axis2.om.OMNamespace;
 
 public class ClientUtil {
 
-	public static OMElement getEchoOMElement(){
-	  OMFactory fac = OMAbstractFactory.getOMFactory();
+    public static OMElement getEchoOMElement() {
+        OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace("http://example1.org/example1", "example1");
         OMElement method = fac.createOMElement("echo", omNs);
         OMElement value = fac.createOMElement("Text", omNs);
@@ -34,8 +33,9 @@ public class ClientUtil {
         method.addChild(value);
 
         return method;
-	}
-    public static OMElement getPingOMElement(){
+    }
+
+    public static OMElement getPingOMElement() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace("http://example1.org/example1", "example1");
         OMElement method = fac.createOMElement("ping", omNs);

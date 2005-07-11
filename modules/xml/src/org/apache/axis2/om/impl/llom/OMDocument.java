@@ -30,17 +30,17 @@ public class OMDocument implements OMContainer {
      * Field rootElement
      */
     private OMElement rootElement;
-    
+
     /**
      * Field firstChild
      */
     protected OMNode firstChild;
-    
+
     /**
      * Field lastChild
      */
     private OMNode lastChild;
-    
+
     /**
      * Field done
      */
@@ -87,7 +87,7 @@ public class OMDocument implements OMContainer {
     public void setRootElement(OMElement rootElement) {
         this.rootElement = rootElement;
     }
-    
+
     /**
      * this will indicate whether parser has parsed this information item completely or not.
      * If somethings info are not available in the item, one has to check this attribute to make sure that, this
@@ -107,12 +107,12 @@ public class OMDocument implements OMContainer {
     public void setComplete(boolean state) {
         this.done = state;
     }
-    
+
     /**
      * This will force the parser to proceed, if parser has not yet finished with the XML input
      */
     public void buildNext() {
-        if(!parserWrapper.isCompleted())
+        if (!parserWrapper.isCompleted())
             parserWrapper.next();
     }
 
@@ -125,7 +125,7 @@ public class OMDocument implements OMContainer {
     public void addChild(OMNode child) {
         addChild((OMNodeImpl) child);
     }
-    
+
     /**
      * Method addChild
      *
@@ -163,11 +163,12 @@ public class OMDocument implements OMContainer {
      * @param elementQName
      * @return
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     public Iterator getChildrenWithName(QName elementQName) throws OMException {
         return new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(),
-                elementQName);
+                                           elementQName);
     }
 
     /**
@@ -182,7 +183,7 @@ public class OMDocument implements OMContainer {
         return firstChild;
     }
 
-	/**
+    /**
      * Method getFirstChildWithName
      *
      * @param elementQName
@@ -192,7 +193,7 @@ public class OMDocument implements OMContainer {
     public OMElement getFirstChildWithName(QName elementQName) throws OMException {
         OMChildrenQNameIterator omChildrenQNameIterator =
                 new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(),
-                        elementQName);
+                                            elementQName);
         OMNode omNode = null;
         if (omChildrenQNameIterator.hasNext()) {
             omNode = (OMNode) omChildrenQNameIterator.next();

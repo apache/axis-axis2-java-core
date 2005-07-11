@@ -118,13 +118,13 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
             String uri = parser.getAttributeNamespace(i);
             if (uri.hashCode() != 0) {
                 ns = node.findNamespace(uri,
-                        parser.getAttributePrefix(i));
+                                        parser.getAttributePrefix(i));
             }
 
             // todo if the attributes are supposed to namespace qualified all the time
             // todo then this should throw an exception here
             node.addAttribute(parser.getAttributeLocalName(i),
-                    parser.getAttributeValue(i), ns);
+                              parser.getAttributeValue(i), ns);
         }
     }
 
@@ -140,7 +140,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
         }
         OMNode node;
         if (lastNode.isComplete()) {
-            node = omfactory.createText((OMElement)lastNode.getParent(), parser.getText());
+            node = omfactory.createText((OMElement) lastNode.getParent(), parser.getText());
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
         } else {
@@ -188,7 +188,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
             if (lastNode != null) {
                 lastNode.setNextSibling(null);
             } else {
-                OMElement parent = (OMElement)elementImpl.getParent();
+                OMElement parent = (OMElement) elementImpl.getParent();
                 if (parent == null) {
                     throw new OMException();
                 }
@@ -274,8 +274,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
      */
     public void setCache(boolean b) {
         if (parserAccessed && b) {
-            throw new UnsupportedOperationException(
-                    "parser accessed. cannot set cache");
+            throw new UnsupportedOperationException("parser accessed. cannot set cache");
         }
         cache = b;
     }
@@ -353,8 +352,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
             parserAccessed = true;
             return parser;
         } else {
-            throw new UnsupportedOperationException(
-                    "cache must be switched off to access the parser");
+            throw new UnsupportedOperationException("cache must be switched off to access the parser");
         }
     }
 

@@ -27,53 +27,54 @@ import java.io.IOException;
 
 /**
  * GUI which handles the IN operations of the queue
- * @author Saminda Abeyruwan <saminda@opensource.lk>
  *
+ * @author Saminda Abeyruwan <saminda@opensource.lk>
  */
-public class AmazonSimpleQueueServiceIn extends JFrame{
+public class AmazonSimpleQueueServiceIn extends JFrame {
     private static final String HELP_FILE_NAME = "/docs/AmazonSimpleWebService.html";
     JTextField createQueue;
     JTextField queueCode;
     JTextField enqueue;
     JTextArea resuts;
 
-    public AmazonSimpleQueueServiceIn(){
-        this.setBounds(200,200,450,500);
+    public AmazonSimpleQueueServiceIn() {
+        this.setBounds(200, 200, 450, 500);
         this.setTitle("Amazon Simple Queue WS - In");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.guiInit();
     }
-    private void guiInit(){
+
+    private void guiInit() {
         getContentPane().setLayout(new GridBagLayout());
         GridBagConstraints cons = new GridBagConstraints();
         cons.fill = GridBagConstraints.BOTH;
         JLabel lable1 = new JLabel("Create Queue");
-        cons.insets = new Insets(5,5,5,5);
-        this.add(lable1,cons,0,0,1,1);
+        cons.insets = new Insets(5, 5, 5, 5);
+        this.add(lable1, cons, 0, 0, 1, 1);
         JLabel lable2 = new JLabel("Queue Code");
-        this.add(lable2, cons, 1,0,1,1);
+        this.add(lable2, cons, 1, 0, 1, 1);
         cons.weightx = 100;
         createQueue = new JTextField("Test Queue LSF2");
-        this.add(createQueue,cons,0,1,1,1);
+        this.add(createQueue, cons, 0, 1, 1, 1);
         queueCode = new JTextField();
         queueCode.setEditable(false);
-        this.add(queueCode,cons,1,1,1,1);
+        this.add(queueCode, cons, 1, 1, 1, 1);
         JLabel lable3 = new JLabel("Enqueue");
-        this.add(lable3,cons,0,2,1,1);
+        this.add(lable3, cons, 0, 2, 1, 1);
         enqueue = new JTextField();
         enqueue.setEditable(false);
-        this.add(enqueue,cons,0,3,2,1);
+        this.add(enqueue, cons, 0, 3, 2, 1);
         JLabel label4 = new JLabel("Results");
-        this.add(label4,cons,0,5,1,1);
+        this.add(label4, cons, 0, 5, 1, 1);
         cons.weighty = 100;
         resuts = new JTextArea();
         resuts.setEditable(false);
         resuts.setLineWrap(true);
         resuts.setWrapStyleWord(true);
         JScrollPane resultpane = new JScrollPane(resuts);
-        this.add(resultpane,cons,0,6,2,2);
-        createQueue.addKeyListener(new ListenersIn(createQueue,queueCode,enqueue,resuts));
-        enqueue.addKeyListener(new ListenersIn(createQueue,queueCode,enqueue,resuts));
+        this.add(resultpane, cons, 0, 6, 2, 2);
+        createQueue.addKeyListener(new ListenersIn(createQueue, queueCode, enqueue, resuts));
+        enqueue.addKeyListener(new ListenersIn(createQueue, queueCode, enqueue, resuts));
 
         AddMenuItems();
 
@@ -82,11 +83,11 @@ public class AmazonSimpleQueueServiceIn extends JFrame{
     private void AddMenuItems() {
         //add the menus
         JMenuBar menuBar = new JMenuBar();
-        JMenu settingsMenu =  new JMenu("Settings");
+        JMenu settingsMenu = new JMenu("Settings");
         settingsMenu.setMnemonic(KeyEvent.VK_S);
-        JMenuItem amazonKeyMenu = new JMenuItem("Set Amazon Key",KeyEvent.VK_G);
+        JMenuItem amazonKeyMenu = new JMenuItem("Set Amazon Key", KeyEvent.VK_G);
         amazonKeyMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
-        amazonKeyMenu.addActionListener(new ActionListener(){
+        amazonKeyMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setKey();
             }
@@ -108,9 +109,9 @@ public class AmazonSimpleQueueServiceIn extends JFrame{
         setJMenuBar(menuBar);
     }
 
-    private void setKey(){
-        String key = JOptionPane.showInputDialog(this,"Set the Amazon Key",QueueManager.getKey());
-        if (key!=null && !key.trim().equals("")){
+    private void setKey() {
+        String key = JOptionPane.showInputDialog(this, "Set the Amazon Key", QueueManager.getKey());
+        if (key != null && !key.trim().equals("")) {
             QueueManager.setKey(key);
         }
     }
@@ -120,15 +121,15 @@ public class AmazonSimpleQueueServiceIn extends JFrame{
      */
     private void showHelp() {
 
-        JFrame frame= new JFrame();
+        JFrame frame = new JFrame();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setLocation(screenSize.width/5,
-                screenSize.height/5);
-        frame.setSize(screenSize.width/2,screenSize.height/2);
+        frame.setLocation(screenSize.width / 5,
+                          screenSize.height / 5);
+        frame.setSize(screenSize.width / 2, screenSize.height / 2);
 
         BorderLayout layout = new BorderLayout();
 
-        JScrollPane jsp ;
+        JScrollPane jsp;
         JEditorPane jep;
 
         jep = new JEditorPane();
@@ -141,24 +142,24 @@ public class AmazonSimpleQueueServiceIn extends JFrame{
         Container contentPane = frame.getContentPane();
         contentPane.setLayout(layout);
         contentPane.add(jsp, BorderLayout.CENTER);
-        String helpDoc = System.getProperty("user.dir")+HELP_FILE_NAME;
+        String helpDoc = System.getProperty("user.dir") + HELP_FILE_NAME;
 
         try {
             jep.setPage(new File(helpDoc).toURL());
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this,"Help file not detected","Help file error",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Help file not detected", "Help file error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         frame.setVisible(true);
     }
 
 
-    private void add(Component c, GridBagConstraints cons, int x, int y, int w, int h){
+    private void add(Component c, GridBagConstraints cons, int x, int y, int w, int h) {
         cons.gridx = x;
         cons.gridy = y;
         cons.gridheight = h;
         cons.gridwidth = w;
-        this.getContentPane().add(c,cons);
+        this.getContentPane().add(c, cons);
     }
 
 }

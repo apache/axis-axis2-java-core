@@ -24,6 +24,7 @@ public interface OMXMLParserWrapper {
      *
      * @return
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     int next() throws OMException;
@@ -34,6 +35,7 @@ public interface OMXMLParserWrapper {
      *
      * @param el
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     void discard(OMElement el) throws OMException;
@@ -41,6 +43,7 @@ public interface OMXMLParserWrapper {
     /**
      * @param b
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     void setCache(boolean b) throws OMException;

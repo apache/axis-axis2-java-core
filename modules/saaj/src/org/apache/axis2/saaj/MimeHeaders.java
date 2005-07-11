@@ -20,9 +20,9 @@ import java.util.Iterator;
 
 /**
  * @author Ashutosh Shahi	ashutosh.shahi@gmail.com
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ *         <p/>
+ *         TODO To change the template for this generated type comment go to
+ *         Window - Preferences - Java - Code Style - Code Templates
  */
 public class MimeHeaders extends javax.xml.soap.MimeHeaders {
     public MimeHeaders() {

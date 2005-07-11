@@ -45,7 +45,7 @@ public class UtilServer {
     public static synchronized void unDeployService(QName service) throws AxisFault {
         receiver.getSystemContext().getAxisConfiguration().removeService(service);
     }
-    
+
     public static synchronized void start() throws Exception {
         start(org.apache.axis2.Constants.TESTING_REPOSITORY);
     }
@@ -55,7 +55,7 @@ public class UtilServer {
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
             File file = new File(repositry);
             if (!file.exists()) {
-                throw new Exception("repository directory "+ file.getAbsolutePath()+ " does not exists");
+                throw new Exception("repository directory " + file.getAbsolutePath() + " does not exists");
             }
             ConfigurationContext er = erfac.buildConfigurationContext(file.getAbsolutePath());
             try {
@@ -95,7 +95,7 @@ public class UtilServer {
     }
 
     public static ServiceContext createAdressedEnabledClientSide(ServiceDescription service)
-        throws AxisFault {
+            throws AxisFault {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
         File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY + "/modules/addressing.mar");
         TestCase.assertTrue(file.exists());
@@ -103,7 +103,7 @@ public class UtilServer {
 
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
         ConfigurationContext sysContext = efac.buildClientConfigurationContext(null);
-        
+
         sysContext.getAxisConfiguration().addMdoule(moduleDesc);
         //sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
 

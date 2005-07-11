@@ -44,9 +44,9 @@ import javax.xml.stream.XMLOutputFactory;
 public class RESTBasedEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                    "http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoOMElement");
+                                  "http://127.0.0.1:"
+                                  + (UtilServer.TESTING_PORT)
+                                  + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -55,15 +55,15 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
     private AxisConfiguration engineRegistry;
     private MessageContext mc;
     //private Thread thisThread;
-   // private SimpleHTTPServer sas;
+    // private SimpleHTTPServer sas;
     private ServiceContext serviceContext;
     private ServiceDescription service;
 
     private boolean finish = false;
-    
-   
+
+
     private Thread thread;
-    
+
     private final MessageInformation messageInfo = new MessageInformation();
 
     public RESTBasedEchoRawXMLTest() {
@@ -76,12 +76,12 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        Parameter parameter = new ParameterImpl(Constants.Configuration.ENABLE_REST,"true");
-        ((AxisConfigurationImpl)UtilServer.getConfigurationContext().getAxisConfiguration()).addParameter(parameter);
+        Parameter parameter = new ParameterImpl(Constants.Configuration.ENABLE_REST, "true");
+        ((AxisConfigurationImpl) UtilServer.getConfigurationContext().getAxisConfiguration()).addParameter(parameter);
         service =
                 Utils.createSimpleService(serviceName,
-        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
         serviceContext =
                 UtilServer.getConfigurationContext().createServiceContext(service.getName());
@@ -126,7 +126,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
 //        };
 //        thread = new Thread(runnable);
 //        thread.start();
-                
+
 
     }
 
@@ -142,11 +142,11 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(fac.createText(value, "Isaac Assimov, the foundation Sega"));
         method.addChild(value);
-        
+
         return method;
     }
 
-    
+
     public void testEchoXMLSync() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
@@ -160,13 +160,13 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
         OMElement result =
                 (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
         result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
-        
+
         System.out.println(messageInfo.requestMessage);
         call.close();
     }
-    
-    public class MessageInformation{
+
+    public class MessageInformation {
         private String requestMessage = null;
-           private String responseMessage = null;
+        private String responseMessage = null;
     }
 }

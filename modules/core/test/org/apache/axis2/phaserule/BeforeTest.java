@@ -37,9 +37,9 @@ import java.util.ArrayList;
  * Date: May 20, 2005
  * Time: 3:00:54 PM
  */
-public class BeforeTest extends TestCase{
+public class BeforeTest extends TestCase {
 
-     public void testBefore() throws AxisFault {
+    public void testBefore() throws AxisFault {
         ArrayList phases = new ArrayList();
         Phase p1 = new Phase("PhaseA");
         phases.add(p1);
@@ -76,11 +76,11 @@ public class BeforeTest extends TestCase{
 
         ArrayList handlers = p1.getHandlers();
         Handler handler = (Handler) handlers.get(0);
-        if(!handler.getName().equals(new QName("Second"))){
+        if (!handler.getName().equals(new QName("Second"))) {
             fail("Computed Hnadler order is wrong ");
         }
         handler = (Handler) handlers.get(1);
-        if(!handler.getName().equals(new QName("First"))){
+        if (!handler.getName().equals(new QName("First"))) {
             fail("Computed Hnadler order is wrong ");
         }
         p1.invoke(msg);

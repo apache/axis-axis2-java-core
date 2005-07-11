@@ -30,11 +30,11 @@ import java.util.Iterator;
 public class ConfigurationContextFactory {
 
     public ConfigurationContext buildConfigurationContext(String RepositaryName)
-        throws DeploymentException {
+            throws DeploymentException {
         ConfigurationContext configurationContext = null;
         try {
             DeploymentEngine deploymentEngine =
-                new DeploymentEngine(RepositaryName);
+                    new DeploymentEngine(RepositaryName);
             AxisConfiguration configuration = deploymentEngine.load();
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
             configurationContext = new ConfigurationContext(configuration);
@@ -47,11 +47,11 @@ public class ConfigurationContextFactory {
     }
 
     public ConfigurationContext buildClientConfigurationContext(String axis2home)
-        throws DeploymentException {
+            throws DeploymentException {
         ConfigurationContext engineContext = null;
         try {
             AxisConfiguration configuration =
-                new DeploymentEngine().loadClient(axis2home);
+                    new DeploymentEngine().loadClient(axis2home);
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
             engineContext = new ConfigurationContext(configuration);
             phaseResolver.buildTranspotsChains();
@@ -72,15 +72,15 @@ public class ConfigurationContextFactory {
      */
 
     private void initModules(ConfigurationContext context)
-        throws DeploymentException {
+            throws DeploymentException {
         try {
             HashMap modules =
-                ((AxisConfigurationImpl) context.getAxisConfiguration())
+                    ((AxisConfigurationImpl) context.getAxisConfiguration())
                     .getModules();
             Collection col = modules.values();
             for (Iterator iterator = col.iterator(); iterator.hasNext();) {
                 ModuleDescription axismodule =
-                    (ModuleDescription) iterator.next();
+                        (ModuleDescription) iterator.next();
                 Module module = axismodule.getModule();
                 if (module != null) {
                     module.init(context.getAxisConfiguration());
@@ -91,19 +91,18 @@ public class ConfigurationContextFactory {
         }
     }
 
-    public static void createChains(
-        ServiceDescription service,
-        AxisConfiguration configurationContextVal,
-        ArrayList modules)
-        throws PhaseException {
+    public static void createChains(ServiceDescription service,
+                                    AxisConfiguration configurationContextVal,
+                                    ArrayList modules)
+            throws PhaseException {
         try {
             PhaseResolver reolve =
-                new PhaseResolver(configurationContextVal, service);
+                    new PhaseResolver(configurationContextVal, service);
             reolve.buildchains();
             for (int i = 0; i < modules.size(); i++) {
                 QName qName = (QName) modules.get(i);
                 ModuleDescription moduledecs =
-                    configurationContextVal.getModule(qName);
+                        configurationContextVal.getModule(qName);
                 reolve.engageModuleToService(service, moduledecs);
             }
         } catch (PhaseException e) {
@@ -114,7 +113,7 @@ public class ConfigurationContextFactory {
     }
 
     public void initTransports(ConfigurationContext configContext)
-        throws AxisFault {
+            throws AxisFault {
         AxisConfiguration axisConf = configContext.getAxisConfiguration();
         
         //Initzialize Transport Ins
@@ -122,7 +121,7 @@ public class ConfigurationContextFactory {
         Iterator values = transportIns.values().iterator();
         while (values.hasNext()) {
             TransportInDescription transportIn =
-                (TransportInDescription) values.next();
+                    (TransportInDescription) values.next();
             TransportListener listener = transportIn.getReciever();
             if (listener != null) {
                 listener.init(configContext, transportIn);
@@ -133,7 +132,7 @@ public class ConfigurationContextFactory {
         values = transportOuts.values().iterator();
         while (values.hasNext()) {
             TransportOutDescription transportOut =
-                (TransportOutDescription) values.next();
+                    (TransportOutDescription) values.next();
             TransportSender sender = transportOut.getSender();
             if (sender != null) {
                 sender.init(configContext, transportOut);

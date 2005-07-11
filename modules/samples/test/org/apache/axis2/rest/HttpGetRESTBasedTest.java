@@ -44,27 +44,27 @@ public class HttpGetRESTBasedTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-       UtilServer.start();
-       
-       ServiceDescription service =
-                       Utils.createSimpleService(serviceName,Echo.class.getName(),operationName);
-               UtilServer.deployService(service);
+        UtilServer.start();
+
+        ServiceDescription service =
+                Utils.createSimpleService(serviceName, Echo.class.getName(), operationName);
+        UtilServer.deployService(service);
 
     }
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
-       UtilServer.stop();
+        UtilServer.stop();
     }
 
     public void testEchoXMLSync() throws Exception {
         //TODO support the GET with the Simple Axis Server and enable this test case
         URL wsdlrequestUrl =
-            new URL("http://127.0.0.1:5555/axis2/services/EchoXMLService/echoOMElement?value1=value1,value2=value2");
+                new URL("http://127.0.0.1:5555/axis2/services/EchoXMLService/echoOMElement?value1=value1,value2=value2");
 
         HttpURLConnection connection = (HttpURLConnection) wsdlrequestUrl.openConnection();
         BufferedReader reader =
-            new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                new BufferedReader(new InputStreamReader(connection.getInputStream()));
         connection.getResponseCode();
         String line = reader.readLine();
         while (line != null) {

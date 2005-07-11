@@ -21,22 +21,22 @@ import javax.activation.DataHandler;
  * Interface OMText
  */
 public interface OMText extends OMNode {
-	/**
-	 * Returns the text value of this node
-	 * @return
-	 */
-	String getText();
+    /**
+     * Returns the text value of this node
+     *
+     * @return
+     */
+    String getText();
 
-	DataHandler getDataHandler();
+    DataHandler getDataHandler();
 
-	/**
-	 *
-	 * @return boolean flag saying whether the node contains
-	 * an optimized text or not
-	 */
-	boolean isOptimized();
-	
-	void doOptimize(boolean value);
+    /**
+     * @return boolean flag saying whether the node contains
+     *         an optimized text or not
+     */
+    boolean isOptimized();
 
-	String getContentID();
+    void doOptimize(boolean value);
+
+    String getContentID();
 }

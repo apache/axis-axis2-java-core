@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis2;
 
 import junit.framework.TestCase;
@@ -29,7 +29,7 @@ public abstract class AbstractTestCase
     protected String sampleDir = "samples" + File.separator;
     protected String outDir = "target" + File.separator + "generated" + File.separator + "samples" + File.separator;
     protected String tempDir = "target" + File.separator + "generated" + File.separator + "temp";
-    protected String testResourceDir =  "test-resources";
+    protected String testResourceDir = "test-resources";
 
 
     /**

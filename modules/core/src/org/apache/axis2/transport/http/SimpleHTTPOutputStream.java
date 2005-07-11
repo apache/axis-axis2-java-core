@@ -27,16 +27,15 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
     private boolean written = false;
     private boolean chuncked = false;
     private String contentType = null;
-    
-    public SimpleHTTPOutputStream(
-        OutputStream out,boolean chuncked)
-        throws AxisFault {
+
+    public SimpleHTTPOutputStream(OutputStream out, boolean chuncked)
+            throws AxisFault {
         super(out);
         this.chuncked = chuncked;
     }
 
     public void write(byte[] b) throws IOException {
-        if(!written){
+        if (!written) {
             writeHeader();
         }
         out.write(b);
@@ -49,7 +48,7 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
      * @throws java.io.IOException
      */
     public void write(byte[] b, int off, int len) throws IOException {
-        if(!written){
+        if (!written) {
             writeHeader();
         }
         out.write(b, off, len);
@@ -60,28 +59,28 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
      * @throws java.io.IOException
      */
     public void write(int b) throws IOException {
-        if(!written){
+        if (!written) {
             writeHeader();
         }
         out.write(b);
     }
 
-    public void writeHeader() throws IOException{
+    public void writeHeader() throws IOException {
         StringBuffer buf = new StringBuffer();
-        if(chuncked){
+        if (chuncked) {
             buf.append(new String(HTTPConstants.HEADER_PROTOCOL_11)).append(" ");
             buf.append(new String(HTTPConstants.OK)).append("\n");
             buf.append(HTTPConstants.HEADER_TRANSFER_ENCODING).append(": ");
             buf.append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED).append("\n");
-            if(contentType != null){
+            if (contentType != null) {
                 buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ");
                 buf.append(contentType).append("\n");
             }
             buf.append("\n");
-        }else{
+        } else {
             buf.append(new String(HTTPConstants.HTTP));
             buf.append(new String(HTTPConstants.OK)).append("\n");
-            if(contentType != null){
+            if (contentType != null) {
                 buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ");
                 buf.append(contentType).append("\n");
             }
@@ -89,34 +88,34 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
         }
         out.write(buf.toString().getBytes());
         written = true;
-        if(chuncked){
+        if (chuncked) {
             out.flush();
-            out =  new ChunkedOutputStream(out);
+            out = new ChunkedOutputStream(out);
         }
-        
+
     }
 
     public void finalize() throws IOException {
         if (!written) {
             out.write(new String(HTTPConstants.NOCONTENT).getBytes());
             written = true;
-        } else{
+        } else {
             out.flush();
         }
-        if(chuncked){
+        if (chuncked) {
             //TODO sometimes the out stream is closed by the client
             try {
-                ((ChunkedOutputStream)out).eos();
+                ((ChunkedOutputStream) out).eos();
             } catch (IOException e) {
             }
         }
     }
-    
+
     /* (non-Javadoc)
      * @see java.io.OutputStream#close()
      */
     public void close() throws IOException {
-        if(!written){
+        if (!written) {
             finalize();
         }
         super.close();

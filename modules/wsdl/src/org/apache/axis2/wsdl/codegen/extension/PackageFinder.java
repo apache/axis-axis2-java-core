@@ -26,33 +26,31 @@ import java.util.Map;
 
 /**
  * @author chathura@opensource.lk
- *  
  */
 public class PackageFinder extends AbstractCodeGenerationExtension {
 
-	public void init(CodeGenConfiguration configuration) {
-		this.configuration = configuration;
+    public void init(CodeGenConfiguration configuration) {
+        this.configuration = configuration;
 
-	}
+    }
 
-	public void engage() {
-		Map allOptions = this.configuration.getParser().getAllOptions();
-        CommandLineOption packageOption = (CommandLineOption)(allOptions.get(CommandLineOptionConstants.PACKAGE_OPTION));
-        String packageName = packageOption==null?null:packageOption.getOptionValue();
+    public void engage() {
+        Map allOptions = this.configuration.getParser().getAllOptions();
+        CommandLineOption packageOption = (CommandLineOption) (allOptions.get(CommandLineOptionConstants.PACKAGE_OPTION));
+        String packageName = packageOption == null ? null : packageOption.getOptionValue();
 
-		if (packageName == null) {
-			WSDLBinding binding = configuration.getWom().getBinding(AxisBindingBuilder.AXIS_BINDING_QNAME);
-			String temp = binding.getBoundInterface().getName().getNamespaceURI();
-			packageName = URLProcessor.getNameSpaceFromURL(temp);
-		}	
-		
-		if(null == packageName || "".equals(packageName))
-			packageName = URLProcessor.DEFAULT_PACKAGE;
-		
-		this.configuration.setPackageName(packageName.toLowerCase());
+        if (packageName == null) {
+            WSDLBinding binding = configuration.getWom().getBinding(AxisBindingBuilder.AXIS_BINDING_QNAME);
+            String temp = binding.getBoundInterface().getName().getNamespaceURI();
+            packageName = URLProcessor.getNameSpaceFromURL(temp);
+        }
 
-	}
+        if (null == packageName || "".equals(packageName))
+            packageName = URLProcessor.DEFAULT_PACKAGE;
 
-	
+        this.configuration.setPackageName(packageName.toLowerCase());
+
+    }
+
 
 }

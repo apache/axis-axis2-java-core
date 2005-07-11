@@ -26,10 +26,9 @@ import java.io.InputStream;
 
 /**
  * Some XML utility functions
- *
  */
 public class XMLUtils {
-	
+
     /**
      * Get an empty new Document
      *
@@ -37,16 +36,16 @@ public class XMLUtils {
      * @throws ParserConfigurationException if construction problems occur
      */
     public static Document newDocument()
-    throws ParserConfigurationException {
-    	DocumentBuilder db = null;
-    	
+            throws ParserConfigurationException {
+        DocumentBuilder db = null;
+
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         db = dbf.newDocumentBuilder();
         Document doc = db.newDocument();
         return doc;
     }
-	
+
     /**
      * Method newDocument
      *

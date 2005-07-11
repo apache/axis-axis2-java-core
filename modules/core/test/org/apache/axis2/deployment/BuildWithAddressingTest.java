@@ -31,27 +31,27 @@ public class BuildWithAddressingTest extends AbstractTestCase {
         super(testName);
     }
 
-    public void testDeployment()  {
+    public void testDeployment() {
         //todo this test has to be complete   Deepal once addressing module finalize
-       /* String filename = "./target/test-resources/deployment";
-        ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ConfigurationContext er = builder.buildConfigurationContext(filename);
-        ArrayList phases = er.getPhases(AxisConfiguration.INFLOW);
-        ModuleDescription modeule = er.getEngineConfig().getModule(new QName("addressing"));
-        assertNotNull(modeule);
-        if (phases.size() <= 0) {
-            fail("this must failed Since there are addressing handlers ");
-        }
-        for (int i = 0; i < phases.size(); i++) {
-            Phase metadata = (Phase) phases.get(i);
-            if ("pre-dispatch".equals(metadata.getPhaseName())) {
-                if (metadata.getHandlerCount() <= 0) {
-                    fail("this must failed Since there are addressing handlers ");
-                } else {
-                    System.out.println("Found pre-dispatch handlers");
-                }
-            }
-        }*/
+        /* String filename = "./target/test-resources/deployment";
+         ConfigurationContextFactory builder = new ConfigurationContextFactory();
+         ConfigurationContext er = builder.buildConfigurationContext(filename);
+         ArrayList phases = er.getPhases(AxisConfiguration.INFLOW);
+         ModuleDescription modeule = er.getEngineConfig().getModule(new QName("addressing"));
+         assertNotNull(modeule);
+         if (phases.size() <= 0) {
+             fail("this must failed Since there are addressing handlers ");
+         }
+         for (int i = 0; i < phases.size(); i++) {
+             Phase metadata = (Phase) phases.get(i);
+             if ("pre-dispatch".equals(metadata.getPhaseName())) {
+                 if (metadata.getHandlerCount() <= 0) {
+                     fail("this must failed Since there are addressing handlers ");
+                 } else {
+                     System.out.println("Found pre-dispatch handlers");
+                 }
+             }
+         }*/
 
     }
 }

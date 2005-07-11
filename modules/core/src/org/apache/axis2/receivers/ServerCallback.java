@@ -20,6 +20,7 @@ import org.apache.axis2.engine.AxisFault;
 
 
 public interface ServerCallback {
-    public void handleResult(MessageContext result)throws AxisFault;
-    public void handleFault(AxisFault fault)throws AxisFault;
+    public void handleResult(MessageContext result) throws AxisFault;
+
+    public void handleFault(AxisFault fault) throws AxisFault;
 }

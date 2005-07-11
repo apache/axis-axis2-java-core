@@ -30,9 +30,9 @@ import org.eclipse.ui.IWorkbench;
 
 /**
  * @author Ajith
- * 
- * TODO To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Style - Code Templates
+ *         <p/>
+ *         TODO To change the template for this generated type comment go to Window -
+ *         Preferences - Java - Code Style - Code Templates
  */
 public class ServiceArchiveWizard extends Wizard implements INewWizard {
 
@@ -40,8 +40,8 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
     private WizardPane2 wizardPane2;
     private WizardPane3 wizardPane3;
     private WizardPane4 wizardPane4;
-    
-    
+
+
     /**
      * 
      */
@@ -49,23 +49,21 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
         super();
         setWindowTitle(ServiceArchiver.getResourceString("main.title"));
     }
-    
-    
-    
-    
+
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
      */
     public IWizardPage getNextPage(IWizardPage page) {
-       IWizardPage pageout = super.getNextPage(page);
-       if (page.equals(wizardPane2)){
-           if (((WizardPane2)page).isSkipNextPage()){
-               pageout = super.getNextPage(pageout);
-           }
-       }
-       return pageout;
+        IWizardPage pageout = super.getNextPage(page);
+        if (page.equals(wizardPane2)) {
+            if (((WizardPane2) page).isSkipNextPage()) {
+                pageout = super.getNextPage(pageout);
+            }
+        }
+        return pageout;
     }
-   
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizard#addPages()
      */
@@ -79,6 +77,7 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
         wizardPane4 = new WizardPane4();
         this.addPage(wizardPane4);
     }
+
     /* (non-Javadobc)
      * @see org.eclipse.jface.wizard.IWizard#performFinish()
      */
@@ -96,15 +95,14 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
             showErrorMessage(e.getMessage());
             return false;
         } catch (Exception e) {
-            showErrorMessage("Unknown Error! " +e.getMessage() );
+            showErrorMessage("Unknown Error! " + e.getMessage());
             return false;
         }
-    
-        
-        
+
+
     }
-    
-    
+
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
      */
@@ -112,12 +110,12 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
         // TODO Auto-generated method stub
 
     }
-    
-    private void showErrorMessage(String message){
-        MessageDialog.openError(this.getShell(),"Error",message);
+
+    private void showErrorMessage(String message) {
+        MessageDialog.openError(this.getShell(), "Error", message);
     }
-    
-    private void showSuccessMessage(String message){
-        MessageDialog.openInformation(this.getShell(),"Success",message);
+
+    private void showSuccessMessage(String message) {
+        MessageDialog.openInformation(this.getShell(), "Success", message);
     }
 }

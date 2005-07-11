@@ -279,7 +279,7 @@ public class SOAPFaultTest extends SOAPFaultTestCase {
             assertTrue("Parent Value of Code has not been set to new fault", code.getParent() == envelope.getBody().getFault());
             assertTrue("Parent Value of Code is still pointing to old fault", code.getParent() != soapEnvelope.getBody().getFault());
             assertNull("Old fault must not have a fault code", soapEnvelope.getBody().getFault().getCode());
-            assertEquals("The SOAP Code value must be "+errorCodeString, errorCodeString, envelope.getBody().getFault().getCode().getValue().getText());
+            assertEquals("The SOAP Code value must be " + errorCodeString, errorCodeString, envelope.getBody().getFault().getCode().getValue().getText());
 
         } catch (Exception e) {
             fail(e.getMessage());

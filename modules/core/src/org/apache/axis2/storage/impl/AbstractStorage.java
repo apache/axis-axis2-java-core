@@ -19,13 +19,14 @@ import org.apache.axis2.storage.AxisStorage;
  *
  * 
  */
-public abstract class AbstractStorage implements AxisStorage{
 
-     private static int key=0;
+public abstract class AbstractStorage implements AxisStorage {
 
-     protected String getUniqueKey(){
-        if (key==Integer.MAX_VALUE){
-            key=0;
+    private static int key = 0;
+
+    protected String getUniqueKey() {
+        if (key == Integer.MAX_VALUE) {
+            key = 0;
         }
         return Integer.toString(key++);
     }

@@ -39,10 +39,10 @@ import javax.xml.namespace.QName;
 
 public class OneWayRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
-             new EndpointReference(AddressingConstants.WSA_TO,
-                     "http://127.0.0.1:"
-             + (UtilServer.TESTING_PORT)
-             + "/axis/services/EchoXMLService/echoOMElement");
+            new EndpointReference(AddressingConstants.WSA_TO,
+                                  "http://127.0.0.1:"
+                                  + (UtilServer.TESTING_PORT)
+                                  + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -76,15 +76,14 @@ public class OneWayRawXMLTest extends TestCase {
         });
         service.addOperation(operation);
         UtilServer.deployService(service);
-      }
+    }
 
-   
+
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.stop();
     }
 
-  
 
     public void testEchoXMLSync() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
@@ -98,10 +97,10 @@ public class OneWayRawXMLTest extends TestCase {
 
         sender.send(operationName.getLocalPart(), payload);
         int index = 0;
-        while(envelope == null){
+        while (envelope == null) {
             Thread.sleep(4000);
-            index ++;
-            if(index == 5){
+            index++;
+            if (index == 5) {
                 throw new AxisFault("error Occured");
             }
         }

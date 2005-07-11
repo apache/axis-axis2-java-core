@@ -20,55 +20,55 @@ import java.awt.*;
 import java.io.*;
 
 public class ImageDataSource implements DataSource {
-	
-	public static final String CONTENT_TYPE = "image/jpeg";
-	
-	private final String name;
-	
-	private final String contentType;
-	
-	private byte[] data;
-	
-	private ByteArrayOutputStream os;
-	
-	public ImageDataSource(String name, Image data) {
-		this(name, CONTENT_TYPE, data);
-	} // ctor
-	
-	public ImageDataSource(String name, String contentType, Image data) {
-		this.name = name;
-		this.contentType = contentType == null ? CONTENT_TYPE : contentType;
-		os = new ByteArrayOutputStream();
-		try {
-			if (data != null) {
-				new JDK13IO().saveImage(this.contentType, data, os);
-			}
-		} catch (Exception e) {
-			// log.error(Messages.getMessage("exception00"), e);
-		}
-	}
-	
-	public String getName() {
-		return name;
-	} // getName
-	
-	public String getContentType() {
-		return contentType;
-	} // getContentType
-	
-	public InputStream getInputStream() throws IOException {
-		if (os.size() != 0) {
-			data = os.toByteArray();
-			os.reset();
-		}
-		return new ByteArrayInputStream(data == null ? new byte[0] : data);
-	} // getInputStream
-	
-	public OutputStream getOutputStream() throws IOException {
-		if (os.size() != 0) {
-			data = os.toByteArray();
-			os.reset();
-		}
-		return os;
-	} // getOutputStream
+
+    public static final String CONTENT_TYPE = "image/jpeg";
+
+    private final String name;
+
+    private final String contentType;
+
+    private byte[] data;
+
+    private ByteArrayOutputStream os;
+
+    public ImageDataSource(String name, Image data) {
+        this(name, CONTENT_TYPE, data);
+    } // ctor
+
+    public ImageDataSource(String name, String contentType, Image data) {
+        this.name = name;
+        this.contentType = contentType == null ? CONTENT_TYPE : contentType;
+        os = new ByteArrayOutputStream();
+        try {
+            if (data != null) {
+                new JDK13IO().saveImage(this.contentType, data, os);
+            }
+        } catch (Exception e) {
+            // log.error(Messages.getMessage("exception00"), e);
+        }
+    }
+
+    public String getName() {
+        return name;
+    } // getName
+
+    public String getContentType() {
+        return contentType;
+    } // getContentType
+
+    public InputStream getInputStream() throws IOException {
+        if (os.size() != 0) {
+            data = os.toByteArray();
+            os.reset();
+        }
+        return new ByteArrayInputStream(data == null ? new byte[0] : data);
+    } // getInputStream
+
+    public OutputStream getOutputStream() throws IOException {
+        if (os.size() != 0) {
+            data = os.toByteArray();
+            os.reset();
+        }
+        return os;
+    } // getOutputStream
 } // class ImageDataSource

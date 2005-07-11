@@ -23,7 +23,8 @@ import java.util.HashMap;
  *
  * 
  */
-public class AxisFileStorage extends AbstractStorage{
+
+public class AxisFileStorage extends AbstractStorage {
 
     private File file;
     private FileOutputStream fos;
@@ -55,7 +56,7 @@ public class AxisFileStorage extends AbstractStorage{
 
         try {
             String key = getUniqueKey();
-            map.put(key,value);
+            map.put(key, value);
 
             updateFileState();
 
@@ -91,7 +92,7 @@ public class AxisFileStorage extends AbstractStorage{
     }
 
     public boolean clean() {
-       try {
+        try {
             map.clear();
             updateFileState();
             return true;

@@ -35,8 +35,10 @@ public interface SOAPBody extends OMElement {
      *
      * @param e
      * @return the new <code>SOAPFault</code> object
-     * @throws org.apache.axis2.om.OMException if there is a SOAP error
      * @throws org.apache.axis2.om.OMException
+     *          if there is a SOAP error
+     * @throws org.apache.axis2.om.OMException
+     *
      */
     public abstract SOAPFault addFault(Exception e) throws OMException;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis2.engine;
 
 import org.apache.axis2.om.OMElement;
@@ -44,11 +44,10 @@ public class Echo {
     public int echoInt(int in) {
         return in;
     }
-    
-    public OMElement echoMTOMtoBase64(OMElement omEle)
-    {
-    	OMText omText  = (OMText)omEle.getFirstChild();
-    	omText.doOptimize(false);
-    	return omEle;
+
+    public OMElement echoMTOMtoBase64(OMElement omEle) {
+        OMText omText = (OMText) omEle.getFirstChild();
+        omText.doOptimize(false);
+        return omEle;
     }
 }

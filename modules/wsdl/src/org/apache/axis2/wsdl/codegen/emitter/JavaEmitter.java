@@ -21,10 +21,10 @@ import org.apache.axis2.wsdl.databinding.TypeMapper;
 *
 * Java emiiter implementation
 */
-public class JavaEmitter extends MultiLanguageClientEmitter{
+
+public class JavaEmitter extends MultiLanguageClientEmitter {
 
     /**
-     *
      * @param configuration
      */
     public JavaEmitter(CodeGenConfiguration configuration) {
@@ -34,16 +34,14 @@ public class JavaEmitter extends MultiLanguageClientEmitter{
     }
 
     /**
-     *
      * @param configuration
      * @param mapper
      */
-    public JavaEmitter(CodeGenConfiguration configuration,TypeMapper mapper) {
+    public JavaEmitter(CodeGenConfiguration configuration, TypeMapper mapper) {
         this.configuration = configuration;
-        this.mapper =mapper;
+        this.mapper = mapper;
 
     }
 
-      
 
 }

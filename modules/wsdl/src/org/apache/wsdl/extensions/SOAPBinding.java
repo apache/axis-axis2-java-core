@@ -20,14 +20,13 @@ import org.apache.wsdl.WSDLExtensibilityElement;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface SOAPBinding extends WSDLExtensibilityElement{
-	public String getStyle();
+public interface SOAPBinding extends WSDLExtensibilityElement {
+    public String getStyle();
 
-	public void setStyle(String style);
+    public void setStyle(String style);
 
-	public String getTransportURI();
+    public String getTransportURI();
 
-	public void setTransportURI(String transportURI);
+    public void setTransportURI(String transportURI);
 }

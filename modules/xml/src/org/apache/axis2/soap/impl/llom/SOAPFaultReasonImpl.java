@@ -24,7 +24,7 @@ import org.apache.axis2.soap.impl.llom.util.UtilProvider;
  * the License.
  * <p/>
  */
-public abstract class SOAPFaultReasonImpl extends SOAPElement implements SOAPFaultReason{
+public abstract class SOAPFaultReasonImpl extends SOAPElement implements SOAPFaultReason {
     protected SOAPFaultText text;
 
     /**
@@ -34,7 +34,7 @@ public abstract class SOAPFaultReasonImpl extends SOAPElement implements SOAPFau
      * @param builder
      */
     public SOAPFaultReasonImpl(SOAPFault parent, OMXMLParserWrapper builder) {
-        super(parent, SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME,  builder);
+        super(parent, SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, builder);
     }
 
     /**
@@ -50,7 +50,7 @@ public abstract class SOAPFaultReasonImpl extends SOAPElement implements SOAPFau
     public void setSOAPText(SOAPFaultText soapFaultText) throws SOAPProcessingException {
         UtilProvider.setNewElement(this, text, soapFaultText);
     }
-                                                                                                                      
+
     public SOAPFaultText getSOAPText() {
         return (SOAPFaultText) UtilProvider.getChildWithName(this, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME);
     }

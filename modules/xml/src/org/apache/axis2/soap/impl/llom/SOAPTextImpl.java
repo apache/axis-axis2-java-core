@@ -20,7 +20,7 @@ import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
  * the License.
  * <p/>
  */
-public class SOAPTextImpl extends SOAPElement{
+public class SOAPTextImpl extends SOAPElement {
 
     protected SOAPTextImpl(OMElement parent) throws SOAPProcessingException {
         super(parent, SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME, true);

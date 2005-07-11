@@ -30,21 +30,20 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
      * Field NAME
      */
     public static final QName NAME =
-        new QName("http://axis.ws.apache.org", "SOAPActionBasedDispatcher");
+            new QName("http://axis.ws.apache.org", "SOAPActionBasedDispatcher");
 
     public SOAPActionBasedDispatcher() {
         init(new HandlerDescription(NAME));
     }
 
-    public OperationDescription findOperation(
-        ServiceDescription service,
-        MessageContext messageContext)
-        throws AxisFault {
+    public OperationDescription findOperation(ServiceDescription service,
+                                              MessageContext messageContext)
+            throws AxisFault {
 
         String action = (String) messageContext.getSoapAction();
         if (action != null) {
             OperationDescription op = service.getOperationBySOAPAction(action);
-            if(op == null){
+            if (op == null) {
                 op = service.getOperation(new QName(action));
             }
             return op;

@@ -46,7 +46,7 @@ public class GUIHandler {
 
     /**
      * Query parameters typed here
-     *      */
+     */
     private JTextField textBox;
 
     /**
@@ -58,7 +58,7 @@ public class GUIHandler {
      * Menu commands to set the key and maximum no of results per page
      */
     private JMenuItem keyMenuItem, maxResultsMenuItem;
-    private AsynchronousClient asyncClient ;
+    private AsynchronousClient asyncClient;
 
     public GUIHandler(AsynchronousClient asyncClient) {
         this.asyncClient = asyncClient;
@@ -88,7 +88,7 @@ public class GUIHandler {
         menuBar.add(settingsMenu);
 
         keyMenuItem = new JMenuItem("Key");
-        keyMenuItem.addActionListener(new ActionListener(){
+        keyMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setKey();
             }
@@ -96,7 +96,7 @@ public class GUIHandler {
         settingsMenu.add(keyMenuItem);
 
         maxResultsMenuItem = new JMenuItem("Result per page");
-        maxResultsMenuItem.addActionListener(new ActionListener(){
+        maxResultsMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setMaxResults();
             }
@@ -119,12 +119,12 @@ public class GUIHandler {
         Dimension wndSize = theKit.getScreenSize(); // Get screen size
         // Set the position to screen center & size to half screen size
         frame.setBounds(wndSize.width / 6, wndSize.height / 10, // Position
-                wndSize.width * 3 / 5, wndSize.height * 3 / 4); // Size
+                        wndSize.width * 3 / 5, wndSize.height * 3 / 4); // Size
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         nextButton = new JButton("More Results");
         pane.add(nextButton);
-        nextButton.addActionListener(new ActionListener(){
+        nextButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 processNextButton();
             }
@@ -133,7 +133,7 @@ public class GUIHandler {
         backButton = new JButton("Previous Page");
         backButton.setVisible(false);
         pane.add(backButton);
-        backButton.addActionListener(new ActionListener(){
+        backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 processBackButton();
             }
@@ -144,16 +144,18 @@ public class GUIHandler {
         textEditorPane.setContentType("text/html");
         textEditorPane.addHyperlinkListener(new LinkFollower());
         JScrollPane scroll = new JScrollPane(textEditorPane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                                             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         pane.add(scroll);
 
 
-
-
         textBox = new JTextField();
-        textBox.addKeyListener(new KeyListener(){
-            public void keyPressed(KeyEvent e) {}
-            public void keyReleased(KeyEvent e) {}
+        textBox.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent e) {
+            }
+
+            public void keyReleased(KeyEvent e) {
+            }
+
             public void keyTyped(KeyEvent e) {
                 processKeyEvent(e.getKeyChar());
             }
@@ -164,7 +166,7 @@ public class GUIHandler {
         SpringLayout.Constraints textBoxConstraints = layout.getConstraints(textBox);
         xSpring = Spring.constant(0); // Spring we値l use for X
         ySpring = Spring.constant(0); // Spring we値l use for Y
-        wSpring = Spring.constant(frame.getBounds().width-8); // Spring we値l use for width
+        wSpring = Spring.constant(frame.getBounds().width - 8); // Spring we値l use for width
         hSpring = Spring.constant(30); // Strut we値l use for height
         textBoxConstraints.setWidth(wSpring); // Set component width constraint
         textBoxConstraints.setHeight(hSpring);
@@ -175,7 +177,7 @@ public class GUIHandler {
 //        SpringLayout.Constraints scrollConstraints = layout.getConstraints(textEditorPane);
         xSpring = Spring.constant(0); // Spring we値l use for X
         ySpring = Spring.constant(30); // Spring we値l use for Y
-        wSpring = Spring.constant(frame.getBounds().width-8); // Spring we値l use for width
+        wSpring = Spring.constant(frame.getBounds().width - 8); // Spring we値l use for width
         hSpring = Spring.constant(450); // Strut we値l use for height
         scrollConstraints.setWidth(wSpring); // Set component width constraint
         scrollConstraints.setHeight(hSpring);
@@ -220,13 +222,13 @@ public class GUIHandler {
      * store it in the properties file
      */
     protected void setKey() {
-        String key = JOptionPane.showInputDialog(null,"Set the Google Key",PropertyLoader.getGoogleKey());
-        if (key!=null && !key.trim().equals("")){
+        String key = JOptionPane.showInputDialog(null, "Set the Google Key", PropertyLoader.getGoogleKey());
+        if (key != null && !key.trim().equals("")) {
             PropertyLoader.setGoogleKey(key);
         }
     }
 
-    private void processBackButton(){
+    private void processBackButton() {
         if (asyncClient.getStartIndex() != 0) {
             int i = Integer.parseInt(asyncClient.getMaxResults());
             asyncClient.setStartIndex(asyncClient.getStartIndex() - i);
@@ -236,6 +238,7 @@ public class GUIHandler {
             doSearch();
         }
     }
+
     /**
      * method keyTyped
      * fires when user typing in TextField textBox
@@ -257,15 +260,15 @@ public class GUIHandler {
      */
     private void showHelp() {
 
-        JFrame frame= new JFrame();
+        JFrame frame = new JFrame();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setLocation(screenSize.width/5,
-                screenSize.height/5);
-        frame.setSize(screenSize.width/2,screenSize.height/2);
+        frame.setLocation(screenSize.width / 5,
+                          screenSize.height / 5);
+        frame.setSize(screenSize.width / 2, screenSize.height / 2);
 
         BorderLayout layout = new BorderLayout();
 
-        JScrollPane jsp ;
+        JScrollPane jsp;
         JEditorPane jep;
 
         jep = new JEditorPane();
@@ -278,12 +281,12 @@ public class GUIHandler {
         Container contentPane = frame.getContentPane();
         contentPane.setLayout(layout);
         contentPane.add(jsp, BorderLayout.CENTER);
-        String helpDoc = System.getProperty("user.dir")+HELP_FILE_NAME;
+        String helpDoc = System.getProperty("user.dir") + HELP_FILE_NAME;
 
         try {
             jep.setPage(new File(helpDoc).toURL());
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null,"Help file not detected","Help file error",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Help file not detected", "Help file error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         frame.setVisible(true);
@@ -300,12 +303,12 @@ public class GUIHandler {
     private void setMaxResults() {
         String maxResults =
                 JOptionPane.showInputDialog(null,
-                        "Enter the number of maximum results per page (Maximum allowed is 10)",asyncClient.getMaxResults());
-        if (maxResults==null){
+                                            "Enter the number of maximum results per page (Maximum allowed is 10)", asyncClient.getMaxResults());
+        if (maxResults == null) {
             return;
-        }else{
+        } else {
             try {
-                asyncClient.setMaxResults(Integer.parseInt(maxResults) +"");
+                asyncClient.setMaxResults(Integer.parseInt(maxResults) + "");
                 asyncClient.setPrevSearch("");
             } catch (NumberFormatException e) {
                 return;
@@ -316,12 +319,12 @@ public class GUIHandler {
     }
 
 
-    private void doSearch(){
+    private void doSearch() {
         new ClientThread().run();
 
     }
 
-    private class ClientThread implements Runnable{
+    private class ClientThread implements Runnable {
         /**
          * method run
          * check the flag doSearch
@@ -330,7 +333,7 @@ public class GUIHandler {
         public void run() {
             if (!asyncClient.getSearch().equals(asyncClient.getPrevSearch())) {
                 asyncClient.setStartIndex(0);
-               // return;
+                // return;
             }
             try {
                 asyncClient.sendMsg();

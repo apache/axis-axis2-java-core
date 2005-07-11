@@ -1,26 +1,16 @@
 package org.apache.axis2.om.xpath;
 
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMContainer;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.llom.OMDocument;
 import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.jaxen.BaseXPath;
-import org.jaxen.DefaultNavigator;
-import org.jaxen.FunctionCallException;
-import org.jaxen.JaxenConstants;
-import org.jaxen.UnsupportedAxisException;
-import org.jaxen.XPath;
+import org.jaxen.*;
 import org.jaxen.saxpath.SAXPathException;
 import org.jaxen.util.SingleObjectIterator;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.namespace.QName;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -74,7 +64,7 @@ public class DocumentNavigator extends DefaultNavigator {
     public String getElementQName(Object object) {
         OMElement attr = (OMElement) object;
         String prefix = null;
-        if(attr.getNamespace()!=null) {
+        if (attr.getNamespace() != null) {
             prefix = attr.getNamespace().getPrefix();
         }
         if (prefix == null || "".equals(prefix)) {
@@ -320,8 +310,8 @@ public class DocumentNavigator extends DefaultNavigator {
         if (isElement(contextNode)) {
             ArrayList attributes = new ArrayList();
             Iterator i = ((OMElement) contextNode).getAttributes();
-            while(i != null && i.hasNext()){
-                attributes.add(new OMAttributeEx((OMAttribute)i.next(), (OMContainer)contextNode));
+            while (i != null && i.hasNext()) {
+                attributes.add(new OMAttributeEx((OMAttribute) i.next(), (OMContainer) contextNode));
             }
             return attributes.iterator();
         }
@@ -338,7 +328,7 @@ public class DocumentNavigator extends DefaultNavigator {
      *                                  not supported by this object model
      */
     public Iterator getNamespaceAxisIterator(Object contextNode) throws UnsupportedAxisException {
-        if (! (contextNode instanceof OMContainer && contextNode instanceof OMElement)) {
+        if (!(contextNode instanceof OMContainer && contextNode instanceof OMElement)) {
             return JaxenConstants.EMPTY_ITERATOR;
         }
         List nsList = new ArrayList();
@@ -357,16 +347,16 @@ public class DocumentNavigator extends DefaultNavigator {
             }
             for (Iterator iter = declaredNS.iterator(); iter != null && iter.hasNext();) {
                 OMNamespace namespace = (OMNamespace) iter.next();
-                if(namespace != null) {
+                if (namespace != null) {
                     String prefix = namespace.getPrefix();
-                    if (prefix != null && ! prefixes.contains(prefix)) {
+                    if (prefix != null && !prefixes.contains(prefix)) {
                         prefixes.add(prefix);
                         nsList.add(new OMNamespaceEx(namespace, context));
                     }
                 }
             }
         }
-        nsList.add(new OMNamespaceEx(new OMNamespaceImpl("http://www.w3.org/XML/1998/namespace", "xml"), (OMContainer)contextNode));
+        nsList.add(new OMNamespaceEx(new OMNamespaceImpl("http://www.w3.org/XML/1998/namespace", "xml"), (OMContainer) contextNode));
         return nsList.iterator();
     }
 
@@ -423,9 +413,9 @@ public class DocumentNavigator extends DefaultNavigator {
     public Iterator getParentAxisIterator(Object contextNode) throws UnsupportedAxisException {
         if (contextNode instanceof OMNode) {
             return new SingleObjectIterator(((OMNode) contextNode).getParent());
-        }  else if (contextNode instanceof OMNamespaceEx) {
+        } else if (contextNode instanceof OMNamespaceEx) {
             return new SingleObjectIterator(((OMNamespaceEx) contextNode).getParent());
-        }  else if (contextNode instanceof OMAttributeEx) {
+        } else if (contextNode instanceof OMAttributeEx) {
             return new SingleObjectIterator(((OMAttributeEx) contextNode).getParent());
         }
         return JaxenConstants.EMPTY_ITERATOR;
@@ -456,10 +446,10 @@ public class DocumentNavigator extends DefaultNavigator {
      */
     public Iterator getFollowingSiblingAxisIterator(Object contextNode) throws UnsupportedAxisException {
         ArrayList list = new ArrayList();
-        if(contextNode != null &&contextNode instanceof OMNode) {
-            while(contextNode != null && contextNode instanceof OMNode){
-                contextNode = ((OMNode)contextNode).getNextSibling();
-                if(contextNode != null)
+        if (contextNode != null && contextNode instanceof OMNode) {
+            while (contextNode != null && contextNode instanceof OMNode) {
+                contextNode = ((OMNode) contextNode).getNextSibling();
+                if (contextNode != null)
                     list.add(contextNode);
             }
         }
@@ -477,10 +467,10 @@ public class DocumentNavigator extends DefaultNavigator {
      */
     public Iterator getPrecedingSiblingAxisIterator(Object contextNode) throws UnsupportedAxisException {
         ArrayList list = new ArrayList();
-        if(contextNode != null &&contextNode instanceof OMNode) {
-            while(contextNode != null && contextNode instanceof OMNode){
-                contextNode = ((OMNode)contextNode).getPreviousSibling();
-                if(contextNode != null)
+        if (contextNode != null && contextNode instanceof OMNode) {
+            while (contextNode != null && contextNode instanceof OMNode) {
+                contextNode = ((OMNode) contextNode).getPreviousSibling();
+                if (contextNode != null)
                     list.add(contextNode);
             }
         }
@@ -525,13 +515,11 @@ public class DocumentNavigator extends DefaultNavigator {
             throws FunctionCallException {
         try {
             XMLStreamReader parser;
-            if(uri.indexOf(':')==-1) {
-                parser = XMLInputFactory.newInstance().createXMLStreamReader(
-                        new FileInputStream(uri));
-            }  else {
+            if (uri.indexOf(':') == -1) {
+                parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream(uri));
+            } else {
                 URL url = new URL(uri);
-                parser = XMLInputFactory.newInstance().createXMLStreamReader(
-                        url.openStream());
+                parser = XMLInputFactory.newInstance().createXMLStreamReader(url.openStream());
             }
             StAXOMBuilder builder =
                     new StAXOMBuilder(parser);
@@ -658,10 +646,12 @@ public class DocumentNavigator extends DefaultNavigator {
     class OMNamespaceEx implements OMNamespace {
         OMNamespace originalNsp = null;
         OMContainer parent = null;
+
         OMNamespaceEx(OMNamespace nsp, OMContainer parent) {
             originalNsp = nsp;
             this.parent = parent;
         }
+
         public boolean equals(String uri, String prefix) {
             return originalNsp.equals(uri, prefix);
         }
@@ -682,10 +672,12 @@ public class DocumentNavigator extends DefaultNavigator {
     class OMAttributeEx implements OMAttribute {
         OMAttribute attribute = null;
         OMContainer parent = null;
+
         OMAttributeEx(OMAttribute attribute, OMContainer parent) {
             this.attribute = attribute;
             this.parent = parent;
         }
+
         public String getLocalName() {
             return attribute.getLocalName();
         }

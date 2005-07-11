@@ -19,6 +19,7 @@ import java.util.Iterator;
 *
 * An empty Iterator implementation
 */
+
 public class EmptyIterator implements Iterator {
     public void remove() {
         throw new UnsupportedOperationException();

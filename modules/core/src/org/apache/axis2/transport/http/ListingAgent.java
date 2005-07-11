@@ -83,9 +83,8 @@ public class ListingAgent {
     private final boolean allowListSingleService = true;
     private OutputStream out = null;
 
-    public void handle(
-            HttpServletRequest httpServletRequest,
-            HttpServletResponse httpServletResponse,OutputStream out)
+    public void handle(HttpServletRequest httpServletRequest,
+                       HttpServletResponse httpServletResponse, OutputStream out)
             throws IOException {
         this.out = out;
         String filePart = httpServletRequest.getRequestURL().toString();
@@ -151,14 +150,12 @@ public class ListingAgent {
     private void listServices(HttpServletRequest req, HttpServletResponse res) throws IOException {
         HashMap services = configContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        req.getSession().setAttribute(
-                Constants.ERROR_SERVICE_MAP,
-                configContext.getAxisConfiguration().getFaulytServices());
+        req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
+                                      configContext.getAxisConfiguration().getFaulytServices());
         res.sendRedirect(LIST_MULTIPLE_SERVICE_JSP_NAME);
     }
 
     /**
-     *
      * @param req
      * @param res
      * @throws IOException
@@ -167,9 +164,8 @@ public class ListingAgent {
             throws IOException {
         HashMap services = configContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        req.getSession().setAttribute(
-                Constants.ERROR_SERVICE_MAP,
-                configContext.getAxisConfiguration().getFaulytServices());
+        req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
+                                      configContext.getAxisConfiguration().getFaulytServices());
         res.sendRedirect(LIST_SRVICES_JSP_NAME);
     }
 
@@ -180,6 +176,7 @@ public class ListingAgent {
         req.getSession().setAttribute(Constants.MODULE_ENGAMENT, null);
         res.sendRedirect(SELECT_SERVICE_JSP_NAME);
     }
+
     private void adminLogging(HttpServletRequest req, HttpServletResponse res) throws IOException {
         String username = req.getParameter("userName");
         String password = req.getParameter("password");
@@ -212,9 +209,8 @@ public class ListingAgent {
         HashMap modules =
                 ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
-        req.getSession().setAttribute(
-                Constants.ERROR_MODULE_MAP,
-                configContext.getAxisConfiguration().getFaulytModules());
+        req.getSession().setAttribute(Constants.ERROR_MODULE_MAP,
+                                      configContext.getAxisConfiguration().getFaulytModules());
         res.sendRedirect(LIST_AVAILABLE_MODULES_JSP_NAME);
     }
 
@@ -228,9 +224,8 @@ public class ListingAgent {
         if (moduleName != null) {
             try {
                 configContext.getAxisConfiguration().engageModule(new QName(moduleName));
-                req.getSession().setAttribute(
-                        Constants.ENGAGE_STATUS,
-                        moduleName + " module engaged globally Successfully");
+                req.getSession().setAttribute(Constants.ENGAGE_STATUS,
+                                              moduleName + " module engaged globally Successfully");
             } catch (AxisFault axisFault) {
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
             }
@@ -255,25 +250,20 @@ public class ListingAgent {
         } else {
             serviceName = (String) req.getSession().getAttribute("service");
         }
-        req.getSession().setAttribute(
-                Constants.OPEARTION_MAP,
-                configContext
-                .getAxisConfiguration()
-                .getService(new QName(serviceName))
-                .getOperations());
+        req.getSession().setAttribute(Constants.OPEARTION_MAP,
+                                      configContext
+                                      .getAxisConfiguration()
+                                      .getService(new QName(serviceName))
+                                      .getOperations());
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
         String operationName = (String) req.getParameter("operation");
         if (serviceName != null && moduleName != null && operationName != null) {
             try {
                 OperationDescription od =
-                        configContext.getAxisConfiguration().getService(
-                                new QName(serviceName)).getOperation(
-                                        new QName(operationName));
-                od.engageModule(
-                        configContext.getAxisConfiguration().getModule(new QName(moduleName)));
-                req.getSession().setAttribute(
-                        Constants.ENGAGE_STATUS,
-                        moduleName + " module engaged to the operation Successfully");
+                        configContext.getAxisConfiguration().getService(new QName(serviceName)).getOperation(new QName(operationName));
+                od.engageModule(configContext.getAxisConfiguration().getModule(new QName(moduleName)));
+                req.getSession().setAttribute(Constants.ENGAGE_STATUS,
+                                              moduleName + " module engaged to the operation Successfully");
             } catch (AxisFault axisFault) {
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
             }
@@ -281,6 +271,7 @@ public class ListingAgent {
         req.getSession().setAttribute("operation", null);
         res.sendRedirect(ENGAGE_TO_OPERATION_JSP_NAME);
     }
+
     private void engageModulesToService(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
         HashMap modules =
@@ -296,12 +287,9 @@ public class ListingAgent {
         if (serviceName != null && moduleName != null) {
             try {
 
-                configContext.getAxisConfiguration().getService(
-                        new QName(serviceName)).engageModule(
-                                configContext.getAxisConfiguration().getModule(new QName(moduleName)));
-                req.getSession().setAttribute(
-                        Constants.ENGAGE_STATUS,
-                        moduleName + " module engaged to the service Successfully");
+                configContext.getAxisConfiguration().getService(new QName(serviceName)).engageModule(configContext.getAxisConfiguration().getModule(new QName(moduleName)));
+                req.getSession().setAttribute(Constants.ENGAGE_STATUS,
+                                              moduleName + " module engaged to the service Successfully");
             } catch (AxisFault axisFault) {
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
             }
@@ -328,9 +316,8 @@ public class ListingAgent {
 
     private void viewGlobalHandlers(HttpServletRequest req, HttpServletResponse res)
             throws IOException {
-        req.getSession().setAttribute(
-                Constants.GLOBAL_HANDLERS,
-                configContext.getAxisConfiguration());
+        req.getSession().setAttribute(Constants.GLOBAL_HANDLERS,
+                                      configContext.getAxisConfiguration());
         res.sendRedirect(VIEW_GLOBAL_HANDLERS_JSP_NAME);
     }
 
@@ -338,16 +325,15 @@ public class ListingAgent {
             throws IOException {
         String service = (String) req.getParameter("service");
         if (service != null) {
-            req.getSession().setAttribute(
-                    Constants.SERVICE_HANDLERS,
-                    configContext.getAxisConfiguration().getService(new QName(service)));
+            req.getSession().setAttribute(Constants.SERVICE_HANDLERS,
+                                          configContext.getAxisConfiguration().getService(new QName(service)));
         }
         res.sendRedirect(VIEW_SERVICE_HANDLERS_JSP_NAME);
     }
 
     private void listPhases(HttpServletRequest req, HttpServletResponse res) throws IOException {
         ArrayList phaselist = new ArrayList();
-        PhasesInfo info = ((AxisConfigurationImpl)configContext.getAxisConfiguration()).getPhasesinfo();
+        PhasesInfo info = ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getPhasesinfo();
         phaselist.add(info.getINPhases());
         phaselist.add(info.getIN_FaultPhases());
         phaselist.add(info.getOUTPhases());
@@ -377,11 +363,11 @@ public class ListingAgent {
         if ((services != null) && !services.isEmpty()) {
             Object serviceObj = services.get(new QName(serviceName));
             if (serviceObj != null) {
-                if(wsdl != null){
+                if (wsdl != null) {
                     // StringWriter writer = new StringWriter();
                     res.setContentType("text/xml");
                     PrintWriter out_writer = new PrintWriter(out);
-                    ((ServiceDescription)serviceObj).printWSDL(out_writer,filePart);
+                    ((ServiceDescription) serviceObj).printWSDL(out_writer, filePart);
                     //  String wsdl_value = writer.toString().trim() ;
                     //  if(wsdl_value == null || wsdl_value.trim().equals("")){
                     //      wsdl_value = "WSDL is not available!!!";
@@ -395,7 +381,7 @@ public class ListingAgent {
                     out.close();
                     wsdl = null;
                     return;
-                }   else {
+                } else {
                     req.getSession().setAttribute(Constants.SINGLE_SERVICE, serviceObj);
                 }
             }

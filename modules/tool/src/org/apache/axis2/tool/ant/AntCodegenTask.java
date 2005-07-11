@@ -1,21 +1,7 @@
 package org.apache.axis2.tool.ant;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.wsdl.WSDLException;
-
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
-import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CommandLineOption;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
@@ -24,6 +10,14 @@ import org.apache.axis2.wsdl.util.URLProcessor;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.wsdl.WSDLDescription;
+
+import javax.wsdl.WSDLException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -42,18 +36,19 @@ import org.apache.wsdl.WSDLDescription;
 *
 *
 */
-public class AntCodegenTask extends Task{
 
-    private String WSDLFileName=null;
-    private String output=".";
-    private String packageName=URLProcessor.DEFAULT_PACKAGE;
-    private String language=CommandLineOptionConstants.LanguageNames.JAVA;
+public class AntCodegenTask extends Task {
 
-    private boolean asyncOnly=false;
-    private boolean syncOnly=false;
-    private boolean serverSide=false;
-    private boolean testcase=false;
-    private boolean generateServerXml=false;
+    private String WSDLFileName = null;
+    private String output = ".";
+    private String packageName = URLProcessor.DEFAULT_PACKAGE;
+    private String language = CommandLineOptionConstants.LanguageNames.JAVA;
+
+    private boolean asyncOnly = false;
+    private boolean syncOnly = false;
+    private boolean serverSide = false;
+    private boolean testcase = false;
+    private boolean generateServerXml = false;
 
     /**
      *
@@ -62,68 +57,55 @@ public class AntCodegenTask extends Task{
         Map optionMap = new HashMap();
 
         optionMap.put(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
-                        getStringArray(WSDLFileName)));
+                      new CommandLineOption(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
+                                            getStringArray(WSDLFileName)));
 
         if (asyncOnly) {
             optionMap
-                    .put(
-                            CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
-                            new CommandLineOption(
-                                    CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
-                                    new String[0]));
+                    .put(CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
+                         new CommandLineOption(CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
+                                               new String[0]));
         }
         if (syncOnly) {
             optionMap
-                    .put(
-                            CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
-                            new CommandLineOption(
-                                    CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
-                                    new String[0]));
+                    .put(CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
+                         new CommandLineOption(CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
+                                               new String[0]));
         }
         optionMap.put(CommandLineOptionConstants.PACKAGE_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.PACKAGE_OPTION,
-                        getStringArray(packageName)));
+                      new CommandLineOption(CommandLineOptionConstants.PACKAGE_OPTION,
+                                            getStringArray(packageName)));
         optionMap.put(CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
-                        getStringArray(language)));
+                      new CommandLineOption(CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
+                                            getStringArray(language)));
         optionMap.put(CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
-                        getStringArray(output)));
+                      new CommandLineOption(CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
+                                            getStringArray(output)));
         if (serverSide) {
             optionMap.put(CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
-                            new String[0]));
+                          new CommandLineOption(CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
+                                                new String[0]));
 
             if (generateServerXml) {
-                optionMap.put(
-                        CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
-                        new CommandLineOption(
-                                CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
-                                new String[0]));
+                optionMap.put(CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
+                              new CommandLineOption(CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
+                                                    new String[0]));
             }
         }
-        if (testcase){
+        if (testcase) {
             optionMap
-                    .put(
-                            CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
-                            new CommandLineOption(
-                                    CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
-                                    new String[0]));
+                    .put(CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
+                         new CommandLineOption(CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
+                                               new String[0]));
         }
         //System.out.println(page3.getOutputLocation());
         return optionMap;
     }
 
-    private WSDLDescription getWOM(String wsdlLocation) throws WSDLException ,
+    private WSDLDescription getWOM(String wsdlLocation) throws WSDLException,
             IOException {
         InputStream in = new FileInputStream(new File(wsdlLocation));
-        WSDLVersionWrapper wsdlvWrap =  WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
+        WSDLVersionWrapper wsdlvWrap = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
         return wsdlvWrap.getDescription();
     }
 
@@ -136,7 +118,7 @@ public class AntCodegenTask extends Task{
 
     public void execute() throws BuildException {
         try {
-            
+
             CommandLineOptionParser parser = new CommandLineOptionParser(this.fillOptionMap());
             new CodeGenerationEngine(parser).generate();
         } catch (Throwable e) {
@@ -180,8 +162,8 @@ public class AntCodegenTask extends Task{
     public void setGenerateServerXml(boolean generateServerXml) {
         this.generateServerXml = generateServerXml;
     }
-    
-    public static void main(String[] args){
+
+    public static void main(String[] args) {
         AntCodegenTask task = new AntCodegenTask();
         task.setWSDLFileName("modules/samples/test-resources/wsdl/compound2.wsdl");
         task.setOutput("temp");

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AbstractTestCase;
@@ -36,7 +36,7 @@ public class BadServerXMLTest extends AbstractTestCase {
             InputStream in = new FileInputStream(getTestResourceFile("deployment/BadServer.xml"));
             DeploymentParser parser = new DeploymentParser(in, null);
             AxisConfigurationImpl glabl = new AxisConfigurationImpl();
-            parser.processGlobalConfig(glabl,DeploymentConstants.AXIS2CONFIG);
+            parser.processGlobalConfig(glabl, DeploymentConstants.AXIS2CONFIG);
             fail("this must failed gracefully with DeploymentException or FileNotFoundException");
         } catch (FileNotFoundException e) {
             return;

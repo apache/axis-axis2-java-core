@@ -53,8 +53,7 @@ public class OMXMLBuilderFactory {
      * @param parser
      * @return
      */
-    public static StAXSOAPModelBuilder createStAXSOAPModelBuilder(
-            SOAPFactory soapFactory, XMLStreamReader parser) {
+    public static StAXSOAPModelBuilder createStAXSOAPModelBuilder(SOAPFactory soapFactory, XMLStreamReader parser) {
         return new StAXSOAPModelBuilder(parser);
     }
 

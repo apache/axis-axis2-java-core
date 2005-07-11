@@ -34,6 +34,7 @@ public abstract class SOAPHeaderBlockImpl extends OMElementImpl
         implements SOAPHeaderBlock {
 
     private boolean processed = false;
+
     /**
      * @param localName
      * @param ns
@@ -62,16 +63,13 @@ public abstract class SOAPHeaderBlockImpl extends OMElementImpl
      * @param attrValue
      */
     protected void setAttribute(String attributeName, String attrValue, String soapEnvelopeNamespaceURI) {
-        OMAttribute omAttribute = this.getFirstAttribute(
-                new QName(soapEnvelopeNamespaceURI, attributeName));
+        OMAttribute omAttribute = this.getFirstAttribute(new QName(soapEnvelopeNamespaceURI, attributeName));
         if (omAttribute != null) {
             omAttribute.setValue(attrValue);
         } else {
-            OMAttribute attribute = new OMAttributeImpl(
-                    attributeName,
-                    new OMNamespaceImpl(
-                            soapEnvelopeNamespaceURI,
-                            SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX), attrValue);
+            OMAttribute attribute = new OMAttributeImpl(attributeName,
+                                                        new OMNamespaceImpl(soapEnvelopeNamespaceURI,
+                                                                            SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX), attrValue);
             this.addAttribute(attribute);
         }
     }
@@ -83,8 +81,7 @@ public abstract class SOAPHeaderBlockImpl extends OMElementImpl
      * @return
      */
     protected String getAttribute(String attrName, String soapEnvelopeNamespaceURI) {
-        OMAttribute omAttribute = this.getFirstAttribute(
-                new QName(soapEnvelopeNamespaceURI, attrName));
+        OMAttribute omAttribute = this.getFirstAttribute(new QName(soapEnvelopeNamespaceURI, attrName));
         return (omAttribute != null)
                 ? omAttribute.getValue()
                 : null;

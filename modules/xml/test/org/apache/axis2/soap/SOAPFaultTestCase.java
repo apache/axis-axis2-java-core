@@ -22,12 +22,12 @@ public class SOAPFaultTestCase extends SOAPBodyTestCase {
     protected SOAPFault soap11Fault;
     protected SOAPFault soap12Fault;
     protected SOAPFault soap11FaultWithParser;
-    protected SOAPFault soap12FaultWithParser;    
+    protected SOAPFault soap12FaultWithParser;
 
     public SOAPFaultTestCase(String testName) {
-        super(testName);        
+        super(testName);
     }
-    
+
     protected void setUp() throws Exception {
         super.setUp();
         soap11Fault = OMAbstractFactory.getSOAP11Factory().createSOAPFault(soap11Body);

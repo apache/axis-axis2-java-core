@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis2.misc;
 
 import org.apache.axis2.AbstractTestCase;
@@ -38,8 +38,6 @@ public class MiscTest extends AbstractTestCase {
         sc.setProperty(key, val);
         assertEquals(sc.getProperty(key), val);
     }
-
-
 
 
     public void testAxisFault() {

@@ -23,29 +23,28 @@ import org.w3c.dom.Element;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class SchemaImpl extends WSDLExtensibilityElementImpl implements ExtensionConstants, Schema {
-	
-	private Element elelment;
-	
-	public SchemaImpl(){
-		type = SCHEMA;
-	}
-	
-	/**
-	 * 
-	 * @return The schema Element as a DOM element
-	 */
-	public Element getElelment() {
-		return elelment;
-	}
-	
-	/**
-	 * Sets the Schema Element as a DOM Element.
-	 * @param elelment
-	 */
-	public void setElelment(Element elelment) {
-		this.elelment = elelment;
-	}
+
+    private Element elelment;
+
+    public SchemaImpl() {
+        type = SCHEMA;
+    }
+
+    /**
+     * @return The schema Element as a DOM element
+     */
+    public Element getElelment() {
+        return elelment;
+    }
+
+    /**
+     * Sets the Schema Element as a DOM Element.
+     *
+     * @param elelment
+     */
+    public void setElelment(Element elelment) {
+        this.elelment = elelment;
+    }
 }

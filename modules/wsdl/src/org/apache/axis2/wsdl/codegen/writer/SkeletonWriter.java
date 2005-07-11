@@ -21,14 +21,15 @@ import java.io.File;
  *
  * 
  */
-public class SkeletonWriter extends ClassWriter{
+
+public class SkeletonWriter extends ClassWriter {
 
 
     public SkeletonWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
-    public SkeletonWriter(File outputFileLocation,int language) {
+    public SkeletonWriter(File outputFileLocation, int language) {
         this.outputFileLocation = outputFileLocation;
         this.language = language;
     }
@@ -36,9 +37,9 @@ public class SkeletonWriter extends ClassWriter{
     /**
      * @see org.apache.axis2.wsdl.codegen.writer.ClassWriter#loadTemplate()
      */
-     public void loadTemplate(){
+    public void loadTemplate() {
         Class clazz = this.getClass();
-        switch (language){
+        switch (language) {
             case XSLTConstants.LanguageTypes.JAVA:
                 this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTSkeletonTemplates.JAVA_TEMPLATE);
                 break;

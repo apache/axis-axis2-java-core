@@ -37,7 +37,7 @@ public class OperationContextFactory implements WSDLConstants {
 
         } else {
             throw new AxisFault("Cannot handle the MEP " + mepURI
-                    + " for the current invocation of Operation ");
+                                + " for the current invocation of Operation ");
         }
     }
 

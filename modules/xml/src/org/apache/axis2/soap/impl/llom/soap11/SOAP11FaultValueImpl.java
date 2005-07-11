@@ -23,7 +23,7 @@ import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
  * author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-public class SOAP11FaultValueImpl extends SOAPFaultValueImpl{
+public class SOAP11FaultValueImpl extends SOAPFaultValueImpl {
     public SOAP11FaultValueImpl(OMElement parent) throws SOAPProcessingException {
         super(parent);
     }
@@ -34,8 +34,8 @@ public class SOAP11FaultValueImpl extends SOAPFaultValueImpl{
 
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
-       if (!((parent instanceof SOAP11FaultSubCodeImpl)|| (parent instanceof SOAP11FaultCodeImpl))) {
-            throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP FaultSubCode or SOAP FaultCode as the parent. But received some other implementation."+parent.getClass());
+        if (!((parent instanceof SOAP11FaultSubCodeImpl) || (parent instanceof SOAP11FaultCodeImpl))) {
+            throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP FaultSubCode or SOAP FaultCode as the parent. But received some other implementation." + parent.getClass());
         }
     }
 }

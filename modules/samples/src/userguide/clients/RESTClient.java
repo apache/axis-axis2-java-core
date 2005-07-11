@@ -28,42 +28,41 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
- * This is a Client progam that accesses 'MyService' web service in Axis2 samples 
+ * This is a Client progam that accesses 'MyService' web service in Axis2 samples
  */
 public class RESTClient {
 
-	private static String toEpr = "http://localhost:8080/axis2/services/MyService";
-	
-	public static void main(String[] args) throws AxisFault {
-		
-			Call  call = new Call();
-			call.setTo(new EndpointReference(AddressingConstants.WSA_TO,toEpr));
-			call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP,false);
-			call.setDoREST(true);
-			
-			OMElement result = call.invokeBlocking("echo", getPayload());
-		
-			try {
-				XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-				result.serializeWithCache(new OMOutput(writer));
-				writer.flush();
-			} catch (XMLStreamException e) {
-				e.printStackTrace();
-			} catch (FactoryConfigurationError e) {
-				e.printStackTrace();
-			}
-	}
-	
-	
-	private static OMElement getPayload() {
-		OMFactory fac = OMAbstractFactory.getOMFactory();
-		OMNamespace omNs = fac.createOMNamespace(
-				"http://example1.org/example1", "example1");
-		OMElement method = fac.createOMElement("echo", omNs);
-		OMElement value = fac.createOMElement("Text", omNs);
-		value.addChild(fac.createText(value, "Axis2 Echo String "));
-		method.addChild(value);
+    private static String toEpr = "http://localhost:8080/axis2/services/MyService";
 
-		return method;
-	}
+    public static void main(String[] args) throws AxisFault {
+
+        Call call = new Call();
+        call.setTo(new EndpointReference(AddressingConstants.WSA_TO, toEpr));
+        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        call.setDoREST(true);
+
+        OMElement result = call.invokeBlocking("echo", getPayload());
+
+        try {
+            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
+            result.serializeWithCache(new OMOutput(writer));
+            writer.flush();
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        } catch (FactoryConfigurationError e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private static OMElement getPayload() {
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+        OMNamespace omNs = fac.createOMNamespace("http://example1.org/example1", "example1");
+        OMElement method = fac.createOMElement("echo", omNs);
+        OMElement value = fac.createOMElement("Text", omNs);
+        value.addChild(fac.createText(value, "Axis2 Echo String "));
+        method.addChild(value);
+
+        return method;
+    }
 }

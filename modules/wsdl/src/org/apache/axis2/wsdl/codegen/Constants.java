@@ -18,8 +18,7 @@ package org.apache.axis2.wsdl.codegen;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class Constants {
-	public static int TEST_PORT =5555;
+    public static int TEST_PORT = 5555;
 }

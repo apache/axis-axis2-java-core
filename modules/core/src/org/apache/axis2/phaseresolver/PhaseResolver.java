@@ -35,7 +35,7 @@ public class PhaseResolver {
     /**
      * Field axisConfig
      */
-    private  AxisConfiguration axisConfig;
+    private AxisConfiguration axisConfig;
 
     /**
      * Field axisService
@@ -276,7 +276,7 @@ public class PhaseResolver {
                     handlers.add(metadata);
                 }
                 new PhaseHolder().buildTransportHandlerChain(phase, handlers);
-            }else {
+            } else {
                 continue;
             }
         }
@@ -316,12 +316,12 @@ public class PhaseResolver {
                     handlers.add(metadata);
                 }
                 new PhaseHolder().buildTransportHandlerChain(phase, handlers);
-            }else {
+            } else {
                 continue;
             }
         }
     }
-    
+
 
     public void engageModuleGlobally(ModuleDescription module) throws AxisFault {
         enageToGlobalChain(module);
@@ -348,10 +348,10 @@ public class PhaseResolver {
         boolean engaged = false;
         for (Iterator iterator = opCol.iterator(); iterator.hasNext();) {
             OperationDescription opDesc = (OperationDescription) iterator.next();
-            Collection modules =  opDesc.getModules();
+            Collection modules = opDesc.getModules();
             for (Iterator iterator1 = modules.iterator(); iterator1.hasNext();) {
                 ModuleDescription description = (ModuleDescription) iterator1.next();
-                if(description.getName().equals(module.getName())){
+                if (description.getName().equals(module.getName())) {
                     engaged = true;
                     break;
                 }
@@ -500,16 +500,16 @@ public class PhaseResolver {
         boolean engaged = false;
         for (Iterator iterator = opCol.iterator(); iterator.hasNext();) {
             OperationDescription opDesc = (OperationDescription) iterator.next();
-            Collection modules =  opDesc.getModules();
+            Collection modules = opDesc.getModules();
             for (Iterator iterator1 = modules.iterator(); iterator1.hasNext();) {
                 ModuleDescription description = (ModuleDescription) iterator1.next();
-                if(description.getName().equals(module.getName())){
+                if (description.getName().equals(module.getName())) {
                     engaged = true;
                     break;
                 }
             }
             if (!engaged) {
-                engageModuleToOperation(opDesc,module);
+                engageModuleToOperation(opDesc, module);
                 opDesc.addToEngageModuleList(module);
             }
         }
@@ -573,7 +573,7 @@ public class PhaseResolver {
                         phaseHolder.addHandler(metadata);
                     } else {
                         throw new PhaseException("Service specific module can not refer system pre defined phases : "
-                                + metadata.getRules().getPhaseName());
+                                                 + metadata.getRules().getPhaseName());
                     }
                 }
             }

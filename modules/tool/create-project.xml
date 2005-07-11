@@ -1,4 +1,4 @@
-<project basedir="." default="all" >
+<project basedir="." default="all">
 
     <property name="src" value="./src"></property>
     <property name="output" value="./eclipse_projects"></property>
@@ -13,41 +13,40 @@
     <property name="service.resource.dir" value="./conf/service"></property>
 
 
+    <target name="all">
+        <antcall target="generate-service-project"/>
+        <antcall target="generate-codegen-project"/>
+    </target>
 
-  <target name="all">
-      <antcall target="generate-service-project" />
-      <antcall target="generate-codegen-project" />
-  </target>
+    <target name="init">
+        <mkdir dir="${output}"></mkdir>
+        <mkdir dir="${service.output.dir}"></mkdir>
+        <mkdir dir="${codegen.output.dir}"></mkdir>
+    </target>
 
-  <target name="init" >
-      <mkdir dir="${output}"></mkdir>
-      <mkdir dir="${service.output.dir}"></mkdir>
-      <mkdir dir="${codegen.output.dir}"></mkdir>
-  </target>
+    <target name="generate-service-project" depends="init">
+        <mkdir dir="${service.output.dir}/${source.dir.name}"></mkdir>
+        <!-- copy the source to src -->
+        <copy todir="${service.output.dir}/${source.dir.name}">
+            <fileset dir="${src}" excludes="**/codegen/**/*.java"/>
+        </copy>
 
-  <target name="generate-service-project" depends="init">
-      <mkdir dir="${service.output.dir}/${source.dir.name}"></mkdir>
-      <!-- copy the source to src -->
-      <copy todir="${service.output.dir}/${source.dir.name}" >
-           <fileset dir="${src}" excludes="**/codegen/**/*.java" />
-      </copy>
-
-      <copy todir="${service.output.dir}" >
-          <fileset dir="${service.resource.dir}"></fileset>
-      </copy>
-  </target>
+        <copy todir="${service.output.dir}">
+            <fileset dir="${service.resource.dir}"></fileset>
+        </copy>
+    </target>
 
     <target name="generate-codegen-project" depends="init">
-      <mkdir dir="${codegen.output.dir}/${source.dir.name}"></mkdir>
-      <!-- copy the source to src -->
-      <copy todir="${codegen.output.dir}/${source.dir.name}" >
-           <fileset dir="${src}" excludes="**/service/**/*.java" />
-      </copy>
+        <mkdir dir="${codegen.output.dir}/${source.dir.name}"></mkdir>
+        <!-- copy the source to src -->
+        <copy todir="${codegen.output.dir}/${source.dir.name}">
+            <fileset dir="${src}" excludes="**/service/**/*.java"/>
+        </copy>
 
-      <copy todir="${codegen.output.dir}" >
-          <fileset dir="${codegen.resource.dir}"></fileset>
-      </copy>
-  </target>
+        <copy todir="${codegen.output.dir}">
+            <fileset dir="${codegen.resource.dir}"></fileset>
+        </copy>
+    </target>
     <target name="clean">
         <delete dir="${output}"></delete>
     </target>

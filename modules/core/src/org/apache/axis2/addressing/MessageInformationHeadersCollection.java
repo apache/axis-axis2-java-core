@@ -228,8 +228,8 @@ public class MessageInformationHeadersCollection {
         this.referenceParameters = referenceParameters;
     }
 
-    public void addReferenceParameter(OMElement referenceParameter){
-        if(referenceParameters == null){
+    public void addReferenceParameter(OMElement referenceParameter) {
+        if (referenceParameters == null) {
             referenceParameters = new ArrayList(5);
         }
         referenceParameters.add(referenceParameter);

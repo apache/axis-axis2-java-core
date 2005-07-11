@@ -22,8 +22,7 @@ import java.io.OutputStream;
 
 
 /**
- *
- * @author Rick Rineholt 
+ * @author Rick Rineholt
  */
 public class ChunkedOutputStream extends FilterOutputStream {
 
@@ -38,24 +37,24 @@ public class ChunkedOutputStream extends FilterOutputStream {
     }
 
     public void write(int b)
-        throws IOException {
-        write(new byte[] {(byte) b}, 0, 1);
+            throws IOException {
+        write(new byte[]{(byte) b}, 0, 1);
     }
 
     public void write(byte[] b)
-            
-        throws IOException {
+
+            throws IOException {
         write(b, 0, b.length);
     }
 
     static final byte[] crlf = "\r\n".getBytes();
 
     public void write(byte[] b,
-        int off,
-        int len)
-        throws IOException {
+                      int off,
+                      int len)
+            throws IOException {
         if (len == 0) return;
-           
+
         out.write((Integer.toHexString(len)).getBytes());
         out.write(crlf);
         out.write(b, off, len);
@@ -69,7 +68,7 @@ public class ChunkedOutputStream extends FilterOutputStream {
      }
      */
 
-    public void eos()throws IOException {
+    public void eos() throws IOException {
         synchronized (this) {
             if (eos) return;
             eos = true;
@@ -77,9 +76,9 @@ public class ChunkedOutputStream extends FilterOutputStream {
         out.write("0\r\n\r\n".getBytes());
         out.flush();
     }
-    
+
     public void close()
-        throws IOException {
+            throws IOException {
         eos();
         out.close();
     }

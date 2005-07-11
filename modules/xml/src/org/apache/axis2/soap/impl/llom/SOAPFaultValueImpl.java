@@ -23,7 +23,7 @@ import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
  * author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-public abstract class SOAPFaultValueImpl extends SOAPElement implements SOAPFaultValue{
+public abstract class SOAPFaultValueImpl extends SOAPElement implements SOAPFaultValue {
 
     protected SOAPFaultValueImpl(OMElement parent) throws SOAPProcessingException {
         super(parent, SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME, true);

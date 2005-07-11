@@ -31,15 +31,15 @@ public class ModifiedConfigFileTest extends TestCase {
 
     AxisConfiguration er;
 
-    public void testPhaseOrderchage(){
+    public void testPhaseOrderchage() {
         try {
             String filename = "./test-resources/deployment/BadConfigOrderChange";
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
             er = builder.buildConfigurationContext(filename).getAxisConfiguration();
             fail("this must failed gracefully with DeploymentException \"Invalid System predefined " +
-                    "inphases , phase order dose not\" +\n support\\n recheck axis2.xml\"");
+                 "inphases , phase order dose not\" +\n support\\n recheck axis2.xml\"");
         } catch (DeploymentException e) {
-            
+
         }
     }
 

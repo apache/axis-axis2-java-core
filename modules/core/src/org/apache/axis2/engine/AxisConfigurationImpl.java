@@ -16,8 +16,8 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.deployment.DeploymentEngine;
-import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
+import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.phaseresolver.PhaseResolver;
@@ -46,7 +46,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * Field services
      */
     private final HashMap services = new HashMap();
-
 
 
     private final HashMap transportsIn = new HashMap();
@@ -79,7 +78,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      */
     protected final List engagedModules;
 
-    private String axis2Repository =null;
+    private String axis2Repository = null;
 
     protected HashMap messagRecievers;
     /////////////////////// From AxisGlobal /////////////////////////////////////
@@ -101,14 +100,14 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
         inPhasesUptoAndIncludingPostDispatch.add(new Phase(PhaseMetadata.PHASE_TRANSPORTIN));
         inPhasesUptoAndIncludingPostDispatch.add(new Phase(PhaseMetadata.PHASE_PRE_DISPATCH));
-        
+
         Phase dispatch = new Phase(PhaseMetadata.PHASE_DISPATCH);
         dispatch.addHandler(new AddressingBasedDispatcher(), 0);
         dispatch.addHandler(new RequestURIBasedDispatcher(), 1);
         dispatch.addHandler(new SOAPActionBasedDispatcher(), 2);
-        dispatch.addHandler(new SOAPMessageBodyBasedDispatcher(),3);
+        dispatch.addHandler(new SOAPMessageBodyBasedDispatcher(), 3);
         inPhasesUptoAndIncludingPostDispatch.add(dispatch);
-        
+
         Phase postDispatch = new Phase(PhaseMetadata.PHASE_POST_DISPATCH);
         postDispatch.addHandler(new DispatchPostConditionsEvaluator());
         inPhasesUptoAndIncludingPostDispatch.add(postDispatch);
@@ -128,7 +127,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     }
 
     public Hashtable getFaulytModules() {
-        return errornesModules;  
+        return errornesModules;
     }
 
     /**
@@ -149,7 +148,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      */
     public synchronized void addService(ServiceDescription service) throws AxisFault {
         services.put(service.getName(), service);
-        PhaseResolver handlerResolver = new PhaseResolver(this,service);
+        PhaseResolver handlerResolver = new PhaseResolver(this, service);
         handlerResolver.buildchains();
     }
 
@@ -307,6 +306,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     public void addParameter(Parameter param) {
         paramInclude.addParameter(param);
     }
+
     /**
      * Method getEngadgedModules
      *
@@ -319,31 +319,31 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     public void engageModule(QName moduleref) throws AxisFault {
         ModuleDescription module = getModule(moduleref);
         boolean isNewmodule = false;
-        if(module == null ) {
-            File file =  new  ArchiveReader().creatModuleArchivefromResource(moduleref.getLocalPart(),getRepository());
-            module =  new DeploymentEngine().buildModule(file);
+        if (module == null) {
+            File file = new ArchiveReader().creatModuleArchivefromResource(moduleref.getLocalPart(), getRepository());
+            module = new DeploymentEngine().buildModule(file);
             isNewmodule = true;
         }
         if (module != null) {
             for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
                 QName qName = (QName) iterator.next();
-                if(moduleref.equals(qName)){
-                    throw new AxisFault(moduleref.getLocalPart()+ " module has alredy engaged globally" +
-                            "  operation terminated !!!");
+                if (moduleref.equals(qName)) {
+                    throw new AxisFault(moduleref.getLocalPart() + " module has alredy engaged globally" +
+                                        "  operation terminated !!!");
                 }
             }
             new PhaseResolver(this).engageModuleGlobally(module);
         } else {
-             throw new AxisFault(this + " Refer to invalid module "
-                     + moduleref.getLocalPart() + " has not bean deployed yet !");
+            throw new AxisFault(this + " Refer to invalid module "
+                                + moduleref.getLocalPart() + " has not bean deployed yet !");
         }
         engagedModules.add(moduleref);
-        if(isNewmodule){
+        if (isNewmodule) {
             addMdoule(module);
         }
     }
-    
-    public boolean isEngaged(QName moduleName){
+
+    public boolean isEngaged(QName moduleName) {
         return engagedModules.contains(moduleName);
     }
 

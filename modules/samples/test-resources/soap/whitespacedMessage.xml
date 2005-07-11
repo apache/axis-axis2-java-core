@@ -1,6 +1,6 @@
 <?xml version='1.0' ?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
-              xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing">
+    xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing">
 
     <env:Header>
 

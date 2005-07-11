@@ -33,60 +33,59 @@ public class MailTransportSender extends AbstractTransportSender {
     private String password;
     private String smtpPort = "25";
 
-    private ByteArrayOutputStream byteArrayOutputStream; 
+    private ByteArrayOutputStream byteArrayOutputStream;
 
     public MailTransportSender() {
 
     }
 
-    public void finalizeSendWithToAddress(MessageContext msgContext,OutputStream out)
-        throws AxisFault {
-            try {
-                TransportOutDescription transportOut = msgContext.getTransportOut();
-                user = Utils.getParameterValue(transportOut.getParameter(MailConstants.SMTP_USER));
-                host = Utils.getParameterValue(transportOut.getParameter(MailConstants.SMTP_HOST));
-                password =
+    public void finalizeSendWithToAddress(MessageContext msgContext, OutputStream out)
+            throws AxisFault {
+        try {
+            TransportOutDescription transportOut = msgContext.getTransportOut();
+            user = Utils.getParameterValue(transportOut.getParameter(MailConstants.SMTP_USER));
+            host = Utils.getParameterValue(transportOut.getParameter(MailConstants.SMTP_HOST));
+            password =
                     Utils.getParameterValue(transportOut.getParameter(MailConstants.SMTP_PASSWORD));
-                smtpPort = Utils.getParameterValue(transportOut.getParameter(MailConstants.SMTP_PORT));
-                if (user != null && host != null && password != null && smtpPort != null) {
-                    EMailSender sender = new EMailSender(user, host, smtpPort, password);
+            smtpPort = Utils.getParameterValue(transportOut.getParameter(MailConstants.SMTP_PORT));
+            if (user != null && host != null && password != null && smtpPort != null) {
+                EMailSender sender = new EMailSender(user, host, smtpPort, password);
 
-                    //TODO this is just a temporary hack, fix this to use input streams
-                    
-                
-                    
-                
-                    String eprAddress = msgContext.getTo().getAddress();
-                    int index = eprAddress.indexOf('/');
-                    String subject = "";
-                    String email = null;
-                    if(index >= 0){
-                        subject = eprAddress.substring(index+1);
-                        email = eprAddress.substring(0,index);
-                    }else{
-                        email = eprAddress;
-                    }
-                
-                    System.out.println(subject);
-                    System.out.println(email);
+                //TODO this is just a temporary hack, fix this to use input streams
 
-                    sender.send(subject, email,new String(byteArrayOutputStream.toByteArray()));
+
+
+
+                String eprAddress = msgContext.getTo().getAddress();
+                int index = eprAddress.indexOf('/');
+                String subject = "";
+                String email = null;
+                if (index >= 0) {
+                    subject = eprAddress.substring(index + 1);
+                    email = eprAddress.substring(0, index);
                 } else {
-                    throw new AxisFault(
-                        "user, port, host or password not set, "
-                            + "   [user null = "
-                            + (user == null)
-                            + ", password null= "
-                            + (password == null)
-                            + ", host null "
-                            + (host == null)
-                            + ",port null "
-                            + (smtpPort == null));
-
+                    email = eprAddress;
                 }
-            } catch (IOException e) {
-                throw new AxisFault(e);
+
+                System.out.println(subject);
+                System.out.println(email);
+
+                sender.send(subject, email, new String(byteArrayOutputStream.toByteArray()));
+            } else {
+                throw new AxisFault("user, port, host or password not set, "
+                                    + "   [user null = "
+                                    + (user == null)
+                                    + ", password null= "
+                                    + (password == null)
+                                    + ", host null "
+                                    + (host == null)
+                                    + ",port null "
+                                    + (smtpPort == null));
+
             }
+        } catch (IOException e) {
+            throw new AxisFault(e);
+        }
 
 
     }
@@ -95,23 +94,23 @@ public class MailTransportSender extends AbstractTransportSender {
         return out;
     }
 
-    protected OutputStream openTheConnection(EndpointReference epr,MessageContext msgContext) throws AxisFault {
+    protected OutputStream openTheConnection(EndpointReference epr, MessageContext msgContext) throws AxisFault {
         byteArrayOutputStream = new ByteArrayOutputStream();
-            return byteArrayOutputStream;
+        return byteArrayOutputStream;
     }
 
     //Output Stream based cases are not supported 
-    public OutputStream startSendWithOutputStreamFromIncomingConnection(
-        MessageContext msgContext,
-    OutputStream out)
-        throws AxisFault {
+    public OutputStream startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
+                                                                        OutputStream out)
+            throws AxisFault {
         throw new UnsupportedOperationException();
 
     }
-    public void finalizeSendWithOutputStreamFromIncomingConnection(
-        MessageContext msgContext,OutputStream out)
-        throws AxisFault {
+
+    public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext, OutputStream out)
+            throws AxisFault {
     }
+
     /* (non-Javadoc)
      * @see org.apache.axis2.transport.TransportSender#cleanUp()
      */

@@ -70,7 +70,7 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
      * @return
      */
     public HashMap getAllOperations() {
-        HashMap all =  this.operations;
+        HashMap all = this.operations;
         if (this.superInterfaces.size() == 0) {
             return all;
         } else {
@@ -85,17 +85,16 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
             while (superIterator.hasNext()) {
                 superInterface = (WSDLInterface) superIterator.next();
                 operationIterator =
-                superInterface.getAllOperations().values().iterator();
+                        superInterface.getAllOperations().values().iterator();
                 while (operationIterator.hasNext()) {
                     superInterfaceOperation =
-                    (WSDLOperation) operationIterator.next();
+                            (WSDLOperation) operationIterator.next();
                     tobeAdded = true;
                     while (thisIterator.hasNext()) {
                         thisOperation = (WSDLOperation) thisIterator.next();
                         if ((thisOperation.getName() == superInterfaceOperation.getName())
                                 && !tobeAdded) {
-                            if (thisOperation.getTargetnamespace().equals(
-                                    superInterfaceOperation.getTargetnamespace())) {
+                            if (thisOperation.getTargetnamespace().equals(superInterfaceOperation.getTargetnamespace())) {
 
                                 // Both are the same Operation; the one inherited and
                                 // the one that is already in the map(may or maynot be inherited)
@@ -104,9 +103,8 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
 
                                 // same name but target namespces dont match
                                 // TODO Think this is an error
-                                throw new WSDLProcessingException(
-                                        "The Interface " + this.getName()
-                                                + " has more than one Operation that has the same name but not the same interface ");
+                                throw new WSDLProcessingException("The Interface " + this.getName()
+                                                                  + " has more than one Operation that has the same name but not the same interface ");
                             }
                         }
                     }
@@ -150,8 +148,8 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
      * @return
      */
     public WSDLOperation getOperation(String nCName) {
-        return (WSDLOperation)this.operations.get(nCName);
-        
+        return (WSDLOperation) this.operations.get(nCName);
+
     }
 
     /**
@@ -217,8 +215,7 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
             return;
         }
         if (null == operation.getName()) {
-            throw new WSDLProcessingException(
-                    "The Operation name cannot be null (required)");
+            throw new WSDLProcessingException("The Operation name cannot be null (required)");
         }
         this.operations.put(operation.getName().getLocalPart(), operation);
     }
@@ -238,7 +235,7 @@ public class WSDLInterfaceImpl extends ExtensibleComponentImpl
      */
     public void addSuperInterface(WSDLInterface interfaceComponent) {
         this.superInterfaces.put(interfaceComponent.getName(),
-                interfaceComponent);
+                                 interfaceComponent);
     }
 
     /**

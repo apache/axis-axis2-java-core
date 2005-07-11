@@ -42,21 +42,21 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
         WSDLDescription wsdlDescription = new WSDLDescriptionImpl();
 
         Definition wsdl1Definition = this.readInTheWSDLFile(in);
-		WSDLPump pump = new WSDLPump(wsdlDescription, wsdl1Definition);
+        WSDLPump pump = new WSDLPump(wsdlDescription, wsdl1Definition);
         pump.pump();
 
         return new WSDLVersionWrapper(wsdlDescription, wsdl1Definition);
     }
-    
-    public WSDLVersionWrapper build (InputStream in, WSDLComponentFactory wsdlComponentFactory) throws WSDLException{
-    	WSDLDescription wsdlDescription = wsdlComponentFactory.createDescription();
+
+    public WSDLVersionWrapper build(InputStream in, WSDLComponentFactory wsdlComponentFactory) throws WSDLException {
+        WSDLDescription wsdlDescription = wsdlComponentFactory.createDescription();
 
         Definition wsdl1Definition = this.readInTheWSDLFile(in);
-		WSDLPump pump = new WSDLPump(wsdlDescription, wsdl1Definition, wsdlComponentFactory);
+        WSDLPump pump = new WSDLPump(wsdlDescription, wsdl1Definition, wsdlComponentFactory);
         pump.pump();
 
         return new WSDLVersionWrapper(wsdlDescription, wsdl1Definition);
-    	
+
     }
 
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {

@@ -25,7 +25,7 @@ public class MockFlow extends FlowImpl implements Flow {
         for (int i = 0; i < length; i++) {
             SpeakingHandler1 h1 = new SpeakingHandler1("Executing " + i + " inside " + message);
             this.addHandler(h1.getHandlerDescription());
-         }
+        }
     }
 
 }

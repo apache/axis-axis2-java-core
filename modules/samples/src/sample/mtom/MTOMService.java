@@ -15,41 +15,37 @@
  */
 package sample.mtom;
 
-import java.awt.Image;
-import java.io.FileOutputStream;
+import org.apache.axis2.attachments.JDK13IO;
+import org.apache.axis2.om.*;
 
 import javax.activation.DataHandler;
+import java.awt.*;
+import java.io.FileOutputStream;
 
-import org.apache.axis2.attachments.JDK13IO;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMText;
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
  */
 public class MTOMService {
-	public OMElement mtomSample(OMElement element) throws Exception {
-		OMElement imageEle = element.getFirstElement();
-		System.out.println(imageEle.getLocalName());
-		OMElement imageName = (OMElement) imageEle.getNextSibling();
-		System.out.println(imageName.getLocalName());
-		OMText binaryNode = (OMText) imageEle.getFirstChild();
-		String fileName = imageName.getText();
-		//Extracting the data and saving 
-		DataHandler actualDH;
-		actualDH = binaryNode.getDataHandler();
-		Image actualObject = new JDK13IO().loadImage(actualDH.getDataSource()
-				.getInputStream());
-		FileOutputStream imageOutStream = new FileOutputStream(fileName);
-		new JDK13IO().saveImage("image/jpeg", actualObject, imageOutStream);
-		
-		//setting response
-		OMFactory fac = OMAbstractFactory.getOMFactory();
-		OMNamespace ns = fac.createOMNamespace("urn://fakenamespace", "ns");
-		OMElement ele = fac.createOMElement("response", ns);
-		ele.setText("Image Saved");
-		return ele;
-	}
+    public OMElement mtomSample(OMElement element) throws Exception {
+        OMElement imageEle = element.getFirstElement();
+        System.out.println(imageEle.getLocalName());
+        OMElement imageName = (OMElement) imageEle.getNextSibling();
+        System.out.println(imageName.getLocalName());
+        OMText binaryNode = (OMText) imageEle.getFirstChild();
+        String fileName = imageName.getText();
+        //Extracting the data and saving
+        DataHandler actualDH;
+        actualDH = binaryNode.getDataHandler();
+        Image actualObject = new JDK13IO().loadImage(actualDH.getDataSource()
+                                                     .getInputStream());
+        FileOutputStream imageOutStream = new FileOutputStream(fileName);
+        new JDK13IO().saveImage("image/jpeg", actualObject, imageOutStream);
+
+        //setting response
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+        OMNamespace ns = fac.createOMNamespace("urn://fakenamespace", "ns");
+        OMElement ele = fac.createOMElement("response", ns);
+        ele.setText("Image Saved");
+        return ele;
+    }
 }

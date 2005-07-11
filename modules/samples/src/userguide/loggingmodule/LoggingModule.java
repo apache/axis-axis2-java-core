@@ -10,7 +10,7 @@ import org.apache.axis2.modules.Module;
  * Date: Apr 19, 2005
  * Time: 3:16:14 PM
  */
-public class LoggingModule implements Module{
+public class LoggingModule implements Module {
 
 
     // initialize the module

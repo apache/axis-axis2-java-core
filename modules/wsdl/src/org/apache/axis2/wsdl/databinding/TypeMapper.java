@@ -35,9 +35,11 @@ import javax.xml.namespace.QName;
 *
 *  Interface for the type mapping
 */
+
 public interface TypeMapper {
     /**
      * Get the type mapping class
+     *
      * @param qname name of the XML element to be mapped
      * @return a class that represents the particualr type
      */
@@ -45,6 +47,7 @@ public interface TypeMapper {
 
     /**
      * Get the parameter name
+     *
      * @param qname name of the XML element to get a parameter
      * @return a unique parameter name
      */
@@ -52,9 +55,10 @@ public interface TypeMapper {
 
     /**
      * Adds a type mapping to the type mapper
+     *
      * @param qname
      * @param value
      */
-    public void addTypeMapping(QName qname,Object value);
+    public void addTypeMapping(QName qname, Object value);
 
 }

@@ -21,13 +21,14 @@ import java.io.File;
  *
  * 
  */
-public class BeanWriter extends ClassWriter{
+
+public class BeanWriter extends ClassWriter {
 
     public BeanWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
-    public BeanWriter(File outputFileLocation,int language) {
+    public BeanWriter(File outputFileLocation, int language) {
         this.outputFileLocation = outputFileLocation;
         this.language = language;
     }
@@ -35,9 +36,9 @@ public class BeanWriter extends ClassWriter{
     /**
      * @see org.apache.axis2.wsdl.codegen.writer.ClassWriter#loadTemplate()
      */
-     public void loadTemplate(){
+    public void loadTemplate() {
         Class clazz = this.getClass();
-        switch (language){
+        switch (language) {
             case XSLTConstants.LanguageTypes.JAVA:
                 this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTBeanTemplates.JAVA_TEMPLATE);
                 break;

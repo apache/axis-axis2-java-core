@@ -68,7 +68,7 @@ public class AddressingHeaders {
         this.action = action;
     }
 
-     // ------------------- Setters and Getters --------------------------------------
+    // ------------------- Setters and Getters --------------------------------------
 
     /**
      * Method getWsaTo

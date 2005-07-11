@@ -27,9 +27,12 @@ public abstract class TransportListener {
     public static final String PARAM_PORT = "port";
 
     public abstract void init(ConfigurationContext axisConf, TransportInDescription transprtIn)
-        throws AxisFault;
+            throws AxisFault;
+
     public abstract void start() throws AxisFault;
+
     public abstract void stop() throws AxisFault;
+
     public abstract EndpointReference replyToEPR(String serviceName) throws AxisFault;
 
 }

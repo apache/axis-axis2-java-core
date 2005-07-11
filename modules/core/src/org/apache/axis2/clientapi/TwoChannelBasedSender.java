@@ -24,28 +24,27 @@ import org.apache.axis2.transport.TransportUtils;
 
 
 public class TwoChannelBasedSender {
-    public static MessageContext send(MessageContext msgctx,TransportInDescription transportIn) throws AxisFault{
-       
+    public static MessageContext send(MessageContext msgctx, TransportInDescription transportIn) throws AxisFault {
+
         AxisEngine engine = new AxisEngine(msgctx.getSystemContext());
-       
+
 
         engine.send(msgctx);
 
         MessageContext response =
-            new MessageContext(msgctx.getSystemContext(),
-                msgctx.getSessionContext(),
-                msgctx.getTransportIn(),
-                msgctx.getTransportOut());
-        response.setProperty(
-            MessageContext.TRANSPORT_IN,
-            msgctx.getProperty(MessageContext.TRANSPORT_IN));
+                new MessageContext(msgctx.getSystemContext(),
+                                   msgctx.getSessionContext(),
+                                   msgctx.getTransportIn(),
+                                   msgctx.getTransportOut());
+        response.setProperty(MessageContext.TRANSPORT_IN,
+                             msgctx.getProperty(MessageContext.TRANSPORT_IN));
         response.setServerSide(false);
         response.setOperationContext(msgctx.getOperationContext());
         response.setServiceContext(msgctx.getServiceContext());
         
         //If request is REST we assume the response is REST, so set the variable
         response.setDoingREST(msgctx.isDoingREST());
-        
+
         SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(response);
 
         if (resenvelope != null) {

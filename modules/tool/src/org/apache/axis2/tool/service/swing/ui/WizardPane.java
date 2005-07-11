@@ -1,14 +1,9 @@
 package org.apache.axis.tool.service.swing.ui;
 
-import java.awt.LayoutManager;
-import java.io.File;
-
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.io.File;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -25,16 +20,17 @@ import javax.swing.filechooser.FileFilter;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 public abstract class WizardPane extends JPanel {
     protected JTextArea descriptionLabel;
     protected JFrame ownerFrame;
 
-    protected int descWidth=400;
-    protected int descHeight=100;
-    protected int width=400;
-    protected int height=300;
-    protected int hgap=5;
-    protected int vgap=5;
+    protected int descWidth = 400;
+    protected int descHeight = 100;
+    protected int width = 400;
+    protected int height = 300;
+    protected int hgap = 5;
+    protected int vgap = 5;
 
     protected WizardPane() {
     }
@@ -55,32 +51,32 @@ public abstract class WizardPane extends JPanel {
         super(layout, isDoubleBuffered);
     }
 
-    protected void initDescription(String desc){
+    protected void initDescription(String desc) {
         this.descriptionLabel = new JTextArea(desc);
         this.descriptionLabel.setOpaque(false);
         this.descriptionLabel.setEditable(false);
         this.descriptionLabel.setAutoscrolls(true);
-        this.descriptionLabel.setBounds(0,0,descWidth,descHeight);
+        this.descriptionLabel.setBounds(0, 0, descWidth, descHeight);
         this.add(this.descriptionLabel);
     }
 
     public abstract boolean validateValues();
 
-    protected void showErrorMessage(String message){
-        JOptionPane.showMessageDialog(this,message,"Error",JOptionPane.ERROR_MESSAGE);
+    protected void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
 
-    protected String browseForAFile(final String  extension){
-        String str="";
-        JFileChooser fc=new JFileChooser();
+    protected String browseForAFile(final String extension) {
+        String str = "";
+        JFileChooser fc = new JFileChooser();
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        fc.addChoosableFileFilter(new FileFilter(){
+        fc.addChoosableFileFilter(new FileFilter() {
             public boolean accept(File f) {
-               if (f.getName().endsWith(extension) || f.isDirectory())
-                   return true;
-               else
-                   return false;
+                if (f.getName().endsWith(extension) || f.isDirectory())
+                    return true;
+                else
+                    return false;
             }
 
             public String getDescription() {
@@ -89,19 +85,19 @@ public abstract class WizardPane extends JPanel {
         });
 
         int returnVal = fc.showOpenDialog(this);
-        if(returnVal == JFileChooser.APPROVE_OPTION) {
-            str=fc.getSelectedFile().getAbsolutePath().trim();
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            str = fc.getSelectedFile().getAbsolutePath().trim();
         }
         return str;
     }
 
-    protected String browseForAFolder(){
-        String str="";
-        JFileChooser fc=new JFileChooser();
+    protected String browseForAFolder() {
+        String str = "";
+        JFileChooser fc = new JFileChooser();
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int returnVal = fc.showOpenDialog(this);
-        if(returnVal == JFileChooser.APPROVE_OPTION) {
-            str=fc.getSelectedFile().getAbsolutePath().trim();
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            str = fc.getSelectedFile().getAbsolutePath().trim();
         }
         return str;
     }

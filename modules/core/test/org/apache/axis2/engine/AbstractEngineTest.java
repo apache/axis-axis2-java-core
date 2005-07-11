@@ -56,11 +56,10 @@ public class AbstractEngineTest extends TestCase {
 
     public class NullMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
-        public void invokeBusinessLogic(
-            MessageContext inMessage,
-            MessageContext outMessage)
-            throws AxisFault {
-            
+        public void invokeBusinessLogic(MessageContext inMessage,
+                                        MessageContext outMessage)
+                throws AxisFault {
+
         }
     }
 }

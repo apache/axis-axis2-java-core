@@ -22,93 +22,88 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPFaultDetail;
 
-import javax.xml.soap.Detail;
-import javax.xml.soap.DetailEntry;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
-
+import javax.xml.soap.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
  * Class DetailImpl
- * 
+ *
  * @author Ashutosh Shahi
- * ashutosh.shahi@gmail.com
+ *         ashutosh.shahi@gmail.com
  */
 public class DetailImpl extends SOAPFaultElementImpl implements Detail {
-	
-	/**
-	 * Field detail
-	 */
-	protected SOAPFaultDetail detail;
-	
-	/**
-	 * Constructor DetailImpl
-	 * 
-	 * @param detailName
-	 * @param parent
-	 */
-	public DetailImpl(SOAPFault parent){
-		SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
-		org.apache.axis2.soap.SOAPFault omFault = ((SOAPFaultImpl)parent).getOMFault();
-		detail = soapFactory.createSOAPFaultDetail(omFault);
-	}
-	
-	public DetailImpl(SOAPFaultDetail detail){
-		this.detail = detail;
-	}
 
-	/**
-	 * Method addDetailEntry
-	 * 
-	 * @param name
-	 * @return
-	 * @throws SOAPException
-	 * @see javax.xml.soap.Detail#addDetailEntry(javax.xml.soap.Name)
-	 */
-	public DetailEntry addDetailEntry(Name name) throws SOAPException {
-		 
-		String localName = name.getLocalName();
-		OMFactory omFactory = OMAbstractFactory.getOMFactory(); 
-		OMNamespace ns = omFactory.createOMNamespace(name.getURI(), name.getPrefix());
-		OMElement detailEntry = omFactory.createOMElement(localName, ns);
-		detail.addDetailEntry(detailEntry);
-		return (new DetailEntryImpl(detailEntry));
-	}
-	
-	/**
-	 * Method addDetailEntry
-	 * 
-	 * @param detailEntry
-	 * @return
-	 */
-	protected DetailEntry addDetailEntry(org.apache.axis2.om.OMElement detailEntry){
-		detail.addDetailEntry(detailEntry);
-		return (new DetailEntryImpl(detailEntry));
-	}
+    /**
+     * Field detail
+     */
+    protected SOAPFaultDetail detail;
 
-	/**
-	 * Method getDetailEntries
-	 * 
-	 * @return
-	 * @see javax.xml.soap.Detail#getDetailEntries()
-	 */
-	public Iterator getDetailEntries() {
-		// Get the detailEntried which will be omElements
-		// convert them to soap DetailEntry and return the iterator
-		Iterator detailEntryIter = detail.getAllDetailEntries();
-		ArrayList aList = new ArrayList();
-		while(detailEntryIter.hasNext()){
-			Object o = detailEntryIter.next();
-			if(o instanceof org.apache.axis2.om.OMElement){
-				OMElement omDetailEntry = (OMElement)o;
-				DetailEntry detailEntry = new DetailEntryImpl(omDetailEntry);
-				aList.add(detailEntry);
-			}
-		}
-		return aList.iterator();
-	}
+    /**
+     * Constructor DetailImpl
+     *
+     * @param detailName
+     * @param parent
+     */
+    public DetailImpl(SOAPFault parent) {
+        SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+        org.apache.axis2.soap.SOAPFault omFault = ((SOAPFaultImpl) parent).getOMFault();
+        detail = soapFactory.createSOAPFaultDetail(omFault);
+    }
+
+    public DetailImpl(SOAPFaultDetail detail) {
+        this.detail = detail;
+    }
+
+    /**
+     * Method addDetailEntry
+     *
+     * @param name
+     * @return
+     * @throws SOAPException
+     * @see javax.xml.soap.Detail#addDetailEntry(javax.xml.soap.Name)
+     */
+    public DetailEntry addDetailEntry(Name name) throws SOAPException {
+
+        String localName = name.getLocalName();
+        OMFactory omFactory = OMAbstractFactory.getOMFactory();
+        OMNamespace ns = omFactory.createOMNamespace(name.getURI(), name.getPrefix());
+        OMElement detailEntry = omFactory.createOMElement(localName, ns);
+        detail.addDetailEntry(detailEntry);
+        return (new DetailEntryImpl(detailEntry));
+    }
+
+    /**
+     * Method addDetailEntry
+     *
+     * @param detailEntry
+     * @return
+     */
+    protected DetailEntry addDetailEntry(org.apache.axis2.om.OMElement detailEntry) {
+        detail.addDetailEntry(detailEntry);
+        return (new DetailEntryImpl(detailEntry));
+    }
+
+    /**
+     * Method getDetailEntries
+     *
+     * @return
+     * @see javax.xml.soap.Detail#getDetailEntries()
+     */
+    public Iterator getDetailEntries() {
+        // Get the detailEntried which will be omElements
+        // convert them to soap DetailEntry and return the iterator
+        Iterator detailEntryIter = detail.getAllDetailEntries();
+        ArrayList aList = new ArrayList();
+        while (detailEntryIter.hasNext()) {
+            Object o = detailEntryIter.next();
+            if (o instanceof org.apache.axis2.om.OMElement) {
+                OMElement omDetailEntry = (OMElement) o;
+                DetailEntry detailEntry = new DetailEntryImpl(omDetailEntry);
+                aList.add(detailEntry);
+            }
+        }
+        return aList.iterator();
+    }
 
 }

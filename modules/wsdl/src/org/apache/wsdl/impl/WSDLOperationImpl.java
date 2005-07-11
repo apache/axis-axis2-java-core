@@ -216,20 +216,22 @@ public class WSDLOperationImpl extends ExtensibleComponentImpl
         }
         return null;
     }
-    
+
     /**
      * Add the InFault to the Components InFaults
+     *
      * @param inFault
      */
-    public void addInFault(WSDLFaultReference inFault){
-    	this.infaults.add(inFault);
+    public void addInFault(WSDLFaultReference inFault) {
+        this.infaults.add(inFault);
     }
-    
+
     /**
      * Add the OutFault to the Component OutFaults
+     *
      * @param outFault
      */
-    public void addOutFault(WSDLFaultReference outFault){
-    	this.outfaults.add(outFault);
+    public void addOutFault(WSDLFaultReference outFault) {
+        this.outfaults.add(outFault);
     }
 }

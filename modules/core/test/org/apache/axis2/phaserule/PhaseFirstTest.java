@@ -77,11 +77,11 @@ public class PhaseFirstTest extends TestCase {
 
         ArrayList handlers = p1.getHandlers();
         Handler handler = (Handler) handlers.get(0);
-        if(!handler.getName().equals(new QName("PhaseFirstHnadler"))){
+        if (!handler.getName().equals(new QName("PhaseFirstHnadler"))) {
             fail("Computed Hnadler order is wrong ");
         }
         handler = (Handler) handlers.get(1);
-        if(!handler.getName().equals(new QName("Second Handler"))){
+        if (!handler.getName().equals(new QName("Second Handler"))) {
             fail("Computed Hnadler order is wrong ");
         }
         p1.invoke(msg);

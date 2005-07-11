@@ -20,7 +20,7 @@ package org.apache.axis2.om;
  */
 public interface OMConstants {
 
-       
+
     // OMBuilder constants
     /**
      * Field PUSH_TYPE_BUILDER
@@ -53,5 +53,5 @@ public interface OMConstants {
      */
     public static final String ARRAY_ITEM_QNAME =
             OMConstants.ARRAY_ITEM_NS_PREFIX + ':'
-                    + OMConstants.ARRAY_ITEM_LOCALNAME;
+            + OMConstants.ARRAY_ITEM_LOCALNAME;
 }

@@ -22,42 +22,44 @@ import java.io.IOException;
 *
 *  File writer utility for writing out class files
 */
+
 public class FileWriter {
 
     /**
      * Creates/ returns a file object
+     *
      * @param rootLocation - Location to be written
-     * @param packageName - package, can be '.' seperated
-     * @param fileName name of the file
-     * @param extension  type of the file, java, csharp, cpp etc
-     * @return  the File that was created
+     * @param packageName  - package, can be '.' seperated
+     * @param fileName     name of the file
+     * @param extension    type of the file, java, csharp, cpp etc
+     * @return the File that was created
      * @throws IOException
      * @throws Exception
      */
-    public static File createClassFile(File rootLocation,String packageName,String fileName,String extension) throws IOException,Exception{
+    public static File createClassFile(File rootLocation, String packageName, String fileName, String extension) throws IOException, Exception {
         File returnFile = null;
         File root = rootLocation;
 
-        if (packageName!=null){
+        if (packageName != null) {
             String directoryNames[] = packageName.split("\\.");
             File tempFile = null;
             int length = directoryNames.length;
             for (int i = 0; i < length; i++) {
-                tempFile = new File(root,directoryNames[i]);
+                tempFile = new File(root, directoryNames[i]);
                 root = tempFile;
-                if (!tempFile.exists()){
+                if (!tempFile.exists()) {
                     tempFile.mkdir();
                 }
             }
         }
 
-        if (!fileName.endsWith(extension)){
+        if (!fileName.endsWith(extension)) {
             fileName = fileName + extension;
         }
 
-        returnFile = new File(root,fileName);
+        returnFile = new File(root, fileName);
 
-        if (!returnFile.exists()){
+        if (!returnFile.exists()) {
             returnFile.createNewFile();
         }
         return returnFile;
@@ -65,33 +67,44 @@ public class FileWriter {
 
     /**
      * Creates/ returns a file object
+     *
      * @param rootLocation - Location to be written
-     * @param packageName - package, can be '.' seperated
-     * @param fileName name of the file
-     * @param fileType  type of the file, java, csharp, cpp etc. Guesses the extension with the
-     * file type
-     * @return  the File that was created
+     * @param packageName  - package, can be '.' seperated
+     * @param fileName     name of the file
+     * @param fileType     type of the file, java, csharp, cpp etc. Guesses the extension with the
+     *                     file type
+     * @return the File that was created
      * @throws IOException
      * @throws Exception
      */
-    public static File createClassFile(File rootLocation,String packageName,String fileName,int fileType) throws IOException,Exception{
-        return createClassFile(rootLocation,packageName,fileName,getExtension(fileType));
+    public static File createClassFile(File rootLocation, String packageName, String fileName, int fileType) throws IOException, Exception {
+        return createClassFile(rootLocation, packageName, fileName, getExtension(fileType));
 
     }
 
     /**
      * Find the extension for a given file type
+     *
      * @param fileType
      * @return
      */
     private static String getExtension(int fileType) {
         String extension = "";
-        switch (fileType){
-            case XSLTConstants.LanguageTypes.JAVA: extension=".java";break;
-            case XSLTConstants.LanguageTypes.C_SHARP: extension=".cs";break;
-            case XSLTConstants.LanguageTypes.C_PLUS_PLUS: extension=".cpp";break;
-            case XSLTConstants.LanguageTypes.VB_DOT_NET: extension=".vb";break;
-            default: extension=".xml";
+        switch (fileType) {
+            case XSLTConstants.LanguageTypes.JAVA:
+                extension = ".java";
+                break;
+            case XSLTConstants.LanguageTypes.C_SHARP:
+                extension = ".cs";
+                break;
+            case XSLTConstants.LanguageTypes.C_PLUS_PLUS:
+                extension = ".cpp";
+                break;
+            case XSLTConstants.LanguageTypes.VB_DOT_NET:
+                extension = ".vb";
+                break;
+            default:
+                extension = ".xml";
         }
         return extension;
     }

@@ -47,29 +47,29 @@ public class ClientUtil {
      * @return msgContext
      */
     public static MessageContext getMessageContext() {
-        OMNamespace namespace,nulNS;
-        OMElement operation,value1,value2;
-        OMElement subValue1,subValue2,subValue3,subValue4,subValue5;
+        OMNamespace namespace, nulNS;
+        OMElement operation, value1, value2;
+        OMElement subValue1, subValue2, subValue3, subValue4, subValue5;
 
         SOAPFactory omFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope reqEnv = omFactory.getDefaultEnvelope();
         namespace = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/",
-                "SOAP-ENV");
+                                            "SOAP-ENV");
         namespace = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/",
-                "SOAP-ENC");
+                                            "SOAP-ENC");
         namespace = reqEnv.declareNamespace("http://www.w3.org/1999/XMLSchema-instance/", "xsi");
         namespace = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
         namespace = reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/soap/",
-                "soap");
+                                            "soap");
         namespace = reqEnv.declareNamespace("http://schemas.xmlsoap.org/wsdl/",
-                "wsdl");
+                                            "wsdl");
         namespace = reqEnv.declareNamespace("http://webservices.amazon.com/AWSAlexa/2005-02-01",
-                "tns");
+                                            "tns");
 
         nulNS = omFactory.createOMNamespace("", "");
 
         operation = omFactory.createOMElement("Search",
-                "http://webservices.amazon.com/AWSAlexa/2005-02-01", "ns1");
+                                              "http://webservices.amazon.com/AWSAlexa/2005-02-01", "ns1");
         reqEnv.getBody().addChild(operation);
         operation.addAttribute("encordingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
 
@@ -80,7 +80,7 @@ public class ClientUtil {
 
         value2 = omFactory.createOMElement("Request", nulNS);
 
-        subValue1= omFactory.createOMElement("ResponseGroup", nulNS);
+        subValue1 = omFactory.createOMElement("ResponseGroup", nulNS);
         subValue1.addChild(omFactory.createText("Web"));
 
         subValue2 = omFactory.createOMElement("Query", nulNS);

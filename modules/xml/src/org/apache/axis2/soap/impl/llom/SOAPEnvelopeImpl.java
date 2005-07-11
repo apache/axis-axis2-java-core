@@ -49,9 +49,10 @@ public class SOAPEnvelopeImpl extends SOAPElement
      *
      * @return the <CODE>SOAPHeader</CODE> object or <CODE> null</CODE> if there
      *         is none
-     * @throws org.apache.axis2.om.OMException if there is a problem obtaining
-     *                                        the <CODE>SOAPHeader</CODE>
-     *                                        object
+     * @throws org.apache.axis2.om.OMException
+     *                     if there is a problem obtaining
+     *                     the <CODE>SOAPHeader</CODE>
+     *                     object
      * @throws OMException
      */
     public SOAPHeader getHeader() throws OMException {
@@ -65,30 +66,31 @@ public class SOAPEnvelopeImpl extends SOAPElement
      *
      * @return the <CODE>SOAPBody</CODE> object for this <CODE>
      *         SOAPEnvelope</CODE> object or <CODE>null</CODE> if there is none
-     * @throws org.apache.axis2.om.OMException if there is a problem obtaining
-     *                                        the <CODE>SOAPBody</CODE> object
+     * @throws org.apache.axis2.om.OMException
+     *                     if there is a problem obtaining
+     *                     the <CODE>SOAPBody</CODE> object
      * @throws OMException
      */
     public SOAPBody getBody() throws OMException {
-            //check for the first element
-            OMElement element = getFirstElement();
-            if (element != null) {
-                if (SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
-                    return (SOAPBody) element;
-                } else {      // if not second element SHOULD be the body
-                    OMNode node = element.getNextSibling();
-                    while (node != null && node.getType() != OMNode.ELEMENT_NODE) {
-                        node = node.getNextSibling();
-                    }
-                    element = (OMElement) node;
+        //check for the first element
+        OMElement element = getFirstElement();
+        if (element != null) {
+            if (SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
+                return (SOAPBody) element;
+            } else {      // if not second element SHOULD be the body
+                OMNode node = element.getNextSibling();
+                while (node != null && node.getType() != OMNode.ELEMENT_NODE) {
+                    node = node.getNextSibling();
+                }
+                element = (OMElement) node;
 
-                    if (node != null && SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
-                        return (SOAPBody) element;
-                    } else {
-                        throw new OMException("SOAPEnvelope must contain a body element which is either first or second child element of the SOAPEnvelope.");
-                    }
+                if (node != null && SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
+                    return (SOAPBody) element;
+                } else {
+                    throw new OMException("SOAPEnvelope must contain a body element which is either first or second child element of the SOAPEnvelope.");
                 }
             }
+        }
         return null;
     }
 

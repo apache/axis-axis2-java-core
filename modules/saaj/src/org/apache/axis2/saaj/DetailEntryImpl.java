@@ -19,32 +19,31 @@ import javax.xml.soap.DetailEntry;
 
 /**
  * Class DetailEntryImpl
- * 
+ *
  * @author Ashutosh Shahi
- * ashutosh.shahi@gmail.com
+ *         ashutosh.shahi@gmail.com
  */
 public class DetailEntryImpl extends SOAPElementImpl implements DetailEntry {
-	
-	/**
-	 * Field detailEntry
-	 */
-	private org.apache.axis2.om.OMElement detailEntry;
-	
-	/**
-	 * Constructor DetailEntryImpl
-	 *
-	 */
-	public DetailEntryImpl(){
-		
-	}
-	
-	/**
-	 * Constructor DetailEntryImpl
-	 * 
-	 * @param detailEntry
-	 */
-	public DetailEntryImpl(org.apache.axis2.om.OMElement detailEntry){
-		this.detailEntry = detailEntry;
-	}
+
+    /**
+     * Field detailEntry
+     */
+    private org.apache.axis2.om.OMElement detailEntry;
+
+    /**
+     * Constructor DetailEntryImpl
+     */
+    public DetailEntryImpl() {
+
+    }
+
+    /**
+     * Constructor DetailEntryImpl
+     *
+     * @param detailEntry
+     */
+    public DetailEntryImpl(org.apache.axis2.om.OMElement detailEntry) {
+        this.detailEntry = detailEntry;
+    }
 
 }

@@ -1,4 +1,5 @@
 package org.apache.axis2.storage.impl;
+
 import java.util.HashMap;
 
 /*
@@ -18,7 +19,8 @@ import java.util.HashMap;
 *
 *
 */
-public class AxisMemoryStorage extends AbstractStorage{
+
+public class AxisMemoryStorage extends AbstractStorage {
 
     private HashMap objectMap;
 
@@ -29,7 +31,7 @@ public class AxisMemoryStorage extends AbstractStorage{
 
     public Object put(Object value) {
         String key = getUniqueKey();
-        objectMap.put(key,value);
+        objectMap.put(key, value);
         return key;
 
     }
@@ -47,12 +49,11 @@ public class AxisMemoryStorage extends AbstractStorage{
         try {
             objectMap.clear();
             returnValue = true;
-        }catch(Exception e){
+        } catch (Exception e) {
             returnValue = false;
         }
         return returnValue;
     }
-
 
 
 }

@@ -1,8 +1,8 @@
 package org.apache.axis2.deployment.util;
 
+import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
-import org.apache.axis2.description.OperationDescription;
 
 import java.util.ArrayList;
 
@@ -131,5 +131,5 @@ public class PhasesInfo {
             operation.setPhasesOutFaultFlow(getOperationOutFaultPhases());
         }
     }
-    
+
 }

@@ -65,9 +65,9 @@ public class PhaseHolder {
             getPhase(phaseName).addHandler(handler);
         } else {
             throw new PhaseException("Invalid Phase ," + phaseName
-                    + "for the handler "
-                    + handler.getName()
-                    + " dose not exit in axis2.xml or refering to phase in diffrent flow");
+                                     + "for the handler "
+                                     + handler.getName()
+                                     + " dose not exit in axis2.xml or refering to phase in diffrent flow");
         }
     }
 
@@ -90,6 +90,7 @@ public class PhaseHolder {
     /**
      * This method is to build the transport phase , here load the corresponding handlers and added them
      * in to correct phase
+     *
      * @param phase
      * @param handlers
      * @throws PhaseException
@@ -101,7 +102,7 @@ public class PhaseHolder {
             for (int i = 0; i < handlers.size(); i++) {
                 HandlerDescription description = (HandlerDescription) handlers.get(i);
                 handlerClass = Class.forName(description.getClassName(), true,
-                        Thread.currentThread().getContextClassLoader());
+                                             Thread.currentThread().getContextClassLoader());
                 handler =
                         (Handler) handlerClass.newInstance();
                 handler.init(description);

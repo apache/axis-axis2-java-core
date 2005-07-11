@@ -17,6 +17,7 @@ import java.util.ArrayList;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 public class Page2Bean {
     private boolean manual;
     private boolean automatic;
@@ -70,12 +71,15 @@ public class Page2Bean {
     public void setAutomaticClassName(String automaticClassName) {
         this.automaticClassName = automaticClassName;
     }
-    public int getMethodNameCount(){
+
+    public int getMethodNameCount() {
         return selectedMethodNames.size();
     }
-    public void setSelectedMethodNames(ArrayList list){
+
+    public void setSelectedMethodNames(ArrayList list) {
         this.selectedMethodNames = list;
     }
+
     public String getMethodName(int index) {
         return selectedMethodNames.get(index).toString();
     }

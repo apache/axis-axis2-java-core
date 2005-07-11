@@ -147,7 +147,7 @@ public class OMElementImpl extends OMNodeImpl
         String namespaceURI = qname.getNamespaceURI();
         if (!"".equals(namespaceURI)) {
             ns = findNamespace(qname.getNamespaceURI(),
-                    qname.getPrefix());
+                               qname.getPrefix());
 //        } else {
 //            if (parent != null) {
 //                ns = parent.getNamespace();
@@ -185,7 +185,7 @@ public class OMElementImpl extends OMNodeImpl
      */
     private OMNamespace handleNamespace(OMNamespace ns) {
         OMNamespace namespace = findNamespace(ns.getName(),
-                ns.getPrefix());
+                                              ns.getPrefix());
         if (namespace == null) {
             namespace = declareNamespace(ns);
         }
@@ -210,11 +210,12 @@ public class OMElementImpl extends OMNodeImpl
      * @param elementQName
      * @return
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     public Iterator getChildrenWithName(QName elementQName) throws OMException {
         return new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(),
-                elementQName);
+                                           elementQName);
     }
 
     /**
@@ -227,7 +228,7 @@ public class OMElementImpl extends OMNodeImpl
     public OMElement getFirstChildWithName(QName elementQName) throws OMException {
         OMChildrenQNameIterator omChildrenQNameIterator =
                 new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(),
-                        elementQName);
+                                            elementQName);
         OMNode omNode = null;
         if (omChildrenQNameIterator.hasNext()) {
             omNode = (OMNode) omChildrenQNameIterator.next();
@@ -261,6 +262,7 @@ public class OMElementImpl extends OMNodeImpl
      *
      * @return
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     public OMNode getNextSibling() throws OMException {
@@ -314,6 +316,7 @@ public class OMElementImpl extends OMNodeImpl
      * @param prefix
      * @return
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     public OMNamespace findNamespace(String uri, String prefix)
@@ -389,6 +392,7 @@ public class OMElementImpl extends OMNodeImpl
      * @param qname
      * @return
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     public OMAttribute getFirstAttribute(QName qname) throws OMException {
@@ -456,9 +460,9 @@ public class OMElementImpl extends OMNodeImpl
             namespace = findNamespace(ns.getName(), ns.getPrefix());
             if (namespace == null) {
                 throw new OMException("Given OMNamespace(" + ns.getName() + ns.getPrefix()
-                        + ") for "
-                        + "this attribute is not declared in the scope of this element. First declare the namespace"
-                        + " and then use it with the attribute");
+                                      + ") for "
+                                      + "this attribute is not declared in the scope of this element. First declare the namespace"
+                                      + " and then use it with the attribute");
             }
         }
         return addAttribute(new OMAttributeImpl(attributeName, ns, value));
@@ -514,6 +518,7 @@ public class OMElementImpl extends OMNodeImpl
      * This will remove this information item and its children, from the model completely
      *
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     public OMNode detach() throws OMException {
@@ -539,6 +544,7 @@ public class OMElementImpl extends OMNodeImpl
      *
      * @return
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     public int getType() throws OMException {

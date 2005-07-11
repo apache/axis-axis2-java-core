@@ -15,22 +15,25 @@
  */
 
 package org.apache.axis2.attachments;
+
 import java.awt.*;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
  * This interface defines a ImageIO modules functionality
+ *
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
  * @since 2.0
  */
 public interface ImageIO {
     /**
      * Save an image.
-     * @param id the mime-type of the format to save the image
+     *
+     * @param id    the mime-type of the format to save the image
      * @param image the image to save
-     * @param os the output stream to write to
-     * @exception Exception if an error prevents image encoding
+     * @param os    the output stream to write to
+     * @throws Exception if an error prevents image encoding
      */
 
     public void saveImage(String id, Image image, OutputStream os)
@@ -38,6 +41,7 @@ public interface ImageIO {
 
     /**
      * Load an Image.
+     *
      * @param in the stream to load the image
      * @return the Image
      */

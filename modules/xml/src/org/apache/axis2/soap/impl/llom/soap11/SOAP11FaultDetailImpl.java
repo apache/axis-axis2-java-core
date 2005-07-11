@@ -53,7 +53,7 @@ public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
 //        throw new UnsupportedOperationException();
 //    }
 
-     public void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
+    public void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
 
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
@@ -66,11 +66,11 @@ public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
         }
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         if (this.getNamespace() != null) {
-           String prefix = this.getNamespace().getPrefix();
-        String nameSpaceName = this.getNamespace().getName();
-        writer.writeStartElement(prefix, SOAP11Constants.SOAP_FAULT_DETAIL_LOCAL_NAME,
-                                nameSpaceName);
-        }else{
+            String prefix = this.getNamespace().getPrefix();
+            String nameSpaceName = this.getNamespace().getName();
+            writer.writeStartElement(prefix, SOAP11Constants.SOAP_FAULT_DETAIL_LOCAL_NAME,
+                                     nameSpaceName);
+        } else {
             writer.writeStartElement(SOAP11Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
         }
         OMSerializerUtil.serializeAttributes(this, omOutput);
@@ -93,5 +93,5 @@ public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
 
     }
 
-    
+
 }

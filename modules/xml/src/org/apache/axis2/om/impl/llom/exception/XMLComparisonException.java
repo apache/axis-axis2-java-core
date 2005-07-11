@@ -20,7 +20,7 @@ public class XMLComparisonException extends Exception {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
-   
+
     public XMLComparisonException(String message) {
         super(message);
     }

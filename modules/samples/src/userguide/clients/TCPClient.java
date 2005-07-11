@@ -22,49 +22,47 @@ import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.om.*;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
- * This is a Client progam that accesses 'MyService' web service in Axis2 samples 
+ * This is a Client progam that accesses 'MyService' web service in Axis2 samples
  */
 public class TCPClient {
 
-	private static String toEpr = "tcp://localhost:8080/axis2/services/MyService";
-	
-	public static void main(String[] args) throws AxisFault {
-		
-			Call  call = new Call();
-			call.setTo(new EndpointReference(AddressingConstants.WSA_TO,toEpr));
-			call.setTransportInfo(Constants.TRANSPORT_TCP,Constants.TRANSPORT_TCP,false);
-			//call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-			
-			OMElement result = call.invokeBlocking("echo", getPayload());
-		
-			try {
-				XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-				result.serializeWithCache(new OMOutput(writer));
-				writer.flush();
-			} catch (XMLStreamException e) {
-				e.printStackTrace();
-			} catch (FactoryConfigurationError e) {
-				e.printStackTrace();
-			}
-	}
-	
-	
-	private static OMElement getPayload() {
-		OMFactory fac = OMAbstractFactory.getOMFactory();
-		OMNamespace omNs = fac.createOMNamespace(
-				"tcp://localhost:8080/axis2/services/MyService", "example1");
-		OMElement method = fac.createOMElement("echo", omNs);
-		OMElement value = fac.createOMElement("Text", omNs);
-		value.addChild(fac.createText(value, "Axis2 Echo String "));
-		method.addChild(value);
+    private static String toEpr = "tcp://localhost:8080/axis2/services/MyService";
 
-		return method;
-	}
+    public static void main(String[] args) throws AxisFault {
+
+        Call call = new Call();
+        call.setTo(new EndpointReference(AddressingConstants.WSA_TO, toEpr));
+        call.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, false);
+        //call.engageModule(new QName(Constants.MODULE_ADDRESSING));
+
+        OMElement result = call.invokeBlocking("echo", getPayload());
+
+        try {
+            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
+            result.serializeWithCache(new OMOutput(writer));
+            writer.flush();
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        } catch (FactoryConfigurationError e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private static OMElement getPayload() {
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+        OMNamespace omNs = fac.createOMNamespace("tcp://localhost:8080/axis2/services/MyService", "example1");
+        OMElement method = fac.createOMElement("echo", omNs);
+        OMElement value = fac.createOMElement("Text", omNs);
+        value.addChild(fac.createText(value, "Axis2 Echo String "));
+        method.addChild(value);
+
+        return method;
+    }
 }

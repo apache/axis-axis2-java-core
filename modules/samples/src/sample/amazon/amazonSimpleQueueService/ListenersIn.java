@@ -45,7 +45,7 @@ public class ListenersIn implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             runnable =
                     new RunnableCreateQueue(this.createQueue, this.queueCode, this.enqueue,
-                            this.result);
+                                            this.result);
             Thread tread = new Thread(runnable);
             tread.start();
         }

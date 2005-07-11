@@ -22,28 +22,30 @@ import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public class SOAPBodyImpl extends WSDLExtensibilityElementImpl implements ExtensionConstants, SOAPBody{
+public class SOAPBodyImpl extends WSDLExtensibilityElementImpl implements ExtensionConstants, SOAPBody {
 
-	protected String use;
-	protected String namespaceURI;
-	  
-	public SOAPBodyImpl(){
-		this.type = SOAP_BODY;
-	}
-	
-	
-	public String getNamespaceURI() {
-		return namespaceURI;
-	}
-	public void setNamespaceURI(String namespaceURI) {
-		this.namespaceURI = namespaceURI;
-	}
-	public String getUse() {
-		return use;
-	}
-	public void setUse(String use) {
-		this.use = use;
-	}
+    protected String use;
+    protected String namespaceURI;
+
+    public SOAPBodyImpl() {
+        this.type = SOAP_BODY;
+    }
+
+
+    public String getNamespaceURI() {
+        return namespaceURI;
+    }
+
+    public void setNamespaceURI(String namespaceURI) {
+        this.namespaceURI = namespaceURI;
+    }
+
+    public String getUse() {
+        return use;
+    }
+
+    public void setUse(String use) {
+        this.use = use;
+    }
 }

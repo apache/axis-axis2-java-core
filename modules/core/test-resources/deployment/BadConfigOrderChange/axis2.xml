@@ -1,4 +1,4 @@
-<axisconfig name ="AxisJava2.0" >
+<axisconfig name="AxisJava2.0">
     <parameter name="hotdeployment" locked="xsd:false">true</parameter>
     <parameter name="hotupdate" locked="xsd:false">true</parameter>
 

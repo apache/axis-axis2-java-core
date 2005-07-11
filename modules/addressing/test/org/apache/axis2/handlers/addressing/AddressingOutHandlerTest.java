@@ -85,8 +85,8 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
         epr = new EndpointReference(WSA_TO, "http://www.to.org/service/");
         referenceValues = new AnyContentType();
-        referenceValues.addReferenceValue(new QName("http://reference.org","Reference4", "myRef"), "Value 400");
-        referenceValues.addReferenceValue(new QName("http://reference.org","Reference3", "myRef"), "Value 300");
+        referenceValues.addReferenceValue(new QName("http://reference.org", "Reference4", "myRef"), "Value 400");
+        referenceValues.addReferenceValue(new QName("http://reference.org", "Reference3", "myRef"), "Value 300");
         epr.setReferenceParameters(referenceValues);
 
         epr.setServiceName(new ServiceName(new QName("http://www.from.org/service/", "Service", "serviceNS"), "port"));

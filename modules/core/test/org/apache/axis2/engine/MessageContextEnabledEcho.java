@@ -25,6 +25,7 @@ import org.apache.axis2.om.OMElement;
 
 public class MessageContextEnabledEcho {
     private MessageContext msgcts;
+
     public MessageContextEnabledEcho() {
     }
 
@@ -34,9 +35,9 @@ public class MessageContextEnabledEcho {
     }
 
     public OMElement echoOMElement(OMElement omEle) throws AxisFault {
-        if(msgcts != null){
+        if (msgcts != null) {
             System.out.println("MessageContext injected");
-        }else{
+        } else {
             throw new AxisFault("Message Context not injected");
         }
         return null;

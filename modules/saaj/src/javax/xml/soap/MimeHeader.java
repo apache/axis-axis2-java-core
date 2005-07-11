@@ -17,8 +17,9 @@ package javax.xml.soap;
 
 /**
  * An object that stores a MIME header name and its value. One
- *   or more <CODE>MimeHeader</CODE> objects may be contained in a
- *   <CODE>MimeHeaders</CODE> object.
+ * or more <CODE>MimeHeader</CODE> objects may be contained in a
+ * <CODE>MimeHeaders</CODE> object.
+ *
  * @see MimeHeaders MimeHeaders
  */
 public class MimeHeader {
@@ -26,20 +27,22 @@ public class MimeHeader {
     /**
      * Constructs a <CODE>MimeHeader</CODE> object initialized
      * with the given name and value.
-     * @param  name a <CODE>String</CODE> giving the
-     *     name of the header
-     * @param  value a <CODE>String</CODE> giving the
-     *     value of the header
+     *
+     * @param name  a <CODE>String</CODE> giving the
+     *              name of the header
+     * @param value a <CODE>String</CODE> giving the
+     *              value of the header
      */
     public MimeHeader(String name, String value) {
-        this.name  = name;
+        this.name = name;
         this.value = value;
     }
 
     /**
      * Returns the name of this <CODE>MimeHeader</CODE>
      * object.
-     * @return  the name of the header as a <CODE>String</CODE>
+     *
+     * @return the name of the header as a <CODE>String</CODE>
      */
     public String getName() {
         return name;
@@ -48,6 +51,7 @@ public class MimeHeader {
     /**
      * Returns the value of this <CODE>MimeHeader</CODE>
      * object.
+     *
      * @return the value of the header as a <CODE>String</CODE>
      */
     public String getValue() {

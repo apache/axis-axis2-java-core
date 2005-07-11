@@ -26,14 +26,14 @@ public class SOAPFaultCodeTest extends SOAPFaultCodeTestCase {
     }
 
     protected void setUp() throws Exception {
-        super.setUp();        
+        super.setUp();
     }
 
     //SOAP 1.1 Fault Code Test (Programaticaly Created)
     public void testSOAP11SetValue() {
         soap11FaultCode.setValue(soap11Factory.createSOAPFaultValue(soap11FaultCode));
-        assertFalse("SOAP 1.1 Fault Code Test :- After calling setValue method, getValue method returns null",soap11FaultCode.getValue() == null);
-        try{
+        assertFalse("SOAP 1.1 Fault Code Test :- After calling setValue method, getValue method returns null", soap11FaultCode.getValue() == null);
+        try {
             soap11FaultCode.setValue(soap12Factory.createSOAPFaultValue(soap12FaultCode));
             fail("SOAP12FaultValue should not be inserted to SOAP11FaultCode");
         } catch (SOAPProcessingException e) {
@@ -43,16 +43,16 @@ public class SOAPFaultCodeTest extends SOAPFaultCodeTestCase {
     }
 
     public void testSOAP11GetValue() {
-        assertTrue("SOAP 1.1 Fault Code Test :- After creating soapfaultcode, it has a value",soap11FaultCode.getValue() == null);
+        assertTrue("SOAP 1.1 Fault Code Test :- After creating soapfaultcode, it has a value", soap11FaultCode.getValue() == null);
         soap11FaultCode.setValue(soap11Factory.createSOAPFaultValue(soap11FaultCode));
-        assertFalse("SOAP 1.1 Fault Code Test :- After calling setValue method, getValue method returns null",soap11FaultCode.getValue() == null);
+        assertFalse("SOAP 1.1 Fault Code Test :- After calling setValue method, getValue method returns null", soap11FaultCode.getValue() == null);
     }
 
     //SOAP 1.2 Fault Code Test (Programaticaly Created)
     public void testSOAP12SetValue() {
         soap12FaultCode.setValue(soap12Factory.createSOAPFaultValue(soap12FaultCode));
-        assertFalse("SOAP 1.2 Fault Code Test :- After calling setValue method, getValue method returns null",soap12FaultCode.getValue() == null);
-        try{
+        assertFalse("SOAP 1.2 Fault Code Test :- After calling setValue method, getValue method returns null", soap12FaultCode.getValue() == null);
+        try {
             soap12FaultCode.setValue(soap11Factory.createSOAPFaultValue(soap11FaultCode));
             fail("SOAP11FaultValue should not be inserted to SOAP12FaultCode");
         } catch (SOAPProcessingException e) {
@@ -67,15 +67,15 @@ public class SOAPFaultCodeTest extends SOAPFaultCodeTestCase {
     }
 
     public void testSOAP12GetValue() {
-        assertTrue("SOAP 1.2 Fault Code Test :- After creating soapfaultcode, it has a value",soap12FaultCode.getValue() == null);
+        assertTrue("SOAP 1.2 Fault Code Test :- After creating soapfaultcode, it has a value", soap12FaultCode.getValue() == null);
         soap12FaultCode.setValue(soap12Factory.createSOAPFaultValue(soap12FaultCode));
-        assertFalse("SOAP 1.2 Fault Code Test :- After calling setValue method, getValue method returns null",soap12FaultCode.getValue() == null);
+        assertFalse("SOAP 1.2 Fault Code Test :- After calling setValue method, getValue method returns null", soap12FaultCode.getValue() == null);
     }
 
     public void testSOAP12SetSubCode() {
         soap12FaultCode.setSubCode(soap12Factory.createSOAPFaultSubCode(soap12FaultCode));
-        assertFalse("SOAP 1.2 Fault Code Test :- After calling setSubCode method, getSubCode method returns null",soap12FaultCode.getSubCode() == null);
-        try{
+        assertFalse("SOAP 1.2 Fault Code Test :- After calling setSubCode method, getSubCode method returns null", soap12FaultCode.getSubCode() == null);
+        try {
             soap12FaultCode.setSubCode(soap11Factory.createSOAPFaultSubCode(soap11FaultCode));
             fail("SOAP11FaultSubCode should not be inserted to SOAP12FaultCode");
         } catch (SOAPProcessingException e) {
@@ -90,25 +90,25 @@ public class SOAPFaultCodeTest extends SOAPFaultCodeTestCase {
     }
 
     public void testSOAP12GetSubCode() {
-        assertTrue("SOAP 1.2 Fault Code Test :- After creating soapfaultcode, it has a subcode",soap12FaultCode.getSubCode() == null);
+        assertTrue("SOAP 1.2 Fault Code Test :- After creating soapfaultcode, it has a subcode", soap12FaultCode.getSubCode() == null);
         soap12FaultCode.setSubCode(soap12Factory.createSOAPFaultSubCode(soap12FaultCode));
-        assertFalse("SOAP 1.2 Fault Code Test :- After calling setSubCode method, getSubCode method returns null",soap12FaultCode.getSubCode() == null);
+        assertFalse("SOAP 1.2 Fault Code Test :- After calling setSubCode method, getSubCode method returns null", soap12FaultCode.getSubCode() == null);
     }
 
     //SOAP 1.1 Fault Code Test (With Parser)
     public void testSOAP11GetValueWithParser() {
-        assertFalse("SOAP 1.1 Fault Code Test with parser : - getValue method returns null",soap11FaultCodeWithParser.getValue() == null);
-        assertTrue("SOAP 1.1 Fault Code Test with parser : - Value local name mismatch",soap11FaultCodeWithParser.getValue().getLocalName().equals(SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME));
+        assertFalse("SOAP 1.1 Fault Code Test with parser : - getValue method returns null", soap11FaultCodeWithParser.getValue() == null);
+        assertTrue("SOAP 1.1 Fault Code Test with parser : - Value local name mismatch", soap11FaultCodeWithParser.getValue().getLocalName().equals(SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME));
     }
 
     //SOAP 1.2 Fault Code Test (With Parser)
     public void testSOAP12GetValueWithParser() {
-        assertFalse("SOAP 1.2 Fault Code Test with parser : - getValue method returns null",soap12FaultCodeWithParser.getValue() == null);
-        assertTrue("SOAP 1.2 Fault Code Test with parser : - Value local name mismatch",soap12FaultCodeWithParser.getValue().getLocalName().equals(SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME));
+        assertFalse("SOAP 1.2 Fault Code Test with parser : - getValue method returns null", soap12FaultCodeWithParser.getValue() == null);
+        assertTrue("SOAP 1.2 Fault Code Test with parser : - Value local name mismatch", soap12FaultCodeWithParser.getValue().getLocalName().equals(SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME));
     }
 
     public void testSOAP12GetSubCodeWithParser() {
-        assertFalse("SOAP 1.2 Fault Code Test with parser :- getSubCode method returns null",soap12FaultCodeWithParser.getSubCode() == null);
-        assertTrue("SOAP 1.2 Fault Code Test with parser : - subcode local name mismatch",soap12FaultCodeWithParser.getSubCode().getLocalName().equals(SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME));
+        assertFalse("SOAP 1.2 Fault Code Test with parser :- getSubCode method returns null", soap12FaultCodeWithParser.getSubCode() == null);
+        assertTrue("SOAP 1.2 Fault Code Test with parser : - subcode local name mismatch", soap12FaultCodeWithParser.getSubCode().getLocalName().equals(SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME));
     }
 }

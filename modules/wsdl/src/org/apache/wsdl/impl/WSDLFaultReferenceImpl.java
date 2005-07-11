@@ -25,16 +25,15 @@ import javax.xml.namespace.QName;
 public class WSDLFaultReferenceImpl extends ComponentImpl
         implements WSDLFaultReference {
 
-    
 
     /**
      * Field ref
      */
     private QName ref;
 
-    
+
     /**
-     * Field messageLabel 
+     * Field messageLabel
      */
     private String messageLabel;
 
@@ -43,10 +42,11 @@ public class WSDLFaultReferenceImpl extends ComponentImpl
      */
     private String direction;
 
-    
-    public WSDLFaultReferenceImpl(){
-    	
+
+    public WSDLFaultReferenceImpl() {
+
     }
+
     /**
      * Returns the direction of the Fault according the MEP
      *

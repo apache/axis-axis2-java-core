@@ -39,10 +39,9 @@ import java.io.File;
  * This is a simple implementation of an SMTP/POP3 server for processing SOAP
  * requests via Apache's xml-axis. This is not intended for production use. Its
  * intended uses are for demos, debugging, and performance profiling.
- * 
+ *
  * @author Davanum Srinivas <dims@yahoo.com>
  * @author Rob Jellinghaus (robj@unrealities.com)
- * 
  * @author Chamil Thanthrimudalige <chamilt@gmail.com>Changes done to make the
  *         Class work inside Axis 2.
  */
@@ -73,12 +72,11 @@ public class SimpleMailListener extends TransportListener implements Runnable {
     public SimpleMailListener() {
     }
 
-    public SimpleMailListener(
-        String host,
-        String port,
-        String userid,
-        String password,
-        String dir) {
+    public SimpleMailListener(String host,
+                              String port,
+                              String userid,
+                              String password,
+                              String dir) {
         this.host = host;
         this.port = port;
         this.user = userid;
@@ -97,12 +95,11 @@ public class SimpleMailListener extends TransportListener implements Runnable {
         }
     }
 
-    public SimpleMailListener(
-        String host,
-        String port,
-        String userid,
-        String password,
-        ConfigurationContext er) {
+    public SimpleMailListener(String host,
+                              String port,
+                              String userid,
+                              String password,
+                              ConfigurationContext er) {
         this.host = host;
         this.port = port;
         this.user = userid;
@@ -135,7 +132,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
         // Accept and process requests from the socket
         if (!stopped) {
             String logMessage =
-                "Mail listner is being setup to listen to the address "
+                    "Mail listner is being setup to listen to the address "
                     + user
                     + "@"
                     + host
@@ -186,11 +183,10 @@ public class SimpleMailListener extends TransportListener implements Runnable {
 
     /**
      * Start this server.
-     * 
+     * <p/>
      * Spawns a worker thread to listen for HTTP requests.
-     * 
-     * @param daemon
-     *            a boolean indicating if the thread should be a daemon.
+     *
+     * @param daemon a boolean indicating if the thread should be a daemon.
      */
     public void start(boolean daemon) {
         if (doThreads) {
@@ -211,7 +207,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
 
     /**
      * Stop this server.
-     * 
+     * <p/>
      * This will interrupt any pending accept().
      */
     public void stop() {
@@ -236,25 +232,23 @@ public class SimpleMailListener extends TransportListener implements Runnable {
             ConfigurationContext configurationContext = builder.buildConfigurationContext(args[0]);
             SimpleMailListener sas = new SimpleMailListener();
             TransportInDescription transportIn =
-                configurationContext.getAxisConfiguration().getTransportIn(
-                    new QName(Constants.TRANSPORT_MAIL));
+                    configurationContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL));
             if (transportIn != null) {
                 sas.init(configurationContext, transportIn);
-                System.out.println(
-                    "Starting the SimpleMailListener with repository "
-                        + new File(args[0]).getAbsolutePath());
+                System.out.println("Starting the SimpleMailListener with repository "
+                                   + new File(args[0]).getAbsolutePath());
                 sas.start();
             } else {
-                System.out.println(
-                    "Startup failed, mail transport not configured, Configure the mail trnasport in the axis2.xml file");
+                System.out.println("Startup failed, mail transport not configured, Configure the mail trnasport in the axis2.xml file");
             }
         }
     }
+
     /* (non-Javadoc)
      * @see org.apache.axis2.transport.TransportListener#init(org.apache.axis2.context.ConfigurationContext, org.apache.axis2.description.TransportInDescription)
      */
     public void init(ConfigurationContext configurationContext, TransportInDescription transportIn)
-        throws AxisFault {
+            throws AxisFault {
         this.configurationContext = configurationContext;
 
         user = Utils.getParameterValue(transportIn.getParameter(MailConstants.POP3_USER));
@@ -263,16 +257,15 @@ public class SimpleMailListener extends TransportListener implements Runnable {
         port = Utils.getParameterValue(transportIn.getParameter(MailConstants.POP3_PORT));
         replyTo = Utils.getParameterValue(transportIn.getParameter(MailConstants.RAPLY_TO));
         if (user == null || host == null || password == null || port == null) {
-            throw new AxisFault(
-                "user, port, host or password not set, "
-                    + "   [user null = "
-                    + (user == null)
-                    + ", password null= "
-                    + (password == null)
-                    + ", host null "
-                    + (host == null)
-                    + ",port null "
-                    + (port == null));
+            throw new AxisFault("user, port, host or password not set, "
+                                + "   [user null = "
+                                + (user == null)
+                                + ", password null= "
+                                + (password == null)
+                                + ", host null "
+                                + (host == null)
+                                + ",port null "
+                                + (port == null));
         }
 
     }
@@ -282,7 +275,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
      */
     public EndpointReference replyToEPR(String serviceName) throws AxisFault {
         // TODO Auto-generated method stub
-        return new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo+"/services/"+serviceName);
+        return new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo + "/services/" + serviceName);
     }
 
 }

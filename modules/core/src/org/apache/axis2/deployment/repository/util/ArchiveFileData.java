@@ -16,19 +16,13 @@
 
 package org.apache.axis2.deployment.repository.util;
 
-import org.apache.axis2.deployment.DeploymentEngine;
-import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.engine.AxisFault;
 
 import javax.xml.namespace.QName;
-import java.io.*;
+import java.io.File;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 /**
  * ArchiveFileData = Hot Deployment File Item , to store infromation of the module or servise

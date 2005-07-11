@@ -21,9 +21,8 @@ import org.apache.wsdl.impl.MessageReferenceImpl;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class MessageDescription extends MessageReferenceImpl implements
-		MessageReference {
+        MessageReference {
 
 }

@@ -21,13 +21,14 @@ import java.util.Properties;
  *
  * 
  */
+
 public class PropertyLoader {
 
     private static String googleKey;
     private static String googleEndpointURL;
     private static String googleEndpointServiceName;
 
-    static{
+    static {
         try {
             Properties prop = new Properties();
             Class clazz = new Object().getClass();
@@ -43,6 +44,7 @@ public class PropertyLoader {
         }
 
     }
+
     public static String getGoogleKey() {
         return googleKey;
     }

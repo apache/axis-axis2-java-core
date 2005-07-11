@@ -15,7 +15,6 @@
  */
 package org.apache.axis2.engine;
 
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.OperationDescription;
@@ -34,7 +33,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
      * Field NAME
      */
     public static final QName NAME =
-        new QName("http://axis.ws.apache.org", "SOAPMessageBodyBasedDispatcher");
+            new QName("http://axis.ws.apache.org", "SOAPMessageBodyBasedDispatcher");
     QName serviceName = null;
     QName operatoinName = null;
 
@@ -45,10 +44,9 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
         init(new HandlerDescription(NAME));
     }
 
-    public OperationDescription findOperation(
-        ServiceDescription service,
-        MessageContext messageContext)
-        throws AxisFault {
+    public OperationDescription findOperation(ServiceDescription service,
+                                              MessageContext messageContext)
+            throws AxisFault {
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
         operatoinName = new QName(bodyFirstChild.getLocalName());
 
@@ -73,7 +71,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
             if (values[0] != null) {
                 serviceName = new QName(values[0]);
                 AxisConfiguration registry =
-                    messageContext.getSystemContext().getAxisConfiguration();
+                        messageContext.getSystemContext().getAxisConfiguration();
                 return registry.getService(serviceName);
             }
         }

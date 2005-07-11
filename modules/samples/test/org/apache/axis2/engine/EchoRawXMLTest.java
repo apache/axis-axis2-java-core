@@ -41,9 +41,9 @@ import javax.xml.namespace.QName;
 public class EchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                    "http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoOMElement");
+                                  "http://127.0.0.1:"
+                                  + (UtilServer.TESTING_PORT)
+                                  + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -52,7 +52,7 @@ public class EchoRawXMLTest extends TestCase {
     private AxisConfiguration engineRegistry;
     private MessageContext mc;
     //private Thread thisThread;
-   // private SimpleHTTPServer sas;
+    // private SimpleHTTPServer sas;
     private ServiceContext serviceContext;
     private ServiceDescription service;
 
@@ -70,8 +70,8 @@ public class EchoRawXMLTest extends TestCase {
         UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
-        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
         serviceContext =
                 UtilServer.getConfigurationContext().createServiceContext(service.getName());
@@ -85,7 +85,7 @@ public class EchoRawXMLTest extends TestCase {
 
 
     public void testEchoXMLASync() throws Exception {
-                OMElement payload = TestingUtils.createDummyOMElement();
+        OMElement payload = TestingUtils.createDummyOMElement();
 
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
 
@@ -94,7 +94,7 @@ public class EchoRawXMLTest extends TestCase {
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
-                TestingUtils.campareWithCreatedOMElement(result.getResponseEnvelope().getBody().getFirstElement());  
+                TestingUtils.campareWithCreatedOMElement(result.getResponseEnvelope().getBody().getFirstElement());
                 finish = true;
             }
 
@@ -109,7 +109,7 @@ public class EchoRawXMLTest extends TestCase {
         while (!finish) {
             Thread.sleep(1000);
             index++;
-            if(index > 10 ){
+            if (index > 10) {
                 throw new AxisFault("Server is shutdown as the Async response take too longs time");
             }
         }

@@ -233,7 +233,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
             return parser.hasName();
         } else {
             return ((currentEvent == START_ELEMENT)
-                               || (currentEvent == END_ELEMENT));
+                    || (currentEvent == END_ELEMENT));
         }
     }
 
@@ -278,8 +278,8 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      */
     public boolean hasText() {
         return ((currentEvent == CHARACTERS) || (currentEvent == DTD)
-                           || (currentEvent == ENTITY_REFERENCE)
-                           || (currentEvent == COMMENT) || (currentEvent == SPACE));
+                || (currentEvent == ENTITY_REFERENCE)
+                || (currentEvent == COMMENT) || (currentEvent == SPACE));
     }
 
     /**
@@ -394,8 +394,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         } else {
             if (isStartElement() || isEndElement()
                     || (currentEvent == NAMESPACE)) {
-                OMNamespace ns = (OMNamespace) getItemFromIterator(
-                        ((OMElement) lastNode).getAllDeclaredNamespaces(), i);
+                OMNamespace ns = (OMNamespace) getItemFromIterator(((OMElement) lastNode).getAllDeclaredNamespaces(), i);
                 returnString = (ns == null)
                         ? null
                         : ns.getName();
@@ -416,8 +415,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         } else {
             if (isStartElement() || isEndElement()
                     || (currentEvent == NAMESPACE)) {
-                OMNamespace ns = (OMNamespace) getItemFromIterator(
-                        ((OMElement) lastNode).getAllDeclaredNamespaces(), i);
+                OMNamespace ns = (OMNamespace) getItemFromIterator(((OMElement) lastNode).getAllDeclaredNamespaces(), i);
                 returnString = (ns == null)
                         ? null
                         : ns.getPrefix();
@@ -438,7 +436,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
             if (isStartElement() || isEndElement()
                     || (currentEvent == NAMESPACE)) {
                 returnCount =
-                getCount(((OMElement) lastNode).getAllDeclaredNamespaces());
+                        getCount(((OMElement) lastNode).getAllDeclaredNamespaces());
             }
         }
         return returnCount;
@@ -458,8 +456,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
 
                 // theres nothing to be returned here
             } else {
-                throw new IllegalStateException(
-                        "attribute type accessed in illegal event!");
+                throw new IllegalStateException("attribute type accessed in illegal event!");
             }
         }
         return returnValue;
@@ -481,8 +478,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                     returnString = attrib.getValue();
                 }
             } else {
-                throw new IllegalStateException(
-                        "attribute type accessed in illegal event!");
+                throw new IllegalStateException("attribute type accessed in illegal event!");
             }
         }
         return returnString;
@@ -502,8 +498,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
 
                 // todo implement this
             } else {
-                throw new IllegalStateException(
-                        "attribute type accessed in illegal event!");
+                throw new IllegalStateException("attribute type accessed in illegal event!");
             }
         }
         return returnString;
@@ -528,8 +523,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                     }
                 }
             } else {
-                throw new IllegalStateException(
-                        "attribute prefix accessed in illegal event!");
+                throw new IllegalStateException("attribute prefix accessed in illegal event!");
             }
         }
         return returnString;
@@ -551,8 +545,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                     returnString = attrib.getLocalName();
                 }
             } else {
-                throw new IllegalStateException(
-                        "attribute localName accessed in illegal event!");
+                throw new IllegalStateException("attribute localName accessed in illegal event!");
             }
         }
         return returnString;
@@ -577,8 +570,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                     }
                 }
             } else {
-                throw new IllegalStateException(
-                        "attribute nameSpace accessed in illegal event!");
+                throw new IllegalStateException("attribute nameSpace accessed in illegal event!");
             }
         }
         return returnString;
@@ -597,8 +589,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
             if (isStartElement() || (currentEvent == ATTRIBUTE)) {
                 returnQName = getAttribute((OMElement) lastNode, i).getQName();
             } else {
-                throw new IllegalStateException(
-                        "attribute count accessed in illegal event!");
+                throw new IllegalStateException("attribute count accessed in illegal event!");
             }
         }
         return returnQName;
@@ -617,8 +608,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                 OMElement elt = (OMElement) lastNode;
                 returnCount = getCount(elt.getAttributes());
             } else {
-                throw new IllegalStateException(
-                        "attribute count accessed in illegal event!");
+                throw new IllegalStateException("attribute count accessed in illegal event!");
             }
         }
         return returnCount;
@@ -807,15 +797,13 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                 try {
                     parser = (XMLStreamReader) builder.getParser();
                 } catch (Exception e) {
-                    throw new UnsupportedOperationException(
-                            "incompatible parser found!");
+                    throw new UnsupportedOperationException("incompatible parser found!");
                 }
-                log.info(
-                        "Switching to the Real Stax parser to generated the future events");
+                log.info("Switching to the Real Stax parser to generated the future events");
 
-                if ((currentEvent == START_DOCUMENT) && (currentEvent == parser.getEventType())){
+                if ((currentEvent == START_DOCUMENT) && (currentEvent == parser.getEventType())) {
                     currentEvent = parser.next();
-                } else{
+                } else {
                     currentEvent = parser.getEventType();
                 }
                 updateCompleteStatus();
@@ -944,7 +932,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      */
     public String getVersion() {
 //        throw new UnsupportedOperationException();
-          return "1.0"; //todo put the constant
+        return "1.0"; //todo put the constant
     }
 
 
@@ -954,7 +942,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @return
      */
     public boolean isStandalone() {
-       return true;
+        return true;
     }
 
     /**
@@ -974,7 +962,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     public String getCharacterEncodingScheme() {
 //        throw new UnsupportedOperationException();
 //        throw new UnsupportedOperationException();
-       return "utf-8";
+        return "utf-8";
     }
 
     /**
@@ -1162,7 +1150,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         OMAttribute returnAttrib = null;
         if (elt != null) {
             returnAttrib =
-            (OMAttribute) getItemFromIterator(elt.getAttributes(), index);
+                    (OMAttribute) getItemFromIterator(elt.getAttributes(), index);
         }
         return returnAttrib;
     }

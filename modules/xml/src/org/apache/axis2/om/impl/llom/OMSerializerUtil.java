@@ -27,6 +27,7 @@ import java.util.Iterator;
 *
 *
 */
+
 public class OMSerializerUtil {
 
     /**
@@ -34,6 +35,7 @@ public class OMSerializerUtil {
      *
      * @param writer
      * @throws javax.xml.stream.XMLStreamException
+     *
      */
     static void serializeEndpart(OMOutput omOutput)
             throws XMLStreamException {
@@ -62,10 +64,10 @@ public class OMSerializerUtil {
             namespaceName = ns.getName();
             if (prefix != null) {
                 writer.writeAttribute(prefix, namespaceName,
-                        attr.getLocalName(), attr.getValue());
+                                      attr.getLocalName(), attr.getValue());
             } else {
                 writer.writeAttribute(namespaceName, attr.getLocalName(),
-                        attr.getValue());
+                                      attr.getValue());
             }
         } else {
             writer.writeAttribute(attr.getLocalName(), attr.getValue());
@@ -79,9 +81,9 @@ public class OMSerializerUtil {
      * @param writer
      * @throws XMLStreamException
      */
-    static void serializeNamespace(OMNamespace namespace,OMOutput omOutput)
+    static void serializeNamespace(OMNamespace namespace, OMOutput omOutput)
             throws XMLStreamException {
-        
+
         if (namespace != null) {
             XMLStreamWriter writer = omOutput.getXmlStreamWriter();
             String uri = namespace.getName();
@@ -101,7 +103,7 @@ public class OMSerializerUtil {
      * @param writer
      * @throws XMLStreamException
      */
-    static void serializeStartpart(OMElementImpl element,OMOutput omOutput)
+    static void serializeStartpart(OMElementImpl element, OMOutput omOutput)
             throws XMLStreamException {
         String nameSpaceName = null;
         String writer_prefix = null;
@@ -114,16 +116,16 @@ public class OMSerializerUtil {
             if (nameSpaceName != null) {
                 if (writer_prefix != null) {
                     writer.writeStartElement(nameSpaceName,
-                            element.getLocalName());
+                                             element.getLocalName());
                 } else {
                     if (prefix != null) {
                         writer.writeStartElement(prefix, element.getLocalName(),
-                                nameSpaceName);
+                                                 nameSpaceName);
                         writer.writeNamespace(prefix, nameSpaceName);
                         writer.setPrefix(prefix, nameSpaceName);
                     } else {
                         writer.writeStartElement(nameSpaceName,
-                                element.getLocalName());
+                                                 element.getLocalName());
                         writer.writeDefaultNamespace(nameSpaceName);
                         writer.setDefaultNamespace(nameSpaceName);
                     }
@@ -140,7 +142,7 @@ public class OMSerializerUtil {
         }
 
         // add the elements attributes
-        serializeAttributes(element,omOutput);
+        serializeAttributes(element, omOutput);
 
         // add the namespaces
         serializeNamespaces(element, omOutput);
@@ -172,29 +174,29 @@ public class OMSerializerUtil {
      * @param cache
      * @throws XMLStreamException
      */
-    static void serializeNormal(OMElementImpl element,OMOutput omOutput, boolean cache)
+    static void serializeNormal(OMElementImpl element, OMOutput omOutput, boolean cache)
             throws XMLStreamException {
-        
-        if (cache){
+
+        if (cache) {
             element.build();
         }
 
-        serializeStartpart(element,omOutput);
+        serializeStartpart(element, omOutput);
         OMNode firstChild = element.firstChild;
         if (firstChild != null) {
-            if (cache){
+            if (cache) {
                 firstChild.serializeWithCache(omOutput);
-            }else{
+            } else {
                 firstChild.serialize(omOutput);
             }
         }
         serializeEndpart(omOutput);
     }
 
-    static void serializeByPullStream(OMElementImpl element,OMOutput omOutput) throws XMLStreamException {
-        StreamingOMSerializer streamingOMSerializer =  new StreamingOMSerializer();
+    static void serializeByPullStream(OMElementImpl element, OMOutput omOutput) throws XMLStreamException {
+        StreamingOMSerializer streamingOMSerializer = new StreamingOMSerializer();
         streamingOMSerializer.serialize(element.getXMLStreamReaderWithoutCaching(),
-                omOutput);
+                                        omOutput);
         return;
     }
 }

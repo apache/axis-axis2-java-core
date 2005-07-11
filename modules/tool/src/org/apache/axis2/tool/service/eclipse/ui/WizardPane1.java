@@ -26,27 +26,23 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
 
 public class WizardPane1 extends WizardPage {
 
     private Text classFileLocationText;
     private Button browseButton;
-    
+
     private boolean pageComplete;
-    
-    public WizardPane1(){
+
+    public WizardPane1() {
         super("page1");
         this.setTitle(ServiceArchiver.getResourceString("page1.title"));
         this.setDescription(ServiceArchiver.getResourceString("page1.welcometext"));
         this.setImageDescriptor(ServiceArchiver.getWizardImageDescriptor());
     }
-   
+
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
@@ -54,58 +50,58 @@ public class WizardPane1 extends WizardPage {
     public void createControl(Composite parent) {
         Composite container = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();
-        layout.numColumns=3;
+        layout.numColumns = 3;
         container.setLayout(layout);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		Label lable = new Label(container,SWT.NULL);
-		lable.setText(ServiceArchiver.getResourceString("page1.fileLocationLabel"));
-		
-		classFileLocationText = new Text(container,SWT.BORDER);
-		classFileLocationText.setLayoutData(gd);
-		classFileLocationText.addModifyListener(new ModifyListener(){
-		    public void modifyText(ModifyEvent e){
-		        handleModify();
-		    }
-		});
-		
-		browseButton = new Button(container,SWT.PUSH);
-		browseButton.setText(ServiceArchiver.getResourceString("general.browse"));
-		browseButton.addMouseListener(new MouseAdapter(){
-		    public void mouseUp(MouseEvent e) {
-		        handleBrowse();
-		    } 
-		});
-		
-		setControl(container);
-		setPageComplete(false);
+        Label lable = new Label(container, SWT.NULL);
+        lable.setText(ServiceArchiver.getResourceString("page1.fileLocationLabel"));
+
+        classFileLocationText = new Text(container, SWT.BORDER);
+        classFileLocationText.setLayoutData(gd);
+        classFileLocationText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                handleModify();
+            }
+        });
+
+        browseButton = new Button(container, SWT.PUSH);
+        browseButton.setText(ServiceArchiver.getResourceString("general.browse"));
+        browseButton.addMouseListener(new MouseAdapter() {
+            public void mouseUp(MouseEvent e) {
+                handleBrowse();
+            }
+        });
+
+        setControl(container);
+        setPageComplete(false);
     }
-    
-    
-    private void handleBrowse(){
-       DirectoryDialog dirDialog = new DirectoryDialog(this.getShell());
-       dirDialog.setMessage(ServiceArchiver.getResourceString("page1.filedialogTitle"));
-       String returnText = dirDialog.open();
-       if (returnText!=null){
-           this.classFileLocationText.setText(returnText);
-       }
+
+
+    private void handleBrowse() {
+        DirectoryDialog dirDialog = new DirectoryDialog(this.getShell());
+        dirDialog.setMessage(ServiceArchiver.getResourceString("page1.filedialogTitle"));
+        String returnText = dirDialog.open();
+        if (returnText != null) {
+            this.classFileLocationText.setText(returnText);
+        }
     }
-    
-    private void handleModify(){
+
+    private void handleModify() {
         String classLocationText = this.classFileLocationText.getText().trim();
-        if (classLocationText.equals("")){
+        if (classLocationText.equals("")) {
             updateMessage("Filename should not be empty");
             return;
-        }else{    
+        } else {
             updateMessage(null);
         }
     }
-    
-    private void updateMessage(String str){
+
+    private void updateMessage(String str) {
         this.setErrorMessage(str);
-        setPageComplete(str==null);
+        setPageComplete(str == null);
     }
-    
-    public Page1Bean getBean(){
+
+    public Page1Bean getBean() {
         Page1Bean pageBean = new Page1Bean();
         pageBean.setFileLocation(this.classFileLocationText.getText());
         return pageBean;

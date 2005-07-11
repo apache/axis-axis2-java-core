@@ -21,19 +21,19 @@ import org.w3c.dom.Node;
 
 /**
  * Class to convert DOM node to OM Node
- *
  */
 public class Dom2OmUtils {
-	
-	private OMNode omNode;
-	public static OMNode toOM(Node node){
-		if(node instanceof NodeImpl){
-			return ((NodeImpl)node).getOMNode();
-		}
-		//ELSE Assumes an implemenattion of DOM to be present
-		//so, here we convert DOM Node to a OMNode and add it as a
-		//child to the omNode member of this NodeImpl
-		return null;
-	}
+
+    private OMNode omNode;
+
+    public static OMNode toOM(Node node) {
+        if (node instanceof NodeImpl) {
+            return ((NodeImpl) node).getOMNode();
+        }
+        //ELSE Assumes an implemenattion of DOM to be present
+        //so, here we convert DOM Node to a OMNode and add it as a
+        //child to the omNode member of this NodeImpl
+        return null;
+    }
 
 }

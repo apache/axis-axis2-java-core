@@ -22,33 +22,32 @@ import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 
 /**
  * @author chathura@opensource.lk
- * This Extensibility Element is extended to handle particularly the
- * SOAP Adress or the Endpoint URL.
- *
+ *         This Extensibility Element is extended to handle particularly the
+ *         SOAP Adress or the Endpoint URL.
  */
-public class SOAPAddressImpl extends WSDLExtensibilityElementImpl implements ExtensionConstants, SOAPAddress{
-	/**
-	 * Location of the Endpoint
-	 */
-	private String locationURI;
-	
-	
-	public SOAPAddressImpl(){
-		type = SOAP_ADDRESS;
-	}
-	
+public class SOAPAddressImpl extends WSDLExtensibilityElementImpl implements ExtensionConstants, SOAPAddress {
+    /**
+     * Location of the Endpoint
+     */
+    private String locationURI;
 
-	/**
-	 * Gets the Endpoint adress
-	 */
-	public String getLocationURI() {
-		return locationURI;
-	}
-	
-	/**
-	 * Sets the Endpoint Address
-	 */
-	public void setLocationURI(String locationURI) {
-		this.locationURI = locationURI;
-	}	
+
+    public SOAPAddressImpl() {
+        type = SOAP_ADDRESS;
+    }
+
+
+    /**
+     * Gets the Endpoint adress
+     */
+    public String getLocationURI() {
+        return locationURI;
+    }
+
+    /**
+     * Sets the Endpoint Address
+     */
+    public void setLocationURI(String locationURI) {
+        this.locationURI = locationURI;
+    }
 }

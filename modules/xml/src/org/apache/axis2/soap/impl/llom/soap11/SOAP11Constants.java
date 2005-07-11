@@ -18,32 +18,32 @@ import org.apache.axis2.soap.impl.llom.SOAPConstants;
  * the License.
  * <p/>
  */
-public interface SOAP11Constants extends SOAPConstants{
+public interface SOAP11Constants extends SOAPConstants {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
-   public static final String SOAP_ENVELOPE_NAMESPACE_URI = "http://schemas.xmlsoap.org/soap/envelope/";
-   
-   /**
-    * Field ATTR_ACTOR
-    */
-   public static final String ATTR_ACTOR = "actor";
-   
-   /**
-    * Field SOAP_FAULT_CODE_LOCAL_NAME
-    */
-   public static final String SOAP_FAULT_CODE_LOCAL_NAME = "faultcode";
-   /**
-    * Field SOAP_FAULT_STRING_LOCAL_NAME
-    */
-   public static final String SOAP_FAULT_STRING_LOCAL_NAME = "faultstring";
-   /**
-    * Field SOAP_FAULT_ACTOR_LOCAL_NAME
-    */
-   public static final String SOAP_FAULT_ACTOR_LOCAL_NAME = "faultactor";
+    public static final String SOAP_ENVELOPE_NAMESPACE_URI = "http://schemas.xmlsoap.org/soap/envelope/";
 
-   public static final String SOAP_FAULT_DETAIL_LOCAL_NAME = "detail";
-   
-   //SOAP 1.2 Content Type
-   public static final String SOAP_11_CONTENT_TYPE = "text/xml";
+    /**
+     * Field ATTR_ACTOR
+     */
+    public static final String ATTR_ACTOR = "actor";
+
+    /**
+     * Field SOAP_FAULT_CODE_LOCAL_NAME
+     */
+    public static final String SOAP_FAULT_CODE_LOCAL_NAME = "faultcode";
+    /**
+     * Field SOAP_FAULT_STRING_LOCAL_NAME
+     */
+    public static final String SOAP_FAULT_STRING_LOCAL_NAME = "faultstring";
+    /**
+     * Field SOAP_FAULT_ACTOR_LOCAL_NAME
+     */
+    public static final String SOAP_FAULT_ACTOR_LOCAL_NAME = "faultactor";
+
+    public static final String SOAP_FAULT_DETAIL_LOCAL_NAME = "detail";
+
+    //SOAP 1.2 Content Type
+    public static final String SOAP_11_CONTENT_TYPE = "text/xml";
 }

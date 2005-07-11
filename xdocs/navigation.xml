@@ -1,54 +1,53 @@
 <!-- Created By Eran Chinthaka -->
 <project name="Axis2.0">
-  <title>Axis 2.0</title>
-  <body>
-     
-    <menu name="Axis 2.0">
-       <item name="Home" href="index.html"/> 
-       <item name="Get Invloved" href="svn.html">
-      	<item name="Overview" href="overview.html"/>
-      	<item name="Setting Up" href="svn.html"/>
-      	<item name="Guide Lines" href="guidelines.html"/>
-      	<item name="Reference Library" href="refLib.html"/>
-      	<item name="Mailing Lists" href="mail-lists.html"/>
-      	<item name="How to build site" href="siteHowTo.html"/>
-      </item>
-      
-      <item name="References">
-        <item name="Documentation" href="docs.html" />
-        <item name="Wiki" href="http://wiki.apache.org/ws/FrontPage/Axis2"/>
-      	<item name="Architecture Guide" href="Axis2ArchitectureGuide.html" /> 
-      	<item name="User Guide" href="userguide.html" />
-      	<item name="Installation Guide" href="installationguide.html" />
-      	<item name="Web Administration Guide" href="webadminguide.html" />
-      	<item name="AXIOM Tutorial" href="OMTutorial.html" />
-      	<item name="Code Generation Tutorial" href="CodegenToolReference.html" />
-      	<item name="REST Support" href="rest-ws.html" />
-      	<item name="MTOM with Axis2" href="mtom-guide.html" />
-      	<item name="M1 Documents" href="m1.html" />  
-      </item>
-      
-      <item name="Downloads">
-      	<item name="Releases" href="releases.html" /> 
-      	<item name="Source Code" href="http://svn.apache.org/viewcvs.cgi/webservices/axis/trunk/?root=Apache-SVN" />  
-      	<item name="Tools" href="axis2tools.html" />
-      </item>
-      <item name="Modules">
-      	<item name="Core" href="multiproject/axis2-core/index.html" /> 
-      	<item name="XML" href="multiproject/axis2-xml/index.html" /> 
-      	<item name="WSDL" href="multiproject/axis2-wsdl/index.html" />
-      	<item name="Tools" href="multiproject/axis2-tools/index.html" />
-      	<item name="Samples" href="multiproject/axis2-samples/index.html" /> 
-      </item> 
-      <item name="Project Information">
-      	<item name="Mailing Lists" href="mail-lists.html" /> 
-      	<item name="Project Team" href="team-list.html" />
-      	<item name="Issue Tracking" href="issue-tracking.html" /> 
-      </item> 
-       
-    </menu>
-    
-    
-    
-  </body>
+    <title>Axis 2.0</title>
+    <body>
+
+        <menu name="Axis 2.0">
+            <item name="Home" href="index.html"/>
+            <item name="Get Invloved" href="svn.html">
+                <item name="Overview" href="overview.html"/>
+                <item name="Setting Up" href="svn.html"/>
+                <item name="Guide Lines" href="guidelines.html"/>
+                <item name="Reference Library" href="refLib.html"/>
+                <item name="Mailing Lists" href="mail-lists.html"/>
+                <item name="How to build site" href="siteHowTo.html"/>
+            </item>
+
+            <item name="References">
+                <item name="Documentation" href="docs.html"/>
+                <item name="Wiki" href="http://wiki.apache.org/ws/FrontPage/Axis2"/>
+                <item name="Architecture Guide" href="Axis2ArchitectureGuide.html"/>
+                <item name="User Guide" href="userguide.html"/>
+                <item name="Installation Guide" href="installationguide.html"/>
+                <item name="Web Administration Guide" href="webadminguide.html"/>
+                <item name="AXIOM Tutorial" href="OMTutorial.html"/>
+                <item name="Code Generation Tutorial" href="CodegenToolReference.html"/>
+                <item name="REST Support" href="rest-ws.html"/>
+                <item name="MTOM with Axis2" href="mtom-guide.html"/>
+                <item name="M1 Documents" href="m1.html"/>
+            </item>
+
+            <item name="Downloads">
+                <item name="Releases" href="releases.html"/>
+                <item name="Source Code" href="http://svn.apache.org/viewcvs.cgi/webservices/axis/trunk/?root=Apache-SVN"/>
+                <item name="Tools" href="axis2tools.html"/>
+            </item>
+            <item name="Modules">
+                <item name="Core" href="multiproject/axis2-core/index.html"/>
+                <item name="XML" href="multiproject/axis2-xml/index.html"/>
+                <item name="WSDL" href="multiproject/axis2-wsdl/index.html"/>
+                <item name="Tools" href="multiproject/axis2-tools/index.html"/>
+                <item name="Samples" href="multiproject/axis2-samples/index.html"/>
+            </item>
+            <item name="Project Information">
+                <item name="Mailing Lists" href="mail-lists.html"/>
+                <item name="Project Team" href="team-list.html"/>
+                <item name="Issue Tracking" href="issue-tracking.html"/>
+            </item>
+
+        </menu>
+
+
+    </body>
 </project>

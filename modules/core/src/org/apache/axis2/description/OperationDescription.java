@@ -69,10 +69,10 @@ public class OperationDescription extends WSDLOperationImpl implements
         if (moduleref != null) {
             Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
             for (Iterator iterator = collectionModule.iterator(); iterator.hasNext();) {
-                ModuleDescription   modu = (ModuleDescription) iterator.next();
-                if(modu.getName().equals(moduleref.getName())){
-                    throw new AxisFault(moduleref.getName().getLocalPart()+ " module has alredy engaged to the operation" +
-                            "  operation terminated !!!");
+                ModuleDescription modu = (ModuleDescription) iterator.next();
+                if (modu.getName().equals(moduleref.getName())) {
+                    throw new AxisFault(moduleref.getName().getLocalPart() + " module has alredy engaged to the operation" +
+                                        "  operation terminated !!!");
                 }
 
             }
@@ -82,11 +82,11 @@ public class OperationDescription extends WSDLOperationImpl implements
         collectionModule.add(moduleref);
     }
 
-    public void addToEngageModuleList(ModuleDescription moduleName){
+    public void addToEngageModuleList(ModuleDescription moduleName) {
         Collection collectionModule = (Collection) this.getComponentProperty(MODULEREF_KEY);
         for (Iterator iterator = collectionModule.iterator(); iterator.hasNext();) {
             ModuleDescription moduleDescription = (ModuleDescription) iterator.next();
-            if(moduleName.getName().equals(moduleDescription.getName())){
+            if (moduleName.getName().equals(moduleDescription.getName())) {
                 return;
             }
         }
@@ -166,8 +166,8 @@ public class OperationDescription extends WSDLOperationImpl implements
         if (null == msgContext.getRelatesTo()) {
             //Its a new incomming message so get the factory to create a new
             // one
-            operationContext = OperationContextFactory.createMEPContext(getAxisSpecifMEPConstant(),  this,
-                    serviceContext);
+            operationContext = OperationContextFactory.createMEPContext(getAxisSpecifMEPConstant(), this,
+                                                                        serviceContext);
 
         } else {
             // So this message is part of an ongoing MEP
@@ -177,9 +177,9 @@ public class OperationDescription extends WSDLOperationImpl implements
 
             if (null == operationContext) {
                 throw new AxisFault("Cannot relate the message in the operation :"
-                        + this.getName()
-                        + " :Unrelated RelatesTO value "
-                        + msgContext.getRelatesTo().getValue());
+                                    + this.getName()
+                                    + " :Unrelated RelatesTO value "
+                                    + msgContext.getRelatesTo().getValue());
             }
 
         }

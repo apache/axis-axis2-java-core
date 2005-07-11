@@ -25,7 +25,7 @@ import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
  * author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-public class SOAP12BodyImpl extends SOAPBodyImpl{
+public class SOAP12BodyImpl extends SOAPBodyImpl {
     /**
      * @param envelope
      */
@@ -43,7 +43,7 @@ public class SOAP12BodyImpl extends SOAPBodyImpl{
         super(envelope, builder);
     }
 
-    public SOAPFault addFault(Exception e) throws OMException  {
+    public SOAPFault addFault(Exception e) throws OMException {
         SOAPFault soapFault = new SOAP12FaultImpl(this, e);
         addFault(soapFault);
         return soapFault;

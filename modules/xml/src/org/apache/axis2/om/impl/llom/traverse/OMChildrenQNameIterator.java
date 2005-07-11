@@ -63,9 +63,8 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
 
                 // check the current node for the criteria
                 if ((currentChild instanceof OMElementImpl)
-                        && (isQNamesMatch(
-                                   ((OMElementImpl) currentChild).getQName(),
-                                   this.givenQName))) {
+                        && (isQNamesMatch(((OMElementImpl) currentChild).getQName(),
+                                          this.givenQName))) {
                     isMatchingNodeFound = true;
                     needToMoveForward = false;
                 } else {
@@ -73,7 +72,7 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
                     // get the next named node
                     currentChild = currentChild.getNextSibling();
                     isMatchingNodeFound = needToMoveForward = !(currentChild
-                                                                           == null);
+                            == null);
                 }
             } else {
                 needToMoveForward = false;
@@ -119,17 +118,15 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
 
         // if the given localname is null, whatever value this.qname has, its a match
         boolean localNameMatch =
-        (qNameToBeMatched.getLocalPart() == null)
+                (qNameToBeMatched.getLocalPart() == null)
                 || (qNameToBeMatched.getLocalPart() == "")
                 || ((elementQName != null)
-                               && elementQName.getLocalPart().equalsIgnoreCase(
-                                       qNameToBeMatched.getLocalPart()));
+                && elementQName.getLocalPart().equalsIgnoreCase(qNameToBeMatched.getLocalPart()));
         boolean namespaceURIMatch =
-        (qNameToBeMatched.getNamespaceURI() == null)
+                (qNameToBeMatched.getNamespaceURI() == null)
                 || (qNameToBeMatched.getNamespaceURI() == "")
                 || ((elementQName != null)
-                               && elementQName.getNamespaceURI().equalsIgnoreCase(
-                                       qNameToBeMatched.getNamespaceURI()));
+                && elementQName.getNamespaceURI().equalsIgnoreCase(qNameToBeMatched.getNamespaceURI()));
         return localNameMatch && namespaceURIMatch;
     }
 }

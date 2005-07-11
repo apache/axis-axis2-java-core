@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2004,2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,80 +15,81 @@
  */
 package org.apache.axis.tool.service.eclipse.plugin;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
  * The main plugin class to be used in the desktop.
  */
 public class ServiceArchiver extends AbstractUIPlugin {
-	//The shared instance.
-	private static ServiceArchiver plugin;
-	//Resource bundle.
-	private ResourceBundle resourceBundle;
-	private static ImageDescriptor wizardImageDescriptor;
-	/**
-	 * The constructor.
-	 */
-	public ServiceArchiver() {
-		super();
-		plugin = this;
-		try {
-			resourceBundle = ResourceBundle.getBundle("org.apache.axis.tool.service.resource.ServiceResources");
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
-	}
+    //The shared instance.
+    private static ServiceArchiver plugin;
+    //Resource bundle.
+    private ResourceBundle resourceBundle;
+    private static ImageDescriptor wizardImageDescriptor;
 
-	/**
-	 * This method is called upon plug-in activation
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-	}
+    /**
+     * The constructor.
+     */
+    public ServiceArchiver() {
+        super();
+        plugin = this;
+        try {
+            resourceBundle = ResourceBundle.getBundle("org.apache.axis.tool.service.resource.ServiceResources");
+        } catch (MissingResourceException x) {
+            resourceBundle = null;
+        }
+    }
 
-	/**
-	 * This method is called when the plug-in is stopped
-	 */
-	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
-	}
+    /**
+     * This method is called upon plug-in activation
+     */
+    public void start(BundleContext context) throws Exception {
+        super.start(context);
+    }
 
-	/**
-	 * Returns the shared instance.
-	 */
-	public static ServiceArchiver getDefault() {
-		return plugin;
-	}
+    /**
+     * This method is called when the plug-in is stopped
+     */
+    public void stop(BundleContext context) throws Exception {
+        super.stop(context);
+    }
 
-	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
-	 */
-	public static String getResourceString(String key) {
-		ResourceBundle bundle = ServiceArchiver.getDefault().getResourceBundle();
-		try {
-			return (bundle != null) ? bundle.getString(key) : key;
-		} catch (MissingResourceException e) {
-			return key;
-		}
-	}
+    /**
+     * Returns the shared instance.
+     */
+    public static ServiceArchiver getDefault() {
+        return plugin;
+    }
 
-	/**
-	 * Returns the plugin's resource bundle,
-	 */
-	public ResourceBundle getResourceBundle() {
-		return resourceBundle;
-	}
-	
-	public static ImageDescriptor getWizardImageDescriptor(){
-	    if (wizardImageDescriptor==null){
-	        wizardImageDescriptor =ServiceArchiver.imageDescriptorFromPlugin("Axis_Service_Archiver","icons/asf-feather.gif");
-	    }
-	    return wizardImageDescriptor;
-	}
+    /**
+     * Returns the string from the plugin's resource bundle,
+     * or 'key' if not found.
+     */
+    public static String getResourceString(String key) {
+        ResourceBundle bundle = ServiceArchiver.getDefault().getResourceBundle();
+        try {
+            return (bundle != null) ? bundle.getString(key) : key;
+        } catch (MissingResourceException e) {
+            return key;
+        }
+    }
+
+    /**
+     * Returns the plugin's resource bundle,
+     */
+    public ResourceBundle getResourceBundle() {
+        return resourceBundle;
+    }
+
+    public static ImageDescriptor getWizardImageDescriptor() {
+        if (wizardImageDescriptor == null) {
+            wizardImageDescriptor = ServiceArchiver.imageDescriptorFromPlugin("Axis_Service_Archiver", "icons/asf-feather.gif");
+        }
+        return wizardImageDescriptor;
+    }
 }

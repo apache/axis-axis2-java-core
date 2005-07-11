@@ -34,13 +34,13 @@ public class UtilsTCPServer {
     public static final String FAILURE_MESSAGE = "Intentional Faliure";
 
     public static synchronized void deployService(ServiceDescription service)
-        throws AxisFault {
+            throws AxisFault {
         configurationContext.getAxisConfiguration().addService(service);
 
     }
 
     public static synchronized void unDeployService(QName service)
-        throws AxisFault {
+            throws AxisFault {
         configurationContext.getAxisConfiguration().removeService(service);
     }
 
@@ -50,7 +50,7 @@ public class UtilsTCPServer {
             //start tcp server
 
             ConfigurationContextFactory erfac =
-                new ConfigurationContextFactory();
+                    new ConfigurationContextFactory();
             File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY);
             System.out.println(file.getAbsoluteFile());
             if (!file.exists()) {
@@ -58,16 +58,15 @@ public class UtilsTCPServer {
             }
 
             configurationContext =
-                erfac.buildConfigurationContext(file.getAbsolutePath());
+                    erfac.buildConfigurationContext(file.getAbsolutePath());
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e1) {
                 throw new AxisFault("Thread interuptted", e1);
             }
-            configurationContext.getAxisConfiguration().engageModule(
-                new QName("addressing"));
+            configurationContext.getAxisConfiguration().engageModule(new QName("addressing"));
             receiver =
-                new TCPServer(UtilServer.TESTING_PORT, configurationContext);
+                    new TCPServer(UtilServer.TESTING_PORT, configurationContext);
             receiver.start();
 
         }

@@ -113,7 +113,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     public DeploymentEngine(String RepositaryName, String serverXMLFile) throws DeploymentException {
-        if(RepositaryName == null || RepositaryName.trim().equals("")){
+        if (RepositaryName == null || RepositaryName.trim().equals("")) {
             throw new DeploymentException("Axis2 repositary can not be null");
         }
         this.folderName = RepositaryName;
@@ -212,10 +212,10 @@ public class DeploymentEngine implements DeploymentConstants {
             new RepositoryListenerImpl(folderName, this);
         }
         try {
-            ((AxisConfigurationImpl)axisConfig).setRepository(axis2repository);
+            ((AxisConfigurationImpl) axisConfig).setRepository(axis2repository);
             engagdeModules();
             validateSystemPredefinedPhases();
-            ((AxisConfigurationImpl)axisConfig).setPhasesinfo(phasesinfo);
+            ((AxisConfigurationImpl) axisConfig).setPhasesinfo(phasesinfo);
         } catch (AxisFault axisFault) {
             log.info("Module validation failed" + axisFault.getMessage());
             throw new DeploymentException(axisFault);
@@ -228,7 +228,7 @@ public class DeploymentEngine implements DeploymentConstants {
         InputStream in = null;
         axis2repository = clientHome;
         boolean isRepositoryExist = false;
-        if (!(clientHome == null ||clientHome.trim().equals(""))) {
+        if (!(clientHome == null || clientHome.trim().equals(""))) {
             checkClientHome(clientHome);
             isRepositoryExist = true;
             try {
@@ -253,9 +253,9 @@ public class DeploymentEngine implements DeploymentConstants {
             hotUpdate = false;
             new RepositoryListenerImpl(folderName, this);
             try {
-                ((AxisConfigurationImpl)axisConfig).setRepository(axis2repository);
+                ((AxisConfigurationImpl) axisConfig).setRepository(axis2repository);
                 engagdeModules();
-                ((AxisConfigurationImpl)axisConfig).setPhasesinfo(phasesinfo);
+                ((AxisConfigurationImpl) axisConfig).setPhasesinfo(phasesinfo);
             } catch (AxisFault axisFault) {
                 log.info("Module validation failed" + axisFault.getMessage());
                 throw new DeploymentException(axisFault);
@@ -311,7 +311,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * are exist , or they have deployed
      */
     private void engagdeModules() throws AxisFault {
-       // ArrayList modules = DeploymentData.getInstance().getModules();
+        // ArrayList modules = DeploymentData.getInstance().getModules();
         // PhaseResolver resolver = new PhaseResolver(axisConfig);
         for (Iterator iterator = modulelist.iterator(); iterator.hasNext();) {
             QName name = (QName) iterator.next();
@@ -333,7 +333,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 ((String) inPhases.get(2)).equals(PhaseMetadata.PHASE_DISPATCH) &&
                 ((String) inPhases.get(3)).equals(PhaseMetadata.PHASE_POST_DISPATCH))) {
             throw new DeploymentException("Invalid System predefined inphases , phase order dose not" +
-                    " support\n recheck axis2.xml");
+                                          " support\n recheck axis2.xml");
         }
         //  ArrayList outPhaes = tempdata.getOutphases();
         //TODO do the validation code here
@@ -366,13 +366,13 @@ public class DeploymentEngine implements DeploymentConstants {
             axisConfig.addService(serviceMetaData);
 
             ArrayList list = currentArchiveFile.getModules();
-            for(int i = 0;i<list.size();i++){
-                ModuleDescription module = axisConfig.getModule((QName)list.get(i));
+            for (int i = 0; i < list.size(); i++) {
+                ModuleDescription module = axisConfig.getModule((QName) list.get(i));
                 if (module != null) {
                     serviceMetaData.engageModule(module);
                 } else {
-                    throw new DeploymentException("Service  "  +  serviceMetaData.getName().getLocalPart() +
-                            "  Refer to invalide module  " + ((QName)list.get(i)).getLocalPart());
+                    throw new DeploymentException("Service  " + serviceMetaData.getName().getLocalPart() +
+                                                  "  Refer to invalide module  " + ((QName) list.get(i)).getLocalPart());
                 }
             }
 
@@ -384,11 +384,11 @@ public class DeploymentEngine implements DeploymentConstants {
                 for (int i = 0; i < modules.size(); i++) {
                     QName moduleName = (QName) modules.get(i);
                     ModuleDescription module = axisConfig.getModule(moduleName);
-                    if(module != null) {
+                    if (module != null) {
                         opDesc.engageModule(module);
                     } else {
-                        throw new DeploymentException("Operation "  +  opDesc.getName().getLocalPart() +
-                                "  Refer to invalide module  " + moduleName.getLocalPart());
+                        throw new DeploymentException("Operation " + opDesc.getName().getLocalPart() +
+                                                      "  Refer to invalide module  " + moduleName.getLocalPart());
                     }
                 }
 
@@ -530,12 +530,12 @@ public class DeploymentEngine implements DeploymentConstants {
                 try {
                     currentArchiveFile.setClassLoader();
                 } catch (AxisFault axisFault) {
-                    log.info("Setting Class Loader  " +axisFault);
+                    log.info("Setting Class Loader  " + axisFault);
                     continue;
                 }
                 ArchiveReader archiveReader = new ArchiveReader();
                 String serviceStatus = "";
-                StringWriter errorWriter= new StringWriter();
+                StringWriter errorWriter = new StringWriter();
                 switch (type) {
                     case SERVICE:
                         try {
@@ -648,9 +648,10 @@ public class DeploymentEngine implements DeploymentConstants {
     /**
      * while parsing the axis2.xml the module refferences have to be store some where , since at that
      * time none of module availble (they load after parsing the document)
+     *
      * @param moduleName <code>QName</code>
      */
-    public void addModule(QName moduleName){
+    public void addModule(QName moduleName) {
         modulelist.add(moduleName);
     }
 

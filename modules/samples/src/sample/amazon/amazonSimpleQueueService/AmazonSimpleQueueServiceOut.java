@@ -85,13 +85,13 @@ public class AmazonSimpleQueueServiceOut extends JFrame {
         cons.weighty = 0;
         this.add(buttonPannel, cons, 0, 6, 2, 1);
         this.createQueue.addKeyListener(new ListenersOut(this.createQueue, this.queueCode,
-                this.read, this.resuts, this.loadButton, this.deleteButton));
+                                                         this.read, this.resuts, this.loadButton, this.deleteButton));
         this.loadButton.addActionListener(new ListenersOut(this.createQueue, this.queueCode,
-                this.read, this.resuts, this.loadButton, this.deleteButton));
+                                                           this.read, this.resuts, this.loadButton, this.deleteButton));
         this.resuts.addMouseMotionListener(new ListenersOut(this.createQueue, this.queueCode,
-                this.read, this.resuts, this.loadButton, this.deleteButton));
+                                                            this.read, this.resuts, this.loadButton, this.deleteButton));
         this.deleteButton.addActionListener(new ListenersOut(this.createQueue, this.queueCode,
-                this.read, this.resuts, this.loadButton, this.deleteButton));
+                                                             this.read, this.resuts, this.loadButton, this.deleteButton));
 
         AddMenuItems();
     }
@@ -105,76 +105,76 @@ public class AmazonSimpleQueueServiceOut extends JFrame {
     }
 
     private void AddMenuItems() {
-            //add the menus
-            JMenuBar menuBar = new JMenuBar();
-            JMenu settingsMenu =  new JMenu("Settings");
-            settingsMenu.setMnemonic(KeyEvent.VK_S);
-            JMenuItem amazonKeyMenu = new JMenuItem("Set Amazon Key",KeyEvent.VK_G);
-            amazonKeyMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
-            amazonKeyMenu.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e) {
-                    setKey();
-                }
-            });
-            settingsMenu.add(amazonKeyMenu);
-
-            JMenu helpMenu = new JMenu("Help");
-            JMenuItem mnuItemHelp = new JMenuItem("Show Help");
-            helpMenu.add(mnuItemHelp);
-
-            mnuItemHelp.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    showHelp();
-                }
-            });
-
-            menuBar.add(settingsMenu);
-            menuBar.add(helpMenu);
-            setJMenuBar(menuBar);
-        }
-
-        private void setKey(){
-            String key = JOptionPane.showInputDialog(this,"Set the Amazon Key",QueueManager.getKey());
-            if (key!=null && !key.trim().equals("")){
-                QueueManager.setKey(key);
+        //add the menus
+        JMenuBar menuBar = new JMenuBar();
+        JMenu settingsMenu = new JMenu("Settings");
+        settingsMenu.setMnemonic(KeyEvent.VK_S);
+        JMenuItem amazonKeyMenu = new JMenuItem("Set Amazon Key", KeyEvent.VK_G);
+        amazonKeyMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
+        amazonKeyMenu.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setKey();
             }
-        }
+        });
+        settingsMenu.add(amazonKeyMenu);
 
-        /**
-         * method showHelp
-         */
-        private void showHelp() {
+        JMenu helpMenu = new JMenu("Help");
+        JMenuItem mnuItemHelp = new JMenuItem("Show Help");
+        helpMenu.add(mnuItemHelp);
 
-            JFrame frame= new JFrame();
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            frame.setLocation(screenSize.width/5,
-                    screenSize.height/5);
-            frame.setSize(screenSize.width/2,screenSize.height/2);
-
-            BorderLayout layout = new BorderLayout();
-
-            JScrollPane jsp ;
-            JEditorPane jep;
-
-            jep = new JEditorPane();
-            //jep.addHyperlinkListener(new LinkFollower());
-            jep.setEditable(false);
-            jep.setContentType("text/html");
-
-            jsp = new JScrollPane(jep);
-
-            Container contentPane = frame.getContentPane();
-            contentPane.setLayout(layout);
-            contentPane.add(jsp, BorderLayout.CENTER);
-            String helpDoc = System.getProperty("user.dir")+HELP_FILE_NAME;
-
-            try {
-                jep.setPage(new File(helpDoc).toURL());
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this,"Help file not detected","Help file error",JOptionPane.ERROR_MESSAGE);
-                return;
+        mnuItemHelp.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                showHelp();
             }
-            frame.setVisible(true);
+        });
+
+        menuBar.add(settingsMenu);
+        menuBar.add(helpMenu);
+        setJMenuBar(menuBar);
+    }
+
+    private void setKey() {
+        String key = JOptionPane.showInputDialog(this, "Set the Amazon Key", QueueManager.getKey());
+        if (key != null && !key.trim().equals("")) {
+            QueueManager.setKey(key);
         }
+    }
+
+    /**
+     * method showHelp
+     */
+    private void showHelp() {
+
+        JFrame frame = new JFrame();
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setLocation(screenSize.width / 5,
+                          screenSize.height / 5);
+        frame.setSize(screenSize.width / 2, screenSize.height / 2);
+
+        BorderLayout layout = new BorderLayout();
+
+        JScrollPane jsp;
+        JEditorPane jep;
+
+        jep = new JEditorPane();
+        //jep.addHyperlinkListener(new LinkFollower());
+        jep.setEditable(false);
+        jep.setContentType("text/html");
+
+        jsp = new JScrollPane(jep);
+
+        Container contentPane = frame.getContentPane();
+        contentPane.setLayout(layout);
+        contentPane.add(jsp, BorderLayout.CENTER);
+        String helpDoc = System.getProperty("user.dir") + HELP_FILE_NAME;
+
+        try {
+            jep.setPage(new File(helpDoc).toURL());
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Help file not detected", "Help file error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        frame.setVisible(true);
+    }
 
 }

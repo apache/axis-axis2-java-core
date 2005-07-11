@@ -44,52 +44,64 @@ public interface SOAPFault extends OMElement {
 
     /**
      * SOAPFaultCode is a mandatory item in a Fault, in SOAP 1.2 specification
+     *
      * @param soapFaultCode
      */
-    public void setCode(SOAPFaultCode soapFaultCode) throws SOAPProcessingException ;
+    public void setCode(SOAPFaultCode soapFaultCode) throws SOAPProcessingException;
+
     public SOAPFaultCode getCode();
 
     /**
      * SOAPFaultReason is a mandatory item in a Fault, in SOAP 1.2 specification
+     *
      * @param reason
      */
     public void setReason(SOAPFaultReason reason) throws SOAPProcessingException;
+
     public SOAPFaultReason getReason();
 
     /**
      * SOAPFaultNode is an optional item in a Fault, in SOAP 1.2 specification
+     *
      * @param node
      */
     public void setNode(SOAPFaultNode node) throws SOAPProcessingException;
+
     public SOAPFaultNode getNode();
 
     /**
      * SOAPFaultRoleImpl is an optional item in a Fault, in SOAP 1.2 specification
+     *
      * @param role
      */
     public void setRole(SOAPFaultRole role) throws SOAPProcessingException;
+
     public SOAPFaultRole getRole();
 
     /**
      * SOAPFaultRoleImpl is an optional item in a Fault, in SOAP 1.2 specification
+     *
      * @param detail
      */
     public void setDetail(SOAPFaultDetail detail) throws SOAPProcessingException;
+
     public SOAPFaultDetail getDetail();
 
     /**
      * This will return if there is an exception in the SOAP fault.
-     *
+     * <p/>
      * If the exception is like;
      * <SOAPFault>
-     *      <Detail>
-     *          <Exception> stack trace goes here </Exception>
-     *      </Detail>
+     * <Detail>
+     * <Exception> stack trace goes here </Exception>
+     * </Detail>
      * </SOAPFault>
      *
      * @return
      * @throws org.apache.axis2.om.OMException
+     *
      */
     public Exception getException() throws OMException;
+
     public void setException(Exception e) throws OMException;
 }

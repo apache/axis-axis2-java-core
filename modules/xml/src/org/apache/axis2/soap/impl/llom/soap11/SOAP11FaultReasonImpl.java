@@ -72,11 +72,11 @@ public class SOAP11FaultReasonImpl extends SOAPFaultReasonImpl {
 
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         if (this.getNamespace() != null) {
-           String prefix = this.getNamespace().getPrefix();
-        String nameSpaceName = this.getNamespace().getName();
-        writer.writeStartElement(prefix, SOAP11Constants.SOAP_FAULT_STRING_LOCAL_NAME,
-                                nameSpaceName);
-        }else{
+            String prefix = this.getNamespace().getPrefix();
+            String nameSpaceName = this.getNamespace().getName();
+            writer.writeStartElement(prefix, SOAP11Constants.SOAP_FAULT_STRING_LOCAL_NAME,
+                                     nameSpaceName);
+        } else {
             writer.writeStartElement(SOAP11Constants.SOAP_FAULT_STRING_LOCAL_NAME);
         }
         OMSerializerUtil.serializeAttributes(this, omOutput);
@@ -98,5 +98,5 @@ public class SOAP11FaultReasonImpl extends SOAPFaultReasonImpl {
 
     }
 
-   
+
 }

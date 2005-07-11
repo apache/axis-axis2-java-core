@@ -32,7 +32,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
      * Field NAME
      */
     public static final QName NAME =
-        new QName("http://axis.ws.apache.org", "RequestURIBasedDispatcher");
+            new QName("http://axis.ws.apache.org", "RequestURIBasedDispatcher");
     QName serviceName = null;
     QName operatoinName = null;
 
@@ -43,10 +43,9 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
         init(new HandlerDescription(NAME));
     }
 
-    public OperationDescription findOperation(
-        ServiceDescription service,
-        MessageContext messageContext)
-        throws AxisFault {
+    public OperationDescription findOperation(ServiceDescription service,
+                                              MessageContext messageContext)
+            throws AxisFault {
         if (operatoinName != null) {
             OperationDescription axisOp = service.getOperation(operatoinName);
             return axisOp;
@@ -69,7 +68,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
             if (values[0] != null) {
                 serviceName = new QName(values[0]);
                 AxisConfiguration registry =
-                    messageContext.getSystemContext().getAxisConfiguration();
+                        messageContext.getSystemContext().getAxisConfiguration();
                 return registry.getService(serviceName);
             }
         }

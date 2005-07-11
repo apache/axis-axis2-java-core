@@ -26,26 +26,28 @@ import java.io.OutputStream;
  *  The XSLT template processor
  * this is based on the JDK built in transformers
  */
+
 public class XSLTTemplateProcessor {
 
     /**
      * Parses an XML stream with an XSL stream
-     * @param out Stream to write the output
-     * @param xmlStream Source XML stream
+     *
+     * @param out        Stream to write the output
+     * @param xmlStream  Source XML stream
      * @param xsltStream Source XSL stream
      * @throws TransformerFactoryConfigurationError
+     *
      * @throws TransformerException
      */
-    public static  void parse(OutputStream out,InputStream xmlStream,InputStream xsltStream)
-            throws TransformerFactoryConfigurationError,TransformerException {
-            Source xmlSource = new StreamSource(xmlStream);
-            Source xsltSource =  new StreamSource(xsltStream);
-            Result result = new StreamResult(out);
-            Transformer transformer = TransformerFactory.newInstance().newTransformer(xsltSource);
-            transformer.transform(xmlSource, result);
+    public static void parse(OutputStream out, InputStream xmlStream, InputStream xsltStream)
+            throws TransformerFactoryConfigurationError, TransformerException {
+        Source xmlSource = new StreamSource(xmlStream);
+        Source xsltSource = new StreamSource(xsltStream);
+        Result result = new StreamResult(out);
+        Transformer transformer = TransformerFactory.newInstance().newTransformer(xsltSource);
+        transformer.transform(xmlSource, result);
 
     }
-
 
 
 }

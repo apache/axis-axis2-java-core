@@ -26,13 +26,13 @@ import javax.xml.stream.XMLStreamReader;
  * This will construct an OM without using SOAP specific classes like SOAPEnvelope, SOAPHeader, SOAPHeaderBlock and SOAPBody.
  * And this will habe the Document concept also.
  */
-public class StAXOMBuilder extends StAXBuilder{
+public class StAXOMBuilder extends StAXBuilder {
     /**
      * Field document
      */
     protected OMDocument document;
 
-     /**
+    /**
      * Constructor StAXOMBuilder
      *
      * @param ombuilderFactory
@@ -70,13 +70,13 @@ public class StAXOMBuilder extends StAXBuilder{
             document.addChild(node);
         } else if (lastNode.isComplete()) {
             node = omfactory.createOMElement(elementName, null,
-                    lastNode.getParent(), this);
+                                             lastNode.getParent(), this);
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
         } else {
             OMElement e = (OMElement) lastNode;
             node = omfactory.createOMElement(elementName, null,
-                    (OMElement) lastNode, this);
+                                             (OMElement) lastNode, this);
             e.setFirstChild(node);
         }
 
@@ -100,7 +100,7 @@ public class StAXOMBuilder extends StAXBuilder{
             node = omfactory.createText(parser.getText());
             document.addChild(node);
         } else if (lastNode.isComplete()) {
-            node = omfactory.createText((OMElement)lastNode.getParent(), parser.getText());
+            node = omfactory.createText((OMElement) lastNode.getParent(), parser.getText());
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
         } else {
@@ -119,7 +119,7 @@ public class StAXOMBuilder extends StAXBuilder{
      * @throws OMException
      */
     protected OMNode createDTD() throws OMException {
-        if(!parser.hasText())
+        if (!parser.hasText())
             return null;
         OMNode node = omfactory.createText(parser.getText());
         document.addChild(node);
@@ -136,7 +136,7 @@ public class StAXOMBuilder extends StAXBuilder{
             node.setType(OMNode.PI_NODE);
             document.addChild(node);
         } else if (lastNode.isComplete()) {
-            node = omfactory.createText((OMElement)lastNode.getParent(), "<?" + target + " " + data + "?>");
+            node = omfactory.createText((OMElement) lastNode.getParent(), "<?" + target + " " + data + "?>");
             node.setType(OMNode.PI_NODE);
             lastNode.setNextSibling(node);
             node.setPreviousSibling(lastNode);
@@ -196,7 +196,7 @@ public class StAXOMBuilder extends StAXBuilder{
                     break;
                 case XMLStreamConstants.END_ELEMENT:
                     if (lastNode.isComplete()) {
-                        OMElement parent = (OMElement)lastNode.getParent();
+                        OMElement parent = (OMElement) lastNode.getParent();
                         parent.setComplete(true);
                         lastNode = parent;
                     } else {
@@ -223,7 +223,7 @@ public class StAXOMBuilder extends StAXBuilder{
                     throw new OMException();
             }
             ////////////////////
-           // if (!done) parser.next();
+            // if (!done) parser.next();
             ///////////////////
             return token;
         } catch (OMException e) {
@@ -249,10 +249,10 @@ public class StAXOMBuilder extends StAXBuilder{
      * @param isSOAPElement
      */
     protected void processNamespaceData(OMElement node, boolean isSOAPElement) {
-          int namespaceCount = parser.getNamespaceCount();
+        int namespaceCount = parser.getNamespaceCount();
         for (int i = 0; i < namespaceCount; i++) {
             node.declareNamespace(parser.getNamespaceURI(i),
-                    parser.getNamespacePrefix(i));
+                                  parser.getNamespacePrefix(i));
         }
 
         // set the own namespace
@@ -266,14 +266,14 @@ public class StAXOMBuilder extends StAXBuilder{
                 if (namespace == null) {
                     namespace = node.declareNamespace(namespaceURI, "");
                 }
-                if(node.getNamespace() == null){
+                if (node.getNamespace() == null) {
                     node.setNamespace(namespace);
                 }
             } else {
                 namespace = node.findNamespace(namespaceURI, prefix);
-                if(namespace == null){
+                if (namespace == null) {
                     node.setNamespace(omfactory.createOMNamespace(namespaceURI, prefix));
-                }else{
+                } else {
                     node.setNamespace(namespace);
                 }
             }

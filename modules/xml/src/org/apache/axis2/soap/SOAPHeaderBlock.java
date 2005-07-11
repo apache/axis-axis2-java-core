@@ -62,6 +62,7 @@ public interface SOAPHeaderBlock extends OMElement {
      * @see #getMustUnderstand() getMustUnderstand()
      */
     public abstract void setMustUnderstand(boolean mustUnderstand);
+
     public abstract void setMustUnderstand(String mustUnderstand) throws SOAPProcessingException;
 
     /**
@@ -77,13 +78,12 @@ public interface SOAPHeaderBlock extends OMElement {
 
     public abstract boolean isProcessed();
 
-     /**
+    /**
      * We need to know whether all the mustUnderstand headers have been
      * processed by the node. This will done by a specific validation handler at
      * the end of the execution chain. For this all the handlers who process a
      * particular header block must explicitly say that he processesd the header
      * by calling setProcessed()
-     *
      */
     public abstract void setProcessed();
 

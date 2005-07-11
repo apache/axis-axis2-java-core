@@ -34,8 +34,8 @@ import java.lang.reflect.Method;
  * This is a Simple java Provider.
  */
 public class RawXMLINOutMessageReceiver
-    extends AbstractInOutSyncMessageReceiver
-    implements MessageReceiver {
+        extends AbstractInOutSyncMessageReceiver
+        implements MessageReceiver {
     /**
      * Field log
      */
@@ -59,7 +59,7 @@ public class RawXMLINOutMessageReceiver
     }
 
     public void invokeBusinessLogic(MessageContext msgContext, MessageContext newmsgContext)
-        throws AxisFault {
+            throws AxisFault {
         try {
 
             // get the implementation class for the Web Service
@@ -88,11 +88,11 @@ public class RawXMLINOutMessageReceiver
                     } else if (WSDLService.STYLE_RPC.equals(style)) {
                         OMElement operationElement = msgContext.getEnvelope().getBody().getFirstElement();
                         if (operationElement != null) {
-                            if (method.getName().equals(operationElement.getLocalName()) 
-                               || operationElement.getLocalName() != null && operationElement.getLocalName().startsWith(method.getName()) ) {
+                            if (method.getName().equals(operationElement.getLocalName())
+                                    || operationElement.getLocalName() != null && operationElement.getLocalName().startsWith(method.getName())) {
                                 omElement = operationElement.getFirstElement();
                             } else {
-                                throw new AxisFault("Operation Name does not match the immediate child name, expected "+ method.getName() + " but get " + operationElement.getLocalName());
+                                throw new AxisFault("Operation Name does not match the immediate child name, expected " + method.getName() + " but get " + operationElement.getLocalName());
                             }
                         } else {
                             throw new AxisFault("rpc style expect the immediate child of the SOAP body ");
@@ -100,33 +100,31 @@ public class RawXMLINOutMessageReceiver
                     } else {
                         throw new AxisFault("Unknown style ");
                     }
-                    args = new Object[] { omElement };
+                    args = new Object[]{omElement};
                 } else {
-                    throw new AxisFault(
-                        "Raw Xml provider supports only the methods bearing the signature public OMElement "
-                            + "&lt;method-name&gt;(OMElement) where the method name is anything");
+                    throw new AxisFault("Raw Xml provider supports only the methods bearing the signature public OMElement "
+                                        + "&lt;method-name&gt;(OMElement) where the method name is anything");
                 }
 
                 OMElement result = (OMElement) method.invoke(obj, args);
-                
+
                 OMElement bodyContent = null;
                 if (WSDLService.STYLE_RPC.equals(style)) {
                     OMNamespace ns = getSOAPFactory().createOMNamespace("http://soapenc/", "res");
                     bodyContent =
-                        getSOAPFactory().createOMElement(method.getName() + "Response", ns);
+                            getSOAPFactory().createOMElement(method.getName() + "Response", ns);
                     bodyContent.addChild(result);
-                }else{
+                } else {
                     bodyContent = result;
                 }
 
                 SOAPEnvelope envelope = getSOAPFactory().getDefaultEnvelope();
-                if(bodyContent!= null){
+                if (bodyContent != null) {
                     envelope.getBody().addChild(bodyContent);
                 }
                 newmsgContext.setEnvelope(envelope);
             } else {
-                throw new AxisFault(
-                    "Implementation class does not define a method called" + opDesc.getName());
+                throw new AxisFault("Implementation class does not define a method called" + opDesc.getName());
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);

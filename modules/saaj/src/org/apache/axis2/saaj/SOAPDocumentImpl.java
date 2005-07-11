@@ -23,16 +23,16 @@ import javax.xml.soap.SOAPException;
 
 /**
  * @author Ashutosh Shahi	ashutosh.shahi@gmail.com
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ *         <p/>
+ *         TODO To change the template for this generated type comment go to
+ *         Window - Preferences - Java - Code Style - Code Templates
  */
 public class SOAPDocumentImpl implements Document {
 
     // Depending on the user's parser preference
     protected Document delegate = null;
     protected SOAPPartImpl soapPart = null;
-    
+
     /**
      * Construct the Document
      * 
@@ -46,16 +46,15 @@ public class SOAPDocumentImpl implements Document {
         }
         soapPart = sp;
     }
-	
+
     public DOMImplementation getImplementation() {
         return delegate.getImplementation();
     }
 
     /**
-     * 
      * Creates an empty <code>DocumentFragment</code> object. @todo not
      * implemented yet
-     * 
+     *
      * @return A new <code>DocumentFragment</code>.
      */
     public DocumentFragment createDocumentFragment() {
@@ -63,9 +62,8 @@ public class SOAPDocumentImpl implements Document {
     }
 
     /**
-     * @todo : link with SOAP
-     * 
      * @return
+     * @todo : link with SOAP
      */
     public DocumentType getDoctype() {
         return delegate.getDoctype();
@@ -73,7 +71,7 @@ public class SOAPDocumentImpl implements Document {
 
     /**
      * should not be called, the method will be handled in SOAPPart
-     * 
+     *
      * @return
      */
     public Element getDocumentElement() {
@@ -87,29 +85,29 @@ public class SOAPDocumentImpl implements Document {
         return delegate.createAttribute(name);
     }
 
-	/* (non-Javadoc)
-	 * @see org.w3c.dom.Document#createCDATASection(java.lang.String)
-	 */
-	public CDATASection createCDATASection(String arg0) throws DOMException {
-		// Not implementing this one, as it may not be supported in om
-		return null;
-	}
+    /* (non-Javadoc)
+     * @see org.w3c.dom.Document#createCDATASection(java.lang.String)
+     */
+    public CDATASection createCDATASection(String arg0) throws DOMException {
+        // Not implementing this one, as it may not be supported in om
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.w3c.dom.Document#createComment(java.lang.String)
-	 */
-	public Comment createComment(String arg0) {
-		//Not implementing this one, as it may not be supported in om
-		return null;
-	}
+    /* (non-Javadoc)
+     * @see org.w3c.dom.Document#createComment(java.lang.String)
+     */
+    public Comment createComment(String arg0) {
+        //Not implementing this one, as it may not be supported in om
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.w3c.dom.Document#createElement(java.lang.String)
-	 */
-	public Element createElement(String arg0) throws DOMException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /* (non-Javadoc)
+     * @see org.w3c.dom.Document#createElement(java.lang.String)
+     */
+    public Element createElement(String arg0) throws DOMException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     public Element getElementById(String elementId) {
         return delegate.getElementById(elementId);
@@ -122,105 +120,101 @@ public class SOAPDocumentImpl implements Document {
      *         DOMException
      */
     public EntityReference createEntityReference(String name)
-    throws DOMException {
-        throw new java.lang.UnsupportedOperationException(
-        "createEntityReference");
+            throws DOMException {
+        throw new java.lang.UnsupportedOperationException("createEntityReference");
     }
 
-	/* (non-Javadoc)
-	 * @see org.w3c.dom.Document#importNode(org.w3c.dom.Node, boolean)
-	 */
-	public Node importNode(Node arg0, boolean arg1) throws DOMException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /* (non-Javadoc)
+     * @see org.w3c.dom.Document#importNode(org.w3c.dom.Node, boolean)
+     */
+    public Node importNode(Node arg0, boolean arg1) throws DOMException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.w3c.dom.Document#getElementsByTagName(java.lang.String)
-	 */
-	public NodeList getElementsByTagName(String localName) {
-		try{
-			NodeListImpl list = new NodeListImpl();
-			if (soapPart != null) {
-				SOAPEnvelopeImpl soapEnv = (SOAPEnvelopeImpl)soapPart.getEnvelope();
-				SOAPHeaderImpl header = (SOAPHeaderImpl)soapEnv.getHeader();
+    /* (non-Javadoc)
+     * @see org.w3c.dom.Document#getElementsByTagName(java.lang.String)
+     */
+    public NodeList getElementsByTagName(String localName) {
+        try {
+            NodeListImpl list = new NodeListImpl();
+            if (soapPart != null) {
+                SOAPEnvelopeImpl soapEnv = (SOAPEnvelopeImpl) soapPart.getEnvelope();
+                SOAPHeaderImpl header = (SOAPHeaderImpl) soapEnv.getHeader();
                 if (header != null) {
                     list.addNodeList(header.getElementsByTagName(localName));
                 }
-                SOAPBodyImpl body = (SOAPBodyImpl)soapEnv.getBody();
+                SOAPBodyImpl body = (SOAPBodyImpl) soapEnv.getBody();
                 if (body != null) {
                     list.addNodeList(body.getElementsByTagName(localName));
                 }
-			}
-			return list;
-		}catch (SOAPException se) {
+            }
+            return list;
+        } catch (SOAPException se) {
             throw new DOMException(DOMException.INVALID_STATE_ERR, "");
         }
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see org.w3c.dom.Document#createTextNode(java.lang.String)
-	 */
-	public Text createTextNode(String data) {
-		TextImpl me = new TextImpl(delegate.createTextNode(data));
-		me.setOwnerDocument(soapPart);
-		return me;
-	}
+    /* (non-Javadoc)
+     * @see org.w3c.dom.Document#createTextNode(java.lang.String)
+     */
+    public Text createTextNode(String data) {
+        TextImpl me = new TextImpl(delegate.createTextNode(data));
+        me.setOwnerDocument(soapPart);
+        return me;
+    }
 
     /**
      * Attribute is not particularly dealt with in SAAJ.
-     *  
      */
     public Attr createAttributeNS(String namespaceURI, String qualifiedName)
-    throws DOMException {
+            throws DOMException {
         return delegate.createAttributeNS(namespaceURI, qualifiedName);
     }
 
-	/* (non-Javadoc)
-	 * @see org.w3c.dom.Document#createElementNS(java.lang.String, java.lang.String)
-	 */
-	public Element createElementNS(String arg0, String arg1)
-			throws DOMException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /* (non-Javadoc)
+     * @see org.w3c.dom.Document#createElementNS(java.lang.String, java.lang.String)
+     */
+    public Element createElementNS(String arg0, String arg1)
+            throws DOMException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.w3c.dom.Document#getElementsByTagNameNS(java.lang.String, java.lang.String)
-	 */
-	public NodeList getElementsByTagNameNS(String namespaceURI, String localName) {
-		try{
-			NodeListImpl list = new NodeListImpl();
-			if (soapPart != null) {
-				SOAPEnvelopeImpl soapEnv = (SOAPEnvelopeImpl)soapPart.getEnvelope();
-				SOAPHeaderImpl header = (SOAPHeaderImpl)soapEnv.getHeader();
+    /* (non-Javadoc)
+     * @see org.w3c.dom.Document#getElementsByTagNameNS(java.lang.String, java.lang.String)
+     */
+    public NodeList getElementsByTagNameNS(String namespaceURI, String localName) {
+        try {
+            NodeListImpl list = new NodeListImpl();
+            if (soapPart != null) {
+                SOAPEnvelopeImpl soapEnv = (SOAPEnvelopeImpl) soapPart.getEnvelope();
+                SOAPHeaderImpl header = (SOAPHeaderImpl) soapEnv.getHeader();
                 if (header != null) {
                     list.addNodeList(header.getElementsByTagNameNS(namespaceURI, localName));
                 }
-                SOAPBodyImpl body = (SOAPBodyImpl)soapEnv.getBody();
+                SOAPBodyImpl body = (SOAPBodyImpl) soapEnv.getBody();
                 if (body != null) {
                     list.addNodeList(body.getElementsByTagNameNS(namespaceURI, localName));
                 }
-			}
-			return list;
-		}catch (SOAPException se) {
+            }
+            return list;
+        } catch (SOAPException se) {
             throw new DOMException(DOMException.INVALID_STATE_ERR, "");
         }
-	}
+    }
 
 
-    public ProcessingInstruction createProcessingInstruction(
-            String target,
-            String data)
-    throws DOMException {
-        throw new java.lang.UnsupportedOperationException(
-        "createProcessingInstruction");
+    public ProcessingInstruction createProcessingInstruction(String target,
+                                                             String data)
+            throws DOMException {
+        throw new java.lang.UnsupportedOperationException("createProcessingInstruction");
     }
 
 
     /**
      * override it in sub-classes
-     * 
+     *
      * @return
      */
     public short getNodeType() {
@@ -258,15 +252,14 @@ public class SOAPDocumentImpl implements Document {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
     }
 
-	
-	public String getNodeName() {
-		return null;
-	}
+
+    public String getNodeName() {
+        return null;
+    }
 
     public String getNodeValue() throws DOMException {
-        throw new DOMException(
-                DOMException.NO_DATA_ALLOWED_ERR,
-                "Cannot use TextNode.get in " + this);
+        throw new DOMException(DOMException.NO_DATA_ALLOWED_ERR,
+                               "Cannot use TextNode.get in " + this);
     }
 
     public String getPrefix() {
@@ -274,9 +267,8 @@ public class SOAPDocumentImpl implements Document {
     }
 
     public void setNodeValue(String nodeValue) throws DOMException {
-        throw new DOMException(
-                DOMException.NO_DATA_ALLOWED_ERR,
-                "Cannot use TextNode.set in " + this);
+        throw new DOMException(DOMException.NO_DATA_ALLOWED_ERR,
+                               "Cannot use TextNode.set in " + this);
     }
 
 
@@ -285,7 +277,6 @@ public class SOAPDocumentImpl implements Document {
     }
 
     /**
-     * 
      * we have to have a link to them...
      */
     public Document getOwnerDocument() {
@@ -300,7 +291,7 @@ public class SOAPDocumentImpl implements Document {
         try {
             if (soapPart != null)
                 return (org.apache.axis2.saaj.SOAPEnvelopeImpl) soapPart
-                .getEnvelope();
+                        .getEnvelope();
             else
                 return null;
         } catch (SOAPException se) {
@@ -308,26 +299,26 @@ public class SOAPDocumentImpl implements Document {
         }
     }
 
-	public Node getLastChild() {
+    public Node getLastChild() {
         try {
             if (soapPart != null)
                 return (org.apache.axis2.saaj.SOAPEnvelopeImpl) soapPart
-                .getEnvelope();
+                        .getEnvelope();
             else
                 return null;
         } catch (SOAPException se) {
             throw new DOMException(DOMException.INVALID_STATE_ERR, "");
         }
-	}
+    }
 
-	public Node getNextSibling() {
+    public Node getNextSibling() {
 
         return null;
     }
 
-	public Node getParentNode() {
-	    return null;
-	}
+    public Node getParentNode() {
+        return null;
+    }
 
     public Node getPreviousSibling() {
         return null;
@@ -337,7 +328,7 @@ public class SOAPDocumentImpl implements Document {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
     }
 
-	
+
     public NodeList getChildNodes() {
         try {
             if (soapPart != null) {
@@ -354,7 +345,7 @@ public class SOAPDocumentImpl implements Document {
     }
 
     // fill appropriate features
-    private String[] features = { "foo", "bar" };
+    private String[] features = {"foo", "bar"};
     private String version = "version 2.0";
 
     public boolean isSupported(String feature, String version) {
@@ -384,12 +375,12 @@ public class SOAPDocumentImpl implements Document {
     }
 
     public Node insertBefore(Node newChild, Node refChild)
-    throws DOMException {
+            throws DOMException {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
     }
 
     public Node replaceChild(Node newChild, Node oldChild)
-    throws DOMException {
+            throws DOMException {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
     }
 

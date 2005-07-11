@@ -82,6 +82,7 @@ public abstract class OMNodeImpl implements OMNode {
      *
      * @return
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     public OMContainer getParent() throws OMException {
@@ -113,6 +114,7 @@ public abstract class OMNodeImpl implements OMNode {
      *
      * @return
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     public OMNode getNextSibling() throws OMException {
@@ -156,6 +158,7 @@ public abstract class OMNodeImpl implements OMNode {
      * This will remove this information item and its children, from the model completely
      *
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     public OMNode detach() throws OMException {
@@ -180,6 +183,7 @@ public abstract class OMNodeImpl implements OMNode {
      *
      * @param sibling
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     public void insertSiblingAfter(OMNode sibling) throws OMException {
@@ -206,6 +210,7 @@ public abstract class OMNodeImpl implements OMNode {
      *
      * @param sibling
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     public void insertSiblingBefore(OMNode sibling) throws OMException {
@@ -231,6 +236,7 @@ public abstract class OMNodeImpl implements OMNode {
      *
      * @return
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     public int getType() throws OMException {

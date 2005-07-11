@@ -269,7 +269,7 @@ public class SOAPHeaderTest extends SOAPHeaderTestCase {
         SOAPHeaderBlock headerBlock3 = (SOAPHeaderBlock) iterator.next();
         assertTrue("SOAP 1.2 Header Test With Parser : - headerBlock1 localname mmismatch", headerBlock3.getLocalName().equals("echoOk2"));
 
-            assertFalse("SOAP 1.2 Header Test With Parser : - examineAllHeaderBlocks method returns an iterator with more than three objects", iterator.hasNext());
+        assertFalse("SOAP 1.2 Header Test With Parser : - examineAllHeaderBlocks method returns an iterator with more than three objects", iterator.hasNext());
     }
 
     public void testSOAP12getHeaderBlocksWithNSURIWithParser() {

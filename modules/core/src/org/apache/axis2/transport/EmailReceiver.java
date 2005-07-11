@@ -24,9 +24,9 @@ import java.util.Properties;
 
 /**
  * @author hemapani
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         <p/>
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class EmailReceiver {
 
@@ -43,12 +43,12 @@ public class EmailReceiver {
         this.popPort = popPort;
         this.password = password;
     }
-    
-    
-    public void connect() throws AxisFault{
+
+
+    public void connect() throws AxisFault {
         try {
             final PasswordAuthentication authentication =
-                new PasswordAuthentication(user, password);
+                    new PasswordAuthentication(user, password);
             Properties props = new Properties();
             props.put("mail.user", user);
             props.put("mail.host", host);
@@ -72,10 +72,10 @@ public class EmailReceiver {
         } catch (MessagingException e) {
             throw new AxisFault(e);
         }
-    
+
     }
-    
-    public void disconnect() throws AxisFault{
+
+    public void disconnect() throws AxisFault {
         try {
             inbox.close(true);
             store.close();
@@ -83,10 +83,10 @@ public class EmailReceiver {
             throw new AxisFault(e);
         }
     }
-    
+
 
     public Message[] receive() throws AxisFault {
-        try{
+        try {
             inbox.open(Folder.READ_WRITE);
             Message[] msgs = inbox.getMessages();
 

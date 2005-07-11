@@ -119,8 +119,7 @@ public class WSDLDescriptionImpl extends ComponentImpl
             return;
         }
         if (null == binding.getName()) {
-            throw new WSDLProcessingException(
-                    "The WSDLBinding name cannot be null(Required)");
+            throw new WSDLProcessingException("The WSDLBinding name cannot be null(Required)");
         }
         this.bindings.put(binding.getName(), binding);
     }
@@ -148,11 +147,10 @@ public class WSDLDescriptionImpl extends ComponentImpl
             return;
         }
         if (null == interfaceComponent.getName()) {
-            throw new WSDLProcessingException(
-                    "PortType/Interface name cannot be null(Required) ");
+            throw new WSDLProcessingException("PortType/Interface name cannot be null(Required) ");
         }
         this.wsdlInterfaces.put(interfaceComponent.getName(),
-                interfaceComponent);
+                                interfaceComponent);
     }
 
     /**
@@ -207,8 +205,7 @@ public class WSDLDescriptionImpl extends ComponentImpl
             return;
         }
         if (null == service.getName()) {
-            throw new WSDLProcessingException(
-                    "The WSDLService name cannot be null (Required)");
+            throw new WSDLProcessingException("The WSDLService name cannot be null (Required)");
         }
         this.services.put(service.getName(), service);
     }
@@ -453,47 +450,46 @@ public class WSDLDescriptionImpl extends ComponentImpl
     public WSDLProperty createProperty() {
         return new WSDLPropertyImpl();
     }
-    
-    public MessageReference createMessageReference(){
-		return new MessageReferenceImpl();
-	}
-	
-	public WSDLBindingMessageReference createWSDLBindingMessageReference(){
-		return new WSDLBindingMessageReferenceImpl();
-	}
-	
-	public WSDLBindingOperation createWSDLBindingOperation(){
-		return new WSDLBindingOperationImpl();
-	}
-	
-	/**
-	 * 
-	 * @return A new Instance of <code>ExtensionFactory</code> that
-	 * is capable of creating the correct <code>ExtensibilityElement</code>
-	 * given a <code>QName</code>.
-	 */
-	public ExtensionFactory createExtensionFactory(){
-		return new ExtensionFactoryImpl();
-	}
 
-	
-	public WSDLBinding getFirstBinding(){
-		Iterator bindingIterator = this.bindings.values().iterator();
-		if(bindingIterator.hasNext()){
-			return (WSDLBinding)bindingIterator.next();
-		}
-		throw new WSDLProcessingException("No Binding Components are available");
-	}
-	
-	public WSDLExtensibilityAttribute createWSDLExtensibilityAttribute(){
-		return new WSDLExtensibilityAttributeImpl();
-	}
-	
-	public WSDLFaultReference createFaultReference(){
-		return  new WSDLFaultReferenceImpl();
-	}
-	
-	public WSDLBindingFault createBindingFault(){
-		return new WSDLBindingFaultImpl();
-	}
+    public MessageReference createMessageReference() {
+        return new MessageReferenceImpl();
+    }
+
+    public WSDLBindingMessageReference createWSDLBindingMessageReference() {
+        return new WSDLBindingMessageReferenceImpl();
+    }
+
+    public WSDLBindingOperation createWSDLBindingOperation() {
+        return new WSDLBindingOperationImpl();
+    }
+
+    /**
+     * @return A new Instance of <code>ExtensionFactory</code> that
+     *         is capable of creating the correct <code>ExtensibilityElement</code>
+     *         given a <code>QName</code>.
+     */
+    public ExtensionFactory createExtensionFactory() {
+        return new ExtensionFactoryImpl();
+    }
+
+
+    public WSDLBinding getFirstBinding() {
+        Iterator bindingIterator = this.bindings.values().iterator();
+        if (bindingIterator.hasNext()) {
+            return (WSDLBinding) bindingIterator.next();
+        }
+        throw new WSDLProcessingException("No Binding Components are available");
+    }
+
+    public WSDLExtensibilityAttribute createWSDLExtensibilityAttribute() {
+        return new WSDLExtensibilityAttributeImpl();
+    }
+
+    public WSDLFaultReference createFaultReference() {
+        return new WSDLFaultReferenceImpl();
+    }
+
+    public WSDLBindingFault createBindingFault() {
+        return new WSDLBindingFaultImpl();
+    }
 }

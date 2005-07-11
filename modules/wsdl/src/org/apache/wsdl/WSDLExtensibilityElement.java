@@ -20,14 +20,13 @@ import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public interface WSDLExtensibilityElement {
-	public boolean isRequired();
+    public boolean isRequired();
 
-	public void setRequired(boolean required);
+    public void setRequired(boolean required);
 
-	public QName getType();
+    public QName getType();
 
-	public void setType(QName type);
+    public void setType(QName type);
 }

@@ -32,88 +32,83 @@ import java.io.FileOutputStream;
 
 public class OMOutputTest extends AbstractTestCase {
 
-	/**
-	 * @param testName
-	 */
-	public OMOutputTest(String testName) {
-		super(testName);
-	}
+    /**
+     * @param testName
+     */
+    public OMOutputTest(String testName) {
+        super(testName);
+    }
 
-	String outFileName;
+    String outFileName;
 
-	String outBase64FileName;
+    String outBase64FileName;
 
-	OMElement envelope;
+    OMElement envelope;
 
-	File outMTOMFile;
+    File outMTOMFile;
 
-	File outBase64File;
+    File outBase64File;
 
-	/*
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-		Object object;
-		DataHandler dataHandler;
+    /*
+     * @see TestCase#setUp()
+     */
+    protected void setUp() throws Exception {
+        super.setUp();
+        Object object;
+        DataHandler dataHandler;
 
-		outFileName = "mtom/OMSerializeMTOMOut.txt";
-		outBase64FileName = "mtom/OMSerializeBase64Out.xml";
-		outMTOMFile = getTestResourceFile(outFileName);
-		outBase64File = getTestResourceFile(outBase64FileName);
+        outFileName = "mtom/OMSerializeMTOMOut.txt";
+        outBase64FileName = "mtom/OMSerializeBase64Out.xml";
+        outMTOMFile = getTestResourceFile(outFileName);
+        outBase64File = getTestResourceFile(outBase64FileName);
 
-		OMNamespaceImpl soap = new OMNamespaceImpl(
-				"http://schemas.xmlsoap.org/soap/envelope/", "soap");
-		envelope = new OMElementImpl("Envelope", soap);
-		OMElement body = new OMElementImpl("Body", soap);
+        OMNamespaceImpl soap = new OMNamespaceImpl("http://schemas.xmlsoap.org/soap/envelope/", "soap");
+        envelope = new OMElementImpl("Envelope", soap);
+        OMElement body = new OMElementImpl("Body", soap);
 
-		OMNamespaceImpl dataName = new OMNamespaceImpl(
-				"http://www.example.org/stuff", "m");
-		OMElement data = new OMElementImpl("data", dataName);
+        OMNamespaceImpl dataName = new OMNamespaceImpl("http://www.example.org/stuff", "m");
+        OMElement data = new OMElementImpl("data", dataName);
 
-		OMNamespaceImpl mime = new OMNamespaceImpl(
-				"http://www.w3.org/2003/06/xmlmime", "m");
+        OMNamespaceImpl mime = new OMNamespaceImpl("http://www.w3.org/2003/06/xmlmime", "m");
 
-		OMElement text = new OMElementImpl("name", dataName);
-		OMAttribute cType1 = new OMAttributeImpl("contentType", mime,
-				"text/plain");
-		text.addAttribute(cType1);
-		byte[] byteArray = new byte[] { 13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
-				98 };
-		dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
-		OMTextImpl textData = new OMTextImpl(dataHandler, false);
+        OMElement text = new OMElementImpl("name", dataName);
+        OMAttribute cType1 = new OMAttributeImpl("contentType", mime,
+                                                 "text/plain");
+        text.addAttribute(cType1);
+        byte[] byteArray = new byte[]{13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
+                                      98};
+        dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
+        OMTextImpl textData = new OMTextImpl(dataHandler, false);
 
-		envelope.addChild(body);
-		body.addChild(data);
-		data.addChild(text);
-		text.addChild(textData);
-	}
+        envelope.addChild(body);
+        body.addChild(data);
+        data.addChild(text);
+        text.addChild(textData);
+    }
 
-	/*
-	 * @see TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		if (this.outMTOMFile.exists()) {
-			this.outMTOMFile.delete();
-		}
-		if (this.outBase64File.exists()) {
-			this.outBase64File.delete();
-		}
-	}
+    /*
+     * @see TestCase#tearDown()
+     */
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        if (this.outMTOMFile.exists()) {
+            this.outMTOMFile.delete();
+        }
+        if (this.outBase64File.exists()) {
+            this.outBase64File.delete();
+        }
+    }
 
-	public void testComplete() throws Exception {
+    public void testComplete() throws Exception {
 
-		OMOutput mtomOutput = new OMOutput(new FileOutputStream(
-				outMTOMFile), true);
-		OMOutput baseOutput = new OMOutput(new FileOutputStream(
-				outBase64File), false);
+        OMOutput mtomOutput = new OMOutput(new FileOutputStream(outMTOMFile), true);
+        OMOutput baseOutput = new OMOutput(new FileOutputStream(outBase64File), false);
 
-		envelope.serialize(baseOutput);
-		baseOutput.flush();
+        envelope.serialize(baseOutput);
+        baseOutput.flush();
 
-		envelope.serialize(mtomOutput);
+        envelope.serialize(mtomOutput);
 
-		mtomOutput.complete();
-	}
+        mtomOutput.complete();
+    }
 }

@@ -46,8 +46,7 @@ import javax.xml.namespace.QName;
 
 public class MessageContextInjectionTest extends TestCase {
     private EndpointReference targetEPR =
-        new EndpointReference(
-            AddressingConstants.WSA_TO,"/axis/services/EchoXMLService/echoOMElement");
+            new EndpointReference(AddressingConstants.WSA_TO, "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -107,7 +106,7 @@ public class MessageContextInjectionTest extends TestCase {
         sender.setSenderTransport(Constants.TRANSPORT_LOCAL);
         sender.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         sender.send(operationName.getLocalPart(), payload);
-        
+
     }
 
 }

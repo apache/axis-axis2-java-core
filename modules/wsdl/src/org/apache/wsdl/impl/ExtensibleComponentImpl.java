@@ -37,8 +37,7 @@ public class ExtensibleComponentImpl extends ComponentImpl
      * Field properties
      */
     private List properties = null;
-    
-    
+
 
     /**
      * Will add a <code>WSDLFeature</code> to the feature list.
@@ -97,6 +96,6 @@ public class ExtensibleComponentImpl extends ComponentImpl
         }
         return this.properties;
     }
-    
-  
+
+
 }

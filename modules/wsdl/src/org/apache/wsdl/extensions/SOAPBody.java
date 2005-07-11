@@ -20,14 +20,13 @@ import org.apache.wsdl.WSDLExtensibilityElement;
 
 /**
  * @author chathura@opensource.lk
- *
  */
-public interface SOAPBody extends WSDLExtensibilityElement{
-	public String getNamespaceURI();
+public interface SOAPBody extends WSDLExtensibilityElement {
+    public String getNamespaceURI();
 
-	public void setNamespaceURI(String namespaceURI);
+    public void setNamespaceURI(String namespaceURI);
 
-	public String getUse();
+    public String getUse();
 
-	public void setUse(String use);
+    public void setUse(String use);
 }

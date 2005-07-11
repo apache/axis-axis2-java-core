@@ -22,15 +22,13 @@ import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public interface CodeGenExtension {
-	
-	
-	public void init(CodeGenConfiguration configuration);
-	
-	public void engage() throws CodeGenerationException;
-	
-	
+
+
+    public void init(CodeGenConfiguration configuration);
+
+    public void engage() throws CodeGenerationException;
+
 
 }

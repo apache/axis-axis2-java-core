@@ -1,31 +1,24 @@
 package sample.google.spellcheck;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
 /**
- *  class sample.google.spellcheck.SyncPanel
+ * class sample.google.spellcheck.SyncPanel
  * This Impements its own GUI of the Synchronous Client and it send the SOAP request after the mouse event.
- * @author Nadana Gunarathna
  *
+ * @author Nadana Gunarathna
  */
-public class SyncPanel extends javax.swing.JPanel implements Observer, ActionListener{
+public class SyncPanel extends javax.swing.JPanel implements Observer, ActionListener {
     FormModel formModel;
     JTextArea writingTextArea;
     JTextArea displayTextArea;
     JTextField errorMessageField;
     JButton sendButton;
 
-    public SyncPanel()
-    {
+    public SyncPanel() {
         GridBagLayout gbLayout = new GridBagLayout();
         GridBagConstraints constraint = new GridBagConstraints();
 
@@ -34,7 +27,7 @@ public class SyncPanel extends javax.swing.JPanel implements Observer, ActionLis
 //        layout.setRows(3);
         this.setLayout(gbLayout);
 
-        formModel  = new FormModel(this);
+        formModel = new FormModel(this);
         writingTextArea = new javax.swing.JTextArea();
         writingTextArea.setLineWrap(true);
 
@@ -47,40 +40,40 @@ public class SyncPanel extends javax.swing.JPanel implements Observer, ActionLis
         errorMessageField.setBackground(Color.LIGHT_GRAY);
         errorMessageField.setForeground(Color.RED);
 
-        sendButton=new javax.swing.JButton("Send");
+        sendButton = new javax.swing.JButton("Send");
         JScrollPane scrollPaneget = new JScrollPane(writingTextArea);
         JScrollPane scrollPaneset = new JScrollPane(displayTextArea);
         writingTextArea.setText("Enter a String");
 
         constraint.fill = GridBagConstraints.BOTH;
-        constraint.gridx=0;
-        constraint.weightx=1;
-        constraint.weighty=8;
-        gbLayout.setConstraints(scrollPaneget,constraint);
+        constraint.gridx = 0;
+        constraint.weightx = 1;
+        constraint.weighty = 8;
+        gbLayout.setConstraints(scrollPaneget, constraint);
         this.add(scrollPaneget);
-        gbLayout.setConstraints(scrollPaneset,constraint);
+        gbLayout.setConstraints(scrollPaneset, constraint);
         this.add(scrollPaneset);
-        constraint.weighty=1;
-        gbLayout.setConstraints(sendButton,constraint);
+        constraint.weighty = 1;
+        gbLayout.setConstraints(sendButton, constraint);
         this.add(sendButton);
-        gbLayout.setConstraints(errorMessageField,constraint);
+        gbLayout.setConstraints(errorMessageField, constraint);
         this.add(errorMessageField);
 
         sendButton.addActionListener(this);
 
     }
-    public void update(String suggestion)
-    {
+
+    public void update(String suggestion) {
         displayTextArea.setText(suggestion);
     }
 
     //updates the error message to the error message display area
     public void updateError(String message) {
-       errorMessageField.setText(message);
+        errorMessageField.setText(message);
     }
 
     public void actionPerformed(ActionEvent e) {
-        String str=writingTextArea.getText().trim();
+        String str = writingTextArea.getText().trim();
         formModel.doSyncSpellingSuggestion(str);
     }
 

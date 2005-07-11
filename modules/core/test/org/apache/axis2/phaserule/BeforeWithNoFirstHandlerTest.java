@@ -37,7 +37,7 @@ import java.util.ArrayList;
  * Date: May 20, 2005
  * Time: 3:04:42 PM
  */
-public class BeforeWithNoFirstHandlerTest extends TestCase{
+public class BeforeWithNoFirstHandlerTest extends TestCase {
     public void testBeforewithNoFirst() throws AxisFault {
         ArrayList phases = new ArrayList();
         Phase p1 = new Phase("PhaseA");
@@ -77,11 +77,11 @@ public class BeforeWithNoFirstHandlerTest extends TestCase{
 
         ArrayList handlers = p1.getHandlers();
         Handler handler = (Handler) handlers.get(0);
-        if(!handler.getName().equals(new QName("Second"))){
+        if (!handler.getName().equals(new QName("Second"))) {
             fail("Computed Hnadler order is wrong ");
         }
         handler = (Handler) handlers.get(1);
-        if(!handler.getName().equals(new QName("First"))){
+        if (!handler.getName().equals(new QName("First"))) {
             fail("Computed Hnadler order is wrong ");
         }
         p1.invoke(msg);

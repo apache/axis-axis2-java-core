@@ -155,7 +155,7 @@ public class HTTPTransportReceiver {
      * @throws AxisFault
      */
     public HashMap parseTheHeaders(InputStream in, boolean serverSide)
-        throws AxisFault {
+            throws AxisFault {
         HashMap map = new HashMap();
         try {
             StringBuffer str = new StringBuffer();
@@ -166,19 +166,17 @@ public class HTTPTransportReceiver {
             length = readLine(in, buf);
             if (serverSide) {
                 if ((buf[0] == 'P')
-                    && (buf[1] == 'O')
-                    && (buf[2] == 'S')
-                    && (buf[3] == 'T')) {
-                    map.put(
-                        HTTPConstants.HTTP_REQ_TYPE,
-                        HTTPConstants.HEADER_POST);
+                        && (buf[1] == 'O')
+                        && (buf[2] == 'S')
+                        && (buf[3] == 'T')) {
+                    map.put(HTTPConstants.HTTP_REQ_TYPE,
+                            HTTPConstants.HEADER_POST);
                     index = 5;
 
                 } else if (
-                    (buf[0] == 'G') && (buf[1] == 'E') && (buf[2] == 'T')) {
-                    map.put(
-                        HTTPConstants.HTTP_REQ_TYPE,
-                        HTTPConstants.HEADER_GET);
+                        (buf[0] == 'G') && (buf[1] == 'E') && (buf[2] == 'T')) {
+                    map.put(HTTPConstants.HTTP_REQ_TYPE,
+                            HTTPConstants.HEADER_GET);
                     index = 4;
 
                 } else {
@@ -211,7 +209,7 @@ public class HTTPTransportReceiver {
                 }
                 for (int i = 0; i < length; i++) {
                     switch (state) {
-                        case BEFORE_SEPERATOR :
+                        case BEFORE_SEPERATOR:
                             if (buf[i] == ':') {
                                 key = str.toString();
                                 str = new StringBuffer();
@@ -223,7 +221,7 @@ public class HTTPTransportReceiver {
                                 str.append((char) buf[i]);
                             }
                             break;
-                        case AFTER_SEPERATOR :
+                        case AFTER_SEPERATOR:
                             if (buf[i] == '\n') {
                                 value = str.toString();
                                 map.put(key, value);
@@ -246,8 +244,7 @@ public class HTTPTransportReceiver {
                             // case END:
                             // break;
                         default :
-                            throw new AxisFault(
-                                "Error Occured Unknown state " + state);
+                            throw new AxisFault("Error Occured Unknown state " + state);
                     }
                 }
                 state = BEFORE_SEPERATOR;
@@ -384,17 +381,17 @@ public class HTTPTransportReceiver {
     }
 
     /**
-         * Read a single line from the input stream
-         *
-         * @param is  inputstream to read from
-         * @param b   byte array to read into
-         * @param off starting offset into the byte array
-         * @param len maximum number of bytes to read
-         * @return
-         * @throws java.io.IOException
-         */
+     * Read a single line from the input stream
+     *
+     * @param is  inputstream to read from
+     * @param b   byte array to read into
+     * @param off starting offset into the byte array
+     * @param len maximum number of bytes to read
+     * @return
+     * @throws java.io.IOException
+     */
     protected int readLine(InputStream is, byte[] b)
-        throws java.io.IOException {
+            throws java.io.IOException {
         int count = 0, c;
 
         // System.out.println("inside here");
@@ -438,25 +435,25 @@ public class HTTPTransportReceiver {
         }
     }
 
- 
 
     /**
      * Returns the HTML text for the list of services deployed
      * This can be delegated to another Class as well
      * where it will handle more options of GET messages :-?
+     *
      * @return
      */
     public static String getServicesHTML(ConfigurationContext configurationContext) {
         String temp = "";
         Map services =
-            configurationContext.getAxisConfiguration().getServices();
+                configurationContext.getAxisConfiguration().getServices();
         Hashtable erroneousServices =
-            configurationContext.getAxisConfiguration().getFaulytServices();
+                configurationContext.getAxisConfiguration().getFaulytServices();
         boolean status = false;
 
         if (services != null && !services.isEmpty()) {
             status = true;
-            Collection serviceCollection = services.values(); 
+            Collection serviceCollection = services.values();
             temp += "<h2>" + "Deployed services" + "</h2>";
             for (Iterator it = serviceCollection.iterator(); it.hasNext();) {
                 Map operations;
@@ -469,13 +466,13 @@ public class HTTPTransportReceiver {
                 if (operationsList.size() > 0) {
                     temp += "Available operations <ul>";
                     for (Iterator iterator1 = operationsList.iterator();
-                        iterator1.hasNext();
-                        ) {
+                         iterator1.hasNext();
+                            ) {
                         OperationDescription axisOperation =
-                            (OperationDescription) iterator1.next();
+                                (OperationDescription) iterator1.next();
                         temp += "<li>"
-                            + axisOperation.getName().getLocalPart()
-                            + "</li>";
+                                + axisOperation.getName().getLocalPart()
+                                + "</li>";
                     }
                     temp += "</ul>";
                 } else {
@@ -491,10 +488,10 @@ public class HTTPTransportReceiver {
             Enumeration faultyservices = erroneousServices.keys();
             while (faultyservices.hasMoreElements()) {
                 String faultyserviceName =
-                    (String) faultyservices.nextElement();
+                        (String) faultyservices.nextElement();
                 temp += "<h3><font color=\"blue\">"
-                    + faultyserviceName
-                    + "</font></h3>";
+                        + faultyserviceName
+                        + "</font></h3>";
             }
         }
 
@@ -503,7 +500,7 @@ public class HTTPTransportReceiver {
         }
 
         temp =
-            "<html><head><title>Axis2: Services</title></head>"
+                "<html><head><title>Axis2: Services</title></head>"
                 + "<body>"
                 + temp
                 + "</body></html>";

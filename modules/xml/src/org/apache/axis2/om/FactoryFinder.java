@@ -35,7 +35,6 @@ class FactoryFinder {
 
 
     /**
-     *
      * @param loader
      * @return
      * @throws OMFactoryException

@@ -58,7 +58,7 @@ public class OMLinkedListImplFactory implements OMFactory {
                                      OMContainer parent,
                                      OMXMLParserWrapper builder) {
         OMElementImpl element = new OMElementImpl(localName, ns, parent,
-                builder);
+                                                  builder);
         return element;
     }
 
@@ -73,8 +73,8 @@ public class OMLinkedListImplFactory implements OMFactory {
     public OMElement createOMElement(String localName, String namespaceURI,
                                      String namespacePrefix) {
         return this.createOMElement(localName,
-                this.createOMNamespace(namespaceURI,
-                        namespacePrefix));
+                                    this.createOMNamespace(namespaceURI,
+                                                           namespacePrefix));
     }
 
     /**
@@ -121,7 +121,7 @@ public class OMLinkedListImplFactory implements OMFactory {
      */
     public OMText createText(String s) {
         OMTextImpl textNode = new OMTextImpl(s);
-    ;
+        ;
         return textNode;
     }
 
@@ -138,8 +138,8 @@ public class OMLinkedListImplFactory implements OMFactory {
     }
 
     public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value) {
-          return new OMAttributeImpl(localName, ns, value);
-      }
+        return new OMAttributeImpl(localName, ns, value);
+    }
 
 
 }

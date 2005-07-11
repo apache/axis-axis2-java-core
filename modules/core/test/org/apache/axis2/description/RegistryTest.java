@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis2.description;
 
 import org.apache.axis2.AbstractTestCase;
@@ -35,23 +35,23 @@ public class RegistryTest extends AbstractTestCase {
 
     public void testRegistry() throws Exception {
         //TODO fix me Srinath
-      /*  GlobalDescription ag = new GlobalDescription();
-        testParameteInClude(ag);
-        reg = new AxisSystemImpl(ag);
+        /*  GlobalDescription ag = new GlobalDescription();
+          testParameteInClude(ag);
+          reg = new AxisSystemImpl(ag);
 
-        QName moduleName = new QName("module1");
-        ModuleDescription modlue = new ModuleDescription(moduleName);
-        reg.addMdoule(modlue);
+          QName moduleName = new QName("module1");
+          ModuleDescription modlue = new ModuleDescription(moduleName);
+          reg.addMdoule(modlue);
 
-        QName serviceName = new QName("service");
-        ServiceDescription service = new ServiceDescription(serviceName);
-        reg.addService(service);
+          QName serviceName = new QName("service");
+          ServiceDescription service = new ServiceDescription(serviceName);
+          reg.addService(service);
 
-        assertSame(modlue, reg.getModule(moduleName));
-        assertSame(service, reg.getService(serviceName));
-        reg.removeService(serviceName);
-        assertSame(ag, reg.getGlobal());
-        assertNull(reg.getService(serviceName));*/
+          assertSame(modlue, reg.getModule(moduleName));
+          assertSame(service, reg.getService(serviceName));
+          reg.removeService(serviceName);
+          assertSame(ag, reg.getGlobal());
+          assertNull(reg.getService(serviceName));*/
 
     }
 
@@ -100,7 +100,6 @@ public class RegistryTest extends AbstractTestCase {
         assertSame(flow3, flowInclude.getOutFlow());
     }
 
- 
 
     public void testHandlers() throws AxisFault {
         Handler handler = new AbstractHandler() {

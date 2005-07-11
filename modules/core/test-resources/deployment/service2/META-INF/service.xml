@@ -2,11 +2,11 @@
     <!-- these are Service Parameters -->
     <parameter name="para1" locked="xsd:true">10</parameter>
     <parameter name="para2" locked="xsd:false">Colombo</parameter>
-   <description>
+    <description>
         This is a testing service , to test the system is working or not
     </description>
-   
-       <!--  Service TypeMapping -->
+
+    <!--  Service TypeMapping -->
 
     <!--
     Phases
@@ -36,7 +36,7 @@
     </INfaultflow>
     <Outfaultflow>
         <handler name="h4" class="Handler2">
-             <order phase="userphase1"/>
+            <order phase="userphase1"/>
         </handler>
 
         <handler name="h5" class="Handler2">
@@ -48,6 +48,6 @@
         </handler>
     </Outfaultflow>
     <operation name="opname">
-      <module ref="module1"></module>
+        <module ref="module1"></module>
     </operation>
 </service>

@@ -37,7 +37,7 @@ public class SOAPBodyTest extends SOAPBodyTestCase {
 
     public void testSOAP11addFault2() {
         soap11Body.addFault(soap11Factory.createSOAPFault(soap11Body));
-        assertTrue("SOAP 1.1 Body Test:- After calling addFault method, SOAP body has no fault",soap11Body.hasFault());
+        assertTrue("SOAP 1.1 Body Test:- After calling addFault method, SOAP body has no fault", soap11Body.hasFault());
 
 
     }
@@ -58,12 +58,12 @@ public class SOAPBodyTest extends SOAPBodyTestCase {
     public void testSOAP12AddFault1() {
         soap12Body.addFault(new Exception("This an exception for testing"));
         assertTrue("SOAP 1.2 Body Test:- After calling addFault method, SOAP body has no fault", soap12Body.hasFault());
-        
+
     }
 
     public void testSOAP12AddFault2() {
         soap12Body.addFault(soap12Factory.createSOAPFault(soap12Body));
-        assertTrue("SOAP 1.2 Body Test:- After calling addFault method, SOAP body has no fault",soap12Body.hasFault());
+        assertTrue("SOAP 1.2 Body Test:- After calling addFault method, SOAP body has no fault", soap12Body.hasFault());
     }
 
     public void testSOAP12HasFault() {
@@ -85,7 +85,7 @@ public class SOAPBodyTest extends SOAPBodyTestCase {
 
     public void testSOAP11GetFaultWithParser() {
         assertFalse("SOAP 1.1 Body Test With parser :- getFault method returns null", soap11BodyWithParser.getFault() == null);
-        assertTrue("SOAP 1.1 Body Test With parser : - SOAP fault name mismatch",soap11BodyWithParser.getFault().getLocalName().equals(SOAPConstants.SOAPFAULT_LOCAL_NAME));
+        assertTrue("SOAP 1.1 Body Test With parser : - SOAP fault name mismatch", soap11BodyWithParser.getFault().getLocalName().equals(SOAPConstants.SOAPFAULT_LOCAL_NAME));
     }
 
     //SOAP 1.2 Body Test (With Parser)-------------------------------------------------------------------------------------------------
@@ -95,6 +95,6 @@ public class SOAPBodyTest extends SOAPBodyTestCase {
 
     public void testSOAP12GetFaultWithParser() {
         assertFalse("SOAP 1.2 Body Test With parser :- getFault method returns null", soap12BodyWithParser.getFault() == null);
-        assertTrue("SOAP 1.2 Body Test With parser : - SOAP fault name mismatch",soap12BodyWithParser.getFault().getLocalName().equals(SOAPConstants.SOAPFAULT_LOCAL_NAME));
+        assertTrue("SOAP 1.2 Body Test With parser : - SOAP fault name mismatch", soap12BodyWithParser.getFault().getLocalName().equals(SOAPConstants.SOAPFAULT_LOCAL_NAME));
     }
 }

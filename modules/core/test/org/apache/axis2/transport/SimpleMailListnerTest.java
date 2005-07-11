@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 package org.apache.axis2.transport;
+
 import junit.framework.TestCase;
 import org.apache.axis2.transport.mail.SimpleMailListener;
 
 public class SimpleMailListnerTest extends TestCase {
     private SimpleMailListener sas;
+
     public SimpleMailListnerTest(String testName) {
         super(testName);
     }
@@ -77,10 +79,10 @@ public class SimpleMailListnerTest extends TestCase {
 //        	}
 //    
     }
-    
-    public  void tearDown() throws Exception{
+
+    public void tearDown() throws Exception {
 //        sas.stop();
     }
-    
+
 }
 

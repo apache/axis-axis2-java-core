@@ -22,24 +22,26 @@ import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk
- *
  */
 public class WSDLExtensibilityElementImpl implements WSDLExtensibilityElement {
-	
-	protected QName type;
-	
-	protected boolean required;
-	
-	public boolean isRequired() {
-		return required;
-	}
-	public void setRequired(boolean required) {
-		this.required = required;
-	}
-	public QName getType() {
-		return type;
-	}
-	public  void setType(QName type) {
-		this.type = type;
-	}
+
+    protected QName type;
+
+    protected boolean required;
+
+    public boolean isRequired() {
+        return required;
+    }
+
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
+
+    public QName getType() {
+        return type;
+    }
+
+    public void setType(QName type) {
+        this.type = type;
+    }
 }

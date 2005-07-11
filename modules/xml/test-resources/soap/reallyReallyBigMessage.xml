@@ -1,29 +1,29 @@
 <?xml version='1.0' ?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
-              xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing">
+    xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing">
     <env:Header>
 
         <wsdl:definitions targetNamespace="http://echo.services"
-                          xmlns="http://schemas.xmlsoap.org/wsdl/"
-                          xmlns:impl="http://echo.services-impl"
-                          xmlns:intf="http://echo.services"
-                          xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
-                          xmlns:tns1="http://types.echo.services"
-                          xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-                          xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
-                          xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            xmlns="http://schemas.xmlsoap.org/wsdl/"
+            xmlns:impl="http://echo.services-impl"
+            xmlns:intf="http://echo.services"
+            xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+            xmlns:tns1="http://types.echo.services"
+            xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+            xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema">
             <wsdl:types>
                 <schema targetNamespace="http://types.echo.services"
-                        xmlns="http://www.w3.org/2001/XMLSchema">
+                    xmlns="http://www.w3.org/2001/XMLSchema">
                     <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
                     <complexType name="MyComplexType">
                         <sequence>
                             <element name="simpleItem" nillable="true"
-                                     type="xsd:string"/>
+                                type="xsd:string"/>
                         </sequence>
                     </complexType>
                     <element name="MyElement" nillable="true"
-                             type="tns1:MyComplexType"/>
+                        type="tns1:MyComplexType"/>
                 </schema>
             </wsdl:types>
             <wsdl:message name="echoRequest">
@@ -36,29 +36,29 @@
                 <wsdl:operation name="echo" parameterOrder="MyElement">
                     <wsdl:input message="intf:echoRequest" name="echoRequest"/>
                     <wsdl:output message="intf:echoResponse"
-                                 name="echoResponse"/>
+                        name="echoResponse"/>
                 </wsdl:operation>
             </wsdl:portType>
             <wsdl:binding name="ComplexEchoServiceSoapBinding"
-                          type="intf:Echo1">
+                type="intf:Echo1">
                 <wsdlsoap:binding style="document"
-                                  transport="http://schemas.xmlsoap.org/soap/http"/>
+                    transport="http://schemas.xmlsoap.org/soap/http"/>
                 <wsdl:operation name="echo">
                     <wsdlsoap:operation soapAction=""/>
                     <wsdl:input name="echoRequest">
                         <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-                                       namespace="http://types.echo.services"
-                                       use="literal"/>
+                            namespace="http://types.echo.services"
+                            use="literal"/>
                     </wsdl:input>
                     <wsdl:output name="echoResponse">
                         <wsdlsoap:body namespace="http://types.echo.services"
-                                       use="literal"/>
+                            use="literal"/>
                     </wsdl:output>
                 </wsdl:operation>
             </wsdl:binding>
             <wsdl:service name="ComplexEchoService">
                 <wsdl:port binding="intf:ComplexEchoServiceSoapBinding"
-                           name="ComplexEchoService">
+                    name="ComplexEchoService">
                     <wsdlsoap:address
                         location="http://localhost:8080/axis/services/ComplexEchoService"/>
                 </wsdl:port>
@@ -111,7 +111,7 @@
                         <xsd:complexContent>
                             <xsd:restriction base="soapenc:Array">
                                 <xsd:attribute ref="soapenc:arrayType"
-                                               wsdl:arrayType="xsd:string[]"/>
+                                    wsdl:arrayType="xsd:string[]"/>
                             </xsd:restriction>
                         </xsd:complexContent>
                     </xsd:complexType>
@@ -120,7 +120,7 @@
                         <xsd:complexContent>
                             <xsd:restriction base="soapenc:Array">
                                 <xsd:attribute ref="soapenc:arrayType"
-                                               wsdl:arrayType="xsd:base64Binary[]"/>
+                                    wsdl:arrayType="xsd:base64Binary[]"/>
                             </xsd:restriction>
                         </xsd:complexContent>
                     </xsd:complexType>
@@ -181,24 +181,24 @@
                             <xsd:element name="stock_quote">
                                 <xsd:complexType>
                                     <xsd:attribute name="symbol"
-                                                   type="xsd:string"/>
+                                        type="xsd:string"/>
                                     <xsd:sequence>
 
                                         <xsd:element name="time"
-                                                     type="typens:time"/>
+                                            type="typens:time"/>
                                         <xsd:element name="change"
-                                                     type="typens:simpleFwd"/>
+                                            type="typens:simpleFwd"/>
                                         <xsd:element name="pctchange"
-                                                     type="xsd:string"/>
+                                            type="xsd:string"/>
                                         <xsd:element name="bid"
-                                                     type="xsd:string"/>
+                                            type="xsd:string"/>
                                         <xsd:element name="ask"
-                                                     type="xsd:string"/>
+                                            type="xsd:string"/>
                                         <xsd:element name="choice"
-                                                     type="typens:complexChoice"/>
+                                            type="typens:complexChoice"/>
                                     </xsd:sequence>
                                     <xsd:attribute name="last"
-                                                   type="xsd:string"/>
+                                        type="xsd:string"/>
                                 </xsd:complexType>
                             </xsd:element>
                             <xsd:element name="outside" type="xsd:int"/>
@@ -229,7 +229,7 @@
                         <xsd:complexContent>
                             <xsd:restriction base="soapenc:Array">
                                 <xsd:attribute ref="soapenc:arrayType"
-                                               wsdl:arrayType="typens:arrayM2[]"/>
+                                    wsdl:arrayType="typens:arrayM2[]"/>
                             </xsd:restriction>
                         </xsd:complexContent>
                     </xsd:complexType>
@@ -237,7 +237,7 @@
                         <xsd:complexContent>
                             <xsd:restriction base="soapenc:Array">
                                 <xsd:attribute ref="soapenc:arrayType"
-                                               wsdl:arrayType="typens:arrayM3[]"/>
+                                    wsdl:arrayType="typens:arrayM3[]"/>
                             </xsd:restriction>
                         </xsd:complexContent>
                     </xsd:complexType>
@@ -245,7 +245,7 @@
                         <xsd:complexContent>
                             <xsd:restriction base="soapenc:Array">
                                 <xsd:attribute ref="soapenc:arrayType"
-                                               wsdl:arrayType="xsd:int[]"/>
+                                    wsdl:arrayType="xsd:int[]"/>
                             </xsd:restriction>
                         </xsd:complexContent>
                     </xsd:complexType>
@@ -254,17 +254,17 @@
                     <xsd:complexType name="Animal">
                         <xsd:all>
                             <xsd:element name="Name" nillable="true"
-                                         type="xsd:string"/>
+                                type="xsd:string"/>
                         </xsd:all>
                     </xsd:complexType>
                     <xsd:element name="Animal" nillable="true"
-                                 type="typens:Animal"/>
+                        type="typens:Animal"/>
                     <xsd:complexType name="Cat">
                         <xsd:complexContent>
                             <xsd:extension base="typens:Animal">
                                 <xsd:all>
                                     <xsd:element name="Purr" nillable="true"
-                                                 type="xsd:string"/>
+                                        type="xsd:string"/>
                                 </xsd:all>
                             </xsd:extension>
                         </xsd:complexContent>
@@ -276,7 +276,7 @@
                             <xsd:extension base="typens:Cat">
                                 <xsd:all>
                                     <xsd:element name="Color"
-                                                 type="xsd:string"/>
+                                        type="xsd:string"/>
                                     <xsd:element name="Toy"/>
                                 </xsd:all>
                             </xsd:extension>
@@ -382,20 +382,20 @@
 
 
                     <xsd:element name="StringParameter"
-                                 type="typens:StringParameter"/>
+                        type="typens:StringParameter"/>
                     <xsd:complexType name="StringParameter">
                         <xsd:simpleContent>
                             <xsd:extension base="xsd:string">
                                 <xsd:attribute name="numBytes"
-                                               type="soapenc:int"/>
+                                    type="soapenc:int"/>
                                 <xsd:attribute name="storageEncoding"
-                                               type="xsd:string"/>
+                                    type="xsd:string"/>
                                 <xsd:attribute name="direction"
-                                               type="typens:flowDirectionType"/>
+                                    type="typens:flowDirectionType"/>
                                 <xsd:attribute name="passMode"
-                                               type="typens:passModeType"/>
+                                    type="typens:passModeType"/>
                                 <xsd:attribute name="description"
-                                               type="xsd:string"/>
+                                    type="xsd:string"/>
                             </xsd:extension>
                         </xsd:simpleContent>
                     </xsd:complexType>
@@ -410,14 +410,14 @@
                         <xsd:complexContent>
                             <xsd:restriction base="soapenc:Array">
                                 <xsd:attribute ref="soapenc:arrayType"
-                                               wsdl:arrayType="xsd:QName[]"/>
+                                    wsdl:arrayType="xsd:QName[]"/>
                             </xsd:restriction>
                         </xsd:complexContent>
                     </xsd:complexType>
 
 
                     <xsd:element name="three" type="typens:enum"
-                                 maxOccurs="unbounded"/>
+                        maxOccurs="unbounded"/>
 
 
                     <xsd:element name="a" type="xsd:short"/>
@@ -677,13 +677,13 @@
 
             <message name="inputNonNegativeInteger">
                 <part name="inNonNegativeInteger"
-                      type="xsd:nonNegativeInteger"/>
+                    type="xsd:nonNegativeInteger"/>
                 <part name="NonNegativeInteger" type="xsd:nonNegativeInteger"/>
             </message>
 
             <message name="outputNonNegativeInteger">
                 <part name="outNonNegativeInteger"
-                      type="xsd:nonNegativeInteger"/>
+                    type="xsd:nonNegativeInteger"/>
                 <part name="NonNegativeInteger" type="xsd:nonNegativeInteger"/>
             </message>
 
@@ -699,13 +699,13 @@
 
             <message name="inputNonPositiveInteger">
                 <part name="inNonPositiveInteger"
-                      type="xsd:nonPositiveInteger"/>
+                    type="xsd:nonPositiveInteger"/>
                 <part name="NonPositiveInteger" type="xsd:nonPositiveInteger"/>
             </message>
 
             <message name="outputNonPositiveInteger">
                 <part name="outNonPositiveInteger"
-                      type="xsd:nonPositiveInteger"/>
+                    type="xsd:nonPositiveInteger"/>
                 <part name="NonPositiveInteger" type="xsd:nonPositiveInteger"/>
             </message>
 
@@ -1026,7 +1026,7 @@
                     <output message="tns:complexSequence"/>
                 </operation>
                 <operation name="complexSequenceOut"
-                           parameterOrder="complexSequence">
+                    parameterOrder="complexSequence">
                     <input message="tns:empty"/>
                     <output message="tns:complexSequence"/>
                 </operation>
@@ -1043,7 +1043,7 @@
                     <output message="tns:complexWComplex"/>
                 </operation>
                 <operation name="complexWComplexOut"
-                           parameterOrder="complexWComplex">
+                    parameterOrder="complexWComplex">
                     <input message="tns:empty"/>
                     <output message="tns:complexWComplex"/>
                 </operation>
@@ -1052,19 +1052,19 @@
                     <output message="tns:complexWComplex"/>
                 </operation>
                 <operation name="emptyComplexTypeIn"
-                           parameterOrder="emptyComplexType">
+                    parameterOrder="emptyComplexType">
                     <input message="tns:emptyComplexType"/>
                     <output message="tns:empty"/>
                     <fault name="emptyFault" message="tns:emptyFault"/>
                 </operation>
                 <operation name="emptyComplexTypeInout"
-                           parameterOrder="emptyComplexType">
+                    parameterOrder="emptyComplexType">
                     <input message="tns:emptyComplexType"/>
                     <output message="tns:emptyComplexType"/>
                     <fault name="emptyFault" message="tns:emptyFault"/>
                 </operation>
                 <operation name="emptyComplexTypeOut"
-                           parameterOrder="emptyComplexType">
+                    parameterOrder="emptyComplexType">
                     <input message="tns:empty"/>
                     <output message="tns:emptyComplexType"/>
                     <fault name="emptyFault" message="tns:emptyFault"/>
