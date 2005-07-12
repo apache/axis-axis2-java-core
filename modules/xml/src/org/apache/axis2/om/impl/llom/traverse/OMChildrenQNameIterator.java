@@ -112,12 +112,12 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
      */
     private boolean isQNamesMatch(QName elementQName, QName qNameToBeMatched) {
 
-        // if no QName was given, that means one needs all
+        // if no QName was given, that means user is asking for all
         if (qNameToBeMatched == null) {
             return true;
         }
 
-        // if the given localname is null, whatever value this.qname has, its a match
+        // if the given localname is null, whatever value this.qname has, its a match. But can one give a QName without a localName ??
         boolean localNameMatch =
                 (qNameToBeMatched.getLocalPart() == null)
                 || (qNameToBeMatched.getLocalPart() == "")

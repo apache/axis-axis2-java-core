@@ -1,9 +1,14 @@
 package org.apache.axis2.soap.impl.llom;
 
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
+import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPFaultNode;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+
+import javax.xml.stream.XMLStreamException;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -40,4 +45,48 @@ public abstract class SOAPFaultNodeImpl extends SOAPElement implements SOAPFault
     public String getNodeValue() {
         return this.getText();
     }
+
+    protected void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
+            // select the builder
+            short builderType = PULL_TYPE_BUILDER;    // default is pull type
+            if (builder != null) {
+                builderType = this.builder.getBuilderType();
+            }
+            if ((builderType == PUSH_TYPE_BUILDER)
+                    && (builder.getRegisteredContentHandler() == null)) {
+                builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(omOutput));
+            }
+
+
+            if (!cache) {
+                //No caching
+                if (this.firstChild != null) {
+                    OMSerializerUtil.serializeStartpart(this, omOutput);
+                    firstChild.serialize(omOutput);
+                    OMSerializerUtil.serializeEndpart(omOutput);
+                } else if (!this.done) {
+                    if (builderType == PULL_TYPE_BUILDER) {
+                        OMSerializerUtil.serializeByPullStream(this, omOutput);
+                    } else {
+                        OMSerializerUtil.serializeStartpart(this, omOutput);
+                        builder.setCache(cache);
+                        builder.next();
+                        OMSerializerUtil.serializeEndpart(omOutput);
+                    }
+                } else {
+                    OMSerializerUtil.serializeNormal(this, omOutput, cache);
+                }
+                // do not serialise the siblings
+
+
+            } else {
+                //Cached
+                OMSerializerUtil.serializeNormal(this, omOutput, cache);
+
+                // do not serialise the siblings
+            }
+
+
+        }
+    
 }

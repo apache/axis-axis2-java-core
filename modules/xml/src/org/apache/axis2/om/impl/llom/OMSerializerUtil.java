@@ -37,7 +37,7 @@ public class OMSerializerUtil {
      * @throws javax.xml.stream.XMLStreamException
      *
      */
-    static void serializeEndpart(OMOutput omOutput)
+    public static void serializeEndpart(OMOutput omOutput)
             throws XMLStreamException {
         omOutput.getXmlStreamWriter().writeEndElement();
     }
@@ -49,7 +49,7 @@ public class OMSerializerUtil {
      * @param writer
      * @throws XMLStreamException
      */
-    static void serializeAttribute(OMAttribute attr, OMOutput omOutput)
+    public static void serializeAttribute(OMAttribute attr, OMOutput omOutput)
             throws XMLStreamException {
 
         // first check whether the attribute is associated with a namespace
@@ -81,7 +81,7 @@ public class OMSerializerUtil {
      * @param writer
      * @throws XMLStreamException
      */
-    static void serializeNamespace(OMNamespace namespace, OMOutput omOutput)
+    public static void serializeNamespace(OMNamespace namespace, OMOutput omOutput)
             throws XMLStreamException {
 
         if (namespace != null) {
@@ -103,7 +103,7 @@ public class OMSerializerUtil {
      * @param writer
      * @throws XMLStreamException
      */
-    static void serializeStartpart(OMElementImpl element, OMOutput omOutput)
+    public static void serializeStartpart(OMElementImpl element, OMOutput omOutput)
             throws XMLStreamException {
         String nameSpaceName = null;
         String writer_prefix = null;
@@ -177,9 +177,7 @@ public class OMSerializerUtil {
      * @param cache
      * @throws XMLStreamException
      */
-    static void serializeNormal(OMElementImpl element,
-                                OMOutput omOutput,
-                                boolean cache)
+    public static void serializeNormal(OMElementImpl element, OMOutput omOutput, boolean cache)
             throws XMLStreamException {
 
         if (cache) {
@@ -198,11 +196,9 @@ public class OMSerializerUtil {
         serializeEndpart(omOutput);
     }
 
-    static void serializeByPullStream(OMElementImpl element,
-                                      OMOutput omOutput) throws XMLStreamException {
+    public static void serializeByPullStream(OMElementImpl element, OMOutput omOutput) throws XMLStreamException {
         StreamingOMSerializer streamingOMSerializer = new StreamingOMSerializer();
-        streamingOMSerializer.serialize(
-                element.getXMLStreamReaderWithoutCaching(),
+        streamingOMSerializer.serialize(element.getXMLStreamReaderWithoutCaching(),
                 omOutput);
         return;
     }

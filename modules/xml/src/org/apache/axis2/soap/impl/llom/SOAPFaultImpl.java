@@ -15,22 +15,15 @@
  */
 package org.apache.axis2.soap.impl.llom;
 
-import org.apache.axis2.om.OMConstants;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.llom.OMElementImpl;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPFault;
-import org.apache.axis2.soap.SOAPFaultCode;
-import org.apache.axis2.soap.SOAPFaultDetail;
-import org.apache.axis2.soap.SOAPFaultNode;
-import org.apache.axis2.soap.SOAPFaultReason;
-import org.apache.axis2.soap.SOAPFaultRole;
+import org.apache.axis2.om.impl.llom.OMSerializerUtil;
+import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
+import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
@@ -42,6 +35,7 @@ public abstract class SOAPFaultImpl extends SOAPElement
         implements SOAPFault, OMConstants {
 
     protected Exception e;
+
 
     /**
      * Constructor SOAPFaultImpl
@@ -179,6 +173,52 @@ public abstract class SOAPFaultImpl extends SOAPElement
             }
         }
         return null;
+    }
+
+    protected void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
+        // select the builder
+        short builderType = PULL_TYPE_BUILDER;    // default is pull type
+        if (builder != null) {
+            builderType = this.builder.getBuilderType();
+        }
+        if ((builderType == PUSH_TYPE_BUILDER)
+                && (builder.getRegisteredContentHandler() == null)) {
+            builder.registerExternalContentHandler(new StreamWriterToContentHandlerConverter(omOutput));
+        }
+
+
+        // this is a special case. This fault element may contain its children in any order. But spec mandates a specific order
+        // the overriding of the method will facilitate that. Not sure this is the best method to do this :(
+        build();
+
+        OMSerializerUtil.serializeStartpart(this, omOutput);
+        SOAPFaultCode faultCode = getCode();
+        if (faultCode != null) {
+            faultCode.serializeWithCache(omOutput);
+        }
+        SOAPFaultReason faultReason = getReason();
+        if (faultReason != null) {
+            faultReason.serializeWithCache(omOutput);
+        }
+
+        SOAPFaultNode faultNode = getNode();
+        if (faultNode != null) {
+            faultNode.serializeWithCache(omOutput);
+        }
+
+        SOAPFaultRole faultRole = getRole();
+        if (faultRole != null) {
+            faultRole.serializeWithCache(omOutput);
+        }
+
+
+
+        SOAPFaultDetail faultDetail = getDetail();
+        if (faultDetail != null) {
+            faultDetail.serializeWithCache(omOutput);
+        }
+
+
     }
 
 }

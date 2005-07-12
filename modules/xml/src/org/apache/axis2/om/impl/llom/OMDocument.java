@@ -171,7 +171,7 @@ public class OMDocument implements OMContainer {
      * @throws OMException
      */
     public Iterator getChildrenWithName(QName elementQName) throws OMException {
-        return new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(),
+        return new OMChildrenQNameIterator(getFirstChild(),
                 elementQName);
     }
 
@@ -196,7 +196,7 @@ public class OMDocument implements OMContainer {
      */
     public OMElement getFirstChildWithName(QName elementQName) throws OMException {
         OMChildrenQNameIterator omChildrenQNameIterator =
-                new OMChildrenQNameIterator((OMNodeImpl) getFirstChild(),
+                new OMChildrenQNameIterator(getFirstChild(),
                         elementQName);
         OMNode omNode = null;
         if (omChildrenQNameIterator.hasNext()) {
