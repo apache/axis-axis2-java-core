@@ -42,16 +42,6 @@ public class OMAttributeImpl implements OMAttribute {
     private OMNamespace namespace;
 
     /**
-     * Field QUOTE_ENTITY
-     */
-    private static String QUOTE_ENTITY = "&quot;";
-
-    /**
-     * Field matcher
-     */
-    private static Matcher matcher = Pattern.compile("\"").matcher(null);
-
-    /**
      * Constructor OMAttributeImpl
      *
      * @param localName
@@ -67,7 +57,7 @@ public class OMAttributeImpl implements OMAttribute {
     /**
      * Method getQName
      *
-     * @return
+     * @return qname
      */
     public QName getQName() {
         String namespaceName = (namespace != null)
@@ -81,7 +71,7 @@ public class OMAttributeImpl implements OMAttribute {
     /**
      * Method getLocalName
      *
-     * @return
+     * @return local name
      */
     public String getLocalName() {
         return localName;
@@ -99,7 +89,7 @@ public class OMAttributeImpl implements OMAttribute {
     /**
      * Method getValue
      *
-     * @return
+     * @return value
      */
     public String getValue() {
         return value;
@@ -126,7 +116,7 @@ public class OMAttributeImpl implements OMAttribute {
     /**
      * Method getNamespace
      *
-     * @return
+     * @return namespace
      */
     public OMNamespace getNamespace() {
         return namespace;

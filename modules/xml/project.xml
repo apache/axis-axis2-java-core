@@ -78,7 +78,10 @@
             </resource>
         </resources>
     </build>
-
+	
+    <reports>
+        <report>maven-junit-report-plugin</report>
+    </reports>
 
     <dependencies>
         <!-- external JARs -->
