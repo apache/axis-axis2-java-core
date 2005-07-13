@@ -16,16 +16,22 @@
 package org.apache.axis2.om.impl.llom.factory;
 
 import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMComment;
 import org.apache.axis2.om.OMContainer;
+import org.apache.axis2.om.OMDocType;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMProcessingInstruction;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.OMAttributeImpl;
+import org.apache.axis2.om.impl.llom.OMCommentImpl;
+import org.apache.axis2.om.impl.llom.OMDocTypeImpl;
 import org.apache.axis2.om.impl.llom.OMElementImpl;
 import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
+import org.apache.axis2.om.impl.llom.OMProcessingInstructionImpl;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 
 import javax.activation.DataHandler;
@@ -45,11 +51,10 @@ public class OMLinkedListImplFactory implements OMFactory {
      *
      * @param localName
      * @param ns
-     * @return
+     * @return element
      */
     public OMElement createOMElement(String localName, OMNamespace ns) {
-        OMElementImpl element = new OMElementImpl(localName, ns);
-        return element;
+        return new OMElementImpl(localName, ns);
     }
 
     /**
@@ -59,14 +64,13 @@ public class OMLinkedListImplFactory implements OMFactory {
      * @param ns
      * @param parent
      * @param builder
-     * @return
+     * @return element
      */
     public OMElement createOMElement(String localName, OMNamespace ns,
                                      OMContainer parent,
                                      OMXMLParserWrapper builder) {
-        OMElementImpl element = new OMElementImpl(localName, ns, parent,
+        return new OMElementImpl(localName, ns, parent,
                 builder);
-        return element;
     }
 
     /**
@@ -75,7 +79,7 @@ public class OMLinkedListImplFactory implements OMFactory {
      * @param localName
      * @param namespaceURI
      * @param namespacePrefix
-     * @return
+     * @return element
      */
     public OMElement createOMElement(String localName, String namespaceURI,
                                      String namespacePrefix) {
@@ -102,7 +106,7 @@ public class OMLinkedListImplFactory implements OMFactory {
      *
      * @param uri
      * @param prefix
-     * @return
+     * @return namespace
      */
     public OMNamespace createOMNamespace(String uri, String prefix) {
         return new OMNamespaceImpl(uri, prefix);
@@ -113,33 +117,51 @@ public class OMLinkedListImplFactory implements OMFactory {
      *
      * @param parent
      * @param text
-     * @return
+     * @return text
      */
     public OMText createText(OMElement parent, String text) {
-        OMTextImpl textNode = new OMTextImpl(parent, text);
-        return textNode;
+        return new OMTextImpl(parent, text);
     }
 
     /**
      * Method createText
      *
      * @param s
-     * @return
+     * @return text
      */
     public OMText createText(String s) {
-        OMTextImpl textNode = new OMTextImpl(s);
-        ;
-        return textNode;
+        return new OMTextImpl(s);
     }
 
+    /**
+     * create Text
+     * @param s
+     * @param mimeType
+     * @param optimize
+     * @return text
+     */
     public OMText createText(String s, String mimeType, boolean optimize) {
         return new OMTextImpl(s, mimeType, optimize);
     }
 
+    /**
+     * create text
+     * @param dataHandler
+     * @param optimize
+     * @return text
+     */
     public OMText createText(DataHandler dataHandler, boolean optimize) {
         return new OMTextImpl(dataHandler, optimize);
     }
 
+    /**
+     * create text
+     * @param parent
+     * @param s
+     * @param mimeType
+     * @param optimize
+     * @return text
+     */
     public OMText createText(OMElement parent,
                              String s,
                              String mimeType,
@@ -147,11 +169,47 @@ public class OMLinkedListImplFactory implements OMFactory {
         return new OMTextImpl(parent, s, mimeType, optimize);
     }
 
+    /**
+     * create attribute
+     * @param localName
+     * @param ns
+     * @param value
+     * @return attribute
+     */
     public OMAttribute createOMAttribute(String localName,
                                          OMNamespace ns,
                                          String value) {
         return new OMAttributeImpl(localName, ns, value);
     }
 
+    /**
+     * create DocType/DTD
+     * @param parent
+     * @param content
+     * @return doctype
+     */
+    public OMDocType createOMDocType(OMContainer parent, String content) {
+        return new OMDocTypeImpl(parent, content);
+    }
 
+    /**
+     * create a PI
+     * @param parent
+     * @param piTarget
+     * @param piData
+     * @return pi
+     */
+    public OMProcessingInstruction createOMProcessingInstruction(OMContainer parent, String piTarget, String piData) {
+        return new OMProcessingInstructionImpl(parent, piTarget, piData);
+    }
+
+    /**
+     * create a comment
+     * @param parent
+     * @param content
+     * @return comment
+     */
+    public OMComment createOMComment(OMContainer parent, String content) {
+        return new OMCommentImpl(parent, content);
+    }
 }

@@ -88,7 +88,7 @@ public interface OMNode {
      * If somethings info are not available in the item, one has to check this attribute to make sure that, this
      * item has been parsed completely or not.
      *
-     * @return
+     * @return boolean
      */
     public boolean isComplete();
 
@@ -151,7 +151,7 @@ public interface OMNode {
     /**
      * get the previous sibling
      *
-     * @return
+     * @return node
      */
     public OMNode getPreviousSibling();
 
@@ -165,19 +165,19 @@ public interface OMNode {
     /**
      * Serialize the node with caching
      *
-     * @param writer
+     * @param omOutput
      * @throws XMLStreamException
-     * @see #serializeWithCache(javax.xml.stream.XMLStreamWriter)
+     * @see #serializeWithCache(OMOutput)
      */
     public void serializeWithCache(OMOutput omOutput)
             throws XMLStreamException;
 
     /**
-     * Serilaize the node without caching
+     * Serialize the node without caching
      *
-     * @param writer
+     * @param omOutput
      * @throws XMLStreamException
-     * @see #serialize(javax.xml.stream.XMLStreamWriter)
+     * @see #serialize(OMOutput)
      */
     public void serialize(OMOutput omOutput) throws XMLStreamException;
 

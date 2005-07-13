@@ -19,9 +19,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 
-/**
- * @author TAMURA Kent &lt;kent@trl.ibm.co.jp&gt;
- */
 public class Base64 {
     private static final char[] S_BASE64CHAR = {'A', 'B', 'C', 'D', 'E', 'F',
                                                 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',

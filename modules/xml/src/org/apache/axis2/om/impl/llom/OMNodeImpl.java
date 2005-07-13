@@ -65,11 +65,6 @@ public abstract class OMNodeImpl implements OMNode {
      * @param parent
      */
     public OMNodeImpl(OMContainer parent) {
-        //if ((parent != null) && (parent.getType() == OMNode.ELEMENT_NODE)) {
-        //Comment by Jaya:
-        //OMContainer is only implemented by OMElement and OMDocument which are
-        //quite well deemed to act as parents, so checking the type of parent
-        //is not necessary.
         if ((parent != null)) {
             this.parent = parent;
             parent.addChild(this);

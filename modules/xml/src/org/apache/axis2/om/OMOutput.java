@@ -24,8 +24,7 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 
 /**
- * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a> For
- *         the moment this assumes that transport takes the decision of whether
+ *         For the moment this assumes that transport takes the decision of whether
  *         to optimise or not by looking at whether the MTOM optimise is enabled &
  *         also looking at the OM tree whether it has any optimisable content
  */

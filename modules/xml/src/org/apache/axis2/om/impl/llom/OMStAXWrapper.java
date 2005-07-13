@@ -1022,9 +1022,6 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         switch (nodeType) {
             case OMNode.ELEMENT_NODE:
                 OMElement element = (OMElement) node;
-//                log.info("Generating events from element {"
-//                                + element.getNamespace().getName() + '}'
-//                                + element.getLocalName() + " Generated OM tree");
                 returnEvent = generateElementEvents(element);
                 break;
             case OMNode.TEXT_NODE:

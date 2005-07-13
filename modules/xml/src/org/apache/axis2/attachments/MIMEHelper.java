@@ -29,9 +29,6 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.util.HashMap;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
- */
 public class MIMEHelper {
     /**
      * if the Message is MTOM optimised then <code>MTOM_TYPE</code>

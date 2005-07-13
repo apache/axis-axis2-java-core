@@ -31,10 +31,6 @@ import org.apache.commons.logging.LogFactory;
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLStreamReader;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
- */
-
 public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
     private Log log = LogFactory.getLog(getClass());
 
@@ -55,7 +51,7 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
 
     /**
      * @param reader
-     * @param mimeHelper2
+     * @param mimeHelper
      */
     public MTOMStAXSOAPModelBuilder(XMLStreamReader reader,
                                     MIMEHelper mimeHelper) {

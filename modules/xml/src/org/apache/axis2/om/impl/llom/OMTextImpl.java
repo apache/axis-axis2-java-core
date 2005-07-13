@@ -37,45 +37,30 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Random;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
- */
 public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
-
     protected String value = null;
-
-    protected short textType = TEXT_NODE;
-
     protected String mimeType;
-
     protected boolean optimize = false;
-
     protected boolean isBinary = false;
-
     private static Random rnd = new Random(new Date().getTime());
-
     /**
      * Field contentID for the mime part used when serialising Binary stuff as
      * MTOM optimised
      */
     private String contentID = null;
-
     /**
      * Field dataHandler
      */
     private DataHandler dataHandler = null;
-
     /**
      * Field nameSpace used when serialising Binary stuff as MTOM optimised
      */
     protected OMNamespace ns = new OMNamespaceImpl(
             "http://www.w3.org/2004/08/xop/Include", "xop");
-
     /**
      * Field localName used when serialising Binary stuff as MTOM optimised
      */
     protected String localName = "Include";
-
     /**
      * Field attributes used when serialising Binary stuff as MTOM optimised
      */
@@ -88,6 +73,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      */
     public OMTextImpl(String s) {
         this.value = s;
+        this.nodeType = TEXT_NODE;
     }
 
     /**
@@ -100,6 +86,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         super(parent);
         this.value = text;
         done = true;
+        this.nodeType = TEXT_NODE;
     }
 
     /**
@@ -122,10 +109,11 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         this(parent, s);
         this.mimeType = mimeType;
         this.optimize = optimize;
-        if (this.contentID == null && optimize == true) {
+        if (this.contentID == null && optimize) {
             createContentID();
         }
         done = true;
+        this.nodeType = TEXT_NODE;
     }
 
     /**
@@ -133,7 +121,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      */
     public OMTextImpl(DataHandler dataHandler) {
         this(dataHandler, true);
-
     }
 
     /**
@@ -144,11 +131,11 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         this.dataHandler = dataHandler;
         this.isBinary = true;
         this.optimize = optimize;
-        if (this.contentID == null && optimize == true) {
+        if (this.contentID == null && optimize) {
             createContentID();
         }
         done = true;
-
+        this.nodeType = TEXT_NODE;
     }
 
     /**
@@ -165,46 +152,19 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         this.optimize = true;
         this.isBinary = true;
         this.builder = builder;
-//done = true;
-
+        this.nodeType = TEXT_NODE;
     }
 
     /**
-     * We use the OMText class to hold comments, text, characterData, CData,
-     * etc., The codes are found in OMNode class
-     *
-     * @param type
-     */
-    public void setTextType(short type) {
-        if ((type == TEXT_NODE) || (type == COMMENT_NODE)
-                || (type == CDATA_SECTION_NODE
-                || (type == PI_NODE))) {
-            this.textType = type;
-        } else {
-            throw new UnsupportedOperationException(
-                    "Attempt to set wrong type");
-        }
-    }
-
-    public int getType() throws OMException {
-        int type = super.getType();
-        if (type == COMMENT_NODE || type == CDATA_SECTION_NODE ||
-                type == PI_NODE)
-            return type;
-        return textType;
-    }
-
-    /**
-     * @param writer
+     * @param omOutput
      * @throws XMLStreamException
      */
     public void serializeWithCache(OMOutput omOutput) throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
-        if (textType == TEXT_NODE) {
+        int type = getType();
+        if (type == TEXT_NODE) {
             writer.writeCharacters(this.value);
-        } else if (textType == COMMENT_NODE) {
-            writer.writeComment(this.value);
-        } else if (textType == CDATA_SECTION_NODE) {
+        } else if (type == CDATA_SECTION_NODE) {
             writer.writeCData(this.value);
         }
         OMNode nextSibling = this.getNextSibling();
@@ -232,16 +192,15 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                         + e);
             }
         }
-
     }
 
     public boolean isOptimized() {
         return optimize;
     }
 
-    public void doOptimize(boolean value) {
+    public void setOptimize(boolean value) {
         this.optimize = value;
-        if (this.contentID == null && value == true) {
+        if (this.contentID == null && value) {
             getContentID();
         }
     }
@@ -253,11 +212,10 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      * @throws OMException
      */
     public DataHandler getDataHandler() {
-
         /*
-         * this should return a DataHandler containing the binary data
-         * reperesented by the Base64 strings stored in OMText
-         */
+        * this should return a DataHandler containing the binary data
+        * reperesented by the Base64 strings stored in OMText
+        */
         if (value != null) {
             ByteArrayDataSource dataSource;
             byte[] data = Base64.decode(value);
@@ -267,8 +225,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                 // Assumes type as application/octet-stream
                 dataSource = new ByteArrayDataSource(data);
             }
-            DataHandler dataHandler = new DataHandler(dataSource);
-            return dataHandler;
+            return new DataHandler(dataSource);
         } else {
             if (dataHandler == null) {
                 dataHandler = ((MTOMStAXSOAPModelBuilder) builder)
@@ -283,7 +240,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     }
 
     public java.io.InputStream getInputStream() throws OMException {
-        if (isBinary == true) {
+        if (isBinary) {
             if (dataHandler == null) {
                 getDataHandler();
             }
@@ -309,8 +266,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     }
 
     public void serialize(OMOutput omOutput) throws XMLStreamException {
-        boolean firstElement = false;
-
         if (!this.isBinary) {
             serializeWithCache(omOutput);
         } else {
@@ -320,8 +275,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                         new OMAttributeImpl("href",
                                 new OMNamespaceImpl("", ""),
                                 "cid:"
-                        + this.contentID.trim());
-
+                                        + this.contentID.trim());
                 this.serializeStartpart(omOutput);
                 omOutput.writeOptimised(this);
                 omOutput.getXmlStreamWriter().writeEndElement();
@@ -335,43 +289,35 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                 nextSibling.serialize(omOutput);
             } else {
                 // TODO : See whether following part is really needed
-                if (parent == null) {
-                    return;
-                } else if (parent.isComplete()) {
-                    return;
-                } else {
+                if (parent != null && !parent.isComplete()) {
                     // do the special serialization
                     // Only the push serializer is left now
                     builder.next();
                 }
-
             }
         }
-
     }
 
     private void createContentID() {
-//		 We can use a UUID, taken using Apache commons id project.
+        // We can use a UUID, taken using Apache commons id project.
         // TODO change to UUID
         this.contentID = "2" + String.valueOf(rnd.nextLong()) +
                 "@schemas.xmlsoap.org";
     }
 
-
     /*
-     * Methods to copy from OMSerialize utils
-     */
+    * Methods to copy from OMSerialize utils
+    */
     private void serializeStartpart(OMOutput omOutput)
             throws XMLStreamException {
-        String nameSpaceName = null;
-        String writer_prefix = null;
-        String prefix = null;
+        String nameSpaceName;
+        String writer_prefix;
+        String prefix;
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         if (this.ns != null) {
             nameSpaceName = this.ns.getName();
             writer_prefix = writer.getPrefix(nameSpaceName);
             prefix = this.ns.getPrefix();
-
             if (nameSpaceName != null) {
                 if (writer_prefix != null) {
                     writer.writeStartElement(nameSpaceName,
@@ -380,8 +326,8 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                     if (prefix != null) {
                         writer.writeStartElement(prefix, this.getLocalName(),
                                 nameSpaceName);
-//TODO FIX ME
-//writer.writeNamespace(prefix, nameSpaceName);
+                        //TODO FIX ME
+                        //writer.writeNamespace(prefix, nameSpaceName);
                         writer.setPrefix(prefix, nameSpaceName);
                     } else {
                         writer.writeStartElement(nameSpaceName,
@@ -392,39 +338,31 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                 }
             } else {
                 writer.writeStartElement(this.getLocalName());
-
             }
         } else {
             writer.writeStartElement(this.getLocalName());
-
         }
-
         // add the elements attribute "href"
-
         serializeAttribute(this.attribute, omOutput);
-
         // add the namespace
         serializeNamespace(this.ns, omOutput);
-
     }
 
     /**
      * Method serializeAttribute
      *
      * @param attr
-     * @param writer
+     * @param omOutput
      * @throws XMLStreamException
      */
     static void serializeAttribute(OMAttribute attr, OMOutput omOutput)
             throws XMLStreamException {
-
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         // first check whether the attribute is associated with a namespace
         OMNamespace ns = attr.getNamespace();
-        String prefix = null;
-        String namespaceName = null;
+        String prefix;
+        String namespaceName;
         if (ns != null) {
-
             // add the prefix if it's availble
             prefix = ns.getPrefix();
             namespaceName = ns.getName();
@@ -432,13 +370,13 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                 writer.writeAttribute(prefix,
                         namespaceName,
                         attr
-                        .getLocalName(),
+                                .getLocalName(),
                         attr.getValue());
             } else {
                 writer.writeAttribute(namespaceName,
                         attr.getLocalName(),
                         attr
-                        .getValue());
+                                .getValue());
             }
         } else {
             writer.writeAttribute(attr.getLocalName(), attr.getValue());
@@ -449,7 +387,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      * Method serializeNamespace
      *
      * @param namespace
-     * @param writer
+     * @param omOutput
      * @throws XMLStreamException
      */
     static void serializeNamespace(OMNamespace namespace, OMOutput omOutput)
@@ -457,12 +395,9 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         if (namespace != null) {
             String uri = namespace.getName();
-            //String prefix = writer.getPrefix(uri);
             String ns_prefix = namespace.getPrefix();
-            //if (prefix == null) {
             writer.writeNamespace(ns_prefix, namespace.getName());
             writer.setPrefix(ns_prefix, uri);
-            //}
         }
     }
 
@@ -478,5 +413,4 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
             builder.discard((OMElement) this.parent);
         }
     }
-
 }

@@ -27,8 +27,6 @@ import java.io.OutputStream;
 
 /**
  * JDK1.3 based Image I/O
- *
- * @author <a href="mailto:butek@us.ibm.com">Russell Butek</a>
  */
 public class JDK13IO extends Component implements ImageIO {
     /**

@@ -6,6 +6,8 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMProcessingInstruction;
+import org.apache.axis2.om.OMComment;
 import org.apache.axis2.om.impl.llom.OMDocument;
 import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
@@ -168,8 +170,7 @@ public class DocumentNavigator extends DefaultNavigator {
      *         else <code>false</code>
      */
     public boolean isComment(Object object) {
-        return (object instanceof OMNode) &&
-                (((OMNode) object).getType() == OMNode.COMMENT_NODE);
+        return (object instanceof OMComment);
     }
 
     /**
@@ -180,8 +181,7 @@ public class DocumentNavigator extends DefaultNavigator {
      *         else <code>false</code>
      */
     public boolean isText(Object object) {
-        return (object instanceof OMNode) &&
-                (((OMNode) object).getType() == OMNode.TEXT_NODE);
+        return (object instanceof OMText);
     }
 
     /**
@@ -192,8 +192,7 @@ public class DocumentNavigator extends DefaultNavigator {
      *         else <code>false</code>
      */
     public boolean isProcessingInstruction(Object object) {
-        return (object instanceof OMNode) &&
-                (((OMNode) object).getType() == OMNode.PI_NODE);
+        return (object instanceof OMProcessingInstruction);
     }
 
     /**
@@ -205,7 +204,7 @@ public class DocumentNavigator extends DefaultNavigator {
      * @return the string-value of the node
      */
     public String getCommentStringValue(Object object) {
-        return ((OMText) object).getText();
+        return ((OMComment) object).getValue();
     }
 
     /**
@@ -611,9 +610,7 @@ public class DocumentNavigator extends DefaultNavigator {
      * @return the target of the processing-instruction node
      */
     public String getProcessingInstructionTarget(Object object) {
-        String data = ((OMText)object).getText().trim();
-        int end = data.indexOf(' ');
-        return data.substring(2,end);
+        return ((OMProcessingInstruction)object).getTarget();
     }
 
     /**
@@ -623,10 +620,7 @@ public class DocumentNavigator extends DefaultNavigator {
      * @return the data of the processing-instruction node
      */
     public String getProcessingInstructionData(Object object) {
-        String data = ((OMText)object).getText().trim();
-        int begin = data.indexOf(' ') + 1;
-        int end = data.length()-2;
-        return data.substring(begin,end);
+        return ((OMProcessingInstruction)object).getValue();
     }
 
     /**

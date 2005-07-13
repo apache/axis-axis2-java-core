@@ -20,11 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
- *         This class provides input streams delimited by the mime boundaries.
- */
-
 public class MimeBodyPartInputStream extends InputStream {
     PushbackInputStream inStream;
 

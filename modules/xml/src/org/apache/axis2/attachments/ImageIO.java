@@ -22,9 +22,6 @@ import java.io.OutputStream;
 
 /**
  * This interface defines a ImageIO modules functionality
- *
- * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
- * @since 2.0
  */
 public interface ImageIO {
     /**

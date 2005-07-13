@@ -24,10 +24,14 @@ public interface OMText extends OMNode {
     /**
      * Returns the text value of this node
      *
-     * @return
+     * @return string
      */
     String getText();
 
+    /**
+     * get the datahandler
+     * @return datahandler
+     */
     DataHandler getDataHandler();
 
     /**
@@ -36,7 +40,15 @@ public interface OMText extends OMNode {
      */
     boolean isOptimized();
 
-    void doOptimize(boolean value);
+    /**
+     * set the optimize flag
+     * @param value
+     */
+    void setOptimize(boolean value);
 
+    /**
+     * get the content id
+     * @return string
+     */
     String getContentID();
 }

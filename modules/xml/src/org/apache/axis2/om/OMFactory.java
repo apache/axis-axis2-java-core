@@ -15,6 +15,10 @@
  */
 package org.apache.axis2.om;
 
+import org.apache.axis2.om.impl.llom.OMDocTypeImpl;
+import org.apache.axis2.om.impl.llom.OMProcessingInstructionImpl;
+import org.apache.axis2.om.impl.llom.OMCommentImpl;
+
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 
@@ -99,9 +103,28 @@ public interface OMFactory {
                                          OMNamespace ns,
                                          String value);
 
+    /**
+     * create DocType/DTD
+     * @param parent
+     * @param content
+     * @return doctype
+     */
+    public OMDocType createOMDocType(OMContainer parent, String content);
 
+    /**
+     * create a PI
+     * @param parent
+     * @param piTarget
+     * @param piData
+     * @return pi
+     */
+    public OMProcessingInstruction createOMProcessingInstruction(OMContainer parent, String piTarget, String piData);
 
-    // make the constructor protected
-
-
+    /**
+     * create a comment
+     * @param parent
+     * @param content
+     * @return comment
+     */
+    public OMComment createOMComment(OMContainer parent, String content);
 }

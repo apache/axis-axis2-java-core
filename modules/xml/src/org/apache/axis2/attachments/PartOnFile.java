@@ -33,9 +33,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class PartOnFile implements Part {
 
     String fileName;

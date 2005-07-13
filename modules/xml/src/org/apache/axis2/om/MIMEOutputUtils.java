@@ -25,9 +25,6 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
- */
 public class MIMEOutputUtils {
 
     private static byte[] CRLF = {13, 10};

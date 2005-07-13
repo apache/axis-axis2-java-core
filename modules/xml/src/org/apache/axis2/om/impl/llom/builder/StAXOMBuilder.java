@@ -16,6 +16,7 @@
 package org.apache.axis2.om.impl.llom.builder;
 
 import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMFactory;
@@ -23,7 +24,6 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMDocument;
-import org.apache.axis2.soap.SOAPEnvelope;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
@@ -85,10 +85,8 @@ public class StAXOMBuilder extends StAXBuilder {
                     (OMElement) lastNode, this);
             e.setFirstChild(node);
         }
-
         // create the namespaces
         processNamespaceData(node, false);
-
         // fill in the attributes
         processAttributes(node);
         return node;
@@ -103,17 +101,12 @@ public class StAXOMBuilder extends StAXBuilder {
     protected OMNode createComment() throws OMException {
         OMNode node;
         if (lastNode == null) {
-            node = omfactory.createText("<!--" + parser.getText() + "-->");
-            document.addChild(node);
+            node = omfactory.createOMComment(document, parser.getText());
         } else if (lastNode.isComplete()) {
-            node =
-                    omfactory.createText((OMElement) lastNode.getParent(),
-                            "<!--" + parser.getText() + "-->");
+            node = omfactory.createOMComment(lastNode.getParent(), parser.getText());
         } else {
-            OMElement e = (OMElement) lastNode;
-            node = omfactory.createText(e, "<!--" + parser.getText() + "-->");
+            node = omfactory.createOMComment((OMElement) lastNode, parser.getText());
         }
-        node.setType(OMNode.COMMENT_NODE);
         return node;
     }
 
@@ -126,45 +119,28 @@ public class StAXOMBuilder extends StAXBuilder {
     protected OMNode createDTD() throws OMException {
         if (!parser.hasText())
             return null;
-        OMNode node = omfactory.createText(parser.getText());
-        document.addChild(node);
-        node.setType(OMNode.DTD_NODE);
-        return node;
+        return omfactory.createOMDocType(document, parser.getText());
     }
 
+    /**
+     * Method createPI
+     * @return
+     * @throws OMException
+     */
     protected OMNode createPI() throws OMException {
         OMNode node;
         String target = parser.getPITarget();
         String data = parser.getPIData();
         if (lastNode == null) {
-            node = omfactory.createText("<?" + target + " " + data + "?>");
-            node.setType(OMNode.PI_NODE);
-            document.addChild(node);
+            node = omfactory.createOMProcessingInstruction(document, target, data);
         } else if (lastNode.isComplete()) {
-            node =
-                    omfactory.createText((OMElement) lastNode.getParent(),
-                            "<?" + target + " " + data + "?>");
-            node.setType(OMNode.PI_NODE);
+            node = omfactory.createOMProcessingInstruction(lastNode.getParent(), target, data);
         } else if (lastNode instanceof OMText) {
-            node = omfactory.createText("<?" + target + " " + data + "?>");
-            node.setType(OMNode.PI_NODE);
-            lastNode.getParent().addChild(node);
+            node = omfactory.createOMProcessingInstruction(lastNode.getParent(), target, data);
         } else {
-            OMElement e = (OMElement) lastNode;
-            node = omfactory.createText(e, "<?" + target + " " + data + "?>");
-            node.setType(OMNode.PI_NODE);
+            node = omfactory.createOMProcessingInstruction((OMContainer) lastNode, target, data);
         }
         return node;
-    }
-
-    /**
-     * Method getOMEnvelope
-     *
-     * @return
-     * @throws OMException
-     */
-    public SOAPEnvelope getOMEnvelope() throws OMException {
-        throw new UnsupportedOperationException();    // TODO implement this
     }
 
     /**
@@ -178,10 +154,6 @@ public class StAXOMBuilder extends StAXBuilder {
             if (done) {
                 throw new OMException();
             }
-            ///////////////////////////////////
-//            int token = parser.getEventType();
-            //////////////////////////////////
-
             int token = parser.next();
             if (!cache) {
                 return token;
@@ -193,7 +165,6 @@ public class StAXOMBuilder extends StAXBuilder {
                 case XMLStreamConstants.START_DOCUMENT:
                     //Don't do anything in the start document event
                     //We've already assumed that start document has passed!
-                    //document = new OMDocument(this);
                     break;
                 case XMLStreamConstants.CHARACTERS:
                     lastNode = createOMText();
@@ -226,9 +197,6 @@ public class StAXOMBuilder extends StAXBuilder {
                 default :
                     throw new OMException();
             }
-            ////////////////////
-            // if (!done) parser.next();
-            ///////////////////
             return token;
         } catch (OMException e) {
             throw e;
@@ -240,7 +208,7 @@ public class StAXOMBuilder extends StAXBuilder {
     /**
      * Method getDocumentElement
      *
-     * @return
+     * @return root element
      */
     public OMElement getDocumentElement() {
         return document.getRootElement();
@@ -258,7 +226,6 @@ public class StAXOMBuilder extends StAXBuilder {
             node.declareNamespace(parser.getNamespaceURI(i),
                     parser.getNamespacePrefix(i));
         }
-
         // set the own namespace
         String namespaceURI = parser.getNamespaceURI();
         String prefix = parser.getPrefix();
@@ -282,21 +249,6 @@ public class StAXOMBuilder extends StAXBuilder {
                     node.setNamespace(namespace);
                 }
             }
-
-        } else {
-            // What to do if namespace URI is not available
         }
     }
-//        int namespaceCount = parser.getNamespaceCount();
-//        for (int i = 0; i < namespaceCount; i++) {
-//            node.declareNamespace(parser.getNamespaceURI(i),
-//                    parser.getNamespacePrefix(i));
-//        }
-//
-//        // set the own namespace
-//        OMNamespace namespace =
-//                node.findNamespace(parser.getNamespaceURI(),
-//                        parser.getPrefix());
-//        node.setNamespace(namespace);
-//    }
 }
