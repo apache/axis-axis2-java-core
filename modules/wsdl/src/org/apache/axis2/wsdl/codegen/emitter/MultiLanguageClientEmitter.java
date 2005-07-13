@@ -18,7 +18,7 @@ import org.apache.axis2.wsdl.codegen.writer.TestClassWriter;
 import org.apache.axis2.wsdl.codegen.writer.TestServiceXMLWriter;
 import org.apache.axis2.wsdl.codegen.writer.TestSkeletonImplWriter;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
-import org.apache.crimson.tree.XmlDocument;
+//import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLBindingOperation;
@@ -36,7 +36,15 @@ import org.apache.wsdl.extensions.SOAPOperation;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+import org.w3c.dom.Document;
 
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -161,7 +169,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     protected void writeTestSkeletonImpl(WSDLBinding binding) throws Exception {
         if (configuration.isWriteTestCase()) {
-            XmlDocument classModel = createDocumentForTestSkeletonImpl(binding);
+            Document classModel = createDocumentForTestSkeletonImpl(binding);
             TestSkeletonImplWriter callbackWriter =
                     new TestSkeletonImplWriter(
                             this.configuration.getOutputLocation(),
@@ -176,7 +184,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected void writeCallBackHandlers(WSDLBinding binding) throws Exception {
 
         if (configuration.isAsyncOn()) {
-            XmlDocument interfaceModel = createDOMDocumentForCallbackHandler(
+            Document interfaceModel = createDOMDocumentForCallbackHandler(
                     binding);
             CallbackHandlerWriter callbackWriter =
                     new CallbackHandlerWriter(
@@ -198,7 +206,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected void writeLocalTestClasses(WSDLBinding binding) throws Exception {
 
         if (configuration.isWriteTestCase()) {
-            XmlDocument classModel = createDOMDocuementForLocalTestCase(
+            Document classModel = createDOMDocuementForLocalTestCase(
                     binding);
             LocalTestClassWriter callbackWriter =
                     new LocalTestClassWriter(
@@ -214,7 +222,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected void writeTestClasses(WSDLBinding binding) throws Exception {
 
         if (configuration.isWriteTestCase()) {
-            XmlDocument classModel = createDOMDocuementForTestCase(binding);
+            Document classModel = createDOMDocuementForTestCase(binding);
             TestClassWriter callbackWriter =
                     new TestClassWriter(this.configuration.getOutputLocation(),
                             this.configuration.getOutputLanguage());
@@ -230,7 +238,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @throws Exception
      */
     protected void writeInterface(WSDLBinding axisBinding) throws Exception {
-        XmlDocument interfaceModel = createDOMDocuementForInterface(
+        Document interfaceModel = createDOMDocuementForInterface(
                 axisBinding);
         InterfaceWriter interfaceWriter =
                 new InterfaceWriter(this.configuration.getOutputLocation(),
@@ -247,7 +255,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected void writeSkeleton(WSDLBinding axisBinding) throws Exception {
 
         //Note -  One can generate the skeleton using the interface XML
-        XmlDocument skeletonModel = createDOMDocuementForSkeleton(axisBinding);
+        Document skeletonModel = createDOMDocuementForSkeleton(axisBinding);
         ClassWriter skeletonWriter = new SkeletonWriter(
                 this.configuration.getOutputLocation(),
                 this.configuration.getOutputLanguage());
@@ -268,7 +276,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             //Note -  there will be a supporter generated per method and will contain the methods to serilize and
             //deserilize the relevant objects
-            XmlDocument databindingSupporterModel = createDOMDocumentforSerialization(
+            Document databindingSupporterModel = createDOMDocumentforSerialization(
                     (WSDLOperation) iterator.next());
             ClassWriter databindingSupportWriter = new DatabindingSupportClassWriter(
                     this.configuration.getOutputLocation(),
@@ -282,7 +290,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected void writeTestServiceXML(WSDLBinding axisBinding) throws Exception {
         if (this.configuration.isWriteTestCase()) {
             //Note -  One can generate the service xml using the interface XML
-            XmlDocument skeletonModel = createDOMDocuementForServiceXML(
+            Document skeletonModel = createDOMDocuementForServiceXML(
                     axisBinding, true);
             TestServiceXMLWriter testServiceXmlWriter = new TestServiceXMLWriter(
                     this.configuration.getOutputLocation(),
@@ -299,7 +307,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      */
     protected void writeServiceXml(WSDLBinding axisBinding) throws Exception {
         if (this.configuration.isGenerateDeployementDescriptor()) {
-            XmlDocument skeletonModel = createDOMDocuementForServiceXML(
+            Document skeletonModel = createDOMDocuementForServiceXML(
                     axisBinding, false);
             ClassWriter serviceXmlWriter = new ServiceXMLWriter(
                     this.configuration.getOutputLocation(),
@@ -317,7 +325,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      */
     protected void writeInterfaceImplementation(WSDLBinding axisBinding,
                                                 WSDLService service) throws Exception {
-        XmlDocument interfaceImplModel = createDOMDocuementForInterfaceImplementation(
+        Document interfaceImplModel = createDOMDocuementForInterfaceImplementation(
                 axisBinding, service);
         InterfaceImplementationWriter writer =
                 new InterfaceImplementationWriter(
@@ -328,7 +336,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     protected void writeMessageReceiver(WSDLBinding axisBinding) throws Exception {
         if (configuration.isWriteMessageReceiver()) {
-            XmlDocument classModel = createDocumentForMessageReceiver(
+            Document classModel = createDocumentForMessageReceiver(
                     axisBinding);
             MessageReceiverWriter writer =
                     new MessageReceiverWriter(
@@ -349,7 +357,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         if (collection != null) {
             for (Iterator iterator = collection.iterator();
                  iterator.hasNext();) {
-                XmlDocument interfaceModel = createDOMDocuementForBean();
+                Document interfaceModel = createDOMDocuementForBean();
                 BeanWriter beanWriter =
                         new BeanWriter(this.configuration.getOutputLocation(),
                                 this.configuration.getOutputLanguage());
@@ -367,10 +375,18 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @throws IOException
      * @throws Exception
      */
-    protected void writeClass(XmlDocument model, ClassWriter writer) throws IOException,
+    protected void writeClass(Document model, ClassWriter writer) throws IOException,
             Exception {
         ByteArrayOutputStream memoryStream = new ByteArrayOutputStream();
-        model.write(memoryStream);
+        // Use a Transformer for output
+        TransformerFactory tFactory =
+                TransformerFactory.newInstance();
+        Transformer transformer = tFactory.newTransformer();
+
+        DOMSource source = new DOMSource(model);
+        StreamResult result = new StreamResult(memoryStream);
+        transformer.transform(source, result);
+
         writer.loadTemplate();
         writer.createOutFile(
                 model.getDocumentElement().getAttribute("package"),
@@ -411,11 +427,12 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         }
     }
 
-    protected XmlDocument createDocumentForTestSkeletonImpl(
+    protected Document createDocumentForTestSkeletonImpl(
             WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
-        XmlDocument doc = new XmlDocument();
+        Document doc = getEmptyDocument();
+
         Element rootElement = doc.createElement("class");
         addAttribute(doc,
                 "package",
@@ -444,16 +461,26 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         return doc;
     }
 
+    private Document getEmptyDocument() {
+        try {
+            DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document doc = documentBuilder.newDocument();
+            return doc;
+        } catch (ParserConfigurationException e) {
+            return null;
+        }
+    }
+
     /**
      * Generating the callbacks
      *
      * @param binding
      * @return
      */
-    protected XmlDocument createDOMDocumentForCallbackHandler(
+    protected Document createDOMDocumentForCallbackHandler(
             WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
-        XmlDocument doc = new XmlDocument();
+        Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("callback");
         addAttribute(doc,
                 "package",
@@ -484,7 +511,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @param operation
      * @return
      */
-    protected Element getInputElement(XmlDocument doc,
+    protected Element getInputElement(Document doc,
                                       WSDLOperation operation) {
         Element inputElt = doc.createElement("input");
         Element param = getInputParamElement(doc, operation);
@@ -492,7 +519,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         return inputElt;
     }
 
-    private Element getInputParamElement(XmlDocument doc,
+    private Element getInputParamElement(Document doc,
                                          WSDLOperation operation) {
         //todo this should go in a loop
         Element param = doc.createElement("param");
@@ -515,7 +542,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @param operation
      * @return
      */
-    protected Element getOutputElement(XmlDocument doc,
+    protected Element getOutputElement(Document doc,
                                        WSDLOperation operation) {
         Element outputElt = doc.createElement("output");
         Element param = getOutputParamElement(doc, operation);
@@ -523,7 +550,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         return outputElt;
     }
 
-    private Element getOutputParamElement(XmlDocument doc,
+    private Element getOutputParamElement(Document doc,
                                           WSDLOperation operation) {
         Element param = doc.createElement("param");
         addAttribute(doc,
@@ -544,15 +571,15 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      *
      * @return
      */
-    protected XmlDocument createDOMDocuementForBean() {
+    protected Document createDOMDocuementForBean() {
         return null;
     }
 
-    protected XmlDocument createDOMDocuementForServiceXML(WSDLBinding binding,
-                                                          boolean forTesting) {
+    protected Document createDOMDocuementForServiceXML(WSDLBinding binding,
+                                                       boolean forTesting) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
-        XmlDocument doc = new XmlDocument();
+        Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
         String localPart = boundInterface.getName().getLocalPart();
         if (forTesting) {
@@ -592,10 +619,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
 
-    protected XmlDocument createDocumentForMessageReceiver(WSDLBinding binding) {
+    protected Document createDocumentForMessageReceiver(WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
-        XmlDocument doc = new XmlDocument();
+        Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
         addAttribute(doc,
                 "package",
@@ -633,10 +660,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @param binding
      * @return
      */
-    protected XmlDocument createDOMDocuementForInterface(WSDLBinding binding) {
+    protected Document createDOMDocuementForInterface(WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
-        XmlDocument doc = new XmlDocument();
+        Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
         addAttribute(doc,
                 "package",
@@ -658,10 +685,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     }
 
-    protected XmlDocument createDOMDocuementForSkeleton(WSDLBinding binding) {
+    protected Document createDOMDocuementForSkeleton(WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
-        XmlDocument doc = new XmlDocument();
+        Document doc = getEmptyDocument();;
         Element rootElement = doc.createElement("interface");
         addAttribute(doc,
                 "package",
@@ -683,7 +710,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     }
 
-    private void fillSyncAttributes(XmlDocument doc, Element rootElement) {
+    private void fillSyncAttributes(Document doc, Element rootElement) {
         addAttribute(doc,
                 "isAsync",
                 this.configuration.isAsyncOn() ? "1" : "0",
@@ -695,13 +722,13 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     private void loadOperations(WSDLInterface boundInterface,
-                                XmlDocument doc,
+                                Document doc,
                                 Element rootElement) {
         loadOperations(boundInterface, doc, rootElement, null);
     }
 
     private void loadOperations(WSDLInterface boundInterface,
-                                XmlDocument doc,
+                                Document doc,
                                 Element rootElement,
                                 WSDLBinding binding) {
         Collection col = boundInterface.getOperations().values();
@@ -740,7 +767,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
 
-    private void addSOAPAction(XmlDocument doc,
+    private void addSOAPAction(Document doc,
                                Element rootElement,
                                WSDLBindingOperation binding) {
         Iterator extIterator = binding.getExtensibilityElements().iterator();
@@ -761,10 +788,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         }
     }
 
-    protected XmlDocument createDOMDocuementForTestCase(WSDLBinding binding) {
+    protected Document createDOMDocuementForTestCase(WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
-        XmlDocument doc = new XmlDocument();
+        Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("class");
         addAttribute(doc,
                 "package",
@@ -794,11 +821,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     }
 
-    protected XmlDocument createDOMDocuementForLocalTestCase(
+    protected Document createDOMDocuementForLocalTestCase(
             WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
-        XmlDocument doc = new XmlDocument();
+        Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("class");
         String serviceXMLPath = configuration.getPackageName().replace('.',
                 '/') +
@@ -838,9 +865,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     }
 
-    protected XmlDocument createDOMDocumentforSerialization(
+    protected Document createDOMDocumentforSerialization(
             WSDLOperation operation) {
-        XmlDocument doc = new XmlDocument();
+        Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("class");
         addAttribute(doc,
                 "package",
@@ -870,13 +897,13 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @param service
      * @return
      */
-    protected XmlDocument createDOMDocuementForInterfaceImplementation(
+    protected Document createDOMDocuementForInterfaceImplementation(
             WSDLBinding binding, WSDLService service) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
         WSDLEndpoint endpoint = null;
         HashMap endpoints = service.getEndpoints();
-        XmlDocument doc = new XmlDocument();
+        Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("class");
         addAttribute(doc,
                 "package",
@@ -909,7 +936,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     }
 
-    protected void addEndpoints(XmlDocument doc,
+    protected void addEndpoints(Document doc,
                                 Element rootElement,
                                 HashMap endpointMap) {
         Object[] endpoints = endpointMap.values().toArray();
@@ -934,7 +961,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     }
 
-    protected void addAttribute(XmlDocument document,
+    protected void addAttribute(Document document,
                                 String AttribName,
                                 String attribValue,
                                 Element element) {
