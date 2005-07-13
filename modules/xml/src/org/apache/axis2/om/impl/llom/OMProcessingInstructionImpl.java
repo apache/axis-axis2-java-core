@@ -38,8 +38,8 @@ public class OMProcessingInstructionImpl extends OMNodeImpl implements OMProcess
      */
     public OMProcessingInstructionImpl(OMContainer parentNode, String target, String value) {
         super(parentNode);
-        this.target = target;
-        this.value = value;
+        this.target = (target == null) ? null : target.trim();
+        this.value = (value == null) ? null : value.trim();
         nodeType = OMNode.PI_NODE;
     }
 
