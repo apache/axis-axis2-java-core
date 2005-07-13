@@ -18,7 +18,6 @@ import org.apache.axis2.wsdl.codegen.writer.TestClassWriter;
 import org.apache.axis2.wsdl.codegen.writer.TestServiceXMLWriter;
 import org.apache.axis2.wsdl.codegen.writer.TestSkeletonImplWriter;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
-//import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLBindingOperation;
@@ -467,7 +466,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             Document doc = documentBuilder.newDocument();
             return doc;
         } catch (ParserConfigurationException e) {
-            return null;
+            throw new RuntimeException(e);
         }
     }
 

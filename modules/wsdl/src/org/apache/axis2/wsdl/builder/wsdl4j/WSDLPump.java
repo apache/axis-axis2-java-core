@@ -17,7 +17,6 @@ package org.apache.axis2.wsdl.builder.wsdl4j;
 
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
-import org.apache.crimson.tree.XmlDocument;
 import org.apache.wsdl.Component;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLBinding;
@@ -65,6 +64,9 @@ import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -411,7 +413,13 @@ public class WSDLPump {
                 Element element = null;
                 WSDLTypes types = womDefinition.getTypes();
                 if (null == types) {
-                    XmlDocument newDoc = new XmlDocument();
+                    DocumentBuilder documentBuilder = null;
+                    try {
+                        documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                    } catch (ParserConfigurationException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Document newDoc = documentBuilder.newDocument();
 
                     Element schemaElement = newDoc.createElement("schema");//http://www.w3.org/2001/XMLSchema
                     types = wsdlComponenetFactory.createTypes();
@@ -563,7 +571,7 @@ public class WSDLPump {
      * Eventuall this will have to be fixed using user input since
      *
      * @param service
-     * @return
+     * @return wsdl interface
      */
     private WSDLInterface getBoundInterface(WSDLService service) {
 
@@ -608,7 +616,7 @@ public class WSDLPump {
      * <code>Vector</code> if any and copy them to <code>Component</code>
      *
      * @param wsdl4jExtensibleElements
-     * @param womExtensibleElements
+     * @param component
      */
     private void copyExtensibleElements(List wsdl4jExtensibleElements,
                                         Component component) {
