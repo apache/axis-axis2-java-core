@@ -47,7 +47,7 @@ public class Echo {
 
     public OMElement echoMTOMtoBase64(OMElement omEle) {
         OMText omText = (OMText) omEle.getFirstChild();
-        omText.doOptimize(false);
+        omText.setOptimize(false);
         return omEle;
     }
 }
