@@ -47,14 +47,11 @@ public class MIMEOutputUtils {
                     "text/xml");
             MimeBodyPart rootMimeBodyPart = new MimeBodyPart();
             rootMimeBodyPart.setDataHandler(dh);
-            ContentType partContentType = new ContentType(
-                    "application/xop+xml");
-            partContentType.setParameter("charset", "UTF-8");
-            partContentType.setParameter("type", "application/soap+xml");
-            rootMimeBodyPart.addHeader("Content-Type",
-                    partContentType.toString());
-            rootMimeBodyPart.addHeader("Content-Transfer-Encoding", "8bit");
-            rootMimeBodyPart.addHeader("Content-ID", contentId);
+
+            rootMimeBodyPart.addHeader("content-type",
+                    "application/xop+xml; charset=utf-8; type=\"text/xml; charset=utf-8\"");
+            rootMimeBodyPart.addHeader("content-transfer-encoding", "binary");
+            rootMimeBodyPart.addHeader("content-id", contentId);
 
             writeBodyPart(outStream, rootMimeBodyPart, boundary);
 
@@ -76,8 +73,9 @@ public class MIMEOutputUtils {
             throws MessagingException {
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
         mimeBodyPart.setDataHandler(node.getDataHandler());
-        mimeBodyPart.addHeader("Content-Transfer-Encoding", "binary");
-        mimeBodyPart.addHeader("Content-ID", node.getContentID());
+        mimeBodyPart.addHeader("content-transfer-encoding", "binary");
+        mimeBodyPart.addHeader("content-type", "application/octet-stream");
+        mimeBodyPart.addHeader("content-id", node.getContentID());
         return mimeBodyPart;
 
     }
@@ -127,16 +125,18 @@ public class MIMEOutputUtils {
     }
 
     public static String getContentTypeForMime(String boundary, String contentId) {
-        ContentType contentType = new ContentType();
-        contentType.setPrimaryType("multipart");
-        contentType.setSubType("related");
-        contentType.setParameter("boundary", boundary);
-        contentType.setParameter("start", contentId);
-        contentType.setParameter("type", "application/xop+xml");
-        //TODO theres something called action that can be set with
-        // following. May be SOAPAction. Better check.
-        contentType.setParameter("start-info", "application/soap+xml");
-        return contentType.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append("multipart/related");
+        sb.append("; ");
+        sb.append("boundary=");
+        sb.append(boundary);
+        sb.append("; ");
+        sb.append("type=\"application/xop+xml\"");
+        sb.append("; ");
+        sb.append("start=\"" + contentId + "\"");
+        sb.append("; ");
+        sb.append("start-info=\"text/xml; charset=utf-8\"");
+        return sb.toString();
     }
 
     /**
@@ -178,6 +178,6 @@ public class MIMEOutputUtils {
         int begin = myRand.nextInt();
         if(begin < 0) begin = begin * -1;
         begin = begin % 8;
-        return new String("--" + sb2.toString().substring(begin, begin + 18)).toUpperCase();
+        return new String(sb2.toString().substring(begin, begin + 18)).toUpperCase();
     }
 }

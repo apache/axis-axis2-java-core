@@ -103,20 +103,21 @@ public class OMOutputImpl {
     }
 
     public String getMimeBoundary() {
-        if(mimeBoundary != null) {
+        if(mimeBoundary == null) {
             mimeBoundary = "--MIMEBoundary" + MIMEOutputUtils.getRandomStringOf18Characters();
         }
         return mimeBoundary;
     }
 
     public String getRootContentId() {
-        if(rootContentId != null) {
+        if(rootContentId == null) {
             rootContentId = "cid:0." + MIMEOutputUtils.getRandomStringOf18Characters() + "@apache.org";
         }
         return rootContentId;
     }
 
     public String getNextContentId() {
+        nextid++;
         return "cid:" + nextid + "." + MIMEOutputUtils.getRandomStringOf18Characters() + "@apache.org";
     }
 }
