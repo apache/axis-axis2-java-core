@@ -73,9 +73,9 @@ public class MIMEOutputUtils {
             throws MessagingException {
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
         mimeBodyPart.setDataHandler(node.getDataHandler());
-        mimeBodyPart.addHeader("content-transfer-encoding", "binary");
-        mimeBodyPart.addHeader("content-type", "application/octet-stream");
         mimeBodyPart.addHeader("content-id", node.getContentID());
+        mimeBodyPart.addHeader("content-type", "application/octet-stream");
+        mimeBodyPart.addHeader("content-transfer-encoding", "binary");
         return mimeBodyPart;
 
     }

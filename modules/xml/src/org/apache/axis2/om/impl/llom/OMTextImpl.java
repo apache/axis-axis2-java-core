@@ -57,7 +57,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      * Field nameSpace used when serialising Binary stuff as MTOM optimised
      */
     protected OMNamespace ns = new OMNamespaceImpl(
-            "http://www.w3.org/2004/08/xop/Include", "xop");
+            "http://www.w3.org/2004/08/xop/include", "xop");
     /**
      * Field localName used when serialising Binary stuff as MTOM optimised
      */
@@ -256,7 +256,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         if(contentID == null) {
             contentID = "cid:" + MIMEOutputUtils.getRandomStringOf18Characters() + "@apache.org";
         }
-        return contentID;
+        return this.contentID;
     }
 
     public boolean isComplete() {
@@ -275,7 +275,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                 this.attribute =
                         new OMAttributeImpl("href",
                                 new OMNamespaceImpl("", ""),
-                                contentID);
+                                getContentID());
                 this.serializeStartpart(omOutput);
                 omOutput.writeOptimized(this);
                 omOutput.getXmlStreamWriter().writeEndElement();
