@@ -330,7 +330,6 @@
             <ant:lib dir="target/lib">
                 <ant:include name="**"/>
                 <ant:exclude name="**servlet**"/>
-                <ant:exclude name="commons-httpclient-*.jar"/>
                 <ant:exclude name="ant*.jar"/>
             </ant:lib>
             <ant:classes dir="modules/core/conf">
@@ -376,7 +375,6 @@
             <ant:fileset dir="target/lib">
                 <ant:include name="*.jar"/>
                 <ant:exclude name="**servlet**.jar"/>
-                <ant:exclude name="commons-httpclient-*.jar"/>
                 <ant:exclude name="ant*.jar"/>
                 <ant:exclude name="commons-fileupload-*.jar"/>
             </ant:fileset>
