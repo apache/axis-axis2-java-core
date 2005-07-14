@@ -34,7 +34,6 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 
@@ -129,10 +128,8 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
                     try {
-                        result.getResponseEnvelope().serialize(
-                                new OMOutput(
-                                        XMLOutputFactory.newInstance()
-                                .createXMLStreamWriter(System.out)));
+                        result.getResponseEnvelope().serialize(XMLOutputFactory.newInstance()
+                                .createXMLStreamWriter(System.out));
                     } catch (XMLStreamException e) {
                         reportError(e);
                     } finally {

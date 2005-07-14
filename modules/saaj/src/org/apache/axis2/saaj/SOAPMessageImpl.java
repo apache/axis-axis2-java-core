@@ -15,7 +15,7 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.transport.http.HTTPConstants;
 
 import javax.xml.soap.AttachmentPart;
@@ -25,6 +25,7 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -205,11 +206,10 @@ public class SOAPMessageImpl extends SOAPMessage {
      */
     public void writeTo(OutputStream out) throws SOAPException, IOException {
         try {
-            OMOutput omOutput = new OMOutput(
-                    XMLOutputFactory.newInstance().createXMLStreamWriter(out));
+            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
             ((SOAPEnvelopeImpl) mSOAPPart.getEnvelope()).getOMEnvelope()
-                    .serialize(omOutput);
-            omOutput.flush();
+                    .serialize(writer);
+            writer.flush();
         } catch (Exception e) {
             throw new SOAPException(e);
         }

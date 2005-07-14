@@ -1,7 +1,6 @@
 package org.apache.axis2.soap.impl.llom.soap11;
 
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPFault;
@@ -60,11 +59,11 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
         return new SOAP11FaultDetailImpl(fault);
     }
 
-    public void serializeWithCache(OMOutput omOutput) throws XMLStreamException {
+    public void serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         super.serializeWithCache(omOutput);
     }
 
-    public void serialize(OMOutput omOutput) throws XMLStreamException {
+    public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         super.serialize(omOutput);
     }
 

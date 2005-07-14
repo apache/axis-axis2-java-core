@@ -17,7 +17,6 @@ package org.apache.axis2.om.impl.streamwrapper;
 
 import org.apache.axis2.om.AbstractTestCase;
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -53,7 +52,7 @@ public class OmStAXBuilderTest extends AbstractTestCase {
     public void testStaxBuilder() throws Exception {
         SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
         assertNotNull(envelope);
-        OMOutput omOutput = new OMOutput(new FileOutputStream(tempFile),
+        org.apache.axis2.om.impl.OMOutputImpl omOutput = new org.apache.axis2.om.impl.OMOutputImpl(new FileOutputStream(tempFile),
                 false);
         //        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
         envelope.serializeWithCache(omOutput);

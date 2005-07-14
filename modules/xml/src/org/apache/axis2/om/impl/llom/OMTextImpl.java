@@ -24,7 +24,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
@@ -159,7 +159,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      * @param omOutput
      * @throws XMLStreamException
      */
-    public void serializeWithCache(OMOutput omOutput) throws XMLStreamException {
+    public void serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         int type = getType();
         if (type == TEXT_NODE) {
@@ -265,7 +265,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         return done;
     }
 
-    public void serialize(OMOutput omOutput) throws XMLStreamException {
+    public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         if (!this.isBinary) {
             serializeWithCache(omOutput);
         } else {
@@ -277,7 +277,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                                 "cid:"
                                         + this.contentID.trim());
                 this.serializeStartpart(omOutput);
-                omOutput.writeOptimised(this);
+                omOutput.writeOptimized(this);
                 omOutput.getXmlStreamWriter().writeEndElement();
             } else {
                 omOutput.getXmlStreamWriter().writeCharacters(this.getText());
@@ -308,7 +308,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     /*
     * Methods to copy from OMSerialize utils
     */
-    private void serializeStartpart(OMOutput omOutput)
+    private void serializeStartpart(OMOutputImpl omOutput)
             throws XMLStreamException {
         String nameSpaceName;
         String writer_prefix;
@@ -355,7 +355,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      * @param omOutput
      * @throws XMLStreamException
      */
-    static void serializeAttribute(OMAttribute attr, OMOutput omOutput)
+    static void serializeAttribute(OMAttribute attr, OMOutputImpl omOutput)
             throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         // first check whether the attribute is associated with a namespace
@@ -390,7 +390,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      * @param omOutput
      * @throws XMLStreamException
      */
-    static void serializeNamespace(OMNamespace namespace, OMOutput omOutput)
+    static void serializeNamespace(OMNamespace namespace, org.apache.axis2.om.impl.OMOutputImpl omOutput)
             throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         if (namespace != null) {

@@ -39,7 +39,6 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.transport.mail.MailTransportSender;
 import org.apache.axis2.transport.mail.SimpleMailListener;
@@ -146,9 +145,8 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
             public void onComplete(AsyncResult result) {
                 try {
                     result.getResponseEnvelope().serialize(
-                            new OMOutput(
                                     XMLOutputFactory.newInstance()
-                            .createXMLStreamWriter(System.out)));
+                            .createXMLStreamWriter(System.out));
                 } catch (XMLStreamException e) {
                     reportError(e);
                 } finally {

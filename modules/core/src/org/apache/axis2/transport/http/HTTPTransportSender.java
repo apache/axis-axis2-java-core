@@ -22,7 +22,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisFault;
-import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis2.transport.AbstractTransportSender;
@@ -69,7 +69,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
                     "\n");
             if (doMTOM) {
                 buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ")
-                        .append(OMOutput.getContentType(true))
+                        .append(OMOutputImpl.getContentType(true))
                         .append("\n");
             } else {
                 String nsURI = msgContext.getEnvelope().getNamespace().getName();
@@ -244,7 +244,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
                     HTTPConstants.HTTPOutTransportInfo);
             if (httpOutTransportInfo != null) {
                 httpOutTransportInfo.setContentType(
-                        OMOutput.getContentType(true));
+                        OMOutputImpl.getContentType(true));
             } else {
                 throw new AxisFault(
                         "Property " + HTTPConstants.HTTPOutTransportInfo +

@@ -20,7 +20,7 @@ import org.apache.axis2.om.OMDocType;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.impl.OMOutputImpl;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -54,9 +54,9 @@ public class OMDocTypeImpl extends OMNodeImpl implements OMDocType {
      *
      * @param omOutput
      * @throws XMLStreamException
-     * @see #serializeWithCache(OMOutput)
+     * @see #serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl)
      */
-    public void serializeWithCache(OMOutput omOutput) throws XMLStreamException {
+    public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         writer.writeCharacters(this.value);
         OMNode nextSibling = this.getNextSibling();
@@ -70,9 +70,9 @@ public class OMDocTypeImpl extends OMNodeImpl implements OMDocType {
      *
      * @param omOutput
      * @throws XMLStreamException
-     * @see #serialize(OMOutput)
+     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
      */
-    public void serialize(OMOutput omOutput) throws XMLStreamException {
+    public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         serializeWithCache(omOutput);
     }
 

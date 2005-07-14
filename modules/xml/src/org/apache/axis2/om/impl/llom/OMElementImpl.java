@@ -23,7 +23,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
@@ -635,14 +635,14 @@ public class OMElementImpl extends OMNodeImpl
      * @param omOutput
      * @throws XMLStreamException
      */
-    public void serializeWithCache(OMOutput omOutput) throws XMLStreamException {
+    public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
         serialize(omOutput, true);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
 
-    protected void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
+    protected void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
 
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
@@ -707,7 +707,7 @@ public class OMElementImpl extends OMNodeImpl
      * @param omOutput
      * @throws XMLStreamException
      */
-    public void serialize(OMOutput omOutput) throws XMLStreamException {
+    public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         this.serialize(omOutput, false);
     }
 

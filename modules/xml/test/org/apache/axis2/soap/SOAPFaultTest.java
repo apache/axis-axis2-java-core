@@ -17,7 +17,6 @@
 package org.apache.axis2.soap;
 
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 
 public class SOAPFaultTest extends SOAPFaultTestCase {
@@ -372,9 +371,9 @@ public class SOAPFaultTest extends SOAPFaultTestCase {
     }
 
     public void testMoreChildrenAddition() {
-        OMOutput output = null;
+        org.apache.axis2.om.impl.OMOutputImpl output = null;
         try {
-            output = new OMOutput(System.out, false);
+            output = new org.apache.axis2.om.impl.OMOutputImpl(System.out, false);
             SOAPFactory soapFactory = OMAbstractFactory.getSOAP12Factory();
             SOAPEnvelope envelope = soapFactory.getDefaultFaultEnvelope();
 

@@ -3,7 +3,6 @@ package org.apache.axis2.om.impl.serializer;
 import junit.framework.TestCase;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -12,6 +11,7 @@ import org.apache.axis2.soap.SOAPFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 
@@ -59,7 +59,7 @@ public class NoNamespaceSerializerTest extends TestCase {
 
     private XMLStreamReader readerOne;
     private XMLStreamReader readerTwo;
-    private OMOutput omOutput;
+    private XMLStreamWriter writer;
 
     // private OMXMLParserWrapper builder;
     // private File tempFile;
@@ -81,8 +81,8 @@ public class NoNamespaceSerializerTest extends TestCase {
                 createXMLStreamReader(
                         new InputStreamReader(
                                 new ByteArrayInputStream(xmlTextTwo.getBytes())));
-        omOutput = new OMOutput(XMLOutputFactory.newInstance().
-                createXMLStreamWriter(System.out));
+        writer = XMLOutputFactory.newInstance().
+                createXMLStreamWriter(System.out);
         builderOne =
                 OMXMLBuilderFactory.createStAXSOAPModelBuilder(
                         OMAbstractFactory.getSOAP11Factory(), readerOne);
@@ -109,7 +109,7 @@ public class NoNamespaceSerializerTest extends TestCase {
 
     public void testSerilizationWithDefaultNamespaces() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builderTwo.getDocumentElement();
-        env.serializeWithCache(omOutput);
+        env.serializeWithCache(writer);
         OMElement balanceElement = env.getBody().getFirstElement();
         assertEquals("Deafualt namespace has not been set properly",
                 balanceElement.getNamespace().getName(),
@@ -135,7 +135,7 @@ public class NoNamespaceSerializerTest extends TestCase {
                                 new ByteArrayInputStream(xmlText2.getBytes()))));
         env.getBody().addChild(builder.getDocumentElement());
 
-        OMOutput omOutput = new OMOutput(System.out, false);
+        org.apache.axis2.om.impl.OMOutputImpl omOutput = new org.apache.axis2.om.impl.OMOutputImpl(System.out, false);
         //env.getBody().addChild(builder.getDocumentElement());
         
         env.serializeWithCache(omOutput);
@@ -147,13 +147,13 @@ public class NoNamespaceSerializerTest extends TestCase {
 
     public void testSerilizationWithCacheOn() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-        env.serializeWithCache(omOutput);
-        omOutput.flush();
+        env.serializeWithCache(writer);
+        writer.flush();
     }
 
     public void testSerilizationWithCacheOff() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-        env.serializeWithCache(omOutput);
-        omOutput.flush();
+        env.serializeWithCache(writer);
+        writer.flush();
     }
 }

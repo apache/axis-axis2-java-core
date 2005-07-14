@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.om;
+package org.apache.axis2.om.impl;
+
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMException;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeBodyPart;
-import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -33,7 +35,7 @@ public class MIMEOutputUtils {
 
     public static void complete(OutputStream outStream,
                                 OutputStream bufferedSoapOutStream, LinkedList binaryNodeList,
-                                String boundary) throws XMLStreamException {
+                                String boundary) {
         try {
             startWritingMime(outStream, boundary);
 
@@ -66,7 +68,7 @@ public class MIMEOutputUtils {
         }
     }
 
-    protected static MimeBodyPart createMimeBodyPart(OMText node)
+    public static MimeBodyPart createMimeBodyPart(OMText node)
             throws MessagingException {
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
         mimeBodyPart.setDataHandler(node.getDataHandler());
@@ -79,7 +81,7 @@ public class MIMEOutputUtils {
     /**
      * @throws IOException This will write the boundary to output Stream
      */
-    protected static void writeMimeBoundary(OutputStream outStream,
+    public static void writeMimeBoundary(OutputStream outStream,
                                             String boundary) throws IOException {
         outStream.write(new byte[]{45, 45});
         outStream.write(boundary.getBytes());
@@ -88,7 +90,7 @@ public class MIMEOutputUtils {
     /**
      * @throws IOException This will write the boundary with CRLF
      */
-    protected static void startWritingMime(OutputStream outStream,
+    public static void startWritingMime(OutputStream outStream,
                                            String boundary)
             throws IOException {
         writeMimeBoundary(outStream, boundary);
@@ -103,7 +105,7 @@ public class MIMEOutputUtils {
      * @throws IOException
      * @throws MessagingException
      */
-    protected static void writeBodyPart(OutputStream outStream,
+    public static void writeBodyPart(OutputStream outStream,
                                         MimeBodyPart part, String boundary) throws IOException,
             MessagingException {
         outStream.write(CRLF);
@@ -115,7 +117,7 @@ public class MIMEOutputUtils {
     /**
      * @throws IOException This will write "--" to the end of last boundary
      */
-    protected static void finishWritingMime(OutputStream outStream)
+    public static void finishWritingMime(OutputStream outStream)
             throws IOException {
         outStream.write(new byte[]{45, 45});
     }

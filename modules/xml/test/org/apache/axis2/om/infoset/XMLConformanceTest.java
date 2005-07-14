@@ -17,7 +17,6 @@ package org.apache.axis2.om.infoset;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.custommonkey.xmlunit.Diff;
@@ -104,7 +103,7 @@ public class XMLConformanceTest extends XMLTestCase {
         try {
             writer = XMLOutputFactory.newInstance().
                     createXMLStreamWriter(new FileOutputStream(tempFile));
-            rootElement.serializeWithCache(new OMOutput(writer));
+            rootElement.serializeWithCache(writer);
         } catch (XMLStreamException e) {
             System.err.println(
                     "Error in creating XMLStreamWriter to write parsed xml into");

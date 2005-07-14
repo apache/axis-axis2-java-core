@@ -24,7 +24,6 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMOutput;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
@@ -52,7 +51,7 @@ public class TCPClient {
         try {
             XMLStreamWriter writer = XMLOutputFactory.newInstance()
                     .createXMLStreamWriter(System.out);
-            result.serializeWithCache(new OMOutput(writer));
+            result.serializeWithCache(writer);
             writer.flush();
         } catch (XMLStreamException e) {
             e.printStackTrace();

@@ -8,7 +8,7 @@ import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.clientapi.Callback;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.impl.OMOutputImpl;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -40,10 +40,8 @@ public class EchoNonBlockingClient {
                 public void onComplete(AsyncResult result) {
                     try {
                         StringWriter writer = new StringWriter();
-                        result.getResponseEnvelope().serializeWithCache(
-                                new OMOutput(
-                                        XMLOutputFactory.newInstance()
-                                .createXMLStreamWriter(writer)));
+                        result.getResponseEnvelope().serializeWithCache(XMLOutputFactory.newInstance()
+                                .createXMLStreamWriter(writer));
                         writer.flush();
 
                         System.out.println(writer.toString());

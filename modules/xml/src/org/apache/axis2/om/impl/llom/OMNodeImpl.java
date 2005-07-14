@@ -19,6 +19,10 @@ import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.OMOutputImpl;
+
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLStreamException;
 
 /**
  * Class OMNodeImpl
@@ -134,7 +138,7 @@ public abstract class OMNodeImpl implements OMNode {
      * If somethings info are not available in the item, one has to check this attribute to make sure that, this
      * item has been parsed completely or not.
      *
-     * @return
+     * @return boolean
      */
     public boolean isComplete() {
         return done;
@@ -252,7 +256,7 @@ public abstract class OMNodeImpl implements OMNode {
     /**
      * Method getPreviousSibling
      *
-     * @return
+     * @return boolean
      */
     public OMNode getPreviousSibling() {
         return previousSibling;
@@ -282,4 +286,54 @@ public abstract class OMNodeImpl implements OMNode {
     }
 
 
+
+    /**
+     * Serialize the node with caching
+     *
+     * @param xmlWriter
+     * @throws javax.xml.stream.XMLStreamException
+     *
+     * @see #serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl)
+     */
+    public void serializeWithCache(XMLStreamWriter xmlWriter) throws XMLStreamException {
+        OMOutputImpl omOutput = new OMOutputImpl(xmlWriter);
+        serializeWithCache(omOutput);
+        omOutput.flush();
+    }
+
+    /**
+     * Serialize the node without caching
+     *
+     * @param xmlWriter
+     * @throws javax.xml.stream.XMLStreamException
+     *
+     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
+     */
+    public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException {
+        OMOutputImpl omOutput = new OMOutputImpl(xmlWriter);
+        serialize(omOutput);
+        omOutput.flush();
+    }
+
+    /**
+     * Serialize the node with caching
+     *
+     * @param omOutput
+     * @throws XMLStreamException
+     * @see #serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl)
+     */
+    public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
+        throw new RuntimeException("Not implemented yet!");
+    }
+
+    /**
+     * Serialize the node without caching
+     *
+     * @param omOutput
+     * @throws XMLStreamException
+     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
+     */
+    public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
+        throw new RuntimeException("Not implemented yet!");
+    }
 }

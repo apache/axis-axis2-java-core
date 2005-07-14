@@ -13,7 +13,7 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
@@ -139,7 +139,7 @@ public class SOAPversionTest extends TestCase {
                         operationName.getLocalPart(), payload);
 //        assertEquals("SOAP Version received is not compatible", SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, result.getNamespace().getName());
         try {
-            OMOutput output = new OMOutput(System.out, false);
+            OMOutputImpl output = new org.apache.axis2.om.impl.OMOutputImpl(System.out, false);
             result.serializeWithCache(output);
             output.flush();
         } catch (XMLStreamException e) {

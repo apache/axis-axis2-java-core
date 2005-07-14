@@ -15,7 +15,7 @@
  */
 package org.apache.axis2.om.impl.llom.serialize;
 
-import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.OMSerializer;
 
 import javax.xml.stream.XMLStreamConstants;
@@ -43,11 +43,23 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
     /**
      * Method serializeWithCache
      *
+     * @param node
+     * @param writer
+     * @throws XMLStreamException
+     */
+    public void serialize(XMLStreamReader node, XMLStreamWriter writer)
+            throws XMLStreamException {
+        serializeNode(node, new OMOutputImpl(writer));
+    }
+
+    /**
+     * Method serializeWithCache
+     *
      * @param obj
      * @param omOutput
      * @throws XMLStreamException
      */
-    public void serialize(Object obj, OMOutput omOutput)
+    public void serialize(XMLStreamReader obj, OMOutputImpl omOutput)
             throws XMLStreamException {
         if (!(obj instanceof XMLStreamReader)) {
             throw new UnsupportedOperationException(
@@ -64,7 +76,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
      * @param omOutput
      * @throws XMLStreamException
      */
-    protected void serializeNode(XMLStreamReader reader, OMOutput omOutput)
+    protected void serializeNode(XMLStreamReader reader, OMOutputImpl omOutput)
             throws XMLStreamException {
         //TODO We get the StAXWriter at this point and uses it hereafter assuming that this is the only entry point to this class.
         // If there can be other classes calling methodes of this we might need to change methode signatures to OMOutputer

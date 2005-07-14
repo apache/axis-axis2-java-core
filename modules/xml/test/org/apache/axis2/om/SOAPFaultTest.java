@@ -16,14 +16,15 @@
 package org.apache.axis2.om;
 
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.om.impl.OMOutputImpl;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-
+import javax.xml.stream.XMLStreamWriter;
 
 public class SOAPFaultTest extends AbstractTestCase {
     private SOAPEnvelope soapEnvelope;
-    private OMOutput omOutput;
+    private XMLStreamWriter output;
 
     /**
      * Constructor.
@@ -34,8 +35,8 @@ public class SOAPFaultTest extends AbstractTestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        omOutput = new OMOutput(XMLOutputFactory.newInstance().
-                createXMLStreamWriter(System.out));
+        output = XMLOutputFactory.newInstance().
+                createXMLStreamWriter(System.out);
     }
 
     public void testSOAPFault() throws Exception {
@@ -51,7 +52,6 @@ public class SOAPFaultTest extends AbstractTestCase {
     }
 
     private void print() throws XMLStreamException {
-        soapEnvelope.serializeWithCache(omOutput);
-        omOutput.flush();
+        soapEnvelope.serializeWithCache(output);
     }
 }

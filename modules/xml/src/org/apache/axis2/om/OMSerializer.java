@@ -16,7 +16,8 @@
 package org.apache.axis2.om;
 
 import javax.xml.stream.XMLStreamException;
-
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * Interface OMSerializer
@@ -25,10 +26,10 @@ public interface OMSerializer {
     /**
      * Method serializeWithCache
      *
-     * @param obj
+     * @param reader
      * @param writer
      * @throws XMLStreamException
      */
-    void serialize(Object obj, OMOutput omOutput)
+    void serialize(XMLStreamReader reader, XMLStreamWriter writer)
             throws XMLStreamException;
 }

@@ -1,14 +1,12 @@
 package org.apache.axis2.soap.impl.llom.soap11;
 
-import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.om.OMTestCase;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-
-/*
+import javax.xml.stream.XMLStreamWriter;/*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +25,7 @@ import javax.xml.stream.XMLStreamException;
  */
 
 public class SOAP11SerializerTest extends OMTestCase {
-    private OMOutput omOutput;
+    private XMLStreamWriter output;
 
     public SOAP11SerializerTest(String testName) {
         super(testName);
@@ -42,19 +40,17 @@ public class SOAP11SerializerTest extends OMTestCase {
         soapEnvelope =
                 (SOAPEnvelope) getOMBuilder("soap/soap11/soap11fault.xml")
                 .getDocumentElement();
-        omOutput = new OMOutput(XMLOutputFactory.newInstance().
-                createXMLStreamWriter(System.out));
+        output = XMLOutputFactory.newInstance().
+                createXMLStreamWriter(System.out);
     }
 
     public void testSerialize() {
         try {
-            soapEnvelope.serializeWithCache(omOutput);
-            omOutput.flush();
+            soapEnvelope.serializeWithCache(output);
 
             System.out.println("");
             System.out.println("=======================");
-            soapEnvelope.serialize(omOutput);
-            omOutput.flush();
+            soapEnvelope.serialize(output);
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }

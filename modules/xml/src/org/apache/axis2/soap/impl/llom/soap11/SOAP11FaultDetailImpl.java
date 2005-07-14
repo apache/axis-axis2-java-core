@@ -1,7 +1,6 @@
 package org.apache.axis2.soap.impl.llom.soap11;
 
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
@@ -54,7 +53,7 @@ public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
 //        throw new UnsupportedOperationException();
 //    }
 
-    public void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
+    public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
 
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type

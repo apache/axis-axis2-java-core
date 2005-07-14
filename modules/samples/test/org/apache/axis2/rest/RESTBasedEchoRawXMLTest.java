@@ -35,7 +35,6 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -171,10 +170,8 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
         OMElement result =
                 (OMElement) call.invokeBlocking(operationName.getLocalPart(),
                         payload);
-        result.serializeWithCache(
-                new OMOutput(
-                        XMLOutputFactory.newInstance().createXMLStreamWriter(
-                                System.out)));
+        result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(
+                                System.out));
 
         System.out.println(messageInfo.requestMessage);
         call.close();

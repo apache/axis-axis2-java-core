@@ -175,7 +175,7 @@ public abstract class SOAPFaultImpl extends SOAPElement
         return null;
     }
 
-    protected void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
+    protected void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
         if (builder != null) {

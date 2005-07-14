@@ -25,7 +25,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
 import org.apache.commons.logging.Log;
@@ -129,17 +129,16 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         }
 
         if (outputMessage != null) {
-            OMOutput omOutput = null;
+            OMOutputImpl omOutput = null;
 
             try {
                 if (msgContext.isDoingMTOM()) {
-                    omOutput = new OMOutput(out, true);
+                    omOutput = new org.apache.axis2.om.impl.OMOutputImpl(out, true);
                     outputMessage.serialize(omOutput);
                     omOutput.flush();
-                    omOutput.complete();
                     out.flush();
                 } else {
-                    omOutput = new OMOutput(out, false);
+                    omOutput = new OMOutputImpl(out, false);
                     outputMessage.serialize(omOutput);
                     omOutput.flush();
                     out.flush();

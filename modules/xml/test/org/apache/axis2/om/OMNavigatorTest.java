@@ -16,6 +16,7 @@
 package org.apache.axis2.om;
 
 import org.apache.axis2.om.impl.llom.OMNavigator;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
@@ -23,6 +24,7 @@ import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -31,7 +33,7 @@ public class OMNavigatorTest extends AbstractTestCase {
     private SOAPEnvelope envelope = null;
     private OMXMLParserWrapper builder;
     private File tempFile;
-    private OMOutput omOutput;
+    private XMLStreamWriter output;
 
     public OMNavigatorTest(String testName) {
         super(testName);
@@ -46,19 +48,15 @@ public class OMNavigatorTest extends AbstractTestCase {
         builder = new StAXSOAPModelBuilder(xmlStreamReader);
         envelope = (SOAPEnvelope) builder.getDocumentElement();
         tempFile = File.createTempFile("temp", "xml");
-        omOutput =
-                new OMOutput(
-                        XMLOutputFactory.newInstance().createXMLStreamWriter(
-                                new FileOutputStream(tempFile)));
-        //        writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-
-
+        output =
+                XMLOutputFactory.newInstance().createXMLStreamWriter(
+                        new FileOutputStream(tempFile));
     }
 
     public void testnavigatorFullyBuilt() throws Exception {
         assertNotNull(envelope);
         //dump the out put to a  temporary file
-        envelope.serializeWithCache(omOutput);
+        envelope.serializeWithCache(output);
 
         //now the OM is fully created test the navigation
         OMNavigator navigator = new OMNavigator(envelope);
@@ -101,7 +99,6 @@ public class OMNavigatorTest extends AbstractTestCase {
     }
 
     protected void tearDown() throws Exception {
-        omOutput.flush();
         tempFile.delete();
     }
 

@@ -19,7 +19,6 @@ import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.om.OMProcessingInstruction;
 
 import javax.xml.stream.XMLStreamException;
@@ -57,9 +56,9 @@ public class OMProcessingInstructionImpl extends OMNodeImpl implements OMProcess
      *
      * @param omOutput
      * @throws XMLStreamException
-     * @see #serializeWithCache(OMOutput)
+     * @see #serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl)
      */
-    public void serializeWithCache(OMOutput omOutput) throws XMLStreamException {
+    public void serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         writer.writeCharacters("<?");
         writer.writeCharacters(this.target);
@@ -77,9 +76,9 @@ public class OMProcessingInstructionImpl extends OMNodeImpl implements OMProcess
      *
      * @param omOutput
      * @throws XMLStreamException
-     * @see #serialize(OMOutput)
+     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
      */
-    public void serialize(OMOutput omOutput) throws XMLStreamException {
+    public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         serializeWithCache(omOutput);
     }
 

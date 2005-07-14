@@ -31,7 +31,6 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMOutput;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
@@ -174,11 +173,8 @@ public class HandlerFailureTest extends TestCase {
             call.setTo(targetEPR);
             OMElement result = call.invokeBlocking(
                     operationName.getLocalPart(), method);
-            OMOutput omOutput = new OMOutput(
-                    XMLOutputFactory.newInstance().createXMLStreamWriter(
+            result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                             System.out));
-            result.serialize(omOutput);
-            omOutput.flush();
             fail("the test must fail due to bad service Name");
         } catch (AxisFault e) {
             e.printStackTrace();

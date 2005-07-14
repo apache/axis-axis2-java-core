@@ -23,7 +23,6 @@ import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.engine.AxisFault;
-import org.apache.axis2.om.OMOutput;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -162,13 +161,10 @@ public class AsynchronousClient {
                     false);
 
             System.out.println("Sending the Async message ....");
-
-            OMOutput omOutput = new OMOutput(XMLOutputFactory.newInstance()
-                    .createXMLStreamWriter
-                    (System.out));
-            requestContext.getEnvelope().serialize(omOutput);
-            omOutput.flush();
-
+            requestContext.getEnvelope().serialize(
+                    XMLOutputFactory.newInstance()
+                            .createXMLStreamWriter
+                            (System.out));
             System.out.println();
             QName opName = new QName("urn:GoogleSearch", "doGoogleSearch");
             OperationDescription opdesc = new OperationDescription(opName);

@@ -18,6 +18,7 @@ package org.apache.axis2.om;
 import junit.framework.TestCase;
 import org.apache.axis2.attachments.ByteArrayDataSource;
 import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.om.impl.MIMEOutputUtils;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
@@ -44,7 +45,7 @@ public class MIMEOutputUtilsTest extends TestCase {
         ByteArrayOutputStream outStream;
         String boundary = "----TemporaryBoundary";
 
-        String contentType = MIMEOutputUtils.getContentTypeForMime(boundary);
+        String contentType = org.apache.axis2.om.impl.MIMEOutputUtils.getContentTypeForMime(boundary);
         DataHandler dataHandler;
         dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
         OMText textData = factory.createText(dataHandler, true);

@@ -18,7 +18,7 @@ package org.apache.axis2.attachments;
 
 import org.apache.axis2.om.AbstractTestCase;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMElementImpl;
 import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
@@ -84,9 +84,9 @@ public class ImageSampleTest extends AbstractTestCase {
 
         outMTOMFile = getTestResourceFile(outFileName);
         outBase64File = getTestResourceFile(outBase64FileName);
-        OMOutput mtomOutput = new OMOutput(new FileOutputStream(outMTOMFile),
+        org.apache.axis2.om.impl.OMOutputImpl mtomOutput = new OMOutputImpl(new FileOutputStream(outMTOMFile),
                 true);
-        OMOutput baseOutput = new OMOutput(new FileOutputStream(outBase64File),
+        org.apache.axis2.om.impl.OMOutputImpl baseOutput = new OMOutputImpl(new FileOutputStream(outBase64File),
                 false);
 
         OMNamespaceImpl soap = new OMNamespaceImpl(
@@ -116,7 +116,6 @@ public class ImageSampleTest extends AbstractTestCase {
 
         envelope.serialize(mtomOutput);
         mtomOutput.flush();
-        mtomOutput.complete();
     }
 
     public void testImageSampleDeserialize() throws Exception {

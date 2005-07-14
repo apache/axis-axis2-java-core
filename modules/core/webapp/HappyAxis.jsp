@@ -4,15 +4,9 @@
                  javax.xml.parsers.SAXParser,
                  javax.xml.parsers.SAXParserFactory,
                  org.apache.axis2.clientapi.Call,
-                 javax.xml.stream.XMLStreamConstants,
-                 javax.xml.stream.XMLStreamReader,
                  org.apache.axis2.addressing.AddressingConstants,
                  org.apache.axis2.addressing.EndpointReference,
-                 org.apache.axis2.clientapi.Call,
                  org.apache.axis2.om.*,
-                 org.apache.axis2.soap.SOAPBody,
-                 org.apache.axis2.soap.SOAPEnvelope,
-                 org.apache.axis2.soap.SOAPFactory,
                  org.apache.axis2.Constants,
                  javax.xml.stream.XMLOutputFactory,
                  org.apache.axis2.engine.AxisFault,
@@ -20,7 +14,7 @@
                  javax.xml.namespace.QName,
                  java.io.StringWriter"
    session="false" %>
- <%
+<%
      /*
      * Copyright 2002,2004 The Apache Software Foundation.
      *
@@ -344,7 +338,7 @@
             OMElement result =
                     (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
             StringWriter writer = new StringWriter();
-            result.serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
+            result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
             writer.flush();
             value = writer.toString();
             return true;

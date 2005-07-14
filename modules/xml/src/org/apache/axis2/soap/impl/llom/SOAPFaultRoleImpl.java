@@ -1,7 +1,7 @@
 package org.apache.axis2.soap.impl.llom;
 
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.soap.SOAPFault;
@@ -48,7 +48,7 @@ public abstract class SOAPFaultRoleImpl extends SOAPElement implements org.apach
         return this.getText();
     }
 
-    protected void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
+    protected void serialize(OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
         if (builder != null) {

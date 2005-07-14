@@ -27,7 +27,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMOutput;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -93,7 +93,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             } else {
                 OutputStream out = (OutputStream) msgContext
                         .getProperty(MessageContext.TRANSPORT_OUT);
-                OMOutput output = new OMOutput(out, false);
+                OMOutputImpl output = new OMOutputImpl(out, false);
                 dataOut.serialize(output);
             }
             msgContext.getOperationContext().setProperty(
@@ -134,7 +134,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
             if (msgContext.isDoingMTOM()) {
                 postMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                        OMOutput.getContentType(true));
+                        OMOutputImpl.getContentType(true));
             } else {
                 postMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
                         "text/xml; charset=utf-8");
@@ -263,8 +263,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
                 XMLStreamWriter outputWriter = XMLOutputFactory.newInstance()
                         .createXMLStreamWriter(bytesOut);
-                OMOutput output = new OMOutput(outputWriter);
-                element.serialize(output);
+                element.serialize(outputWriter);
                 outputWriter.flush();
                 return bytesOut.toByteArray();
             } catch (XMLStreamException e) {
@@ -277,10 +276,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         public void writeRequest(OutputStream out) throws IOException {
             try {
                 if (chuncked || doingMTOM) {
-                    OMOutput output = new OMOutput(out, doingMTOM);
+                    OMOutputImpl output = new OMOutputImpl(out, doingMTOM);
                     element.serialize(output);
-                    if (doingMTOM)
-                        output.complete();
                     output.flush();
                     out.flush();
                 } else {

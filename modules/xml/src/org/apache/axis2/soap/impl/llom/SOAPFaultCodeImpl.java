@@ -1,8 +1,7 @@
 package org.apache.axis2.soap.impl.llom;
 
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.OMOutput;
-import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.soap.SOAPFault;
@@ -77,7 +76,7 @@ public abstract class SOAPFaultCodeImpl extends SOAPElement implements SOAPFault
                 SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME);
     }
 
-    protected void serialize(OMOutput omOutput, boolean cache) throws XMLStreamException {
+    protected void serialize(OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
         // select the builder
         short builderType = PULL_TYPE_BUILDER;    // default is pull type
         if (builder != null) {
