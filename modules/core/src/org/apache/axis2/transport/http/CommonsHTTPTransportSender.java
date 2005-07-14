@@ -52,8 +52,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         TransportSender {
     private boolean chuncked = false;
 
-    private boolean doMTOM = false;
-
     private String httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
 
     public static final String HTTP_METHOD = "HTTP_METHOD";
@@ -127,13 +125,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             //supporting RESTFacility..
 
             if (!msgContext.isDoingREST()) {
-                this.transportConfigurationPOST(msgContext,dataout,url,soapActionString,doMTOM);
+                this.transportConfigurationPOST(msgContext,dataout,url,soapActionString);
             }
             if (msgContext.isDoingREST() && !msgContext.isRestThroughPOST()) {
                 this.transportConfigurationGET(msgContext,url);
             }
             if (msgContext.isDoingREST() && msgContext.isRestThroughPOST()) {
-                this.transportConfigurationPOST(msgContext,dataout,url,soapActionString,doMTOM);
+                this.transportConfigurationPOST(msgContext,dataout,url,soapActionString);
             }
         } catch (MalformedURLException e) {
             throw new AxisFault(e);
@@ -276,11 +274,11 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
     }
 
     private void transportConfigurationPOST(MessageContext msgContext,
-                                                OMElement dataout, URL url, String soapActionString, boolean doMTOM) throws MalformedURLException, AxisFault, IOException {
+                                                OMElement dataout, URL url, String soapActionString) throws MalformedURLException, AxisFault, IOException {
             PostMethod postMethod = new PostMethod();
             postMethod.setPath(url.getFile());
             msgContext.setProperty(HTTP_METHOD, postMethod);
-            postMethod.setRequestEntity(new AxisRequestEntity(dataout, chuncked,doMTOM));
+            postMethod.setRequestEntity(new AxisRequestEntity(dataout, chuncked,msgContext.isDoingMTOM()));
             if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chuncked) {
                 ((PostMethod) postMethod).setContentChunked(true);
             }
