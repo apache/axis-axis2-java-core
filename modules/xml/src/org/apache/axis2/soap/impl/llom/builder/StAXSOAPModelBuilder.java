@@ -352,7 +352,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
                         parent.setComplete(true);
                         lastNode = parent;
                     } else {
-                        OMNode e = (OMNode) lastNode;
+                        OMNode e = lastNode;
                         e.setComplete(true);
                     }
                     elementLevel--;

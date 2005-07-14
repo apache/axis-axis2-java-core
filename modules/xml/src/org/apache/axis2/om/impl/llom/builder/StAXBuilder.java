@@ -23,9 +23,6 @@ import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.llom.OMElementImpl;
-import org.apache.axis2.om.impl.llom.OMNodeImpl;
-import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
@@ -186,13 +183,9 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
      * @throws OMException
      */
     public void discard(OMElement el) throws OMException {
-        OMElementImpl elementImpl = null;
-        if (el instanceof OMElementImpl) {
-            elementImpl = (OMElementImpl) el;
-        } else {
-            throw new OMException();
-        }
-        if (elementImpl.isComplete() || !cache) {
+        OMElement element = null;
+
+        if (element.isComplete() || !cache) {
             throw new OMException();
         }
         try {
@@ -201,12 +194,12 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
                 while (parser.next() != XMLStreamConstants.END_ELEMENT) ;
 
                 // TODO:
-            } while (!parser.getName().equals(elementImpl.getQName()));
-            lastNode = (OMNodeImpl) elementImpl.getPreviousSibling();
+            } while (!parser.getName().equals(element.getQName()));
+            lastNode = element.getPreviousSibling();
             if (lastNode != null) {
                 lastNode.setNextSibling(null);
             } else {
-                OMElement parent = (OMElement) elementImpl.getParent();
+                OMElement parent = (OMElement) element.getParent();
                 if (parent == null) {
                     throw new OMException();
                 }
