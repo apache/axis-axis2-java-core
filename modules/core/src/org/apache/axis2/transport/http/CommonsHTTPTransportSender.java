@@ -21,7 +21,6 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisFault;
@@ -29,7 +28,6 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.transport.TransportSender;
-import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -37,6 +35,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.GetMethod;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
@@ -52,6 +51,8 @@ import java.net.URL;
 public class CommonsHTTPTransportSender extends AbstractHandler implements
         TransportSender {
     private boolean chuncked = false;
+
+    private boolean doMTOM = false;
 
     private String httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
 
@@ -112,112 +113,27 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
     }
 
-    public void writeMessageWithCommons(MessageContext msgContext,
+        public void writeMessageWithCommons(MessageContext msgContext,
                                         EndpointReference toURL,
-                                        OMElement dataout) throws AxisFault {
+                                        OMElement dataout)
+            throws AxisFault {
         try {
             URL url = new URL(toURL.getAddress());
             //Configure the transport
             String soapAction = msgContext.getWSAAction();
             //settign soapAction
-            String soapActionString = soapAction == null ? "" : soapAction;
+            String soapActionString = soapAction == null ? "" : soapAction.toString();
 
-            PostMethod postMethod = new PostMethod();
-            postMethod.setPath(url.getFile());
-            msgContext.setProperty(HTTP_METHOD, postMethod);
-            postMethod.setRequestEntity(
-                    new AxisRequestEntity(dataout,
-                            chuncked, msgContext.isDoingMTOM()));
-            if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)
-                    && chuncked) {
-                postMethod.setContentChunked(true);
-            }
+            //supporting RESTFacility..
 
-            if (msgContext.isDoingMTOM()) {
-                postMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                        omOutput.getOptimizedContentType());
-            } else {
-                postMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                        "text/xml; charset=utf-8");
-            }
-            postMethod.setRequestHeader(HTTPConstants.HEADER_ACCEPT,
-                    HTTPConstants.HEADER_ACCEPT_APPL_SOAP
-                    + HTTPConstants.HEADER_ACCEPT_APPLICATION_DIME
-                    + HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED
-                    + HTTPConstants.HEADER_ACCEPT_TEXT_ALL);
-            postMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url
-                    .getHost());
-            postMethod.setRequestHeader(HTTPConstants.HEADER_CACHE_CONTROL,
-                    "no-cache");
-            postMethod
-                    .setRequestHeader(HTTPConstants.HEADER_PRAGMA, "no-cache");
-            //content length is not set yet
-            //setting HTTP vesion
-
-            if (httpVersion != null) {
-                if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
-                    //postMethod.setHttp11(false); todo method to findout the
-                    // transport version...
-                    //allowing keep-alive for 1.0
-                    postMethod.setRequestHeader(
-                            HTTPConstants.HEADER_CONNECTION,
-                            HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
-                } else {
-                    // allowing keep-alive for 1.1
-                    postMethod.setRequestHeader(
-                            HTTPConstants.HEADER_CONNECTION,
-                            HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
-                }
-            }
-            // othervise assumes HTTP 1.1 and keep-alive is default.
             if (!msgContext.isDoingREST()) {
-                postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION,
-                        soapActionString);
+                this.transportConfigurationPOST(msgContext,dataout,url,soapActionString,doMTOM);
             }
-
-            //execuite the HtttpMethodBase - a connection manager can be given
-            // for handle multiple
-            httpClient = new HttpClient();
-            //hostConfig handles the socket functions..
-            HostConfiguration hostConfig = getHostConfiguration(msgContext,
-                    url);
-
-            //code that wirte the stream to the wire
-
-            this.httpClient.executeMethod(hostConfig, postMethod);
-            if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
-                InputStream in = postMethod.getResponseBodyAsStream();
-                if (in == null) {
-                    throw new AxisFault("Input Stream can not be Null");
-                }
-                msgContext.getOperationContext().setProperty(
-                        MessageContext.TRANSPORT_IN, in);
-                Header contentTypeHeader = postMethod
-                        .getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
-                if (contentTypeHeader != null) {
-                    String contentType = contentTypeHeader.getValue();
-                    if (contentType != null
-                            &&
-                            contentType
-                            .indexOf(
-                                    HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) >=
-                            0) {
-                        OperationContext opContext = msgContext
-                                .getOperationContext();
-                        if (opContext != null) {
-                            opContext.setProperty(
-                                    HTTPConstants.MTOM_RECIVED_CONTENT_TYPE,
-                                    contentType);
-                        }
-                    }
-                }
-
-            } else if (postMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
-                return;
-            } else {
-                throw new AxisFault("Error " + postMethod.getStatusCode()
-                        + "  Error Message is "
-                        + postMethod.getResponseBodyAsString());
+            if (msgContext.isDoingREST() && !msgContext.isRestThroughPOST()) {
+                this.transportConfigurationGET(msgContext,url);
+            }
+            if (msgContext.isDoingREST() && msgContext.isRestThroughPOST()) {
+                this.transportConfigurationPOST(msgContext,dataout,url,soapActionString,doMTOM);
             }
         } catch (MalformedURLException e) {
             throw new AxisFault(e);
@@ -228,7 +144,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         }
 
     }
-
     protected HostConfiguration getHostConfiguration(MessageContext context,
                                                      URL targetURL) {
         //TODO cheaking wheather the host is a proxy
@@ -359,5 +274,90 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         }
 
     }
+
+    private void transportConfigurationPOST(MessageContext msgContext,
+                                                OMElement dataout, URL url, String soapActionString, boolean doMTOM) throws MalformedURLException, AxisFault, IOException {
+            PostMethod postMethod = new PostMethod();
+            postMethod.setPath(url.getFile());
+            msgContext.setProperty(HTTP_METHOD, postMethod);
+            postMethod.setRequestEntity(new AxisRequestEntity(dataout, chuncked,doMTOM));
+            if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chuncked) {
+                ((PostMethod) postMethod).setContentChunked(true);
+            }
+
+            postMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
+                    "text/xml; charset=utf-8");
+            postMethod.setRequestHeader(HTTPConstants.HEADER_ACCEPT,
+                    HTTPConstants.HEADER_ACCEPT_APPL_SOAP
+                    + HTTPConstants.HEADER_ACCEPT_APPLICATION_DIME
+                    + HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED
+                    + HTTPConstants.HEADER_ACCEPT_TEXT_ALL);
+            postMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
+            postMethod.setRequestHeader(HTTPConstants.HEADER_CACHE_CONTROL, "no-cache");
+            postMethod.setRequestHeader(HTTPConstants.HEADER_PRAGMA, "no-cache");
+            //content length is not set yet
+            //setting HTTP vesion
+
+            if (httpVersion != null) {
+                if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
+                    //postMethod.setHttp11(false); todo method to findout the transport version...
+                    //allowing keep-alive for 1.0
+                    postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
+                            HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
+                } else {
+                    // allowing keep-alive for 1.1
+                    postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
+                            HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
+                }
+            }
+            // othervise assumes HTTP 1.1 and keep-alive is default.
+            if (!msgContext.isDoingREST()) {
+                postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapActionString);
+            }
+
+            //execuite the HtttpMethodBase - a connection manager can be given for handle multiple
+            httpClient = new HttpClient();
+            //hostConfig handles the socket functions..
+            HostConfiguration hostConfig = getHostConfiguration(msgContext, url);
+
+            //code that wirte the stream to the wire
+
+            this.httpClient.executeMethod(hostConfig, postMethod);
+            if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
+                InputStream in = postMethod.getResponseBodyAsStream();
+                if (in == null) {
+                    throw new AxisFault("Input Stream can not be Null");
+                }
+                msgContext.getOperationContext().setProperty(MessageContext.TRANSPORT_IN, in);
+            } else if (postMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
+                return;
+            } else {
+                throw new AxisFault("Error " + postMethod.getStatusCode() + "  Error Message is " + postMethod.getResponseBodyAsString());
+            }
+
+        }
+        private void transportConfigurationGET(MessageContext msgContext, URL url) throws MalformedURLException, AxisFault, IOException {
+            GetMethod getMehtod = new GetMethod();
+            getMehtod.setPath(url.getFile());
+            getMehtod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
+                    "text/xml; charset=utf-8");
+            this.httpClient = new HttpClient();
+            HostConfiguration hostConfig = this.getHostConfiguration(msgContext, url);
+
+            this.httpClient.executeMethod(hostConfig, getMehtod);
+            if (getMehtod.getStatusCode() == HttpStatus.SC_OK) {
+
+                InputStream in = getMehtod.getResponseBodyAsStream();
+                if (in == null) {
+                    throw new AxisFault("Input Stream can not be Null");
+                }
+                msgContext.getOperationContext().setProperty(MessageContext.TRANSPORT_IN, in);
+            } else if (getMehtod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
+                return;
+            } else {
+                throw new AxisFault("Error " + getMehtod.getStatusCode() + "  Error Message is " + getMehtod.getResponseBodyAsString());
+            }
+        }
+
 
 }
