@@ -45,7 +45,7 @@ public class MIMEOutputUtilsTest extends TestCase {
         ByteArrayOutputStream outStream;
         String boundary = "----TemporaryBoundary";
 
-        String contentType = org.apache.axis2.om.impl.MIMEOutputUtils.getContentTypeForMime(boundary);
+        String contentType = org.apache.axis2.om.impl.MIMEOutputUtils.getContentTypeForMime(boundary, "cid:0.632569289925808400@example.org");
         DataHandler dataHandler;
         dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
         OMText textData = factory.createText(dataHandler, true);

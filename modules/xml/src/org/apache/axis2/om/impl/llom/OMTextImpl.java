@@ -25,6 +25,7 @@ import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.MIMEOutputUtils;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
@@ -109,9 +110,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         this(parent, s);
         this.mimeType = mimeType;
         this.optimize = optimize;
-        if (this.contentID == null && optimize) {
-            createContentID();
-        }
         done = true;
         this.nodeType = TEXT_NODE;
     }
@@ -131,9 +129,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         this.dataHandler = dataHandler;
         this.isBinary = true;
         this.optimize = optimize;
-        if (this.contentID == null && optimize) {
-            createContentID();
-        }
         done = true;
         this.nodeType = TEXT_NODE;
     }
@@ -200,9 +195,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     public void setOptimize(boolean value) {
         this.optimize = value;
-        if (this.contentID == null && value) {
-            getContentID();
-        }
     }
 
     /**
@@ -227,6 +219,9 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
             }
             return new DataHandler(dataSource);
         } else {
+            if (contentID == null){
+                throw new RuntimeException("ContentID is null");
+            }
             if (dataHandler == null) {
                 dataHandler = ((MTOMStAXSOAPModelBuilder) builder)
                         .getDataHandler(contentID);
@@ -258,7 +253,10 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     }
 
     public String getContentID() {
-        return this.contentID;
+        if(contentID == null) {
+            contentID = "cid:" + MIMEOutputUtils.getRandomStringOf18Characters() + "@apache.org";
+        }
+        return contentID;
     }
 
     public boolean isComplete() {
@@ -270,12 +268,14 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
             serializeWithCache(omOutput);
         } else {
             if (omOutput.isOptimized()) {
+                if(contentID == null){
+                    contentID = omOutput.getNextContentId();
+                }
                 // send binary as MTOM optimised
                 this.attribute =
                         new OMAttributeImpl("href",
                                 new OMNamespaceImpl("", ""),
-                                "cid:"
-                                        + this.contentID.trim());
+                                contentID);
                 this.serializeStartpart(omOutput);
                 omOutput.writeOptimized(this);
                 omOutput.getXmlStreamWriter().writeEndElement();
@@ -296,13 +296,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                 }
             }
         }
-    }
-
-    private void createContentID() {
-        // We can use a UUID, taken using Apache commons id project.
-        // TODO change to UUID
-        this.contentID = "2" + String.valueOf(rnd.nextLong()) +
-                "@schemas.xmlsoap.org";
     }
 
     /*

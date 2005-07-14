@@ -42,6 +42,8 @@ public class OMOutputImpl {
     private LinkedList binaryNodeList;
     private ByteArrayOutputStream bufferedSoapOutStream;
     private String mimeBoundary = null;
+    private String rootContentId = null;
+    private int nextid = 0;
 
     public OMOutputImpl() {
     }
@@ -76,7 +78,7 @@ public class OMOutputImpl {
         xmlWriter.flush();
         if (doOptimize) {
             MIMEOutputUtils.complete(outStream, bufferedSoapOutStream,
-                    binaryNodeList, getMimeBoundary());
+                    binaryNodeList, getMimeBoundary(), getRootContentId());
         }
     }
 
@@ -85,7 +87,7 @@ public class OMOutputImpl {
     }
 
     public String getOptimizedContentType() {
-        return org.apache.axis2.om.impl.MIMEOutputUtils.getContentTypeForMime(getMimeBoundary());
+        return MIMEOutputUtils.getContentTypeForMime(getMimeBoundary(),getRootContentId());
     }
 
     public void writeOptimized(OMText node) {
@@ -102,52 +104,19 @@ public class OMOutputImpl {
 
     public String getMimeBoundary() {
         if(mimeBoundary != null) {
-            mimeBoundary = "--MIMEBoundary" + getRandomStringOf18Characters();
+            mimeBoundary = "--MIMEBoundary" + MIMEOutputUtils.getRandomStringOf18Characters();
         }
         return mimeBoundary;
     }
 
-    private static Random myRand = null;
+    public String getRootContentId() {
+        if(rootContentId != null) {
+            rootContentId = "cid:0." + MIMEOutputUtils.getRandomStringOf18Characters() + "@apache.org";
+        }
+        return rootContentId;
+    }
 
-    /**
-     * MD5 a random string with localhost/date etc will return 128 bits
-     * construct a string of 18 characters from those bits.
-     * @return string
-     */
-    private static String getRandomStringOf18Characters() {
-        if (myRand == null) {
-            myRand = new Random();
-        }
-        long rand = myRand.nextLong();
-        String sid;
-        try {
-            sid = InetAddress.getLocalHost().toString();
-        } catch (UnknownHostException e) {
-            sid = Thread.currentThread().getName();
-        }
-        long time = System.currentTimeMillis();
-        StringBuffer sb = new StringBuffer();
-        sb.append(sid);
-        sb.append(":");
-        sb.append(Long.toString(time));
-        sb.append(":");
-        sb.append(Long.toString(rand));
-        MessageDigest md5 = null;
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            System.out.println("Error: " + e);
-        }
-        md5.update(sb.toString().getBytes());
-        byte[] array = md5.digest();
-        StringBuffer sb2 = new StringBuffer();
-        for (int j = 0; j < array.length; ++j) {
-            int b = array[j] & 0xFF;
-            sb2.append(Integer.toHexString(b));
-        }
-        int begin = myRand.nextInt();
-        if(begin < 0) begin = begin * -1;
-        begin = begin % 8;
-        return new String("--" + sb2.toString().substring(begin, begin + 18)).toUpperCase();
+    public String getNextContentId() {
+        return "cid:" + nextid + "." + MIMEOutputUtils.getRandomStringOf18Characters() + "@apache.org";
     }
 }
