@@ -269,7 +269,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         if (!this.isBinary) {
             serializeWithCache(omOutput);
         } else {
-            if (omOutput.doOptimise()) {
+            if (omOutput.isOptimized()) {
                 // send binary as MTOM optimised
                 this.attribute =
                         new OMAttributeImpl("href",

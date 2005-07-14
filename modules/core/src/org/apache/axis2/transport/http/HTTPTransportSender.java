@@ -22,7 +22,6 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisFault;
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis2.transport.AbstractTransportSender;
@@ -69,7 +68,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
                     "\n");
             if (doMTOM) {
                 buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ")
-                        .append(OMOutputImpl.getContentType(true))
+                        .append(omOutput.getOptimizedContentType())
                         .append("\n");
             } else {
                 String nsURI = msgContext.getEnvelope().getNamespace().getName();
@@ -159,7 +158,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
             TransportSenderInfo transportInfo =
                     (TransportSenderInfo) msgContext.getProperty(
                             TRANSPORT_SENDER_INFO);
-            InputStream in = null;
+            InputStream in;
             if (chuncked || msgContext.isDoingMTOM()) {
                 if (chuncked) {
                     ((ChunkedOutputStream) out).eos();
@@ -244,7 +243,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
                     HTTPConstants.HTTPOutTransportInfo);
             if (httpOutTransportInfo != null) {
                 httpOutTransportInfo.setContentType(
-                        OMOutputImpl.getContentType(true));
+                        omOutput.getOptimizedContentType());
             } else {
                 throw new AxisFault(
                         "Property " + HTTPConstants.HTTPOutTransportInfo +

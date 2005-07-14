@@ -47,6 +47,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
      */
     private Log log = LogFactory.getLog(getClass());
 
+    protected OMOutputImpl omOutput = new OMOutputImpl();
 
     /**
      * Field NAME
@@ -77,7 +78,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         //put a <parameter name="doREST" value="true"/> at the axis2.xml
         msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
 
-        OutputStream out = null;
+        OutputStream out;
 
         EndpointReference epr = null;
 
@@ -129,20 +130,11 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         }
 
         if (outputMessage != null) {
-            OMOutputImpl omOutput = null;
-
             try {
-                if (msgContext.isDoingMTOM()) {
-                    omOutput = new org.apache.axis2.om.impl.OMOutputImpl(out, true);
-                    outputMessage.serialize(omOutput);
-                    omOutput.flush();
-                    out.flush();
-                } else {
-                    omOutput = new OMOutputImpl(out, false);
-                    outputMessage.serialize(omOutput);
-                    omOutput.flush();
-                    out.flush();
-                }
+                omOutput.setOutputStream(out, msgContext.isDoingMTOM());
+                outputMessage.serialize(omOutput);
+                omOutput.flush();
+                out.flush();
             } catch (Exception e) {
                 throw new AxisFault("Stream error", e);
             }

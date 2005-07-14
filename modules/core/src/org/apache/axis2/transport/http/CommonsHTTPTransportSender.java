@@ -61,6 +61,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
     protected OMElement outputMessage;
 
+    protected OMOutputImpl omOutput = new OMOutputImpl();
+
     public CommonsHTTPTransportSender() {
     } //default
 
@@ -80,7 +82,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 epr = msgContext.getTo();
             }
 
-            OMElement dataOut = null;
+            OMElement dataOut;
             if (msgContext.isDoingREST()) {
                 dataOut = msgContext.getEnvelope().getFirstElement();
             } else {
@@ -93,8 +95,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             } else {
                 OutputStream out = (OutputStream) msgContext
                         .getProperty(MessageContext.TRANSPORT_OUT);
-                OMOutputImpl output = new OMOutputImpl(out, false);
-                dataOut.serialize(output);
+                omOutput.setOutputStream(out, false);
+                dataOut.serialize(omOutput);
             }
             msgContext.getOperationContext().setProperty(
                     Constants.RESPONSE_WRITTEN, Constants.VALUE_TRUE);
@@ -118,8 +120,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             //Configure the transport
             String soapAction = msgContext.getWSAAction();
             //settign soapAction
-            String soapActionString = soapAction == null ? "" : soapAction
-                    .toString();
+            String soapActionString = soapAction == null ? "" : soapAction;
 
             PostMethod postMethod = new PostMethod();
             postMethod.setPath(url.getFile());
@@ -129,12 +130,12 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                             chuncked, msgContext.isDoingMTOM()));
             if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)
                     && chuncked) {
-                ((PostMethod) postMethod).setContentChunked(true);
+                postMethod.setContentChunked(true);
             }
 
             if (msgContext.isDoingMTOM()) {
                 postMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                        OMOutputImpl.getContentType(true));
+                        omOutput.getOptimizedContentType());
             } else {
                 postMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
                         "text/xml; charset=utf-8");
@@ -276,9 +277,9 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         public void writeRequest(OutputStream out) throws IOException {
             try {
                 if (chuncked || doingMTOM) {
-                    OMOutputImpl output = new OMOutputImpl(out, doingMTOM);
-                    element.serialize(output);
-                    output.flush();
+                    omOutput.setOutputStream(out, doingMTOM);
+                    element.serialize(omOutput);
+                    omOutput.flush();
                     out.flush();
                 } else {
                     if (bytes == null) {

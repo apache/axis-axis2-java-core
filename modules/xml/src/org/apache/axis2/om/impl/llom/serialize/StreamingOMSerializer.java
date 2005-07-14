@@ -61,10 +61,6 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
      */
     public void serialize(XMLStreamReader obj, OMOutputImpl omOutput)
             throws XMLStreamException {
-        if (!(obj instanceof XMLStreamReader)) {
-            throw new UnsupportedOperationException(
-                    "Unsupported input object. Must be of the the type XMLStreamReader");
-        }
         XMLStreamReader node = (XMLStreamReader) obj;
         serializeNode(node, omOutput);
     }

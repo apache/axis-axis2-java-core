@@ -15,7 +15,6 @@
  */
 package org.apache.axis2.om.impl;
 
-import org.apache.axis2.om.impl.MIMEOutputUtils;
 import org.apache.axis2.om.OMText;
 
 import javax.xml.stream.FactoryConfigurationError;
@@ -39,22 +38,23 @@ public class OMOutputImpl {
     private ByteArrayOutputStream bufferedSoapOutStream;
     private static String mimeBoundary = "----=_AxIs2_Def_boundary_=42214532";
 
-    /**
-     * @param xmlWriter if it is guaranteed for not using attachments one can use this
-     */
+    public OMOutputImpl() {
+    }
+
     public OMOutputImpl(XMLStreamWriter xmlWriter) {
         this.xmlWriter = xmlWriter;
     }
 
-    /**
-     * @throws FactoryConfigurationError
-     * @throws XMLStreamException
-     */
-    public OMOutputImpl(OutputStream outStream, boolean doOptimise)
+    public OMOutputImpl(OutputStream outStream, boolean doOptimize)
             throws XMLStreamException, FactoryConfigurationError {
-        this.doOptimize = doOptimise;
+        setOutputStream(outStream, doOptimize);
+    }
+
+    public void setOutputStream(OutputStream outStream, boolean doOptimize)
+            throws XMLStreamException, FactoryConfigurationError {
+        this.doOptimize = doOptimize;
         this.outStream = outStream;
-        if (doOptimise) {
+        if (doOptimize) {
             bufferedSoapOutStream = new ByteArrayOutputStream();
             xmlWriter =
                     XMLOutputFactory.newInstance().createXMLStreamWriter(
@@ -67,10 +67,6 @@ public class OMOutputImpl {
         }
     }
 
-    public XMLStreamWriter getXmlStreamWriter() {
-        return xmlWriter;
-    }
-
     public void flush() throws XMLStreamException {
         xmlWriter.flush();
         if (doOptimize) {
@@ -79,22 +75,23 @@ public class OMOutputImpl {
         }
     }
 
-    public boolean doOptimise() {
+    public boolean isOptimized() {
         return doOptimize;
     }
 
-    public static String getContentType(boolean doOptimize) {
-        if (doOptimize) {
-            return org.apache.axis2.om.impl.MIMEOutputUtils.getContentTypeForMime(mimeBoundary);
-        }
-        //TODO have to check whether SOAP1.1 & SOAP 1.2
-        return null;
+    public String getOptimizedContentType() {
+        return org.apache.axis2.om.impl.MIMEOutputUtils.getContentTypeForMime(mimeBoundary);
     }
 
     public void writeOptimized(OMText node) {
         binaryNodeList.add(node);
     }
 
-    public void complete() throws XMLStreamException {
+    public void setXmlStreamWriter(XMLStreamWriter xmlWriter) {
+        this.xmlWriter = xmlWriter;
+    }
+
+    public XMLStreamWriter getXmlStreamWriter() {
+        return xmlWriter;
     }
 }

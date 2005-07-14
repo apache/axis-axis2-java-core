@@ -58,7 +58,7 @@ public class ImageDataSource implements DataSource {
 
     public String getContentType() {
         return contentType;
-    } // getContentType
+    } // getOptimizedContentType
 
     public InputStream getInputStream() throws IOException {
         if (os.size() != 0) {
