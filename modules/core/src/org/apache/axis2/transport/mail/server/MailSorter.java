@@ -36,20 +36,30 @@ public class MailSorter {
     private ArrayList sUsers = new ArrayList(); // Special users. They are hard coded for the time being to axis2-server@localhost and axis2-server@127.0.0.1
     private ConfigurationContext configurationContext = null;
     protected static Log log = LogFactory.getLog(MailSorter.class.getName());
-
+    private boolean actAsMailet = false;
     public MailSorter(Storage st, ConfigurationContext configurationContext) {
         this.st = st;
         sUsers.add("axis2-server@localhost");
         sUsers.add("axis2-server@127.0.0.1");
-        this.configurationContext = configurationContext;
+        if (configurationContext == null){
+            actAsMailet = false;
+        } else {
+            this.configurationContext = configurationContext;
+            actAsMailet = true;
+        }
     }
 
     public void sort(String user, MimeMessage msg) {
-        if (sUsers.contains(user)) {
-            processMail(configurationContext, msg);
+        if (actAsMailet) {
+            if (sUsers.contains(user)) {
+                processMail(configurationContext, msg);
+            } else {
+                st.addMail(user, msg);
+            }            
         } else {
             st.addMail(user, msg);
         }
+
     }
 
     public void processMail(ConfigurationContext confContext,

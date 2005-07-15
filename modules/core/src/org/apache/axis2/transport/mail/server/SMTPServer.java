@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-
 /**
  * @author Chamil Thanthrimudalige
  * @author Chamikara Jayalath
@@ -14,15 +13,25 @@ import java.net.Socket;
 
 public class SMTPServer extends Thread {
     private Storage st;
+
     private ConfigurationContext configurationContext;
+
     private int port;
 
-    public SMTPServer(Storage st,
-                      ConfigurationContext configurationContext,
-                      int port) {
+    private boolean actAsMailet = false;
+
+    public SMTPServer(Storage st, ConfigurationContext configurationContext,
+            int port) {
         this.st = st;
         this.configurationContext = configurationContext;
         this.port = port;
+        actAsMailet = true;
+    }
+
+    public SMTPServer(Storage st, int port) {
+        this.st = st;
+        this.port = port;
+        actAsMailet = false;
     }
 
     public void run() {
@@ -42,10 +51,12 @@ public class SMTPServer extends Thread {
             try {
                 //wait for a client
                 Socket socket = ss.accept();
-
-                SMTPWorker thread = new SMTPWorker(socket,
-                        st,
-                        configurationContext);
+                SMTPWorker thread = null;
+                if (actAsMailet)
+                    thread = new SMTPWorker(socket, st, configurationContext);
+                else {
+                    thread = new SMTPWorker(socket, st);
+                }
                 thread.start();
 
             } catch (IOException ex) {

@@ -12,9 +12,11 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MailServer {
     Storage st = null;
+
     public ConfigurationContext configurationContext = null;
-    protected static Log log = LogFactory.getLog(
-            SimpleMailListener.class.getName());
+
+    protected static Log log = LogFactory.getLog(SimpleMailListener.class
+            .getName());
 
     public MailServer(String dir, int popPort, int smtpPort) throws AxisFault {
         try {
@@ -24,16 +26,15 @@ public class MailServer {
             log.error(e);
         }
         try {
-            System.out.println(
-                    "Sleeping for a bit to let the engine start up.");
+            System.out
+                    .println("Sleeping for a bit to let the engine start up.");
             Thread.sleep(2000);
         } catch (InterruptedException e1) {
             log.error(e1);
         }
         st = new Storage();
         // Start up the two servers and lets have some fun. - CT
-        SMTPServer smtpServer = new SMTPServer(st,
-                configurationContext,
+        SMTPServer smtpServer = new SMTPServer(st, configurationContext,
                 smtpPort);
         smtpServer.start();
         POP3Server pop3Server = new POP3Server(st, popPort);
@@ -41,13 +42,12 @@ public class MailServer {
 
     }
 
-    public MailServer(ConfigurationContext configurationContext,
-                      int popPort,
-                      int smtpPort) throws AxisFault {
+    public MailServer(ConfigurationContext configurationContext, int popPort,
+            int smtpPort) throws AxisFault {
         this.configurationContext = configurationContext;
         try {
-            System.out.println(
-                    "Sleeping for a bit to let the engine start up.");
+            System.out
+                    .println("Sleeping for a bit to let the engine start up.");
             Thread.sleep(2000);
         } catch (InterruptedException e1) {
             log.error(e1);
@@ -55,11 +55,41 @@ public class MailServer {
 
         st = new Storage();
         // Start up the two servers and lets have some fun. - CT
-        SMTPServer smtpServer = new SMTPServer(st,
-                configurationContext,
+        SMTPServer smtpServer = new SMTPServer(st, configurationContext,
                 smtpPort);
         smtpServer.start();
         POP3Server pop3Server = new POP3Server(st, popPort);
         pop3Server.start();
+    }
+
+    public MailServer(int popPort, int smtpPort) throws AxisFault {
+        st = new Storage();
+        // Start up the two servers and lets have some fun. - CT
+        SMTPServer smtpServer = new SMTPServer(st, smtpPort);
+        smtpServer.start();
+        POP3Server pop3Server = new POP3Server(st, popPort);
+        pop3Server.start();
+    }
+
+    public static void main(String args[]){
+        int smtpPost = MailConstants.SMTP_SERVER_PORT;
+        int popPort = MailConstants.POP_SERVER_PORT;
+        if (args.length == 2) {
+            try {
+                smtpPost = Integer.parseInt(args[0]);
+                popPort = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e1) {
+                System.out.println("Error in parsing the custom ports.");
+            }
+        } else {
+            System.out.println("Usage MailServer <SMTP_PORT> <POP_PORT>");
+            System.out.println("Using 1134 as the SMTP port and 1049 as the POP port");
+        }
+
+        try {
+            MailServer ms = new MailServer(popPort, smtpPost);
+        } catch (AxisFault e) {
+            e.printStackTrace();
+        }
     }
 }

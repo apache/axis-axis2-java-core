@@ -17,7 +17,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Properties;
 
-
 /**
  * @author Chamil Thanthrimudalige
  * @author Chamikara Jayalath
@@ -25,40 +24,53 @@ import java.util.Properties;
 
 public class SMTPWorker extends Thread {
 
-    BufferedReader reader = null;
+    private BufferedReader reader = null;
 
-    BufferedWriter writer = null;
+    private BufferedWriter writer = null;
 
-    ArrayList receivers = new ArrayList();
+    private boolean actAsMailet = false;
 
-    Storage st = null;
+    private ArrayList receivers = new ArrayList();
+
+    private Storage st = null;
+
     boolean runThread = true;
 
     private MimeMessage mail = null;
+
     private ConfigurationContext configurationContext = null;
 
-    String temp = "";
-    boolean dataWriting = false;
-    boolean transmitionEnd = false;
+    private String temp = "";
 
-    boolean bodyData = false;
+    private boolean dataWriting = false;
 
-    public SMTPWorker(Socket socket,
-                      Storage st,
-                      ConfigurationContext configurationContext) {
+    private boolean transmitionEnd = false;
+
+    private boolean bodyData = false;
+
+    public SMTPWorker(Socket socket, Storage st,
+            ConfigurationContext configurationContext) {
+        doWork(socket, st, configurationContext);
+    }
+
+    public SMTPWorker(Socket socket, Storage st) {
+        doWork(socket, st, null);
+    }
+
+    private void doWork(Socket socket, Storage st,
+            ConfigurationContext configurationContext) {
         try {
             this.st = st;
-            this.configurationContext = configurationContext;
+            if (configurationContext == null) {
+                actAsMailet = false;
+            } else {
+                this.configurationContext = configurationContext;
+                actAsMailet = true;
+            }
             //get the streams from the socket and save in instance variables.
-            reader =
-                    new BufferedReader(
-                            new InputStreamReader(
-                                    socket
+            reader = new BufferedReader(new InputStreamReader(socket
                     .getInputStream()));
-            writer =
-                    new BufferedWriter(
-                            new OutputStreamWriter(
-                                    socket
+            writer = new BufferedWriter(new OutputStreamWriter(socket
                     .getOutputStream()));
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -70,7 +82,7 @@ public class SMTPWorker extends Thread {
         try {
             //do initial transmission.
             initializeClient();
-            
+
             //analyze all the inputs from client and work accordingly.
             while (runThread) {
                 String input = null;
@@ -93,10 +105,15 @@ public class SMTPWorker extends Thread {
             }
             for (int idx = 0; idx < receivers.size(); idx++) {
                 try {
-                    MailSorter mSort = new MailSorter(this.st,
-                            this.configurationContext);
-                    mSort.sort((String) receivers.get(idx),
-                            new MimeMessage(mail));
+                    MailSorter mSort = null;
+                    if (actAsMailet) {
+                        mSort = new MailSorter(this.st,
+                                this.configurationContext);
+                    } else {
+                        mSort = new MailSorter(this.st, null);
+                    }
+                    mSort.sort((String) receivers.get(idx), new MimeMessage(
+                            mail));
                 } catch (MessagingException e1) {
                     e1.printStackTrace();
                 }
@@ -115,16 +132,19 @@ public class SMTPWorker extends Thread {
     }
 
     private String processInput(String input) {
-        byte[] CR_LF = new byte[]{0x0D, 0x0A};
-        if (input == null) return MailConstants.COMMAND_UNKNOWN;
-        if (mail != null && transmitionEnd) return MailConstants.COMMAND_TRANSMISSION_END;
+        byte[] CR_LF = new byte[] { 0x0D, 0x0A };
+        if (input == null)
+            return MailConstants.COMMAND_UNKNOWN;
+        if (mail != null && transmitionEnd)
+            return MailConstants.COMMAND_TRANSMISSION_END;
 
         if (input.startsWith("MAIL")) {
-            mail = new MimeMessage(Session.getInstance(new Properties(), new Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return null;
-                }
-            }));
+            mail = new MimeMessage(Session.getInstance(new Properties(),
+                    new Authenticator() {
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return null;
+                        }
+                    }));
 
             int start = input.indexOf("<") + 1;
             int end;
@@ -139,7 +159,8 @@ public class SMTPWorker extends Thread {
             String from = input.substring(start, end);
 
             if (from != null && !from.trim().equals("")) {
-                //TODO this is an ugly hack to get the from address in. There should be a better way to do this.
+                //TODO this is an ugly hack to get the from address in. There
+                // should be a better way to do this.
                 MailAddress mailFrom[] = new MailAddress[1];
                 mailFrom[0] = new MailAddress(from);
                 try {
@@ -160,29 +181,29 @@ public class SMTPWorker extends Thread {
 
             String domain = MailConstants.SERVER_DOMAIN;
             //System.out.println("RCPT:" + input);
-            //temp += input + "\n";  TODO Check this
+            //temp += input + "\n"; TODO Check this
             int start = input.indexOf("<") + 1;
             int end;
 
             if (start <= 0) {
                 start = input.indexOf("TO:") + 3;
-/*                if(!input.endsWith(domain)){
-                    System.out.println("ERROR: wrong donmain name");
-                    return MailConstants.RCPT_ERROR;
-                }*/
+                /*
+                 * if(!input.endsWith(domain)){ System.out.println("ERROR: wrong
+                 * donmain name"); return MailConstants.RCPT_ERROR; }
+                 */
             } else {
-/*                if(!input.endsWith(domain + ">")){
-                    System.out.println("ERROR: wrong donmain name");
-                    return MailConstants.RCPT_ERROR;
-                }*/
+                /*
+                 * if(!input.endsWith(domain + ">")){ System.out.println("ERROR:
+                 * wrong donmain name"); return MailConstants.RCPT_ERROR; }
+                 */
             }
 
             end = input.indexOf(">");
             String toStr = input.substring(start, end);
 
             try {
-                mail.addRecipient(Message.RecipientType.TO,
-                        new MailAddress(toStr));
+                mail.addRecipient(Message.RecipientType.TO, new MailAddress(
+                        toStr));
                 receivers.add(toStr);
             } catch (MessagingException e) {
                 // TODO Auto-generated catch block
@@ -210,9 +231,8 @@ public class SMTPWorker extends Thread {
                 if (bodyData) {
                     temp += input;
                     mail.setContent(temp, "text/plain");
-                    System.out.println(
-                            "\n\n\n---------------" + temp +
-                            "---------------\n\n\n");
+                    System.out.println("\n\n\n---------------" + temp
+                            + "---------------\n\n\n");
                 } else {
                     mail.addHeaderLine(input);
                 }
