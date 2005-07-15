@@ -17,18 +17,18 @@
     /// &lt;/summary&gt;
 
     public interface
-        <xsl:value-of select="@name"></xsl:value-of>
+        <xsl:value-of select="@name"/>
     {
 
         <xsl:for-each select="method">
             <xsl:variable name="outputtype">
-                <xsl:value-of select="output/param/@type"></xsl:value-of>
+                <xsl:value-of select="output/param/@type"/>
             </xsl:variable>
             <xsl:variable name="inputtype">
-                <xsl:value-of select="input/param/@type"></xsl:value-of>
+                <xsl:value-of select="input/param/@type"/>
             </xsl:variable>  <!-- this needs to change-->
             <xsl:variable name="inputparam">
-                <xsl:value-of select="input/param/@name"></xsl:value-of>
+                <xsl:value-of select="input/param/@name"/>
             </xsl:variable>  <!-- this needs to change-->
             <xsl:if test="$isSync='1'">
         /// &lt;summary&gt;
@@ -44,7 +44,7 @@
                 <xsl:if test="$inputtype!=''">
                     <xsl:value-of select="$inputtype"/>
                     <xsl:text> </xsl:text>
-                    <xsl:value-of select="$inputparam"></xsl:value-of>
+                    <xsl:value-of select="$inputparam"/>
                 </xsl:if>);
             </xsl:if>
 
@@ -62,7 +62,7 @@
                 <xsl:if test="$inputtype!=''">
                     <xsl:value-of select="$inputtype"/>
                     <xsl:text> </xsl:text>
-                    <xsl:value-of select="$inputparam"></xsl:value-of>
+                    <xsl:value-of select="$inputparam"/>
                 </xsl:if>) ;
             </xsl:if>
 

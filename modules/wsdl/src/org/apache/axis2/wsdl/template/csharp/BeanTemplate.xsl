@@ -16,10 +16,10 @@
 
         <xsl:for-each select="property">
             <xsl:variable name="propertyType">
-                <xsl:value-of select="@type"></xsl:value-of>
+                <xsl:value-of select="@type"/>
             </xsl:variable>
             <xsl:variable name="propertyName">
-                <xsl:value-of select="@name"></xsl:value-of>
+                <xsl:value-of select="@name"/>
             </xsl:variable>
 
         /// &lt;summary&gt;

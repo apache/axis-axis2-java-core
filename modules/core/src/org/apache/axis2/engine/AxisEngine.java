@@ -279,16 +279,16 @@ public class AxisEngine {
                                        MessageContext msgctx) throws AxisFault {
         msgctx.setPausedFalse();
         int count = phases.size();
-        boolean foudMatch = false;
+        boolean foundMatch = false;
 
         for (int i = 0; i < count && !msgctx.isPaused(); i++) {
             Phase phase = (Phase) phases.get(i);
             if (phase.getPhaseName().equals(msgctx.getPausedPhaseName())) {
-                foudMatch = true;
+                foundMatch = true;
                 phase.invokeStartFromHandler(msgctx.getPausedHandlerName(),
                                              msgctx);
             } else {
-                if (foudMatch) {
+                if (foundMatch) {
                     phase.invoke(msgctx);
                 }
 

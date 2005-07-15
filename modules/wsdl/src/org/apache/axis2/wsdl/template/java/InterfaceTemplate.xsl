@@ -22,24 +22,24 @@
      */
 
     public interface
-        <xsl:value-of select="@name"></xsl:value-of> {
+        <xsl:value-of select="@name"/> {
         <xsl:for-each select="method">
             <xsl:variable name="outputtype">
-                <xsl:value-of select="output/param/@type"></xsl:value-of>
+                <xsl:value-of select="output/param/@type"/>
             </xsl:variable>
 
             <xsl:variable name="inputtype">
-                <xsl:value-of select="input/param/@type"></xsl:value-of>
+                <xsl:value-of select="input/param/@type"/>
             </xsl:variable>  <!-- this needs to change-->
             <xsl:variable name="inputparam">
-                <xsl:value-of select="input/param/@name"></xsl:value-of>
+                <xsl:value-of select="input/param/@name"/>
             </xsl:variable>  <!-- this needs to change-->
             <xsl:if test="$isSync='1'">
         /**
          * Auto generated method signature 
          *
                 <xsl:if test="$inputtype!=''">@param
-                    <xsl:value-of select="$inputparam"></xsl:value-of>
+                    <xsl:value-of select="$inputparam"/>
                 </xsl:if>
          */
         public
@@ -52,7 +52,7 @@
                 <xsl:if test="$inputtype!=''">
                     <xsl:value-of select="$inputtype"/>
                     <xsl:text> </xsl:text>
-                    <xsl:value-of select="$inputparam"></xsl:value-of>
+                    <xsl:value-of select="$inputparam"/>
                 </xsl:if>) throws java.rmi.RemoteException;
             </xsl:if>
             <xsl:if test="$isAsync='1'">
@@ -60,7 +60,7 @@
          * Auto generated method signature
          *
                 <xsl:if test="$inputtype!=''">@param
-                    <xsl:value-of select="$inputparam"></xsl:value-of>
+                    <xsl:value-of select="$inputparam"/>
                 </xsl:if>
          */
         public  void start
@@ -68,7 +68,7 @@
                 <xsl:if test="$inputtype!=''">
                     <xsl:value-of select="$inputtype"/>
                     <xsl:text> </xsl:text>
-                    <xsl:value-of select="$inputparam"></xsl:value-of>,
+                    <xsl:value-of select="$inputparam"/>,
                 </xsl:if>final
                 <xsl:value-of select="$package"/>.
                 <xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException;

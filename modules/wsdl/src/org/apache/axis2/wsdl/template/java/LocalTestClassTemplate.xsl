@@ -111,13 +111,13 @@
 
         <xsl:for-each select="method">
             <xsl:variable name="outputtype">
-                <xsl:value-of select="output/param/@type"></xsl:value-of>
+                <xsl:value-of select="output/param/@type"/>
             </xsl:variable>
             <xsl:variable name="inputtype">
-                <xsl:value-of select="input/param/@type"></xsl:value-of>
+                <xsl:value-of select="input/param/@type"/>
             </xsl:variable>  <!-- this needs to change-->
             <xsl:variable name="inputparam">
-                <xsl:value-of select="input/param/@name"></xsl:value-of>
+                <xsl:value-of select="input/param/@name"/>
             </xsl:variable>  <!-- this needs to change-->
             <xsl:if test="$isSync='1'">
 

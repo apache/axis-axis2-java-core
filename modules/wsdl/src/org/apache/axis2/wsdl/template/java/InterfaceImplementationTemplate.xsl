@@ -80,22 +80,22 @@
 
         <xsl:for-each select="method">
             <xsl:variable name="outputtype">
-                <xsl:value-of select="output/param/@type"></xsl:value-of>
+                <xsl:value-of select="output/param/@type"/>
             </xsl:variable>
             <xsl:variable name="style">
-                <xsl:value-of select="@style"></xsl:value-of>
+                <xsl:value-of select="@style"/>
             </xsl:variable>
             <xsl:variable name="inputtype">
-                <xsl:value-of select="input/param/@type"></xsl:value-of>
+                <xsl:value-of select="input/param/@type"/>
             </xsl:variable>  <!-- this needs to change-->
             <xsl:variable name="inputparam">
-                <xsl:value-of select="input/param/@name"></xsl:value-of>
+                <xsl:value-of select="input/param/@name"/>
             </xsl:variable>  <!-- this needs to change-->
             <xsl:variable name="dbsupportclassname">
-                <xsl:value-of select="@dbsupportname"></xsl:value-of>
+                <xsl:value-of select="@dbsupportname"/>
             </xsl:variable>
             <xsl:variable name="soapAction">
-                <xsl:value-of select="@soapaction"></xsl:value-of>
+                <xsl:value-of select="@soapaction"/>
             </xsl:variable>
             <xsl:variable name="fullsupporterclassname">
                 <xsl:value-of select="$dbpackage"/>.
@@ -113,7 +113,7 @@
                 <xsl:value-of select="@name"/>
          *
                 <xsl:if test="$inputtype!=''">@param
-                    <xsl:value-of select="$inputparam"></xsl:value-of>
+                    <xsl:value-of select="$inputparam"/>
                 </xsl:if>
          */
         public
@@ -126,7 +126,7 @@
                 <xsl:if test="$inputtype!=''">
                     <xsl:value-of select="$inputtype"/>
                     <xsl:text> </xsl:text>
-                    <xsl:value-of select="$inputparam"></xsl:value-of>
+                    <xsl:value-of select="$inputparam"/>
                 </xsl:if>) throws java.rmi.RemoteException{
 
 		    org.apache.axis2.clientapi.Call _call = new org.apache.axis2.clientapi.Call(_serviceContext);
@@ -221,7 +221,7 @@
                 <xsl:value-of select="@name"/>
          *
                 <xsl:if test="$inputtype!=''">@param
-                    <xsl:value-of select="$inputparam"></xsl:value-of>
+                    <xsl:value-of select="$inputparam"/>
                 </xsl:if>
          */
         public  void start
@@ -229,7 +229,7 @@
                 <xsl:if test="$inputtype!=''">
                     <xsl:value-of select="$inputtype"/>
                     <xsl:text> </xsl:text>
-                    <xsl:value-of select="$inputparam"></xsl:value-of>,
+                    <xsl:value-of select="$inputparam"/>,
                 </xsl:if>final
                 <xsl:value-of select="$package"/>.
                 <xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException{
