@@ -11,7 +11,7 @@ class GroovyRcv{
 	//public static void main(args){
    //	  println "hi"
 
-	Object parseXML(arg){
+	Object echo(arg){
 
 	 addNodeValues = []
 	 nameNodeValues = []

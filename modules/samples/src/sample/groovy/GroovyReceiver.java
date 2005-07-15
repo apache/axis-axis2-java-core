@@ -10,13 +10,17 @@ import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLInputFactory;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.ByteArrayInputStream;
@@ -65,7 +69,7 @@ public class GroovyReceiver  extends AbstractInOutSyncMessageReceiver
             throw new AxisFault("Operation is not located");
         }
         String methodName = op.getName().getLocalPart();
-        OMElement firstChild = inMessage.getEnvelope();
+        OMElement firstChild = (OMElement)inMessage.getEnvelope().getBody().getFirstChild();
         inMessage.getEnvelope().build();
         try {
             StringWriter writer = new StringWriter();
@@ -73,7 +77,6 @@ public class GroovyReceiver  extends AbstractInOutSyncMessageReceiver
             firstChild.serializeWithCache(new OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
             writer.flush();
             String value = writer.toString();
-            System.out.println("In Coming Message: " + value);
             if (value !=null) {
                 try {
                     InputStream in = new ByteArrayInputStream(value.getBytes());
@@ -92,8 +95,9 @@ public class GroovyReceiver  extends AbstractInOutSyncMessageReceiver
                     OMNamespace ns = fac.createOMNamespace("http://soapenc/", "res");
                     OMElement responseElement = fac.createOMElement(methodName + "Response", ns);
                     String outMessageString =   obj.toString();
-                    System.out.println("outMessageString = " + outMessageString);
-                    responseElement.setText(outMessageString);
+                   // System.out.println("outMessageString = " + outMessageString);
+                   // responseElement.setText(outMessageString);
+                    responseElement.addChild(getpayLoad(outMessageString));
                     envelope.getBody().addChild(responseElement);
                     outMessage.setEnvelope(envelope);
                 } catch (CompilationFailedException e) {
@@ -109,5 +113,16 @@ public class GroovyReceiver  extends AbstractInOutSyncMessageReceiver
         }
 
     }
+
+    private OMElement getpayLoad(String str) throws XMLStreamException {
+        XMLStreamReader xmlReader=  XMLInputFactory.newInstance().createXMLStreamReader(new
+                ByteArrayInputStream(str.getBytes()));
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+
+        StAXOMBuilder staxOMBuilder = new
+                StAXOMBuilder(fac,(XMLStreamReader) xmlReader);
+        return   staxOMBuilder.getDocumentElement();
+    }
+
 
 }

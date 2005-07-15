@@ -39,6 +39,7 @@
         <mkdir dir="target/test-resources/MTOM-enabledRepository"/>
         <copy file="test/org/apache/axis2/mtom/MTOM-enabled-axis2.xml"
             tofile="target/test-resources/MTOM-enabledRepository/axis2.xml"/>
+        <attainGoal name="groovy"/>
     </postGoal>
 
     <postGoal name="test:test">
@@ -47,7 +48,7 @@
     </postGoal>
 
     <goal name="create-samples">
-        <mkdir dir="target/samples"/>
+<!--        <mkdir dir="target/samples"/>-->
         <mkdir dir="${samples.dir}/userguide"/>
         <mkdir dir="target/samples/wsdl"/>
         <copy todir="target/samples/wsdl">
@@ -59,7 +60,7 @@
         <attainGoal name="googleSpellcheck"/>
         <attainGoal name="version"/>
         <attainGoal name="mtomSample"/>
-        <attainGoal name="groovy"/>
+<!--        <attainGoal name="groovy"/>-->
     </goal>
 
     <!-- ================================================================ -->
@@ -164,6 +165,7 @@
     <!-- ================================================================ -->
 
     <goal name="groovy">
+        <mkdir dir="target/samples"/>
         <ant:copy file="./src/sample/groovy/GroovyRcv.groovy" tofile="target/classes/sample/groovy/GroovyRcv.groovy"/>
         <mkdir dir="target/classes/sample/groovy/lib"/>
         <mkdir dir="target/classes/sample/groovy/sample"/>
@@ -175,6 +177,9 @@
             <fileset dir="target/classes/sample/groovy">
             </fileset>
         </jar>
+        <mkdir dir="target/groovyRepo"/>
+        <mkdir dir="target/groovyRepo/services"/>
+        <ant:copy file="${samples.dir}/groovyService.aar" tofile="target/groovyRepo/services/groovyService.aar"/>
     </goal>
 
 
