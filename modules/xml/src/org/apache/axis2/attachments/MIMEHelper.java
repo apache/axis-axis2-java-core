@@ -177,8 +177,6 @@ public class MIMEHelper {
             rootContentID = firstPartId;
         } else {
             rootContentID.trim();
-            rootContentID = rootContentID
-                    .substring(1, (rootContentID.length() - 1));
         }
         DataHandler dh;
         try {
@@ -204,7 +202,6 @@ public class MIMEHelper {
     public DataHandler getDataHandler(String blobContentID) throws OMException {
 
         Part bodyPart;
-        blobContentID = "<" + blobContentID + ">";
         boolean attachmentFound = false;
 
         //		// without the following part a Null Pointer Exception is thrown
