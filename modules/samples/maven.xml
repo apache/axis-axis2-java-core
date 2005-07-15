@@ -16,12 +16,12 @@
         <copy file="../addressing/target/addressing.mar"
             tofile="target/test-resources/repository-client/modules/addressing.mar"/>
         <mkdir dir="target/toWar/services/"/>
-        
+
         <!-- Create Chuncked enabled Repository -->
         <mkdir dir="target/test-resources/chuncked-enabledRepository"/>
         <copy file="test/org/apache/axis2/engine/chuncking-enabled-axis2.xml"
             tofile="target/test-resources/chuncked-enabledRepository/axis2.xml"/>
-        
+
         <!-- Create Mail transport enabled Repository -->
         <mkdir dir="target/test-resources/mail-transport-enabledRepository"/>
         <mkdir dir="target/test-resources/mail-transport-enabledRepository/modules"/>
@@ -34,7 +34,7 @@
         <mkdir dir="target/test-resources/commons-http-enabledRepository"/>
         <copy file="test/org/apache/axis2/engine/commons-http-enabled-axis2.xml"
             tofile="target/test-resources/commons-http-enabledRepository/axis2.xml"/>
-        
+
         <!-- MTOM enabled Repository -->
         <mkdir dir="target/test-resources/MTOM-enabledRepository"/>
         <copy file="test/org/apache/axis2/mtom/MTOM-enabled-axis2.xml"
@@ -59,7 +59,7 @@
         <attainGoal name="googleSpellcheck"/>
         <attainGoal name="version"/>
         <attainGoal name="mtomSample"/>
-         <attainGoal name="groovy"/>
+        <attainGoal name="groovy"/>
     </goal>
 
     <!-- ================================================================ -->
@@ -159,19 +159,22 @@
     </goal>
 
 
-     <!-- ================================================================ -->
+    <!-- ================================================================ -->
     <!--- Groovy Service Sample -->
     <!-- ================================================================ -->
 
     <goal name="groovy">
         <ant:copy file="./src/sample/groovy/GroovyRcv.groovy" tofile="target/classes/sample/groovy/GroovyRcv.groovy"/>
         <mkdir dir="target/classes/sample/groovy/lib"/>
+        <mkdir dir="target/classes/sample/groovy/sample"/>
+        <mkdir dir="target/classes/sample/groovy/sample/groovy"/>
+        <ant:copy file="target/classes/sample/groovy/GroovyReceiver.class" tofile="target/classes/sample/groovy/sample/groovy/GroovyReceiver.class"/>
+        <ant:delete file="target/classes/sample/groovy/GroovyReceiver.class"/>
         <ant:copy file="${maven.repo.local}/groovy/jars/groovy-all-1.0-jsr-01.jar" tofile="target/classes/sample/groovy/lib/groovy-all-1.0-jsr-01.jar"/>
-
-         <jar destfile="${samples.dir}/groovyService.aar">
+        <jar destfile="${samples.dir}/groovyService.aar">
             <fileset dir="target/classes/sample/groovy">
             </fileset>
-         </jar>
+        </jar>
     </goal>
 
 
