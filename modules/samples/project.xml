@@ -71,6 +71,17 @@
             </properties>
             <url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
+
+       <dependency>
+            <groupId>groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>1.0-jsr-01</version>
+            <properties>
+                <module>true</module>
+            </properties>
+            <url>http://dist.codehaus.org/groovy/jars/</url>
+        </dependency>
+
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>

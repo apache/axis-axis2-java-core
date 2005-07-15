@@ -59,6 +59,7 @@
         <attainGoal name="googleSpellcheck"/>
         <attainGoal name="version"/>
         <attainGoal name="mtomSample"/>
+         <attainGoal name="groovy"/>
     </goal>
 
     <!-- ================================================================ -->
@@ -156,6 +157,26 @@
             </fileset>
         </jar>
     </goal>
+
+
+     <!-- ================================================================ -->
+    <!--- Groovy Service Sample -->
+    <!-- ================================================================ -->
+
+    <goal name="groovy">
+        <ant:copy file="./src/sample/groovy/GroovyRcv.groovy" tofile="target/classes/sample/groovy/GroovyRcv.groovy"/>
+        <mkdir dir="target/classes/sample/groovy/lib"/>
+        <ant:copy file="${maven.repo.local}/groovy/jars/groovy-all-1.0-jsr-01.jar" tofile="target/classes/sample/groovy/lib/groovy-all-1.0-jsr-01.jar"/>
+
+         <jar destfile="${samples.dir}/groovyService.aar">
+            <fileset dir="target/classes/sample/groovy">
+            </fileset>
+         </jar>
+    </goal>
+
+
+
+
     <!-- ================================================================ -->
     <!--- Google Search Sample -->
     <!-- ================================================================ -->
