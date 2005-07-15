@@ -21,6 +21,7 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisFault;
@@ -33,6 +34,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HeaderElement;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -322,6 +325,20 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
             this.httpClient.executeMethod(hostConfig, postMethod);
             if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
+                Header header = postMethod.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+                if(header != null) {
+                    HeaderElement[] headers = header.getElements();
+                    for(int i=0;i<headers.length;i++){
+                        if(headers[i].getName().equals(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED)){
+                            OperationContext opContext = msgContext.getOperationContext();
+                            if (opContext != null) {
+                                opContext.setProperty(
+                                        HTTPConstants.MTOM_RECIVED_CONTENT_TYPE,
+                                        header.getValue());
+                            }
+                        }
+                    }
+                }
                 InputStream in = postMethod.getResponseBodyAsStream();
                 if (in == null) {
                     throw new AxisFault("Input Stream can not be Null");
