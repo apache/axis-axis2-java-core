@@ -77,7 +77,7 @@
         <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-servlet</artifactId>
-            <version>2.4-rc3</version>
+            <version>2.4-SNAPSHOT</version>
             <properties>
                 <module>true</module>
             </properties>
