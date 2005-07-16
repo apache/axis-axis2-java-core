@@ -49,7 +49,7 @@ public class MTOMStAXSOAPModelBuilderTest extends AbstractTestCase {
         super(testName);
     }
 
-    String contentTypeString = "multipart/Related; type=\"application/xop+xml\"; boundary=\"----=_AxIs2_Def_boundary_=42214532\"; start=\"<SOAPPart>\"";
+    String contentTypeString = "multipart/Related; type=\"application/xop+xml\"; boundary=\"----=_AxIs2_Def_boundary_=42214532\"; start=\"SOAPPart\"";
 
     protected void setUp() throws Exception {
         super.setUp();
