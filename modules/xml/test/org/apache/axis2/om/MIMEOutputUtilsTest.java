@@ -49,14 +49,17 @@ public class MIMEOutputUtilsTest extends TestCase {
         DataHandler dataHandler;
         dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
         OMText textData = factory.createText(dataHandler, true);
+        assertNotNull(textData.getContentID());
 
         DataHandler dataHandler2 = new DataHandler(
                 "Apache Software Foundation", "text/plain");
         OMText text = factory.createText(dataHandler2, true);
+        assertNotNull(text.getContentID());
         outStream = new ByteArrayOutputStream();
         outStream.write(("Content-Type: " + contentType).getBytes());
-        outStream.write(new byte[]{13, 10});
-        //outStream.write("\n\n".getBytes());
+        outStream.write(new byte[]{13,10});
+        outStream.write(new byte[]{13,10});
+
         MIMEOutputUtils.startWritingMime(outStream, boundary);
         MimeBodyPart part1 = MIMEOutputUtils.createMimeBodyPart(textData);
         MIMEOutputUtils.writeBodyPart(outStream, part1, boundary);
@@ -65,7 +68,6 @@ public class MIMEOutputUtilsTest extends TestCase {
         MIMEOutputUtils.finishWritingMime(outStream);
         buffer = outStream.toByteArray();
         System.out.println(new String(buffer));
-        System.out.println("Axis2");
     }
 
     public void testMIMEWriting() throws IOException, MessagingException {
@@ -75,13 +77,13 @@ public class MIMEOutputUtilsTest extends TestCase {
                 .getInstance(props, null);
         MimeMessage mimeMessage = new MimeMessage(session, inStream);
         DataHandler dh = mimeMessage.getDataHandler();
-        MimeMultipart multiPart = new MimeMultipart(
-                (MimePartDataSource) dh
-                .getDataSource());
-        MimeBodyPart mimeBodyPart2 = (MimeBodyPart) multiPart.getBodyPart(0);
-        Object object = mimeBodyPart2.getContent();
-        MimeBodyPart mimeBodyPart1 = (MimeBodyPart) multiPart.getBodyPart(0);
-
+        MimeMultipart multiPart = new MimeMultipart(dh.getDataSource());
+        MimeBodyPart mimeBodyPart0 = (MimeBodyPart) multiPart.getBodyPart(0);
+        Object object0 = mimeBodyPart0.getContent();
+        assertNotNull(object0);
+        MimeBodyPart mimeBodyPart1 = (MimeBodyPart) multiPart.getBodyPart(1);
+        Object object1 = mimeBodyPart1.getContent();
+        assertNotNull(object1);
+        assertEquals(multiPart.getCount(),2);
     }
-
 }
