@@ -40,11 +40,7 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class ServiceDescription
@@ -58,7 +54,8 @@ public class ServiceDescription
 
     private Definition difDefinition = null; //to store the wsdl definition , which is build at the deployment time
 
-
+    //to keep the time that last update time of the service
+    private long lastupdate ;
     /**
      * TODO this should be in the WSDLInterface, yet we want it to have in the
      * the Services, so we put this here for M1 until we foud better way to do
@@ -626,6 +623,17 @@ public class ServiceDescription
         } catch (IOException e) {
             throw new AxisFault(e);
         }
+    }
+
+    /**
+     * This method will set the current time as last update time of the service
+     */
+    public void setLastupdate(){
+        lastupdate = new Date().getTime();
+    }
+
+    public long getLastupdate(){
+        return lastupdate;
     }
 
 }

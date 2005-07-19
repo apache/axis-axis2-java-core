@@ -30,6 +30,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.AxisObserver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.Log;
@@ -42,6 +43,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Observer;
+import java.util.Observable;
 
 /**
  * This class is used to parse the following xml douments
@@ -229,6 +232,8 @@ public class DeploymentParser implements DeploymentConstants {
                                     "Flow type is a required attribute in " +
                                     ST);
                         }
+                    } else if (LISTENERST.equals(ST)){
+                        processListener(axisGlobal);
                     } else {
                         throw new UnsupportedOperationException(
                                 ST +
@@ -618,6 +623,66 @@ public class DeploymentParser implements DeploymentConstants {
         parameter.setValue(element);
         return parameter;
     }
+
+    private void processListener(AxisConfigurationImpl axisGlobal) throws DeploymentException {
+        AxisObserver observer = null;
+        int attribCount = pullparser.getAttributeCount();
+        if (attribCount ==1) {
+            String attname = pullparser.getAttributeLocalName(0);
+            String attvalue = pullparser.getAttributeValue(0);
+            if (CLASSNAME.equals(attname)) {
+                try {
+                    Class observerclass =  Class.forName(attvalue,true,Thread.currentThread().
+                            getContextClassLoader());
+                    observer =  (AxisObserver) observerclass.newInstance();
+                } catch (ClassNotFoundException e) {
+                    throw new DeploymentException(e);
+                } catch (IllegalAccessException e) {
+                    throw new DeploymentException(e);
+                } catch (InstantiationException e) {
+                    throw new DeploymentException(e);
+                }
+            }
+
+        } else {
+            throw new DeploymentException("bad listener arguments");
+        }
+
+        boolean END_LISTENER = false;
+        try {
+            while (!END_LISTENER) {
+                int eventType = pullparser.next();
+                if (eventType == XMLStreamConstants.END_DOCUMENT) {
+                    END_LISTENER = true;
+                }else if (eventType == XMLStreamConstants.START_ELEMENT) {
+                    String tagnae = pullparser.getLocalName();
+                    if (tagnae.equals(PARAMETERST)) {
+                        Parameter parameter = processParameter();
+                        observer.addParameter(parameter);
+                    } else {
+                        throw new DeploymentException(
+                                "parser Exception : un supported element" +
+                                tagnae);
+                    }
+
+                }else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                    String endtagname = pullparser.getLocalName();
+                    if (LISTENERST.equals(endtagname)) {
+                        END_LISTENER = true;
+                        break;
+                    }
+                } else if (eventType == XMLStreamConstants.CHARACTERS) {
+                }
+            }
+        } catch (XMLStreamException e) {
+            throw new DeploymentException("parser Exception", e);
+        } catch (Exception e) {
+            throw new DeploymentException(e);
+        }
+        observer.init();
+        axisGlobal.addObservers(observer);
+    }
+
 
     /**
      * this method is to process the HandlerMetaData tag in the either service.xml or axis2.xml

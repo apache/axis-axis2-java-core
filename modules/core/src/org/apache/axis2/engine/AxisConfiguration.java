@@ -22,9 +22,7 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.*;
 
 /**
  * The palce where all the Global states of Axis is kept.

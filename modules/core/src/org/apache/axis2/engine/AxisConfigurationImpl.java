@@ -30,12 +30,7 @@ import org.apache.axis2.phaseresolver.PhaseResolver;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class EngineRegistryImpl
@@ -47,6 +42,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     private Hashtable errornesServices;
 
     private Hashtable errornesModules;
+
 
     /**
      * Field modules
@@ -91,6 +87,9 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     private String axis2Repository = null;
 
+    //to store AxisObserver Objects
+    private ArrayList observersList = null;
+
     protected HashMap messagRecievers;
     /////////////////////// From AxisGlobal /////////////////////////////////////
     /**
@@ -107,6 +106,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         outFaultPhases = new ArrayList();
         errornesServices = new Hashtable();
         errornesModules = new Hashtable();
+        observersList = new ArrayList();
 
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
         inPhasesUptoAndIncludingPostDispatch.add(
@@ -163,6 +163,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         services.put(service.getName(), service);
         PhaseResolver handlerResolver = new PhaseResolver(this, service);
         handlerResolver.buildchains();
+        service.setLastupdate();
+        notifyObserves(AxisEvent.SERVICE_DEPLOY ,service);
     }
 
     /**
@@ -202,6 +204,10 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @throws AxisFault
      */
     public synchronized void removeService(QName name) throws AxisFault {
+        ServiceDescription service = getService(name);
+        if (service != null) {
+            notifyObserves(AxisEvent.SERVICE_DEPLOY , service);
+        }
         services.remove(name);
     }
 
@@ -382,4 +388,16 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         this.axis2Repository = axis2Repository;
     }
 
+    private void notifyObserves(int event_type , ServiceDescription service){
+        AxisEvent event = new AxisEvent(service,event_type);
+        for (int i = 0; i < observersList.size(); i++) {
+            AxisObserver axisObserver = (AxisObserver) observersList.get(i);
+            axisObserver.update(event);
+        }
+    }
+
+    public void addObservers(AxisObserver axisObserver){
+        observersList.add(axisObserver);
+    }
+    
 }

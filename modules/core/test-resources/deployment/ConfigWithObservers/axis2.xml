@@ -12,9 +12,9 @@
     <parameter name="password" locked="xsd:false">axis2</parameter>
 
 <!--    The way of adding listener to the system-->
-<!--    <listener class="org.apache.axis2.ObserverIMPL">-->
-<!--        <parameter name="RSS_URL" locked="xsd:false">http://127.0.0.1/rss</parameter>-->
-<!--    </listener>-->
+    <listener class="org.apache.axis2.deployment.AxisObserverImpl">
+        <parameter name="RSS_URL" locked="xsd:false">http://127.0.0.1/rss</parameter>
+    </listener>
 
 
 

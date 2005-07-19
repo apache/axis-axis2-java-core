@@ -535,6 +535,7 @@ public class PhaseResolver {
         HashMap opeartions = service.getOperations();
         Collection opCol = opeartions.values();
         boolean engaged = false;
+        service.addModuleOperations(module);
         for (Iterator iterator = opCol.iterator(); iterator.hasNext();) {
             OperationDescription opDesc = (OperationDescription) iterator.next();
             Collection modules = opDesc.getModules();
@@ -551,7 +552,6 @@ public class PhaseResolver {
                 opDesc.addToEngageModuleList(module);
             }
         }
-        service.addModuleOperations(module);
     }
 
 
