@@ -33,8 +33,6 @@ import java.util.Iterator;
 /**
  * @author Ashutosh Shahi ashutosh.shahi@gmail.com
  *         <p/>
- *         TODO To change the template for this generated type comment go to
- *         Window - Preferences - Java - Code Style - Code Templates
  */
 public class SOAPMessageImpl extends SOAPMessage {
 
@@ -58,7 +56,7 @@ public class SOAPMessageImpl extends SOAPMessage {
                     bodyInStream,
                     null,
                     null,
-                    (MimeHeaders) headers);
+                    headers);
         } catch (SOAPException e) {
             e.printStackTrace();
         }
@@ -66,7 +64,7 @@ public class SOAPMessageImpl extends SOAPMessage {
 
     private void setup(Object initialContents, boolean bodyInStream,
                        String contentType, String contentLocation,
-                       MimeHeaders mimeHeaders) throws SOAPException {
+                       javax.xml.soap.MimeHeaders mimeHeaders) throws SOAPException {
         if (null == mSOAPPart)
             mSOAPPart = new SOAPPartImpl(this, initialContents, bodyInStream);
         else
