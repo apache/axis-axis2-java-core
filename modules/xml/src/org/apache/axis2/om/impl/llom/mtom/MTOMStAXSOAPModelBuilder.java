@@ -86,7 +86,8 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
                 if (contentIDName.equalsIgnoreCase("href")
                         & contentID.substring(0, 3).equalsIgnoreCase("cid")) {
                     contentID = contentID.substring(4);
-                } else {
+                } else if (!(contentIDName.equalsIgnoreCase("href")
+                       & (!contentID.equals("")))) {                    
                     throw new OMException(
                             "contentID not Found in XOP:Include element");
                 }

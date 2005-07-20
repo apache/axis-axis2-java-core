@@ -15,22 +15,22 @@
  */
 package org.apache.axis2.om.impl;
 
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.OMException;
-
-import javax.activation.DataHandler;
-import javax.mail.MessagingException;
-import javax.mail.internet.ContentType;
-import javax.mail.internet.MimeBodyPart;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Random;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Random;
+
+import javax.activation.DataHandler;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeBodyPart;
+
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMText;
 
 public class MIMEOutputUtils {
 
@@ -51,7 +51,7 @@ public class MIMEOutputUtils {
             rootMimeBodyPart.addHeader("content-type",
                     "application/xop+xml; charset=utf-8; type=\"text/xml; charset=utf-8\"");
             rootMimeBodyPart.addHeader("content-transfer-encoding", "binary");
-            rootMimeBodyPart.addHeader("content-id", contentId);
+            rootMimeBodyPart.addHeader("content-id","<"+contentId+">");
 
             writeBodyPart(outStream, rootMimeBodyPart, boundary);
 
@@ -73,7 +73,7 @@ public class MIMEOutputUtils {
             throws MessagingException {
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
         mimeBodyPart.setDataHandler(node.getDataHandler());
-        mimeBodyPart.addHeader("content-id", node.getContentID());
+        mimeBodyPart.addHeader("content-id", "<"+node.getContentID()+">");
         mimeBodyPart.addHeader("content-type", "application/octet-stream");
         mimeBodyPart.addHeader("content-transfer-encoding", "binary");
         return mimeBodyPart;
@@ -133,7 +133,7 @@ public class MIMEOutputUtils {
         sb.append("; ");
         sb.append("type=\"application/xop+xml\"");
         sb.append("; ");
-        sb.append("start=\"" + contentId + "\"");
+        sb.append("start=\"<" + "cid:"+contentId + ">\"");
         sb.append("; ");
         sb.append("start-info=\"text/xml; charset=utf-8\"");
         return sb.toString();

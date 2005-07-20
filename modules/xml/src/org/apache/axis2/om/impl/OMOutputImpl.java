@@ -15,20 +15,16 @@
  */
 package org.apache.axis2.om.impl;
 
-import org.apache.axis2.om.OMText;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.util.LinkedList;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.LinkedList;
-import java.util.Random;
+
+import org.apache.axis2.om.OMText;
 
 /**
  * For the moment this assumes that transport takes the decision of whether
@@ -104,20 +100,20 @@ public class OMOutputImpl {
 
     public String getMimeBoundary() {
         if(mimeBoundary == null) {
-            mimeBoundary = "--MIMEBoundary" + MIMEOutputUtils.getRandomStringOf18Characters();
+            mimeBoundary = "MIMEBoundary" + MIMEOutputUtils.getRandomStringOf18Characters();
         }
         return mimeBoundary;
     }
 
     public String getRootContentId() {
         if(rootContentId == null) {
-            rootContentId = "cid:0." + MIMEOutputUtils.getRandomStringOf18Characters() + "@apache.org";
+            rootContentId = "0." + MIMEOutputUtils.getRandomStringOf18Characters() + "@apache.org";
         }
         return rootContentId;
     }
 
     public String getNextContentId() {
         nextid++;
-        return "cid:" + nextid + "." + MIMEOutputUtils.getRandomStringOf18Characters() + "@apache.org";
+        return nextid + "." + MIMEOutputUtils.getRandomStringOf18Characters() + "@apache.org";
     }
 }

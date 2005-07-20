@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.attachments.ByteArrayDataSource;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.om.impl.MIMEOutputUtils;
+import org.apache.axis2.om.impl.OMOutputImpl;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
@@ -43,9 +44,12 @@ public class MIMEOutputUtilsTest extends TestCase {
         super.setUp();
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         ByteArrayOutputStream outStream;
-        String boundary = "----TemporaryBoundary";
+        String boundary;
+        
+        OMOutputImpl omOutput = new OMOutputImpl(null);
+        boundary = omOutput.getMimeBoundary();
 
-        String contentType = org.apache.axis2.om.impl.MIMEOutputUtils.getContentTypeForMime(boundary, "cid:0.632569289925808400@example.org");
+        String contentType = org.apache.axis2.om.impl.MIMEOutputUtils.getContentTypeForMime(boundary,omOutput.getRootContentId());
         DataHandler dataHandler;
         dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
         OMText textData = factory.createText(dataHandler, true);
