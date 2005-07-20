@@ -31,6 +31,8 @@ import java.io.FileOutputStream;
  */
 public class MTOMService {
     public OMElement mtomSample(OMElement element) throws Exception {
+    	
+    	System.out.println("Entered");
         OMElement imageEle = element.getFirstElement();
         System.out.println(imageEle.getLocalName());
         OMElement imageName = (OMElement) imageEle.getNextSibling();
@@ -40,16 +42,19 @@ public class MTOMService {
         //Extracting the data and saving
         DataHandler actualDH;
         actualDH = binaryNode.getDataHandler();
+        System.out.println("got DH");
         Image actualObject = new JDK13IO().loadImage(actualDH.getDataSource()
                 .getInputStream());
+        System.out.println("image created");
         FileOutputStream imageOutStream = new FileOutputStream(fileName);
         new JDK13IO().saveImage("image/jpeg", actualObject, imageOutStream);
-
+        System.out.println("saved"+fileName);
         //setting response
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace ns = fac.createOMNamespace("urn://fakenamespace", "ns");
         OMElement ele = fac.createOMElement("response", ns);
         ele.setText("Image Saved");
+        System.out.println("Exited");
         return ele;
     }
 }

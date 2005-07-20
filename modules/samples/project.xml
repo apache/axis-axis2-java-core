@@ -160,7 +160,7 @@
                 <exclude>**/*InteropStubTest.java</exclude>
                 <exclude>**/*EchoRawXMLChunckedTest.java</exclude>
                 <exclude>**org/apache/axis2/mail/*.java</exclude>
-                <exclude>**org/apache/axis2/mtom/*.java</exclude>
+                
                 <!--		<exclude>**/*MailEchoRawXMLTest.java</exclude>
                         <exclude>**/*MailOneWayRawXMLTest.java</exclude>
                         <exclude>**/*MailRequestResponseRawXMLTest.java</exclude>

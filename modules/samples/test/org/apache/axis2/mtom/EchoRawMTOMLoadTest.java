@@ -20,6 +20,8 @@ package org.apache.axis2.mtom;
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
  */
 
+import java.io.ByteArrayInputStream;
+
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -70,6 +72,8 @@ public class EchoRawMTOMLoadTest extends TestCase {
     private ServiceDescription service;
 
     private boolean finish = false;
+    
+    byte[] expectedByteArray;
 
     public EchoRawMTOMLoadTest() {
         super(EchoRawMTOMLoadTest.class.getName());
@@ -99,12 +103,12 @@ public class EchoRawMTOMLoadTest extends TestCase {
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement rpcWrapEle = fac.createOMElement("echoOMElement", omNs);
         OMElement data = fac.createOMElement("data", omNs);
-        byte[] byteArray = new byte[]{13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
+        expectedByteArray = new byte[]{13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
                                       98};
         for (int i = 0; i < 4; i++) {
             OMElement subData = fac.createOMElement("subData", omNs);
             DataHandler dataHandler = new DataHandler(
-                    new ByteArrayDataSource(byteArray));
+                    new ByteArrayDataSource(expectedByteArray));
             OMText textData = new OMTextImpl(dataHandler, true);
             //OMText textData = new OMTextImpl("Thilina Gunarathne");
             subData.addChild(textData);
@@ -135,6 +139,12 @@ public class EchoRawMTOMLoadTest extends TestCase {
             OMElement ele = (OMElement) result.getFirstChild();
             OMElement ele1 = (OMElement) ele.getFirstChild();
             OMText binaryNode = (OMText) ele1.getFirstChild();
+            DataHandler actualDataHandler = binaryNode.getDataHandler();
+            ByteArrayInputStream inStream = (ByteArrayInputStream)actualDataHandler.getContent();
+            byte[] actualByteArray = new byte[11];
+            inStream.read(actualByteArray);
+            assertEquals(expectedByteArray[0],actualByteArray[0]);
+            assertEquals(expectedByteArray[0],actualByteArray[0]);       
             System.out.println(i);
         }
     }

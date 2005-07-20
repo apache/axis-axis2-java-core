@@ -85,7 +85,7 @@ public class MTOMClientModel {
         call.setTo(targetEPR);
         // enabling MTOM in the client side
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP,
                 Constants.TRANSPORT_HTTP, false);
         OMElement result = (OMElement) call.invokeBlocking(operationName
                 .getLocalPart(),

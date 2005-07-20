@@ -149,6 +149,7 @@ public class UserInterface extends JPanel implements ActionListener {
             mtomTest.setTargetEPR(EPRName);
             OMElement result = (OMElement) mtomTest.testEchoXMLSync(fileName);
             jTextArea.setText(result.toString());
+            jTextArea.append("\n"+result.getText());
             JOptionPane.showMessageDialog(parent, "Sent & saved Image Succesfully",
                     " Success", JOptionPane.PLAIN_MESSAGE);
         } catch (Exception e) {

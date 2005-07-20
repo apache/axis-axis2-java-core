@@ -78,6 +78,8 @@ public class EchoRawMTOMTest extends TestCase {
     private ServiceDescription service;
 
     private boolean finish = false;
+    
+    private OMTextImpl expectedTextData;
 
     public EchoRawMTOMTest() {
         super(EchoRawMTOMTest.class.getName());
@@ -113,14 +115,11 @@ public class EchoRawMTOMTest extends TestCase {
                 new JDK13IO()
                 .loadImage(
                         getResourceAsStream("org/apache/axis2/mtom/test.jpg"));
-
         ImageDataSource dataSource = new ImageDataSource("test.jpg",
                 expectedImage);
         expectedDH = new DataHandler(dataSource);
-        OMTextImpl textData = new OMTextImpl(expectedDH, true);
-        data.addChild(textData);
-        //OMTextImpl textData1 = new OMTextImpl(expectedDH, true);
-        //data.addChild(textData1);
+        expectedTextData = new OMTextImpl(expectedDH, true);
+        data.addChild(expectedTextData);
         rpcWrapEle.addChild(data);
         return rpcWrapEle;
 
@@ -144,6 +143,11 @@ public class EchoRawMTOMTest extends TestCase {
         // OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
         OMElement ele = (OMElement) result.getFirstChild();
         OMText binaryNode = (OMText) ele.getFirstChild();
+        
+        // to the assert equal
+        compareWithCreatedOMText(binaryNode);
+        
+        // Save the image
         DataHandler actualDH;
         actualDH = binaryNode.getDataHandler();
         Image actualObject = new JDK13IO().loadImage(actualDH.getDataSource()
@@ -156,5 +160,10 @@ public class EchoRawMTOMTest extends TestCase {
     private InputStream getResourceAsStream(String path) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         return cl.getResourceAsStream(path);
+    }
+    private void compareWithCreatedOMText(OMText actualTextData) {
+        String originalTextValue = expectedTextData.getText();
+        String returnedTextValue = actualTextData.getText();
+        TestCase.assertEquals(returnedTextValue, originalTextValue);
     }
 }
