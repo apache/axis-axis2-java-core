@@ -24,30 +24,26 @@ import org.apache.commons.logging.LogFactory;
 /**
  * This is takes care of the IN-OUT sync MEP in the server side
  */
-public abstract class AbstractInOutAsyncMessageReceiver
-        extends AbstractMessageReceiver {
+public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageReceiver {
     protected Log log = LogFactory.getLog(getClass());
 
-    public abstract void invokeBusinessLogic(MessageContext inMessage,
-                                             ServerCallback callback)
-            throws AxisFault;
+    public abstract void invokeBusinessLogic(MessageContext inMessage, ServerCallback callback)
+        throws AxisFault;
 
     public final void recieve(final MessageContext messgeCtx) throws AxisFault {
         final ServerCallback callback = new ServerCallback() {
             public void handleResult(MessageContext result) throws AxisFault {
                 AxisEngine engine =
-                        new AxisEngine(
-                                messgeCtx.getOperationContext()
-                        .getServiceContext()
-                        .getEngineContext());
+                    new AxisEngine(
+                        messgeCtx.getOperationContext().getServiceContext().getEngineContext());
                 engine.send(messgeCtx);
             }
-
             public void handleFault(AxisFault fault) throws AxisFault {
-                AxisEngine engine = new AxisEngine(
-                        messgeCtx.getOperationContext().getServiceContext()
-                        .getEngineContext());
-                engine.handleFault(messgeCtx, fault);
+                AxisEngine engine =
+                    new AxisEngine(
+                        messgeCtx.getOperationContext().getServiceContext().getEngineContext());
+                MessageContext faultContext = engine.createFaultMessageContext(messgeCtx, fault);
+                engine.sendFault(faultContext);
             }
         };
         Runnable theadedTask = new Runnable() {

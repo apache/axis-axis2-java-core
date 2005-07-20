@@ -122,7 +122,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         inPhasesUptoAndIncludingPostDispatch.add(dispatch);
 
         Phase postDispatch = new Phase(PhaseMetadata.PHASE_POST_DISPATCH);
-        postDispatch.addHandler(new DispatchPostConditionsEvaluator());
+        postDispatch.addHandler(new DispatchingChecker());
         inPhasesUptoAndIncludingPostDispatch.add(postDispatch);
     }
 

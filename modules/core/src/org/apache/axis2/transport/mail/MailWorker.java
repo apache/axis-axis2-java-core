@@ -49,7 +49,6 @@ public class MailWorker implements AxisWorker {
 
     private ConfigurationContext reg = null;
 
-    // Current message
     private MimeMessage mimeMessage;
 
     private Properties prop = new Properties();
@@ -71,60 +70,77 @@ public class MailWorker implements AxisWorker {
      * The main workhorse method.
      */
     public void doWork() {
-        // create an Axis server
         AxisEngine engine = new AxisEngine(reg);
         MessageContext msgContext = null;
         // create and initialize a message context
         try {
-            TransportInDescription transportIn = reg.getAxisConfiguration()
-                    .getTransportIn(new QName(Constants.TRANSPORT_MAIL));
-            TransportOutDescription transportOut = reg.getAxisConfiguration()
-                    .getTransportOut(new QName(Constants.TRANSPORT_MAIL));
+            TransportInDescription transportIn =
+                reg.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL));
+            TransportOutDescription transportOut =
+                reg.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL));
+            if (transportIn != null && transportOut != null) {
+                //create Message Context
+                msgContext = new MessageContext(reg, transportIn, transportOut);
+                msgContext.setServerSide(true);
+                msgContext.setProperty(MailConstants.CONTENT_TYPE, mimeMessage.getContentType());
+                String soapAction = getMailHeader(MailConstants.HEADER_SOAP_ACTION);
+                msgContext.setWSAAction(soapAction);
+                msgContext.setSoapAction(soapAction);
 
-            msgContext = new MessageContext(reg, transportIn, transportOut);
-            msgContext.setServerSide(true);
-            msgContext.setProperty(MailConstants.CONTENT_TYPE,
-                    mimeMessage.getContentType());
-            String soapAction = getMailHeader(MailConstants.HEADER_SOAP_ACTION);
-            msgContext.setWSAAction(soapAction);
-            msgContext.setSoapAction(soapAction);
+                //Create Mail EPR, EPR is constructed using the format, foo@bar/axis2/services/echo and is constructed 
+                //using the <to-email-address>/<email-subject>
+                InternetAddress[] recepainets = (InternetAddress[]) mimeMessage.getAllRecipients();
+                if (recepainets != null && recepainets.length > 0) {
+                    String emailAddress = recepainets[0].getAddress();
+                    String emailSubject = mimeMessage.getSubject();
+                    EndpointReference to =
+                        new EndpointReference(
+                            AddressingConstants.WSA_TO,
+                            emailAddress + "/" + (emailSubject != null ? emailSubject : ""));
+                } else {
+                    throw new AxisFault("No receptineist found in the Email");
+                }
+                //try to assume the reply to value
+                InternetAddress[] replyToAs = (InternetAddress[]) mimeMessage.getAllRecipients();
+                if (replyToAs != null && replyToAs.length > 0) {
+                    String replyTo = replyToAs[0].getAddress();
+                    if (replyTo != null) {
+                        msgContext.setReplyTo(
+                            new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo));
+                    }
+                }
 
-            String serviceURL = mimeMessage.getSubject();
-            if (serviceURL == null) {
-                serviceURL = "";
-            }
-
-            String replyTo = ((InternetAddress) mimeMessage.getReplyTo()[0]).getAddress();
-            if (replyTo != null) {
-                msgContext.setReplyTo(
-                        new EndpointReference(AddressingConstants.WSA_REPLY_TO,
-                                replyTo));
-            }
-
-            String recepainets = ((InternetAddress) mimeMessage.getAllRecipients()[0]).getAddress();
-            if (recepainets != null) {
-                msgContext.setTo(
-                        new EndpointReference(AddressingConstants.WSA_FROM,
-                                recepainets + "/" + serviceURL));
+                //Create the SOAP Message
+                //TODO This can we written better way, to use the streams better
+                String message = mimeMessage.getContent().toString();
+                ByteArrayInputStream bais = new ByteArrayInputStream(message.getBytes());
+                XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
+                StAXBuilder builder = new StAXSOAPModelBuilder(reader);
+                SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
+                msgContext.setEnvelope(envelope);
+                if (envelope.getBody().hasFault()) {
+                    engine.receiveFault(msgContext);
+                } else {
+                    engine.receive(msgContext);
+                }
             } else {
-                throw new AxisFault("No receptineist found in the Email");
+                throw new AxisFault("Unknown transport " + Constants.TRANSPORT_MAIL);
             }
 
-            // add the SOAPEnvelope
-            String message = mimeMessage.getContent().toString();
-            System.out.println("message[" + message + "]");
-            ByteArrayInputStream bais =
-                    new ByteArrayInputStream(message.getBytes());
-            XMLStreamReader reader = XMLInputFactory.newInstance()
-                    .createXMLStreamReader(bais);
-            StAXBuilder builder = new StAXSOAPModelBuilder(reader);
-            msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
-
-            // invoke the Axis engine
-            engine.receive(msgContext);
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error(e);
+            try {
+
+                if (msgContext != null) {
+                    MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
+                    engine.sendFault(faultContext);
+                } else {
+                    log.error(e);
+                    e.printStackTrace();
+                }
+            } catch (AxisFault e1) {
+                log.error(e);
+                e1.printStackTrace();
+            }
         }
 
         /*

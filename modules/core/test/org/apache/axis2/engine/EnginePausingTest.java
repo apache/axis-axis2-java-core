@@ -142,7 +142,7 @@ public class EnginePausingTest extends TestCase {
         }
         engine.receive(mc);
 
-        assertEquals(executedHandlers.size(), 27);
+        assertEquals(27,executedHandlers.size());
         for (int i = 15; i < 27; i++) {
             assertEquals(((Integer) executedHandlers.get(i)).intValue(),
                     i + 1);

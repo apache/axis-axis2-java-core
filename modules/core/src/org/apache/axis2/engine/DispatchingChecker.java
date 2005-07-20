@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
 /**
  * Class Dispatcher
  */
-public class DispatchPostConditionsEvaluator extends AbstractHandler implements Handler {
+public class DispatchingChecker extends AbstractHandler implements Handler {
     /**
      * Field NAME
      */
@@ -39,7 +39,7 @@ public class DispatchPostConditionsEvaluator extends AbstractHandler implements 
      */
     private ConfigurationContext engineContext;
 
-    public DispatchPostConditionsEvaluator() {
+    public DispatchingChecker() {
         init(new HandlerDescription(NAME));
     }
 

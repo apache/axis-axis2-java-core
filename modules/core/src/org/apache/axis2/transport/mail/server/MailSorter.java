@@ -33,7 +33,8 @@ import java.util.ArrayList;
  */
 public class MailSorter {
     Storage st = null;
-    private ArrayList sUsers = new ArrayList(); // Special users. They are hard coded for the time being to axis2-server@localhost and axis2-server@127.0.0.1
+    private ArrayList sUsers = new ArrayList();
+    // Special users. They are hard coded for the time being to axis2-server@localhost and axis2-server@127.0.0.1
     private ConfigurationContext configurationContext = null;
     protected static Log log = LogFactory.getLog(MailSorter.class.getName());
     private boolean actAsMailet = false;
@@ -41,7 +42,7 @@ public class MailSorter {
         this.st = st;
         sUsers.add("axis2-server@localhost");
         sUsers.add("axis2-server@127.0.0.1");
-        if (configurationContext == null){
+        if (configurationContext == null) {
             actAsMailet = false;
         } else {
             this.configurationContext = configurationContext;
@@ -55,33 +56,30 @@ public class MailSorter {
                 processMail(configurationContext, msg);
             } else {
                 st.addMail(user, msg);
-            }            
+            }
         } else {
             st.addMail(user, msg);
         }
 
     }
 
-    public void processMail(ConfigurationContext confContext,
-                            MimeMessage mimeMessage) {
+    public void processMail(ConfigurationContext confContext, MimeMessage mimeMessage) {
         // create an Axis server
         AxisEngine engine = new AxisEngine(confContext);
         MessageContext msgContext = null;
         // create and initialize a message context
         try {
             msgContext =
-                    new MessageContext(confContext,
-                            confContext.getAxisConfiguration().getTransportIn(
-                                    new QName(Constants.TRANSPORT_MAIL)),
-                            confContext.getAxisConfiguration().getTransportOut(
-                                    new QName(Constants.TRANSPORT_MAIL)));
+                new MessageContext(
+                    confContext,
+                    confContext.getAxisConfiguration().getTransportIn(
+                        new QName(Constants.TRANSPORT_MAIL)),
+                    confContext.getAxisConfiguration().getTransportOut(
+                        new QName(Constants.TRANSPORT_MAIL)));
             msgContext.setServerSide(true);
 
-            msgContext.setProperty(MailConstants.CONTENT_TYPE,
-                    mimeMessage.getContentType());
-            msgContext.setWSAAction(
-                    getMailHeader(MailConstants.HEADER_SOAP_ACTION,
-                            mimeMessage));
+            msgContext.setProperty(MailConstants.CONTENT_TYPE, mimeMessage.getContentType());
+            msgContext.setWSAAction(getMailHeader(MailConstants.HEADER_SOAP_ACTION, mimeMessage));
 
             String serviceURL = mimeMessage.getSubject();
             if (serviceURL == null) {
@@ -91,42 +89,44 @@ public class MailSorter {
             String replyTo = ((InternetAddress) mimeMessage.getReplyTo()[0]).getAddress();
             if (replyTo != null) {
                 msgContext.setReplyTo(
-                        new EndpointReference(AddressingConstants.WSA_REPLY_TO,
-                                replyTo));
+                    new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo));
             }
 
             String recepainets = ((InternetAddress) mimeMessage.getAllRecipients()[0]).getAddress();
 
-
             if (recepainets != null) {
                 msgContext.setTo(
-                        new EndpointReference(AddressingConstants.WSA_FROM,
-                                recepainets + "/" + serviceURL));
+                    new EndpointReference(
+                        AddressingConstants.WSA_FROM,
+                        recepainets + "/" + serviceURL));
             }
 
             // add the SOAPEnvelope
             String message = mimeMessage.getContent().toString();
             System.out.println("message[" + message + "]");
-            ByteArrayInputStream bais =
-                    new ByteArrayInputStream(message.getBytes());
-            XMLStreamReader reader = XMLInputFactory.newInstance()
-                    .createXMLStreamReader(bais);
+            ByteArrayInputStream bais = new ByteArrayInputStream(message.getBytes());
+            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
             StAXBuilder builder = new StAXSOAPModelBuilder(reader);
-            msgContext.setEnvelope((SOAPEnvelope) builder.getDocumentElement());
-            // invoke the Axis engine
-            engine.receive(msgContext);
-        } catch (Exception e) {
-            AxisFault af;
-            if (e instanceof AxisFault) {
-                af = (AxisFault) e;
-                log.debug("Error occured while trying to process the mail.",
-                        af);
+  
+            SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
+            msgContext.setEnvelope(envelope);
+            if (envelope.getBody().hasFault()) {
+                engine.receiveFault(msgContext);
             } else {
-                af = AxisFault.makeFault(e);
+                engine.receive(msgContext);
+            }
+        } catch (Exception e) {
+            try {
+                if (msgContext != null) {
+                    MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
+                    engine.sendFault(faultContext);
+                }
+            } catch (Exception e1) {
+                log.error(e);
+                e.printStackTrace();
             }
         }
     }
-
 
     private String getMailHeader(String headerName, MimeMessage mimeMessage) throws AxisFault {
         try {

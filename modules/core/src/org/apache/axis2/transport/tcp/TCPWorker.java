@@ -17,10 +17,22 @@
  */
 package org.apache.axis2.transport.tcp;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.net.Socket;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
@@ -29,16 +41,9 @@ import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.util.threadpool.AxisWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.net.Socket;
-
+/**
+ * This Class is the work hoarse of the TCP request, this process the incomming SOAP Message.  
+ */
 public class TCPWorker implements AxisWorker {
     protected Log log = LogFactory.getLog(getClass().getName());
     private ConfigurationContext configurationContext;
@@ -52,38 +57,42 @@ public class TCPWorker implements AxisWorker {
     public void doWork() {
         MessageContext msgContext = null;
         try {
-            Reader in = new InputStreamReader(socket.getInputStream());
-            TransportOutDescription transportOut =
-                    configurationContext.getAxisConfiguration()
-                    .getTransportOut(new QName(Constants.TRANSPORT_TCP));
-            msgContext =
-                    new MessageContext(configurationContext,
-                            configurationContext.getAxisConfiguration()
-                    .getTransportIn(new QName(Constants.TRANSPORT_TCP)),
-                            transportOut);
-            msgContext.setServerSide(true);
-            OutputStream out = socket.getOutputStream();
-            msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
-
             AxisEngine engine = new AxisEngine(configurationContext);
-            try {
-                XMLStreamReader xmlreader = XMLInputFactory.newInstance()
-                        .createXMLStreamReader(in);
+            AxisConfiguration axisConf = configurationContext.getAxisConfiguration();
+
+            TransportOutDescription transportOut =
+                axisConf.getTransportOut(new QName(Constants.TRANSPORT_TCP));
+            TransportInDescription transportIn =
+                axisConf.getTransportIn(new QName(Constants.TRANSPORT_TCP));
+            if (transportOut != null && transportIn != null) {
+                //create the Message Context and fill in the values
+                msgContext = new MessageContext(configurationContext, transportIn, transportOut);
+                msgContext.setServerSide(true);
+                OutputStream out = socket.getOutputStream();
+                msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
+
+                //create the SOAP Envelope
+                Reader in = new InputStreamReader(socket.getInputStream());
+                XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
                 StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
-                msgContext.setEnvelope(
-                        (SOAPEnvelope) builder.getDocumentElement());
-            } catch (Exception e) {
-                throw new AxisFault(e.getMessage(), e);
+                SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
+                msgContext.setEnvelope(envelope);
+                if (envelope.getBody().hasFault()) {
+                    engine.receiveFault(msgContext);
+                } else {
+                    engine.receive(msgContext);
+                }
+            } else {
+                throw new AxisFault("Unknown transport " + Constants.TRANSPORT_TCP);
             }
-            engine.receive(msgContext);
 
         } catch (Throwable e) {
             try {
                 AxisEngine engine = new AxisEngine(configurationContext);
                 if (msgContext != null) {
-                    msgContext.setProperty(MessageContext.TRANSPORT_OUT,
-                            socket.getOutputStream());
-                    engine.handleFault(msgContext, e);
+                    msgContext.setProperty(MessageContext.TRANSPORT_OUT, socket.getOutputStream());
+                    MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
+                    engine.sendFault(faultContext);
                 }
             } catch (Exception e1) {
                 log.error(e);
