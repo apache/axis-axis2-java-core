@@ -43,6 +43,7 @@ import java.util.Map;
 public class AxisServlet extends HttpServlet {
     private ListingAgent lister;
     private static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
+    private ConfigurationContext configContext;
 
     /**
      * Method init
@@ -56,7 +57,7 @@ public class AxisServlet extends HttpServlet {
             String repoDir = context.getRealPath("/WEB-INF");
             ConfigurationContextFactory erfac =
                 new ConfigurationContextFactory();
-            ConfigurationContext configContext =
+            configContext =
                 erfac.buildConfigurationContext(repoDir);
             configContext.setProperty(
                 Constants.CONTAINER_MANAGED,
@@ -81,11 +82,6 @@ public class AxisServlet extends HttpServlet {
         HttpServletRequest httpServletRequest,
         HttpServletResponse httpServletResponse)
         throws ServletException, IOException {
-
-        ConfigurationContext configContext =
-            (ConfigurationContext) getServletContext().getAttribute(
-                CONFIGURATION_CONTEXT);
-
         httpServletResponse.setContentType("text/xml; charset=utf-8");
         MessageContext msgContext = null;
         OutputStream out = null;
@@ -168,9 +164,6 @@ public class AxisServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
         MessageContext msgContext = null;
-        ConfigurationContext configContext =
-            (ConfigurationContext) getServletContext().getAttribute(
-                CONFIGURATION_CONTEXT);
         try {
             Object sessionContext =
                 req.getSession().getAttribute(
