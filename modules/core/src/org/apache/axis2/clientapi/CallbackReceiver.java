@@ -1,12 +1,17 @@
 package org.apache.axis2.clientapi;
 
+import java.util.HashMap;
+
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.soap.SOAPEnvelope;
 
-import java.util.HashMap;
+/**
+ * This is a MessageReceiver that is used at the client side to accept the 
+ * Messages (response) that comes in the Client. This one correlated the incomming Message to
+ * the related Messages and Call the correct callback. 
+ */
 
 public class CallbackReceiver implements MessageReceiver {
 
@@ -22,15 +27,7 @@ public class CallbackReceiver implements MessageReceiver {
         callbackstore.put(MsgID, callback);
     }
 
-    public void invoke(String MsgID, SOAPEnvelope result) {
-
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.axis2.engine.MessageReceiver#recieve(org.apache.axis2.context.MessageContext)
-     */
     public void recieve(MessageContext messgeCtx) throws AxisFault {
-        //TODO find the related message ID and call the callback
         RelatesTo relatesTO = messgeCtx.getMessageInformationHeaders()
                 .getRelatesTo();
 

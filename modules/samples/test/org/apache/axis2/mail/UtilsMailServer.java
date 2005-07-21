@@ -24,38 +24,66 @@ import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.transport.mail.server.MailConstants;
 import org.apache.axis2.transport.mail.server.MailServer;
 
 public class UtilsMailServer {
-    private static final String MAIL_TRANSPORT_ENABLED_REPO_PATH =
-        Constants.TESTING_PATH + "mail-transport-enabledRepository";
+    private static final String MAIL_TRANSPORT_SERVER_ENABLED_REPO_PATH =
+        Constants.TESTING_PATH + "mail-transport-server-enabledRepository";
+    private static final String MAIL_TRANSPORT_CLIENT_ENABLED_REPO_PATH =
+            Constants.TESTING_PATH + "mail-transport-client-enabledRepository";
 
     private static MailServer server;
-    private static ConfigurationContext configContext;
+    private static ConfigurationContext SERVER_CONFIG_CONTEXT;
+    private static ConfigurationContext CLIENT_CONFIG_CONTEXT;
+    private static int runningServerCount = 0;
 
-    public static ConfigurationContext start() throws Exception {
+    public synchronized static ConfigurationContext start() throws Exception {
         
         //start the mail server      
-        if (server == null) {
-            configContext = createNewConfigurationContext();
-            MailServer server =
+        if (runningServerCount == 0) {
+            SERVER_CONFIG_CONTEXT = createServerConfigurationContext();
+            server =
                 new MailServer(
-                    configContext,
+            SERVER_CONFIG_CONTEXT,
                     MailConstants.POP_SERVER_PORT,
                     MailConstants.SMTP_SERVER_PORT);
         }
-        return configContext;
+        runningServerCount++;
+        return SERVER_CONFIG_CONTEXT;
     }
-    public static ConfigurationContext createNewConfigurationContext() throws Exception {
-        File file = new File(MAIL_TRANSPORT_ENABLED_REPO_PATH);
-        TestCase.assertTrue(
-            "Mail repository directory " + file.getAbsolutePath() + " does not exsist",
-            file.exists());
-        ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ConfigurationContext configContext =
-            builder.buildConfigurationContext(file.getAbsolutePath());
-        return configContext;
+    public static ConfigurationContext createServerConfigurationContext() throws Exception {
+        if(SERVER_CONFIG_CONTEXT == null){
+            File file = new File(MAIL_TRANSPORT_SERVER_ENABLED_REPO_PATH);
+            TestCase.assertTrue(
+                "Mail repository directory " + file.getAbsolutePath() + " does not exsist",
+                file.exists());
+            ConfigurationContextFactory builder = new ConfigurationContextFactory();
+            SERVER_CONFIG_CONTEXT =
+                builder.buildConfigurationContext(file.getAbsolutePath());
+        }
+        return SERVER_CONFIG_CONTEXT;
     }
-    public static void stop(){}
+    
+    
+    public static ConfigurationContext createClientConfigurationContext() throws Exception {
+        if(CLIENT_CONFIG_CONTEXT == null){
+            File file = new File(MAIL_TRANSPORT_CLIENT_ENABLED_REPO_PATH);
+            TestCase.assertTrue(
+                "Mail repository directory " + file.getAbsolutePath() + " does not exsist",
+                file.exists());
+            ConfigurationContextFactory builder = new ConfigurationContextFactory();
+            CLIENT_CONFIG_CONTEXT =
+                builder.buildConfigurationContext(file.getAbsolutePath());
+        }
+        return CLIENT_CONFIG_CONTEXT;
+    }
+
+    public static synchronized void stop() throws AxisFault{
+        runningServerCount--;
+        if(runningServerCount == 0){
+            server.stop();
+        }
+    }
 }

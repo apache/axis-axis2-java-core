@@ -24,7 +24,8 @@ import org.apache.axis2.handlers.AbstractHandler;
 import javax.xml.namespace.QName;
 
 /**
- * Class Dispatcher
+ * This one is run after all the dispatchers and make a Operation and a Service is idenitified
+ * if the message to go any further
  */
 public class DispatchingChecker extends AbstractHandler implements Handler {
     /**

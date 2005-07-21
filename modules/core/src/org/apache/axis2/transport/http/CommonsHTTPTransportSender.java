@@ -26,6 +26,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.transport.TransportSender;
@@ -341,13 +342,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 }
                 InputStream in = postMethod.getResponseBodyAsStream();
                 if (in == null) {
-                    throw new AxisFault("Input Stream can not be Null");
+                    throw new AxisFault(Messages.getMessage("canNotBeNull","InputStream"));
                 }
                 msgContext.getOperationContext().setProperty(MessageContext.TRANSPORT_IN, in);
             } else if (postMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
                 return;
             } else {
-                throw new AxisFault("Error " + postMethod.getStatusCode() + "  Error Message is " + postMethod.getResponseBodyAsString());
+                throw new AxisFault(Messages.getMessage("transportError",String.valueOf(postMethod.getStatusCode()),postMethod.getResponseBodyAsString()));
             }
 
         }
@@ -364,14 +365,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
                 InputStream in = getMehtod.getResponseBodyAsStream();
                 if (in == null) {
-                    throw new AxisFault("Input Stream can not be Null");
+                    throw new AxisFault(Messages.getMessage("canNotBeNull","InputStream"));
                 }
                 msgContext.getOperationContext().setProperty(MessageContext.TRANSPORT_IN, in);
             } else if (getMehtod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
                 return;
             } else {
-                throw new AxisFault("Error " + getMehtod.getStatusCode() + "  Error Message is " + getMehtod.getResponseBodyAsString());
-            }
+                throw new AxisFault(Messages.getMessage("transportError",String.valueOf(getMehtod.getStatusCode()),getMehtod.getResponseBodyAsString()));            }
         }
 
 

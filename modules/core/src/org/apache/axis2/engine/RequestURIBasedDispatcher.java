@@ -25,7 +25,7 @@ import org.apache.axis2.util.Utils;
 import javax.xml.namespace.QName;
 
 /**
- * Class Dispatcher
+ * Dispatches the service based on the information from the traget endpoint URL
  */
 public class RequestURIBasedDispatcher extends AbstractDispatcher {
     /**

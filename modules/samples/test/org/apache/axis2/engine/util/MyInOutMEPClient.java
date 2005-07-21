@@ -54,7 +54,7 @@ public class MyInOutMEPClient extends Call {
 //            axisConfig = new OperationDescription(new QName(axisop));
 //            serviceContext.getServiceConfig().addOperation(axisConfig);
 //        }
-        MessageContext msgctx = prepareTheSystem(toSend);
+        MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
 
         MessageContext responseContext = super.invokeBlocking(axisConfig,
                 msgctx);

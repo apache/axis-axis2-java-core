@@ -22,6 +22,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis2.transport.AbstractTransportSender;
@@ -147,7 +148,7 @@ public class HTTPTransportSender extends AbstractTransportSender {
                 throw new AxisFault(e.getMessage(), e);
             }
         } else {
-            throw new AxisFault("to EPR must be specified");
+            throw new AxisFault(Messages.getMessage("notFound", "TO EPR"));
         }
     }
 

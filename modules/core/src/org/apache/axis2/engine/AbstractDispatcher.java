@@ -26,7 +26,11 @@ import org.apache.axis2.handlers.AbstractHandler;
 import javax.xml.namespace.QName;
 
 /**
- * Class Dispatcher
+ * This the base class for all dispatchers, it is a Handler which has a one 
+ * traget, that is to find the Service a given SOAP message is targeted to.
+ * 
+ * Axis2 service dispatching is model via a Chain of diapatchers, each trying to 
+ * Diaptach but let go without throwing a execption in case they fail. 
  */
 public abstract class AbstractDispatcher extends AbstractHandler implements Handler {
     /**
@@ -46,7 +50,7 @@ public abstract class AbstractDispatcher extends AbstractHandler implements Hand
     }
 
     /**
-     * Method invoke
+     * This is final, obivously not for overiding
      *
      * @param msgctx
      * @throws AxisFault
@@ -74,9 +78,22 @@ public abstract class AbstractDispatcher extends AbstractHandler implements Hand
 
     }
 
+    /**
+     * Give the diaptacher turn to find the Service
+     * @param messageContext
+     * @return
+     * @throws AxisFault
+     */
     public abstract ServiceDescription findService(
             MessageContext messageContext) throws AxisFault;
 
+    /**
+     * Give the diaptacher turn to find the Operation
+     * @param service
+     * @param messageContext
+     * @return
+     * @throws AxisFault
+     */
     public abstract OperationDescription findOperation(
             ServiceDescription service, MessageContext messageContext) throws AxisFault;
 

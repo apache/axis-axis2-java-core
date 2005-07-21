@@ -29,6 +29,11 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This is the biggest memeber of the Axis2 information hierachy, and if this is serialized completly
+ * the whole Axis2 is saved to the disc.  
+ */
+
 public class ConfigurationContext extends AbstractContext {
 
     private AxisConfiguration axisConfiguration;
@@ -38,7 +43,6 @@ public class ConfigurationContext extends AbstractContext {
     private Map moduleContextMap;
     private ThreadPool threadPool;
     private File rootDir;
-
 
     /**
      * Map containing <code>MessageID</code> to
@@ -57,9 +61,7 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     /**
-     * The method is used to do the intialization of the EngineContext, right now we know that
-     * module.init(..) is called here
-     *
+     * The method is used to do the intialization of the EngineContext
      * @throws AxisFault
      */
 
@@ -84,12 +86,22 @@ public class ConfigurationContext extends AbstractContext {
     public void setAxisConfiguration(AxisConfiguration configuration) {
         axisConfiguration = configuration;
     }
-
-    public synchronized void registerOperationContext(String messageID,
-                                                      OperationContext mepContext) {
+    
+    /**
+     * Register a OperationContext agienst a given Message ID.
+     * @param messageID
+     * @param mepContext
+     */
+    public synchronized void registerOperationContext(
+        String messageID,
+        OperationContext mepContext) {
         this.operationContextMap.put(messageID, mepContext);
     }
-
+    /**
+     * get a OperationContext given a Message ID
+     * @param messageID
+     * @return
+     */
     public OperationContext getOperationContext(String messageID) {
         return (OperationContext) this.operationContextMap.get(messageID);
     }
@@ -97,12 +109,21 @@ public class ConfigurationContext extends AbstractContext {
     public Map getOperationContextMap() {
         return this.operationContextMap;
     }
-
-    public synchronized void registerServiceContext(String serviceInstanceID,
-                                                    ServiceContext serviceContext) {
+    
+    /**
+     * Register a ServiceContext agienst a given Message ID.
+     */
+    public synchronized void registerServiceContext(
+        String serviceInstanceID,
+        ServiceContext serviceContext) {
         this.serviceContextMap.put(serviceInstanceID, serviceContext);
     }
 
+    /**
+     * get the ServiceContext given a id
+     * @param serviceInstanceID
+     * @return
+     */
     public ServiceContext getServiceContext(String serviceInstanceID) {
         return (ServiceContext) this.serviceContextMap.get(serviceInstanceID);
     }
@@ -115,19 +136,20 @@ public class ConfigurationContext extends AbstractContext {
         this.storage = storage;
     }
 
-    public ServiceContext createServiceContext(QName serviceName) throws AxisFault {
+    public ServiceContext createServiceContext(QName serviceName)
+        throws AxisFault {
         ServiceDescription service = axisConfiguration.getService(serviceName);
         if (service != null) {
             ServiceContext serviceContext = new ServiceContext(service, this);
             return serviceContext;
         } else {
             throw new AxisFault(
-                    "Service not found service name = " + serviceName);
+                "Service not found service name = " + serviceName);
         }
     }
 
     /**
-     * @return
+     * @return the Gloal ThradPool
      */
     public ThreadPool getThreadPool() {
         if (threadPool == null) {
@@ -135,7 +157,12 @@ public class ConfigurationContext extends AbstractContext {
         }
         return threadPool;
     }
-
+    /**
+     * This method allows users to reolve the paths relative to the 
+     * root diretory
+     * @param path
+     * @return
+     */
     public File getRealPath(String path) {
         if (rootDir == null) {
             return new File(path);

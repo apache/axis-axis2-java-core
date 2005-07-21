@@ -1,9 +1,9 @@
 package org.apache.axis2.clientapi;
 
-import org.apache.axis2.soap.SOAPEnvelope;
 
 /**
- * Created by IntelliJ IDEA.
+ * This Class is the abstract representation of the Callback that would be called in the completion of a 
+ * Async invocation
  * Author : Deepal Jayasinghe
  * Date: Apr 9, 2005
  * Time: 8:03:41 PM
@@ -14,27 +14,33 @@ public abstract class Callback {
      */
     private boolean complete = false;
 
-    /**
-     * Field result
-     */
-    private SOAPEnvelope result;
 
     /**
-     * Method onComplete
+     * This Method is called by Axis2 once the Async Operation is sucessfully completed and the result returns
      *
      * @param result
      */
     public abstract void onComplete(AsyncResult result);
 
     /**
-     * Method reportError
+     * This Method is called by Axis2 once the Async Operation fails and the result returns
      *
      * @param e
      */
     public abstract void reportError(Exception e);
 
     /**
-     * Method isComplete
+     * This says has the Async Operation is completed or not. this could be useful for poleing 
+     * with a special callback written for poleing (checking repeatedly time to time).
+     * e.g.
+     * <code>
+     *      <pre>
+     *          while(!callback.isComplete()){
+     *             Thread.sleep(1000);
+     *          }
+     *          do whatever u need to do
+     *      </pre>
+     * </code>
      *
      * @return
      */
@@ -49,23 +55,5 @@ public abstract class Callback {
      */
     public void setComplete(boolean complete) {
         this.complete = complete;
-    }
-
-    /**
-     * Method getResult
-     *
-     * @return
-     */
-    public SOAPEnvelope getResult() {
-        return result;
-    }
-
-    /**
-     * Method setResult
-     *
-     * @param result
-     */
-    public void setResult(SOAPEnvelope result) {
-        this.result = result;
     }
 }

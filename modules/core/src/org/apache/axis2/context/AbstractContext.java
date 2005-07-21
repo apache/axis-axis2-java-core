@@ -20,7 +20,10 @@ import java.util.HashMap;
  *
  * 
  */
-
+/**
+ *  This is the topmost level of the Context hierachy, is potentially a bag of 
+ *  properties. 
+ */
 public abstract class AbstractContext implements Serializable {
 
     protected transient final HashMap nonPersistentMap;

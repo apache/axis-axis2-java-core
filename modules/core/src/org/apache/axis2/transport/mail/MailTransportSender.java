@@ -20,6 +20,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.AbstractTransportSender;
 import org.apache.axis2.util.Utils;
 
@@ -39,35 +40,32 @@ public class MailTransportSender extends AbstractTransportSender {
 
     }
 
-    public void finalizeSendWithToAddress(MessageContext msgContext,
-                                          OutputStream out)
-            throws AxisFault {
+    public void finalizeSendWithToAddress(
+        MessageContext msgContext,
+        OutputStream out)
+        throws AxisFault {
         try {
             TransportOutDescription transportOut = msgContext.getTransportOut();
             user =
-                    Utils.getParameterValue(
-                            transportOut.getParameter(MailConstants.SMTP_USER));
+                Utils.getParameterValue(
+                    transportOut.getParameter(MailConstants.SMTP_USER));
             host =
-                    Utils.getParameterValue(
-                            transportOut.getParameter(MailConstants.SMTP_HOST));
+                Utils.getParameterValue(
+                    transportOut.getParameter(MailConstants.SMTP_HOST));
             password =
-                    Utils.getParameterValue(
-                            transportOut.getParameter(
-                                    MailConstants.SMTP_PASSWORD));
+                Utils.getParameterValue(
+                    transportOut.getParameter(MailConstants.SMTP_PASSWORD));
             smtpPort =
-                    Utils.getParameterValue(
-                            transportOut.getParameter(MailConstants.SMTP_PORT));
-            if (user != null && host != null && password != null &&
-                    smtpPort != null) {
-                EMailSender sender = new EMailSender(user,
-                        host,
-                        smtpPort,
-                        password);
+                Utils.getParameterValue(
+                    transportOut.getParameter(MailConstants.SMTP_PORT));
+            if (user != null
+                && host != null
+                && password != null
+                && smtpPort != null) {
+                EMailSender sender =
+                    new EMailSender(user, host, smtpPort, password);
 
                 //TODO this is just a temporary hack, fix this to use input streams
-
-
-
 
                 String eprAddress = msgContext.getTo().getAddress();
                 int index = eprAddress.indexOf('/');
@@ -83,51 +81,59 @@ public class MailTransportSender extends AbstractTransportSender {
                 System.out.println(subject);
                 System.out.println(email);
 
-                sender.send(subject,
-                        email,
-                        new String(byteArrayOutputStream.toByteArray()));
+                sender.send(
+                    subject,
+                    email,
+                    new String(byteArrayOutputStream.toByteArray()));
             } else {
-                throw new AxisFault("user, port, host or password not set, "
-                        + "   [user null = "
-                        + (user == null)
-                        + ", password null= "
-                        + (password == null)
-                        + ", host null "
-                        + (host == null)
-                        + ",port null "
-                        + (smtpPort == null));
-
+                if (user == null) {
+                    throw new AxisFault(
+                        Messages.getMessage("canNotBeNull", "User"));
+                } else if (smtpPort == null) {
+                    throw new AxisFault(
+                        Messages.getMessage("canNotBeNull", "smtpPort"));
+                } else if (host == null) {
+                    throw new AxisFault(
+                        Messages.getMessage("canNotBeNull", "Host"));
+                } else if (password == null) {
+                    throw new AxisFault(
+                        Messages.getMessage("canNotBeNull", "password"));
+                }
             }
         } catch (IOException e) {
             throw new AxisFault(e);
         }
 
-
     }
 
-    public OutputStream startSendWithToAddress(MessageContext msgContext,
-                                               OutputStream out) throws AxisFault {
+    public OutputStream startSendWithToAddress(
+        MessageContext msgContext,
+        OutputStream out)
+        throws AxisFault {
         return out;
     }
 
-    protected OutputStream openTheConnection(EndpointReference epr,
-                                             MessageContext msgContext) throws AxisFault {
+    protected OutputStream openTheConnection(
+        EndpointReference epr,
+        MessageContext msgContext)
+        throws AxisFault {
         byteArrayOutputStream = new ByteArrayOutputStream();
         return byteArrayOutputStream;
     }
 
     //Output Stream based cases are not supported 
     public OutputStream startSendWithOutputStreamFromIncomingConnection(
-            MessageContext msgContext,
-            OutputStream out)
-            throws AxisFault {
+        MessageContext msgContext,
+        OutputStream out)
+        throws AxisFault {
         throw new UnsupportedOperationException();
 
     }
 
     public void finalizeSendWithOutputStreamFromIncomingConnection(
-            MessageContext msgContext, OutputStream out)
-            throws AxisFault {
+        MessageContext msgContext,
+        OutputStream out)
+        throws AxisFault {
     }
 
     /* (non-Javadoc)

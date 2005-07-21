@@ -18,6 +18,7 @@
 package org.apache.axis2.transport;
 
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 
 import javax.mail.Authenticator;
 import javax.mail.Folder;
@@ -29,12 +30,6 @@ import javax.mail.Session;
 import javax.mail.Store;
 import java.util.Properties;
 
-/**
- * @author hemapani
- *         <p/>
- *         To change the template for this generated type comment go to
- *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 public class EmailReceiver {
 
     private String user;
@@ -44,21 +39,35 @@ public class EmailReceiver {
     private Store store;
     private Folder inbox;
 
-    public EmailReceiver(String user,
-                         String host,
-                         String popPort,
-                         String password) {
+    public EmailReceiver(
+        String user,
+        String host,
+        String popPort,
+        String password)
+        throws AxisFault {
         this.user = user;
         this.host = host;
         this.popPort = popPort;
         this.password = password;
-    }
+        if (this.user == null) {
+            throw new AxisFault(Messages.getMessage("canNotBeNull","User"));
+        }
+        if (this.host == null) {
+            throw new AxisFault(Messages.getMessage("canNotBeNull","Host"));
+        }
+        if (this.popPort == null) {
+            throw new AxisFault(Messages.getMessage("canNotBeNull","port"));
+        }
+        if (this.password == null) {
+            throw new AxisFault(Messages.getMessage("canNotBeNull","Password"));
+        }
 
+    }
 
     public void connect() throws AxisFault {
         try {
             final PasswordAuthentication authentication =
-                    new PasswordAuthentication(user, password);
+                new PasswordAuthentication(user, password);
             Properties props = new Properties();
             props.put("mail.user", user);
             props.put("mail.host", host);
@@ -76,7 +85,6 @@ public class EmailReceiver {
             Folder root = store.getDefaultFolder();
             inbox = root.getFolder("inbox");
 
-
         } catch (NoSuchProviderException e) {
             throw new AxisFault(e);
         } catch (MessagingException e) {
@@ -93,7 +101,6 @@ public class EmailReceiver {
             throw new AxisFault(e);
         }
     }
-
 
     public Message[] receive() throws AxisFault {
         try {

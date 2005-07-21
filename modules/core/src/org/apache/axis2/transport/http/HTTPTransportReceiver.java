@@ -19,6 +19,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -78,62 +79,7 @@ public class HTTPTransportReceiver {
      */
     private boolean done = false;
 
-//
-//    /**
-//     * Method invoke
-//     *
-//     * @param msgContext
-//     * @throws AxisFault
-//     */
-//    public SOAPEnvelope handleHTTPRequest(
-//        MessageContext msgContext,InputStream inStream, Map map)
-//        throws AxisFault {
-//        SOAPEnvelope soapEnvelope = null;
-//
-//
-//
-//            msgContext.setWSAAction(
-//                (String) map.get(HTTPConstants.HEADER_SOAP_ACTION));
-//            Utils.configureMessageContextForHTTP(
-//                (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
-//                msgContext.getWSAAction(),
-//                msgContext);
-//
-//            String requestURI = (String) map.get(HTTPConstants.REQUEST_URI);
-//            msgContext.setTo(
-//                new EndpointReference(AddressingConstants.WSA_TO, requestURI));
-//
-//            if (HTTPConstants
-//                .RESPONSE_ACK_CODE_VAL
-//                .equals(map.get(HTTPConstants.RESPONSE_CODE))) {
-//                msgContext.setProperty(
-//                    MessageContext.TRANSPORT_SUCCEED,
-//                    HTTPConstants.RESPONSE_ACK_CODE_VAL);
-//                return null;
-//            } else if (
-//                HTTPConstants.HEADER_GET.equals(
-//                    map.get(HTTPConstants.HTTP_REQ_TYPE))) {
-//                SOAPEnvelope envelope =
-//                    HTTPTransportUtils.createEnvelopeFromGetRequest(
-//                        requestURI,
-//                        getGetRequestParameters(requestURI));
-//                if (envelope == null) {
-//                    this.handleGETRequest(
-//                        requestURI,
-//                        (OutputStream) map.get(MessageContext.TRANSPORT_OUT),
-//                        msgContext.getSystemContext());
-//                    return null;
-//                } else {
-//                    msgContext.setProperty(
-//                        Constants.Configuration.DO_REST,
-//                        Constants.VALUE_TRUE);
-//                    return envelope;
-//                }
-//
-//            } else {
-//                return TransportUtils.createSOAPMessage(msgContext,inStream);
-//            }
-//    }
+
 
 
     /**
@@ -211,7 +157,7 @@ public class HTTPTransportReceiver {
             while (!done) {
                 length = readLine(in, buf);
                 if (length <= 0) {
-                    throw new AxisFault("Premature end of steam");
+                    throw new AxisFault(Messages.getMessage("preatureEOS"));
                 }
                 for (int i = 0; i < length; i++) {
                     switch (state) {
@@ -262,109 +208,6 @@ public class HTTPTransportReceiver {
         return map;
     }
 
-    // public HashMap parseTheHeaders(Reader reader, boolean serverSide)
-    // throws AxisFault {
-    // HashMap map = new HashMap();
-    // try {
-    // 
-    // StringBuffer str = new StringBuffer();
-    // 
-    // int state = BEFORE_SEPERATOR;
-    // 
-    // String key = null;
-    // String value = null;
-    // 
-    // int start = 0;
-    // 
-    // length = readLine(reader,buf);
-    // 
-    // 
-    // 
-    // if (serverSide) {
-    // if (buf[0] == 'P'
-    // && buf[1] == 'O'
-    // && buf[2] == 'S'
-    // && buf[3] == 'T') {
-    // index = 5;
-    // value = readFirstLineArg(' ');
-    // map.put(HTTPConstants.REQUEST_URI,value );
-    // value = readFirstLineArg('\n');
-    // map.put(
-    // HTTPConstants.PROTOCOL_VERSION,value);
-    // start = index;
-    // } else {
-    // throw new AxisFault("Only the POST requests are supported");
-    // }
-    // } else {
-    // index = 0;
-    // value = readFirstLineArg(' ');
-    // map.put(HTTPConstants.PROTOCOL_VERSION, value);
-    // value = readFirstLineArg(' ');
-    // map.put(HTTPConstants.RESPONSE_CODE,value);
-    // value = readFirstLineArg('\n');
-    // map.put(HTTPConstants.RESPONSE_WORD, value);
-    // start = index;
-    // }
-    // 
-    // while (state != END) {
-    // if(length <= 0){
-    // throw new AxisFault("Premature end of steam");
-    // }
-    // for (int i = start; i < length; i++) {
-    // System.out.println(state);
-    // switch (state) {
-    // case BEFORE_SEPERATOR :
-    // if (buf[i] == ':') {
-    // key = str.toString();
-    // str = new StringBuffer();
-    // state = AFTER_SEPERATOR;
-    // 
-    // if(buf[i+1] == ' '){
-    // i++;//ignore next space
-    // }
-    // } else {
-    // str.append(buf[i]);
-    // }
-    // break;
-    // case AFTER_SEPERATOR :
-    // if (buf[i] == '\n') {
-    // value = str.toString();
-    // map.put(key, value);
-    // str = new StringBuffer();
-    // state = END_OF_LINE;
-    // } else {
-    // str.append(buf[i]);
-    // }
-    // break;
-    // case END_OF_LINE :
-    // if (buf[i] == '\n') {
-    // state = END;
-    // break;
-    // } else {
-    // state = BEFORE_SEPERATOR;
-    // str.append(buf[i]);
-    // }
-    // break;
-    // case END:
-    // break;
-    // default :
-    // throw new AxisFault(
-    // "Error Occured Unknown state " + state);
-    // 
-    // }
-    // }
-    // start = 0;
-    // if(state != END){
-    // length = reader.read(buf);
-    // }
-    // 
-    // 
-    // }
-    // } catch (IOException e) {
-    // throw new AxisFault(e.getMessage(), e);
-    // }
-    // return map;
-    // }
 
     /**
      * Method readFirstLineArg

@@ -16,6 +16,15 @@
 
 package org.apache.axis2.deployment;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.FlowImpl;
@@ -29,22 +38,12 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.AxisFault;
-import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.engine.AxisObserver;
+import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Observer;
-import java.util.Observable;
 
 /**
  * This class is used to parse the following xml douments

@@ -20,10 +20,14 @@ package org.apache.axis2.engine;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 
+/**
+ * This one check had the SOAP processing Model requirements arte met
+ */
 public class MustUnderstandChecker extends AbstractHandler {
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-    
+        //TODO do the must understand check here. writing the actual logic is 
+        //differed for the next week hackerthone. Today is  21/July/2005
     }
 
 }

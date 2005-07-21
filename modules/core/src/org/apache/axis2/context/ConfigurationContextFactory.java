@@ -29,6 +29,12 @@ import java.util.Iterator;
  */
 public class ConfigurationContextFactory {
 
+    /**
+     * Build the configuration for the Server
+     * @param RepositaryName
+     * @return
+     * @throws DeploymentException
+     */
     public ConfigurationContext buildConfigurationContext(
             String RepositaryName)
             throws DeploymentException {
@@ -41,11 +47,19 @@ public class ConfigurationContextFactory {
             configurationContext = new ConfigurationContext(configuration);
             phaseResolver.buildTranspotsChains();
             initModules(configurationContext);
+            initTransports(configurationContext);
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
         }
         return configurationContext;
     }
+    /**
+     * Built the Configuration for the Client
+     * @param axis2home, the value can be null and it is resolved to the default
+     * axis2.xml file
+     * @return
+     * @throws DeploymentException
+     */
 
     public ConfigurationContext buildClientConfigurationContext(
             String axis2home)
@@ -93,6 +107,13 @@ public class ConfigurationContextFactory {
         }
     }
 
+    /**
+     * Here the Phases are resolved and the Order of the Handlers are established
+     * @param service
+     * @param configurationContextVal
+     * @param modules
+     * @throws PhaseException
+     */
     public static void createChains(ServiceDescription service,
                                     AxisConfiguration configurationContextVal,
                                     ArrayList modules)
@@ -113,7 +134,14 @@ public class ConfigurationContextFactory {
             throw new PhaseException(axisFault);
         }
     }
-
+    
+    /**
+     * This method initilize the transports, passing the information taken from the
+     * deployment to the real instance, for and example here the <code>TransportSender</code>
+     * get a referance to the <code>TransportOutDescription</code>.
+     * @param configContext
+     * @throws AxisFault
+     */
     public void initTransports(ConfigurationContext configContext)
             throws AxisFault {
         AxisConfiguration axisConf = configContext.getAxisConfiguration();

@@ -10,6 +10,7 @@ import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.engine.MustUnderstandChecker;
 import org.apache.axis2.engine.Phase;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.wsdl.WSDLConstants;
@@ -195,10 +196,8 @@ public class OperationDescription extends WSDLOperationImpl implements
                             msgContext.getRelatesTo().getValue());
 
             if (null == operationContext) {
-                throw new AxisFault("Cannot relate the message in the operation :"
-                        + this.getName()
-                        + " :Unrelated RelatesTO value "
-                        + msgContext.getRelatesTo().getValue());
+                throw new AxisFault(Messages.getMessage("cannotCorrealteMsg",
+                this.getName().toString(),msgContext.getRelatesTo().getValue()));
             }
 
         }

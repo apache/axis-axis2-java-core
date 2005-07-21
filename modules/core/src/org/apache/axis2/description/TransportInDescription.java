@@ -22,7 +22,7 @@ import org.apache.axis2.transport.TransportListener;
 import javax.xml.namespace.QName;
 
 /**
- * Represents a transport deployed in AXis2
+ * Represents a incoming transport deployed in AXis2
  */
 public class TransportInDescription
         implements ParameterInclude {

@@ -23,6 +23,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -44,11 +45,10 @@ public abstract class MEPClient {
     protected boolean doRestThroughPOST = false;
     protected String wsaAction;
 
+    //TODO try to find a better way to handle the GET
     public void setRestThroughPOST(boolean b) {
         doRestThroughPOST = b;
     }
-
-
 
     public void setDoREST(boolean b) {
         doREST = b;
@@ -64,19 +64,21 @@ public abstract class MEPClient {
         this.mep = mep;
     }
 
-    protected void verifyInvocation(OperationDescription axisop,
+    /**
+     * prepare the message context for invocation, here the properties kept in the 
+     * MEPClient copied to the MessageContext
+     */
+    protected void prepareInvocation(OperationDescription axisop,
                                     MessageContext msgCtx) throws AxisFault {
         if (axisop == null) {
-            throw new AxisFault("OperationDescription can not be null");
+            throw new AxisFault(Messages.getMessage("cannotBeNullOperationDescription"));
         }
-
+        //make sure operation is type right MEP
         if (mep.equals(axisop.getMessageExchangePattern())) {
-            throw new AxisFault("This mepClient supports only "
-                    + mep
-                    + " And the Axis Operations suppiled supports "
-                    + axisop.getMessageExchangePattern());
+            throw new AxisFault(Messages.getMessage("mepClientSupportOnly",
+                mep,axisop.getMessageExchangePattern()));
         }
-
+        //if operation not alrady added, add it
         if (serviceContext.getServiceConfig().getOperation(axisop.getName()) ==
                 null) {
             serviceContext.getServiceConfig().addOperation(axisop);
@@ -86,9 +88,16 @@ public abstract class MEPClient {
         if (wsaAction != null) {
             msgCtx.setWSAAction(wsaAction);
         }
+        msgCtx.setSoapAction(soapAction);
     }
 
-    protected MessageContext prepareTheSystem(OMElement toSend) throws AxisFault {
+    /**
+     * This class prepare the SOAP Envelope using the payload
+     * @param toSend
+     * @return
+     * @throws AxisFault
+     */
+    protected MessageContext prepareTheSOAPEnvelope(OMElement toSend) throws AxisFault {
         MessageContext msgctx = new MessageContext(
                 serviceContext.getEngineContext());
 
@@ -97,7 +106,15 @@ public abstract class MEPClient {
         msgctx.setEnvelope(envelope);
         return msgctx;
     }
-
+    
+    /**
+     * try to infer the transport looking at the URL, the URL can be http:// 
+     * tcp:// mail:// local://. The method will look for the trnasport name as the 
+     * protocol part of the transport.
+     * @param epr
+     * @return
+     * @throws AxisFault
+     */
     public TransportOutDescription inferTransport(EndpointReference epr) throws AxisFault {
         String transport = null;
         if (epr != null) {
@@ -113,11 +130,15 @@ public abstract class MEPClient {
                     .getTransportOut(new QName(transport));
 
         } else {
-            throw new AxisFault("Cannot Infer transport from the URL");
+            throw new AxisFault(Messages.getMessage("cannotInferTransport"));
         }
 
     }
-
+    /**
+     * create write SOAPEvelope(in terms of version) based on the values set.
+     * @return
+     * @throws AxisFault
+     */
     public SOAPEnvelope createDefaultSOAPEnvelope() throws AxisFault {
         SOAPFactory fac = null;
         if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
@@ -126,11 +147,23 @@ public abstract class MEPClient {
                 soapVersionURI)) {
             fac = OMAbstractFactory.getSOAP11Factory();
         } else {
-            throw new AxisFault(
-                    "Invalid SOAP URI. Axis2 only supports SOAP 1.1 and 1.2");
+            throw new AxisFault(Messages.getMessage("invaidSOAPversion"));
         }
         return fac.getDefaultEnvelope();
     }
+    
+    /**
+     * Engage a given Module to the current invocation. But to call this method the 
+     * Module *MUST* be enable (picked up by the deployment and known to Axis2) else
+     * Exception will be thrown. To be detected put the moduels to the AXIS2_REPOSITORY/modules directory
+     * @param name
+     * @throws AxisFault
+     */
+    public void engageModule(QName name) throws AxisFault {
+        serviceContext.getEngineContext().getAxisConfiguration().engageModule(
+                name);
+    }
+
 
     /**
      * @param string

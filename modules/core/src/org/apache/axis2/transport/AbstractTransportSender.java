@@ -24,6 +24,7 @@ import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -136,10 +137,10 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
                 omOutput.flush();
                 out.flush();
             } catch (Exception e) {
-                throw new AxisFault("Stream error", e);
+                throw new AxisFault(e);
             }
         } else {
-            throw new AxisFault("the OUTPUT message is Null, nothing to write");
+            throw new AxisFault(Messages.getMessage("outMessageNull"));
         }
     }
 

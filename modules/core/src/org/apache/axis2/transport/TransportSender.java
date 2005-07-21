@@ -22,11 +22,23 @@ import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.Handler;
 
 /**
- * Interface TransportSender
+ * This send the SOAP Message to other SOAP nodes and this alone write the SOAP Message to the 
+ * wire. Out flow must be end with one of this kind.
  */
 public interface TransportSender extends Handler {
-    public void cleanUp(MessageContext msgContext) throws AxisFault;
-
+    /**
+     * Initialize
+     * @param confContext
+     * @param transportOut
+     * @throws AxisFault
+     */
     public void init(ConfigurationContext confContext,
                      TransportOutDescription transportOut) throws AxisFault;
+    /**
+     * Clean up
+     * @param msgContext
+     * @throws AxisFault
+     */                     
+    public void cleanUp(MessageContext msgContext) throws AxisFault;
+
 }

@@ -1,6 +1,7 @@
 package org.apache.axis2.transport.mail.server;
 
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.engine.AxisFault;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -19,9 +20,13 @@ public class SMTPServer extends Thread {
     private int port;
 
     private boolean actAsMailet = false;
+    private ServerSocket ss;
+    private boolean running = false;
 
-    public SMTPServer(Storage st, ConfigurationContext configurationContext,
-            int port) {
+    public SMTPServer(
+        Storage st,
+        ConfigurationContext configurationContext,
+        int port) {
         this.st = st;
         this.configurationContext = configurationContext;
         this.port = port;
@@ -39,15 +44,18 @@ public class SMTPServer extends Thread {
     }
 
     public void runServer() {
-        ServerSocket ss = null;
+
         try {
-            ss = new ServerSocket(port);
-            System.out.println("SMTP Server started on port " + port);
+            synchronized (this) {
+                running = true;
+                ss = new ServerSocket(port);
+                System.out.println("SMTP Server started on port " + port);
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
 
-        while (true) {
+        while (running) {
             try {
                 //wait for a client
                 Socket socket = ss.accept();
@@ -60,9 +68,21 @@ public class SMTPServer extends Thread {
                 thread.start();
 
             } catch (IOException ex) {
-                ex.printStackTrace();
+                if (running) {
+                    ex.printStackTrace();
+                }
             }
         }
     }
 
+    public void stopServer() throws AxisFault {
+        try {
+            synchronized (this) {
+                running = false;
+                ss.close();
+            }
+        } catch (IOException e) {
+            throw new AxisFault(e);
+        }
+    }
 }

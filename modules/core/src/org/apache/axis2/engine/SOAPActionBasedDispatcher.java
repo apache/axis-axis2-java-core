@@ -23,7 +23,7 @@ import org.apache.axis2.description.ServiceDescription;
 import javax.xml.namespace.QName;
 
 /**
- * Class Dispatcher
+ * Dispatches based on the SOAPAction 
  */
 public class SOAPActionBasedDispatcher extends AbstractDispatcher {
     /**

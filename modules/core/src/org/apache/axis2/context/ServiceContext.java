@@ -23,20 +23,22 @@ import org.apache.axis2.description.ServiceDescription;
 
 import javax.xml.namespace.QName;
 
-
+/**
+ * Well this is never clearly defined, what is does nor the lifecycle
+ * So I advised to NOT to use this .. as it might not live up to your expectation.
+ */
 public class ServiceContext extends AbstractContext {
     private ServiceDescription serviceConfig;
 
     private String serviceInstanceID;
 
-    public ServiceContext(ServiceDescription serviceConfig,
-                          ConfigurationContext engineContext) {
+    public ServiceContext(
+        ServiceDescription serviceConfig,
+        ConfigurationContext engineContext) {
         super(engineContext);
         this.serviceConfig = serviceConfig;
 
-
     }
-
 
     /**
      * @return Returns the serviceInstanceID.

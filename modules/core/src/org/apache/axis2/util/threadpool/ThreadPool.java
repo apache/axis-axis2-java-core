@@ -1,6 +1,7 @@
 package org.apache.axis2.util.threadpool;
 
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -40,7 +41,7 @@ public class ThreadPool {
 
     public void addWorker(AxisWorker worker) throws AxisFault {
         if (shoutDown)
-            throw new AxisFault("Thread Pool is Shutting Down");
+            throw new AxisFault(Messages.getMessage("threadpoolshutdown"));
         tasks.add(worker);
     }
 
@@ -68,7 +69,7 @@ public class ThreadPool {
             try {
                 Thread.sleep(SLEEP_INTERVAL);
             } catch (InterruptedException e) {
-                throw new AxisFault("Error while safeShutDown", e);
+                throw new AxisFault(Messages.getMessage("errorWhileSafeShutDown"));
             }
         }
         forceShutDown();

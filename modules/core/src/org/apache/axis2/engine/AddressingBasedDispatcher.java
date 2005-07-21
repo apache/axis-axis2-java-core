@@ -24,7 +24,7 @@ import org.apache.axis2.description.ServiceDescription;
 import javax.xml.namespace.QName;
 
 /**
- * Class Dispatcher
+ * Dispatcher based on the WS-Addressing properties
  */
 public class AddressingBasedDispatcher extends AbstractDispatcher {
     /**
@@ -37,7 +37,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
     public AddressingBasedDispatcher() {
         init(new HandlerDescription(NAME));
     }
-
+    //TODO this logic needed to be improved, as the Dispatching is almost garentnee to fail
     public OperationDescription findOperation(ServiceDescription service,
                                               MessageContext messageContext)
             throws AxisFault {
@@ -46,15 +46,12 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
         if (action != null) {
             QName operationName = new QName(action);
             OperationDescription op = service.getOperation(operationName);
-
             return op;
         }
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.axis2.engine.AbstractDispatcher#findService(org.apache.axis2.context.MessageContext)
-     */
+    //  TODO this logic needed to be improved, as the Dispatching is almost garentnee to fail
     public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
         ServiceDescription service = null;

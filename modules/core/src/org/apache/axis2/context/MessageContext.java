@@ -36,6 +36,8 @@ import javax.xml.namespace.QName;
  * artifacts does not keep states foward from the execution.
  */
 public class MessageContext extends AbstractContext {
+    
+    public static final String TRANSPORT_HEADERS = "TRANSPORT_HEADERS";
     /**
      * Field TRANSPORT_WRITER
      */

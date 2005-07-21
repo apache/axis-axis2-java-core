@@ -16,6 +16,23 @@
 
 package org.apache.axis2.deployment;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axis2.deployment.listener.RepositoryListenerImpl;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
@@ -39,22 +56,6 @@ import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 
 public class DeploymentEngine implements DeploymentConstants {
@@ -506,9 +507,9 @@ public class DeploymentEngine implements DeploymentConstants {
                 handlermd.setHandler(handler);
 
             } catch (InstantiationException e) {
-                throw new AxisFault(e.getMessage());
+                throw new AxisFault(e);
             } catch (IllegalAccessException e) {
-                throw new AxisFault(e.getMessage());
+                throw new AxisFault(e);
             }
 
         }

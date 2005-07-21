@@ -28,12 +28,15 @@ import org.apache.axis2.om.OMElement;
 import javax.xml.namespace.QName;
 
 /**
- * @author hemapani
- *         <p/>
- *         To change the template for this generated type comment go to
- *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *    Message Sender is the class simmiler to the Call, one that provides much simpler API
+ *    to users to work with. 
  */
 public class MessageSender extends InOnlyMEPClient {
+    
+    /**
+     * Service context of the Service this MessageSender handles, compare this with the Call, simpler method.
+     * @param service
+     */
     public MessageSender(ServiceContext service) {
         super(service);
     }
@@ -41,7 +44,12 @@ public class MessageSender extends InOnlyMEPClient {
     public MessageSender() throws AxisFault {
         super(assumeServiceContext());
     }
-
+    /**
+     * Send the SOAP Message, the actual worker
+     * @param opName
+     * @param toSend
+     * @throws AxisFault
+     */
     public void send(String opName, OMElement toSend) throws AxisFault {
         OperationDescription axisOp = serviceContext.getServiceConfig()
                 .getOperation(opName);
@@ -49,9 +57,14 @@ public class MessageSender extends InOnlyMEPClient {
             axisOp = new OperationDescription(new QName(opName));
             serviceContext.getServiceConfig().addOperation(axisOp);
         }
-        super.send(axisOp, prepareTheSystem(toSend));
+        super.send(axisOp, prepareTheSOAPEnvelope(toSend));
     }
 
+    /**
+     * create a default service Context if the users are not intersted in the lower levels of control
+     * @return
+     * @throws AxisFault
+     */
     private static ServiceContext assumeServiceContext() throws AxisFault {
         ConfigurationContext sysContext = null;
         if (ListenerManager.configurationContext == null) {

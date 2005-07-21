@@ -21,6 +21,7 @@ import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
@@ -136,13 +137,10 @@ public class RawXMLINOnlyMessageReceiver
                         envelope.getBody().addChild(responseMethodName);
                     }
                 } else {
-                    throw new AxisFault("Unknown style ");
+                    throw new AxisFault(Messages.getMessage("unknownStyle",style));
                 }
             } else {
-                throw new AxisFault(
-                        "Raw Xml provider supports only the methods bearing the signature public OMElement "
-                        +
-                        "&lt;method-name&gt;(OMElement) where the method name is anything");
+                throw new AxisFault(Messages.getMessage("rawXmlProivdeIsLimited"));
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);

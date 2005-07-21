@@ -25,6 +25,7 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
@@ -87,6 +88,8 @@ public class MailWorker implements AxisWorker {
                 msgContext.setWSAAction(soapAction);
                 msgContext.setSoapAction(soapAction);
 
+                //TODO add the transport Headers to the Message Context                
+
                 //Create Mail EPR, EPR is constructed using the format, foo@bar/axis2/services/echo and is constructed 
                 //using the <to-email-address>/<email-subject>
                 InternetAddress[] recepainets = (InternetAddress[]) mimeMessage.getAllRecipients();
@@ -98,7 +101,7 @@ public class MailWorker implements AxisWorker {
                             AddressingConstants.WSA_TO,
                             emailAddress + "/" + (emailSubject != null ? emailSubject : ""));
                 } else {
-                    throw new AxisFault("No receptineist found in the Email");
+                    throw new AxisFault(Messages.getMessage("noRecep4Email"));
                 }
                 //try to assume the reply to value
                 InternetAddress[] replyToAs = (InternetAddress[]) mimeMessage.getAllRecipients();
@@ -124,7 +127,7 @@ public class MailWorker implements AxisWorker {
                     engine.receive(msgContext);
                 }
             } else {
-                throw new AxisFault("Unknown transport " + Constants.TRANSPORT_MAIL);
+                throw new AxisFault(Messages.getMessage("unknownTransport",Constants.TRANSPORT_MAIL));
             }
 
         } catch (Exception e) {

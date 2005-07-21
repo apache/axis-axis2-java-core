@@ -23,6 +23,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.threadpool.AxisWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,7 +50,7 @@ public class HTTPWorker implements AxisWorker {
         try {
             if (socket != null) {
                 if (configurationContext == null) {
-                    throw new AxisFault("Engine Must be null");
+                    throw new AxisFault(Messages.getMessage("cannotBeNullConfigurationContext"));
                 }
 
                 InputStream inStream = socket.getInputStream();
@@ -64,6 +65,7 @@ public class HTTPWorker implements AxisWorker {
                             new QName(Constants.TRANSPORT_HTTP)),
                         transportOut);
                 msgContext.setServerSide(true);
+                
 
                 //parse the Transport Headers
                 HTTPTransportReceiver receiver = new HTTPTransportReceiver();
@@ -80,7 +82,9 @@ public class HTTPWorker implements AxisWorker {
                     out = new SimpleHTTPOutputStream(socket.getOutputStream(), false);
                 }
                 msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
-
+                //set the transport Headers
+                msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,map);
+                
                 //This is way to provide Accsess to the transport information to the transport Sender
                 msgContext.setProperty(
                     HTTPConstants.HTTPOutTransportInfo,

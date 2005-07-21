@@ -19,19 +19,18 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.soap.SOAPEnvelope;
 
 /**
- * Class AsyncResult
+ * This Class represents the results of a Async Invocation, this is one return to the
+ * Callback. This class is almost always created by the Axis2 and returned.
  */
 public class AsyncResult {
 
     public AsyncResult(MessageContext result) {
         this.result = result;
     }
-
     /**
      * Field result
      */
     private MessageContext result;
-
 
     /**
      * @return SOAPEnvelope

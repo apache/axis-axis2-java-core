@@ -18,13 +18,15 @@ package org.apache.axis2.mail;
 
 //todo
 
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
+
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.OperationDescription;
@@ -38,23 +40,14 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.mail.SimpleMailListener;
-import org.apache.axis2.transport.mail.server.MailConstants;
-import org.apache.axis2.transport.mail.server.MailServer;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-import java.io.File;
-
 public class MailOneWayRawXMLTest extends TestCase {
-    private static final String MAIL_TRANSPORT_ENABLED_REPO_PATH = Constants.TESTING_PATH +
-            "mail-transport-enabledRepository";
-
-
     private EndpointReference targetEPR =
             new EndpointReference(AddressingConstants.WSA_TO,
-                    "axis2@127.0.0.1" +
+                    "foo@127.0.0.1" +
             "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
@@ -76,11 +69,8 @@ public class MailOneWayRawXMLTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        configContext = createNewConfigurationContext();  
         //start the mail server      
-        MailServer server = new MailServer(configContext,
-                MailConstants.POP_SERVER_PORT,
-                MailConstants.SMTP_SERVER_PORT);
+        configContext = UtilsMailServer.start();
 
         SimpleMailListener ml = new SimpleMailListener();
         ml.init(configContext,
@@ -104,6 +94,7 @@ public class MailOneWayRawXMLTest extends TestCase {
     }
 
     protected void tearDown() throws Exception {
+        UtilsMailServer.stop();
     }
 
     private OMElement createEnvelope() {
@@ -154,16 +145,16 @@ public class MailOneWayRawXMLTest extends TestCase {
         }
     }
 
-    public ConfigurationContext createNewConfigurationContext() throws Exception {
-        File file = new File(MAIL_TRANSPORT_ENABLED_REPO_PATH);
-        assertTrue(
-                "Mail repository directory " + file.getAbsolutePath() +
-                " does not exsist",
-                file.exists());
-        ConfigurationContextFactory builder = new ConfigurationContextFactory();
-        ConfigurationContext configContext =
-                builder.buildConfigurationContext(file.getAbsolutePath());
-        return configContext;
-    }
-
+//    public ConfigurationContext createNewConfigurationContext() throws Exception {
+//        File file = new File(MAIL_TRANSPORT_ENABLED_REPO_PATH);
+//        assertTrue(
+//                "Mail repository directory " + file.getAbsolutePath() +
+//                " does not exsist",
+//                file.exists());
+//        ConfigurationContextFactory builder = new ConfigurationContextFactory();
+//        ConfigurationContext configContext =
+//                builder.buildConfigurationContext(file.getAbsolutePath());
+//        return configContext;
+//    }
+//
 }

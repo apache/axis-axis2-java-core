@@ -12,6 +12,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MailServer {
     Storage st = null;
+    private SMTPServer smtpServer;
+    private POP3Server pop3Server; 
 
     public ConfigurationContext configurationContext = null;
 
@@ -34,10 +36,10 @@ public class MailServer {
         }
         st = new Storage();
         // Start up the two servers and lets have some fun. - CT
-        SMTPServer smtpServer = new SMTPServer(st, configurationContext,
+        smtpServer = new SMTPServer(st, configurationContext,
                 smtpPort);
         smtpServer.start();
-        POP3Server pop3Server = new POP3Server(st, popPort);
+        pop3Server = new POP3Server(st, popPort);
         pop3Server.start();
 
     }
@@ -55,20 +57,25 @@ public class MailServer {
 
         st = new Storage();
         // Start up the two servers and lets have some fun. - CT
-        SMTPServer smtpServer = new SMTPServer(st, configurationContext,
+        smtpServer = new SMTPServer(st, configurationContext,
                 smtpPort);
         smtpServer.start();
-        POP3Server pop3Server = new POP3Server(st, popPort);
+        pop3Server = new POP3Server(st, popPort);
         pop3Server.start();
     }
 
     public MailServer(int popPort, int smtpPort) throws AxisFault {
         st = new Storage();
         // Start up the two servers and lets have some fun. - CT
-        SMTPServer smtpServer = new SMTPServer(st, smtpPort);
+        smtpServer = new SMTPServer(st, smtpPort);
         smtpServer.start();
-        POP3Server pop3Server = new POP3Server(st, popPort);
+        pop3Server = new POP3Server(st, popPort);
         pop3Server.start();
+    }
+    
+    public void stop() throws AxisFault{
+        smtpServer.stopServer();
+        pop3Server.stopServer();
     }
 
     public static void main(String args[]){

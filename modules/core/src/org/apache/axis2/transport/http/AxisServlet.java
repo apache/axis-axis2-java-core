@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class AxisServlet
@@ -53,9 +54,13 @@ public class AxisServlet extends HttpServlet {
         try {
             ServletContext context = config.getServletContext();
             String repoDir = context.getRealPath("/WEB-INF");
-            ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-            ConfigurationContext configContext = erfac.buildConfigurationContext(repoDir);
-            configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
+            ConfigurationContextFactory erfac =
+                new ConfigurationContextFactory();
+            ConfigurationContext configContext =
+                erfac.buildConfigurationContext(repoDir);
+            configContext.setProperty(
+                Constants.CONTAINER_MANAGED,
+                Constants.VALUE_TRUE);
             configContext.setRootDir(new File(context.getRealPath("/WEB-INF")));
             lister = new ListingAgent(configContext);
             context.setAttribute(CONFIGURATION_CONTEXT, configContext);
@@ -78,14 +83,16 @@ public class AxisServlet extends HttpServlet {
         throws ServletException, IOException {
 
         ConfigurationContext configContext =
-            (ConfigurationContext) getServletContext().getAttribute(CONFIGURATION_CONTEXT);
+            (ConfigurationContext) getServletContext().getAttribute(
+                CONFIGURATION_CONTEXT);
 
         httpServletResponse.setContentType("text/xml; charset=utf-8");
         MessageContext msgContext = null;
         OutputStream out = null;
         try {
             Object sessionContext =
-                httpServletRequest.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
+                httpServletRequest.getSession().getAttribute(
+                    Constants.SESSION_CONTEXT_PROPERTY);
             if (sessionContext == null) {
                 sessionContext = new SessionContext(null);
                 httpServletRequest.getSession().setAttribute(
@@ -114,6 +121,8 @@ public class AxisServlet extends HttpServlet {
             msgContext.setProperty(
                 HTTPConstants.HTTPOutTransportInfo,
                 new ServletBasedOutTransportInfo(httpServletResponse));
+            msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,getTransportHeaders(httpServletRequest));    
+                
             out = httpServletResponse.getOutputStream();
             boolean processed =
                 HTTPTransportUtils.processHTTPGetRequest(
@@ -121,7 +130,8 @@ public class AxisServlet extends HttpServlet {
                     httpServletRequest.getInputStream(),
                     out,
                     httpServletRequest.getContentType(),
-                    httpServletRequest.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
+                    httpServletRequest.getHeader(
+                        HTTPConstants.HEADER_SOAP_ACTION),
                     httpServletRequest.getRequestURL().toString(),
                     configContext,
                     map);
@@ -132,7 +142,8 @@ public class AxisServlet extends HttpServlet {
             if (msgContext != null) {
                 msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
                 AxisEngine engine = new AxisEngine(configContext);
-                MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
+                MessageContext faultContext =
+                    engine.createFaultMessageContext(msgContext, e);
                 engine.sendFault(faultContext);
             } else {
                 throw new ServletException(e);
@@ -158,13 +169,17 @@ public class AxisServlet extends HttpServlet {
         throws ServletException, IOException {
         MessageContext msgContext = null;
         ConfigurationContext configContext =
-            (ConfigurationContext) getServletContext().getAttribute(CONFIGURATION_CONTEXT);
+            (ConfigurationContext) getServletContext().getAttribute(
+                CONFIGURATION_CONTEXT);
         try {
             Object sessionContext =
-                req.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
+                req.getSession().getAttribute(
+                    Constants.SESSION_CONTEXT_PROPERTY);
             if (sessionContext == null) {
                 sessionContext = new SessionContext(null);
-                req.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY, sessionContext);
+                req.getSession().setAttribute(
+                    Constants.SESSION_CONTEXT_PROPERTY,
+                    sessionContext);
             }
             msgContext =
                 new MessageContext(
@@ -177,6 +192,8 @@ public class AxisServlet extends HttpServlet {
             msgContext.setProperty(
                 HTTPConstants.HTTPOutTransportInfo,
                 new ServletBasedOutTransportInfo(res));
+            msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,getTransportHeaders(req));
+                
             res.setContentType("text/xml; charset=utf-8");
             HTTPTransportUtils.processHTTPPostRequest(
                 msgContext,
@@ -187,19 +204,35 @@ public class AxisServlet extends HttpServlet {
                 req.getRequestURL().toString(),
                 configContext);
             Object contextWritten =
-                msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
-            if (contextWritten == null || !Constants.VALUE_TRUE.equals(contextWritten)) {
+                msgContext.getOperationContext().getProperty(
+                    Constants.RESPONSE_WRITTEN);
+            if (contextWritten == null
+                || !Constants.VALUE_TRUE.equals(contextWritten)) {
                 res.setStatus(HttpServletResponse.SC_ACCEPTED);
             }
         } catch (AxisFault e) {
             if (msgContext != null) {
-                msgContext.setProperty(MessageContext.TRANSPORT_OUT, res.getOutputStream());
+                msgContext.setProperty(
+                    MessageContext.TRANSPORT_OUT,
+                    res.getOutputStream());
                 AxisEngine engine = new AxisEngine(configContext);
-                MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
+                MessageContext faultContext =
+                    engine.createFaultMessageContext(msgContext, e);
                 engine.sendFault(faultContext);
             } else {
                 throw new ServletException(e);
             }
         }
+    }
+
+    private Map getTransportHeaders(HttpServletRequest req) {
+        HashMap headerMap = new HashMap();
+        Enumeration headerNames = req.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String key = (String) headerNames.nextElement();
+            String value = req.getHeader(key);
+            headerMap.put(key, value);
+        }
+        return headerMap;
     }
 }

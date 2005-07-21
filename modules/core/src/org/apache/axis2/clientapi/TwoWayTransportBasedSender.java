@@ -19,19 +19,21 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.transport.TransportUtils;
 
-
-public class TwoChannelBasedSender {
+/**
+ * This works for only a two way transport, this class send the SOAP Message and wait till the\result arrives
+ */
+public class TwoWayTransportBasedSender {
     public static MessageContext send(MessageContext msgctx,
                                       TransportInDescription transportIn) throws AxisFault {
 
         AxisEngine engine = new AxisEngine(msgctx.getSystemContext());
-
-
         engine.send(msgctx);
 
+        //create the response
         MessageContext response =
                 new MessageContext(msgctx.getSystemContext(),
                         msgctx.getSessionContext(),
@@ -47,14 +49,12 @@ public class TwoChannelBasedSender {
         response.setDoingREST(msgctx.isDoingREST());
 
         SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(response);
-
         if (resenvelope != null) {
             response.setEnvelope(resenvelope);
             engine = new AxisEngine(msgctx.getSystemContext());
             engine.receive(response);
-
         } else {
-            throw new AxisFault("Blocking invocation always expect a response");
+            throw new AxisFault(Messages.getMessage("blockInvocationExpectsRes="));
         }
         return response;
     }

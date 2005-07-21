@@ -16,13 +16,16 @@ public class POP3Server extends Thread {
     protected static Log log = LogFactory.getLog(POP3Server.class.getName());
     private ServerSocket serverSocket;
     private Storage st = null;
-
+    private boolean running = false;
 
     public POP3Server(Storage st, int port) throws AxisFault {
         this.st = st;
         try {
-            serverSocket = new ServerSocket(port);
-            System.out.println("Server started on port " + port);
+            synchronized (this) {
+                running = true;
+                serverSocket = new ServerSocket(port);
+                System.out.println("Server started on port " + port);
+            }
         } catch (IOException e) {
             throw new AxisFault(e);
         }
@@ -37,6 +40,18 @@ public class POP3Server extends Thread {
             } catch (Exception e) {
                 log.error(e);
             }
+        }
+    }
+
+    public void stopServer() throws AxisFault {
+        try {
+            synchronized (this) {
+                running = false;
+                serverSocket.close();
+            }
+
+        } catch (IOException e) {
+            throw new AxisFault(e);
         }
     }
 }

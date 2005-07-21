@@ -26,7 +26,8 @@ import org.apache.axis2.util.Utils;
 import javax.xml.namespace.QName;
 
 /**
- * Class Dispatcher
+ * Dispatches based on the namespace URI of the first child of
+ * the Body.
  */
 public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
     /**

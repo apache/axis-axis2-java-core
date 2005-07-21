@@ -22,13 +22,22 @@
         <copy file="test/org/apache/axis2/engine/chuncking-enabled-axis2.xml"
             tofile="target/test-resources/chuncked-enabledRepository/axis2.xml"/>
 
-        <!-- Create Mail transport enabled Repository -->
-        <mkdir dir="target/test-resources/mail-transport-enabledRepository"/>
-        <mkdir dir="target/test-resources/mail-transport-enabledRepository/modules"/>
-        <copy file="test/org/apache/axis2/mail/mail-enabled-axis2.xml"
-            tofile="target/test-resources/mail-transport-enabledRepository/axis2.xml"/>
+        <!-- Create Mail Client transport enabled Repository -->
+        <mkdir dir="target/test-resources/mail-transport-client-enabledRepository"/>
+        <mkdir dir="target/test-resources/mail-transport-client-enabledRepository/modules"/>
+        <copy file="test/org/apache/axis2/mail/mail-enabled-client-axis2.xml"
+            tofile="target/test-resources/mail-transport-client-enabledRepository/axis2.xml"/>
         <copy file="../addressing/target/addressing.mar"
-            tofile="target/test-resources/mail-transport-enabledRepository/modules/addressing.mar"/>
+            tofile="target/test-resources/mail-transport-client-enabledRepository/modules/addressing.mar"/>
+
+        <!-- Create Mail Server transport enabled Repository -->
+        <mkdir dir="target/test-resources/mail-transport-server-enabledRepository"/>
+        <mkdir dir="target/test-resources/mail-transport-server-enabledRepository/modules"/>
+        <copy file="test/org/apache/axis2/mail/mail-enabled-server-axis2.xml"
+            tofile="target/test-resources/mail-transport-server-enabledRepository/axis2.xml"/>
+        <copy file="../addressing/target/addressing.mar"
+            tofile="target/test-resources/mail-transport-server-enabledRepository/modules/addressing.mar"/>
+
 
         <!-- Commons transport enabled enabled Repository -->
         <mkdir dir="target/test-resources/commons-http-enabledRepository"/>
@@ -44,8 +53,18 @@
 
     <postGoal name="test:test">
         <attainGoal name="create-samples"/>
+        <attainGoal name="mail-tests"/>
         <!-- <attainGoal name="doInterop-test"/>   -->
     </postGoal>
+    
+    <goal name="mail-tests">
+      <!--   	 TODO call the Mail tests if the mail jar is presents
+        <j:if test="${maven.repo.local}/j2ee/jars/mail.jar"> 
+            <ant:ant antfile="script/mail-test.xml" inheritall="true" inheritrefs="true" dir="."/>
+         </j:if> 
+         maven -Dtestcase=org.foo.bar.MyTest test:single-test
+         -->
+    </goal>
 
     <goal name="create-samples">
 <!--        <mkdir dir="target/samples"/>-->
@@ -269,29 +288,9 @@
         </jar>
     </goal>
 
-    <goal name="test-mtom">
-        <echo message="running MTOM tests"/>
-        <echo message="${maven.repo.local}"/>
-        <junit printsummary="yes" haltonfailure="yes">
-            <classpath>
-                <fileset dir="${maven.repo.local}">
-                    <include name="j2ee/jars/***.jar"/>
-                    <include name="axis/jars/axis2-core-0.9.jar"/>
-                    <include name="axis/jars/axis2-xml-0.9.jar"/>
-                    <include name="axis/jars/axis2-wsdl-0.9.jar"/>
-                    <include name="axis/jars/axis-wsdl4j-1.2.jar"/>
-                    <include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
-                    <include name="stax/jars/stax-1.1.1-dev.jar"/>
-                    <include name="stax/jars/stax-api-1.0.jar"/>
-                </fileset>
-                <pathelement location="target/test-classes"/>
-                <path refid="maven.dependency.classpath"/>
-            </classpath>
-            <formatter type="plain"/>
-            <test name="org.apache.axis2.engine.EchoRawMTOMToBase64Test"/>
-            <test name="org.apache.axis2.engine.EchoRawMTOMTest"/>
-        </junit>
-    </goal>
+    <!-- ================================================================ -->
+    <!--- Google Mail Sample -->
+    <!-- ================================================================ -->
 
     <goal name="test-mail">
         <echo message="running Mail tests"/>
@@ -318,6 +317,9 @@
         </junit>
     </goal>
 
+    <!-- ================================================================ -->
+    <!--- Run the Interop Tests -->
+    <!-- ================================================================ -->
 
     <goal name="doInterop-test">
         <taskdef name="wsdl2java"

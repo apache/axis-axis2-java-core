@@ -29,6 +29,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.transport.TransportListener;
@@ -59,7 +60,6 @@ public class InOutMEPClient extends MEPClient {
      * SMTP transport support only two channel case
      */
     protected boolean useSeparateListener = false;
-
 
     /**
      * The address the message should be send
@@ -107,15 +107,34 @@ public class InOutMEPClient extends MEPClient {
     //        throw new UnsupportedOperationException();
     //    }
 
-    public MessageContext invokeBlocking(OperationDescription axisop,
-                                         final MessageContext msgctx)
-            throws AxisFault {
-        verifyInvocation(axisop, msgctx);
+    /**
+     * This invocation done via this method blocks till the result arrives, using this method does not indicate 
+     * anyhting about the transport used or the nature of the transport. 
+     * e.g. invocation done with this method might
+     * <ol>
+     *      <li>send request via http and recevie the response via the return path of the same http connection</li>
+     *      <li>send request via http and recevie the response different http connection</li>
+     *      <li>send request via a email smtp and recevie the response via a email</li>
+     * </ol>
+     *  
+     */
+
+    public MessageContext invokeBlocking(
+        OperationDescription axisop,
+        final MessageContext msgctx)
+        throws AxisFault {
+        prepareInvocation(axisop, msgctx);
         if (useSeparateListener) {
+            //This mean doing a Request-Response invocation using two channel. If the 
+            //transport is two way transport (e.g. http) Only one channel is used (e.g. in http cases
+            //202 OK is sent to say no repsone avalible). Axis2 get blocked return when the response is avalible. 
+
             SyncCallBack callback = new SyncCallBack();
+            //this method call two channel non blocking method to do the work and wait on the callbck
             invokeNonBlocking(axisop, msgctx, callback);
             int index = 0;
             while (!callback.isComplete()) {
+                //wait till the reponse arrives
                 if (index < 20) {
                     try {
                         Thread.sleep(100);
@@ -123,12 +142,13 @@ public class InOutMEPClient extends MEPClient {
                         throw new AxisFault(e);
                     }
                 } else {
-                    throw new AxisFault("Time out waiting for the response");
+                    throw new AxisFault(Messages.getMessage("responseTimeOut"));
                 }
             }
+            //process the resule of the invocation
             if (callback.envelope != null) {
-                MessageContext resMsgctx = new MessageContext(
-                        serviceContext.getEngineContext());
+                MessageContext resMsgctx =
+                    new MessageContext(serviceContext.getEngineContext());
                 resMsgctx.setEnvelope(callback.envelope);
                 return resMsgctx;
             } else {
@@ -139,69 +159,81 @@ public class InOutMEPClient extends MEPClient {
                 }
             }
         } else {
+            //This is the Usual Request-Response Sync implemetation
             msgctx.setTo(to);
-            msgctx.setSoapAction(soapAction);
             msgctx.setServiceContext(serviceContext);
             ConfigurationContext syscontext = serviceContext.getEngineContext();
 
             checkTransport(msgctx);
 
+            //find and set the Operation Context
             ConfigurationContext sysContext = serviceContext.getEngineContext();
             AxisConfiguration registry = sysContext.getAxisConfiguration();
-
             msgctx.setOperationContext(
-                    OperationContextFactory.createMEPContext(
-                            WSDLConstants.MEP_CONSTANT_IN_OUT,
-                            axisop,
-                            serviceContext));
-            MessageContext response = TwoChannelBasedSender.send(msgctx,
-                    listenerTransport);
+                OperationContextFactory.createMEPContext(
+                    WSDLConstants.MEP_CONSTANT_IN_OUT,
+                    axisop,
+                    serviceContext));
+            //Send the SOAP Message and receive a response                
+            MessageContext response =
+                TwoWayTransportBasedSender.send(msgctx, listenerTransport);
 
+            //check for a fault and return the result
             SOAPEnvelope resenvelope = response.getEnvelope();
-
             if (resenvelope.getBody().hasFault()) {
                 throw new AxisFault(
-                        resenvelope.getBody().getFault().getException());
+                    resenvelope.getBody().getFault().getException());
             }
             return response;
         }
     }
 
-    public void invokeNonBlocking(final OperationDescription axisop,
-                                  final MessageContext msgctx,
-                                  final Callback callback)
-            throws AxisFault {
-        verifyInvocation(axisop, msgctx);
+   /**
+    * This invocation done via this method blocks till the result arrives, using this method does not indicate 
+    * anyhting about the transport used or the nature of the transport. 
+    */
+    public void invokeNonBlocking(
+        final OperationDescription axisop,
+        final MessageContext msgctx,
+        final Callback callback)
+        throws AxisFault {
+        prepareInvocation(axisop, msgctx);
         msgctx.setTo(to);
         try {
-            final ConfigurationContext syscontext = serviceContext.getEngineContext();
+            final ConfigurationContext syscontext =
+                serviceContext.getEngineContext();
 
             AxisEngine engine = new AxisEngine(syscontext);
-            //TODO
             checkTransport(msgctx);
-            msgctx.setSoapAction(soapAction);
 
             if (useSeparateListener) {
+                //the invocation happen via a seperate Channel, so we should set up the
+                //information need to correlated the response message and invoke the call back
                 String messageID = String.valueOf(System.currentTimeMillis());
                 msgctx.setMessageID(messageID);
                 axisop.setMessageReciever(callbackReceiver);
                 callbackReceiver.addCallback(messageID, callback);
+                //set the replyto such that the response will arrive at the transport listener started
                 msgctx.setReplyTo(
-                        ListenerManager.replyToEPR(
-                                serviceContext.getServiceConfig().getName()
-                        .getLocalPart()
-                        + "/"
-                        + axisop.getName().getLocalPart(),
-                                listenerTransport.getName().getLocalPart()));
+                    ListenerManager.replyToEPR(
+                        serviceContext
+                            .getServiceConfig()
+                            .getName()
+                            .getLocalPart()
+                            + "/"
+                            + axisop.getName().getLocalPart(),
+                        listenerTransport.getName().getLocalPart()));
+                //create and set the Operation context        
                 msgctx.setOperationContext(
-                        axisop.findOperationContext(msgctx, serviceContext));
+                    axisop.findOperationContext(msgctx, serviceContext));
                 msgctx.setServiceContext(serviceContext);
+                //send the message
                 engine.send(msgctx);
             } else {
+                //here a bloking invocation happens in a new thrad, so the progamming model is 
+                //non blocking
                 serviceContext.getEngineContext().getThreadPool().addWorker(
-                        new NonBlockingInvocationWorker(callback,
-                                axisop,
-                                msgctx));
+                    new NonBlockingInvocationWorker(callback, axisop, msgctx));
             }
 
         } catch (OMException e) {
@@ -235,67 +267,76 @@ public class InOutMEPClient extends MEPClient {
      * @throws AxisFault
      */
 
-    public void setTransportInfo(String senderTransport,
-                                 String listenerTransport,
-                                 boolean useSeparateListener)
-            throws AxisFault {
-
+    public void setTransportInfo(
+        String senderTransport,
+        String listenerTransport,
+        boolean useSeparateListener)
+        throws AxisFault {
+        //here we check for a legal combination, for and example if the sendertransport is http and listner
+        //transport is smtp the invocation must using seperate transport 
         if (!useSeparateListener) {
-            boolean isTransportsEqual = senderTransport.equals(
-                    listenerTransport);
-            boolean isATwoWaytransport = Constants.TRANSPORT_HTTP.equals(
-                    senderTransport)
+            boolean isTransportsEqual =
+                senderTransport.equals(listenerTransport);
+            boolean isATwoWaytransport =
+                Constants.TRANSPORT_HTTP.equals(senderTransport)
                     || Constants.TRANSPORT_TCP.equals(senderTransport)
-                    ||
-                    Constants.TRANSPORT_COMMONS_HTTP.equals(senderTransport);
-            boolean isCommonsAndHTTP = Constants.TRANSPORT_COMMONS_HTTP.equals(
-                    senderTransport)
+                    || Constants.TRANSPORT_COMMONS_HTTP.equals(senderTransport);
+            boolean isCommonsAndHTTP =
+                Constants.TRANSPORT_COMMONS_HTTP.equals(senderTransport)
                     && Constants.TRANSPORT_HTTP.equals(listenerTransport);
-            if (!isCommonsAndHTTP &&
-                    (!isTransportsEqual || !isATwoWaytransport)) {
-                throw new AxisFault(
-                        "useSeparateListener = false is only supports by the htpp/tcp and tcp commons transport set as the sender and receiver");
+            if (!isCommonsAndHTTP
+                && (!isTransportsEqual || !isATwoWaytransport)) {
+                    throw new AxisFault(Messages.getMessage("useSeparateListenerLimited"));
             }
         } else {
             this.useSeparateListener = useSeparateListener;
 
         }
-
-        AxisConfiguration axisConfig = serviceContext.getEngineContext()
-                .getAxisConfiguration();
+        
+        //find and set the transport details
+        AxisConfiguration axisConfig =
+            serviceContext.getEngineContext().getAxisConfiguration();
         this.listenerTransport =
-                axisConfig.getTransportIn(new QName(listenerTransport));
+            axisConfig.getTransportIn(new QName(listenerTransport));
         this.senderTransport =
-                axisConfig.getTransportOut(new QName(senderTransport));
+            axisConfig.getTransportOut(new QName(senderTransport));
         if (this.senderTransport == null) {
-            throw new AxisFault("Unknown transport " + senderTransport);
+            throw new AxisFault(Messages.getMessage("unknownTransport",senderTransport));
         }
-
         if (this.listenerTransport == null) {
-            throw new AxisFault("Unknown transport " + listenerTransport);
+            throw new AxisFault(Messages.getMessage("unknownTransport",listenerTransport));
         }
-
+        
+        //if seperate transport is used, start the required listeners
         if (useSeparateListener == true) {
             if (!serviceContext
-                    .getEngineContext()
-                    .getAxisConfiguration()
-                    .isEngaged(new QName(Constants.MODULE_ADDRESSING))) {
-                throw new AxisFault(
-                        "to do two Transport Channels the Addressing Modules must be engeged");
+                .getEngineContext()
+                .getAxisConfiguration()
+                .isEngaged(new QName(Constants.MODULE_ADDRESSING))) {
+                    throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));
             }
-            ListenerManager.makeSureStarted(listenerTransport,
-                    serviceContext.getEngineContext());
+            ListenerManager.makeSureStarted(
+                listenerTransport,
+                serviceContext.getEngineContext());
         }
     }
 
+    /**
+     * Check has the transports are identified correctly
+     * @param msgctx
+     * @throws AxisFault
+     */
     private void checkTransport(MessageContext msgctx) throws AxisFault {
         if (senderTransport == null) {
             senderTransport = inferTransport(to);
         }
         if (listenerTransport == null) {
             listenerTransport =
-                    serviceContext.getEngineContext().getAxisConfiguration()
-                    .getTransportIn(senderTransport.getName());
+                serviceContext
+                    .getEngineContext()
+                    .getAxisConfiguration()
+                    .getTransportIn(
+                    senderTransport.getName());
         }
 
         if (msgctx.getTransportIn() == null) {
@@ -306,7 +347,9 @@ public class InOutMEPClient extends MEPClient {
         }
 
     }
-
+    /**
+     * This Class act as the Callback that allow users to wait on the result
+     */
     public class SyncCallBack extends Callback {
         private SOAPEnvelope envelope;
         private Exception error;
@@ -318,30 +361,28 @@ public class InOutMEPClient extends MEPClient {
         public void reportError(Exception e) {
             error = e;
         }
-        //        public boolean hasResult() {
-        //            return envelope != null || error != null;
-        //        }
     }
-
-    public void engageModule(QName moduleName) throws AxisFault {
-        serviceContext.getEngineContext().getAxisConfiguration().engageModule(
-                moduleName);
-    }
-
+    /**
+     * Closing the Call, this will stop the started Transport Listeners. If there are multiple 
+     * request to send the Call should be kept open closing only when done
+     */
     public void close() throws AxisFault {
-        //senderTransport.getSender().cleanUp();
         ListenerManager.stop(listenerTransport.getName().getLocalPart());
     }
-
+    /**
+     * This Class is the workhorse for a Non Blocking invocation that uses a 
+     * two way transport 
+     */
     private class NonBlockingInvocationWorker implements AxisWorker {
 
         private Callback callback;
         private OperationDescription axisop;
         private MessageContext msgctx;
 
-        public NonBlockingInvocationWorker(Callback callback,
-                                           OperationDescription axisop,
-                                           MessageContext msgctx) {
+        public NonBlockingInvocationWorker(
+            Callback callback,
+            OperationDescription axisop,
+            MessageContext msgctx) {
             this.callback = callback;
             this.axisop = axisop;
             this.msgctx = msgctx;
@@ -350,13 +391,15 @@ public class InOutMEPClient extends MEPClient {
         public void doWork() {
             try {
                 msgctx.setOperationContext(
-                        OperationContextFactory.createMEPContext(
-                                WSDLConstants.MEP_CONSTANT_IN_OUT,
-                                axisop,
-                                serviceContext));
+                    OperationContextFactory.createMEPContext(
+                        WSDLConstants.MEP_CONSTANT_IN_OUT,
+                        axisop,
+                        serviceContext));
                 msgctx.setServiceContext(serviceContext);
-                MessageContext response = TwoChannelBasedSender.send(msgctx,
-                        listenerTransport);
+                //send the request and wait for reponse
+                MessageContext response =
+                    TwoWayTransportBasedSender.send(msgctx, listenerTransport);
+                //call the callback                        
                 SOAPEnvelope resenvelope = response.getEnvelope();
                 AsyncResult asyncResult = new AsyncResult(response);
                 callback.onComplete(asyncResult);

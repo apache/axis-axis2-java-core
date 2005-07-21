@@ -35,6 +35,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
@@ -83,7 +84,7 @@ public class TCPWorker implements AxisWorker {
                     engine.receive(msgContext);
                 }
             } else {
-                throw new AxisFault("Unknown transport " + Constants.TRANSPORT_TCP);
+                throw new AxisFault(Messages.getMessage("unknownTransport",Constants.TRANSPORT_TCP));
             }
 
         } catch (Throwable e) {

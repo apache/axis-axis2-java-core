@@ -21,6 +21,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
 
 import javax.xml.namespace.QName;
@@ -28,13 +29,24 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.HashMap;
 
+/**
+ * This manages the Listners, this class havely depends on the static constructs and should be 
+ * re-architectured. This class only allow the Client to keep one ConfigurationContext in a given JVM.
+ */
 public class ListenerManager {
 
     public static int port = 6059;
     public static HashMap listeners = new HashMap();
     public static ConfigurationContext configurationContext;
 
-    public static final void makeSureStarted(String transport,
+    /**
+     * This Method starts a Listenet if it is not already started. But only a one listener started for
+     * a given one transport.
+     * @param transport
+     * @param configurationContext
+     * @throws AxisFault
+     */
+    public static synchronized final void makeSureStarted(String transport,
                                              ConfigurationContext configurationContext)
             throws AxisFault {
         if (ListenerManager.configurationContext != null &&
@@ -47,11 +59,11 @@ public class ListenerManager {
         TransportListnerState tsState = (TransportListnerState) listeners.get(
                 transport);
         if (tsState == null) {
+            //means this transport not yet started, start the transport
             TransportInDescription tranportIn =
                     configurationContext.getAxisConfiguration().getTransportIn(
                             new QName(transport));
             TransportListener listener = tranportIn.getReciever();
-//            listener.init(configurationContext, tranportIn);
             listener.start();
             tsState = new TransportListnerState(listener);
             listeners.put(transport, tsState);
@@ -59,7 +71,7 @@ public class ListenerManager {
         tsState.waitingCalls++;
     }
 
-    public static final void stop(String transport) throws AxisFault {
+    public static synchronized final void stop(String transport) throws AxisFault {
         TransportListnerState tsState = (TransportListnerState) listeners.get(
                 transport);
         if (tsState != null) {
@@ -70,6 +82,12 @@ public class ListenerManager {
         }
     }
 
+    /**
+     * @param serviceName
+     * @param transport
+     * @return reply to URL return will direct the response for the message to the given transport listener
+     * @throws AxisFault
+     */
     public static EndpointReference replyToEPR(String serviceName,
                                                String transport)
             throws AxisFault {
@@ -78,9 +96,7 @@ public class ListenerManager {
         if (tsState != null) {
             return tsState.listener.replyToEPR(serviceName);
         } else {
-            throw new AxisFault("Calling method before starting the with makeSureStarted(..) Listener transport =  "
-                    + transport);
-
+            throw new AxisFault(Messages.getMessage("replyNeedStarting",transport));
         }
 
     }
@@ -89,7 +105,9 @@ public class ListenerManager {
         port++;
         return port;
     }
-
+    /**
+     * Class keep information about the listener for a given transport
+     */
     public static class TransportListnerState {
         public TransportListnerState(TransportListener listener) {
             this.listener = listener;
@@ -99,6 +117,9 @@ public class ListenerManager {
         public TransportListener listener;
     }
 
+    /**
+     * this method control the number of server sockets kept open
+     */
     public static ServerSocket openSocket(int port) throws AxisFault {
         for (int i = 0; i < 5; i++) {
             try {
@@ -106,7 +127,7 @@ public class ListenerManager {
             } catch (IOException e) {
             }
         }
-        throw new AxisFault("failed to open the scoket");
+        throw new AxisFault(Messages.getMessage("filedToOpenSocket"));
     }
 
 }

@@ -19,6 +19,7 @@ package org.apache.axis2.context;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.wsdl.WSDLConstants;
 
 import java.util.Map;
@@ -150,8 +151,7 @@ public class OperationContext extends AbstractContext {
         } else if (messageLabel == WSDLConstants.MESSAGE_LABEL_OUT) {
             return outMessageContext;
         } else {
-            throw new AxisFault("Unrecognized message label: '" + messageLabel
-                    + "'");
+            throw new AxisFault(Messages.getMessage("unknownMsgLabel"));
         }
     }
 

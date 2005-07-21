@@ -50,7 +50,7 @@ public class Call extends InOutMEPClient {
     }
 
     /**
-     * This is used to create call object with client home , using onky this constructor it can
+     * This is used to create call object with client home , using only this constructor it can
      * able to engage modules  , addning client side parameters
      *
      * @param clientHome
@@ -77,30 +77,15 @@ public class Call extends InOutMEPClient {
      * @throws AxisFault
      */
 
-    public OMElement invokeBlocking(String axisop, OMElement toSend) throws AxisFault {
+    public OMElement invokeBlocking(String axisop, OMElement toSend)
+        throws AxisFault {
 
-        OperationDescription axisConfig =
-                serviceContext.getServiceConfig().getOperation(
-                        new QName(axisop));
-        if (axisConfig == null) {
-            axisConfig = new OperationDescription(new QName(axisop));
-            axisConfig.setRemainingPhasesInFlow(
-                    operationTemplate.getRemainingPhasesInFlow());
-            axisConfig.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
-            axisConfig.setPhasesInFaultFlow(
-                    operationTemplate.getPhasesInFaultFlow());
-            axisConfig.setPhasesOutFaultFlow(
-                    operationTemplate.getPhasesOutFaultFlow());
-            serviceContext.getServiceConfig().addOperation(axisConfig);
-        }
+        OperationDescription opDesc =
+            serviceContext.getServiceConfig().getOperation(new QName(axisop));
+        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop);
+        MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
 
-//        if (axisConfig == null) {
-//            axisConfig = new OperationDescription(new QName(axisop));
-//            serviceContext.getServiceConfig().addOperation(axisConfig);
-//        }
-        MessageContext msgctx = prepareTheSystem(toSend);
-
-        this.lastResponseMessage = super.invokeBlocking(axisConfig, msgctx);
+        this.lastResponseMessage = super.invokeBlocking(opDesc, msgctx);
         SOAPEnvelope resEnvelope = lastResponseMessage.getEnvelope();
         return resEnvelope.getBody().getFirstElement();
     }
@@ -115,27 +100,42 @@ public class Call extends InOutMEPClient {
      * @throws AxisFault
      */
 
-    public void invokeNonBlocking(String axisop,
-                                  OMElement toSend,
-                                  Callback callback)
-            throws AxisFault {
-        OperationDescription axisConfig =
-                serviceContext.getServiceConfig().getOperation(
-                        new QName(axisop));
-        if (axisConfig == null) {
-            axisConfig = new OperationDescription(new QName(axisop));
-            axisConfig.setRemainingPhasesInFlow(
-                    operationTemplate.getRemainingPhasesInFlow());
-            axisConfig.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
-            axisConfig.setPhasesInFaultFlow(
-                    operationTemplate.getPhasesInFaultFlow());
-            axisConfig.setPhasesOutFaultFlow(
-                    operationTemplate.getPhasesOutFaultFlow());
-            serviceContext.getServiceConfig().addOperation(axisConfig);
-        }
-        MessageContext msgctx = prepareTheSystem(toSend);
+    public void invokeNonBlocking(
+        String axisop,
+        OMElement toSend,
+        Callback callback)
+        throws AxisFault {
+        OperationDescription opDesc =
+            serviceContext.getServiceConfig().getOperation(new QName(axisop));
+        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop);
+        MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
+        //call the underline implementation
+        super.invokeNonBlocking(opDesc, msgctx, callback);
+    }
 
-        super.invokeNonBlocking(axisConfig, msgctx, callback);
+    /**
+     * This method create a operation desc if it null and copy the flows from the template operation
+     * @param opDesc
+     * @param axisOp
+     * @return
+     */
+    private OperationDescription createOpDescAndFillInFlowInformation(
+        OperationDescription opDesc,
+        String axisOp) {
+        if (opDesc == null) {
+            //if the operation is not alrady define we will copy the 
+            //crated Phases from the templete operation to the this Operation
+            opDesc = new OperationDescription(new QName(axisOp));
+            opDesc.setRemainingPhasesInFlow(
+                operationTemplate.getRemainingPhasesInFlow());
+            opDesc.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
+            opDesc.setPhasesInFaultFlow(
+                operationTemplate.getPhasesInFaultFlow());
+            opDesc.setPhasesOutFaultFlow(
+                operationTemplate.getPhasesOutFaultFlow());
+            serviceContext.getServiceConfig().addOperation(opDesc);
+        }
+        return opDesc;
     }
 
     /**
@@ -144,25 +144,29 @@ public class Call extends InOutMEPClient {
      * @return ServiceContext that has a ConfigurationContext set in and has assumed values.
      * @throws AxisFault
      */
-    protected static ServiceContext assumeServiceContext(String clinetHome) throws AxisFault {
+    protected static ServiceContext assumeServiceContext(String clinetHome)
+        throws AxisFault {
         ConfigurationContext sysContext = null;
+        //we are trying to keep one configuration Context at the Client side. That make it easier to
+        //manage the TransportListeners. But using the static referance is bit crude!. 
         if (ListenerManager.configurationContext == null) {
-            ConfigurationContextFactory efac = new ConfigurationContextFactory();
+            ConfigurationContextFactory efac =
+                new ConfigurationContextFactory();
             sysContext = efac.buildClientConfigurationContext(clinetHome);
         } else {
             sysContext = ListenerManager.configurationContext;
         }
 
-        //create new service
+        //we will assume a Service and operations  
         QName assumedServiceName = new QName("AnonnoymousService");
-        ServiceDescription axisService = new ServiceDescription(
-                assumedServiceName);
+        ServiceDescription axisService =
+            new ServiceDescription(assumedServiceName);
         operationTemplate =
-                new OperationDescription(new QName("TemplateOperatin"));
+            new OperationDescription(new QName("TemplateOperatin"));
         axisService.addOperation(operationTemplate);
         sysContext.getAxisConfiguration().addService(axisService);
-        ServiceContext service = sysContext.createServiceContext(
-                assumedServiceName);
+        ServiceContext service =
+            sysContext.createServiceContext(assumedServiceName);
         return service;
     }
 

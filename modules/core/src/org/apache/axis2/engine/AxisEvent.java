@@ -2,8 +2,6 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.description.ServiceDescription;
 
-import java.util.EventObject;
-
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

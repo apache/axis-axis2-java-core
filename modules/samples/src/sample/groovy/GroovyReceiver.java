@@ -3,6 +3,7 @@ package sample.groovy;
 import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.description.Parameter;
@@ -59,14 +60,14 @@ public class GroovyReceiver  extends AbstractInOutSyncMessageReceiver
                 inMessage.getOperationContext().getServiceContext().getServiceConfig();
         Parameter implInfoParam = service.getParameter("ServiceClass");
         if (implInfoParam==null){
-            throw new AxisFault("Service class not specified!");
+            throw new AxisFault(Messages.getMessage("paramIsNotSpecified","ServiceClass"));
         }
         InputStream groovyFileStream = this.getClass().getResourceAsStream(implInfoParam.getValue().toString());
 
         //look at the method name. if available this should be a groovy method
         OperationDescription op = inMessage.getOperationContext().getAxisOperation();
         if (op == null) {
-            throw new AxisFault("Operation is not located");
+            throw new AxisFault(Messages.getMessage("notFound","Operation"));
         }
         String methodName = op.getName().getLocalPart();
         OMElement firstChild = (OMElement)inMessage.getEnvelope().getBody().getFirstChild();
@@ -86,7 +87,7 @@ public class GroovyReceiver  extends AbstractInOutSyncMessageReceiver
                     Object[] arg = {in};
                     Object obj =groovyObject.invokeMethod(methodName, arg );
                     if (obj==null){
-                        throw new AxisFault("No answer recieved from groovy side!!!!");
+                        throw new AxisFault(Messages.getMessage("groovryNoanswer"));
                     }
 
                     SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
@@ -101,11 +102,11 @@ public class GroovyReceiver  extends AbstractInOutSyncMessageReceiver
                     envelope.getBody().addChild(responseElement);
                     outMessage.setEnvelope(envelope);
                 } catch (CompilationFailedException e) {
-                    throw new AxisFault("Groovy compilation error!",e);
+                    throw new AxisFault(e);
                 } catch (InstantiationException e) {
-                    throw new AxisFault("Groovy instantiation problem!",e);
+                    throw new AxisFault(e);
                 } catch (IllegalAccessException e) {
-                    throw new AxisFault("Groovy illegal access!",e);
+                    throw new AxisFault(e);
                 }
             }
         } catch (XMLStreamException e) {

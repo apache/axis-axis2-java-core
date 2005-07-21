@@ -24,6 +24,7 @@ import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -200,7 +201,7 @@ public class ListingAgent {
                 || password == null
                 || username.trim().equals("")
                 || password.trim().equals("")) {
-            throw new AxisFault("invalid user name");
+            throw new AxisFault(Messages.getMessage("invaliduser"));
         }
         String adminUserName =
                 (String) ((AxisConfigurationImpl) configContext.getAxisConfiguration())
@@ -217,7 +218,7 @@ public class ListingAgent {
             req.getSession().setAttribute(Constants.LOGGED, "Yes");
             res.sendRedirect(ADMIN_JSP_NAME);
         } else {
-            throw new AxisFault("invalid user name");
+            throw new AxisFault(Messages.getMessage("invaliduser"));
         }
     }
 

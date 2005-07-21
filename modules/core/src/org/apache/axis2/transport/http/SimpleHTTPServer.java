@@ -94,7 +94,7 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
             this.configurationContext = erfac.buildConfigurationContext(dir);
             Thread.sleep(2000);
         } catch (Exception e1) {
-            throw new AxisFault("Thread interuptted", e1);
+            throw new AxisFault(e1);
         }
     }
 

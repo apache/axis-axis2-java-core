@@ -21,6 +21,7 @@ import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -96,33 +97,22 @@ public class RawXMLINOutMessageReceiver
                                 .getBody()
                                 .getFirstElement();
                         if (operationElement != null) {
-                            if (method.getName().equals(
-                                    operationElement.getLocalName())
-                                    ||
-                                    operationElement.getLocalName() != null &&
+                            if (operationElement.getLocalName() != null &&
                                     operationElement.getLocalName().startsWith(
                                             method.getName())) {
                                 omElement = operationElement.getFirstElement();
                             } else {
-                                throw new AxisFault(
-                                        "Operation Name does not match the immediate child name, expected " +
-                                        method.getName() +
-                                        " but get " +
-                                        operationElement.getLocalName());
+                                throw new AxisFault(Messages.getMessage("AandBdonotmatch","Operation Name","immediate child name",operationElement.getLocalName(),method.getName()));
                             }
                         } else {
-                            throw new AxisFault(
-                                    "rpc style expect the immediate child of the SOAP body ");
+                            throw new AxisFault(Messages.getMessage("rpcNeedmatchingChild"));
                         }
                     } else {
-                        throw new AxisFault("Unknown style ");
+                        throw new AxisFault(Messages.getMessage("unknownStyle",style));
                     }
                     args = new Object[]{omElement};
                 } else {
-                    throw new AxisFault(
-                            "Raw Xml provider supports only the methods bearing the signature public OMElement "
-                            +
-                            "&lt;method-name&gt;(OMElement) where the method name is anything");
+                    throw new AxisFault(Messages.getMessage("rawXmlProivdeIsLimited"));
                 }
 
                 OMElement result = (OMElement) method.invoke(obj, args);
@@ -145,9 +135,7 @@ public class RawXMLINOutMessageReceiver
                 }
                 newmsgContext.setEnvelope(envelope);
             } else {
-                throw new AxisFault(
-                        "Implementation class does not define a method called" +
-                        opDesc.getName());
+                throw new AxisFault(Messages.getMessage("methodNotImplemented",opDesc.getName().toString()));
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);

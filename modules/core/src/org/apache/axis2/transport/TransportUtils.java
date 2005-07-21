@@ -18,6 +18,7 @@ package org.apache.axis2.transport;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -39,8 +40,10 @@ public class TransportUtils {
         InputStream inStream = (InputStream) msgContext.getProperty(
                 MessageContext.TRANSPORT_IN);
         msgContext.setProperty(MessageContext.TRANSPORT_IN, null);
+        //this inputstram is set by the TransportSender represents a two way transport or
+        //by a Transport Recevier
         if (inStream == null) {
-            throw new AxisFault("Input stream is Null");
+            throw new AxisFault(Messages.getMessage("inputstreamNull"));
         }
         return createSOAPMessage(msgContext, inStream);
     }
@@ -56,7 +59,7 @@ public class TransportUtils {
                         opContext.getProperty(
                                 HTTPConstants.MTOM_RECIVED_CONTENT_TYPE);
             } else {
-                throw new AxisFault("Operation Context can not be Null");
+                throw new AxisFault(Messages.getMessage("cannotBeNullOperationContext"));
             }
 
             StAXBuilder builder = null;

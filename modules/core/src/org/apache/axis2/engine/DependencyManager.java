@@ -22,6 +22,9 @@ import org.apache.axis2.context.MessageContext;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * This one Handlers the dependancy of the Service implemetation are injected before invoke the Service
+ */
 public class DependencyManager {
     private final static String MESSAGE_CONTEXT_INJECTION_METHOD = "init";
 

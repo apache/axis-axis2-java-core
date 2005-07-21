@@ -18,6 +18,7 @@ package org.apache.axis2.transport.tcp;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.AbstractTransportSender;
 import org.apache.axis2.util.URL;
 
@@ -93,7 +94,7 @@ public class TCPTransportSender extends AbstractTransportSender {
                 throw new AxisFault(e.getMessage(), e);
             }
         } else {
-            throw new AxisFault("to EPR must be specified");
+            throw new AxisFault(Messages.getMessage("canNotBeNull","Can not Be Null"));
         }
     }
 

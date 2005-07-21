@@ -28,10 +28,14 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 
+/**
+ * This class Hnadles In-Only (fire and forget) MEP
+ */
 public class InOnlyMEPClient extends MEPClient {
     protected MessageInformationHeadersCollection messageInformationHeaders;
     protected TransportOutDescription senderTransport;
@@ -42,27 +46,31 @@ public class InOnlyMEPClient extends MEPClient {
         messageInformationHeaders = new MessageInformationHeadersCollection();
     }
 
+    /**
+     * Send the SOAP Message and forget about it. This is one way
+     * @param axisop
+     * @param msgctx
+     * @throws AxisFault
+     */
     public void send(OperationDescription axisop, final MessageContext msgctx) throws AxisFault {
-        verifyInvocation(axisop, msgctx);
-        msgctx.setSoapAction(soapAction);
+        prepareInvocation(axisop, msgctx);
         msgctx.setMessageInformationHeaders(messageInformationHeaders);
         msgctx.setServiceContext(serviceContext);
         ConfigurationContext syscontext = serviceContext.getEngineContext();
-
+        
+        //if the transport to use for sending is not specified, try to find it from the URL
         if (senderTransport == null) {
             senderTransport =
                     inferTransport(messageInformationHeaders.getTo());
         }
-
         msgctx.setTransportOut(senderTransport);
 
+        //initialize and set the Operation Context
         ConfigurationContext sysContext = serviceContext.getEngineContext();
         AxisConfiguration registry = sysContext.getAxisConfiguration();
-
+        msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext));
+        
         AxisEngine engine = new AxisEngine(sysContext);
-        msgctx.setOperationContext(
-                axisop.findOperationContext(msgctx, serviceContext));
-
         engine.send(msgctx);
     }
 
@@ -115,14 +123,18 @@ public class InOnlyMEPClient extends MEPClient {
         messageInformationHeaders.setTo(to);
     }
 
-    public void engageModule(QName name) throws AxisFault {
-        serviceContext.getEngineContext().getAxisConfiguration().engageModule(
-                name);
-    }
-
+    /**
+     * set the transport to used for sending the SOAP Message
+     * @param senderTransport
+     * @throws AxisFault if the transport not found
+     */
     public void setSenderTransport(String senderTransport) throws AxisFault {
+        AxisConfiguration axisConfiguration = 
+            serviceContext.getEngineContext().getAxisConfiguration();
         this.senderTransport =
-                serviceContext.getEngineContext().getAxisConfiguration()
-                .getTransportOut(new QName(senderTransport));
+            axisConfiguration.getTransportOut(new QName(senderTransport));
+        if(senderTransport == null){
+            throw new AxisFault(Messages.getMessage("unknownTransport",senderTransport));
+        }
     }
 }
