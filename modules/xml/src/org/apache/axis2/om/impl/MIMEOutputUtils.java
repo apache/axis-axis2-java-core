@@ -133,7 +133,7 @@ public class MIMEOutputUtils {
         sb.append("; ");
         sb.append("type=\"application/xop+xml\"");
         sb.append("; ");
-        sb.append("start=\"<" + "cid:"+contentId + ">\"");
+        sb.append("start=\"<" + contentId + ">\"");
         sb.append("; ");
         sb.append("start-info=\"text/xml; charset=utf-8\"");
         return sb.toString();
