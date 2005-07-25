@@ -17,6 +17,7 @@
 package org.apache.axis2.clientapi;
 
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -33,6 +34,7 @@ import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
+import org.apache.axis2.Constants;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.stream.XMLStreamReader;
@@ -41,7 +43,7 @@ import javax.xml.stream.XMLStreamReader;
 /**
  * @author chathura@opensource.lk
  */
-public abstract class Stub {
+public abstract class Stub{
 
     protected ConfigurationContext _configurationContext;
     protected static ServiceDescription _service;
@@ -50,8 +52,8 @@ public abstract class Stub {
 
     protected boolean doRest=false;
 
-    protected String senderTransport = tra;
-    protected String listenerTransport;
+    protected String senderTransport = Constants.TRANSPORT_HTTP;
+    protected String listenerTransport =Constants.TRANSPORT_HTTP ;
     protected boolean useSeparateListener;
 
     public void setTransportInfo(String senderTransport,String listenerTransport,boolean useSeparateListener)throws AxisFault{
