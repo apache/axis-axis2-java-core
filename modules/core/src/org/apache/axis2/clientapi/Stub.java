@@ -48,6 +48,22 @@ public abstract class Stub {
     protected ServiceContext _serviceContext;
     protected EndpointReference toEPR;
 
+    protected boolean doRest=false;
+
+    protected String senderTransport = tra;
+    protected String listenerTransport;
+    protected boolean useSeparateListener;
+
+    public void setTransportInfo(String senderTransport,String listenerTransport,boolean useSeparateListener)throws AxisFault{
+        this.senderTransport = senderTransport;
+        this.listenerTransport=listenerTransport;
+        this.useSeparateListener=useSeparateListener;
+    }
+
+    public void setDoREST(boolean doRest) {
+        this.doRest = doRest;
+    }
+
 
     /**
      * If _maintainSession is set to True all the calls will use the same
