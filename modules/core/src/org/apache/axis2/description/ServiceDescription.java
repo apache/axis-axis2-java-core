@@ -20,6 +20,7 @@ import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLEndpoint;
@@ -96,7 +97,7 @@ public class ServiceDescription
      * @param moduleref
      * @throws AxisFault
      */
-    public void engageModule(ModuleDescription moduleref) throws AxisFault {
+    public void engageModule(ModuleDescription moduleref , AxisConfiguration axisConfig) throws AxisFault {
         if (moduleref == null) {
             return;
         }
@@ -114,7 +115,7 @@ public class ServiceDescription
 
             }
         }
-        new PhaseResolver().engageModuleToService(this, moduleref);
+        new PhaseResolver(axisConfig).engageModuleToService(this, moduleref);
         Collection collectionModule = (Collection) this.getComponentProperty(
                 MODULEREF_KEY);
         collectionModule.add(moduleref);
@@ -125,9 +126,10 @@ public class ServiceDescription
      *
      * @param module
      */
-    public void addModuleOperations(ModuleDescription module) {
+    public void addModuleOperations(ModuleDescription module ,AxisConfiguration axisConfig) {
         HashMap map = module.getOperations();
         Collection col = map.values();
+        PhaseResolver pr = new PhaseResolver(axisConfig, this);
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             OperationDescription operation = (OperationDescription) iterator.next();
             this.addOperation(operation);

@@ -402,7 +402,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 ModuleDescription module = axisConfig.getModule(
                         (QName) list.get(i));
                 if (module != null) {
-                    serviceMetaData.engageModule(module);
+                    serviceMetaData.engageModule(module,axisConfig);
                 } else {
                     throw new DeploymentException(
                             "Service  " +

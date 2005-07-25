@@ -96,6 +96,17 @@ public class PhaseResolver {
     }
 
     /**
+     * To build the opration for the opeartion which the module going to be added
+     * @param opartion    <code>OperationDescription</code>
+     * @throws AxisFault
+     */
+    public void buildModuleOperation(OperationDescription opartion) throws AxisFault {
+        for (int i = 1; i < 5; i++) {
+            buildExcutionChains(i, opartion);
+        }
+    }
+
+    /**
      * this opeartion is used to build all the three cahins ,
      * so type varible is used to difrenciate them
      * type = 1 inflow
@@ -346,7 +357,7 @@ public class PhaseResolver {
         Collection serviceCol = services.values();
         for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
             ServiceDescription serviceDescription = (ServiceDescription) iterator.next();
-            serviceDescription.addModuleOperations(module);
+            serviceDescription.addModuleOperations(module,axisConfig);
             engageModuleToServiceFromGlobal(serviceDescription, module);
             serviceDescription.addToEngagModuleList(module);
         }
@@ -535,7 +546,7 @@ public class PhaseResolver {
         HashMap opeartions = service.getOperations();
         Collection opCol = opeartions.values();
         boolean engaged = false;
-        service.addModuleOperations(module);
+        service.addModuleOperations(module,axisConfig);
         for (Iterator iterator = opCol.iterator(); iterator.hasNext();) {
             OperationDescription opDesc = (OperationDescription) iterator.next();
             Collection modules = opDesc.getModules();

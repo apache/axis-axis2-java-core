@@ -319,7 +319,7 @@ public class ListingAgent {
                         new QName(serviceName))
                         .engageModule(
                                 configContext.getAxisConfiguration().getModule(
-                                        new QName(moduleName)));
+                                        new QName(moduleName)),configContext.getAxisConfiguration());
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                         moduleName +
                         " module engaged to the service Successfully");
