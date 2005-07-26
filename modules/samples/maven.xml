@@ -49,6 +49,12 @@
         <copy file="test/org/apache/axis2/mtom/MTOM-enabled-axis2.xml"
             tofile="target/test-resources/MTOM-enabledRepository/axis2.xml"/>
         <attainGoal name="groovy"/>
+        <j:jelly xmlns="jelly:ant">
+            <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestModuleB"/>
+            <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestModuleC"/>
+            <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestServiceB"/>
+            <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestServiceC"/>
+        </j:jelly>
     </postGoal>
 
     <postGoal name="test:test">
