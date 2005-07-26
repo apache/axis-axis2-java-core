@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.attachments;
 
+import org.apache.axis2.attachments.utils.ImageDataSource;
+import org.apache.axis2.attachments.utils.JDK13IO;
 import org.apache.axis2.om.AbstractTestCase;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;

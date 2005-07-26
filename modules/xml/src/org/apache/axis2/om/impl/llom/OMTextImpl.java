@@ -26,7 +26,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis2.attachments.Base64;
 import org.apache.axis2.attachments.ByteArrayDataSource;
-import org.apache.axis2.attachments.IOUtils;
+import org.apache.axis2.attachments.utils.IOUtils;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMConstants;
 import org.apache.axis2.om.OMElement;

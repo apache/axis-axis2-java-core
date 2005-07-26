@@ -227,7 +227,7 @@ public class HTTPTransportUtils {
         /*
          * put a reference to Attachments in to the message context
          */
-        msgContext.setProperty("Attachments", mimeHelper);
+        msgContext.setProperty(MIMEHelper.ATTACHMENTS, mimeHelper);
         if (mimeHelper.getAttachmentSpecType().equals(MIMEHelper.MTOM_TYPE)) {
             /*
              * Creates the MTOM specific MTOMStAXSOAPModelBuilder
