@@ -36,7 +36,7 @@ import javax.xml.namespace.QName;
  * artifacts does not keep states foward from the execution.
  */
 public class MessageContext extends AbstractContext {
-    
+
     public static final String TRANSPORT_HEADERS = "TRANSPORT_HEADERS";
     /**
      * Field TRANSPORT_WRITER
@@ -135,6 +135,7 @@ public class MessageContext extends AbstractContext {
     //Rest through GET of HTTP
     private boolean doRESTthroughPOST = false;
 
+    private String soapNamespaceURI = "";
 
 
     /**
@@ -292,6 +293,7 @@ public class MessageContext extends AbstractContext {
      */
     public void setEnvelope(SOAPEnvelope envelope) {
         this.envelope = envelope;
+        soapNamespaceURI = envelope.getNamespace().getName();
     }
 
     /**
@@ -507,8 +509,7 @@ public class MessageContext extends AbstractContext {
     /**
      * @param collection
      */
-    public void setMessageInformationHeaders(
-            MessageInformationHeadersCollection collection) {
+    public void setMessageInformationHeaders(MessageInformationHeadersCollection collection) {
         messageInformationHeaders = collection;
     }
 
@@ -609,12 +610,17 @@ public class MessageContext extends AbstractContext {
         doingREST = b;
     }
 
-    public void setRestThroughPOST(boolean b){
-          doRESTthroughPOST = b;
-      }
-      public boolean isRestThroughPOST(){
-          return doRESTthroughPOST;
-      }
-    
+    public void setRestThroughPOST(boolean b) {
+        doRESTthroughPOST = b;
+    }
+
+    public boolean isRestThroughPOST() {
+        return doRESTthroughPOST;
+    }
+
+
+    public String getSOAPVersion() {
+        return soapNamespaceURI;
+    }
 
 }

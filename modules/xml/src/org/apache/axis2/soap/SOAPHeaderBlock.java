@@ -28,8 +28,7 @@ import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 public interface SOAPHeaderBlock extends OMElement {
     /**
      * Sets the actor associated with this <CODE> SOAPHeaderBlock</CODE> object
-     * to the specified actor. The default value of an actor is: <CODE>
-     * OMConstants.URI_SOAP_ACTOR_NEXT</CODE>
+     * to the specified actor.
      *
      * @param roleURI a <CODE>String</CODE> giving the URI of the actor to set
      * @throws java.lang.IllegalArgumentException
