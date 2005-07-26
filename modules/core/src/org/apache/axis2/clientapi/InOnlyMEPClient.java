@@ -17,6 +17,8 @@
  */
 package org.apache.axis2.clientapi;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeadersCollection;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
@@ -30,8 +32,6 @@ import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.i18n.Messages;
 import org.apache.wsdl.WSDLConstants;
-
-import javax.xml.namespace.QName;
 
 /**
  * This class Hnadles In-Only (fire and forget) MEP

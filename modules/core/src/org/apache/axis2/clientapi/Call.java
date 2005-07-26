@@ -17,6 +17,10 @@
  */
 package org.apache.axis2.clientapi;
 
+import java.util.HashMap;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -26,9 +30,6 @@ import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
-
-import javax.xml.namespace.QName;
-import java.util.HashMap;
 
 /**
  * This class is the pretty convineance class for the user without see the comlplexites of Axis2.

@@ -17,6 +17,8 @@
  */
 package org.apache.axis2.clientapi;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
@@ -24,8 +26,6 @@ import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.om.OMElement;
-
-import javax.xml.namespace.QName;
 
 /**
  *    Message Sender is the class simmiler to the Call, one that provides much simpler API

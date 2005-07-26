@@ -81,6 +81,12 @@
     <dependencies>
         <!-- external JARs -->
         <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis2-common</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
+        
+        <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.0.3</version>
