@@ -8,7 +8,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.engine.MustUnderstandChecker;
+import org.apache.axis2.engine.SOAPProcessingModelChecker;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
@@ -49,7 +49,7 @@ public class OperationDescription extends WSDLOperationImpl implements
         remainingPhasesInFlow.add(
                 new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
         Phase messageProcessing = new Phase(PhaseMetadata.PHASE_MESSAGE_PROCESSING);
-        messageProcessing.addHandler(new MustUnderstandChecker());  
+        messageProcessing.addHandler(new SOAPProcessingModelChecker());  
         remainingPhasesInFlow.add(messageProcessing);              
 
         phasesOutFlow = new ArrayList();
