@@ -13,13 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package sample.mtom.client;
+package sample.mtom.imagetransfer.client;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.attachments.ImageDataSource;
-import org.apache.axis2.attachments.JDK13IO;
+import org.apache.axis2.attachments.utils.ImageDataSource;
+import org.apache.axis2.attachments.utils.JDK13IO;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;

@@ -13,9 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package sample.mtom;
+package sample.mtom.imagetransfer.service;
 
-import org.apache.axis2.attachments.JDK13IO;
+import org.apache.axis2.attachments.utils.JDK13IO;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
