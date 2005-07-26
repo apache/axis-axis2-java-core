@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.attachments;
+package org.apache.axis2.attachments.utils;
 
 
 import sun.awt.image.codec.JPEGImageEncoderImpl;
@@ -77,7 +77,7 @@ public class JDK13IO extends Component implements ImageIO {
             return null;
         } else {
             byte[] bytes = new byte[in.available()];
-            org.apache.axis2.attachments.IOUtils.readFully(in, bytes);
+            org.apache.axis2.attachments.utils.IOUtils.readFully(in, bytes);
             return Toolkit.getDefaultToolkit().createImage(bytes);
         }
     } // loadImage
