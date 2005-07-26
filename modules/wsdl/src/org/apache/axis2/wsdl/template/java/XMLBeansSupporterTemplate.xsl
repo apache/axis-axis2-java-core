@@ -53,8 +53,8 @@
     <xsl:template match="param">
         <xsl:if test="@type!=''">
           public  static org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
-		    org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory.createStAXOMBuilder
-            (org.apache.axis2.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.clientapi.StreamWrapper(param.newXMLStreamReader())) ;
+		    org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
+            (org.apache.axis2.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.clientapi.StreamWrapper(param.newXMLStreamReader()) ;
 		    org.apache.axis2.om.OMElement documentElement = builder.getDocumentElement();
             //Building the element is needed to avoid certain stream errors!
             documentElement.build();

@@ -35,12 +35,7 @@ public class PackageFinder extends AbstractCodeGenerationExtension {
     }
 
     public void engage() {
-        Map allOptions = this.configuration.getParser().getAllOptions();
-        CommandLineOption packageOption = (CommandLineOption) (allOptions.get(
-                CommandLineOptionConstants.PACKAGE_OPTION));
-        String packageName = packageOption == null ?
-                null : packageOption.getOptionValue();
-
+        String packageName = this.configuration.getPackageName();
         if (packageName == null) {
             WSDLBinding binding = configuration.getWom().getBinding(
                     AxisBindingBuilder.AXIS_BINDING_QNAME);

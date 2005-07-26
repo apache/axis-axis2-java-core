@@ -45,7 +45,10 @@ public class CodeGenerationEngine {
 
     private CodeGenConfiguration configuration;
 
-
+    public CodeGenerationEngine(CodeGenConfiguration config) throws CodeGenerationException{
+       this.configuration = config;
+        loadExtensions();
+    }
     public CodeGenerationEngine(CommandLineOptionParser parser) throws CodeGenerationException {
         WSDLDescription wom;
         try {
@@ -57,6 +60,12 @@ public class CodeGenerationEngine {
         }
 
         this.configuration = new CodeGenConfiguration(wom, parser);
+        loadExtensions();
+
+
+    }
+
+    private void loadExtensions() {
         AxisBindingBuilder axisBindingBuilder = new AxisBindingBuilder();
         axisBindingBuilder.init(this.configuration);
         axisBindingBuilder.engage();
@@ -78,31 +87,37 @@ public class CodeGenerationEngine {
 
     public void generate() throws CodeGenerationException {
 
-        for (int i = 0; i < this.moduleEndpoints.size(); i++) {
-            ((CodeGenExtension) this.moduleEndpoints.get(i)).engage();
+        try {
+            for (int i = 0; i < this.moduleEndpoints.size(); i++) {
+                ((CodeGenExtension) this.moduleEndpoints.get(i)).engage();
+            }
+
+            Emitter emitter = null;
+            TypeMapper mapper = configuration.getTypeMapper();
+
+            switch (configuration.getOutputLanguage()) {
+                case XSLTConstants.LanguageTypes.JAVA:
+                    emitter = new JavaEmitter(this.configuration, mapper);
+                    break;
+                case XSLTConstants.LanguageTypes.C_SHARP:
+                    emitter = new CSharpEmitter(this.configuration, mapper);
+                    break;
+                case XSLTConstants.LanguageTypes.C_PLUS_PLUS:
+                case XSLTConstants.LanguageTypes.VB_DOT_NET:
+
+                default:
+                    throw new UnsupportedOperationException();
+
+            }
+            if (this.configuration.isServerSide())
+                emitter.emitSkeleton();
+            else
+                emitter.emitStub();
+        } catch (Exception e) {
+            //System.out.println("Thrown here %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new CodeGenerationException(e);
         }
-
-        Emitter emitter = null;
-        TypeMapper mapper = configuration.getTypeMapper();
-
-        switch (configuration.getOutputLanguage()) {
-            case XSLTConstants.LanguageTypes.JAVA:
-                emitter = new JavaEmitter(this.configuration, mapper);
-                break;
-            case XSLTConstants.LanguageTypes.C_SHARP:
-                emitter = new CSharpEmitter(this.configuration, mapper);
-                break;
-            case XSLTConstants.LanguageTypes.C_PLUS_PLUS:
-            case XSLTConstants.LanguageTypes.VB_DOT_NET:
-
-            default:
-                throw new UnsupportedOperationException();
-
-        }
-        if (this.configuration.isServerSide())
-            emitter.emitSkeleton();
-        else
-            emitter.emitStub();
 
 
     }
