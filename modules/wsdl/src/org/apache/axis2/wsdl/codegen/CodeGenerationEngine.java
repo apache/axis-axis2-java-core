@@ -127,8 +127,10 @@ public class CodeGenerationEngine {
             IOException {
         String uri = ((CommandLineOption) parser.getAllOptions().get(
                 CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION)).getOptionValue();
-        InputStream in = new FileInputStream(new File(uri));
-        return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in)
+        File file = new File(uri);
+        InputStream in = new FileInputStream(file);
+        String baseURI = file.getParentFile()!=null?file.getParentFile().toURI().toString():null;
+        return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in,baseURI)
                 .getDescription();
     }
 

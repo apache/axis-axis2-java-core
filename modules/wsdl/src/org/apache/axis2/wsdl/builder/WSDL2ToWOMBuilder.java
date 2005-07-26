@@ -34,4 +34,10 @@ public class WSDL2ToWOMBuilder implements WOMBuilder {
         throw new UnsupportedOperationException("Not Implemented");
 
     }
+
+    public WSDLVersionWrapper build(InputStream in,
+                                    String baseURI) throws WSDLException {
+        throw new UnsupportedOperationException("Not Implemented");
+
+    }
 }

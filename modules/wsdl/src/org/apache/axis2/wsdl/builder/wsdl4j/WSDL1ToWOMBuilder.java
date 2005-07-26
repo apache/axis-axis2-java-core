@@ -41,7 +41,16 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
 
         WSDLDescription wsdlDescription = new WSDLDescriptionImpl();
 
-        Definition wsdl1Definition = this.readInTheWSDLFile(in);
+        Definition wsdl1Definition = this.readInTheWSDLFile(in,null);
+        WSDLPump pump = new WSDLPump(wsdlDescription, wsdl1Definition);
+        pump.pump();
+
+        return new WSDLVersionWrapper(wsdlDescription, wsdl1Definition);
+    }
+
+     public WSDLVersionWrapper build(InputStream wsdlSource, String baseUri) throws WSDLException {
+        WSDLDescription wsdlDescription = new WSDLDescriptionImpl();
+        Definition wsdl1Definition = this.readInTheWSDLFile(wsdlSource,baseUri);
         WSDLPump pump = new WSDLPump(wsdlDescription, wsdl1Definition);
         pump.pump();
 
@@ -52,7 +61,7 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
                                     WSDLComponentFactory wsdlComponentFactory) throws WSDLException {
         WSDLDescription wsdlDescription = wsdlComponentFactory.createDescription();
 
-        Definition wsdl1Definition = this.readInTheWSDLFile(in);
+        Definition wsdl1Definition = this.readInTheWSDLFile(in,null);
         WSDLPump pump = new WSDLPump(wsdlDescription,
                 wsdl1Definition,
                 wsdlComponentFactory);
@@ -62,10 +71,11 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
 
     }
 
-    private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
+    private Definition readInTheWSDLFile(InputStream in, String baseURI) throws WSDLException {
 
         WSDLReader reader =
                 WSDLFactory.newInstance().newWSDLReader();
+
         Document doc;
         try {
             doc = Utils.newDocument(in);
@@ -82,7 +92,7 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
             throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error", e);
         }
 
-        return reader.readWSDL(null, doc);
+        return reader.readWSDL(baseURI, doc);
     }
 
 
