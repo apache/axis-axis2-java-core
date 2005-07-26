@@ -41,7 +41,7 @@ public class OMChildrenQNameIteratorTest extends AbstractTestCase {
                         XMLInputFactory.newInstance().createXMLStreamReader(
                                 new FileReader(
                                         getTestResourceFile(
-                                                "soap/soapmessage1.xml"))));
+                                                "soap/soapmessage1.xml"))), null);
         envelope = stAXSOAPModelBuilder.getSOAPEnvelope();
     }
 

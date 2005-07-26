@@ -45,7 +45,7 @@ public class OMNavigatorTest extends AbstractTestCase {
                         new FileReader(
                                 getTestResourceFile("soap/soapmessage1.xml")));
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
-        builder = new StAXSOAPModelBuilder(xmlStreamReader);
+        builder = new StAXSOAPModelBuilder(xmlStreamReader, null);
         envelope = (SOAPEnvelope) builder.getDocumentElement();
         tempFile = File.createTempFile("temp", "xml");
         output =

@@ -71,7 +71,7 @@ public class TCPTransportTest extends TestCase {
         try {
             XMLStreamReader xmlreader =
                     XMLInputFactory.newInstance().createXMLStreamReader(in);
-            StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
+            StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader, null);
             return (SOAPEnvelope) builder.getDocumentElement();
         } catch (Exception e) {
             throw new AxisFault(e.getMessage(), e);

@@ -39,6 +39,7 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,8 +51,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 public class EchoRawMTOMTest extends TestCase {
-    private EndpointReference targetEPR = new EndpointReference(
-            AddressingConstants.WSA_TO,
+    private EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
             "http://127.0.0.1:"
             + (UtilServer.TESTING_PORT)
             + "/axis/services/EchoXMLService/echoOMElement");
@@ -78,7 +78,7 @@ public class EchoRawMTOMTest extends TestCase {
     private ServiceDescription service;
 
     private boolean finish = false;
-    
+
     private OMTextImpl expectedTextData;
 
     public EchoRawMTOMTest() {
@@ -113,8 +113,7 @@ public class EchoRawMTOMTest extends TestCase {
         Image expectedImage;
         expectedImage =
                 new JDK13IO()
-                .loadImage(
-                        getResourceAsStream("org/apache/axis2/mtom/test.jpg"));
+                .loadImage(getResourceAsStream("org/apache/axis2/mtom/test.jpg"));
         ImageDataSource dataSource = new ImageDataSource("test.jpg",
                 expectedImage);
         expectedDH = new DataHandler(dataSource);
@@ -135,6 +134,7 @@ public class EchoRawMTOMTest extends TestCase {
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP, false);
+        call.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
         OMElement result = (OMElement) call.invokeBlocking(operationName
                 .getLocalPart(),
@@ -161,6 +161,7 @@ public class EchoRawMTOMTest extends TestCase {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         return cl.getResourceAsStream(path);
     }
+
     private void compareWithCreatedOMText(OMText actualTextData) {
         String originalTextValue = expectedTextData.getText();
         String returnedTextValue = actualTextData.getText();

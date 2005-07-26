@@ -42,15 +42,15 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class EchoRawMTOMToBase64Test extends TestCase {
-    private EndpointReference targetEPR = new EndpointReference(
-            AddressingConstants.WSA_TO, "http://127.0.0.1:"
-                    + (UtilServer.TESTING_PORT)
-                    + "/axis/services/EchoXMLService/echoMTOMtoBase64");
+    private EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:"
+            + (UtilServer.TESTING_PORT)
+            + "/axis/services/EchoXMLService/echoMTOMtoBase64");
 
     private Log log = LogFactory.getLog(getClass());
 
@@ -101,10 +101,9 @@ public class EchoRawMTOMToBase64Test extends TestCase {
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement rpcWrapEle = fac.createOMElement("echoMTOMtoBase64", omNs);
         OMElement data = fac.createOMElement("data", omNs);
-        byte[] byteArray = new byte[] { 13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
-                98 };
-        DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(
-                byteArray));
+        byte[] byteArray = new byte[]{13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
+                                      98};
+        DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
         expectedTextData = new OMTextImpl(dataHandler, true);
         data.addChild(expectedTextData);
         rpcWrapEle.addChild(data);
@@ -123,8 +122,9 @@ public class EchoRawMTOMToBase64Test extends TestCase {
             call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
             call.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP, false);
+            call.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
-            OMElement result = (OMElement) call.invokeBlocking(operationName
+            OMElement result = call.invokeBlocking(operationName
                     .getLocalPart(), payload);
 
             OMElement data = (OMElement) result.getFirstChild();

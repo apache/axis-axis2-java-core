@@ -131,8 +131,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
         try {
             XMLStreamReader sopa12Parser = XMLInputFactory.newInstance()
                     .createXMLStreamReader(new StringReader(soap12Message));
-            OMXMLParserWrapper soap12Builder = new StAXSOAPModelBuilder(
-                    sopa12Parser);
+            OMXMLParserWrapper soap12Builder = new StAXSOAPModelBuilder(sopa12Parser, null);
             SOAPEnvelope soap12Envelope = (SOAPEnvelope) soap12Builder.getDocumentElement();
 //            soap12Envelope.build();
 //            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
@@ -374,8 +373,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
 
             XMLStreamReader sopa11Parser = XMLInputFactory.newInstance()
                     .createXMLStreamReader(new StringReader(soap11Message));
-            OMXMLParserWrapper soap11Builder = new StAXSOAPModelBuilder(
-                    sopa11Parser);
+            OMXMLParserWrapper soap11Builder = new StAXSOAPModelBuilder(sopa11Parser, null);
             SOAPEnvelope soap11Envelope = (SOAPEnvelope) soap11Builder.getDocumentElement();
 //            soap11Envelope.build();
 //            writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);

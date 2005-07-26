@@ -44,7 +44,7 @@ public class OMTest extends AbstractTestCase {
         XMLStreamReader parser = XMLInputFactory.newInstance()
                 .createXMLStreamReader(new FileReader(file));
         fac = OMAbstractFactory.getSOAP11Factory();
-        OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser);
+        OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
         envelope = (SOAPEnvelope) builder.getDocumentElement();
     }
 

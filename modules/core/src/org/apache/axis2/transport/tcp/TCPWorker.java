@@ -75,7 +75,7 @@ public class TCPWorker implements AxisWorker {
                 //create the SOAP Envelope
                 Reader in = new InputStreamReader(socket.getInputStream());
                 XMLStreamReader xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in);
-                StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader);
+                StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader, null);
                 SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
                 msgContext.setEnvelope(envelope);
                 if (envelope.getBody().hasFault()) {

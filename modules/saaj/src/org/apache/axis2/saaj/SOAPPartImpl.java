@@ -81,7 +81,7 @@ public class SOAPPartImpl extends SOAPPart {
                 stAXSOAPModelBuilder =
                         new StAXSOAPModelBuilder(
                                 XMLInputFactory.newInstance()
-                        .createXMLStreamReader(inr));
+                        .createXMLStreamReader(inr), null);
                 org.apache.axis2.soap.SOAPEnvelope omEnv = stAXSOAPModelBuilder.getSOAPEnvelope();
                 envelope = new SOAPEnvelopeImpl(omEnv);
                 ((SOAPEnvelopeImpl) envelope).setOwnerDocument(this);

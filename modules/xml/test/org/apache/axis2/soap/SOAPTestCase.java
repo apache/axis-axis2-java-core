@@ -76,7 +76,7 @@ public class SOAPTestCase extends AbstractTestCase {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        return new StAXSOAPModelBuilder(parser);
+        return new StAXSOAPModelBuilder(parser, null);
     }
 
 }

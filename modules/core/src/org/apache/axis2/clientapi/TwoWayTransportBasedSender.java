@@ -48,7 +48,7 @@ public class TwoWayTransportBasedSender {
         //If request is REST we assume the response is REST, so set the variable
         response.setDoingREST(msgctx.isDoingREST());
 
-        SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(response);
+        SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(response, msgctx.getEnvelope().getNamespace().getName());
         if (resenvelope != null) {
             response.setEnvelope(resenvelope);
             engine = new AxisEngine(msgctx.getSystemContext());

@@ -128,7 +128,7 @@ public class ImageSampleTest extends AbstractTestCase {
                                 new InputStreamReader(
                                         mimeHelper
                 .getSOAPPartInputStream())));
-        builder = new MTOMStAXSOAPModelBuilder(reader, mimeHelper);
+        builder = new MTOMStAXSOAPModelBuilder(reader, mimeHelper, null);
         OMElement root = (OMElement) builder.getDocumentElement();
         OMElement body = (OMElement) root.getFirstChild();
         OMElement data = (OMElement) body.getFirstChild();

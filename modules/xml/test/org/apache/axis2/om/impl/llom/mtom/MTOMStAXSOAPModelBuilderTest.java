@@ -21,6 +21,7 @@ import org.apache.axis2.om.AbstractTestCase;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLInputFactory;
@@ -54,21 +55,16 @@ public class MTOMStAXSOAPModelBuilderTest extends AbstractTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         inFileName = "mtom/MTOMBuilderTestIn.txt";
-        InputStream inStream = new FileInputStream(
-                getTestResourceFile(inFileName));
+        InputStream inStream = new FileInputStream(getTestResourceFile(inFileName));
         mimeHelper = new MIMEHelper(inStream, contentTypeString);
         XMLStreamReader reader = XMLInputFactory.newInstance()
-                .createXMLStreamReader(
-                        new BufferedReader(
-                                new InputStreamReader(
-                                        mimeHelper
+                .createXMLStreamReader(new BufferedReader(new InputStreamReader(mimeHelper
                 .getSOAPPartInputStream())));
-        builder = new MTOMStAXSOAPModelBuilder(reader, mimeHelper);
-
+        builder = new MTOMStAXSOAPModelBuilder(reader, mimeHelper, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
     }
 
     public void testCreateOMElement() throws Exception {
-        OMElement root = (OMElement) builder.getDocumentElement();
+        OMElement root = builder.getDocumentElement();
         System.out.println(root.getLocalName() + " : "
                 + root.getNamespace().getName());
         OMElement body = (OMElement) root.getFirstChild();

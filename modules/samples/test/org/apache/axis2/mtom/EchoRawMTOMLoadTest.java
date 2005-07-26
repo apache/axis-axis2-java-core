@@ -40,6 +40,7 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -132,8 +133,9 @@ public class EchoRawMTOMLoadTest extends TestCase {
                     Constants.VALUE_TRUE);
             call.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP, false);
+            call.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
-            OMElement result = (OMElement) call.invokeBlocking(operationName
+            OMElement result = call.invokeBlocking(operationName
                     .getLocalPart(),
                     payload);
             OMElement ele = (OMElement) result.getFirstChild();

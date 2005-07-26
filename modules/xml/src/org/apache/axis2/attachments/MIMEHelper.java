@@ -157,7 +157,7 @@ public class MIMEHelper {
                 this.applicationType = SWA_TYPE;
             } else {
                 throw new OMException(
-                "Invalid Application type. Support available for MTOM & SwA only.");
+                "Invalid Application type. Support available for MTOM/SOAP 1.2 & SwA/SOAP 1.l only.");
             }
         }
         return this.applicationType;

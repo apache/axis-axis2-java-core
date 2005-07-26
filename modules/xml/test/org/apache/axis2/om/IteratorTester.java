@@ -35,7 +35,7 @@ public class IteratorTester extends AbstractTestCase {
                         XMLInputFactory.newInstance().createXMLStreamReader(
                                 new FileReader(
                                         getTestResourceFile(
-                                                "soap/soapmessage1.xml")))).getSOAPEnvelope();
+                                                "soap/soapmessage1.xml"))), null).getSOAPEnvelope();
     }
 
     protected void tearDown() throws Exception {

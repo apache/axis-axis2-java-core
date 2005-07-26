@@ -67,7 +67,7 @@ public class LocalTransportReceiver {
                 XMLInputFactory.newInstance().createXMLStreamReader(
                     new BufferedReader(new InputStreamReader(in)));
 
-            StAXBuilder builder = new StAXSOAPModelBuilder(reader);
+            StAXBuilder builder = new StAXSOAPModelBuilder(reader, null);
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
             msgCtx.setEnvelope(envelope);
             AxisEngine engine = new AxisEngine(confContext);

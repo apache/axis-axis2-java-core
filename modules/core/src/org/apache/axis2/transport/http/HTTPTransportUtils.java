@@ -63,18 +63,21 @@ public class HTTPTransportUtils {
         InputStream in,
         OutputStream out,
         String contentType,
-        String soapAction,
+        String soapActionHeader,
         String requestURI,
         ConfigurationContext configurationContext)
         throws AxisFault {
         try {
+
+
             //remove the starting and trailing " from the SOAP Action
-            if (soapAction != null && soapAction.startsWith("\"") && soapAction.endsWith("\"")) {
-                soapAction = soapAction.substring(1, soapAction.length() - 1);
+            if (soapActionHeader != null && soapActionHeader.startsWith("\"") && soapActionHeader.endsWith("\"")) {
+
+                soapActionHeader = soapActionHeader.substring(1, soapActionHeader.length() - 1);
             }
             //fill up the Message Contexts
-            msgContext.setWSAAction(soapAction);
-            msgContext.setSoapAction(soapAction);
+            msgContext.setWSAAction(soapActionHeader);
+            msgContext.setSoapAction(soapActionHeader);
             msgContext.setTo(new EndpointReference(AddressingConstants.WSA_TO, requestURI));
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
             msgContext.setServerSide(true);
@@ -92,12 +95,12 @@ public class HTTPTransportUtils {
                         XMLInputFactory.newInstance().createXMLStreamReader(reader);
                     if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
                         //it is SOAP 1.2
-                        builder = new StAXSOAPModelBuilder(xmlreader);
+                        builder = new StAXSOAPModelBuilder(xmlreader, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                         envelope = (SOAPEnvelope) builder.getDocumentElement();
                     } else if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
                         //it is SOAP 1.1
                         Object enable = msgContext.getProperty(Constants.Configuration.ENABLE_REST);
-                        if ((soapAction == null || soapAction.length() == 0)
+                        if ((soapActionHeader == null || soapActionHeader.length() == 0)
                             && Constants.VALUE_TRUE.equals(enable)) {
                             //If the content Type is text/xml (BTW which is the SOAP 1.1 Content type ) and
                             //the SOAP Action is absent it is rest !!
@@ -108,7 +111,7 @@ public class HTTPTransportUtils {
                             envelope = soapFactory.getDefaultEnvelope();
                             envelope.getBody().addChild(builder.getDocumentElement());
                         }else{
-                            builder = new StAXSOAPModelBuilder(xmlreader);
+                            builder = new StAXSOAPModelBuilder(xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                             envelope = (SOAPEnvelope) builder.getDocumentElement();
                         }
                     }
@@ -220,6 +223,7 @@ public class HTTPTransportUtils {
         XMLStreamReader reader =
             XMLInputFactory.newInstance().createXMLStreamReader(
                 new BufferedReader(new InputStreamReader(mimeHelper.getSOAPPartInputStream())));
+
         /*
          * put a reference to Attachments in to the message context
          */
@@ -228,10 +232,10 @@ public class HTTPTransportUtils {
             /*
              * Creates the MTOM specific MTOMStAXSOAPModelBuilder
              */
-            builder = new MTOMStAXSOAPModelBuilder(reader, mimeHelper);
+            builder = new MTOMStAXSOAPModelBuilder(reader, mimeHelper, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         } else if (mimeHelper.getAttachmentSpecType().equals(MIMEHelper.SWA_TYPE)) {
-            builder = new StAXSOAPModelBuilder(reader);
-        }
+            builder = new StAXSOAPModelBuilder(reader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        } 
         return builder;
     }
 

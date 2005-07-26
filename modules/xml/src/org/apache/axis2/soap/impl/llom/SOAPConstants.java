@@ -72,4 +72,8 @@ public interface SOAPConstants {
             SOAP_DEFAULT_NAMESPACE_PREFIX;
 
     public static final String SOAP_FAULT_DETAIL_EXCEPTION_ENTRY = "Exception";
+
+    // -------- SOAP Exceptions ------------------------------
+
+    
 }

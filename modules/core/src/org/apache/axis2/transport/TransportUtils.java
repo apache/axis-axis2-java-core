@@ -35,7 +35,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 public class TransportUtils {
-    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext) throws AxisFault {
+    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext, String soapNamespaceURI) throws AxisFault {
 
         InputStream inStream = (InputStream) msgContext.getProperty(
                 MessageContext.TRANSPORT_IN);
@@ -45,11 +45,11 @@ public class TransportUtils {
         if (inStream == null) {
             throw new AxisFault(Messages.getMessage("inputstreamNull"));
         }
-        return createSOAPMessage(msgContext, inStream);
+        return createSOAPMessage(msgContext, inStream, soapNamespaceURI);
     }
 
-    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext,
-                                                 InputStream inStream)
+    private static SOAPEnvelope createSOAPMessage(MessageContext msgContext,
+                                                 InputStream inStream, String soapNamespaceURI)
             throws AxisFault {
         try {
             Object contentType = null;
@@ -87,7 +87,7 @@ public class TransportUtils {
                 XMLStreamReader xmlreader =
                         XMLInputFactory.newInstance().createXMLStreamReader(
                                 reader);
-                builder = new StAXSOAPModelBuilder(xmlreader);
+                builder = new StAXSOAPModelBuilder(xmlreader, soapNamespaceURI);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             }
             return envelope;

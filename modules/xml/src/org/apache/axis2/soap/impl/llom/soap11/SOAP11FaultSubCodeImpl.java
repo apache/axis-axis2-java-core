@@ -51,23 +51,20 @@ public class SOAP11FaultSubCodeImpl extends SOAPFaultSubCodeImpl {
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         if (!(parent instanceof SOAP11FaultSubCodeImpl) ||
                 (parent instanceof SOAP11FaultCodeImpl)) {
-            throw new SOAPProcessingException(
-                    "Expecting SOAP 1.1 implementation of SOAP FaultSubCode or SOAP FaultCode as the parent. But received some other implementation");
+            throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP FaultSubCode or SOAP FaultCode as the parent. But received some other implementation");
         }
     }
 
     public void setSubCode(SOAPFaultSubCode subCode) throws SOAPProcessingException {
-        if (!(subCode instanceof SOAP11FaultSubCodeImpl)) {
-            throw new SOAPProcessingException(
-                    "Expecting SOAP 1.1 implementation of SOAP Fault Sub Code. But received some other implementation");
+        if (!((parent instanceof SOAP11FaultSubCodeImpl) || (parent instanceof SOAP11FaultCodeImpl))) {
+            throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault Sub Code. But received some other implementation");
         }
         super.setSubCode(subCode);
     }
 
     public void setValue(SOAPFaultValue soapFaultSubCodeValue) throws SOAPProcessingException {
         if (!(soapFaultSubCodeValue instanceof SOAP11FaultValueImpl)) {
-            throw new SOAPProcessingException(
-                    "Expecting SOAP 1.1 implementation of SOAP Fault Value. But received some other implementation");
+            throw new SOAPProcessingException("Expecting SOAP 1.1 implementation of SOAP Fault Value. But received some other implementation");
         }
         super.setValue(soapFaultSubCodeValue);
     }

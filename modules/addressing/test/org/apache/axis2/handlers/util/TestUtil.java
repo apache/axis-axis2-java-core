@@ -41,7 +41,7 @@ public class TestUtil {
         XMLStreamReader parser = XMLInputFactory.newInstance()
                 .createXMLStreamReader(
                         new FileReader(getTestResourceFile(fileName)));
-        builder = new StAXSOAPModelBuilder(parser);
+        builder = new StAXSOAPModelBuilder(parser, null);
         return builder;
     }
 

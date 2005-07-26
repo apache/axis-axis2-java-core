@@ -45,6 +45,7 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -126,7 +127,6 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase {
     }
 
     public void testEchoXMLSync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
         OMElement payload = createEnvelope();
 
@@ -136,7 +136,8 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase {
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP,
                 Constants.TRANSPORT_HTTP, false);
-        OMElement result = (OMElement) call.invokeBlocking(operationName
+        call.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        OMElement result = call.invokeBlocking(operationName
                 .getLocalPart(), payload);
 
         OMElement ele = (OMElement) result.getFirstChild();

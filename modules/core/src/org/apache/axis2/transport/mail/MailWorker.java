@@ -29,6 +29,8 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis2.util.threadpool.AxisWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -118,7 +120,16 @@ public class MailWorker implements AxisWorker {
                 String message = mimeMessage.getContent().toString();
                 ByteArrayInputStream bais = new ByteArrayInputStream(message.getBytes());
                 XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
-                StAXBuilder builder = new StAXSOAPModelBuilder(reader);
+
+                String soapNamespaceURI = "";
+                if(mimeMessage.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1){
+                   soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+                }else if(mimeMessage.getContentType().indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1){
+                    soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+
+                }
+                StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
+
                 SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
                 msgContext.setEnvelope(envelope);
                 if (envelope.getBody().hasFault()) {

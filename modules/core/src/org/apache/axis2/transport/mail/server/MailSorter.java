@@ -10,6 +10,8 @@ import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis2.transport.mail.MailConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,6 +40,7 @@ public class MailSorter {
     private ConfigurationContext configurationContext = null;
     protected static Log log = LogFactory.getLog(MailSorter.class.getName());
     private boolean actAsMailet = false;
+
     public MailSorter(Storage st, ConfigurationContext configurationContext) {
         this.st = st;
         sUsers.add("axis2-server@localhost");
@@ -70,12 +73,9 @@ public class MailSorter {
         // create and initialize a message context
         try {
             msgContext =
-                new MessageContext(
-                    confContext,
-                    confContext.getAxisConfiguration().getTransportIn(
-                        new QName(Constants.TRANSPORT_MAIL)),
-                    confContext.getAxisConfiguration().getTransportOut(
-                        new QName(Constants.TRANSPORT_MAIL)));
+                    new MessageContext(confContext,
+                            confContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL)),
+                            confContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL)));
             msgContext.setServerSide(true);
 
             msgContext.setProperty(MailConstants.CONTENT_TYPE, mimeMessage.getContentType());
@@ -88,16 +88,13 @@ public class MailSorter {
 
             String replyTo = ((InternetAddress) mimeMessage.getReplyTo()[0]).getAddress();
             if (replyTo != null) {
-                msgContext.setReplyTo(
-                    new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo));
+                msgContext.setReplyTo(new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo));
             }
 
             String recepainets = ((InternetAddress) mimeMessage.getAllRecipients()[0]).getAddress();
 
             if (recepainets != null) {
-                msgContext.setTo(
-                    new EndpointReference(
-                        AddressingConstants.WSA_FROM,
+                msgContext.setTo(new EndpointReference(AddressingConstants.WSA_FROM,
                         recepainets + "/" + serviceURL));
             }
 
@@ -106,8 +103,16 @@ public class MailSorter {
             System.out.println("message[" + message + "]");
             ByteArrayInputStream bais = new ByteArrayInputStream(message.getBytes());
             XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
-            StAXBuilder builder = new StAXSOAPModelBuilder(reader);
-  
+
+            String soapNamespaceURI = "";
+            if (mimeMessage.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
+                soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+            } else if (mimeMessage.getContentType().indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+                soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+
+            }
+            StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
+
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
             msgContext.setEnvelope(envelope);
             if (envelope.getBody().hasFault()) {

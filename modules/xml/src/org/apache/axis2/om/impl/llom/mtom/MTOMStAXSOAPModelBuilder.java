@@ -44,8 +44,8 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
 
     public MTOMStAXSOAPModelBuilder(XMLStreamReader parser,
                                     SOAPFactory factory,
-                                    MIMEHelper mimeHelper) {
-        super(parser, factory);
+                                    MIMEHelper mimeHelper, String soapVersion) {
+        super(parser, factory, soapVersion);
         this.mimeHelper = mimeHelper;
     }
 
@@ -54,8 +54,8 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
      * @param mimeHelper
      */
     public MTOMStAXSOAPModelBuilder(XMLStreamReader reader,
-                                    MIMEHelper mimeHelper) {
-        super(reader);
+                                    MIMEHelper mimeHelper, String soapVersion) {
+        super(reader, soapVersion);
         this.mimeHelper = mimeHelper;
     }
 
