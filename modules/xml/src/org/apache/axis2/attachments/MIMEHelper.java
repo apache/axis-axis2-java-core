@@ -44,6 +44,8 @@ public class MIMEHelper {
      */
     public static final String ROOT_PART = "SoapPart";
     
+    public static final String ATTACHMENTS = "Attachments";
+    
     /**
      * <code>ContentType</code> of the MIME message
      */
@@ -215,10 +217,8 @@ public class MIMEHelper {
     public DataHandler getDataHandler(String blobContentID) throws OMException {
         
         Part bodyPart;
-        //	blobContentID = "<" + blobContentID + ">";
         boolean attachmentFound = false;
-        
-        //TODO make sure to add surrounding angle brackets to the content ID
+       
         if (bodyPartsMap.containsKey(blobContentID)) {
             bodyPart = (Part) bodyPartsMap.get(blobContentID);
             attachmentFound = true;
@@ -246,8 +246,7 @@ public class MIMEHelper {
             } catch (MessagingException e) {
                 throw new OMException("Invalid Mime Message " + e);
             }
-        }
-        
+        }      
     }
     
     protected void setEndOfStream(boolean value)
@@ -269,8 +268,8 @@ public class MIMEHelper {
             "Referenced MIME part not found.End of Stream reached.");
         
         MimeBodyPart mimeBodyPart = null;
-        MimeBodyPartInputStream partStream;
-        partStream = new MimeBodyPartInputStream(pushbackInStream, boundary,
+        MIMEBodyPartInputStream partStream;
+        partStream = new MIMEBodyPartInputStream(pushbackInStream, boundary,
                 this);
         try {
             mimeBodyPart = new MimeBodyPart(partStream);
