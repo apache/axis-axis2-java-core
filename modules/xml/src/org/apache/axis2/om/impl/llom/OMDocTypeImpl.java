@@ -58,7 +58,7 @@ public class OMDocTypeImpl extends OMNodeImpl implements OMDocType {
      */
     public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
-        writer.writeCharacters(this.value);
+        writer.writeDTD(this.value);
         OMNode nextSibling = this.getNextSibling();
         if (nextSibling != null) {
             nextSibling.serializeWithCache(omOutput);
