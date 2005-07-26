@@ -108,6 +108,9 @@ public class OMElementImpl extends OMNodeImpl
      */
     public OMElementImpl(String localName, OMNamespace ns) {
         super(null);
+        if(localName == null || "".equals(localName)){
+            throw new OMException("localname can not be null or empty");
+        }
         this.localName = localName;
         this.done = true;
         if (ns != null) {
