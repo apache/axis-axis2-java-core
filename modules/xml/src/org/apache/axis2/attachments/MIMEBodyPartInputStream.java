@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 
-public class MimeBodyPartInputStream extends InputStream {
+public class MIMEBodyPartInputStream extends InputStream {
     PushbackInputStream inStream;
 
     boolean boundaryFound = false;
@@ -23,13 +23,13 @@ public class MimeBodyPartInputStream extends InputStream {
 
     byte[] boundary;
 
-    public MimeBodyPartInputStream(PushbackInputStream inStream, byte[] boundary) {
+    public MIMEBodyPartInputStream(PushbackInputStream inStream, byte[] boundary) {
         super();
         this.inStream = inStream;
         this.boundary = boundary;
     }
 
-    public MimeBodyPartInputStream(PushbackInputStream inStream,
+    public MIMEBodyPartInputStream(PushbackInputStream inStream,
             byte[] boundary, MIMEHelper parent) {
         this(inStream, boundary);
         this.parent = parent;
