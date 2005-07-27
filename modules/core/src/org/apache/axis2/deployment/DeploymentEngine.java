@@ -49,11 +49,11 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -449,7 +449,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * and it will also load the service handlers
      *
      * @param axisService
-     * @throws AxisFault
+     * @throws org.apache.axis2.AxisFault
      */
     private void loadServiceProperties(ServiceDescription axisService) throws AxisFault {
         Flow inflow = axisService.getInFlow();

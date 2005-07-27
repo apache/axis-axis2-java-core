@@ -17,6 +17,7 @@
 package org.apache.axis2.transport.http;
 
 import org.apache.axis2.Constants;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
@@ -24,7 +25,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
@@ -194,7 +194,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             }
         }
 
-        public void writeRequest(OutputStream out) throws IOException {
+        public void writeRequest(OutputStream out) throws IOException{
             try {
                 if (chuncked || doingMTOM) {
                     omOutput.setOutputStream(out, doingMTOM);
@@ -213,7 +213,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 throw new AxisFault(e);
             } catch (IOException e) {
                 throw new AxisFault(e);
-            }
+            } 
         }
 
         public long getContentLength() {

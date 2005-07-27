@@ -18,6 +18,7 @@ package org.apache.axis2.engine;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.phaseresolver.PhaseException;
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -132,7 +133,7 @@ public class Phase {
      * If need to see how this works look at the stack!
      *
      * @param msgctx
-     * @throws AxisFault
+     * @throws org.apache.axis2.AxisFault
      */
     public void invoke(MessageContext msgctx) throws AxisFault {
         msgctx.setPausedPhaseName(this.getPhaseName());

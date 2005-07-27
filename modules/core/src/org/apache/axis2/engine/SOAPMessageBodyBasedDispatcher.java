@@ -22,6 +22,7 @@ import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 

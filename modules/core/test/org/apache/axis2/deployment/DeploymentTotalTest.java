@@ -19,8 +19,8 @@ package org.apache.axis2.deployment;
 import junit.framework.TestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.phaseresolver.PhaseException;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.stream.XMLStreamException;
 

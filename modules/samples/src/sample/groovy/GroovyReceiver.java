@@ -2,7 +2,6 @@ package sample.groovy;
 
 import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.ServiceDescription;
@@ -16,6 +15,7 @@ import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.AxisFault;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 import javax.xml.stream.XMLOutputFactory;

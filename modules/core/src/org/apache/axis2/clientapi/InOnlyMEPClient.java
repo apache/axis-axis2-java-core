@@ -29,8 +29,8 @@ import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.AxisFault;
 import org.apache.wsdl.WSDLConstants;
 
 /**
@@ -126,7 +126,7 @@ public class InOnlyMEPClient extends MEPClient {
     /**
      * set the transport to used for sending the SOAP Message
      * @param senderTransport
-     * @throws AxisFault if the transport not found
+     * @throws org.apache.axis2.AxisFault if the transport not found
      */
     public void setSenderTransport(String senderTransport) throws AxisFault {
         AxisConfiguration axisConfiguration = 

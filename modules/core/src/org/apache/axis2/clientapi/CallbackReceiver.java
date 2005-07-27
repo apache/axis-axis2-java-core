@@ -4,8 +4,8 @@ import java.util.HashMap;
 
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.AxisFault;
 
 /**
  * This is a MessageReceiver that is used at the client side to accept the 

@@ -22,24 +22,23 @@ import java.util.ResourceBundle;
 
 
 /**
- * @see org.apache.axis.i18n.Messages
- * 
- * FUNCTIONAL TEMPLATE for Messages classes.
- * 
- * Copy this template to your package.
- * 
- * For subpackages of org.apache.axis.*, the internal constants
- * are set appropriately.  To adapt this scheme to an extension project
- * (package prefix differs from org.apache.axis.*), edit the projectName
- * attribute.  The others shouldn't need to be changed unless this is
- * being adapted to a non-AXIS related project..
- * 
  * @author Richard A. Sitze (rsitze@us.ibm.com)
  * @author Karl Moss (kmoss@macromedia.com)
  * @author Glen Daniels (gdaniels@apache.org)
+ * @see org.apache.axis.i18n.Messages
+ *      <p/>
+ *      FUNCTIONAL TEMPLATE for Messages classes.
+ *      <p/>
+ *      Copy this template to your package.
+ *      <p/>
+ *      For subpackages of org.apache.axis.*, the internal constants
+ *      are set appropriately.  To adapt this scheme to an extension project
+ *      (package prefix differs from org.apache.axis.*), edit the projectName
+ *      attribute.  The others shouldn't need to be changed unless this is
+ *      being adapted to a non-AXIS related project..
  */
 public class Messages {
-    private static final Class  thisClass = Messages.class;
+    private static final Class thisClass = Messages.class;
 
     private static final String projectName = MessagesConstants.projectName;
 
@@ -50,114 +49,116 @@ public class Messages {
     private static final ClassLoader classLoader = thisClass.getClassLoader();
 
     private static final ResourceBundle parent =
-        (MessagesConstants.rootPackageName == packageName)
-        ? null
-        : MessagesConstants.rootBundle;
+            (MessagesConstants.rootPackageName == packageName)
+            ? null
+            : MessagesConstants.rootBundle;
 
-
-    /***** NO NEED TO CHANGE ANYTHING BELOW *****/
-
-    private static final MessageBundle messageBundle =
-        new MessageBundle(projectName, packageName, resourceName,
-                                     locale, classLoader, parent);
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param key The resource key
-      * @return The formatted message
-      */
+     * ** NO NEED TO CHANGE ANYTHING BELOW ****
+     */
+
+    private static final MessageBundle messageBundle =
+            new MessageBundle(projectName, packageName, resourceName,
+                    locale, classLoader, parent);
+
+    /**
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param key The resource key
+     * @return The formatted message
+     */
     public static String getMessage(String key)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         return messageBundle.getMessage(key);
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param key  The resource key
+     * @param arg0 The argument to place in variable {0}
+     * @return The formatted message
+     */
     public static String getMessage(String key, String arg0)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         return messageBundle.getMessage(key, arg0);
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @param arg1 The argument to place in variable {1}
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param key  The resource key
+     * @param arg0 The argument to place in variable {0}
+     * @param arg1 The argument to place in variable {1}
+     * @return The formatted message
+     */
     public static String getMessage(String key, String arg0, String arg1)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         return messageBundle.getMessage(key, arg0, arg1);
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @param arg1 The argument to place in variable {1}
-      * @param arg2 The argument to place in variable {2}
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param key  The resource key
+     * @param arg0 The argument to place in variable {0}
+     * @param arg1 The argument to place in variable {1}
+     * @param arg2 The argument to place in variable {2}
+     * @return The formatted message
+     */
     public static String getMessage(String key, String arg0, String arg1, String arg2)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         return messageBundle.getMessage(key, arg0, arg1, arg2);
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @param arg1 The argument to place in variable {1}
-      * @param arg2 The argument to place in variable {2}
-      * @param arg3 The argument to place in variable {3}
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param key  The resource key
+     * @param arg0 The argument to place in variable {0}
+     * @param arg1 The argument to place in variable {1}
+     * @param arg2 The argument to place in variable {2}
+     * @param arg3 The argument to place in variable {3}
+     * @return The formatted message
+     */
     public static String getMessage(String key, String arg0, String arg1, String arg2, String arg3)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         return messageBundle.getMessage(key, arg0, arg1, arg2, arg3);
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @param arg1 The argument to place in variable {1}
-      * @param arg2 The argument to place in variable {2}
-      * @param arg3 The argument to place in variable {3}
-      * @param arg4 The argument to place in variable {4}
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param key  The resource key
+     * @param arg0 The argument to place in variable {0}
+     * @param arg1 The argument to place in variable {1}
+     * @param arg2 The argument to place in variable {2}
+     * @param arg3 The argument to place in variable {3}
+     * @param arg4 The argument to place in variable {4}
+     * @return The formatted message
+     */
     public static String getMessage(String key, String arg0, String arg1, String arg2, String arg3, String arg4)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         return messageBundle.getMessage(key, arg0, arg1, arg2, arg3, arg4);
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param key The resource key
-      * @param args An array of objects to place in corresponding variables
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param key  The resource key
+     * @param args An array of objects to place in corresponding variables
+     * @return The formatted message
+     */
     public static String getMessage(String key, String[] args)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         return messageBundle.getMessage(key, args);
     }
-    
+
     public static ResourceBundle getResourceBundle() {
         return messageBundle.getResourceBundle();
     }
-    
+
     public static MessageBundle getMessageBundle() {
         return messageBundle;
     }

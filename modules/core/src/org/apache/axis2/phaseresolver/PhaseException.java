@@ -15,7 +15,8 @@
  */
 package org.apache.axis2.phaseresolver;
 
-import org.apache.axis2.engine.AxisFault;
+
+import org.apache.axis2.AxisFault;
 
 /**
  * Class PhaseException

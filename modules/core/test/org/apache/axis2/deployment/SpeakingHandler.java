@@ -17,9 +17,9 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

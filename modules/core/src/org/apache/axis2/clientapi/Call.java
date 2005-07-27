@@ -27,9 +27,9 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.AxisFault;
 
 /**
  * This class is the pretty convineance class for the user without see the comlplexites of Axis2.
@@ -98,7 +98,7 @@ public class Call extends InOutMEPClient {
      * @param toSend   -  This should be OM Element (payload)
      *                 invocation behaves accordingly
      * @param callback
-     * @throws AxisFault
+     * @throws org.apache.axis2.AxisFault
      */
 
     public void invokeNonBlocking(
@@ -143,7 +143,7 @@ public class Call extends InOutMEPClient {
      * Assume the values for the ConfigurationContext and ServiceContext to make the NON WSDL cases simple.
      *
      * @return ServiceContext that has a ConfigurationContext set in and has assumed values.
-     * @throws AxisFault
+     * @throws org.apache.axis2.AxisFault
      */
     protected static ServiceContext assumeServiceContext(String clinetHome)
         throws AxisFault {

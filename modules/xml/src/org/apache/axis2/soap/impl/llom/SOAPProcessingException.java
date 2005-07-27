@@ -19,14 +19,38 @@ import org.apache.axis2.om.OMException;
  * <p/>
  */
 public class SOAPProcessingException extends OMException {
+
+    private String soapFaultCode;
+
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
     public SOAPProcessingException(String message) {
-        super(message);    //To change body of overridden methods use File | Settings | File Templates.
+        super(message);
     }
 
     public SOAPProcessingException(Throwable cause) {
         super(cause);
+    }
+
+    /**
+     *
+     * @param messageText - this will appear as the Text in the Reason information item of SOAP Fault
+     * @param faultCode - this will appear as the Value in the Code information item of SOAP Fault
+     * @param cause - this will appear under the Detail information item of SOAP Fault
+     */
+    public SOAPProcessingException(String messageText, String faultCode, Throwable cause) {
+        super(messageText, cause);
+        this.soapFaultCode = faultCode;
+    }
+
+    /**
+     *
+     * @param messageText - this will appear as the Text in the Reason information item of SOAP Fault
+     * @param faultCode - this will appear as the Value in the Code information item of SOAP Fault
+     */
+    public SOAPProcessingException(String messageText, String faultCode) {
+        super(messageText);
+        this.soapFaultCode = faultCode;
     }
 }

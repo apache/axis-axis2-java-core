@@ -32,7 +32,7 @@ import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.AxisFault;
 
 
 import java.util.Iterator;

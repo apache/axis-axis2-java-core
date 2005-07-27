@@ -7,6 +7,7 @@ import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.phaseresolver.PhaseException;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

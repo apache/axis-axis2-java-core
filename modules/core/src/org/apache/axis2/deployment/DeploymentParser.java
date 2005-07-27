@@ -37,11 +37,11 @@ import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfigurationImpl;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.AxisObserver;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

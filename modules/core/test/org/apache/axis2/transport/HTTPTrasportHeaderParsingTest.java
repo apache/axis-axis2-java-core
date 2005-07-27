@@ -18,7 +18,7 @@ package org.apache.axis2.transport;
 
 
 import org.apache.axis2.AbstractTestCase;
-import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportReceiver;
 

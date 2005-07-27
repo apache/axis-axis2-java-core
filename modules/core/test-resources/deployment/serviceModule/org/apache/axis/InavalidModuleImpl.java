@@ -2,7 +2,6 @@ package org.apache.axis2;
 
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisFault;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

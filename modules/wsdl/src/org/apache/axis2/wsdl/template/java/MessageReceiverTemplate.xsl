@@ -17,7 +17,7 @@
     public class <xsl:value-of select="@name"/> extends <xsl:value-of select="@basereceiver"/>{
     
 		public void invokeBusinessLogic(org.apache.axis2.context.MessageContext msgContext, org.apache.axis2.context.MessageContext newMsgContext)
-		throws org.apache.axis2.engine.AxisFault{
+		throws org.apache.axis2.AxisFault{
     
      try {
 
@@ -30,7 +30,7 @@
              //Find the operation that has been set by the Dispatch phase.
             org.apache.axis2.description.OperationDescription op = msgContext.getOperationContext().getAxisOperation();
             if (op == null) {
-                throw new org.apache.axis2.engine.AxisFault("Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
+                throw new org.apache.axis2.AxisFault("Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
             }
             
             String methodName;
@@ -66,7 +66,7 @@
 		
 					org.apache.axis2.om.OMElement firstChild = (org.apache.axis2.om.OMElement)msgContext.getEnvelope().getBody().getFirstChild();
 					if(null == firstChild)
-						throw new org.apache.axis2.engine.AxisFault("Wrapper Element Not Found for the operation of RPC style");
+						throw new org.apache.axis2.AxisFault("Wrapper Element Not Found for the operation of RPC style");
 					java.util.Iterator children = firstChild.getChildren();
 					org.apache.xmlbeans.XmlObject[] params = new org.apache.xmlbeans.XmlObject[<xsl:value-of select="$inputparamcount"/>];
 					int count = 0;
@@ -75,7 +75,7 @@
 						count++;
 					}
 				if(count!= <xsl:value-of select="$inputparamcount"/>)
-					throw new org.apache.axis2.engine.AxisFault("Parts mismatch in the message");
+					throw new org.apache.axis2.AxisFault("Parts mismatch in the message");
 						 
 					</xsl:if>
 				</xsl:for-each>
@@ -134,7 +134,7 @@
             
 
         } catch (Exception e) {
-            throw org.apache.axis2.engine.AxisFault.makeFault(e);
+            throw org.apache.axis2.AxisFault.makeFault(e);
         }
      <xsl:for-each select="method"/>
 		 }

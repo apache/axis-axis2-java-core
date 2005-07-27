@@ -7,13 +7,13 @@ import org.apache.axis2.addressing.MessageInformationHeadersCollection;
 import org.apache.axis2.addressing.ServiceName;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
+import org.apache.axis2.AxisFault;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;

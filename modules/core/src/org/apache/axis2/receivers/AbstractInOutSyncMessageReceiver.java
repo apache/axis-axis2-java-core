@@ -20,8 +20,8 @@ import org.apache.axis2.addressing.MessageInformationHeadersCollection;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.AxisFault;
 
 /**
  * This is the Absract IN-OUT MEP MessageReceiver. The

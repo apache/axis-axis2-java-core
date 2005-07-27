@@ -20,6 +20,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 

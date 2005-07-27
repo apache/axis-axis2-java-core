@@ -16,7 +16,7 @@
 package org.apache.axis2.receivers;
 
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.AxisFault;
 
 
 public interface ServerCallback {

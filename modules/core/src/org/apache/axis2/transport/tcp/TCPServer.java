@@ -23,9 +23,9 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

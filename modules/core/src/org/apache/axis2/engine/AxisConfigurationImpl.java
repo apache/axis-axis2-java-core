@@ -27,6 +27,7 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.phaseresolver.PhaseResolver;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import java.io.File;

@@ -73,7 +73,14 @@ public interface SOAPConstants {
 
     public static final String SOAP_FAULT_DETAIL_EXCEPTION_ENTRY = "Exception";
 
-    // -------- SOAP Exceptions ------------------------------
+    // -------- SOAP Fault Codes ------------------------------
+    public static final String FAULT_CODE_VERSION_MISMATCH = "env:VersionMismatch";
+    public static final String FAULT_CODE_MUST_UNDERSTAND  = "env:MustUnderstand";
+    public static final String FAULT_CODE_DATA_ENCODING_UNKNOWN = "env:DataEncodingUnknown";
 
-    
+    // Followings are different in SOAP 1.1 and 1.2 specifications
+    public static final String FAULT_CODE_SENDER = "";
+    public static final String FAULT_CODE_RECEIVER = "";
+
+
 }

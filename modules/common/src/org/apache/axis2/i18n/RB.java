@@ -19,16 +19,12 @@ package org.apache.axis2.i18n;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * CURRENTLY NOT USED
  * KEEPING FOR REFERENCE  9/19/2002
- * 
+ * <p/>
  * <p>Wrapper class for resource bundles. Property files are used to store
  * resource strings, which are the only types of resources available.
  * Property files can inherit properties from other files so that
@@ -59,7 +55,7 @@ import java.util.Properties;
  * variables. Any dynamic variable defined in PropertiesUtil.getVariableValue()
  * can be used (such as {date}), as well as arguments in the form {0}, {1}, etc.
  * Argument values are specified in the various overloaded getString() methods.</p>
- * 
+ *
  * @author Karl Moss (kmoss@macromedia.com)
  * @author Glen Daniels (gdaniels@apache.org)
  */
@@ -82,34 +78,34 @@ public class RB {
     protected Properties resourceProperties;
 
     /**
-      * Construct a new RB
-      * @param name The name of the property file without the ".properties" extension
-      */
-    public RB(String name) throws MissingResourceException
-    {
+     * Construct a new RB
+     *
+     * @param name The name of the property file without the ".properties" extension
+     */
+    public RB(String name) throws MissingResourceException {
         this(null, name, null);
     }
 
     /**
-      * Construct a new RB
-      * @param caller The calling object. This is used to get the package name
-      * to further construct the basename as well as to get the proper ClassLoader
-      * @param name The name of the property file without the ".properties" extension
-      */
-    public RB(Object caller, String name) throws MissingResourceException
-    {
+     * Construct a new RB
+     *
+     * @param caller The calling object. This is used to get the package name
+     *               to further construct the basename as well as to get the proper ClassLoader
+     * @param name   The name of the property file without the ".properties" extension
+     */
+    public RB(Object caller, String name) throws MissingResourceException {
         this(caller, name, null);
     }
 
     /**
-      * Construct a new RB
-      * @param caller The calling object. This is used to get the package name
-      * to further construct the basename as well as to get the proper ClassLoader
-      * @param name The name of the property file without the ".properties" extension
-      * @param local The local
-      */
-    public RB(Object caller, String name, Locale locale) throws MissingResourceException
-    {
+     * Construct a new RB
+     *
+     * @param caller The calling object. This is used to get the package name
+     *               to further construct the basename as well as to get the proper ClassLoader
+     * @param name   The name of the property file without the ".properties" extension
+     * @param local  The local
+     */
+    public RB(Object caller, String name, Locale locale) throws MissingResourceException {
         ClassLoader cl = null;
 
         if (caller != null) {
@@ -117,8 +113,7 @@ public class RB {
             Class c;
             if (caller instanceof Class) {
                 c = (Class) caller;
-            }
-            else {
+            } else {
                 c = caller.getClass();
             }
 
@@ -157,47 +152,47 @@ public class RB {
     }
 
     /**
-      * Gets a string message from the resource bundle for the given key
-      * @param key The resource key
-      * @return The message
-      */
-    public String getString(String key) throws MissingResourceException
-    {
+     * Gets a string message from the resource bundle for the given key
+     *
+     * @param key The resource key
+     * @return The message
+     */
+    public String getString(String key) throws MissingResourceException {
         return getString(key, (Object[]) null);
     }
 
     /**
-      * <p>Gets a string message from the resource bundle for the given key. The
-      * message may contain variables that will be substituted with the given
-      * arguments. Variables have the format:</p>
-      * <dir>
-      * This message has two variables: {0} and {1}
-      * </dir>
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @return The message
-      */
-    public String getString(String key, Object arg0) throws MissingResourceException
-    {
+     * <p>Gets a string message from the resource bundle for the given key. The
+     * message may contain variables that will be substituted with the given
+     * arguments. Variables have the format:</p>
+     * <dir>
+     * This message has two variables: {0} and {1}
+     * </dir>
+     *
+     * @param key  The resource key
+     * @param arg0 The argument to place in variable {0}
+     * @return The message
+     */
+    public String getString(String key, Object arg0) throws MissingResourceException {
         Object[] o = new Object[1];
         o[0] = arg0;
         return getString(key, o);
     }
 
     /**
-      * <p>Gets a string message from the resource bundle for the given key. The
-      * message may contain variables that will be substituted with the given
-      * arguments. Variables have the format:</p>
-      * <dir>
-      * This message has two variables: {0} and {1}
-      * </dir>
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @param arg1 The argument to place in variable {1}
-      * @return The message
-      */
-    public String getString(String key, Object arg0, Object arg1) throws MissingResourceException
-    {
+     * <p>Gets a string message from the resource bundle for the given key. The
+     * message may contain variables that will be substituted with the given
+     * arguments. Variables have the format:</p>
+     * <dir>
+     * This message has two variables: {0} and {1}
+     * </dir>
+     *
+     * @param key  The resource key
+     * @param arg0 The argument to place in variable {0}
+     * @param arg1 The argument to place in variable {1}
+     * @return The message
+     */
+    public String getString(String key, Object arg0, Object arg1) throws MissingResourceException {
         Object[] o = new Object[2];
         o[0] = arg0;
         o[1] = arg1;
@@ -205,20 +200,20 @@ public class RB {
     }
 
     /**
-      * <p>Gets a string message from the resource bundle for the given key. The
-      * message may contain variables that will be substituted with the given
-      * arguments. Variables have the format:</p>
-      * <dir>
-      * This message has two variables: {0} and {1}
-      * </dir>
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @param arg1 The argument to place in variable {1}
-      * @param arg2 The argument to place in variable {1}
-      * @return The message
-      */
-    public String getString(String key, Object arg0, Object arg1, Object arg2) throws MissingResourceException
-    {
+     * <p>Gets a string message from the resource bundle for the given key. The
+     * message may contain variables that will be substituted with the given
+     * arguments. Variables have the format:</p>
+     * <dir>
+     * This message has two variables: {0} and {1}
+     * </dir>
+     *
+     * @param key  The resource key
+     * @param arg0 The argument to place in variable {0}
+     * @param arg1 The argument to place in variable {1}
+     * @param arg2 The argument to place in variable {1}
+     * @return The message
+     */
+    public String getString(String key, Object arg0, Object arg1, Object arg2) throws MissingResourceException {
         Object[] o = new Object[3];
         o[0] = arg0;
         o[1] = arg1;
@@ -227,18 +222,18 @@ public class RB {
     }
 
     /**
-      * <p>Gets a string message from the resource bundle for the given key. The
-      * message may contain variables that will be substituted with the given
-      * arguments. Variables have the format:</p>
-      * <dir>
-      * This message has two variables: {0} and {1}
-      * </dir>
-      * @param key The resource key
-      * @param array An array of objects to place in corresponding variables
-      * @return The message
-      */
-    public String getString(String key, Object[] array) throws MissingResourceException
-    {
+     * <p>Gets a string message from the resource bundle for the given key. The
+     * message may contain variables that will be substituted with the given
+     * arguments. Variables have the format:</p>
+     * <dir>
+     * This message has two variables: {0} and {1}
+     * </dir>
+     *
+     * @param key   The resource key
+     * @param array An array of objects to place in corresponding variables
+     * @return The message
+     */
+    public String getString(String key, Object[] array) throws MissingResourceException {
         String msg = null;
         if (resourceProperties != null) {
             msg = resourceProperties.getProperty(key);
@@ -246,8 +241,8 @@ public class RB {
 
         if (msg == null) {
             throw new MissingResourceException("Cannot find resource key \"" + key +
-                                               "\" in base name " + basePropertyFileName,
-                                               basePropertyFileName, key);
+                    "\" in base name " + basePropertyFileName,
+                    basePropertyFileName, key);
         }
 
         msg = MessageFormat.format(msg, array);
@@ -256,8 +251,7 @@ public class RB {
 
     protected void loadProperties(String basename, ClassLoader loader, Locale locale,
                                   Locale defaultLocale)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         // Check the cache first
         String loaderName = "";
         if (loader != null) {
@@ -284,7 +278,7 @@ public class RB {
 
             if (p == null) {
                 throw new MissingResourceException("Cannot find resource for base name " +
-                                                   basePropertyFileName, basePropertyFileName, "");
+                        basePropertyFileName, basePropertyFileName, "");
             }
 
             // Cache the properties
@@ -296,8 +290,7 @@ public class RB {
     }
 
     protected Properties loadProperties(String basename, ClassLoader loader, Locale locale,
-                                        Properties props)
-    {
+                                        Properties props) {
 
         String language = locale.getLanguage();
         String country = locale.getCountry();
@@ -313,19 +306,18 @@ public class RB {
             if (country != null) {
 
                 if (variant != null) {
-                    props = merge(props, loadProperties(basename + "_" + language +"_" + country + "_" + variant +
-                                                        PROPERTY_EXT, loader));
+                    props = merge(props, loadProperties(basename + "_" + language + "_" + country + "_" + variant +
+                            PROPERTY_EXT, loader));
                 }
-                props = merge(props, loadProperties(basename + "_" + language +"_" + country +
-                                                    PROPERTY_EXT, loader));
+                props = merge(props, loadProperties(basename + "_" + language + "_" + country +
+                        PROPERTY_EXT, loader));
             }
             props = merge(props, loadProperties(basename + "_" + language + PROPERTY_EXT, loader));
         }
         return props;
     }
 
-    protected Properties loadProperties(String resname, ClassLoader loader)
-    {
+    protected Properties loadProperties(String resname, ClassLoader loader) {
         Properties props = null;
 
         // Attempt to open and load the properties
@@ -344,19 +336,16 @@ public class RB {
                 props = new Properties();
                 try {
                     props.load(in);
-                }
-                catch (IOException ex) {
+                } catch (IOException ex) {
                     // On error, clear the props
                     props = null;
                 }
             }
-        }
-        finally {
+        } finally {
             if (in != null) {
                 try {
                     in.close();
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     // Ignore error on close
                 }
             }
@@ -365,18 +354,15 @@ public class RB {
     }
 
     /**
-      * Merge two Properties objects
-      */
-    protected Properties merge(Properties p1, Properties p2)
-    {
+     * Merge two Properties objects
+     */
+    protected Properties merge(Properties p1, Properties p2) {
         if ((p1 == null) &&
-            (p2 == null)) {
+                (p2 == null)) {
             return null;
-        }
-        else if (p1 == null) {
+        } else if (p1 == null) {
             return p2;
-        }
-        else if (p2 == null) {
+        } else if (p2 == null) {
             return p1;
         }
 
@@ -393,53 +379,52 @@ public class RB {
     }
 
     /**
-      * Get the underlying properties
-      */
-    public Properties getProperties()
-    {
+     * Get the underlying properties
+     */
+    public Properties getProperties() {
         return resourceProperties;
     }
 
     // STATIC ACCESSORS
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param key The resource key
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param caller The calling object, used to get the package name and class loader
+     * @param key    The resource key
+     * @return The formatted message
+     */
     public static String getString(Object caller, String key)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         return getMessage(caller, BASE_NAME, null, key, null);
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param caller The calling object, used to get the package name and class loader
+     * @param key    The resource key
+     * @param arg0   The argument to place in variable {0}
+     * @return The formatted message
+     */
     public static String getString(Object caller, String key, Object arg0)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         Object[] o = new Object[1];
         o[0] = arg0;
         return getMessage(caller, BASE_NAME, null, key, o);
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @param arg1 The argument to place in variable {1}
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param caller The calling object, used to get the package name and class loader
+     * @param key    The resource key
+     * @param arg0   The argument to place in variable {0}
+     * @param arg1   The argument to place in variable {1}
+     * @return The formatted message
+     */
     public static String getString(Object caller, String key, Object arg0, Object arg1)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         Object[] o = new Object[2];
         o[0] = arg0;
         o[1] = arg1;
@@ -447,17 +432,17 @@ public class RB {
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @param arg1 The argument to place in variable {1}
-      * @param arg2 The argument to place in variable {2}
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param caller The calling object, used to get the package name and class loader
+     * @param key    The resource key
+     * @param arg0   The argument to place in variable {0}
+     * @param arg1   The argument to place in variable {1}
+     * @param arg2   The argument to place in variable {2}
+     * @return The formatted message
+     */
     public static String getString(Object caller, String key, Object arg0, Object arg1, Object arg2)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         Object[] o = new Object[3];
         o[0] = arg0;
         o[1] = arg1;
@@ -466,18 +451,18 @@ public class RB {
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @param arg1 The argument to place in variable {1}
-      * @param arg2 The argument to place in variable {2}
-      * @param arg3 The argument to place in variable {3}
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param caller The calling object, used to get the package name and class loader
+     * @param key    The resource key
+     * @param arg0   The argument to place in variable {0}
+     * @param arg1   The argument to place in variable {1}
+     * @param arg2   The argument to place in variable {2}
+     * @param arg3   The argument to place in variable {3}
+     * @return The formatted message
+     */
     public static String getString(Object caller, String key, Object arg0, Object arg1, Object arg2, Object arg3)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         Object[] o = new Object[4];
         o[0] = arg0;
         o[1] = arg1;
@@ -488,19 +473,19 @@ public class RB {
 
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @param arg1 The argument to place in variable {1}
-      * @param arg2 The argument to place in variable {2}
-      * @param arg3 The argument to place in variable {3}
-      * @param arg4 The argument to place in variable {4}
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param caller The calling object, used to get the package name and class loader
+     * @param key    The resource key
+     * @param arg0   The argument to place in variable {0}
+     * @param arg1   The argument to place in variable {1}
+     * @param arg2   The argument to place in variable {2}
+     * @param arg3   The argument to place in variable {3}
+     * @param arg4   The argument to place in variable {4}
+     * @return The formatted message
+     */
     public static String getString(Object caller, String key, Object arg0, Object arg1, Object arg2, Object arg3, Object arg4)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         Object[] o = new Object[5];
         o[0] = arg0;
         o[1] = arg1;
@@ -512,60 +497,60 @@ public class RB {
 
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param key The resource key
-      * @param array An array of objects to place in corresponding variables
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param caller The calling object, used to get the package name and class loader
+     * @param key    The resource key
+     * @param array  An array of objects to place in corresponding variables
+     * @return The formatted message
+     */
     public static String getString(Object caller, String key, Object[] args)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         return getMessage(caller, BASE_NAME, null, key, args);
     }
 
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param locale The locale
-      * @param key The resource key
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param caller The calling object, used to get the package name and class loader
+     * @param locale The locale
+     * @param key    The resource key
+     * @return The formatted message
+     */
     public static String getString(Object caller, Locale locale, String key)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         return getMessage(caller, BASE_NAME, locale, key, null);
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param locale The locale
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param caller The calling object, used to get the package name and class loader
+     * @param locale The locale
+     * @param key    The resource key
+     * @param arg0   The argument to place in variable {0}
+     * @return The formatted message
+     */
     public static String getString(Object caller, Locale locale, String key, Object arg0)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         Object[] o = new Object[1];
         o[0] = arg0;
         return getMessage(caller, BASE_NAME, locale, key, o);
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param locale The locale
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @param arg1 The argument to place in variable {1}
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param caller The calling object, used to get the package name and class loader
+     * @param locale The locale
+     * @param key    The resource key
+     * @param arg0   The argument to place in variable {0}
+     * @param arg1   The argument to place in variable {1}
+     * @return The formatted message
+     */
     public static String getString(Object caller, Locale locale, String key, Object arg0, Object arg1)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         Object[] o = new Object[2];
         o[0] = arg0;
         o[1] = arg1;
@@ -573,18 +558,18 @@ public class RB {
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param locale The locale
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @param arg1 The argument to place in variable {1}
-      * @param arg2 The argument to place in variable {2}
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param caller The calling object, used to get the package name and class loader
+     * @param locale The locale
+     * @param key    The resource key
+     * @param arg0   The argument to place in variable {0}
+     * @param arg1   The argument to place in variable {1}
+     * @param arg2   The argument to place in variable {2}
+     * @return The formatted message
+     */
     public static String getString(Object caller, Locale locale, String key, Object arg0, Object arg1, Object arg2)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         Object[] o = new Object[3];
         o[0] = arg0;
         o[1] = arg1;
@@ -593,19 +578,19 @@ public class RB {
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param locale The locale
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @param arg1 The argument to place in variable {1}
-      * @param arg2 The argument to place in variable {2}
-      * @param arg3 The argument to place in variable {3}
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param caller The calling object, used to get the package name and class loader
+     * @param locale The locale
+     * @param key    The resource key
+     * @param arg0   The argument to place in variable {0}
+     * @param arg1   The argument to place in variable {1}
+     * @param arg2   The argument to place in variable {2}
+     * @param arg3   The argument to place in variable {3}
+     * @return The formatted message
+     */
     public static String getString(Object caller, Locale locale, String key, Object arg0, Object arg1, Object arg2, Object arg3)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         Object[] o = new Object[4];
         o[0] = arg0;
         o[1] = arg1;
@@ -615,19 +600,19 @@ public class RB {
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param locale The locale
-      * @param key The resource key
-      * @param arg0 The argument to place in variable {0}
-      * @param arg1 The argument to place in variable {1}
-      * @param arg2 The argument to place in variable {2}
-      * @param arg3 The argument to place in variable {3}
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param caller The calling object, used to get the package name and class loader
+     * @param locale The locale
+     * @param key    The resource key
+     * @param arg0   The argument to place in variable {0}
+     * @param arg1   The argument to place in variable {1}
+     * @param arg2   The argument to place in variable {2}
+     * @param arg3   The argument to place in variable {3}
+     * @return The formatted message
+     */
     public static String getString(Object caller, Locale locale, String key, Object arg0, Object arg1, Object arg2, Object arg3, Object arg4)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         Object[] o = new Object[5];
         o[0] = arg0;
         o[1] = arg1;
@@ -638,32 +623,31 @@ public class RB {
     }
 
     /**
-      * Get a message from resource.properties from the package of the given object.
-      * @param caller The calling object, used to get the package name and class loader
-      * @param locale The locale
-      * @param key The resource key
-      * @param array An array of objects to place in corresponding variables
-      * @return The formatted message
-      */
+     * Get a message from resource.properties from the package of the given object.
+     *
+     * @param caller The calling object, used to get the package name and class loader
+     * @param locale The locale
+     * @param key    The resource key
+     * @param array  An array of objects to place in corresponding variables
+     * @return The formatted message
+     */
     public static String getString(Object caller, Locale locale, String key, Object[] args)
-        throws MissingResourceException
-    {
+            throws MissingResourceException {
         return getMessage(caller, BASE_NAME, locale, key, args);
     }
 
     // Workhorse that does the resource loading and key lookup
     public static String getMessage(Object caller, String basename, Locale locale, String key,
-                                       Object[] args)
-        throws MissingResourceException
-    {
+                                    Object[] args)
+            throws MissingResourceException {
         String msg = null;
         MissingResourceException firstEx = null;
         String fullName = null;
         Class curClass = null;
         boolean didNull = false;
-        
+
         if (caller != null) {
-            if(caller instanceof Class)
+            if (caller instanceof Class)
                 curClass = (Class) caller;
             else
                 curClass = caller.getClass();
@@ -680,20 +664,17 @@ public class RB {
                 int pos = pkgName.lastIndexOf(".");
                 if (pos > 0) {
                     fullName = pkgName.substring(0, pos + 1).replace('.', '/') + basename;
-                }
-                else {
+                } else {
                     fullName = basename;
                 }
-            }
-            else {
+            } else {
                 fullName = basename;
             }
 
             try {
                 RB rb = new RB(caller, fullName, locale);
                 msg = rb.getString(key, args);
-            }
-            catch (MissingResourceException ex) {
+            } catch (MissingResourceException ex) {
                 if (curClass == null) {
                     throw ex;
                 }
@@ -713,7 +694,7 @@ public class RB {
                 } else {
                     String cname = curClass.getName();
                     if (cname.startsWith("java.") ||
-                        cname.startsWith("javax.")) {
+                            cname.startsWith("javax.")) {
                         if (didNull)
                             throw firstEx;
                         didNull = true;
@@ -728,10 +709,9 @@ public class RB {
     }
 
     /**
-      * Clears the internal cache
-      */
-    public static void clearCache()
-    {
+     * Clears the internal cache
+     */
+    public static void clearCache() {
         propertyCache.clear();
     }
 }

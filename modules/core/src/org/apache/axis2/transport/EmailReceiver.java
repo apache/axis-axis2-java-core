@@ -17,8 +17,8 @@
  */
 package org.apache.axis2.transport;
 
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.AxisFault;
 
 import javax.mail.Authenticator;
 import javax.mail.Folder;

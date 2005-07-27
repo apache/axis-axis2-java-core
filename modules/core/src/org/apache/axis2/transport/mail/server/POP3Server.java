@@ -1,8 +1,8 @@
 package org.apache.axis2.transport.mail.server;
 
-import org.apache.axis2.engine.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.AxisFault;
 
 import java.io.IOException;
 import java.net.ServerSocket;

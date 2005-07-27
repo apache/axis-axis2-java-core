@@ -25,6 +25,7 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeaderBlock;
 import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.AxisFault;
 
 /**
  * This handler checks that the SOAP processing model rules have been followed

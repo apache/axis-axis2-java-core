@@ -16,7 +16,7 @@
 
 package sample.amazon.search;
 
-import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.AxisFault;
 
 import javax.swing.*;
 import java.awt.*;

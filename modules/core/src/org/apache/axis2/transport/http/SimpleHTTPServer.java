@@ -22,8 +22,8 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -129,7 +129,7 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
                             new HTTPWorker(configurationContext, socket));
                 }
             }
-        } catch (IOException e) {
+        } catch (AxisFault e) {
             log.error(e);
         }
         stop();

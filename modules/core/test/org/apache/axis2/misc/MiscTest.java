@@ -17,8 +17,8 @@
 package org.apache.axis2.misc;
 
 import org.apache.axis2.AbstractTestCase;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.SessionContext;
-import org.apache.axis2.engine.AxisFault;
 
 import java.lang.reflect.InvocationTargetException;
 

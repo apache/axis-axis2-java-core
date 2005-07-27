@@ -22,9 +22,9 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import org.apache.axis2.Constants;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.transport.mail.server.MailConstants;
 import org.apache.axis2.transport.mail.server.MailServer;
 

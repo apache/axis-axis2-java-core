@@ -24,9 +24,9 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.util.PhaseValidator;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

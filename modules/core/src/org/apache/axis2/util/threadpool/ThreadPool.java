@@ -1,7 +1,7 @@
 package org.apache.axis2.util.threadpool;
 
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -59,7 +59,7 @@ public class ThreadPool {
      * This will wait till all the workers that are already handed over to the
      * thread pool get executed.
      *
-     * @throws AxisFault
+     * @throws org.apache.axis2.AxisFault
      */
     public void safeShutDown() throws AxisFault {
         synchronized (this) {

@@ -17,10 +17,10 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AbstractTestCase;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.phaseresolver.PhaseException;
 
 import javax.xml.namespace.QName;

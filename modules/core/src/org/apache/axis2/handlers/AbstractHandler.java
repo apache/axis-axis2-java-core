@@ -18,8 +18,8 @@ package org.apache.axis2.handlers;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 

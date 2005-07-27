@@ -24,8 +24,8 @@ import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 

@@ -1,8 +1,8 @@
 package userguide.loggingmodule;
 
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.modules.Module;
+import org.apache.axis2.AxisFault;
 
 /**
  * Created by IntelliJ IDEA.

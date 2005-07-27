@@ -17,7 +17,7 @@
 package org.apache.axis2.deployment.repository.util;
 
 import org.apache.axis2.deployment.DeploymentClassLoader;
-import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import java.io.File;

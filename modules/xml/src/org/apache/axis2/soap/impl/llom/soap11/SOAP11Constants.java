@@ -46,6 +46,10 @@ public interface SOAP11Constants extends SOAPConstants {
 
     //SOAP 1.2 Content Type
     public static final String SOAP_11_CONTENT_TYPE = "text/xml";
-    
+
+     // -------- SOAP Fault Codes ------------------------------
+    public static final String FAULT_CODE_SENDER = "Client";
+    public static final String FAULT_CODE_RECEIVER = "Server";
+
     public static final String SOAP_ACTOR_NEXT = "http://schemas.xmlsoap.org/soap/actor/next";
 }

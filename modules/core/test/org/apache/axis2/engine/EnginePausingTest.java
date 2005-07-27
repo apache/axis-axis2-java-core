@@ -31,6 +31,7 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.http.HTTPTransportSender;
+import org.apache.axis2.AxisFault;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;

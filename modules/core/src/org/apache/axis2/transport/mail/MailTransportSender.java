@@ -19,10 +19,10 @@ package org.apache.axis2.transport.mail;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.AbstractTransportSender;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.AxisFault;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

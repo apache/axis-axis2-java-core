@@ -22,6 +22,7 @@ import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 
@@ -53,7 +54,7 @@ public abstract class AbstractDispatcher extends AbstractHandler implements Hand
      * This is final, obivously not for overiding
      *
      * @param msgctx
-     * @throws AxisFault
+     * @throws org.apache.axis2.AxisFault
      */
     public final void invoke(MessageContext msgctx) throws AxisFault {
 

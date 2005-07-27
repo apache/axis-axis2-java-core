@@ -30,10 +30,10 @@ public class MessagesConstants {
     public static final String rootPackageName = "org.apache.axis2.i18n".intern();
 
     public static final ResourceBundle rootBundle =
-        ProjectResourceBundle.getBundle(projectName,
-                                        rootPackageName,
-                                        resourceName,
-                                        locale,
-                                        MessagesConstants.class.getClassLoader(),
-                                        null);
+            ProjectResourceBundle.getBundle(projectName,
+                    rootPackageName,
+                    resourceName,
+                    locale,
+                    MessagesConstants.class.getClassLoader(),
+                    null);
 }

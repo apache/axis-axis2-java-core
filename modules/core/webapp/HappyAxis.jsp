@@ -9,10 +9,11 @@
                  org.apache.axis2.om.*,
                  org.apache.axis2.Constants,
                  javax.xml.stream.XMLOutputFactory,
-                 org.apache.axis2.engine.AxisFault,
+                 org.apache.axis2.AxisFault,
                  javax.xml.stream.XMLStreamException,
                  javax.xml.namespace.QName,
-                 java.io.StringWriter"
+                 java.io.StringWriter,
+                 org.apache.axis2.AxisFault"
    session="false" %>
 <%
      /*

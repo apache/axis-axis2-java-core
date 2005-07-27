@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.engine;
+package org.apache.axis2;
 
 import java.lang.reflect.InvocationTargetException;
+import java.rmi.RemoteException;
 
 /**
  * An exception which maps cleanly to a SOAP fault.
@@ -28,7 +29,9 @@ import java.lang.reflect.InvocationTargetException;
  * <li>Fault details; an xml tree of fault specific stuff
  * </ol>
  */
-public class AxisFault extends java.rmi.RemoteException {
+public class AxisFault extends RemoteException {
+
+    private String soapFaultCode;
 
     public AxisFault(Throwable arg1) {
         super(arg1.getMessage(), arg1);
@@ -70,5 +73,26 @@ public class AxisFault extends java.rmi.RemoteException {
             return (AxisFault) e;
         }
         return new AxisFault(e.getMessage(), e);
+    }
+
+     /**
+     *
+     * @param messageText - this will appear as the Text in the Reason information item of SOAP Fault
+     * @param faultCode - this will appear as the Value in the Code information item of SOAP Fault
+     * @param cause - this will appear under the Detail information item of SOAP Fault
+     */
+    public AxisFault(String messageText, String faultCode, Throwable cause) {
+        super(messageText, cause);
+        this.soapFaultCode = faultCode;
+    }
+
+    /**
+     *
+     * @param messageText - this will appear as the Text in the Reason information item of SOAP Fault
+     * @param faultCode - this will appear as the Value in the Code information item of SOAP Fault
+     */
+    public AxisFault(String messageText, String faultCode) {
+        super(messageText);
+        this.soapFaultCode = faultCode;
     }
 }

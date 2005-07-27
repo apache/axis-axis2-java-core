@@ -21,7 +21,7 @@ import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
-import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 

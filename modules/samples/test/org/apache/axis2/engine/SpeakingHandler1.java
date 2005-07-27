@@ -21,6 +21,7 @@ import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

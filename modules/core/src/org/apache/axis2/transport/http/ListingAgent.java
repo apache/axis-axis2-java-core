@@ -18,12 +18,12 @@
 package org.apache.axis2.transport.http;
 
 import org.apache.axis2.Constants;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfigurationImpl;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.i18n.Messages;
 
 import javax.servlet.http.HttpServletRequest;
@@ -194,7 +194,7 @@ public class ListingAgent {
         res.sendRedirect(SELECT_SERVICE_JSP_NAME);
     }
 
-    private void adminLogging(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    private void adminLogging(HttpServletRequest req, HttpServletResponse res) throws AxisFault, IOException {
         String username = req.getParameter("userName");
         String password = req.getParameter("password");
         if (username == null

@@ -18,8 +18,8 @@ package org.apache.axis2.transport;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.AxisFault;
 
 /**
  * This send the SOAP Message to other SOAP nodes and this alone write the SOAP Message to the 
@@ -30,14 +30,14 @@ public interface TransportSender extends Handler {
      * Initialize
      * @param confContext
      * @param transportOut
-     * @throws AxisFault
+     * @throws org.apache.axis2.AxisFault
      */
     public void init(ConfigurationContext confContext,
                      TransportOutDescription transportOut) throws AxisFault;
     /**
      * Clean up
      * @param msgContext
-     * @throws AxisFault
+     * @throws org.apache.axis2.AxisFault
      */                     
     public void cleanUp(MessageContext msgContext) throws AxisFault;
 

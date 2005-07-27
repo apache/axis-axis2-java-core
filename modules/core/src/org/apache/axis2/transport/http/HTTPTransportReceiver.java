@@ -18,8 +18,8 @@ package org.apache.axis2.transport.http;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.AxisFault;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -214,7 +214,7 @@ public class HTTPTransportReceiver {
      *
      * @param terminal
      * @return
-     * @throws AxisFault
+     * @throws org.apache.axis2.AxisFault
      */
     private String readFirstLineArg(char terminal) throws AxisFault {
         StringBuffer str = new StringBuffer();

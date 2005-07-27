@@ -16,7 +16,8 @@
 
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.engine.AxisFault;
+
+import org.apache.axis2.AxisFault;
 
 public class DeploymentException extends AxisFault {
     public DeploymentException(Throwable cause) {
