@@ -24,6 +24,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisFault;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -54,7 +55,6 @@ public abstract class MEPClient {
         doREST = b;
     }
 
-
     public String getSoapAction() {
         return soapAction;
     }
@@ -68,19 +68,21 @@ public abstract class MEPClient {
      * prepare the message context for invocation, here the properties kept in the 
      * MEPClient copied to the MessageContext
      */
-    protected void prepareInvocation(OperationDescription axisop,
-                                    MessageContext msgCtx) throws AxisFault {
+    protected void prepareInvocation(OperationDescription axisop, MessageContext msgCtx)
+        throws AxisFault {
         if (axisop == null) {
             throw new AxisFault(Messages.getMessage("cannotBeNullOperationDescription"));
         }
         //make sure operation is type right MEP
         if (mep.equals(axisop.getMessageExchangePattern())) {
-            throw new AxisFault(Messages.getMessage("mepClientSupportOnly",
-                mep,axisop.getMessageExchangePattern()));
+            throw new AxisFault(
+                Messages.getMessage(
+                    "mepClientSupportOnly",
+                    mep,
+                    axisop.getMessageExchangePattern()));
         }
         //if operation not alrady added, add it
-        if (serviceContext.getServiceConfig().getOperation(axisop.getName()) ==
-                null) {
+        if (serviceContext.getServiceConfig().getOperation(axisop.getName()) == null) {
             serviceContext.getServiceConfig().addOperation(axisop);
         }
         msgCtx.setDoingREST(doREST);
@@ -98,15 +100,14 @@ public abstract class MEPClient {
      * @throws AxisFault
      */
     protected MessageContext prepareTheSOAPEnvelope(OMElement toSend) throws AxisFault {
-        MessageContext msgctx = new MessageContext(
-                serviceContext.getEngineContext());
+        MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
 
         SOAPEnvelope envelope = createDefaultSOAPEnvelope();
         envelope.getBody().addChild(toSend);
         msgctx.setEnvelope(envelope);
         return msgctx;
     }
-    
+
     /**
      * try to infer the transport looking at the URL, the URL can be http:// 
      * tcp:// mail:// local://. The method will look for the trnasport name as the 
@@ -126,8 +127,8 @@ public abstract class MEPClient {
         }
 
         if (transport != null) {
-            return serviceContext.getEngineContext().getAxisConfiguration()
-                    .getTransportOut(new QName(transport));
+            return serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(
+                new QName(transport));
 
         } else {
             throw new AxisFault(Messages.getMessage("cannotInferTransport"));
@@ -143,15 +144,14 @@ public abstract class MEPClient {
         SOAPFactory fac = null;
         if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             fac = OMAbstractFactory.getSOAP12Factory();
-        } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
-                soapVersionURI)) {
+        } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             fac = OMAbstractFactory.getSOAP11Factory();
         } else {
             throw new AxisFault(Messages.getMessage("invaidSOAPversion"));
         }
         return fac.getDefaultEnvelope();
     }
-    
+
     /**
      * Engage a given Module to the current invocation. But to call this method the 
      * Module *MUST* be enable (picked up by the deployment and known to Axis2) else
@@ -160,10 +160,12 @@ public abstract class MEPClient {
      * @throws AxisFault
      */
     public void engageModule(QName name) throws AxisFault {
-        serviceContext.getEngineContext().getAxisConfiguration().engageModule(
-                name);
+        AxisConfiguration axisConf = serviceContext.getEngineContext().getAxisConfiguration();
+        //if it is already engeged do not engege it agaien
+        if (!axisConf.isEngaged(name)) {
+            axisConf.engageModule(name);
+        }
     }
-
 
     /**
      * @param string

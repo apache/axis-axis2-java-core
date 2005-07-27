@@ -59,4 +59,9 @@ public interface SOAP12Constants extends SOAPConstants {
 
     //SOAP 1.2 Content Type
     public static final String SOAP_12_CONTENT_TYPE = "application/soap+xml";
+    
+    public static final String SOAP_ROLE_NEXT = "http://www.w3.org/2003/05/soap-envelope/role/next";
+    public static final String SOAP_ROLE_NONE = "http://www.w3.org/2003/05/soap-envelope/role/next";
+    public static final String SOAP_ROLE_ULTIMATE_RECEIVER = "http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver";
+    
 }

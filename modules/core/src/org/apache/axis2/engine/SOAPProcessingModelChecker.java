@@ -23,6 +23,8 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeaderBlock;
+import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 
 /**
  * This handler checks that the SOAP processing model rules have been followed
@@ -30,31 +32,49 @@ import org.apache.axis2.soap.SOAPHeaderBlock;
  */
 public class SOAPProcessingModelChecker extends AbstractHandler {
 
-public void invoke(MessageContext msgContext) throws AxisFault {
-    // determine SOAP version of message (waiting for Chinthaka's
-    // method)
-//  	boolean isSOAP12 = true;
-//   
-//       SOAPEnvelope se = msgContext.getEnvelope();
-//        if (se.getHeader() == null) {
-//            return;
-//        }
-//        Iterator hbs = se.getHeader().examineAllHeaderBlocks();
-//        while (hbs.hasNext()) {
-//            SOAPHeaderBlock hb = (SOAPHeaderBlock) hbs.next();
-//
-//            // if this header block has been processed or mustUnderstand isn't
-//            // turned on then its cool
-//            if (hb.isProcessed() || !hb.getMustUnderstand())
-//                continue;
-//            }
-//
-//            // if this header block is not targetted to me then its not my
-//            // problem. Currently this code only supports the "next" role; we
-//            // need to fix this to allow the engine/service to be in one or more
-//            // additional roles and then to check that any headers targetted for
-//            // that role too have been dealt with.
-//        	if there's no role or if the role is NEXT then throw fault
-//        }
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        SOAPEnvelope se = msgContext.getEnvelope();
+        if (se.getHeader() == null) {
+            return;
+        }
+        Iterator hbs = se.getHeader().examineAllHeaderBlocks();
+        while (hbs.hasNext()) {
+            SOAPHeaderBlock hb = (SOAPHeaderBlock) hbs.next();
+
+            // if this header block has been processed or mustUnderstand isn't
+            // turned on then its cool
+            if (hb.isProcessed() || !hb.getMustUnderstand()) {
+                continue;
+            }
+            // if this header block is not targetted to me then its not my
+            // problem. Currently this code only supports the "next" role; we
+            // need to fix this to allow the engine/service to be in one or more
+            // additional roles and then to check that any headers targetted for
+            // that role too have been dealt with.
+
+            boolean isSOAP12 =
+                SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(msgContext.getSOAPVersion());
+            String role = hb.getRole();
+
+            if (isSOAP12) {
+                //if must understand and soap 1.2 the Role should be NEXT , if it is null we considerr
+                // it to be NEXT
+                if (role != null && !SOAP12Constants.SOAP_ROLE_NEXT.equals(role)) {
+                    throw new AxisFault("Must Understand check failed");
+                }
+                
+                //TODO what should be do with the Ulitmate Receiver? Axis2 is ultimate Receiver most of the time
+                //should we support that as well
+            } else {
+                //if must understand and soap 1.1 the actor should be NEXT , if it is null we considerr
+                // it to be NEXT
+                if (role != null && !SOAP11Constants.SOAP_ACTOR_NEXT.equals(role)) {
+                    throw new AxisFault("Must Understand check failed");
+                }
+            }
+
+        }
+
     }
+
 }
