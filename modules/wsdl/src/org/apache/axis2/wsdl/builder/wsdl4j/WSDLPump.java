@@ -56,6 +56,7 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.Types;
+import javax.wsdl.Import;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
@@ -71,6 +72,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
+import java.util.Vector;
 
 /**
  * @author chathura@opensource.lk
@@ -139,14 +142,38 @@ public class WSDLPump {
         Types wsdl4jTypes = wsdl4JDefinition.getTypes();
         if (null != wsdl4jTypes) {
             WSDLTypes wsdlTypes = this.wsdlComponenetFactory.createTypes();
-
-
             this.copyExtensibleElements(wsdl4jTypes.getExtensibilityElements(),
                     wsdlTypes);
-
             this.womDefinition.setTypes(wsdlTypes);
         }
 
+
+        // There can be types that are imported. Check the imports and
+        //do the necessary things
+        Map wsdlImports = wsdl4JDefinition.getImports();
+        if (null != wsdlImports && !wsdlImports.isEmpty()){
+            Collection importsCollection = wsdlImports.values();
+
+            for (Iterator iterator = importsCollection.iterator(); iterator.hasNext();) {
+                Vector values = (Vector)iterator.next();
+                for (int i = 0; i < values.size(); i++) {
+                    Import wsdlImport = (Import)values.elementAt(i);;
+                    if (wsdlImport.getDefinition()!=null){
+                        Definition importedDef = wsdlImport.getDefinition();
+                        //add the imported types
+                        if (null!=importedDef.getTypes()){
+                            WSDLTypes wsdlTypes = this.wsdlComponenetFactory.createTypes();
+                            this.copyExtensibleElements(importedDef.getTypes().
+                                    getExtensibilityElements(),
+                                    wsdlTypes);
+                            this.womDefinition.setTypes(wsdlTypes);
+                        }
+                    }
+
+                }
+
+            }
+        }
         ///////////////////(2)Copy the Interfaces///////////////////////////
         //copy the Interfaces: Get the PortTypes from WSDL4J parse OM and
         // copy it to the

@@ -2,6 +2,7 @@ package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
+import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLTypes;
 import org.apache.wsdl.extensions.ExtensionConstants;
@@ -55,6 +56,9 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             WSDLTypes typesList = configuration.getWom().getTypes();
             if (typesList == null) {
                 //there are no types to be code generated
+                //However if the type mapper is left empty it will be a problem for the other
+                //processes. Hence the default type mapper is set to the configuration
+                this.configuration.setTypeMapper(new DefaultTypeMapper());
                 return;
             }
             List typesArray = typesList.getExtensibilityElements();
@@ -68,17 +72,15 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
 
                     try {
                         Element schemaElement = ((Schema) extensiblityElt).getElelment();
-                        System.out.println("schemaElement = " + schemaElement);
-//                    //add the namespaces
+                        //System.out.println("schemaElement = " + schemaElement);
                         XmlOptions options = new XmlOptions();
-                        options.setCompileDownloadUrls();
+                        //options.setCompileDownloadUrls();//download imported URL's
                         options.setLoadAdditionalNamespaces(
-                                configuration.getWom().getNamespaces());
+                                configuration.getWom().getNamespaces()); //add the namespaces
                         //options.
                         xmlObjects[i] =
                                 XmlObject.Factory.parse(schemaElement, options);
                     } catch (Exception e) {
-
                         throw new RuntimeException(e);
                     }
                 }
@@ -87,6 +89,9 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             final File outputFolder = configuration.getOutputLocation();
 
             try {
+
+                //System.out.println(XmlBeans.loadXsd(xmlObjects));
+
                 SchemaTypeSystem sts = XmlBeans.compileXmlBeans(DEFAULT_STS_NAME, null,
                         xmlObjects,
                         new BindingConfig(), XmlBeans.getContextTypeLoader(),
@@ -109,7 +114,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                                 file.createNewFile();
                                 return new FileWriter(file);
                             }
-                        }, null);
+                        }, new XmlOptions().setCompileDownloadUrls());
 
                 //create the type mapper
                 JavaTypeMapper mapper = new JavaTypeMapper();

@@ -131,11 +131,16 @@ public class AntCodegenTask extends Task {
     public void execute() throws BuildException {
         try {
 
+            Map commandLineOptions = this.fillOptionMap();
+            System.out.println("options =" +commandLineOptions);
             CommandLineOptionParser parser = new CommandLineOptionParser(
-                    this.fillOptionMap());
+                    commandLineOptions);
+            //System.out.println(" parser" + parser);
             new CodeGenerationEngine(parser).generate();
         } catch (Throwable e) {
-            throw new BuildException(e);
+            //System.out.println("Thrown here $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$b");
+              e.printStackTrace();
+              throw new BuildException(e);
         }
 
     }
