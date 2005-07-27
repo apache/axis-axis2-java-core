@@ -168,8 +168,8 @@
                 <exclude>**org/apache/axis2/mail/*.java</exclude>
 
                 <!--Deepal SOAP test suit is failing due to some problem in AxisEngine some one has to fix that-->
-                <exclude>**/*SOAP12Test.java</exclude>
-                <exclude>**/*SOAP12TestWithFaults.java</exclude>
+<!--                <exclude>**/*SOAP12Test.java</exclude>-->
+<!--                <exclude>**/*SOAP12TestWithFaults.java</exclude>-->
 
                 <!--		<exclude>**/*MailEchoRawXMLTest.java</exclude>
                 <exclude>**/*MailOneWayRawXMLTest.java</exclude>

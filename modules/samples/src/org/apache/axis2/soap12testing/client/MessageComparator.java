@@ -20,18 +20,29 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
+import org.apache.axis2.transport.http.HTTPTransportReceiver;
+import org.apache.axis2.engine.AxisFault;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
+import java.util.Map;
 
 public class MessageComparator {
     public boolean compare(String testNumber, InputStream replyMessage) {
         SOAPEnvelope replyMessageEnvelope;
         SOAPEnvelope requiredMessageEnvelope;
         try {
+//            File file = new File("D:\\Projects\\LSF\\Axis2\\Axis1.0\\modules\\samples/test-resources\\SOAP12Testing\\ReplyMessages\\SOAP12ResT" + testNumber + ".xml");
             File file = new File("test-resources\\SOAP12Testing\\ReplyMessages\\SOAP12ResT" + testNumber + ".xml");
+
+            HTTPTransportReceiver receiver = new HTTPTransportReceiver();
+            Map map = receiver.parseTheHeaders(replyMessage, false);
+
+
+
+
             XMLStreamReader requiredMessageParser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
             OMXMLParserWrapper requiredMessageBuilder = new StAXSOAPModelBuilder(requiredMessageParser,null);
             requiredMessageEnvelope = (SOAPEnvelope) requiredMessageBuilder.getDocumentElement();
@@ -49,6 +60,8 @@ public class MessageComparator {
             e.printStackTrace();
         } catch (XMLComparisonException e) {
             e.printStackTrace();
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();
         }
         return false;
     }

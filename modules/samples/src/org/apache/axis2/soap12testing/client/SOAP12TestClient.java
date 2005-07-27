@@ -16,30 +16,36 @@
 
 package org.apache.axis2.soap12testing.client;
 
+import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.transport.http.HTTPConstants;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.*;
 import java.io.*;
 import java.util.Iterator;
 
-public class SOAP12TestClient {            
+public class SOAP12TestClient {
     public String getReply(int port, String webserviceName,String testNumber) {
         String replyMessage = "";
         try {
             URL netUrl = new URL("http://localhost:"+port+"/axis2/services/"+webserviceName+"/echo");
-            HttpURLConnection connection = (HttpURLConnection) netUrl.openConnection();
-            connection.setDoOutput(true);
+
+            Socket socket =  new Socket("127.0.0.1",port);
+
+//            HttpURLConnection connection = (HttpURLConnection) netUrl.openConnection();
+//            connection.setDoOutput(true);
 
             SOAPCreater soapCreater = new SOAPCreater();
-            String requestMessage = soapCreater.getStringFromSOAPMessage(testNumber);
+            String requestMessage = soapCreater.getStringFromSOAPMessage(testNumber,netUrl);
             PrintWriter out = new PrintWriter(
-                              connection.getOutputStream());
-
+                    socket.getOutputStream());
+//                              connection.getOutputStream());
             out.println(requestMessage);
             out.flush();
-	        out.close();
+            out.close();
 
-            BufferedReader reader = new BufferedReader( new InputStreamReader(connection.getInputStream()));
+            BufferedReader reader = new BufferedReader( new InputStreamReader(socket.getInputStream()));
             StringBuffer sb = new StringBuffer();
             String response = reader.readLine();
             while( null != response ) {
@@ -47,7 +53,8 @@ public class SOAP12TestClient {
                 response = reader.readLine();
             }
             replyMessage = sb.toString();
-            connection.disconnect();
+            socket.close();
+//            connection.disconnect();
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -60,16 +67,15 @@ public class SOAP12TestClient {
     public InputStream getRelpy(int port,String webserviceName,String testNumber) {
         try {
             URL netUrl = new URL("http://localhost:"+port+"/axis2/services/"+webserviceName+"/echo");
-            HttpURLConnection connection = (HttpURLConnection) netUrl.openConnection();
-            connection.setDoOutput(true);
-
+            Socket socket =  new Socket("127.0.0.1",port);
             SOAPCreater soapCreater = new SOAPCreater();
-            String requestMessage = soapCreater.getStringFromSOAPMessage(testNumber);
-            PrintWriter out = new PrintWriter(connection.getOutputStream());
+            String requestMessage = soapCreater.getStringFromSOAPMessage(testNumber,netUrl);
+            PrintWriter out = new PrintWriter(
+                    socket.getOutputStream());
+            System.out.println("Message: " + requestMessage);
             out.println(requestMessage);
             out.flush();
-	        out.close();
-            return connection.getInputStream();
+            return socket.getInputStream();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {

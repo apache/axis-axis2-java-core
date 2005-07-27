@@ -18,15 +18,20 @@ package org.apache.axis2.soap12testing.client;
 
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.engine.AxisFault;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
 import java.io.*;
+import java.net.URL;
 
 public class SOAPCreater {
-    public String getStringFromSOAPMessage(String testNumber) {
-         //D:\Projects\LSF\Axis2\Axis1.0\modules\samples\target\Repository
+    public String getStringFromSOAPMessage(String testNumber , URL url) {
+        //D:\Projects\LSF\Axis2\Axis1.0\modules\samples\target\Repository
 //        File file = new File("D:\\Projects\\LSF\\Axis2\\Axis1.0\\modules\\samples/test-resources\\SOAP12Testing\\RequestMessages\\SOAP12ReqT" + testNumber + ".xml");
         File file = new File("./test-resources\\SOAP12Testing\\RequestMessages\\SOAP12ReqT" + testNumber + ".xml");
         try {
@@ -34,11 +39,19 @@ public class SOAPCreater {
             BufferedInputStream bf = new BufferedInputStream(stream);
             DataInputStream ds = new DataInputStream(bf);
             StringBuffer sb = new StringBuffer();
+
+            sb.append(HTTPConstants.HEADER_POST).append(" ");
+            sb.append(url.getFile()).append(" ").append(HTTPConstants.HEADER_PROTOCOL_10).append(
+                    "\n");
+            sb.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ")
+                    .append(SOAP12Constants.SOAP_12_CONTENT_TYPE);
+            sb.append("; charset=utf-8\n");
+            sb.append("\n");
+
             String record;
             while ((record = ds.readLine()) != null) {
                 sb.append(record.trim());
             }
-            System.out.println("record = " + sb.toString());
             return sb.toString();
         } catch (Exception e) {
             return "";

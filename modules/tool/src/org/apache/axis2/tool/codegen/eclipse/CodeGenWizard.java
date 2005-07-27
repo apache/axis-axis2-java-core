@@ -8,6 +8,8 @@ import org.apache.axis.tool.codegen.eclipse.util.SettingsConstants;
 import org.apache.axis.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis.wsdl.codegen.CodeGenerationEngine;
 import org.apache.wsdl.WSDLDescription;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
