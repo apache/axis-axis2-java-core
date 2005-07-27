@@ -117,14 +117,13 @@ public abstract class SOAPFaultImpl extends SOAPElement
                 SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
     }
 
-
-    // ---------------------------------------------------------------------------------------------//
-
+    /**
+     * If exception detailElement is not there we will return null
+     */
     public Exception getException() throws OMException {
-        getDetail();
-        if (getDetail() == null) {
-            return new Exception(
-                    "No Exception element found in the SOAP Detail element");
+        SOAPFaultDetail detail = getDetail();
+        if (detail == null) {
+            return null;
         }
 
         OMElement exceptionElement = getDetail().getFirstChildWithName(
@@ -132,8 +131,7 @@ public abstract class SOAPFaultImpl extends SOAPElement
         if (exceptionElement != null) {
             return new Exception(exceptionElement.getText());
         }
-        return new Exception(
-                "No Exception element found in the SOAP Detail element");
+        return null;
     }
 
     protected void putExceptionToSOAPFault(Exception e) throws SOAPProcessingException {

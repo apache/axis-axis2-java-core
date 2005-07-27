@@ -17,13 +17,10 @@
  */
 package org.apache.axis2.clientapi;
 
-import java.io.IOException;
-import java.util.Iterator;
-
 import javax.xml.namespace.QName;
 
-import org.apache.axis2.Constants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -35,12 +32,9 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFault;
-import org.apache.axis2.soap.SOAPFaultDetail;
-import org.apache.axis2.soap.impl.llom.SOAPConstants;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.util.threadpool.AxisWorker;
 import org.apache.wsdl.WSDLConstants;
@@ -188,20 +182,14 @@ public class InOutMEPClient extends MEPClient {
             SOAPEnvelope resenvelope = response.getEnvelope();
             if (resenvelope.getBody().hasFault()) {
                 SOAPFault soapFault = resenvelope.getBody().getFault();
-                SOAPFaultDetail faultDetail = soapFault.getDetail();
-                //if there is exception throw it
-                if(faultDetail != null){
-                    Iterator it = faultDetail.getAllDetailEntries();
-                    while(it.hasNext()){
-                        OMElement detailElement = (OMElement)it.next();
-                        if(SOAPConstants.SOAP_FAULT_DETAIL_EXCEPTION_ENTRY.equals(detailElement.getLocalName())){
-                            throw new AxisFault(soapFault.getException());
-                        }
-                    }
+                Exception ex = soapFault.getException();
+                //does the SOAPFault has a detail element for Excpetion
+                if(ex != null){
+                    throw new AxisFault(ex);
+                }else{
+                    //if detail element not present let us throw the exception with Reason
+                    throw new AxisFault(soapFault.getReason().getText());
                 }
-                //throw new exception with reason
-                throw new AxisFault(soapFault.getReason().getText());
-                
             }
             return response;
         }
