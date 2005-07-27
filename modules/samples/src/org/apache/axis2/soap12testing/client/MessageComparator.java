@@ -33,11 +33,11 @@ public class MessageComparator {
         try {
             File file = new File("test-resources\\SOAP12Testing\\ReplyMessages\\SOAP12ResT" + testNumber + ".xml");
             XMLStreamReader requiredMessageParser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
-            OMXMLParserWrapper requiredMessageBuilder = new StAXSOAPModelBuilder(requiredMessageParser);
+            OMXMLParserWrapper requiredMessageBuilder = new StAXSOAPModelBuilder(requiredMessageParser,null);
             requiredMessageEnvelope = (SOAPEnvelope) requiredMessageBuilder.getDocumentElement();
 
             XMLStreamReader replyMessageParser = XMLInputFactory.newInstance().createXMLStreamReader(replyMessage);
-            OMXMLParserWrapper replyMessageBuilder = new StAXSOAPModelBuilder(replyMessageParser);
+            OMXMLParserWrapper replyMessageBuilder = new StAXSOAPModelBuilder(replyMessageParser,null);
             replyMessageEnvelope = (SOAPEnvelope) replyMessageBuilder.getDocumentElement();
 
             SOAPComparator soapComparator = new SOAPComparator();

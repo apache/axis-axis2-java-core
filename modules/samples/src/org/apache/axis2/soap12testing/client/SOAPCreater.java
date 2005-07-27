@@ -49,7 +49,7 @@ public class SOAPCreater {
         File file = new File(pathAndFileName);
         try {
             XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
-            OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser);
+            OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser,null);
             return (SOAPEnvelope) builder.getDocumentElement();            
         } catch (Exception e) {
             e.printStackTrace();
