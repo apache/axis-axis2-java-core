@@ -27,8 +27,8 @@ import java.io.*;
 public class SOAPCreater {
     public String getStringFromSOAPMessage(String testNumber) {
          //D:\Projects\LSF\Axis2\Axis1.0\modules\samples\target\Repository
-        File file = new File("D:\\Projects\\LSF\\Axis2\\Axis1.0\\modules\\samples/test-resources\\SOAP12Testing\\RequestMessages\\SOAP12ReqT" + testNumber + ".xml");
-       // File file = new File("./test-resources\\SOAP12Testing\\RequestMessages\\SOAP12ReqT" + testNumber + ".xml");
+//        File file = new File("D:\\Projects\\LSF\\Axis2\\Axis1.0\\modules\\samples/test-resources\\SOAP12Testing\\RequestMessages\\SOAP12ReqT" + testNumber + ".xml");
+        File file = new File("./test-resources\\SOAP12Testing\\RequestMessages\\SOAP12ReqT" + testNumber + ".xml");
         try {
             FileInputStream stream = new FileInputStream(file);
             BufferedInputStream bf = new BufferedInputStream(stream);

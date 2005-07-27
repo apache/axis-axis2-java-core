@@ -37,8 +37,8 @@ public class SimpleServer {
         try {
             ServerSocket serverSoc = null;
             serverSoc = new ServerSocket(port);
-           // SimpleHTTPServer reciver = new SimpleHTTPServer("./target/Repository", serverSoc);
-            SimpleHTTPServer reciver = new SimpleHTTPServer("D:\\Projects\\LSF\\Axis2\\Axis1.0\\modules\\samples\\target\\Repository", serverSoc);
+            SimpleHTTPServer reciver = new SimpleHTTPServer("./target/Repository", serverSoc);
+//            SimpleHTTPServer reciver = new SimpleHTTPServer("D:\\Projects\\LSF\\Axis2\\Axis1.0\\modules\\samples\\target\\Repository", serverSoc);
             Thread thread = new Thread(reciver);
             thread.setDaemon(true);
             thread.start();
