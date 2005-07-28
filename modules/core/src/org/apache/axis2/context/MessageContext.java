@@ -48,6 +48,10 @@ public class MessageContext extends AbstractContext {
      */
     public static final String TRANSPORT_IN = "TRANSPORT_IN";
 
+    /**
+     * Field  CHARACTER_SET_ENCODING
+     */
+    public static final String CHARACTER_SET_ENCODING = "CHARACTER_SET_ENCODING";
 
     /**
      * Field TRANSPORT_SUCCEED
