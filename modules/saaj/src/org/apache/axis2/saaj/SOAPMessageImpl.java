@@ -188,18 +188,16 @@ public class SOAPMessageImpl extends SOAPMessage {
      */
     public void saveChanges() throws SOAPException {
         // TODO Auto-generated method stub
-
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPMessage#saveRequired()
      */
     public boolean saveRequired() {
-        // TODO Auto-generated method stub
         return false;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPMessage#writeTo(java.io.OutputStream)
      */
     public void writeTo(OutputStream out) throws SOAPException, IOException {
