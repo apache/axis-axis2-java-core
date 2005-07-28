@@ -53,4 +53,12 @@ public class SOAPProcessingException extends OMException {
         super(messageText);
         this.soapFaultCode = faultCode;
     }
+
+    public String getSoapFaultCode() {
+        return soapFaultCode;
+    }
+
+    public void setSoapFaultCode(String soapFaultCode) {
+        this.soapFaultCode = soapFaultCode;
+    }
 }

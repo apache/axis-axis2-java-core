@@ -31,6 +31,7 @@ import org.apache.axis2.soap.SOAPFaultCode;
 import org.apache.axis2.soap.SOAPFaultDetail;
 import org.apache.axis2.soap.SOAPFaultReason;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
@@ -267,46 +268,89 @@ public class AxisEngine {
 
         //            body.addFault(new AxisFault(e.getMessage(), e));
         body.getFault().setException(new AxisFault(e));
-        extractFaultInformationFromMessageContext(
-            processingContext,
-            envelope.getBody().getFault());
+        extractFaultInformationFromMessageContext(processingContext,
+            envelope.getBody().getFault(), e);
 
         faultContext.setEnvelope(envelope);
         sendFault(faultContext);
         return faultContext;
     }
 
+    /**
+     * Information to create the SOAPFault can be extracted from different places.
+     * 1. Those information may have been put in to the message context by some handler. When someone
+     * is putting like that, he must make sure the SOAPElements he is putting must be from the
+     * correct SOAP Version.
+     * 2. SOAPProcessingException is flexible enough to carry information about the fault. For example
+     * it has an attribute to store the fault code. The fault reason can be extracted from the
+     * message of the exception. I opted to put the stacktrace under the detail element.
+     * eg : <Detail>
+     *          <Exception> stack trace goes here </Exception>
+     *      <Detail>
+     *
+     * If those information can not be extracted from any of the above places, I default the soap
+     * fault values to following.
+     * <Fault>
+     *      <Code>
+     *          <Value>env:Receiver</Value>
+     *      </Code>
+     *      <Reason>
+     *          <Text>unknown</Text>
+     *      </Reason>
+     *      <Role/>
+     *      <Node/>
+     *      <Detail/>
+     * </Fault>
+     *
+     * -- EC
+     *
+     * @param context
+     * @param fault
+     * @param e
+     */
     private void extractFaultInformationFromMessageContext(
         MessageContext context,
-        SOAPFault fault) {
+        SOAPFault fault, Throwable e) {
         Object faultCode =
             context.getProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME);
         if (faultCode != null) {
             fault.setCode((SOAPFaultCode) faultCode);
+        }else if((e != null) && (e instanceof SOAPProcessingException)){
+            String soapFaultCode = ((SOAPProcessingException) e).getSoapFaultCode();
+            fault.getCode().getValue().setText(soapFaultCode);
         }
 
         Object faultReason =
             context.getProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME);
         if (faultReason != null) {
             fault.setReason((SOAPFaultReason) faultReason);
+        }else if (e != null){
+            String message = e.getMessage();
+            fault.getReason().getSOAPText().setText( ("".equals(message) || message == null) ? message : "unknown");
         }
 
         Object faultRole =
             context.getProperty(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME);
         if (faultRole != null) {
             fault.getRole().setText((String) faultRole);
+        }else{
+            // TODO : get the role of this server and assign it here
         }
 
         Object faultNode =
             context.getProperty(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME);
         if (faultNode != null) {
             fault.getNode().setText((String) faultNode);
+        }else{
+            // TODO : get the node of this server and assign it here
         }
 
         Object faultDetail =
             context.getProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
         if (faultDetail != null) {
             fault.setDetail((SOAPFaultDetail) faultDetail);
+        }else{
+//            fault.getDetail().se
         }
     }
 
@@ -372,7 +416,6 @@ public class AxisEngine {
      * @param context
      * @param key
      * @return
-     * @see #store(org.apache.axis2.context.EngineContext, Object)
      */
     public Object retrieve(ConfigurationContext context, Object key) {
         return context.getStorage().get(key);

@@ -21,7 +21,7 @@ import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
 import org.apache.axis2.transport.http.HTTPTransportReceiver;
-import org.apache.axis2.engine.AxisFault;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;

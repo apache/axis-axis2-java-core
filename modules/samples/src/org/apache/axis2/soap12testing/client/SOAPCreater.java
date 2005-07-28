@@ -22,7 +22,6 @@ import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.engine.AxisFault;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
