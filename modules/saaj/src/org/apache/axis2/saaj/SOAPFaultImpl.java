@@ -69,7 +69,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     public void setFaultCode(String faultCode) throws SOAPException {
         // No direct mapping of SOAP 1.1 faultCode to SOAP 1.2, Mapping it to
         // (Fault Value of FaultCode) in OM impl
-        SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+        SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPFaultCode fCode = soapFactory.createSOAPFaultCode(fault);
         SOAPFaultValue value = soapFactory.createSOAPFaultValue(fCode);
         fCode.setValue(value);
@@ -98,7 +98,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     public void setFaultActor(String faultActor) throws SOAPException {
 
         //faultActor mapped to SOAPFaultNode in OM
-        SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+        SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPFaultNode fNode = soapFactory.createSOAPFaultNode(fault);
         fNode.setNodeValue(faultActor);
     }
@@ -125,7 +125,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     public void setFaultString(String faultString) throws SOAPException {
 
         //FaultString mapped to text elemtnt of SOAPFaultReason->SOAPFaultText in OM
-        SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+        SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPFaultReason fReason = soapFactory.createSOAPFaultReason(fault);
         SOAPFaultText text = soapFactory.createSOAPFaultText(fReason);
         text.setText(faultString);
@@ -165,7 +165,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      */
     public Detail addDetail() throws SOAPException {
 
-        SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+        SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPFaultDetail detail = soapFactory.createSOAPFaultDetail(fault);
         return new DetailImpl(detail);
     }
@@ -210,7 +210,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
             throws SOAPException {
         //FaultString mapped to text elemtnt of SOAPFaultReason->SOAPFaultText in OM
         // Not using Locale information
-        SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+        SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPFaultReason fReason = soapFactory.createSOAPFaultReason(fault);
         SOAPFaultText text = soapFactory.createSOAPFaultText(fReason);
         text.setText(faultString);

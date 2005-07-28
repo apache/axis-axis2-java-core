@@ -67,21 +67,19 @@ public class SOAPFactoryImpl extends javax.xml.soap.SOAPFactory {
         return null;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPFactory#createName(java.lang.String, java.lang.String, java.lang.String)
      */
     public Name createName(String localName, String prefix, String uri)
             throws SOAPException {
-        // TODO Auto-generated method stub
-        return null;
+        return new PrefixedQName(uri, localName, prefix);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPFactory#createName(java.lang.String)
      */
     public Name createName(String localName) throws SOAPException {
-        // TODO Auto-generated method stub
-        return null;
+    	return new PrefixedQName(null, localName, null);
     }
 
 }

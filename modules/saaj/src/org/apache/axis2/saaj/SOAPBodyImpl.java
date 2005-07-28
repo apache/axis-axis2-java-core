@@ -63,10 +63,9 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
     public SOAPFault addFault() throws SOAPException {
         try {
             //OM SOAPFaultImpl has SOAPFaultImpl(OMElement parent, Exception e) constructor, will use that
-            SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+            SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
             org.apache.axis2.soap.SOAPFault omSoapFault = soapFactory.createSOAPFault(
-                    omSOAPBody,
-                    new Exception("No explicit faultstring available"));
+                    omSOAPBody);
             omSOAPBody.addFault(omSoapFault);
             return (new SOAPFaultImpl(omSoapFault));
         } catch (Exception e) {

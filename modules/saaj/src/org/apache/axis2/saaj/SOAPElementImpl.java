@@ -15,6 +15,7 @@
  */
 package org.apache.axis2.saaj;
 
+import org.apache.axis2.om.OMNamespace;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.NodeList;
@@ -198,6 +199,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
             throws SOAPException {
         org.apache.axis2.om.OMNamespace omNS = org.apache.axis2.om.OMAbstractFactory.getOMFactory()
                 .createOMNamespace(name.getURI(), name.getPrefix());
+        omElement.declareNamespace(omNS);
         //TODO:
         //The namespace of the attribute must be within the scope of the SOAPElement
         //That check should be performed here.
@@ -250,9 +252,13 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
             Object o = attrIter.next();
             if (o instanceof org.apache.axis2.om.OMAttribute) {
                 //we need to create a SOAPNode for this and add to the arrayList
-                javax.xml.soap.Node soapNode = new NodeImpl(
+                /*javax.xml.soap.Node soapNode = new NodeImpl(
                         (org.apache.axis2.om.OMAttribute) o);
-                arrayList.add(soapNode);
+                arrayList.add(soapNode);*/
+            	//We need to return javax.xml.soap.Name 
+                OMNamespace ons = ((org.apache.axis2.om.OMAttribute)o).getNamespace();
+                String lName = ((org.apache.axis2.om.OMAttribute)o).getLocalName();
+                arrayList.add(new PrefixedQName(ons.getName(), lName, ons.getPrefix()));
             }
         }
         return arrayList.iterator();

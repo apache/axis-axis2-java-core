@@ -88,6 +88,7 @@ public class SOAPPartImpl extends SOAPPart {
             }
 
         } catch (Exception e) {
+        	//e.printStackTrace();
             throw new SOAPException(e);
         }
     }

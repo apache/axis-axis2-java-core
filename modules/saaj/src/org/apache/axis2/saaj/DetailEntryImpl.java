@@ -43,6 +43,7 @@ public class DetailEntryImpl extends SOAPElementImpl implements DetailEntry {
      * @param detailEntry
      */
     public DetailEntryImpl(org.apache.axis2.om.OMElement detailEntry) {
+    	super(detailEntry);
         this.detailEntry = detailEntry;
     }
 
