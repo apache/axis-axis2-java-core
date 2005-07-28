@@ -257,8 +257,7 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
      * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
      */
     public EndpointReference replyToEPR(String serviceName) {
-        return new EndpointReference(AddressingConstants.WSA_REPLY_TO,
-                "http://127.0.0.1:" + (serverSocket.getLocalPort()) +
+        return new EndpointReference("http://127.0.0.1:" + (serverSocket.getLocalPort()) +
                 "/axis/services/" +
                 serviceName);
     }

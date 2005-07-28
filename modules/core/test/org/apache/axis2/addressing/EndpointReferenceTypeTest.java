@@ -24,7 +24,6 @@ import javax.xml.namespace.QName;
 public class EndpointReferenceTypeTest extends TestCase {
 
     EndpointReference endpointReference;
-    private String headerType = AddressingConstants.WSA_FROM;
     private String address = "htttp://wwww.openource.lk/~chinthaka";
 
     public static void main(String[] args) {
@@ -36,21 +35,7 @@ public class EndpointReferenceTypeTest extends TestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
-        endpointReference = new EndpointReference(headerType, address);
-    }
-
-    public void testGetAndSetMessageInformationHeaderType() {
-        assertEquals(
-                "MessageInformationHeaderType not set properly in the constructor",
-                headerType,
-                endpointReference.getMessageInformationHeaderType());
-
-        endpointReference.setMessageInformationHeaderType(
-                AddressingConstants.WSA_REPLY_TO);
-        assertEquals(
-                "MessageInformationHeaderType not set properly in the setter method",
-                AddressingConstants.WSA_REPLY_TO,
-                endpointReference.getMessageInformationHeaderType());
+        endpointReference = new EndpointReference(address);
     }
 
     public void testGetAndSetAddress() {

@@ -37,9 +37,7 @@ import java.io.FileInputStream;
 public class MTOMClientModel {
     private File inputFile = null;
 
-    private EndpointReference targetEPR = new EndpointReference(
-            AddressingConstants.WSA_TO,
-            "http://127.0.0.1:8080/axis2/services/MyService");
+    private EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService");
 
     private QName operationName = new QName("mtomSample");
 
@@ -96,8 +94,7 @@ public class MTOMClientModel {
 
 
     public void setTargetEPR(String targetEPR) {
-        this.targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
-                targetEPR);
+        this.targetEPR = new EndpointReference(targetEPR);
 
     }
 

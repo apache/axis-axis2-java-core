@@ -53,8 +53,7 @@ public class HandlerFailureTest extends TestCase {
             (UtilServer.TESTING_PORT) +
             "/axis/services/" + SERVICE_NAME + "/" + OPERATION_NAME;
 //    private static final String ADDRESS = "http://127.0.0.1:8080/axis/services/" + SERVICE_NAME;
-    private EndpointReference targetEPR = new EndpointReference(
-            AddressingConstants.WSA_TO, ADDRESS);
+    private EndpointReference targetEPR = new EndpointReference(ADDRESS);
     private QName serviceName = new QName("", SERVICE_NAME);
     //private QName serviceName = new QName("", targetEPR.getValue());
 

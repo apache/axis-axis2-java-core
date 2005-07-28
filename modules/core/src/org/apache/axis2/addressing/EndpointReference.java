@@ -25,14 +25,6 @@ import javax.xml.namespace.QName;
  */
 public class EndpointReference {
     /**
-     * this can be one of the followings
-     * AddressingConstants.WSA_FROM
-     * AddressingConstants.WSA_REPLY_TO
-     * AddressingConstants.WSA_FAULT_TO
-     */
-    private String messageInformationHeaderType;
-
-    /**
      * Required property. may be a logical address or identifier for the service endpoint
      */
     private String address;
@@ -60,35 +52,10 @@ public class EndpointReference {
     private OMElement policies;
 
     /**
-     * @param messageInformationHeaderType this can be one of the followings
-     *                                     AddressingConstants.WSA_FROM
-     *                                     AddressingConstants.WSA_REPLY_TO
-     *                                     AddressingConstants.WSA_FAULT_TO
      * @param address
      */
-    public EndpointReference(String messageInformationHeaderType,
-                             String address) {
-        this.messageInformationHeaderType = messageInformationHeaderType;
+    public EndpointReference(String address) {
         this.address = address;
-    }
-
-    /**
-     * Method getMessageInformationHeaderType
-     *
-     * @return
-     */
-    public String getMessageInformationHeaderType() {
-        return messageInformationHeaderType;
-    }
-
-    /**
-     * Method setMessageInformationHeaderType
-     *
-     * @param messageInformationHeaderType
-     */
-    public void setMessageInformationHeaderType(
-            String messageInformationHeaderType) {
-        this.messageInformationHeaderType = messageInformationHeaderType;
     }
 
     /**

@@ -42,8 +42,7 @@
 <%IP=request.getRequestURL().toString();
     int lastindex = IP.lastIndexOf('/');
     IP = IP.substring(0,lastindex);
-    targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
-                    IP + "/services/Version/getVersion");
+    targetEPR = new EndpointReference(IP + "/services/Version/getVersion");
 %>
 <%!
     /*

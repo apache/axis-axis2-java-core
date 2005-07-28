@@ -16,7 +16,7 @@
 package org.apache.axis2.receivers;
 
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.MessageInformationHeadersCollection;
+import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
@@ -40,11 +40,11 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
                         messgeCtx.getTransportOut());
 
         newmsgCtx.setMessageInformationHeaders(
-                new MessageInformationHeadersCollection());
-        MessageInformationHeadersCollection oldMessageInfoHeaders =
+                new MessageInformationHeaders());
+        MessageInformationHeaders oldMessageInfoHeaders =
                 messgeCtx.getMessageInformationHeaders();
-        MessageInformationHeadersCollection messageInformationHeaders =
-                new MessageInformationHeadersCollection();
+        MessageInformationHeaders messageInformationHeaders =
+                new MessageInformationHeaders();
         messageInformationHeaders.setTo(oldMessageInfoHeaders.getReplyTo());
         messageInformationHeaders.setFaultTo(
                 oldMessageInfoHeaders.getFaultTo());

@@ -21,9 +21,7 @@ import java.io.StringWriter;
  * Time: 5:08:44 PM
  */
 public class EchoNonBlockingClient {
-    private static EndpointReference targetEPR = new EndpointReference(
-            AddressingConstants.WSA_TO,
-            "http://127.0.0.1:8080/axis2/services/MyService/echo");
+    private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService/echo");
 
     public static void main(String[] args) {
         try {

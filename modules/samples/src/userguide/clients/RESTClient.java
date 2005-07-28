@@ -40,7 +40,7 @@ public class RESTClient {
     public static void main(String[] args) throws AxisFault {
 
         Call call = new Call();
-        call.setTo(new EndpointReference(AddressingConstants.WSA_TO, toEpr));
+        call.setTo(new EndpointReference(toEpr));
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);

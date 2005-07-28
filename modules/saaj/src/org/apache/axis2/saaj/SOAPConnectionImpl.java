@@ -50,8 +50,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
                     Constants.TRANSPORT_HTTP,
                     true);
             call.setTo(
-                    new EndpointReference(AddressingConstants.WSA_TO,
-                            url.toString()));
+                    new EndpointReference(url.toString()));
             org.apache.axis2.soap.SOAPEnvelope responseEnv = (org.apache.axis2.soap.SOAPEnvelope) call.invokeBlocking(
                     "echo", envelope);
             SOAPEnvelopeImpl response = new SOAPEnvelopeImpl(responseEnv);

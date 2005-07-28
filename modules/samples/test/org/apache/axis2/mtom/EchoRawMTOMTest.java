@@ -51,8 +51,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 public class EchoRawMTOMTest extends TestCase {
-    private EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
-            "http://127.0.0.1:"
+    private EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:"
             + (UtilServer.TESTING_PORT)
             + "/axis/services/EchoXMLService/echoOMElement");
 

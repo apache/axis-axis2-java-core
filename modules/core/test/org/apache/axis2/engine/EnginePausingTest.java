@@ -132,8 +132,7 @@ public class EnginePausingTest extends TestCase {
 
     public void testReceive() throws Exception {
         mc.setTo(
-                new EndpointReference(AddressingConstants.WSA_TO,
-                        "axis/services/NullService/DummyOp"));
+                new EndpointReference("axis/services/NullService/DummyOp"));
         AxisEngine engine = new AxisEngine(engineContext);
         engine.receive(mc);
         assertEquals(executedHandlers.size(), 14);

@@ -45,8 +45,7 @@ import javax.xml.stream.XMLStreamException;
 
 public class TCPEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
-            new EndpointReference(AddressingConstants.WSA_TO,
-                    "tcp://127.0.0.1:"
+            new EndpointReference("tcp://127.0.0.1:"
             + (UtilServer.TESTING_PORT)
             + "/axis/services/EchoXMLService/echoOMElement");
     private QName serviceName = new QName("EchoXMLService");

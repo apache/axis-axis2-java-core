@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.MessageInformationHeadersCollection;
+import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.ServiceName;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
@@ -52,8 +52,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
     }
 
     public void testAddToSOAPHeader() throws Exception {
-        EndpointReference epr = new EndpointReference(WSA_TO,
-                "http://www.to.org/service/");
+        EndpointReference epr = new EndpointReference("http://www.to.org/service/");
         epr.setInterfaceName(
                 new QName("http://www.from.org/service/port/",
                         "Port",
@@ -93,18 +92,17 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
     }
 
     public void testHeaderCreationFromMsgCtxtInformation() throws Exception {
-        MessageInformationHeadersCollection mIHeaders = new MessageInformationHeadersCollection();
+        MessageInformationHeaders mIHeaders = new MessageInformationHeaders();
 
         AnyContentType referenceValues = new AnyContentType();
 
-        EndpointReference epr = new EndpointReference(WSA_FROM,
-                "http://www.from.org/service/");
+        EndpointReference epr = new EndpointReference("http://www.from.org/service/");
         referenceValues.addReferenceValue(new QName("Reference2"),
                 "Value 200");
         epr.setReferenceParameters(referenceValues);
         mIHeaders.setFrom(epr);
 
-        epr = new EndpointReference(WSA_TO, "http://www.to.org/service/");
+        epr = new EndpointReference("http://www.to.org/service/");
         referenceValues = new AnyContentType();
         referenceValues.addReferenceValue(
                 new QName("http://reference.org", "Reference4", "myRef"),
@@ -128,8 +126,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         mIHeaders.setTo(epr);
 
         epr =
-                new EndpointReference(WSA_REPLY_TO,
-                        "http://www.replyTo.org/service/");
+                new EndpointReference("http://www.replyTo.org/service/");
         mIHeaders.setReplyTo(epr);
 
         mIHeaders.setMessageId("123456-7890");

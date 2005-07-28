@@ -152,8 +152,7 @@ public class AsynchronousClient {
             e.printStackTrace();
         }
         call.setTo(
-                new EndpointReference(AddressingConstants.WSA_TO,
-                        url.toString()));
+                new EndpointReference(url.toString()));
         MessageContext requestContext = ClientUtil.getMessageContext();
         try {
             call.setTransportInfo(Constants.TRANSPORT_HTTP,

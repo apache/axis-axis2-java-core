@@ -99,9 +99,7 @@ public class MailWorker implements AxisWorker {
                     String emailAddress = recepainets[0].getAddress();
                     String emailSubject = mimeMessage.getSubject();
                     EndpointReference to =
-                        new EndpointReference(
-                            AddressingConstants.WSA_TO,
-                            emailAddress + "/" + (emailSubject != null ? emailSubject : ""));
+                        new EndpointReference(emailAddress + "/" + (emailSubject != null ? emailSubject : ""));
                 } else {
                     throw new AxisFault(Messages.getMessage("noRecep4Email"));
                 }
@@ -111,7 +109,7 @@ public class MailWorker implements AxisWorker {
                     String replyTo = replyToAs[0].getAddress();
                     if (replyTo != null) {
                         msgContext.setReplyTo(
-                            new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo));
+                            new EndpointReference(replyTo));
                     }
                 }
 

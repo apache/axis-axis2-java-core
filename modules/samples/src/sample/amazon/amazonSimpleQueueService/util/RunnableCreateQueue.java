@@ -73,7 +73,7 @@ public class RunnableCreateQueue extends QueueManager implements Runnable {
         String url = "http://webservices.amazon.com/onca/soap?Service=AWSSimpleQueueService";
         try {
             Call call = new Call();
-            call.setTo(new EndpointReference(AddressingConstants.WSA_TO, url));
+            call.setTo(new EndpointReference(url));
             call.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
                     false);

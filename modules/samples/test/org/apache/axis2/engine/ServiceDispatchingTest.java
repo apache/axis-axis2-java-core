@@ -39,8 +39,7 @@ import javax.xml.namespace.QName;
 
 public class ServiceDispatchingTest extends TestCase {
     private EndpointReference targetEPR =
-            new EndpointReference(AddressingConstants.WSA_TO,
-                    "http://127.0.0.1:"
+            new EndpointReference("http://127.0.0.1:"
             + (UtilServer.TESTING_PORT)
             + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
@@ -89,8 +88,7 @@ public class ServiceDispatchingTest extends TestCase {
         OMElement payload = TestingUtils.createDummyOMElement();
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
         call.setTo(
-                new EndpointReference(AddressingConstants.WSA_TO,
-                        "http://127.0.0.1:5555/axis/services/EchoXMLService/echoOMElement"));
+                new EndpointReference("http://127.0.0.1:5555/axis/services/EchoXMLService/echoOMElement"));
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
@@ -110,8 +108,7 @@ public class ServiceDispatchingTest extends TestCase {
         payload.addChild(value);
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
         call.setTo(
-                new EndpointReference(AddressingConstants.WSA_TO,
-                        "http://127.0.0.1:5555/axis/services/EchoXMLService/"));
+                new EndpointReference("http://127.0.0.1:5555/axis/services/EchoXMLService/"));
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
@@ -136,8 +133,7 @@ public class ServiceDispatchingTest extends TestCase {
 
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
         call.setTo(
-                new EndpointReference(AddressingConstants.WSA_TO,
-                        "http://127.0.0.1:5555/axis/services/"));
+                new EndpointReference("http://127.0.0.1:5555/axis/services/"));
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);

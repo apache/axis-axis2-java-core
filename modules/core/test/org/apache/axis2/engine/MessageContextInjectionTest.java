@@ -46,8 +46,7 @@ import javax.xml.namespace.QName;
 
 public class MessageContextInjectionTest extends TestCase {
     private EndpointReference targetEPR =
-            new EndpointReference(AddressingConstants.WSA_TO,
-                    "/axis/services/EchoXMLService/echoOMElement");
+            new EndpointReference("/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");

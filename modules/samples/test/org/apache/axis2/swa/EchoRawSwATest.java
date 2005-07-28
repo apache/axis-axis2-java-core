@@ -53,9 +53,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 public class EchoRawSwATest extends TestCase {
-    private EndpointReference targetEPR = new EndpointReference(
-            AddressingConstants.WSA_TO,
-            "http://127.0.0.1:"
+    private EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:"
             + (UtilServer.TESTING_PORT)
             + "/axis/services/EchoSwAService/echoAttachment");
 

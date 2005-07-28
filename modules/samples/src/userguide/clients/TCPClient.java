@@ -40,7 +40,7 @@ public class TCPClient {
     public static void main(String[] args) throws AxisFault {
 
         Call call = new Call();
-        call.setTo(new EndpointReference(AddressingConstants.WSA_TO, toEpr));
+        call.setTo(new EndpointReference(toEpr));
         call.setTransportInfo(Constants.TRANSPORT_TCP,
                 Constants.TRANSPORT_TCP,
                 false);

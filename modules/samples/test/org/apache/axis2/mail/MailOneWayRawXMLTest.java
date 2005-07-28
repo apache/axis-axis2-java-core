@@ -46,8 +46,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class MailOneWayRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
-            new EndpointReference(AddressingConstants.WSA_TO,
-                    "foo@127.0.0.1" +
+            new EndpointReference("foo@127.0.0.1" +
             "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");

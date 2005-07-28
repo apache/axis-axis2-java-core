@@ -84,8 +84,7 @@ public class FormModel {
         }
 
         call.setTo(
-                new EndpointReference(AddressingConstants.WSA_TO,
-                        url.toString()));
+                new EndpointReference(url.toString()));
         try {
             call.invokeNonBlocking("doGoogleSpellingSugg",
                     requestElement,
@@ -117,8 +116,7 @@ public class FormModel {
         }
 
         call.setTo(
-                new EndpointReference(AddressingConstants.WSA_TO,
-                        url.toString()));
+                new EndpointReference(url.toString()));
         try {
             responseElement =
                     (OMElement) call.invokeBlocking("doGoogleSpellingSugg",

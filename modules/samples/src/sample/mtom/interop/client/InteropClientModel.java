@@ -35,9 +35,7 @@ import org.apache.axis2.om.OMText;
 public class InteropClientModel {
     private File inputFile = null;
 
-    private EndpointReference targetEPR = new EndpointReference(
-            AddressingConstants.WSA_TO,
-            "http://127.0.0.1:8080/axis2/services/interopService");
+    private EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/interopService");
 
     private QName operationName = new QName("mtomSample");
 
@@ -77,7 +75,6 @@ public class InteropClientModel {
     }
 
     public void setTargetEPR(String targetEPR) {
-        this.targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
-                targetEPR);
+        this.targetEPR = new EndpointReference(targetEPR);
     }
 }

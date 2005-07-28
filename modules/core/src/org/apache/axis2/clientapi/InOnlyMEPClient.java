@@ -20,7 +20,7 @@ package org.apache.axis2.clientapi;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.MessageInformationHeadersCollection;
+import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -37,13 +37,13 @@ import org.apache.wsdl.WSDLConstants;
  * This class Hnadles In-Only (fire and forget) MEP
  */
 public class InOnlyMEPClient extends MEPClient {
-    protected MessageInformationHeadersCollection messageInformationHeaders;
+    protected MessageInformationHeaders messageInformationHeaders;
     protected TransportOutDescription senderTransport;
 
 
     public InOnlyMEPClient(ServiceContext service) {
         super(service, WSDLConstants.MEP_URI_IN_ONLY);
-        messageInformationHeaders = new MessageInformationHeadersCollection();
+        messageInformationHeaders = new MessageInformationHeaders();
     }
 
     /**

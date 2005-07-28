@@ -110,8 +110,7 @@ public class TCPServer extends TransportListener implements Runnable {
      * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
      */
     public EndpointReference replyToEPR(String serviceName) throws AxisFault {
-        return new EndpointReference(AddressingConstants.WSA_REPLY_TO,
-                "tcp://127.0.0.1:" + (serversocket.getLocalPort()) +
+        return new EndpointReference("tcp://127.0.0.1:" + (serversocket.getLocalPort()) +
                 "/axis/services/" +
                 serviceName);
     }

@@ -14,9 +14,7 @@ import org.apache.axis2.om.OMElement;
  * Time: 2:11:25 PM
  */
 public class PingClient {
-    private static EndpointReference targetEPR = new EndpointReference(
-            AddressingConstants.WSA_TO,
-            "http://127.0.0.1:8080/axis2/services/MyService/ping");
+    private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService/ping");
 
     public static void main(String[] args) {
         try {

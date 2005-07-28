@@ -119,8 +119,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
 
     public void testServerReceive() throws Exception {
         mc.setTo(
-                new EndpointReference(AddressingConstants.WSA_TO,
-                        "axis/services/NullService"));
+                new EndpointReference("axis/services/NullService"));
         AxisEngine engine = new AxisEngine(engineContext);
         mc.setServerSide(true);
         engine.receive(mc);

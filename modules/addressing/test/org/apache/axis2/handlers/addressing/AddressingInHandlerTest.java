@@ -3,7 +3,7 @@ package org.apache.axis2.handlers.addressing;
 import junit.framework.TestCase;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.MessageInformationHeadersCollection;
+import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.handlers.util.TestUtil;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeader;
@@ -57,7 +57,7 @@ public class AddressingInHandlerTest extends TestCase {
                     testFileName);
 
             SOAPHeader header = ((SOAPEnvelope) omBuilder.getDocumentElement()).getHeader();
-            MessageInformationHeadersCollection messageInformationHeadersCollection =
+            MessageInformationHeaders messageInformationHeadersCollection =
                     inHandler.extractCommonAddressingParameters(header,
                             null,
                             header.getHeaderBlocksWithNSURI(

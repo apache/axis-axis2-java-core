@@ -88,14 +88,13 @@ public class MailSorter {
 
             String replyTo = ((InternetAddress) mimeMessage.getReplyTo()[0]).getAddress();
             if (replyTo != null) {
-                msgContext.setReplyTo(new EndpointReference(AddressingConstants.WSA_REPLY_TO, replyTo));
+                msgContext.setReplyTo(new EndpointReference(replyTo));
             }
 
             String recepainets = ((InternetAddress) mimeMessage.getAllRecipients()[0]).getAddress();
 
             if (recepainets != null) {
-                msgContext.setTo(new EndpointReference(AddressingConstants.WSA_FROM,
-                        recepainets + "/" + serviceURL));
+                msgContext.setTo(new EndpointReference(recepainets + "/" + serviceURL));
             }
 
             // add the SOAPEnvelope

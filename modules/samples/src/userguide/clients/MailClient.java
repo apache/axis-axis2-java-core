@@ -35,7 +35,7 @@ public class MailClient {
     public static void main(String[] args) throws AxisFault {
         MessageSender msgSender = new MessageSender();
         msgSender.setTo(
-                new EndpointReference(AddressingConstants.WSA_TO, toEpr));
+                new EndpointReference(toEpr));
         msgSender.setSenderTransport(Constants.TRANSPORT_MAIL);
         msgSender.send("echo", getPayload());
     }

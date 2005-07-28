@@ -3,7 +3,7 @@ package org.apache.axis2.handlers.addressing;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.MessageInformationHeadersCollection;
+import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.ServiceName;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
@@ -91,7 +91,7 @@ public class AddressingOutHandler
                         addressingNamespace, WSA_DEFAULT_PRFIX);
 
 
-        MessageInformationHeadersCollection messageInformationHeaders =
+        MessageInformationHeaders messageInformationHeaders =
                 msgContext.getMessageInformationHeaders();
         SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
 

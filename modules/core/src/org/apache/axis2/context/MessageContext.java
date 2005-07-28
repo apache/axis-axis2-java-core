@@ -16,7 +16,7 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.MessageInformationHeadersCollection;
+import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.Parameter;
@@ -70,7 +70,7 @@ public class MessageContext extends AbstractContext {
      * information is present in the SOAP header.
      */
 
-    private MessageInformationHeadersCollection messageInformationHeaders;
+    private MessageInformationHeaders messageInformationHeaders;
 
     private OperationContext operationContext;
     private ServiceContext serviceContext;
@@ -164,7 +164,6 @@ public class MessageContext extends AbstractContext {
      * @param sessionContext
      * @param transportIn
      * @param transportOut
-     * @param configurationContext
      * @throws AxisFault
      */
 
@@ -180,7 +179,7 @@ public class MessageContext extends AbstractContext {
         } else {
             this.sessionContext = sessionContext;
         }
-        messageInformationHeaders = new MessageInformationHeadersCollection();
+        messageInformationHeaders = new MessageInformationHeaders();
         this.transportIn = transportIn;
         this.transportOut = transportOut;
         this.configurationContext = engineContext;
@@ -365,8 +364,6 @@ public class MessageContext extends AbstractContext {
 
     /**
      * Method getExecutionChain
-     *
-     * @return
      */
 
     public void setWSAAction(String actionURI) {
@@ -385,7 +382,7 @@ public class MessageContext extends AbstractContext {
         return messageInformationHeaders.getMessageId();
     }
 
-    public MessageInformationHeadersCollection getMessageInformationHeaders() {
+    public MessageInformationHeaders getMessageInformationHeaders() {
         return messageInformationHeaders;
     }
 
@@ -397,7 +394,6 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @param b
      */
     public void setPausedTrue(QName handlerName) {
         paused = true;
@@ -513,7 +509,7 @@ public class MessageContext extends AbstractContext {
     /**
      * @param collection
      */
-    public void setMessageInformationHeaders(MessageInformationHeadersCollection collection) {
+    public void setMessageInformationHeaders(MessageInformationHeaders collection) {
         messageInformationHeaders = collection;
     }
 

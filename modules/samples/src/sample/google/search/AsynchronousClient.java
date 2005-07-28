@@ -93,8 +93,7 @@ public class AsynchronousClient {
         }
 
         call.setTo(
-                new EndpointReference(AddressingConstants.WSA_TO,
-                        url.toString()));
+                new EndpointReference(url.toString()));
 
         MessageContext requestContext = ClientUtil.getMessageContext(this);
         try {

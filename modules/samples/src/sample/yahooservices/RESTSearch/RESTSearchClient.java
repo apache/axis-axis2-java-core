@@ -29,7 +29,7 @@ public class RESTSearchClient {
     public static void main(String[] args) {
         try{
             Call call = new Call();
-            call.setTo(new EndpointReference(AddressingConstants.WSA_TO, eprGet));
+            call.setTo(new EndpointReference(eprGet));
             call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP,Constants.TRANSPORT_HTTP, false);
             call.setDoREST(true);
             call.setRestThroughPOST(false);

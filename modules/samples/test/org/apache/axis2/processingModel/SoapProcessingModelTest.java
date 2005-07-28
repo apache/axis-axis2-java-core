@@ -47,9 +47,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class SoapProcessingModelTest extends TestCase {
     private EndpointReference targetEPR =
-        new EndpointReference(
-            AddressingConstants.WSA_TO,
-            "http://127.0.0.1:"
+        new EndpointReference("http://127.0.0.1:"
                 + (UtilServer.TESTING_PORT)
                 + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());

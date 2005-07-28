@@ -53,8 +53,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MailetRequestResponceRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
-            new EndpointReference(AddressingConstants.WSA_TO,
-                    "axis2-server@127.0.0.1" +
+            new EndpointReference("axis2-server@127.0.0.1" +
             "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");

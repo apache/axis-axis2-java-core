@@ -324,9 +324,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
      */
     public EndpointReference replyToEPR(String serviceName) throws AxisFault {
         // TODO Auto-generated method stub
-        return new EndpointReference(
-            AddressingConstants.WSA_REPLY_TO,
-            replyTo + "/services/" + serviceName);
+        return new EndpointReference(replyTo + "/services/" + serviceName);
     }
 
 }
