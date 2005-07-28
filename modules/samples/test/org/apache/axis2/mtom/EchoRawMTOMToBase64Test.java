@@ -58,20 +58,11 @@ public class EchoRawMTOMToBase64Test extends TestCase {
 
     private QName operationName = new QName("echoMTOMtoBase64");
 
-    private QName transportName = new QName("http://localhost/my",
-            "NullTransport");
-
-    private AxisConfiguration engineRegistry;
-
-    private MessageContext mc;
-
     private ServiceContext serviceContext;
 
     private ServiceDescription service;
 
     OMText expectedTextData;
-
-    private boolean finish = false;
 
     public EchoRawMTOMToBase64Test() {
         super(EchoRawMTOMToBase64Test.class.getName());

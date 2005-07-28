@@ -17,9 +17,7 @@ import java.util.HashMap;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
-import javax.mail.Part;
 import javax.mail.internet.ContentType;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.ParseException;
 
 import org.apache.axis2.om.OMException;
@@ -32,66 +30,79 @@ public class MIMEHelper {
      * if the Message is MTOM optimised then <code>MTOM_TYPE</code>
      */
     public static final String MTOM_TYPE = "application/xop+xml";
-    
+
     /**
      * If the message is Soap with Attachments <code>SwA_TYPE</code>
      */
     public static final String SWA_TYPE = "text/xml";
-    
+
     /**
      * <code>rootPart</code> is used as the key for the root BodyPart in the
      * Parts HashMap
      */
     public static final String ROOT_PART = "SoapPart";
-    
+
     public static final String ATTACHMENTS = "Attachments";
-    
+
     /**
      * <code>ContentType</code> of the MIME message
      */
     ContentType contentType;
-    
+
     /**
      * Mime <code>boundary</code> which seperates mime parts
      */
     byte[] boundary;
-    
+
     /**
      * <code>applicationType</code> used to distinguish between MTOM & SWA If
      * the message is MTOM optimised type is application/xop+xml If the message
      * is SWA, type is ??have to find out
      */
     String applicationType = null;
-    
+
     /**
      * <code>pushbackInStream</code> stores the reference to the incoming
      * stream A PushbackStream has the ability to "push back" or "unread" one
      * byte.
      */
     PushbackInputStream pushbackInStream;
-    
+
     /**
      * <code>mimeBodyPartsMap</code> stores the already parsed Mime Body
      * Parts. This Map will be keyed using the content-ID's
      */
     HashMap bodyPartsMap;
-    
+
     /**
      * <code>partIndex</code>- Number of Mime parts parsed
      */
     int partIndex = 0;
-    
+
+    /**
+     * <code>endOfStreamReached</code> flag which is to be set by
+     * MIMEBodyPartStream when MIME message terminator is found.
+     */
     boolean endOfStreamReached = false;
-    
+
     String firstPartId = null;
-    
+
     boolean fileCacheEnable = false;
-    
+
     String attachmentRepoDir = null;
-    
+
+    /**
+     * @param inStream
+     * @param contentTypeString
+     * @param fileCacheEnable
+     * @param attachmentRepoDir
+     * @throws OMException
+     * @see Will move the pointer to the begining of the first MIME part. Will
+     *      read till first MIME boundary is found or end of stream reached.
+     */
     public MIMEHelper(InputStream inStream, String contentTypeString,
             boolean fileCacheEnable, String attachmentRepoDir)
-    throws OMException {
+            throws OMException {
         this.attachmentRepoDir = attachmentRepoDir;
         this.fileCacheEnable = fileCacheEnable;
         bodyPartsMap = new HashMap();
@@ -100,17 +111,17 @@ public class MIMEHelper {
         } catch (ParseException e) {
             throw new OMException(
                     "Invalid Content Type Field in the Mime Message"
-                    + e.toString());
+                            + e.toString());
         }
         // Boundary always have the prefix "--".
         this.boundary = ("--" + contentType.getParameter("boundary"))
-        .getBytes();
-        
-        //TODO do we need to wrap InputStream from a BufferedInputStream before
+                .getBytes();
+
+        // do we need to wrap InputStream from a BufferedInputStream before
         // wrapping from PushbackStream
         pushbackInStream = new PushbackInputStream(inStream,
                 (this.boundary.length + 2));
-        
+
         // Move the read pointer to the begining of the first part
         // read till the end of first boundary
         while (true) {
@@ -124,7 +135,7 @@ public class MIMEHelper {
                         value = pushbackInStream.read();
                         if (value == -1)
                             throw new OMException(
-                            "Unexpected End of Stream while searching for first Mime Boundary");
+                                    "Unexpected End of Stream while searching for first Mime Boundary");
                         boundaryIndex++;
                     }
                     if (boundaryIndex == boundary.length) { // boundary found
@@ -133,19 +144,25 @@ public class MIMEHelper {
                     }
                 } else if ((byte) value == -1) {
                     throw new OMException(
-                    "Mime parts not found. Stream ended while searching for the boundary");
+                            "Mime parts not found. Stream ended while searching for the boundary");
                 }
             } catch (IOException e1) {
                 throw new OMException("Stream Error" + e1.toString());
             }
         }
     }
-    
+
+    /**
+     * @param inStream
+     * @param contentTypeString
+     * @throws OMException
+     * @see Will set file cache to false
+     */
     public MIMEHelper(InputStream inStream, String contentTypeString)
-    throws OMException {
+            throws OMException {
         this(inStream, contentTypeString, false, null);
     }
-    
+
     /**
      * @return whether Message Type is SOAP with Attachments or MTOM optimised
      *         by checking the application type parameter in the Contant Type
@@ -159,12 +176,12 @@ public class MIMEHelper {
                 this.applicationType = SWA_TYPE;
             } else {
                 throw new OMException(
-                "Invalid Application type. Support available for MTOM/SOAP 1.2 & SwA/SOAP 1.l only.");
+                        "Invalid Application type. Support available for MTOM/SOAP 1.2 & SwA/SOAP 1.l only.");
             }
         }
         return this.applicationType;
     }
-    
+
     /**
      * @return the InputStream which includes the SOAP Envelope We assumes that
      *         the root mime part is always pointed by "start" parameter in
@@ -172,7 +189,7 @@ public class MIMEHelper {
      */
     public InputStream getSOAPPartInputStream() throws OMException {
         String rootContentID = contentType.getParameter("start");
-        
+
         // to handle the Start parameter not mentioned situation
         if (rootContentID == null) {
             if (partIndex == 0) {
@@ -181,8 +198,7 @@ public class MIMEHelper {
             rootContentID = firstPartId;
         } else {
             rootContentID.trim();
-            // Keep it here till we make sure the two angle brackets are
-            // required or not
+
             if ((rootContentID.indexOf("<") > -1)
                     & (rootContentID.indexOf(">") > -1))
                 rootContentID = rootContentID.substring(1, (rootContentID
@@ -197,7 +213,7 @@ public class MIMEHelper {
             dh = getDataHandler(rootContentID);
             if (dh == null) {
                 throw new OMException(
-                "Mandatory Root MIME part containing the SOAP Envelope is missing");
+                        "Mandatory Root MIME part containing the SOAP Envelope is missing");
             }
             return dh.getInputStream();
         } catch (IOException e) {
@@ -205,20 +221,20 @@ public class MIMEHelper {
                     "Problem with DataHandler of the Root Mime Part. " + e);
         }
     }
-    
+
     /**
      * @param blobContentID
      * @return The DataHandler of the mime part refered by the content-Id
      * @throws OMException
-     *             First checks whether the MIME part is already parsed by
-     *             checking the parts HashMap. If it is not parsed yet then call
-     *             the getNextPart() till we find the required part.
+     * @see First checks whether the MIME part is already parsed by checking the
+     *      parts HashMap. If it is not parsed yet then call the getNextPart()
+     *      till we find the required part.
      */
     public DataHandler getDataHandler(String blobContentID) throws OMException {
-        
+
         Part bodyPart;
         boolean attachmentFound = false;
-       
+
         if (bodyPartsMap.containsKey(blobContentID)) {
             bodyPart = (Part) bodyPartsMap.get(blobContentID);
             attachmentFound = true;
@@ -246,114 +262,110 @@ public class MIMEHelper {
             } catch (MessagingException e) {
                 throw new OMException("Invalid Mime Message " + e);
             }
-        }      
+        }
     }
-    
-    protected void setEndOfStream(boolean value)
-    {
+
+    protected void setEndOfStream(boolean value) {
         this.endOfStreamReached = value;
-        
+
     }
-    
+
     /**
-     * @return The next MIME Body part in the stream Uses the MimeBodyPartStream
-     *         to obtain streams delimited by boundaries.
+     * @return This will return the next available MIME part in the stream.
      * @throws OMException
+     *             if Stream ends while reading the next part...
      */
-    private MimeBodyPart getMimeBodyPart() throws OMException {
-        // endOfStreamReached will be set to true if the message ended in MIME Style
-        // having "--" suffix with the last mime boundary
+    private Part getPart() throws OMException {
+        // endOfStreamReached will be set to true if the message ended in MIME
+        // Style having "--" suffix with the last mime boundary
         if (endOfStreamReached)
             throw new OMException(
-            "Referenced MIME part not found.End of Stream reached.");
-        
-        MimeBodyPart mimeBodyPart = null;
+                    "Referenced MIME part not found.End of Stream reached.");
+
+        Part part = null;
         MIMEBodyPartInputStream partStream;
         partStream = new MIMEBodyPartInputStream(pushbackInStream, boundary,
                 this);
         try {
-            mimeBodyPart = new MimeBodyPart(partStream);
-            
-            // This will take care if stream ended without having MIME message terminator
-            if (mimeBodyPart.getSize() <= 0) {
+            if (fileCacheEnable) {
+                try {
+                    part = new PartOnFile(partStream, attachmentRepoDir);
+                } catch (Exception e) {
+                    throw new OMException("Error creating temporary File." + e);
+                }
+            } else {
+                part = new PartOnMemory(partStream);
+            }
+            // This will take care if stream ended without having MIME
+            // message terminator
+            if (part.getSize() <= 0) {
                 throw new OMException(
-                "Referenced MIME part not found.End of Stream reached.");
+                        "Referenced MIME part not found.End of Stream reached.");
             }
         } catch (MessagingException e) {
-            throw new OMException("Problem reading Mime Part No "
-                    + (partIndex + 1) + ". " + e);
+            throw new OMException("Error creating Mime Part." + e);
         }
         partIndex++;
-        return mimeBodyPart;
+        return part;
     }
-    
+
     /**
-     * @return
+     * @return the Root MIME part which contains the SOAP envelope
      * @throws OMException
      */
-    private MimeBodyPart getRootMimeBodyPart() throws OMException {
-        MimeBodyPart rootMimeBodyPart;
+    private Part getRootMimeBodyPart() throws OMException {
+        Part rootPart;
         if (bodyPartsMap.isEmpty()) {
-            rootMimeBodyPart = getMimeBodyPart();
-            bodyPartsMap.put(ROOT_PART, rootMimeBodyPart);
+            rootPart = getPart();
+            bodyPartsMap.put(ROOT_PART, rootPart);
         } else {
-            rootMimeBodyPart = (MimeBodyPart) bodyPartsMap.get(ROOT_PART);
+            rootPart = (Part) bodyPartsMap.get(ROOT_PART);
         }
-        return rootMimeBodyPart;
+        return rootPart;
     }
-    
+
+    /**
+     * @return the Next valid MIME part + store the Part in the Parts List
+     * @throws OMException
+     *             throw if cotent id is null or if two MIME parts contain the same
+     *             content-ID & the exceptions throws by getPart()
+     */
     private Part getNextPart() throws OMException {
-        MimeBodyPart nextMimeBodyPart;
-        nextMimeBodyPart = getMimeBodyPart();
-        if (nextMimeBodyPart != null) {
+        Part nextPart;
+        nextPart = getPart();
+        if (nextPart != null) {
             String partContentID;
             try {
-                partContentID = nextMimeBodyPart.getContentID();
-                
+                partContentID = nextPart.getContentID();
+
                 if (partContentID == null & partIndex == 1) {
-                    bodyPartsMap.put("firstPart", nextMimeBodyPart);
+                    bodyPartsMap.put("firstPart", nextPart);
                     firstPartId = "firstPart";
-                    return nextMimeBodyPart;
+                    return nextPart;
                 }
                 if (partContentID == null) {
                     throw new OMException(
-                    "Part content ID cannot be blank for non root MIME parts");
+                            "Part content ID cannot be blank for non root MIME parts");
                 }
                 if ((partContentID.indexOf("<") > -1)
                         & (partContentID.indexOf(">") > -1)) {
                     partContentID = partContentID.substring(1, (partContentID
                             .length() - 1));
-                    
+
                 } else if (partIndex == 1) {
                     firstPartId = partContentID;
                 }
-                if (bodyPartsMap.containsKey(partContentID))
-                {
-                    throw new OMException("Two MIME parts with the same Content-ID not allowed.");
+                if (bodyPartsMap.containsKey(partContentID)) {
+                    throw new OMException(
+                            "Two MIME parts with the same Content-ID not allowed.");
                 }
-       /*
-        * Temporary File storage support is deffered till 1.0
-        */         
-                //                if (fileCacheEnable) {
-                //                    PartOnFile part = new PartOnFile(nextMimeBodyPart,
-                //                            partContentID,
-                //                            attachmentRepoDir);
-                //                    return part;
-                //                } else {
-                bodyPartsMap.put(partContentID, nextMimeBodyPart);
-                return nextMimeBodyPart;
-                //                }
+                bodyPartsMap.put(partContentID, nextPart);
+                return nextPart;
             } catch (MessagingException e) {
-                throw new OMException(
-                        "Error Reading Content-ID from Mime Part No "
-                        + partIndex + ". " + e);
+                throw new OMException("Error reading Content-ID from the Part."
+                        + e);
             }
-            //            } catch (Exception e) {
-            //                throw new OMException("Error Creating File Storage Part"
-            //                        + partIndex + ". " + e);
-            //            }
         } else
             return null;
     }
-    
 }

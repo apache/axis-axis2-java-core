@@ -62,17 +62,6 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase {
 
     private QName operationName = new QName("echoOMElement");
 
-    private QName transportName = new QName("http://localhost/my",
-            "NullTransport");
-
-    private String imageInFileName = "img/test.jpg";
-
-    private String imageOutFileName = "mtom/img/testOut.jpg";
-
-    private AxisConfiguration engineRegistry;
-
-    private MessageContext mc;
-
     private ServiceContext serviceContext;
 
     private ServiceDescription service;

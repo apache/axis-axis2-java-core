@@ -61,18 +61,12 @@ public class EchoRawMTOMLoadTest extends TestCase {
 
     private QName operationName = new QName("echoOMElement");
 
-    private QName transportName = new QName("http://localhost/my",
-            "NullTransport");
-
-    private AxisConfiguration engineRegistry;
-
-    private MessageContext mc;
-
     private ServiceContext serviceContext;
 
     private ServiceDescription service;
+    
+    private OMText textData;
 
-    private boolean finish = false;
     
     byte[] expectedByteArray;
 
@@ -110,11 +104,10 @@ public class EchoRawMTOMLoadTest extends TestCase {
             OMElement subData = fac.createOMElement("subData", omNs);
             DataHandler dataHandler = new DataHandler(
                     new ByteArrayDataSource(expectedByteArray));
-            OMText textData = new OMTextImpl(dataHandler, true);
-            //OMText textData = new OMTextImpl("Thilina Gunarathne");
+            textData = new OMTextImpl(dataHandler, true);
             subData.addChild(textData);
             data.addChild(subData);
-            //System.out.println("Creating blobs "+i);
+            
         }
 
         rpcWrapEle.addChild(data);
@@ -141,14 +134,13 @@ public class EchoRawMTOMLoadTest extends TestCase {
             OMElement ele = (OMElement) result.getFirstChild();
             OMElement ele1 = (OMElement) ele.getFirstChild();
             OMText binaryNode = (OMText) ele1.getFirstChild();
-            DataHandler actualDataHandler = binaryNode.getDataHandler();
-            ByteArrayInputStream inStream = (ByteArrayInputStream)actualDataHandler.getContent();
-            byte[] actualByteArray = new byte[11];
-            inStream.read(actualByteArray);
-            assertEquals(expectedByteArray[0],actualByteArray[0]);
-            assertEquals(expectedByteArray[0],actualByteArray[0]);       
+            compareWithActualOMText(binaryNode);  
             System.out.println(i);
         }
+    }
+    private void compareWithActualOMText(OMText binaryNode)
+    {
+        assertEquals(textData.getText(),binaryNode.getText());
     }
 
 }

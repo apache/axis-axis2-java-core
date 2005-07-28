@@ -61,13 +61,13 @@ public class ImageSampleTest extends AbstractTestCase {
 
     File outBase64File;
 
-    String outFileName = "mtom/ActualImageMTOMOut.bin";
+    String outFileName = "target/ActualImageMTOMOut.bin";
 
-    String outBase64FileName = "mtom/OMSerializeBase64Out.xml";
+    String outBase64FileName = "target/OMSerializeBase64Out.xml";
 
     String imageInFileName = "mtom/img/test.jpg";
 
-    String imageOutFileName = "mtom/img/testOut.jpg";
+    String imageOutFileName = "target/testOut.jpg";
 
     String inMimeFileName = "mtom/ImageMTOMOut.bin";
 
@@ -84,8 +84,8 @@ public class ImageSampleTest extends AbstractTestCase {
 
     public void testImageSampleSerialize() throws Exception {
 
-        outMTOMFile = getTestResourceFile(outFileName);
-        outBase64File = getTestResourceFile(outBase64FileName);
+        outMTOMFile = new File(outFileName);
+        outBase64File = new File(outBase64FileName);
         org.apache.axis2.om.impl.OMOutputImpl mtomOutput = new OMOutputImpl(new FileOutputStream(outMTOMFile),
                 true);
         org.apache.axis2.om.impl.OMOutputImpl baseOutput = new OMOutputImpl(new FileOutputStream(outBase64File),
@@ -147,7 +147,7 @@ public class ImageSampleTest extends AbstractTestCase {
         Image actualObject = new JDK13IO().loadImage(actualDH.getDataSource()
                 .getInputStream());
         FileOutputStream imageOutStream = new FileOutputStream(
-                getTestResourceFile(imageOutFileName));
+                new File(imageOutFileName));
         new JDK13IO().saveImage("image/jpeg", actualObject, imageOutStream);
 
     }

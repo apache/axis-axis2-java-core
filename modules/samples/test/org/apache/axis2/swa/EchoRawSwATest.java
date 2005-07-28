@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.mtom;
+package org.apache.axis2.swa;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
@@ -39,7 +39,7 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.transport.http.HTTPTransportSender;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,36 +49,52 @@ import javax.xml.namespace.QName;
 import java.awt.*;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.Socket;
 
-public class EchoRawMTOMTest extends TestCase {
-    private EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO,
+public class EchoRawSwATest extends TestCase {
+    private EndpointReference targetEPR = new EndpointReference(
+            AddressingConstants.WSA_TO,
             "http://127.0.0.1:"
             + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoOMElement");
+            + "/axis/services/EchoSwAService/echoAttachment");
 
     private Log log = LogFactory.getLog(getClass());
 
-    private QName serviceName = new QName("EchoXMLService");
+    private QName serviceName = new QName("EchoSwAService");
 
-    private QName operationName = new QName("echoOMElement");
+    private QName operationName = new QName("echoAttachment");
+
+    private QName transportName = new QName("http://localhost/my",
+            "NullTransport");
+
+    private String imageInFileName = "img/test.jpg";
+
+    private String imageOutFileName = "mtom/img/testOut.jpg";
+
+    private AxisConfiguration engineRegistry;
+
+    private MessageContext mc;
 
     private ServiceContext serviceContext;
 
     private ServiceDescription service;
 
+    private boolean finish = false;
+    
     private OMTextImpl expectedTextData;
 
-    public EchoRawMTOMTest() {
-        super(EchoRawMTOMTest.class.getName());
+    public EchoRawSwATest() {
+        super(EchoRawSwATest.class.getName());
     }
 
-    public EchoRawMTOMTest(String testName) {
+    public EchoRawSwATest(String testName) {
         super(testName);
     }
 
     protected void setUp() throws Exception {
         UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
-        service = Utils.createSimpleService(serviceName, Echo.class.getName(),
+        service = Utils.createSimpleService(serviceName, EchoSwA.class.getName(),
                 operationName);
         UtilServer.deployService(service);
         serviceContext = UtilServer.getConfigurationContext()
@@ -90,65 +106,16 @@ public class EchoRawMTOMTest extends TestCase {
         UtilServer.stop();
     }
 
-    private OMElement createEnvelope() throws Exception {
-
-        DataHandler expectedDH;
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement rpcWrapEle = fac.createOMElement("echoOMElement", omNs);
-        OMElement data = fac.createOMElement("data", omNs);
-        Image expectedImage;
-        expectedImage =
-                new JDK13IO()
-                .loadImage(getResourceAsStream("org/apache/axis2/mtom/test.jpg"));
-        ImageDataSource dataSource = new ImageDataSource("test.jpg",
-                expectedImage);
-        expectedDH = new DataHandler(dataSource);
-        expectedTextData = new OMTextImpl(expectedDH, true);
-        data.addChild(expectedTextData);
-        rpcWrapEle.addChild(data);
-        return rpcWrapEle;
-
-    }
 
     public void testEchoXMLSync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
-        OMElement payload = createEnvelope();
-
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
-        call.setTo(targetEPR);
-        call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
-                Constants.TRANSPORT_HTTP, false);
-        call.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-
-        OMElement result = (OMElement) call.invokeBlocking(operationName
-                .getLocalPart(),
-                payload);
-        // result.serializeWithCache(new
-        // OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
-        OMElement ele = (OMElement) result.getFirstChild();
-        OMText binaryNode = (OMText) ele.getFirstChild();
+        Socket socket =  new Socket("127.0.0.1",5555);
         
-        // to the assert equal
-        compareWithCreatedOMText(binaryNode);
-        
-        // Save the image
-        DataHandler actualDH;
-        actualDH = binaryNode.getDataHandler();
-        Image actualObject = new JDK13IO().loadImage(actualDH.getDataSource()
-                .getInputStream());
-        FileOutputStream imageOutStream = new FileOutputStream("target/testout.jpg");
-        new JDK13IO().saveImage("image/jpeg", actualObject, imageOutStream);
-
     }
 
     private InputStream getResourceAsStream(String path) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         return cl.getResourceAsStream(path);
     }
-
     private void compareWithCreatedOMText(OMText actualTextData) {
         String originalTextValue = expectedTextData.getText();
         String returnedTextValue = actualTextData.getText();
