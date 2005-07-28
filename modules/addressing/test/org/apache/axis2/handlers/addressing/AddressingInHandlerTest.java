@@ -57,25 +57,25 @@ public class AddressingInHandlerTest extends TestCase {
                     testFileName);
 
             SOAPHeader header = ((SOAPEnvelope) omBuilder.getDocumentElement()).getHeader();
-            MessageInformationHeaders messageInformationHeadersCollection =
+            MessageInformationHeaders messageInformationHeaders =
                     inHandler.extractCommonAddressingParameters(header,
                             null,
                             header.getHeaderBlocksWithNSURI(
                                     AddressingConstants.Submission.WSA_NAMESPACE),
                             AddressingConstants.Submission.WSA_NAMESPACE);
 
-            if (messageInformationHeadersCollection == null) {
+            if (messageInformationHeaders == null) {
                 fail(
                         "Addressing Information Headers have not been retrieved properly");
             }
             assertEquals("action header is not correct",
-                    messageInformationHeadersCollection.getAction(),
+                    messageInformationHeaders.getAction(),
                     action);
             assertEquals("action header is not correct",
-                    messageInformationHeadersCollection.getMessageId(),
+                    messageInformationHeaders.getMessageId(),
                     messageID);
 
-            assertFromEPR(messageInformationHeadersCollection.getFrom());
+            assertFromEPR(messageInformationHeaders.getFrom());
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -148,12 +148,12 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
 
     public MessageInformationHeaders extractCommonAddressingParameters(
         SOAPHeader header,
-        MessageInformationHeaders messageInformationHeadersCollection,
+        MessageInformationHeaders messageInformationHeaders,
         ArrayList addressingHeaders,
         String addressingNamespace)
         throws AddressingException {
-        if (messageInformationHeadersCollection == null) {
-            messageInformationHeadersCollection = new MessageInformationHeaders();
+        if (messageInformationHeaders == null) {
+            messageInformationHeaders = new MessageInformationHeaders();
         }
 
         Iterator addressingHeadersIt = addressingHeaders.iterator();
@@ -163,32 +163,32 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
             if (AddressingConstants.WSA_TO.equals(soapHeaderBlock.getLocalName())) {
                 //here the addressing epr overidde what ever already there is 
                 epr = new EndpointReference(soapHeaderBlock.getText());
-                messageInformationHeadersCollection.setTo(epr);
+                messageInformationHeaders.setTo(epr);
             } else if (AddressingConstants.WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
-                epr = messageInformationHeadersCollection.getFrom();
+                epr = messageInformationHeaders.getFrom();
                 if (epr == null) {
                     epr = new EndpointReference("");
-                    messageInformationHeadersCollection.setFrom(epr);
+                    messageInformationHeaders.setFrom(epr);
                 }
                 extractEPRAddressInformation(soapHeaderBlock, epr, addressingNamespace);
             } else if (AddressingConstants.WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName())) {
-                epr = messageInformationHeadersCollection.getReplyTo();
+                epr = messageInformationHeaders.getReplyTo();
                 if (epr == null) {
                     epr = new EndpointReference("");
-                    messageInformationHeadersCollection.setReplyTo(epr);
+                    messageInformationHeaders.setReplyTo(epr);
                 }
                 extractEPRAddressInformation(soapHeaderBlock, epr, addressingNamespace);
             } else if (AddressingConstants.WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName())) {
-                epr = messageInformationHeadersCollection.getFaultTo();
+                epr = messageInformationHeaders.getFaultTo();
                 if (epr == null) {
                     epr = new EndpointReference("");
-                    messageInformationHeadersCollection.setFaultTo(epr);
+                    messageInformationHeaders.setFaultTo(epr);
                 }
                 extractEPRAddressInformation(soapHeaderBlock, epr, addressingNamespace);
             } else if (AddressingConstants.WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
-                messageInformationHeadersCollection.setMessageId(soapHeaderBlock.getText());
+                messageInformationHeaders.setMessageId(soapHeaderBlock.getText());
             } else if (AddressingConstants.WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
-                messageInformationHeadersCollection.setAction(soapHeaderBlock.getText());
+                messageInformationHeaders.setAction(soapHeaderBlock.getText());
             } else if (AddressingConstants.WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
                 String address = soapHeaderBlock.getText();
                 OMAttribute relationshipType =
@@ -204,11 +204,11 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                         relationshipType == null
                             ? relationshipTypeDefaultValue
                             : relationshipType.getValue());
-                messageInformationHeadersCollection.setRelatesTo(relatesTo);
+                messageInformationHeaders.setRelatesTo(relatesTo);
             }
         }
 
-        return messageInformationHeadersCollection;
+        return messageInformationHeaders;
     }
 
     private void extractEPRAddressInformation(
