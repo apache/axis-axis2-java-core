@@ -88,10 +88,10 @@ public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
         }
         writer.writeEndElement();
 
-        //serilize siblings
-        if (this.nextSibling != null) {
-            nextSibling.serialize(omOutput);
-        }
+//        //serilize siblings
+//        if (this.nextSibling != null) {
+//            nextSibling.serialize(omOutput);
+//        }
 
     }
 

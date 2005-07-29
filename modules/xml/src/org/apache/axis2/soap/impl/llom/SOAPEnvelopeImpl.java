@@ -15,15 +15,11 @@
  */
 package org.apache.axis2.soap.impl.llom;
 
-import org.apache.axis2.om.OMConstants;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.*;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeader;
+import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 
 import javax.xml.namespace.QName;
 
@@ -61,8 +57,15 @@ public class SOAPEnvelopeImpl extends SOAPElement
      * @throws OMException
      */
     public SOAPHeader getHeader() throws OMException {
-        return (SOAPHeader) getFirstChildWithName(
-                new QName(SOAPConstants.HEADER_LOCAL_NAME));
+        return (SOAPHeader) getFirstChildWithName(new QName(SOAPConstants.HEADER_LOCAL_NAME));
+    }
+
+    public void addChild(OMNode child) {
+        if ((child instanceof OMElement) &&!(child instanceof SOAPHeader || child instanceof SOAPBody)) {
+            throw new SOAPProcessingException("SOAP Envelope can not have children other than SOAP Header and Body", SOAP12Constants.FAULT_CODE_SENDER);
+        } else {
+            super.addChild(child);
+        }
     }
 
     /**
@@ -91,12 +94,10 @@ public class SOAPEnvelopeImpl extends SOAPElement
                 element = (OMElement) node;
 
                 if (node != null &&
-                        SOAPConstants.BODY_LOCAL_NAME.equals(
-                                element.getLocalName())) {
+                        SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
                     return (SOAPBody) element;
                 } else {
-                    throw new OMException(
-                            "SOAPEnvelope must contain a body element which is either first or second child element of the SOAPEnvelope.");
+                    throw new OMException("SOAPEnvelope must contain a body element which is either first or second child element of the SOAPEnvelope.");
                 }
             }
         }

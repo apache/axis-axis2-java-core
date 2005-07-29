@@ -1,11 +1,11 @@
 package org.apache.axis2.engine.util;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 
@@ -36,17 +36,13 @@ public class MyInOutMEPClient extends Call {
     public SOAPEnvelope invokeBlockingWithEnvelopeOut(String axisop,
                                                       OMElement toSend) throws AxisFault {
         OperationDescription axisConfig =
-                serviceContext.getServiceConfig().getOperation(
-                        new QName(axisop));
+                serviceContext.getServiceConfig().getOperation(new QName(axisop));
         if (axisConfig == null) {
             axisConfig = new OperationDescription(new QName(axisop));
-            axisConfig.setRemainingPhasesInFlow(
-                    operationTemplate.getRemainingPhasesInFlow());
+            axisConfig.setRemainingPhasesInFlow(operationTemplate.getRemainingPhasesInFlow());
             axisConfig.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
-            axisConfig.setPhasesInFaultFlow(
-                    operationTemplate.getPhasesInFaultFlow());
-            axisConfig.setPhasesOutFaultFlow(
-                    operationTemplate.getPhasesOutFaultFlow());
+            axisConfig.setPhasesInFaultFlow(operationTemplate.getPhasesInFaultFlow());
+            axisConfig.setPhasesOutFaultFlow(operationTemplate.getPhasesOutFaultFlow());
             serviceContext.getServiceConfig().addOperation(axisConfig);
         }
 
@@ -60,5 +56,37 @@ public class MyInOutMEPClient extends Call {
                 msgctx);
         SOAPEnvelope envelope = responseContext.getEnvelope();
         return envelope;
+    }
+
+
+    public SOAPEnvelope invokeBlockingWithEnvelopeOut(String axisop,
+                                                      SOAPEnvelope reqEnvelope) throws AxisFault {
+        OperationDescription axisConfig =
+                serviceContext.getServiceConfig().getOperation(new QName(axisop));
+        if (axisConfig == null) {
+            axisConfig = new OperationDescription(new QName(axisop));
+            axisConfig.setRemainingPhasesInFlow(operationTemplate.getRemainingPhasesInFlow());
+            axisConfig.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
+            axisConfig.setPhasesInFaultFlow(operationTemplate.getPhasesInFaultFlow());
+            axisConfig.setPhasesOutFaultFlow(operationTemplate.getPhasesOutFaultFlow());
+            serviceContext.getServiceConfig().addOperation(axisConfig);
+        }
+
+//        if (axisConfig == null) {
+//            axisConfig = new OperationDescription(new QName(axisop));
+//            serviceContext.getServiceConfig().addOperation(axisConfig);
+//        }
+        MessageContext msgctx = getMessageContext(reqEnvelope);
+
+        MessageContext responseContext = super.invokeBlocking(axisConfig,
+                msgctx);
+        SOAPEnvelope envelope = responseContext.getEnvelope();
+        return envelope;
+    }
+
+    protected MessageContext getMessageContext(SOAPEnvelope envelope) throws AxisFault {
+        MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
+        msgctx.setEnvelope(envelope);
+        return msgctx;
     }
 }

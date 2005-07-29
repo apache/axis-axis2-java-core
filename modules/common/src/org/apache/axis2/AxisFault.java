@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
  * <li>Fault details; an xml tree of fault specific stuff
  * </ol>
  */
-public class AxisFault extends RemoteException {
+public class AxisFault extends RemoteException implements SOAPFaultException{
 
     private String soapFaultCode;
 
@@ -94,5 +94,13 @@ public class AxisFault extends RemoteException {
     public AxisFault(String messageText, String faultCode) {
         super(messageText);
         this.soapFaultCode = faultCode;
+    }
+
+    public String getFaultCode() {
+        return soapFaultCode;
+    }
+
+    public void setFaultCode(String soapFaultCode) {
+        this.soapFaultCode = soapFaultCode;
     }
 }

@@ -91,14 +91,14 @@ public class SOAP11FaultReasonImpl extends SOAPFaultReasonImpl {
         writer.writeEndElement();
 
         //serilize siblings
-        if (this.nextSibling != null) {
-            nextSibling.serialize(omOutput);
-        } else if (this.parent != null) {
-            if (!this.parent.isComplete()) {
-                builder.setCache(cache);
-                builder.next();
-            }
-        }
+//        if (this.nextSibling != null) {
+//            nextSibling.serialize(omOutput);
+//        } else if (this.parent != null) {
+//            if (!this.parent.isComplete()) {
+//                builder.setCache(cache);
+//                builder.next();
+//            }
+//        }
 
     }
 

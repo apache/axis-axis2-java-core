@@ -1,6 +1,7 @@
 package org.apache.axis2.soap.impl.llom;
 
 import org.apache.axis2.om.OMException;
+import org.apache.axis2.SOAPFaultException;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -18,7 +19,7 @@ import org.apache.axis2.om.OMException;
  * the License.
  * <p/>
  */
-public class SOAPProcessingException extends OMException {
+public class SOAPProcessingException extends OMException implements SOAPFaultException{
 
     private String soapFaultCode;
 
@@ -54,11 +55,11 @@ public class SOAPProcessingException extends OMException {
         this.soapFaultCode = faultCode;
     }
 
-    public String getSoapFaultCode() {
+    public String getFaultCode() {
         return soapFaultCode;
     }
 
-    public void setSoapFaultCode(String soapFaultCode) {
+    public void setFaultCode(String soapFaultCode) {
         this.soapFaultCode = soapFaultCode;
     }
 }

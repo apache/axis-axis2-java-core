@@ -166,11 +166,13 @@
                 <exclude>**/*InteropStubTest.java</exclude>
                 <exclude>**/*EchoRawXMLChunckedTest.java</exclude>
                 <exclude>**org/apache/axis2/mail/*.java</exclude>
+                <exclude>**/*FaultHandlingTest.java</exclude>
                 <!--
 		<exclude>**/*SOAP12Test.java</exclude>
                 <exclude>**/*SOAP12TestWithFaults.java</exclude>
-		-->
-                <!--		<exclude>**/*MailEchoRawXMLTest.java</exclude>
+                
+
+               <exclude>**/*MailEchoRawXMLTest.java</exclude>
                 <exclude>**/*MailOneWayRawXMLTest.java</exclude>
                 <exclude>**/*MailRequestResponseRawXMLTest.java</exclude>
                 <exclude>**/*CommonsHTTPEchoRawXMLTest.java</exclude>

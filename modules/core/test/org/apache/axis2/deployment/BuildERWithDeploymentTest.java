@@ -16,12 +16,12 @@
 
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.AbstractTestCase;
 
 import javax.xml.namespace.QName;
 

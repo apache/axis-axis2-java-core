@@ -1,12 +1,12 @@
 package org.apache.axis2.phaserule;
 
-import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.phaseresolver.PhaseHolder;
+import org.apache.axis2.AbstractTestCase;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
