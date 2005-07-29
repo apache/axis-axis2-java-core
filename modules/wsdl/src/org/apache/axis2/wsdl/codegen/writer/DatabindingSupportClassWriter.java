@@ -43,9 +43,9 @@ public class DatabindingSupportClassWriter extends ClassWriter {
     }
 
     public void loadTemplate() {
-        if (this.databindingFramework ==
-                XSLTConstants.DataBindingTypes.XML_BEANS) {
-            Class clazz = this.getClass();
+        Class clazz = this.getClass();
+        if ( XSLTConstants.DataBindingTypes.XML_BEANS ==
+                this.databindingFramework) {
             switch (language) {
                 case XSLTConstants.LanguageTypes.JAVA:
                     this.xsltStream =
@@ -58,7 +58,10 @@ public class DatabindingSupportClassWriter extends ClassWriter {
                 default:
                     throw new UnsupportedOperationException();
             }
-        } else {
+        } if (XSLTConstants.DataBindingTypes.NONE ==
+                this.databindingFramework) {
+             this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTDatabindingSupporterTemplates.DEFAULT_TEMPLATE);
+        }else{
             throw new UnsupportedOperationException(
                     "Unsupported Data binding Framework!");
         }

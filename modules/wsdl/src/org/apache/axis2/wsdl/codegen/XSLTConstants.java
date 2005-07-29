@@ -34,6 +34,7 @@ public interface XSLTConstants {
 
     public interface DataBindingTypes {
 
+        public static final int NONE = 0;
         public static final int XML_BEANS = 1;
         public static final int JAXB = 2;
 
@@ -86,6 +87,7 @@ public interface XSLTConstants {
 
     public interface XSLTDatabindingSupporterTemplates {
         public static final String JAVA_TEMPLATE = "/org/apache/axis2/wsdl/template/java/XMLBeansSupporterTemplate.xsl";
+        public static final String DEFAULT_TEMPLATE = "/org/apache/axis2/wsdl/template/java/DefaultDataBindingSupporterTemplate.xsl";
         //public static final String CSHARP_TEMPLATE = "/org/apache/axis2/wsdl/template/csharp/TestClassTemplate.xsl";
     }
 

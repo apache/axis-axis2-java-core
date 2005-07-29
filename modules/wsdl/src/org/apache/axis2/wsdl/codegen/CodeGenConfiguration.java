@@ -110,6 +110,8 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
             loadLanguge(langOption.getOptionValue());
         }
 
+        CommandLineOption dataBindingOption = (CommandLineOption) optionMap.get(
+                DATA_BINDING_TYPE_OPTION);
 
     }
 
