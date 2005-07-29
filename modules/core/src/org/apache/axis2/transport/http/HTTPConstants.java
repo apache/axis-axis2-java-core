@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -68,6 +69,11 @@ public class HTTPConstants {
      * Field HEADER_PROTOCOL_V11
      */
     public static final String HEADER_PROTOCOL_V11 = "1.1".intern();
+    
+    /**
+     * Field CHAR_SET_ENCODING
+     */
+    public static String CHAR_SET_ENCODING = "charset";
 
     /**
      * Field HEADER_POST

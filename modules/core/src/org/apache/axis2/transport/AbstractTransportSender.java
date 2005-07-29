@@ -132,8 +132,12 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
 
         if (outputMessage != null) {
             try {
-                omOutput.setOutputStream(out, msgContext.isDoingMTOM());
-                outputMessage.serialize(omOutput);
+            	//Pick the char set encoding from the msgContext
+                String charSetEnc = (String) msgContext
+						.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+				omOutput.setOutputStream(out, msgContext.isDoingMTOM(),
+						charSetEnc);
+				outputMessage.serialize(omOutput);
                 omOutput.flush();
                 out.flush();
             } catch (Exception e) {

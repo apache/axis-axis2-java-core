@@ -39,7 +39,7 @@ public class MIMEOutputUtils {
 
     public static void complete(OutputStream outStream,
                                 OutputStream bufferedSoapOutStream, LinkedList binaryNodeList,
-                                String boundary, String contentId) {
+                                String boundary, String contentId, String charSetEncoding) {
         try {
             startWritingMime(outStream, boundary);
 
@@ -48,8 +48,11 @@ public class MIMEOutputUtils {
             MimeBodyPart rootMimeBodyPart = new MimeBodyPart();
             rootMimeBodyPart.setDataHandler(dh);
 
+            
+            
             rootMimeBodyPart.addHeader("content-type",
-                    "application/xop+xml; charset=utf-8; type=\"text/xml; charset=utf-8\"");
+                    "application/xop+xml; charset=" + charSetEncoding + 
+					"; type=\"text/xml; charset=" + charSetEncoding + "\"");
             rootMimeBodyPart.addHeader("content-transfer-encoding", "binary");
             rootMimeBodyPart.addHeader("content-id","<"+contentId+">");
 
@@ -124,7 +127,7 @@ public class MIMEOutputUtils {
         outStream.write(new byte[]{45, 45});
     }
 
-    public static String getContentTypeForMime(String boundary, String contentId) {
+    public static String getContentTypeForMime(String boundary, String contentId, String charSetEncoding) {
         StringBuffer sb = new StringBuffer();
         sb.append("multipart/related");
         sb.append("; ");
@@ -135,7 +138,7 @@ public class MIMEOutputUtils {
         sb.append("; ");
         sb.append("start=\"<" + contentId + ">\"");
         sb.append("; ");
-        sb.append("start-info=\"text/xml; charset=utf-8\"");
+        sb.append("start-info=\"text/xml; charset=" + charSetEncoding + "\"");
         return sb.toString();
     }
 

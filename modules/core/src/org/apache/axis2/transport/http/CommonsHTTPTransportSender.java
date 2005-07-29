@@ -98,7 +98,10 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             } else {
                 OutputStream out = (OutputStream) msgContext
                         .getProperty(MessageContext.TRANSPORT_OUT);
-                omOutput.setOutputStream(out, false);
+                
+                String charSetEnc = (String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                omOutput.setOutputStream(out, false,charSetEnc);
+
                 dataOut.serialize(omOutput);
             }
             msgContext.getOperationContext().setProperty(
@@ -160,6 +163,9 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
     //get the contentLength...
     public class AxisRequestEntity implements RequestEntity {
+    	
+        private String charSetEnc;
+    	
         private OMElement element;
 
         private boolean chuncked;
@@ -169,11 +175,12 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         private boolean doingMTOM = false;
 
         public AxisRequestEntity(OMElement element, boolean chuncked,
-                                 boolean doingMTOM) {
-            this.element = element;
-            this.chuncked = chuncked;
-            this.doingMTOM = doingMTOM;
-        }
+				boolean doingMTOM, String charSetEncoding) {
+			this.element = element;
+			this.chuncked = chuncked;
+			this.doingMTOM = doingMTOM;
+			this.charSetEnc = charSetEncoding;
+		}
 
         public boolean isRepeatable() {
             return false;
@@ -183,7 +190,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             try {
                 ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
                 XMLStreamWriter outputWriter = XMLOutputFactory.newInstance()
-                        .createXMLStreamWriter(bytesOut);
+                        .createXMLStreamWriter(bytesOut, charSetEnc);
                 element.serialize(outputWriter);
                 outputWriter.flush();
                 return bytesOut.toByteArray();
@@ -197,7 +204,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         public void writeRequest(OutputStream out) throws IOException{
             try {
                 if (chuncked || doingMTOM) {
-                    omOutput.setOutputStream(out, doingMTOM);
+                    omOutput.setOutputStream(out, doingMTOM, charSetEnc);
                     element.serialize(omOutput);
                     omOutput.flush();
                     out.flush();
@@ -232,7 +239,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         }
 
         public String getContentType() {
-            return "text/xml; charset=utf-8";
+            return "text/xml; charset=" + this.charSetEnc;
         }
     }
 
@@ -291,7 +298,11 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             PostMethod postMethod = new PostMethod();
             postMethod.setPath(url.getFile());
             msgContext.setProperty(HTTP_METHOD, postMethod);
-            postMethod.setRequestEntity(new AxisRequestEntity(dataout, chuncked,msgContext.isDoingMTOM()));
+            
+            String charEncoding = (String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+            
+            postMethod.setRequestEntity(new AxisRequestEntity(dataout, chuncked,msgContext.isDoingMTOM(), charEncoding));
+
             if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chuncked) {
                 ((PostMethod) postMethod).setContentChunked(true);
             }
@@ -305,8 +316,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 postMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
                         omOutput.getOptimizedContentType());
             } else {
-                postMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                        "text/xml; charset=utf-8");
+            	if(charEncoding == null) //Use default encoding scheme
+            		postMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
+                        "text/xml; charset=" + MessageContext.DEFAULT_CHAR_SET_ENCODING);
+            	else
+            		postMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
+                    "text/xml; charset=" + charEncoding);
+
             }
 
             if (httpVersion != null) {
@@ -353,25 +369,32 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
         }
         private void transportConfigurationGET(MessageContext msgContext, URL url) throws MalformedURLException, AxisFault, IOException {
-            GetMethod getMehtod = new GetMethod();
-            getMehtod.setPath(url.getFile());
-            getMehtod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                    "text/xml; charset=utf-8");
+            GetMethod getMethod = new GetMethod();
+            getMethod.setPath(url.getFile());
+
+           	String charEncoding = (String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+        	if(charEncoding == null) //Default encoding scheme
+        		getMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
+                    "text/xml; charset=" + MessageContext.DEFAULT_CHAR_SET_ENCODING);
+        	else
+        		getMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
+                "text/xml; charset=" + charEncoding);
+        	
             this.httpClient = new HttpClient();
             HostConfiguration hostConfig = this.getHostConfiguration(msgContext, url);
 
-            this.httpClient.executeMethod(hostConfig, getMehtod);
-            if (getMehtod.getStatusCode() == HttpStatus.SC_OK) {
+            this.httpClient.executeMethod(hostConfig, getMethod);
+            if (getMethod.getStatusCode() == HttpStatus.SC_OK) {
 
-                InputStream in = getMehtod.getResponseBodyAsStream();
+                InputStream in = getMethod.getResponseBodyAsStream();
                 if (in == null) {
                     throw new AxisFault(Messages.getMessage("canNotBeNull","InputStream"));
                 }
                 msgContext.getOperationContext().setProperty(MessageContext.TRANSPORT_IN, in);
-            } else if (getMehtod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
+            } else if (getMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
                 return;
             } else {
-                throw new AxisFault(Messages.getMessage("transportError",String.valueOf(getMehtod.getStatusCode()),getMehtod.getResponseBodyAsString()));            }
+                throw new AxisFault(Messages.getMessage("transportError",String.valueOf(getMethod.getStatusCode()),getMethod.getResponseBodyAsString()));            }
         }
 
 

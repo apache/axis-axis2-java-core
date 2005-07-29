@@ -17,15 +17,31 @@
  */
 package org.apache.axis2.transport.http;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.MIMEHelper;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
@@ -39,94 +55,133 @@ import org.apache.axis2.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis2.util.Utils;
 
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.*;
-import java.util.Iterator;
-import java.util.Map;
-
 public class HTTPTransportUtils {
 
-    public static void processHTTPPostRequest(MessageContext msgContext,
-                                              InputStream in,
-                                              OutputStream out,
-                                              String contentType,
-                                              String soapActionHeader,
-                                              String requestURI,
-                                              ConfigurationContext configurationContext)
+    public static void processHTTPPostRequest(
+            MessageContext msgContext,
+            InputStream in,
+            OutputStream out,
+            String contentType,
+            String soapActionHeader,
+            String requestURI,
+            ConfigurationContext configurationContext)
             throws AxisFault {
-        try {
+            try {
 
 
-            //remove the starting and trailing " from the SOAP Action
-            if (soapActionHeader != null && soapActionHeader.startsWith("\"") && soapActionHeader.endsWith("\"")) {
+                //remove the starting and trailing " from the SOAP Action
+                if (soapActionHeader != null && soapActionHeader.startsWith("\"") && soapActionHeader.endsWith("\"")) {
 
-                soapActionHeader = soapActionHeader.substring(1, soapActionHeader.length() - 1);
-            }
-            //fill up the Message Contexts
-            msgContext.setWSAAction(soapActionHeader);
-            msgContext.setSoapAction(soapActionHeader);
-            msgContext.setTo(new EndpointReference(requestURI));
-            msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
-            msgContext.setServerSide(true);
+                    soapActionHeader = soapActionHeader.substring(1, soapActionHeader.length() - 1);
+                }
+                //fill up the Message Contexts
+                msgContext.setWSAAction(soapActionHeader);
+                msgContext.setSoapAction(soapActionHeader);
+                msgContext.setTo(new EndpointReference(requestURI));
+                msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
+                msgContext.setServerSide(true);
 
-            SOAPEnvelope envelope = null;
-            StAXBuilder builder = null;
-            if (contentType != null) {
-                if (contentType.indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
-                    //It is MTOM
-                    builder = selectBuilderForMIME(msgContext, in, contentType);
-                    envelope = (SOAPEnvelope) builder.getDocumentElement();
-                } else {
-                    Reader reader = new InputStreamReader(in);
-                    XMLStreamReader xmlreader =
-                            XMLInputFactory.newInstance().createXMLStreamReader(reader);
-                    if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
-                        //it is SOAP 1.2
-                        builder = new StAXSOAPModelBuilder(xmlreader, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+
+                SOAPEnvelope envelope = null;
+                StAXBuilder builder = null;
+                if (contentType != null) {
+                    if (contentType.indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
+                        //It is MTOM
+                        builder = selectBuilderForMIME(msgContext, in, contentType);
                         envelope = (SOAPEnvelope) builder.getDocumentElement();
-                    } else if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
-                        //it is SOAP 1.1
-                        Object enable = msgContext.getProperty(Constants.Configuration.ENABLE_REST);
-                        if ((soapActionHeader == null || soapActionHeader.length() == 0)
-                                && Constants.VALUE_TRUE.equals(enable)) {
-                            //If the content Type is text/xml (BTW which is the SOAP 1.1 Content type ) and
-                            //the SOAP Action is absent it is rest !!
-                            msgContext.setDoingREST(true);
-                            SOAPFactory soapFactory = new SOAP11Factory();
-                            builder = new StAXOMBuilder(xmlreader);
-                            builder.setOmbuilderFactory(soapFactory);
-                            envelope = soapFactory.getDefaultEnvelope();
-                            envelope.getBody().addChild(builder.getDocumentElement());
+                    } else {
+                        Reader reader = new InputStreamReader(in);
+                        
+                        XMLStreamReader xmlreader;
+                        //Figure out the char set encoding and create the reader
+                        
+                        //If charset is not specified
+                        if(contentType.indexOf(HTTPConstants.CHAR_SET_ENCODING) == -1) { 
+                        	xmlreader = XMLInputFactory
+								.newInstance()
+								.createXMLStreamReader(
+										in,
+										MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                        	//Set the encoding scheme in the message context
+                        	msgContext.setProperty(
+								MessageContext.CHARACTER_SET_ENCODING,
+								MessageContext.DEFAULT_CHAR_SET_ENCODING);
                         } else {
-                            builder = new StAXSOAPModelBuilder(xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-                            envelope = (SOAPEnvelope) builder.getDocumentElement();
+                        	//get the type of char encoding
+                        	String charSetEnc = getCharSetEncoing(contentType);
+                        	xmlreader = XMLInputFactory.newInstance().createXMLStreamReader(in,charSetEnc);
+                        	
+                        	//Setting the value in msgCtx
+                        	msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,charSetEnc);
+                        	
                         }
+                        if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
+                            //it is SOAP 1.2
+                            builder = new StAXSOAPModelBuilder(xmlreader, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                            envelope = (SOAPEnvelope) builder.getDocumentElement();
+                        } else if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+                            //it is SOAP 1.1
+                            Object enable = msgContext.getProperty(Constants.Configuration.ENABLE_REST);
+                            if ((soapActionHeader == null || soapActionHeader.length() == 0)
+                                && Constants.VALUE_TRUE.equals(enable)) {
+                                //If the content Type is text/xml (BTW which is the SOAP 1.1 Content type ) and
+                                //the SOAP Action is absent it is rest !!
+                                msgContext.setDoingREST(true);
+                                SOAPFactory soapFactory = new SOAP11Factory();
+                                builder = new StAXOMBuilder(xmlreader);
+                                builder.setOmbuilderFactory(soapFactory);
+                                envelope = soapFactory.getDefaultEnvelope();
+                                envelope.getBody().addChild(builder.getDocumentElement());
+                            }else{
+                                builder = new StAXSOAPModelBuilder(xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                                envelope = (SOAPEnvelope) builder.getDocumentElement();
+                            }
+                        }
+
                     }
 
                 }
 
-            }
+                msgContext.setEnvelope(envelope);
+                AxisEngine engine = new AxisEngine(configurationContext);
+                if (envelope.getBody().hasFault()) {
+                    engine.receiveFault(msgContext);
+                } else {
+                    engine.receive(msgContext);
+                }
 
-            msgContext.setEnvelope(envelope);
-            AxisEngine engine = new AxisEngine(configurationContext);
-            if (envelope.getBody().hasFault()) {
-                engine.receiveFault(msgContext);
-            } else {
-                engine.receive(msgContext);
+            } catch (SOAPProcessingException e) {
+                throw new AxisFault(e);
+            } catch (OMException e) {
+                throw new AxisFault(e);
+            } catch (XMLStreamException e) {
+                throw new AxisFault(e);
             }
-
-        } catch (SOAPProcessingException e) {
-            throw new AxisFault(e);
-        } catch (OMException e) {
-            throw new AxisFault(e);
-        } catch (XMLStreamException e) {
-            throw new AxisFault(e);
         }
-    }
 
+    
+    /**
+     * Extracts and returns the character set encoding from the 
+     * Content-type header
+     * Example:
+     * Content-Type: text/xml; charset=utf-8 
+	 * @param contentType
+	 */
+	private static String getCharSetEncoing(String contentType) {
+		int index = contentType.indexOf(HTTPConstants.CHAR_SET_ENCODING);
+		//If there are spaces around the '=' sign
+		int indexOfEq = contentType.indexOf("=", index);
+		String value = (contentType.substring(indexOfEq + 1, contentType
+				.length())).trim();
+
+		//There might be "" around the value - if so remove them
+		value = value.replaceAll("\"", "");
+
+		return value.trim();
+		
+	}
+
+    
     public static boolean processHTTPGetRequest(MessageContext msgContext,
                                                 InputStream in,
                                                 OutputStream out,

@@ -47,76 +47,81 @@ public class HTTPTransportSender extends AbstractTransportSender {
     private String httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
     public static final String TRANSPORT_SENDER_INFO = "TRANSPORT_SENDER_INFO";
 
-    protected void writeTransportHeaders(OutputStream out,
-                                         URL url,
-                                         MessageContext msgContext,
-                                         int contentLength)
-            throws AxisFault {
-        try {
+    protected void writeTransportHeaders(OutputStream out, URL url,
+			MessageContext msgContext, int contentLength) throws AxisFault {
+		try {
 
-            String soapActionString = msgContext.getSoapAction();
-            if (soapActionString == null || soapActionString.length() == 0) {
-                soapActionString = msgContext.getWSAAction();
-            }
-            if (soapActionString == null) {
-                soapActionString = "";
-            }
+			String soapActionString = msgContext.getSoapAction();
+			if (soapActionString == null || soapActionString.length() == 0) {
+				soapActionString = msgContext.getWSAAction();
+			}
+			if (soapActionString == null) {
+				soapActionString = "";
+			}
 
-            boolean doMTOM = msgContext.isDoingMTOM();
-            StringBuffer buf = new StringBuffer();
-            buf.append(HTTPConstants.HEADER_POST).append(" ");
-            buf.append(url.getFile()).append(" ").append(httpVersion).append(
-                    "\n");
-            if (doMTOM) {
-                buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ")
-                        .append(omOutput.getOptimizedContentType())
-                        .append("\n");
-            } else {
-                String nsURI = msgContext.getEnvelope().getNamespace().getName();
-                if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
-                    buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ")
-                            .append(SOAP12Constants.SOAP_12_CONTENT_TYPE);
-                    buf.append("; charset=utf-8\n");
-                } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
-                        nsURI)) {
-                    buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(
-                            ": text/xml; charset=utf-8\n");
-                } else {
-                    throw new AxisFault(
-                            "Unknown SOAP Version. Current Axis handles only SOAP 1.1 and SOAP 1.2 messages");
-                }
+			boolean doMTOM = msgContext.isDoingMTOM();
+			StringBuffer buf = new StringBuffer();
+			buf.append(HTTPConstants.HEADER_POST).append(" ");
+			buf.append(url.getFile()).append(" ").append(httpVersion).append(
+					"\n");
 
-            }
+			//Get the char set encoding if set
+			String charSetEnc = (String) msgContext
+					.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+			if (charSetEnc == null)
+				charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING; 
 
-            buf.append(HTTPConstants.HEADER_ACCEPT).append(
-                    ": application/soap+xml, application/dime, multipart/related, text/*\n");
-            buf.append(HTTPConstants.HEADER_HOST).append(": ").append(
-                    url.getHost())
-                    .append("\n");
-            buf.append(HTTPConstants.HEADER_CACHE_CONTROL).append(
-                    ": no-cache\n");
-            buf.append(HTTPConstants.HEADER_PRAGMA).append(": no-cache\n");
-            if (chuncked) {
-                buf
-                        .append(HTTPConstants.HEADER_TRANSFER_ENCODING)
-                        .append(": ")
-                        .append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)
-                        .append("\n");
-            }
-            if (!chuncked && !msgContext.isDoingMTOM()) {
-                buf.append(HTTPConstants.HEADER_CONTENT_LENGTH).append(
-                        ": " + contentLength + "\n");
-            }
-            if (!msgContext.isDoingREST()) {
-                buf.append("SOAPAction: \"" + soapActionString + "\"\n");
-            }
-            buf.append("\n");
-            out.write(buf.toString().getBytes());
-        } catch (IOException e) {
-            throw new AxisFault(e);
-        }
-    }
+			if (doMTOM) {
+				buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ")
+						.append(omOutput.getOptimizedContentType())
+						.append("\n");
+			} else {
+				String nsURI = msgContext.getEnvelope().getNamespace()
+						.getName();
 
+				if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
+					buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ")
+							.append(SOAP12Constants.SOAP_12_CONTENT_TYPE);
+					buf.append("; charset=" + charSetEnc + "\n");
+				} else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI
+						.equals(nsURI)) {
+					buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(
+							": text/xml; charset=" + charSetEnc + "\n");
+				} else {
+					throw new AxisFault(
+							"Unknown SOAP Version. Current Axis handles only SOAP 1.1 and SOAP 1.2 messages");
+				}
+
+			}
+
+			buf
+					.append(HTTPConstants.HEADER_ACCEPT)
+					.append(
+							": application/soap+xml, application/dime, multipart/related, text/*\n");
+			buf.append(HTTPConstants.HEADER_HOST).append(": ").append(
+					url.getHost()).append("\n");
+			buf.append(HTTPConstants.HEADER_CACHE_CONTROL).append(
+					": no-cache\n");
+			buf.append(HTTPConstants.HEADER_PRAGMA).append(": no-cache\n");
+			if (chuncked) {
+				buf.append(HTTPConstants.HEADER_TRANSFER_ENCODING).append(": ")
+						.append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)
+						.append("\n");
+			}
+			if (!chuncked && !msgContext.isDoingMTOM()) {
+				buf.append(HTTPConstants.HEADER_CONTENT_LENGTH).append(
+						": " + contentLength + "\n");
+			}
+			if (!msgContext.isDoingREST()) {
+				buf.append("SOAPAction: \"" + soapActionString + "\"\n");
+			}
+			buf.append("\n");
+			out.write(buf.toString().getBytes());
+		} catch (IOException e) {
+			throw new AxisFault(e);
+		}
+	}
+    
     public void finalizeSendWithOutputStreamFromIncomingConnection(
             MessageContext msgContext,
             OutputStream out) {

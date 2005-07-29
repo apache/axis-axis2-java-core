@@ -15,22 +15,23 @@
  */
 package org.apache.axis2.om;
 
-import junit.framework.TestCase;
-import org.apache.axis2.attachments.ByteArrayDataSource;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.om.impl.MIMEOutputUtils;
-import org.apache.axis2.om.impl.OMOutputImpl;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimePartDataSource;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Properties;
+
+import junit.framework.TestCase;
+
+import org.apache.axis2.attachments.ByteArrayDataSource;
+import org.apache.axis2.om.impl.MIMEOutputUtils;
+import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.soap.SOAPFactory;
 
 /**
  * @author Thilina
@@ -49,7 +50,9 @@ public class MIMEOutputUtilsTest extends TestCase {
         OMOutputImpl omOutput = new OMOutputImpl(null);
         boundary = omOutput.getMimeBoundary();
 
-        String contentType = org.apache.axis2.om.impl.MIMEOutputUtils.getContentTypeForMime(boundary,omOutput.getRootContentId());
+        String contentType = org.apache.axis2.om.impl.MIMEOutputUtils
+				.getContentTypeForMime(boundary, omOutput.getRootContentId(),
+						omOutput.getCharSetEncoding());
         DataHandler dataHandler;
         dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
         OMText textData = factory.createText(dataHandler, true);

@@ -40,6 +40,14 @@ public class OMOutputImpl {
     private String mimeBoundary = null;
     private String rootContentId = null;
     private int nextid = 0;
+    
+    /**
+     * Field DEFAULT_CHAR_SET_ENCODING specifies the default 
+     * character encoding scheme to be used
+     */
+    private static final String DEFAULT_CHAR_SET_ENCODING = "utf-8";
+    
+    private String charSetEncoding;
 
     public OMOutputImpl() {
     }
@@ -48,33 +56,61 @@ public class OMOutputImpl {
         this.xmlWriter = xmlWriter;
     }
 
+    /**
+     * This creates a new OMOutputImpl with default encoding
+     * @see OMOutputImpl#DEFAULT_CHAR_SET_ENCODING
+     * @param outStream
+     * @param doOptimize
+     * @throws XMLStreamException
+     * @throws FactoryConfigurationError
+     */
     public OMOutputImpl(OutputStream outStream, boolean doOptimize)
             throws XMLStreamException, FactoryConfigurationError {
-        setOutputStream(outStream, doOptimize);
+        setOutputStream(outStream, doOptimize, DEFAULT_CHAR_SET_ENCODING);
+    }
+    
+    /**
+     * 
+     * @param outStream
+     * @param doOptimize
+     * @param charSetEncoding
+     * @throws XMLStreamException
+     * @throws FactoryConfigurationError
+     */
+    public OMOutputImpl(OutputStream outStream, boolean doOptimize, String charSetEncoding)
+    throws XMLStreamException, FactoryConfigurationError {
+    	setOutputStream(outStream, doOptimize, charSetEncoding);
+    	this.charSetEncoding = charSetEncoding;
     }
 
-    public void setOutputStream(OutputStream outStream, boolean doOptimize)
-            throws XMLStreamException, FactoryConfigurationError {
-        this.doOptimize = doOptimize;
-        this.outStream = outStream;
-        if (doOptimize) {
-            bufferedSoapOutStream = new ByteArrayOutputStream();
-            xmlWriter =
-                    XMLOutputFactory.newInstance().createXMLStreamWriter(
-                            bufferedSoapOutStream);
-            binaryNodeList = new LinkedList();
-        } else {
-            xmlWriter =
-                    XMLOutputFactory.newInstance().createXMLStreamWriter(
-                            outStream);
-        }
-    }
+    public void setOutputStream(OutputStream outStream, boolean doOptimize,
+    		String charSetEncoding) throws XMLStreamException,
+			FactoryConfigurationError {
+
+    	this.charSetEncoding = charSetEncoding;
+		this.doOptimize = doOptimize;
+		this.outStream = outStream;
+
+		if (charSetEncoding == null) //Default encoding is UTF-8
+			this.charSetEncoding = DEFAULT_CHAR_SET_ENCODING;
+
+		if (doOptimize) {
+			bufferedSoapOutStream = new ByteArrayOutputStream();
+			xmlWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(
+					bufferedSoapOutStream, this.charSetEncoding);
+			binaryNodeList = new LinkedList();
+		} else {
+			xmlWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(
+					outStream, this.charSetEncoding);
+		}
+	}
 
     public void flush() throws XMLStreamException {
         xmlWriter.flush();
         if (doOptimize) {
             MIMEOutputUtils.complete(outStream, bufferedSoapOutStream,
-                    binaryNodeList, getMimeBoundary(), getRootContentId());
+                    binaryNodeList, getMimeBoundary(), getRootContentId(), 
+					this.charSetEncoding);
         }
     }
 
@@ -83,8 +119,9 @@ public class OMOutputImpl {
     }
 
     public String getOptimizedContentType() {
-        return MIMEOutputUtils.getContentTypeForMime(getMimeBoundary(),getRootContentId());
-    }
+		return MIMEOutputUtils.getContentTypeForMime(getMimeBoundary(),
+				getRootContentId(), this.getCharSetEncoding());
+	}
 
     public void writeOptimized(OMText node) {
         binaryNodeList.add(node);
@@ -99,21 +136,36 @@ public class OMOutputImpl {
     }
 
     public String getMimeBoundary() {
-        if(mimeBoundary == null) {
-            mimeBoundary = "MIMEBoundary" + MIMEOutputUtils.getRandomStringOf18Characters();
-        }
-        return mimeBoundary;
-    }
+		if (mimeBoundary == null) {
+			mimeBoundary = "MIMEBoundary"
+					+ MIMEOutputUtils.getRandomStringOf18Characters();
+		}
+		return mimeBoundary;
+	}
 
-    public String getRootContentId() {
-        if(rootContentId == null) {
-            rootContentId = "0." + MIMEOutputUtils.getRandomStringOf18Characters() + "@apache.org";
-        }
-        return rootContentId;
-    }
+	public String getRootContentId() {
+		if (rootContentId == null) {
+			rootContentId = "0."
+					+ MIMEOutputUtils.getRandomStringOf18Characters()
+					+ "@apache.org";
+		}
+		return rootContentId;
+	}
 
-    public String getNextContentId() {
-        nextid++;
-        return nextid + "." + MIMEOutputUtils.getRandomStringOf18Characters() + "@apache.org";
-    }
+	public String getNextContentId() {
+		nextid++;
+		return nextid + "." + MIMEOutputUtils.getRandomStringOf18Characters()
+				+ "@apache.org";
+	}
+    
+    /**
+	 * Returns the character set endocing scheme If the value of the
+	 * charSetEncoding is not set then the default will be returned
+	 * 
+	 * @return
+	 */
+	public String getCharSetEncoding() {
+		return (this.charSetEncoding == null) ? DEFAULT_CHAR_SET_ENCODING
+				: this.charSetEncoding;
+	}
 }

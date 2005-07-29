@@ -80,7 +80,7 @@ public class AxisServlet extends HttpServlet {
     protected void doGet(HttpServletRequest httpServletRequest,
                          HttpServletResponse httpServletResponse)
             throws ServletException, IOException {
-        httpServletResponse.setContentType("text/xml; charset=utf-8");
+
         MessageContext msgContext = null;
         OutputStream out = null;
         try {
@@ -124,6 +124,9 @@ public class AxisServlet extends HttpServlet {
             if (!processed) {
                 lister.handle(httpServletRequest, httpServletResponse, out);
             }
+            
+            //TODO: Change this to actual request's value
+            httpServletResponse.setContentType("text/xml; charset=utf-8");
         } catch (AxisFault e) {
             if (msgContext != null) {
                 msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
@@ -171,7 +174,7 @@ public class AxisServlet extends HttpServlet {
                     new ServletBasedOutTransportInfo(res));
             msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getTransportHeaders(req));
 
-            res.setContentType("text/xml; charset=utf-8");
+            
             HTTPTransportUtils.processHTTPPostRequest(msgContext,
                     req.getInputStream(),
                     res.getOutputStream(),
@@ -179,8 +182,15 @@ public class AxisServlet extends HttpServlet {
                     req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
                     req.getRequestURL().toString(),
                     configContext);
+            
             Object contextWritten =
                     msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
+            
+            //Getting the 
+            res.setContentType("text/xml; charset="+ 
+            		(String) msgContext
+						.getProperty(MessageContext.CHARACTER_SET_ENCODING));
+            
             if (contextWritten == null
                     || !Constants.VALUE_TRUE.equals(contextWritten)) {
                 res.setStatus(HttpServletResponse.SC_ACCEPTED);

@@ -52,6 +52,24 @@ public class MessageContext extends AbstractContext {
      * Field  CHARACTER_SET_ENCODING
      */
     public static final String CHARACTER_SET_ENCODING = "CHARACTER_SET_ENCODING";
+    
+    /**
+     * Field UTF_8
+     * This is the 'utf-8' value for CHARACTER_SET_ENCODING property
+     */
+    public static final String UTF_8 = "utf-8";
+    
+    /**
+     * Field UTF_8
+     * This is the 'utf-8' value for CHARACTER_SET_ENCODING property
+     */
+    public static final String UTF_16 = "utf-16";
+    
+    /**
+     * Field DEFAULT_CHAR_SET_ENCODING 
+     * This is the default value for CHARACTER_SET_ENCODING property
+     */
+    public static final String DEFAULT_CHAR_SET_ENCODING = UTF_8; 
 
     /**
      * Field TRANSPORT_SUCCEED
@@ -385,6 +403,7 @@ public class MessageContext extends AbstractContext {
     public MessageInformationHeaders getMessageInformationHeaders() {
         return messageInformationHeaders;
     }
+    
 
     /**
      * @return
