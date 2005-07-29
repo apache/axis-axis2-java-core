@@ -9,6 +9,7 @@ import org.apache.axis2.wsdl.codegen.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.URLProcessor;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.Path;
 import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.WSDLException;
@@ -50,6 +51,28 @@ public class AntCodegenTask extends Task {
     private boolean testcase = false;
     private boolean generateServerXml = false;
 
+    private Path classpath = null;
+
+    public Path getClasspath() {
+        return classpath;
+    }
+
+    public void setClasspath(Path classpath) {
+        System.out.println("path = "+classpath);
+//        if (classpath == null) {
+//            classpath = classpath;
+//        } else {
+//            classpath.append(classpath);
+//        }
+
+    }
+     public Path createClasspath() {
+        if (classpath == null) {
+            classpath = new Path(this.getProject());
+        }
+         System.out.println("classpath = " + classpath);
+        return classpath.createPath();
+    }
     /**
      *
      */
