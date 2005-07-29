@@ -16,53 +16,54 @@
 
 package org.apache.axis2.soap12testing.client;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URL;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
-import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
-import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.transport.http.HTTPConstants;
 
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
-import java.io.*;
-import java.net.URL;
-
 public class SOAPCreater {
-    public String getStringFromSOAPMessage(String testNumber , URL url) {
-        //D:\Projects\LSF\Axis2\Axis1.0\modules\samples\target\Repository
-//        File file = new File("D:\\Projects\\LSF\\Axis2\\Axis1.0\\modules\\samples/test-resources\\SOAP12Testing\\RequestMessages\\SOAP12ReqT" + testNumber + ".xml");
-        File file = new File("./test-resources\\SOAP12Testing\\RequestMessages\\SOAP12ReqT" + testNumber + ".xml");
-        try {
-            FileInputStream stream = new FileInputStream(file);
-            BufferedInputStream bf = new BufferedInputStream(stream);
-            DataInputStream ds = new DataInputStream(bf);
-            StringBuffer sb = new StringBuffer();
+    public String getStringFromSOAPMessage(String testNumber, URL url) throws IOException {
+        File file =
+            new File(
+                MessageComparator.TEST_MAIN_DIR + "test-resources/SOAP12Testing/RequestMessages/SOAP12ReqT" + testNumber + ".xml");
+        FileInputStream stream = new FileInputStream(file);
+        BufferedInputStream bf = new BufferedInputStream(stream);
+        DataInputStream ds = new DataInputStream(bf);
+        StringBuffer sb = new StringBuffer();
 
-            sb.append(HTTPConstants.HEADER_POST).append(" ");
-            sb.append(url.getFile()).append(" ").append(HTTPConstants.HEADER_PROTOCOL_10).append(
-                    "\n");
-            sb.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ")
-                    .append(SOAP12Constants.SOAP_12_CONTENT_TYPE);
-            sb.append("; charset=utf-8\n");
-            sb.append("\n");
+        sb.append(HTTPConstants.HEADER_POST).append(" ");
+        sb.append(url.getFile()).append(" ").append(HTTPConstants.HEADER_PROTOCOL_10).append("\n");
+        sb.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ").append(
+            SOAP12Constants.SOAP_12_CONTENT_TYPE);
+        sb.append("; charset=utf-8\n");
+        sb.append("\n");
 
-            String record;
-            while ((record = ds.readLine()) != null) {
-                sb.append(record.trim());
-            }
-            return sb.toString();
-        } catch (Exception e) {
-            return "";
+        String record;
+        while ((record = ds.readLine()) != null) {
+            sb.append(record.trim());
         }
+        return sb.toString();
     }
 
     public SOAPEnvelope getEnvelopeFromSOAPMessage(String pathAndFileName) {
         File file = new File(pathAndFileName);
         try {
-            XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
-            OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser,null);
-            return (SOAPEnvelope) builder.getDocumentElement();            
+            XMLStreamReader parser =
+                XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
+            OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
+            return (SOAPEnvelope) builder.getDocumentElement();
         } catch (Exception e) {
             e.printStackTrace();
         }

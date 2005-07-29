@@ -30,12 +30,15 @@ import java.io.*;
 import java.util.Map;
 
 public class MessageComparator {
+    //public static final String TEST_MAIN_DIR = "./modules/samples/";
+    public static final String TEST_MAIN_DIR = "./";
+    
+    
     public boolean compare(String testNumber, InputStream replyMessage) {
         SOAPEnvelope replyMessageEnvelope;
         SOAPEnvelope requiredMessageEnvelope;
         try {
-//            File file = new File("D:\\Projects\\LSF\\Axis2\\Axis1.0\\modules\\samples/test-resources\\SOAP12Testing\\ReplyMessages\\SOAP12ResT" + testNumber + ".xml");
-            File file = new File("test-resources\\SOAP12Testing\\ReplyMessages\\SOAP12ResT" + testNumber + ".xml");
+            File file = new File(TEST_MAIN_DIR+"test-resources/SOAP12Testing/ReplyMessages/SOAP12ResT" + testNumber + ".xml");
 
             HTTPTransportReceiver receiver = new HTTPTransportReceiver();
             Map map = receiver.parseTheHeaders(replyMessage, false);

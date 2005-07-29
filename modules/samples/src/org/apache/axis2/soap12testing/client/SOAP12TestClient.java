@@ -16,14 +16,14 @@
 
 package org.apache.axis2.soap12testing.client;
 
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
-import org.apache.axis2.transport.http.HTTPConstants;
-
-import java.net.HttpURLConnection;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.Socket;
 import java.net.URL;
-import java.net.*;
-import java.io.*;
-import java.util.Iterator;
 
 public class SOAP12TestClient {
     public String getReply(int port, String webserviceName,String testNumber) {
@@ -75,6 +75,7 @@ public class SOAP12TestClient {
             System.out.println("Message: " + requestMessage);
             out.println(requestMessage);
             out.flush();
+            socket.shutdownOutput();
             return socket.getInputStream();
         } catch (MalformedURLException e) {
             e.printStackTrace();

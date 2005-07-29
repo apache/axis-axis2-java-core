@@ -16,11 +16,12 @@
 
 package org.apache.axis2.soap12testing.server;
 
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.transport.http.SimpleHTTPServer;
-
 import java.io.File;
 import java.net.ServerSocket;
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.soap12testing.client.MessageComparator;
+import org.apache.axis2.transport.http.SimpleHTTPServer;
 
 public class SimpleServer {
     private int port;
@@ -37,8 +38,11 @@ public class SimpleServer {
         try {
             ServerSocket serverSoc = null;
             serverSoc = new ServerSocket(port);
-            SimpleHTTPServer reciver = new SimpleHTTPServer("./target/Repository", serverSoc);
-//            SimpleHTTPServer reciver = new SimpleHTTPServer("D:\\Projects\\LSF\\Axis2\\Axis1.0\\modules\\samples\\target\\Repository", serverSoc);
+            File file = new File(MessageComparator.TEST_MAIN_DIR+ "target/Repository");
+            if(!file.exists()){
+                throw new AxisFault(file.getAbsolutePath() + " File does not exisits");
+            }
+            SimpleHTTPServer reciver = new SimpleHTTPServer(file.getAbsolutePath(), serverSoc);
             Thread thread = new Thread(reciver);
             thread.setDaemon(true);
             thread.start();
