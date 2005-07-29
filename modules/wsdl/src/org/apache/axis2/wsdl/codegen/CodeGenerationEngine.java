@@ -16,6 +16,12 @@
 
 package org.apache.axis2.wsdl.codegen;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.wsdl.WSDLException;
+
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.wsdl.codegen.emitter.CSharpEmitter;
 import org.apache.axis2.wsdl.codegen.emitter.Emitter;
@@ -27,14 +33,6 @@ import org.apache.axis2.wsdl.codegen.extension.WSDLValidatorExtension;
 import org.apache.axis2.wsdl.codegen.extension.XMLBeansExtension;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.wsdl.WSDLDescription;
-
-import javax.wsdl.WSDLException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author chathura@opensource.lk
@@ -127,10 +125,7 @@ public class CodeGenerationEngine {
             IOException {
         String uri = ((CommandLineOption) parser.getAllOptions().get(
                 CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION)).getOptionValue();
-        File file = new File(uri);
-        InputStream in = new FileInputStream(file);
-        String baseURI = file.getParentFile()!=null?file.getParentFile().toURI().toString():null;
-        return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in,baseURI)
+        return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(uri)
                 .getDescription();
     }
 

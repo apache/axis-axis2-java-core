@@ -16,16 +16,15 @@
 
 package org.apache.wsdl;
 
+import java.util.Iterator;
+
+import javax.wsdl.Definition;
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPOperation;
-
-import javax.wsdl.Definition;
-import javax.xml.namespace.QName;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Iterator;
 
 /**
  * @author chathura@opensource.lk
@@ -44,11 +43,10 @@ public class SOAPActionTest extends AbstractTestCase {
         super.setUp();
         WSDLVersionWrapper wsdlVersionWrapper = null;
         if (null == this.womDescription) {
-            InputStream in = new FileInputStream(
-                    getTestResourceFile("InteropTestDocLit2.wsdl"));
+            String path = getTestResourceFile("InteropTestDocLit2.wsdl").getAbsolutePath();
             wsdlVersionWrapper =
                     WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11)
-                    .build(in);
+                    .build(path);
             this.womDescription = wsdlVersionWrapper.getDescription();
 
         }

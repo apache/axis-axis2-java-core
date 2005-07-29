@@ -16,11 +16,9 @@
 
 package org.apache.wsdl;
 
-import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
-
 import javax.xml.namespace.QName;
-import java.io.FileInputStream;
-import java.io.InputStream;
+
+import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 
 /**
  * @author chathura@opensource.lk
@@ -40,10 +38,9 @@ public class BindingOperationTest extends AbstractTestCase {
     public void testBindingOperation() throws Exception {
         WSDLDescription womDescription;
 
-        InputStream in = new FileInputStream(
-                getTestResourceFile("BookQuote.wsdl"));
+        String path = getTestResourceFile("BookQuote.wsdl").getAbsolutePath();
         womDescription = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11)
-                .build(in).getDescription();
+                .build(path).getDescription();
 
         assertNotNull(womDescription);
         if (null != womDescription) {

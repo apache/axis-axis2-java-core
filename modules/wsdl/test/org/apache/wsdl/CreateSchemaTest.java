@@ -16,6 +16,10 @@
 
 package org.apache.wsdl;
 
+import java.util.Iterator;
+
+import javax.wsdl.Definition;
+
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.wsdl.extensions.ExtensionConstants;
@@ -23,11 +27,6 @@ import org.apache.wsdl.extensions.Schema;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import javax.wsdl.Definition;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Iterator;
 
 /**
  * @author chathura@opensource.lk
@@ -45,11 +44,10 @@ public class CreateSchemaTest extends AbstractTestCase {
     protected void setUp() throws Exception {
         WSDLVersionWrapper wsdlVersionWrapper = null;
         if (null == this.womDescription) {
-            InputStream in = new FileInputStream(
-                    getTestResourceFile("BookQuote.wsdl"));
+            String path = getTestResourceFile("BookQuote.wsdl").getAbsolutePath();
             wsdlVersionWrapper =
                     WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11)
-                    .build(in);
+                    .build(path);
             this.womDescription = wsdlVersionWrapper.getDescription();
         }
         if (null == wsdl4jDefinition) {
