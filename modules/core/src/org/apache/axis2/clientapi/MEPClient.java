@@ -46,6 +46,14 @@ public abstract class MEPClient {
     protected boolean doRestThroughPOST = false;
     protected String wsaAction;
 
+    /*
+      If there is a SOAP Fault in the body of the incoming SOAP Message, system can be configured to
+      throw an exception with the details extracted from the information from the fault message.
+      This boolean variable will enable that facility. If this is false, the response message will just
+      be returned to the application, irrespective of whether it has a Fault or not.
+    */
+    protected boolean isExceptionToBeThrownOnSOAPFault = true;
+
     //TODO try to find a better way to handle the GET
     public void setRestThroughPOST(boolean b) {
         doRestThroughPOST = b;
@@ -65,7 +73,7 @@ public abstract class MEPClient {
     }
 
     /**
-     * prepare the message context for invocation, here the properties kept in the 
+     * prepare the message context for invocation, here the properties kept in the
      * MEPClient copied to the MessageContext
      */
     protected void prepareInvocation(OperationDescription axisop, MessageContext msgCtx)
@@ -186,6 +194,18 @@ public abstract class MEPClient {
      */
     public void setWsaAction(String string) {
         wsaAction = string;
+    }
+
+    /**
+     *
+     * @param exceptionToBeThrownOnSOAPFault - If there is a SOAP Fault in the body of the incoming
+     * SOAP Message, system can be configured to throw an exception with the details extracted from
+     * the information from the fault message.
+     * This boolean variable will enable that facility. If this is false, the response message will just
+     * be returned to the application, irrespective of whether it has a Fault or not.
+     */
+    public void setExceptionToBeThrownOnSOAPFault(boolean exceptionToBeThrownOnSOAPFault) {
+        isExceptionToBeThrownOnSOAPFault = exceptionToBeThrownOnSOAPFault;
     }
 
 }

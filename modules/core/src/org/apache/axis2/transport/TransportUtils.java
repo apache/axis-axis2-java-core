@@ -87,6 +87,7 @@ public class TransportUtils {
                 XMLStreamReader xmlreader =
                         XMLInputFactory.newInstance().createXMLStreamReader(
                                 reader);
+                msgContext.setSoapNamespaceURI(soapNamespaceURI);
                 builder = new StAXSOAPModelBuilder(xmlreader, soapNamespaceURI);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             }

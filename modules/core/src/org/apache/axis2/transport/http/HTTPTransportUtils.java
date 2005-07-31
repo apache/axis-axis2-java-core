@@ -117,6 +117,7 @@ public class HTTPTransportUtils {
                         }
                         if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
                             //it is SOAP 1.2
+                            msgContext.setSoapNamespaceURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                             builder = new StAXSOAPModelBuilder(xmlreader, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                             envelope = (SOAPEnvelope) builder.getDocumentElement();
                         } else if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
@@ -127,12 +128,15 @@ public class HTTPTransportUtils {
                                 //If the content Type is text/xml (BTW which is the SOAP 1.1 Content type ) and
                                 //the SOAP Action is absent it is rest !!
                                 msgContext.setDoingREST(true);
+                                msgContext.setSoapNamespaceURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+
                                 SOAPFactory soapFactory = new SOAP11Factory();
                                 builder = new StAXOMBuilder(xmlreader);
                                 builder.setOmbuilderFactory(soapFactory);
                                 envelope = soapFactory.getDefaultEnvelope();
                                 envelope.getBody().addChild(builder.getDocumentElement());
                             }else{
+                                msgContext.setSoapNamespaceURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                                 builder = new StAXSOAPModelBuilder(xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                                 envelope = (SOAPEnvelope) builder.getDocumentElement();
                             }
@@ -272,6 +276,7 @@ public class HTTPTransportUtils {
              */
             builder = new MTOMStAXSOAPModelBuilder(reader, mimeHelper, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         } else if (mimeHelper.getAttachmentSpecType().equals(MIMEHelper.SWA_TYPE)) {
+            msgContext.setSoapNamespaceURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
             builder = new StAXSOAPModelBuilder(reader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         }
         return builder;

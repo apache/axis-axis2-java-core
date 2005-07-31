@@ -249,14 +249,15 @@ public class AxisEngine {
         faultContext.setServerSide(true);
         SOAPEnvelope envelope = null;
 
-        if (processingContext.getEnvelope() != null && SOAP12Constants
+        if (processingContext.getSOAPVersion() != null && SOAP11Constants
                 .SOAP_ENVELOPE_NAMESPACE_URI
-                .equals(processingContext.getEnvelope().getNamespace().getName())) {
-            envelope =
-                    OMAbstractFactory.getSOAP12Factory().getDefaultFaultEnvelope();
-        } else {
+                .equals(processingContext.getSOAPVersion())) {
             envelope =
                     OMAbstractFactory.getSOAP11Factory().getDefaultFaultEnvelope();
+        } else {
+            // Following will make SOAP 1.2 as the default, too.
+            envelope =
+                    OMAbstractFactory.getSOAP12Factory().getDefaultFaultEnvelope();
         }
 
 
@@ -315,7 +316,7 @@ public class AxisEngine {
             // defaulting to SOAP 1.2
             soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
         } else {
-            soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+            soapNamespaceURI = context.getSOAPVersion();
         }
 
 

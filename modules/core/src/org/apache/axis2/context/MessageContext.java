@@ -642,4 +642,8 @@ public class MessageContext extends AbstractContext {
         return soapNamespaceURI;
     }
 
+    public void setSoapNamespaceURI(String soapNamespaceURI) {
+        this.soapNamespaceURI = soapNamespaceURI;
+    }
+
 }
