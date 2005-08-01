@@ -40,14 +40,15 @@ public class OMOutputImpl {
     private String mimeBoundary = null;
     private String rootContentId = null;
     private int nextid = 0;
-    
+    private String xmlVersion = "1.0";
+
     /**
      * Field DEFAULT_CHAR_SET_ENCODING specifies the default 
      * character encoding scheme to be used
      */
     private static final String DEFAULT_CHAR_SET_ENCODING = "utf-8";
     
-    private String charSetEncoding;
+    private String charSetEncoding = DEFAULT_CHAR_SET_ENCODING;
 
     public OMOutputImpl() {
     }
@@ -66,28 +67,14 @@ public class OMOutputImpl {
      */
     public OMOutputImpl(OutputStream outStream, boolean doOptimize)
             throws XMLStreamException, FactoryConfigurationError {
-        setOutputStream(outStream, doOptimize, DEFAULT_CHAR_SET_ENCODING);
+        setOutputStream(outStream, doOptimize);
     }
     
-    /**
-     * 
-     * @param outStream
-     * @param doOptimize
-     * @param charSetEncoding
-     * @throws XMLStreamException
-     * @throws FactoryConfigurationError
-     */
-    public OMOutputImpl(OutputStream outStream, boolean doOptimize, String charSetEncoding)
-    throws XMLStreamException, FactoryConfigurationError {
-    	setOutputStream(outStream, doOptimize, charSetEncoding);
-    	this.charSetEncoding = charSetEncoding;
-    }
 
-    public void setOutputStream(OutputStream outStream, boolean doOptimize,
-    		String charSetEncoding) throws XMLStreamException,
+
+    public void setOutputStream(OutputStream outStream, boolean doOptimize) throws XMLStreamException,
 			FactoryConfigurationError {
 
-    	this.charSetEncoding = charSetEncoding;
 		this.doOptimize = doOptimize;
 		this.outStream = outStream;
 
@@ -165,7 +152,19 @@ public class OMOutputImpl {
 	 * @return
 	 */
 	public String getCharSetEncoding() {
-		return (this.charSetEncoding == null) ? DEFAULT_CHAR_SET_ENCODING
-				: this.charSetEncoding;
+		return this.charSetEncoding;
 	}
+
+    public void setCharSetEncoding(String charSetEncoding) {
+        this.charSetEncoding = charSetEncoding;
+    }
+
+    public String getXmlVersion() {
+        return xmlVersion;
+    }
+
+    public void setXmlVersion(String xmlVersion) {
+        this.xmlVersion = xmlVersion;
+    }
+
 }

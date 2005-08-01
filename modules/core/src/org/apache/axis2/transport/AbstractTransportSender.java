@@ -135,8 +135,8 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
             	//Pick the char set encoding from the msgContext
                 String charSetEnc = (String) msgContext
 						.getProperty(MessageContext.CHARACTER_SET_ENCODING);
-				omOutput.setOutputStream(out, msgContext.isDoingMTOM(),
-						charSetEnc);
+				omOutput.setOutputStream(out, msgContext.isDoingMTOM());
+                omOutput.setCharSetEncoding(charSetEnc);
 				outputMessage.serialize(omOutput);
                 omOutput.flush();
                 out.flush();

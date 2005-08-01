@@ -100,7 +100,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                         .getProperty(MessageContext.TRANSPORT_OUT);
                 
                 String charSetEnc = (String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
-                omOutput.setOutputStream(out, false,charSetEnc);
+                omOutput.setOutputStream(out, false);
+                omOutput.setCharSetEncoding(charSetEnc);
 
                 dataOut.serialize(omOutput);
             }
@@ -204,7 +205,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         public void writeRequest(OutputStream out) throws IOException{
             try {
                 if (chuncked || doingMTOM) {
-                    omOutput.setOutputStream(out, doingMTOM, charSetEnc);
+                    omOutput.setOutputStream(out, doingMTOM);
+                    omOutput.setCharSetEncoding(charSetEnc);
                     element.serialize(omOutput);
                     omOutput.flush();
                     out.flush();

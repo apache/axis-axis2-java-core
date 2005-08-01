@@ -16,12 +16,14 @@
 package org.apache.axis2.soap.impl.llom;
 
 import org.apache.axis2.om.*;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 
 /**
  * Class SOAPEnvelopeImpl
@@ -61,7 +63,7 @@ public class SOAPEnvelopeImpl extends SOAPElement
     }
 
     public void addChild(OMNode child) {
-        if ((child instanceof OMElement) &&!(child instanceof SOAPHeader || child instanceof SOAPBody)) {
+        if ((child instanceof OMElement) && !(child instanceof SOAPHeader || child instanceof SOAPBody)) {
             throw new SOAPProcessingException("SOAP Envelope can not have children other than SOAP Header and Body", SOAP12Constants.FAULT_CODE_SENDER);
         } else {
             super.addChild(child);
@@ -115,5 +117,11 @@ public class SOAPEnvelopeImpl extends SOAPElement
 
     protected void checkParent(OMElement parent) throws SOAPProcessingException {
         // here do nothing as SOAPEnvelope doesn't have a parent !!!
+    }
+
+    protected void serialize(OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
+//        omOutput.getXmlStreamWriter().writeStartDocument(omOutput.getCharSetEncoding(),
+//                omOutput.getXmlVersion());
+        super.serialize(omOutput, cache);
     }
 }
