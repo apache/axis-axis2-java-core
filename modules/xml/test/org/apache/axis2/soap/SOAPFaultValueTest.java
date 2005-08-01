@@ -97,7 +97,7 @@ public class SOAPFaultValueTest extends SOAPFaultSubCodeTestCase {
     public void testSOAP11GetTextWithParser() {
         assertTrue(
                 "SOAP 1.1 Fault Value Test with parser : - value text mismatch",
-                soap11FaultValueWithParser.getText().equals("env:Sender"));
+                soap11FaultValueWithParser.getText().trim().equals("env:Sender"));
     }
 
     //SOAP 1.2 Fault Value(In Fault Code) Test (With Parser)

@@ -72,7 +72,7 @@ public class SOAPFaultNodeTest extends SOAPFaultTestCase {
     public void testSOAP12GetNodeValueWithParser() {
         assertTrue(
                 "SOAP 1.2 Fault Node Test With Parser : - getNodeValue method returns incorrect value",
-                soap12FaultNodeWithParser.getNodeValue().equals(
+                soap12FaultNodeWithParser.getNodeValue().trim().equals(
                         "http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver"));
     }
 }

@@ -622,8 +622,8 @@ public class OMElementImpl extends OMNodeImpl
             if (child.getType() == OMNode.TEXT_NODE) {
                 textNode = (OMText) child;
                 if (textNode.getText() != null &&
-                        !"".equals(textNode.getText().trim())) {
-                    childText += textNode.getText().trim();
+                        !"".equals(textNode.getText())) {
+                    childText += textNode.getText();
                 }
             }
             child = child.getNextSibling();

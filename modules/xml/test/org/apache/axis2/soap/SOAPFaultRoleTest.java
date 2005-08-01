@@ -40,7 +40,7 @@ public class SOAPFaultRoleTest extends SOAPFaultTestCase {
         soap11FaultRole.setRoleValue("This is only a test");
         assertTrue(
                 "SOAP 1.1 Fault Role Test : - After calling setRoleValue method, getRoleValue method returns incorrect value",
-                soap11FaultRole.getRoleValue().equals("This is only a test"));
+                soap11FaultRole.getRoleValue().trim().equals("This is only a test"));
     }
 
     public void testSOAP11GetRoleValue() {
@@ -50,7 +50,7 @@ public class SOAPFaultRoleTest extends SOAPFaultTestCase {
         soap11FaultRole.setRoleValue("This is only a test");
         assertTrue(
                 "SOAP 1.1 Fault Role Test : - After calling setRoleValue method, getRoleValue method returns incorrect value",
-                soap11FaultRole.getRoleValue().equals("This is only a test"));
+                soap11FaultRole.getRoleValue().trim().equals("This is only a test"));
     }
 
     //SOAP 1.2 Fault Role Test (Programaticaly Created)
@@ -58,24 +58,24 @@ public class SOAPFaultRoleTest extends SOAPFaultTestCase {
         soap12FaultRole.setRoleValue("This is only a test");
         assertTrue(
                 "SOAP 1.2 Fault Role Test : - After calling setRoleValue method, getRoleValue method returns incorrect value",
-                soap12FaultRole.getRoleValue().equals("This is only a test"));
+                soap12FaultRole.getRoleValue().trim().equals("This is only a test"));
     }
 
     public void testSOAP12GetRoleValue() {
         assertTrue(
                 "SOAP 1.2 Fault Role Test : - After creating SOAPFaultRole, it has a value",
-                soap12FaultRole.getRoleValue().equals(""));
+                soap12FaultRole.getRoleValue().trim().equals(""));
         soap12FaultRole.setRoleValue("This is only a test");
         assertTrue(
                 "SOAP 1.2 Fault Role Test : - After calling setRoleValue method, getRoleValue method returns incorrect value",
-                soap12FaultRole.getRoleValue().equals("This is only a test"));
+                soap12FaultRole.getRoleValue().trim().equals("This is only a test"));
     }
 
     //SOAP 1.1 Fault Role Test (With Parser)
     public void testSOAP11GetRoleValueWithParser() {
         assertTrue(
                 "SOAP 1.1 Fault Role Test With Parser : - getRoleValue method returns incorrect value",
-                soap11FaultRoleWithParser.getRoleValue().equals(
+                soap11FaultRoleWithParser.getRoleValue().trim().equals(
                         "http://schemas.xmlsoap.org/soap/envelope/actor/ultimateReceiver"));
     }
 
@@ -83,7 +83,7 @@ public class SOAPFaultRoleTest extends SOAPFaultTestCase {
     public void testSOAP12GetRoleValueWithParser() {
         assertTrue(
                 "SOAP 1.2 Fault Role Test With Parser : - getRoleValue method returns incorrect value",
-                soap12FaultRoleWithParser.getRoleValue().equals(
+                soap12FaultRoleWithParser.getRoleValue().trim().equals(
                         "ultimateReceiver"));
     }
 }

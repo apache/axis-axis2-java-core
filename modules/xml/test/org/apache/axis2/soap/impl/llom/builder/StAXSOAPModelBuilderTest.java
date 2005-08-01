@@ -162,16 +162,23 @@ public class StAXSOAPModelBuilderTest extends TestCase {
             assertTrue("SOAP 1.2 :- Header block name space uri mismatch",
                     headerBlock.getNamespace().getName().equals(
                             "http://example.org/ts-tests"));
-            assertTrue("SOAP 1.2 :- Headaer block text mismatch",
-                    headerBlock.getText().equals("foo"));
+            assertTrue("SOAP 1.2 :- Header block text mismatch",
+                    headerBlock.getText().trim().equals("foo"));
 
             Iterator headerBlockAttributes = headerBlock.getAttributes();
             OMAttribute roleAttribute = (OMAttribute) headerBlockAttributes.next();
             assertTrue("SOAP 1.2 :- Role attribute name mismatch",
                     roleAttribute.getLocalName().equals(
                             SOAP12Constants.SOAP_ROLE));
+            
+            System.out.println(roleAttribute.getValue().trim());
+            System.out.println(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI + "/" +
+                    SOAP12Constants.SOAP_ROLE +
+                    "/" +
+                    "ultimateReceiver");
+            
             assertTrue("SOAP 1.2 :- Role value mismatch",
-                    roleAttribute.getValue().equals(
+                    roleAttribute.getValue().trim().equals(
                             SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI + "/" +
                     SOAP12Constants.SOAP_ROLE +
                     "/" +
@@ -306,7 +313,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     node.getNamespace().getName().equals(
                             SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI));
             assertTrue("SOAP 1.2 :- Node value mismatch",
-                    node.getText().equals(
+                    node.getText().trim().equals(
                             "http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver"));
 
             iteratorInFault.next();
@@ -318,7 +325,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     role.getNamespace().getName().equals(
                             SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI));
             assertTrue("SOAP 1.2 :- Role value mismatch",
-                    role.getText().equals("ultimateReceiver"));
+                    role.getText().trim().equals("ultimateReceiver"));
 
             iteratorInFault.next();
             SOAPFaultDetail detail = (SOAPFaultDetail) iteratorInFault.next();
@@ -330,7 +337,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                             SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI));
 
             assertTrue("SOAP 1.2 :- Text in detail mismatch",
-                    detail.getText().equals("Details of error"));
+                    detail.getText().trim().equals("Details of error"));
 
             Iterator iteratorInDetail = detail.getChildren();
 
@@ -342,7 +349,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     element1.getNamespace().getName().equals(
                             "http:www.sample.org"));
             assertTrue("SOAP 1.2 :- Text value in MaxTime element mismatch",
-                    element1.getText().equals("P5M"));
+                    element1.getText().trim().equals("P5M"));
 
             Iterator attributeIterator = element1.getAttributes();
             OMAttribute attributeInMaxTime = (OMAttribute) attributeIterator.next();
@@ -352,7 +359,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     attributeInMaxTime.getNamespace().getName().equals(
                             "http:www.sample.org"));
             assertTrue("SOAP 1.2 :- Attribute value mismatch",
-                    attributeInMaxTime.getValue().equals("This is only a test"));
+                    attributeInMaxTime.getValue().trim().equals("This is only a test"));
 
             iteratorInDetail.next();
             OMElement element2 = (OMElement) iteratorInDetail.next();
@@ -372,7 +379,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     element21.getNamespace().getName().equals(
                             "http:www.sample.org"));
             assertTrue("SOAP 1.2 :- Text value in Time element mismatch",
-                    element21.getText().equals("P3M"));
+                    element21.getText().trim().equals("P3M"));
 
             XMLStreamReader sopa11Parser = XMLInputFactory.newInstance()
                     .createXMLStreamReader(new StringReader(soap11Message));
@@ -405,7 +412,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     headerBlock.getNamespace().getName().equals(
                             "http://example.org/ts-tests"));
             assertTrue("SOAP 1.1 :- Headaer block text mismatch",
-                    headerBlock.getText().equals("foo"));
+                    headerBlock.getText().trim().equals("foo"));
 
             headerBlockAttributes = headerBlock.getAttributes();
 
@@ -427,7 +434,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     actorAttribute.getLocalName().equals(
                             SOAP11Constants.ATTR_ACTOR));
             assertTrue("SOAP 1.1 :- Actor value mismatch",
-                    actorAttribute.getValue().equals(
+                    actorAttribute.getValue().trim().equals(
                             "http://schemas.xmlsoap.org/soap/" +
                     SOAP11Constants.ATTR_ACTOR +
                     "/" +
@@ -471,7 +478,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     reason.getNamespace().getName().equals(
                             SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI));
             assertTrue("SOAP 1.1 :- Fault string value mismatch",
-                    reason.getSOAPText().getText().equals("Sender Timeout"));
+                    reason.getSOAPText().getText().trim().equals("Sender Timeout"));
 
             iteratorInFault.next();
             role = (SOAPFaultRole) iteratorInFault.next();
@@ -482,7 +489,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     role.getNamespace().getName().equals(
                             SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI));
             assertTrue("SOAP 1.1 :- Actor value mismatch",
-                    role.getText().equals(
+                    role.getText().trim().equals(
                             "http://schemas.xmlsoap.org/soap/envelope/actor/ultimateReceiver"));
 
             iteratorInFault.next();
@@ -494,7 +501,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     detail.getNamespace().getName().equals(
                             SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI));
             assertTrue("SOAP 1.2 :- Text in detail mismatch",
-                    detail.getText().equals("Details of error"));
+                    detail.getText().trim().equals("Details of error"));
 
             iteratorInDetail = detail.getChildren();
 
@@ -506,7 +513,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     element1.getNamespace().getName().equals(
                             "http:www.sample.org"));
             assertTrue("SOAP 1.1 :- Text value in MaxTime element mismatch",
-                    element1.getText().equals("P5M"));
+                    element1.getText().trim().equals("P5M"));
 
             attributeIterator = element1.getAttributes();
             attributeInMaxTime = (OMAttribute) attributeIterator.next();
@@ -536,7 +543,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     element21.getNamespace().getName().equals(
                             "http:www.sample.org"));
             assertTrue("SOAP 1.1 :- Text value in Time element mismatch",
-                    element21.getText().equals("P3M"));
+                    element21.getText().trim().equals("P3M"));
 
             iteratorInFault.next();
             OMElement testElement = (OMElement) iteratorInFault.next();
@@ -553,7 +560,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     childOfTestElement.getNamespace().getName().equals(
                             "http:www.Test.org"));
             assertTrue("SOAP 1.1 :- Test element child value mismatch",
-                    childOfTestElement.getText().equals("This is only a test"));
+                    childOfTestElement.getText().trim().equals("This is only a test"));
 
         } catch (XMLStreamException e) {
             log.info(e.getMessage());

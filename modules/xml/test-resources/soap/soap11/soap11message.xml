@@ -25,9 +25,7 @@
             <soapenv:faultcode>
                 env:Sender
             </soapenv:faultcode>
-            <soapenv:faultstring>
-                Sender Timeout
-            </soapenv:faultstring>
+            <soapenv:faultstring>Sender Timeout</soapenv:faultstring>
             <soapenv:faultactor>
                 http://schemas.xmlsoap.org/soap/envelope/actor/ultimateReceiver
             </soapenv:faultactor>
@@ -45,3 +43,4 @@
         </soapenv:Fault>
     </soapenv:Body>
 </soapenv:Envelope>
+
