@@ -250,6 +250,7 @@ public class AxisEngine {
             }
         }
 
+
         faultContext.setOperationContext(processingContext.getOperationContext());
         faultContext.setProcessingFault(true);
         faultContext.setServerSide(true);
@@ -276,7 +277,7 @@ public class AxisEngine {
                 envelope.getBody().getFault(), e);
 
         faultContext.setEnvelope(envelope);
-        sendFault(faultContext);
+//        sendFault(faultContext);
         return faultContext;
     }
 

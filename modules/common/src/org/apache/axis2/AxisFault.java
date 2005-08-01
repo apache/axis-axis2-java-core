@@ -33,7 +33,6 @@ public class AxisFault extends RemoteException implements SOAPFaultException{
 
     private String soapFaultCode;
 
-    
     public AxisFault(Throwable arg1) {
         super(arg1.getMessage(), arg1);
     }

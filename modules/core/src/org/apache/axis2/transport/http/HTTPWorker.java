@@ -138,7 +138,7 @@ public class HTTPWorker implements AxisWorker {
                 log.error(e1);
 //                e1.printStackTrace();
             }
-            e.printStackTrace();
+//            e.printStackTrace();
         } finally {
             if (socket != null) {
                 try {
