@@ -21,6 +21,8 @@ import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -35,7 +37,7 @@ public abstract class SOAPFaultImpl extends SOAPElement
         implements SOAPFault, OMConstants {
 
     protected Exception e;
-
+   private Log log = LogFactory.getLog(getClass());
 
     /**
      * Constructor SOAPFaultImpl
@@ -136,7 +138,7 @@ public abstract class SOAPFaultImpl extends SOAPElement
 
     protected void putExceptionToSOAPFault(Exception e) throws SOAPProcessingException {
         StringWriter sw = new StringWriter();
-        e.printStackTrace(new PrintWriter(sw));
+        log.info(e.getMessage());
 
         getDetail();
         if (getDetail() == null) {
@@ -215,7 +217,7 @@ public abstract class SOAPFaultImpl extends SOAPElement
         if (faultDetail != null) {
             faultDetail.serializeWithCache(omOutput);
         }
-       OMSerializerUtil.serializeEndpart(omOutput);
+
 
     }
 

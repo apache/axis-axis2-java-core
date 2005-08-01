@@ -37,13 +37,10 @@ public class LoggingHandler extends AbstractHandler {
 	
 	public void invoke(MessageContext msgContext) throws AxisFault {
 		log.info("Incomming message Frrom "+msgContext.getTo().getAddress());
-		System.out.println("Incomming message Frrom "+msgContext.getTo().getAddress());
-
 	}
 	
 	public void revoke(MessageContext msgContext){
 		log.info("Incomming message Revovked at the server "+msgContext.getTo().getAddress() );
-		System.out.println("Incomming message Revovked at the server "+msgContext.getTo().getAddress() );
 	}
 
 }

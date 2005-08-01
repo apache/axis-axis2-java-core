@@ -33,7 +33,7 @@ public class QueueManager {
             properties.load(stream);
             key = properties.getProperty("key");
         } catch (Exception e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
 
     }

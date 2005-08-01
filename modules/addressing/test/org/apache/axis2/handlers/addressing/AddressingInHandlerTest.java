@@ -8,6 +8,8 @@ import org.apache.axis2.handlers.util.TestUtil;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -29,7 +31,7 @@ public class AddressingInHandlerTest extends TestCase {
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */
-
+     private Log log = LogFactory.getLog(getClass());
     AddressingInHandler inHandler;
     TestUtil testUtil = new TestUtil();
     private static final String testFileName = "soapmessage.xml";
@@ -78,7 +80,7 @@ public class AddressingInHandlerTest extends TestCase {
             assertFromEPR(messageInformationHeaders.getFrom());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
             fail(" An Exception has occured " + e.getMessage());
         }
     }

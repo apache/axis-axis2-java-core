@@ -97,7 +97,7 @@ public class TCPWorker implements AxisWorker {
                 }
             } catch (Exception e1) {
                 log.error(e);
-                e.printStackTrace();
+//                e.printStackTrace();
             }
 
         } finally {
@@ -106,7 +106,7 @@ public class TCPWorker implements AxisWorker {
                     this.socket.close();
                 } catch (IOException e1) {
                     // TODO Auto-generated catch block
-                    e1.printStackTrace();
+//                    e1.printStackTrace();
                 }
             }
         }

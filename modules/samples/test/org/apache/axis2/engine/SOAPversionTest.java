@@ -143,7 +143,7 @@ public class SOAPversionTest extends TestCase {
             result.serializeWithCache(output);
             output.flush();
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         }
 
         inOutMEPClient.close();

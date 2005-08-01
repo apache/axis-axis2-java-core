@@ -74,7 +74,7 @@ public class MIMEOutputUtilsTest extends TestCase {
         MIMEOutputUtils.writeBodyPart(outStream, part2, boundary);
         MIMEOutputUtils.finishWritingMime(outStream);
         buffer = outStream.toByteArray();
-        System.out.println(new String(buffer));
+//        System.out.println(new String(buffer));
     }
 
     public void testMIMEWriting() throws IOException, MessagingException {

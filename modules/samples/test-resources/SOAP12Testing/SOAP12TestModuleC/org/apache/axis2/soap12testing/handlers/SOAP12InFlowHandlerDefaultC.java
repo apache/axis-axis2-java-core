@@ -122,7 +122,7 @@ public class SOAP12InFlowHandlerDefaultC extends AbstractHandler implements Head
                                     msgContext.setProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, reason);
 
                                 } catch (SOAPProcessingException e) {
-                                    e.printStackTrace();
+                                    //e.printStackTrace();
                                 }
 
 
@@ -133,7 +133,7 @@ public class SOAP12InFlowHandlerDefaultC extends AbstractHandler implements Head
                                     newHeaderBlock.declareNamespace(headerBlockNamespace);
                                     newHeaderBlock.addAttribute("qname", headerBlockNamespace.getName() + ":" + elementName, null);
                                 } catch (SOAPProcessingException e) {
-                                    e.printStackTrace();
+                                    //e.printStackTrace();
                                 }
                                 headerBlockPresent = new Integer(1);
                                 msgContext.getOperationContext().setProperty("HEADER_BLOCK_PRESENT", headerBlockPresent, true);

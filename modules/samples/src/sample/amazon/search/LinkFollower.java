@@ -80,10 +80,8 @@ class LinkFollower implements HyperlinkListener, Runnable {
             }
             try {
                 currentURL = evt.getURL().toString();   //set the URL
-                System.out.println("Going to " + currentURL);
                 showURL = true;                        // Flag is set, thread should open the URL
             } catch (Exception e) {
-                System.out.println("ERROR: Trouble fetching url");
             }
         }
     }

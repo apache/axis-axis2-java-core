@@ -432,12 +432,6 @@ public class DeploymentEngine implements DeploymentConstants {
 
             }
             ///factory.createChains(serviceMetaData, axisConfig, );
-            System.out.println(
-                    "service Description : " +
-                    serviceMetaData.getServiceDescription());
-            System.out.println(
-                    "adding new service : " +
-                    serviceMetaData.getName().getLocalPart());
         } catch (PhaseException e) {
             throw new AxisFault(e);
         }
@@ -549,7 +543,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         loadModuleClass(moduelmetada);
         axisConfig.addMdoule(moduelmetada);
-        System.out.println("adding new module");
+        log.info("adding new module");
     }
 
 
@@ -622,7 +616,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             log.info("Exception  " + e);
                             PrintWriter error_ptintWriter = new PrintWriter(
                                     errorWriter);
-                            e.printStackTrace(error_ptintWriter);
+                           e.printStackTrace(error_ptintWriter);
                             serviceStatus = "Error:\n" +
                                     errorWriter.toString();
                         } finally {

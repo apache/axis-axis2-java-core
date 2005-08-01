@@ -121,7 +121,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
             OMElement data = (OMElement) result.getFirstChild();
             compareWithCreatedOMText(data.getText());
             call.close();
-            System.out.println(i);
+            log.info("" + i);
         }
     }
 

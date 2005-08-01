@@ -22,6 +22,8 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.clientapi.Callback;
 import org.apache.axis2.om.OMElement;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import sample.amazon.amazonSimpleQueueService.OMElementCreator;
 
 import javax.swing.*;
@@ -36,6 +38,7 @@ public class RunnableCreateQueue extends QueueManager implements Runnable {
     JTextArea result;
     JTextField queueCode;
     JTextField enqueue;
+//    private Log log = LogFactory.getLog(getClass());
 
     public RunnableCreateQueue(JTextField createQueue, JTextField queueCode, JTextField enqueue,
                                JTextArea result) {
@@ -79,9 +82,9 @@ public class RunnableCreateQueue extends QueueManager implements Runnable {
                     false);
             call.invokeNonBlocking(operation, element, specificCallbackObject);
         } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();
+//            axisFault.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 

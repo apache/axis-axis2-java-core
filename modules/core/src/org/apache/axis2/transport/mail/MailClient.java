@@ -1,5 +1,8 @@
 package org.apache.axis2.transport.mail;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.mail.Authenticator;
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -23,6 +26,7 @@ public class MailClient
     protected String from;
     protected Session session;
     protected PasswordAuthentication authentication;
+    private Log log = LogFactory.getLog(getClass());
 
     public MailClient(String user, String host) {
         this(user, host, user, false);
@@ -56,8 +60,7 @@ public class MailClient
                             String content,
                             String soapAction)
             throws MessagingException {
-        System.out.println("SENDING message from " + from + " to " + to);
-        System.out.println();
+        log.info("SENDING message from " + from + " to " + to);
         MimeMessage msg = new MimeMessage(session);
         msg.setHeader("transport.mail.soapaction", soapAction);
         msg.addRecipients(Message.RecipientType.TO, to);
@@ -76,7 +79,7 @@ public class MailClient
                 (show ? "Show" : "") +
                 (show && clear ? " and " : "") +
                 (clear ? "Clear" : "");
-        System.out.println(action + " INBOX for " + from);
+        log.info(action + " INBOX for " + from);
         Store store = session.getStore();
         store.connect();
         Folder root = store.getDefaultFolder();
@@ -85,14 +88,14 @@ public class MailClient
         Message[] msgs = inbox.getMessages();
         numMessages = msgs.length;
         if (msgs.length == 0 && show) {
-            System.out.println("No messages in inbox");
+            log.info("No messages in inbox");
         }
         for (int i = 0; i < msgs.length; i++) {
             MimeMessage msg = (MimeMessage) msgs[i];
             if (show) {
-                System.out.println("    From: " + msg.getFrom()[0]);
-                System.out.println(" Subject: " + msg.getSubject());
-                System.out.println(" Content: " + msg.getContent());
+                log.info("    From: " + msg.getFrom()[0]);
+                log.info(" Subject: " + msg.getSubject());
+                log.info(" Content: " + msg.getContent());
             }
             if (clear) {
                 msg.setFlag(Flags.Flag.DELETED, true);
@@ -100,7 +103,6 @@ public class MailClient
         }
         inbox.close(true);
         store.close();
-        System.out.println();
         return numMessages;
     }
 }

@@ -19,6 +19,8 @@ package org.apache.axis2.engine;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Rev: $ $Date: $
@@ -26,6 +28,7 @@ import org.apache.axis2.AxisFault;
 
 public class MessageContextEnabledEcho {
     private MessageContext msgcts;
+      private Log log = LogFactory.getLog(getClass());
 
     public MessageContextEnabledEcho() {
     }
@@ -37,7 +40,7 @@ public class MessageContextEnabledEcho {
 
     public OMElement echoOMElement(OMElement omEle) throws AxisFault {
         if (msgcts != null) {
-            System.out.println("MessageContext injected");
+            log.info("MessageContext injected");
         } else {
             throw new AxisFault("Message Context not injected");
         }

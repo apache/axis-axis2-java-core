@@ -23,6 +23,8 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.OperationDescription;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -96,7 +98,7 @@ public class AsynchronousClient {
             propertyFile.createNewFile();
             prop.load(new FileInputStream(propertyFile));
             amazonkey = prop.getProperty("amazonKey");
-            System.out.println("key is " + amazonkey);
+            //System.out.println("key is " + amazonkey);
             if (amazonkey == null) {
                 gui.setKey();
             }
@@ -159,12 +161,11 @@ public class AsynchronousClient {
                     Constants.TRANSPORT_HTTP,
                     false);
 
-            System.out.println("Sending the Async message ....");
+//            System.out.println("Sending the Async message ....");
             requestContext.getEnvelope().serialize(
                     XMLOutputFactory.newInstance()
                             .createXMLStreamWriter
                             (System.out));
-            System.out.println();
             QName opName = new QName("urn:GoogleSearch", "doGoogleSearch");
             OperationDescription opdesc = new OperationDescription(opName);
             call.invokeNonBlocking(opdesc,
@@ -175,8 +176,6 @@ public class AsynchronousClient {
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }
-        System.out.println(
-                "Message sent and the client thread is returned....");
     }
 }
 

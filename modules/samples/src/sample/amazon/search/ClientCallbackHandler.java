@@ -22,6 +22,8 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
@@ -58,6 +60,7 @@ public class ClientCallbackHandler extends Callback {
      * Stores the response
      */
     private AsyncResult myResult;
+    private Log log = LogFactory.getLog(getClass());
 
     /**
      * method onComplete
@@ -65,16 +68,16 @@ public class ClientCallbackHandler extends Callback {
      * @param result
      */
     public void onComplete(AsyncResult result) {
-        System.out.println(
+        log.info(
                 "Responce message received to the ClientCallbackHandler ...");
         try {
             result.getResponseEnvelope().serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                             System.out));
         } catch (XMLStreamException e) {
-            System.out.println("Error occured after responce is received");
+            log.info("Error occured after responce is received");
             e.printStackTrace();
         } catch (FactoryConfigurationError e) {
-            System.out.println("Error occured after responce is received");
+            log.info("Error occured after responce is received");
             e.printStackTrace();
         }
         myResult = result;
@@ -100,14 +103,14 @@ public class ClientCallbackHandler extends Callback {
 
         String opLocalName = operation.getLocalName();
         if (opLocalName.equals("Fault")) {
-            System.out.println(
+            log.info(
                     "A Fault message recieved, Check your Licence key");
             strURL =
                     strURL +
                     "A Fault message recieved, Check your Licence key. Else you have reached the " +
                     "daily limit of 1000 requests";
         } else {
-            System.out.println("this is opera: " + operation.getLocalName());
+            log.info("this is opera: " + operation.getLocalName());
             iterator0 = operation.getChildren();
 
             while (iterator0.hasNext()) {
@@ -115,20 +118,20 @@ public class ClientCallbackHandler extends Callback {
                 if (node.getType() == OMNode.ELEMENT_NODE) {
                     elem = (OMElement) node;
                     String str = elem.getLocalName();
-                    System.out.println(str);
+                    log.info(str);
                     if (str.equals("SearchResult")) {
-                        System.out.println("Got Search Results");
+                        log.info("Got Search Results");
                         iterator1 = elem.getChildren();
                         while (iterator1.hasNext()) {
                             node = (OMNode) iterator1.next();
                             if (node.getType() == OMNode.ELEMENT_NODE) {
                                 elem = (OMElement) node;
                                 String str1 = elem.getLocalName();
-                                System.out.println(str1);
+                                log.info(str1);
                                 if (str1.equals("Alexa")) {
-                                    System.out.println("Got Alexa");
+                                   log.info("Got Alexa");
                                     elem = elem.getFirstElement(); //elem -> websearch
-                                    System.out.println("Should be WebSearch " +
+                                    log.info("Should be WebSearch " +
                                             elem.getLocalName());
                                     iterator2 = elem.getChildren();
                                     while (iterator2.hasNext()) {
@@ -137,10 +140,7 @@ public class ClientCallbackHandler extends Callback {
                                                 OMNode.ELEMENT_NODE) {
                                             elem = (OMElement) node;
                                             String str3 = elem.getLocalName();
-                                            System.out.println(str3);
                                             if (str3.equals("Results")) {
-                                                System.out.println(
-                                                        "Got Results");
                                                 iterator3 = elem.getChildren();
                                                 while (iterator3.hasNext()) {
                                                     node =
@@ -150,8 +150,6 @@ public class ClientCallbackHandler extends Callback {
                                                         elem =
                                                                 (OMElement) node;
                                                         String str4 = elem.getLocalName();
-                                                        System.out.println(
-                                                                str4);
                                                         if (str4.equals(
                                                                 "Result")) {
                                                             iterator4 =
@@ -176,8 +174,6 @@ public class ClientCallbackHandler extends Callback {
                                                                                 ">" +
                                                                                 txt +
                                                                                 "</a><br>";
-                                                                        System.out.println(
-                                                                                strURL);
                                                                     }
                                                                 }
                                                             }

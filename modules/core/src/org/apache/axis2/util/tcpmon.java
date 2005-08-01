@@ -1393,7 +1393,7 @@ public class tcpmon extends JFrame {
                 } else {
 
                     // something went wrong before we had the output area
-                    System.out.println(st.toString());
+                    //System.out.println(st.toString());
                 }
                 halt();
             }

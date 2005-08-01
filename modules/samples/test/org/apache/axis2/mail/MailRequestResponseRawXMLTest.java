@@ -156,7 +156,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
             }
 
             public void reportError(Exception e) {
-                e.printStackTrace();
+                log.info(e.getMessage());
                 finish = true;
             }
         };

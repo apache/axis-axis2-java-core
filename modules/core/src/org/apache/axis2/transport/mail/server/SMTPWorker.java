@@ -1,6 +1,8 @@
 package org.apache.axis2.transport.mail.server;
 
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -47,6 +49,7 @@ public class SMTPWorker extends Thread {
     private boolean transmitionEnd = false;
 
     private boolean bodyData = false;
+    private Log log = LogFactory.getLog(getClass());
 
     public SMTPWorker(Socket socket, Storage st,
             ConfigurationContext configurationContext) {
@@ -73,7 +76,8 @@ public class SMTPWorker extends Thread {
             writer = new BufferedWriter(new OutputStreamWriter(socket
                     .getOutputStream()));
         } catch (IOException ex) {
-            ex.printStackTrace();
+            log.info(ex.getMessage());
+//            ex.printStackTrace();
         }
     }
 
@@ -115,13 +119,14 @@ public class SMTPWorker extends Thread {
                     mSort.sort((String) receivers.get(idx), new MimeMessage(
                             mail));
                 } catch (MessagingException e1) {
-                    e1.printStackTrace();
+                    log.info(e1.getMessage());
+                    //e1.printStackTrace();
                 }
             }
             //
 
         } catch (IOException e) {
-            System.out.println("ERROR: CLIENT CLOSED THE SOCKET");
+            log.info("ERROR: CLIENT CLOSED THE SOCKET");
         }
     }
 
@@ -166,8 +171,9 @@ public class SMTPWorker extends Thread {
                 try {
                     mail.addFrom(mailFrom);
                 } catch (MessagingException e) {
+                    log.info(e.getMessage());
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 }
             }
 
@@ -206,8 +212,9 @@ public class SMTPWorker extends Thread {
                         toStr));
                 receivers.add(toStr);
             } catch (MessagingException e) {
+                log.info(e.getMessage());
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+//                e.printStackTrace();
             }
             return MailConstants.RCPT_OK;
 
@@ -231,14 +238,13 @@ public class SMTPWorker extends Thread {
                 if (bodyData) {
                     temp += input;
                     mail.setContent(temp, "text/plain");
-                    System.out.println("\n\n\n---------------" + temp
-                            + "---------------\n\n\n");
                 } else {
                     mail.addHeaderLine(input);
                 }
             } catch (MessagingException e) {
+                log.info(e.getMessage());
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+//                e.printStackTrace();
             }
             return null;
 

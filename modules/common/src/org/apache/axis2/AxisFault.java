@@ -19,7 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 
 /**
- * An exception which maps cleanly to a SOAP fault.
+ * An exception which maps cleanly to a Axis Fault.
  * This is a base class for exceptions which are mapped to faults.
  * SOAP faults contain
  * <ol>
@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
  * <li>Fault details; an xml tree of fault specific stuff
  * </ol>
  */
-public class AxisFault extends RemoteException implements SOAPFaultException{
+public class AxisFault extends RemoteException {
 
     private String soapFaultCode;
 
@@ -94,13 +94,5 @@ public class AxisFault extends RemoteException implements SOAPFaultException{
     public AxisFault(String messageText, String faultCode) {
         super(messageText);
         this.soapFaultCode = faultCode;
-    }
-
-    public String getFaultCode() {
-        return soapFaultCode;
-    }
-
-    public void setFaultCode(String soapFaultCode) {
-        this.soapFaultCode = soapFaultCode;
     }
 }

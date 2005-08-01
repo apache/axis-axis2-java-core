@@ -24,7 +24,7 @@ public class POP3Server extends Thread {
             synchronized (this) {
                 running = true;
                 serverSocket = new ServerSocket(port);
-                System.out.println("Server started on port " + port);
+                log.info("Server started on port " + port);
             }
         } catch (IOException e) {
             throw new AxisFault(e);

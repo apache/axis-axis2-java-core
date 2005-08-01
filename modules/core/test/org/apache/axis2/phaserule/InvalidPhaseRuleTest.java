@@ -1,12 +1,14 @@
 package org.apache.axis2.phaserule;
 
+import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.phaseresolver.PhaseHolder;
-import org.apache.axis2.AbstractTestCase;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
 
     InvalidPhaseRuleTest phaserul;
     AxisConfiguration axisSytem;
+    private Log log = LogFactory.getLog(getClass());
 
     public InvalidPhaseRuleTest(String testName) {
         super(testName);
@@ -84,7 +87,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
             ph.addHandler(hm3);
             fail("this must failed gracefully with PhaseException ");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         }
     }
 
@@ -130,7 +133,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
 
             fail("this must failed gracefully with PhaseException ");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         }
     }
 

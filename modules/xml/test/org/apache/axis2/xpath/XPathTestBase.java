@@ -67,6 +67,8 @@ import org.jaxen.function.StringFunction;
 import org.jaxen.saxpath.helpers.XPathReaderFactory;
 import org.jaxen.pattern.Pattern;
 import org.jaxen.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -81,6 +83,7 @@ public abstract class XPathTestBase extends TestCase
     protected static boolean verbose = false;
     protected static boolean debug = false;
     private ContextSupport contextSupport;
+    private Log log = LogFactory.getLog(getClass());
 
     public XPathTestBase(String name)
     {
@@ -104,7 +107,7 @@ public abstract class XPathTestBase extends TestCase
     public void log(boolean actualVerbose,
                     String text)
     {
-        if (actualVerbose) System.out.println(text);
+        if (actualVerbose) log.info(text);
     }
 
     protected void assertCountXPath(int expectedSize, Object context, String xpathStr) throws JaxenException

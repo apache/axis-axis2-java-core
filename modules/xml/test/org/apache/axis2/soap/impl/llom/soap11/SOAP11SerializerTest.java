@@ -3,6 +3,8 @@ package org.apache.axis2.soap.impl.llom.soap11;
 import org.apache.axis2.om.OMTestCase;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -25,6 +27,8 @@ import javax.xml.stream.XMLStreamWriter;/*
  */
 
 public class SOAP11SerializerTest extends OMTestCase {
+
+    private Log log = LogFactory.getLog(getClass());
     private XMLStreamWriter output;
 
     public SOAP11SerializerTest(String testName) {
@@ -48,11 +52,11 @@ public class SOAP11SerializerTest extends OMTestCase {
         try {
             soapEnvelope.serializeWithCache(output);
 
-            System.out.println("");
-            System.out.println("=======================");
+//            System.out.println("");
+//            System.out.println("=======================");
             soapEnvelope.serialize(output);
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         }
 
     }

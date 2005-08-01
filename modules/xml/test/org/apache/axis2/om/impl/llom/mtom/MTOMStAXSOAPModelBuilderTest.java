@@ -65,15 +65,15 @@ public class MTOMStAXSOAPModelBuilderTest extends AbstractTestCase {
 
     public void testCreateOMElement() throws Exception {
         OMElement root = builder.getDocumentElement();
-        System.out.println(root.getLocalName() + " : "
-                + root.getNamespace().getName());
+//        System.out.println(root.getLocalName() + " : "
+//                + root.getNamespace().getName());
         OMElement body = (OMElement) root.getFirstChild();
-        System.out.println(body.getLocalName() + " : "
-                + body.getNamespace().getName());
+//        System.out.println(body.getLocalName() + " : "
+//                + body.getNamespace().getName());
 
         OMElement data = (OMElement) body.getFirstChild();
-        System.out.println(data.getLocalName() + " : "
-                + data.getNamespace().getName());
+//        System.out.println(data.getLocalName() + " : "
+//                + data.getNamespace().getName());
         Iterator childIt = data.getChildren();
         //while (childIt.hasNext()) {
         OMElement child = (OMElement) childIt.next();

@@ -89,11 +89,11 @@ public class SimpleMailListener extends TransportListener implements Runnable {
                 new ConfigurationContextFactory();
             configurationContext = builder.buildConfigurationContext(dir);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
+//            e.printStackTrace();
         }
         try {
-            System.out.println(
-                "Sleeping for a bit to let the engine start up.");
+            log.info("Sleeping for a bit to let the engine start up.");
             Thread.sleep(2000);
         } catch (InterruptedException e1) {
             log.debug(e1.getMessage(), e1);
@@ -144,7 +144,6 @@ public class SimpleMailListener extends TransportListener implements Runnable {
                     + host
                     + " On port "
                     + port;
-            System.out.println(logMessage);
             log.info(logMessage);
         }
         while (!stopped) {
@@ -156,7 +155,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
                 Message[] msgs = receiver.receive();
 
                 if (msgs != null && msgs.length > 0) {
-                    System.out.println(msgs.length + " Message Found");
+                    log.info(msgs.length + " Message Found");
                     for (int i = 0; i < msgs.length; i++) {
                         MimeMessage msg = (MimeMessage) msgs[i];
                         if (msg != null) {
@@ -180,13 +179,11 @@ public class SimpleMailListener extends TransportListener implements Runnable {
                     "An error occured when running the mail listner."
                         + e.getMessage(),
                     e);
-                e.printStackTrace();
                 break;
             }
         }
 
         log.info("Mail listner has been stoped.");
-        System.out.println("Mail listner has been stoped.");
         //log.info(Messages.getMessage("quit00", "SimpleMailListner")); TODO Issue #1
         // CT 07-Feb-2005.
 
@@ -251,7 +248,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
      */
     public static void main(String args[]) throws AxisFault {
         if (args.length != 1) {
-            System.out.println("java SimpleMailListener <repository>");
+            log.info("java SimpleMailListener <repository>");
         } else {
             ConfigurationContextFactory builder =
                 new ConfigurationContextFactory();
@@ -263,12 +260,12 @@ public class SimpleMailListener extends TransportListener implements Runnable {
                     new QName(Constants.TRANSPORT_MAIL));
             if (transportIn != null) {
                 sas.init(configurationContext, transportIn);
-                System.out.println(
+                log.info(
                     "Starting the SimpleMailListener with repository "
                         + new File(args[0]).getAbsolutePath());
                 sas.start();
             } else {
-                System.out.println(
+                log.info(
                     "Startup failed, mail transport not configured, Configure the mail trnasport in the axis2.xml file");
             }
         }

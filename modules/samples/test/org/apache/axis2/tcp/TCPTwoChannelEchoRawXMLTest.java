@@ -36,6 +36,8 @@ import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -55,6 +57,8 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
     private SimpleHTTPServer sas;
     private ServiceDescription service;
     private ServiceContext serviceContext;
+
+    private Log log = LogFactory.getLog(getClass());
 
     private boolean finish = false;
 
@@ -137,7 +141,8 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
                 }
 
                 public void reportError(Exception e) {
-                    e.printStackTrace();
+                    log.info(e.getMessage());
+//                    e.printStackTrace();
                     finish = true;
                 }
             };

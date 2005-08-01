@@ -78,8 +78,6 @@ public class MailTransportSender extends AbstractTransportSender {
                     email = eprAddress;
                 }
 
-                System.out.println(subject);
-                System.out.println(email);
 
                 sender.send(
                     subject,

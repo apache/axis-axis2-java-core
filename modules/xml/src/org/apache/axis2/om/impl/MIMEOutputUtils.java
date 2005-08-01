@@ -31,11 +31,14 @@ import javax.mail.internet.MimeBodyPart;
 
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMText;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class MIMEOutputUtils {
 
     private static byte[] CRLF = {13, 10};
     private static Random myRand = null;
+    private Log log = LogFactory.getLog(getClass());
 
     public static void complete(OutputStream outStream,
                                 OutputStream bufferedSoapOutStream, LinkedList binaryNodeList,
@@ -169,7 +172,8 @@ public class MIMEOutputUtils {
         try {
             md5 = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("Error: " + e);
+            //System.out.println("Error: " + e);
+            //todo heve to be properly handle
         }
         md5.update(sb.toString().getBytes());
         byte[] array = md5.digest();

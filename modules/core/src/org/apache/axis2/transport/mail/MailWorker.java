@@ -126,7 +126,6 @@ public class MailWorker implements AxisWorker {
                     soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
 
                 }
-                msgContext.setSoapNamespaceURI(soapNamespaceURI);
                 StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
 
                 SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
@@ -148,11 +147,11 @@ public class MailWorker implements AxisWorker {
                     engine.sendFault(faultContext);
                 } else {
                     log.error(e);
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 }
             } catch (AxisFault e1) {
                 log.error(e);
-                e1.printStackTrace();
+//                e1.printStackTrace();
             }
         }
 

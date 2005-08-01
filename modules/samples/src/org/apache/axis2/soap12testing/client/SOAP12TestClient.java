@@ -16,6 +16,9 @@
 
 package org.apache.axis2.soap12testing.client;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +29,9 @@ import java.net.Socket;
 import java.net.URL;
 
 public class SOAP12TestClient {
+
+    private Log log = LogFactory.getLog(getClass());
+
     public String getReply(int port, String webserviceName,String testNumber) {
         String replyMessage = "";
         try {
@@ -57,9 +63,9 @@ public class SOAP12TestClient {
 //            connection.disconnect();
 
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         }
         return replyMessage;
     }
@@ -72,15 +78,17 @@ public class SOAP12TestClient {
             String requestMessage = soapCreater.getStringFromSOAPMessage(testNumber,netUrl);
             PrintWriter out = new PrintWriter(
                     socket.getOutputStream());
-            System.out.println("Message: " + requestMessage);
+//            System.out.println("Message: " + requestMessage);
             out.println(requestMessage);
             out.flush();
             socket.shutdownOutput();
             return socket.getInputStream();
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
+//            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
+//            e.printStackTrace();
         }
         return null;
     }

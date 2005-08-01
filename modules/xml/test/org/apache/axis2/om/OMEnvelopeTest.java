@@ -19,8 +19,11 @@ import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class OMEnvelopeTest extends OMTestCase {
+    private Log log = LogFactory.getLog(getClass());
     public OMEnvelopeTest(String testName) {
         super(testName);
     }
@@ -66,7 +69,7 @@ public class OMEnvelopeTest extends OMTestCase {
         try {
             env = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
         } catch (SOAPProcessingException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
             fail(e.getMessage());
         }
         assertNotNull(env);

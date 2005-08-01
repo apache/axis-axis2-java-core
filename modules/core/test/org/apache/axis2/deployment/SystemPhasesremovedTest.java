@@ -3,6 +3,8 @@ package org.apache.axis2.deployment;
 import junit.framework.TestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -30,6 +32,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 public class SystemPhasesremovedTest extends TestCase {
 
     AxisConfiguration er;
+    private Log log = LogFactory.getLog(getClass());
 
     public void testPhaseOrderchage() {
         try {
@@ -42,7 +45,7 @@ public class SystemPhasesremovedTest extends TestCase {
                     "this must failed gracefully with DeploymentException \"Invalid System predefined " +
                     "inphases , phase order dose not\" +\n support\\n recheck axis2.xml\"");
         } catch (DeploymentException e) {
-            e.printStackTrace();
+            log.info(e.getCause());
         }
     }
 

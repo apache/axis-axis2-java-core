@@ -132,8 +132,8 @@ public class EchoRawMTOMLoadTest extends TestCase {
             OMElement ele = (OMElement) result.getFirstChild();
             OMElement ele1 = (OMElement) ele.getFirstChild();
             OMText binaryNode = (OMText) ele1.getFirstChild();
-            compareWithActualOMText(binaryNode);  
-            System.out.println(i);
+            compareWithActualOMText(binaryNode);
+            log.info("" + i);
         }
     }
     private void compareWithActualOMText(OMText binaryNode)

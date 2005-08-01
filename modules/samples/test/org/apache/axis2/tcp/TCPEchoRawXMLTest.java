@@ -38,6 +38,8 @@ import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -59,7 +61,7 @@ public class TCPEchoRawXMLTest extends TestCase {
     private ServiceContext serviceContext;
 
     private boolean finish = false;
-
+    private Log log = LogFactory.getLog(getClass());
     public TCPEchoRawXMLTest() {
         super(TCPEchoRawXMLTest.class.getName());
     }
@@ -127,7 +129,8 @@ public class TCPEchoRawXMLTest extends TestCase {
             }
 
             public void reportError(Exception e) {
-                e.printStackTrace();
+                log.info(e.getMessage());
+//                e.printStackTrace();
                 finish = true;
             }
         };

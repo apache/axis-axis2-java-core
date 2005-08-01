@@ -2,6 +2,8 @@ package org.apache.axis2.om;
 
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
@@ -24,7 +26,7 @@ import javax.xml.namespace.QName;
 public class OMElementTest extends OMTestCase implements OMConstants {
     private static final String WSA_URI = "http://schemas.xmlsoap.org/ws/2004/03/addressing";
     private static final String WSA_TO = "To";
-
+    private Log log = LogFactory.getLog(getClass());
 
     public OMElementTest(String testName) {
         super(testName);
@@ -50,7 +52,7 @@ public class OMElementTest extends OMTestCase implements OMConstants {
                     wsaTo.getText().trim(),
                     expectedString);
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            log.info(e.getMessage());
         }
     }
 

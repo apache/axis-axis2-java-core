@@ -99,7 +99,7 @@ public class MailSorter {
 
             // add the SOAPEnvelope
             String message = mimeMessage.getContent().toString();
-            System.out.println("message[" + message + "]");
+            log.info("message[" + message + "]");
             ByteArrayInputStream bais = new ByteArrayInputStream(message.getBytes());
             XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
 
@@ -110,7 +110,6 @@ public class MailSorter {
                 soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
 
             }
-            msgContext.setSoapNamespaceURI(soapNamespaceURI);
             StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
 
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
@@ -128,7 +127,6 @@ public class MailSorter {
                 }
             } catch (Exception e1) {
                 log.error(e);
-                e.printStackTrace();
             }
         }
     }

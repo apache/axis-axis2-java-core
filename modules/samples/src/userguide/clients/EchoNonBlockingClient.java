@@ -42,7 +42,6 @@ public class EchoNonBlockingClient {
                                 .createXMLStreamWriter(writer));
                         writer.flush();
 
-                        System.out.println(writer.toString());
 
                     } catch (XMLStreamException e) {
                         reportError(e);

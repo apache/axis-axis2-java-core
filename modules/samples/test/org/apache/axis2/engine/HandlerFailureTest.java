@@ -50,7 +50,8 @@ public class HandlerFailureTest extends TestCase {
 
 
     private static final String ADDRESS = "http://127.0.0.1:" +
-            (UtilServer.TESTING_PORT) +
+            ("5556") +
+//            (UtilServer.TESTING_PORT) +
             "/axis/services/" + SERVICE_NAME + "/" + OPERATION_NAME;
 //    private static final String ADDRESS = "http://127.0.0.1:8080/axis/services/" + SERVICE_NAME;
     private EndpointReference targetEPR = new EndpointReference(ADDRESS);
@@ -174,7 +175,7 @@ public class HandlerFailureTest extends TestCase {
                             System.out));
             fail("the test must fail due to bad service Name");
         } catch (AxisFault e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
             assertTrue(
                     (e.getMessage().indexOf(UtilServer.FAILURE_MESSAGE)) > 0);
             return;

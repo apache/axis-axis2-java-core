@@ -91,7 +91,7 @@ public class TCPServer extends TransportListener implements Runnable {
                 }
             } catch (AxisFault e) {
                 log.error(e);
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
 

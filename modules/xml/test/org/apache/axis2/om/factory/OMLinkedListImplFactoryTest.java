@@ -30,6 +30,8 @@ import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
 import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * User: Eran Chinthaka (eran.chinthaka@gmail.com)
@@ -38,6 +40,9 @@ import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
  * All Rights Reserved.
  */
 public class OMLinkedListImplFactoryTest extends AbstractTestCase {
+
+    private Log log = LogFactory.getLog(getClass());
+
     public OMLinkedListImplFactoryTest(String testName) {
         super(testName);
     }
@@ -78,7 +83,7 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
                     child.getBuilder() instanceof OMXMLParserWrapper);
 
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            log.info(e.getMessage());
         }
     }
 
@@ -122,7 +127,7 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
 
 
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            log.info(e.getMessage());
         }
     }
 
@@ -146,7 +151,7 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
 
 
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            log.info(e.getMessage());
         }
     }
 
@@ -170,7 +175,7 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
 
 
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            log.info(e.getMessage());
         }
     }
 
@@ -195,7 +200,7 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
 
 
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            log.info(e.getMessage());
         }
     }
 
@@ -221,7 +226,7 @@ public class OMLinkedListImplFactoryTest extends AbstractTestCase {
 
 
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            log.info(e.getMessage());
         }
     }
 

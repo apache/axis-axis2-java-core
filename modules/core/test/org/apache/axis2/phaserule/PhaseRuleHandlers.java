@@ -47,7 +47,6 @@ public class PhaseRuleHandlers extends AbstractHandler implements Handler {
     }
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        System.out.println("I am " + name + " Handler Running :)");
         log.info("I am " + name + " Handler Running :)");
     }
 

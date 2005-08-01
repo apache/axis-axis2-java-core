@@ -32,8 +32,12 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class SOAPCreater {
+
+    private Log log = LogFactory.getLog(getClass());
     public String getStringFromSOAPMessage(String testNumber, URL url) throws IOException {
         File file =
             new File(
@@ -65,7 +69,8 @@ public class SOAPCreater {
             OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
             return (SOAPEnvelope) builder.getDocumentElement();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
+//            e.printStackTrace();
         }
         return null;
     }

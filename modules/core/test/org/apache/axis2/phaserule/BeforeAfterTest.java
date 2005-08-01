@@ -107,7 +107,6 @@ public class BeforeAfterTest extends TestCase {
 
             for (int i = 0; i < handlers.size(); i++) {
                 Handler handler = (Handler) handlers.get(i);
-                System.out.println("handler = " + handler.getName());
             }
 
             Handler handler = (Handler) handlers.get(0);

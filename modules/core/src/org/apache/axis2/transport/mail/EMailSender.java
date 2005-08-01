@@ -110,8 +110,8 @@ public class EMailSender {
             for (int i = 0; i < msgs.length; i++) {
                 MimeMessage msg = (MimeMessage) msgs[i];
                 if (msg != null) {
-                    System.out.println(msg.getSender());
-                    System.out.println(msg.getContent());
+//                    System.out.println(msg.getSender());
+//                    System.out.println(msg.getContent());
                 }
                 msg.setFlag(Flags.Flag.DELETED, true);
             }

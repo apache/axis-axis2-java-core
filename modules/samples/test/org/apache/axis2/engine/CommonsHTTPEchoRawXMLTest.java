@@ -103,7 +103,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
             }
 
             public void reportError(Exception e) {
-                e.printStackTrace();
+                log.info(e.getMessage());
                 finish = true;
             }
         };

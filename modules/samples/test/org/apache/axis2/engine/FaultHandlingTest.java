@@ -46,7 +46,8 @@ import java.io.FileReader;
 public class FaultHandlingTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
+//            + (UtilServer.TESTING_PORT)
+            + ("5556")
             + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName operationName = new QName("echoOMElement");
@@ -62,7 +63,7 @@ public class FaultHandlingTest extends TestCase {
             UtilServer.start();
             inOutMEPClient = getMyInOutMEPClient();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         }
 
     }
@@ -121,7 +122,7 @@ public class FaultHandlingTest extends TestCase {
                     inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), inEnvelope);
             return result;
         } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();
+            log.info(axisFault.getMessage());
             fail("Something wrong in getting the response from " + operationName.getLocalPart() + " service");
         }
         return null;
@@ -161,6 +162,7 @@ public class FaultHandlingTest extends TestCase {
 
     protected void tearDown() throws Exception {
         UtilServer.stop();
+        inOutMEPClient.close();
     }
 
 }

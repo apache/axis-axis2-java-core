@@ -22,6 +22,8 @@ import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
 import org.apache.axis2.transport.http.HTTPTransportReceiver;
 import org.apache.axis2.AxisFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -32,7 +34,7 @@ import java.util.Map;
 public class MessageComparator {
     //public static final String TEST_MAIN_DIR = "./modules/samples/";
     public static final String TEST_MAIN_DIR = "./";
-    
+    private Log log = LogFactory.getLog(getClass());
     
     public boolean compare(String testNumber, InputStream replyMessage) {
         SOAPEnvelope replyMessageEnvelope;
@@ -58,13 +60,13 @@ public class MessageComparator {
             return soapComparator.compare(requiredMessageEnvelope,replyMessageEnvelope);
 
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         } catch (XMLComparisonException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();
+            log.info(axisFault.getMessage());
         }
         return false;
     }

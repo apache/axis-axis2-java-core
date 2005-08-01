@@ -49,7 +49,6 @@ public class ClientForWebServiceWithModule {
                     .createXMLStreamWriter(writer));
             writer.flush();
 
-            System.out.println(writer.toString());
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();

@@ -19,6 +19,8 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLTestCase;
 
@@ -35,6 +37,7 @@ public class XMLConformanceTest extends XMLTestCase {
     private static int successCount = 0;
     private static int parsedCount = 0;
     private static int fileCount = 0;
+    private Log log = LogFactory.getLog(getClass());
 
     public XMLConformanceTest(String name) {
         super(name);
@@ -49,12 +52,12 @@ public class XMLConformanceTest extends XMLTestCase {
         File testSuiteDirectory = new File("test-resources/XMLSuite/xmlconf");
         if(testSuiteDirectory.exists()) {
             ProcessDir(testSuiteDirectory);
-            System.out.println("File count is " + fileCount);
-            System.out.println("Parsed count is " + parsedCount +
+            log.info("File count is " + fileCount);
+            log.info("Parsed count is " + parsedCount +
                     ". This is just partial success");
-            System.out.println("Complete success count is " + successCount);
+            log.info("Complete success count is " + successCount);
         } else {
-            System.out.println("Skipping W3C XMLSuite test");
+            log.info("Skipping W3C XMLSuite test");
         }
     }
 
@@ -91,9 +94,9 @@ public class XMLConformanceTest extends XMLTestCase {
                                     new FileInputStream(absolutePath), "UTF-8"));
             rootElement = staxOMBuilder.getDocumentElement();
         } catch (Exception e) {
-            System.err.println("Exception trying to get hold of rootElement: "
+            log.info("Exception trying to get hold of rootElement: "
                     + e.getMessage());
-            System.err.println("in file: " + absolutePath + "\n");
+            log.info("in file: " + absolutePath + "\n");
             return;
         }
         //we will write output into the file named TempOutputFile.txt in
@@ -105,13 +108,12 @@ public class XMLConformanceTest extends XMLTestCase {
                     createXMLStreamWriter(new FileOutputStream(tempFile));
             rootElement.serializeWithCache(writer);
         } catch (XMLStreamException e) {
-            System.err.println(
-                    "Error in creating XMLStreamWriter to write parsed xml into");
+            log.info("Error in creating XMLStreamWriter to write parsed xml into");
             return;
         } catch (Exception e) {
-            System.err.println("Exception while serializing: " +
+            log.info("Exception while serializing: " +
                     e.getMessage());
-            System.err.println("in file: " + absolutePath + "\n");
+            log.info("in file: " + absolutePath + "\n");
             return;
         }
         writer.flush();
@@ -123,17 +125,17 @@ public class XMLConformanceTest extends XMLTestCase {
             diff = compareXML(new FileReader(absolutePath), new FileReader(
                     "TempOutputFile.txt"));
         } catch (Exception e) {
-            System.out.println("" +
+            log.info("" +
                     "Error comparing original and generated files for: " +
                     absolutePath);
-            System.out.println("Error message is: " + e.getMessage());
+            log.info("Error message is: " + e.getMessage());
             return;
         }
         try {
             assertXMLEqual(diff, true);
             successCount++;
         } catch (Error e) {
-            System.out.println("XMLEquality failed for file: " + absolutePath);
+            log.info("XMLEquality failed for file: " + absolutePath);
         }
     }
 

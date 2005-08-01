@@ -97,7 +97,7 @@ public class POP3Worker extends Thread {
                                     " messages in maildrop");
                         }
                     } catch (NumberFormatException e) {
-                        e.printStackTrace();
+                        log.info(e.getMessage());
                         printWriter.println(
                                 MailConstants.ERR +
                                 "problem passing the index. Index submited was " +

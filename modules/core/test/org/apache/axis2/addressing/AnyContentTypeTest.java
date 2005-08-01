@@ -20,9 +20,13 @@ import junit.framework.TestCase;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+
 
 public class AnyContentTypeTest extends TestCase {
     private AnyContentType anyContentType;
+     private Log log = LogFactory.getLog(getClass());
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(AnyContentTypeTest.class);
@@ -37,8 +41,7 @@ public class AnyContentTypeTest extends TestCase {
     }
 
     public void testAddAndGetReferenceValue() {
-        System.out.println(
-                "Testing by putting more than 5 values in this. (this is initialized for 5)");
+        log.info( "Testing by putting more than 5 values in this. (this is initialized for 5)");
         for (int i = 0; i < 10; i++) {
             anyContentType.addReferenceValue(
                     new QName("http://www.opensouce.lk/" + i, "" + i),

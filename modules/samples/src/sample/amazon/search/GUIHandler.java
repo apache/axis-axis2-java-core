@@ -184,13 +184,11 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
      * @param e
      */
     public void keyTyped(KeyEvent e) {
-        System.out.println("inside");
         int event = e.getKeyChar();
 
         if (event == KeyEvent.VK_SPACE || event == KeyEvent.VK_ENTER) {
             AsynchronousClient.search = textBox.getText().trim();
             AsynchronousClient.search.trim();
-            System.out.println(textBox.getText());
             if (!AsynchronousClient.prevSearch.equals(
                     AsynchronousClient.search)) {
                 AsynchronousClient.doSearch = true;
@@ -213,7 +211,6 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == mnuMaxResults) {
             do {
-                System.out.println("come to the place");
                 AsynchronousClient.maxResults =
                         JOptionPane.showInputDialog(null,
                                 "Enter the number of maximum results per page (Maximum allowed is 1000)");

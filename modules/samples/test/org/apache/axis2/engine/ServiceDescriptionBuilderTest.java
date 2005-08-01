@@ -5,6 +5,8 @@ import org.apache.axis2.description.AxisDescWSDLComponentFactory;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.wsdl.WSDLDescription;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,6 +38,7 @@ import java.util.Iterator;
  */
 public class ServiceDescriptionBuilderTest extends TestCase {
     private ServiceDescription service = null;
+    private Log log = LogFactory.getLog(getClass());
 
     private void initialize() throws Exception {
 
@@ -63,7 +66,7 @@ public class ServiceDescriptionBuilderTest extends TestCase {
         try {
             this.initialize();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         }
     }
 }

@@ -20,6 +20,8 @@ import org.apache.axis2.om.AbstractTestCase;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -40,7 +42,7 @@ public class SOAPTestCase extends AbstractTestCase {
 
     protected static final String SOAP11_FILE_NAME = "soap/soap11/soap11message.xml";
     protected static final String SOAP12_FILE_NAME = "soap/soap12message.xml";
-
+    private Log log = LogFactory.getLog(getClass());
     /**
      * @param testName
      */
@@ -72,9 +74,9 @@ public class SOAPTestCase extends AbstractTestCase {
                     XMLInputFactory.newInstance().createXMLStreamReader(
                             new FileReader(getTestResourceFile(fileName)));
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         }
         return new StAXSOAPModelBuilder(parser, null);
     }

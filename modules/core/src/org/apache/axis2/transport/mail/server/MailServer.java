@@ -28,8 +28,7 @@ public class MailServer {
             log.error(e);
         }
         try {
-            System.out
-                    .println("Sleeping for a bit to let the engine start up.");
+            log.info("Sleeping for a bit to let the engine start up.");
             Thread.sleep(2000);
         } catch (InterruptedException e1) {
             log.error(e1);
@@ -48,8 +47,7 @@ public class MailServer {
             int smtpPort) throws AxisFault {
         this.configurationContext = configurationContext;
         try {
-            System.out
-                    .println("Sleeping for a bit to let the engine start up.");
+            log.info("Sleeping for a bit to let the engine start up.");
             Thread.sleep(2000);
         } catch (InterruptedException e1) {
             log.error(e1);
@@ -86,17 +84,18 @@ public class MailServer {
                 smtpPost = Integer.parseInt(args[0]);
                 popPort = Integer.parseInt(args[1]);
             } catch (NumberFormatException e1) {
-                System.out.println("Error in parsing the custom ports.");
+               log.info("Error in parsing the custom ports.");
             }
         } else {
-            System.out.println("Usage MailServer <SMTP_PORT> <POP_PORT>");
-            System.out.println("Using 1134 as the SMTP port and 1049 as the POP port");
+            log.info("Usage MailServer <SMTP_PORT> <POP_PORT>");
+            log.info("Using 1134 as the SMTP port and 1049 as the POP port");
         }
 
         try {
             MailServer ms = new MailServer(popPort, smtpPost);
         } catch (AxisFault e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
+//            e.printStackTrace();
         }
     }
 }

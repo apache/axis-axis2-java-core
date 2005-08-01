@@ -39,7 +39,7 @@ public class OMBlankElementTest extends TestCase {
 		try {
 			//We should not get anything as the return value here: the output of the serialization
 			String value = buildBlankOMElem();
-			System.out.println(value);
+//			System.out.println(value);
 			assertNull("There's a serialized output for a blank XML element that cannot exist", value);
 		} catch (Exception e) {
 			//An exception is thrown trying to serialize a blank element

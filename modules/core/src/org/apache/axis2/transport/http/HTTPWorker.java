@@ -132,11 +132,11 @@ public class HTTPWorker implements AxisWorker {
                     engine.sendFault(faultContext);
                 } else {
                     log.error(e);
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 }
             } catch (Exception e1) {
                 log.error(e1);
-                e1.printStackTrace();
+//                e1.printStackTrace();
             }
             e.printStackTrace();
         } finally {
@@ -144,7 +144,7 @@ public class HTTPWorker implements AxisWorker {
                 try {
                     this.socket.close();
                 } catch (IOException e1) {
-                    log.error(e1);
+//                    log.error(e1);
                 }
             }
         }

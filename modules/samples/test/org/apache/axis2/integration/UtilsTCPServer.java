@@ -21,6 +21,8 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.transport.tcp.TCPServer;
 import org.apache.axis2.AxisFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -32,6 +34,7 @@ public class UtilsTCPServer {
     private static ConfigurationContext configurationContext;
     public static final int TESTING_PORT = 5555;
     public static final String FAILURE_MESSAGE = "Intentional Faliure";
+    private Log log = LogFactory.getLog(getClass());
 
     public static synchronized void deployService(ServiceDescription service)
             throws AxisFault {
@@ -85,6 +88,7 @@ public class UtilsTCPServer {
                 count--;
             }
         } catch (AxisFault e) {
+
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

@@ -17,9 +17,12 @@ package org.apache.axis2.om;
 
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class OMBodyTest extends OMTestCase implements OMConstants {
     SOAPBody soapBody;
+    private Log log = LogFactory.getLog(getClass());
 
     public OMBodyTest(String testName) {
         super(testName);
@@ -37,18 +40,18 @@ public class OMBodyTest extends OMTestCase implements OMConstants {
      * Class under test for SOAPFault addFault()
      */
     public void testAddFault() {
-        System.out.println("Adding SOAP fault to body ....");
+        log.info("Adding SOAP fault to body ....");
         try {
             soapBody.addChild(
                     soapFactory.createSOAPFault(soapBody,
                             new Exception("Testing soap fault")));
         } catch (SOAPProcessingException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
             fail(e.getMessage());
         }
-        System.out.println("\t checking for SOAP Fault ...");
+        log.info("\t checking for SOAP Fault ...");
         assertTrue("SOAP body has no SOAP fault", soapBody.hasFault());
-        System.out.println("\t checking for not-nullity ...");
+        log.info("\t checking for not-nullity ...");
         assertTrue("SOAP body has no SOAP fault", soapBody.getFault() != null);
 
         //SimpleOMSerializer simpleOMSerializer = new SimpleOMSerializer();

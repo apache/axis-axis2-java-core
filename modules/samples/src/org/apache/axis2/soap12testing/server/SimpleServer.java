@@ -22,10 +22,12 @@ import java.net.ServerSocket;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.soap12testing.client.MessageComparator;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class SimpleServer {
     private int port;
-
+    private Log log = LogFactory.getLog(getClass());
     public SimpleServer() {
         this.port = 8008;
     }
@@ -47,7 +49,8 @@ public class SimpleServer {
             thread.setDaemon(true);
             thread.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
+//            e.printStackTrace();
         }
     }
 }

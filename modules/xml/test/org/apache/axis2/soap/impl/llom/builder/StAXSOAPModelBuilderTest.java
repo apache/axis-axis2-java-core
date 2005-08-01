@@ -20,6 +20,8 @@ import org.apache.axis2.soap.SOAPHeaderBlock;
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
 import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -36,6 +38,7 @@ import java.util.Iterator;
  */
 public class StAXSOAPModelBuilderTest extends TestCase {
 
+    private Log log = LogFactory.getLog(getClass());
     public void setUp() {
 
     }
@@ -553,10 +556,10 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     childOfTestElement.getText().equals("This is only a test"));
 
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
             fail("Test failed. Reason -> " + e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
             fail("Test failed. Reason -> " + e.getMessage());
 
         }
