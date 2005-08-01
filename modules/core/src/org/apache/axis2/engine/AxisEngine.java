@@ -133,7 +133,13 @@ public class AxisEngine {
                     operationDescription.getRemainingPhasesInFlow();
             invokePhases(operationSpecificPhases, msgContext);
         }
-
+        
+        /**
+         * Promote the operation specific paramters in the message context to
+         * the operation context
+         */
+        promoteMessageContextProperties(msgContext);
+        
         if (msgContext.isServerSide() && !msgContext.isPaused()) {
             // invoke the Message Receivers
             MessageReceiver receiver =
@@ -474,6 +480,19 @@ public class AxisEngine {
     public boolean clearStorage(ConfigurationContext context) {
         return context.getStorage().clean();
     }
+    
+    /**
+     * This is used to promote operation/service specific properties that are 
+     * in the message context to the relevant context 
+     * @param msgContext The message context
+     */
+    private void promoteMessageContextProperties(MessageContext msgContext) {
+    	//Character set encoding
+    	String charSetEncoding = (String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+		if(charSetEncoding != null){
+    		msgContext.getOperationContext().setProperty(MessageContext.CHARACTER_SET_ENCODING,charSetEncoding,true);
+    	}
+    }
 
     private String getSenderFaultCode(String soapNamespace) {
         return SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespace) ? SOAP12Constants.FAULT_CODE_SENDER : SOAP11Constants.FAULT_CODE_SENDER;
@@ -482,4 +501,5 @@ public class AxisEngine {
     private String getReceiverFaultCode(String soapNamespace) {
         return SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespace) ? SOAP12Constants.FAULT_CODE_RECEIVER : SOAP11Constants.FAULT_CODE_RECEIVER;
     }
+
 }
