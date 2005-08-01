@@ -30,7 +30,7 @@
          * auto generated Axis2 call back method for <xsl:value-of select="@name"/> method
          *
          */
-        public void receiveResult<xsl:value-of select="@name"/>(org.apache.axis2.clientapi.AsyncResult result) {
+        public void receiveResult<xsl:value-of select="@name"/>( <xsl:value-of select="output/param/@type"/><xsl:text> </xsl:text><xsl:value-of select="output/param/@name"/>) {
 			//Fill here with the code to handle the response
 			
         }

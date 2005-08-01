@@ -205,7 +205,10 @@
              _messageContext.setEnvelope(env);
 		      _call.invokeNonBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext, new org.apache.axis2.clientapi.Callback(){
                    public void onComplete(org.apache.axis2.clientapi.AsyncResult result){
-                         callback.receiveResult<xsl:value-of select="@name"/>(result);
+                   
+					    java.lang.Object object = <xsl:value-of select="$fullsupporterclassname"/>.fromOM(getElement(result.getResponseEnvelope(),"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
+             
+                         callback.receiveResult<xsl:value-of select="@name"/>((<xsl:value-of select="$outputtype"/>)object);
                    }
                    public void reportError(java.lang.Exception e){
                          callback.receiveError<xsl:value-of select="@name"/>(e);
