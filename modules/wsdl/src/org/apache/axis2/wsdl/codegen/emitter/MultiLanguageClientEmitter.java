@@ -561,18 +561,21 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                                           WSDLOperation operation) {
         Element param = doc.createElement("param");
         MessageReference outputMessage = operation.getOutputMessage();
+        String typeMappingStr = null;
+        String parameterName = null;
         if (outputMessage!=null){
-            addAttribute(doc,
-                    "name",
-                    this.mapper.getParameterName(
-                            outputMessage.getElement()),
-                    param);
-
+            parameterName =  this.mapper.getParameterName(
+                            outputMessage.getElement()) ;
             String typeMapping = this.mapper.getTypeMapping(
                     operation.getOutputMessage().getElement());
-            String typeMappingStr = typeMapping == null ? "" : typeMapping;
-            addAttribute(doc, "type", typeMappingStr, param);
+            typeMappingStr = typeMapping == null ? "" : typeMapping;
+        }else{
+            parameterName  = this.mapper.getParameterName(null);
+            typeMappingStr = "";        //set the empty string
         }
+        addAttribute(doc,"name",parameterName,param);
+        addAttribute(doc,"type", typeMappingStr, param);
+
         return param;
     }
 

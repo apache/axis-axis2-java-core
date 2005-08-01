@@ -38,7 +38,7 @@
         */
         public <xsl:value-of select="@name"/>(String axis2Home,String targetEndpoint) throws java.lang.Exception {
 
-			this.toEPR = new org.apache.axis2.addressing.EndpointReference(org.apache.axis2.addressing.AddressingConstants.WSA_TO, targetEndpoint);
+			this.toEPR = new org.apache.axis2.addressing.EndpointReference(targetEndpoint);
 		    //creating the configuration
            _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory().buildClientConfigurationContext(axis2Home);
            _configurationContext.getAxisConfiguration().addService(_service);
