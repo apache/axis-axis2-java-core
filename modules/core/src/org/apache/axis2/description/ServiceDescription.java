@@ -66,6 +66,8 @@ public class ServiceDescription
 
     private String serviceDescription = "Not Specified";
 
+    private String fileName = "";
+
     /**
      * Constructor ServiceDescription
      */
@@ -332,6 +334,12 @@ public class ServiceDescription
         ParameterIncludeImpl paramInclude =
                 (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
         return (Parameter) paramInclude.getParameter(name);
+    }
+
+    public ArrayList getParameters() {
+        ParameterIncludeImpl paramInclude =
+                (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
+        return  paramInclude.getParameters();
     }
 
     /*
@@ -636,6 +644,14 @@ public class ServiceDescription
 
     public long getLastupdate(){
         return lastupdate;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
 }

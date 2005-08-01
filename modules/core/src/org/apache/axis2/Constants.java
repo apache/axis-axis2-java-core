@@ -1,18 +1,18 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis2;
 
 /**
@@ -96,6 +96,7 @@ public class Constants {
 
     public static final String LIST_SERVICE_FOR_MODULE_ENGAMNET = "listoperation";
 
+
     /**
      * List service for adminpagse
      */
@@ -114,6 +115,8 @@ public class Constants {
 
     public static final String VIEW_GLOBAL_HANDLERS = "viewGlobalHandlers";
     public static final String SELECT_SERVICE = "selectService";
+    public static final String EDIR_SERVICE_PARA = "editServicepara";
+    public static final String SELECT_SERVICE_FOR_PARA_EDIT = "selectServiceParaEdit";
     public static final String VIEW_SERVICE_HANDLERS = "viewServiceHandlers";
 
     /**
@@ -121,13 +124,15 @@ public class Constants {
      */
     public static final String SERVICE_MAP = "servicemap";
 
+    public static final String SERVICE = "service";
+
     public static final String OPEARTION_MAP = "operationmap";
     /**
      * Field Available modules
      */
     public static final String MODULE_MAP = "modulemap";
 
-    public static final String MODULE_ENGAMENT = "module_engaging";
+    public static final String SELECT_SERVICE_TYPE = "SELECT_SERVICE_TYPE";
 
     public static final String GLOBAL_HANDLERS = "axisconfig";
     public static final String SERVICE_HANDLERS = "serviceHandlers";
@@ -135,6 +140,8 @@ public class Constants {
     public static final String PHASE_LIST = "phaseList";
 
     public static final String LIST_OPERATIONS_FOR_THE_SERVICE = "listOperations";
+
+    public static final String REMOVE_SERVICE = "removeService";
 
     public static final String ENGAGE_STATUS = "engagestatus";
 

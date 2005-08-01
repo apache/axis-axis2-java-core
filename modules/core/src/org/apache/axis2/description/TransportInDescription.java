@@ -20,6 +20,7 @@ import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.transport.TransportListener;
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
 
 /**
  * Represents a incoming transport deployed in AXis2
@@ -79,6 +80,10 @@ public class TransportInDescription
      */
     public Parameter getParameter(String name) {
         return paramInclude.getParameter(name);
+    }
+
+    public ArrayList getParameters() {
+        return paramInclude.getParameters();
     }
 
     /**

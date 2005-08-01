@@ -396,7 +396,7 @@ public class DeploymentEngine implements DeploymentConstants {
         try {
             loadServiceProperties(serviceMetaData);
             axisConfig.addService(serviceMetaData);
-
+            serviceMetaData.setFileName(currentArchiveFile.getFile().getAbsolutePath());
             ArrayList list = currentArchiveFile.getModules();
             for (int i = 0; i < list.size(); i++) {
                 ModuleDescription module = axisConfig.getModule(

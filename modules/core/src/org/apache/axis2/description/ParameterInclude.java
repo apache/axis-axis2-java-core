@@ -15,6 +15,8 @@
  */
 package org.apache.axis2.description;
 
+import java.util.ArrayList;
+
 /**
  * Interface ParameterInclude
  */
@@ -36,4 +38,11 @@ public interface ParameterInclude {
      * @return
      */
     public Parameter getParameter(String name);
+
+    /**
+     * To get all the parameters in a given description
+     * @return
+     */
+    ArrayList getParameters();
+
 }

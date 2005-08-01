@@ -153,6 +153,12 @@ public class OperationDescription extends WSDLOperationImpl implements
         return (Parameter) paramInclude.getParameter(name);
     }
 
+    public ArrayList getParameters() {
+        ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this
+                .getComponentProperty(PARAMETER_KEY);
+        return  paramInclude.getParameters();
+    }
+
     /**
      * This method is responsible for finding a MEPContext for an incomming
      * messages. An incomming message can be of two states.

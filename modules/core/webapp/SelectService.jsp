@@ -30,19 +30,23 @@
  */
 %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <html>
   <head><title>Simple jsp page</title></head>
   <body>
   <%
       String action ="";
       String buttonName="" ;
-      String status = (String)request.getSession().getAttribute(Constants.MODULE_ENGAMENT);
-      if(status != null && status.equals("Yes")) {
+      String status = (String)request.getSession().getAttribute(Constants.SELECT_SERVICE_TYPE);
+      if(status != null && status.equals("MODULE")) {
           action = "listOperations";
           buttonName = " View Operations";
-      } else {
+      } else if(status != null && status.equals("VIEW")){
           buttonName = " View ";
           action = "viewServiceHandlers";
+      } else if (status != null && status.equals("SERVICE_PARAMETER")){
+          buttonName = " Edit Parameters ";
+          action = Constants.EDIR_SERVICE_PARA;
       }
   %>
 <form method="get" name="engaginModule" action="<%=action%>">

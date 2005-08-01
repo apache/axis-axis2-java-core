@@ -32,12 +32,12 @@
 
 <body>
 <table width="100%">
-  <tr>
+
+ <tr> <tr>
      <td colspan="2" >
       <b> System Components</b>
      </td>
   </tr>
- <tr>
     <td>
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
@@ -137,6 +137,37 @@
        </td>
        <td>
         &nbsp;&nbsp;&nbsp;&nbsp;
+       </td>
+    </tr>
+
+    <tr>
+     <td colspan="2" >
+       <b>Edit Service</b>
+     </td>
+  </tr>
+    <tr>
+       <td>
+       &nbsp;&nbsp;&nbsp;&nbsp;
+       </td>
+       <td>
+         <a href="removeService" target="mainFrame">Turn off service</a>
+       </td>
+    </tr>
+    <tr>
+       <td>
+       &nbsp;&nbsp;&nbsp;&nbsp;
+       </td>
+       <td>
+         <a href="selectServiceParaEdit" target="mainFrame">Edit Service Parameters</a>
+       </td>
+    </tr>
+
+     <tr>
+       <td>
+       &nbsp;&nbsp;&nbsp;&nbsp;
+       </td>
+        <td>
+       &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
     </tr>
     <tr>

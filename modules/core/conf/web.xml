@@ -81,4 +81,20 @@
         <servlet-name>AxisServlet</servlet-name>
         <url-pattern>/services/*</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/servicedit</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/removeService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/editServicepara</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/selectServiceParaEdit</url-pattern>
+    </servlet-mapping>
 </web-app>

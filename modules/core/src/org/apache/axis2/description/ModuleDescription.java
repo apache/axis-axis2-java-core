@@ -19,6 +19,7 @@ import org.apache.axis2.modules.Module;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * <p>This holds the information about a Module. </p>
@@ -133,6 +134,10 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
      */
     public Parameter getParameter(String name) {
         return parameters.getParameter(name);
+    }
+
+    public ArrayList getParameters() {
+        return parameters.getParameters();
     }
 
     /**

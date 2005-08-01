@@ -319,6 +319,10 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         return paramInclude.getParameter(name);
     }
 
+    public ArrayList getParameters() {
+        return paramInclude.getParameters();
+    }
+
     /**
      * Method addParameter
      *
@@ -400,5 +404,5 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     public void addObservers(AxisObserver axisObserver){
         observersList.add(axisObserver);
     }
-    
+
 }

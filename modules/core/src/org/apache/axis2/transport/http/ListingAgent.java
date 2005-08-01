@@ -23,6 +23,8 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.i18n.Messages;
 
@@ -35,6 +37,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class ListingAgent {
 
@@ -46,6 +49,8 @@ public class ListingAgent {
     private static final String LIST_SRVICES_JSP_NAME = "listService.jsp";
 
     private static final String SELECT_SERVICE_JSP_NAME = "SelectService.jsp";
+
+    private static final String REMOVE_SERVICE_JSP_NAME = "RemoveService.jsp";
 
     private static final String ADMIN_JSP_NAME = "admin.jsp";
 
@@ -67,6 +72,7 @@ public class ListingAgent {
     private static final String VIEW_SERVICE_HANDLERS_JSP_NAME = "ViewServiceHandlers.jsp";
 
     private static final String ENGAGE_TO_OPERATION_JSP_NAME = "enaggingtoanopeartion.jsp";
+    private static final String SERVICE_PARA_EDIT_JSP_NAME = "ServiceParaEdit.jsp";
 
     public ListingAgent(ConfigurationContext configContext) {
         this.configContext = configContext;
@@ -141,6 +147,18 @@ public class ListingAgent {
                 filePart.endsWith(Constants.LIST_OPERATIONS_FOR_THE_SERVICE)) {
             engageModulesToOpeartion(httpServletRequest, httpServletResponse);
             return;
+        } else if ((filePart != null) &&
+                filePart.endsWith(Constants.REMOVE_SERVICE)) {
+            removeService(httpServletRequest, httpServletResponse);
+            return;
+        }else if ((filePart != null) &&
+                filePart.endsWith(Constants.SELECT_SERVICE_FOR_PARA_EDIT)) {
+            lsitServiceforParameterChanged(httpServletRequest, httpServletResponse);
+            return;
+        } else if ((filePart != null) &&
+                filePart.endsWith(Constants.EDIR_SERVICE_PARA)) {
+            chageParameters(httpServletRequest, httpServletResponse);
+            return;
         }
 
         if (allowListServices && (filePart != null) &&
@@ -190,7 +208,7 @@ public class ListingAgent {
             throws IOException {
         HashMap services = configContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        req.getSession().setAttribute(Constants.MODULE_ENGAMENT, null);
+        req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "VIEW");
         res.sendRedirect(SELECT_SERVICE_JSP_NAME);
     }
 
@@ -346,8 +364,106 @@ public class ListingAgent {
             throws IOException {
         HashMap services = configContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        req.getSession().setAttribute(Constants.MODULE_ENGAMENT, "Yes");
+        req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "MODULE");
         res.sendRedirect(SELECT_SERVICE_JSP_NAME);
+    }
+
+    private void lsitServiceforParameterChanged(HttpServletRequest req,
+                                                HttpServletResponse res)
+            throws IOException {
+        HashMap services = configContext.getAxisConfiguration().getServices();
+        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "SERVICE_PARAMETER");
+        res.sendRedirect(SELECT_SERVICE_JSP_NAME);
+    }
+
+
+
+    private void chageParameters(HttpServletRequest req,
+                                 HttpServletResponse res)
+            throws IOException {
+        if(req.getParameter("changePara")!=null){
+            String serviceName = req.getParameter("service");
+            ServiceDescription service =  configContext.getAxisConfiguration().
+                    getService(new QName(serviceName));
+            if(service !=null){
+                ArrayList service_para = service.getParameters();
+                for (int i = 0; i < service_para.size(); i++) {
+                    Parameter parameter = (Parameter) service_para.get(i);
+                    String para =  req.getParameter(serviceName + "_" + parameter.getName());
+                    service.addParameter(new ParameterImpl(parameter.getName(),para));
+                }
+                HashMap operation = service.getOperations();
+                Collection op_col = operation.values();
+                for (Iterator iterator = op_col.iterator(); iterator.hasNext();) {
+                    OperationDescription operationDescription =
+                            (OperationDescription) iterator.next();
+                    String op_name = operationDescription.getName().getLocalPart();
+                    ArrayList operation_para = operationDescription.getParameters();
+                    for (int i = 0; i < operation_para.size(); i++) {
+                        Parameter parameter = (Parameter) operation_para.get(i);
+                        String para =  req.getParameter(op_name + "_" + parameter.getName());
+                        operationDescription.addParameter(
+                                new ParameterImpl(parameter.getName(),para));
+                    }
+                }
+            }
+            res.setContentType("text/css");
+            PrintWriter out_writer = new PrintWriter(out);
+            out_writer.println("Parameters  changed Successfully");
+            out_writer.flush();
+            out_writer.close();
+            req.getSession().removeAttribute(Constants.SERVICE);
+            return;
+
+        }   else {
+            String service = (String) req.getParameter("service");
+            if (service != null) {
+                req.getSession().setAttribute(Constants.SERVICE,
+                        configContext.getAxisConfiguration().getService(
+                                new QName(service)));
+            }
+        }
+        res.sendRedirect(SERVICE_PARA_EDIT_JSP_NAME);
+    }
+
+    private void removeService(HttpServletRequest req,
+                               HttpServletResponse res)
+            throws IOException {
+        if (req.getParameter("submit") != null) {
+            String serviceName = req.getParameter("service");
+            String turnoff = req.getParameter("turnoff") ;
+//            String remove = req.getParameter("remove");
+            if(serviceName !=null){
+//                if (remove !=null){
+//                    ServiceDescription service =  configContext.getAxisConfiguration().
+//                            getService(new QName(serviceName));
+//                    if(service != null ){
+//                        File servicefile = new File(service.getFileName());
+//                        if(servicefile.exists()){
+//                            configContext.getAxisConfiguration().removeService(
+//                                    new QName(serviceName));
+//                            servicefile.delete();
+//                        }
+//
+//                    }
+//                }
+                if(turnoff !=null){
+                    configContext.getAxisConfiguration().removeService(new QName(serviceName));
+                    res.setContentType("text/css");
+                    PrintWriter out_writer = new PrintWriter(out);
+                    out_writer.println("Service removed from the system Successfully");
+                    out_writer.flush();
+                    out_writer.close();
+                    return;
+                }
+            }
+
+        } else {
+            HashMap services = configContext.getAxisConfiguration().getServices();
+            req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        }
+        res.sendRedirect(REMOVE_SERVICE_JSP_NAME);
     }
 
     private void viewGlobalHandlers(HttpServletRequest req,
@@ -406,20 +522,10 @@ public class ListingAgent {
             Object serviceObj = services.get(new QName(serviceName));
             if (serviceObj != null) {
                 if (wsdl != null) {
-                    // StringWriter writer = new StringWriter();
-                    res.setContentType("text/xml");
+                    res.setContentType("text/html");
                     PrintWriter out_writer = new PrintWriter(out);
                     ((ServiceDescription) serviceObj).printWSDL(out_writer,
                             filePart);
-                    //  String wsdl_value = writer.toString().trim() ;
-                    //  if(wsdl_value == null || wsdl_value.trim().equals("")){
-                    //      wsdl_value = "WSDL is not available!!!";
-                    // }
-
-                    // req.getSession().setAttribute(Constants.WSDL_CONTENT, wsdl_value);
-                    // PrintWriter out_writer = new PrintWriter(out);
-                    //  System.out.println("wsdl_value = " + wsdl_value);
-                    //  out_writer.write(wsdl_value);
                     out.flush();
                     out.close();
                     wsdl = null;
