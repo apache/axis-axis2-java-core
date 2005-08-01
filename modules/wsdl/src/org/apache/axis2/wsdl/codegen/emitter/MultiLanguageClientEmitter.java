@@ -133,7 +133,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             WSDLDescription wom = this.configuration.getWom();
             Map bindings = wom.getBindings();
             WSDLBinding axisBinding = null;
-            WSDLService axisService = null;            
+            WSDLService axisService = null;
             if (bindings==null)
                 throw new CodeGenerationException("Binding needs to be present!");
             Collection bindingCollection = bindings.values();
@@ -560,16 +560,19 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     private Element getOutputParamElement(Document doc,
                                           WSDLOperation operation) {
         Element param = doc.createElement("param");
-        addAttribute(doc,
-                "name",
-                this.mapper.getParameterName(
-                        operation.getOutputMessage().getElement()),
-                param);
+        MessageReference outputMessage = operation.getOutputMessage();
+        if (outputMessage!=null){
+            addAttribute(doc,
+                    "name",
+                    this.mapper.getParameterName(
+                            outputMessage.getElement()),
+                    param);
 
-        String typeMapping = this.mapper.getTypeMapping(
-                operation.getOutputMessage().getElement());
-        String typeMappingStr = typeMapping == null ? "" : typeMapping;
-        addAttribute(doc, "type", typeMappingStr, param);
+            String typeMapping = this.mapper.getTypeMapping(
+                    operation.getOutputMessage().getElement());
+            String typeMappingStr = typeMapping == null ? "" : typeMapping;
+            addAttribute(doc, "type", typeMappingStr, param);
+        }
         return param;
     }
 

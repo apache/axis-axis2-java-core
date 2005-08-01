@@ -58,7 +58,7 @@ public class DatabindingSupportClassWriter extends ClassWriter {
                 default:
                     throw new UnsupportedOperationException();
             }
-        } if (XSLTConstants.DataBindingTypes.NONE ==
+        } else if (XSLTConstants.DataBindingTypes.NONE ==
                 this.databindingFramework) {
              this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTDatabindingSupporterTemplates.DEFAULT_TEMPLATE);
         }else{
