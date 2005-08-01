@@ -46,8 +46,8 @@ import java.io.FileReader;
 public class FaultHandlingTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
-//            + (UtilServer.TESTING_PORT)
-            + ("5556")
+            + (UtilServer.TESTING_PORT)
+//            + ("5556")
             + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName operationName = new QName("echoOMElement");

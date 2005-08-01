@@ -110,6 +110,7 @@ public class MailSorter {
                 soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
 
             }
+            msgContext.setSoapNamespaceURI(soapNamespaceURI);
             StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
 
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();

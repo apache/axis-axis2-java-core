@@ -1,20 +1,20 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- *  Runtime state of the engine
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*  Runtime state of the engine
+*/
 package org.apache.axis2.clientapi;
 
 import java.util.HashMap;
@@ -30,6 +30,8 @@ import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfigurationImpl;
+import org.apache.axis2.deployment.util.PhasesInfo;
 
 /**
  * This class is the pretty convineance class for the user without see the comlplexites of Axis2.
@@ -79,10 +81,10 @@ public class Call extends InOutMEPClient {
      */
 
     public OMElement invokeBlocking(String axisop, OMElement toSend)
-        throws AxisFault {
+            throws AxisFault {
 
         OperationDescription opDesc =
-            serviceContext.getServiceConfig().getOperation(new QName(axisop));
+                serviceContext.getServiceConfig().getOperation(new QName(axisop));
         opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop);
         MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
 
@@ -102,12 +104,12 @@ public class Call extends InOutMEPClient {
      */
 
     public void invokeNonBlocking(
-        String axisop,
-        OMElement toSend,
-        Callback callback)
-        throws AxisFault {
+            String axisop,
+            OMElement toSend,
+            Callback callback)
+            throws AxisFault {
         OperationDescription opDesc =
-            serviceContext.getServiceConfig().getOperation(new QName(axisop));
+                serviceContext.getServiceConfig().getOperation(new QName(axisop));
         opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop);
         MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
         //call the underline implementation
@@ -121,19 +123,19 @@ public class Call extends InOutMEPClient {
      * @return
      */
     private OperationDescription createOpDescAndFillInFlowInformation(
-        OperationDescription opDesc,
-        String axisOp) {
+            OperationDescription opDesc,
+            String axisOp) {
         if (opDesc == null) {
             //if the operation is not alrady define we will copy the 
             //crated Phases from the templete operation to the this Operation
             opDesc = new OperationDescription(new QName(axisOp));
             opDesc.setRemainingPhasesInFlow(
-                operationTemplate.getRemainingPhasesInFlow());
+                    operationTemplate.getRemainingPhasesInFlow());
             opDesc.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
             opDesc.setPhasesInFaultFlow(
-                operationTemplate.getPhasesInFaultFlow());
+                    operationTemplate.getPhasesInFaultFlow());
             opDesc.setPhasesOutFaultFlow(
-                operationTemplate.getPhasesOutFaultFlow());
+                    operationTemplate.getPhasesOutFaultFlow());
             serviceContext.getServiceConfig().addOperation(opDesc);
         }
         return opDesc;
@@ -146,28 +148,34 @@ public class Call extends InOutMEPClient {
      * @throws org.apache.axis2.AxisFault
      */
     protected static ServiceContext assumeServiceContext(String clinetHome)
-        throws AxisFault {
+            throws AxisFault {
         ConfigurationContext sysContext = null;
         //we are trying to keep one configuration Context at the Client side. That make it easier to
         //manage the TransportListeners. But using the static referance is bit crude!. 
         if (ListenerManager.configurationContext == null) {
             ConfigurationContextFactory efac =
-                new ConfigurationContextFactory();
+                    new ConfigurationContextFactory();
             sysContext = efac.buildClientConfigurationContext(clinetHome);
         } else {
             sysContext = ListenerManager.configurationContext;
         }
 
-        //we will assume a Service and operations  
+        //we will assume a Service and operations
         QName assumedServiceName = new QName("AnonnoymousService");
         ServiceDescription axisService =
-            new ServiceDescription(assumedServiceName);
+                new ServiceDescription(assumedServiceName);
         operationTemplate =
-            new OperationDescription(new QName("TemplateOperatin"));
+                new OperationDescription(new QName("TemplateOperatin"));
+
+        PhasesInfo info =((AxisConfigurationImpl)sysContext.getAxisConfiguration()).getPhasesinfo();
+        //to set the operation flows
+        if(info != null){
+            info.setOperationPhases(operationTemplate);
+        }
         axisService.addOperation(operationTemplate);
         sysContext.getAxisConfiguration().addService(axisService);
         ServiceContext service =
-            sysContext.createServiceContext(assumedServiceName);
+                sysContext.createServiceContext(assumedServiceName);
         return service;
     }
 

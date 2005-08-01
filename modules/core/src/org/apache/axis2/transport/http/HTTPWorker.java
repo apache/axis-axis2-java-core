@@ -144,7 +144,7 @@ public class HTTPWorker implements AxisWorker {
                 try {
                     this.socket.close();
                 } catch (IOException e1) {
-//                    log.error(e1);
+                    log.error(e1);
                 }
             }
         }

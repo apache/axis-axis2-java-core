@@ -254,6 +254,7 @@ public class DeploymentEngine implements DeploymentConstants {
             checkClientHome(clientHome);
             isRepositoryExist = true;
             try {
+//                engineConfigName = axis2repository + "/axis2.xml";
                 File tempfile = new File(engineConfigName);
                 in = new FileInputStream(tempfile);
             } catch (FileNotFoundException e) {
