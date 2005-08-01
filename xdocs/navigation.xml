@@ -29,7 +29,7 @@
         <item name="Code Generation Tutorial" href="CodegenToolReference.html"/>
         <item name="REST Support" href="rest-ws.html"/>
         <item name="MTOM with Axis2" href="mtom-guide.html"/>
-        <item name="M1 Documents" href="m1.html"/>
+        <item name="Migration from Axis 1.x" href="migration.htm"/>
       </item>
       <item name="Get Invloved" href="overview.html">
         <item name="Checkout the Source" href="svn.html"/>
