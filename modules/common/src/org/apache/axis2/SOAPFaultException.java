@@ -23,5 +23,4 @@ public interface SOAPFaultException {
     public void setFaultCode(String faultCode);
 
     public String getMessage();
-
 }

@@ -120,8 +120,14 @@ public class SOAPEnvelopeImpl extends SOAPElement
     }
 
     protected void serialize(OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
-//        omOutput.getXmlStreamWriter().writeStartDocument(omOutput.getCharSetEncoding(),
-//                omOutput.getXmlVersion());
+
+        if (!omOutput.isIgnoreXMLDeclaration()) {
+            String charSetEncoding = omOutput.getCharSetEncoding();
+            String xmlVersion = omOutput.getXmlVersion();
+            omOutput.getXmlStreamWriter().writeStartDocument(charSetEncoding == null ?
+                    OMConstants.DEFAULT_CHAR_SET_ENCODING : charSetEncoding,
+                    xmlVersion == null ? OMConstants.DEFAULT_XML_VERSION : xmlVersion);
+        }
         super.serialize(omOutput, cache);
     }
 }

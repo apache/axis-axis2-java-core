@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMConstants;
 
 /**
  * For the moment this assumes that transport takes the decision of whether
@@ -40,15 +41,11 @@ public class OMOutputImpl {
     private String mimeBoundary = null;
     private String rootContentId = null;
     private int nextid = 0;
-    private String xmlVersion = "1.0";
 
-    /**
-     * Field DEFAULT_CHAR_SET_ENCODING specifies the default 
-     * character encoding scheme to be used
-     */
-    private static final String DEFAULT_CHAR_SET_ENCODING = "utf-8";
-    
-    private String charSetEncoding = DEFAULT_CHAR_SET_ENCODING;
+    private String xmlVersion = OMConstants.DEFAULT_XML_VERSION;
+    private String charSetEncoding = OMConstants.DEFAULT_CHAR_SET_ENCODING;
+    private boolean ignoreXMLDeclaration = false;
+
 
     public OMOutputImpl() {
     }
@@ -79,7 +76,7 @@ public class OMOutputImpl {
 		this.outStream = outStream;
 
 		if (charSetEncoding == null) //Default encoding is UTF-8
-			this.charSetEncoding = DEFAULT_CHAR_SET_ENCODING;
+			this.charSetEncoding = OMConstants.DEFAULT_CHAR_SET_ENCODING;
 
 		if (doOptimize) {
 			bufferedSoapOutStream = new ByteArrayOutputStream();
@@ -165,6 +162,14 @@ public class OMOutputImpl {
 
     public void setXmlVersion(String xmlVersion) {
         this.xmlVersion = xmlVersion;
+    }
+
+    public boolean isIgnoreXMLDeclaration() {
+        return ignoreXMLDeclaration;
+    }
+
+    public void ignoreXMLDeclaration(boolean ignoreXMLDeclaration) {
+        this.ignoreXMLDeclaration = ignoreXMLDeclaration;
     }
 
 }

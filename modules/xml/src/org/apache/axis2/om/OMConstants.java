@@ -54,4 +54,11 @@ public interface OMConstants {
     public static final String ARRAY_ITEM_QNAME =
             OMConstants.ARRAY_ITEM_NS_PREFIX + ':'
             + OMConstants.ARRAY_ITEM_LOCALNAME;
+
+    /**
+     * Field DEFAULT_CHAR_SET_ENCODING specifies the default
+     * character encoding scheme to be used
+     */
+    public static final String DEFAULT_CHAR_SET_ENCODING = "utf-8";
+    public static final String DEFAULT_XML_VERSION = "1.0";
 }

@@ -69,7 +69,7 @@ public class CallUnregisteredServiceTest extends TestCase {
         try {
             SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
-            SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
+//            SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
             OMNamespace omNs = fac.createOMNamespace("http://localhost/my",
                     "my");
             OMElement method = fac.createOMElement("echoOMElement", omNs);
@@ -78,12 +78,13 @@ public class CallUnregisteredServiceTest extends TestCase {
                     fac.createText(value,
                             "Isaac Assimov, the foundation Sega"));
             method.addChild(value);
-            reqEnv.getBody().addChild(method);
+//            reqEnv.getBody().addChild(method);
 
             Call call = new Call();
             EndpointReference targetEPR =
                     new EndpointReference("http://127.0.0.1:"
-                    + (UtilServer.TESTING_PORT)
+                    + ("5556")
+//                    + (UtilServer.TESTING_PORT)
                     + "/axis/services/EchoXMLService1");
             call.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
@@ -91,7 +92,7 @@ public class CallUnregisteredServiceTest extends TestCase {
             call.setTo(targetEPR);
             SOAPEnvelope resEnv =
                     (SOAPEnvelope) call.invokeBlocking(
-                            operationName.getLocalPart(), reqEnv);
+                            operationName.getLocalPart(), method);
 
             SOAPBody sb = resEnv.getBody();
             if (sb.hasFault()) {
