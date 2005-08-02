@@ -27,11 +27,13 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
     private boolean written = false;
     private boolean chuncked = false;
     private String contentType = null;
+    private String httpVersion;
 
-    public SimpleHTTPOutputStream(OutputStream out, boolean chuncked)
-            throws AxisFault {
+    public SimpleHTTPOutputStream(OutputStream out, boolean chuncked,String httpVersion)
+        throws AxisFault {
         super(out);
         this.chuncked = chuncked;
+        this.httpVersion = httpVersion;
     }
 
     public void write(byte[] b) throws IOException {
@@ -68,12 +70,12 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
     public void writeHeader() throws IOException {
         StringBuffer buf = new StringBuffer();
         if (chuncked) {
-            buf.append(new String(HTTPConstants.HEADER_PROTOCOL_11)).append(
-                    " ");
+            buf.append(httpVersion).append(
+                " ");
             buf.append(new String(HTTPConstants.OK)).append("\n");
             buf.append(HTTPConstants.HEADER_TRANSFER_ENCODING).append(": ");
             buf.append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED).append(
-                    "\n");
+                "\n");
             if (contentType != null) {
                 buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ");
                 buf.append(contentType).append("\n");
@@ -99,7 +101,11 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
 
     public void finalize() throws IOException {
         if (!written) {
-            out.write(new String(HTTPConstants.NOCONTENT).getBytes());
+            StringBuffer buf = new StringBuffer();
+            buf.append(httpVersion).append(
+                " ");
+            buf.append(new String(HTTPConstants.NOCONTENT));
+            out.write(buf.toString().getBytes());
             written = true;
         } else {
             out.flush();

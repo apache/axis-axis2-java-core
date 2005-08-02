@@ -375,23 +375,6 @@ public class CommonsHTTPTransportSender
                 soapActionString);
         }
         postMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
-//        if (msgContext.isDoingMTOM()) {
-//            postMethod.setRequestHeader(
-//                HTTPConstants.HEADER_CONTENT_TYPE,
-//                omOutput.getContentType());
-//        } else {
-//            if (charEncoding == null) //Use default encoding scheme
-//                postMethod.setRequestHeader(
-//                    HTTPConstants.HEADER_CONTENT_TYPE,
-//                    "text/xml; charset="
-//                        + MessageContext.DEFAULT_CHAR_SET_ENCODING);
-//            else
-//                postMethod.setRequestHeader(
-//                    HTTPConstants.HEADER_CONTENT_TYPE,
-//                    "text/xml; charset=" + charEncoding);
-//
-//        }
-
         if (httpVersion != null) {
             if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
                 //postMethod.setHttp11(false); todo method to findout the transport version...

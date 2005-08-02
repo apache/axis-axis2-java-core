@@ -72,14 +72,25 @@ public class HTTPWorker implements AxisWorker {
                 Map map = receiver.parseTheHeaders(inStream, true);
 
                 //build a way to write the respone if the Axis choose to do so
-
+                String httpVersion = (String)map.get(HTTPConstants.PROTOCOL_VERSION);
+                if(httpVersion == null){
+                    throw new AxisFault("HTTP version can not be Null");
+                }
+                if(HTTPConstants.HEADER_PROTOCOL_10.equals(httpVersion)){
+                    httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
+                }else if(HTTPConstants.HEADER_PROTOCOL_11.equals(httpVersion)){
+                    httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+                }else{
+                    throw new AxisFault("Unknown protocol versoin "+ httpVersion);
+                }
+                
                 String transferEncoding = (String) map.get(HTTPConstants.HEADER_TRANSFER_ENCODING);
                 if (transferEncoding != null
                     && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(transferEncoding)) {
                     inStream = new ChunkedInputStream(inStream);
-                    out = new SimpleHTTPOutputStream(socket.getOutputStream(), true);
+                    out = new SimpleHTTPOutputStream(socket.getOutputStream(), true,httpVersion);
                 } else {
-                    out = new SimpleHTTPOutputStream(socket.getOutputStream(), false);
+                    out = new SimpleHTTPOutputStream(socket.getOutputStream(), false,httpVersion);
                 }
                 msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
                 //set the transport Headers
@@ -139,7 +150,7 @@ public class HTTPWorker implements AxisWorker {
                 log.error(e1);
                 e1.printStackTrace();
             }
-            //e.printStackTrace();
+            e.printStackTrace();
         } finally {
             if (socket != null) {
                 try {
