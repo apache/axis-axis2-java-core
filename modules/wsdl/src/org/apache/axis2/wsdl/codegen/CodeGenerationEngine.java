@@ -112,8 +112,6 @@ public class CodeGenerationEngine {
             else
                 emitter.emitStub();
         } catch (Exception e) {
-            //System.out.println("Thrown here %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             throw new CodeGenerationException(e);
         }
 

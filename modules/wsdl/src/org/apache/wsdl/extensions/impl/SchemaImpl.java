@@ -21,6 +21,8 @@ import org.apache.wsdl.extensions.Schema;
 import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 import org.w3c.dom.Element;
 
+import java.util.Stack;
+
 /**
  * @author chathura@opensource.lk
  */
@@ -28,9 +30,18 @@ public class SchemaImpl extends WSDLExtensibilityElementImpl implements Extensio
         Schema {
 
     private Element elelment;
+    private Stack importedSchemaStack= new Stack();
 
     public SchemaImpl() {
         type = SCHEMA;
+    }
+
+    public Stack getImportedSchemaStack() {
+        return importedSchemaStack;
+    }
+
+    public void setImportedSchemaStack(Stack importedSchemaStack) {
+        this.importedSchemaStack = importedSchemaStack;
     }
 
     /**

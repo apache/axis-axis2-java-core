@@ -19,6 +19,8 @@ package org.apache.wsdl.extensions;
 import org.apache.wsdl.WSDLExtensibilityElement;
 import org.w3c.dom.Element;
 
+import java.util.Stack;
+
 /**
  * @author chathura@opensource.lk
  */
@@ -30,8 +32,18 @@ public interface Schema extends WSDLExtensibilityElement {
 
     /**
      * Sets the Schema Element as a DOM Element.
-     *
      * @param elelment
      */
     public void setElelment(Element elelment);
+    /**
+     *
+     * @return
+     */
+    public Stack getImportedSchemaStack();
+    /**
+     * 
+     * @param importedSchemaStack
+     */
+    public void setImportedSchemaStack(Stack importedSchemaStack) ;
+
 }

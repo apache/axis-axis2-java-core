@@ -134,8 +134,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             Map bindings = wom.getBindings();
             WSDLBinding axisBinding = null;
             WSDLService axisService = null;
-            if (bindings==null)
+            if (bindings==null){
                 throw new CodeGenerationException("Binding needs to be present!");
+            }
+            
             Collection bindingCollection = bindings.values();
             for (Iterator iterator = bindingCollection.iterator(); iterator.hasNext();) {
                 axisBinding  =  (WSDLBinding)iterator.next();
@@ -159,7 +161,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 //write the call back handlers
                 writeCallBackHandlers(axisBinding);
                 //write the test classes
-//            writeTestClasses(axisBinding);
+                writeTestClasses(axisBinding);
                 //write the databinding supporters
                 writeDatabindingSupporters(axisBinding);
                 //write a dummy implementation call for the tests to run.
@@ -168,7 +170,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 //writeTestServiceXML(axisBinding);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             throw new CodeGenerationException(e);
         }
     }
@@ -408,24 +409,36 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     public void emitSkeleton() throws CodeGenerationException {
         try {
             //get the binding
-            WSDLBinding axisBinding = this.configuration.getWom().getBinding(
-                    AxisBindingBuilder.AXIS_BINDING_QNAME);
-            //
-            testCompatibiltyAll(axisBinding);
-            //write interfaces
-            writeSkeleton(axisBinding);
-            //write interface implementations
-            writeServiceXml(axisBinding);
-            //write the local test classes
-//            writeLocalTestClasses(axisBinding);
-            //write a dummy implementation call for the tests to run.
-            writeTestSkeletonImpl(axisBinding);
-            //write a testservice.xml that will load the dummy skeleton impl for testing
-            writeTestServiceXML(axisBinding);
-            //write a MessageReceiver for this particular service.
-            writeMessageReceiver(axisBinding);
-            //////////////////////////////////////
+            WSDLDescription wom = this.configuration.getWom();
+            Map bindings = wom.getBindings();
+            WSDLBinding axisBinding = null;
+
+            if (bindings==null){
+                throw new CodeGenerationException("Binding needs to be present!");
+            }
+
+            Collection bindingCollection = bindings.values();
+
+            for (Iterator iterator = bindingCollection.iterator(); iterator.hasNext();) {
+                axisBinding  =  (WSDLBinding)iterator.next();
+                //test the compatibility
+                testCompatibiltyAll(axisBinding);
+                //write interfaces
+                writeSkeleton(axisBinding);
+                //write interface implementations
+                writeServiceXml(axisBinding);
+                //write the local test classes
+//               writeLocalTestClasses(axisBinding);
+                //write a dummy implementation call for the tests to run.
+                writeTestSkeletonImpl(axisBinding);
+                //write a testservice.xml that will load the dummy skeleton impl for testing
+                writeTestServiceXML(axisBinding);
+                //write a MessageReceiver for this particular service.
+                writeMessageReceiver(axisBinding);
+            }
             // Call the emit stub method to generate the client side too
+            // Do we need to enforce this here ?????
+            // Perhaps we can introduce a flag to determine this!
             emitStub();
 
         } catch (Exception e) {
@@ -565,7 +578,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         String parameterName = null;
         if (outputMessage!=null){
             parameterName =  this.mapper.getParameterName(
-                            outputMessage.getElement()) ;
+                    outputMessage.getElement()) ;
             String typeMapping = this.mapper.getTypeMapping(
                     operation.getOutputMessage().getElement());
             typeMappingStr = typeMapping == null ? "" : typeMapping;

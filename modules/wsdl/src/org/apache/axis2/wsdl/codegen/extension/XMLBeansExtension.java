@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.List;
+import java.util.Stack;
+import java.util.Vector;
+import java.net.URLClassLoader;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -52,6 +55,10 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
     }
 
     public void engage() {
+        //test whether the TCCL has the Xbeans classes
+        //ClassLoader cl = Thread.currentThread().getContextClassLoader();
+
+
         try {
             WSDLTypes typesList = configuration.getWom().getTypes();
             if (typesList == null) {
@@ -61,79 +68,86 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                 this.configuration.setTypeMapper(new DefaultTypeMapper());
                 return;
             }
+
             List typesArray = typesList.getExtensibilityElements();
             WSDLExtensibilityElement extensiblityElt = null;
-            XmlObject[] xmlObjects = new XmlObject[typesArray.size()];
 
             for (int i = 0; i < typesArray.size(); i++) {
                 extensiblityElt = (WSDLExtensibilityElement) typesArray.get(i);
+                Vector xmlObjectsVector = new Vector();
+                Schema schema = null;
+                SchemaTypeSystem sts  = null;
 
                 if (ExtensionConstants.SCHEMA.equals(extensiblityElt.getType())) {
+                    schema = (Schema) extensiblityElt;
+                    XmlOptions options = new XmlOptions();
+                    options.setLoadAdditionalNamespaces(
+                            configuration.getWom().getNamespaces()); //add the namespaces
 
-                    try {
-                        Element schemaElement = ((Schema) extensiblityElt).getElelment();
-                        //System.out.println("schemaElement = " + schemaElement);
-                        XmlOptions options = new XmlOptions();
-                        //options.setCompileDownloadUrls();//download imported URL's
-                        options.setLoadAdditionalNamespaces(
-                                configuration.getWom().getNamespaces()); //add the namespaces
-                        //options.
-                        xmlObjects[i] =
-                                XmlObject.Factory.parse(schemaElement, options);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                    Stack importedSchemaStack = schema.getImportedSchemaStack();
+                    //compile these schemas
+                    while (!importedSchemaStack.isEmpty()){
+                        xmlObjectsVector.add(
+                                XmlObject.Factory.parse(
+                                        ((javax.wsdl.extensions.schema.Schema)importedSchemaStack.pop()).getElement()
+                                        ,options));
                     }
                 }
-            }
 
-            final File outputFolder = configuration.getOutputLocation();
-
-            try {
-
-                //System.out.println(XmlBeans.loadXsd(xmlObjects));
-
-                SchemaTypeSystem sts = XmlBeans.compileXmlBeans(DEFAULT_STS_NAME, null,
-                        xmlObjects,
+                sts = XmlBeans.compileXmlBeans(DEFAULT_STS_NAME, null,
+                        convertToXMLObjectArray(xmlObjectsVector),
                         new BindingConfig(), XmlBeans.getContextTypeLoader(),
-                        new Filer() {
-                            public OutputStream createBinaryFile(String typename)
-                                    throws IOException {
-                                File file = new File(outputFolder, typename);
-                                file.getParentFile().mkdirs();
-                                file.createNewFile();
-                                return new FileOutputStream(file);
-                            }
-
-                            public Writer createSourceFile(String typename)
-                                    throws IOException {
-                                typename =
-                                        typename.replace('.', File.separatorChar);
-                                File file = new File(outputFolder,
-                                        typename + ".java");
-                                file.getParentFile().mkdirs();
-                                file.createNewFile();
-                                return new FileWriter(file);
-                            }
-                        }, new XmlOptions().setCompileDownloadUrls());
+                        new Axis2Filer(),
+                        null);
 
                 //create the type mapper
                 JavaTypeMapper mapper = new JavaTypeMapper();
                 SchemaType[] types = sts.documentTypes();
-
-                for (int i = 0; i < types.length; i++) {
-                    mapper.addTypeMapping(types[i].getDocumentElementName(),
-                            types[i].getFullJavaName());
+                int length = types.length;
+                for (int j = 0; j < length; j++) {
+                    mapper.addTypeMapping(types[j].getDocumentElementName(),
+                            types[j].getFullJavaName());
                 }
                 //set the type mapper to the config
                 configuration.setTypeMapper(mapper);
 
-            } catch (XmlException e) {
-                throw new RuntimeException(e);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
     }
 
+    private XmlObject[] convertToXMLObjectArray(Vector vec){
+        XmlObject[] xmlObjects = new XmlObject[vec.size()];
+        for (int i = 0; i < vec.size(); i++) {
+            xmlObjects[i] = (XmlObject)vec.get(i);
+        }
+        return xmlObjects;
+    }
+    /**
+     * Private class to generate the filer
+     */
+    private class Axis2Filer implements Filer{
 
+        public OutputStream createBinaryFile(String typename)
+                throws IOException {
+            File file = new File(configuration.getOutputLocation(), typename);
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+            return new FileOutputStream(file);
+        }
+
+        public Writer createSourceFile(String typename)
+                throws IOException {
+            typename =
+                    typename.replace('.', File.separatorChar);
+            File file = new File(configuration.getOutputLocation(),
+                    typename + ".java");
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+            return new FileWriter(file);
+        }
+    }
 }
+

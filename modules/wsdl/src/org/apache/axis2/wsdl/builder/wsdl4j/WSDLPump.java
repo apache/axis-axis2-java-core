@@ -60,6 +60,7 @@ import javax.wsdl.Import;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
+import javax.wsdl.extensions.schema.SchemaImport;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
@@ -74,6 +75,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Collection;
 import java.util.Vector;
+import java.util.Stack;
 
 /**
  * @author chathura@opensource.lk
@@ -147,29 +149,36 @@ public class WSDLPump {
             this.womDefinition.setTypes(wsdlTypes);
         }
 
+//        Map importsMap = wsdl4JDefinition.getImports();
+//        if (null!=importsMap && importsMap.size()>0){
+//           Object[] imports = importsMap.values().toArray();
+//            for (int i = 0; i < imports.length; i++) {
+//                Import wsdl4jImport = (Import) importsMap.values().
+//            }
+//        }
 
         // There can be types that are imported. Check the imports and
-        //do the necessary things
+        // These schemas are needed for the XMLBeans for code generation
+
         Map wsdlImports = wsdl4JDefinition.getImports();
+        Stack schemaStack = null;
+
         if (null != wsdlImports && !wsdlImports.isEmpty()){
             Collection importsCollection = wsdlImports.values();
-
             for (Iterator iterator = importsCollection.iterator(); iterator.hasNext();) {
                 Vector values = (Vector)iterator.next();
                 for (int i = 0; i < values.size(); i++) {
-                    Import wsdlImport = (Import)values.elementAt(i);;
+                    Import wsdlImport = (Import)values.elementAt(i);
+
                     if (wsdlImport.getDefinition()!=null){
                         Definition importedDef = wsdlImport.getDefinition();
                         //add the imported types
-                        if (null!=importedDef.getTypes()){
-                            WSDLTypes wsdlTypes = this.wsdlComponenetFactory.createTypes();
-                            this.copyExtensibleElements(importedDef.getTypes().
-                                    getExtensibilityElements(),
-                                    wsdlTypes);
-                            this.womDefinition.setTypes(wsdlTypes);
-                        }
+                        WSDLTypes wsdlTypes = this.wsdlComponenetFactory.createTypes();
+                        this.copyExtensibleElements(importedDef.getTypes().
+                                getExtensibilityElements(),
+                                wsdlTypes);
+                        this.womDefinition.setTypes(wsdlTypes);
                     }
-
                 }
 
             }
@@ -323,6 +332,25 @@ public class WSDLPump {
             wsdlService.setEndpoint(wsdlEndpoint);
         }
 
+    }
+
+    private void pushSchemaElement(Schema originalSchema,Stack stack){
+        stack.push(originalSchema);
+        Map map = originalSchema.getImports();
+        Collection values;
+        if (map!=null && map.size()>0){
+            values = map.values();
+            for (Iterator iterator = values.iterator(); iterator.hasNext();) {
+                //recursively add the schema's
+                Vector v = (Vector)iterator.next();
+                for (int i = 0; i < v.size(); i++) {
+                    pushSchemaElement(((SchemaImport)v.get(i)).getReferencedSchema(),stack);
+                }
+
+            }
+        }else{
+            return;
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////
@@ -678,9 +706,15 @@ public class WSDLPump {
                 component.addExtensibilityElement(extensibilityElement);
             } else if (wsdl4jElement instanceof Schema) {
                 Schema schema = (Schema) wsdl4jElement;
+                //populate the imported schema stack
+                Stack schemaStack = new Stack();
+                //recursivly load the schema elements. The best thing is to push these into
+                //a stack and then pop from the other side
+                pushSchemaElement(schema, schemaStack);
                 org.apache.wsdl.extensions.Schema extensibilityElement = (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
                         schema.getElementType());
                 extensibilityElement.setElelment(schema.getElement());
+                extensibilityElement.setImportedSchemaStack(schemaStack);
                 Boolean required = schema.getRequired();
                 if (null != required) {
                     extensibilityElement.setRequired(required.booleanValue());

@@ -26,7 +26,6 @@ public interface WSDLTypes extends Component {
     /**
      * Adds the <code>ExtensionElement</code> to the map keyed with the <code>QName</code>
      *
-     * @param qName
      * @param element
      */
     public void addElement(WSDLExtensibilityElement element);
