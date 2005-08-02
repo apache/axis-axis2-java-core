@@ -1,6 +1,15 @@
 package org.apache.axis2.engine;
 
+import java.io.File;
+import java.io.FileReader;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import junit.framework.TestCase;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -17,13 +26,6 @@ import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.File;
-import java.io.FileReader;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -47,25 +49,20 @@ public class FaultHandlingTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
             + (UtilServer.TESTING_PORT)
-//            + ("5556")
+
             + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName operationName = new QName("echoOMElement");
 
     protected String testResourceDir = "test-resources";
-    MyInOutMEPClient inOutMEPClient;
+    private MyInOutMEPClient inOutMEPClient;
 
 
     private boolean finish = false;
 
-    protected void setUp() {
-        try {
+    protected void setUp() throws Exception {
             UtilServer.start();
             inOutMEPClient = getMyInOutMEPClient();
-        } catch (Exception e) {
-            log.info(e.getMessage());
-        }
-
     }
 
     public void testTwoHeadersSOAPMessage() throws AxisFault, XMLStreamException {
@@ -115,17 +112,11 @@ public class FaultHandlingTest extends TestCase {
         assertNotNull(fault.getReason().getText());
     }
 
-    private SOAPEnvelope getResponse(SOAPEnvelope inEnvelope) {
-        try {
+    private SOAPEnvelope getResponse(SOAPEnvelope inEnvelope) throws AxisFault {
             inOutMEPClient.setExceptionToBeThrownOnSOAPFault(false);
             SOAPEnvelope result =
                     inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), inEnvelope);
             return result;
-        } catch (AxisFault axisFault) {
-            log.info(axisFault.getMessage());
-            fail("Something wrong in getting the response from " + operationName.getLocalPart() + " service");
-        }
-        return null;
     }
 
     private SOAPEnvelope getTwoHeadersSOAPEnvelope(SOAPFactory fac) {

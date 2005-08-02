@@ -25,6 +25,8 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
@@ -51,25 +53,26 @@ public class MessageContext extends AbstractContext {
     /**
      * Field  CHARACTER_SET_ENCODING
      */
-    public static final String CHARACTER_SET_ENCODING = "CHARACTER_SET_ENCODING";
-    
+    public static final String CHARACTER_SET_ENCODING =
+        "CHARACTER_SET_ENCODING";
+
     /**
      * Field UTF_8
      * This is the 'utf-8' value for CHARACTER_SET_ENCODING property
      */
     public static final String UTF_8 = "utf-8";
-    
+
     /**
      * Field UTF_8
      * This is the 'utf-8' value for CHARACTER_SET_ENCODING property
      */
     public static final String UTF_16 = "utf-16";
-    
+
     /**
      * Field DEFAULT_CHAR_SET_ENCODING 
      * This is the default value for CHARACTER_SET_ENCODING property
      */
-    public static final String DEFAULT_CHAR_SET_ENCODING = UTF_8; 
+    public static final String DEFAULT_CHAR_SET_ENCODING = UTF_8;
 
     /**
      * Field TRANSPORT_SUCCEED
@@ -149,16 +152,14 @@ public class MessageContext extends AbstractContext {
 
     private String soapAction;
 
-
     //Are we doing MTOM now?
     private boolean doingMTOM = false;
     //Are we doing REST now?
     private boolean doingREST = false;
     //Rest through GET of HTTP
-    private boolean doRESTthroughPOST = false;
+    private boolean doRESTthroughPOST = true;
 
-    private String soapNamespaceURI = "";
-
+    private boolean isSOAP11 = true;
 
     /**
      * Conveniance Method, but before call engine.send() or  engine.receive() one must send transport in/out
@@ -167,14 +168,16 @@ public class MessageContext extends AbstractContext {
      * @throws AxisFault
      */
 
-    public MessageContext(ConfigurationContext engineContext) throws AxisFault {
+    public MessageContext(ConfigurationContext engineContext)
+        throws AxisFault {
         this(engineContext, null, null, null);
     }
 
-    public MessageContext(ConfigurationContext engineContext,
-                          TransportInDescription transportIn,
-                          TransportOutDescription transportOut)
-            throws AxisFault {
+    public MessageContext(
+        ConfigurationContext engineContext,
+        TransportInDescription transportIn,
+        TransportOutDescription transportOut)
+        throws AxisFault {
         this(engineContext, null, transportIn, transportOut);
     }
 
@@ -185,11 +188,12 @@ public class MessageContext extends AbstractContext {
      * @throws AxisFault
      */
 
-    public MessageContext(ConfigurationContext engineContext,
-                          SessionContext sessionContext,
-                          TransportInDescription transportIn,
-                          TransportOutDescription transportOut)
-            throws AxisFault {
+    public MessageContext(
+        ConfigurationContext engineContext,
+        SessionContext sessionContext,
+        TransportInDescription transportIn,
+        TransportOutDescription transportOut)
+        throws AxisFault {
         super(null);
 
         if (sessionContext == null) {
@@ -312,9 +316,21 @@ public class MessageContext extends AbstractContext {
     /**
      * @param envelope
      */
-    public void setEnvelope(SOAPEnvelope envelope) {
+    public void setEnvelope(SOAPEnvelope envelope) throws AxisFault {
         this.envelope = envelope;
-        soapNamespaceURI = envelope.getNamespace().getName();
+        String soapNamespaceURI = envelope.getNamespace().getName();
+        if (SOAP12Constants
+            .SOAP_ENVELOPE_NAMESPACE_URI
+            .equals(soapNamespaceURI)) {
+            isSOAP11 = false;
+        } else if (
+            SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
+                soapNamespaceURI)) {
+            isSOAP11 = true;
+        } else {
+            throw new AxisFault("Unknown SOAP Version. Current Axis handles only SOAP 1.1 and SOAP 1.2 messages");
+        }
+
     }
 
     /**
@@ -403,7 +419,6 @@ public class MessageContext extends AbstractContext {
     public MessageInformationHeaders getMessageInformationHeaders() {
         return messageInformationHeaders;
     }
-    
 
     /**
      * @return
@@ -540,7 +555,9 @@ public class MessageContext extends AbstractContext {
 
         //The context hirachy might not have constructed fully, the check should
         //look for the disconnected grandparents
-        if (obj == null && operationContext == null && serviceContext != null) {
+        if (obj == null
+            && operationContext == null
+            && serviceContext != null) {
             obj = serviceContext.getProperty(key, persistent);
         }
         if (obj == null && operationContext == null) {
@@ -557,7 +574,8 @@ public class MessageContext extends AbstractContext {
             param = serviceDesc.getParameter(key);
         }
         if (param == null && configurationContext != null) {
-            AxisConfiguration baseConfig = configurationContext.getAxisConfiguration();
+            AxisConfiguration baseConfig =
+                configurationContext.getAxisConfiguration();
             param = baseConfig.getParameter(key);
         }
         if (param != null) {
@@ -637,13 +655,7 @@ public class MessageContext extends AbstractContext {
         return doRESTthroughPOST;
     }
 
-
-    public String getSOAPVersion() {
-        return soapNamespaceURI;
+    public boolean isSOAP11() {
+        return isSOAP11;
     }
-
-    public void setSoapNamespaceURI(String soapNamespaceURI) {
-        this.soapNamespaceURI = soapNamespaceURI;
-    }
-
 }

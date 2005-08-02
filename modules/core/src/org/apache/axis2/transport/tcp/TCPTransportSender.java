@@ -31,9 +31,7 @@ import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-/**
- * Class HTTPTransportSender
- */
+
 public class TCPTransportSender extends AbstractTransportSender {
     /**
      * Field out

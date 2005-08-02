@@ -28,14 +28,11 @@ import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.utils.ImageDataSource;
 import org.apache.axis2.attachments.utils.JDK13IO;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -44,7 +41,6 @@ import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
-import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -122,7 +118,7 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase {
                 Constants.TESTING_PATH + "commons-http-enabledRepository");
         call.setTo(targetEPR);
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP,
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP, false);
         call.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         OMElement result = call.invokeBlocking(operationName

@@ -18,10 +18,12 @@ package org.apache.axis2.engine;
 
 //todo
 
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
-import org.apache.axis2.Constants;
+
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.AsyncResult;
 import org.apache.axis2.clientapi.Callback;
@@ -36,8 +38,6 @@ import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
 
 public class CommonsHTTPEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
@@ -91,7 +91,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
                 Constants.TESTING_PATH + "commons-http-enabledRepository");
 
         call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP,
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
 
@@ -135,7 +135,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
                 Constants.TESTING_PATH + "commons-http-enabledRepository");
 
         call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP,
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
 

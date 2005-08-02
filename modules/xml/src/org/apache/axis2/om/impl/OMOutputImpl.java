@@ -24,8 +24,11 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMConstants;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+
 
 /**
  * For the moment this assumes that transport takes the decision of whether
@@ -41,9 +44,16 @@ public class OMOutputImpl {
     private String mimeBoundary = null;
     private String rootContentId = null;
     private int nextid = 0;
+    private boolean isSoap11 = true;
 
+    /**
+     * Field DEFAULT_CHAR_SET_ENCODING specifies the default 
+     * character encoding scheme to be used
+     */
+    private static final String DEFAULT_CHAR_SET_ENCODING = "utf-8";
+
+    private String charSetEncoding = DEFAULT_CHAR_SET_ENCODING;
     private String xmlVersion = OMConstants.DEFAULT_XML_VERSION;
-    private String charSetEncoding = OMConstants.DEFAULT_CHAR_SET_ENCODING;
     private boolean ignoreXMLDeclaration = false;
 
 
@@ -63,38 +73,44 @@ public class OMOutputImpl {
      * @throws FactoryConfigurationError
      */
     public OMOutputImpl(OutputStream outStream, boolean doOptimize)
-            throws XMLStreamException, FactoryConfigurationError {
+        throws XMLStreamException, FactoryConfigurationError {
         setOutputStream(outStream, doOptimize);
     }
-    
 
+    public void setOutputStream(OutputStream outStream, boolean doOptimize)
+        throws XMLStreamException, FactoryConfigurationError {
 
-    public void setOutputStream(OutputStream outStream, boolean doOptimize) throws XMLStreamException,
-			FactoryConfigurationError {
+        this.doOptimize = doOptimize;
+        this.outStream = outStream;
 
-		this.doOptimize = doOptimize;
-		this.outStream = outStream;
+        if (charSetEncoding == null) //Default encoding is UTF-8
+            this.charSetEncoding = DEFAULT_CHAR_SET_ENCODING;
 
-		if (charSetEncoding == null) //Default encoding is UTF-8
-			this.charSetEncoding = OMConstants.DEFAULT_CHAR_SET_ENCODING;
-
-		if (doOptimize) {
-			bufferedSoapOutStream = new ByteArrayOutputStream();
-			xmlWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(
-					bufferedSoapOutStream, this.charSetEncoding);
-			binaryNodeList = new LinkedList();
-		} else {
-			xmlWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(
-					outStream, this.charSetEncoding);
-		}
-	}
+        if (doOptimize) {
+            bufferedSoapOutStream = new ByteArrayOutputStream();
+            xmlWriter =
+                XMLOutputFactory.newInstance().createXMLStreamWriter(
+                    bufferedSoapOutStream,
+                    this.charSetEncoding);
+            binaryNodeList = new LinkedList();
+        } else {
+            xmlWriter =
+                XMLOutputFactory.newInstance().createXMLStreamWriter(
+                    outStream,
+                    this.charSetEncoding);
+        }
+    }
 
     public void flush() throws XMLStreamException {
         xmlWriter.flush();
         if (doOptimize) {
-            MIMEOutputUtils.complete(outStream, bufferedSoapOutStream,
-                    binaryNodeList, getMimeBoundary(), getRootContentId(), 
-					this.charSetEncoding);
+            MIMEOutputUtils.complete(
+                outStream,
+                bufferedSoapOutStream,
+                binaryNodeList,
+                getMimeBoundary(),
+                getRootContentId(),
+                this.charSetEncoding);
         }
     }
 
@@ -102,10 +118,27 @@ public class OMOutputImpl {
         return doOptimize;
     }
 
-    public String getOptimizedContentType() {
-		return MIMEOutputUtils.getContentTypeForMime(getMimeBoundary(),
-				getRootContentId(), this.getCharSetEncoding());
-	}
+    public String getContentType() {
+
+        if (isOptimized()) {
+            return MIMEOutputUtils.getContentTypeForMime(
+                getMimeBoundary(),
+                getRootContentId(),
+                this.getCharSetEncoding());
+        } else {
+
+            StringBuffer buf = new StringBuffer();
+            if (!isSoap11) {
+                buf.append(SOAP12Constants.SOAP_12_CONTENT_TYPE);
+                buf.append("; charset=" + this.getCharSetEncoding());
+            } else {
+                buf.append(SOAP11Constants.SOAP_11_CONTENT_TYPE)
+                    .append("; charset=" + this.getCharSetEncoding());
+            }
+            return buf.toString();
+        }
+
+    }
 
     public void writeOptimized(OMText node) {
         binaryNodeList.add(node);
@@ -120,37 +153,41 @@ public class OMOutputImpl {
     }
 
     public String getMimeBoundary() {
-		if (mimeBoundary == null) {
-			mimeBoundary = "MIMEBoundary"
-					+ MIMEOutputUtils.getRandomStringOf18Characters();
-		}
-		return mimeBoundary;
-	}
+        if (mimeBoundary == null) {
+            mimeBoundary =
+                "MIMEBoundary"
+                    + MIMEOutputUtils.getRandomStringOf18Characters();
+        }
+        return mimeBoundary;
+    }
 
-	public String getRootContentId() {
-		if (rootContentId == null) {
-			rootContentId = "0."
-					+ MIMEOutputUtils.getRandomStringOf18Characters()
-					+ "@apache.org";
-		}
-		return rootContentId;
-	}
+    public String getRootContentId() {
+        if (rootContentId == null) {
+            rootContentId =
+                "0."
+                    + MIMEOutputUtils.getRandomStringOf18Characters()
+                    + "@apache.org";
+        }
+        return rootContentId;
+    }
 
-	public String getNextContentId() {
-		nextid++;
-		return nextid + "." + MIMEOutputUtils.getRandomStringOf18Characters()
-				+ "@apache.org";
-	}
-    
+    public String getNextContentId() {
+        nextid++;
+        return nextid
+            + "."
+            + MIMEOutputUtils.getRandomStringOf18Characters()
+            + "@apache.org";
+    }
+
     /**
-	 * Returns the character set endocing scheme If the value of the
-	 * charSetEncoding is not set then the default will be returned
-	 * 
-	 * @return
-	 */
-	public String getCharSetEncoding() {
-		return this.charSetEncoding;
-	}
+     * Returns the character set endocing scheme If the value of the
+     * charSetEncoding is not set then the default will be returned
+     * 
+     * @return
+     */
+    public String getCharSetEncoding() {
+        return this.charSetEncoding;
+    }
 
     public void setCharSetEncoding(String charSetEncoding) {
         this.charSetEncoding = charSetEncoding;
@@ -164,6 +201,13 @@ public class OMOutputImpl {
         this.xmlVersion = xmlVersion;
     }
 
+    /**
+     * @param b
+     */
+    public void setSoap11(boolean b) {
+        isSoap11 = b;
+    }
+
     public boolean isIgnoreXMLDeclaration() {
         return ignoreXMLDeclaration;
     }
@@ -171,5 +215,6 @@ public class OMOutputImpl {
     public void ignoreXMLDeclaration(boolean ignoreXMLDeclaration) {
         this.ignoreXMLDeclaration = ignoreXMLDeclaration;
     }
+
 
 }

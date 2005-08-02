@@ -16,8 +16,13 @@
 
 package org.apache.axis2.engine;
 
+import java.util.ArrayList;
+
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
-import org.apache.axis2.addressing.AddressingConstants;
+
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -30,12 +35,8 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.transport.http.HTTPTransportSender;
-import org.apache.axis2.AxisFault;
+import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
 import org.apache.wsdl.WSDLService;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
 
 public class EnginePausingTest extends TestCase {
 
@@ -54,7 +55,7 @@ public class EnginePausingTest extends TestCase {
         AxisConfiguration engineRegistry = new AxisConfigurationImpl();
         engineContext = new ConfigurationContext(engineRegistry);
         transportOut = new TransportOutDescription(new QName("null"));
-        transportOut.setSender(new HTTPTransportSender());
+        transportOut.setSender(new CommonsHTTPTransportSender());
         transportIn = new TransportInDescription(new QName("null"));
 
     }

@@ -16,7 +16,11 @@
 
 package org.apache.axis2.engine;
 
-import org.apache.axis2.addressing.AddressingConstants;
+import java.util.ArrayList;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -28,13 +32,9 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.transport.http.HTTPTransportSender;
-import org.apache.axis2.AxisFault;
+import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLService;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
 
 public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     private MessageContext mc;
@@ -60,7 +60,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
 
         TransportOutDescription transport = new TransportOutDescription(
                 new QName("null"));
-        transport.setSender(new HTTPTransportSender());
+        transport.setSender(new CommonsHTTPTransportSender());
 
         TransportInDescription transportIn = new TransportInDescription(
                 new QName("null"));

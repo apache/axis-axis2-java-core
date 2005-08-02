@@ -124,9 +124,6 @@ public class AxisServlet extends HttpServlet {
             if (!processed) {
                 lister.handle(httpServletRequest, httpServletResponse, out);
             }
-            
-            //TODO: Change this to actual request's value
-            httpServletResponse.setContentType("text/xml; charset=utf-8");
         } catch (AxisFault e) {
             if (msgContext != null) {
                 msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);

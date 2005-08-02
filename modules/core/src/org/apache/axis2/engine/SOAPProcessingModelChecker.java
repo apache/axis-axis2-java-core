@@ -53,11 +53,10 @@ public class SOAPProcessingModelChecker extends AbstractHandler {
             // additional roles and then to check that any headers targetted for
             // that role too have been dealt with.
 
-            boolean isSOAP12 =
-                SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(msgContext.getSOAPVersion());
+            
             String role = hb.getRole();
 
-            if (isSOAP12) {
+            if (!msgContext.isSOAP11()) {
                 //if must understand and soap 1.2 the Role should be NEXT , if it is null we considerr
                 // it to be NEXT
                 if (role != null && !SOAP12Constants.SOAP_ROLE_NEXT.equals(role)) {

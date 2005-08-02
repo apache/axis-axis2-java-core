@@ -22,7 +22,6 @@ import javax.activation.FileDataSource;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -66,7 +65,7 @@ public class InteropClientModel {
         call.setTo(targetEPR);
         // enabling MTOM in the client side
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP,
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP, false);
         OMElement result = (OMElement) call.invokeBlocking(operationName
                 .getLocalPart(),

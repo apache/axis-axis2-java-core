@@ -1,16 +1,14 @@
 package sample.yahooservices.RESTSearch;
 
-import org.apache.axis2.clientapi.Call;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.AddressingConstants;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
-
-
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLOutputFactory;
 
 
 /**
@@ -30,7 +28,7 @@ public class RESTSearchClient {
         try{
             Call call = new Call();
             call.setTo(new EndpointReference(eprGet));
-            call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP,Constants.TRANSPORT_HTTP, false);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP, false);
             call.setDoREST(true);
             call.setRestThroughPOST(false);
 

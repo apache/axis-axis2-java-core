@@ -48,11 +48,11 @@ import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis2.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.impl.llom.soap12.SOAP12Factory;
 import org.apache.axis2.util.Utils;
 
 public class HTTPTransportUtils {
@@ -66,8 +66,9 @@ public class HTTPTransportUtils {
             String requestURI,
             ConfigurationContext configurationContext)
             throws AxisFault {
+            boolean soap11 = false;
             try {
-
+                
 
                 //remove the starting and trailing " from the SOAP Action
                 if (soapActionHeader != null && soapActionHeader.startsWith("\"") && soapActionHeader.endsWith("\"")) {
@@ -116,11 +117,12 @@ public class HTTPTransportUtils {
                         	
                         }
                         if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
+                            soap11 = false;
                             //it is SOAP 1.2
-                            msgContext.setSoapNamespaceURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                             builder = new StAXSOAPModelBuilder(xmlreader, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                             envelope = (SOAPEnvelope) builder.getDocumentElement();
                         } else if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+                            soap11 = true;
                             //it is SOAP 1.1
                             Object enable = msgContext.getProperty(Constants.Configuration.ENABLE_REST);
                             if ((soapActionHeader == null || soapActionHeader.length() == 0)
@@ -128,7 +130,6 @@ public class HTTPTransportUtils {
                                 //If the content Type is text/xml (BTW which is the SOAP 1.1 Content type ) and
                                 //the SOAP Action is absent it is rest !!
                                 msgContext.setDoingREST(true);
-                                msgContext.setSoapNamespaceURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
                                 SOAPFactory soapFactory = new SOAP11Factory();
                                 builder = new StAXOMBuilder(xmlreader);
@@ -136,7 +137,6 @@ public class HTTPTransportUtils {
                                 envelope = soapFactory.getDefaultEnvelope();
                                 envelope.getBody().addChild(builder.getDocumentElement());
                             }else{
-                                msgContext.setSoapNamespaceURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                                 builder = new StAXSOAPModelBuilder(xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                                 envelope = (SOAPEnvelope) builder.getDocumentElement();
                             }
@@ -154,13 +154,12 @@ public class HTTPTransportUtils {
                     engine.receive(msgContext);
                 }
 
-            } catch (SOAPProcessingException e) {
+            } catch (Exception e){
+                if(msgContext.getEnvelope() == null && !soap11){
+                    msgContext.setEnvelope(new SOAP12Factory().createSOAPEnvelope());
+                }
                 throw new AxisFault(e);
-            } catch (OMException e) {
-                throw new AxisFault(e);
-            } catch (XMLStreamException e) {
-                throw new AxisFault(e);
-            }
+            } 
         }
 
     
@@ -276,7 +275,6 @@ public class HTTPTransportUtils {
              */
             builder = new MTOMStAXSOAPModelBuilder(reader, mimeHelper, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         } else if (mimeHelper.getAttachmentSpecType().equals(MIMEHelper.SWA_TYPE)) {
-            msgContext.setSoapNamespaceURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
             builder = new StAXSOAPModelBuilder(reader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         }
         return builder;

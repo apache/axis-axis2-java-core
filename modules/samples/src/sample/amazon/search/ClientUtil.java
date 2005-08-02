@@ -46,7 +46,7 @@ public class ClientUtil {
      *
      * @return msgContext
      */
-    public static MessageContext getMessageContext() {
+    public static MessageContext getMessageContext() throws AxisFault {
         OMNamespace namespace, nulNS;
         OMElement operation, value1, value2;
         OMElement subValue1, subValue2, subValue3, subValue4, subValue5;

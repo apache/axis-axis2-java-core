@@ -15,8 +15,14 @@
  */
 package sample.mtom.imagetransfer.client;
 
+import java.awt.Image;
+import java.io.File;
+import java.io.FileInputStream;
+
+import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.utils.ImageDataSource;
 import org.apache.axis2.attachments.utils.JDK13IO;
@@ -26,12 +32,6 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMText;
-
-import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
-import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
 
 
 public class MTOMClientModel {
@@ -83,7 +83,7 @@ public class MTOMClientModel {
         call.setTo(targetEPR);
         // enabling MTOM in the client side
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP,
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP, false);
         OMElement result = (OMElement) call.invokeBlocking(operationName
                 .getLocalPart(),

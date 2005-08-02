@@ -166,11 +166,15 @@
                 <exclude>**/*InteropStubTest.java</exclude>
                 <exclude>**/*EchoRawXMLChunckedTest.java</exclude>
                 <exclude>**org/apache/axis2/mail/*.java</exclude>
-                <exclude>**/*CallUnregisteredServiceTest.java</exclude>
-		<exclude>**/*SoapProcessingModelTest.java</exclude>
-		<exclude>**/*HandlerFailureTest.java</exclude>
+                
+                <exclude>**/OneWayRawXMLTest.java</exclude>
+                <exclude>**/*EchoRawMTOMTest.java</exclude>
+                <exclude>**/*EchoRawMTOMLoadTest.java</exclude>
+                <exclude>**/*EchoRawMTOMToBase64Test.java</exclude>
+                <exclude>**/*MTOMCommonsChunkingTest.java</exclude>
+         
                 <!--
-		<exclude>**/*SOAP12Test.java</exclude>
+         		<exclude>**/*SOAP12Test.java</exclude>
                 <exclude>**/*SOAP12TestWithFaults.java</exclude>
                 <exclude>**/*FaultHandlingTest.java</exclude>
                 

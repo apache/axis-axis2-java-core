@@ -47,7 +47,7 @@ public class ClientUtil {
      */
     public static MessageContext getMessageContext(
             AsynchronousClient asyncClient)
-            throws DeploymentException {
+            throws AxisFault {
         OMNamespace defNs;
         OMElement operation;
         MessageContext msgContext = null;

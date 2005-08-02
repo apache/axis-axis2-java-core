@@ -278,12 +278,8 @@ public class InOutMEPClient extends MEPClient {
             boolean isATwoWaytransport =
                     Constants.TRANSPORT_HTTP.equals(senderTransport)
                     || Constants.TRANSPORT_TCP.equals(senderTransport)
-                    || Constants.TRANSPORT_COMMONS_HTTP.equals(senderTransport);
-            boolean isCommonsAndHTTP =
-                    Constants.TRANSPORT_COMMONS_HTTP.equals(senderTransport)
-                    && Constants.TRANSPORT_HTTP.equals(listenerTransport);
-            if (!isCommonsAndHTTP
-                    && (!isTransportsEqual || !isATwoWaytransport)) {
+                    || Constants.TRANSPORT_HTTP.equals(senderTransport);
+            if ((!isTransportsEqual || !isATwoWaytransport)) {
                 throw new AxisFault(Messages.getMessage("useSeparateListenerLimited"));
             }
         } else {

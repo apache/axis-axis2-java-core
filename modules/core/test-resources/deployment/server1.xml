@@ -6,9 +6,10 @@
 
     <transportReceiver name="http">
     </transportReceiver>
-    <transportSender name="http" class="org.apache.axis2.transport.http.HTTPTransportSender">
+    <transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
+        <parameter name="PROTOCOL" locked="xsd:false">HTTP/1.1</parameter>
+        <parameter name="Transfer-Encoding" locked="xsd:false">chunked</parameter>
     </transportSender>
-
     <module ref="addressing"/>
 
     <phaseOrder type="inflow">

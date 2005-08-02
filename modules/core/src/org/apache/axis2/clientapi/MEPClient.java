@@ -43,7 +43,7 @@ public abstract class MEPClient {
     protected String soapVersionURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
     protected String soapAction = "";
     protected boolean doREST = false;
-    protected boolean doRestThroughPOST = false;
+    protected boolean doRestThroughPOST = true;
     protected String wsaAction;
 
     /*

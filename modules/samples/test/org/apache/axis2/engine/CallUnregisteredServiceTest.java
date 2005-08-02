@@ -18,10 +18,12 @@ package org.apache.axis2.engine;
 
 //todo
 
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
-import org.apache.axis2.Constants;
+
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.context.MessageContext;
@@ -35,8 +37,6 @@ import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
 
 public class CallUnregisteredServiceTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());
@@ -101,7 +101,7 @@ public class CallUnregisteredServiceTest extends TestCase {
             fail("The test must fail due to wrong service Name");
 
         } catch (AxisFault e) {
-            assertTrue(e.getMessage().indexOf("Service Not found") > 0);
+            assertTrue(e.getMessage().indexOf("Service Not found") >= 0);
             tearDown();
             return;
         }

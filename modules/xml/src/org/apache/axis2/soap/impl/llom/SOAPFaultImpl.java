@@ -15,20 +15,30 @@
  */
 package org.apache.axis2.soap.impl.llom;
 
-import org.apache.axis2.om.*;
-import org.apache.axis2.om.impl.llom.OMElementImpl;
-import org.apache.axis2.om.impl.llom.OMSerializerUtil;
-import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
-import org.apache.axis2.soap.*;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.StringWriter;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Iterator;
+
+import org.apache.axis2.om.OMConstants;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.llom.OMElementImpl;
+import org.apache.axis2.om.impl.llom.OMSerializerUtil;
+import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
+import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.soap.SOAPFaultCode;
+import org.apache.axis2.soap.SOAPFaultDetail;
+import org.apache.axis2.soap.SOAPFaultNode;
+import org.apache.axis2.soap.SOAPFaultReason;
+import org.apache.axis2.soap.SOAPFaultRole;
+import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Class SOAPFaultImpl
@@ -130,7 +140,7 @@ public abstract class SOAPFaultImpl extends SOAPElement
 
         OMElement exceptionElement = getDetail().getFirstChildWithName(
                 new QName(SOAPConstants.SOAP_FAULT_DETAIL_EXCEPTION_ENTRY));
-        if (exceptionElement != null) {
+        if (exceptionElement != null && exceptionElement.getText() != null) {
             return new Exception(exceptionElement.getText());
         }
         return null;
@@ -138,8 +148,8 @@ public abstract class SOAPFaultImpl extends SOAPElement
 
     protected void putExceptionToSOAPFault(Exception e) throws SOAPProcessingException {
         StringWriter sw = new StringWriter();
-        log.info(e.getMessage());
-
+        sw.write(e.getMessage());
+        sw.flush();
         getDetail();
         if (getDetail() == null) {
             setDetail(getNewSOAPFaultDetail(this));

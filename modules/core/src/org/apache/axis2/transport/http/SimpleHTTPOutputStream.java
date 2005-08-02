@@ -103,13 +103,14 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
             written = true;
         } else {
             out.flush();
-        }
-        if (chuncked) {
-            //TODO sometimes the out stream is closed by the client
-            try {
-                ((ChunkedOutputStream) out).eos();
-            } catch (IOException e) {
+            if (chuncked) {
+                //TODO sometimes the out stream is closed by the client
+                try {
+                    ((ChunkedOutputStream) out).eos();
+                } catch (IOException e) {
+                }
             }
+
         }
     }
 

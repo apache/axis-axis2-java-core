@@ -16,9 +16,11 @@
 
 package org.apache.axis2.engine;
 
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
+
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -33,8 +35,6 @@ import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
 
 public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
     private EndpointReference targetEPR =
