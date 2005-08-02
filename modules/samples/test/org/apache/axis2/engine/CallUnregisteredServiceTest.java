@@ -83,8 +83,7 @@ public class CallUnregisteredServiceTest extends TestCase {
             Call call = new Call();
             EndpointReference targetEPR =
                     new EndpointReference("http://127.0.0.1:"
-                    + ("5556")
-//                    + (UtilServer.TESTING_PORT)
+                    + (UtilServer.TESTING_PORT)
                     + "/axis/services/EchoXMLService1");
             call.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,

@@ -50,7 +50,6 @@ public class HandlerFailureTest extends TestCase {
 
 
     private static final String ADDRESS = "http://127.0.0.1:" +
-//            ("5556") +
             (UtilServer.TESTING_PORT) +
             "/axis/services/" + SERVICE_NAME + "/" + OPERATION_NAME;
 //    private static final String ADDRESS = "http://127.0.0.1:8080/axis/services/" + SERVICE_NAME;
