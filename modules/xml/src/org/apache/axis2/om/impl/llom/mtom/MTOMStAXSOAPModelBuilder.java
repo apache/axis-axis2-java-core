@@ -61,6 +61,7 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
 
     protected OMNode createOMElement() throws OMException {
 
+    	elementLevel++;
         String elementName = parser.getLocalName();
 
         String namespaceURI = parser.getNamespaceURI();

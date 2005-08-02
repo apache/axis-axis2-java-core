@@ -47,7 +47,7 @@ public class StAXOMBuilder extends StAXBuilder {
     public StAXOMBuilder(OMFactory ombuilderFactory, XMLStreamReader parser) {
         super(ombuilderFactory, parser);
         document = new OMDocument(this);
-        omfactory = OMAbstractFactory.getOMFactory();
+        //omfactory = OMAbstractFactory.getOMFactory();
     }
 
     /**
@@ -142,6 +142,19 @@ public class StAXOMBuilder extends StAXBuilder {
         }
         return node;
     }
+    
+    protected void endElement(){
+    	if (lastNode.isComplete()) {
+            OMElement parent = (OMElement) lastNode.getParent();
+            parent.setComplete(true);
+            lastNode = parent;
+        } else {
+            OMElement e = (OMElement) lastNode;
+            e.setComplete(true);
+        }
+    	
+    	//return lastNode;
+    }
 
     /**
      * Method next
@@ -170,14 +183,7 @@ public class StAXOMBuilder extends StAXBuilder {
                     lastNode = createOMText();
                     break;
                 case XMLStreamConstants.END_ELEMENT:
-                    if (lastNode.isComplete()) {
-                        OMElement parent = (OMElement) lastNode.getParent();
-                        parent.setComplete(true);
-                        lastNode = parent;
-                    } else {
-                        OMElement e = (OMElement) lastNode;
-                        e.setComplete(true);
-                    }
+                	endElement();
                     break;
                 case XMLStreamConstants.END_DOCUMENT:
                     done = true;

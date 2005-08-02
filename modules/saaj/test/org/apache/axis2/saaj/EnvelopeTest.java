@@ -71,10 +71,8 @@ public class EnvelopeTest extends TestCase {
     	SOAPBody body = smsg.getSOAPPart().getEnvelope().getBody();
     	assertTrue(body != null);
     }
-    /*
-     * Commenting out for now, as  underlying StaxSOAPModelBuilder does not have
-     * capability to process comments
-     * 
+  
+    
     public void testEnvelopeWithLeadingComment() throws Exception {
     	String soapMessageWithLeadingComment =
     		"<?xml version='1.0' encoding='UTF-8'?>" + 
@@ -95,7 +93,7 @@ public class EnvelopeTest extends TestCase {
     	message.writeTo(System.out);
     	assertTrue(envelope != null);
     }
-    */
+    
     
     private SOAPEnvelope getSOAPEnvelope() throws Exception {
         SOAPConnectionFactory scFactory = SOAPConnectionFactory.newInstance();
@@ -259,5 +257,6 @@ public class EnvelopeTest extends TestCase {
     	tester.testText2();
     	tester.testText3();
     	tester.testAttributes();
+    	tester.testEnvelopeWithLeadingComment();
     }
 }

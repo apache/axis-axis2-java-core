@@ -17,6 +17,7 @@ package org.apache.axis2.soap.impl.llom.builder;
 
 import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.exception.OMBuilderException;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -37,7 +38,7 @@ import javax.xml.stream.XMLStreamReader;
 /**
  * Class StAXSOAPModelBuilder
  */
-public class StAXSOAPModelBuilder extends StAXBuilder {
+public class StAXSOAPModelBuilder extends StAXOMBuilder {
     /**
      * Field envelope
      */
@@ -66,7 +67,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
      * element level 1 = envelope level element level 2 = Header or Body level
      * element level 3 = HeaderElement or BodyElement level
      */
-    int elementLevel = 0;
+    protected int elementLevel = 0;
 
     private boolean processingFault = false;
 
@@ -179,6 +180,7 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
      * @throws OMException
      */
     protected OMNode createOMElement() throws OMException {
+    	elementLevel++;
         OMElement node;
         String elementName = parser.getLocalName();
         if (lastNode == null) {
@@ -325,70 +327,30 @@ public class StAXSOAPModelBuilder extends StAXBuilder {
         return receiverfaultCode;
     }
 
-    /**
-     * Method next
-     *
-     * @return
-     * @throws OMException
-     */
-    public int next() throws OMException {
-        try {
-            if (done) {
-                throw new OMException();
-            }
-            int token = parser.next();
-            if (!cache) {
-                return token;
-            }
-            switch (token) {
-                case XMLStreamConstants.START_ELEMENT:
-                    elementLevel++;
-                    lastNode = createOMElement();
-                    break;
-                case XMLStreamConstants.CHARACTERS:
-                    lastNode = createOMText();
-                    break;
-                case XMLStreamConstants.END_ELEMENT:
-                    if (lastNode.isComplete()) {
-                        OMElement parent = (OMElement) lastNode.getParent();
+    public void endElement(){
+    	 if (lastNode.isComplete()) {
+             OMElement parent = (OMElement) lastNode.getParent();
 
-//                        //added
-//                        /*check whether all mandatory fault elements are present
-//                        */
-//                        if (parent.getLocalName().equals(SOAP12Constants.SOAPFAULT_LOCAL_NAME) && processingMandatoryFaultElements) {
-//                            throw new OMBuilderException("Missing mandatory fault elements");
-//                        }
-//                        //added
-//                        /*finish processing detail element in soap 1.2 builderhelper
-//                        */
-//                        if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME)) {
-//                            this.setProcessingDetailElements(false);
-//                        }
+//             //added
+//             /*check whether all mandatory fault elements are present
+//             */
+//             if (parent.getLocalName().equals(SOAP12Constants.SOAPFAULT_LOCAL_NAME) && processingMandatoryFaultElements) {
+//                 throw new OMBuilderException("Missing mandatory fault elements");
+//             }
+//             //added
+//             /*finish processing detail element in soap 1.2 builderhelper
+//             */
+//             if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME)) {
+//                 this.setProcessingDetailElements(false);
+//             }
 
-                        parent.setComplete(true);
-                        lastNode = parent;
-                    } else {
-                        OMNode e = lastNode;
-                        e.setComplete(true);
-                    }
-                    elementLevel--;
-                    break;
-                case XMLStreamConstants.END_DOCUMENT:
-                    done = true;
-                    break;
-                case XMLStreamConstants.SPACE:
-                    next();
-                    break;
-                default :
-                    throw new SOAPProcessingException("SOAP Message contains not allowed information" +
-                            " item", getSenderFaultCode());
-            }
-            return token;
-        } catch (OMException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new OMException(e);
-        }
+             parent.setComplete(true);
+             lastNode = parent;
+         } else {
+             OMNode e = lastNode;
+             e.setComplete(true);
+         }
+         elementLevel--;
     }
 
     /**
