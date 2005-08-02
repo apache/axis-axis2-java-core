@@ -335,6 +335,9 @@ public class WSDLPump {
     }
 
     private void pushSchemaElement(Schema originalSchema,Stack stack){
+        if (originalSchema==null){
+            return;
+        }
         stack.push(originalSchema);
         Map map = originalSchema.getImports();
         Collection values;
