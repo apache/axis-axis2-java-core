@@ -49,7 +49,7 @@ public class HandlerFailureTest extends TestCase {
 
 
     private static final String ADDRESS = "http://127.0.0.1:" +
-            (UtilServer.TESTING_PORT+1) +
+            (UtilServer.TESTING_PORT) +
             "/axis/services/" + SERVICE_NAME + "/" + OPERATION_NAME;
     private EndpointReference targetEPR = new EndpointReference(ADDRESS);
     private QName serviceName = new QName("", SERVICE_NAME);
