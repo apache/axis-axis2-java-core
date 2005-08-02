@@ -515,7 +515,8 @@ public class OMElementImpl extends OMNodeImpl
      */
     public void setFirstChild(OMNode firstChild) {
         this.firstChild = firstChild;
-        firstChild.setParent(this);
+        if (firstChild != null)
+            firstChild.setParent(this);
     }
 
     /**
