@@ -4,8 +4,7 @@
         <parameter name="para1" locked="xsd:true">10</parameter>
     </transportReceiver>
     <transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
-        <parameter name="PROTOCOL" locked="xsd:false">HTTP/1.1</parameter>
-        <parameter name="Transfer-Encoding" locked="xsd:false">chunked</parameter>
+        <parameter name="PROTOCOL" locked="xsd:false">HTTP/1.0</parameter>
     </transportSender>
  
     <phaseOrder type="inflow">

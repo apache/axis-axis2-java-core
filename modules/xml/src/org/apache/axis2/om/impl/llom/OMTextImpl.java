@@ -209,9 +209,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                 }while (inStream.available()>0);
                 return Base64.encode(data);
             } catch (Exception e) {
-                throw new OMException(
-                        "Cannot read from Stream taken form the Data Handler"
-                                + e);
+                throw new OMException(e);
             }
         }
     }

@@ -129,16 +129,17 @@ public class HTTPWorker implements AxisWorker {
                 if (msgContext != null) {
                     msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
                     MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
+                    faultContext.setProperty(HTTPConstants.HTTPOutTransportInfo,msgContext.getProperty(HTTPConstants.HTTPOutTransportInfo));
                     engine.sendFault(faultContext);
                 } else {
                     log.error(e);
-
+                    e.printStackTrace();
                 }
             } catch (Exception e1) {
                 log.error(e1);
-  
+                e1.printStackTrace();
             }
-//            e.printStackTrace();
+            //e.printStackTrace();
         } finally {
             if (socket != null) {
                 try {

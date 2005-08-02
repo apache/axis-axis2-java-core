@@ -61,6 +61,7 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
                 messgeCtx.getProperty(HTTPConstants.HTTPOutTransportInfo));
         newmsgCtx.setDoingREST(messgeCtx.isDoingREST());
         newmsgCtx.setDoingMTOM(messgeCtx.isDoingMTOM());
+        newmsgCtx.setServerSide(messgeCtx.isServerSide());
 
         invokeBusinessLogic(messgeCtx, newmsgCtx);
 

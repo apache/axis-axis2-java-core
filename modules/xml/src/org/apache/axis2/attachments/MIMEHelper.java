@@ -303,7 +303,7 @@ public class MIMEHelper {
                         "Referenced MIME part not found.End of Stream reached.");
             }
         } catch (MessagingException e) {
-            throw new OMException("Error creating Mime Part." + e);
+            throw new OMException(e);
         }
         partIndex++;
         return part;

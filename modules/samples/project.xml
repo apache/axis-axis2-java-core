@@ -168,10 +168,12 @@
                 <exclude>**org/apache/axis2/mail/*.java</exclude>
                 
                 <exclude>**/OneWayRawXMLTest.java</exclude>
+                <!--
                 <exclude>**/*EchoRawMTOMTest.java</exclude>
                 <exclude>**/*EchoRawMTOMLoadTest.java</exclude>
                 <exclude>**/*EchoRawMTOMToBase64Test.java</exclude>
-                <exclude>**/*MTOMCommonsChunkingTest.java</exclude>
+                
+                <exclude>**/*MTOMCommonsChunkingTest.java</exclude> -->
          
                 <!--
          		<exclude>**/*SOAP12Test.java</exclude>

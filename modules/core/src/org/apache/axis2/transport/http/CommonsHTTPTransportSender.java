@@ -78,13 +78,13 @@ public class CommonsHTTPTransportSender
             if (charSetEnc != null) {
                 omOutput.setCharSetEncoding(charSetEnc);
             }
+            msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
             omOutput.setSoap11(msgContext.isSOAP11());
+            omOutput.setDoOptimize(msgContext.isDoingMTOM());
 
             //Check for the REST behaviour, if you desire rest beahaviour
             //put a <parameter name="doREST" value="true"/> at the
             // server.xml/client.xml file
-            msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
-
             EndpointReference epr = null;
             if (msgContext.getTo() != null
                 && !AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(
@@ -114,18 +114,24 @@ public class CommonsHTTPTransportSender
                             HTTPConstants.HTTPOutTransportInfo);
                     if (transportInfo != null) {
                         transportInfo.setContentType(omOutput.getContentType());
+                    }else{
+                        throw new AxisFault(HTTPConstants.HTTPOutTransportInfo + " does not set");
                     }
                 }
                 omOutput.setOutputStream(out, msgContext.isDoingMTOM());
                 dataOut.serialize(omOutput);
                 omOutput.flush();
             }
-            msgContext.getOperationContext().setProperty(
-                Constants.RESPONSE_WRITTEN,
-                Constants.VALUE_TRUE);
+            if(msgContext.getOperationContext() != null){
+                msgContext.getOperationContext().setProperty(
+                    Constants.RESPONSE_WRITTEN,
+                    Constants.VALUE_TRUE);            
+            }
         } catch (XMLStreamException e) {
             throw new AxisFault(e);
         } catch (FactoryConfigurationError e) {
+            throw new AxisFault(e);
+        } catch (IOException e) {
             throw new AxisFault(e);
         }
     }
@@ -345,6 +351,9 @@ public class CommonsHTTPTransportSender
         String charEncoding =
             (String) msgContext.getProperty(
                 MessageContext.CHARACTER_SET_ENCODING);
+        if(charEncoding == null){
+            charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
+        }                
 
         postMethod.setRequestEntity(
             new AxisRequestEntity(

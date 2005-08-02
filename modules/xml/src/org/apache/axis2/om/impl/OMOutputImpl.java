@@ -217,4 +217,11 @@ public class OMOutputImpl {
     }
 
 
+    /**
+     * @param b
+     */
+    public void setDoOptimize(boolean b) {
+        doOptimize = b;
+    }
+
 }

@@ -48,7 +48,7 @@ import org.apache.commons.logging.LogFactory;
 public class SoapProcessingModelTest extends TestCase {
     private EndpointReference targetEPR =
         new EndpointReference("http://127.0.0.1:"
-                + (UtilServer.TESTING_PORT)
+                + (UtilServer.TESTING_PORT+1)
                 + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
@@ -106,21 +106,21 @@ public class SoapProcessingModelTest extends TestCase {
             inOutMC.close();
         }
     }
-    
-    public void testSendingMustUnderstandWithNextRole() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP12Factory();
-        SOAPEnvelope envelope = fac.getDefaultEnvelope();
-        OMNamespace headerNs = fac.createOMNamespace("http://dummyHeader", "dh");
-        SOAPHeaderBlock h1 =
-            fac.createSOAPHeaderBlock("DummyHeader", headerNs, envelope.getHeader());
-        h1.setMustUnderstand(true);
-        h1.addChild(fac.createText("Dummy String"));
-        h1.setRole(SOAP12Constants.SOAP_ROLE_NEXT);
-        OMElement payload = TestingUtils.createDummyOMElement();
-        envelope.getBody().addChild(payload);
-        sendMessageWithHeader(envelope);
-
-    }
+//    
+//    public void testSendingMustUnderstandWithNextRole() throws Exception {
+//        SOAPFactory fac = OMAbstractFactory.getSOAP12Factory();
+//        SOAPEnvelope envelope = fac.getDefaultEnvelope();
+//        OMNamespace headerNs = fac.createOMNamespace("http://dummyHeader", "dh");
+//        SOAPHeaderBlock h1 =
+//            fac.createSOAPHeaderBlock("DummyHeader", headerNs, envelope.getHeader());
+//        h1.setMustUnderstand(true);
+//        h1.addChild(fac.createText("Dummy String"));
+//        h1.setRole(SOAP12Constants.SOAP_ROLE_NEXT);
+//        OMElement payload = TestingUtils.createDummyOMElement();
+//        envelope.getBody().addChild(payload);
+//        sendMessageWithHeader(envelope);
+//
+//    }
 
     public void testSendingMustUnderstandWithArbitaryRole() throws Exception {
         try {
