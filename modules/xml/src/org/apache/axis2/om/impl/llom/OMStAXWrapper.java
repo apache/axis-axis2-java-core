@@ -42,7 +42,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     /**
      * Field log
      */
-    private Log log = LogFactory.getLog(getClass());
+//    private Log log = LogFactory.getLog(getClass());
 
     /**
      * Field navigator
@@ -814,10 +814,10 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                     parser = (XMLStreamReader) builder.getParser();
                 } catch (Exception e) {
                     throw new UnsupportedOperationException(
-                            "incompatible parser found!");
+                            "incompatible parser found!");                         
                 }
-                log.info(
-                        "Switching to the Real Stax parser to generated the future events");
+//                log.info(
+//                        "Switching to the Real Stax parser to generated the future events");
 
                 if ((currentEvent == START_DOCUMENT) &&
                         (currentEvent == parser.getEventType())) {

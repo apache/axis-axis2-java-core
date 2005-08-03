@@ -15,17 +15,8 @@
 */
 package org.apache.axis2.om.impl.llom;
 
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMConstants;
-import org.apache.axis2.om.OMContainer;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
@@ -108,7 +99,7 @@ public class OMElementImpl extends OMNodeImpl
      */
     public OMElementImpl(String localName, OMNamespace ns) {
         super(null);
-        if(localName == null || localName.trim().length() == 0){
+        if (localName == null || localName.trim().length() == 0) {
             throw new OMException("localname can not be null or empty");
         }
         this.localName = localName;
@@ -120,6 +111,7 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * Constructor OMElementImpl
+     *
      * @param localName
      * @param ns
      * @param parent
@@ -514,9 +506,19 @@ public class OMElementImpl extends OMNodeImpl
      * @param firstChild
      */
     public void setFirstChild(OMNode firstChild) {
-        this.firstChild = firstChild;
-        if (firstChild != null)
+        if (firstChild != null) {
             firstChild.setParent(this);
+            this.firstChild = firstChild;
+        }
+//
+//        OMNode currentFirstChild = getFirstChild();
+//        if (currentFirstChild != null) {
+//            currentFirstChild.insertSiblingBefore(firstChild);
+//        } else {
+//            this.firstChild = firstChild;
+//        }
+//        if (firstChild != null)
+//            firstChild.setParent(this);
     }
 
     /**

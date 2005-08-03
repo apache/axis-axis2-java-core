@@ -1,5 +1,6 @@
 package org.apache.axis2;
 
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -21,6 +22,5 @@ package org.apache.axis2;
 public interface SOAPFaultException {
     public String getFaultCode();
     public void setFaultCode(String faultCode);
-
     public String getMessage();
 }

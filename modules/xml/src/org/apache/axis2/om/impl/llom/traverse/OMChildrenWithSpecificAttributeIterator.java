@@ -106,7 +106,7 @@ public class OMChildrenWithSpecificAttributeIterator
      */
     public Object next() {
         Object o = super.next();
-        if ((o != null) && detach) {
+        if ((o != null) && detach && ((OMElement) o).getParent() != null) {
             ((OMElement) o).detach();
         }
         return o;

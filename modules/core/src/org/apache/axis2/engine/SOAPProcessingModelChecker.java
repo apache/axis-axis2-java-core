@@ -60,7 +60,7 @@ public class SOAPProcessingModelChecker extends AbstractHandler {
                 //if must understand and soap 1.2 the Role should be NEXT , if it is null we considerr
                 // it to be NEXT
                 if (role != null && !SOAP12Constants.SOAP_ROLE_NEXT.equals(role)) {
-                    throw new AxisFault("Must Understand check failed");
+                    throw new AxisFault("Must Understand check failed", SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND);
                 }
                 
                 //TODO what should be do with the Ulitmate Receiver? Axis2 is ultimate Receiver most of the time
@@ -69,7 +69,7 @@ public class SOAPProcessingModelChecker extends AbstractHandler {
                 //if must understand and soap 1.1 the actor should be NEXT , if it is null we considerr
                 // it to be NEXT
                 if (role != null && !SOAP11Constants.SOAP_ACTOR_NEXT.equals(role)) {
-                    throw new AxisFault("Must Understand check failed");
+                    throw new AxisFault("Must Understand check failed", SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND);
                 }
             }
 
