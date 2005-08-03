@@ -79,7 +79,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
                         "paramIsNotSpecified",
                         "SERVICE_CLASS"));
             }
-
+            
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
@@ -135,4 +135,6 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     public SOAPFactory getSOAPFactory() {
         return fac;
     }
+    
+
 }

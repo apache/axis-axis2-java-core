@@ -16,8 +16,20 @@
 
 package org.apache.axis2.transport.http;
 
-import org.apache.axis2.Constants;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
@@ -30,27 +42,18 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HeaderElement;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HeaderElement;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.GetMethod;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class CommonsHTTPTransportSender
     extends AbstractHandler
@@ -77,6 +80,13 @@ public class CommonsHTTPTransportSender
                     MessageContext.CHARACTER_SET_ENCODING);
             if (charSetEnc != null) {
                 omOutput.setCharSetEncoding(charSetEnc);
+            } else {
+            	OperationContext opctx = msgContext.getOperationContext();
+            	if(opctx != null) {
+            		charSetEnc = (String)opctx.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+            	} else {
+            		charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
+            	}
             }
             msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
             omOutput.setSoap11(msgContext.isSOAP11());
@@ -397,27 +407,10 @@ public class CommonsHTTPTransportSender
         }
 
         this.httpClient.executeMethod(hostConfig, postMethod);
+        
         if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
-            Header header =
-                postMethod.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
-            if (header != null) {
-                HeaderElement[] headers = header.getElements();
-                for (int i = 0; i < headers.length; i++) {
-                    if (headers[i]
-                        .getName()
-                        .equals(
-                            HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED)) {
-                        OperationContext opContext =
-                            msgContext.getOperationContext();
-                        if (opContext != null) {
-                            opContext.setProperty(
-                                HTTPConstants.MTOM_RECIVED_CONTENT_TYPE,
-                                header.getValue());
-                        }
-                    }
-                }
-            }
-            InputStream in = postMethod.getResponseBodyAsStream();
+        	obatainHTTPHeaderInformation(postMethod, msgContext);
+        	InputStream in = postMethod.getResponseBodyAsStream();
             if (in == null) {
                 throw new AxisFault(
                     Messages.getMessage("canNotBeNull", "InputStream"));
@@ -459,8 +452,11 @@ public class CommonsHTTPTransportSender
             this.getHostConfiguration(msgContext, url);
 
         this.httpClient.executeMethod(hostConfig, getMethod);
+        
         if (getMethod.getStatusCode() == HttpStatus.SC_OK) {
-
+        	
+        	obatainHTTPHeaderInformation(getMethod, msgContext);
+        	
             InputStream in = getMethod.getResponseBodyAsStream();
             if (in == null) {
                 throw new AxisFault(
@@ -480,4 +476,40 @@ public class CommonsHTTPTransportSender
         }
     }
 
+    /**
+     * Collect the HTTP header information and set them in the message context
+     * @param method
+     * @param msgContext
+     */
+    private void obatainHTTPHeaderInformation(HttpMethodBase method,MessageContext msgContext) {
+        Header header =
+        	method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+        if (header != null) {
+            HeaderElement[] headers = header.getElements();
+            for (int i = 0; i < headers.length; i++) {
+                NameValuePair charsetEnc = headers[i]
+											.getParameterByName(HTTPConstants.CHAR_SET_ENCODING);
+				if (headers[i]
+                    .getName()
+                    .equals(
+                        HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED)) {
+                    OperationContext opContext =
+                        msgContext.getOperationContext();
+                    if (opContext != null) {
+                        opContext.setProperty(
+								HTTPConstants.MTOM_RECIVED_CONTENT_TYPE,
+								header.getValue());
+					}
+				} else if (charsetEnc != null) {
+
+					msgContext
+							.setProperty(
+									MessageContext.CHARACTER_SET_ENCODING,
+									charsetEnc);
+				}
+			}
+        }
+	
+    }
+    
 }

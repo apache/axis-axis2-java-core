@@ -138,12 +138,6 @@ public class AxisEngine {
             invokePhases(operationSpecificPhases, msgContext);
         }
         
-        /**
-         * Promote the operation specific paramters in the message context to
-         * the operation context
-         */
-        promoteMessageContextProperties(msgContext);
-        
         if (msgContext.isServerSide() && !msgContext.isPaused()) {
             // invoke the Message Receivers
             MessageReceiver receiver =
@@ -497,18 +491,7 @@ public class AxisEngine {
         return context.getStorage().clean();
     }
     
-    /**
-     * This is used to promote operation/service specific properties that are 
-     * in the message context to the relevant context 
-     * @param msgContext The message context
-     */
-    private void promoteMessageContextProperties(MessageContext msgContext) {
-    	//Character set encoding
-    	String charSetEncoding = (String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
-		if(charSetEncoding != null){
-    		msgContext.getOperationContext().setProperty(MessageContext.CHARACTER_SET_ENCODING,charSetEncoding,true);
-    	}
-    }
+
 
     private String getSenderFaultCode(String soapNamespace) {
         return SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(

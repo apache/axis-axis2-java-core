@@ -59,6 +59,11 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
                 messgeCtx.getProperty(MessageContext.TRANSPORT_OUT));
         newmsgCtx.setProperty(HTTPConstants.HTTPOutTransportInfo,
                 messgeCtx.getProperty(HTTPConstants.HTTPOutTransportInfo));
+        
+        //Setting the charater set encoding
+        newmsgCtx.setProperty(MessageContext.CHARACTER_SET_ENCODING, messgeCtx
+				.getProperty(MessageContext.CHARACTER_SET_ENCODING));
+        
         newmsgCtx.setDoingREST(messgeCtx.isDoingREST());
         newmsgCtx.setDoingMTOM(messgeCtx.isDoingMTOM());
         newmsgCtx.setServerSide(messgeCtx.isServerSide());

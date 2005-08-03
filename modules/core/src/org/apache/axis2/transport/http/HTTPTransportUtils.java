@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -196,7 +197,8 @@ public class HTTPTransportUtils {
             throw new AxisFault(e);
         } catch (FactoryConfigurationError e) {
             throw new AxisFault(e);
-
+        } catch (UnsupportedEncodingException e) {
+        	throw new AxisFault(e);
         } finally {
             if (msgContext.getEnvelope() == null && !soap11) {
                 msgContext.setEnvelope(
@@ -299,7 +301,9 @@ public class HTTPTransportUtils {
         MessageContext msgContext,
         InputStream inStream,
         String contentTypeString)
-        throws OMException, XMLStreamException, FactoryConfigurationError {
+        throws OMException,
+			XMLStreamException, FactoryConfigurationError,
+			UnsupportedEncodingException {
         StAXBuilder builder = null;
 
         boolean fileCacheForAttachments =
@@ -321,15 +325,17 @@ public class HTTPTransportUtils {
                 contentTypeString,
                 fileCacheForAttachments,
                 attachmentRepoDir);
-        XMLStreamReader reader =
-            XMLInputFactory.newInstance().createXMLStreamReader(
-                new BufferedReader(
-                    new InputStreamReader(
-                        mimeHelper.getSOAPPartInputStream())));
+        
+        String charSetEnc = getCharSetEncoing(contentTypeString);
+        
+        XMLStreamReader reader = XMLInputFactory.newInstance()
+				.createXMLStreamReader(
+						new BufferedReader(new InputStreamReader(mimeHelper
+								.getSOAPPartInputStream(), charSetEnc)));
 
         /*
-         * put a reference to Attachments in to the message context
-         */
+		 * put a reference to Attachments in to the message context
+		 */
         msgContext.setProperty(MIMEHelper.ATTACHMENTS, mimeHelper);
         if (mimeHelper.getAttachmentSpecType().equals(MIMEHelper.MTOM_TYPE)) {
             /*

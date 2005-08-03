@@ -15,6 +15,12 @@
  */
 package org.apache.axis2.transport;
 
+import java.io.InputStream;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.i18n.Messages;
@@ -26,13 +32,6 @@ import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
-import org.apache.axis2.AxisFault;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 
 public class TransportUtils {
    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext, String soapNamespaceURI) throws AxisFault {
@@ -65,7 +64,12 @@ public class TransportUtils {
             StAXBuilder builder = null;
             SOAPEnvelope envelope = null;
 
-            if (contentType != null) {
+            String charSetEnc = (String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+            if(charSetEnc == null) {
+            	charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
+            }
+            
+			if (contentType != null) {
                 msgContext.setDoingMTOM(true);
                 builder =
                         HTTPTransportUtils.selectBuilderForMIME(msgContext,
@@ -73,20 +77,18 @@ public class TransportUtils {
                                 (String) contentType);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             } else if (msgContext.isDoingREST()) {
-                Reader reader = new InputStreamReader(inStream);
                 XMLStreamReader xmlreader =
                         XMLInputFactory.newInstance().createXMLStreamReader(
-                                reader);
+                                inStream,charSetEnc);
                 SOAPFactory soapFactory = new SOAP11Factory();
                 builder = new StAXOMBuilder(xmlreader);
                 builder.setOmbuilderFactory(soapFactory);
                 envelope = soapFactory.getDefaultEnvelope();
                 envelope.getBody().addChild(builder.getDocumentElement());
             } else {
-                Reader reader = new InputStreamReader(inStream);
                 XMLStreamReader xmlreader =
                         XMLInputFactory.newInstance().createXMLStreamReader(
-                                reader);
+                        		inStream,charSetEnc);
                 builder = new StAXSOAPModelBuilder(xmlreader, soapNamespaceURI);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             }
