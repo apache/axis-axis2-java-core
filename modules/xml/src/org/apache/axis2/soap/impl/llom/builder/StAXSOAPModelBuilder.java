@@ -354,6 +354,26 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     }
 
     /**
+     * Method createDTD
+     * 
+     * Overriding the default behaviour as a SOAPMessage
+     *  should not have a DTD
+     */
+    protected OMNode createDTD() throws OMException {
+    	throw new OMException("SOAP message MUST NOT contain a Document Type Declaration(DTD)");
+    }
+    
+    /**
+     * Method createPI
+     * 
+     * Overriding the default behaviour as a SOAP Message 
+     * should not have a PI
+     */
+    protected OMNode createPI() throws OMException {
+    	throw new OMException("SOAP message MUST NOT contain Processing Instructions(PI)");
+    }
+    
+    /**
      * Method getDocumentElement
      *
      * @return
