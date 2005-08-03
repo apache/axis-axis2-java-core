@@ -25,6 +25,7 @@
 					<include name="j2ee/jars/activation.jar"/>
 					<include name="j2ee/jars/mail.jar"/>
 					<include name="axis/jars/axis2-core-0.9.jar"/>
+					<include name="axis/jars/axis2-common-0.9.jar"/>
 					<include name="axis/jars/axis2-tools-0.9.jar"/>
 					<include name="axis/jars/axis2-xml-0.9.jar"/>
 					<include name="axis/jars/axis2-wsdl-0.9.jar"/>
@@ -37,6 +38,7 @@
 					<include name="junit/jars/*.jar"/>
 					<include name="xmlbeans/jars/xbean-2.0.0-beta1.jar"/>
 		      </fileset>
+		      <pathelement location="${class.dir}"/>
 	</path>
 	
      <taskdef name="wsdl2java"
@@ -44,32 +46,21 @@
             classpathref="test.classpath"/>
 	
 	<target name="doInterop-test">
-                 <mkdir dir="${interop3.dir}"/>  
-				<mkdir dir="${work.dir}"/>  
+              <mkdir dir="${interop3.dir}"/>  
+			<mkdir dir="${work.dir}"/>  
 				<mkdir dir="${calss.dir}"/>                       
 				
 		       <wsdl2java WSDLFileName="${wsdl.dir}compound2.wsdl" output="${work.dir}"/> 
-		       <!--
-		       <java classname="org.apache.axis2.wsdl.WSDL2Java">
-                  <classpath refid="maven.dependency.classpath"/>
-                  <arg value="-uri"/>
-                  <arg file="${wsdl.dir}/compound2.wsdl"/>
-                  <arg value="-o"/>
-                   <arg file="${work.dir}"/>
-               </java>
-               -->
-		       <copy file="${wsdl.dir}/InteropClient2.java" todir="${work.dir}" overwrite="true" />
-               <copy file="${wsdl.dir}/echoEmployeeDatabindingSupporter.java" todir="${work.dir}/org/soapinterop/databinding" overwrite="true" />
                
                 <move todir="${classes.dir}/schema">
             		<fileset dir="${work.dir}/schema"/>
                </move>   
     	
               <javac srcdir="${work.dir}" destdir="${classes.dir}" debug="on">
-                  <classpath refid="maven.dependency.classpath" />
+                  <classpath refid="test.classpath" />
               </javac>
     	
-    	     <!-- Run the interop test -->
+    	     <!-- Run the interop test 
     	     <java classname="Client">
                 <classpath refid="maven.dependency.classpath" />
    		     </java>
@@ -79,6 +70,8 @@
 			    <formatter type="plain"/>
 			    <test name="InteropClient2" />
 		    </junit>
+		    
+		    -->
 	</target>
 </project>
 

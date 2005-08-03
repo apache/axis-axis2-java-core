@@ -1,5 +1,16 @@
 package org.apache.axis2.tool.ant;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.wsdl.WSDLException;
+
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
@@ -9,18 +20,7 @@ import org.apache.axis2.wsdl.codegen.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.URLProcessor;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.Path;
 import org.apache.wsdl.WSDLDescription;
-
-import javax.wsdl.WSDLException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.HashMap;
-import java.util.Map;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -53,96 +53,82 @@ public class AntCodegenTask extends Task {
     private boolean testcase = false;
     private boolean generateServerXml = false;
 
-    private Path classpath = null;
-
-    public Path getClasspath() {
-        return classpath;
-    }
-
-    public void setClasspath(Path classpath) {
-        System.out.println("path = "+classpath);
-//        if (classpath == null) {
-//            classpath = classpath;
-//        } else {
-//            classpath.append(classpath);
-//        }
-
-    }
-     public Path createClasspath() {
-        if (classpath == null) {
-            classpath = new Path(this.getProject());
-        }
-         System.out.println("classpath = " + classpath);
-        return classpath.createPath();
-    }
+ 
+ 
     /**
      *
      */
     private Map fillOptionMap() {
         Map optionMap = new HashMap();
 
-        optionMap.put(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
-                        getStringArray(WSDLFileName)));
+        optionMap.put(
+            CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
+            new CommandLineOption(
+                CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
+                getStringArray(WSDLFileName)));
 
         if (asyncOnly) {
-            optionMap
-                    .put(CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
-                            new CommandLineOption(
-                                    CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
-                                    new String[0]));
+            optionMap.put(
+                CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
+                new CommandLineOption(
+                    CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
+                    new String[0]));
         }
         if (syncOnly) {
-            optionMap
-                    .put(CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
-                            new CommandLineOption(
-                                    CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
-                                    new String[0]));
+            optionMap.put(
+                CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
+                new CommandLineOption(
+                    CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
+                    new String[0]));
         }
-        optionMap.put(CommandLineOptionConstants.PACKAGE_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.PACKAGE_OPTION,
-                        getStringArray(packageName)));
-        optionMap.put(CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
-                        getStringArray(language)));
-        optionMap.put(CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
-                        getStringArray(output)));
+        optionMap.put(
+            CommandLineOptionConstants.PACKAGE_OPTION,
+            new CommandLineOption(
+                CommandLineOptionConstants.PACKAGE_OPTION,
+                getStringArray(packageName)));
+        optionMap.put(
+            CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
+            new CommandLineOption(
+                CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
+                getStringArray(language)));
+        optionMap.put(
+            CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
+            new CommandLineOption(
+                CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
+                getStringArray(output)));
         if (serverSide) {
-            optionMap.put(CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
-                            new String[0]));
+            optionMap.put(
+                CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
+                new CommandLineOption(
+                    CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
+                    new String[0]));
 
             if (generateServerXml) {
                 optionMap.put(
-                        CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
-                        new CommandLineOption(
-                                CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
-                                new String[0]));
+                    CommandLineOptionConstants
+                        .GENERATE_SERVICE_DESCRIPTION_OPTION,
+                    new CommandLineOption(
+                        CommandLineOptionConstants
+                            .GENERATE_SERVICE_DESCRIPTION_OPTION,
+                        new String[0]));
             }
         }
         if (testcase) {
-            optionMap
-                    .put(CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
-                            new CommandLineOption(
-                                    CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
-                                    new String[0]));
+            optionMap.put(
+                CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
+                new CommandLineOption(
+                    CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
+                    new String[0]));
         }
         //System.out.println(page3.getOutputLocation());
         return optionMap;
     }
 
-    private WSDLDescription getWOM(String wsdlLocation) throws WSDLException,
-            IOException {
+    private WSDLDescription getWOM(String wsdlLocation)
+        throws WSDLException, IOException {
         InputStream in = new FileInputStream(new File(wsdlLocation));
-        WSDLVersionWrapper wsdlvWrap = WOMBuilderFactory.getBuilder(
-                WOMBuilderFactory.WSDL11)
-                .build(in);
+        WSDLVersionWrapper wsdlvWrap =
+            WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
         return wsdlvWrap.getDescription();
     }
 
@@ -152,30 +138,25 @@ public class AntCodegenTask extends Task {
         return values;
     }
 
-
     public void execute() throws BuildException {
         try {
-            File mavenRepo = new File("E:/Documents and Settings/srinath/.maven/repository");
-            File xmlbeansJar = new File(mavenRepo,"xmlbeans/jars/xbean-2.0.0-beta1.jar");
-            File staxDevJar = new File(mavenRepo,"stax/jars/stax-1.1.1-dev.jar");
-            File staxApiJar = new File(mavenRepo,"stax/jars/stax-api-1.0.jar");
-            if(!xmlbeansJar.exists()){
-                throw new RuntimeException(xmlbeansJar.getAbsolutePath() + " Does not exsists");
-            }
-            ClassLoader cl = new URLClassLoader(new URL[]{xmlbeansJar.toURL()},
-                Thread.currentThread().getContextClassLoader());
+            /**
+             * This needs the ClassLoader we use to load the task have all the dependancyies set, hope that 
+             * is ok for now
+             */
+            ClassLoader cl = new URLClassLoader(new URL[]{new File(output).toURL()},getClass().getClassLoader());
             Thread.currentThread().setContextClassLoader(cl);
-            
+
             Map commandLineOptions = this.fillOptionMap();
-            System.out.println("options =" +commandLineOptions);
-            CommandLineOptionParser parser = new CommandLineOptionParser(
-                    commandLineOptions);
+            //System.out.println("options =" + commandLineOptions);
+            CommandLineOptionParser parser =
+                new CommandLineOptionParser(commandLineOptions);
             //System.out.println(" parser" + parser);
             new CodeGenerationEngine(parser).generate();
         } catch (Throwable e) {
             //System.out.println("Thrown here $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$b");
-              e.printStackTrace();
-              throw new BuildException(e);
+            e.printStackTrace();
+            throw new BuildException(e);
         }
 
     }
@@ -219,10 +200,9 @@ public class AntCodegenTask extends Task {
     public static void main(String[] args) {
         AntCodegenTask task = new AntCodegenTask();
         task.setWSDLFileName(
-                "modules/samples/test-resources/wsdl/compound2.wsdl");
+            "modules/samples/test-resources/wsdl/compound2.wsdl");
         task.setOutput("temp");
         task.execute();
     }
-
 
 }
