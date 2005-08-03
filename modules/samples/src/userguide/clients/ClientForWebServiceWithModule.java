@@ -48,6 +48,7 @@ public class ClientForWebServiceWithModule {
             result.serializeWithCache(XMLOutputFactory.newInstance()
                     .createXMLStreamWriter(writer));
             writer.flush();
+            System.out.println(writer.toString());
 
 
         } catch (AxisFault axisFault) {

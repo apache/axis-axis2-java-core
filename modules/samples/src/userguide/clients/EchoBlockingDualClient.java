@@ -42,6 +42,7 @@ public class EchoBlockingDualClient {
             result.serializeWithCache(XMLOutputFactory.newInstance()
                     .createXMLStreamWriter(writer));
             writer.flush();
+            System.out.println(writer.toString());
 
 
             //Need to close the Client Side Listener.

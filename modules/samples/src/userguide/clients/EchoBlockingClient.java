@@ -48,6 +48,7 @@ public class EchoBlockingClient {
                     .createXMLStreamWriter(writer));
             writer.flush();
 
+            System.out.println(writer.toString());
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();

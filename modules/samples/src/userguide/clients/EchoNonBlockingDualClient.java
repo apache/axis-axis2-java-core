@@ -46,6 +46,7 @@ public class EchoNonBlockingDualClient {
                         result.getResponseEnvelope().serializeWithCache(XMLOutputFactory.newInstance()
                                 .createXMLStreamWriter(writer));
                         writer.flush();
+                        System.out.println(writer.toString());
 
 
                     } catch (XMLStreamException e) {
