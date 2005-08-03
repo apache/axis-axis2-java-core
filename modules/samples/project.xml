@@ -164,7 +164,7 @@
                 <exclude>**/*Abstract*.java</exclude>
                 <exclude>**/*Util*.java</exclude>
                 <exclude>**/*InteropStubTest.java</exclude>
-                <exclude>**/*EchoRawXMLChunckedTest.java</exclude>
+                <!-- <exclude>**/*EchoRawXMLChunckedTest.java</exclude> -->
                 <exclude>**org/apache/axis2/mail/*.java</exclude>
                  
                 
