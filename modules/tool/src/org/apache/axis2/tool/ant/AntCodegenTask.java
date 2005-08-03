@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -153,7 +155,17 @@ public class AntCodegenTask extends Task {
 
     public void execute() throws BuildException {
         try {
-
+            File mavenRepo = new File("E:/Documents and Settings/srinath/.maven/repository");
+            File xmlbeansJar = new File(mavenRepo,"xmlbeans/jars/xbean-2.0.0-beta1.jar");
+            File staxDevJar = new File(mavenRepo,"stax/jars/stax-1.1.1-dev.jar");
+            File staxApiJar = new File(mavenRepo,"stax/jars/stax-api-1.0.jar");
+            if(!xmlbeansJar.exists()){
+                throw new RuntimeException(xmlbeansJar.getAbsolutePath() + " Does not exsists");
+            }
+            ClassLoader cl = new URLClassLoader(new URL[]{xmlbeansJar.toURL()},
+                Thread.currentThread().getContextClassLoader());
+            Thread.currentThread().setContextClassLoader(cl);
+            
             Map commandLineOptions = this.fillOptionMap();
             System.out.println("options =" +commandLineOptions);
             CommandLineOptionParser parser = new CommandLineOptionParser(

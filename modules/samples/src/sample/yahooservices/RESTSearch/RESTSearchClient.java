@@ -4,11 +4,15 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis2.Constants;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
+import org.apache.axis2.clientapi.RESTCall;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
+
+import java.net.URL;
 
 
 /**
@@ -19,22 +23,19 @@ import org.apache.axis2.om.impl.OMOutputImpl;
  * To change this template use File | Settings | File Templates.
  */
 public class RESTSearchClient {
-    private static String eprGet =
-            "http://api.search.yahooservices.com/WebSearchService/V1/webSearch?appid=ApacheRestDemo&query=finances&format=pdf";
-
-
-
     public static void main(String[] args) {
         try{
-            Call call = new Call();
-            call.setTo(new EndpointReference(eprGet));
+
+            String epr = "http://api.search.yahoo.com/WebSearchService/V1/webSearch?appid=ApacheRestDemo&query=finances&format=pdf";
+
+            RESTCall call = new RESTCall();
+            call.setTo(new EndpointReference(epr));
             call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP, false);
             call.setDoREST(true);
             call.setRestThroughPOST(false);
 
             //if post is through GET of HTTP
-            OMElement response = call.invokeBlocking("",OMAbstractFactory.getOMFactory().createOMElement("","",""));
-
+            OMElement response = call.invokeBlocking();
             XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
             response.serializeWithCache(new OMOutputImpl(writer));
             writer.flush();
@@ -47,3 +48,4 @@ public class RESTSearchClient {
 
 
 }
+
