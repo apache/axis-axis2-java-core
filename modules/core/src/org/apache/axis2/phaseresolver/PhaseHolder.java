@@ -15,9 +15,11 @@
 */
 package org.apache.axis2.phaseresolver;
 
+import org.apache.axis2.deployment.DeploymentErrorMsgs;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
+import org.apache.axis2.i18n.Messages;
 
 import java.util.ArrayList;
 
@@ -64,12 +66,8 @@ public class PhaseHolder {
         if (isPhaseExist(phaseName)) {
             getPhase(phaseName).addHandler(handler);
         } else {
-            throw new PhaseException(
-                    "Invalid Phase ," + phaseName
-                    + "  for the handler "
-                    + handler.getName()
-                    +
-                    " dose not exit in axis2.xml or refering to phase in diffrent flow");
+            throw new PhaseException(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_PHASE,
+                    phaseName, handler.getName().getLocalPart()));
         }
     }
 
@@ -102,8 +100,7 @@ public class PhaseHolder {
             Class handlerClass = null;
             Handler handler;
             for (int i = 0; i < handlers.size(); i++) {
-                HandlerDescription description = (HandlerDescription) handlers.get(
-                        i);
+                HandlerDescription description = (HandlerDescription) handlers.get(i);
                 handlerClass =
                         Class.forName(description.getClassName(),
                                 true,

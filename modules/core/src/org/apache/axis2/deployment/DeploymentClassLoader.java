@@ -1,10 +1,8 @@
 package org.apache.axis2.deployment;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import org.apache.axis2.i18n.Messages;
+
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -126,7 +124,8 @@ public class DeploymentClassLoader extends URLClassLoader {
                 return cla;
             }
             if (!foundClass) {
-                throw new ClassNotFoundException("Class Not found : " + name);
+//                throw new ClassNotFoundException("Class Not found : " + name);
+                throw new ClassNotFoundException(Messages.getMessage(DeploymentErrorMsgs.CLASS_NOT_FOUND, name));
             }
 
         } catch (Exception e) {
@@ -181,7 +180,7 @@ public class DeploymentClassLoader extends URLClassLoader {
             }
 
         }
-        throw new ClassNotFoundException("Class Not found : " + filename);
+        throw new ClassNotFoundException(Messages.getMessage(DeploymentErrorMsgs.CLASS_NOT_FOUND, filename));
     }
 }
 
