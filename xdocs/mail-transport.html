@@ -1,109 +1,279 @@
-<!-- saved from url=(0022)http://internet.e-mail -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>Mail transport</title>
-
+  <title>Invoking a service using
+a mail</title>
 </head>
-
-<body><h1>Mail transport</h1>
-<p>The inner workings of the mail transport has two parts the transport Sender and the transport Listener. Here the transport Listener is a basic email client which will be on a loop checking for new messages for a particular email address. When an email comes in it will be tunneled into the Axis engine.</p>
-<p>When you think in terms of usage the mail transport in Axis2 can be used in two ways. It can be used against a generic mail server or it can be used like a mailet. The simple mailet provided will direct any message that is coming to a particular address into the Axis engine. The engine will process the message and will use the Transport sender to send the reply.</p>
-<p></p>
-<p>To get started on the mail transport you need the following additional jar dependencies on the classpath.</p>
-  <ol>
-  <li>mail.jar&nbsp;(This contains com.sun.mail.* and javax.mail.*)</li>
-  <li>activation.jar</li>
-  </ol>
-<p>These can be downloaded from <a href="http://java.sun.com/products/javamail/">JavaMail API</a> and <a href="http://java.sun.com/products/javabeans/jaf/">JavaBeans Activation Framework</a>.</p>
-
-<h2>Transport Sender</h2>
-<p>You need a mail account in a SMTP server, and Mail transport sender can be activated by adding following entry to the axis2.xml file.</p>
-  <source>
-  <pre>
-   &lt;transportSender name="mail" class="org.apache.axis2.transport.mail.MailTransportSender"&gt;
-        &lt;parameter name="transport.mail.smtp.host" locked="xsd:false"&gt;smtp server host&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.smtp.user" locked="xsd:false"&gt;user name&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.smtp.password" locked="xsd:false"&gt;password&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.smtp.port" locked="xsd:false"&gt;Port on the server for pop&lt;/parameter&gt;
-   &lt;/transportSender&gt;
-  </pre>
-  </source>
-
-  <h2>Transport Receiver</h2>
-
-  <p>You need a mail address that has pop access, the mail Listener can be activated by adding following entry to the axis2.xml file.</p>
-
-  <source><pre>
-   &lt;transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener">
-        &lt;parameter name="transport.mail.pop3.host" locked="xsd:false"&gt;pop server host&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.user" locked="xsd:false"&gt;user name&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.password" locked="xsd:false"&gt;password&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.port" locked="xsd:false"&gt;Port on the server for smtp&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.replyToAddress" locked="xsd:false"&gt;email address&lt;/parameter&gt;
-  &lt;/transportReceiver&gt;
-  </pre></source>
-
-  <p>At the Client side if the Mail Listener is needed it is automatically started by Axis2.</p>
-
-  <h2>Using Mail transport in the Server Side</h2>
-  <p> If the Mail Listener is need to be started as the server it can be done with following command with the all the axis2 jars and the mail dependency jars in the classpath.</p>
-  <source><pre>java org.apache.axis2.transport.mail.SimpleMailListener repository-directory</pre></source>
-
-  <h2>Using Mail transport in the Client Side</h2>
-  <p>Following code segment shows how to send a oneway SOAP message using the mail transport, this need the Transport Sender configured.</p>
-<source>
-<pre>
-OMElement payload = ....
-
-MessageSender sender = new MessageSender(serviceContext);
-sender.setTo(targetEPR);
-sender.setSenderTransport(Constants.TRANSPORT_MAIL);
-
-sender.send(operationName.getLocalPart(), payload);
-</pre>
-</source>
-  
-  <h2>Configure James as SMTP and POP server</h2>
-  <p>Download the <a href="http://james.apache.org/">Apache James</a> and start James, connect to the James via telnet for administrator James with following code
+<body>
+<h1>Invoking
+a service using a mail</h1>
+<h2>Prologue</h2>
+<p>Most of the web services that we
+interact with are synchronous and request-response in nature. However,
+we see that the synchronous request-response type of interaction is
+only a part of the messaging scenarios we encounter in real life.
+Asynchronous messaging is very important in constructing loosely
+coupled systems. Take for an instance a chain of stores, at the end of
+the day all the stores all over can send a mail to the central system
+telling it what that days business activity was and in the morning when
+the store opens there will be a reply to that mail with new
+instructions and updates. It is a lot like the way the old business
+worked but with a modern touch. Similarly Axis2 mail transport can be
+used to implement SETI@HOME through mail.</p>
+<h2>Introduction</h2>
+<p>To get things started you will
+first need to go through the Mail Transport <a
+ href="mail-configuration.html">configuration document</a>. It will give you all
+the information you need about how to configure Axis2 to get the mail
+transport working.</p>
+<p>Broadly speaking there are 3
+ways of calling a service through mail.
 </p>
+<blockquote>1. Using the simple
+mail server included in Axis2.<br>
+2. Using a generic mail server.<br>
+3. Using mailets.<br>
+</blockquote>
+<p></p>
+<p>Option number 1 and 2 are
+fairly simple and easy to implement, whereas option 3 is somewhat
+harder [unless of cause you are one of those guys who see mails going
+around in your dreams.]. However the mailet scenario provides a more robust and useful
+solution in a production environment.</p>
+<p>If you are not a guru in mail
+related issues you should probably get stated on the simple mail server
+that has been provided with Axis2. Once you get the hang of the Axis2
+related issues then you can move onto tackle the mail beast. Please do
+keep in mind that the mail server we have implemented is ONLY FOR
+DEMONSTRATION/TESTING PURPOSES.</p>
+<h3>1. Using the simple mail
+server included in Axis2</h3>
+<p>Before we start I want to
+reiterate the fact that the mail server included with Axis2 is ONLY FOR
+DEMONSTRATION/TESTING PURPOSES.</p>
+<p>The SMTP/POP server that we
+have included has the ability to function as a standalone SMTP/POP
+server and also has the ability to work as a mailet. All this is done
+through a small filter that keeps watch for certain pre-configured
+email addresses. These pre-configured email addresses can be changed by
+doing a simple edit of the filter class
+org.apache.axis2.transport.mail.server.Sorter.</p>
+<p>Now that we have the
+environment set up, let us start pumping out some code to get the mail
+functionality off the ground. First we'll have a look at it from the
+mail server side. <br>
+</p>
+<pre><code>
+        // Start the mail server using the default configurations.
+        ConfigurationContext configContext = UtilsMailServer.start();
 
-<source>
+        // Start the default mail listener. It will starting poling for mail
+        // using the configuration from the XML file.
+        SimpleMailListener ml = new SimpleMailListener();
+        ml.init(configContext, configContext.getAxisConfiguration()
+                .getTransportIn(new QName(Constants.TRANSPORT_MAIL)));
+        ml.start();
+
+        // Setup a service that will echo what we send to the server.
+        ServiceDescription service = Utils.createSimpleService(serviceName,
+                Echo.class.getName(), new QName("echoOMElement"));
+        configContext.getAxisConfiguration().addService(service);
+        Utils.resolvePhases(configContext.getAxisConfiguration(), service);
+        ServiceContext serviceContext = configContext
+                .createServiceContext(new QName("EchoXMLService"));
+</code></pre>
+<p>This code sets up your Axis2
+server working through mail, with a single service. If you need to
+have a look under the hood have a look at the MailServer and
+UtilsMailServer classes.</p>
+<p>Moving onto the client side
+have a look at the code listing below. It will call the service that
+was setup on the previous code listing.</p>
+<pre><code>
+        ConfigurationContext configContext = UtilsMailServer
+                .createClientConfigurationContext();
+        ServiceDescription service = new ServiceDescription(serviceName);
+        OperationDescription operation = new OperationDescription(operationName);
+        operation.setMessageReciever(new MessageReceiver() {
+                public void recieve(MessageContext messgeCtx) throws AxisFault {
+                        envelope = messgeCtx.getEnvelope();
+                }
+        });
+        service.addOperation(operation);
+        configContext.getAxisConfiguration().addService(service);
+        Utils.resolvePhases(configContext.getAxisConfiguration(), service);
+        ServiceContext serviceContext = configContext
+                .createServiceContext(serviceName);
+        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+                serviceContext);
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_MAIL,
+                Constants.TRANSPORT_MAIL, true);
+        // Create a callback to set to the service invocation.
+        Callback callback = new Callback() {
+                public void onComplete(AsyncResult result) {
+                        try {
+                                result.getResponseEnvelope().serialize(
+                                        XMLOutputFactory.newInstance()
+                                                .createXMLStreamWriter(System.out));
+                        } catch (XMLStreamException e) {
+                                reportError(e);
+                        } finally {
+                                finish = true;
+                        }
+                }
+                public void reportError(Exception e) {
+                        log.info(e.getMessage());
+                        finish = true;
+                }
+         };
+
+        // Call the service and start poling for the reply from the server.
+        call.invokeNonBlocking(operationName.getLocalPart(), createEnvelope(),
+                callback);
+        int index = 0;
+        while (!finish) {
+                Thread.sleep(1000);
+                index++;
+                if (index &gt; 10) {
+                        throw new AxisFault(
+                                "Server is being shutdown as the Async response is taking too long.");
+                }
+        }
+        call.close();
+</code><br></pre>
+<p>This will call the service that
+was setup on the server and will poll the mail server till the response
+is received. Well that is all there is to it.</p>
+<p></p>
+<h3>2. Using a generic mail server</h3>
+<p>First you need two email
+accounts that works with POP/SMTP. One will act as a server and the
+other will act as the client. For the time being we will use
+server@somewhere.org and client@somewhere.org as the server and the
+client email addresses. Now that we have the email addresses you will
+have to set up the client and the server looking at the Mail Transport <a
+ href="http://ws.apache.org/axis2/mail-transport.html">introduction
+document</a>.</p>
+<p>When calling the generic mail
+server the client side code will remain the same and there will be some
+modification to the server-side code.</p>
+<p>
+</p>
+<pre><code>
+        // Create a configuration context. This will also load the details about the mail
+        // address to listen to from the configuration file.
+        File file = new File(MAIL_TRANSPORT_SERVER_ENABLED_REPO_PATH);
+        ConfigurationContextFactory builder = new ConfigurationContextFactory();
+        ConfigurationContext configContextbuilder
+                .buildConfigurationContext(file.getAbsolutePath());
+
+        // Startup the default mail server and start listening to a 
+        // mail address.
+        SimpleMailListener ml = new SimpleMailListener();
+        ml.init(configContext, configContext.getAxisConfiguration()
+                .getTransportIn(new QName(Constants.TRANSPORT_MAIL)));
+        ml.start();
+
+        // Setup a simple service.
+        ServiceDescription service = Utils.createSimpleService(serviceName,
+                Echo.class.getName(), operationName);
+        configContext.getAxisConfiguration().addService(service);
+        Utils.resolvePhases(configContext.getAxisConfiguration(), service);
+        ServiceContext serviceContext = configContext.createServiceContext(serviceName);
+</code></pre>
+<p>We have to create a separate ConfigurationContext and then use that. We are done simple as that.</p>
+<h3>3. Calling Axis through a
+James mailet</h3>
+<p>This process will be a bit more
+challenging than the other two methods but will provide a really
+elegant way to use the mail transport. Before we get started you will
+have to go though the James documents <a
+ href="http://james.apache.org/custom_matcher_2_1.html">Writing
+a Custom Matcher</a> and <a
+ href="http://james.apache.org/custom_mailet_2_1.html">Writing
+a Custom Mailet</a>.</p>
+<p>Now that we know the James part of it lets dive into to the Axis2 part of the code. Once you have set up the James side of business we just need to use the same functionality that is used in the above code. Have a look at the code listing below for more details</p>
 <pre>
-$telnet 127.0.0.1 4555
-Trying 127.0.0.1...
-Connected to localhost.localdomain (127.0.0.1).
-Escape character is '^]'.
-JAMES Remote Administration Tool 2.2.0
-Please enter your login and password
-Login id:
-root
-Password:
-root
-Welcome root. HELP for a list of commands
-</pre>
-</source>
+<code>
+    public void processMail(ConfigurationContext confContext, MimeMessage mimeMessage) {
+        // create an Axis server
+        AxisEngine engine = new AxisEngine(confContext);
+        MessageContext msgContext = null;
+        // create and initialize a message context
+        try {
+            // Create a message context with mail as in and out transports.
+            msgContext =
+                    new MessageContext(confContext,
+                            confContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL)),
+                            confContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL)));
+            msgContext.setServerSide(true);
 
-<p>Add users to James</p>
-<source>
+            msgContext.setProperty(MailConstants.CONTENT_TYPE, mimeMessage.getContentType());
+            msgContext.setWSAAction(getMailHeader(MailConstants.HEADER_SOAP_ACTION, mimeMessage));
+
+            // The service path is in the subject of the mail.
+            String serviceURL = mimeMessage.getSubject();
+            if (serviceURL == null) {
+                serviceURL = "";
+            }
+
+            String replyTo = ((InternetAddress) mimeMessage.getReplyTo()[0]).getAddress();
+            if (replyTo != null) {
+                msgContext.setReplyTo(new EndpointReference(replyTo));
+            }
+
+            String recipients = ((InternetAddress) mimeMessage.getAllRecipients()[0]).getAddress();
+
+            if (recipients != null) {
+                msgContext.setTo(new EndpointReference(recipients + "/" + serviceURL));
+            }
+
+            // add the SOAPEnvelope
+            String message = mimeMessage.getContent().toString();
+            ByteArrayInputStream bais = new ByteArrayInputStream(message.getBytes());
+            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
+
+            // This is just in place to work with SOAP 1.1 and 1.2.
+            String soapNamespaceURI = "";
+            if (mimeMessage.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
+                soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+            } else if (mimeMessage.getContentType().indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+                soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+
+            }
+            StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
+
+            SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
+            msgContext.setEnvelope(envelope);
+            if (envelope.getBody().hasFault()) {
+                engine.receiveFault(msgContext);
+            } else {
+                engine.receive(msgContext);
+            }
+        } catch (Exception e) {
+            try {
+                if (msgContext != null) {
+                    MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
+                    engine.sendFault(faultContext);
+                }
+            } catch (Exception e1) {
+                log.error(e);
+            }
+        }
+    }
+</code>
+</pre>
+<p>If you don't happen to have a ConfigurationContext lying around to call this method you can use the following bit of code to get one. Once you create one you can store that on the mailet and keep using it.
+</p>
 <pre>
-adduser axis2-server axis2
-User axis2-server added
-adduser axis2-client axis2
-User axis2-client added
-Connection closed by foreign host.
+<code>
+        File file = new File(MAIL_TRANSPORT_SERVER_ENABLED_REPO_PATH);
+        ConfigurationContextFactory builder = new ConfigurationContextFactory();
+        ConfigurationContext configContextbuilder
+                .buildConfigurationContext(file.getAbsolutePath());
+</code>
 </pre>
-</source>
-
-  <p>Now James is up and running with the accounts</p>
-
-  <h2>Using the included mail server</h2>
-
-  <p>The inbuilt mail server has to be started from code by providing a ConfigurationContext for the time being, because the standalone and the mailet functionalities are tightly bound.</p>
-  <p>The server itself does not need any configuration or tinkering to work. A ConfigurationContext and the ports to operate on are the only details needed. The server will store the mails in memory against the recipient till the recipient pops it from the server. To facilitate the use in *nix environments as a non root user the pop and smtp ports used by default config/test cases are (1024 + 25) and (1024 + 110).</p>
-
-  <hr/>
-
-  <p>&nbsp;</p>
-
+<p>Well that seems to be all form the wonderful world of mail for now. :)</p>
 </body>
 </html>
