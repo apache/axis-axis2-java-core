@@ -75,8 +75,12 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public CodeGenConfiguration(WSDLDescription wom, Map optionMap) {
         this.wom = wom;
 
-        String outputLocation = ((CommandLineOption) optionMap.get(
-                OUTPUT_LOCATION_OPTION)).getOptionValue();
+        CommandLineOption clo =
+                ((CommandLineOption)optionMap.get(OUTPUT_LOCATION_OPTION));
+        if (clo == null) {
+            //
+        }
+        String outputLocation = clo.getOptionValue();
         this.outputLocation = new File(outputLocation);
 
         serverSide = (optionMap.get(SERVER_SIDE_CODE_OPTION) != null);
@@ -110,8 +114,10 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
             loadLanguge(langOption.getOptionValue());
         }
 
-        CommandLineOption dataBindingOption = (CommandLineOption) optionMap.get(
-                DATA_BINDING_TYPE_OPTION);
+// Unused code commented out by gdaniels...
+//
+//        CommandLineOption dataBindingOption = (CommandLineOption) optionMap.get(
+//                DATA_BINDING_TYPE_OPTION);
 
     }
 

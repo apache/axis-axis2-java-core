@@ -3,7 +3,6 @@ package org.apache.axis2.wsdl.codegen.emitter;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.Constants;
-import org.apache.axis2.wsdl.codegen.extension.AxisBindingBuilder;
 import org.apache.axis2.wsdl.codegen.writer.BeanWriter;
 import org.apache.axis2.wsdl.codegen.writer.CallbackHandlerWriter;
 import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
@@ -214,8 +213,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected void writeLocalTestClasses(WSDLBinding binding) throws Exception {
 
         if (configuration.isWriteTestCase()) {
-            Document classModel = createDOMDocuementForLocalTestCase(
-                    binding);
+            Document classModel = createDOMDocumentForLocalTestCase(binding);
             LocalTestClassWriter callbackWriter =
                     new LocalTestClassWriter(
                             this.configuration.getOutputLocation(),
@@ -230,7 +228,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected void writeTestClasses(WSDLBinding binding) throws Exception {
 
         if (configuration.isWriteTestCase()) {
-            Document classModel = createDOMDocuementForTestCase(binding);
+            Document classModel = createDOMDocumentForTestCase(binding);
             TestClassWriter callbackWriter =
                     new TestClassWriter(this.configuration.getOutputLocation(),
                             this.configuration.getOutputLanguage());
@@ -246,7 +244,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @throws Exception
      */
     protected void writeInterface(WSDLBinding axisBinding) throws Exception {
-        Document interfaceModel = createDOMDocuementForInterface(
+        Document interfaceModel = createDOMDocumentForInterface(
                 axisBinding);
         InterfaceWriter interfaceWriter =
                 new InterfaceWriter(this.configuration.getOutputLocation(),
@@ -263,7 +261,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected void writeSkeleton(WSDLBinding axisBinding) throws Exception {
 
         //Note -  One can generate the skeleton using the interface XML
-        Document skeletonModel = createDOMDocuementForSkeleton(axisBinding);
+        Document skeletonModel = createDOMDocumentForSkeleton(axisBinding);
         ClassWriter skeletonWriter = new SkeletonWriter(
                 this.configuration.getOutputLocation(),
                 this.configuration.getOutputLanguage());
@@ -298,7 +296,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected void writeTestServiceXML(WSDLBinding axisBinding) throws Exception {
         if (this.configuration.isWriteTestCase()) {
             //Note -  One can generate the service xml using the interface XML
-            Document skeletonModel = createDOMDocuementForServiceXML(
+            Document skeletonModel = createDOMDocumentForServiceXML(
                     axisBinding, true);
             TestServiceXMLWriter testServiceXmlWriter = new TestServiceXMLWriter(
                     this.configuration.getOutputLocation(),
@@ -315,7 +313,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      */
     protected void writeServiceXml(WSDLBinding axisBinding) throws Exception {
         if (this.configuration.isGenerateDeployementDescriptor()) {
-            Document skeletonModel = createDOMDocuementForServiceXML(
+            Document skeletonModel = createDOMDocumentForServiceXML(
                     axisBinding, false);
             ClassWriter serviceXmlWriter = new ServiceXMLWriter(
                     this.configuration.getOutputLocation(),
@@ -333,7 +331,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      */
     protected void writeInterfaceImplementation(WSDLBinding axisBinding,
                                                 WSDLService service) throws Exception {
-        Document interfaceImplModel = createDOMDocuementForInterfaceImplementation(
+        Document interfaceImplModel = createDOMDocumentForInterfaceImplementation(
                 axisBinding, service);
         InterfaceImplementationWriter writer =
                 new InterfaceImplementationWriter(
@@ -365,7 +363,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         if (collection != null) {
             for (Iterator iterator = collection.iterator();
                  iterator.hasNext();) {
-                Document interfaceModel = createDOMDocuementForBean();
+                Document interfaceModel = createDOMDocumentForBean();
                 BeanWriter beanWriter =
                         new BeanWriter(this.configuration.getOutputLocation(),
                                 this.configuration.getOutputLanguage());
@@ -597,11 +595,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      *
      * @return
      */
-    protected Document createDOMDocuementForBean() {
+    protected Document createDOMDocumentForBean() {
         return null;
     }
 
-    protected Document createDOMDocuementForServiceXML(WSDLBinding binding,
+    protected Document createDOMDocumentForServiceXML(WSDLBinding binding,
                                                        boolean forTesting) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
@@ -686,7 +684,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @param binding
      * @return
      */
-    protected Document createDOMDocuementForInterface(WSDLBinding binding) {
+    protected Document createDOMDocumentForInterface(WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
         Document doc = getEmptyDocument();
@@ -711,7 +709,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     }
 
-    protected Document createDOMDocuementForSkeleton(WSDLBinding binding) {
+    protected Document createDOMDocumentForSkeleton(WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
         Document doc = getEmptyDocument();;
@@ -814,7 +812,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         }
     }
 
-    protected Document createDOMDocuementForTestCase(WSDLBinding binding) {
+    protected Document createDOMDocumentForTestCase(WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
         Document doc = getEmptyDocument();
@@ -847,7 +845,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     }
 
-    protected Document createDOMDocuementForLocalTestCase(
+    protected Document createDOMDocumentForLocalTestCase(
             WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
@@ -923,11 +921,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * @param service
      * @return
      */
-    protected Document createDOMDocuementForInterfaceImplementation(
+    protected Document createDOMDocumentForInterfaceImplementation(
             WSDLBinding binding, WSDLService service) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
-        WSDLEndpoint endpoint = null;
         HashMap endpoints = service.getEndpoints();
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("class");

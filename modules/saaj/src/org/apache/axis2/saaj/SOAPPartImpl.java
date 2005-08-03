@@ -275,7 +275,7 @@ public class SOAPPartImpl extends SOAPPart {
     }
 
     /**
-     * SOAPEnvelope is the Document Elements of this XML docuement
+     * SOAPEnvelope is the Document Elements of this XML document
      */
     protected Document mDocument;
 

@@ -11,26 +11,26 @@
     /*
      *  Auto generated java interface by the Axis code generator
      */
-
     public interface <xsl:value-of select="@name"></xsl:value-of> {
      <xsl:for-each select="method">
          <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
-
-         <xsl:variable name="inputtype"><xsl:value-of select="input/param/@type"></xsl:value-of></xsl:variable>  <!-- this needs to change-->
-         <xsl:variable name="inputparam"><xsl:value-of select="input/param/@name"></xsl:value-of></xsl:variable>  <!-- this needs to change-->
          <xsl:if test="$isSync='1'">
         /**
-         * Auto generated method signature 
-         *<xsl:if test="$inputtype!=''">@param <xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>
+         * Auto generated method signature
+         <xsl:for-each select="input/param">
+         * @param <xsl:value-of select="@name"/>
+         </xsl:for-each>
          */
-        public  <xsl:if test="$outputtype=''">void</xsl:if><xsl:if test="$outputtype!=''"><xsl:value-of select="$outputtype"/></xsl:if><xsl:text> </xsl:text><xsl:value-of select="@name"/>(<xsl:if test="$inputtype!=''"><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>) throws java.rmi.RemoteException;
+        public <xsl:if test="$outputtype=''">void</xsl:if><xsl:if test="$outputtype!=''"><xsl:value-of select="$outputtype"/></xsl:if><xsl:text> </xsl:text><xsl:value-of select="@name"/>(<xsl:for-each select="input/param"><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"></xsl:value-of><xsl:if test="not(position()=last())">, </xsl:if></xsl:for-each>) throws java.rmi.RemoteException;
         </xsl:if>
         <xsl:if test="$isAsync='1'">
          /**
          * Auto generated method signature
-         *<xsl:if test="$inputtype!=''">@param <xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>
+         <xsl:for-each select="input/param">
+         * @param <xsl:value-of select="@name"/>
+         </xsl:for-each>
          */
-        public  void start<xsl:value-of select="@name"/>(<xsl:if test="$inputtype!=''"><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="$inputparam"></xsl:value-of>,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException;
+        public void start<xsl:value-of select="@name"/>(<xsl:for-each select="input/param"><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"></xsl:value-of>, </xsl:for-each>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException;
         </xsl:if>
      </xsl:for-each>
     }

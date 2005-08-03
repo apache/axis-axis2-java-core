@@ -104,7 +104,6 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
         commandLineOption = new CommandLineOption(optionType, optionBundle);
         commandLineOptions.put(commandLineOption.getType(), commandLineOption);
         return commandLineOptions;
-
     }
 
     public Map getAllOptions() {

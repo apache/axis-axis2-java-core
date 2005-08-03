@@ -76,15 +76,12 @@ public class CodeGenerationEngine {
         packageFinder.init(this.configuration);
         this.moduleEndpoints.add(packageFinder);
 
-
         XMLBeansExtension xmlBeanExtension = new XMLBeansExtension();
         xmlBeanExtension.init(this.configuration);
         this.moduleEndpoints.add(xmlBeanExtension);
     }
 
-
     public void generate() throws CodeGenerationException {
-
         try {
             for (int i = 0; i < this.moduleEndpoints.size(); i++) {
                 ((CodeGenExtension) this.moduleEndpoints.get(i)).engage();
