@@ -393,10 +393,8 @@ public class CommonsHTTPTransportSender
                 postMethod.setRequestHeader(
                     HTTPConstants.HEADER_CONNECTION,
                     HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
-                postMethod.setHttp11(false);
             } else {
                 // allowing keep-alive for 1.1
-                postMethod.setHttp11(true);
                 postMethod.setRequestHeader(
                     HTTPConstants.HEADER_CONNECTION,
                     HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
