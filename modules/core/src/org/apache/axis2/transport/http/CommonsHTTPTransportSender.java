@@ -321,7 +321,7 @@ public class CommonsHTTPTransportSender
                 }
             } else if (
                 HTTPConstants.HEADER_PROTOCOL_10.equals(version.getValue())) {
-                //TODO HTTP1.0 specific parameters
+                this.httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
             } else {
                 throw new AxisFault(
                     "Parameter "
@@ -346,6 +346,7 @@ public class CommonsHTTPTransportSender
 
         PostMethod postMethod = new PostMethod();
         postMethod.setPath(url.getFile());
+        
         msgContext.setProperty(HTTP_METHOD, postMethod);
 
         String charEncoding =
@@ -382,8 +383,10 @@ public class CommonsHTTPTransportSender
                 postMethod.setRequestHeader(
                     HTTPConstants.HEADER_CONNECTION,
                     HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
+                postMethod.setHttp11(false);
             } else {
                 // allowing keep-alive for 1.1
+                postMethod.setHttp11(true);
                 postMethod.setRequestHeader(
                     HTTPConstants.HEADER_CONNECTION,
                     HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
