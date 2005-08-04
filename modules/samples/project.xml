@@ -20,7 +20,7 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
-    <id>axis2-Samples</id>
+    <id>axis2-samples</id>
     <name>samples</name>
     <description>Set of samples available for Axis 2.0.</description>
 
