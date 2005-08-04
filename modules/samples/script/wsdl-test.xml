@@ -1,22 +1,11 @@
 <?xml version="1.0"?>
-<!-- ====================================================================== 
-     Feb 11, 2005 1:04:21 PM                                                        
 
-      This build file is intended to compile and run the Axis2 samples
-      provided here with the service being deployed at Tomcat or by
-      running a simple Axis2 server.   
-     
-                   
-                                                                     
-     ====================================================================== -->
-<project name="samples" basedir=".." default="doInterop-test">
+<project name="samples" basedir=".." default="testCodeGen">
      <property name="maven.repo.local" value="${user.home}/.maven/repository/" />
-     <property name="class.dir" value="${basedir}/target/test-classes" />
+     
+     <property name="codeGen.dir" value="${basedir}/target/code-gen" />
      <property name="report.dir" value="${basedir}/target/test-reports" />
      <property name="src.dir" value="${basedir}/test" />
-     <property name="interop3.dir" value="target/interop3"/>
-     <property name="work.dir" value="${interop3.dir}/work"/>
-     <property name="calss.dir" value="${interop3.dir}/classes"/>
      <property name="wsdl.dir" value="${basedir}/../wsdl/test-resources/"/>
            
 
@@ -44,6 +33,50 @@
      <taskdef name="wsdl2java"
         classname="org.apache.axis2.tool.ant.AntCodegenTask"
             classpathref="test.classpath"/>
+
+	<target name="testCodeGen">
+        <mkdir dir="${codeGen.dir}/1"/>  
+       	<mkdir dir="${codeGen.dir}/1/src"/>  
+       	<mkdir dir="${codeGen.dir}/1/classes"/>  
+       	
+        <wsdl2java WSDLFileName="${wsdl.dir}/compound2.wsdl" 
+        	output="${codeGen.dir}/1/src"> 
+        	<classpath refid="test.classpath" />
+        </wsdl2java>	
+        <move todir="${codeGen.dir}/1/classes/schema">
+    		<fileset dir="${codeGen.dir}/1/src/schema"/>
+       </move>
+        <javac srcdir="${codeGen.dir}/1/src" destdir="${codeGen.dir}/1/classes" debug="on">
+           <classpath refid="test.classpath" />
+        </javac>
+
+        <mkdir dir="${codeGen.dir}/2"/>  
+       	<mkdir dir="${codeGen.dir}/2/src"/>  
+       	<mkdir dir="${codeGen.dir}/2/classes"/>  
+       	
+        <wsdl2java WSDLFileName="${wsdl.dir}/complex-doc-literal.wsdl" output="${codeGen.dir}/2/src"/> 
+        <move todir="${codeGen.dir}/2/classes/schema">
+    		<fileset dir="${codeGen.dir}/2/src/schema"/>
+        </move>
+        <javac srcdir="${codeGen.dir}/2/src" destdir="${codeGen.dir}/2/classes" debug="on">
+           <classpath refid="test.classpath" />
+        </javac>
+        
+        <mkdir dir="${codeGen.dir}/3"/>  
+       	<mkdir dir="${codeGen.dir}/3/src"/>  
+       	<mkdir dir="${codeGen.dir}/3/classes"/>  
+       	
+        <wsdl2java WSDLFileName="${wsdl.dir}/simple-doc-literal.wsdl" output="${codeGen.dir}/3/src"/> 
+        <move todir="${codeGen.dir}/3/classes/schema">
+    		<fileset dir="${codeGen.dir}/3/src/schema"/>
+       </move>
+        <javac srcdir="${codeGen.dir}/3/src" destdir="${codeGen.dir}/3/classes" debug="on">
+           <classpath refid="test.classpath" />
+        </javac>
+	</target>
+            
+            
+	            
 	
 	<target name="doInterop-test">
               <mkdir dir="${interop3.dir}"/>  

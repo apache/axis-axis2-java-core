@@ -8,59 +8,9 @@
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
     <j:set var="samples.dir" value="target/samples"/>
-    <postGoal name="test:compile">
-        <mkdir dir="target/test-resources/samples/modules"/>
-        <mkdir dir="target/test-resources/repository-client/modules"/>
-        <copy file="../addressing/target/addressing.mar"
-            tofile="target/test-resources/samples/modules/addressing.mar"/>
-        <copy file="../addressing/target/addressing.mar"
-            tofile="target/test-resources/repository-client/modules/addressing.mar"/>
-        <mkdir dir="target/toWar/services/"/>
-
-        <!-- Create Chuncked enabled Repository -->
-        <mkdir dir="target/test-resources/chuncked-enabledRepository"/>
-        <copy file="test/org/apache/axis2/engine/chuncking-enabled-axis2.xml"
-            tofile="target/test-resources/chuncked-enabledRepository/axis2.xml"/>
-
-        <!-- Create Mail Client transport enabled Repository -->
-        <mkdir dir="target/test-resources/mail-transport-client-enabledRepository"/>
-        <mkdir dir="target/test-resources/mail-transport-client-enabledRepository/modules"/>
-        <copy file="test/org/apache/axis2/mail/mail-enabled-client-axis2.xml"
-            tofile="target/test-resources/mail-transport-client-enabledRepository/axis2.xml"/>
-        <copy file="../addressing/target/addressing.mar"
-            tofile="target/test-resources/mail-transport-client-enabledRepository/modules/addressing.mar"/>
-
-        <!-- Create Mail Server transport enabled Repository -->
-        <mkdir dir="target/test-resources/mail-transport-server-enabledRepository"/>
-        <mkdir dir="target/test-resources/mail-transport-server-enabledRepository/modules"/>
-        <copy file="test/org/apache/axis2/mail/mail-enabled-server-axis2.xml"
-            tofile="target/test-resources/mail-transport-server-enabledRepository/axis2.xml"/>
-        <copy file="../addressing/target/addressing.mar"
-            tofile="target/test-resources/mail-transport-server-enabledRepository/modules/addressing.mar"/>
-
-
-        <!-- Commons transport enabled enabled Repository -->
-        <mkdir dir="target/test-resources/commons-http-enabledRepository"/>
-        <copy file="test/org/apache/axis2/engine/commons-http-enabled-axis2.xml"
-            tofile="target/test-resources/commons-http-enabledRepository/axis2.xml"/>
-
-        <!-- MTOM enabled Repository -->
-        <mkdir dir="target/test-resources/MTOM-enabledRepository"/>
-        <copy file="test/org/apache/axis2/mtom/MTOM-enabled-axis2.xml"
-            tofile="target/test-resources/MTOM-enabledRepository/axis2.xml"/>
-        <attainGoal name="groovy"/>
-        <j:jelly xmlns="jelly:ant">
-            <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestModuleB"/>
-            <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestModuleC"/>
-            <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestServiceB"/>
-            <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestServiceC"/>
-        </j:jelly>
-    </postGoal>
 
     <postGoal name="test:test">
         <attainGoal name="create-samples"/>
-        <attainGoal name="mail-tests"/>
-        <!-- <attainGoal name="doInterop-test"/>   -->
     </postGoal>
     
     <goal name="mail-tests">
@@ -85,7 +35,7 @@
         <attainGoal name="googleSpellcheck"/>
         <attainGoal name="version"/>
         <attainGoal name="mtomSample"/>
-<!--        <attainGoal name="groovy"/>-->
+        <attainGoal name="groovy"/>
     </goal>
 
     <!-- ================================================================ -->
@@ -186,31 +136,6 @@
 
 
     <!-- ================================================================ -->
-    <!--- Groovy Service Sample -->
-    <!-- ================================================================ -->
-
-    <goal name="groovy">
-        <mkdir dir="target/samples"/>
-        <ant:copy file="./src/sample/groovy/GroovyRcv.groovy" tofile="target/classes/sample/groovy/GroovyRcv.groovy"/>
-        <mkdir dir="target/classes/sample/groovy/lib"/>
-        <mkdir dir="target/classes/sample/groovy/sample"/>
-        <mkdir dir="target/classes/sample/groovy/sample/groovy"/>
-        <ant:copy file="target/classes/sample/groovy/GroovyReceiver.class" tofile="target/classes/sample/groovy/sample/groovy/GroovyReceiver.class"/>
-        <ant:delete file="target/classes/sample/groovy/GroovyReceiver.class"/>
-        <ant:copy file="${maven.repo.local}/groovy/jars/groovy-all-1.0-jsr-01.jar" tofile="target/classes/sample/groovy/lib/groovy-all-1.0-jsr-01.jar"/>
-        <jar destfile="${samples.dir}/groovyService.aar">
-            <fileset dir="target/classes/sample/groovy">
-            </fileset>
-        </jar>
-        <mkdir dir="target/groovyRepo"/>
-        <mkdir dir="target/groovyRepo/services"/>
-        <ant:copy file="${samples.dir}/groovyService.aar" tofile="target/groovyRepo/services/groovyService.aar"/>
-    </goal>
-
-
-
-
-    <!-- ================================================================ -->
     <!--- Google Search Sample -->
     <!-- ================================================================ -->
 
@@ -293,83 +218,23 @@
             </fileset>
         </jar>
     </goal>
-
+    
     <!-- ================================================================ -->
-    <!--- Google Mail Sample -->
-    <!-- ================================================================ -->
-
-    <goal name="test-mail">
-        <echo message="running Mail tests"/>
-        <echo message="${maven.repo.local}"/>
-        <junit printsummary="yes" haltonfailure="yes">
-            <classpath>
-                <fileset dir="${maven.repo.local}">
-                    <include name="j2ee/jars/***.jar"/>
-                    <include name="axis/jars/axis2-core-0.9.jar"/>
-                    <include name="axis/jars/axis2-xml-0.9.jar"/>
-                    <include name="axis/jars/axis2-wsdl-0.9.jar"/>
-                    <include name="axis/jars/axis-wsdl4j-1.2.jar"/>
-                    <include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
-                    <include name="stax/jars/stax-1.1.1-dev.jar"/>
-                    <include name="stax/jars/stax-api-1.0.jar"/>
-                </fileset>
-                <pathelement location="target/test-classes"/>
-                <path refid="maven.dependency.classpath"/>
-            </classpath>
-            <formatter type="plain"/>
-            <test name="org.apache.axis2.mail.MailetRequestResponceRawXMLTest"/>
-            <test name="org.apache.axis2.mail.MailOneWayRawXMLTest"/>
-            <test name="org.apache.axis2.mail.MailRequestResponseRawXMLTest"/>
-        </junit>
-    </goal>
-
-    <!-- ================================================================ -->
-    <!--- Run the Interop Tests -->
+    <!--- Groovy Service Sample -->
     <!-- ================================================================ -->
 
-    <goal name="doInterop-test">
-        <taskdef name="wsdl2java"
-            classname="org.apache.axis2.tool.ant.AntCodegenTask"
-            classpathref="maven.dependency.classpath"/>
-        <j:set var="interop3.dir" value="target/interop3"/>
-        <j:set var="work.dir" value="${interop3.dir}/work"/>
-        <j:set var="calss.dir" value="${interop3.dir}/classes"/>
-        <j:set var="wsdl.dir" value="${basedir}/../wsdl/test-resources/"/>
-
-        <mkdir dir="${interop3.dir}"/>
-        <mkdir dir="${work.dir}"/>
-        <mkdir dir="${calss.dir}"/>
-
-        <wsdl2java WSDLFileName="${wsdl.dir}compound2.wsdl" output="${work.dir}"/>
-        <!--
-        <java classname="org.apache.axis2.wsdl.WSDL2Java">
-<classpath refid="maven.dependency.classpath"/>
-<arg value="-uri"/>
-<arg file="${wsdl.dir}/compound2.wsdl"/>
-<arg value="-o"/>
-<arg file="${work.dir}"/>
-</java>
-        -->
-        <copy file="${wsdl.dir}/InteropClient2.java" todir="${work.dir}" overwrite="true"/>
-        <copy file="${wsdl.dir}/echoEmployeeDatabindingSupporter.java" todir="${work.dir}/org/soapinterop/databinding" overwrite="true"/>
-
-        <move todir="${classes.dir}/schema">
-            <fileset dir="${work.dir}/schema"/>
-        </move>
-
-        <javac srcdir="${work.dir}" destdir="${classes.dir}" debug="on">
-            <classpath refid="maven.dependency.classpath"/>
-        </javac>
-
-        <!-- Run the interop test -->
-        <java classname="Client">
-            <classpath refid="maven.dependency.classpath"/>
-        </java>
-
-        <junit dir="${classes.dir}" printsummary="yes" haltonfailure="yes">
-            <classpath refid="maven.dependency.classpath"/>
-            <formatter type="plain"/>
-            <test name="InteropClient2"/>
-        </junit>
+    <goal name="groovy">
+        <mkdir dir="target/samples"/>
+        <ant:copy file="./src/sample/groovy/GroovyRcv.groovy" tofile="target/classes/sample/groovy/GroovyRcv.groovy"/>
+        <mkdir dir="target/classes/sample/groovy/lib"/>
+        <mkdir dir="target/classes/sample/groovy/sample"/>
+        <mkdir dir="target/classes/sample/groovy/sample/groovy"/>
+        <ant:copy file="target/classes/sample/groovy/GroovyReceiver.class" tofile="target/classes/sample/groovy/sample/groovy/GroovyReceiver.class"/>
+        <ant:delete file="target/classes/sample/groovy/GroovyReceiver.class"/>
+        <ant:copy file="${maven.repo.local}/groovy/jars/groovy-all-1.0-jsr-01.jar" tofile="target/classes/sample/groovy/lib/groovy-all-1.0-jsr-01.jar"/>
+        <jar destfile="${samples.dir}/groovyService.aar">
+            <fileset dir="target/classes/sample/groovy">
+            </fileset>
+        </jar>
     </goal>
 </project>

@@ -1,8 +1,0 @@
-<?xml version='1.0' ?>
-<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
-  <env:Body>
-    <test:echoHeaderResponse xmlns:test="http://example.org/ts-tests">
-      foo
-    </test:echoHeaderResponse>
-  </env:Body>
-</env:Envelope>

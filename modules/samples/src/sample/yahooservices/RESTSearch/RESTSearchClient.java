@@ -4,15 +4,10 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.clientapi.RESTCall;
-import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
-
-import java.net.URL;
 
 
 /**
