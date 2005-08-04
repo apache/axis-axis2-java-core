@@ -15,7 +15,12 @@
  */
 package org.apache.axis2.transport.http;
 
-import org.apache.axis2.addressing.AddressingConstants;
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.ListenerManager;
 import org.apache.axis2.context.ConfigurationContext;
@@ -23,14 +28,8 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 /**
  * This is a simple implementation of an HTTP server for processing

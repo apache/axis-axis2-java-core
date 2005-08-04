@@ -15,12 +15,10 @@
  */
 package org.apache.axis2.om.impl.llom;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMNamespace;
-
-import javax.xml.namespace.QName;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Class OMAttributeImpl

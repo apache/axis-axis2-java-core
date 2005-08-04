@@ -15,12 +15,11 @@
  */
 package org.apache.axis2.om;
 
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.om.impl.OMOutputImpl;
-
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axis2.soap.SOAPEnvelope;
 
 public class SOAPFaultTest extends AbstractTestCase {
     private SOAPEnvelope soapEnvelope;

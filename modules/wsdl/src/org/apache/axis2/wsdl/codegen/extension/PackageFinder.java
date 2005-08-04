@@ -17,12 +17,8 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis2.wsdl.codegen.CommandLineOption;
-import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.util.URLProcessor;
 import org.apache.wsdl.WSDLBinding;
-
-import java.util.Map;
 
 /**
  * @author chathura@opensource.lk

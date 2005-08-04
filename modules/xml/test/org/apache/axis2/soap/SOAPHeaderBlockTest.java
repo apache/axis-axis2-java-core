@@ -16,9 +16,6 @@
 
 package org.apache.axis2.soap;
 
-import org.apache.axis2.om.OMElement;
-
-import javax.xml.namespace.QName;
 import java.util.Iterator;
 
 public class SOAPHeaderBlockTest extends SOAPHeaderTestCase {

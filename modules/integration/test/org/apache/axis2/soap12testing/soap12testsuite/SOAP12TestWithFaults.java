@@ -17,11 +17,10 @@
 package org.apache.axis2.soap12testing.soap12testsuite;
 
 import junit.framework.TestCase;
-import org.apache.axis2.soap12testing.server.SimpleServer;
-import org.apache.axis2.soap12testing.client.SOAP12TestClient;
-import org.apache.axis2.soap12testing.client.MessageComparator;
 
-import java.io.InputStream;
+import org.apache.axis2.soap12testing.client.MessageComparator;
+import org.apache.axis2.soap12testing.client.SOAP12TestClient;
+import org.apache.axis2.soap12testing.server.SimpleServer;
 
 public class SOAP12TestWithFaults extends TestCase {
     private SimpleServer server;

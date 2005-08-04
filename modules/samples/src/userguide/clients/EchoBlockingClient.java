@@ -1,15 +1,3 @@
-package userguide.clients;
-
-import org.apache.axis2.Constants;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.clientapi.Call;
-import org.apache.axis2.om.OMElement;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import java.io.StringWriter;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -26,6 +14,19 @@ import java.io.StringWriter;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package userguide.clients;
+
+import java.io.StringWriter;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.clientapi.Call;
+import org.apache.axis2.om.OMElement;
+
 
 public class EchoBlockingClient {
     private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService/echo");

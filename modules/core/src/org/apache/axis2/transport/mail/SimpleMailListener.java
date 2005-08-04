@@ -16,9 +16,15 @@
 
 package org.apache.axis2.transport.mail;
 
-import org.apache.axis2.Constants;
+import java.io.File;
+
+import javax.mail.Flags;
+import javax.mail.Message;
+import javax.mail.internet.MimeMessage;
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
@@ -29,12 +35,6 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.internet.MimeMessage;
-import javax.xml.namespace.QName;
-import java.io.File;
 
 /**
  * This is a simple implementation of an SMTP/POP3 server for processing SOAP

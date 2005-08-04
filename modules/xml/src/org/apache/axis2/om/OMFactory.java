@@ -15,10 +15,6 @@
  */
 package org.apache.axis2.om;
 
-import org.apache.axis2.om.impl.llom.OMDocTypeImpl;
-import org.apache.axis2.om.impl.llom.OMProcessingInstructionImpl;
-import org.apache.axis2.om.impl.llom.OMCommentImpl;
-
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 
@@ -26,6 +22,13 @@ import javax.xml.namespace.QName;
  * Class OMFactory
  */
 public interface OMFactory {
+
+	/**
+	 * Create a new OMDocument
+	 * @return
+	 */
+	public OMDocument createOMDocument();
+	
     /**
      * @param localName
      * @param ns

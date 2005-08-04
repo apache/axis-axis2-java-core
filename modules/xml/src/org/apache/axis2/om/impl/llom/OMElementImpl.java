@@ -318,7 +318,7 @@ public class OMElementImpl extends OMNodeImpl
 
         // go up to check with ancestors
         if (parent != null) {
-            //For the OMDocument there won't be any explicit namespace
+            //For the OMDocumentImpl there won't be any explicit namespace
             //declarations, so going up the parent chain till the document
             //element should be enough.
             if (parent instanceof OMElement) {
@@ -618,6 +618,31 @@ public class OMElementImpl extends OMNodeImpl
                 if (textNode.getText() != null &&
                         !"".equals(textNode.getText())) {
                     childText += textNode.getText();
+                }
+            }
+            child = child.getNextSibling();
+        }
+
+        return childText;
+    }
+    
+    /**
+     * Returns the concatanation of TRIMMED values of all 
+     * OMText  child nodes of this element
+     * This is incuded purely to improve usability
+     * @return
+     */
+    public String getTrimmedText() {
+        String childText = "";
+        OMNode child = this.getFirstChild();
+        OMText textNode;
+
+        while (child != null) {
+            if (child.getType() == OMNode.TEXT_NODE) {
+                textNode = (OMText) child;
+                if (textNode.getText() != null &&
+                        !"".equals(textNode.getText().trim())) {
+                    childText += textNode.getText().trim();
                 }
             }
             child = child.getNextSibling();

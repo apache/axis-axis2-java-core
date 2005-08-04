@@ -23,7 +23,7 @@ import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.impl.llom.OMDocument;
+import org.apache.axis2.om.impl.llom.OMDocumentImpl;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
@@ -36,7 +36,7 @@ public class StAXOMBuilder extends StAXBuilder {
     /**
      * Field document
      */
-    protected OMDocument document;
+    protected OMDocumentImpl document;
 
     /**
      * Constructor StAXOMBuilder
@@ -46,7 +46,7 @@ public class StAXOMBuilder extends StAXBuilder {
      */
     public StAXOMBuilder(OMFactory ombuilderFactory, XMLStreamReader parser) {
         super(ombuilderFactory, parser);
-        document = new OMDocument(this);
+        document = new OMDocumentImpl(this);
         //omfactory = OMAbstractFactory.getOMFactory();
     }
 
@@ -57,7 +57,7 @@ public class StAXOMBuilder extends StAXBuilder {
      */
     public StAXOMBuilder(XMLStreamReader parser) {
         super(parser);
-        document = new OMDocument(this);
+        document = new OMDocumentImpl(this);
         omfactory = OMAbstractFactory.getOMFactory();
     }
 
@@ -72,7 +72,7 @@ public class StAXOMBuilder extends StAXBuilder {
         String elementName = parser.getLocalName();
         if (lastNode == null) {
             node = omfactory.createOMElement(elementName, null, null, this);
-            document.setRootElement(node);
+            document.setDocumentElement(node);
             document.addChild(node);
         } else if (lastNode.isComplete()) {
             node = omfactory.createOMElement(elementName, null,
@@ -217,7 +217,7 @@ public class StAXOMBuilder extends StAXBuilder {
      * @return root element
      */
     public OMElement getDocumentElement() {
-        return document.getRootElement();
+        return document.getDocumentElement();
     }
 
     /**

@@ -22,9 +22,8 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
-import org.apache.axis2.Constants;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
 import org.apache.axis2.context.ConfigurationContext;

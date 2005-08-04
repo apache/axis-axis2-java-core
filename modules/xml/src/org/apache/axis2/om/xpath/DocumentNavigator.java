@@ -8,7 +8,7 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMProcessingInstruction;
 import org.apache.axis2.om.OMComment;
-import org.apache.axis2.om.impl.llom.OMDocument;
+import org.apache.axis2.om.impl.llom.OMDocumentImpl;
 import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.jaxen.*;
@@ -126,7 +126,7 @@ public class DocumentNavigator extends DefaultNavigator {
      *         else <code>false</code>
      */
     public boolean isDocument(Object object) {
-        return object instanceof OMDocument;
+        return object instanceof OMDocumentImpl;
     }
 
     /**
@@ -342,7 +342,7 @@ public class DocumentNavigator extends DefaultNavigator {
         List nsList = new ArrayList();
         HashSet prefixes = new HashSet();
         for (OMContainer context = (OMContainer) contextNode;
-             context != null && !(context instanceof OMDocument);
+             context != null && !(context instanceof OMDocumentImpl);
              context = ((OMElement) context).getParent()) {
             OMElement element = (OMElement) context;
             ArrayList declaredNS = new ArrayList();
@@ -578,7 +578,7 @@ public class DocumentNavigator extends DefaultNavigator {
      * @see #isDocument(Object)
      */
     public Object getDocumentNode(Object contextNode) {
-        if (contextNode instanceof OMDocument) {
+        if (contextNode instanceof OMDocumentImpl) {
             return contextNode;
         }
         return getDocumentNode(((OMNode) contextNode).getParent());
@@ -653,7 +653,7 @@ public class DocumentNavigator extends DefaultNavigator {
      */
     public Object getParentNode(Object contextNode) throws UnsupportedAxisException {
         if (contextNode == null ||
-                contextNode instanceof OMDocument) {
+                contextNode instanceof OMDocumentImpl) {
             return null;
         } else if (contextNode instanceof OMAttributeEx) {
             return ((OMAttributeEx) contextNode).getParent();

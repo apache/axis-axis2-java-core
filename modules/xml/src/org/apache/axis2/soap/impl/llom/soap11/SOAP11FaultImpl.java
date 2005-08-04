@@ -1,8 +1,9 @@
 package org.apache.axis2.soap.impl.llom.soap11;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPFaultCode;
@@ -12,8 +13,6 @@ import org.apache.axis2.soap.SOAPFaultReason;
 import org.apache.axis2.soap.SOAPFaultRole;
 import org.apache.axis2.soap.impl.llom.SOAPFaultImpl;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
-
-import javax.xml.stream.XMLStreamException;
 
 
 /**

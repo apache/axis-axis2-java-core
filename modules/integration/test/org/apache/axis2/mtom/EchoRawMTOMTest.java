@@ -21,7 +21,6 @@ package org.apache.axis2.mtom;
  */
 
 import java.awt.Image;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import javax.activation.DataHandler;
