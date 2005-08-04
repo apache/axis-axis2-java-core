@@ -15,21 +15,24 @@
  */
 package org.apache.axis2.om.impl.llom;
 
-import org.apache.axis2.om.OMContainer;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.axis2.om.OMDocument;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
 
-import javax.xml.namespace.QName;
-import java.util.Iterator;
-
 /**
- * Class OMDocument
+ * Class OMDocumentImpl
  */
-public class OMDocument implements OMContainer {
+public class OMDocumentImpl implements OMDocument {
     /**
      * Field rootElement
      */
@@ -56,10 +59,30 @@ public class OMDocument implements OMContainer {
     private OMXMLParserWrapper parserWrapper;
 
     /**
+     * Field charSetEncoding
+     * Dafult : UTF-8
+     */
+    private String charSetEncoding = "UTF-8";
+    
+    /**
+     * Field xmlVersion
+     */
+    private String xmlVersion = "1.0";
+    
+
+    
+    /**
+     * Default constructor
+     */
+    public OMDocumentImpl() {
+    	
+    }
+    
+    /**
      * @param rootElement
      * @param parserWrapper
      */
-    public OMDocument(OMElement rootElement, OMXMLParserWrapper parserWrapper) {
+    public OMDocumentImpl(OMElement rootElement, OMXMLParserWrapper parserWrapper) {
         this.rootElement = rootElement;
         this.parserWrapper = parserWrapper;
     }
@@ -67,7 +90,7 @@ public class OMDocument implements OMContainer {
     /**
      * @param parserWrapper
      */
-    public OMDocument(OMXMLParserWrapper parserWrapper) {
+    public OMDocumentImpl(OMXMLParserWrapper parserWrapper) {
         this.parserWrapper = parserWrapper;
     }
 
@@ -76,7 +99,7 @@ public class OMDocument implements OMContainer {
      *
      * @return
      */
-    public OMElement getRootElement() {
+    public OMElement getDocumentElement() {
         while (rootElement == null) {
             parserWrapper.next();
         }
@@ -88,7 +111,7 @@ public class OMDocument implements OMContainer {
      *
      * @param rootElement
      */
-    public void setRootElement(OMElement rootElement) {
+    public void setDocumentElement(OMElement rootElement) {
         this.rootElement = rootElement;
     }
 
@@ -216,4 +239,86 @@ public class OMDocument implements OMContainer {
     public void setFirstChild(OMNode firstChild) {
         this.firstChild = firstChild;
     }
+    
+    
+    /**
+     * Returns the character set encoding scheme to be used
+     * @return
+     */
+	public String getCharsetEncoding() {
+		return charSetEncoding;
+	}
+	
+	/**
+	 * Set the character set encoding scheme
+	 * @param charSetEncoding
+	 */
+	public void setCharsetEncoding(String charEncoding) {
+		this.charSetEncoding = charEncoding;
+	}
+	
+	public String getXMLVersion() {
+		return xmlVersion;
+	}
+	public void setXMLVersion(String xmlVersion) {
+		this.xmlVersion = xmlVersion;
+	}
+	
+	/**
+	 * Serialize the docuement with/without the XML declaration
+	 */
+	public void serialize(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException {
+		serialize(omOutput,false,includeXMLDeclaration);
+	}
+
+	/**
+	 * Serialize the document with the XML declaration
+	 * 
+	 * @see org.apache.axis2.om.OMDocument#serialize(org.apache.axis2.om.impl.OMOutputImpl,
+	 *      boolean)
+	 */
+	public void serialize(OMOutputImpl omOutput)
+			throws XMLStreamException {
+		serialize(omOutput, false, true);
+	}
+	
+
+	/**
+	 * Serialize the document with cache
+	 * @see org.apache.axis2.om.OMDocument#serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl)
+	 */
+	public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
+		serialize(omOutput, true, true);
+		
+	}
+
+	/**
+	 * Serialize the document with cache
+	 * @see org.apache.axis2.om.OMDocument#serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl, boolean)
+	 */
+	public void serializeWithCache(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException {
+		serialize(omOutput,true,includeXMLDeclaration);
+		
+	}
+	
+	private void serialize(OMOutputImpl omOutput, boolean cache, boolean includeXMLDeclaration) throws XMLStreamException {
+		if (includeXMLDeclaration) {
+			//Check whether the OMOutput char encoding and OMDocument char
+			//encoding matches, if not use char encoding of OMOutput
+			String outputCharEncoding = omOutput.getCharSetEncoding();
+			if(!outputCharEncoding.equalsIgnoreCase(this.charSetEncoding)) {
+				this.charSetEncoding = outputCharEncoding;
+			}
+			omOutput.getXmlStreamWriter().writeStartDocument(charSetEncoding,
+					xmlVersion);
+		}
+
+		if (cache) {
+			this.rootElement.serializeWithCache(omOutput);
+		} else {
+			this.rootElement.serialize(omOutput);
+		}
+	}
+
+	
 }
