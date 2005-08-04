@@ -39,6 +39,8 @@ import org.apache.wsdl.extensions.ExtensionFactory;
 import org.apache.wsdl.impl.WSDLProcessingException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingFault;
@@ -82,7 +84,15 @@ import java.util.Stack;
  */
 public class WSDLPump {
 
-    private static final String BOUND_INTERFACE_NAME = "BoundInterface";
+    private static final String XSD_TYPE = "type";
+	private static final String XSD_SEQUENCE = "sequence";
+	private static final String XSD_NAME = "name";
+	private static final String XSD_COMPLEXTYPE = "complexType";
+	private static final String XSD_TARGETNAMESPACE = "targetNamespace";
+	private static final String XMLNS_AXIS2WRAPPED = "xmlns:axis2wrapped";
+	private static final String NAMESPACE_XMLSCHEMA = "http://www.w3.org/2001/XMLSchema";
+	private static final String XSD_ELEMENT = "element";
+	private static final String BOUND_INTERFACE_NAME = "BoundInterface";
 
     private WSDLDescription womDefinition;
 
@@ -468,8 +478,11 @@ public class WSDLPump {
                 //Get the list of multiparts of the message and create a new Element
                 //out of it and add it to the schema.
                 Map parts = wsdl4jMessage.getParts();
-                Element element = null;
+                Element schemaElement = null;
                 WSDLTypes types = womDefinition.getTypes();
+                
+                //If types is null create a new one to be used for multipart 
+                //resolution if any.
                 if (null == types) {
                     DocumentBuilder documentBuilder = null;
                     try {
@@ -479,33 +492,39 @@ public class WSDLPump {
                     }
                     Document newDoc = documentBuilder.newDocument();
 
-                    Element schemaElement = newDoc.createElement("schema");//http://www.w3.org/2001/XMLSchema
+                    Element newSchemaElement = newDoc.createElementNS("http://www.w3.org/2001/XMLSchema", "schema");
                     types = wsdlComponenetFactory.createTypes();
                     ExtensionFactory extensionFactory = wsdlComponenetFactory.createExtensionFactory();
                     org.apache.wsdl.extensions.Schema typesElement = (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
                             ExtensionConstants.SCHEMA);
-                    typesElement.setElelment(schemaElement);
+                    typesElement.setElelment(newSchemaElement);
                     types.addExtensibilityElement(typesElement);
                     this.womDefinition.setTypes(types);
                 }
+                
+                
+                //
                 Iterator schemaEIIterator = types.getExtensibilityElements()
                         .iterator();
                 while (schemaEIIterator.hasNext()) {
                     WSDLExtensibilityElement temp = (WSDLExtensibilityElement) schemaEIIterator.next();
                     if (ExtensionConstants.SCHEMA.equals(temp.getType())) {
-                        element =
+                        schemaElement =
                                 ((org.apache.wsdl.extensions.Schema) temp).getElelment();
                         break;
                     }
                 }
 
-                Document doc = element.getOwnerDocument();
+                schemaElement.setAttribute(WSDLPump.XMLNS_AXIS2WRAPPED, schemaElement.getAttribute(WSDLPump.XSD_TARGETNAMESPACE));
+                Document doc = schemaElement.getOwnerDocument();
                 String name = wsdl4jMessage.getQName().getLocalPart();
-                Element newElement = doc.createElement("complexType");
-                newElement.setAttribute("name", name);
+                Element newType = doc.createElementNS(WSDLPump.NAMESPACE_XMLSCHEMA, WSDLPump.XSD_COMPLEXTYPE);
+                newType.setAttribute(WSDLPump.XSD_NAME, name);
 
-                Element cmplxContent = doc.createElement("complexContent");
+                
+                Element cmplxContent = doc.createElementNS(WSDLPump.NAMESPACE_XMLSCHEMA, WSDLPump.XSD_SEQUENCE);
                 Element child;
+                Element relaventElementInSchemaReferedByPart = null;
                 Iterator iterator = parts.keySet().iterator();
                 while (iterator.hasNext()) {
                     Part part = (Part) parts.get(iterator.next());
@@ -514,26 +533,50 @@ public class WSDLPump {
                         elementName = part.getTypeName();
                     }
 
-
-                    child = doc.createElement("element");
-                    child.setAttribute("name",
-                            "var" + elementName.getLocalPart());
-                    child.setAttribute("type",
-                            elementName.getNamespaceURI() + ":" +
-                            elementName.getLocalPart());
+                    
+                    NodeList allSchemaElements = schemaElement.getChildNodes();
+                    for(int i=0; i< allSchemaElements.getLength(); i++){
+                    	if(allSchemaElements.item(i).getNodeType() == Node.ELEMENT_NODE && 
+                    			allSchemaElements.item(i).getLocalName().equals(WSDLPump.XSD_ELEMENT)
+                    			&& elementName.getLocalPart().equals(((Element)allSchemaElements.item(i)).getAttribute(WSDLPump.XSD_NAME))){
+                    		relaventElementInSchemaReferedByPart = (Element)allSchemaElements.item(i);
+                    		break;
+                    	}
+                    					
+                    		
+                    }
+                    child = doc.createElementNS(WSDLPump.NAMESPACE_XMLSCHEMA, WSDLPump.XSD_ELEMENT);
+                    child.setAttribute(WSDLPump.XSD_NAME, elementName.getLocalPart());
+                    if(null != relaventElementInSchemaReferedByPart){
+                    
+                    	
+                    	child.setAttribute(WSDLPump.XSD_TYPE, 
+                    			relaventElementInSchemaReferedByPart.getAttribute(WSDLPump.XSD_TYPE));
+                    }else{
+                    	child.setAttribute(WSDLPump.XSD_TYPE, elementName.getLocalPart());
+                    }
                     cmplxContent.appendChild(child);
+                    
                 }
 
 
-                newElement.appendChild(cmplxContent);
+                newType.appendChild(cmplxContent);
 
-                element.appendChild(newElement);
+                schemaElement.appendChild(newType);
+                
+                
+                Element newElement = doc.createElementNS(WSDLPump.NAMESPACE_XMLSCHEMA, WSDLPump.XSD_ELEMENT);
+                newElement.setAttribute(WSDLPump.XSD_NAME,
+                        wsdl4jMessage.getQName().getLocalPart());
+                newElement.setAttribute(WSDLPump.XSD_TYPE,
+                		"axis2wrapped:"+wsdl4jMessage.getQName().getLocalPart());
+                schemaElement.appendChild(newElement);
                 //Now since  a new type is created augmenting the parts add the QName
                 //of the newly created type as the messageReference's name.
                 referenceQName = wsdl4jMessage.getQName();
                 //Add this message as a resolved message, so that incase some other
                 //operation refer to the same message the if above will take a hit
-                //and the cashed QName can be used instead of crating another type
+                //and the cashed QName can be used instead of creating another type
                 //for the same message.
 
                 this.resolvedMultipartMessageList.add(wsdl4jMessage.getQName());
