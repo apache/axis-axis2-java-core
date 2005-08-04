@@ -55,8 +55,8 @@ import com.ibm.wsdl.Constants;
 
 
 public class XMLUtils {
-    protected static Log log =
-        LogFactory.getLog(XMLUtils.class.getName());
+//    protected Log log =
+//        LogFactory.getLog(getClass().getName());
         
     public static final String charEncoding = "ISO-8859-1";
     private static final String saxParserFactoryProperty =
@@ -166,7 +166,7 @@ public class XMLUtils {
                                        factoryClassName);
                 }
             } catch (Exception e) {
-                log.error(Messages.getMessage("exception00"), e);
+                //log.error(Messages.getMessage("exception00"), e);
                 saxFactory = null;
             }
        } else {
@@ -186,7 +186,7 @@ public class XMLUtils {
             dbf.setNamespaceAware(true);
         }
         catch( Exception e ) {
-            log.error(Messages.getMessage("exception00"), e );
+            //log.error(Messages.getMessage("exception00"), e );
             dbf = null;
         }
         return( dbf );
@@ -431,8 +431,8 @@ public class XMLUtils {
     
     public static class ParserErrorHandler implements ErrorHandler
     {
-        protected static Log log =
-            LogFactory.getLog(ParserErrorHandler.class.getName());
+//        protected static Log log =
+//            LogFactory.getLog(ParserErrorHandler.class.getName());
         /**
          * Returns a string describing parse exception details
          */
@@ -451,8 +451,8 @@ public class XMLUtils {
         // See SAX documentation for more info.
 
         public void warning(SAXParseException spe) throws SAXException {
-            if (log.isDebugEnabled())
-                log.debug( Messages.getMessage("warning00", getParseExceptionInfo(spe)));
+//            if (log.isDebugEnabled())
+//                log.debug( Messages.getMessage("warning00", getParseExceptionInfo(spe)));
         }
         
         public void error(SAXParseException spe) throws SAXException {

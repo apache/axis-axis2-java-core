@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
+ * Copyright 2004,2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.wsdl.util;
 
-import org.xml.sax.InputSource;
+package org.apache.axis2.engine;
 
-public class DefaultEntityResolver implements org.xml.sax.EntityResolver {
-     public DefaultEntityResolver() {
+import org.apache.axis2.description.Flow;
+import org.apache.axis2.description.FlowImpl;
+
+public class MockFlow extends FlowImpl implements Flow {
+    public MockFlow(String message, int length) {
+        super();
+        for (int i = 0; i < length; i++) {
+            SpeakingHandler1 h1 = new SpeakingHandler1(
+                    "Executing " + i + " inside " + message);
+            this.addHandler(h1.getHandlerDescription());
+        }
     }
 
-    public InputSource resolveEntity(String publicId, String systemId) {
-        return XMLUtils.getEmptyInputSource();
-    }
 }

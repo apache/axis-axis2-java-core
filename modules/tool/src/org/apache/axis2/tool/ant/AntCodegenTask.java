@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,8 +16,10 @@ import org.apache.axis2.wsdl.codegen.CommandLineOption;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.URLProcessor;
+import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.Path;
 import org.apache.wsdl.WSDLDescription;
 
 /*
@@ -52,9 +52,29 @@ public class AntCodegenTask extends Task {
     private boolean serverSide = false;
     private boolean testcase = false;
     private boolean generateServerXml = false;
+    private Path classpath;
+ 
+ 
+    /**
+     * 
+     */
+    public AntCodegenTask() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+    
+    
+    /**
+      * set the classpath
+      * @return
+      */
+     public Path createClasspath() {
+         if (classpath == null) {
+             classpath = new Path(getProject());
+         }
+         return classpath.createPath();
+     }
 
- 
- 
     /**
      *
      */
@@ -144,8 +164,19 @@ public class AntCodegenTask extends Task {
              * This needs the ClassLoader we use to load the task have all the dependancyies set, hope that 
              * is ok for now
              */
-            ClassLoader cl = new URLClassLoader(new URL[]{new File(output).toURL()},getClass().getClassLoader());
+            
+            
+            AntClassLoader cl = new AntClassLoader(
+                                    null,
+                                    getProject(),
+                                    classpath,
+                                    false);
+            
+     //       log("path is "+cl.getClasspath());                                    
+//            ClassLoader cl = new URLClassLoader(new URL[]{new File(output).toURL()},getClass().getClassLoader());
             Thread.currentThread().setContextClassLoader(cl);
+            cl.addPathElement(output);
+            System.out.println("path is "+cl.getClasspath());    
 
             Map commandLineOptions = this.fillOptionMap();
             //System.out.println("options =" + commandLineOptions);
@@ -203,6 +234,20 @@ public class AntCodegenTask extends Task {
             "modules/samples/test-resources/wsdl/compound2.wsdl");
         task.setOutput("temp");
         task.execute();
+    }
+
+    /**
+     * @return
+     */
+    public Path getClasspath() {
+        return classpath;
+    }
+
+    /**
+     * @param path
+     */
+    public void setClasspath(Path path) {
+        classpath = path;
     }
 
 }
