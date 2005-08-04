@@ -55,15 +55,15 @@ public class OMAttributeImpl implements OMAttribute {
     }
 
     /**
-     * Method getQName
      *
      * @return qname
      */
     public QName getQName() {
-        String namespaceName = (namespace != null)
-                ? namespace.getName()
-                : null;
-        return new QName(namespaceName, localName);
+        if(namespace != null){
+            return new QName(namespace.getName(), localName, namespace.getPrefix());
+        }else{
+            return new QName(localName);
+        }
     }
 
     // -------- Getters and Setters

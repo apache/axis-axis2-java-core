@@ -76,20 +76,12 @@ public class OMElementImpl extends OMNodeImpl
         super(parent);
         this.localName = localName;
         if (ns != null) {
-            setNamespace(handleNamespace(ns));
+            setNamespace(ns);
         }
         this.builder = builder;
         firstChild = null;
     }
 
-    /**
-     * @param parent
-     * @param parent
-     */
-    protected OMElementImpl(OMContainer parent) {
-        super(parent);
-        this.done = true;
-    }
 
     /**
      * Constructor OMElementImpl
@@ -98,45 +90,39 @@ public class OMElementImpl extends OMNodeImpl
      * @param ns
      */
     public OMElementImpl(String localName, OMNamespace ns) {
-        super(null);
+        this(localName, ns, null);
+    }
+
+    /**
+     * This is the basic constructor for OMElement. All the other constructors within this class
+     * will depend on this.
+     *
+     * @param localName - this MUST always be not null
+     * @param ns - can be null
+     * @param parent - this should be an OMContainer
+     */
+    public OMElementImpl(String localName, OMNamespace ns, OMContainer parent) {
+        super(parent);
         if (localName == null || localName.trim().length() == 0) {
             throw new OMException("localname can not be null or empty");
         }
         this.localName = localName;
         this.done = true;
         if (ns != null) {
-            setNamespace(handleNamespace(ns));
-        }
-    }
-
-    /**
-     * Constructor OMElementImpl
-     *
-     * @param localName
-     * @param ns
-     * @param parent
-     */
-    public OMElementImpl(String localName, OMNamespace ns, OMContainer parent) {
-        super(parent);
-        this.localName = localName;
-        this.done = true;
-        if (ns != null) {
-            setNamespace(handleNamespace(ns));
+            setNamespace(ns);
         }
     }
 
     /**
      * Here it is assumed that this QName passed, at least contains the localName for this element
      *
-     * @param qname
+     * @param qname - this should be valid qname according to javax.xml.namespace.QName
      * @param parent
      * @throws OMException
      */
     public OMElementImpl(QName qname, OMContainer parent) throws OMException {
-        super(parent);
-        this.localName = qname.getLocalPart();
-        this.done = true;
-        handleNamespace(qname);
+       this(qname.getLocalPart(), null, parent);
+        this.ns = handleNamespace(qname);
     }
 
     /**
@@ -144,8 +130,8 @@ public class OMElementImpl extends OMNodeImpl
      *
      * @param qname
      */
-    private void handleNamespace(QName qname) {
-        OMNamespace ns;
+    private OMNamespace handleNamespace(QName qname) {
+        OMNamespace ns = null;
 
         // first try to find a namespace from the scope
         String namespaceURI = qname.getNamespaceURI();
@@ -158,7 +144,7 @@ public class OMElementImpl extends OMNodeImpl
              *  1. nsURI = null & parent != null, but ns = null
              *  2. nsURI != null, (parent doesn't have an ns with given URI), but ns = null
              */
-            if ((ns == null) && !"".equals(namespaceURI)) {
+            if (ns == null) {
                 String prefix = qname.getPrefix();
                 if (!"".equals(prefix)) {
                     ns = declareNamespace(namespaceURI, prefix);
@@ -169,9 +155,13 @@ public class OMElementImpl extends OMNodeImpl
                 }
             }
             if (ns != null) {
-                this.setNamespace(ns);
+                this.ns = (ns);
             }
+        }else{
+           // no namespace URI in the given QName. No need to bother about this ??
         }
+
+        return ns;
     }
 
     /**
@@ -508,8 +498,8 @@ public class OMElementImpl extends OMNodeImpl
     public void setFirstChild(OMNode firstChild) {
         if (firstChild != null) {
             firstChild.setParent(this);
-            this.firstChild = firstChild;
         }
+        this.firstChild = firstChild;
 //
 //        OMNode currentFirstChild = getFirstChild();
 //        if (currentFirstChild != null) {
@@ -780,14 +770,11 @@ public class OMElementImpl extends OMNodeImpl
      * @param namespace
      */
     public void setNamespace(OMNamespace namespace) {
-        if (ns != null) {
-            OMNamespace ns = findNamespace(namespace.getName(),
-                    namespace.getPrefix());
-            if (ns == null) {
-                declareNamespace(namespace);
-            }
+        OMNamespace nsObject = null;
+        if (namespace != null) {
+            nsObject = handleNamespace(namespace);
         }
-        this.ns = namespace;
+        this.ns = nsObject;
     }
 
     /**

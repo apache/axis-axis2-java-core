@@ -32,6 +32,7 @@ public interface OMFactory {
      * @return
      */
     public OMElement createOMElement(String localName, OMNamespace ns);
+    public OMElement createOMElement(String localName, OMNamespace ns, OMContainer parent);
 
     /**
      * @param localName

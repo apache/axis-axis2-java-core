@@ -57,6 +57,10 @@ public class OMLinkedListImplFactory implements OMFactory {
         return new OMElementImpl(localName, ns);
     }
 
+    public OMElement createOMElement(String localName, OMNamespace ns, OMContainer parent) {
+        return new OMElementImpl(localName, ns, parent);
+    }
+
     /**
      * Method createOMElement
      *

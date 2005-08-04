@@ -36,7 +36,7 @@ public abstract class SOAPElement extends OMElementImpl {
     protected SOAPElement(OMElement parent,
                           String localName,
                           boolean extractNamespaceFromParent) throws SOAPProcessingException {
-        super(parent);
+        super(localName, null, parent);
         if (parent == null) {
             throw new SOAPProcessingException(
                     " Can not create " + localName +

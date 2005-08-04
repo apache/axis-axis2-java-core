@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import java.util.Iterator;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -28,6 +29,11 @@ public class OMElementTest extends OMTestCase implements OMConstants {
     private static final String WSA_TO = "To";
     private Log log = LogFactory.getLog(getClass());
 
+    OMFactory factory = OMAbstractFactory.getOMFactory();
+    private OMElement firstElement;
+    private OMElement secondElement;
+
+
     public OMElementTest(String testName) {
         super(testName);
     }
@@ -36,7 +42,11 @@ public class OMElementTest extends OMTestCase implements OMConstants {
      * @see TestCase#setUp()
      */
     protected void setUp() throws Exception {
-
+       OMNamespace testingNamespace = factory.createOMNamespace(
+                        "http://testing.axis2.org", "axis2");
+        firstElement = factory.createOMElement("FirstElement", testingNamespace);
+        secondElement = factory.createOMElement("SecondElement", factory.createOMNamespace(
+                                "http://testing.axis2.org", "axis2"), firstElement);
     }
 
     public void testGetText() {
@@ -54,6 +64,58 @@ public class OMElementTest extends OMTestCase implements OMConstants {
         } catch (Exception e) {
             log.info(e.getMessage());
         }
+    }
+
+    public void testConstructors(){
+
+        try {
+            OMElement elementWithNoLocalName = factory.createOMElement("", null);
+            fail("This should fail as OMElement should not be allowed to create without a local name ");
+        } catch (Exception e) {
+            assertTrue(true);
+        }
+
+        assertEquals("Namespace having same information, declared in the same context, should share" +
+                " the same namespace object",firstElement.getNamespace(), secondElement.getNamespace());
+        assertEquals("OMElement children addition has not worked properly", secondElement, firstElement.getFirstElement());
+
+        OMNamespace testNamespace2 = factory.createOMNamespace("ftp://anotherTest.axis2.org", "axis2");
+        firstElement.declareNamespace(testNamespace2);
+
+        OMNamespace inheritedSecondNamespace = secondElement.findNamespace(testNamespace2.getName(),
+                testNamespace2.getPrefix());
+        assertNotNull("Children should inherit namespaces declared in parent", inheritedSecondNamespace);
+        assertEquals("inherited namespace uri should be equal", inheritedSecondNamespace.getName(), testNamespace2.getName());
+        assertEquals("inherited namespace prefix should be equal", inheritedSecondNamespace.getPrefix(), testNamespace2.getPrefix());
+
+
+    }
+
+    public void testChildDetachment() {
+        OMNamespace testNamespace2 = factory.createOMNamespace("ftp://anotherTest.axis2.org", "axis2");
+        
+        secondElement.detach();
+        assertTrue("OMElement children detachment has not worked properly", !secondElement.equals(firstElement.getFirstElement()));
+        assertNull("First Element should not contain elements after detaching. ", firstElement.getFirstElement());
+        assertNull("First Element should not contain elements after detaching. ", firstElement.getFirstChild());
+        assertNull(secondElement.findNamespace(testNamespace2.getName(), testNamespace2.getPrefix()));
+
+        firstElement.addChild(secondElement);
+        firstElement.setText("Some Sample Text");
+
+        assertTrue("First added child must be the first child", secondElement.equals(firstElement.getFirstChild()));
+        Iterator children = firstElement.getChildren();
+        int childCount = 0;
+        while (children.hasNext()) {
+            Object o = children.next();
+            childCount++;
+        }
+        assertEquals("Children count should be two", childCount, 2);
+
+        secondElement.detach();
+        assertTrue("First child should be the text child", firstElement.getFirstChild() instanceof OMText);
+
+
     }
 
 }
