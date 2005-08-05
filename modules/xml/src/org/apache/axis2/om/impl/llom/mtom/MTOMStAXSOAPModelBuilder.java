@@ -23,6 +23,7 @@ import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
+import org.apache.axis2.om.impl.MTOMConstants;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.commons.logging.Log;
@@ -31,8 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLStreamReader;
 
-public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
-    private Log log = LogFactory.getLog(getClass());
+public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder implements MTOMConstants {
 
     /**
      * <code>mimeHelper</code> handles deffered parsing of incoming MIME
@@ -67,14 +67,16 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
         String namespaceURI = parser.getNamespaceURI();
 
         // create an OMBlob if the element is an <xop:Include>
-        if (elementName.equalsIgnoreCase("Include")
-                & namespaceURI
-                .equalsIgnoreCase("http://www.w3.org/2004/08/xop/include")) {
+
+        if (XOP_INCLUDE.equalsIgnoreCase(elementName)
+                && XOP_NAMESPACE_URI
+                .equalsIgnoreCase(namespaceURI)) {
+            // do we need to check prfix as well. Meaning, should it be "XOP" ?
+
 
             OMText node;
             String contentID = null;
             String contentIDName = null;
-            OMAttribute Attr;
             if (lastNode == null) {
                 // Decide whether to ckeck the level >3 or not
                 throw new OMException(
@@ -88,7 +90,7 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder {
                         & contentID.substring(0, 3).equalsIgnoreCase("cid")) {
                     contentID = contentID.substring(4);
                 } else if (!(contentIDName.equalsIgnoreCase("href")
-                       & (!contentID.equals("")))) {                    
+                       & (!contentID.equals("")))) {
                     throw new OMException(
                             "contentID not Found in XOP:Include element");
                 }
