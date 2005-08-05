@@ -99,8 +99,8 @@ public class EchoRawSwATest extends TestCase {
         OutputStream outStream = socket.getOutputStream();
         InputStream inStream = socket.getInputStream();
         InputStream requestMsgInStream = getResourceAsStream("org/apache/axis2/swa/swainput.txt");
-        while (requestMsgInStream.available() > 0) {
-            int data = requestMsgInStream.read();
+        int data;
+	while ((data = requestMsgInStream.read())!=-1) {
             outStream.write(data);
         }
         outStream.flush();
