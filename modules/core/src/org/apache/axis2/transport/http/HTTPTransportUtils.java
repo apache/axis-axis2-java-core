@@ -118,7 +118,7 @@ public class HTTPTransportUtils {
                             MessageContext.DEFAULT_CHAR_SET_ENCODING);
                     } else {
                         //get the type of char encoding
-                        String charSetEnc = getCharSetEncoing(contentType);
+                        String charSetEnc = getCharSetEncoding(contentType);
                         xmlreader =
                             XMLInputFactory
                                 .newInstance()
@@ -215,8 +215,13 @@ public class HTTPTransportUtils {
      * Content-Type: text/xml; charset=utf-8 
      * @param contentType
      */
-    private static String getCharSetEncoing(String contentType) {
+    private static String getCharSetEncoding(String contentType) {
         int index = contentType.indexOf(HTTPConstants.CHAR_SET_ENCODING);
+        if(index == -1) { //Charset encoding not found in the contect-type header
+        	//Using the default UTF-8
+        	return MessageContext.DEFAULT_CHAR_SET_ENCODING;
+        }
+        
         //If there are spaces around the '=' sign
         int indexOfEq = contentType.indexOf("=", index);
         String value =
@@ -326,7 +331,7 @@ public class HTTPTransportUtils {
                 fileCacheForAttachments,
                 attachmentRepoDir);
         
-        String charSetEnc = getCharSetEncoing(contentTypeString);
+        String charSetEnc = getCharSetEncoding(contentTypeString);
         
         XMLStreamReader reader = XMLInputFactory.newInstance()
 				.createXMLStreamReader(

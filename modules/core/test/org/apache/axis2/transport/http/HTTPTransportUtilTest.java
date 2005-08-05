@@ -49,7 +49,7 @@ public class HTTPTransportUtilTest extends TestCase {
         element11.addChild(optimizedText);
         assertTrue(
                 "optmization check has not performed correctly in SOAPEnvelope",
-                httpTransportUtils.checkEnvelopeForOptimise(soapEnvelope));
+                HTTPTransportUtils.checkEnvelopeForOptimise(soapEnvelope));
     }
 
     public void testNonOptimizedEnvelope() {
@@ -63,7 +63,7 @@ public class HTTPTransportUtilTest extends TestCase {
         element11.addChild(optimizedText);
         assertFalse(
                 "optmization check has not performed correctly in SOAPEnvelope",
-                httpTransportUtils.checkEnvelopeForOptimise(soapEnvelope));
+                HTTPTransportUtils.checkEnvelopeForOptimise(soapEnvelope));
     }
 
 
