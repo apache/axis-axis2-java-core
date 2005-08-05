@@ -276,16 +276,19 @@
     <!-- ======= -->
 
     <reports>
+    
         <!-- report>maven-license-plugin</report>
-        <report>maven-checkstyle-plugin</report>
+        
         <report>maven-pmd-plugin</report>
         <report>maven-jdepend-plugin</report>
         <report>maven-jxr-plugin</report>
         <report>maven-javadoc-plugin</report>
-        <report>maven-junit-report-plugin</report>
-        <report>maven-clover-plugin</report> -->
+        <report>maven-clover-plugin</report>
+        <report>maven-junit-report-plugin</report -->
         <report>maven-changes-plugin</report>
+        
+        
     </reports>
-
+   
 </project>
 
