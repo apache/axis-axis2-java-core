@@ -15,10 +15,7 @@
  */
 package org.apache.axis2.soap.impl.llom;
 
-import org.apache.axis2.om.OMConstants;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.*;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFault;
@@ -145,5 +142,9 @@ public abstract class SOAPBodyImpl extends SOAPElement
             throw new SOAPProcessingException(
                     "Expecting an implementation of SOAP Envelope as the parent. But received some other implementation");
         }
+    }
+
+    public OMNode detach() throws OMException {
+        throw new SOAPProcessingException("Can not detach SOAP Body, SOAP Envelope must have a Body !!");
     }
 }

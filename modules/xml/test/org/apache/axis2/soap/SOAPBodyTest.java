@@ -17,6 +17,7 @@
 package org.apache.axis2.soap;
 
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
+import org.apache.axis2.om.OMException;
 
 public class SOAPBodyTest extends SOAPBodyTestCase {
 
@@ -134,5 +135,21 @@ public class SOAPBodyTest extends SOAPBodyTestCase {
                 "SOAP 1.2 Body Test With parser : - SOAP fault name mismatch",
                 soap12BodyWithParser.getFault().getLocalName().equals(
                         SOAPConstants.SOAPFAULT_LOCAL_NAME));
+    }
+
+    public void testSOAPBodyDetachment(){
+        try {
+            soap11Body.detach();
+            fail("Detachment of SOAP Body is not allowed !!");
+        } catch (OMException e) {
+            assertTrue(true);
+        }
+
+        try {
+            soap12Body.detach();
+            fail("Detachment of SOAP Body is not allowed !!");
+        } catch (OMException e) {
+            assertTrue(true);
+        }
     }
 }

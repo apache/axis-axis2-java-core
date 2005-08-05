@@ -76,4 +76,7 @@ public abstract class SOAPElement extends OMElementImpl {
      */
     protected abstract void checkParent(OMElement parent) throws SOAPProcessingException;
 
+
+    
+
 }
