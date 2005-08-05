@@ -21,6 +21,7 @@ package org.apache.axis2.swa;
  */
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 import javax.xml.namespace.QName;
@@ -29,45 +30,36 @@ import junit.framework.TestCase;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
-import org.apache.axis2.util.Utils;
+import org.apache.axis2.receivers.AbstractMessageReceiver;
+import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wsdl.WSDLService;
 
 public class EchoRawSwATest extends TestCase {
-    private EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoSwAService/echoAttachment");
+    private EndpointReference targetEPR = new EndpointReference(
+            "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
+                    + "/axis/services/EchoSwAService/echoAttachment");
 
     private Log log = LogFactory.getLog(getClass());
 
     private QName serviceName = new QName("EchoSwAService");
 
     private QName operationName = new QName("echoAttachment");
-
-    private QName transportName = new QName("http://localhost/my",
-            "NullTransport");
-
-    private String imageInFileName = "img/test.jpg";
-
-    private String imageOutFileName = "mtom/img/testOut.jpg";
-
-    private AxisConfiguration engineRegistry;
-
-    private MessageContext mc;
-
+    
     private ServiceContext serviceContext;
 
     private ServiceDescription service;
 
     private boolean finish = false;
-    
+
     private OMTextImpl expectedTextData;
 
     public EchoRawSwATest() {
@@ -80,11 +72,21 @@ public class EchoRawSwATest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
-        service = Utils.createSimpleService(serviceName, EchoSwA.class.getName(),
-                operationName);
+        service = new ServiceDescription(serviceName);
+        service.setClassLoader(Thread.currentThread().getContextClassLoader());
+        service
+                .addParameter(new ParameterImpl(
+                        AbstractMessageReceiver.SERVICE_CLASS, EchoSwA.class
+                                .getName()));
+
+        OperationDescription axisOp = new OperationDescription(operationName);
+        axisOp.setMessageReciever(new RawXMLINOutMessageReceiver());
+        axisOp.setStyle(WSDLService.STYLE_DOC);
+        service.addOperation(axisOp);
         UtilServer.deployService(service);
         serviceContext = UtilServer.getConfigurationContext()
                 .createServiceContext(service.getName());
+
     }
 
     protected void tearDown() throws Exception {
@@ -92,16 +94,32 @@ public class EchoRawSwATest extends TestCase {
         UtilServer.stop();
     }
 
-
     public void testEchoXMLSync() throws Exception {
-        Socket socket =  new Socket("127.0.0.1",5555);
-        
+        Socket socket = new Socket("127.0.0.1", 5555);
+        OutputStream outStream = socket.getOutputStream();
+        InputStream inStream = socket.getInputStream();
+        InputStream requestMsgInStream = getResourceAsStream("org/apache/axis2/swa/swainput.txt");
+        while (requestMsgInStream.available() > 0) {
+            int data = requestMsgInStream.read();
+            outStream.write(data);
+        }
+        outStream.flush();
+        socket.shutdownOutput();
+        byte[] i =  new byte[1];
+        StringBuffer stringBuffer =  new StringBuffer();
+        while ((i[0] = (byte)inStream.read()) != -1) {
+            stringBuffer.append(new String(i));
+        }
+        socket.close();
+        assertTrue(stringBuffer.toString().indexOf("Apache Axis2 - The NExt Generation Web Services Engine")>0);
+        assertTrue(stringBuffer.toString().indexOf("multipart/related")>0);
     }
 
     private InputStream getResourceAsStream(String path) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         return cl.getResourceAsStream(path);
     }
+
     private void compareWithCreatedOMText(OMText actualTextData) {
         String originalTextValue = expectedTextData.getText();
         String returnedTextValue = actualTextData.getText();
