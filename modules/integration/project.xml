@@ -173,7 +173,7 @@
                 <!--  <exclude>**/*Groovy*.java</exclude> -->
                 <!-- <exclude>**/*EchoRawXMLChunckedTest.java</exclude> -->
                 <exclude>**org/apache/axis2/mail/*.java</exclude>
-                 
+                  <exclude>**/*EchoRawSwATest.java</exclude>
                 
                 
                 <!--
