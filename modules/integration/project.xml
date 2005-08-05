@@ -176,7 +176,7 @@
                   <exclude>**/*EchoRawSwATest.java</exclude>
                   <exclude>**/*EchoRawMTOMTest.java</exclude>
                   <exclude>**/*EchoRawMTOMCommonsChunkingTest.java</exclude>
-                  <exclude>**/*GroovyServiceTest.java</exclude>
+<!--                  <exclude>**/*GroovyServiceTest.java</exclude>-->
                 
                 
                 <!--
