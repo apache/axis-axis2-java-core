@@ -50,12 +50,10 @@ public class MIMEOutputUtils {
                     "text/xml");
             MimeBodyPart rootMimeBodyPart = new MimeBodyPart();
             rootMimeBodyPart.setDataHandler(dh);
-
-            
             
             rootMimeBodyPart.addHeader("content-type",
                     "application/xop+xml; charset=" + charSetEncoding + 
-					"; type=\"text/xml; charset=" + charSetEncoding + "\"");
+					"; type=\"application/soap+xml;\"");
             rootMimeBodyPart.addHeader("content-transfer-encoding", "binary");
             rootMimeBodyPart.addHeader("content-id","<"+contentId+">");
 

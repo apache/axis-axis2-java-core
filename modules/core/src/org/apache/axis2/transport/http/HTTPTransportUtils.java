@@ -224,8 +224,15 @@ public class HTTPTransportUtils {
         
         //If there are spaces around the '=' sign
         int indexOfEq = contentType.indexOf("=", index);
-        String value =
-            (contentType.substring(indexOfEq + 1, contentType.length())).trim();
+        //There can be situations where "charset" is not the last parameter of the Content-Type header
+        int indexOfSemiColon = contentType.indexOf(";", indexOfEq);
+        String value;
+        if (indexOfSemiColon > 0) {
+            value = (contentType.substring(indexOfEq + 1, indexOfSemiColon));
+        } else {
+            value = (contentType.substring(indexOfEq + 1, contentType.length()))
+                    .trim();
+        }
 
         //There might be "" around the value - if so remove them
         value = value.replaceAll("\"", "");
@@ -319,24 +326,19 @@ public class HTTPTransportUtils {
                         Constants.Configuration.CACHE_ATTACHMENTS)));
         String attachmentRepoDir = null;
         if (fileCacheForAttachments) {
-            attachmentRepoDir =
-                (String) msgContext.getProperty(
-                    Constants.Configuration.ATTACHMENT_TEMP_DIR);
+            attachmentRepoDir = (String) msgContext
+                    .getProperty(Constants.Configuration.ATTACHMENT_TEMP_DIR);
         }
 
-        MIMEHelper mimeHelper =
-            new MIMEHelper(
-                inStream,
-                contentTypeString,
-                fileCacheForAttachments,
-                attachmentRepoDir);
-        
-        String charSetEnc = getCharSetEncoding(contentTypeString);
-        
+        MIMEHelper mimeHelper = new MIMEHelper(inStream, contentTypeString,
+                fileCacheForAttachments, attachmentRepoDir);
+
         XMLStreamReader reader = XMLInputFactory.newInstance()
-				.createXMLStreamReader(
-						new BufferedReader(new InputStreamReader(mimeHelper
-								.getSOAPPartInputStream(), charSetEnc)));
+                .createXMLStreamReader(
+                        new BufferedReader(new InputStreamReader(mimeHelper
+                                .getSOAPPartInputStream(),
+                                getCharSetEncoding(mimeHelper
+                                        .getSOAPPartContentType()))));
 
         /*
 		 * put a reference to Attachments in to the message context

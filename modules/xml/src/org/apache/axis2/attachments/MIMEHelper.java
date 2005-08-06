@@ -188,6 +188,27 @@ public class MIMEHelper {
      *         content-type
      */
     public InputStream getSOAPPartInputStream() throws OMException {
+        DataHandler dh;
+        try {
+            dh = getDataHandler(getSOAPPartContentID());
+            if (dh == null) {
+                throw new OMException(
+                        "Mandatory Root MIME part containing the SOAP Envelope is missing");
+            }
+            return dh.getInputStream();
+        } catch (IOException e) {
+            throw new OMException(
+                    "Problem with DataHandler of the Root Mime Part. " + e);
+        }
+    }
+
+    /**
+     * @return the Content-ID of the SOAP part It'll be the value Start
+     *         Parameter of Content-Type header if given in the Content type of
+     *         the MIME message. Else it'll be the content-id of the first MIME
+     *         part of the MIME message
+     */
+    private String getSOAPPartContentID() {
         String rootContentID = contentType.getParameter("start");
 
         // to handle the Start parameter not mentioned situation
@@ -208,59 +229,61 @@ public class MIMEHelper {
         if (rootContentID.substring(0, 3).equalsIgnoreCase("cid")) {
             rootContentID = rootContentID.substring(4);
         }
-        DataHandler dh;
+        return rootContentID;
+    }
+
+    public String getSOAPPartContentType() {
+        Part soapPart = getPart(getSOAPPartContentID());
         try {
-            dh = getDataHandler(rootContentID);
-            if (dh == null) {
-                throw new OMException(
-                        "Mandatory Root MIME part containing the SOAP Envelope is missing");
-            }
-            return dh.getInputStream();
-        } catch (IOException e) {
-            throw new OMException(
-                    "Problem with DataHandler of the Root Mime Part. " + e);
+            return soapPart.getContentType();
+        } catch (MessagingException e) {
+            throw new OMException(e);
         }
     }
 
     /**
      * @param blobContentID
+     *            (without the surrounding angle brackets and "cid:" prefix)
      * @return The DataHandler of the mime part refered by the content-Id
+     * @throws OMException
+     */
+    public DataHandler getDataHandler(String blobContentID) throws OMException {
+
+        try {
+            return getPart(blobContentID).getDataHandler();
+        } catch (MessagingException e) {
+            throw new OMException("Problem with Mime Body Part No " + partIndex
+                    + ".  ", e);
+        }
+
+    }
+
+    /**
+     * @param blobContentID
+     * @return The Part refered by the content-Id
      * @throws OMException
      * @see First checks whether the MIME part is already parsed by checking the
      *      parts HashMap. If it is not parsed yet then call the getNextPart()
      *      till we find the required part.
      */
-    public DataHandler getDataHandler(String blobContentID) throws OMException {
-
+    public Part getPart(String blobContentID) {
         Part bodyPart;
         boolean attachmentFound = false;
-
         if (bodyPartsMap.containsKey(blobContentID)) {
             bodyPart = (Part) bodyPartsMap.get(blobContentID);
-            attachmentFound = true;
-            DataHandler dh;
-            try {
-                dh = bodyPart.getDataHandler();
-            } catch (MessagingException e) {
-                throw new OMException("Problem with Mime Body Part No "
-                        + partIndex + ".  " + e);
-            }
-            return dh;
+            return bodyPart;
         } else {
-            try {
-                while (true) {
-                    bodyPart = this.getNextPart();
-                    if (bodyPart == null) {
-                        return null;
-                    }
-                    if (bodyPartsMap.containsKey(blobContentID)) {
-                        bodyPart = (Part) bodyPartsMap.get(blobContentID);
-                        DataHandler dh = bodyPart.getDataHandler();
-                        return dh;
-                    }
+            //This loop will be terminated by the Exceptions thrown if the Mime
+            // part searching was not found
+            while (true) {
+                bodyPart = this.getNextPart();
+                if (bodyPart == null) {
+                    return null;
                 }
-            } catch (MessagingException e) {
-                throw new OMException("Invalid Mime Message " + e);
+                if (bodyPartsMap.containsKey(blobContentID)) {
+                    bodyPart = (Part) bodyPartsMap.get(blobContentID);
+                    return bodyPart;
+                }
             }
         }
     }
@@ -268,6 +291,51 @@ public class MIMEHelper {
     protected void setEndOfStream(boolean value) {
         this.endOfStreamReached = value;
 
+    }
+
+    /**
+     * @return the Next valid MIME part + store the Part in the Parts List
+     * @throws OMException
+     *             throw if cotent id is null or if two MIME parts contain the
+     *             same content-ID & the exceptions throws by getPart()
+     */
+    private Part getNextPart() throws OMException {
+        Part nextPart;
+        nextPart = getPart();
+        if (nextPart != null) {
+            String partContentID;
+            try {
+                partContentID = nextPart.getContentID();
+
+                if (partContentID == null & partIndex == 1) {
+                    bodyPartsMap.put("firstPart", nextPart);
+                    firstPartId = "firstPart";
+                    return nextPart;
+                }
+                if (partContentID == null) {
+                    throw new OMException(
+                            "Part content ID cannot be blank for non root MIME parts");
+                }
+                if ((partContentID.indexOf("<") > -1)
+                        & (partContentID.indexOf(">") > -1)) {
+                    partContentID = partContentID.substring(1, (partContentID
+                            .length() - 1));
+
+                } else if (partIndex == 1) {
+                    firstPartId = partContentID;
+                }
+                if (bodyPartsMap.containsKey(partContentID)) {
+                    throw new OMException(
+                            "Two MIME parts with the same Content-ID not allowed.");
+                }
+                bodyPartsMap.put(partContentID, nextPart);
+                return nextPart;
+            } catch (MessagingException e) {
+                throw new OMException("Error reading Content-ID from the Part."
+                        + e);
+            }
+        } else
+            return null;
     }
 
     /**
@@ -307,65 +375,5 @@ public class MIMEHelper {
         }
         partIndex++;
         return part;
-    }
-
-    /**
-     * @return the Root MIME part which contains the SOAP envelope
-     * @throws OMException
-     */
-    private Part getRootMimeBodyPart() throws OMException {
-        Part rootPart;
-        if (bodyPartsMap.isEmpty()) {
-            rootPart = getPart();
-            bodyPartsMap.put(ROOT_PART, rootPart);
-        } else {
-            rootPart = (Part) bodyPartsMap.get(ROOT_PART);
-        }
-        return rootPart;
-    }
-
-    /**
-     * @return the Next valid MIME part + store the Part in the Parts List
-     * @throws OMException
-     *             throw if cotent id is null or if two MIME parts contain the same
-     *             content-ID & the exceptions throws by getPart()
-     */
-    private Part getNextPart() throws OMException {
-        Part nextPart;
-        nextPart = getPart();
-        if (nextPart != null) {
-            String partContentID;
-            try {
-                partContentID = nextPart.getContentID();
-
-                if (partContentID == null & partIndex == 1) {
-                    bodyPartsMap.put("firstPart", nextPart);
-                    firstPartId = "firstPart";
-                    return nextPart;
-                }
-                if (partContentID == null) {
-                    throw new OMException(
-                            "Part content ID cannot be blank for non root MIME parts");
-                }
-                if ((partContentID.indexOf("<") > -1)
-                        & (partContentID.indexOf(">") > -1)) {
-                    partContentID = partContentID.substring(1, (partContentID
-                            .length() - 1));
-
-                } else if (partIndex == 1) {
-                    firstPartId = partContentID;
-                }
-                if (bodyPartsMap.containsKey(partContentID)) {
-                    throw new OMException(
-                            "Two MIME parts with the same Content-ID not allowed.");
-                }
-                bodyPartsMap.put(partContentID, nextPart);
-                return nextPart;
-            } catch (MessagingException e) {
-                throw new OMException("Error reading Content-ID from the Part."
-                        + e);
-            }
-        } else
-            return null;
     }
 }

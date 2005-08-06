@@ -174,34 +174,9 @@
                 <!-- <exclude>**/*EchoRawXMLChunckedTest.java</exclude> -->
                 <exclude>**org/apache/axis2/mail/*.java</exclude>
                   <exclude>**/*EchoRawSwATest.java</exclude>
-                  <exclude>**/*EchoRawMTOMTest.java</exclude>
-                  <exclude>**/*EchoRawMTOMCommonsChunkingTest.java</exclude>
+                  
 <!--                  <exclude>**/*GroovyServiceTest.java</exclude>-->
                 
-                
-                <!--
-                <exclude>**/*EchoRawMTOMTest.java</exclude>
-                <exclude>**/*EchoRawMTOMLoadTest.java</exclude>
-                <exclude>**/*EchoRawMTOMToBase64Test.java</exclude>
-                
-                <exclude>**/*MTOMCommonsChunkingTest.java</exclude> 
-                <exclude>**/OneWayRawXMLTest.java</exclude>
-               
-                -->
-         
-                <!--
-         		<exclude>**/*SOAP12Test.java</exclude>
-                <exclude>**/*SOAP12TestWithFaults.java</exclude>
-                <exclude>**/*FaultHandlingTest.java</exclude>
-                
-
-               <exclude>**/*MailEchoRawXMLTest.java</exclude>
-                <exclude>**/*MailOneWayRawXMLTest.java</exclude>
-                <exclude>**/*MailRequestResponseRawXMLTest.java</exclude>
-                <exclude>**/*CommonsHTTPEchoRawXMLTest.java</exclude>
-                <exclude>**/*EchoRawMTOMTest.java</exclude>
-                <exclude>**/*EchoRawMTOMLoadTest.java</exclude>
-                <exclude>**/*EchoRawMTOMToBase64Test.java</exclude>  -->
             </excludes>
             <includes>
                 <include>**/*Test.java</include>
