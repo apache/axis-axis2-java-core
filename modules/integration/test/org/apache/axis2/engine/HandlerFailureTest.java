@@ -171,7 +171,6 @@ public class HandlerFailureTest extends TestCase {
                             System.out));
             fail("the test must fail due to bad service Name");
         } catch (AxisFault e) {
-            e.printStackTrace();
             log.info(e.getMessage());
             String message = e.getMessage();
             assertTrue((message.indexOf(UtilServer.FAILURE_MESSAGE)) >= 0);

@@ -336,7 +336,7 @@
             call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
 
             OMElement result =
-                    (OMElement) call.invokeBlocking(operationName.getLocalPart(), payload);
+                    call.invokeBlocking(operationName.getLocalPart(), payload);
             StringWriter writer = new StringWriter();
             result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
             writer.flush();

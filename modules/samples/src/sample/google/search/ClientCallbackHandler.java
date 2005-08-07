@@ -141,7 +141,6 @@ public class ClientCallbackHandler extends Callback {
                                                 OMNode.ELEMENT_NODE) {
                                             elem = (OMElement) node;
                                             String str3 = elem.getLocalName();
-                                            System.out.println(str3);
                                             if (elem.getLocalName().equals(
                                                     "snippet")) {
                                                 //System.out.println("Got the snippet");

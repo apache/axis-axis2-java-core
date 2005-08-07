@@ -47,6 +47,7 @@ import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
+import org.apache.axis2.om.impl.MTOMConstants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
@@ -343,8 +344,8 @@ public class HTTPTransportUtils {
         /*
 		 * put a reference to Attachments in to the message context
 		 */
-        msgContext.setProperty(MIMEHelper.ATTACHMENTS, mimeHelper);
-        if (mimeHelper.getAttachmentSpecType().equals(MIMEHelper.MTOM_TYPE)) {
+        msgContext.setProperty(MTOMConstants.ATTACHMENTS, mimeHelper);
+        if (mimeHelper.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
             /*
              * Creates the MTOM specific MTOMStAXSOAPModelBuilder
              */
@@ -354,7 +355,7 @@ public class HTTPTransportUtils {
                     mimeHelper,
                     SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         } else if (
-            mimeHelper.getAttachmentSpecType().equals(MIMEHelper.SWA_TYPE)) {
+            mimeHelper.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
             builder =
                 new StAXSOAPModelBuilder(
                     reader,

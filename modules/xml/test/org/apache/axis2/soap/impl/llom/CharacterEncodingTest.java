@@ -88,8 +88,6 @@ public class CharacterEncodingTest extends TestCase {
 		
 		assertNotNull("No value for testParam param", result);
 		
-		System.out.println("\nResult: " + result);
-		
 		assertEquals("Expected result not received.", expected, result);
 	
 		

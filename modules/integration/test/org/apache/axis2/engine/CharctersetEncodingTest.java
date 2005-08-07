@@ -125,7 +125,7 @@ public class CharctersetEncodingTest extends TestCase {
 			call.close();
 
 		} catch (AxisFault e) {
-			e.printStackTrace();
+			log.error(e,e);
 			assertFalse("Faliure in processing", true);
 		}
 	}

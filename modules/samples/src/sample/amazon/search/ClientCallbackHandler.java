@@ -162,8 +162,6 @@ public class ClientCallbackHandler extends Callback {
                                                                     elem =
                                                                             (OMElement) node;
                                                                     String str5 = elem.getLocalName();
-                                                                    System.out.println(
-                                                                            str5);
                                                                     if (str5.equals(
                                                                             "NavigableUrl")) {
                                                                         String txt = elem.getText();
@@ -190,12 +188,10 @@ public class ClientCallbackHandler extends Callback {
                 }
             }
         }
-        System.out.println("Outside of loop");
         GUIHandler.showResults(strURL + endHTML);
     }
 
     public void reportError(Exception e) {
-        System.out.println("Error occured after responce is received");
         e.printStackTrace();
     }
 }

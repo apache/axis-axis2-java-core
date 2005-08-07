@@ -21,28 +21,12 @@ import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 
 import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.impl.MTOMConstants;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class MIMEHelper {
-    /**
-     * if the Message is MTOM optimised then <code>MTOM_TYPE</code>
-     */
-    public static final String MTOM_TYPE = "application/xop+xml";
-
-    /**
-     * If the message is Soap with Attachments <code>SwA_TYPE</code>
-     */
-    public static final String SWA_TYPE = "text/xml";
-
-    /**
-     * <code>rootPart</code> is used as the key for the root BodyPart in the
-     * Parts HashMap
-     */
-    public static final String ROOT_PART = "SoapPart";
-
-    public static final String ATTACHMENTS = "Attachments";
 
     /**
      * <code>ContentType</code> of the MIME message
@@ -101,7 +85,7 @@ public class MIMEHelper {
      *      read till first MIME boundary is found or end of stream reached.
      */
     public MIMEHelper(InputStream inStream, String contentTypeString,
-            boolean fileCacheEnable, String attachmentRepoDir)
+                      boolean fileCacheEnable, String attachmentRepoDir)
             throws OMException {
         this.attachmentRepoDir = attachmentRepoDir;
         this.fileCacheEnable = fileCacheEnable;
@@ -170,10 +154,10 @@ public class MIMEHelper {
     public String getAttachmentSpecType() {
         if (this.applicationType == null) {
             applicationType = contentType.getParameter("type");
-            if (applicationType.equalsIgnoreCase(MTOM_TYPE)) {
-                this.applicationType = MTOM_TYPE;
-            } else if (applicationType.equalsIgnoreCase(SWA_TYPE)) {
-                this.applicationType = SWA_TYPE;
+            if (applicationType.equalsIgnoreCase(MTOMConstants.MTOM_TYPE)) {
+                this.applicationType = MTOMConstants.MTOM_TYPE;
+            } else if (applicationType.equalsIgnoreCase(MTOMConstants.SWA_TYPE)) {
+                this.applicationType = MTOMConstants.SWA_TYPE;
             } else {
                 throw new OMException(
                         "Invalid Application type. Support available for MTOM/SOAP 1.2 & SwA/SOAP 1.l only.");

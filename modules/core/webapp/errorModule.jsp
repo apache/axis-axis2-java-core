@@ -13,7 +13,7 @@
   <body>
   <%
       Hashtable errornessModules =(Hashtable)request.getSession().getAttribute(Constants.ERROR_MODULE_MAP);
-      String moduleName = (String)request.getParameter("moduleName");
+      String moduleName = request.getParameter("moduleName");
   %> <h3>The Module has deployment faults</h3><%
   %><font color="red" ><%=(String)errornessModules.get(moduleName) %></font><%
   %>

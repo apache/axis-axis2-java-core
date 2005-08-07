@@ -88,8 +88,6 @@ public class UtilsTCPServer {
                 count--;
             }
         } catch (AxisFault e) {
-
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

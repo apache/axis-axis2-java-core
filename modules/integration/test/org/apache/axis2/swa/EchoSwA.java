@@ -25,6 +25,7 @@ import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
+import org.apache.axis2.om.impl.MTOMConstants;
 
 /**
  * @version $Rev: $ $Date: $
@@ -33,7 +34,7 @@ import org.apache.axis2.om.impl.llom.OMTextImpl;
 public class EchoSwA {
     private MessageContext msgcts;
     public EchoSwA() {
-    } 
+    }
 
     public void init(MessageContext msgcts) {
         this.msgcts = msgcts;
@@ -44,9 +45,9 @@ public class EchoSwA {
         OMElement child  = (OMElement)omEle.getFirstChild();
         OMAttribute attr = (OMAttribute)child.getFirstAttribute(new QName("href"));
         String contentID = attr.getValue();
-        MIMEHelper attachment = (MIMEHelper)msgcts.getProperty(MIMEHelper.ATTACHMENTS);
+        MIMEHelper attachment = (MIMEHelper)msgcts.getProperty(MTOMConstants.ATTACHMENTS);
         contentID = contentID.trim();
-        
+
         if (contentID.substring(0, 3).equalsIgnoreCase("cid")) {
             contentID = contentID.substring(4);
         }

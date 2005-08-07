@@ -171,12 +171,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     roleAttribute.getLocalName().equals(
                             SOAP12Constants.SOAP_ROLE));
             
-            System.out.println(roleAttribute.getValue().trim());
-            System.out.println(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI + "/" +
-                    SOAP12Constants.SOAP_ROLE +
-                    "/" +
-                    "ultimateReceiver");
-            
+
             assertTrue("SOAP 1.2 :- Role value mismatch",
                     roleAttribute.getValue().trim().equals(
                             SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI + "/" +

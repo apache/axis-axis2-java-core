@@ -144,12 +144,6 @@ public class SOAPFaultsTest extends TestCase {
             String string = fault.getFaultString();
             String actor = fault.getFaultActor();
 
-            System.out.println("SOAP fault contains: ");
-            System.out.println("    fault code = " + code);
-            System.out.println("    fault string = " + string);
-            if (actor != null) {
-                System.out.println("    fault actor = " + actor);
-            }
 
             detail = fault.getDetail();
             if (detail != null) {
@@ -157,7 +151,6 @@ public class SOAPFaultsTest extends TestCase {
                 while (it.hasNext()) {
                     entry = (DetailEntry) it.next();
                     String value = entry.getValue();
-                    System.out.println("    Detail entry = " + value);
                 }
             }
         }

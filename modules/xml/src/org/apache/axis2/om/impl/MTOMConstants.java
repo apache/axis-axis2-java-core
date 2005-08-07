@@ -22,4 +22,18 @@ public interface MTOMConstants {
     public static final String XOP_INCLUDE = "Include";
     public static final String XOP_NAMESPACE_URI = "http://www.w3.org/2004/08/xop/include";
 
+    /**
+     * if the Message is MTOM optimised then <code>MTOM_TYPE</code>
+     */
+    String MTOM_TYPE = "application/xop+xml";
+    /**
+     * If the message is Soap with Attachments <code>SwA_TYPE</code>
+     */
+    String SWA_TYPE = "text/xml";
+    /**
+     * <code>rootPart</code> is used as the key for the root BodyPart in the
+     * Parts HashMap
+     */
+    String ROOT_PART = "SoapPart";
+    String ATTACHMENTS = "Attachments";
 }

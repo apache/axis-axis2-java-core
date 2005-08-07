@@ -143,14 +143,12 @@ public class HTTPWorker implements AxisWorker {
                     faultContext.setProperty(HTTPConstants.HTTPOutTransportInfo,msgContext.getProperty(HTTPConstants.HTTPOutTransportInfo));
                     engine.sendFault(faultContext);
                 } else {
-                    log.error(e);
-                    e.printStackTrace();
+                    log.error(e,e);
                 }
             } catch (Exception e1) {
-                log.error(e1);
-                e1.printStackTrace();
+                log.error(e1.getMessage(), e1);
             }
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } finally {
             if (socket != null) {
                 try {

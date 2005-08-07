@@ -121,8 +121,7 @@ public class TextTest extends TestCase {
         SOAPElement postalCode = delivery.addChildElement(name);
         postalCode.addTextNode("PostalCode015");
 
-        System.out.println("The message is lll:\n");
-        message.writeTo(System.out);
+//        message.writeTo(System.out);
 
 	}
 

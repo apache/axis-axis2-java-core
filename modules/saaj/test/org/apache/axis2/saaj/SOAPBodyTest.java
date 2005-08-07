@@ -98,9 +98,6 @@ public class SOAPBodyTest extends TestCase {
             SOAPElement el = (SOAPElement) it.next();
             count++;
             Name name = el.getElementName();
-            System.out.println("Element:" + el);
-            System.out.println("BODY ELEMENT NAME:" + name.getPrefix() + ":"
-                    + name.getLocalName() + " " + name.getURI());
         }
         assertTrue(count == 1);
     }

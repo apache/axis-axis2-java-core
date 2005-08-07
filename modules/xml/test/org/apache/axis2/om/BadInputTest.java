@@ -132,31 +132,7 @@ public class BadInputTest extends OMTestCase {
 
     }
 
-    //    public void testAllMessagesInBadSOAP() throws OMException, Exception{
-    //           File dir = ;
-    //           File[] files = dir.listFiles();
-    //           
-    //           if(files != null){
-    //               for(int i = 0;i<files.length;i++){
-    //                   System.out.print(files[i] + "=");              
-    //                try {
-    //                       if(files[i].isFile() && files[i].getName().endsWith(".xml")){
-    //                           SOAPEnvelope soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(
-    //                                   files[i]).getDocumentElement();
-    //                           OMTestUtils.walkThrough(soapEnvelope);
-    //                       }
-    //                } catch (OMException e) {
-    //                    System.out.println(e);
-    //                }catch(AxisFault e){
-    //                    System.out.println(e);
-    //               }catch(Exception e){
-    //                    e.printStackTrace();
-    //                    fail("must failed gracefully with OMException or AxisFault");
-    //                    return;
-    //               }
-    //           }
-    //       }
-    //    }
+    
 
 
 }

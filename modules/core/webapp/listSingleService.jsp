@@ -18,7 +18,7 @@
             String isFault = (String)request.getSession().getAttribute(Constants.IS_FAULTY);
             if(Constants.IS_FAULTY.equals(isFault)){
                 Hashtable errornessservices =(Hashtable)request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);
-                String servicName = (String)request.getParameter("serviceName");
+                String servicName = request.getParameter("serviceName");
                 %>
                     <h3>This Web service has deployment faults</h3><%
                      %><font color="red" ><%=(String)errornessservices.get(servicName) %></font>

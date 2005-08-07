@@ -52,7 +52,6 @@ public class PrefixesTest extends TestCase {
         msg.writeTo(baos);
 
         String xml = new String(baos.toByteArray());
-        System.out.println(xml);
         assertTrue(xml.indexOf("prefix1") != -1);
         assertTrue(xml.indexOf("prefix2") != -1);
         assertTrue(xml.indexOf("http://www.sun.com") != -1);

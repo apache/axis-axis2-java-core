@@ -17,6 +17,8 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPBody;
@@ -39,12 +41,14 @@ public class SOAPMessageImpl extends SOAPMessage {
     private SOAPPartImpl mSOAPPart;
     private java.util.Hashtable mProps = new java.util.Hashtable();
     private MimeHeaders headers;
+    private Log log = LogFactory.getLog(getClass());
+
 
     public SOAPMessageImpl(Object initialContents) {
         try {
             setup(initialContents, false, null, null, null);
         } catch (SOAPException e) {
-            e.printStackTrace();
+           log.error("Error in creating SOAPMessage", e);
         }
     }
 
@@ -58,7 +62,7 @@ public class SOAPMessageImpl extends SOAPMessage {
                     null,
                     headers);
         } catch (SOAPException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
