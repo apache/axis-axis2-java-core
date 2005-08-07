@@ -22,14 +22,9 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMTestUtils;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPFault;
-import org.apache.axis2.soap.SOAPHeader;
-import org.apache.axis2.soap.SOAPHeaderBlock;
+import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
-import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

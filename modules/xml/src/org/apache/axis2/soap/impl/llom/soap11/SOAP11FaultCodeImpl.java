@@ -7,6 +7,7 @@ import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConve
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPFaultSubCode;
 import org.apache.axis2.soap.SOAPFaultValue;
+import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.impl.llom.SOAPFaultCodeImpl;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 

@@ -20,7 +20,7 @@ import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeader;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

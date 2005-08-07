@@ -4,8 +4,8 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.impl.llom.exception.OMBuilderException;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
-import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 
 import javax.xml.stream.XMLStreamReader;
 

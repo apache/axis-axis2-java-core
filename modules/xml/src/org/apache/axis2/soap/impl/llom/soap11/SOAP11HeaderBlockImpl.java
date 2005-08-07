@@ -4,6 +4,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.SOAPHeader;
+import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
 import org.apache.axis2.soap.impl.llom.SOAPHeaderBlockImpl;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;

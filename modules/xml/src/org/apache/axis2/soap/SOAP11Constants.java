@@ -1,4 +1,4 @@
-package org.apache.axis2.soap.impl.llom.soap11;
+package org.apache.axis2.soap;
 
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
 

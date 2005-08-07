@@ -11,7 +11,7 @@ import org.apache.axis2.soap.SOAPFaultReason;
 import org.apache.axis2.soap.SOAPFaultText;
 import org.apache.axis2.soap.SOAPFaultValue;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
-import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis2.soap.SOAP11Constants;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;

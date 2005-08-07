@@ -5,9 +5,9 @@ import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.SOAPFaultCode;
 import org.apache.axis2.soap.SOAPFaultSubCode;
 import org.apache.axis2.soap.SOAPFaultValue;
+import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.impl.llom.SOAPFaultSubCodeImpl;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

@@ -6,7 +6,7 @@ import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConve
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPFaultDetail;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 
 import javax.xml.stream.XMLStreamException;
 import java.util.Iterator;

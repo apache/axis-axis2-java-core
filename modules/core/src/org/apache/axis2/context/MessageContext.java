@@ -25,8 +25,8 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.SOAP12Constants;
+import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;

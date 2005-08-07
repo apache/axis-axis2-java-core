@@ -26,8 +26,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axis2.om.OMConstants;
 import org.apache.axis2.om.OMText;
-import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 
 
 /**

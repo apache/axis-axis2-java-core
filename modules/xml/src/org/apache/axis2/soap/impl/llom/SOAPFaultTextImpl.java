@@ -7,7 +7,7 @@ import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.OMAttributeImpl;
 import org.apache.axis2.soap.SOAPFaultReason;
 import org.apache.axis2.soap.SOAPFaultText;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 
 import javax.xml.namespace.QName;
 

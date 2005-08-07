@@ -36,7 +36,7 @@ import org.apache.axis2.soap.SOAPFaultDetail;
 import org.apache.axis2.soap.SOAPFaultNode;
 import org.apache.axis2.soap.SOAPFaultReason;
 import org.apache.axis2.soap.SOAPFaultRole;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

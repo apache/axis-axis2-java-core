@@ -50,11 +50,11 @@ import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
 import org.apache.axis2.om.impl.MTOMConstants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.SOAP12Constants;
+import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
 import org.apache.axis2.soap.impl.llom.soap11.SOAP11Factory;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Factory;
 import org.apache.axis2.util.Utils;
 

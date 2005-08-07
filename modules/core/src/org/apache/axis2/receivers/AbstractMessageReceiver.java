@@ -27,8 +27,8 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 
 import javax.xml.namespace.QName;
 

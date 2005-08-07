@@ -38,7 +38,7 @@ import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
+import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;

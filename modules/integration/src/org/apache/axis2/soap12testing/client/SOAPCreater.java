@@ -24,8 +24,8 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

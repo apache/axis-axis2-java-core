@@ -4,7 +4,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.SOAPFaultSubCode;
 import org.apache.axis2.soap.SOAPFaultValue;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.impl.llom.util.UtilProvider;
 
 /*

@@ -23,15 +23,11 @@ import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
 import org.apache.axis2.soap.impl.llom.SOAPEnvelopeImpl;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
-import org.apache.axis2.soap.impl.llom.soap11.SOAP11Constants;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
