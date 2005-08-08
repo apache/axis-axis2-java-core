@@ -8,6 +8,7 @@ import org.apache.axis2.handlers.util.TestUtil;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.impl.llom.util.XMLComparator;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 import javax.xml.namespace.QName;
@@ -70,8 +71,8 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
         epr.setReferenceParameters(anyContentType);
 
-        SOAPEnvelope defaultEnvelope = OMAbstractFactory.getSOAP11Factory()
-                .getDefaultEnvelope();
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
 
         defaultEnvelope.getHeader().declareNamespace(Submission.WSA_NAMESPACE,
                 "wsa");

@@ -38,6 +38,15 @@ public interface SOAPEnvelope extends OMElement {
     public abstract SOAPHeader getHeader() throws OMException;
 
     /**
+     * Convenience method to add a SOAP header to this envelope
+     *
+     * @param namespaceURI
+     * @param name
+     */
+    public abstract SOAPHeaderBlock addHeader(String namespaceURI, String name)
+            throws OMException;
+
+    /**
      * Returns the <CODE>SOAPBody</CODE> object associated with
      * this <CODE>SOAPEnvelope</CODE> object.
      * <P> This SOAPBody will just be a container for all the BodyElements in the

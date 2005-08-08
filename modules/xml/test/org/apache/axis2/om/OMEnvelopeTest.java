@@ -73,9 +73,6 @@ public class OMEnvelopeTest extends OMTestCase {
             fail(e.getMessage());
         }
         assertNotNull(env);
-        assertNotNull("Header should not be null", env.getHeader());
         assertNotNull("Body should not be null", env.getBody());
-
     }
-
 }

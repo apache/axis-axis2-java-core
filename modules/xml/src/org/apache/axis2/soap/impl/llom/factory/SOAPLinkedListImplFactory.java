@@ -28,9 +28,8 @@ public class SOAPLinkedListImplFactory extends OMLinkedListImplFactory implement
      * Eran Chinthaka (chinthaka@apache.org)
      */
 
-
     public SOAPEnvelope createSOAPEnvelope(OMXMLParserWrapper builder) {
-        return new SOAPEnvelopeImpl(builder);
+        return new SOAPEnvelopeImpl(builder, this);
     }
 
     public SOAPEnvelope createSOAPEnvelope() {

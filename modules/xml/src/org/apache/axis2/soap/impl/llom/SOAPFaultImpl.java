@@ -209,14 +209,12 @@ public abstract class SOAPFaultImpl extends SOAPElement
             faultRole.serializeWithCache(omOutput);
         }
 
-
-
         SOAPFaultDetail faultDetail = getDetail();
         if (faultDetail != null) {
             faultDetail.serializeWithCache(omOutput);
         }
 
-
+        OMSerializerUtil.serializeEndpart(omOutput);
     }
 
 }
