@@ -26,7 +26,7 @@ package org.apache.axis2.soap12testing.handlers;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
-import org.apache.axis2.soap.impl.llom.soap12.SOAP12Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMNamespace;

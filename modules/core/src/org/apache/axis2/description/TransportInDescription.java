@@ -52,7 +52,7 @@ public class TransportInDescription
     protected QName name;
 
 
-    protected TransportListener reciever;
+    protected TransportListener receiver;
 
     //to store handler in inFlow
     private Phase inPhase;
@@ -128,15 +128,15 @@ public class TransportInDescription
     /**
      * @return
      */
-    public TransportListener getReciever() {
-        return reciever;
+    public TransportListener getReceiver() {
+        return receiver;
     }
 
     /**
      * @param receiver
      */
     public void setReceiver(TransportListener receiver) {
-        reciever = receiver;
+        this.receiver = receiver;
     }
 
     public Phase getInPhase() {

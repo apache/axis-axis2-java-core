@@ -15,7 +15,6 @@
 */
 package org.apache.axis2.engine;
 
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.HandlerDescription;
@@ -44,8 +43,6 @@ public abstract class AbstractDispatcher extends AbstractHandler implements Hand
     /**
      * Constructor Dispatcher
      */
-    private ConfigurationContext engineContext;
-
     public AbstractDispatcher() {
         init(new HandlerDescription(NAME));
     }

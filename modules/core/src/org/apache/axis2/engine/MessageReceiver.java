@@ -25,5 +25,5 @@ import org.apache.axis2.AxisFault;
  * Message Receiver to decide.
  */
 public interface MessageReceiver {
-    public void recieve(MessageContext messgeCtx) throws AxisFault;
+    public void receive(MessageContext messgeCtx) throws AxisFault;
 }

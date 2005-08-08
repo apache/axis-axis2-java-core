@@ -27,7 +27,7 @@ public class CallbackReceiver implements MessageReceiver {
         callbackstore.put(MsgID, callback);
     }
 
-    public void recieve(MessageContext messgeCtx) throws AxisFault {
+    public void receive(MessageContext messgeCtx) throws AxisFault {
         RelatesTo relatesTO = messgeCtx.getMessageInformationHeaders()
                 .getRelatesTo();
 

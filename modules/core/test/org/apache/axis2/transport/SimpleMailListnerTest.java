@@ -57,7 +57,7 @@ public class SimpleMailListnerTest extends TestCase {
 //    
 //    }
     
-    public void testSendViaMailAndRecieve() throws Exception {
+    public void testSendViaMailAndReceive() throws Exception {
 //         	// CREATE CLIENT INSTANCE MailClient(String user, String host, String password)
 //        	MailClient mailclient = new MailClient("client", "localhost", "client");
 //

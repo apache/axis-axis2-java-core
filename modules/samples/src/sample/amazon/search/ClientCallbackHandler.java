@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * This class implements the onComplete method extended by call back
- * recieves the Response
+ * receives the Response
  * process the soap with OM to extract the data
  * Find the <NavigationURL> element and get the text from it
  *
@@ -104,10 +104,10 @@ public class ClientCallbackHandler extends Callback {
         String opLocalName = operation.getLocalName();
         if (opLocalName.equals("Fault")) {
             log.info(
-                    "A Fault message recieved, Check your Licence key");
+                    "A Fault message received, Check your Licence key");
             strURL =
                     strURL +
-                    "A Fault message recieved, Check your Licence key. Else you have reached the " +
+                    "A Fault message received, Check your Licence key. Else you have reached the " +
                     "daily limit of 1000 requests";
         } else {
             log.info("this is opera: " + operation.getLocalName());

@@ -78,7 +78,7 @@ public class MessageContextInjectionTest extends TestCase {
                         MessageContextEnabledEcho.class.getName()));
         OperationDescription operation = new OperationDescription(
                 operationName);
-        operation.setMessageReciever(new RawXMLINOnlyMessageReceiver());
+        operation.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
         service.addOperation(operation);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         LocalTransportReceiver.CONFIG_CONTEXT.getAxisConfiguration()

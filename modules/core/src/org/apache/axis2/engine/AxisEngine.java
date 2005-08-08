@@ -137,8 +137,8 @@ public class AxisEngine {
         if (msgContext.isServerSide() && !msgContext.isPaused()) {
             // invoke the Message Receivers
             MessageReceiver receiver =
-                operationDescription.getMessageReciever();
-            receiver.recieve(msgContext);
+                operationDescription.getMessageReceiver();
+            receiver.receive(msgContext);
         }
     }
 

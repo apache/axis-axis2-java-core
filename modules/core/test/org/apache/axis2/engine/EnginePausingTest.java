@@ -67,8 +67,8 @@ public class EnginePausingTest extends TestCase {
         engineContext.getAxisConfiguration().addService(service);
 
         OperationDescription axisOp = new OperationDescription(operationName);
-        axisOp.setMessageReciever(new MessageReceiver() {
-            public void recieve(MessageContext messgeCtx) throws AxisFault {
+        axisOp.setMessageReceiver(new MessageReceiver() {
+            public void receive(MessageContext messgeCtx) throws AxisFault {
 
             }
         });

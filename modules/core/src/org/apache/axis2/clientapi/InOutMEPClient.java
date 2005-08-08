@@ -216,7 +216,7 @@ public class InOutMEPClient extends MEPClient {
                 //information need to correlated the response message and invoke the call back
                 String messageID = String.valueOf(System.currentTimeMillis());
                 msgctx.setMessageID(messageID);
-                axisop.setMessageReciever(callbackReceiver);
+                axisop.setMessageReceiver(callbackReceiver);
                 callbackReceiver.addCallback(messageID, callback);
                 //set the replyto such that the response will arrive at the transport listener started
                 msgctx.setReplyTo(ListenerManager.replyToEPR(serviceContext

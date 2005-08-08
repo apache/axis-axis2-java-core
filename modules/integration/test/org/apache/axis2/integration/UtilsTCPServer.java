@@ -33,7 +33,7 @@ public class UtilsTCPServer {
 
     private static ConfigurationContext configurationContext;
     public static final int TESTING_PORT = 5555;
-    public static final String FAILURE_MESSAGE = "Intentional Faliure";
+    public static final String FAILURE_MESSAGE = "Intentional Failure";
     private Log log = LogFactory.getLog(getClass());
 
     public static synchronized void deployService(ServiceDescription service)
@@ -57,7 +57,7 @@ public class UtilsTCPServer {
             File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY);
             System.out.println(file.getAbsoluteFile());
             if (!file.exists()) {
-                throw new Exception("repository directory does not exists");
+                throw new Exception("Repository directory does not exist");
             }
 
             configurationContext =

@@ -29,7 +29,7 @@ public abstract class AbstractInMessageReceiver
 
     public abstract void invokeBusinessLogic(MessageContext inMessage) throws AxisFault;
 
-    public final void recieve(final MessageContext messgeCtx) throws AxisFault {
+    public final void receive(final MessageContext messgeCtx) throws AxisFault {
         invokeBusinessLogic(messgeCtx);
     }
 

@@ -34,7 +34,7 @@ public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageR
     public abstract void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage, ServerCallback callback)
         throws AxisFault;
 
-    public final void recieve(final MessageContext messgeCtx) throws AxisFault {
+    public final void receive(final MessageContext messgeCtx) throws AxisFault {
     	
         final ServerCallback callback = new ServerCallback() {
             public void handleResult(MessageContext result) throws AxisFault {

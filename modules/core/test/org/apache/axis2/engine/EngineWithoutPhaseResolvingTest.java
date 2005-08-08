@@ -67,8 +67,8 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
         axisOp = new OperationDescription(opearationName);
 
         service = new ServiceDescription(serviceName);
-        axisOp.setMessageReciever(new MessageReceiver() {
-            public void recieve(MessageContext messgeCtx) throws AxisFault {
+        axisOp.setMessageReceiver(new MessageReceiver() {
+            public void receive(MessageContext messgeCtx) throws AxisFault {
                 // TODO Auto-generated method stub
 
             }

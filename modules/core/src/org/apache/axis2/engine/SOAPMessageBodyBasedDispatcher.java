@@ -38,7 +38,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
             new QName("http://axis.ws.apache.org",
                     "SOAPMessageBodyBasedDispatcher");
     QName serviceName = null;
-    QName operatoinName = null;
+    QName operationName = null;
 
     /**
      * Constructor Dispatcher
@@ -52,9 +52,9 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
             throws AxisFault {
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody()
                 .getFirstElement();
-        operatoinName = new QName(bodyFirstChild.getLocalName());
+        operationName = new QName(bodyFirstChild.getLocalName());
 
-        OperationDescription axisOp = service.getOperation(operatoinName);
+        OperationDescription axisOp = service.getOperation(operationName);
         return axisOp;
     }
 
@@ -62,7 +62,6 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
      * @see org.apache.axis2.engine.AbstractDispatcher#findService(org.apache.axis2.context.MessageContext)
      */
     public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
-        final String URI_ID_STRING = "/services";
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
                 
         if(bodyFirstChild != null){
@@ -73,7 +72,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
                 String[] values = Utils.parseRequestURLForServiceAndOperation(
                         filePart);
                 if (values[1] != null) {
-                    operatoinName = new QName(values[1]);
+                    operationName = new QName(values[1]);
                 }
                 if (values[0] != null) {
                     serviceName = new QName(values[0]);

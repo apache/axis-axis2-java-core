@@ -49,7 +49,7 @@ public class WSInfo {
         return lastmodifieddate;
     }
 
-    public void setLastmodifieddate(long lastmodifieddate) {
+    public void setLastModifiedDate(long lastmodifieddate) {
         this.lastmodifieddate = lastmodifieddate;
     }
 

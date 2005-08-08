@@ -64,6 +64,13 @@ public interface OMElement extends OMNode, OMContainer {
     public Iterator getChildren();
 
     /**
+     * Returns a filtered list of children - just the elements.
+     *
+     * @return an iterator over the child elements
+     */ 
+    public Iterator getChildElements();
+
+    /**
      * THis will create a namespace in the current element scope
      *
      * @param uri
@@ -115,10 +122,12 @@ public interface OMElement extends OMNode, OMContainer {
     public Iterator getAttributes();
 
     /**
-     * @param qname
-     * @return
+     * Return a named attribute if present
+     *
+     * @param qname the qualified name to search for
+     * @return an OMAttribute with the given name if found, or null
      */
-    public Iterator getAttributes(QName qname);
+    public OMAttribute getAttribute(QName qname);
 
     /**
      * This will insert attribute to this element. Implementor can decide as to insert this

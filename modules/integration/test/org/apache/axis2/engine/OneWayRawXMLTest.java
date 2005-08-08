@@ -70,8 +70,8 @@ public class OneWayRawXMLTest extends TestCase {
         ServiceDescription service = new ServiceDescription(serviceName);
         OperationDescription operation = new OperationDescription(
                 operationName);
-        operation.setMessageReciever(new MessageReceiver() {
-            public void recieve(MessageContext messgeCtx) throws AxisFault {
+        operation.setMessageReceiver(new MessageReceiver() {
+            public void receive(MessageContext messgeCtx) throws AxisFault {
                 envelope = messgeCtx.getEnvelope();
                 TestingUtils.campareWithCreatedOMElement(
                         envelope.getBody().getFirstElement());

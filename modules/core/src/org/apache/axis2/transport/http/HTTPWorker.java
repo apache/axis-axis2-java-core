@@ -81,7 +81,7 @@ public class HTTPWorker implements AxisWorker {
                 }else if(HTTPConstants.HEADER_PROTOCOL_11.equals(httpVersion)){
                     httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
                 }else{
-                    throw new AxisFault("Unknown protocol versoin "+ httpVersion);
+                    throw new AxisFault("Unknown protocol version "+ httpVersion);
                 }
                 
                 String transferEncoding = (String) map.get(HTTPConstants.HEADER_TRANSFER_ENCODING);

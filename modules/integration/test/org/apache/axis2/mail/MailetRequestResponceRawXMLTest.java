@@ -113,8 +113,8 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
         ServiceDescription service = new ServiceDescription(serviceName);
         OperationDescription operation = new OperationDescription(
                 operationName);
-        operation.setMessageReciever(new MessageReceiver() {
-            public void recieve(MessageContext messgeCtx) throws AxisFault {
+        operation.setMessageReceiver(new MessageReceiver() {
+            public void receive(MessageContext messgeCtx) throws AxisFault {
                 envelope = messgeCtx.getEnvelope();
             }
         });
@@ -188,7 +188,7 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
 //                new ParameterImpl("transport.mail.replyToAddress",
 //                        "foo@127.0.0.1"));
 //        transportIn.setReceiver(new SimpleMailListener());
-//        transportIn.getReciever().init(configContext, transportIn);
+//        transportIn.getReceiver().init(configContext, transportIn);
 //
 //        TransportOutDescription transportOut =
 //                new TransportOutDescription(
@@ -231,7 +231,7 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
 //                new ParameterImpl("transport.mail.replyToAddress",
 //                        "client@127.0.0.1"));
 //        transportIn.setReceiver(new SimpleMailListener());
-//        transportIn.getReciever().init(configContext, transportIn);
+//        transportIn.getReceiver().init(configContext, transportIn);
 //
 //        TransportOutDescription transportOut =
 //                new TransportOutDescription(

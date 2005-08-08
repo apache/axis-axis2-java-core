@@ -32,7 +32,7 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
                                              MessageContext outMessage)
             throws AxisFault;
 
-    public final void recieve(MessageContext messgeCtx) throws AxisFault {
+    public final void receive(MessageContext messgeCtx) throws AxisFault {
         MessageContext newmsgCtx =
                 new MessageContext(messgeCtx.getSystemContext(),
                         messgeCtx.getSessionContext(),

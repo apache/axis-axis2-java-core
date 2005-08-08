@@ -516,14 +516,14 @@ public class DeploymentEngine implements DeploymentConstants {
     /**
      * @param file
      */
-    public void addtowsToDeploy(ArchiveFileData file) {
+    public void addWSToDeploy(ArchiveFileData file) {
         wsToDeploy.add(file);
     }
 
     /**
      * @param file
      */
-    public void addtowstoUnDeploy(WSInfo file) {
+    public void addWSToUndeploy(WSInfo file) {
         wsToUnDeploy.add(file);
     }
 

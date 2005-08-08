@@ -91,7 +91,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     //to store AxisObserver Objects
     private ArrayList observersList = null;
 
-    protected HashMap messagRecievers;
+    protected HashMap messagReceivers;
     /////////////////////// From AxisGlobal /////////////////////////////////////
     /**
      * Constructor EngineRegistryImpl
@@ -99,7 +99,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     public AxisConfigurationImpl() {
         paramInclude = new ParameterIncludeImpl();
         engagedModules = new ArrayList();
-        messagRecievers = new HashMap();
+        messagReceivers = new HashMap();
 
         inPhases = new ArrayList();
         outPhases = new ArrayList();
@@ -302,11 +302,11 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     public void addMessageReceiver(String key,
                                    MessageReceiver messageReceiver) {
-        messagRecievers.put(key, messageReceiver);
+        messagReceivers.put(key, messageReceiver);
     }
 
     public MessageReceiver getMessageReceiver(String key) {
-        return (MessageReceiver) messagRecievers.get(key);
+        return (MessageReceiver) messagReceivers.get(key);
     }
 
     /**

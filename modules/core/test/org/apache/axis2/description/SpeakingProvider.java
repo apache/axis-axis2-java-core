@@ -30,7 +30,7 @@ public class SpeakingProvider implements MessageReceiver {
     }
 
 
-    public void recieve(MessageContext msgContext) throws AxisFault {
+    public void receive(MessageContext msgContext) throws AxisFault {
         log.info("I am Speaking Provider Running :)");
     }
 

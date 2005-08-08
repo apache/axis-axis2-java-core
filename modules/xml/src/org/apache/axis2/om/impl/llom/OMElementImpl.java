@@ -271,6 +271,15 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
+     * Returns a filtered list of children - just the elements.
+     *
+     * @return an iterator over the child elements
+     */
+    public Iterator getChildElements() {
+        return new OMChildrenIterator(getFirstChild());
+    }
+
+    /**
      * THis will create a namespace in the current element scope
      *
      * @param uri
@@ -397,9 +406,14 @@ public class OMElementImpl extends OMNodeImpl
         return attributes.values().iterator();
     }
 
-    public Iterator getAttributes(QName qname) {
-        //TODO: would there be multiple attributes with the same QName
-        return null;
+    /**
+     * Return a named attribute if present
+     *
+     * @param qname the qualified name to search for
+     * @return an OMAttribute with the given name if found, or null
+     */
+    public OMAttribute getAttribute(QName qname) {
+        return (OMAttribute)attributes.get(qname);
     }
 
     /**

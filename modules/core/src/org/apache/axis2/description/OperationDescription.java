@@ -220,11 +220,11 @@ public class OperationDescription extends WSDLOperationImpl implements
 
     }
 
-    public MessageReceiver getMessageReciever() {
+    public MessageReceiver getMessageReceiver() {
         return messageReceiver;
     }
 
-    public void setMessageReciever(MessageReceiver messageReceiver) {
+    public void setMessageReceiver(MessageReceiver messageReceiver) {
         this.messageReceiver = messageReceiver;
     }
 

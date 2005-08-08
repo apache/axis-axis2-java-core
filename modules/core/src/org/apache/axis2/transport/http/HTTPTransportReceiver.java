@@ -37,12 +37,12 @@ public class HTTPTransportReceiver {
     /**
      * Field END
      */
-    private static final int END = 1;
+//    private static final int END = 1;
 
     /**
      * Field END_OF_LINE
      */
-    private static final int END_OF_LINE = 2;
+//    private static final int END_OF_LINE = 2;
 
     /**
      * Field BEFORE_SEPERATOR
@@ -100,7 +100,7 @@ public class HTTPTransportReceiver {
      * Server: Apache-Coyote/1.1
      * Connection: close
      *
-     * @param reader
+     * @param in
      * @param serverSide
      * @return
      * @throws AxisFault
@@ -113,7 +113,6 @@ public class HTTPTransportReceiver {
             int state = BEFORE_SEPERATOR;
             String key = null;
             String value = null;
-            int start = 0;
             length = readLine(in, buf);
             if (serverSide) {
                 if ((buf[0] == 'P')
@@ -235,8 +234,6 @@ public class HTTPTransportReceiver {
      *
      * @param is  inputstream to read from
      * @param b   byte array to read into
-     * @param off starting offset into the byte array
-     * @param len maximum number of bytes to read
      * @return
      * @throws java.io.IOException
      */

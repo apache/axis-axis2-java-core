@@ -24,6 +24,7 @@ import org.w3c.dom.Document;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Chathura Herath
@@ -33,11 +34,6 @@ public class ComponentImpl implements WSDLConstants, Component {
      * Field componentProperties
      */
     protected HashMap componentProperties = new HashMap();
-
-    /**
-     * List of Element
-     */
-    protected List elments;
 
     /**
      * Field documentation
@@ -54,6 +50,11 @@ public class ComponentImpl implements WSDLConstants, Component {
      * component.
      */
     private List attributes = null;
+
+    /**
+     * Metadata
+     */
+    private HashMap metadata = null;
 
     /**
      * Returns the Documentation Element as a <code>Document</code>.
@@ -163,5 +164,17 @@ public class ComponentImpl implements WSDLConstants, Component {
             this.attributes = new LinkedList();
         }
         return this.attributes;
+    }
+
+    /**
+     * Get access to the metadata bag associated with this component (which
+     * contains anything we feel like hanging off it)
+     *
+     * @return the metadata Map.
+     */
+    public Map getMetadataBag() {
+        if (metadata == null)
+            metadata = new HashMap();
+        return metadata;
     }
 }

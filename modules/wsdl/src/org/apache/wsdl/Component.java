@@ -17,6 +17,7 @@ package org.apache.wsdl;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author chathura@opensource.lk
@@ -80,4 +81,12 @@ public interface Component {
      * @param attribute <code>ExtensibilityAttribute</code>
      */
     public void addExtensibleAttributes(WSDLExtensibilityAttribute attribute);
+
+    /**
+     * Get access to the metadata bag associated with this component (which
+     * contains anything we feel like hanging off it)
+     *
+     * @return the metadata Map.
+     */
+    public Map getMetadataBag();
 }

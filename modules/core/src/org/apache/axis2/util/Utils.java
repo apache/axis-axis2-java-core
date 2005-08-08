@@ -91,7 +91,7 @@ public class Utils {
                         className));
 
         OperationDescription axisOp = new OperationDescription(opName);
-        axisOp.setMessageReciever(messageReceiver);
+        axisOp.setMessageReceiver(messageReceiver);
         axisOp.setStyle(WSDLService.STYLE_RPC);
         service.addOperation(axisOp);
         return service;

@@ -429,10 +429,10 @@ public class DeploymentParser implements DeploymentConstants {
                         PhasesInfo info = dpengine.getPhasesinfo();
                         info.setOperationPhases(operation);
 //                        DeploymentData.getInstance().setOperationPhases(operation);
-                        if (operation.getMessageReciever() == null) {
+                        if (operation.getMessageReceiver() == null) {
                             try {
                                 /**
-                                 * Setting default Message Recive as Message Reciever
+                                 * Setting default Message Recive as Message Receiver
                                  */
                                 ClassLoader loader1 =
                                         Thread.currentThread()
@@ -441,7 +441,7 @@ public class DeploymentParser implements DeploymentConstants {
                                         Class.forName("org.apache.axis2.receivers.RawXMLINOutMessageReceiver",
                                                 true,
                                                 loader1);
-                                operation.setMessageReciever((MessageReceiver) messageReceiver.newInstance());
+                                operation.setMessageReceiver((MessageReceiver) messageReceiver.newInstance());
                             } catch (ClassNotFoundException e) {
                                 throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
                                         "ClassNotFoundException",
@@ -840,7 +840,7 @@ public class DeploymentParser implements DeploymentConstants {
                                                 Class.forName(attvalue,
                                                         true,
                                                         loader1);
-                                        operation.setMessageReciever((MessageReceiver) messageReceiver.newInstance());
+                                        operation.setMessageReceiver((MessageReceiver) messageReceiver.newInstance());
                                     }
                                 } catch (ClassNotFoundException e) {
                                     throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
@@ -970,10 +970,10 @@ public class DeploymentParser implements DeploymentConstants {
                         PhasesInfo info = dpengine.getPhasesinfo();
                         info.setOperationPhases(operation);
 //                        DeploymentData.getInstance().setOperationPhases(operation);
-                        if (operation.getMessageReciever() == null) {
+                        if (operation.getMessageReceiver() == null) {
                             try {
                                 /**
-                                 * Setting default Message Recive as Message Reciever
+                                 * Setting default Message Recive as Message Receiver
                                  */
                                 ClassLoader loader1 =
                                         Thread.currentThread()
@@ -982,7 +982,7 @@ public class DeploymentParser implements DeploymentConstants {
                                         Class.forName("org.apache.axis2.receivers.RawXMLINOutMessageReceiver",
                                                 true,
                                                 loader1);
-                                operation.setMessageReciever((MessageReceiver) messageReceiver.newInstance());
+                                operation.setMessageReceiver((MessageReceiver) messageReceiver.newInstance());
                             } catch (ClassNotFoundException e) {
                                 throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
                                         "ClassNotFoundException",

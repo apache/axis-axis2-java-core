@@ -80,7 +80,7 @@ public class EchoRawSwATest extends TestCase {
                                 .getName()));
 
         OperationDescription axisOp = new OperationDescription(operationName);
-        axisOp.setMessageReciever(new RawXMLINOutMessageReceiver());
+        axisOp.setMessageReceiver(new RawXMLINOutMessageReceiver());
         axisOp.setStyle(WSDLService.STYLE_DOC);
         service.addOperation(axisOp);
         UtilServer.deployService(service);

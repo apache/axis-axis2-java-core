@@ -62,7 +62,6 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
      */
     private boolean stopped = false;
 
-    private boolean chuncked = false;
     private int port;
 
     public SimpleHTTPServer() {
@@ -157,8 +156,6 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
 
     /**
      * Start this server as a NON-daemon.
-     *
-     * @throws Exception
      */
     public void start() throws AxisFault {
         if (serverSocket == null) {
@@ -227,6 +224,7 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {
             System.out.println("SimpleHTTPServer repositoryLocation port");
+            System.exit(1);
         }
         ServerSocket serverSoc = null;
         serverSoc = new ServerSocket(Integer.parseInt(args[1]));

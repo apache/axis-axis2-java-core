@@ -152,7 +152,7 @@ public class ConfigurationContextFactory {
         while (values.hasNext()) {
             TransportInDescription transportIn =
                     (TransportInDescription) values.next();
-            TransportListener listener = transportIn.getReciever();
+            TransportListener listener = transportIn.getReceiver();
             if (listener != null) {
                 listener.init(configContext, transportIn);
             }

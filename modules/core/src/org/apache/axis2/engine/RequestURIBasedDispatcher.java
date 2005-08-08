@@ -36,7 +36,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
             new QName("http://axis.ws.apache.org",
                     "RequestURIBasedDispatcher");
     QName serviceName = null;
-    QName operatoinName = null;
+    QName operationName = null;
 
     /**
      * Constructor Dispatcher
@@ -48,8 +48,8 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
     public OperationDescription findOperation(ServiceDescription service,
                                               MessageContext messageContext)
             throws AxisFault {
-        if (operatoinName != null) {
-            OperationDescription axisOp = service.getOperation(operatoinName);
+        if (operationName != null) {
+            OperationDescription axisOp = service.getOperation(operationName);
             return axisOp;
         }
         return null;
@@ -66,7 +66,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
             String[] values = Utils.parseRequestURLForServiceAndOperation(
                     filePart);
             if (values[1] != null) {
-                operatoinName = new QName(values[1]);
+                operationName = new QName(values[1]);
             }
             if (values[0] != null) {
                 serviceName = new QName(values[0]);
