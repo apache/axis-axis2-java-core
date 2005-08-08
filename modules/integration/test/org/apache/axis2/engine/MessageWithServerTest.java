@@ -18,16 +18,7 @@ package org.apache.axis2.engine;
 
 //todo
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.net.Socket;
-
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.OperationDescription;
@@ -37,6 +28,13 @@ import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.net.Socket;
 
 public class MessageWithServerTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());

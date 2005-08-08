@@ -63,12 +63,12 @@
 package org.apache.axis2.xpath;
 
 import junit.framework.TestCase;
-import org.jaxen.function.StringFunction;
-import org.jaxen.saxpath.helpers.XPathReaderFactory;
-import org.jaxen.pattern.Pattern;
-import org.jaxen.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jaxen.*;
+import org.jaxen.function.StringFunction;
+import org.jaxen.pattern.Pattern;
+import org.jaxen.saxpath.helpers.XPathReaderFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;

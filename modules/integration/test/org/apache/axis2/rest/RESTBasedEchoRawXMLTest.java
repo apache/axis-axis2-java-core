@@ -17,11 +17,7 @@
 package org.apache.axis2.rest;
 
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-
 import junit.framework.TestCase;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
@@ -41,6 +37,9 @@ import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
 
 
 public class RESTBasedEchoRawXMLTest extends TestCase {

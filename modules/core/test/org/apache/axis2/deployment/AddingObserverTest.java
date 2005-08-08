@@ -1,8 +1,8 @@
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import junit.framework.TestCase;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.engine.AxisConfiguration;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

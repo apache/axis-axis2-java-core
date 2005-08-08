@@ -16,6 +16,7 @@
 
 package sample.google.search;
 
+import org.apache.axis2.AxisFault;
 import sample.google.common.util.PropertyLoader;
 
 import javax.swing.*;
@@ -26,8 +27,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
-
-import org.apache.axis2.AxisFault;
 
 /**
  * Build and desplay the GUI

@@ -17,15 +17,15 @@
  */
 package org.apache.axis2.engine;
 
-import java.util.Iterator;
-
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeaderBlock;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.AxisFault;
+
+import java.util.Iterator;
 
 /**
  * This handler checks that the SOAP processing model rules have been followed

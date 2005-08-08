@@ -17,17 +17,10 @@
  */
 package org.apache.axis2.transport;
 
-import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.i18n.Messages;
 
-import javax.mail.Authenticator;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Store;
+import javax.mail.*;
 import java.util.Properties;
 
 public class EmailReceiver {

@@ -24,11 +24,8 @@
  */
         %>
 <%@ page import="org.apache.axis2.Constants,
-                 org.apache.axis2.description.ServiceDescription,
-                 org.apache.axis2.description.OperationDescription,
-                 java.util.*,
-                 javax.xml.namespace.QName,
-                 org.apache.axis2.description.ModuleDescription"%>
+                 org.apache.axis2.description.ModuleDescription,
+                 java.util.*"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
   <head><title>List Available Moules</title>

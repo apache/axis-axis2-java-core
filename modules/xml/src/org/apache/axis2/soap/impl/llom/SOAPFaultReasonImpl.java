@@ -2,12 +2,12 @@ package org.apache.axis2.soap.impl.llom;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
+import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
+import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPFaultReason;
 import org.apache.axis2.soap.SOAPFaultText;
-import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.impl.llom.util.UtilProvider;
 
 import javax.xml.stream.XMLStreamException;

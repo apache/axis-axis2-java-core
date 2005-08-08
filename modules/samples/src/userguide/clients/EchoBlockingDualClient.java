@@ -16,16 +16,15 @@
 
 package userguide.clients;
 
-import java.io.StringWriter;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.om.OMElement;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
+import java.io.StringWriter;
 
 /**
  * Created by IntelliJ IDEA.

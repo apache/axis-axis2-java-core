@@ -15,8 +15,8 @@
  */
 package org.apache.axis2.om.impl.llom;
 
-import java.util.Iterator;
-import java.util.Stack;
+import org.apache.axis2.om.*;
+import org.apache.axis2.om.impl.llom.exception.OMStreamingException;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -24,14 +24,8 @@ import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.llom.exception.OMStreamingException;
+import java.util.Iterator;
+import java.util.Stack;
 
 /**
  * Note  - This class also implements the streaming constants interface

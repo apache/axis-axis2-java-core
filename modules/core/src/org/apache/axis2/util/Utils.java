@@ -15,15 +15,9 @@
  */
 package org.apache.axis2.util;
 
-import org.apache.axis2.Constants;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.PhaseRule;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.Constants;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;

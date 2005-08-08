@@ -17,7 +17,6 @@
 package org.apache.axis2.soap;
 
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.soap.SOAP12Constants;
 
 public class SOAPFaultTest extends SOAPFaultTestCase {
 

@@ -15,15 +15,13 @@
  */
 package org.apache.axis2.engine;
 
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.*;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 
 /**
  * The palce where all the Global states of Axis is kept.

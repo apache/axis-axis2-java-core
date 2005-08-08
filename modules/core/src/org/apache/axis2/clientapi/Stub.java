@@ -16,10 +16,8 @@
 
 package org.apache.axis2.clientapi;
 
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis2.Constants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -37,6 +35,8 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.wsdl.WSDLService;
+
+import javax.xml.stream.XMLStreamReader;
 
 
 /**

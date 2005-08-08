@@ -1,18 +1,17 @@
 package org.apache.axis2.engine;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Iterator;
-
 import junit.framework.TestCase;
-
 import org.apache.axis2.description.AxisDescWSDLComponentFactory;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLDescription;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Iterator;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

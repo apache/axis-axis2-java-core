@@ -2,13 +2,7 @@ package org.apache.axis2.soap.impl.llom.soap12;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPFault;
-import org.apache.axis2.soap.SOAPFaultCode;
-import org.apache.axis2.soap.SOAPFaultDetail;
-import org.apache.axis2.soap.SOAPFaultNode;
-import org.apache.axis2.soap.SOAPFaultReason;
-import org.apache.axis2.soap.SOAPFaultRole;
+import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.SOAPFaultImpl;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 

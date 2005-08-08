@@ -15,10 +15,10 @@
  */
 package org.apache.axis2.transport;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.AxisFault;
 
 /**
  * Class TransportListener

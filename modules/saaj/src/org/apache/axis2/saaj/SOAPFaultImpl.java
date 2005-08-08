@@ -16,13 +16,7 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPFaultCode;
-import org.apache.axis2.soap.SOAPFaultDetail;
-import org.apache.axis2.soap.SOAPFaultNode;
-import org.apache.axis2.soap.SOAPFaultReason;
-import org.apache.axis2.soap.SOAPFaultText;
-import org.apache.axis2.soap.SOAPFaultValue;
+import org.apache.axis2.soap.*;
 
 import javax.xml.soap.Detail;
 import javax.xml.soap.Name;

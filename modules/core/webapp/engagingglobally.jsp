@@ -24,13 +24,11 @@
  */
         %>
 
-<%@ page import="java.util.Collection,
-                 org.apache.axis2.Constants,
-                 java.util.Iterator,
-                 javax.xml.namespace.QName,
+<%@ page import="org.apache.axis2.Constants,
                  org.apache.axis2.description.ModuleDescription,
+                 java.util.Collection,
                  java.util.HashMap,
-                 java.util.Enumeration"%><html>
+                 java.util.Iterator"%><html>
 <head>
 <title>Engaging Module Globally</title>
 <style type="text/css">

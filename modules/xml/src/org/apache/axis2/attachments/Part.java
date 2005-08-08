@@ -16,12 +16,11 @@
  */
 package org.apache.axis2.attachments;
 
+import javax.activation.DataHandler;
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
-
-import javax.activation.DataHandler;
-import javax.mail.MessagingException;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>

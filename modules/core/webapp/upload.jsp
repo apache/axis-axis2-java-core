@@ -1,14 +1,8 @@
-<%@ page import="java.io.DataInputStream,
+<%@ page import="javax.servlet.ServletContext,
                  java.io.File,
-                 java.io.FileOutputStream,
-                 java.io.Writer,
-                 java.io.PrintWriter,
                  java.io.IOException,
-                 org.apache.commons.fileupload.FileUpload,
-                 java.util.List,
-                 org.apache.commons.fileupload.DiskFileUpload,
-                 org.apache.commons.fileupload.FileItem,
-                 java.util.Iterator"%>
+                 java.util.Iterator,
+                 java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"
  %>
 <html>                                                                                                       

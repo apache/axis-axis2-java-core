@@ -15,26 +15,18 @@
  */
 package org.apache.axis2.om.impl.serializer;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
+import org.apache.axis2.om.*;
+import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.soap.SOAPEnvelope;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.axis2.om.AbstractTestCase;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPEnvelope;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 
 public class ElementSerializerTest extends AbstractTestCase {
     private XMLStreamReader reader;

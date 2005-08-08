@@ -16,8 +16,6 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
-import java.util.Iterator;
-
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.wsdl.WSDLExtensibilityElement;
@@ -25,6 +23,8 @@ import org.apache.wsdl.WSDLTypes;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.Schema;
 import org.w3c.dom.NamedNodeMap;
+
+import java.util.Iterator;
 
 /**
  * @author chathura@opensource.lk

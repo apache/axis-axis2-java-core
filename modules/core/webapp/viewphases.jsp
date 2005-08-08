@@ -24,11 +24,8 @@
  */
         %>
 <%@ page import="org.apache.axis2.Constants,
-                 org.apache.axis2.description.ServiceDescription,
-                 org.apache.axis2.description.ModuleDescription,
-                 org.apache.axis2.description.OperationDescription,
-                 java.util.*,
-                 org.apache.axis2.engine.Phase"%>
+                 org.apache.axis2.engine.Phase,
+                 java.util.ArrayList"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head><title>View Phases</title>

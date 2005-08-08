@@ -1,11 +1,11 @@
-import javax.xml.namespace.QName;
-
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.axis2.AxisFault;
+
+import javax.xml.namespace.QName;
 
 public class Handler2  extends AbstractHandler implements Handler {
     private Log log = LogFactory.getLog(getClass());

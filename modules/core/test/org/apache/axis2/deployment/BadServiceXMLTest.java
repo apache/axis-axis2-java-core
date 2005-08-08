@@ -16,8 +16,8 @@
 
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.AbstractTestCase;
+import org.apache.axis2.description.ServiceDescription;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

@@ -15,8 +15,8 @@
  */
 package org.apache.axis2.engine;
 
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
 
 /**
  * This one receives the Message, what is does is not of concern for Axis2 (litirally).

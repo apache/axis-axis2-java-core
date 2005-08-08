@@ -18,8 +18,8 @@ package org.apache.axis2.description;
 import org.apache.axis2.modules.Module;
 
 import javax.xml.namespace.QName;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * <p>This holds the information about a Module. </p>

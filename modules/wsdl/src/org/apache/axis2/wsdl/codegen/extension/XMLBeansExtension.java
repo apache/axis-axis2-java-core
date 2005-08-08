@@ -1,15 +1,5 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.util.List;
-import java.util.Stack;
-import java.util.Vector;
-
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
@@ -17,13 +7,12 @@ import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLTypes;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.Schema;
-import org.apache.xmlbeans.BindingConfig;
-import org.apache.xmlbeans.Filer;
-import org.apache.xmlbeans.SchemaType;
-import org.apache.xmlbeans.SchemaTypeSystem;
-import org.apache.xmlbeans.XmlBeans;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.*;
+
+import java.io.*;
+import java.util.List;
+import java.util.Stack;
+import java.util.Vector;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

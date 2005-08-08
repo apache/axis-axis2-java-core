@@ -4,9 +4,9 @@ import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
+import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeaderBlock;
-import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.impl.llom.SOAPHeaderImpl;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 

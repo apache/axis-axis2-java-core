@@ -15,18 +15,12 @@
  */
 package org.apache.axis2.om.impl.llom;
 
-import java.io.ByteArrayOutputStream;
-
-import javax.xml.stream.XMLStreamException;
-
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMDocument;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
+import junit.framework.TestCase;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.OMOutputImpl;
 
-import junit.framework.TestCase;
+import javax.xml.stream.XMLStreamException;
+import java.io.ByteArrayOutputStream;
 
 /**
  * This tests the serialize method 

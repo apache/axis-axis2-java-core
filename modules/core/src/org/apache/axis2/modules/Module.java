@@ -16,8 +16,8 @@
  */
 package org.apache.axis2.modules;
 
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
 
 /**
  * Every module provides an implementation of this class. Modules are in one of

@@ -17,6 +17,7 @@
 package org.apache.axis2.integration;
 
 import junit.framework.TestCase;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
@@ -25,7 +26,6 @@ import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
-import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import java.io.File;

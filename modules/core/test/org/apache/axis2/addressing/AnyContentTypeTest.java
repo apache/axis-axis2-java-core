@@ -17,11 +17,10 @@
 package org.apache.axis2.addressing;
 
 import junit.framework.TestCase;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 
 
 public class AnyContentTypeTest extends TestCase {

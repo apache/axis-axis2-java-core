@@ -15,9 +15,9 @@
  */
 package org.apache.axis2.om;
 
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis2.om.impl.OMOutputImpl;
+
+import javax.xml.stream.XMLStreamException;
 
 
 public interface OMDocument extends OMContainer {

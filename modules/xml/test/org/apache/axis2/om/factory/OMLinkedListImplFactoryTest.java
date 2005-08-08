@@ -15,16 +15,9 @@
  */
 package org.apache.axis2.om.factory;
 
-import org.apache.axis2.om.AbstractTestCase;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMTestUtils;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.*;
 import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
-import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

@@ -1,7 +1,7 @@
 package org.apache.axis2.soap.impl.llom;
 
-import org.apache.axis2.om.OMException;
 import org.apache.axis2.SOAPFaultException;
+import org.apache.axis2.om.OMException;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.

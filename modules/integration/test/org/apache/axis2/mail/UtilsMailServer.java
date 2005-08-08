@@ -17,16 +17,15 @@
  */
 package org.apache.axis2.mail;
 
-import java.io.File;
-
 import junit.framework.TestCase;
-
-import org.apache.axis2.Constants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.mail.server.MailConstants;
 import org.apache.axis2.transport.mail.server.MailServer;
+
+import java.io.File;
 
 public class UtilsMailServer {
     private static final String MAIL_TRANSPORT_SERVER_ENABLED_REPO_PATH =

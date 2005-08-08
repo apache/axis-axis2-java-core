@@ -15,21 +15,16 @@
 */
 package org.apache.axis2.soap.impl.llom.builder;
 
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
 import org.apache.axis2.soap.impl.llom.SOAPEnvelopeImpl;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * Class StAXSOAPModelBuilder

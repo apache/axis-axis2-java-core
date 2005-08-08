@@ -1,8 +1,8 @@
-<%@ page import="java.util.HashMap,
-                 java.util.Collection,
-                 java.util.Iterator,
+<%@ page import="org.apache.axis2.Constants,
                  org.apache.axis2.description.ServiceDescription,
-                 org.apache.axis2.Constants"%>
+                 java.util.Collection,
+                 java.util.HashMap,
+                 java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>

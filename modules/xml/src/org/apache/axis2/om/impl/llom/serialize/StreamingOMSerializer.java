@@ -15,8 +15,8 @@
  */
 package org.apache.axis2.om.impl.llom.serialize;
 
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.OMSerializer;
+import org.apache.axis2.om.impl.OMOutputImpl;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;

@@ -15,23 +15,18 @@
  */
 package sample.mtom.imagetransfer.client;
 
-import java.awt.Image;
-import java.io.File;
-import java.io.FileInputStream;
-
-import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.utils.ImageDataSource;
 import org.apache.axis2.attachments.utils.JDK13IO;
 import org.apache.axis2.clientapi.Call;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.*;
+
+import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
+import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
 
 
 public class MTOMClientModel {

@@ -1,11 +1,9 @@
-<%@ page contentType="text/html; charset=iso-8859-1" language="java" import="java.sql.*,
-                                                                             org.apache.axis2.Constants,
-                                                                             java.util.HashMap,
-                                                                             java.util.Collection,
-                                                                             java.util.Iterator,
+<%@ page contentType="text/html; charset=iso-8859-1" language="java" import="org.apache.axis2.Constants,
                                                                              org.apache.axis2.description.ModuleDescription,
-                                                                             org.apache.axis2.description.ServiceDescription,
-                                                                             org.apache.axis2.description.OperationDescription" errorPage="" %>
+                                                                             org.apache.axis2.description.OperationDescription,
+                                                                             java.util.Collection,
+                                                                             java.util.HashMap,
+                                                                             java.util.Iterator" errorPage="" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>

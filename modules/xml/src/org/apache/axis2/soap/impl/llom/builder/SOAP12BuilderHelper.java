@@ -5,7 +5,6 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.llom.exception.OMBuilderException;
 import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
-import org.apache.axis2.soap.SOAP12Constants;
 
 import javax.xml.stream.XMLStreamReader;
 import java.util.Vector;

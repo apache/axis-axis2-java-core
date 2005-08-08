@@ -16,16 +16,16 @@
 
 package org.apache.axis2.swa;
 
-import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.attachments.MIMEHelper;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.om.impl.MTOMConstants;
+import org.apache.axis2.om.impl.llom.OMTextImpl;
+
+import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
 
 /**
  * @version $Rev: $ $Date: $

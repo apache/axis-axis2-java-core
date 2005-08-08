@@ -1,6 +1,7 @@
 package org.apache.axis2.phaserule;
 
 import junit.framework.TestCase;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
@@ -9,7 +10,6 @@ import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseHolder;
-import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

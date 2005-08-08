@@ -1,7 +1,7 @@
 package org.apache.axis2.util.threadpool;
 
-import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

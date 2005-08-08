@@ -1,10 +1,6 @@
 package org.apache.axis2.engine;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
 import junit.framework.TestCase;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
@@ -12,6 +8,9 @@ import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.phaseresolver.PhaseException;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

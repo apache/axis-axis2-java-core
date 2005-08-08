@@ -1,3 +1,8 @@
+package org.apache.axis2.wsdl.codegen.extension;
+
+import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -12,15 +17,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * author : Eran Chinthaka (chinthaka@apache.org)
  */
-package org.apache.axis2.receivers;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.MessageContext;
+public class SimpleDBExtension extends AbstractCodeGenerationExtension {
+    public void init(CodeGenConfiguration configuration) {
+        throw new UnsupportedOperationException();
+    }
 
-
-public interface ServerCallback {
-    public void handleResult(MessageContext result) throws AxisFault;
-
-    public void handleFault(AxisFault fault) throws AxisFault;
+    public void engage() throws CodeGenerationException {
+        throw new UnsupportedOperationException();
+    }
 }

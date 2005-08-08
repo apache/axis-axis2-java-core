@@ -16,14 +16,14 @@
 
 package org.apache.axis2.soap12testing.server;
 
-import java.io.File;
-import java.net.ServerSocket;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.soap12testing.client.MessageComparator;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.io.File;
+import java.net.ServerSocket;
 
 public class SimpleServer {
     private int port;

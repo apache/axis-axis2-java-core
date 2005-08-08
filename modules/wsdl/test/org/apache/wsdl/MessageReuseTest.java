@@ -16,11 +16,6 @@
 
 package org.apache.wsdl;
 
-import java.util.Iterator;
-
-import javax.wsdl.Definition;
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.wsdl.extensions.ExtensionConstants;
@@ -28,6 +23,10 @@ import org.apache.wsdl.extensions.Schema;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.wsdl.Definition;
+import javax.xml.namespace.QName;
+import java.util.Iterator;
 
 /**
  * @author chathura@opensource.lk

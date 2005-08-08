@@ -16,10 +16,6 @@
 
 package org.apache.axis2.engine;
 
-import java.util.ArrayList;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
@@ -35,6 +31,9 @@ import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLService;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
 
 public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     private MessageContext mc;

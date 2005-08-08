@@ -15,9 +15,9 @@
 */
 package org.apache.axis2.description;
 
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**

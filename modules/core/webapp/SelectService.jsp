@@ -1,9 +1,8 @@
-<%@ page import="java.util.HashMap,
-                 org.apache.axis2.Constants,
+<%@ page import="org.apache.axis2.Constants,
+                 org.apache.axis2.description.ServiceDescription,
                  java.util.Collection,
-                 java.util.Iterator,
-                 org.apache.axis2.description.ModuleDescription,
-                 org.apache.axis2.description.ServiceDescription"%>
+                 java.util.HashMap,
+                 java.util.Iterator"%>
   <%
            /*
 * Copyright 2004,2005 The Apache Software Foundation.

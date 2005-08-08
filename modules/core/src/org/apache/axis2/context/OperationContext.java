@@ -16,10 +16,10 @@ package org.apache.axis2.context;
 * limitations under the License.
 */
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.AxisFault;
 import org.apache.wsdl.WSDLConstants;
 
 import java.util.Map;

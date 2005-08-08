@@ -16,9 +16,9 @@
 
 package org.apache.wsdl;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+
+import javax.xml.namespace.QName;
 
 /**
  * @author chathura@opensource.lk

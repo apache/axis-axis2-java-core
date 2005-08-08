@@ -17,17 +17,14 @@
 package org.apache.axis2.om.impl.llom.mtom;
 
 import org.apache.axis2.attachments.MIMEHelper;
-import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.om.impl.MTOMConstants;
+import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLStreamReader;

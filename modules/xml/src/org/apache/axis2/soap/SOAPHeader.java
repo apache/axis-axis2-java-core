@@ -15,12 +15,12 @@
  */
 package org.apache.axis2.soap;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Interface SOAPHeader

@@ -18,14 +18,12 @@ package org.apache.axis2.om;
  * author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-import java.io.StringWriter;
+import junit.framework.TestCase;
+import org.apache.axis2.om.impl.OMOutputImpl;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-
-import junit.framework.TestCase;
-
-import org.apache.axis2.om.impl.OMOutputImpl;
+import java.io.StringWriter;
 
 
 public class OMBlankElementTest extends TestCase {

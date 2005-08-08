@@ -17,8 +17,6 @@
 package org.apache.axis2.soap;
 
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
 
 public class SOAPEnvelopeTest extends SOAPTestCase {
     protected SOAPEnvelope soap11Envelope;

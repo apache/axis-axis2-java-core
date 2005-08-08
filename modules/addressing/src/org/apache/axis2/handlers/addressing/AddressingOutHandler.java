@@ -1,10 +1,7 @@
 package org.apache.axis2.handlers.addressing;
 
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AnyContentType;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.MessageInformationHeaders;
-import org.apache.axis2.addressing.ServiceName;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.*;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
@@ -13,7 +10,6 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
-import org.apache.axis2.AxisFault;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;

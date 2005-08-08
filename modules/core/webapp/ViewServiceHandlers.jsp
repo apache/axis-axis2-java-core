@@ -1,13 +1,12 @@
-<%@ page import="org.apache.axis2.engine.AxisConfigurationImpl,
-                 org.apache.axis2.Constants,
-                 java.util.ArrayList,
-                 org.apache.axis2.engine.Phase,
-                 org.apache.axis2.engine.Handler,
+<%@ page import="org.apache.axis2.Constants,
+                 org.apache.axis2.description.OperationDescription,
                  org.apache.axis2.description.ServiceDescription,
-                 java.util.HashMap,
+                 org.apache.axis2.engine.Handler,
+                 org.apache.axis2.engine.Phase,
+                 java.util.ArrayList,
                  java.util.Collection,
-                 java.util.Iterator,
-                 org.apache.axis2.description.OperationDescription"%>
+                 java.util.HashMap,
+                 java.util.Iterator"%>
   <%
            /*
 * Copyright 2004,2005 The Apache Software Foundation.

@@ -15,6 +15,14 @@
  */
 package org.apache.axis2.om.impl;
 
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMText;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.activation.DataHandler;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeBodyPart;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
@@ -24,15 +32,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
-
-import javax.activation.DataHandler;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeBodyPart;
-
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMText;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class MIMEOutputUtils {
 

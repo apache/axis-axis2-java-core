@@ -1,14 +1,14 @@
 package org.apache.axis2.echo;
 
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-import java.io.FileInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -34,6 +34,7 @@ import java.io.File;
  * Time: 1:12:11 PM
  */
 public class Echo {
+
     public Echo() {
     }
     public OMElement viewVersion(OMElement omEle) {

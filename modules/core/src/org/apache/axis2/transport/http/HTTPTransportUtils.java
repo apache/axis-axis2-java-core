@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Map;
@@ -84,8 +85,7 @@ public class HTTPTransportUtils {
             //fill up the Message Contexts
             msgContext.setWSAAction(soapActionHeader);
             msgContext.setSoapAction(soapActionHeader);
-            msgContext.setTo(new EndpointReference(
-                    requestURI.substring(1, requestURI.length())));
+            msgContext.setTo(new EndpointReference(requestURI));
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
             msgContext.setServerSide(true);
 
@@ -99,6 +99,8 @@ public class HTTPTransportUtils {
                     builder = selectBuilderForMIME(msgContext, in, contentType);
                     envelope = (SOAPEnvelope) builder.getDocumentElement();
                 } else {
+                    Reader reader = new InputStreamReader(in);
+
                     XMLStreamReader xmlreader;
                     //Figure out the char set encoding and create the reader
 

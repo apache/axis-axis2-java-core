@@ -10,18 +10,17 @@
  */
 package org.apache.axis2.attachments;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
-import java.util.HashMap;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.impl.MTOMConstants;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
-
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.impl.MTOMConstants;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PushbackInputStream;
+import java.util.HashMap;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>

@@ -15,18 +15,15 @@
 */
 package sample.amazon.amazonSimpleQueueService.util;
 
-import javax.swing.JButton;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.clientapi.Callback;
 import org.apache.axis2.om.OMElement;
-
 import sample.amazon.amazonSimpleQueueService.OMElementCreator;
+
+import javax.swing.*;
 
 /**
  * This will create the Excutable code which runs seperately of GUI interations

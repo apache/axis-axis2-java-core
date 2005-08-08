@@ -17,9 +17,9 @@
  */
 package org.apache.axis2.context;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.AxisFault;
 import org.apache.wsdl.WSDLConstants;
 
 /**

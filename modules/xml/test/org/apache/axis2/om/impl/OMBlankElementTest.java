@@ -1,17 +1,11 @@
 package org.apache.axis2.om.impl;
 
-import java.io.StringWriter;
+import junit.framework.TestCase;
+import org.apache.axis2.om.*;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-
-import junit.framework.TestCase;
-
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
+import java.io.StringWriter;
 
 public class OMBlankElementTest extends TestCase {
 
