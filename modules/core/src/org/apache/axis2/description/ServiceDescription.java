@@ -480,6 +480,9 @@ public class ServiceDescription
      *         otherwise will return null.
      */
     public OperationDescription getOperationBySOAPAction(String soapAction) {
+        if(soapAction == null || soapAction.equals("")){
+           return null;
+        }
         Iterator iterator = this.getEndpoints().keySet().iterator();
         if (iterator.hasNext()) {
             WSDLEndpoint endpoint = (WSDLEndpoint) this.getEndpoints().get(
@@ -728,6 +731,6 @@ public class ServiceDescription
     }
 
     public Map getMetadataBag() {
-        return serviceimpl.getMetadataBag();  
+        return serviceimpl.getMetadataBag();
     }
 }
