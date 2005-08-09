@@ -50,7 +50,7 @@ public class WSDL2JavaTest extends TestCase{
     protected void tearDown() throws Exception {
         File outputFile = new File(OUTPUT_LOCATION);
         if (outputFile.exists() && outputFile.isDirectory()){
-            //deleteDir(outputFile);
+            deleteDir(outputFile);
         }
     }
 
@@ -122,7 +122,7 @@ public class WSDL2JavaTest extends TestCase{
         javaCompiler.setProject(codeGenProject);
         javaCompiler.setIncludejavaruntime(true);
         javaCompiler.setIncludeantruntime(true);
-        
+
         File outputLocationFile = new File(OUTPUT_LOCATION);
 
         Path classPath = new Path(codeGenProject,OUTPUT_LOCATION) ;

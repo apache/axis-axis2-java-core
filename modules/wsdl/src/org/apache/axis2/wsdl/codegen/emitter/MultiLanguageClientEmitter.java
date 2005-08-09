@@ -58,23 +58,15 @@ import java.util.Map;
 *
 * Abstract Client emitter
 * the XML will look like the following
-* todo escape the following
-* <pre>
-<interface package="">
-<method name="">
-<input>
-<param name="" type=""/>*
-</input> ?
-<output>
-<param name="" type=""/>?
-</output>?
-</method>
-</interface>
-</pre>
+* todo Add references to relevant shcemas !
 */
 
 
 public abstract class MultiLanguageClientEmitter implements Emitter {
+    /*
+     *  Important! These constants are used in some places in the templates. Care should
+     *  be taken when changing them
+     */
     private static final String CALL_BACK_HANDLER_SUFFIX = "CallbackHandler";
     private static final String STUB_SUFFIX = "Stub";
     private static final String TEST_SUFFIX = "Test";
@@ -263,11 +255,12 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected void writeDatabindingSupporters(WSDLBinding axisBinding) throws Exception {
         Collection col = axisBinding.getBoundInterface().getOperations()
                 .values();
+        String portTypeName = axisBinding.getBoundInterface().getName().getLocalPart();
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             //Note -  there will be a supporter generated per method and will contain the methods to serilize and
-            //deserilize the relevant objects
+            //deserailize the relevant objects
             Document databindingSupporterModel = createDOMDocumentforSerialization(
-                    (WSDLOperation) iterator.next());
+                    (WSDLOperation) iterator.next(),portTypeName);
             ClassWriter databindingSupportWriter = new DatabindingSupportClassWriter(
                     this.configuration.getOutputLocation(),
                     this.configuration.getOutputLanguage(),
@@ -749,6 +742,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                                 Element rootElement,
                                 WSDLBinding binding) {
         Collection col = boundInterface.getOperations().values();
+
+        String portTypeName = boundInterface.getName().getLocalPart();
+
         Element methodElement = null;
         WSDLOperation operation = null;
 
@@ -764,7 +760,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             addAttribute(doc, "style", operation.getStyle(), methodElement);
             addAttribute(doc,
                     "dbsupportname",
-                    localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
+                    portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
                     methodElement);
             if (null != binding) {
                 WSDLBindingOperation bindingOperation =
@@ -881,7 +877,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     protected Document createDOMDocumentforSerialization(
-            WSDLOperation operation) {
+            WSDLOperation operation,String portTypeName) {
+
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("class");
         addAttribute(doc,
@@ -892,7 +889,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         String localPart = operation.getName().getLocalPart();
         addAttribute(doc,
                 "name",
-                localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
+                portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
                 rootElement);
         addAttribute(doc, "methodname", localPart, rootElement);
         addAttribute(doc,
