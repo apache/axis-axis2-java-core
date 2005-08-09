@@ -37,7 +37,8 @@
             * auto generated Axis2 call back method for <xsl:value-of select="@name"/> method
             *
             */
-           public void receiveResult<xsl:value-of select="@name"/>( <xsl:value-of select="$outParamType"/><xsl:text> </xsl:text><xsl:value-of select="$outParamName"/>) {
+           public void receiveResult<xsl:value-of select="@name"/>(
+                    <xsl:if test="$outParamType!=''"><xsl:value-of select="$outParamType"/><xsl:text> </xsl:text><xsl:value-of select="$outParamName"/></xsl:if>) {
 			        //Fill here with the code to handle the response
            }
 

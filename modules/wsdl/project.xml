@@ -97,6 +97,15 @@
                 <module>true</module>
             </properties>
         </dependency>
+         <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.6.2</version>
+            <type>jar</type>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
     </dependencies>
 
     <reports/>

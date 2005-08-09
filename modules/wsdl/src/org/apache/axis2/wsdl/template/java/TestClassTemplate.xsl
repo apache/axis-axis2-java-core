@@ -35,12 +35,10 @@
     public class <xsl:value-of select="@name"/> extends junit.framework.TestCase{
 
      <xsl:for-each select="method">
-         <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
-         <xsl:variable name="inputtype"><xsl:value-of select="input/param/@type"></xsl:value-of></xsl:variable>  <!-- this needs to change-->
-         <xsl:variable name="inputparam"><xsl:value-of select="input/param/@name"></xsl:value-of></xsl:variable>  <!-- this needs to change-->
-         <xsl:variable name="dbsupportclassname"><xsl:value-of select="@dbsupportname"></xsl:value-of></xsl:variable>
-         <xsl:if test="$isSync='1'">
-
+         <xsl:if test="@mep='http://www.w3.org/2004/08/wsdl/in-out'">
+          <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
+          <xsl:variable name="dbsupportclassname"><xsl:value-of select="@dbsupportname"></xsl:value-of></xsl:variable>
+          <xsl:if test="$isSync='1'">
         /**
          * Auto generated test method
          */
@@ -53,15 +51,25 @@
         <xsl:value-of select="$fullsupporterclassname"/> databindSupporter = new <xsl:value-of select="$fullsupporterclassname"/>();
 
            <xsl:choose>
-             <xsl:when test="$inputtype!=''">
+             <xsl:when test="count(input/param)>0">
+<!--                //<xsl:variable name="firstInput"><xsl:value-of select="input/param[1]"/></xsl:variable>  -->
                 <xsl:choose>
                     <xsl:when test="$outputtype=''">
+                    <!-- for now think there is only one input element -->
                     //There is no output to be tested!
-                    stub.<xsl:value-of select="@name"/>((<xsl:value-of select="$inputtype"/>)databindSupporter.getTestObject(<xsl:value-of select="$inputtype"/>.class));
+                    stub.<xsl:value-of select="@name"/>(
+                        <xsl:for-each select="input/param">
+                             <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if>(<xsl:value-of select="@type"/>)databindSupporter.getTestObject(<xsl:value-of select="@type"/>.class)
+                        </xsl:if>
+                        </xsl:for-each>);
                     </xsl:when>
                     <xsl:otherwise>
-                    assertNotNull(stub.<xsl:value-of select="@name"/>((<xsl:value-of select="$inputtype"/>)databindSupporter.getTestObject(<xsl:value-of select="$inputtype"/>.class)));
-                    </xsl:otherwise>
+                        assertNotNull(stub.<xsl:value-of select="@name"/>(
+                        <xsl:for-each select="input/param">
+                             <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if>(<xsl:value-of select="@type"/>)databindSupporter.getTestObject(<xsl:value-of select="@type"/>.class)
+                        </xsl:if>
+                        </xsl:for-each>));
+                  </xsl:otherwise>
                 </xsl:choose>
               </xsl:when>
               <xsl:otherwise>
@@ -92,8 +100,12 @@
             <xsl:variable name="fullsupporterclassname"><xsl:value-of select="$dbpackage"/>.<xsl:value-of select="$dbsupportclassname"/></xsl:variable>
             <xsl:value-of select="$fullsupporterclassname"/> databindSupporter = new <xsl:value-of select="$fullsupporterclassname"/>();
              <xsl:choose>
-             <xsl:when test="$inputtype!=''">
-                stub.start<xsl:value-of select="@name"/>((<xsl:value-of select="$inputtype"/>)databindSupporter.getTestObject(<xsl:value-of select="$inputtype"/>.class),
+             <xsl:when test="count(input/param)>0">
+                stub.start<xsl:value-of select="@name"/>(
+                         <xsl:for-each select="input/param">
+                             <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if>(<xsl:value-of select="@type"/>)databindSupporter.getTestObject(<xsl:value-of select="@type"/>.class)
+                        </xsl:if>
+                        </xsl:for-each>,
                     new <xsl:value-of select="$tempCallbackName"/>()
                 );
               </xsl:when>
@@ -120,19 +132,9 @@
 
         }
       </xsl:if>
+      <!-- end of in-out mep -->
+      </xsl:if>
      </xsl:for-each>
 
-
-     public static Object createTestInput(Class paramClass){
-
-      OMFactory factory = OMAbstractFactory.getOMFactory();
-		OMElement element = factory.createOMElement(new QName("http://soapinterop.org/", "<xsl:value-of select="generate-id()"/>"), null);
-		OMElement element1 = factory.createOMElement(new QName("http://soapinterop.org/","<xsl:value-of select="generate-id()"/>"), element);
-		element.addChild(element1);
-    	OMTextImpl text = new OMTextImpl("<xsl:value-of select="generate-id()"/>");
-    	element1.addChild(text);
-    	return element;
-    }
-    }
     </xsl:template>
  </xsl:stylesheet>

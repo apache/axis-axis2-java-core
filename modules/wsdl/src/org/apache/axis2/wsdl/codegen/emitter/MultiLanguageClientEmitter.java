@@ -123,7 +123,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             if (bindings==null){
                 throw new CodeGenerationException("Binding needs to be present!");
             }
-            
+
             Collection bindingCollection = bindings.values();
             for (Iterator iterator = bindingCollection.iterator(); iterator.hasNext();) {
                 axisBinding  =  (WSDLBinding)iterator.next();
@@ -410,9 +410,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 //write the local test classes
 //               writeLocalTestClasses(axisBinding);
                 //write a dummy implementation call for the tests to run.
-                writeTestSkeletonImpl(axisBinding);
+                //writeTestSkeletonImpl(axisBinding);
                 //write a testservice.xml that will load the dummy skeleton impl for testing
-                writeTestServiceXML(axisBinding);
+                //writeTestServiceXML(axisBinding);
                 //write a MessageReceiver for this particular service.
                 writeMessageReceiver(axisBinding);
             }
@@ -515,7 +515,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                                       WSDLOperation operation) {
         Element inputElt = doc.createElement("input");
         Element param = getInputParamElement(doc, operation);
-        inputElt.appendChild(param);
+        if (param!=null){
+            inputElt.appendChild(param);
+        }
         return inputElt;
     }
 
@@ -524,14 +526,18 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         //todo this should go in a loop
         Element param = doc.createElement("param");
         MessageReference inputMessage = operation.getInputMessage();
-        addAttribute(doc,
-                "name",
-                this.mapper.getParameterName(inputMessage.getElement()),
-                param);
-        String typeMapping = this.mapper.getTypeMapping(
-                inputMessage.getElement());
-        String typeMappingStr = typeMapping == null ? "" : typeMapping;
-        addAttribute(doc, "type", typeMappingStr, param);
+        if (inputMessage!=null){
+            addAttribute(doc,
+                    "name",
+                    this.mapper.getParameterName(inputMessage.getElement()),
+                    param);
+            String typeMapping = this.mapper.getTypeMapping(
+                    inputMessage.getElement());
+            String typeMappingStr = typeMapping == null ? "" : typeMapping;
+            addAttribute(doc, "type", typeMappingStr, param);
+        }else{
+            param = null;
+        }
         return param;
     }
 
@@ -546,7 +552,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                                        WSDLOperation operation) {
         Element outputElt = doc.createElement("output");
         Element param = getOutputParamElement(doc, operation);
-        outputElt.appendChild(param);
+        if (param!=null){
+            outputElt.appendChild(param);
+        }
+
         return outputElt;
     }
 
@@ -556,18 +565,20 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         MessageReference outputMessage = operation.getOutputMessage();
         String typeMappingStr = null;
         String parameterName = null;
+
         if (outputMessage!=null){
             parameterName =  this.mapper.getParameterName(
                     outputMessage.getElement()) ;
             String typeMapping = this.mapper.getTypeMapping(
                     operation.getOutputMessage().getElement());
             typeMappingStr = typeMapping == null ? "" : typeMapping;
+
         }else{
-            parameterName  = this.mapper.getParameterName(null);
-            typeMappingStr = "";        //set the empty string
+            parameterName = "" ;
+            typeMappingStr = "";
         }
-        addAttribute(doc,"name",parameterName,param);
-        addAttribute(doc,"type", typeMappingStr, param);
+          addAttribute(doc,"name",parameterName,param);
+          addAttribute(doc,"type", typeMappingStr, param);
 
         return param;
     }
@@ -582,7 +593,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     }
 
     protected Document createDOMDocumentForServiceXML(WSDLBinding binding,
-                                                       boolean forTesting) {
+                                                      boolean forTesting) {
         WSDLInterface boundInterface = binding.getBoundInterface();
 
         Document doc = getEmptyDocument();
@@ -888,8 +899,17 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 "namespace",
                 operation.getName().getNamespaceURI(),
                 rootElement);
-        rootElement.appendChild(getInputParamElement(doc, operation));
-        rootElement.appendChild(getOutputParamElement(doc, operation));
+        Element inputParamElement = getInputParamElement(doc, operation);
+
+        if (inputParamElement!=null){
+            rootElement.appendChild(inputParamElement);
+        }
+
+        Element outputParamElement = getOutputParamElement(doc, operation);
+        if (outputParamElement!=null){
+            rootElement.appendChild(outputParamElement);
+        }
+
         doc.appendChild(rootElement);
         return doc;
     }

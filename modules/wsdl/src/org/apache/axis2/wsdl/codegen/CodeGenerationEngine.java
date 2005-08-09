@@ -30,8 +30,9 @@ import org.apache.axis2.wsdl.codegen.extension.AxisBindingBuilder;
 import org.apache.axis2.wsdl.codegen.extension.CodeGenExtension;
 import org.apache.axis2.wsdl.codegen.extension.PackageFinder;
 import org.apache.axis2.wsdl.codegen.extension.WSDLValidatorExtension;
-import org.apache.axis2.wsdl.codegen.extension.AbstractCodeGenerationExtension;
-import org.apache.axis2.wsdl.codegen.extension.SimpleDBExtension;
+import org.apache.axis2.wsdl.codegen.extension.XMLBeansExtension;
+//import org.apache.axis2.wsdl.codegen.extension.AbstractCodeGenerationExtension;
+//import org.apache.axis2.wsdl.codegen.extension.SimpleDBExtension;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.wsdl.WSDLDescription;
 
@@ -40,13 +41,13 @@ import org.apache.wsdl.WSDLDescription;
  */
 public class CodeGenerationEngine {
     private List moduleEndpoints = new ArrayList();
-    private AbstractCodeGenerationExtension dbExt = new SimpleDBExtension();
+
 
     private CodeGenConfiguration configuration;
 
     public CodeGenerationEngine(CodeGenConfiguration config) throws CodeGenerationException{
        this.configuration = config;
-       loadExtensions(dbExt);
+       loadExtensions();
     }
     
     public CodeGenerationEngine(CommandLineOptionParser parser) throws CodeGenerationException {
@@ -60,10 +61,13 @@ public class CodeGenerationEngine {
         }
 
         this.configuration = new CodeGenConfiguration(wom, parser);
-        loadExtensions(dbExt);
+        loadExtensions();
     }
 
-    private void loadExtensions(AbstractCodeGenerationExtension dbExt) {
+    private void loadExtensions() {
+        //Ideally these extensions should be loaded through a configuration taken
+        //from some external location. Say a config file.
+
         AxisBindingBuilder axisBindingBuilder = new AxisBindingBuilder();
         axisBindingBuilder.init(this.configuration);
         axisBindingBuilder.engage();
@@ -76,8 +80,15 @@ public class CodeGenerationEngine {
         packageFinder.init(this.configuration);
         this.moduleEndpoints.add(packageFinder);
 
-        dbExt.init(this.configuration);
-        this.moduleEndpoints.add(dbExt);
+        //Xbeans extension
+        XMLBeansExtension xbeansExtension = new XMLBeansExtension();
+        xbeansExtension.init(this.configuration);
+        this.moduleEndpoints. add(xbeansExtension);
+
+        //default databinding extension
+//        AbstractCodeGenerationExtension dbExt = new SimpleDBExtension();
+//        dbExt.init(this.configuration);
+//        this.moduleEndpoints.add(dbExt);
     }
 
     public void generate() throws CodeGenerationException {

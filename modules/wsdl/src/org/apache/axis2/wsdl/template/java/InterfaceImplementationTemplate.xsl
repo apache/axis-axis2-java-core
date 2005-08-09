@@ -68,15 +68,14 @@
         /**
          * Auto generated method signature
          * @see <xsl:value-of select="$package"/>.<xsl:value-of select="$interfaceName"/>#<xsl:value-of select="@name"/>
-         <xsl:for-each select="input/param">
-            <xsl:if test="@type!=''">* @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
-         </xsl:text></xsl:if></xsl:for-each>
+         <xsl:for-each select="input/param[@type!='']">
+         * @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
+         </xsl:text></xsl:for-each>
          */
         public <xsl:choose><xsl:when test="$outputtype=''">void</xsl:when><xsl:otherwise><xsl:value-of select="$outputtype"/></xsl:otherwise></xsl:choose>
         <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
-         <xsl:for-each select="input/param">
-            <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
-          </xsl:if>
+         <xsl:for-each select="input/param[@type!='']">
+            <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
          </xsl:for-each>) throws java.rmi.RemoteException{
 
 		    org.apache.axis2.clientapi.Call _call = new org.apache.axis2.clientapi.Call(_serviceContext);
@@ -88,16 +87,17 @@
             _call.setSoapAction("<xsl:value-of select="$soapAction"/>");
             org.apache.axis2.soap.SOAPEnvelope env = null;
             env = createEnvelope();
+            <xsl:variable name="count"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
             <xsl:choose>
             <!-- test the number of input parameters
 				  If the number of parameter is more then just run the normal test-->
-              <xsl:when test="count(input/param)>0">
+                <xsl:when test="$count>0">
                   <xsl:choose>
                       <xsl:when test="$style='rpc'">
                // Style is RPC
               setValueRPC(env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
-              new String[]{<xsl:for-each select="input/param"><xsl:if test="count(input/param)>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
-              new Object[]{<xsl:for-each select="input/param"><xsl:if test="count(input/param)>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
+              new String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
+              new Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                       </xsl:when>
                       <xsl:when test="$style='doc'">
                       <!-- for the doc lit case there can be only one element. So take the first element -->
@@ -149,14 +149,15 @@
          /**
          * Auto generated method signature for Asynchronous Invocations
          * @see <xsl:value-of select="$package"/>.<xsl:value-of select="$interfaceName"/>#start<xsl:value-of select="@name"/>
-         <xsl:for-each select="input/param">
-            <xsl:if test="@type!=''">* @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
-         </xsl:text></xsl:if></xsl:for-each>
+          <xsl:for-each select="input/param[@type!='']">
+         * @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
+         </xsl:text></xsl:for-each>
          */
         public  void start<xsl:value-of select="@name"/>(
-         <xsl:for-each select="input/param">
-            <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"></xsl:value-of></xsl:if></xsl:for-each>
-           <xsl:if test="count(input/param)>0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException{
+         <xsl:variable name="paramCount"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
+         <xsl:for-each select="input/param[@type!='']">
+            <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"></xsl:value-of></xsl:for-each>
+            <xsl:if test="$paramCount>0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException{
 
              org.apache.axis2.clientapi.Call _call = new org.apache.axis2.clientapi.Call(_serviceContext);
  		     org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
@@ -165,16 +166,17 @@
              org.apache.axis2.soap.SOAPEnvelope env = createEnvelope();
              <xsl:choose>
              <!-- There are more than 1 parameter in the input-->
-              <xsl:when test="count(input/param)>0">
+              <xsl:when test="$paramCount>0">
               <xsl:choose>
                <xsl:when test="$style='rpc'">
            // Style is RPC
            setValueRPC(env,
             "<xsl:value-of select="@namespace"/>",
             "<xsl:value-of select="@name"/>",
-             new String[]{<xsl:for-each select="input/param"><xsl:if test="count(input/param)>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
-             new Object[]{<xsl:for-each select="input/param"><xsl:if test="count(input/param)>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
+             new String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
+             new Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                       </xsl:when>
+
                       <xsl:when test="$style='doc'">
            //Style is Doc
             setValueDoc(env,<xsl:value-of select="$fullsupporterclassname"/>.toOM(<xsl:value-of select="input/param[1]/@name"/>));
@@ -205,25 +207,28 @@
           throw UnsupportedOperationException("Unknown Style");
                       </xsl:otherwise>
                   </xsl:choose>
-
-             </xsl:otherwise>
+              </xsl:otherwise>
             </xsl:choose>
              _messageContext.setEnvelope(env);
-		     _call.invokeNonBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext, new org.apache.axis2.clientapi.Callback(){
-                   public void onComplete(org.apache.axis2.clientapi.AsyncResult result){
+             <xsl:choose>
+             <xsl:when test="$outputtype=''">
+              //Nothing to pass as the callback!!!   
+              _call.invokeNonBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext,null);
+              </xsl:when>
+              <xsl:otherwise>
+               _call.invokeNonBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext, new org.apache.axis2.clientapi.Callback(){
+                public void onComplete(org.apache.axis2.clientapi.AsyncResult result){
 
-					    java.lang.Object object = <xsl:value-of select="$fullsupporterclassname"/>.fromOM(getElement(result.getResponseEnvelope(),"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
-
-                         callback.receiveResult<xsl:value-of select="@name"/>((<xsl:value-of select="$outputtype"/>)object);
-                   }
-                   public void reportError(java.lang.Exception e){
-                         callback.receiveError<xsl:value-of select="@name"/>(e);
-                   }
-
-              }
+			    java.lang.Object object = <xsl:value-of select="$fullsupporterclassname"/>.fromOM(getElement(result.getResponseEnvelope(),"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
+                             callback.receiveResult<xsl:value-of select="@name"/>((<xsl:value-of select="$outputtype"/>)object);
+                }
+                public void reportError(java.lang.Exception e){
+                      callback.receiveError<xsl:value-of select="@name"/>(e);
+                }
+             }
             );
-
-            <!-- this needs to be changed -->
+              </xsl:otherwise>
+             </xsl:choose>
         }
       </xsl:if>
       <!-- End of in-out mep -->
@@ -232,9 +237,8 @@
       <xsl:if test="$mep='http://www.w3.org/2004/08/wsdl/in-only'">
       <!-- for the in only mep there is no notion of sync or async. And there is no return type also -->
       public void <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
-         <xsl:for-each select="input/param">
-            <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
-          </xsl:if>
+         <xsl:for-each select="input/param[@type!='']">
+            <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
          </xsl:for-each>) throws java.rmi.RemoteException{
          org.apache.axis2.clientapi.Call _call = new org.apache.axis2.clientapi.Call(_serviceContext);
             _call.setTransportInfo(this.senderTransport,this.listenerTransport,this.useSeparateListener);
@@ -248,13 +252,13 @@
             <xsl:choose>
             <!-- test the number of input parameters
 				  If the number of parameter is more then just run the normal generation-->
-              <xsl:when test="count(input/param)>0">
+              <xsl:when test="count(input/param[@type!=''])>0">
                   <xsl:choose>
                       <xsl:when test="$style='rpc'">
                // Style is RPC
               setValueRPC(env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
-              new String[]{<xsl:for-each select="input/param"><xsl:if test="count(input/param)>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
-              new Object[]{<xsl:for-each select="input/param"><xsl:if test="count(input/param)>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
+              new String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
+              new Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                       </xsl:when>
                       <xsl:when test="$style='doc'">
                       <!-- for the doc lit case there can be only one element. So take the first element -->

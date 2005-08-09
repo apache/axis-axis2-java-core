@@ -78,7 +78,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         CommandLineOption clo =
                 ((CommandLineOption)optionMap.get(OUTPUT_LOCATION_OPTION));
         if (clo == null) {
-            //
+            throw new RuntimeException("Cannot codegenerate! WSDL file is missing!");
         }
         String outputLocation = clo.getOptionValue();
         this.outputLocation = new File(outputLocation);
