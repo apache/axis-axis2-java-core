@@ -22,10 +22,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.phaseresolver.PhaseResolver;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPOperation;
 import org.apache.wsdl.impl.WSDLInterfaceImpl;
@@ -43,13 +40,14 @@ import java.util.*;
  * Class ServiceDescription
  */
 public class ServiceDescription
-        extends WSDLServiceImpl
-        implements WSDLService,
+        //    extends WSDLServiceImpl
+        implements WSDLService ,
         ParameterInclude,
         FlowInclude,
         DescriptionConstants {
 
-    private Definition difDefinition = null; //to store the wsdl definition , which is build at the deployment time
+    private Definition difDefinition = null;
+    //to store the wsdl definition , which is build at the deployment time
 
     //to keep the time that last update time of the service
     private long lastupdate ;
@@ -64,10 +62,21 @@ public class ServiceDescription
 
     private String fileName = "";
 
+    private WSDLServiceImpl serviceimpl = null;
+
     /**
      * Constructor ServiceDescription
      */
+
+    public ServiceDescription(WSDLServiceImpl serviceimpl){
+        this.serviceimpl = serviceimpl;
+        this.setComponentProperty(MODULEREF_KEY, new ArrayList());
+        this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
+        this.setServiceInterface(new WSDLInterfaceImpl());
+    }
+
     public ServiceDescription() {
+        this.serviceimpl = new WSDLServiceImpl();
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setServiceInterface(new WSDLInterfaceImpl());
@@ -650,4 +659,75 @@ public class ServiceDescription
         this.fileName = fileName;
     }
 
+    public HashMap getEndpoints() {
+        return serviceimpl.getEndpoints();
+    }
+
+    public void setEndpoints(HashMap endpoints) {
+        serviceimpl.setEndpoints(endpoints);
+    }
+
+    public void setEndpoint(WSDLEndpoint endpoint){
+        serviceimpl.setEndpoint(endpoint);
+    }
+
+    public WSDLEndpoint getEndpoint(QName qName) {
+        return serviceimpl.getEndpoint(qName);
+    }
+
+    public QName getName() {
+        return serviceimpl.getName();
+    }
+
+    public void setName(QName name) {
+        serviceimpl.setName(name);
+    }
+
+    public String getNamespace() {
+        return serviceimpl.getNamespace();
+    }
+
+    public WSDLInterface getServiceInterface() {
+        return serviceimpl.getServiceInterface();
+    }
+
+    public void setServiceInterface(WSDLInterface serviceInterface) {
+        serviceimpl.setServiceInterface(serviceInterface);
+    }
+
+    public HashMap getComponentProperties() {
+        return serviceimpl.getComponentProperties();
+    }
+
+    public void setComponentProperties(HashMap properties) {
+        serviceimpl.setComponentProperties(properties);
+    }
+
+    public void setComponentProperty(Object key, Object obj) {
+        serviceimpl.setComponentProperty(key,obj);
+    }
+
+    public Object getComponentProperty(Object key) {
+        return serviceimpl.getComponentProperty(key);
+    }
+
+    public void addExtensibilityElement(WSDLExtensibilityElement element) {
+        serviceimpl.addExtensibilityElement(element);
+    }
+
+    public List getExtensibilityElements() {
+        return serviceimpl.getExtensibilityElements();
+    }
+
+    public List getExtensibilityAttributes() {
+        return serviceimpl.getExtensibilityAttributes();
+    }
+
+    public void addExtensibleAttributes(WSDLExtensibilityAttribute attribute) {
+        serviceimpl.addExtensibleAttributes(attribute);
+    }
+
+    public Map getMetadataBag() {
+        return serviceimpl.getMetadataBag();  
+    }
 }

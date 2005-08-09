@@ -27,6 +27,8 @@ import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLDescription;
+import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.impl.WSDLServiceImpl;
 
 import java.io.*;
 import java.util.Iterator;
@@ -87,9 +89,11 @@ public class ArchiveReader implements DeploymentConstants {
                         .iterator();
                 if (iterator.hasNext()) {
                     foundservice = true;
-                    service =
-                            (ServiceDescription) womDescription.getServices()
-                            .get(iterator.next());
+                    WSDLServiceImpl serviceimpl = (WSDLServiceImpl)womDescription.getServices().get(iterator.next());
+                    service = new ServiceDescription(serviceimpl);
+//                    service =
+//                            (ServiceDescription) womDescription.getServices()
+//                            .get(iterator.next());
                 }
                 if (!foundservice) {
                     service = new ServiceDescription();
