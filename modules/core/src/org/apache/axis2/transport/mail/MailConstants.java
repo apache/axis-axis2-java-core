@@ -31,4 +31,7 @@ public class MailConstants {
     public final static String SMTP_USER = "transport.mail.smtp.user";
     public final static String SMTP_PASSWORD = "transport.mail.smtp.password";
     public final static String SMTP_PORT = "transport.mail.smtp.port";
+    
+    public final static String DEFAULT_CHAR_SET = "us-ascii";
+    public final static String DEFAULT_CHAR_SET_ENCODING = "7bit";
 }

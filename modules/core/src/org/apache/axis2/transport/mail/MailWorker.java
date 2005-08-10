@@ -85,6 +85,8 @@ public class MailWorker implements AxisWorker {
                 msgContext = new MessageContext(reg, transportIn, transportOut);
                 msgContext.setServerSide(true);
                 msgContext.setProperty(MailConstants.CONTENT_TYPE, mimeMessage.getContentType());
+                msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, mimeMessage.getEncoding());
+
                 String soapAction = getMailHeader(MailConstants.HEADER_SOAP_ACTION);
                 msgContext.setWSAAction(soapAction);
                 msgContext.setSoapAction(soapAction);

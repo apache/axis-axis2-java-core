@@ -68,6 +68,7 @@ public class MailTransportSender extends AbstractTransportSender {
                 //TODO this is just a temporary hack, fix this to use input streams
 
                 String eprAddress = msgContext.getTo().getAddress();
+                String charEncoding = (String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
                 int index = eprAddress.indexOf('/');
                 String subject = "";
                 String email = null;
@@ -78,11 +79,10 @@ public class MailTransportSender extends AbstractTransportSender {
                     email = eprAddress;
                 }
 
-
                 sender.send(
                     subject,
                     email,
-                    new String(byteArrayOutputStream.toByteArray()));
+                    new String(byteArrayOutputStream.toByteArray()), charEncoding);
             } else {
                 if (user == null) {
                     throw new AxisFault(

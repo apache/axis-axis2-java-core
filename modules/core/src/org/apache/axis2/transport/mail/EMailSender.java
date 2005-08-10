@@ -17,14 +17,21 @@
  */
 package org.apache.axis2.transport.mail;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.transport.EmailReceiver;
+import java.util.Properties;
 
-import javax.mail.*;
+import javax.mail.Authenticator;
+import javax.mail.Flags;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.Properties;
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.transport.EmailReceiver;
 
 /**
  * @author hemapani
@@ -48,7 +55,7 @@ public class EMailSender {
         this.password = password;
     }
 
-    public void send(String subject, String targetEmail, String message) throws AxisFault {
+    public void send(String subject, String targetEmail, String message, String charSetEn) throws AxisFault {
         try {
             final PasswordAuthentication authentication =
                     new PasswordAuthentication(user, password);
@@ -70,10 +77,14 @@ public class EMailSender {
                     new InternetAddress(targetEmail));
             msg.setSubject(subject);
 
-            msg.addHeaderLine("Content-Type: text/plain; charset=us-ascii");
+            if (charSetEn.equals("")){
+                charSetEn = MailConstants.DEFAULT_CHAR_SET_ENCODING;
+            }
+
+            msg.addHeaderLine("Content-Type: text/plain; charset=" + MailConstants.DEFAULT_CHAR_SET);
 
             msg.setText(message);
-            msg.setHeader("Content-Transfer-Encoding", "7bit");
+            msg.setHeader("Content-Transfer-Encoding", charSetEn);
             Transport.send(msg);
         } catch (AddressException e) {
             throw new AxisFault(e);
@@ -92,7 +103,7 @@ public class EMailSender {
 
         sender.send("Testing mail sending",
                 "hemapani@127.0.0.1",
-                "Hellp, testing");
+                "Hellp, testing", "us-ascii");
 
         EmailReceiver receiver = new EmailReceiver(user,
                 host,
