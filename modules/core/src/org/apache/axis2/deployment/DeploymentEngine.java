@@ -532,94 +532,95 @@ public class DeploymentEngine implements DeploymentConstants {
                 int type = currentArchiveFile.getType();
                 try {
                     currentArchiveFile.setClassLoader();
-                } catch (AxisFault axisFault) {
-                    log.info(Messages.getMessage(DeploymentErrorMsgs.SETTING_CL, axisFault.getMessage()));
-                    continue;
-                }
-                ArchiveReader archiveReader = new ArchiveReader();
-                String serviceStatus = "";
-                StringWriter errorWriter = new StringWriter();
-                switch (type) {
-                    case SERVICE:
-                        try {
-                            // ServiceDescription service = archiveReader.createService(currentArchiveFile.getAbsolutePath());
-                            ServiceDescription service = archiveReader.createService(currentArchiveFile);
-                            archiveReader.readServiceArchive(currentArchiveFile.getAbsolutePath(),
-                                    this,
-                                    service);
-                            addnewService(service);
-                            log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS, currentArchiveFile.getName()));
-                        } catch (DeploymentException de) {
-                            log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
-                                    currentArchiveFile.getName()));
+                    ArchiveReader archiveReader = new ArchiveReader();
+                    String serviceStatus = "";
+                    StringWriter errorWriter = new StringWriter();
+                    switch (type) {
+                        case SERVICE:
+                            try {
+                                // ServiceDescription service = archiveReader.createService(currentArchiveFile.getAbsolutePath());
+                                ServiceDescription service = archiveReader.createService(currentArchiveFile);
+                                archiveReader.readServiceArchive(currentArchiveFile.getAbsolutePath(),
+                                        this,
+                                        service);
+                                addnewService(service);
+                                log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS, currentArchiveFile.getName()));
+                            } catch (DeploymentException de) {
+                                log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
+                                        currentArchiveFile.getName()));
 //                            log.info("DeploymentException  " + de);
-                            PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
-                            de.printStackTrace(error_ptintWriter);
-                            serviceStatus = "Error:\n" +
-                                    errorWriter.toString();
-                        } catch (AxisFault axisFault) {
-                            log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
-                                    currentArchiveFile.getName()));
+                                PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
+                                de.printStackTrace(error_ptintWriter);
+                                serviceStatus = "Error:\n" +
+                                        errorWriter.toString();
+                            } catch (AxisFault axisFault) {
+                                log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
+                                        currentArchiveFile.getName()));
 //                            log.info("AxisFault  " + axisFault);
-                            PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
-                            axisFault.printStackTrace(error_ptintWriter);
-                            serviceStatus = "Error:\n" +
-                                    errorWriter.toString();
-                        } catch (Exception e) {
-                            log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
-                                    currentArchiveFile.getName()));
+                                PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
+                                axisFault.printStackTrace(error_ptintWriter);
+                                serviceStatus = "Error:\n" +
+                                        errorWriter.toString();
+                            } catch (Exception e) {
+                                log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
+                                        currentArchiveFile.getName()));
 //                            log.info("Exception  " + e);
-                            PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
-                            e.printStackTrace(error_ptintWriter);
-                            serviceStatus = "Error:\n" +
-                                    errorWriter.toString();
-                        } finally {
-                            if (serviceStatus.startsWith("Error:")) {
-                                axisConfig.getFaulytServices().put(getAxisServiceName(currentArchiveFile.getName()),
-                                        serviceStatus);
+                                PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
+                                e.printStackTrace(error_ptintWriter);
+                                serviceStatus = "Error:\n" +
+                                        errorWriter.toString();
+                            } finally {
+                                if (serviceStatus.startsWith("Error:")) {
+                                    axisConfig.getFaulytServices().put(getAxisServiceName(currentArchiveFile.getName()),
+                                            serviceStatus);
+                                }
+                                currentArchiveFile = null;
                             }
-                            currentArchiveFile = null;
-                        }
-                        break;
-                    case MODULE:
-                        String moduleStatus = "";
-                        try {
-                            ModuleDescription metaData = new ModuleDescription();
-                            archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(),
-                                    this,
-                                    metaData);
-                            addNewModule(metaData);
-                            log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
-                                    metaData.getName().getLocalPart()));
+                            break;
+                        case MODULE:
+                            String moduleStatus = "";
+                            try {
+                                ModuleDescription metaData = new ModuleDescription();
+                                archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(),
+                                        this,
+                                        metaData);
+                                addNewModule(metaData);
+                                log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
+                                        metaData.getName().getLocalPart()));
 //                                    "Moduel WS Name  " +
 //                                    currentArchiveFile.getName() +
 //                                    " modulename :" +
 //                                    metaData.getName());
-                        } catch (DeploymentException e) {
-                            log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE, currentArchiveFile.getName(),
-                                    e.getMessage()));
+                            } catch (DeploymentException e) {
+                                log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE, currentArchiveFile.getName(),
+                                        e.getMessage()));
 //                                    "Invalid module" +
 //                                    currentArchiveFile.getName());
 //                            log.info("DeploymentException  " + e);
-                            PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
-                            e.printStackTrace(error_ptintWriter);
-                            moduleStatus = "Error:\n" + errorWriter.toString();
-                        } catch (AxisFault axisFault) {
-                            log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE, currentArchiveFile.getName(),
-                                    axisFault.getMessage()));
-                            PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
-                            axisFault.printStackTrace(error_ptintWriter);
-                            moduleStatus = "Error:\n" + errorWriter.toString();
-                        } finally {
-                            if (moduleStatus.startsWith("Error:")) {
-                                axisConfig.getFaulytModules().put(getAxisServiceName(currentArchiveFile.getName()),
-                                        moduleStatus);
+                                PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
+                                e.printStackTrace(error_ptintWriter);
+                                moduleStatus = "Error:\n" + errorWriter.toString();
+                            } catch (AxisFault axisFault) {
+                                log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE, currentArchiveFile.getName(),
+                                        axisFault.getMessage()));
+                                PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
+                                axisFault.printStackTrace(error_ptintWriter);
+                                moduleStatus = "Error:\n" + errorWriter.toString();
+                            } finally {
+                                if (moduleStatus.startsWith("Error:")) {
+                                    axisConfig.getFaulytModules().put(getAxisServiceName(currentArchiveFile.getName()),
+                                            moduleStatus);
+                                }
+                                currentArchiveFile = null;
                             }
-                            currentArchiveFile = null;
-                        }
-                        break;
+                            break;
 
+                    }
+                } catch (AxisFault axisFault) {
+                    log.info(Messages.getMessage(DeploymentErrorMsgs.SETTING_CL, axisFault.getMessage()));
+                    continue;
                 }
+
             }
         }
         wsToDeploy.clear();
