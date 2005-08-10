@@ -82,7 +82,6 @@ public class PhasesInfo {
                     PhaseMetadata.PHASE_PRE_DISPATCH.equals(phaseName) ||
                     PhaseMetadata.PHASE_DISPATCH.equals(phaseName) ||
                     PhaseMetadata.PHASE_POST_DISPATCH.equals(phaseName)) {
-                continue;
             } else {
                 oprationINPhases.add(new Phase(phaseName));
             }
@@ -95,7 +94,6 @@ public class PhasesInfo {
         for (int i = 0; i < OUTPhases.size(); i++) {
             String phaseName = (String) OUTPhases.get(i);
             if (PhaseMetadata.PHASE_TRANSPORT_OUT.equals(phaseName)) {
-                continue;
             } else {
                 oprationOUTPhases.add(new Phase(phaseName));
             }

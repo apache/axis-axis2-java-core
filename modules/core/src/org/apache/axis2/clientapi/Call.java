@@ -173,9 +173,7 @@ public class Call extends InOutMEPClient {
         }
         axisService.addOperation(operationTemplate);
         sysContext.getAxisConfiguration().addService(axisService);
-        ServiceContext service =
-                sysContext.createServiceContext(assumedServiceName);
-        return service;
+        return sysContext.createServiceContext(assumedServiceName);
     }
 
     /**

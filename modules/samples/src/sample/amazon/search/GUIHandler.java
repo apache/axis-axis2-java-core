@@ -227,8 +227,8 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
      */
     public void run() {
         while (true) {
-            AsynchronousClient.search.toString().trim();
-            if (AsynchronousClient.doSearch == true) {
+            AsynchronousClient.search.trim();
+            if (AsynchronousClient.doSearch) {
 
                 try {
                     AsynchronousClient.doSearch = false;

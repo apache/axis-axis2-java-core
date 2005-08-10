@@ -146,7 +146,7 @@ public class OperationDescription extends WSDLOperationImpl implements
     public Parameter getParameter(String name) {
         ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this
                 .getComponentProperty(PARAMETER_KEY);
-        return (Parameter) paramInclude.getParameter(name);
+        return paramInclude.getParameter(name);
     }
 
     public ArrayList getParameters() {

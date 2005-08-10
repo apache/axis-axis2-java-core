@@ -286,7 +286,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
                 boolean localNameExist = false;
                 for (int i = 0; i < detailElementNames.size(); i++) {
                     if (parent.getLocalName().equals(
-                            (String) detailElementNames.get(i))) {
+                            detailElementNames.get(i))) {
                         localNameExist = true;
                         detailElementLevel = i + 1;
                     }

@@ -15,83 +15,94 @@
  */
 package org.apache.axis2.om.impl.traverse;
 
-import org.apache.axis2.om.OMConstants;
-import org.apache.axis2.om.OMTestCase;
+import junit.framework.TestCase;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
 
-public class OMChildrenWithSpecificAttributeIteratorTest extends OMTestCase implements OMConstants {
-    private String sampleSOAPMessage = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/03/addressing\">\n" +
-            "    <soapenv:Header>\n" +
-            "        <wsa:MessageID soapenv:mustUnderstand=\"1\">uuid:920C5190-0B8F-11D9-8CED-F22EDEEBF7E5</wsa:MessageID>\n" +
-            "        <wsa:To soapenv:mustUnderstand=\"0\">http://localhost:8081/axis/services/BankPort</wsa:To>\n" +
-            "        <wsa:From soapenv:mustUnderstand=\"1\">\n" +
-            "            <Address xmlns=\"http://schemas.xmlsoap.org/ws/2004/03/addressing\">http://schemas.xmlsoap.org/ws/2004/03/addressing/role/anonymous</Address>\n" +
-            "        </wsa:From>\n" +
-            "    </soapenv:Header>\n" +
-            "    <soapenv:Body>\n" +
-            "        <axis2:echoVoid xmlns:axis2=\"http://ws.apache.org/axis2\" ></axis2:echoVoid>\n" +
-            "    </soapenv:Body>\n" +
-            "</soapenv:Envelope>";
+import javax.xml.namespace.QName;
+import java.util.Iterator;
+
+public class OMChildrenWithSpecificAttributeIteratorTest extends TestCase {
 
     public OMChildrenWithSpecificAttributeIteratorTest(String testName) {
         super(testName);
     }
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner
-                .run(OMChildrenWithSpecificAttributeIteratorTest.class);
-    }
+    public void testChildrenRetrievalWithDetaching() {
 
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
+        OMFactory factory = OMAbstractFactory.getOMFactory();
+        OMNamespace testNamespace = factory.createOMNamespace("http://test.axis2.org", "test");
+        OMElement documentElement = getSampleDocumentElement(testNamespace);
 
-    public void testChildrenRetrievalWithNoDetach() {
-        //       try {
-        //            soapEnvelope = getOMBuilder(new ByteArrayInputStream(sampleSOAPMessage.getBytes())).getSOAPEnvelope();
-        //            SOAPHeader soapHeader = soapEnvelope.getHeader();
-        //
-        //            // getting header blocks with mustUnderstand="0"
-        //            OMChildrenWithSpecificAttributeIterator iter = new OMChildrenWithSpecificAttributeIterator(soapHeader.getFirstChild(), new QName(SOAP_ENVELOPE_NAMESPACE_URI, ATTR_MUSTUNDERSTAND), "0", false);
-        //
-        //            if (iter.hasNext()) {
-        //                SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) iter.next();
-        //                assertEquals("Header Block with mustUnderstand=\")0\" has not been retrieved properly", soapHeaderBlock.getLocalName(), AddressingConstants.WSA_TO);
-        //            }
-        //
-        //            if (iter.hasNext()) {
-        //                fail("Given sample SOAP doesn't have more than one mustunderstand false header blocks");
-        //            }
-        //
-        //
-        //        } catch (Exception e) {
-        //            e.printStackTrace();
-        //            fail("Something has gone wrong in accessing the test xml file");
-        //        }
-    }
+        Iterator childrenIter = new OMChildrenWithSpecificAttributeIterator(
+                documentElement.getFirstChild(), new QName(testNamespace.getName(), "myAttr",
+                testNamespace.getPrefix()), "Axis2", true);
 
-    public void testChildrenRetrievalWithDetach() throws Exception {
-        //        soapEnvelope = getOMBuilder(new ByteArrayInputStream(sampleSOAPMessage.getBytes())).getSOAPEnvelope();
-        //        SOAPHeader soapHeader = soapEnvelope.getHeader();
-        //
-        //        OMChildrenWithSpecificAttributeIterator iter = new OMChildrenWithSpecificAttributeIterator(soapHeader.getFirstChild(), new QName(SOAP_ENVELOPE_NAMESPACE_URI, ATTR_MUSTUNDERSTAND), "0", true);
-        //        if (iter.hasNext()) {
-        //            SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) iter.next();
-        //            assertEquals("Header Block with mustUnderstand=\")0\" has not been retrieved properly", soapHeaderBlock.getLocalName(), AddressingConstants.WSA_TO);
-        //        }
-        //
-        //        Iterator soapHeaderChildrenIter = soapHeader.getChildren();
-        //        int childrenCount = 0;
-        //        while (soapHeaderChildrenIter.hasNext()) {
-        //            Object o = soapHeaderChildrenIter.next();
-        //            childrenCount++;
-        //        }
-        //
-        //        assertEquals("OMChildrenWithSpecificAttributeIterator with detach true, not working properly", childrenCount, 6); // here this 6 includes white spaces as OMText
+        int childCount = getChidrenCount(childrenIter);
+        assertEquals("Iterator must return 5 children with the given attribute", childCount, 5);
+
+        Iterator children = documentElement.getChildren();
+        childCount = getChidrenCount(children);
+        assertEquals("Iterator must return only one child, having detached the other children", childCount, 1);
 
     }
 
+    public void testChildrenRetrievalWithNoDetaching() {
 
+        OMFactory factory = OMAbstractFactory.getOMFactory();
+        OMNamespace testNamespace = factory.createOMNamespace("http://test.axis2.org", "test");
+        OMElement documentElement = getSampleDocumentElement(testNamespace);
+
+        Iterator childrenIter = new OMChildrenWithSpecificAttributeIterator(
+                documentElement.getFirstChild(), new QName(testNamespace.getName(), "myAttr",
+                testNamespace.getPrefix()), "Axis2", false);
+
+        int childCount = getChidrenCount(childrenIter);
+        assertEquals("Iterator must return 5 children with the given attribute", childCount, 5);
+
+        Iterator children = documentElement.getChildren();
+        childCount = getChidrenCount(children);
+        assertEquals("Iterator must return 6 children, having not detached the children", childCount, 6);
+
+    }
+
+    private OMElement getSampleDocumentElement(OMNamespace testNamespace){
+        OMFactory factory = OMAbstractFactory.getOMFactory();
+
+        OMElement documentElement = factory.createOMElement("Employees", testNamespace);
+        documentElement.declareNamespace(testNamespace);
+
+        OMElement employee;
+        OMElement name;
+
+        for (int i = 0; i < 5; i++) {
+            employee = factory.createOMElement("Employee", testNamespace, documentElement);
+            name = factory.createOMElement("Name"+i, testNamespace);
+            employee.addAttribute("myAttr", "Axis2", testNamespace);
+            name.setText("Apache Developer");
+            employee.addChild(name);
+        }
+
+        //adding one more child with the given attr
+        employee = factory.createOMElement("Employee", testNamespace, documentElement);
+        name = factory.createOMElement("Name", testNamespace);
+        name.addAttribute("myAttr", "Un-Related Value", testNamespace);
+        name.setText("Apache Developer");
+        employee.addChild(name);
+
+        return documentElement;
+    }
+
+    private int getChidrenCount(Iterator childrenIter) {
+        int childCount = 0;
+        while (childrenIter.hasNext()) {
+            OMElement omElement = (OMElement) childrenIter.next();
+            childCount++;
+        }
+
+        return childCount;
+    }
 }

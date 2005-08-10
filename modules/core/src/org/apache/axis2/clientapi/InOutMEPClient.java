@@ -302,7 +302,7 @@ public class InOutMEPClient extends MEPClient {
         }
         
         //if seperate transport is used, start the required listeners
-        if (useSeparateListener == true) {
+        if (useSeparateListener) {
             if (!serviceContext
                     .getEngineContext()
                     .getAxisConfiguration()

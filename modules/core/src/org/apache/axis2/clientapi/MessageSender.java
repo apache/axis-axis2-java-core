@@ -79,8 +79,7 @@ public class MessageSender extends InOnlyMEPClient {
         ServiceDescription axisService = new ServiceDescription(
                 assumedServiceName);
         sysContext.getAxisConfiguration().addService(axisService);
-        ServiceContext service = sysContext.createServiceContext(
+        return sysContext.createServiceContext(
                 assumedServiceName);
-        return service;
     }
 }

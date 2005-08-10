@@ -27,8 +27,7 @@ import java.io.InputStream;
 public class ChunkedInputStream extends java.io.FilterInputStream {
     protected long chunkSize = 0l;
     protected volatile boolean closed = false;
-    private static final int maxCharLong = (Long.toHexString(Long.MAX_VALUE))
-            .toString().length();
+    private static final int maxCharLong = (Long.toHexString(Long.MAX_VALUE)).length();
 
     private ChunkedInputStream() {
         super(null);

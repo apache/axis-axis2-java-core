@@ -152,10 +152,7 @@ public class WSInfoList implements DeploymentConstants {
      * @return
      */
     public boolean isModified(File file, WSInfo wsInfo) {
-        if (wsInfo.getLastmodifieddate() != file.lastModified()) {
-            return true;
-        }
-        return false;
+        return (wsInfo.getLastmodifieddate() != file.lastModified());
     }
 
     /**

@@ -140,8 +140,7 @@ public class ConfigurationContext extends AbstractContext {
         throws AxisFault {
         ServiceDescription service = axisConfiguration.getService(serviceName);
         if (service != null) {
-            ServiceContext serviceContext = new ServiceContext(service, this);
-            return serviceContext;
+            return new ServiceContext(service, this);
         } else {
             throw new AxisFault(
                 "Service not found service name = " + serviceName);

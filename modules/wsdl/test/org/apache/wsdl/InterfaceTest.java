@@ -51,9 +51,9 @@ public class InterfaceTest extends AbstractTestCase {
             }
             array[j] = intfc;
         }
-        assertEquals(((WSDLOperation) array[0].getOperation("op0of inteface0"))
+        assertEquals(array[0].getOperation("op0of inteface0")
                 .getName().getLocalPart(), "op0of inteface0");
-        assertEquals(((WSDLOperation) array[0].getOperation("op1of inteface0"))
+        assertEquals(array[0].getOperation("op1of inteface0")
                 .getName().getLocalPart(), "op1of inteface0");
         assertEquals(array[interfaceCounter - 1].getAllOperations().size(),
                 interfaceCounter * operationCounter);

@@ -17,12 +17,7 @@ package org.apache.axis2.soap.impl.llom;
 
 import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPHeader;
-import org.apache.axis2.soap.SOAPHeaderBlock;
-import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -86,10 +81,9 @@ public class SOAPEnvelopeImpl extends SOAPElement
 
         SOAPHeader headerContainer = getHeader();
         OMNamespace namespace = factory.createOMNamespace(namespaceURI, null);
-        SOAPHeaderBlock block = factory.createSOAPHeaderBlock(name,
+        return factory.createSOAPHeaderBlock(name,
                                                               namespace,
                                                               headerContainer);
-        return block;
     }
 
     public void addChild(OMNode child) {

@@ -42,8 +42,7 @@ public class XMLUtils {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         db = dbf.newDocumentBuilder();
-        Document doc = db.newDocument();
-        return doc;
+        return db.newDocument();
     }
 
     /**

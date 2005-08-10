@@ -135,11 +135,11 @@ public class EchoRawXMLLoadTest extends TestCase {
                 false);
 
         OMElement result =
-                (OMElement) call.invokeBlocking(operationName.getLocalPart(),
+                call.invokeBlocking(operationName.getLocalPart(),
                         payload);
 
         OMElement result1 =
-                (OMElement) call.invokeBlocking(operationName.getLocalPart(),
+                call.invokeBlocking(operationName.getLocalPart(),
                         payload);
 
         TestingUtils.campareWithCreatedOMElement(result);

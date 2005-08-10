@@ -118,7 +118,7 @@ public class FormModel {
                 new EndpointReference(url.toString()));
         try {
             responseElement =
-                    (OMElement) call.invokeBlocking("doGoogleSpellingSugg",
+                    call.invokeBlocking("doGoogleSpellingSugg",
                             requestElement);
         } catch (AxisFault axisFault) {
             observer.updateError(axisFault.getMessage());

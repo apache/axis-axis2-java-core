@@ -1,15 +1,14 @@
 package org.apache.axis2.wsdl.codegen;
 
 import junit.framework.TestCase;
-
-import java.util.Map;
-import java.util.HashMap;
-import java.io.File;
-
-import org.apache.tools.ant.taskdefs.Javac;
-import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
+import org.apache.tools.ant.taskdefs.Javac;
+import org.apache.tools.ant.types.Path;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

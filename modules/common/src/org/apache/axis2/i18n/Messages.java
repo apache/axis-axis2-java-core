@@ -49,7 +49,7 @@ public class Messages {
     private static final ClassLoader classLoader = thisClass.getClassLoader();
 
     private static final ResourceBundle parent =
-            (MessagesConstants.rootPackageName == packageName)
+            (MessagesConstants.rootPackageName.equals(packageName))
             ? null
             : MessagesConstants.rootBundle;
 

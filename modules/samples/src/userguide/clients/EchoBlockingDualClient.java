@@ -50,7 +50,7 @@ public class EchoBlockingDualClient {
                     true);
 
             //Blocking Invocation
-            OMElement result = (OMElement) call.invokeBlocking("echo",
+            OMElement result = call.invokeBlocking("echo",
                     payload);
 
             StringWriter writer = new StringWriter();

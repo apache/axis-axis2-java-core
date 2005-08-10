@@ -93,7 +93,7 @@ public class GroovyServiceTest extends TestCase {
                 Constants.TRANSPORT_HTTP,
                 false);
 
-        OMElement result = (OMElement) call.invokeBlocking(operationName.getLocalPart(),
+        OMElement result = call.invokeBlocking(operationName.getLocalPart(),
                 payload);
         assertNotNull(result);
         OMElement person = (OMElement)result.getFirstChild();
@@ -120,7 +120,7 @@ public class GroovyServiceTest extends TestCase {
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         StAXOMBuilder staxOMBuilder = new
-                StAXOMBuilder(fac,(XMLStreamReader) xmlReader);
+                StAXOMBuilder(fac,xmlReader);
         return   staxOMBuilder.getDocumentElement();
     }
 

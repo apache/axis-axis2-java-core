@@ -165,17 +165,11 @@ public class RepositoryListenerImpl implements RepositoryListener,
      * @return
      */
     private boolean isServiceArchiveFile(String filename) {
-        if (filename.endsWith(".jar") | filename.endsWith(".aar")) {
-            return true;
-        }
-        return false;
+        return ((filename.endsWith(".jar")) | (filename.endsWith(".aar")));
     }
 
     private boolean isModuleArchiveFile(String filename) {
-        if (filename.endsWith(".jar") || filename.endsWith(".mar")) {
-            return true;
-        }
-        return false;
+        return ((filename.endsWith(".jar")) || (filename.endsWith(".mar")));
     }
 
 }

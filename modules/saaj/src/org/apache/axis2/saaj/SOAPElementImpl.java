@@ -317,9 +317,9 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
      */
     public Name getElementName() {
         QName qName = omElement.getQName();
-        return (Name) (new PrefixedQName(qName.getNamespaceURI(),
+        return new PrefixedQName(qName.getNamespaceURI(),
                 qName.getLocalPart(),
-                qName.getPrefix()));
+                qName.getPrefix());
     }
 
     /**
@@ -715,7 +715,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
                 returnList.addNodeList(list);
             }
         }
-        return (NodeList) returnList;
+        return returnList;
     }
 
     private NodeList getElementsByTagNamePreOrder(SOAPElement child,
@@ -724,7 +724,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         //We are doing preorder, so see if root itself is a match and place it first in the order
         if (child.getLocalName().equals(localName)) {
             //so this must be first in the returnList
-            returnList.addNode((org.w3c.dom.Node) child);
+            returnList.addNode(child);
         }
         returnList.addNodeList(child.getElementsByTagName(localName));
         return returnList;
@@ -824,7 +824,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
                 returnList.addNodeList(list);
             }
         }
-        return (NodeList) returnList;
+        return returnList;
     }
 
     private NodeList getElementsByTagNameNSPreOrder(SOAPElement child,
@@ -835,7 +835,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         if (child.getNamespaceURI().equals(namespaceURI) &&
                 child.getLocalName().equals(localName)) {
             //so this must be first in the returnList
-            returnList.addNode((org.w3c.dom.Node) child);
+            returnList.addNode(child);
         }
         returnList.addNodeList(
                 child.getElementsByTagNameNS(namespaceURI, localName));

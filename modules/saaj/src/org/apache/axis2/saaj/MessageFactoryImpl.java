@@ -35,8 +35,7 @@ public class MessageFactoryImpl extends MessageFactory {
      */
     public SOAPMessage createMessage() throws SOAPException {
         SOAPEnvelopeImpl env = new SOAPEnvelopeImpl();
-        SOAPMessageImpl message = new SOAPMessageImpl(env);
-        return message;
+        return new SOAPMessageImpl(env);
     }
 
     /* (non-Javadoc)
@@ -45,11 +44,9 @@ public class MessageFactoryImpl extends MessageFactory {
     public SOAPMessage createMessage(MimeHeaders mimeheaders,
                                      InputStream inputstream) throws IOException,
             SOAPException {
-        // TODO Auto-generated method stub
-        SOAPMessageImpl message = new SOAPMessageImpl(inputstream,
+        return new SOAPMessageImpl(inputstream,
                 false,
                 mimeheaders);
-        return message;
     }
 
 }

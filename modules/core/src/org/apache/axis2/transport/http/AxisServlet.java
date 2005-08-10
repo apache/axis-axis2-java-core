@@ -184,9 +184,9 @@ public class AxisServlet extends HttpServlet {
                     msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
             
             //Getting the 
-            res.setContentType("text/xml; charset="+ 
-            		(String) msgContext
-						.getProperty(MessageContext.CHARACTER_SET_ENCODING));
+            res.setContentType("text/xml; charset="+
+                    msgContext
+                        .getProperty(MessageContext.CHARACTER_SET_ENCODING));
             
             if (contextWritten == null
                     || !Constants.VALUE_TRUE.equals(contextWritten)) {

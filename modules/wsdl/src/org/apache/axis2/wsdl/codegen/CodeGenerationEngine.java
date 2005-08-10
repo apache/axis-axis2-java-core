@@ -16,25 +16,18 @@
 
 package org.apache.axis2.wsdl.codegen;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.wsdl.WSDLException;
-
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.wsdl.codegen.emitter.CSharpEmitter;
 import org.apache.axis2.wsdl.codegen.emitter.Emitter;
 import org.apache.axis2.wsdl.codegen.emitter.JavaEmitter;
-import org.apache.axis2.wsdl.codegen.extension.AxisBindingBuilder;
-import org.apache.axis2.wsdl.codegen.extension.CodeGenExtension;
-import org.apache.axis2.wsdl.codegen.extension.PackageFinder;
-import org.apache.axis2.wsdl.codegen.extension.WSDLValidatorExtension;
-import org.apache.axis2.wsdl.codegen.extension.XMLBeansExtension;
-//import org.apache.axis2.wsdl.codegen.extension.AbstractCodeGenerationExtension;
-//import org.apache.axis2.wsdl.codegen.extension.SimpleDBExtension;
+import org.apache.axis2.wsdl.codegen.extension.*;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.wsdl.WSDLDescription;
+
+import javax.wsdl.WSDLException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author chathura@opensource.lk

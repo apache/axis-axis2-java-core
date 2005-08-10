@@ -356,10 +356,7 @@ public class SOAPDocumentImpl implements Document {
     private String version = "version 2.0";
 
     public boolean isSupported(String feature, String version) {
-        if (!version.equalsIgnoreCase(version))
-            return false;
-        else
-            return true;
+        return version.equalsIgnoreCase(version);
     }
 
     public Node appendChild(Node newChild) throws DOMException {

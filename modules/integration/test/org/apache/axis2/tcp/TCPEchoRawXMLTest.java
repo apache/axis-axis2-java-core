@@ -163,7 +163,7 @@ public class TCPEchoRawXMLTest extends TestCase {
                 false);
 
         OMElement result =
-                (OMElement) call.invokeBlocking(operationName.getLocalPart(),
+                call.invokeBlocking(operationName.getLocalPart(),
                         payload);
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(
                                 System.out));
@@ -192,7 +192,7 @@ public class TCPEchoRawXMLTest extends TestCase {
                 Constants.TRANSPORT_TCP,
                 true);
 
-        OMElement result = (OMElement) call.invokeBlocking(
+        OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), method);
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(
                                 System.out));

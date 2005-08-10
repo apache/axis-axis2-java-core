@@ -63,11 +63,11 @@ public class POP3Worker extends Thread {
             while (stk.hasMoreTokens()) {
                 tokens.add(stk.nextToken());
             }
-            if (((String) tokens.get(0)).equals(MailConstants.USER)) {
+            if (tokens.get(0).equals(MailConstants.USER)) {
                 user = (String) tokens.get(1);
                 messages = st.popUserMails(user);
                 printWriter.println(MailConstants.OK);
-            } else if (((String) tokens.get(0)).equals(MailConstants.PASS)) {
+            } else if (tokens.get(0).equals(MailConstants.PASS)) {
                 printWriter.println(MailConstants.OK); // Passwords are not checked.
             } else if (input.equals(MailConstants.QUIT)) {
                 printWriter.println(
@@ -75,7 +75,7 @@ public class POP3Worker extends Thread {
                 doneProcess = true;
             } else if (input.equals(MailConstants.STAT)) {
                 printWriter.println(MailConstants.OK + messages.size() + " 1"); // We take the maildrop size as one.
-            } else if (((String) tokens.get(0)).equals(MailConstants.LIST)) { // scan listing
+            } else if (tokens.get(0).equals(MailConstants.LIST)) { // scan listing
                 if (tokens.size() > 1) {
                     try {
                         int optArg = Integer.parseInt((String) tokens.get(1));
@@ -97,7 +97,7 @@ public class POP3Worker extends Thread {
                         printWriter.println(
                                 MailConstants.ERR +
                                 "problem passing the index. Index submited was " +
-                                (String) tokens.get(1));
+                                tokens.get(1));
                     }
                 } else {
                     printWriter.println(MailConstants.OK + messages.size());
@@ -107,7 +107,7 @@ public class POP3Worker extends Thread {
                     }
                     printWriter.println(".");
                 }
-            } else if (((String) tokens.get(0)).equals(MailConstants.RETR)) {
+            } else if (tokens.get(0).equals(MailConstants.RETR)) {
                 String i = (String) tokens.get(1);
                 try {
                     int index = Integer.parseInt(i);
@@ -128,7 +128,7 @@ public class POP3Worker extends Thread {
                 } catch (MessagingException e2) {
                     printWriter.println(MailConstants.ERR);
                 }
-            } else if (((String) tokens.get(0)).equals(MailConstants.DELE)) {
+            } else if (tokens.get(0).equals(MailConstants.DELE)) {
                 String smIndex = (String) tokens.get(1);
                 try {
                     int mIndex = Integer.parseInt(smIndex) - 1 - numDeleted; // When one mail is deleted the index of the other mails will reduce. Asumed that the delete will occure from bottom up.
@@ -142,8 +142,8 @@ public class POP3Worker extends Thread {
                 } catch (NumberFormatException e) {
                     printWriter.println(MailConstants.ERR);
                 }
-            } else if (((String) tokens.get(0)).equals(MailConstants.NOOP) ||
-                    ((String) tokens.get(0)).equals(MailConstants.RSET)) {
+            } else if (tokens.get(0).equals(MailConstants.NOOP) ||
+                    tokens.get(0).equals(MailConstants.RSET)) {
                 printWriter.println(MailConstants.OK);
             } else {
                 printWriter.println(MailConstants.ERR);

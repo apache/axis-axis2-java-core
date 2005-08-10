@@ -168,7 +168,7 @@ public class NodeImpl implements Node {
 
         if (omNode.getType() == OMNode.TEXT_NODE) {
             OMElement parent = (OMElement) omNode.getParent();
-            ((OMText) omNode).discard();
+            omNode.discard();
             omNode =
                     org.apache.axis2.om.OMAbstractFactory.getOMFactory()
                     .createText(parent, value);
@@ -179,7 +179,7 @@ public class NodeImpl implements Node {
                         org.apache.axis2.om.OMAbstractFactory.getOMFactory()
                         .createText((OMElement) omNode, value);
             } else if (firstChild.getType() == OMNode.TEXT_NODE) {
-                ((OMText) firstChild).discard();
+                firstChild.discard();
                 firstChild =
                         org.apache.axis2.om.OMAbstractFactory.getOMFactory()
                         .createText((OMElement) omNode, value);
@@ -218,7 +218,7 @@ public class NodeImpl implements Node {
     public boolean hasAttributes() {
         if (omNode instanceof OMElement) {
             Iterator iter = ((OMElement) omNode).getAttributes();
-            return (iter.hasNext() ? true : false);
+            return (iter.hasNext());
         }
         return false;
     }
@@ -231,7 +231,7 @@ public class NodeImpl implements Node {
     public boolean hasChildNodes() {
         if (omNode instanceof OMElement) {
             Iterator iter = ((OMElement) omNode).getChildren();
-            return (iter.hasNext() ? true : false);
+            return (iter.hasNext());
         }
         return false;
     }
@@ -314,7 +314,7 @@ public class NodeImpl implements Node {
 
         if (omNode.getType() == OMNode.TEXT_NODE) {
             OMElement parent = (OMElement) omNode.getParent();
-            ((OMText) omNode).discard();
+            omNode.discard();
             omNode =
                     org.apache.axis2.om.OMAbstractFactory.getOMFactory()
                     .createText(parent, value);

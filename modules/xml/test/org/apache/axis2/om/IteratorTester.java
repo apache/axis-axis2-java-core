@@ -116,7 +116,7 @@ public class IteratorTester extends AbstractTestCase {
         int firstChildrenCount = 0;
         int secondChildrenCount = 0;
         while (iter.hasNext()) {
-            assertNotNull((OMNode) iter.next());
+            assertNotNull(iter.next());
             firstChildrenCount++;
         }
 
@@ -128,7 +128,7 @@ public class IteratorTester extends AbstractTestCase {
         //reset the iterator
         iter = elt.getChildren(); //reset the iterator
         while (iter.hasNext()) {
-            assertNotNull((OMNode) iter.next());
+            assertNotNull(iter.next());
             secondChildrenCount++;
         }
         assertEquals("children count must reduce from 1",

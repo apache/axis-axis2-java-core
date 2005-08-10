@@ -419,10 +419,9 @@ public class XMLUtils {
             if (systemId == null) {
                 systemId = "null";
             }
-            String info = "URI=" + systemId +
+            return "URI=" + systemId +
                 " Line=" + spe.getLineNumber() +
                 ": " + spe.getMessage();
-            return info;
         }
 
         // The following methods are standard SAX ErrorHandler methods.

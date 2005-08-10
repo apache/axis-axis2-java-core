@@ -419,7 +419,7 @@ public class ProjectResourceBundle extends ResourceBundle {
 
         ResourceBundle getParentBundle(String packageName) {
             ResourceBundle p;
-            if (packageName != _projectName) {
+            if (!packageName.equals(_projectName)) {
                 p = getBundle(this, getPackage(packageName));
             } else {
                 p = _parent;
@@ -446,7 +446,7 @@ public class ProjectResourceBundle extends ResourceBundle {
             /* Ensure that project is a proper prefix of class.
              * Terminate project name with '.' to ensure proper match.
              */
-            if (packageName != _projectName && !packageName.startsWith(_projectName + '.')) {
+            if (!packageName.equals(_projectName) && !packageName.startsWith(_projectName + '.')) {
                 log.debug("Project not a prefix of Package");
                 throw new MissingResourceException("Project '" + _projectName
                         + "' must be a prefix of Package '"

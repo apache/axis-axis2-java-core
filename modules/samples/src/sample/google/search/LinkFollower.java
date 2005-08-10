@@ -76,7 +76,7 @@ class LinkFollower implements HyperlinkListener, Runnable {
 
             /** Window is not built yet, so build it */
 
-            if (builded == false) {
+            if (!builded) {
                 buildURLWindaw();
             }
             try {
@@ -131,7 +131,7 @@ class LinkFollower implements HyperlinkListener, Runnable {
      */
     public void run() {
         while (true) {
-            if (showURL == true) {
+            if (showURL) {
                 this.setPage();
                 showURL = false;
             }

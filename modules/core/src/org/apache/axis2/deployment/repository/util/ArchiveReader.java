@@ -27,7 +27,6 @@ import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLDescription;
-import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.impl.WSDLServiceImpl;
 
 import java.io.*;
@@ -127,10 +126,9 @@ public class ArchiveReader implements DeploymentConstants {
                                    ServiceDescription service) throws DeploymentException {
         // get attribute values
         boolean foundServiceXML = false;
-        String strArchive = filename;
         ZipInputStream zin;
         try {
-            zin = new ZipInputStream(new FileInputStream(strArchive));
+            zin = new ZipInputStream(new FileInputStream(filename));
             ZipEntry entry;
             while ((entry = zin.getNextEntry()) != null) {
                 if (entry.getName().equals(SERVICEXML)) {
@@ -155,10 +153,9 @@ public class ArchiveReader implements DeploymentConstants {
                                   ModuleDescription module) throws DeploymentException {
         // get attribute values
         boolean foundmoduleXML = false;
-        String strArchive = filename;
         ZipInputStream zin = null;
         try {
-            zin = new ZipInputStream(new FileInputStream(strArchive));
+            zin = new ZipInputStream(new FileInputStream(filename));
             ZipEntry entry;
             while ((entry = zin.getNextEntry()) != null) {
                 if (entry.getName().equals(MODULEXML)) {
@@ -171,7 +168,7 @@ public class ArchiveReader implements DeploymentConstants {
             //  zin.closeEntry();
             zin.close();
             if (!foundmoduleXML) {
-                throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.MODULEXML_NOT_FOUND_FOR_THE_MODULE, strArchive));
+                throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.MODULEXML_NOT_FOUND_FOR_THE_MODULE, filename));
 //                        "module.xml not found  for the module :  " +
 //                        strArchive);
             }

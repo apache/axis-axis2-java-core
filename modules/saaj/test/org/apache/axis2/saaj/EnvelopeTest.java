@@ -36,7 +36,7 @@ public class EnvelopeTest extends TestCase {
     	SOAPMessage smsg = 
     		mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(xmlString.getBytes()));
     	SOAPPart sp = smsg.getSOAPPart();
-    	SOAPEnvelope se = (SOAPEnvelope)sp.getEnvelope();
+    	SOAPEnvelope se = sp.getEnvelope();
     	//smsg.writeTo(System.out);
     	assertTrue(se != null);
     }
@@ -46,7 +46,7 @@ public class EnvelopeTest extends TestCase {
     	SOAPMessage smsg =
     		mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(xmlString.getBytes()));
     	SOAPPart sp = smsg.getSOAPPart();
-    	SOAPEnvelope se = (SOAPEnvelope)sp.getEnvelope();
+    	SOAPEnvelope se = sp.getEnvelope();
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	smsg.writeTo(baos);
     	SOAPBody body = smsg.getSOAPPart().getEnvelope().getBody();
@@ -70,7 +70,7 @@ public class EnvelopeTest extends TestCase {
     		factory.createMessage(new MimeHeaders(),
     				new ByteArrayInputStream(soapMessageWithLeadingComment.getBytes()));
     	SOAPPart part = message.getSOAPPart();
-    	SOAPEnvelope envelope = (SOAPEnvelope) part.getEnvelope();
+    	SOAPEnvelope envelope = part.getEnvelope();
     	message.writeTo(System.out);
     	assertTrue(envelope != null);
     }

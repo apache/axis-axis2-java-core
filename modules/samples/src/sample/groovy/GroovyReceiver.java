@@ -134,7 +134,7 @@ public class GroovyReceiver
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         StAXOMBuilder staxOMBuilder =
-            new StAXOMBuilder(fac, (XMLStreamReader) xmlReader);
+            new StAXOMBuilder(fac, xmlReader);
         return staxOMBuilder.getDocumentElement();
     }
 

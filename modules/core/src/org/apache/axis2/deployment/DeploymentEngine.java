@@ -176,8 +176,8 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     private void setDeploymentFeatures() {
         String value;
-        Parameter parahotdeployment = ((AxisConfigurationImpl) axisConfig).getParameter(HOTDEPLOYMENT);
-        Parameter parahotupdate = ((AxisConfigurationImpl) axisConfig).getParameter(HOTUPDATE);
+        Parameter parahotdeployment = axisConfig.getParameter(HOTDEPLOYMENT);
+        Parameter parahotupdate = axisConfig.getParameter(HOTUPDATE);
         if (parahotdeployment != null) {
             value = (String) parahotdeployment.getValue();
             if ("false".equals(value))
@@ -319,7 +319,7 @@ public class DeploymentEngine implements DeploymentConstants {
         // PhaseResolver resolver = new PhaseResolver(axisConfig);
         for (Iterator iterator = modulelist.iterator(); iterator.hasNext();) {
             QName name = (QName) iterator.next();
-            ((AxisConfigurationImpl) axisConfig).engageModule(name);
+            axisConfig.engageModule(name);
         }
     }
 
@@ -332,10 +332,10 @@ public class DeploymentEngine implements DeploymentConstants {
     private void validateSystemPredefinedPhases() throws DeploymentException {
         ArrayList inPhases = phasesinfo.getINPhases();
         //TODO condition checking should be otherway since null value can occur
-        if (!(((String) inPhases.get(0)).equals(PhaseMetadata.PHASE_TRANSPORTIN) &&
-                ((String) inPhases.get(1)).equals(PhaseMetadata.PHASE_PRE_DISPATCH) &&
-                ((String) inPhases.get(2)).equals(PhaseMetadata.PHASE_DISPATCH) &&
-                ((String) inPhases.get(3)).equals(PhaseMetadata.PHASE_POST_DISPATCH))) {
+        if (!(inPhases.get(0).equals(PhaseMetadata.PHASE_TRANSPORTIN) &&
+                inPhases.get(1).equals(PhaseMetadata.PHASE_PRE_DISPATCH) &&
+                inPhases.get(2).equals(PhaseMetadata.PHASE_DISPATCH) &&
+                inPhases.get(3).equals(PhaseMetadata.PHASE_POST_DISPATCH))) {
             throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_PHASE));
         }
         //  ArrayList outPhaes = tempdata.getOutphases();
@@ -344,8 +344,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     public ModuleDescription getModule(QName moduleName) throws AxisFault {
-        ModuleDescription axisModule = axisConfig.getModule(moduleName);
-        return axisModule;
+        return axisConfig.getModule(moduleName);
     }
 
     /**
@@ -359,8 +358,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     private AxisConfiguration createEngineConfig() {
-        AxisConfiguration newEngineConfig = new AxisConfigurationImpl();
-        return newEngineConfig;
+        return new AxisConfigurationImpl();
     }
 
 

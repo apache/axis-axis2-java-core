@@ -106,7 +106,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
         org.apache.axis2.soap.SOAPHeader omSOAPHeader;
         try {
             omSOAPHeader =
-                    (org.apache.axis2.soap.SOAPHeader) omSOAPEnvelope.getHeader();
+                    omSOAPEnvelope.getHeader();
         } catch (Exception e) {
             throw new SOAPException(e);
         }

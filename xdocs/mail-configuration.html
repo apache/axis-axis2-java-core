@@ -14,7 +14,7 @@
   <li>javamail</li>
   <li>activation</li>
   </ol>
-<p>We use the jeranimo version of these jars. Specificaly we are using geronimo-spec-javamail-[version].jar and geronimo-spec-activation-[version].jar. These will be downloaded by maven the build is being run.</p>
+<p>We use the Geronimo version of these jars. Specificaly we are using geronimo-spec-javamail-[version].jar and geronimo-spec-activation-[version].jar. These will be downloaded by maven when you run the maven build.</p>
 
 <h2>Transport Sender</h2>
 <p>You need to have a mail account to activate the mail functionality. This can either be a generic mail server or you can start up a james mail server. The Mail transport sender can be activated by adding following entry to the axis2.xml file.</p>
@@ -31,10 +31,10 @@
 
   <h2>Transport Receiver</h2>
 
-  <p>The mail Listener can be activated by adding following entry to the axis2.xml file.</p>
+  <p>The mail Listener can be activated by adding the following entry to the axis2.xml file.</p>
 
   <source><pre>
-   &lt;transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener">
+   &lt;transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener"&gt;
         &lt;parameter name="transport.mail.pop3.host" locked="xsd:false"&gt;pop server host&lt;/parameter&gt;
         &lt;parameter name="transport.mail.pop3.user" locked="xsd:false"&gt;user name&lt;/parameter&gt;
         &lt;parameter name="transport.mail.pop3.password" locked="xsd:false"&gt;password&lt;/parameter&gt;
@@ -64,7 +64,7 @@ sender.send(operationName.getLocalPart(), payload);
 </source>
   
   <h2>Configure James as SMTP and POP server</h2>
-  <p>Download the <a href="http://james.apache.org/">Apache James</a> and start James, connect to the James via telnet for administrator James with following code
+  <p>Download the <a href="http://james.apache.org/">Apache James</a> and start James, connect to the James via telnet for administrator James with the following code
 </p>
 
 <source>

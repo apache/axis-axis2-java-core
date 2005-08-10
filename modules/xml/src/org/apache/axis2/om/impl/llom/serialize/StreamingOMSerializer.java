@@ -61,7 +61,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
      */
     public void serialize(XMLStreamReader obj, OMOutputImpl omOutput)
             throws XMLStreamException {
-        XMLStreamReader node = (XMLStreamReader) obj;
+        XMLStreamReader node = obj;
         serializeNode(node, omOutput);
     }
 

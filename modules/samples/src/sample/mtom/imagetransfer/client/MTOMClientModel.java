@@ -80,11 +80,10 @@ public class MTOMClientModel {
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP, false);
-        OMElement result = (OMElement) call.invokeBlocking(operationName
+        return call.invokeBlocking(operationName
                 .getLocalPart(),
                 payload);
 
-        return result;
     }
 
 

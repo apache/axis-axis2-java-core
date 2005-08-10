@@ -120,9 +120,8 @@ public class UtilServer {
 
         sysContext.getAxisConfiguration().addService(service);
         //Utils.resolvePhases(sysContext.getEngineConfig(), service);
-        ServiceContext serviceContext = sysContext.createServiceContext(
+        return sysContext.createServiceContext(
                 service.getName());
-        return serviceContext;
 
     }
 

@@ -42,7 +42,7 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
                                               MessageContext messageContext)
             throws AxisFault {
 
-        String action = (String) messageContext.getSoapAction();
+        String action = messageContext.getSoapAction();
         if (action != null) {
             OperationDescription op = service.getOperationBySOAPAction(action);
             if (op == null) {

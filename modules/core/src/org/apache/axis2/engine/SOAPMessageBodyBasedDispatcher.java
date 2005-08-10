@@ -54,8 +54,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
                 .getFirstElement();
         operationName = new QName(bodyFirstChild.getLocalName());
 
-        OperationDescription axisOp = service.getOperation(operationName);
-        return axisOp;
+        return service.getOperation(operationName);
     }
 
     /* (non-Javadoc)

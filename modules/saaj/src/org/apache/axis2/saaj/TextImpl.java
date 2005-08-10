@@ -80,9 +80,7 @@ public class TextImpl extends NodeImpl implements Text {
     public boolean isComment() {
 
         String temp = omText.getText();
-        if (temp.startsWith("<!--") && temp.endsWith("-->"))
-            return true;
-        return false;
+        return temp.startsWith("<!--") && temp.endsWith("-->");
     }
 
     /**

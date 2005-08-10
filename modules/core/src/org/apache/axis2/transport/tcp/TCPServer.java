@@ -50,9 +50,8 @@ public class TCPServer extends TransportListener implements Runnable {
     public TCPServer(int port, String dir) throws AxisFault {
         try {
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-            ConfigurationContext configContext = erfac.buildConfigurationContext(
+            this.configContext = erfac.buildConfigurationContext(
                     dir);
-            this.configContext = configContext;
             Thread.sleep(3000);
             serversocket = new ServerSocket(port);
         } catch (DeploymentException e1) {

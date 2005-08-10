@@ -49,8 +49,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
                                               MessageContext messageContext)
             throws AxisFault {
         if (operationName != null) {
-            OperationDescription axisOp = service.getOperation(operationName);
-            return axisOp;
+            return service.getOperation(operationName);
         }
         return null;
 

@@ -43,7 +43,7 @@ public class EchoSwA {
 
     public OMElement echoAttachment(OMElement omEle) {
         OMElement child  = (OMElement)omEle.getFirstChild();
-        OMAttribute attr = (OMAttribute)child.getFirstAttribute(new QName("href"));
+        OMAttribute attr = child.getFirstAttribute(new QName("href"));
         String contentID = attr.getValue();
         MIMEHelper attachment = (MIMEHelper)msgcts.getProperty(MTOMConstants.ATTACHMENTS);
         contentID = contentID.trim();

@@ -54,8 +54,7 @@ public class MyInOutMEPClient extends Call {
 
         MessageContext responseContext = super.invokeBlocking(axisConfig,
                 msgctx);
-        SOAPEnvelope envelope = responseContext.getEnvelope();
-        return envelope;
+        return responseContext.getEnvelope();
     }
 
 
@@ -80,8 +79,7 @@ public class MyInOutMEPClient extends Call {
 
         MessageContext responseContext = super.invokeBlocking(axisConfig,
                 msgctx);
-        SOAPEnvelope envelope = responseContext.getEnvelope();
-        return envelope;
+        return responseContext.getEnvelope();
     }
 
     protected MessageContext getMessageContext(SOAPEnvelope envelope) throws AxisFault {

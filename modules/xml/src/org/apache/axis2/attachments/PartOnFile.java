@@ -144,8 +144,7 @@ public class PartOnFile implements Part {
     }
 
     public InputStream getInputStream() throws IOException, MessagingException {
-        FileInputStream inStream = new FileInputStream(cacheFile);
-        return inStream;
+        return new FileInputStream(cacheFile);
     }
 
     public DataHandler getDataHandler() throws MessagingException {

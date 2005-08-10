@@ -31,7 +31,7 @@ public class PropertyLoader {
     static {
         try {
             Properties prop = new Properties();
-            Class clazz = new Object().getClass();
+            Class clazz = Object.class;
             InputStream stream = clazz.getResourceAsStream(
                     "/sample/google/common/conf/key.properties");
             prop.load(stream);

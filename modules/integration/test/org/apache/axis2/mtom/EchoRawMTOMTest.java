@@ -114,7 +114,7 @@ public class EchoRawMTOMTest extends TestCase {
                 Constants.TRANSPORT_HTTP, false);
         call.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
-        OMElement result = (OMElement) call.invokeBlocking(operationName
+        OMElement result = call.invokeBlocking(operationName
                 .getLocalPart(),
                 payload);
         // result.serializeWithCache(new

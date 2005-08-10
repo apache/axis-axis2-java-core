@@ -74,8 +74,7 @@ public class ClientCallbackHandler extends Callback {
      */
 
     public void onComplete(AsyncResult result) {
-        AsyncResult myResult = result;
-        extractDetails(myResult);
+        extractDetails(result);
     }
 
     /**

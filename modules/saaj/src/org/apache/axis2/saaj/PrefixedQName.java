@@ -79,7 +79,7 @@ public class PrefixedQName implements Name {
      */
     public String getQualifiedName() {
         StringBuffer buf = new StringBuffer(prefix);
-        if (prefix != emptyString)
+        if (!prefix.equals(emptyString))
             buf.append(':');
         buf.append(qName.getLocalPart());
         return buf.toString();
@@ -119,10 +119,7 @@ public class PrefixedQName implements Name {
         if (!qName.equals(((PrefixedQName) obj).qName)) {
             return false;
         }
-        if (prefix == ((PrefixedQName) obj).prefix) {
-            return true;
-        }
-        return false;
+        return prefix.equals(((PrefixedQName) obj).prefix);
     }
 
     /**

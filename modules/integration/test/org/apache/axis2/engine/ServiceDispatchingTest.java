@@ -91,7 +91,7 @@ public class ServiceDispatchingTest extends TestCase {
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
-        OMElement result = (OMElement) call.invokeBlocking(
+        OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), payload);
         TestingUtils.campareWithCreatedOMElement(result);
         call.close();
@@ -112,7 +112,7 @@ public class ServiceDispatchingTest extends TestCase {
                 Constants.TRANSPORT_HTTP,
                 false);
         call.setSoapAction("echoOMElement");
-        OMElement result = (OMElement) call.invokeBlocking(
+        OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), payload);
         TestingUtils.campareWithCreatedOMElement(result);
         call.close();
@@ -136,7 +136,7 @@ public class ServiceDispatchingTest extends TestCase {
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
-        OMElement result = (OMElement) call.invokeBlocking(
+        OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), payload);
         TestingUtils.campareWithCreatedOMElement(result);
         call.close();

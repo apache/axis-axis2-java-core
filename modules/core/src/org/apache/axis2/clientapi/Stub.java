@@ -127,8 +127,7 @@ public abstract class Stub{
 
     //todo make this compliant with the SOAP12
     protected SOAPEnvelope createEnvelope() throws SOAPProcessingException {
-        SOAPEnvelope env = getFactory().getDefaultEnvelope();
-        return env;
+        return getFactory().getDefaultEnvelope();
     }
 
     protected void setValueRPC(SOAPEnvelope env,

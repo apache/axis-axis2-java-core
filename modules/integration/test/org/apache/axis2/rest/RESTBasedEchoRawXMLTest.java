@@ -26,7 +26,6 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -79,8 +78,8 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
         UtilServer.start();
         Parameter parameter = new ParameterImpl(
                 Constants.Configuration.ENABLE_REST, "true");
-        ((AxisConfigurationImpl) UtilServer.getConfigurationContext()
-                .getAxisConfiguration()).addParameter(parameter);
+        UtilServer.getConfigurationContext()
+                .getAxisConfiguration().addParameter(parameter);
         service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
@@ -165,7 +164,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
                 false);
         call.setDoREST(true);
         OMElement result =
-                (OMElement) call.invokeBlocking(operationName.getLocalPart(),
+                call.invokeBlocking(operationName.getLocalPart(),
                         payload);
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(
                                 System.out));

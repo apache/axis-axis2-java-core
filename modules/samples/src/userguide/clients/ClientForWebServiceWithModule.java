@@ -55,7 +55,7 @@ public class ClientForWebServiceWithModule {
                     false);
 
             //Blocking invocation
-            OMElement result = (OMElement) call.invokeBlocking("echo",
+            OMElement result = call.invokeBlocking("echo",
                     payload);
 
             StringWriter writer = new StringWriter();

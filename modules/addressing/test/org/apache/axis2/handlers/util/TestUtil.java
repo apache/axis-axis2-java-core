@@ -35,7 +35,7 @@ public class TestUtil {
 
 
     public StAXSOAPModelBuilder getOMBuilder(String fileName) throws Exception {
-        if (fileName == "" || fileName == null) {
+        if ("".equals(fileName) || fileName == null) {
             fileName = IN_FILE_NAME;
         }
         XMLStreamReader parser = XMLInputFactory.newInstance()

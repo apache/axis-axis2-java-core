@@ -72,9 +72,9 @@ public class WOMBuilderFactory {
         int version = getWSDLVersion(doc);
 
         if (version == WSDL11) {
-            return (WOMBuilder) new WSDL1ToWOMBuilder();
+            return new WSDL1ToWOMBuilder();
         } else if (version == wsdl20) {
-            return (WOMBuilder) new WSDL2ToWOMBuilder();
+            return new WSDL2ToWOMBuilder();
         }
 
         throw new WSDLException(WSDLException.OTHER_ERROR,

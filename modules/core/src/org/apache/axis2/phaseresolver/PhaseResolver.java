@@ -116,7 +116,6 @@ public class PhaseResolver {
      */
     private void buildExcutionChains(int type, OperationDescription operation)
             throws AxisFault, PhaseException {
-        int flowtype = type;
         ArrayList allHandlers = new ArrayList();
         ModuleDescription module;
         Flow flow = null;
@@ -127,7 +126,7 @@ public class PhaseResolver {
             QName modulename = (QName) modulqnames.get(i);
             module = axisConfig.getModule(modulename);
             if (module != null) {
-                switch (flowtype) {
+                switch (type) {
                     case PhaseMetadata.IN_FLOW:
                         {
                             flow = module.getInFlow();
@@ -167,7 +166,6 @@ public class PhaseResolver {
                          * are already added to global chain which run irrespective of the service
                          *
                          */
-                        continue;
                     }
                 }
             }
@@ -176,7 +174,7 @@ public class PhaseResolver {
 
         ///////////////////////////////////////////////////////////////////////////////////////////
         ////////////////////////// SERVICE HANDLERS ///////////////////////////////////////////////
-        switch (flowtype) {
+        switch (type) {
             case PhaseMetadata.IN_FLOW:
                 {
                     flow = axisService.getInFlow();
@@ -210,7 +208,7 @@ public class PhaseResolver {
                 allHandlers.add(metadata);
             }
         }
-        switch (flowtype) {
+        switch (type) {
             case PhaseMetadata.IN_FLOW:
                 {
                     phaseHolder =
@@ -296,7 +294,6 @@ public class PhaseResolver {
                 }
                 new PhaseHolder().buildTransportHandlerChain(phase, handlers);
             } else {
-                continue;
             }
         }
     }
@@ -336,7 +333,6 @@ public class PhaseResolver {
                 }
                 new PhaseHolder().buildTransportHandlerChain(phase, handlers);
             } else {
-                continue;
             }
         }
     }
@@ -438,8 +434,6 @@ public class PhaseResolver {
                         HandlerDescription metadata = flow.getHandler(j);
                         if (!PhaseValidator.isSystemPhases(metadata.getRules().getPhaseName())) {
                             phaseHolder.addHandler(metadata);
-                        } else {
-                            continue;
                         }
                     }
                 }
@@ -456,7 +450,7 @@ public class PhaseResolver {
                 case PhaseMetadata.IN_FLOW:
                     {
                         phaseHolder =
-                                new PhaseHolder(((AxisConfigurationImpl) axisConfig).
+                                new PhaseHolder(axisConfig.
                                 getInPhasesUptoAndIncludingPostDispatch());
                         break;
                     }
@@ -469,7 +463,7 @@ public class PhaseResolver {
                 case PhaseMetadata.FAULT_IN_FLOW:
                     {
                         phaseHolder =
-                                new PhaseHolder(((AxisConfigurationImpl) axisConfig).getInFaultFlow());
+                                new PhaseHolder(axisConfig.getInFaultFlow());
                         break;
                     }
                 case PhaseMetadata.FAULT_OUT_FLOW:
@@ -516,7 +510,6 @@ public class PhaseResolver {
                          * so global module can do that. here the global module are the module which are
                          * reffred by axis2.xml
                          */
-                        continue;
                     }
                 }
             }
@@ -551,32 +544,31 @@ public class PhaseResolver {
 
     public void engageModuleToOperation(OperationDescription operation,
                                         ModuleDescription module) throws PhaseException {
-        OperationDescription opDesc = operation;
         Flow flow = null;
         for (int type = 1; type < 5; type++) {
             switch (type) {
                 case PhaseMetadata.IN_FLOW:
                     {
                         phaseHolder =
-                                new PhaseHolder(opDesc.getRemainingPhasesInFlow());
+                                new PhaseHolder(operation.getRemainingPhasesInFlow());
                         break;
                     }
                 case PhaseMetadata.OUT_FLOW:
                     {
                         phaseHolder =
-                                new PhaseHolder(opDesc.getPhasesOutFlow());
+                                new PhaseHolder(operation.getPhasesOutFlow());
                         break;
                     }
                 case PhaseMetadata.FAULT_IN_FLOW:
                     {
                         phaseHolder =
-                                new PhaseHolder(opDesc.getPhasesInFaultFlow());
+                                new PhaseHolder(operation.getPhasesInFaultFlow());
                         break;
                     }
                 case PhaseMetadata.FAULT_OUT_FLOW:
                     {
                         phaseHolder =
-                                new PhaseHolder(opDesc.getPhasesOutFaultFlow());
+                                new PhaseHolder(operation.getPhasesOutFaultFlow());
                         break;
                     }
             }

@@ -43,11 +43,10 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
                                               MessageContext messageContext)
             throws AxisFault {
 
-        String action = (String) messageContext.getWSAAction();
+        String action = messageContext.getWSAAction();
         if (action != null) {
             QName operationName = new QName(action);
-            OperationDescription op = service.getOperation(operationName);
-            return op;
+            return service.getOperation(operationName);
         }
         return null;
     }

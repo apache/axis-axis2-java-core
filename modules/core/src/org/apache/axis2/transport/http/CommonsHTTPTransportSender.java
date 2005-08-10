@@ -366,7 +366,7 @@ public class CommonsHTTPTransportSender
 
         if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)
             && chuncked) {
-            ((PostMethod) postMethod).setContentChunked(true);
+            postMethod.setContentChunked(true);
         }
         postMethod.setRequestHeader(
             HTTPConstants.HEADER_USER_AGENT,

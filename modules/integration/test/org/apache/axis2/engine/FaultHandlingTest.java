@@ -108,9 +108,7 @@ public class FaultHandlingTest extends TestCase {
 
     private SOAPEnvelope getResponse(SOAPEnvelope inEnvelope) throws AxisFault {
             inOutMEPClient.setExceptionToBeThrownOnSOAPFault(false);
-            SOAPEnvelope result =
-                    inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), inEnvelope);
-            return result;
+            return inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), inEnvelope);
     }
 
     private SOAPEnvelope getTwoHeadersSOAPEnvelope(SOAPFactory fac) {

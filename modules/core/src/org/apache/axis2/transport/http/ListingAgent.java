@@ -161,7 +161,7 @@ public class ListingAgent {
             return;
         }
 
-        if (allowListServices && (filePart != null) &&
+        if ((filePart != null) &&
                 filePart.endsWith(Constants.LISTSERVICES)) {
             listServices(httpServletRequest, httpServletResponse);
             return;
@@ -222,11 +222,11 @@ public class ListingAgent {
             throw new AxisFault(Messages.getMessage("invaliduser"));
         }
         String adminUserName =
-                (String) ((AxisConfigurationImpl) configContext.getAxisConfiguration())
+                (String) configContext.getAxisConfiguration()
                 .getParameter(Constants.USER_NAME)
                 .getValue();
         String adminPassword =
-                (String) ((AxisConfigurationImpl) configContext.getAxisConfiguration())
+                (String) configContext.getAxisConfiguration()
                 .getParameter(Constants.PASSWORD)
                 .getValue();
         if (username != null
@@ -255,7 +255,7 @@ public class ListingAgent {
         HashMap modules =
                 ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
-        String moduleName = (String) req.getParameter("modules");
+        String moduleName = req.getParameter("modules");
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
         if (moduleName != null) {
             try {
@@ -278,12 +278,12 @@ public class ListingAgent {
         HashMap modules =
                 ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
-        String moduleName = (String) req.getParameter("modules");
+        String moduleName = req.getParameter("modules");
 
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
         req.getSession().setAttribute("modules", null);
 
-        String serviceName = (String) req.getParameter("service");
+        String serviceName = req.getParameter("service");
         if (serviceName != null) {
             req.getSession().setAttribute("service", serviceName);
         } else {
@@ -295,7 +295,7 @@ public class ListingAgent {
                 .getService(new QName(serviceName))
                 .getOperations());
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
-        String operationName = (String) req.getParameter("operation");
+        String operationName = req.getParameter("operation");
         if (serviceName != null && moduleName != null && operationName != null) {
             try {
                 OperationDescription od =
@@ -325,10 +325,10 @@ public class ListingAgent {
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         HashMap services = configContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        String moduleName = (String) req.getParameter("modules");
+        String moduleName = req.getParameter("modules");
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
         req.getSession().setAttribute("modules", null);
-        String serviceName = (String) req.getParameter("service");
+        String serviceName = req.getParameter("service");
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
         if (serviceName != null && moduleName != null) {
             try {
@@ -417,7 +417,7 @@ public class ListingAgent {
             return;
 
         }   else {
-            String service = (String) req.getParameter("service");
+            String service = req.getParameter("service");
             if (service != null) {
                 req.getSession().setAttribute(Constants.SERVICE,
                         configContext.getAxisConfiguration().getService(
@@ -477,7 +477,7 @@ public class ListingAgent {
     private void viewServiceHandlers(HttpServletRequest req,
                                      HttpServletResponse res)
             throws IOException {
-        String service = (String) req.getParameter("service");
+        String service = req.getParameter("service");
         if (service != null) {
             req.getSession().setAttribute(Constants.SERVICE_HANDLERS,
                     configContext.getAxisConfiguration().getService(

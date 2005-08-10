@@ -139,7 +139,7 @@ public class EchoRawXMLTest extends TestCase {
                 false);
 
         OMElement result =
-                (OMElement) call.invokeBlocking(operationName.getLocalPart(),
+                call.invokeBlocking(operationName.getLocalPart(),
                         payload);
         TestingUtils.campareWithCreatedOMElement(result);
         call.close();
@@ -156,7 +156,7 @@ public class EchoRawXMLTest extends TestCase {
                 Constants.TRANSPORT_HTTP,
                 false);
 
-        OMElement result = (OMElement) call.invokeBlocking(
+        OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), payload);
         TestingUtils.campareWithCreatedOMElement(result);
         call.close();

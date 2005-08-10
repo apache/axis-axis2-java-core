@@ -25,7 +25,7 @@ public class QueueManager {
     private static String key = null;
 
     static {
-        Class clazz = new Object().getClass();
+        Class clazz = Object.class;
         InputStream stream = clazz.getResourceAsStream(
                 "/sample/amazon/common/conf/key.properties");
         Properties properties = new Properties();

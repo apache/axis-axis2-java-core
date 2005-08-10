@@ -338,7 +338,7 @@ public class ServiceDescription
     public Parameter getParameter(String name) {
         ParameterIncludeImpl paramInclude =
                 (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
-        return (Parameter) paramInclude.getParameter(name);
+        return paramInclude.getParameter(name);
     }
 
     public ArrayList getParameters() {
@@ -558,7 +558,7 @@ public class ServiceDescription
             // serviceContext);
         } else {
             serviceContext =
-                    (ServiceContext) msgContext.getSystemContext()
+                    msgContext.getSystemContext()
                     .getServiceContext(msgContext.getServiceInstanceID());
         }
 

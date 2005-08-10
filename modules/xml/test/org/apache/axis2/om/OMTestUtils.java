@@ -30,9 +30,8 @@ public class OMTestUtils {
     public static OMXMLParserWrapper getOMBuilder(File file) throws Exception {
         XMLStreamReader parser = XMLInputFactory.newInstance()
                 .createXMLStreamReader(new FileReader(file));
-        OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXSOAPModelBuilder(
+        return OMXMLBuilderFactory.createStAXSOAPModelBuilder(
                 OMAbstractFactory.getSOAP11Factory(), parser);
-        return builder;
     }
 
     public static void walkThrough(OMElement omEle) {

@@ -109,8 +109,8 @@ public class CharctersetEncodingTest extends TestCase {
 					Constants.TRANSPORT_HTTP, false);
 
 
-			OMElement resultElem = (OMElement) call.invokeBlocking(operationName
-					.getLocalPart(), payload);
+			OMElement resultElem = call.invokeBlocking(operationName
+                    .getLocalPart(), payload);
 
 
 

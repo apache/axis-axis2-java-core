@@ -147,7 +147,7 @@ public class UserInterface extends JPanel implements ActionListener {
         try {
             mtomTest.setInputFile(file);
             mtomTest.setTargetEPR(EPRName);
-            OMElement result = (OMElement) mtomTest.testEchoXMLSync(fileName);
+            OMElement result = mtomTest.testEchoXMLSync(fileName);
             jTextArea.setText(result.toString());
             jTextArea.append("\n"+result.getText());
             JOptionPane.showMessageDialog(parent, "Sent & saved Image Succesfully",
@@ -169,11 +169,7 @@ public class UserInterface extends JPanel implements ActionListener {
 
             String extension = getExtension(f);
             if (extension != null) {
-                if (extension.equals("jpg") || extension.equals("JPEG"))
-                    return true;
-                else {
-                    return false;
-                }
+                return extension.equals("jpg") || extension.equals("JPEG");
             }
 
             return false;

@@ -69,13 +69,6 @@ public class ImageSampleTest extends AbstractTestCase {
     String contentTypeString = "multipart/Related; type=\"application/xop+xml\";start=\"<SOAPPart>\"; boundary=\"----=_AxIs2_Def_boundary_=42214532\"";
 
 
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
-
-    }
 
     public void testImageSampleSerialize() throws Exception {
 
@@ -126,7 +119,7 @@ public class ImageSampleTest extends AbstractTestCase {
                                         mimeHelper
                 .getSOAPPartInputStream())));
         builder = new MTOMStAXSOAPModelBuilder(reader, mimeHelper, null);
-        OMElement root = (OMElement) builder.getDocumentElement();
+        OMElement root = builder.getDocumentElement();
         OMElement body = (OMElement) root.getFirstChild();
         OMElement data = (OMElement) body.getFirstChild();
         OMText blob = (OMText) data.getFirstChild();

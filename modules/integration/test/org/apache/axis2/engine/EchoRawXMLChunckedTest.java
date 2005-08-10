@@ -137,7 +137,7 @@ public class EchoRawXMLChunckedTest extends TestCase {
                 false);
 
         OMElement result =
-                (OMElement) call.invokeBlocking(operationName.getLocalPart(),
+                call.invokeBlocking(operationName.getLocalPart(),
                         payload);
         TestingUtils.campareWithCreatedOMElement(result);
         call.close();

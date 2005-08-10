@@ -72,7 +72,7 @@ class LinkFollower implements HyperlinkListener, Runnable {
      */
     public void hyperlinkUpdate(HyperlinkEvent evt) {
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            if (builded == false) {
+            if (!builded) {
 
                 /** Window is not built yet, so build it */
 
@@ -82,6 +82,7 @@ class LinkFollower implements HyperlinkListener, Runnable {
                 currentURL = evt.getURL().toString();   //set the URL
                 showURL = true;                        // Flag is set, thread should open the URL
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -127,7 +128,7 @@ class LinkFollower implements HyperlinkListener, Runnable {
      */
     public void run() {
         while (true) {
-            if (showURL == true) {
+            if (showURL) {
                 this.setPage();
                 showURL = false;
             }

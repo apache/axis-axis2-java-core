@@ -109,7 +109,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
                 Constants.TRANSPORT_HTTP,
                 true);
 
-        OMElement result = (OMElement) call.invokeBlocking(
+        OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), method);
         TestingUtils.campareWithCreatedOMElement(result);
         call.close();
