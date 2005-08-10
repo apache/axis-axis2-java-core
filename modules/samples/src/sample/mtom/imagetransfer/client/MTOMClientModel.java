@@ -16,6 +16,7 @@
 package sample.mtom.imagetransfer.client;
 
 import org.apache.axis2.Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.utils.ImageDataSource;
 import org.apache.axis2.attachments.utils.JDK13IO;
@@ -75,6 +76,7 @@ public class MTOMClientModel {
         OMElement payload = createEnvelope(fileName);
 
         Call call = new Call();
+        call.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         call.setTo(targetEPR);
         // enabling MTOM in the client side
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);

@@ -16,6 +16,7 @@
 package sample.mtom.interop.client;
 
 import org.apache.axis2.Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.om.*;
@@ -57,6 +58,7 @@ public class InteropClientModel {
 
         OMElement payload = createEnvelope(fileName);
         Call call = new Call();
+        call.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         call.setTo(targetEPR);
         // enabling MTOM in the client side
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
