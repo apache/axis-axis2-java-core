@@ -151,7 +151,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
         try {
             org.apache.axis2.soap.SOAPHeader header = omSOAPEnvelope.getHeader();
             if (header == null) {
-                SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+                SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
                 header = soapFactory.createSOAPHeader(omSOAPEnvelope);
                 omSOAPEnvelope.addChild(header);
                 return (new SOAPHeaderImpl(header));
@@ -178,7 +178,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
         try {
             org.apache.axis2.soap.SOAPBody body = omSOAPEnvelope.getBody();
             if (body == null) {
-                SOAPFactory soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+                SOAPFactory soapFactory = OMAbstractFactory.getSOAP11Factory();
                 body = soapFactory.createSOAPBody(omSOAPEnvelope);
                 omSOAPEnvelope.addChild(body);
                 return (new SOAPBodyImpl(body));
