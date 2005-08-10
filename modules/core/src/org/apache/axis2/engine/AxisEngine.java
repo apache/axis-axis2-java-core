@@ -27,6 +27,7 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -269,6 +270,7 @@ public class AxisEngine {
             e);
 
         faultContext.setEnvelope(envelope);
+        faultContext.setProperty(HTTPConstants.HTTPOutTransportInfo, processingContext.getProperty(HTTPConstants.HTTPOutTransportInfo));
         return faultContext;
     }
 
