@@ -1,6 +1,6 @@
 <service name="MTOMService">
     <description>
-        This is a sample Web Service with two operations,echo and ping.
+        This is a sample Web Service for illustrating MTOM based binary data transfer.
     </description>
     <parameter name="ServiceClass" locked="xsd:false">sample.mtom.imagetransfer.service.MTOMService</parameter>
     <operation name="mtomSample">

@@ -205,16 +205,16 @@
             </ant:fileset>
         </ant:copy>
         <jar destfile="${samples.dir}/mtom/mtomSample.aar">
-            <fileset dir="src/sample/mtom/">
+            <fileset dir="src/sample/mtom/imagetransfer/service/">
                 <include name="META-INF/**"/>
             </fileset>
             <fileset dir="target/classes">
-                <include name="sample/mtom/*.class"/>
+                <include name="sample/mtom/imagetransfer/service/**/*.class"/>
             </fileset>
         </jar>
         <jar destfile="${samples.dir}/mtom/mtomClient.jar">
             <fileset dir="target/classes">
-                <include name="sample/mtom/**"/>
+                <include name="sample/mtom/imagetransfer/client/**/*.class"/>
             </fileset>
         </jar>
     </goal>
