@@ -1,8 +1,26 @@
 package org.apache.axis2.saaj;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
 import junit.framework.TestCase;
 
-import javax.xml.soap.*;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPBodyElement;
+import javax.xml.soap.SOAPPart;
+import javax.xml.soap.Text;
+
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class TextTest extends TestCase {
 	
@@ -114,13 +132,49 @@ public class TextTest extends TestCase {
         SOAPElement postalCode = delivery.addChildElement(name);
         postalCode.addTextNode("PostalCode015");
 
-//        message.writeTo(System.out);
+        System.out.println("The message is lll:\n");
+        message.writeTo(System.out);
+
+	}
+	
+	public void testComment() throws SOAPException, IOException{
+		
+		String xmlString = "<?xml version='1.0' encoding='utf-8'?> " +
+				"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+				"<soapenv:Header></soapenv:Header><soapenv:Body>" + 
+				"<Node:abc xmlns:Node=\"http://www.simpletest.org\">" + 
+				"This is some text" + 
+				"&lt;!--This is comment--&gt;This is other text</Node:abc>" + 
+				"</soapenv:Body></soapenv:Envelope>";
+		
+		MessageFactory mf = MessageFactory.newInstance();
+		SOAPMessage message = 
+    		mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(xmlString.getBytes()));
+        
+        SOAPBody body = message.getSOAPBody();
+        Node bodyElement = body.getFirstChild();
+        NodeList textNodes = bodyElement.getChildNodes();
+        
+        assertEquals(textNodes.getLength(), 3);
+        
+        for(int i = 0;i < textNodes.getLength(); i++){
+        	Node nde = textNodes.item(i);
+        	boolean isComment;
+        	if(nde instanceof Text){
+        		isComment = ((Text)nde).isComment();
+        		if(i == 1)
+        			assertEquals(true, isComment);
+        		else
+        			assertEquals(false, isComment);
+        	}
+        }
 
 	}
 
     public static void main(String[] args) throws Exception {
         TextTest tester = new TextTest("TestEnvelope");
         tester.testAddTextNode();
+        tester.testComment();
     }
 	
 }
