@@ -48,6 +48,10 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
             if (op == null) {
                 op = service.getOperation(new QName(action));
             }
+            /* HACK: Please remove this when we add support for custom action uri */
+            if (op == null && action.lastIndexOf('/')!=-1) {
+                op = service.getOperation(new QName(action.substring(action.lastIndexOf('/'),action.length())));
+            }
             return op;
         }
         return null;
