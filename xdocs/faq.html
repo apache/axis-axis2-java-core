@@ -4,7 +4,7 @@
 	<h1>General</h1>
 	<ol>
 	<LI><strong>I see OMElements in all the signatures, in the stubs, Client API and in skeltons. Where is data binding?</strong><br>
-	<p>Axis2 does not have Databinding burns in to it, and it is a Problem that is already tackled by things like XML Beans and JAXB. Axis2 do not do data binding at this stage (M2) and work on pure XML. But the future relases (M3) will have support to plug in the databinding tool.If you want to to RPC over XML Axis2 is not there yet(soo it will be .. not yet), but if you are intersting in a SOAP Messaging Axis2 is the tool for that.</p> 
+	<p>Axis2 supports databinding using XML-Beans from 0.9 release. For more information please read the <a href="userguide.html">user guide</a></p> 
 	</p>
 	</LI>
 	
@@ -32,14 +32,14 @@
 	</LI>
 	
 	<LI><strong>When I try to do a non blocking call with use Seperate Listener true I get the error <i>to do two Transport Channels the Addressing Modules must be engeged</i>, Why is this?</strong><br>
-	<p>To do the two transport Channel invocation you need addressing module engage. enable it by uncommenting the entry in the client.xml file or Call.engageModule(QName).</p> 
+	<p>To do the two transport Channel invocation you need to engage the addressing module. You can enable it by uncommenting the entry in the axis2.xml file or Call.engageModule(QName).</p> 
 	</p>
 	</LI>
 	
 	<LI><a name="b5"><strong>What is the Axis Repository?</strong></a><br>
 	<p>Repository store the configuration of Axis2, the users should specify the repository folder starting the Aixs Server (HTTP ot TCP). In the case of tomcat it is the webapps/axis2/WEB-INF folder. Following picture shows a sample repository.</p> 
 	<img src="images/faq/1.jpg"/>
-	<p>modules and services have a archive format defined and they are automatically picked up by Axis2 when they are copied to corresponding folders. </p>
+	<p>Modules and services have a archive format defined and they are automatically picked up by Axis2 when they are copied to corresponding folders. </p>
 	</LI>
 	</ol>	
 	

@@ -2,7 +2,7 @@
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<title>Untitled Document</title>
+<title>Quick Guide to Maven for Axis 2.0</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 
@@ -11,10 +11,10 @@
 <h2 align="left">Introduction</h2>
 <p align="left"><a href="http://maven.apache.org">Maven</a> is used as the build tool of Axis 2.0. This document will provide a quick guide to use maven with your developments.</p>
 <h2 align="left">Commands</h2>
-<table width="370" border="1" align="center">
+<table border="1" align="center">
   <tr>
-    <th width="103" scope="col"><div align="left">Command</div></th>
-    <th width="251" scope="col"><div align="left">Description</div></th>
+    <th scope="col"><div align="left">Command</div></th>
+    <th scope="col"><div align="left">Description</div></th>
   </tr>
   <tr>
     <td><div align="left">maven</div></td>
@@ -22,11 +22,11 @@
   </tr>
   <tr>
     <td>maven clean </td>
-    <td>Clean all the stuff build so far, that are in the target folder. This will not clean the jar repository. </td>
+    <td>Clean all the stuff build so far, that are in the target folder. This will not clean the jar repository</td>
   </tr>
   <tr>
     <td><div align="left">maven test </div></td>
-    <td><div align="left">run only the tests. Will do automatic compilation of changed sources as well </div></td>
+    <td><div align="left">run only the tests. Will do automatic compilation of changed sources as well</div></td>
   </tr>
   <tr>
     <td><div align="left">maven -g </div></td>
@@ -42,7 +42,11 @@
   </tr>
   <tr>
     <td><div align="left">maven eclipse</div></td>
-    <td><div align="left">generate project files for eclipse. </div></td>
+    <td><div align="left">generate project files for eclipse</div></td>
+  </tr>
+  <tr>
+    <td><div align="left">maven -dmaven.test.skip=true</div></td>
+    <td><div align="left"></div>Builds Axis2 and skips all the tests</td>
   </tr>
 </table>
 <p align="left">&nbsp;</p>
