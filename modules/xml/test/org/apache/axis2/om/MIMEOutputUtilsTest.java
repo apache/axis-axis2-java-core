@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.attachments.ByteArrayDataSource;
 import org.apache.axis2.om.impl.MIMEOutputUtils;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPFactory;
 
 import javax.activation.DataHandler;
@@ -50,7 +51,7 @@ public class MIMEOutputUtilsTest extends TestCase {
 
         String contentType = org.apache.axis2.om.impl.MIMEOutputUtils
 				.getContentTypeForMime(boundary, omOutput.getRootContentId(),
-						omOutput.getCharSetEncoding());
+						omOutput.getCharSetEncoding(),SOAP12Constants.SOAP_12_CONTENT_TYPE);
         DataHandler dataHandler;
         dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
         OMText textData = factory.createText(dataHandler, true);
