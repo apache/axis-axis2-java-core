@@ -178,6 +178,7 @@ public class Constants {
         public static final String ENABLE_MTOM = "enableMTOM";
         public static final String ATTACHMENT_TEMP_DIR = "attachmentDIR";
         public static final String CACHE_ATTACHMENTS = "cacheAttachments";
+        public static final String FILE_SIZE_THRESHOLD = "sizeThreshold";
     }
 
     public static final String VALUE_TRUE = "true";
@@ -187,7 +188,7 @@ public class Constants {
 
 
     public static final String TESTING_PATH = "target/test-resources/";
-    //public static final String TESTING_PATH = "modules/samples/target/test-resources/";
+    //public static final String TESTING_PATH = "modules/integration/target/test-resources/";
 
     public static final String TESTING_REPOSITORY = TESTING_PATH + "samples";
 

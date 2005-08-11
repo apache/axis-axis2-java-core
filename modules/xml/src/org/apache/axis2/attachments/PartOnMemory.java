@@ -29,7 +29,7 @@ import java.util.Enumeration;
 public class PartOnMemory implements Part{
 
     MimeBodyPart part;
-    public PartOnMemory(MIMEBodyPartInputStream partInStream) throws MessagingException
+    public PartOnMemory(InputStream partInStream) throws MessagingException
     {
         part =  new MimeBodyPart(partInStream);
     }

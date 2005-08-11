@@ -20,24 +20,28 @@ package org.apache.axis2.mtom;
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
  */
 
+import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
+
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.attachments.ByteArrayDataSource;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
 
 public class EchoRawMTOMLoadTest extends TestCase {
     private EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:"
@@ -81,7 +85,7 @@ public class EchoRawMTOMLoadTest extends TestCase {
         UtilServer.stop();
     }
 
-    private OMElement createEnvelope() {
+    protected OMElement createEnvelope() {
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
@@ -91,8 +95,8 @@ public class EchoRawMTOMLoadTest extends TestCase {
                                       98};
         for (int i = 0; i < 4; i++) {
             OMElement subData = fac.createOMElement("subData", omNs);
-            DataHandler dataHandler = new DataHandler(
-                    new ByteArrayDataSource(expectedByteArray));
+            DataHandler dataHandler = new DataHandler("Thilina","text/plain");
+                    //new ByteArrayDataSource(expectedByteArray));
             textData = new OMTextImpl(dataHandler, true);
             subData.addChild(textData);
             data.addChild(subData);
@@ -127,7 +131,7 @@ public class EchoRawMTOMLoadTest extends TestCase {
             log.info("" + i);
         }
     }
-    private void compareWithActualOMText(OMText binaryNode)
+    protected void compareWithActualOMText(OMText binaryNode)
     {
         assertEquals(textData.getText(),binaryNode.getText());
     }

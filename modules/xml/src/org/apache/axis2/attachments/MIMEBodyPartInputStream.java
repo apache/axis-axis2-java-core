@@ -97,4 +97,9 @@ public class MIMEBodyPartInputStream extends InputStream {
         inStream.unread(boundary, 1, boundaryIndex - 1);
         return boundary[0];
     }
+    
+    public boolean getBoundaryStatus()
+    {
+        return boundaryFound;
+    }
 }

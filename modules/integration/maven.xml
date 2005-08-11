@@ -49,6 +49,11 @@
         <copy file="test/org/apache/axis2/mtom/MTOM-enabled-axis2.xml"
             tofile="target/test-resources/MTOM-enabledRepository/axis2.xml"/>
             
+        <!-- MTOM enabled Repository -->
+        <mkdir dir="target/test-resources/MTOM-fileCache-enabledRepository"/>
+        <copy file="test/org/apache/axis2/mtom/MTOM-fileCache-enabled-axis2.xml"
+            tofile="target/test-resources/MTOM-fileCache-enabledRepository/axis2.xml"/>
+            
         <mkdir dir="target/groovyRepo"/>
         <mkdir dir="target/groovyRepo/services"/>
         <ant:copy file="../samples/target/samples/groovyService.aar" tofile="target/groovyRepo/services/groovyService.aar"/>            

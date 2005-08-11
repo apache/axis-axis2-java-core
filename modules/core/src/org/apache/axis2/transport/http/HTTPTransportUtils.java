@@ -316,13 +316,20 @@ public class HTTPTransportUtils {
                     msgContext.getProperty(
                         Constants.Configuration.CACHE_ATTACHMENTS)));
         String attachmentRepoDir = null;
+        String attachmentSizeThreshold = null;
         if (fileCacheForAttachments) {
             attachmentRepoDir = (String) msgContext
                     .getProperty(Constants.Configuration.ATTACHMENT_TEMP_DIR);
+//            if (attachmentRepoDir==null | ("").equals(attachmentRepoDir))
+//            {
+//                msgContext.getServiceContext().getEngineContext().getRealPath("temp");
+//            }
+            attachmentSizeThreshold = (String) msgContext
+            .getProperty(Constants.Configuration.FILE_SIZE_THRESHOLD);
         }
 
         MIMEHelper mimeHelper = new MIMEHelper(inStream, contentTypeString,
-                fileCacheForAttachments, attachmentRepoDir);
+                fileCacheForAttachments, attachmentRepoDir,attachmentSizeThreshold);
 
         XMLStreamReader reader = XMLInputFactory.newInstance()
                 .createXMLStreamReader(

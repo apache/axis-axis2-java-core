@@ -21,9 +21,13 @@ package org.apache.axis2.mtom;
  */
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.ByteArrayDataSource;
+import org.apache.axis2.clientapi.AsyncResult;
+import org.apache.axis2.clientapi.Callback;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.Echo;
@@ -31,6 +35,7 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAP12Constants;
+import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -55,6 +60,8 @@ public class EchoRawMTOMToBase64Test extends TestCase {
     private ServiceDescription service;
 
     OMText expectedTextData;
+    
+    private boolean finish = false;
 
     public EchoRawMTOMToBase64Test() {
         super(EchoRawMTOMToBase64Test.class.getName());
@@ -93,6 +100,46 @@ public class EchoRawMTOMToBase64Test extends TestCase {
         return rpcWrapEle;
     }
 
+    public void testEchoXMLASync() throws Exception {
+        OMElement payload = createPayload();
+
+        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
+
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
+
+        Callback callback = new Callback() {
+            public void onComplete(AsyncResult result) {
+                SOAPEnvelope envelope = result.getResponseEnvelope();
+                
+                OMElement data = (OMElement) envelope.getBody().getFirstElement().getFirstChild();
+                compareWithCreatedOMText(data.getText());
+                finish = true;
+            }
+
+            public void reportError(Exception e) {
+                log.info(e.getMessage());
+                finish = true;
+            }
+        };
+
+        call.invokeNonBlocking(operationName.getLocalPart(),
+                payload,
+                callback);
+        int index = 0;
+        while (!finish) {
+            Thread.sleep(1000);
+            index++;
+            if (index > 10) {
+                throw new AxisFault(
+                        "Server is shutdown as the Async response take too longs time");
+            }
+        }
+        call.close();
+    }
+    
     public void testEchoXMLSync() throws Exception {
         for (int i = 0; i < 10; i++) {
             SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();

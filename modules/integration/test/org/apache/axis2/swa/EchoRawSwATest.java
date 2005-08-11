@@ -20,7 +20,17 @@ package org.apache.axis2.swa;
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
  */
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.net.SocketException;
+
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
+
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.OperationDescription;
@@ -34,13 +44,6 @@ import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLService;
-
-import javax.xml.namespace.QName;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.Socket;
 
 public class EchoRawSwATest extends TestCase {
 
@@ -91,34 +94,34 @@ public class EchoRawSwATest extends TestCase {
     }
 
     public void testEchoXMLSync() throws Exception {
+        Thread.sleep(1000);
         Socket socket = new Socket("127.0.0.1", 5555);
         OutputStream outStream = socket.getOutputStream();
         InputStream inStream = socket.getInputStream();
         InputStream requestMsgInStream = getResourceAsStream("org/apache/axis2/swa/swainput.bin");
         int data;
-	while ((data = requestMsgInStream.read())!=-1) {
+        while ((data = requestMsgInStream.read()) != -1) {
+            System.out.print(data);
             outStream.write(data);
         }
         outStream.flush();
         socket.shutdownOutput();
-        BufferedReader reader = new BufferedReader( new InputStreamReader(socket.getInputStream()));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(socket
+                .getInputStream()));
         StringBuffer sb = new StringBuffer();
+
         String response = reader.readLine();
-        while( null != response ) {
-            sb.append(response.trim());
-            response = reader.readLine();
+        while (null != response) {
+            try {
+                sb.append(response.trim());
+                response = reader.readLine();
+            } catch (SocketException e) {
+                break;
+            }
         }
-//        int x=0;
-//         BufferedInputStream buffredStream = new BufferedInputStream(inStream);
-//         socket.setKeepAlive(true);
-//        while ((i[0] = (byte)buffredStream.read()) > -1) {
-//            stringBuffer.append(new String(i));
-//            System.out.println(x);
-//            x++;
-//        }
-      //  socket.close();
-        assertTrue(sb.toString().indexOf("Apache Axis2 - The NExt Generation Web Services Engine")>0);
-        assertTrue(sb.toString().indexOf("multipart/related")>0);
+        assertTrue(sb.toString().indexOf(
+                "Apache Axis2 - The NExt Generation Web Services Engine") > 0);
+        assertTrue(sb.toString().indexOf("multipart/related") > 0);
     }
 
     private InputStream getResourceAsStream(String path) {

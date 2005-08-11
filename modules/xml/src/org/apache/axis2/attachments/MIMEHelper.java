@@ -10,17 +10,19 @@
  */
 package org.apache.axis2.attachments;
 
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.impl.MTOMConstants;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PushbackInputStream;
+import java.util.HashMap;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
-import java.util.HashMap;
+
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.impl.MTOMConstants;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -74,6 +76,8 @@ public class MIMEHelper {
 
     String attachmentRepoDir = null;
 
+    int fileStorageThreshold;
+
     /**
      * @param inStream
      * @param contentTypeString
@@ -84,17 +88,22 @@ public class MIMEHelper {
      *      read till first MIME boundary is found or end of stream reached.
      */
     public MIMEHelper(InputStream inStream, String contentTypeString,
-                      boolean fileCacheEnable, String attachmentRepoDir)
-            throws OMException {
+            boolean fileCacheEnable, String attachmentRepoDir,
+            String fileThreshold) throws OMException {
         this.attachmentRepoDir = attachmentRepoDir;
         this.fileCacheEnable = fileCacheEnable;
+        if (fileThreshold != null && (!fileThreshold.equals(""))) {
+            this.fileStorageThreshold = Integer.parseInt(fileThreshold);
+        } else {
+            this.fileStorageThreshold = 1;
+        }
         bodyPartsMap = new HashMap();
         try {
             contentType = new ContentType(contentTypeString);
         } catch (ParseException e) {
             throw new OMException(
                     "Invalid Content Type Field in the Mime Message"
-                            + e.toString());
+                            ,e);
         }
         // Boundary always have the prefix "--".
         this.boundary = ("--" + contentType.getParameter("boundary"))
@@ -143,7 +152,7 @@ public class MIMEHelper {
      */
     public MIMEHelper(InputStream inStream, String contentTypeString)
             throws OMException {
-        this(inStream, contentTypeString, false, null);
+        this(inStream, contentTypeString, false, null, null);
     }
 
     /**
@@ -181,7 +190,7 @@ public class MIMEHelper {
             return dh.getInputStream();
         } catch (IOException e) {
             throw new OMException(
-                    "Problem with DataHandler of the Root Mime Part. " + e);
+                    "Problem with DataHandler of the Root Mime Part. ",e);
         }
     }
 
@@ -334,17 +343,40 @@ public class MIMEHelper {
                     "Referenced MIME part not found.End of Stream reached.");
 
         Part part = null;
-        MIMEBodyPartInputStream partStream;
-        partStream = new MIMEBodyPartInputStream(pushbackInStream, boundary,
-                this);
+
         try {
             if (fileCacheEnable) {
                 try {
-                    part = new PartOnFile(partStream, attachmentRepoDir);
+                    MIMEBodyPartInputStream partStream;
+                    byte[] buffer = new byte[fileStorageThreshold];
+                    partStream = new MIMEBodyPartInputStream(pushbackInStream,
+                            boundary, this);
+                    int count = 0;
+                    int value;
+                    // Make sure not to modify this to a Short Circuit "&". If
+                    // removed a byte will be lost
+                    while (count != fileStorageThreshold
+                            && (!partStream.getBoundaryStatus())) {
+                        value = partStream.read();
+                        buffer[count] = (byte) value;
+                        count++;
+                    }
+                    if (count == fileStorageThreshold) {
+                        PushbackFilePartInputStream filePartStream = new PushbackFilePartInputStream(
+                                partStream, buffer);
+                        part = new PartOnFile(filePartStream, attachmentRepoDir);
+                    } else {
+                        ByteArrayInputStream byteArrayInStream = new ByteArrayInputStream(
+                                buffer,0,count-1);
+                        part = new PartOnMemory(byteArrayInStream);
+                    }
                 } catch (Exception e) {
-                    throw new OMException("Error creating temporary File." + e);
+                    throw new OMException("Error creating temporary File.", e);
                 }
             } else {
+                MIMEBodyPartInputStream partStream;
+                partStream = new MIMEBodyPartInputStream(pushbackInStream,
+                        boundary, this);
                 part = new PartOnMemory(partStream);
             }
             // This will take care if stream ended without having MIME
