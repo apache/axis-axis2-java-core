@@ -101,6 +101,7 @@ public class AxisEngine {
      * @see Handler
      */
     public void receive(MessageContext msgContext) throws AxisFault {
+
         ConfigurationContext sysCtx = msgContext.getSystemContext();
         OperationDescription operationDescription = null;
         ArrayList preCalculatedPhases =
@@ -250,6 +251,9 @@ public class AxisEngine {
         faultContext.setProcessingFault(true);
         faultContext.setServerSide(true);
         SOAPEnvelope envelope = null;
+
+         faultContext.setProperty(HTTPConstants.HTTPOutTransportInfo,
+                processingContext.getProperty(HTTPConstants.HTTPOutTransportInfo));
 
         if (processingContext.isSOAP11()) {
             envelope =

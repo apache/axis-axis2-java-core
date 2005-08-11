@@ -1,23 +1,24 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- *  Runtime state of the engine
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*  Runtime state of the engine
+*/
 package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;
@@ -28,9 +29,10 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
     private boolean chuncked = false;
     private String contentType = null;
     private String httpVersion;
+    private boolean isFault = false;
 
     public SimpleHTTPOutputStream(OutputStream out, boolean chuncked,String httpVersion)
-        throws AxisFault {
+            throws AxisFault {
         super(out);
         this.chuncked = chuncked;
         this.httpVersion = httpVersion;
@@ -69,13 +71,20 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
 
     public void writeHeader() throws IOException {
         StringBuffer buf = new StringBuffer();
+        String httpStatus = "";
+        if(isFault){
+            httpStatus = new String(HTTPConstants.ISE);
+        } else {
+            httpStatus = new String(HTTPConstants.OK);
+        }
+
         if (chuncked) {
             buf.append(httpVersion).append(
-                " ");
-            buf.append(new String(HTTPConstants.OK)).append("\n");
+                    " ");
+            buf.append(httpStatus).append("\n");
             buf.append(HTTPConstants.HEADER_TRANSFER_ENCODING).append(": ");
             buf.append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED).append(
-                "\n");
+                    "\n");
             if (contentType != null) {
                 buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ");
                 buf.append(contentType).append("\n");
@@ -83,7 +92,7 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
             buf.append("\n");
         } else {
             buf.append(new String(HTTPConstants.HTTP));
-            buf.append(new String(HTTPConstants.OK)).append("\n");
+            buf.append(httpStatus).append("\n");
             if (contentType != null) {
                 buf.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ");
                 buf.append(contentType).append("\n");
@@ -103,7 +112,7 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
         if (!written) {
             StringBuffer buf = new StringBuffer();
             buf.append(httpVersion).append(
-                " ");
+                    " ");
             buf.append(new String(HTTPConstants.NOCONTENT));
             out.write(buf.toString().getBytes());
             written = true;
@@ -121,8 +130,8 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
     }
 
     /* (non-Javadoc)
-     * @see java.io.OutputStream#close()
-     */
+    * @see java.io.OutputStream#close()
+    */
     public void close() throws IOException {
         if (!written) {
             finalize();
@@ -137,4 +146,7 @@ public class SimpleHTTPOutputStream extends FilterOutputStream {
         contentType = string;
     }
 
+    public void setFault(boolean fault) {
+        isFault = fault;
+    }
 }

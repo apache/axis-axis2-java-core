@@ -36,7 +36,7 @@ public class Version {
         OMElement version = fac.createOMElement("Version", omNs);
         version.addChild(
                 fac.createText(version,
-                        "Hello I am Axis2 versionning service , My version is Axis2 M2 !! "));
+                        "Hello I am Axis2 versionning service , My version is Axis2 0.91 !! "));
         return version;
     }
 }

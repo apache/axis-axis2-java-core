@@ -123,4 +123,8 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
         super.setDetail(detail);
     }
 
+    protected void serialiseFaultNode(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
+        
+    }
+
 }

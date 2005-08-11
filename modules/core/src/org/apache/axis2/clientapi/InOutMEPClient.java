@@ -183,6 +183,8 @@ public class InOutMEPClient extends MEPClient {
                 if (isExceptionToBeThrownOnSOAPFault) {
                     //does the SOAPFault has a detail element for Excpetion
                     if (ex != null) {
+//                        AxisEngine engine  = new AxisEngine(sysContext);
+//                        engine.receiveFault(response);
                         throw new AxisFault(ex);
                     } else {
                         //if detail element not present let us throw the exception with Reason

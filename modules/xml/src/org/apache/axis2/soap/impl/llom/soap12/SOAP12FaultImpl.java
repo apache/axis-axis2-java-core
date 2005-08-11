@@ -6,6 +6,8 @@ import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.SOAPFaultImpl;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 
+import javax.xml.stream.XMLStreamException;
+
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -96,6 +98,13 @@ public class SOAP12FaultImpl extends SOAPFaultImpl {
         if (!(parent instanceof SOAP12BodyImpl)) {
             throw new SOAPProcessingException(
                     "Expecting SOAP 1.2 implementation of SOAP Body as the parent. But received some other implementation");
+        }
+    }
+
+    protected void serialiseFaultNode(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
+        SOAPFaultNode faultNode = getNode();
+        if (faultNode != null) {
+            faultNode.serializeWithCache(omOutput);
         }
     }
 }

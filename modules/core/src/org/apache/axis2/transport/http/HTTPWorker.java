@@ -140,6 +140,7 @@ public class HTTPWorker implements AxisWorker {
                 if (msgContext != null) {
                     msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
                     MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
+                    out.setFault(true);
                     engine.sendFault(faultContext);
                 } else {
                     log.error(e,e);

@@ -154,6 +154,7 @@ public class AxisServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         MessageContext msgContext = null;
+        OutputStream out = null;
         try {
             Object sessionContext =
                     req.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
@@ -171,10 +172,10 @@ public class AxisServlet extends HttpServlet {
                     new ServletBasedOutTransportInfo(res));
             msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getTransportHeaders(req));
 
-            
+            out =  res.getOutputStream();
             HTTPTransportUtils.processHTTPPostRequest(msgContext,
                     req.getInputStream(),
-                    res.getOutputStream(),
+                    out,
                     req.getContentType(),
                     req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
                     req.getRequestURL().toString(),
@@ -194,8 +195,9 @@ public class AxisServlet extends HttpServlet {
             }
         } catch (AxisFault e) {
             if (msgContext != null) {
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 msgContext.setProperty(MessageContext.TRANSPORT_OUT,
-                        res.getOutputStream());
+                        out);
                 AxisEngine engine = new AxisEngine(configContext);
                 MessageContext faultContext =
                         engine.createFaultMessageContext(msgContext, e);
