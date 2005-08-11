@@ -16,11 +16,13 @@
  */
 
 package org.apache.axis2.engine;
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.integration.UtilServer;
@@ -31,8 +33,6 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
 
 /**
  * Testing charater encoding support
@@ -52,13 +52,6 @@ public class CharctersetEncodingTest extends TestCase {
 	private QName serviceName = new QName("EchoXMLService");
 
 	private QName operationName = new QName("echoOMElement");
-
-	private QName transportName = new QName("http://localhost/my",
-			"NullTransport");
-
-	private AxisConfiguration engineRegistry;
-
-	private MessageContext mc;
 
 	private ServiceContext serviceContext;
 

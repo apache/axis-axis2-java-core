@@ -14,8 +14,8 @@ end of header section -->
 <h1>OM Tutorial</h1>
 <h2>Section 1-Introduction</h2>
 <h3>What is OM?</h3>
-<p>OM stands for Object Model (also known as AXIOM - AXis Object Model) and refers to the XML info set model that is developed for Axis 2. 
-XML info set refers to the information included inside the XML and for programmatical manipulation it is convenient to have a representation of this XML info set in a language specific manner. For an object oriented language the obvious choice is a model made up of objects. DOM and JDOM are two such XML models. OM is conceptually similar to such an XML model by its external behavior but deep down it is very much different.
+<p>OM stands for Object Model (also known as AXIOM - AXis Object Model) and refers to the XML infoset model that is developed for Axis 2. 
+XML infoset refers to the information included inside the XML and for programmatical manipulation it is convenient to have a representation of this XML infoset in a language specific manner. For an object oriented language the obvious choice is a model made up of objects. DOM and JDOM are two such XML models. OM is conceptually similar to such an XML model by its external behavior but deep down it is very much different.
 The objective of this tutorial is to introduce the basics of OM and explain the best practices to follow while using OM. However before entering the deep ends of OM it is better to skim the surface and see what it is all about!</p>
 <h3>For whom is this Tutorial?</h3>
 <p>This tutorial can be used by anybody who is interested in OM and needs to go deeper in it. However it is assumed that the reader has a basic understanding of the concepts of XML (such as Namespaces) and a working knowledge of tools such as Ant.  Knowledge in similar object models such as DOM will be quite helpful in understanding but such knowledge is not assumed.
@@ -28,7 +28,7 @@ and hence the parser only proceeds at the users command. The user can decide to 
 parser.
 OM is based on pull parsing. To learn more about XML pull parsing see the <a href="http://www.bearcave.com/software/java/xml/xmlpull.html">XML pull parsing introduction</a>.  
 <h3>A Bit of History</h3>
-<p>The original OM was proposed as a store for the pull parser events for later processing, at the Axis summit held at Colombo during September 2004. However this approach was soon improved and OM was pursued as a complete info set model due to its flexibility.
+<p>The original OM was proposed as a store for the pull parser events for later processing, at the Axis summit held at Colombo in September 2004. However this approach was soon improved and OM was pursued as a complete info set model due to its flexibility.
 Several implementation techniques were attempted during the initial phases. The two most promising techniques were the table based technique and the link list based technique. During the intermediate performance tests the link list based technique proved to be much more memory efficient for smaller and mid sized XML documents (the advantage of the table based OM was only visible for the large and very large XML documents) and hence the link list based technique was chosen as the most suitable. 
 Initial efforts were focused on implementing the XML info set items which are relevant to the SOAP specification (DTD support, Processing Instruction support, etc were not considered).  The advantage of having a tight integration was evident at this stage and this resulted in having SOAP specific interfaces as part of OM rather than a layer on top of it.
 OM was deliberately made API centric. It allows the implementations to take place independently and swapped without affecting the program later.</p>
@@ -90,13 +90,13 @@ To <a href="http://www.w3schools.com/SOAP/soap_intro.asp">learn more on SOAP</a>
 It is possible to obtain a "OM only" jar. 
 <p>
 The easiest way to obtain the OM binary is to download the Axis2 binary distribution. The lib directory will
-contain the axis2-xml-M2.jar. However more adventures users can build the OM from source. The next section describes how
+contain the axis2-xml-0.91.jar. However more adventures users can build the OM from source. The next section describes how
 to build OM from source.</p>
 <p>Detailed information on getting source from Axis2 SVN repository can be found <a href="svn.html" target="_blank">here</a>.</p>
 <p>After the source download OM-binary can be built. 
   For both Windows and Linux move to the project directory and execute the command "maven jar". All other necessary jars will be automatically downloaded.
-  When the build finishes successfully, the axis2-xml-M2.jar can be found in the newly created "targets" directory</p>
-<p>Once the OM-binary is obtained by any of the mentioned means,it should be included in the class path for any of the OM based programs to work. The subsequent parts of this tutorial assume that this build step is complete and the Axis-M2.jar is correctly in the classpath along with the StAX API jar file and a StAX implementation.
+  When the build finishes successfully, the axis2-xml-0.91.jar can be found in the newly created "targets" directory</p>
+<p>Once the OM-binary is obtained by any of the mentioned means,it should be included in the class path for any of the OM based programs to work. The subsequent parts of this tutorial assume that this build step is complete and the Axis-0.91.jar is correctly in the classpath along with the StAX API jar file and a StAX implementation.
 </p>
 <h3>Creation</h3>
 <p>Creation is the first and foremost action in using an Object representation. This part explains how OM can be built from an existing document or just programmatically.
@@ -160,7 +160,7 @@ A node can also be removed from the tree by calling the remove method of the ret
 Handling namespaces
 Namespaces are a tricky part of any XML object model and is the same in OM. However care has been taken to make the interface to the namespace very simple. 
 OMNamespace is the class that represents a namespace with intentionally removed setter methods. This makes the OMNamespace immutable and allows the underlying implementation to share the objects without any difficulty.
-Almost all the namespace related methods are included in the OMNamedNode abstract class and the OMElement class. Following are the important methods to handle namespaces.</p>
+Following are the important methods available in OMElement to handle namespaces.</p>
 
 <pre class="code">
 public OMNamespace declareNamespace(String uri, String prefix);
@@ -169,19 +169,7 @@ public OMNamespace findNamespace(String uri, String prefix) throws OMException;
 </pre>
 <div align="left"><b>Code listing 2.5</b></div>
 <p>The declareNamespacexx methods are fairly straightforward. They add a namespace to namespace declarations section. Note that a namespace declaration that has already being added will not be added twice. 
-FindNamespaces is a very handy method to locate a namespace object higher up the object tree. It searches for a matching namespace in its own declarations section and jumps to the parent if it's not found. The search progresses up the tree until a matching namespace is found or the root has been reached.</p>
-
-<!-- Special section -->
-<p class="special">
-<table width="100%">
-			 <tr>
-			 		 <td><img src="images/OM005.gif" alt="Rememeber this"/></td>
-					 <td class="special-td">FindInscopeNamespaces method can be computationally expensive, if the search commenced from a deep branch of the tree and hence should be used with caution.<td>
-			 </tr>
-</table>
-</p>
-<!-- End of specila section -->
-
+FindNamespaces is a very handy method to locate a namespace object higher up the object tree. It searches for a matching namespace in its own declarations section and jumps to the parent if it's not found. The search progresses up the tree until a matching namespace is found or the root has been reached.</p>
 <p>During the serialization a directly created namespace from the factory will only be added to the declarations when that prefix is encountered by the serializer. More of the serialization matters will be discussed in the serializer section.</p>
 <p>The following simple code segment shows how the namespaces are dealt with in OM</p>
 <pre class="code" >
