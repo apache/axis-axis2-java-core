@@ -14,6 +14,7 @@
         <item name="Installation Guide" href="installationguide.html"/>
         <item name="User Guide" href="userguide.html"/>
         <item name="Web Administration Guide" href="webadminguide.html"/>
+        <item name="Axis2 Configuration Guide" href="axis2config.html"/>
       </item>
       <item name="Axis 2 Modules">
         <item name="Core" href="multiproject/axis2-core/index.html"/>
