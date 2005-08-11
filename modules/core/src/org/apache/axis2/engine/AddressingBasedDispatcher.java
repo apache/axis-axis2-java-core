@@ -21,6 +21,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
 
@@ -38,16 +39,18 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
     public AddressingBasedDispatcher() {
         init(new HandlerDescription(NAME));
     }
+
     //TODO this logic needed to be improved, as the Dispatching is almost garentnee to fail
     public OperationDescription findOperation(ServiceDescription service,
                                               MessageContext messageContext)
             throws AxisFault {
-
         String action = messageContext.getWSAAction();
         if (action != null) {
             QName operationName = new QName(action);
             return service.getOperation(operationName);
         }
+
+
         return null;
     }
 
@@ -59,7 +62,18 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
             QName serviceName = new QName(toEPR.getAddress());
             service =
                     messageContext.getSystemContext().getAxisConfiguration()
-                    .getService(serviceName);
+                            .getService(serviceName);
+            if (service == null) {
+                String filePart = toEPR.getAddress();
+                String[] values = Utils.parseRequestURLForServiceAndOperation(
+                        filePart);
+                if (values[0] != null) {
+                    serviceName = new QName(values[0]);
+                    AxisConfiguration registry =
+                            messageContext.getSystemContext().getAxisConfiguration();
+                    return registry.getService(serviceName);
+                }
+            }
         }
         return service;
     }
