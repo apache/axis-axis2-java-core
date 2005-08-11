@@ -67,8 +67,8 @@
     <!-- ================================================= -->
     <!-- Global Modules  -->
     <!-- ================================================= -->
-    <!-- Uncomment this to enable Addressing
-    <module ref="addressing"/> -->
+    <!-- Comment this to disable Addressing -->
+    <module ref="addressing"/>
 
     <!-- ================================================= -->
     <!-- Phases  -->

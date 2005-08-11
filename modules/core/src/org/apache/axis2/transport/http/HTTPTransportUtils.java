@@ -343,7 +343,7 @@ public class HTTPTransportUtils {
                 new MTOMStAXSOAPModelBuilder(
                     reader,
                     mimeHelper,
-                    SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                    null);
         } else if (
             mimeHelper.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
             builder =
