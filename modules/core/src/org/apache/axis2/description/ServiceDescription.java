@@ -537,9 +537,11 @@ public class ServiceDescription
                 if (element.getType().equals(ExtensionConstants.SOAP_OPERATION)) {
                     if (((SOAPOperation) element).getSoapAction().equals(
                             soapAction)) {
-                        operation =
-                                (OperationDescription) bindingOperation.getOperation();
-                        count++;
+                        WSDLOperation op = bindingOperation.getOperation();
+                        if (op instanceof OperationDescription) {
+                            operation = (OperationDescription) op;
+                            count++;
+                        }
                     }
                 }
             }
