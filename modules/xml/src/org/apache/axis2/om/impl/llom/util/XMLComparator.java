@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -32,8 +33,25 @@ public class XMLComparator {
      */
     private Log log = LogFactory.getLog(getClass());
 
+    private Vector ignorableNamespaceList = new Vector();
+
+    public void addIgnorableNamespace(String nsURI){
+        ignorableNamespaceList.add(nsURI);
+    }
+
+    public void clearIgnorableNamespaces(){
+        ignorableNamespaceList.clear();
+    }
+
 
     public boolean compare(OMElement elementOne, OMElement elementTwo) throws XMLComparisonException {
+
+        //ignore if the elements belong to any of the ignorable namespaces list
+        if (isIgnorable(elementOne) ||
+                isIgnorable(elementTwo)){
+            return true;
+        }
+
         if (elementOne == null && elementTwo == null) {
             log.info("Both Elements are null.");
             return true;
@@ -66,14 +84,14 @@ public class XMLComparator {
         compareAllAttributes(elementOne, elementTwo);
 
         log.info("Comparing texts .....");
-        
+
         /*
-         * Trimming the value of the XMLElement is not correct
-         * since this compare method cannot be used to compare
-         * element contents with trailing and leading whitespaces
-         * BUT for the practicalltiy of tests and to get the current 
-         * tests working we have to trim() the contents  
-         */
+        * Trimming the value of the XMLElement is not correct
+        * since this compare method cannot be used to compare
+        * element contents with trailing and leading whitespaces
+        * BUT for the practicalltiy of tests and to get the current
+        * tests working we have to trim() the contents
+        */
         compare("Elements texts are not equal ",
                 elementOne.getText().trim(),
                 elementTwo.getText().trim());
@@ -97,22 +115,49 @@ public class XMLComparator {
         compareChildren(elementTwo, elementOne);
     }
 
+
+    private boolean isIgnorable(OMElement elt){
+        if (elt!=null){
+            OMNamespace namespace = elt.getNamespace();
+            if (namespace!=null){
+            return ignorableNamespaceList.contains(namespace.getName());
+            }else{
+                return false; 
+            }
+        }else{
+            return false;
+        }
+    }
+
+
     private void compareChildren(OMElement elementOne, OMElement elementTwo) throws XMLComparisonException {
+        //ignore if the elements belong to any of the ignorable namespaces list
+        if (isIgnorable(elementOne) ||
+                isIgnorable(elementTwo)){
+            return ;
+        }
         Iterator elementOneChildren = elementOne.getChildren();
         while (elementOneChildren.hasNext()) {
             OMNode omNode = (OMNode) elementOneChildren.next();
             if (omNode instanceof OMElement) {
                 OMElement elementOneChild = (OMElement) omNode;
-                if ("Reference4".equals(elementOneChild.getLocalName())) {
-                    log.info("Reference4");
-                }
-                OMElement elementTwoChild = elementTwo.getFirstChildWithName(
-                        elementOneChild.getQName());
-                if (elementTwoChild == null) {
-                    throw new XMLComparisonException(
-                            " There is no " + elementOneChild.getLocalName() +
-                            " element under " +
-                            elementTwo.getLocalName());
+                OMElement elementTwoChild = null;
+//                if ("Reference4".equals(elementOneChild.getLocalName())) {
+//                    log.info("Reference4");
+//                }
+                //Do the comparison only if the element is not ignorable
+                if (!isIgnorable(elementOneChild)){
+                    elementTwoChild = elementTwo.getFirstChildWithName(
+                            elementOneChild.getQName());
+                    //Do the comparison only if the element is not ignorable
+                    if (!isIgnorable(elementTwoChild)){
+                        if (elementTwoChild == null) {
+                            throw new XMLComparisonException(
+                                    " There is no " + elementOneChild.getLocalName() +
+                                    " element under " +
+                                    elementTwo.getLocalName());
+                        }
+                    }
                 }
                 compare(elementOneChild, elementTwoChild);
             }

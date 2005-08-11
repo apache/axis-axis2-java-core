@@ -19,6 +19,7 @@ package org.apache.axis2.soap12testing.client;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.transport.http.HTTPTransportReceiver;
@@ -38,7 +39,7 @@ public class MessageComparator {
     //public static final String TEST_MAIN_DIR = "./modules/samples/";
     public static final String TEST_MAIN_DIR = "./";
     private Log log = LogFactory.getLog(getClass());
-    
+
     public boolean compare(String testNumber, InputStream replyMessage) {
         SOAPEnvelope replyMessageEnvelope;
         SOAPEnvelope requiredMessageEnvelope;
@@ -46,10 +47,8 @@ public class MessageComparator {
             File file = new File(TEST_MAIN_DIR+"test-resources/SOAP12Testing/ReplyMessages/SOAP12ResT" + testNumber + ".xml");
 
             HTTPTransportReceiver receiver = new HTTPTransportReceiver();
-            Map map = receiver.parseTheHeaders(replyMessage, false);
-
-
-
+            //This step is needed to skip the headers :)
+            receiver.parseTheHeaders(replyMessage, false);
 
             XMLStreamReader requiredMessageParser = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(file));
             OMXMLParserWrapper requiredMessageBuilder = new StAXSOAPModelBuilder(requiredMessageParser,null);
@@ -60,6 +59,24 @@ public class MessageComparator {
             replyMessageEnvelope = (SOAPEnvelope) replyMessageBuilder.getDocumentElement();
 
             SOAPComparator soapComparator = new SOAPComparator();
+            //ignore elements that belong to the addressing namespace
+            soapComparator.addIgnorableNamespace("http://schemas.xmlsoap.org/ws/2004/08/addressing");
+//            ////////////////////////////////////////////////////
+            System.out.println("######################################################");
+            OMOutputImpl omOutput = new OMOutputImpl(System.out,false);
+            requiredMessageEnvelope.serializeWithCache(omOutput);
+            omOutput.flush();
+            System.out.println("");
+            System.out.println("-------------------------------------------------------");
+           OMOutputImpl omOutput1 = new OMOutputImpl(System.out,false);
+            replyMessageEnvelope.serializeWithCache(omOutput1);
+            omOutput1.flush();
+            System.out.println("");
+                   System.out.println("`######################################################");
+            /////////////////////////////////////////////////////
+
+
+
             return soapComparator.compare(requiredMessageEnvelope,replyMessageEnvelope);
 
         } catch (XMLStreamException e) {
