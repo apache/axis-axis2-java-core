@@ -138,7 +138,7 @@ public class MIMEOutputUtils {
         sb.append("; ");
         sb.append("start=\"<" + contentId + ">\"");
         sb.append("; ");
-        sb.append("start-info=\""+SOAPContentType+"; charset=" + charSetEncoding + "\"");
+        sb.append("start-info=\""+SOAPContentType+";\"");
         return sb.toString();
     }
 
