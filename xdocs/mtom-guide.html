@@ -149,7 +149,7 @@ public class MTOMService {
 <h1>SOAP with Attachments (SwA) with Axis2</h1>
 <p>Axis2 Handles SwA messages at the inflow only. When Axis2 receives a SwA message it extracts the binary attachment parts and put a reference to those parts in the Message Context. Users can access binary attachements using the content-id. Care should be taken to rip off the "cid" prefix when content-id is taken from the "Href" attributes. When accessing the message context from a service users need to use the message context injection mechanism by introducing a "init" methode to the service class.(see the folloowing service example) </p><p>Note: Axis2 supports content-id referencing only. Does not support Content Location referencing.</p><ul>
   <li><strong>Sample service which accepts a SwA message</strong></li>
-</ul><source>
+</ul><source><pre>
 public class EchoSwA {
     private MessageContext msgcts;
 
@@ -183,8 +183,7 @@ public class EchoSwA {
     }
 }
 
- 
-</source><p>MTOM specification is designed to be backward compatible with the SOAP with Attachements specification. Even though the representation is different, both technologies have the same wire format. We can safely assume that any SOAP with Attachments endpoint can accept a MTOM optimized messages and  treat them as SOAP with Attachment messages - Any MTOM optimised message is a valid SwA message. Because of that Axis2 does not define a seperate programming model or serialization for SwA. Users can use the MTOM programming model and serialization to send messages to SwA endpoints. </p><p>Note : Above is tested with Axis 1.x</p><ul>
+</pre></source><p>MTOM specification is designed to be backward compatible with the SOAP with Attachements specification. Even though the representation is different, both technologies have the same wire format. We can safely assume that any SOAP with Attachments endpoint can accept a MTOM optimized messages and  treat them as SOAP with Attachment messages - Any MTOM optimised message is a valid SwA message. Because of that Axis2 does not define a seperate programming model or serialization for SwA. Users can use the MTOM programming model and serialization to send messages to SwA endpoints. </p><p>Note : Above is tested with Axis 1.x</p><ul>
   <li><strong>A sample SwA message from Axis 1.x </strong></li>
 </ul><source>
 <pre>
