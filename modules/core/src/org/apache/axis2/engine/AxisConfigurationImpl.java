@@ -22,6 +22,8 @@ import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.phaseresolver.PhaseResolver;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -37,7 +39,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     private Hashtable errornesServices;
 
     private Hashtable errornesModules;
-
+     private Log log = LogFactory.getLog(getClass());
 
     /**
      * Field modules
@@ -349,9 +351,11 @@ public class AxisConfigurationImpl implements AxisConfiguration {
                  iterator.hasNext();) {
                 QName qName = (QName) iterator.next();
                 if (moduleref.equals(qName)) {
-                    throw new AxisFault(moduleref.getLocalPart() +
-                            " module has alredy engaged globally" +
-                            "  operation terminated !!!");
+                    //Instead of throwing the error, we can just log this problem
+                    log.info("Attempt to engage an already engaged module "+ qName);
+//                    throw new AxisFault(moduleref.getLocalPart() +
+//                            " module has alredy engaged globally" +
+//                            "  operation terminated !!!");
                 }
             }
             new PhaseResolver(this).engageModuleGlobally(module);

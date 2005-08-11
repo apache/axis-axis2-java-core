@@ -53,10 +53,21 @@
         <mkdir dir="target/test-resources/MTOM-fileCache-enabledRepository"/>
         <copy file="test/org/apache/axis2/mtom/MTOM-fileCache-enabled-axis2.xml"
             tofile="target/test-resources/MTOM-fileCache-enabledRepository/axis2.xml"/>
-            
+          
+          <!-- Groovy repository -->  
         <mkdir dir="target/groovyRepo"/>
         <mkdir dir="target/groovyRepo/services"/>
-        <ant:copy file="../samples/target/samples/groovyService.aar" tofile="target/groovyRepo/services/groovyService.aar"/>            
+        <mkdir dir="target/groovyRepo/modules"/>
+        <ant:copy file="../samples/target/samples/groovyService.aar" tofile="target/groovyRepo/services/groovyService.aar"/>   
+        <copy file="../addressing/target/addressing.mar"
+            tofile="target/groovyRepo/modules/addressing.mar"/>
+    
+    <!-- Standard repository -->
+    <mkdir dir="target/Repository"/>
+        <mkdir dir="target/Repository/services"/>
+        <mkdir dir="target/Repository/modules"/>
+        <copy file="../addressing/target/addressing.mar"
+            tofile="target/Repository/modules/addressing.mar"/>
 
         <j:jelly xmlns="jelly:ant">
             <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestModuleB"/>
