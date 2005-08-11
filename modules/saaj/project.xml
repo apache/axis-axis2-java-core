@@ -21,8 +21,8 @@
     <extend>../../etc/project.xml</extend>
 
     <id>saaj-impl</id>
-    <name>saaj-impl</name>
-    <description>Total SAAJ implementation</description>
+    <name>axis2-saaj</name>
+    <description>Axis2 SAAJ implementation</description>
 
     <build>
         <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
