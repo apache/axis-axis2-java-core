@@ -18,6 +18,7 @@ package org.apache.axis2.description;
 import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -64,12 +65,15 @@ public class ServiceDescription
 
     private WSDLServiceImpl serviceimpl = null;
 
+    private HashMap wasaction_opeartionmap = null;
+
     /**
      * Constructor ServiceDescription
      */
 
     public ServiceDescription(WSDLServiceImpl serviceimpl){
         this.serviceimpl = serviceimpl;
+        this.wasaction_opeartionmap = new HashMap();
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setServiceInterface(new WSDLInterfaceImpl());
@@ -77,6 +81,7 @@ public class ServiceDescription
 
     public ServiceDescription() {
         this.serviceimpl = new WSDLServiceImpl();
+        this.wasaction_opeartionmap = new HashMap();
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setServiceInterface(new WSDLInterfaceImpl());
@@ -104,7 +109,8 @@ public class ServiceDescription
      * @param moduleref
      * @throws AxisFault
      */
-    public void engageModule(ModuleDescription moduleref , AxisConfiguration axisConfig) throws AxisFault {
+    public void engageModule(ModuleDescription moduleref , AxisConfiguration axisConfig)
+            throws AxisFault {
         if (moduleref == null) {
             return;
         }
@@ -181,7 +187,12 @@ public class ServiceDescription
         String opStr = operationName.getLocalPart();
 
         HashMap allOperations = this.getServiceInterface().getAllOperations();
-        return (OperationDescription) allOperations.get(opStr);
+        OperationDescription opeartion = (OperationDescription) allOperations.get(opStr);
+        if(opeartion == null ){
+            opeartion = (OperationDescription)wasaction_opeartionmap.get(
+                    operationName.getLocalPart());
+        }
+        return opeartion;
     }
 
     /*
@@ -481,7 +492,7 @@ public class ServiceDescription
      */
     public OperationDescription getOperationBySOAPAction(String soapAction) {
         if(soapAction == null || soapAction.equals("")){
-           return null;
+            return null;
         }
         Iterator iterator = this.getEndpoints().keySet().iterator();
         if (iterator.hasNext()) {
@@ -732,5 +743,12 @@ public class ServiceDescription
 
     public Map getMetadataBag() {
         return serviceimpl.getMetadataBag();
+    }
+
+    /**
+     * To add the was action paramater into has map so that was action based dispatch can support
+     */
+    public void addMapping(String mappingKey , OperationDescription operation){
+        wasaction_opeartionmap.put(mappingKey,operation);
     }
 }

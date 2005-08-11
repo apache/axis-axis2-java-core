@@ -17,6 +17,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfigurationImpl;
@@ -814,6 +815,9 @@ public class DeploymentParser implements DeploymentConstants {
                         }
                     } else if (PARAMETERST.equals(ST)) {
                         Parameter parameter = processParameter();
+                        if(parameter.getName().equals(Constants.WSA_ACTION)){
+                            axisService.addMapping((String)parameter.getValue(),operation);
+                        }
                         operation.addParameter(parameter);
                     } else if (IN_FAILTFLOW.equals(ST)) {
                         throw new UnsupportedOperationException(Messages.getMessage(DeploymentErrorMsgs.UNKNOWN_IN_OPERATION, ST));
