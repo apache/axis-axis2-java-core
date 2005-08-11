@@ -200,6 +200,11 @@ public class ArchiveReader implements DeploymentConstants {
                     repository.mkdirs();
                     modules = new File(repository, "modules");
                     modules.mkdirs();
+                } else {
+                    modules = new File(repository, "modules");
+                    if(!modules.exists()){
+                        modules.mkdirs();
+                    }
                 }
             } else {
                 modules = new File(axis2repository, "modules");
@@ -212,15 +217,12 @@ public class ArchiveReader implements DeploymentConstants {
             modulearchiveFile = new File(modules, modulearchiveName);
             if (modulearchiveFile.exists()) {
                 return modulearchiveFile;
-            } else {
-                modulearchiveFile.createNewFile();
             }
-            FileOutputStream dest = new
-                    FileOutputStream(modulearchiveFile);
-            ZipOutputStream out = new ZipOutputStream(new
-                    BufferedOutputStream(dest));
-            byte data[] = new byte[BUFFER];
-
+//
+//            else {
+//                modulearchiveFile.createNewFile();
+//            }
+//
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             InputStream in = cl.getResourceAsStream("modules/" + moduleName + ".mar");
             if (in == null) {
@@ -228,20 +230,28 @@ public class ArchiveReader implements DeploymentConstants {
             }
             if (in == null) {
                 throw new DeploymentException(moduleName + " module is not found");
-            }
-            ZipInputStream zin = null;
-            zin = new ZipInputStream(in);
-            ZipEntry entry;
-            while ((entry = zin.getNextEntry()) != null) {
-                ZipEntry zip = new ZipEntry(entry);
-                out.putNextEntry(zip);
-                int count;
-                while ((count = zin.read(data, 0, BUFFER)) != -1) {
-                    out.write(data, 0, count);
+            } else {
+                modulearchiveFile.createNewFile();
+                FileOutputStream dest = new
+                        FileOutputStream(modulearchiveFile);
+                ZipOutputStream out = new ZipOutputStream(new
+                        BufferedOutputStream(dest));
+                byte data[] = new byte[BUFFER];
+                ZipInputStream zin = null;
+                zin = new ZipInputStream(in);
+                ZipEntry entry;
+                while ((entry = zin.getNextEntry()) != null) {
+                    ZipEntry zip = new ZipEntry(entry);
+                    out.putNextEntry(zip);
+                    int count;
+                    while ((count = zin.read(data, 0, BUFFER)) != -1) {
+                        out.write(data, 0, count);
+                    }
                 }
+                out.close();
+                zin.close();
             }
-            out.close();
-            zin.close();
+
         } catch (Exception e) {
             throw new DeploymentException(e);
         }
