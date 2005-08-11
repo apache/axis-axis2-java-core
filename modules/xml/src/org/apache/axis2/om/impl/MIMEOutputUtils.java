@@ -138,7 +138,7 @@ public class MIMEOutputUtils {
         sb.append("; ");
         sb.append("start=\"<" + contentId + ">\"");
         sb.append("; ");
-        sb.append("start-info=\"text/xml; charset=" + charSetEncoding + "\"");
+        sb.append("start-info=\"application/soap+xml; charset=" + charSetEncoding + "\"");
         return sb.toString();
     }
 
