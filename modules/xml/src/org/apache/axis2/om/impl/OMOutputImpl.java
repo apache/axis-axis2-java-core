@@ -102,14 +102,23 @@ public class OMOutputImpl {
 
     public void flush() throws XMLStreamException {
         xmlWriter.flush();
+        String SOAPContentType;
         if (doOptimize) {
+            if (isSoap11)
+            {
+                SOAPContentType = SOAP11Constants.SOAP_11_CONTENT_TYPE;
+            }
+            else
+            {
+                SOAPContentType = SOAP12Constants.SOAP_12_CONTENT_TYPE;
+            }
             MIMEOutputUtils.complete(
                 outStream,
                 bufferedSoapOutStream,
                 binaryNodeList,
                 getMimeBoundary(),
                 getRootContentId(),
-                this.charSetEncoding);
+                this.charSetEncoding,SOAPContentType);
         }
     }
 
@@ -118,12 +127,20 @@ public class OMOutputImpl {
     }
 
     public String getContentType() {
-
+        String SOAPContentType;
         if (isOptimized()) {
+            if (isSoap11)
+            {
+                SOAPContentType = SOAP11Constants.SOAP_11_CONTENT_TYPE;
+            }
+            else
+            {
+                SOAPContentType = SOAP12Constants.SOAP_12_CONTENT_TYPE;
+            }
             return MIMEOutputUtils.getContentTypeForMime(
                 getMimeBoundary(),
                 getRootContentId(),
-                this.getCharSetEncoding());
+                this.getCharSetEncoding(),SOAPContentType);
         } else {
 
             StringBuffer buf = new StringBuffer();
@@ -222,5 +239,4 @@ public class OMOutputImpl {
     public void setDoOptimize(boolean b) {
         doOptimize = b;
     }
-
 }

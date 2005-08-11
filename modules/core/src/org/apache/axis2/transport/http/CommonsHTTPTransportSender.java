@@ -114,6 +114,7 @@ public class CommonsHTTPTransportSender
                         (HTTPOutTransportInfo) msgContext.getProperty(
                             HTTPConstants.HTTPOutTransportInfo);
                     if (transportInfo != null) {
+                        omOutput.setSoap11(msgContext.isSOAP11());
                         transportInfo.setContentType(omOutput.getContentType());
                     }else{
                         throw new AxisFault(HTTPConstants.HTTPOutTransportInfo + " does not set");
