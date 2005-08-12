@@ -247,6 +247,7 @@ ability to handle very large attachments without buffering them in memory at any
 caching streams the incoming MIME parts directly in to files, after reading the MIME part headers.</p>
 <P>Also a user can specify a size threshold for the File caching.When this threshold value is specified, only the attachments whose size is bigget than the threshold value will get 
 cached in files. Smaller attachmments will remain in Memory. </p>
+<p>NOTE : It is a must to specify a directory to temporary store the attachments. Also care should be taken to *clean that directory* time to time.</p>
 <p>The following parameters needs to be set in Axis2.xml in order to enable file caching.</p><source><pre>
 <em>&lt;axisconfig name="AxisJava2.0"&gt;
     &lt;!-- ================================================= --&gt;
