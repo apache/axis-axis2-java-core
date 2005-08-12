@@ -15,6 +15,7 @@
         <item name="User Guide" href="userguide.html"/>
         <item name="Web Administration Guide" href="webadminguide.html"/>
         <item name="Axis2 Configuration Guide" href="axis2config.html"/>
+        <item name="Migration form Axis1.x " href="migration.html"/>
       </item>
       <item name="Axis 2 Modules">
         <item name="Core" href="multiproject/axis2-core/index.html"/>
