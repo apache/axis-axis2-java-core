@@ -133,7 +133,7 @@ public class InOutMEPClient extends MEPClient {
             int index = 0;
             while (!callback.isComplete()) {
                 //wait till the reponse arrives
-                if (index < 20) {
+                if (index++ < 20) {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
@@ -231,6 +231,9 @@ public class InOutMEPClient extends MEPClient {
                 //create and set the Operation context
                 msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext));
                 msgctx.setServiceContext(serviceContext);
+
+                System.out.println("Reply To = " + msgctx.getReplyTo().getAddress());
+                System.out.println("To = " + msgctx.getTo().getAddress());
                 //send the message
                 engine.send(msgctx);
             } else {
@@ -241,6 +244,8 @@ public class InOutMEPClient extends MEPClient {
 
         } catch (OMException e) {
             throw AxisFault.makeFault(e);
+        }catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
