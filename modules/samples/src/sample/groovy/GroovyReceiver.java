@@ -73,6 +73,11 @@ public class GroovyReceiver
                 this.getClass().getResourceAsStream(
                     implInfoParam.getValue().toString());
 
+            if (groovyFileStream == null) {
+                throw new AxisFault(
+                    Messages.getMessage("groovyUnableToLoad", implInfoParam.getValue().toString()));
+            }
+
             //look at the method name. if available this should be a groovy method
             OperationDescription op =
                 inMessage.getOperationContext().getAxisOperation();
@@ -101,7 +106,7 @@ public class GroovyReceiver
                 Object[] arg = { in };
                 Object obj = groovyObject.invokeMethod(methodName, arg);
                 if (obj == null) {
-                    throw new AxisFault(Messages.getMessage("groovryNoanswer"));
+                    throw new AxisFault(Messages.getMessage("groovyNoanswer"));
                 }
                 
                 SOAPFactory fac = null;
