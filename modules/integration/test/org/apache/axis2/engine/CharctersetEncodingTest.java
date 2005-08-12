@@ -101,7 +101,15 @@ public class CharctersetEncodingTest extends TestCase {
 			call.setTransportInfo(Constants.TRANSPORT_HTTP,
 					Constants.TRANSPORT_HTTP, false);
 
-
+			/**
+			 * Temporary Fix to occational connection reset problem 
+			 */
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e1) {
+				log.error(e1,e1);
+			}
+			
 			OMElement resultElem = call.invokeBlocking(operationName
                     .getLocalPart(), payload);
 
