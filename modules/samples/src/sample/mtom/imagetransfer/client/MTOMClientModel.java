@@ -77,7 +77,7 @@ public class MTOMClientModel {
 
     }
 
-    public OMElement testEchoXMLSync(String fileName) throws Exception {
+    public OMElement sendFile(String fileName) throws Exception {
 
         OMElement payload = createEnvelope(fileName);
 

@@ -61,7 +61,7 @@ public class InteropClientModel {
         call.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         call.setTo(targetEPR);
         // enabling MTOM in the client side
-        call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+        call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_FALSE);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP, false);
         return call.invokeBlocking(operationName

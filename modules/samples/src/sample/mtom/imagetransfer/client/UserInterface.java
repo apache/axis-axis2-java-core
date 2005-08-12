@@ -147,11 +147,14 @@ public class UserInterface extends JPanel implements ActionListener {
         try {
             mtomTest.setInputFile(file);
             mtomTest.setTargetEPR(EPRName);
-            OMElement result = mtomTest.testEchoXMLSync(fileName);
+            OMElement result = mtomTest.sendFile(fileName);
             jTextArea.setText(result.toString());
             jTextArea.append("\n"+result.getText());
+            if (result.getText().equalsIgnoreCase("Image Saved"))
+            {
             JOptionPane.showMessageDialog(parent, "Sent & saved Image Succesfully",
                     " Success", JOptionPane.PLAIN_MESSAGE);
+            }
         } catch (Exception e) {
             e.printStackTrace(); //To change body of catch statement use File |
             // Settings | File Templates.
