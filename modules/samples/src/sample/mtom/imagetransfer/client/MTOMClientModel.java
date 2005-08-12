@@ -15,19 +15,24 @@
  */
 package sample.mtom.imagetransfer.client;
 
+import java.awt.Image;
+import java.io.File;
+import java.io.FileInputStream;
+
+import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.Constants;
-import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.utils.ImageDataSource;
 import org.apache.axis2.attachments.utils.JDK13IO;
 import org.apache.axis2.clientapi.Call;
-import org.apache.axis2.om.*;
-
-import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
-import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.soap.SOAP11Constants;
 
 
 public class MTOMClientModel {
@@ -64,10 +69,10 @@ public class MTOMClientModel {
         if (fileName != null) {
             imageName.setText(fileName);
         }
-        OMElement wrap = fac.createOMElement("wrap",omNs);
-        wrap.addChild(image);
-        wrap.addChild(imageName);
-        data.addChild(wrap);
+        //OMElement wrap = fac.createOMElement("wrap",omNs);
+        data.addChild(image);
+        data.addChild(imageName);
+        //data.addChild(wrap);
         return data;
 
     }
@@ -77,7 +82,7 @@ public class MTOMClientModel {
         OMElement payload = createEnvelope(fileName);
 
         Call call = new Call();
-        call.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        call.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         call.setTo(targetEPR);
         // enabling MTOM in the client side
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
