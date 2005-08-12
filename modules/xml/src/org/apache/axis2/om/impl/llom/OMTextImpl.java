@@ -199,7 +199,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                     IOUtils.readFully(inStream, data, 0, 3);
                     text.append(Base64.encode(data));                    
                 }while (inStream.available()>0);
-                return Base64.encode(data);
+                return text.toString();
             } catch (Exception e) {
                 throw new OMException(e);
             }
