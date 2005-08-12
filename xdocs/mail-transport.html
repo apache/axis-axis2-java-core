@@ -63,7 +63,7 @@ environment set up, let us start pumping out some code to get the mail
 functionality off the ground. First we'll have a look at it from the
 mail server side. <br>
 </p>
-<pre><code>
+<source><pre>
         // Start the mail server using the default configurations.
         ConfigurationContext configContext = UtilsMailServer.start();
 
@@ -81,7 +81,7 @@ mail server side. <br>
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
         ServiceContext serviceContext = configContext
                 .createServiceContext(new QName("EchoXMLService"));
-</code></pre>
+</pre></source>
 <p>This code sets up your Axis2
 server working through mail, with a single service. If you need to
 have a look under the hood have a look at the MailServer and
@@ -89,7 +89,7 @@ UtilsMailServer classes.</p>
 <p>Moving onto the client side
 have a look at the code listing below. It will call the service that
 was setup on the previous code listing.</p>
-<pre><code>
+<source><pre>
         ConfigurationContext configContext = UtilsMailServer
                 .createClientConfigurationContext();
         ServiceDescription service = new ServiceDescription(serviceName);
@@ -141,7 +141,7 @@ was setup on the previous code listing.</p>
                 }
         }
         call.close();
-</code><br></pre>
+</pre></source>
 <p>This will call the service that
 was setup on the server and will poll the mail server till the response
 is received. Well that is all there is to it.</p>
@@ -160,7 +160,7 @@ server the client side code will remain the same and there will be some
 modification to the server-side code.</p>
 <p>
 </p>
-<pre><code>
+<source><pre>
         // Create a configuration context. This will also load the details about the mail
         // address to listen to from the configuration file.
         File file = new File(MAIL_TRANSPORT_SERVER_ENABLED_REPO_PATH);
@@ -181,7 +181,7 @@ modification to the server-side code.</p>
         configContext.getAxisConfiguration().addService(service);
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
         ServiceContext serviceContext = configContext.createServiceContext(serviceName);
-</code></pre>
+</pre></source>
 <p>We have to create a separate ConfigurationContext and then use that. We are done; wasn't that simple?</p>
 <h3>3. Calling Axis through a
 James mailet</h3>
@@ -194,8 +194,7 @@ a Custom Matcher</a> and <a
  href="http://james.apache.org/custom_mailet_2_1.html">Writing
 a Custom Mailet</a>.</p>
 <p>Now that we know the James part of it lets dive into to the Axis2 part of the code. Once you have set up the James side of business we just need to use the same functionality that is used in the above code. Have a look at the code listing below for more details</p>
-<pre>
-<code>
+<source><pre>
     public void processMail(ConfigurationContext confContext, MimeMessage mimeMessage) {
         // create an Axis server
         AxisEngine engine = new AxisEngine(confContext);
@@ -262,18 +261,17 @@ a Custom Mailet</a>.</p>
             }
         }
     }
-</code>
 </pre>
+</source>
 <p>If you don't happen to have a ConfigurationContext lying around to call this method you can use the following bit of code to get one. Once you create one you can store that on the mailet and keep using it.
 </p>
-<pre>
-<code>
+<source><pre>
         File file = new File(MAIL_TRANSPORT_SERVER_ENABLED_REPO_PATH);
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
         ConfigurationContext configContextbuilder
                 .buildConfigurationContext(file.getAbsolutePath());
-</code>
 </pre>
+</source>
 <p>Well that seems to be all from the wonderful world of mail for now. :)</p>
 </body>
 </html>

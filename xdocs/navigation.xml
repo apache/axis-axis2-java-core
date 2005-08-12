@@ -14,8 +14,6 @@
         <item name="Installation Guide" href="installationguide.html"/>
         <item name="User Guide" href="userguide.html"/>
         <item name="Web Administration Guide" href="webadminguide.html"/>
-        <item name="Axis2 Configuration Guide" href="axis2config.html"/>
-        <item name="Migration form Axis1.x " href="migration.html"/>
       </item>
       <item name="Axis 2 Modules">
         <item name="Core" href="multiproject/axis2-core/index.html"/>
@@ -31,6 +29,7 @@
         <item name="Code Generation Tutorial" href="CodegenToolReference.html"/>
         <item name="REST Support" href="rest-ws.html"/>
         <item name="MTOM with Axis2" href="mtom-guide.html"/>
+        <item name="Axis2 Configuration Guide" href="axis2config.html"/>
         <item name="Migration from Axis 1.x" href="migration.htm"/>
       </item>
       <item name="Get Invloved" href="overview.html">
