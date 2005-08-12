@@ -236,7 +236,12 @@ public class ListingAgent {
             req.getSession().setAttribute(Constants.LOGGED, "Yes");
             res.sendRedirect(ADMIN_JSP_NAME);
         } else {
-            throw new AxisFault(Messages.getMessage("invaliduser"));
+            res.setContentType("text/css");
+            PrintWriter out_writer = new PrintWriter(out);
+            out_writer.println("Invalid user name password");
+            out_writer.flush();
+            out_writer.close();
+           // throw new AxisFault(Messages.getMessage("invaliduser"));
         }
     }
 
