@@ -28,7 +28,7 @@
         <item name="AXIOM Tutorial" href="OMTutorial.html"/>
         <item name="Code Generation Tutorial" href="CodegenToolReference.html"/>
         <item name="REST Support" href="rest-ws.html"/>
-        <item name="MTOM with Axis2" href="mtom-guide.html"/>
+        <item name="MTOM SWA with Axis2" href="mtom-guide.html"/>
         <item name="Axis2 Configuration Guide" href="axis2config.html"/>
         <item name="Migration from Axis 1.x" href="migration.htm"/>
       </item>
