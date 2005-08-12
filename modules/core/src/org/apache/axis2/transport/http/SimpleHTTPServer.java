@@ -17,19 +17,17 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.clientapi.ListenerManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.http.server.SimpleHttpServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 /**
  * This is a simple implementation of an HTTP server for processing
@@ -52,18 +50,15 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
     protected ConfigurationContext configurationContext;
 
     /**
-     * Field serverSocket
+     * Embedded commons http client based server
      */
-    protected ServerSocket serverSocket;
+    SimpleHttpServer embedded = null;
+
+    int port = -1;
 
     /**
-     * are we stopped?
-     * latch to true if stop() is called
+     * Constructor SimpleHTTPServer
      */
-    private boolean stopped = false;
-
-    private int port;
-
     public SimpleHTTPServer() {
     }
 
@@ -73,9 +68,9 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
      * @param systemContext
      */
     public SimpleHTTPServer(ConfigurationContext systemContext,
-                            ServerSocket serverSoc) {
+                            int port) throws IOException {
         this.configurationContext = systemContext;
-        this.serverSocket = serverSoc;
+        this.port = port;
     }
 
     /**
@@ -84,10 +79,9 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
      * @param dir
      * @throws AxisFault
      */
-    public SimpleHTTPServer(String dir, ServerSocket serverSoc) throws AxisFault {
+    public SimpleHTTPServer(String dir, int port) throws AxisFault {
         try {
-            this.serverSocket = serverSoc;
-            // Class erClass = Class.forName("org.apache.axis2.deployment.EngineContextFactoryImpl");
+            this.port = port;
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
             this.configurationContext = erfac.buildConfigurationContext(dir);
             Thread.sleep(2000);
@@ -112,58 +106,29 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
      */
     public void run() {
         try {
-            while (!stopped) {
-                // Accept and process requests from the socket
-                Socket socket = null;
-                try {
-                    socket = serverSocket.accept();
-                } catch (java.io.InterruptedIOException iie) {
-                } catch (Exception e) {
-                    log.debug(e);
-                    break;
-                }
-                if (socket != null) {
-                    configurationContext.getThreadPool().addWorker(
-                            new HTTPWorker(configurationContext, socket));
-                }
-            }
-        } catch (AxisFault e) {
+            embedded = new SimpleHttpServer(port);
+            embedded.setRequestHandler(new HTTPWorker(configurationContext));
+            embedded.run();
+        } catch (IOException e) {
             log.error(e);
+            throw new RuntimeException(e);
         }
-        stop();
         log.info("Simple Axis Server Quit");
-    }
-
-    /**
-     * Obtain the serverSocket that that SimpleAxisServer is listening on.
-     *
-     * @return
-     */
-    public ServerSocket getServerSocket() {
-        return serverSocket;
-    }
-
-    /**
-     * Set the serverSocket this server should listen on.
-     * (note : changing this will not affect a running server, but if you
-     * stop() and then start() the server, the new socket will be used).
-     *
-     * @param serverSocket
-     */
-    public void setServerSocket(ServerSocket serverSocket) {
-        this.serverSocket = serverSocket;
     }
 
     /**
      * Start this server as a NON-daemon.
      */
     public void start() throws AxisFault {
-        if (serverSocket == null) {
-            serverSocket = ListenerManager.openSocket(port);
+        try {
+            embedded = new SimpleHttpServer(port);
+            embedded.setRequestHandler(new HTTPWorker(configurationContext));
+            Thread newThread = new Thread(embedded);
+            newThread.start();
+        } catch (IOException e) {
+            log.error(e);
+            throw new AxisFault(e);
         }
-
-        Thread newThread = new Thread(this);
-        newThread.start();
     }
 
     /**
@@ -173,35 +138,8 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
      */
     public void stop() {
         log.info("stop called");
-
-        // recognise use before we are live
-        if (stopped) {
-            return;
-        }
-
-        /*
-         * Close the server socket cleanly, but avoid fresh accepts while
-         * the socket is closing.
-         */
-        stopped = true;
-        try {
-            if (serverSocket != null) {
-                serverSocket.close();
-
-                // while(socket != null){
-                // try {
-                // //make sure all sockets closed by the time
-                // //else we got in to lot of trouble testing
-                // Thread.sleep(1000);
-                // } catch (InterruptedException e1) {
-                // log.error(e1);
-                // }
-                // }
-            }
-        } catch (IOException e) {
-            log.info(e);
-        } finally {
-            serverSocket = null;
+        if(embedded != null) {
+            embedded.destroy();
         }
         log.info("Simple Axis Server Quits");
     }
@@ -209,7 +147,7 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
     /**
      * Method getSystemContext
      *
-     * @return
+     * @return the system context
      */
     public ConfigurationContext getSystemContext() {
         return configurationContext;
@@ -226,14 +164,11 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
             System.out.println("SimpleHTTPServer repositoryLocation port");
             System.exit(1);
         }
-        ServerSocket serverSoc = null;
-        serverSoc = new ServerSocket(Integer.parseInt(args[1]));
-        SimpleHTTPServer receiver = new SimpleHTTPServer(args[0], serverSoc);
+        SimpleHTTPServer receiver = new SimpleHTTPServer(args[0], Integer.parseInt(args[1]));
         System.out.println("starting SimpleHTTPServer in port "
                 + args[1]
                 + " using the repository "
                 + new File(args[0]).getAbsolutePath());
-        receiver.setServerSocket(serverSoc);
         Thread thread = new Thread(receiver);
         thread.setDaemon(true);
         try {
@@ -250,23 +185,38 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
         }
     }
 
-    /* (non-Javadoc)
+    /**
+     * replyToEPR
+     *
+     * @param serviceName
+     * @return an EndpointReference
+     *
      * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
      */
     public EndpointReference replyToEPR(String serviceName) {
-        return new EndpointReference("http://127.0.0.1:" + (serverSocket.getLocalPort()) +
+        return new EndpointReference("http://127.0.0.1:" + (embedded.getLocalPort()) +
                 "/axis/services/" +
                 serviceName);
     }
 
+    /**
+     * init method in TransportListener
+     *
+     * @param axisConf
+     * @param transprtIn
+     * @throws AxisFault
+     */
     public void init(ConfigurationContext axisConf,
                      TransportInDescription transprtIn)
             throws AxisFault {
-        this.configurationContext = axisConf;
-        Parameter param = transprtIn.getParameter(PARAM_PORT);
-        if (param != null) {
-            this.port = Integer.parseInt((String) param.getValue());
+        try {
+            this.configurationContext = axisConf;
+            Parameter param = transprtIn.getParameter(PARAM_PORT);
+            if (param != null) {
+                this.port = Integer.parseInt((String) param.getValue());
+            }
+        } catch (Exception e1) {
+            throw new AxisFault(e1);
         }
     }
-
 }

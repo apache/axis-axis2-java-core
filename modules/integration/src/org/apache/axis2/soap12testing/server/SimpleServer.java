@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
-import java.net.ServerSocket;
 
 public class SimpleServer {
     private int port;
@@ -38,13 +37,11 @@ public class SimpleServer {
 
     public void start() {
         try {
-            ServerSocket serverSoc = null;
-            serverSoc = new ServerSocket(port);
             File file = new File(MessageComparator.TEST_MAIN_DIR+ "target/Repository");
             if(!file.exists()){
                 throw new AxisFault(file.getAbsolutePath() + " File does not exisits");
             }
-            SimpleHTTPServer reciver = new SimpleHTTPServer(file.getAbsolutePath(), serverSoc);
+            SimpleHTTPServer reciver = new SimpleHTTPServer(file.getAbsolutePath(), port);
             Thread thread = new Thread(reciver);
             thread.setDaemon(true);
             thread.start();

@@ -19,6 +19,10 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.server.HttpRequestHandler;
+import org.apache.axis2.transport.http.server.SimpleHttpServerConnection;
+import org.apache.axis2.transport.http.server.SimpleRequest;
+import org.apache.axis2.transport.http.server.SimpleResponse;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
@@ -27,138 +31,138 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.threadpool.AxisWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.Header;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.net.Socket;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Enumeration;
 
-public class HTTPWorker implements AxisWorker {
+public class HTTPWorker implements HttpRequestHandler {
     protected Log log = LogFactory.getLog(getClass().getName());
     private ConfigurationContext configurationContext;
-    private Socket socket;
 
-    public HTTPWorker(ConfigurationContext configurationContext, Socket socket) {
+    public HTTPWorker(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
-        this.socket = socket;
     }
 
-    public void doWork() {
+    public boolean processRequest(final SimpleHttpServerConnection conn, final SimpleRequest request) throws IOException {
         MessageContext msgContext = null;
-        SimpleHTTPOutputStream out = null;
+        SimpleResponse response = new SimpleResponse();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
         try {
-            if (socket != null) {
-                if (configurationContext == null) {
-                    throw new AxisFault(Messages.getMessage("cannotBeNullConfigurationContext"));
-                }
+            if (configurationContext == null) {
+                throw new AxisFault(Messages.getMessage("cannotBeNullConfigurationContext"));
+            }
 
-                InputStream inStream = socket.getInputStream();
+            InputStream inStream = request.getBody();
 
-                TransportOutDescription transportOut =
+            TransportOutDescription transportOut =
                     configurationContext.getAxisConfiguration().getTransportOut(
-                        new QName(Constants.TRANSPORT_HTTP));
-                msgContext =
+                            new QName(Constants.TRANSPORT_HTTP));
+            msgContext =
                     new MessageContext(
-                        configurationContext,
-                        configurationContext.getAxisConfiguration().getTransportIn(
-                            new QName(Constants.TRANSPORT_HTTP)),
-                        transportOut);
-                msgContext.setServerSide(true);
-                
-
-                //parse the Transport Headers
-                HTTPTransportReceiver receiver = new HTTPTransportReceiver();
-                Map map = receiver.parseTheHeaders(inStream, true);
-
-                //build a way to write the respone if the Axis choose to do so
-                String httpVersion = (String)map.get(HTTPConstants.PROTOCOL_VERSION);
-                if(httpVersion == null){
-                    throw new AxisFault("HTTP version can not be Null");
-                }
-                if(HTTPConstants.HEADER_PROTOCOL_10.equals(httpVersion)){
-                    httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
-                }else if(HTTPConstants.HEADER_PROTOCOL_11.equals(httpVersion)){
-                    httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
-                }else{
-                    throw new AxisFault("Unknown protocol version "+ httpVersion);
-                }
-                
-                String transferEncoding = (String) map.get(HTTPConstants.HEADER_TRANSFER_ENCODING);
-                if (transferEncoding != null
-                    && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(transferEncoding)) {
-                    inStream = new ChunkedInputStream(inStream);
-                    out = new SimpleHTTPOutputStream(socket.getOutputStream(), true,httpVersion);
-                } else {
-                    out = new SimpleHTTPOutputStream(socket.getOutputStream(), false,httpVersion);
-                }
-                msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
-                //set the transport Headers
-                msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,map);
-                
-                //This is way to provide Accsess to the transport information to the transport Sender
-                msgContext.setProperty(
-                    HTTPConstants.HTTPOutTransportInfo,
-                    new SimpleHTTPOutTransportInfo(out));
-
-                if (HTTPConstants.HEADER_GET.equals(map.get(HTTPConstants.HTTP_REQ_TYPE))) {
-                    //It is GET handle the Get request 
-                    boolean processed =
-                        HTTPTransportUtils.processHTTPGetRequest(
-                            msgContext,
-                            inStream,
-                            out,
-                            (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
-                            (String) map.get(HTTPConstants.HEADER_SOAP_ACTION),
-                            (String) map.get(HTTPConstants.REQUEST_URI),
                             configurationContext,
-                            HTTPTransportReceiver.getGetRequestParameters(
-                                (String) map.get(HTTPConstants.REQUEST_URI)));
+                            configurationContext.getAxisConfiguration().getTransportIn(
+                                    new QName(Constants.TRANSPORT_HTTP)),
+                            transportOut);
+            msgContext.setServerSide(true);
 
-                    if (!processed) {
-                        out.write(
-                            HTTPTransportReceiver.getServicesHTML(configurationContext).getBytes());
-                        out.flush();
-                    }
-                } else {
-                    //It is POST, handle it
-                    HTTPTransportUtils.processHTTPPostRequest(
+            HttpVersion ver = request.getRequestLine().getHttpVersion();
+            if (ver == null) {
+                throw new AxisFault("HTTP version can not be Null");
+            }
+            String httpVersion = null;
+            if (HttpVersion.HTTP_1_0.equals(ver)) {
+                httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
+            } else if (HttpVersion.HTTP_1_1.equals(ver)) {
+                httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+            } else {
+                throw new AxisFault("Unknown supported protocol version " + ver);
+            }
+
+
+            msgContext.setProperty(MessageContext.TRANSPORT_OUT, baos);
+
+            //set the transport Headers
+            msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getHeaders(request));
+
+            //This is way to provide Accsess to the transport information to the transport Sender
+            msgContext.setProperty(
+                    HTTPConstants.HTTPOutTransportInfo,
+                    new SimpleHTTPOutTransportInfo(response));
+
+            String soapAction = null;
+            if (request.getFirstHeader(HTTPConstants.HEADER_SOAP_ACTION) != null) {
+                soapAction = request.getFirstHeader(HTTPConstants.HEADER_SOAP_ACTION).getValue();
+            }
+            if (HTTPConstants.HEADER_GET.equals(request.getRequestLine().getMethod())) {
+                //It is GET handle the Get request
+                boolean processed =
+                        HTTPTransportUtils.processHTTPGetRequest(
+                                msgContext,
+                                inStream,
+                                baos,
+                                request.getContentType(),
+                                soapAction,
+                                request.getRequestLine().getUri(),
+                                configurationContext,
+                                HTTPTransportReceiver.getGetRequestParameters(
+                                        request.getRequestLine().getUri()));
+                if (!processed) {
+                    response.setStatusLine(request.getRequestLine().getHttpVersion(), 200, "OK");
+                    response.setBodyString(HTTPTransportReceiver.getServicesHTML(configurationContext));
+                    conn.writeResponse(response);
+                    return true;
+                }
+            } else {
+                //It is POST, handle it
+                HTTPTransportUtils.processHTTPPostRequest(
                         msgContext,
                         inStream,
-                        out,
-                        (String) map.get(HTTPConstants.HEADER_CONTENT_TYPE),
-                        (String) map.get(HTTPConstants.HEADER_SOAP_ACTION),
-                        (String) map.get(HTTPConstants.REQUEST_URI),
+                        baos,
+                        request.getContentType(),
+                        soapAction,
+                        request.getRequestLine().getUri(),
                         configurationContext);
-                }
-
-                out.finalize();
             }
+            response.setStatusLine(request.getRequestLine().getHttpVersion(), 200, "OK");
+            response.setBody(new ByteArrayInputStream(baos.toByteArray()));
+            conn.writeResponse(response);
         } catch (Throwable e) {
             try {
                 AxisEngine engine = new AxisEngine(configurationContext);
                 if (msgContext != null) {
-                    msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
+                    msgContext.setProperty(MessageContext.TRANSPORT_OUT, baos);
                     MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
-                    out.setFault(true);
+                    response.setStatusLine(request.getRequestLine().getHttpVersion(), 500, "Internal server error");
                     engine.sendFault(faultContext);
+                    response.setBody(new ByteArrayInputStream(baos.toByteArray()));
+                    conn.writeResponse(response);
                 } else {
-                    log.error(e,e);
+                    log.error(e, e);
                 }
             } catch (Exception e1) {
                 log.error(e1.getMessage(), e1);
             }
             log.error(e.getMessage(), e);
-        } finally {
-            if (socket != null) {
-                try {
-                    this.socket.close();
-                } catch (IOException e1) {
-                    log.error(e1);
-                }
-            }
         }
-
+        return true;
     }
 
+    private Map getHeaders(SimpleRequest request) {
+        HashMap headerMap = new HashMap();
+        Header[] headers = request.getHeaders();
+        for (int i = 0; i < headers.length; i++) {
+            headerMap.put(headers[i].getName(), headers[i].getValue());
+        }
+        return headerMap;
+    }
 }

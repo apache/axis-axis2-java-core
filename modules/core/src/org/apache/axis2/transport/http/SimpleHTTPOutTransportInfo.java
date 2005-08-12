@@ -17,14 +17,17 @@
  */
 package org.apache.axis2.transport.http;
 
-public class SimpleHTTPOutTransportInfo implements HTTPOutTransportInfo {
-    private SimpleHTTPOutputStream outInfo;
+import org.apache.axis2.transport.http.server.SimpleResponse;
+import org.apache.commons.httpclient.Header;
 
-    public SimpleHTTPOutTransportInfo(SimpleHTTPOutputStream outInfo) {
+public class SimpleHTTPOutTransportInfo implements HTTPOutTransportInfo {
+    private SimpleResponse outInfo;
+
+    public SimpleHTTPOutTransportInfo(SimpleResponse outInfo) {
         this.outInfo = outInfo;
     }
 
     public void setContentType(String contentType) {
-        outInfo.setContentType(contentType);
+        outInfo.setHeader(new Header(HTTPConstants.HEADER_CONTENT_TYPE,contentType));
     }
 }

@@ -29,7 +29,6 @@ import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.net.ServerSocket;
 
 public class UtilServer {
     private static int count = 0;
@@ -63,15 +62,8 @@ public class UtilServer {
             }
             ConfigurationContext er = erfac.buildConfigurationContext(
                     file.getAbsolutePath());
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e1) {
-                throw new AxisFault("Thread interuptted", e1);
-            }
 
-            ServerSocket serverSoc = null;
-            serverSoc = new ServerSocket(Constants.TESTING_PORT);
-            receiver = new SimpleHTTPServer(er, serverSoc);
+            receiver = new SimpleHTTPServer(er, Constants.TESTING_PORT);
             Thread thread = new Thread(receiver);
             thread.setDaemon(true);
 
@@ -83,6 +75,13 @@ public class UtilServer {
             } finally {
 
             }
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e1) {
+                throw new AxisFault("Thread interuptted", e1);
+            }
+
         }
         count++;
     }
