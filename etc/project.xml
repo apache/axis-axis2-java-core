@@ -90,7 +90,7 @@
             <name>Eran Chinthaka</name>
             <id>chinthaka</id>
             <email>chinthaka@apache.org</email>
-            <organization>Lanka Software Foundation / Eurocenter DDC</organization>
+            <organization>Lanka Software Foundation</organization>
             <url>http://www.apache.org/~chinthaka</url>
         </developer>
         <developer>
@@ -125,7 +125,7 @@
             <name>Ajith Ranabahu</name>
             <id>ajith</id>
             <email>ajith@apache.org</email>
-            <organization>Lanka Software Foundation / Eurocenter DDC</organization>
+            <organization>Lanka Software Foundation</organization>
             <url>http://www.apache.org/~ajith</url>
 
         </developer>
@@ -136,7 +136,7 @@
             <organization>Computer Associates</organization>
         </developer>
         <developer>
-            <name>Shahi, Ashutosh</name>
+            <name>Ashutosh Shahi</name>
             <id>ashu</id>
             <email>Ashutosh.Shahi@ca.com</email>
             <organization>Computer Associates</organization>
@@ -152,6 +152,12 @@
             <id>thilina</id>
             <email>thilina@opensource.lk</email>
             <organization>Lanka Software Foundation / Virtusa</organization>
+        </developer>
+        <developer>
+            <name>Ruchith Fernando</name>
+            <id>ruchith</id>
+            <email>ruchithf@apache.lk</email>
+            <organization>Lanka Software Foundation</organization>
         </developer>
 
 
@@ -173,11 +179,6 @@
             <organization>Lanka Software Foundation</organization>
         </contributor>
         <contributor>
-            <name>Ruchith Fernando</name>
-            <email>ruchithf@apache.lk</email>
-            <organization>Lanka Software Foundation</organization>
-        </contributor>
-        <contributor>
             <name>Nadana Gunarathna</name>
             <email>nadana@opensource.lk</email>
             <organization>Lanka Software Foundation</organization>
@@ -190,6 +191,21 @@
         <contributor>
             <name>Gayan Asanka</name>
             <email>gayan@opensource.lk</email>
+            <organization>Lanka Software Foundation</organization>
+        </contributor>
+        <contributor>
+            <name>Anushka Kumara</name>
+            <email>anushkakumar@gmail.com</email>
+            <organization>Lanka Software Foundation</organization>
+        </contributor>
+        <contributor>
+            <name>Chinthaka Thilakarathne</name>
+            <email></email>
+            <organization>Lanka Software Foundation</organization>
+        </contributor>
+        <contributor>
+            <name>Dharshana Dias</name>
+            <email></email>
             <organization>Lanka Software Foundation</organization>
         </contributor>
     </contributors>
