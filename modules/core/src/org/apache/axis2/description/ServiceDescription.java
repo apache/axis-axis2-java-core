@@ -608,35 +608,29 @@ public class ServiceDescription
         try {
             Definition wsdlDefinition = this.getWSDLDefinition();
             if (wsdlDefinition != null) {
-                Iterator sreviceitr = wsdlDefinition.getServices().keySet()
-                        .iterator();
-                while (sreviceitr.hasNext()) {
-                    wsdlDefinition.removeService((QName) sreviceitr.next());
-                }
+//                Iterator sreviceitr = wsdlDefinition.getServices().keySet()
+//                        .iterator();
+//                while (sreviceitr.hasNext()) {
+//                    wsdlDefinition.removeService((QName) sreviceitr.next());
+//                }
 
                 //  wsdlDefinition.removeService(this.getName());
+                Collection services =  wsdlDefinition.getServices().values();
 
-                Service service = wsdlDefinition.createService();
-                service.setQName(this.getName());
-
-                Port port = wsdlDefinition.createPort();
-                SOAPAddress soapAddress = new SOAPAddressImpl();
-                soapAddress.setElementType(SOAPConstants.Q_ELEM_SOAP_ADDRESS);
-                soapAddress.setLocationURI(PortURL);
-                port.addExtensibilityElement(soapAddress);
-                port.setName(this.getName().getLocalPart() + "Port");
-
-                Map bindingsMap = wsdlDefinition.getBindings();
-                Collection bind_col = bindingsMap.values();
-                for (Iterator iterator = bind_col.iterator();
-                     iterator.hasNext();) {
-                    Binding binding = (Binding) iterator.next();
-                    port.setBinding(binding);
-                    break;
+                for (Iterator iterator = services.iterator(); iterator.hasNext();) {
+                    Service service = (Service) iterator.next();
+                    Collection ports =  service.getPorts().values();
+                    for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();) {
+                        Port port = (Port) iterator1.next();
+                        service.setQName(this.getName());
+                        SOAPAddress soapAddress = new SOAPAddressImpl();
+                        soapAddress.setElementType(SOAPConstants.Q_ELEM_SOAP_ADDRESS);
+                        soapAddress.setLocationURI(PortURL);
+                        port.getExtensibilityElements().clear();
+                        port.addExtensibilityElement(soapAddress);
+                    }
                 }
-                service.addPort(port);
 
-                wsdlDefinition.addService(service);
                 WSDLFactory.newInstance().newWSDLWriter().writeWSDL(
                         wsdlDefinition, out);
                 out.flush();
