@@ -271,7 +271,7 @@ public class CommonsHTTPTransportSender
 
         public long getContentLength() {
             try {
-                if (chuncked) {
+                if (chuncked || doingMTOM) {
                     return -1;
                 } else {
                     if (bytes == null) {
