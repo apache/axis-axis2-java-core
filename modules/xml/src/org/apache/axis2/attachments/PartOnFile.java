@@ -50,9 +50,6 @@ public class PartOnFile implements Part {
             fileOutStream.write(value);
             while (!inStream.getBoundaryStatus()) {
                 value = inStream.read();
-                if(value == -1) {
-                    break;
-                }
                 if (!inStream.getBoundaryStatus()) {
                     fileOutStream.write(value);
                 }
