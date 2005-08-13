@@ -35,10 +35,7 @@ import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.Header;
 
 import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.Map;
 import java.util.HashMap;
@@ -84,6 +81,7 @@ public class HTTPWorker implements HttpRequestHandler {
                 httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
             } else if (HttpVersion.HTTP_1_1.equals(ver)) {
                 httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+                response.setHeader(new Header(HTTPConstants.HEADER_TRANSFER_ENCODING, HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED));
             } else {
                 throw new AxisFault("Unknown supported protocol version " + ver);
             }
