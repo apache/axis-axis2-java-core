@@ -38,7 +38,7 @@ import java.io.IOException;
  * not use multiple instances of this class in the same JVM/classloader unless
  * you want bad things to happen at shutdown.
  */
-public class SimpleHTTPServer extends TransportListener implements Runnable {
+public class SimpleHTTPServer extends TransportListener {
     /**
      * Field log
      */
@@ -91,6 +91,18 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
     }
 
     /**
+     * Checks if this HTTP server instance is running.
+     *
+     * @return  true/false
+     */
+    public boolean isRunning() {
+        if(embedded == null) {
+            return false;
+        }
+        return embedded.isRunning();
+    }
+
+    /**
      * stop the server if not already told to.
      *
      * @throws Throwable
@@ -101,30 +113,12 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
     }
 
     /**
-     * Accept requests from a given TCP port and send them through the
-     * Axis engine for processing.
-     */
-    public void run() {
-        try {
-            embedded = new SimpleHttpServer(port);
-            embedded.setRequestHandler(new HTTPWorker(configurationContext));
-            embedded.run();
-        } catch (IOException e) {
-            log.error(e);
-            throw new RuntimeException(e);
-        }
-        log.info("Simple Axis Server Quit");
-    }
-
-    /**
      * Start this server as a NON-daemon.
      */
     public void start() throws AxisFault {
         try {
             embedded = new SimpleHttpServer(port);
             embedded.setRequestHandler(new HTTPWorker(configurationContext));
-            Thread newThread = new Thread(embedded);
-            newThread.start();
         } catch (IOException e) {
             log.error(e);
             throw new AxisFault(e);
@@ -169,15 +163,13 @@ public class SimpleHTTPServer extends TransportListener implements Runnable {
                 + args[1]
                 + " using the repository "
                 + new File(args[0]).getAbsolutePath());
-        Thread thread = new Thread(receiver);
-        thread.setDaemon(true);
         try {
             System.out.println(
                     "[Axis2] Using the Repository " +
                     new File(args[0]).getAbsolutePath());
             System.out.println(
                     "[Axis2] Starting the SimpleHTTPServer on port " + args[1]);
-            thread.start();
+            receiver.start();
             System.out.println("[Axis2] SimpleHTTPServer started");
             System.in.read();
         } finally {

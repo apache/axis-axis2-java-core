@@ -39,12 +39,10 @@ public class SimpleServer {
         try {
             File file = new File(MessageComparator.TEST_MAIN_DIR+ "target/Repository");
             if(!file.exists()){
-                throw new AxisFault(file.getAbsolutePath() + " File does not exisits");
+                throw new AxisFault(file.getAbsolutePath() + " File does not exist");
             }
-            SimpleHTTPServer reciver = new SimpleHTTPServer(file.getAbsolutePath(), port);
-            Thread thread = new Thread(reciver);
-            thread.setDaemon(true);
-            thread.start();
+            SimpleHTTPServer receiver = new SimpleHTTPServer(file.getAbsolutePath(), port);
+            receiver.start();
         } catch (Exception e) {
             log.info(e.getMessage());
 //            e.printStackTrace();

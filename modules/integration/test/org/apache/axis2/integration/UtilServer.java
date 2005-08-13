@@ -64,11 +64,9 @@ public class UtilServer {
                     file.getAbsolutePath());
 
             receiver = new SimpleHTTPServer(er, Constants.TESTING_PORT);
-            Thread thread = new Thread(receiver);
-            thread.setDaemon(true);
 
             try {
-                thread.start();
+                receiver.start();
                 System.out.print(
                         "Server started on port " + Constants.TESTING_PORT +
                         ".....");
@@ -89,6 +87,12 @@ public class UtilServer {
     public static synchronized void stop() {
         if (count == 1) {
             receiver.stop();
+            while(receiver.isRunning()){
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {
+                }
+            }
             count = 0;
             System.out.print("Server stopped .....");
         } else {
