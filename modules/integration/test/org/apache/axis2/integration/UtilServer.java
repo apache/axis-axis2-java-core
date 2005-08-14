@@ -34,7 +34,7 @@ public class UtilServer {
     private static int count = 0;
     private static SimpleHTTPServer receiver;
     public static final int TESTING_PORT = 5555;
-    public static final String FAILURE_MESSAGE = "Intentional Faliure";
+    public static final String FAILURE_MESSAGE = "Intentional Failure";
 
     public static synchronized void deployService(ServiceDescription service) throws AxisFault {
         receiver.getSystemContext().getAxisConfiguration().addService(service);
