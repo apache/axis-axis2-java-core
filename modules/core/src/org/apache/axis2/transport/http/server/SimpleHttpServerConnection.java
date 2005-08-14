@@ -64,8 +64,9 @@ public class SimpleHttpServerConnection {
             throw new IllegalArgumentException("Socket may not be null");
         }
         this.socket = socket;
+        this.socket.setSoLinger(false, 0);
         this.socket.setKeepAlive(true);
-        this.socket.setSoTimeout(0);
+        this.socket.setSoTimeout(60000);
         this.socket.setTcpNoDelay(true);
         this.in = socket.getInputStream();
         this.out = socket.getOutputStream();
@@ -224,7 +225,7 @@ public class SimpleHttpServerConnection {
             int i = 0;
             while ((i = content.read(tmp)) >= 0) {
                 outsream.write(tmp, 0, i);
-            }        
+            }
             if (outsream instanceof ChunkedOutputStream) {
                 ((ChunkedOutputStream)outsream).finish();
             }
