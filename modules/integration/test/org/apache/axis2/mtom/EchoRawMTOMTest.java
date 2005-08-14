@@ -32,7 +32,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.utils.ImageDataSource;
-import org.apache.axis2.attachments.utils.JDK13IO;
+import org.apache.axis2.attachments.utils.ImageIO;
 import org.apache.axis2.clientapi.AsyncResult;
 import org.apache.axis2.clientapi.Callback;
 import org.apache.axis2.context.ServiceContext;
@@ -102,7 +102,7 @@ public class EchoRawMTOMTest extends TestCase {
         OMElement data = fac.createOMElement("data", omNs);
         Image expectedImage;
         expectedImage =
-                new JDK13IO()
+                new ImageIO()
                 .loadImage(getResourceAsStream("org/apache/axis2/mtom/test.jpg"));
         ImageDataSource dataSource = new ImageDataSource("test.jpg",
                 expectedImage);
@@ -182,10 +182,10 @@ public class EchoRawMTOMTest extends TestCase {
         // Save the image
         DataHandler actualDH;
         actualDH = binaryNode.getDataHandler();
-        Image actualObject = new JDK13IO().loadImage(actualDH.getDataSource()
+        Image actualObject = new ImageIO().loadImage(actualDH.getDataSource()
                 .getInputStream());
 //        FileOutputStream imageOutStream = new FileOutputStream("target/testout.jpg");
-//        new JDK13IO().saveImage("image/jpeg", actualObject, imageOutStream);
+//        new ImageIO().saveImage("image/jpeg", actualObject, imageOutStream);
 
     }
 

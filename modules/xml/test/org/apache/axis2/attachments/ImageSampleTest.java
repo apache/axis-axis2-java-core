@@ -17,7 +17,7 @@
 package org.apache.axis2.attachments;
 
 import org.apache.axis2.attachments.utils.ImageDataSource;
-import org.apache.axis2.attachments.utils.JDK13IO;
+import org.apache.axis2.attachments.utils.ImageIO;
 import org.apache.axis2.om.AbstractTestCase;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
@@ -89,7 +89,7 @@ public class ImageSampleTest extends AbstractTestCase {
         OMElement data = new OMElementImpl("data", dataName);
 
         expectedImage =
-                new JDK13IO().loadImage(
+                new ImageIO().loadImage(
                         new FileInputStream(
                                 getTestResourceFile(imageInFileName)));
         ImageDataSource dataSource = new ImageDataSource("WaterLilies.jpg",
@@ -132,11 +132,11 @@ public class ImageSampleTest extends AbstractTestCase {
 
         DataHandler actualDH;
         actualDH = blob.getDataHandler();
-        Image actualObject = new JDK13IO().loadImage(actualDH.getDataSource()
+        Image actualObject = new ImageIO().loadImage(actualDH.getDataSource()
                 .getInputStream());
         FileOutputStream imageOutStream = new FileOutputStream(
                 new File(imageOutFileName));
-        new JDK13IO().saveImage("image/jpeg", actualObject, imageOutStream);
+        new ImageIO().saveImage("image/jpeg", actualObject, imageOutStream);
 
     }
 

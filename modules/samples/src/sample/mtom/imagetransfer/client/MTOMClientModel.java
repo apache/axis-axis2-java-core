@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.utils.ImageDataSource;
-import org.apache.axis2.attachments.utils.JDK13IO;
+import org.apache.axis2.attachments.utils.ImageIO;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -56,7 +56,7 @@ public class MTOMClientModel {
         OMElement data = fac.createOMElement("mtomSample", omNs);
         OMElement image = fac.createOMElement("image", omNs);
         Image expectedImage;
-        expectedImage = new JDK13IO()
+        expectedImage = new ImageIO()
                 .loadImage(new FileInputStream(inputFile));
 
         ImageDataSource dataSource = new ImageDataSource("test.jpg",

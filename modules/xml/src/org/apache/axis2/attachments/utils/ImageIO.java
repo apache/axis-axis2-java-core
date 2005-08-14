@@ -16,25 +16,53 @@
 
 package org.apache.axis2.attachments.utils;
 
+
+import sun.awt.image.codec.JPEGImageEncoderImpl;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageWriter;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 /**
- * This interface defines a ImageIO modules functionality
+ * JDK1.4 based Image I/O
  */
-public interface ImageIO {
+public class ImageIO extends Component {
     /**
      * Save an image.
      *
-     * @param id    the mime-type of the format to save the image
-     * @param image the image to save
-     * @param os    the output stream to write to
+     * @param mimeType the mime-type of the format to save the image
+     * @param image    the image to save
+     * @param os       the stream to write to
      * @throws Exception if an error prevents image encoding
      */
+    public void saveImage(String mimeType, Image image, OutputStream os)
+            throws Exception {
 
-    public void saveImage(String id, Image image, OutputStream os)
-            throws Exception;
+        ImageWriter writer = null;
+        Iterator iter = javax.imageio.ImageIO.getImageWritersByMIMEType(mimeType);
+        if (iter.hasNext()) {
+            writer = (ImageWriter) iter.next();
+        }
+        writer.setOutput(javax.imageio.ImageIO.createImageOutputStream(os));
+        BufferedImage rendImage = null;
+        if (image instanceof BufferedImage) {
+            rendImage = (BufferedImage) image;
+        } else {
+            MediaTracker tracker = new MediaTracker(this);
+            tracker.addImage(image, 0);
+            tracker.waitForAll();
+            rendImage = new BufferedImage(image.getWidth(null), image.getHeight(null), 1);
+            Graphics g = rendImage.createGraphics();
+            g.drawImage(image, 0, 0, null);
+        }
+        writer.write(new IIOImage(rendImage, null, null));
+        writer.dispose();
+    } // saveImage
 
     /**
      * Load an Image.
@@ -42,7 +70,8 @@ public interface ImageIO {
      * @param in the stream to load the image
      * @return the Image
      */
-    public Image loadImage(InputStream in)
-            throws Exception;
+    public Image loadImage(InputStream in) throws Exception {
+        return javax.imageio.ImageIO.read(in);
+    } // loadImage
 }
 

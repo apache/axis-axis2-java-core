@@ -41,7 +41,7 @@ public class ImageDataSource implements DataSource {
         os = new ByteArrayOutputStream();
         try {
             if (data != null) {
-                new JDK13IO().saveImage(this.contentType, data, os);
+                new ImageIO().saveImage(this.contentType, data, os);
             }
         } catch (Exception e) {
             // log.error(Messages.getMessage("exception00"), e);

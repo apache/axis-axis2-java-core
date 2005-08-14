@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.utils.ImageDataSource;
-import org.apache.axis2.attachments.utils.JDK13IO;
+import org.apache.axis2.attachments.utils.ImageIO;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.Echo;
@@ -89,7 +89,7 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase {
         OMElement rpcWrapEle = fac.createOMElement("echoOMElement", omNs);
         data = fac.createOMElement("data", omNs);
         Image expectedImage;
-        expectedImage = new JDK13IO()
+        expectedImage = new ImageIO()
                 .loadImage(getResourceAsStream("org/apache/axis2/mtom/test.jpg"));
 
         ImageDataSource dataSource = new ImageDataSource("test.jpg",

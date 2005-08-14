@@ -15,7 +15,7 @@
  */
 package sample.mtom.imagetransfer.service;
 
-import org.apache.axis2.attachments.utils.JDK13IO;
+import org.apache.axis2.attachments.utils.ImageIO;
 import org.apache.axis2.om.*;
 
 import javax.activation.DataHandler;
@@ -35,10 +35,10 @@ public class MTOMService {
         //Extracting the data and saving
         DataHandler actualDH;
         actualDH = binaryNode.getDataHandler();
-        Image actualObject = new JDK13IO().loadImage(actualDH.getDataSource()
+        Image actualObject = new ImageIO().loadImage(actualDH.getDataSource()
                 .getInputStream());
         FileOutputStream imageOutStream = new FileOutputStream(fileName);
-        new JDK13IO().saveImage("image/jpeg", actualObject, imageOutStream);
+        new ImageIO().saveImage("image/jpeg", actualObject, imageOutStream);
         //setting response
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace ns = fac.createOMNamespace("urn://fakenamespace", "ns");
