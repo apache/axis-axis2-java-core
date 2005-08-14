@@ -93,16 +93,22 @@
             </properties>
             <url>http://dist.codehaus.org/groovy/jars/</url>
         </dependency>
-
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
-            <version>3.0-rc2</version>
+            <version>3.0-rc3</version>
             <properties>
                 <module>true</module>
             </properties>
         </dependency>
-
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.3</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
