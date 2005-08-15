@@ -104,7 +104,7 @@ public class GUIHandler {
         settingsMenu.add(maxResultsMenuItem);
         maxResultsMenuItem.setEnabled(true);
         maxResultsMenuItem.setToolTipText(
-                "This feature is currently disabled!");
+                "You can set the maximum number of results per page, Maximum allowable is 10");
 
         JMenu helpMenu = new JMenu("Help");
         JMenuItem mnuItemHelp = new JMenuItem("Show Help");

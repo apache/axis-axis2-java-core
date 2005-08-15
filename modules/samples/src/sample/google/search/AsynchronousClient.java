@@ -7,7 +7,6 @@ import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.OperationDescription;
 import sample.google.common.util.PropertyLoader;
-
 import javax.xml.namespace.QName;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,7 +26,6 @@ import java.net.URL;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-
 
 public class AsynchronousClient {
 
@@ -84,7 +82,7 @@ public class AsynchronousClient {
         Call call = new Call();
         URL url = null;
         try {
-            url = new URL("http", "api.google.com", "/search/beta2");
+            url = new URL("http", "api.google.com","/search/beta2");
             //  url = new URL("http://127.0.0.1:8080/axis2/services/axisversion/viewVersion");
         } catch (MalformedURLException e) {
             e.printStackTrace();

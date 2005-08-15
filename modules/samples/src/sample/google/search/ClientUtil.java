@@ -57,12 +57,12 @@ public class ClientUtil {
         SOAPFactory omFactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope envelope = omFactory.getDefaultEnvelope();
         envelope.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/",
-                "SOAP-ENV");
+                "soapenv");
         envelope.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/",
                 "SOAP-ENC");
-        envelope.declareNamespace("http://www.w3.org/1999/XMLSchema-instance/",
+        envelope.declareNamespace("http://www.w3.org/2001/XMLSchema-instance",
                 "xsi");
-        envelope.declareNamespace("http://www.w3.org/1999/XMLSchema",
+        envelope.declareNamespace("http://www.w3.org/2001/XMLSchema",
                 "xsd");
 
         operation =
@@ -70,7 +70,7 @@ public class ClientUtil {
                         "urn:GoogleSearch",
                         "ns1");
         envelope.getBody().addChild(operation);
-        operation.addAttribute("SOAP-ENV:encordingStyle",
+        operation.addAttribute("soapenv:encordingStyle",
                 "http://schemas.xmlsoap.org/soap/encoding/", null);
 
         operation.addChild(
