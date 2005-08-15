@@ -26,7 +26,7 @@ RESTful Message. Else they are treated as usual SOAP Messages.</p>
 from the client API or by deployment descriptor of the client.</p>
 <ol>   
 <li> By adding an entry in the client.xml file similar to that of the axis.xml.</li>
-<li>Through client API e.g. <source><pre>call.setDoREST(true);</pre></source>;</li>
+<li>Through client API e.g. <source><pre>call.setDoREST(true);</pre></source></li>
 </ol>
 
 <h3>Sample REST - HTTP POST Client</h3>
@@ -35,7 +35,8 @@ the <source><pre>echo</pre></source> operation of the <source><pre>userguide.exa
 And the class source will be as follows
 <source>
 <pre>
-public class MyServiceClient {    private static String toEpr = "http://localhost:9080/axis2/services/MyService/echo";
+public class MyServiceClient {
+    private static String toEpr = "http://localhost:9080/axis2/services/MyService/echo";
     
     public static void main(String[] args) throws AxisFault {
         OMElement payload = ...
