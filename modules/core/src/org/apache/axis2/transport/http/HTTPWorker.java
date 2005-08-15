@@ -122,6 +122,14 @@ public class HTTPWorker implements HttpRequestHandler {
                     return true;
                 }
             } else {
+                ByteArrayOutputStream baosIn = new ByteArrayOutputStream();
+                byte[] bytes = new byte[8192];
+                int size = 0;
+                while ((size = inStream.read(bytes)) != -1) {
+                    baosIn.write(bytes, 0, size);
+                }
+                inStream = new ByteArrayInputStream(baosIn.toByteArray());
+
                 //It is POST, handle it
                 HTTPTransportUtils.processHTTPPostRequest(
                         msgContext,
@@ -164,12 +172,12 @@ public class HTTPWorker implements HttpRequestHandler {
             Header connheader = request.getFirstHeader("Connection");
             if (connheader != null) {
                 if (connheader.getValue().equalsIgnoreCase("keep-alive")) {
-                    Header header = new Header("Connection", "keep-alive"); 
+                    Header header = new Header("Connection", "keep-alive");
                     response.addHeader(header);
                     conn.setKeepAlive(true);
                 }
                 if (connheader.getValue().equalsIgnoreCase("close")) {
-                    Header header = new Header("Connection", "close"); 
+                    Header header = new Header("Connection", "close");
                     response.addHeader(header);
                     conn.setKeepAlive(false);
                 }
@@ -182,7 +190,6 @@ public class HTTPWorker implements HttpRequestHandler {
                 }
             }
         }
-        System.out.println("HTTPWorker.isKeepAlive : " + conn.isKeepAlive());
     }
 
     private Map getHeaders(SimpleRequest request) {

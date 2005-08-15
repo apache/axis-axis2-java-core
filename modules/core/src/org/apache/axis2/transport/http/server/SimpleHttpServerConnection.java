@@ -65,6 +65,7 @@ public class SimpleHttpServerConnection {
         }
         this.socket = socket;
         this.socket.setTcpNoDelay(true);
+        this.socket.setSoTimeout(500);
         this.in = socket.getInputStream();
         this.out = socket.getOutputStream();
     }
