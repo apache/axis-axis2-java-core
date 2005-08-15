@@ -60,30 +60,22 @@ public class CodeGenerationEngine {
     private void loadExtensions() {
         //Ideally these extensions should be loaded through a configuration taken
         //from some external location. Say a config file.
-
-        AxisBindingBuilder axisBindingBuilder = new AxisBindingBuilder();
-        axisBindingBuilder.init(this.configuration);
-        axisBindingBuilder.engage();
-
-        WSDLValidatorExtension validatorExtension = new WSDLValidatorExtension();
-        validatorExtension.init(this.configuration);
-        this.moduleEndpoints.add(validatorExtension);
-
-        PackageFinder packageFinder = new PackageFinder();
-        packageFinder.init(this.configuration);
-        this.moduleEndpoints.add(packageFinder);
-
+        addExtension(new AxisBindingBuilder());
+        addExtension(new WSDLValidatorExtension());
+        addExtension(new PackageFinder());
         //Xbeans extension
-        XMLBeansExtension xbeansExtension = new XMLBeansExtension();
-        xbeansExtension.init(this.configuration);
-        this.moduleEndpoints. add(xbeansExtension);
+        addExtension(new XMLBeansExtension());
+        //simple databinding extension
+        //addExtension(new SimpleDBExtension());
+        //default extension. Does the cleanup
+        addExtension(new DefaultDatabindingExtension());
 
-        //default databinding extension
-//        AbstractCodeGenerationExtension dbExt = new SimpleDBExtension();
-//        dbExt.init(this.configuration);
-//        this.moduleEndpoints.add(dbExt);
     }
 
+    private void addExtension(AbstractCodeGenerationExtension ext){
+        ext.init(this.configuration);
+        this.moduleEndpoints.add(ext);
+    }
     public void generate() throws CodeGenerationException {
         try {
             for (int i = 0; i < this.moduleEndpoints.size(); i++) {
