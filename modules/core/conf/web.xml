@@ -97,4 +97,12 @@
         <servlet-name>AxisServlet</servlet-name>
         <url-pattern>/selectServiceParaEdit</url-pattern>
     </servlet-mapping>
+    <error-page>
+        <exception-type>org.apache.axis2.transport.http.server.AdminAppException</exception-type>
+        <location>/error.jsp</location>
+    </error-page>
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/error.jsp</location>
+    </error-page>
 </web-app>

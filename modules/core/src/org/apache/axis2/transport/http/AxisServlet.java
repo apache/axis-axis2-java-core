@@ -134,6 +134,8 @@ public class AxisServlet extends HttpServlet {
             } else {
                 throw new ServletException(e);
             }
+        } catch (Exception e) {
+            throw new ServletException(e);
         }
 
     }

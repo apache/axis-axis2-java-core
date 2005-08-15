@@ -19,6 +19,7 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.server.AdminAppException;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.OperationDescription;
@@ -93,7 +94,7 @@ public class ListingAgent {
     public void handle(HttpServletRequest httpServletRequest,
                        HttpServletResponse httpServletResponse,
                        OutputStream out)
-            throws IOException {
+            throws IOException,Exception {
         this.out = out;
         String filePart = httpServletRequest.getRequestURL().toString();
         if ((filePart != null) &&
@@ -212,14 +213,14 @@ public class ListingAgent {
         res.sendRedirect(SELECT_SERVICE_JSP_NAME);
     }
 
-    private void adminLogging(HttpServletRequest req, HttpServletResponse res) throws AxisFault, IOException {
+    private void adminLogging(HttpServletRequest req, HttpServletResponse res) throws AdminAppException, IOException {
         String username = req.getParameter("userName");
         String password = req.getParameter("password");
         if (username == null
                 || password == null
                 || username.trim().equals("")
                 || password.trim().equals("")) {
-            throw new AxisFault(Messages.getMessage("invaliduser"));
+            throw new AdminAppException(Messages.getMessage("invaliduser"));
         }
         String adminUserName =
                 (String) configContext.getAxisConfiguration()
@@ -236,12 +237,12 @@ public class ListingAgent {
             req.getSession().setAttribute(Constants.LOGGED, "Yes");
             res.sendRedirect(ADMIN_JSP_NAME);
         } else {
-            res.setContentType("text/css");
-            PrintWriter out_writer = new PrintWriter(out);
-            out_writer.println("Invalid user name password");
-            out_writer.flush();
-            out_writer.close();
-           // throw new AxisFault(Messages.getMessage("invaliduser"));
+//            res.setContentType("text/css");
+//            PrintWriter out_writer = new PrintWriter(out);
+//            out_writer.println("Invalid user name password");
+//            out_writer.flush();
+//            out_writer.close();
+            throw new AdminAppException(Messages.getMessage("invaliduser"));
         }
     }
 
