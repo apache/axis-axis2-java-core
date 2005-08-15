@@ -1,8 +1,8 @@
-package org.apache.axis.tool.service.swing.ui;
+package org.apache.axis2.tool.service.swing.ui;
 
-import org.apache.axis.tool.service.bean.Page3Bean;
-import org.apache.axis.tool.service.bean.WizardBean;
-import org.apache.axis.tool.util.Constants;
+import org.apache.axis2.tool.service.bean.Page3Bean;
+import org.apache.axis2.tool.service.bean.WizardBean;
+import org.apache.axis2.tool.util.Constants;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

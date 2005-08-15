@@ -1,6 +1,6 @@
-package org.apache.axis.tool.codegen.eclipse.ui;
+package org.apache.axis2.tool.codegen.eclipse.ui;
 
-import org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
+import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
@@ -10,7 +10,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * The first page of the code generator wizrad. Asks for the WSDL file Name
@@ -22,13 +26,14 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
 
     private ISelection selection;
 
-
+   
     /**
+     * 
      * @param pageName
      */
     public WSDLFileSelectionPage() {
         super("page1");
-
+       
 
     }
 
@@ -74,7 +79,7 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
                 handleBrowse();
             }
         });
-
+        
         setPageComplete(false);
         setControl(container);
 
@@ -82,7 +87,7 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
          * Validate this dialog, because we could have got valid values from the
          * settings already.
          */
-        if (restoredFromPreviousSettings) {
+        if (restoredFromPreviousSettings){
             dialogChanged();
         }
     }
@@ -101,7 +106,7 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
         }
 
         if (!fileName.matches(".*\\.wsdl")) {
-            updateStatus(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
+            updateStatus(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
                     .getResourceString("page1.error.wrongextension"));
             return;
         }
@@ -112,10 +117,11 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
 
     /**
      * Pops up the file browse dialog box
+     *  
      */
     private void handleBrowse() {
         FileDialog fileDialog = new FileDialog(this.getShell());
-        fileDialog.setFilterExtensions(new String[]{"*.wsdl"});
+        fileDialog.setFilterExtensions(new String[] { "*.wsdl" });
         String fileName = fileDialog.open();
         if (fileName != null) {
             fileText.setText(fileName);
@@ -123,10 +129,10 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
 
     }
 
-
+    
     /**
      * Get the file name
-     *
+     * 
      * @return
      */
     public String getFileName() {
@@ -136,7 +142,7 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.axis.tool.codegen.eclipse.ui.CodegenPage#getPageType()
+     * @see org.apache.axis2.tool.codegen.eclipse.ui.CodegenPage#getPageType()
      */
     public int getPageType() {
         return WSDL_2_JAVA_TYPE;

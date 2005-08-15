@@ -13,37 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.tool.codegen;
+package org.apache.axis2.tool.codegen;
 
+
+import java.util.Vector;
 
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.fromJava.Emitter;
 
-import java.util.Vector;
-
 /**
  * @author Ajith
- *         <p/>
- *         TODO To change the template for this generated type comment go to Window -
- *         Preferences - Java - Code Style - Code Templates
+ * 
+ * TODO To change the template for this generated type comment go to Window -
+ * Preferences - Java - Code Style - Code Templates
  */
 public class Java2WSDLGenerator {
 
-    public void emit(String classPath,
-                     String implementationClassName,
-                     String serviceLocationUrl,
-                     String inputWsdlName,
-                     String bindingName,
-                     String portypeName,
-                     String style,
-                     String outputFileName,
-                     int mode,
-                     Vector listOfIncludedMethods) throws Throwable {
+    public void emit(String classPath, 
+            String implementationClassName,
+            String serviceLocationUrl,
+            String inputWsdlName,
+            String bindingName,
+            String portypeName,
+            String style,
+            String outputFileName,
+            int mode,
+            Vector listOfIncludedMethods) throws Throwable{
         try {
 
-            ClassUtils.setDefaultClassLoader(
-                    ClassUtils.createClassLoader(classPath,
-                            this.getClass().getClassLoader()));
+            ClassUtils.setDefaultClassLoader(ClassUtils.createClassLoader(
+                    classPath, this.getClass().getClassLoader()));
 
             // Instantiate the emitter
             Emitter emitter = new Emitter();
@@ -52,8 +51,7 @@ public class Java2WSDLGenerator {
             emitter.setCls(implementationClassName);
 
             //service location
-            if (serviceLocationUrl != null &&
-                    !serviceLocationUrl.trim().equals(""))
+            if (serviceLocationUrl !=null && !serviceLocationUrl.trim().equals(""))
                 emitter.setLocationUrl(serviceLocationUrl);
             
             //input wsdl
@@ -61,21 +59,21 @@ public class Java2WSDLGenerator {
                 emitter.setInputWSDL(inputWsdlName);
             
             //portype name
-            if (portypeName != null && !portypeName.trim().equals(""))
+            if (portypeName!=null && !portypeName.trim().equals(""))
                 emitter.setPortTypeName(portypeName);
             
             //Style
-            if (style != null && !style.trim().equals(""))
+            if (style!=null && !style.trim().equals(""))
                 emitter.setStyle(style);
-            if (listOfIncludedMethods != null)
+            if (listOfIncludedMethods!=null)
                 emitter.setAllowedMethods(listOfIncludedMethods);
-
-            if (mode != Emitter.MODE_ALL &&
-                    mode != Emitter.MODE_IMPLEMENTATION &&
-                    mode != Emitter.MODE_INTERFACE)
+            
+            if (mode!= Emitter.MODE_ALL &&
+                    mode!= Emitter.MODE_IMPLEMENTATION &&
+                    mode!= Emitter.MODE_INTERFACE)
                 mode = Emitter.MODE_ALL; // Default to all in unknown case
-
-            emitter.emit(outputFileName, mode);
+            
+           emitter.emit(outputFileName,mode);
 
         } catch (Throwable t) {
             throw t;

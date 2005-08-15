@@ -1,6 +1,4 @@
-package org.apache.axis.tool.core;
-
-import sun.misc.URLClassPath;
+package org.apache.axis2.tool.core;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +8,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+import sun.misc.URLClassPath;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -25,15 +24,15 @@ import java.util.Enumeration;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 public class ClassFileHandler {
 
 
     /**
+     * @deprecated
+     * This needs to be written in a functional manner
      * @param location
      * @return
      * @throws IOException
-     * @deprecated This needs to be written in a functional manner
      */
     //todo see whether this is possible
     public ArrayList getClassesAtLocation(String location) throws IOException {
@@ -45,16 +44,14 @@ public class ClassFileHandler {
         Enumeration enum = classLoader.getResources("");
 
         while (enum.hasMoreElements()) {
-            Object o = enum.nextElement();
+            Object o =  enum.nextElement();
             System.out.println("o = " + o);
         }
         return null;
 
     }
 
-    public ArrayList getMethodNamesFromClass(String classFileName,
-                                             String location) throws IOException,
-            ClassNotFoundException {
+    public ArrayList getMethodNamesFromClass(String classFileName,String location) throws IOException, ClassNotFoundException{
         ArrayList returnList = new ArrayList();
         File fileEndpoint = new File(location);
         if (!fileEndpoint.exists())

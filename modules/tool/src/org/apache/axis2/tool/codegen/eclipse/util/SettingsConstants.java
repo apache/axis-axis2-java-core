@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.apache.axis.tool.codegen.eclipse.util;
+package org.apache.axis2.tool.codegen.eclipse.util;
 
 public interface SettingsConstants {
 
@@ -35,6 +35,7 @@ public interface SettingsConstants {
     // Output selection page
     /**
      * The key to store the output location in the settings
+     *  
      */
     static final String PREF_OUTPUT_LOCATION = "PREF_OUTPUT_LOCATION";
 
@@ -84,36 +85,36 @@ public interface SettingsConstants {
     static final String JAVA_CLASS_NAME = "JAVA_CLASS_NAME";
 
     static final String JAVA_CLASS_LOCATION_NAME = "JAVA_CLASS_LOCATION_NAME";
-
+    
     // ##################################################################################
     // Java2wsdl options selection page
     static final String PREF_JAVA_INPUT_WSDL_NAME = "INPUT_WSDL";
-
+    
     static final String PREF_JAVA_LOCATION = "LOCATION_URL";
     static final String PREF_JAVA_BINDING_NAME = "BINDING_NAME";
     static final String PREF_JAVA_MODE_INDEX = "MODE_INDEX";
     static final String PREF_JAVA_STYLE_INDEX = "STYLE_INDEX";
     static final String PREF_JAVA_PORTYPE_NAME = "PORTYPE_NAME";
-
+    
     // ##################################################################################
     //output page
     static final String JAVA_OUTPUT_WSDL_NAME = "OUTPUT_WSDL";
     static final String PREF_JAVA_OUTPUT_WSDL_LOCATION = "OUTPUT_WSDL_LOCATION";
     // ##################################################################################
     // Page constants
-    static final int WSDL_2_JAVA_TYPE = 1;
-    static final int JAVA_2_WSDL_TYPE = 2;
-    static final int UNSPECIFIED_TYPE = 3;
-
+     static final int WSDL_2_JAVA_TYPE = 1;
+     static final int JAVA_2_WSDL_TYPE = 2;
+     static final int UNSPECIFIED_TYPE = 3;
+    
     // ##################################################################################
     // WSDL Mode constants
-    static final String WSDL_ALL = "All";
-    static final String WSDL_INTERFACE_ONLY = "Interface only";
-    static final String WSDL_IMPLEMENTATION_ONLY = "Implementation only";
-
-    // ###########################################################
-    static final String WSDL_STYLE_DOCUMENT = "Document";
-    static final String WSDL_STYLE_RPC = "rpc";
-    static final String WSDL_STYLE_WRAPPED = "wrapped";
-
+     static final String WSDL_ALL = "All";
+     static final String WSDL_INTERFACE_ONLY = "Interface only";
+     static final String WSDL_IMPLEMENTATION_ONLY = "Implementation only";
+     
+     // ###########################################################
+     static final String WSDL_STYLE_DOCUMENT="Document";
+     static final String WSDL_STYLE_RPC="rpc";
+     static final String WSDL_STYLE_WRAPPED="wrapped";
+    
 }

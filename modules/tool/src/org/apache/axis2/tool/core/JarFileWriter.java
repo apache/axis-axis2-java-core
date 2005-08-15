@@ -1,10 +1,10 @@
-package org.apache.axis.tool.core;
-
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Jar;
+package org.apache.axis2.tool.core;
 
 import java.io.File;
 import java.io.IOException;
+
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Jar;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -21,8 +21,7 @@ import java.io.IOException;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-public class JarFileWriter extends Jar {
+public class JarFileWriter extends Jar{
 
 
     public JarFileWriter() {
@@ -33,19 +32,16 @@ public class JarFileWriter extends Jar {
         this.setOwningTarget(new org.apache.tools.ant.Target());
     }
 
-    public void writeJarFile(File outputFolder,
-                             String outputFileName,
-                             File inputFileFolder) throws IOException,
-            Exception {
+    public void writeJarFile(File outputFolder,String outputFileName,File inputFileFolder) throws IOException,Exception {
 
-        if (!outputFolder.exists()) {
+        if (!outputFolder.exists()){
             outputFolder.mkdir(); //create the output path
-        } else {
+        }else{
             if (!outputFolder.isDirectory())
                 return;
         }
 
-        File targetFile = new File(outputFolder, outputFileName);
+        File targetFile = new File(outputFolder,outputFileName);
         this.setBasedir(inputFileFolder);
         this.setDestFile(targetFile);
 

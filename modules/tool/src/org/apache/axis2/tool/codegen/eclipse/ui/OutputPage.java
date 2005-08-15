@@ -14,7 +14,7 @@
  * the License.
  */
 
-package org.apache.axis.tool.codegen.eclipse.ui;
+package org.apache.axis2.tool.codegen.eclipse.ui;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -25,18 +25,22 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
 public class OutputPage extends AbstractWizardPage {
-
+   
     private Text outputLocation;
 
     private Button browseButton;
 
     private Button locationSelectCheckBox;
 
-
+   
     /**
      *  
      */
@@ -67,8 +71,8 @@ public class OutputPage extends AbstractWizardPage {
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         Label label = new Label(container, SWT.NULL);
         label
-                .setText(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
-                .getResourceString("page3.output.caption"));
+                .setText(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
+                        .getResourceString("page3.output.caption"));
 
         outputLocation = new Text(container, SWT.BORDER);
         outputLocation.setLayoutData(gd);
@@ -82,8 +86,8 @@ public class OutputPage extends AbstractWizardPage {
 
         browseButton = new Button(container, SWT.PUSH);
         browseButton
-                .setText(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
-                .getResourceString("page3.outselection.browse"));
+                .setText(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
+                        .getResourceString("page3.outselection.browse"));
         browseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 handleBrowse();
@@ -98,8 +102,8 @@ public class OutputPage extends AbstractWizardPage {
         /*
          * Update the buttons, in case this was restored from an earlier setting
          */
-        if (restoredFromPreviousSettings) {
-            handleModifyEvent();
+        if (restoredFromPreviousSettings){
+            	handleModifyEvent();
         }
     }
 
@@ -114,21 +118,23 @@ public class OutputPage extends AbstractWizardPage {
 
     /**
      * Worker method for handling modifications to the textbox
+     *  
      */
     private void handleModifyEvent() {
         String text = this.outputLocation.getText();
         if ((text == null) || (text.trim().equals(""))) {
-            updateStatus(org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
+            updateStatus(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
                     .getResourceString("page3.error.nolocation"));
             return;
         }
         updateStatus(null);
     }
 
-
+   
     /**
      * Handle the browse button events: opens a dialog where the user can choose
      * an external directory location
+     *  
      */
     private void handleBrowse() {
         boolean location = false;// locationSelectCheckBox.getSelection();
@@ -143,8 +149,8 @@ public class OutputPage extends AbstractWizardPage {
                     getShell(),
                     ResourcesPlugin.getWorkspace().getRoot(),
                     false,
-                    org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin
-                    .getResourceString("page3.containerbox.title"));
+                    org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
+                            .getResourceString("page3.containerbox.title"));
             if (dialog.open() == ContainerSelectionDialog.OK) {
                 Object[] result = dialog.getResult();
                 if (result.length == 1) {
@@ -157,7 +163,7 @@ public class OutputPage extends AbstractWizardPage {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.axis.tool.codegen.eclipse.ui.CodegenPage#getPageType()
+     * @see org.apache.axis2.tool.codegen.eclipse.ui.CodegenPage#getPageType()
      */
     public int getPageType() {
         return WSDL_2_JAVA_TYPE;

@@ -1,10 +1,10 @@
-package org.apache.axis.tool.core;
+package org.apache.axis2.tool.core;
+
+import java.io.File;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.types.FileSet;
-
-import java.io.File;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -22,7 +22,7 @@ import java.io.File;
  * limitations under the License.
  */
 
-public class FileCopier extends Copy {
+public class FileCopier extends Copy{
     public FileCopier() {
         this.setProject(new Project());
         this.getProject().init();
@@ -31,7 +31,7 @@ public class FileCopier extends Copy {
         this.setOwningTarget(new org.apache.tools.ant.Target());
     }
 
-    public void copyFiles(File sourceFile, File destinationDirectory) {
+    public void copyFiles(File sourceFile,File destinationDirectory,String filter){
 
         this.filesets.clear();
 
@@ -40,7 +40,12 @@ public class FileCopier extends Copy {
         else {
             FileSet fileset = new FileSet();
             fileset.setDir(sourceFile);
-            fileset.setIncludes("*/**");
+            if (filter!=null){
+                if (filter.matches("\\.\\w*")){
+                    fileset.setIncludes("*/**/*"+filter); 
+                }
+            }
+            
             this.addFileset(fileset);
         }
         this.setTodir(destinationDirectory);

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.tool.codegen.eclipse.util;
+package org.apache.axis2.tool.codegen.eclipse.util;
 
 public interface UIConstants {
-    public static final String JAVA = "Java";
-    public static final String C_SHARP = "C#";
-    public static final String C_PLUS_PLUS = "C++";
+    public static final String JAVA = "Java" ;
+    public static final String C_SHARP = "C#" ;
+    public static final String C_PLUS_PLUS = "C++" ;
 
 }

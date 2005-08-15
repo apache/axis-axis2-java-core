@@ -1,4 +1,4 @@
-package org.apache.axis.tool.service.control;
+package org.apache.axis2.tool.service.control;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

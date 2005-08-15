@@ -1,8 +1,16 @@
-package org.apache.axis.tool.core;
+package org.apache.axis2.tool.core;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
+import org.apache.axis2.wsdl.codegen.writer.ServiceXMLWriter;
+import org.apache.crimson.tree.XmlDocument;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -21,43 +29,61 @@ import java.util.ArrayList;
 */
 
 public class ServiceFileCreator {
-    public File createServiceFile(String providerClassName,
-                                  String serviceClass,
-                                  ArrayList methodList) throws Exception {
+    
+    public File createServiceFile(String serviceName,String implementationClassName,ArrayList methodList) throws Exception {
+        
+        String currentUserDir = System.getProperty("user.dir");
+        String fileName = "service.xml";
+        
+        ClassWriter serviceXmlWriter = new ServiceXMLWriter(currentUserDir);
+        writeClass(getServiceModel(serviceName,implementationClassName,methodList),serviceXmlWriter,fileName);
+
+        return new File(currentUserDir + File.separator + fileName);
 
 
-        String content = this.getFileString(providerClassName,
-                serviceClass,
-                methodList);
-        File serviceFile = new File("service.xml");
-
-        FileWriter fileWriter = new FileWriter(serviceFile);
-        fileWriter.write(content);
-        fileWriter.flush();
-
-        return serviceFile;
 
 
     }
 
-    private String getFileString(String providerClassName,
-                                 String serviceClass,
-                                 ArrayList methodList) {
-        String str = "<service provider=\"" +
-                providerClassName + "\" >" +
-                "    <java:implementation class=\"" +
-                serviceClass + "\" " +
-                "xmlns:java=\"http://ws.apache.org/axis2/deployment/java\"/>\n";
-        for (int i = 0; i < methodList.size(); i++) {
-            str = str + "    <operation name=\"" +
-                    methodList.get(i).toString() +
-                    "\" qname=\"" +
-                    methodList.get(i).toString() +
-                    "\" >\n";
-
+    private XmlDocument getServiceModel(String serviceName,String className,ArrayList methods){
+        XmlDocument doc = new XmlDocument();
+        Element rootElement = doc.createElement("interface");
+        addAttribute(doc,"package","", rootElement);
+        addAttribute(doc,"name",className,rootElement);
+        addAttribute(doc,"servicename",serviceName,rootElement);
+        Element methodElement = null;
+        int size = methods.size();
+        for(int i=0;i<size;i++){
+            methodElement = doc.createElement("method");
+            addAttribute(doc,"name",methods.get(i).toString(),methodElement);
+            rootElement.appendChild(methodElement);
         }
-        str = str + "</service>";
-        return str;
+        doc.appendChild(rootElement);
+        return doc;
     }
+    
+    private void addAttribute(XmlDocument document,String AttribName, String attribValue, Element element){
+        Attr attribute = document.createAttribute(AttribName);
+        attribute.setValue(attribValue);
+        element.setAttributeNode(attribute);
+    }
+    
+    /**
+     * A resusable method for the implementation of interface and implementation writing
+     * @param model
+     * @param writer
+     * @throws IOException
+     * @throws Exception
+     */
+    private void writeClass(XmlDocument model,ClassWriter writer,String fileName) throws IOException,Exception {
+        ByteArrayOutputStream memoryStream = new ByteArrayOutputStream();
+        model.write(memoryStream);
+        writer.loadTemplate();
+        writer.createOutFile(null,
+                 fileName);
+        writer.writeOutFile(new ByteArrayInputStream(memoryStream.toByteArray()));
+    }
+    
+   
 
 }

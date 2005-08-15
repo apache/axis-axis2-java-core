@@ -13,33 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.tool.codegen.eclipse.ui;
+package org.apache.axis2.tool.service.eclipse.ui;
 
-import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
-import org.apache.axis2.tool.codegen.eclipse.util.SettingsConstants;
+
+import org.apache.axis2.tool.service.eclipse.plugin.ServiceArchiver;
+import org.apache.axis2.tool.service.eclipse.util.SettingsConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.WizardPage;
 
-public abstract class AbstractWizardPage extends WizardPage implements SettingsConstants {
-    
+
+public abstract class AbstractServiceWizardPage extends WizardPage implements SettingsConstants{
     protected IDialogSettings settings;
     protected boolean restoredFromPreviousSettings = false;
     
-    public AbstractWizardPage(String pageName){
+    public AbstractServiceWizardPage(String pageName){
         super(pageName+".name");
         init(pageName);
     }
     
     protected void init(String pageName){
-        setTitle(CodegenWizardPlugin.getResourceString(pageName+".title"));
-        setDescription(CodegenWizardPlugin.getResourceString(pageName+".desc"));
-        setImageDescriptor(CodegenWizardPlugin.getWizardImageDescriptor());
+        setTitle(ServiceArchiver.getResourceString(pageName+".title"));
+        setDescription(ServiceArchiver.getResourceString(pageName+".desc"));
+        setImageDescriptor(ServiceArchiver.getWizardImageDescriptor());
         
         /*
          * Get the settings for this page. If there is no section in the
          * Plugin's settings for this OptionsPage, create a new section
          */
-        IDialogSettings rootSettings = CodegenWizardPlugin.getDefault()
+        IDialogSettings rootSettings = ServiceArchiver.getDefault()
                 .getDialogSettings();
         IDialogSettings section = rootSettings.getSection(this.getClass()
                 .getName());
@@ -59,6 +60,15 @@ public abstract class AbstractWizardPage extends WizardPage implements SettingsC
     }
 
     protected abstract void initializeDefaultSettings(); 
-   
-    public abstract int getPageType() ;
+    
+    //Default implementation
+    public boolean isSkipNext(){
+        return false;
+    }
+    
+    //public abstract WizardBean getBean();
+    
+    
+    
+    
 }

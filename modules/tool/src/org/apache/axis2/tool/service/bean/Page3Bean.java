@@ -1,4 +1,4 @@
-package org.apache.axis.tool.service.bean;
+package org.apache.axis2.tool.service.bean;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.

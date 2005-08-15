@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.tool.service.eclipse.plugin;
+package org.apache.axis2.tool.service.eclipse.plugin;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -41,7 +41,7 @@ public class ServiceArchiver extends AbstractUIPlugin {
         try {
             resourceBundle =
                     ResourceBundle.getBundle(
-                            "org.apache.axis.tool.service.resource.ServiceResources");
+                            "org.apache.axis2.tool.service.resource.ServiceResources");
         } catch (MissingResourceException x) {
             resourceBundle = null;
         }

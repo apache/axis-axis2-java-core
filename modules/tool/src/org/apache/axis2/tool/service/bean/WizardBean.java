@@ -1,4 +1,4 @@
-package org.apache.axis.tool.service.bean;
+package org.apache.axis2.tool.service.bean;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -17,16 +17,30 @@ package org.apache.axis.tool.service.bean;
  */
 
 public class WizardBean {
-    private Page1Bean page1bean;
+    private ClassFileSelectionBean classFileBean;
+    private WSDLFileLocationBean wsdlBean;
     private Page2Bean page2bean;
     private Page3Bean page3bean;
 
-    public Page1Bean getPage1bean() {
-        return page1bean;
+    
+    /**
+     * @return Returns the wsdlBean.
+     */
+    public WSDLFileLocationBean getWsdlBean() {
+        return wsdlBean;
+    }
+    /**
+     * @param wsdlBean The wsdlBean to set.
+     */
+    public void setWsdlBean(WSDLFileLocationBean wsdlBean) {
+        this.wsdlBean = wsdlBean;
+    }
+    public ClassFileSelectionBean getPage1bean() {
+        return classFileBean;
     }
 
-    public void setPage1bean(Page1Bean page1bean) {
-        this.page1bean = page1bean;
+    public void setPage1bean(ClassFileSelectionBean page1bean) {
+        this.classFileBean = page1bean;
     }
 
     public Page2Bean getPage2bean() {

@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.tool.service.eclipse.ui;
+package org.apache.axis2.tool.service.eclipse.ui;
 
 
-import org.apache.axis.tool.service.bean.WizardBean;
-import org.apache.axis.tool.service.control.Controller;
-import org.apache.axis.tool.service.control.ProcessException;
-import org.apache.axis.tool.service.eclipse.plugin.ServiceArchiver;
+import org.apache.axis2.tool.service.bean.WizardBean;
+import org.apache.axis2.tool.service.control.Controller;
+import org.apache.axis2.tool.service.control.ProcessException;
+import org.apache.axis2.tool.service.eclipse.plugin.ServiceArchiver;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
@@ -36,12 +35,40 @@ import org.eclipse.ui.IWorkbench;
  */
 public class ServiceArchiveWizard extends Wizard implements INewWizard {
 
-    private WizardPane1 wizardPane1;
-    private WizardPane2 wizardPane2;
-    private WizardPane3 wizardPane3;
-    private WizardPane4 wizardPane4;
+    private ClassFileLocationPage classFileLocationPage;
+    private WSDLFileSelectionPage wsdlFileSelectionPage;
+    private ServiceXMLFileSelectionPage serviceXMLFileSelectionPage;
+    private ServiceXMLGenerationPage serviceXMLGenerationPage;
+    private ServiceArchiveOutputLocationPage serviceArchiveOutputLocationPage;
 
-
+    private boolean updateServiceGenerationStatus;
+    private String classFileLocation;
+    private String wsdlFileGenerationStatus;
+    
+    
+    /**
+     * @return Returns the wsdlFileGenerationStatus.
+     */
+    public String getWsdlFileGenerationStatus() {
+        return wsdlFileGenerationStatus;
+    }
+    /**
+     * @param message The wsdlFileGenerationStatus to set.
+     */
+    public void updateWsdlFileGenerationStatus(String message) {
+        this.wsdlFileGenerationStatus = message;
+    }
+    public  String getClassFileLocation(){
+        return classFileLocation;
+    }
+    
+    public  void setClassFileLocation(String location){
+        this.classFileLocation = location;
+    }
+    
+    public void updateServiceGeneration(boolean status){
+        updateServiceGenerationStatus = status;
+    }
     /**
      * 
      */
@@ -54,28 +81,33 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
      */
-    public IWizardPage getNextPage(IWizardPage page) {
-        IWizardPage pageout = super.getNextPage(page);
-        if (page.equals(wizardPane2)) {
-            if (((WizardPane2) page).isSkipNextPage()) {
-                pageout = super.getNextPage(pageout);
-            }
-        }
-        return pageout;
-    }
+//    public IWizardPage getNextPage(IWizardPage page) {
+//       
+//        AbstractServiceWizardPage thisPage = (AbstractServiceWizardPage)page.getNextPage();
+//        while (thisPage!=null && thisPage.isSkipNext()) {
+//            if (thisPage.getNextPage()!=null) {
+//                thisPage = (AbstractServiceWizardPage)thisPage.getNextPage();
+//            }else{
+//                break;
+//            }
+//        }
+//        return thisPage;
+//    }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizard#addPages()
      */
     public void addPages() {
-        wizardPane1 = new WizardPane1();
-        this.addPage(wizardPane1);
-        wizardPane2 = new WizardPane2();
-        this.addPage(wizardPane2);
-        wizardPane3 = new WizardPane3();
-        this.addPage(wizardPane3);
-        wizardPane4 = new WizardPane4();
-        this.addPage(wizardPane4);
+        classFileLocationPage = new ClassFileLocationPage();
+        this.addPage(classFileLocationPage);
+        wsdlFileSelectionPage = new WSDLFileSelectionPage();
+        this.addPage(wsdlFileSelectionPage);
+        serviceXMLFileSelectionPage = new ServiceXMLFileSelectionPage();
+        this.addPage(serviceXMLFileSelectionPage);
+//        serviceXMLGenerationPage = new ServiceXMLGenerationPage();
+//        this.addPage(serviceXMLGenerationPage);
+        serviceArchiveOutputLocationPage = new ServiceArchiveOutputLocationPage();
+        this.addPage(serviceArchiveOutputLocationPage);
     }
 
     /* (non-Javadobc)
@@ -84,9 +116,12 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
     public boolean performFinish() {
         //create a wizard bean
         WizardBean wizBean = new WizardBean();
-        wizBean.setPage1bean(wizardPane1.getBean());
-        wizBean.setPage2bean(wizardPane2.getBean());
-        wizBean.setPage3bean(wizardPane4.getBean());
+        wizBean.setPage1bean(classFileLocationPage.getBean());
+        wizBean.setWsdlBean(wsdlFileSelectionPage.getBean());
+        wizBean.setPage2bean(serviceXMLFileSelectionPage.getBean());
+        wizBean.setPage3bean(serviceArchiveOutputLocationPage.getBean());
+        
+        
         try {
             new Controller().process(wizBean);
             showSuccessMessage(" jar file creation successful! ");

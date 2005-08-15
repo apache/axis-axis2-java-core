@@ -15,15 +15,14 @@ package org.apache.axis2.tool.util;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 public class Constants {
-    public class UIConstants {
-        public static final int LABEL_WIDTH = 100;
-        public static final int RADIO_BUTTON_WIDTH = 200;
-        public static final int TEXT_BOX_WIDTH = 250;
-        public static final int BROWSE_BUTTON_WIDTH = 20;
-        public static final int GENERAL_BUTTON_WIDTH = 80;
+    public class UIConstants{
+        public static final int LABEL_WIDTH=100;
+        public static final int RADIO_BUTTON_WIDTH=200;
+        public static final int TEXT_BOX_WIDTH=250;
+        public static final int BROWSE_BUTTON_WIDTH=20;
+        public static final int GENERAL_BUTTON_WIDTH=80;
 
-        public static final int GENERAL_COMP_HEIGHT = 20;
+        public static final int GENERAL_COMP_HEIGHT=20;
     }
 }

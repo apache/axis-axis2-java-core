@@ -13,15 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.tool.codegen;
+package org.apache.axis2.tool.codegen;
 
-import org.apache.axis.tool.codegen.eclipse.util.UIConstants;
-import org.apache.axis.wsdl.builder.WOMBuilderFactory;
-import org.apache.axis.wsdl.codegen.CommandLineOption;
-import org.apache.axis.wsdl.codegen.CommandLineOptionConstants;
-import org.apache.wsdl.WSDLDescription;
-
-import javax.wsdl.WSDLException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,27 +22,42 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.wsdl.WSDLException;
+
+import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
+import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis2.wsdl.codegen.CommandLineOption;
+import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
+import org.apache.wsdl.WSDLDescription;
+
 
 public class WSDL2JavaGenerator {
-
+    
     /**
      * Maps a string containing the name of a language to a constant defined in CommandLineOptionConstants.LanguageNames
      * 
      * @param UILangValue a string containg a language, e.g. "java", "cs", "cpp" or "vb"
      * @return a normalized string constant
      */
-    private String mapLanguagesWithCombo(String UILangValue) {
-        if (UIConstants.JAVA.equals(UILangValue)) {
-            return CommandLineOptionConstants.LanguageNames.JAVA;
-        } else if (UIConstants.C_SHARP.equals(UILangValue)) {
-            return CommandLineOptionConstants.LanguageNames.C_SHARP;
-        } else if (UIConstants.C_PLUS_PLUS.equals(UILangValue)) {
-            return CommandLineOptionConstants.LanguageNames.C_PLUS_PLUS;
-        } else {
-            return null;
-        }
+    private String mapLanguagesWithCombo(String UILangValue)
+    {
+       if (UIConstants.JAVA.equals(UILangValue))
+       {
+          return CommandLineOptionConstants.LanguageNames.JAVA;
+       }
+       else if (UIConstants.C_SHARP.equals(UILangValue))
+       {
+          return CommandLineOptionConstants.LanguageNames.C_SHARP;
+       }
+       else if (UIConstants.C_PLUS_PLUS.equals(UILangValue))
+       {
+          return CommandLineOptionConstants.LanguageNames.C_PLUS_PLUS;
+       }
+       else
+       {
+          return null;
+       }
     }
-
     /**
      * Creates a list of parameters for the code generator based on the decisions made by the user on the OptionsPage
      * (page2). For each setting, there is a Command-Line option for the Axis2 code generator.
@@ -57,89 +65,81 @@ public class WSDL2JavaGenerator {
      * @return a Map with keys from CommandLineOptionConstants with the values entered by the user on the Options Page.
      */
     public Map fillOptionMap(boolean isAyncOnly,
-                             boolean isSyncOnly,
-                             boolean isServerSide,
-                             boolean isServerXML,
-                             boolean isTestCase,
-                             String WSDLFileName,
-                             String packageName,
-                             String selectedLanguage,
-                             String outputLocation) {
-        Map optionMap = new HashMap();
-        //WSDL file name
-        optionMap.put(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
-                        getStringArray(WSDLFileName)));
-
-        //Async only
-        if (isAyncOnly) {
-            optionMap.put(CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION,
-                            new String[0]));
-        }
-        //sync only
-        if (isSyncOnly) {
-            optionMap.put(CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION,
-                            new String[0]));
-        }
-        //serverside
-        if (isServerSide) {
-            optionMap.put(CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
-                            new String[0]));
-            //server xml
-            if (isServerXML) {
-                optionMap.put(
-                        CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
-                        new CommandLineOption(
-                                CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
-                                new String[0]));
-            }
-        }
-        //test case
-        if (isTestCase) {
-            optionMap.put(CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
-                    new CommandLineOption(
-                            CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
-                            new String[0]));
-        }
-        //package name
-        optionMap.put(CommandLineOptionConstants.PACKAGE_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.PACKAGE_OPTION,
-                        getStringArray(packageName)));
-        //selected language
-        optionMap.put(CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.STUB_LANGUAGE_OPTION,
-                        getStringArray(mapLanguagesWithCombo(selectedLanguage))));
-        //output location
-        optionMap.put(CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
-                        getStringArray(outputLocation)));
-
-        // System.out.println(page3.getOutputLocation());
-        return optionMap;
+            		  boolean isSyncOnly,
+            		  boolean isServerSide,
+            		  boolean isServerXML,
+            		  boolean isTestCase,
+            		  String WSDLFileName,
+            		  String packageName,
+            		  String selectedLanguage,
+            		  String outputLocation
+            		  )
+    {
+       Map optionMap = new HashMap();
+       //WSDL file name
+       optionMap.put(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION, new CommandLineOption(
+          CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION, getStringArray(WSDLFileName)));
+       
+       //Async only
+       if (isAyncOnly)
+       {
+          optionMap.put(CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION, new CommandLineOption(
+             CommandLineOptionConstants.CODEGEN_ASYNC_ONLY_OPTION, new String[0]));
+       }
+       //sync only
+       if (isSyncOnly)
+       {
+          optionMap.put(CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION, new CommandLineOption(
+             CommandLineOptionConstants.CODEGEN_SYNC_ONLY_OPTION, new String[0]));
+       }
+       //serverside
+       if (isServerSide)
+       {
+          optionMap.put(CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION, new CommandLineOption(
+             CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION, new String[0]));
+          //server xml
+          if (isServerXML)
+          {
+             optionMap.put(CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION, new CommandLineOption(
+                CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION, new String[0]));
+          }
+       }
+       //test case
+       if (isTestCase)
+       {
+          optionMap.put(CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION, new CommandLineOption(
+             CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION, new String[0]));
+       }
+       //package name
+       optionMap.put(CommandLineOptionConstants.PACKAGE_OPTION, new CommandLineOption(
+          CommandLineOptionConstants.PACKAGE_OPTION, getStringArray(packageName)));
+       //selected language
+       optionMap.put(CommandLineOptionConstants.STUB_LANGUAGE_OPTION, new CommandLineOption(
+          CommandLineOptionConstants.STUB_LANGUAGE_OPTION, getStringArray(mapLanguagesWithCombo(selectedLanguage))));
+       //output location
+       optionMap.put(CommandLineOptionConstants.OUTPUT_LOCATION_OPTION, new CommandLineOption(
+          CommandLineOptionConstants.OUTPUT_LOCATION_OPTION, getStringArray(outputLocation)));
+       
+       //data binding constant
+       // #########################################################################################
+       // This is set to the default NONE option since eclipse cannot load the XBeans thingy
+       //###########################################################################################
+       optionMap.put(CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, new CommandLineOption(
+               CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, getStringArray(0+"")));
+       return optionMap;
     }
-
     /**
      * Reads the WSDL Object Model from the given location.
-     *
+     * 
      * @param wsdlLocation the filesystem location (full path) of the WSDL file to read in.
      * @return the WSDLDescription object containing the WSDL Object Model of the given WSDL file
      * @throws WSDLException when WSDL File is invalid
-     * @throws IOException   on errors reading the WSDL file
+     * @throws IOException on errors reading the WSDL file
      */
-    public WSDLDescription getWOM(String wsdlLocation) throws WSDLException,
-            IOException {
-        InputStream in = new FileInputStream(new File(wsdlLocation));
-        return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
+    public WSDLDescription getWOM(String wsdlLocation) throws WSDLException, IOException
+    {
+       InputStream in = new FileInputStream(new File(wsdlLocation));
+       return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in).getDescription();
     }
 
     /**
@@ -148,9 +148,10 @@ public class WSDL2JavaGenerator {
      * @param value a single string
      * @return an array containing only one element
      */
-    private String[] getStringArray(String value) {
-        String[] values = new String[1];
-        values[0] = value;
-        return values;
+    private String[] getStringArray(String value)
+    {
+       String[] values = new String[1];
+       values[0] = value;
+       return values;
     }
 }

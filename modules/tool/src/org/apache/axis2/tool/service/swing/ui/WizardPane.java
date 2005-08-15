@@ -1,4 +1,4 @@
-package org.apache.axis.tool.service.swing.ui;
+package org.apache.axis2.tool.service.swing.ui;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;

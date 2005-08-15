@@ -1,13 +1,14 @@
-package org.apache.axis.tool.service.control;
+package org.apache.axis2.tool.service.control;
 
-import org.apache.axis.tool.core.ClassFileHandler;
-import org.apache.axis.tool.core.FileCopier;
-import org.apache.axis.tool.core.JarFileWriter;
-import org.apache.axis.tool.core.ServiceFileCreator;
-import org.apache.axis.tool.service.bean.Page1Bean;
-import org.apache.axis.tool.service.bean.Page2Bean;
-import org.apache.axis.tool.service.bean.Page3Bean;
-import org.apache.axis.tool.service.bean.WizardBean;
+import org.apache.axis2.tool.core.ClassFileHandler;
+import org.apache.axis2.tool.core.FileCopier;
+import org.apache.axis2.tool.core.JarFileWriter;
+import org.apache.axis2.tool.core.ServiceFileCreator;
+import org.apache.axis2.tool.service.bean.ClassFileSelectionBean;
+import org.apache.axis2.tool.service.bean.Page2Bean;
+import org.apache.axis2.tool.service.bean.Page3Bean;
+import org.apache.axis2.tool.service.bean.WSDLFileLocationBean;
+import org.apache.axis2.tool.service.bean.WizardBean;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,15 +55,18 @@ public class Controller {
 
     public void process(WizardBean bean) throws ProcessException, Exception {
 
-        Page1Bean page1Bean = bean.getPage1bean();
+        ClassFileSelectionBean page1Bean = bean.getPage1bean();
+        WSDLFileLocationBean wsdlBean = bean.getWsdlBean();
         Page2Bean page2Bean = bean.getPage2bean();
         Page3Bean page3Bean = bean.getPage3bean();
 
         File serviceFile = null;
+        File wsdlFile = null;
         File classFileFolder = null;
         File outputFolder = null;
         String outputFileName = null;
         boolean isServiceCreated = false;
+        boolean isWSDLAvailable = false;
 
         //see if the class file location is valid
         classFileFolder = new File(page1Bean.getFileLocation());
@@ -96,6 +100,18 @@ public class Controller {
             isServiceCreated = true;
         }
 
+        //see if the WSDL file is available
+        if (!wsdlBean.isSkip()){
+            wsdlFile = new File(wsdlBean.getWSDLFileName());
+            if (!wsdlFile.exists()) {
+                throw new ProcessException(
+                        "Specified WSDL file is missing!");
+            }else{
+                isWSDLAvailable = true;
+            }
+        }
+        
+        
         outputFolder = new File(page3Bean.getOutputFolderName());
         outputFileName = page3Bean.getOutputFileName();
         if (!outputFileName.toLowerCase().endsWith(".jar")) {
@@ -111,9 +127,11 @@ public class Controller {
             File metaInfFolder = new File(tempFileFolder, "META-INF");
             metaInfFolder.mkdir();
 
-            new FileCopier().copyFiles(classFileFolder, tempFileFolder);
-            new FileCopier().copyFiles(serviceFile, metaInfFolder);
-
+            new FileCopier().copyFiles(classFileFolder, tempFileFolder,null);
+            new FileCopier().copyFiles(serviceFile, metaInfFolder,null);
+            if (isWSDLAvailable){
+                new FileCopier().copyFiles(wsdlFile, metaInfFolder,null);
+            }
             //jar the temp directory. the output folder will be created if missing
             new JarFileWriter().writeJarFile(outputFolder,
                     outputFileName,
@@ -121,12 +139,27 @@ public class Controller {
         } catch (Exception e) {
             throw new ProcessException(e);
         } finally {
-            tempFileFolder.delete();
-            if (isServiceCreated)
+            deleteDir(tempFileFolder);
+             if (isServiceCreated)
                 serviceFile.delete();
 
 
         }
 
+    }
+    
+    private  boolean deleteDir(File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i=0; i<children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+    
+        // The directory is now empty so delete it
+        return dir.delete();
     }
 }

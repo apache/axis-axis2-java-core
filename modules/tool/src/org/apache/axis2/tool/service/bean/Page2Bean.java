@@ -1,4 +1,4 @@
-package org.apache.axis.tool.service.bean;
+package org.apache.axis2.tool.service.bean;
 
 import java.util.ArrayList;
 
@@ -27,7 +27,21 @@ public class Page2Bean {
     private String providerClassName;
 
     private ArrayList selectedMethodNames;
-
+    private String serviceName;
+    
+    
+    /**
+     * @return Returns the serviceName.
+     */
+    public String getServiceName() {
+        return serviceName;
+    }
+    /**
+     * @param serviceName The serviceName to set.
+     */
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
     public String getProviderClassName() {
         return providerClassName;
     }

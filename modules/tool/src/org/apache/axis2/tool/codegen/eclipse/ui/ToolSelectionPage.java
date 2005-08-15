@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.tool.codegen.eclipse.ui;
+package org.apache.axis2.tool.codegen.eclipse.ui;
 
-import org.apache.axis.tool.codegen.eclipse.CodeGenWizard;
-import org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
+import org.apache.axis2.tool.codegen.eclipse.CodeGenWizard;
+import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,20 +28,19 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  * @author Ajith
- *         <p/>
- *         TODO To change the template for this generated type comment go to
- *         Window - Preferences - Java - Code Style - Code Templates
+ *
+ * TODO To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Style - Code Templates
  */
 public class ToolSelectionPage extends AbstractWizardPage {
-
+   
     private Button java2WSDLRadioButton;
     private Button wsdl2JavaRadioButton;
-
     public ToolSelectionPage() {
         super("page0");
-
+       
     }
-
+    
     /**
      * Creates a default value for the settings on this page
      */
@@ -53,8 +52,8 @@ public class ToolSelectionPage extends AbstractWizardPage {
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createControl(Composite parent) {
-
+public void createControl(Composite parent) {
+        
         Composite container = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();
         container.setLayout(layout);
@@ -62,64 +61,62 @@ public class ToolSelectionPage extends AbstractWizardPage {
         layout.verticalSpacing = 9;
 
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-
+        
         Label label = new Label(container, SWT.NULL);
-        label.setText(
-                CodegenWizardPlugin.getResourceString("page0.options.desc"));
-
-        wsdl2JavaRadioButton = new Button(container, SWT.RADIO);
-        wsdl2JavaRadioButton.setText(
-                CodegenWizardPlugin.getResourceString(
-                        "page0.wsdl2java.caption"));
-        wsdl2JavaRadioButton.setToolTipText(
-                CodegenWizardPlugin.getResourceString("page0.wsdl2java.desc"));
-        wsdl2JavaRadioButton.setSelection(
-                settings.getBoolean(PREF_TOOL_SELECTION_WSDL2JAVA));
-        wsdl2JavaRadioButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                handleCheckboxSelection();
-            }
+        label.setText(CodegenWizardPlugin.getResourceString("page0.options.desc"));
+             
+        wsdl2JavaRadioButton = new Button(container,SWT.RADIO);
+        wsdl2JavaRadioButton.setText(CodegenWizardPlugin.getResourceString("page0.wsdl2java.caption"));
+        wsdl2JavaRadioButton.setToolTipText(CodegenWizardPlugin.getResourceString("page0.wsdl2java.desc"));
+        wsdl2JavaRadioButton.setSelection(settings.getBoolean(PREF_TOOL_SELECTION_WSDL2JAVA));
+        wsdl2JavaRadioButton.addSelectionListener(new SelectionAdapter(){
+           public void widgetSelected(SelectionEvent e)
+           {
+              handleCheckboxSelection();
+           }
         });
-
-        java2WSDLRadioButton = new Button(container, SWT.RADIO);
-        java2WSDLRadioButton.setText(
-                CodegenWizardPlugin.getResourceString(
-                        "page0.java2wsdl.caption"));
-        java2WSDLRadioButton.setToolTipText(
-                CodegenWizardPlugin.getResourceString("page0.java2wsdl.desc"));
-        java2WSDLRadioButton.setSelection(
-                settings.getBoolean(PREF_TOOL_SELECTION_JAVA2WSDL));
-        java2WSDLRadioButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                handleCheckboxSelection();
-            }
+        
+        java2WSDLRadioButton = new Button(container,SWT.RADIO);
+        java2WSDLRadioButton.setText(CodegenWizardPlugin.getResourceString("page0.java2wsdl.caption"));
+        java2WSDLRadioButton.setToolTipText(CodegenWizardPlugin.getResourceString("page0.java2wsdl.desc"));
+        java2WSDLRadioButton.setSelection(settings.getBoolean(PREF_TOOL_SELECTION_JAVA2WSDL));
+        java2WSDLRadioButton.addSelectionListener(new SelectionAdapter(){
+           public void widgetSelected(SelectionEvent e)
+           {
+              handleCheckboxSelection();
+           }
         });
-
+        
+        ///////////////////////////////////////
+        ///  The java2WSDL is disabled  ///
+        java2WSDLRadioButton.setEnabled(false);
+        //////////////////////////////////////
+        
         handleCheckboxSelection();
         setControl(container);
 
     }
 
-    private void handleCheckboxSelection() {
-        CodeGenWizard wizard = (CodeGenWizard) this.getWizard();
-        if (wsdl2JavaRadioButton.getSelection()) {
-            settings.put(PREF_TOOL_SELECTION_WSDL2JAVA, true);
-            settings.put(PREF_TOOL_SELECTION_JAVA2WSDL, false);
-            wizard.setSelectedWizardType(WSDL_2_JAVA_TYPE);
-        } else if (java2WSDLRadioButton.getSelection()) {
-            settings.put(PREF_TOOL_SELECTION_WSDL2JAVA, false);
-            settings.put(PREF_TOOL_SELECTION_JAVA2WSDL, true);
-            wizard.setSelectedWizardType(JAVA_2_WSDL_TYPE);
-        }
-    }
-
-
+	private void handleCheckboxSelection(){
+	    CodeGenWizard wizard = (CodeGenWizard)this.getWizard();
+	    if (wsdl2JavaRadioButton.getSelection()){
+	        settings.put(PREF_TOOL_SELECTION_WSDL2JAVA,true);
+	        settings.put(PREF_TOOL_SELECTION_JAVA2WSDL,false);
+	       wizard.setSelectedWizardType(WSDL_2_JAVA_TYPE); 
+	    }else if (java2WSDLRadioButton.getSelection()){
+	        settings.put(PREF_TOOL_SELECTION_WSDL2JAVA,false);
+	        settings.put(PREF_TOOL_SELECTION_JAVA2WSDL,true);
+	        wizard.setSelectedWizardType(JAVA_2_WSDL_TYPE); 
+	    }
+	}
+	
+	
     /* (non-Javadoc)
-     * @see org.apache.axis.tool.codegen.eclipse.ui.CodegenPage#getPageType()
+     * @see org.apache.axis2.tool.codegen.eclipse.ui.CodegenPage#getPageType()
      */
     public int getPageType() {
-        return UNSPECIFIED_TYPE;
+         return UNSPECIFIED_TYPE;
     }
-
-
+    
+        
 }

@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.tool.codegen.eclipse.ui;
+package org.apache.axis2.tool.codegen.eclipse.ui;
 
-import org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
+import java.io.File;
+
+import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -23,18 +25,20 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-
-import java.io.File;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * @author Ajith
- *         <p/>
- *         TODO To change the template for this generated type comment go to
- *         Window - Preferences - Java - Code Style - Code Templates
+ *
+ * TODO To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Style - Code Templates
  */
 public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
-
+    
     private Text outputFolderTextBox;
     private Text outputFileNameTextBox;
 
@@ -44,22 +48,20 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
     public JavaWSDLOutputLocationPage() {
         super("page6");
     }
-
     /* (non-Javadoc)
-     * @see org.apache.axis.tool.codegen.eclipse.ui.AbstractWizardPage#initializeDefaultSettings()
+     * @see org.apache.axis2.tool.codegen.eclipse.ui.AbstractWizardPage#initializeDefaultSettings()
      */
     protected void initializeDefaultSettings() {
-        settings.put(PREF_JAVA_OUTPUT_WSDL_LOCATION,
-                System.getProperty("user.dir"));
-        settings.put(JAVA_OUTPUT_WSDL_NAME, "service.wsdl");
+        settings.put(PREF_JAVA_OUTPUT_WSDL_LOCATION,System.getProperty("user.dir"));
+        settings.put(JAVA_OUTPUT_WSDL_NAME,"service.wsdl");
 
     }
 
     /* (non-Javadoc)
-     * @see org.apache.axis.tool.codegen.eclipse.ui.AbstractWizardPage#getPageType()
+     * @see org.apache.axis2.tool.codegen.eclipse.ui.AbstractWizardPage#getPageType()
      */
     public int getPageType() {
-        return JAVA_2_WSDL_TYPE;
+         return JAVA_2_WSDL_TYPE;
     }
 
     /* (non-Javadoc)
@@ -77,74 +79,71 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
         label.setText(CodegenWizardPlugin
                 .getResourceString("page6.output.label"));
 
-        outputFolderTextBox = new Text(container, SWT.BORDER);
+        outputFolderTextBox = new Text(container,SWT.BORDER);
         outputFolderTextBox.setLayoutData(gd);
-        outputFolderTextBox.setText(
-                settings.get(PREF_JAVA_OUTPUT_WSDL_LOCATION));
-        outputFolderTextBox.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
+        outputFolderTextBox.setText(settings.get(PREF_JAVA_OUTPUT_WSDL_LOCATION));
+        outputFolderTextBox.addModifyListener(new ModifyListener(){
+            public void modifyText(ModifyEvent e){
                 handleFolderTextChange();
             }
         });
-
-        Button browseButton = new Button(container, SWT.PUSH);
+        
+        Button  browseButton = new Button(container,SWT.PUSH);
         browseButton.setText(CodegenWizardPlugin
                 .getResourceString("general.browse"));
-        browseButton.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
-                handleBrowse();
+        browseButton.addSelectionListener(new SelectionListener(){
+            public void widgetSelected(SelectionEvent e){
+               handleBrowse(); 
             }
-
-            public void widgetDefaultSelected(SelectionEvent e) {
-            }
+            public void widgetDefaultSelected(SelectionEvent e){}
         });
-
+        
         label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
                 .getResourceString("page6.outputname.label"));
-
+        
         gd = new GridData(GridData.FILL_HORIZONTAL);
-        outputFileNameTextBox = new Text(container, SWT.BORDER);
+        outputFileNameTextBox = new Text(container,SWT.BORDER);
         outputFileNameTextBox.setLayoutData(gd);
         outputFileNameTextBox.setText(settings.get(JAVA_OUTPUT_WSDL_NAME));
-        outputFileNameTextBox.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
-                handleFileNameTextChange();
+        outputFileNameTextBox.addModifyListener(new ModifyListener(){
+            public void modifyText(ModifyEvent e){
+               handleFileNameTextChange();
             }
         });
-
-        if (restoredFromPreviousSettings) {
+        
+        if(restoredFromPreviousSettings){
             handleFolderTextChange();
             handleFolderTextChange();
         }
-
+        
         setControl(container);
 
     }
-
-    private void handleFolderTextChange() {
+    
+    private void handleFolderTextChange(){
         String outputFolder = outputFolderTextBox.getText();
-        settings.put(PREF_JAVA_OUTPUT_WSDL_LOCATION, outputFolder);
-        if ("".equals(outputFolder.trim())) {
+        settings.put(PREF_JAVA_OUTPUT_WSDL_LOCATION,outputFolder);
+        if ("".equals(outputFolder.trim())){
             updateStatus("Input a proper location for the output");
-        } else {
+        }else{
             updateStatus(null);
         }
     }
-
-    private void handleFileNameTextChange() {
-        String outFileName = outputFileNameTextBox.getText();
-        settings.put(JAVA_OUTPUT_WSDL_NAME, outFileName);
-        if ("".equals(outFileName.trim())) {
+    
+    private void handleFileNameTextChange(){
+        String outFileName = outputFileNameTextBox .getText();
+        settings.put(JAVA_OUTPUT_WSDL_NAME,outFileName);
+        if ("".equals(outFileName.trim())){
             updateStatus("Input a file name");
-        } else if (outFileName.matches("\\W")) {
+        }else if (outFileName.matches("\\W")){
             updateStatus("Input a valid file name");
-        } else {
-            updateStatus(null);
+        }else{
+            updateStatus(null); 
         }
     }
-
-    private void handleBrowse() {
+    
+    private void handleBrowse(){
         DirectoryDialog fileDialog = new DirectoryDialog(this.getShell());
         String dirName = fileDialog.open();
         if (dirName != null) {
@@ -152,21 +151,21 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
         }
 
     }
-
-    public String getFullFileName() {
-        String folder = this.outputFolderTextBox.getText();
+    
+    public String getFullFileName(){
+        String folder =this.outputFolderTextBox.getText();
         String fileName = this.outputFileNameTextBox.getText();
-        if (!fileName.endsWith(".wsdl")) {
+        if (!fileName.endsWith(".wsdl")){
             fileName = fileName + ".wsdl";
         }
-        return folder + File.separator + fileName;
+        return folder + File.separator +fileName;
     }
-
-    public String getOutputWSDLName() {
+    
+    public String getOutputWSDLName(){
         return this.outputFileNameTextBox.getText();
     }
-
-    public String getOutputLocation() {
+    
+    public String getOutputLocation(){
         return this.outputFolderTextBox.getText();
     }
 

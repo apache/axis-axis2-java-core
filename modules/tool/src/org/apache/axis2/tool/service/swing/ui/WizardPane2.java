@@ -1,10 +1,10 @@
-package org.apache.axis.tool.service.swing.ui;
+package org.apache.axis2.tool.service.swing.ui;
 
-import org.apache.axis.tool.service.bean.Page2Bean;
-import org.apache.axis.tool.service.bean.WizardBean;
-import org.apache.axis.tool.service.control.Controller;
-import org.apache.axis.tool.service.control.ProcessException;
-import org.apache.axis.tool.util.Constants;
+import org.apache.axis2.tool.service.bean.Page2Bean;
+import org.apache.axis2.tool.service.bean.WizardBean;
+import org.apache.axis2.tool.service.control.Controller;
+import org.apache.axis2.tool.service.control.ProcessException;
+import org.apache.axis2.tool.util.Constants;
 
 import javax.swing.*;
 import java.awt.*;

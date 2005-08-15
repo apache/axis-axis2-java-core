@@ -1,8 +1,8 @@
-package org.apache.axis.tool.service.swing.ui;
+package org.apache.axis2.tool.service.swing.ui;
 
-import org.apache.axis.tool.service.bean.Page1Bean;
-import org.apache.axis.tool.service.bean.WizardBean;
-import org.apache.axis.tool.util.Constants;
+import org.apache.axis2.tool.service.bean.ClassFileSelectionBean;
+import org.apache.axis2.tool.service.bean.WizardBean;
+import org.apache.axis2.tool.util.Constants;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -28,7 +28,7 @@ import java.awt.event.KeyListener;
 
 public class WizardPane1 extends WizardPane {
 
-    private Page1Bean myBean = null;
+    private ClassFileSelectionBean myBean = null;
 
     private JLabel classFileLocationLabel;
     private JTextField classFileLocationTextBox;
@@ -44,7 +44,7 @@ public class WizardPane1 extends WizardPane {
             myBean = wizardBean.getPage1bean();
             this.classFileLocationTextBox.setText(myBean.getFileLocation());
         } else {
-            myBean = new Page1Bean();
+            myBean = new ClassFileSelectionBean();
             wizardBean.setPage1bean(myBean);
         }
 

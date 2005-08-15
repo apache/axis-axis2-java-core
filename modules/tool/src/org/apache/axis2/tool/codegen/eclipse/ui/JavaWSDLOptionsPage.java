@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis.tool.codegen.eclipse.ui;
+package org.apache.axis2.tool.codegen.eclipse.ui;
 
-import org.apache.axis.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis.wsdl.fromJava.Emitter;
+import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -75,7 +75,7 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
     private Text bindingTextBox;
 
     private Combo modeSelectionCombo;
-
+    
     private Combo styleSelectionCombo;
 
 
@@ -84,15 +84,15 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.axis.tool.codegen.eclipse.ui.AbstractWizardPage#initializeDefaultSettings()
+     * @see org.apache.axis2.tool.codegen.eclipse.ui.AbstractWizardPage#initializeDefaultSettings()
      */
     protected void initializeDefaultSettings() {
-        settings.put(PREF_JAVA_INPUT_WSDL_NAME, "");
-        settings.put(PREF_JAVA_LOCATION, "http://localhost:8080");
-        settings.put(PREF_JAVA_BINDING_NAME, "");
-        settings.put(PREF_JAVA_PORTYPE_NAME, "");
-        settings.put(PREF_JAVA_MODE_INDEX, 0);
-        settings.put(PREF_JAVA_STYLE_INDEX, 0);
+       settings.put(PREF_JAVA_INPUT_WSDL_NAME,"");
+       settings.put(PREF_JAVA_LOCATION,"http://localhost:8080");
+       settings.put(PREF_JAVA_BINDING_NAME,"");
+       settings.put(PREF_JAVA_PORTYPE_NAME,"");
+       settings.put(PREF_JAVA_MODE_INDEX,0);
+       settings.put(PREF_JAVA_STYLE_INDEX,0);
     }
 
     /**
@@ -106,7 +106,7 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.axis.tool.codegen.eclipse.ui.CodegenPage#getPageType()
+     * @see org.apache.axis2.tool.codegen.eclipse.ui.CodegenPage#getPageType()
      */
     public int getPageType() {
         return JAVA_2_WSDL_TYPE;
@@ -134,8 +134,7 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         inputWSDLNameTextBox.setText(settings.get(PREF_JAVA_INPUT_WSDL_NAME));
         inputWSDLNameTextBox.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                settings.put(PREF_JAVA_INPUT_WSDL_NAME,
-                        inputWSDLNameTextBox.getText());
+                settings.put(PREF_JAVA_INPUT_WSDL_NAME, inputWSDLNameTextBox.getText());
                 //dialogChanged();
             }
         });
@@ -150,12 +149,11 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         serviceLocationURLTextBox.setText(settings.get(PREF_JAVA_LOCATION));
         serviceLocationURLTextBox.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                settings.put(PREF_JAVA_LOCATION,
-                        serviceLocationURLTextBox.getText());
+                settings.put(PREF_JAVA_LOCATION, serviceLocationURLTextBox.getText());
                 //dialogChanged();
             }
         });
-
+        
         label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
                 .getResourceString("page5.binding.label"));
@@ -170,7 +168,7 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
                 //dialogChanged();
             }
         });
-
+        
         label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
                 .getResourceString("page5.porttype.label"));
@@ -181,8 +179,7 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         portTypeNameTextBox.setText(settings.get(PREF_JAVA_PORTYPE_NAME));
         portTypeNameTextBox.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                settings.put(PREF_JAVA_PORTYPE_NAME,
-                        portTypeNameTextBox.getText());
+                settings.put(PREF_JAVA_PORTYPE_NAME, portTypeNameTextBox.getText());
                 //dialogChanged();
             }
         });
@@ -191,48 +188,38 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         label = new Label(container, SWT.NULL);
         label
                 .setText(CodegenWizardPlugin
-                .getResourceString("page5.mode.label"));
+                        .getResourceString("page5.mode.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
-        modeSelectionCombo =
-                new Combo(container,
-                        SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+        modeSelectionCombo = new Combo(container, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
         modeSelectionCombo.setLayoutData(gd);
-        // modeSelectionCombo.
+       // modeSelectionCombo.
         populateModeCombo();
-        modeSelectionCombo.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
-                settings.put(PREF_JAVA_MODE_INDEX,
-                        modeSelectionCombo.getSelectionIndex());
+        modeSelectionCombo.addSelectionListener(new SelectionListener(){
+            public void widgetSelected(SelectionEvent e){
+                settings.put(PREF_JAVA_MODE_INDEX,modeSelectionCombo.getSelectionIndex());
             }
-
-            public void widgetDefaultSelected(SelectionEvent e) {
-            }
+            public void widgetDefaultSelected(SelectionEvent e){}
         });
         
         // #####################################################
         label = new Label(container, SWT.NULL);
         label
                 .setText(CodegenWizardPlugin
-                .getResourceString("page5.style.label"));
+                        .getResourceString("page5.style.label"));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
-        styleSelectionCombo =
-                new Combo(container,
-                        SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+        styleSelectionCombo = new Combo(container, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
         styleSelectionCombo.setLayoutData(gd);
         populateStyleCombo();
-        styleSelectionCombo.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
-                settings.put(PREF_JAVA_STYLE_INDEX,
-                        styleSelectionCombo.getSelectionIndex());
+        styleSelectionCombo.addSelectionListener(new SelectionListener(){
+            public void widgetSelected(SelectionEvent e){
+                settings.put(PREF_JAVA_STYLE_INDEX,styleSelectionCombo.getSelectionIndex());
             }
-
-            public void widgetDefaultSelected(SelectionEvent e) {
-            }
+            public void widgetDefaultSelected(SelectionEvent e){}
         });
-
-
+        
+        
         setControl(container);
 
     }
@@ -252,28 +239,24 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
 
         styleSelectionCombo.select(settings.getInt(PREF_JAVA_STYLE_INDEX));
     }
-
-    public int getMode() {
-        String selectedOption = modeSelectionCombo.getItem(
-                modeSelectionCombo.getSelectionIndex());
-        if (WSDL_ALL.equals(selectedOption)) {
+    public int getMode(){
+        String selectedOption = modeSelectionCombo.getItem(modeSelectionCombo.getSelectionIndex());
+        if (WSDL_ALL.equals(selectedOption)){
             return Emitter.MODE_ALL;
-        } else if (WSDL_INTERFACE_ONLY.equals(selectedOption)) {
+        }else if (WSDL_INTERFACE_ONLY.equals(selectedOption)){
             return Emitter.MODE_INTERFACE;
-        } else if (WSDL_IMPLEMENTATION_ONLY.equals(selectedOption)) {
+        }else if (WSDL_IMPLEMENTATION_ONLY.equals(selectedOption)){
             return Emitter.MODE_IMPLEMENTATION;
-        } else {
+        }else{
             throw new RuntimeException("Unknown Exception");
         }
     }
+    
 
-
-    public String getStyle() {
-        return this.styleSelectionCombo.getItem(
-                styleSelectionCombo.getSelectionIndex())
-                .toUpperCase();
+    
+    public String getStyle(){
+        return this.styleSelectionCombo.getItem(styleSelectionCombo.getSelectionIndex()).toUpperCase();
     }
-
     public String getLocationURL() {
         return this.serviceLocationURLTextBox.getText();
     }
@@ -289,10 +272,11 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
     public String getBindingName() {
         return this.bindingTextBox.getText();
     }
-
-    private String getgetClassFileLocation() {
-        return null;
-    }
-
-
+    
+   private String getgetClassFileLocation(){
+       return null;
+   }
+    
+   
+ 
 }

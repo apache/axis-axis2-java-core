@@ -1,4 +1,4 @@
-package org.apache.axis.tool.service.bean;
+package org.apache.axis2.tool.service.bean;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -16,8 +16,9 @@ package org.apache.axis.tool.service.bean;
  * limitations under the License.
  */
 
-public class Page1Bean {
+public class ClassFileSelectionBean {
     private String fileLocation;
+    private String filter;
 
     public String getFileLocation() {
         return fileLocation;
@@ -25,5 +26,19 @@ public class Page1Bean {
 
     public void setFileLocation(String fileLocation) {
         this.fileLocation = fileLocation;
+    }
+    
+    
+    /**
+     * @return Returns the filter.
+     */
+    public String getFilter() {
+        return filter;
+    }
+    /**
+     * @param filter The filter to set.
+     */
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 }
