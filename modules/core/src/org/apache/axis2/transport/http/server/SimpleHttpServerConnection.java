@@ -64,10 +64,6 @@ public class SimpleHttpServerConnection {
             throw new IllegalArgumentException("Socket may not be null");
         }
         this.socket = socket;
-        this.socket.setSoLinger(true, 2);
-        this.socket.setKeepAlive(true);
-        this.socket.setSoTimeout(60000);
-        this.socket.setTcpNoDelay(true);
         this.in = socket.getInputStream();
         this.out = socket.getOutputStream();
     }
@@ -77,7 +73,6 @@ public class SimpleHttpServerConnection {
             if (socket != null) {
                 in.close();
                 out.close();
-                socket.shutdownOutput();
                 socket.close();
                 socket = null;
             }

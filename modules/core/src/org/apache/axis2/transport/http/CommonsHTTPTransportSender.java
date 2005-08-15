@@ -348,6 +348,11 @@ public class CommonsHTTPTransportSender
         //hostConfig handles the socket functions..
         HostConfiguration hostConfig = getHostConfiguration(msgContext, url);
 
+        // SO_TIMEOUT -- timeout for blocking reads
+        httpClient.getHttpConnectionManager().getParams().setSoTimeout(60000);
+        // timeout for initial connection
+        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(60000);
+
         PostMethod postMethod = new PostMethod();
         postMethod.setPath(url.getFile());
 
