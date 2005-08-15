@@ -64,6 +64,7 @@ public class SimpleHttpServerConnection {
             throw new IllegalArgumentException("Socket may not be null");
         }
         this.socket = socket;
+        this.socket.setTcpNoDelay(true);
         this.in = socket.getInputStream();
         this.out = socket.getOutputStream();
     }

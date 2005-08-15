@@ -5,6 +5,7 @@ User-Agent: Axis/1.2.1
 Host: 127.0.0.1:8081
 Cache-Control: no-cache
 Pragma: no-cache
+Connection: close
 SOAPAction: ""
 
 

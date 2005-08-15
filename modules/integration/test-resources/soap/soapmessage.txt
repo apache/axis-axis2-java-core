@@ -1,6 +1,7 @@
 POST /axis/services/EchoService HTTP/1.1
 Host: 127.0.0.1
 Content-Type: application/soap+xml; charset="utf-8"
+Connection: close
 
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing">
     <soapenv:Header>
