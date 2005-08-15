@@ -421,4 +421,8 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
             builder.discard((OMElement) this.parent);
         }
     }
+
+    public void buildWithMTOM() throws OMException {
+        this.getDataHandler();
+    }
 }

@@ -49,7 +49,7 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * Field namespaces
-     */    
+     */
     protected HashMap namespaces = null;
 
     /**
@@ -65,11 +65,6 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * Constructor OMElementImpl
-     *
-     * @param localName
-     * @param ns
-     * @param parent
-     * @param builder
      */
     public OMElementImpl(String localName, OMNamespace ns, OMContainer parent,
                          OMXMLParserWrapper builder) {
@@ -85,9 +80,6 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * Constructor OMElementImpl
-     *
-     * @param localName
-     * @param ns
      */
     public OMElementImpl(String localName, OMNamespace ns) {
         this(localName, ns, null);
@@ -98,8 +90,8 @@ public class OMElementImpl extends OMNodeImpl
      * will depend on this.
      *
      * @param localName - this MUST always be not null
-     * @param ns - can be null
-     * @param parent - this should be an OMContainer
+     * @param ns        - can be null
+     * @param parent    - this should be an OMContainer
      */
     public OMElementImpl(String localName, OMNamespace ns, OMContainer parent) {
         super(parent);
@@ -117,18 +109,15 @@ public class OMElementImpl extends OMNodeImpl
      * Here it is assumed that this QName passed, at least contains the localName for this element
      *
      * @param qname - this should be valid qname according to javax.xml.namespace.QName
-     * @param parent
      * @throws OMException
      */
     public OMElementImpl(QName qname, OMContainer parent) throws OMException {
-       this(qname.getLocalPart(), null, parent);
+        this(qname.getLocalPart(), null, parent);
         this.ns = handleNamespace(qname);
     }
 
     /**
      * Method handleNamespace
-     *
-     * @param qname
      */
     private OMNamespace handleNamespace(QName qname) {
         OMNamespace ns = null;
@@ -157,8 +146,8 @@ public class OMElementImpl extends OMNodeImpl
             if (ns != null) {
                 this.ns = (ns);
             }
-        }else{
-           // no namespace URI in the given QName. No need to bother about this ??
+        } else {
+            // no namespace URI in the given QName. No need to bother about this ??
         }
 
         return ns;
@@ -167,7 +156,6 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * Method handleNamespace
      *
-     * @param ns
      * @return namespace
      */
     private OMNamespace handleNamespace(OMNamespace ns) {
@@ -182,8 +170,6 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * This will add child to the element. One can decide whether he append the child or he adds to the
      * front of the children list
-     *
-     * @param child
      */
     public void addChild(OMNode child) {
         addChild((OMNodeImpl) child);
@@ -194,8 +180,6 @@ public class OMElementImpl extends OMNodeImpl
      * the OMNodes.
      * This QName can contain any combination of prefix, localname and URI
      *
-     * @param elementQName
-     * @return
      * @throws org.apache.axis2.om.OMException
      *
      * @throws OMException
@@ -208,8 +192,6 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * Method getFirstChildWithName
      *
-     * @param elementQName
-     * @return
      * @throws OMException
      */
     public OMElement getFirstChildWithName(QName elementQName) throws OMException {
@@ -228,8 +210,6 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * Method addChild
-     *
-     * @param child
      */
     private void addChild(OMNodeImpl child) {
         if (firstChild == null) {
@@ -248,7 +228,6 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * This will give the next sibling. This can be an OMAttribute for OMAttribute or OMText or OMELement for others.
      *
-     * @return
      * @throws org.apache.axis2.om.OMException
      *
      * @throws OMException
@@ -282,8 +261,6 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * THis will create a namespace in the current element scope
      *
-     * @param uri
-     * @param prefix
      * @return namespace
      */
     public OMNamespace declareNamespace(String uri, String prefix) {
@@ -293,7 +270,6 @@ public class OMElementImpl extends OMNodeImpl
 
 
     /**
-     * @param namespace
      * @return namespace
      */
     public OMNamespace declareNamespace(OMNamespace namespace) {
@@ -309,9 +285,6 @@ public class OMElementImpl extends OMNodeImpl
      * This will start to find from the current element and goes up in the hiararchy until this finds one.
      * If none is found, return null
      *
-     * @param uri
-     * @param prefix
-     * @return
      * @throws org.apache.axis2.om.OMException
      *
      * @throws OMException
@@ -341,9 +314,6 @@ public class OMElementImpl extends OMNodeImpl
      * This will ckeck for the namespace <B>only</B> in the current Element
      * This can also be used to retrieve the prefix of a known namespace URI
      *
-     * @param uri
-     * @param prefix
-     * @return
      * @throws OMException
      */
     private OMNamespace findDeclaredNamespace(String uri, String prefix)
@@ -381,8 +351,6 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * This will help to search for an attribute with a given QName within this Element
      *
-     * @param qname
-     * @return
      * @throws org.apache.axis2.om.OMException
      *
      * @throws OMException
@@ -413,14 +381,13 @@ public class OMElementImpl extends OMNodeImpl
      * @return an OMAttribute with the given name if found, or null
      */
     public OMAttribute getAttribute(QName qname) {
-        return (OMAttribute)attributes.get(qname);
+        return (OMAttribute) attributes.get(qname);
     }
 
     /**
      * This will insert attribute to this element. Implementor can decide as to insert this
      * in the front or at the end of set of attributes
      *
-     * @param attr
      * @return attribute
      */
     public OMAttribute addAttribute(OMAttribute attr) {
@@ -433,8 +400,6 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * Method removeAttribute
-     *
-     * @param attr
      */
     public void removeAttribute(OMAttribute attr) {
         if (attributes != null) {
@@ -445,9 +410,6 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * Method addAttribute
      *
-     * @param attributeName
-     * @param value
-     * @param ns
      * @return attribute
      */
     public OMAttribute addAttribute(String attributeName, String value,
@@ -469,8 +431,6 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * Method setBuilder
-     *
-     * @param wrapper
      */
     public void setBuilder(OMXMLParserWrapper wrapper) {
         this.builder = wrapper;
@@ -506,8 +466,6 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * Method setFirstChild
-     *
-     * @param firstChild
      */
     public void setFirstChild(OMNode firstChild) {
         if (firstChild != null) {
@@ -553,7 +511,6 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * This is to get the type of node, as this is the super class of all the nodes
      *
-     * @return
      * @throws org.apache.axis2.om.OMException
      *
      * @throws OMException
@@ -565,7 +522,6 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * getXMLStreamReader
      *
-     * @return
      * @see org.apache.axis2.om.OMElement#getXMLStreamReader()
      */
     public XMLStreamReader getXMLStreamReader() {
@@ -575,7 +531,6 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * getXMLStreamReaderWithoutCaching
      *
-     * @return
      * @see org.apache.axis2.om.OMElement#getXMLStreamReaderWithoutCaching()
      */
     public XMLStreamReader getXMLStreamReaderWithoutCaching() {
@@ -585,7 +540,6 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * getXMLStreamReader
      *
-     * @param cache
      * @return reader
      */
     private XMLStreamReader getXMLStreamReader(boolean cache) {
@@ -600,8 +554,6 @@ public class OMElementImpl extends OMNodeImpl
      * Sets the text of the given element.
      * caution - This method will wipe out all the text elements (and hence any
      * moxed content) before setting the text
-     *
-     * @param text
      */
     public void setText(String text) {
 
@@ -639,12 +591,11 @@ public class OMElementImpl extends OMNodeImpl
 
         return childText;
     }
-    
+
     /**
-     * Returns the concatanation of TRIMMED values of all 
+     * Returns the concatanation of TRIMMED values of all
      * OMText  child nodes of this element
      * This is incuded purely to improve usability
-     * @return
      */
     public String getTrimmedText() {
         String childText = "";
@@ -668,7 +619,6 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * Method serializeWithCache
      *
-     * @param omOutput
      * @throws XMLStreamException
      */
     public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
@@ -740,7 +690,6 @@ public class OMElementImpl extends OMNodeImpl
      * cause loss of data.So its advised to use populateYourSelf() method, before this,
      * if you want to preserve data in the stream.
      *
-     * @param omOutput
      * @throws XMLStreamException
      */
     public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
@@ -785,8 +734,6 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * Method setLocalName
-     *
-     * @param localName
      */
     public void setLocalName(String localName) {
         this.localName = localName;
@@ -795,7 +742,6 @@ public class OMElementImpl extends OMNodeImpl
     /**
      * Method getNamespace
      *
-     * @return
      * @throws OMException
      */
     public OMNamespace getNamespace() throws OMException {
@@ -805,8 +751,6 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * Method setNamespace
-     *
-     * @param namespace
      */
     public void setNamespace(OMNamespace namespace) {
         OMNamespace nsObject = null;
@@ -845,6 +789,16 @@ public class OMElementImpl extends OMNodeImpl
             this.detach();
         } else {
             builder.discard(this);
+        }
+    }
+
+    public void buildWithMTOM() throws OMException {
+        if (!done) {
+            this.build();
+        }
+        Iterator childrenIterator = this.getChildren();
+        while (childrenIterator.hasNext()) {
+            ((OMNode) childrenIterator.next()).buildWithMTOM();
         }
     }
 }

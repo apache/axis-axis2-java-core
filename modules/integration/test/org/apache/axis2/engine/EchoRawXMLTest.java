@@ -39,24 +39,24 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 
 public class EchoRawXMLTest extends TestCase {
-    private EndpointReference targetEPR =
+    protected EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
             + (UtilServer.TESTING_PORT)
             + "/axis/services/EchoXMLService/echoOMElement");
-    private Log log = LogFactory.getLog(getClass());
-    private QName serviceName = new QName("EchoXMLService");
-    private QName operationName = new QName("echoOMElement");
-    private QName transportName = new QName("http://localhost/my",
+    protected Log log = LogFactory.getLog(getClass());
+    protected QName serviceName = new QName("EchoXMLService");
+    protected QName operationName = new QName("echoOMElement");
+    protected QName transportName = new QName("http://localhost/my",
             "NullTransport");
 
-    private AxisConfiguration engineRegistry;
-    private MessageContext mc;
+    protected AxisConfiguration engineRegistry;
+    protected MessageContext mc;
     //private Thread thisThread;
     // private SimpleHTTPServer sas;
-    private ServiceContext serviceContext;
-    private ServiceDescription service;
+    protected ServiceContext serviceContext;
+    protected ServiceDescription service;
 
-    private boolean finish = false;
+    protected boolean finish = false;
 
     public EchoRawXMLTest() {
         super(EchoRawXMLTest.class.getName());

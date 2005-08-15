@@ -207,4 +207,10 @@ public interface OMNode {
      */
     public void build();
 
+    /**
+     * The build method will not read the information from stream and build MTOM stuff.
+     * This method is to build the normal model and force build the MTOM stuff too.
+     * @throws OMException
+     */
+    public void buildWithMTOM() throws OMException;
 }
