@@ -59,13 +59,13 @@
             <name>Davanum Srinivas</name>
             <id>dims</id>
             <email>dims@apache.org</email>
-            <organization>Computer Associates</organization>
+            <organization>WSO2</organization>
         </developer>
         <developer>
             <name>Sanjiva Weerawarana</name>
             <id>sanjiva</id>
             <email>sanjiva@apache.org</email>
-            <organization>Lanka Software Foundation</organization>
+            <organization>WSO2 / Lanka Software Foundation</organization>
         </developer>
         <developer>
             <name>Glen Daniels</name>
@@ -90,7 +90,7 @@
             <name>Eran Chinthaka</name>
             <id>chinthaka</id>
             <email>chinthaka@apache.org</email>
-            <organization>Lanka Software Foundation</organization>
+            <organization>WSO2 / Lanka Software Foundation</organization>
             <url>http://www.apache.org/~chinthaka</url>
         </developer>
         <developer>
@@ -117,7 +117,7 @@
             <name>Deepal Jayasinghe</name>
             <id>deepal</id>
             <email>deepal@apache.org</email>
-            <organization>Lanka Software Foundation</organization>
+            <organization>WSO2 / Lanka Software Foundation</organization>
             <url>http://www.apache.org/~deepal</url>
 
         </developer>
@@ -125,7 +125,7 @@
             <name>Ajith Ranabahu</name>
             <id>ajith</id>
             <email>ajith@apache.org</email>
-            <organization>Lanka Software Foundation</organization>
+            <organization>WSO2 / Lanka Software Foundation</organization>
             <url>http://www.apache.org/~ajith</url>
 
         </developer>
@@ -151,13 +151,13 @@
             <name>Thilina Gunarathne</name>
             <id>thilina</id>
             <email>thilina@opensource.lk</email>
-            <organization>Lanka Software Foundation / Virtusa</organization>
+            <organization>Lanka Software Foundation</organization>
         </developer>
         <developer>
             <name>Ruchith Fernando</name>
             <id>ruchith</id>
             <email>ruchithf@apache.lk</email>
-            <organization>Lanka Software Foundation</organization>
+            <organization>WSO2 / Lanka Software Foundation</organization>
         </developer>
 
 
@@ -176,7 +176,7 @@
         <contributor>
             <name>Chamil Thanthrimudalige</name>
             <email>chamil@opensource.lk</email>
-            <organization>Lanka Software Foundation</organization>
+            <organization>WSO2 / Lanka Software Foundation</organization>
         </contributor>
         <contributor>
             <name>Nadana Gunarathna</name>
@@ -186,7 +186,7 @@
         <contributor>
             <name>Saminda Abeyruwan</name>
             <email>saminda@opensource.lk</email>
-            <organization>Lanka Software Foundation</organization>
+            <organization>WSO2 / Lanka Software Foundation</organization>
         </contributor>
         <contributor>
             <name>Gayan Asanka</name>
@@ -235,6 +235,7 @@
                 <exclude>**/*Abstract*.java</exclude>
                 <exclude>**/*Util*.java</exclude>
                 <exclude>**/*PhaseResolvingTest.java</exclude>
+                <exclude>**/*EchoRawMTOMTest.java</exclude>
             </excludes>
             <includes>
                 <include>**/*Test.java</include>

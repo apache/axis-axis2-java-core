@@ -49,7 +49,7 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * Field namespaces
-     */
+     */    
     protected HashMap namespaces = null;
 
     /**
