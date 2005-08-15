@@ -121,8 +121,8 @@ public class ServiceDescription
                 ModuleDescription modu = (ModuleDescription) iterator.next();
                 if (modu.getName().equals(moduleref.getName())) {
                     throw new AxisFault(moduleref.getName().getLocalPart() +
-                            " module has alredy engaged to the seevice" +
-                            "  operation terminated !!!");
+                            " module has alredy been engaged on the service. " +
+                            " Operation terminated !!!");
                 }
 
             }

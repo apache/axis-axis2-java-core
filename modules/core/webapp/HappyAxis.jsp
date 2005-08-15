@@ -438,8 +438,10 @@ not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
     %>
     <p>
     <font color="blue" >
-    Found the echo service and Axis2 is working properly, and now you can drop any web service in
-    to axis2/WEB-INF/service and check it is working.and got the following result
+    Found the Axis2 default Version service and Axis2 is working properly.Now you can drop any web service in
+    to axis2/WEB-INF/service and check it is working.
+
+    While invoking the version service got the following out put.
     <br>
        <%= value%> </font>
        </p>

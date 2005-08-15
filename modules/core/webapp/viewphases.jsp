@@ -49,33 +49,33 @@
          </blockquote>
          <b>InFaultFlow </b>
          <blockquote>
-         <%
-             tempList = (ArrayList)phases.get(1);
-             for (int i = 0; i < tempList.size(); i++) {
-                 String phase = (String) tempList.get(i);
-         %><%=phase%><br><%
-             }
-         %>
+<%--         <%--%>
+<%--             tempList = (ArrayList)phases.get(1);--%>
+<%--             for (int i = 0; i < tempList.size(); i++) {--%>
+<%--                 String phase = (String) tempList.get(i);--%>
+<%--         %><%=phase%><br><%--%>
+<%--             }--%>
+<%--         %>--%>
          </blockquote>
          <b>OutFlow </b>
          <blockquote>
-         <%
-             tempList = (ArrayList)phases.get(2);
-             for (int i = 0; i < tempList.size(); i++) {
-                 String phase = (String) tempList.get(i);
-         %><%=phase%><br><%
-             }
-         %>
+<%--         <%--%>
+<%--             tempList = (ArrayList)phases.get(2);--%>
+<%--             for (int i = 0; i < tempList.size(); i++) {--%>
+<%--                 String phase = (String) tempList.get(i);--%>
+<%--         %><%=phase%><br><%--%>
+<%--             }--%>
+<%--         %>--%>
          </blockquote>
          <b>OutFaultFlow </b>
          <blockquote>
-         <%
-             tempList = (ArrayList)phases.get(3);
-             for (int i = 0; i < tempList.size(); i++) {
-                 String phase = (String) tempList.get(i);
-         %><%=phase%><br><%
-             }
-         %>
+<%--         <%--%>
+<%--             tempList = (ArrayList)phases.get(3);--%>
+<%--             for (int i = 0; i < tempList.size(); i++) {--%>
+<%--                 String phase = (String) tempList.get(i);--%>
+<%--         %><%=phase%><br><%--%>
+<%--             }--%>
+<%--         %>--%>
          </blockquote>
          <br>
          <hr>
