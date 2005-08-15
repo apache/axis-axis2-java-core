@@ -187,7 +187,7 @@ public class SimpleHTTPServer extends TransportListener {
      */
     public EndpointReference replyToEPR(String serviceName) {
         return new EndpointReference("http://127.0.0.1:" + (embedded.getLocalPort()) +
-                "/axis/services/" +
+                "/axis2/services/" +
                 serviceName);
     }
 

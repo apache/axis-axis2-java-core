@@ -226,7 +226,7 @@ public class CommonsHTTPTransportSender
         }
 
         public boolean isRepeatable() {
-            return false;
+            return true;
         }
 
         public byte[] writeBytes() throws AxisFault {
@@ -346,14 +346,14 @@ public class CommonsHTTPTransportSender
         //execuite the HtttpMethodBase - a connection manager can be given for handle multiple
         httpClient = new HttpClient();
         //hostConfig handles the socket functions..
-        HostConfiguration hostConfig = getHostConfiguration(msgContext, url);
+        //HostConfiguration hostConfig = getHostConfiguration(msgContext, url);
 
         // SO_TIMEOUT -- timeout for blocking reads
         httpClient.getHttpConnectionManager().getParams().setSoTimeout(60000);
         // timeout for initial connection
         httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(60000);
 
-        PostMethod postMethod = new PostMethod();
+        PostMethod postMethod = new PostMethod(url.toString());
         postMethod.setPath(url.getFile());
 
         msgContext.setProperty(HTTP_METHOD, postMethod);
@@ -403,7 +403,7 @@ public class CommonsHTTPTransportSender
             }
         }
 
-        this.httpClient.executeMethod(hostConfig, postMethod);
+        this.httpClient.executeMethod(postMethod);
 
         if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
             processResponse(postMethod, msgContext);

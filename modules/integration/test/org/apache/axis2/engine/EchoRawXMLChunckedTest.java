@@ -136,6 +136,10 @@ public class EchoRawXMLChunckedTest extends TestCase {
                 Constants.TRANSPORT_HTTP,
                 false);
 
+        //Fix for the connection reset problem that we get once in a while
+        //with some linux distros
+        Thread.sleep(200);
+        
         OMElement result =
                 call.invokeBlocking(operationName.getLocalPart(),
                         payload);
