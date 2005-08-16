@@ -101,8 +101,8 @@
         <exception-type>org.apache.axis2.transport.http.server.AdminAppException</exception-type>
         <location>/Error/AuthError.html</location>
     </error-page>
-    <error-page>
+    <!--error-page>
         <exception-type>java.lang.Exception</exception-type>
         <location>/Error/GenError.html</location>
-    </error-page>
+    </error-page-->
 </web-app>
