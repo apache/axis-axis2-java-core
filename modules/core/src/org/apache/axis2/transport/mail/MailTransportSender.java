@@ -22,6 +22,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.AbstractTransportSender;
+import org.apache.axis2.transport.mail.server.MailSrvConstants;
 import org.apache.axis2.util.Utils;
 
 import java.io.ByteArrayOutputStream;
@@ -48,16 +49,16 @@ public class MailTransportSender extends AbstractTransportSender {
             TransportOutDescription transportOut = msgContext.getTransportOut();
             user =
                 Utils.getParameterValue(
-                    transportOut.getParameter(MailConstants.SMTP_USER));
+                    transportOut.getParameter(MailSrvConstants.SMTP_USER));
             host =
                 Utils.getParameterValue(
-                    transportOut.getParameter(MailConstants.SMTP_HOST));
+                    transportOut.getParameter(MailSrvConstants.SMTP_HOST));
             password =
                 Utils.getParameterValue(
-                    transportOut.getParameter(MailConstants.SMTP_PASSWORD));
+                    transportOut.getParameter(MailSrvConstants.SMTP_PASSWORD));
             smtpPort =
                 Utils.getParameterValue(
-                    transportOut.getParameter(MailConstants.SMTP_PORT));
+                    transportOut.getParameter(MailSrvConstants.SMTP_PORT));
             if (user != null
                 && host != null
                 && password != null
@@ -71,7 +72,7 @@ public class MailTransportSender extends AbstractTransportSender {
                 // In mail char set is what is being used. Charset encoding is not what is expected here.
                 String charSet = (String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
                 if (charSet == null){
-                    charSet = MailConstants.DEFAULT_CHAR_SET;
+                    charSet = MailSrvConstants.DEFAULT_CHAR_SET;
                 }
                 int index = eprAddress.indexOf('/');
                 String subject = "";

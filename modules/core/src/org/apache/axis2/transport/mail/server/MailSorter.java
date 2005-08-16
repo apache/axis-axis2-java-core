@@ -77,8 +77,8 @@ public class MailSorter {
                             confContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL)));
             msgContext.setServerSide(true);
 
-            msgContext.setProperty(MailConstants.CONTENT_TYPE, mimeMessage.getContentType());
-            msgContext.setWSAAction(getMailHeader(MailConstants.HEADER_SOAP_ACTION, mimeMessage));
+            msgContext.setProperty(MailSrvConstants.CONTENT_TYPE, mimeMessage.getContentType());
+            msgContext.setWSAAction(getMailHeader(MailSrvConstants.HEADER_SOAP_ACTION, mimeMessage));
 
             String serviceURL = mimeMessage.getSubject();
             if (serviceURL == null) {

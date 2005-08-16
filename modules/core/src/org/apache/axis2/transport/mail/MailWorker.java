@@ -18,6 +18,7 @@ package org.apache.axis2.transport.mail;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.mail.server.MailSrvConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -60,8 +61,8 @@ public class MailWorker implements AxisWorker {
     /**
      * Constructor for MailWorker
      *
-     * @param server
      * @param mimeMessage
+     * @param reg
      */
     public MailWorker(MimeMessage mimeMessage, ConfigurationContext reg) {
         this.mimeMessage = mimeMessage;
@@ -84,10 +85,10 @@ public class MailWorker implements AxisWorker {
                 //create Message Context
                 msgContext = new MessageContext(reg, transportIn, transportOut);
                 msgContext.setServerSide(true);
-                msgContext.setProperty(MailConstants.CONTENT_TYPE, mimeMessage.getContentType());
+                msgContext.setProperty(MailSrvConstants.CONTENT_TYPE, mimeMessage.getContentType());
                 msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, mimeMessage.getEncoding());
 
-                String soapAction = getMailHeader(MailConstants.HEADER_SOAP_ACTION);
+                String soapAction = getMailHeader(MailSrvConstants.HEADER_SOAP_ACTION);
                 msgContext.setWSAAction(soapAction);
                 msgContext.setSoapAction(soapAction);
 

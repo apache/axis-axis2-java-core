@@ -25,6 +25,7 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.EmailReceiver;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.mail.server.MailSrvConstants;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -281,19 +282,19 @@ public class SimpleMailListener extends TransportListener implements Runnable {
 
         user =
             Utils.getParameterValue(
-                transportIn.getParameter(MailConstants.POP3_USER));
+                transportIn.getParameter(MailSrvConstants.POP3_USER));
         host =
             Utils.getParameterValue(
-                transportIn.getParameter(MailConstants.POP3_HOST));
+                transportIn.getParameter(MailSrvConstants.POP3_HOST));
         password =
             Utils.getParameterValue(
-                transportIn.getParameter(MailConstants.POP3_PASSWORD));
+                transportIn.getParameter(MailSrvConstants.POP3_PASSWORD));
         port =
             Utils.getParameterValue(
-                transportIn.getParameter(MailConstants.POP3_PORT));
+                transportIn.getParameter(MailSrvConstants.POP3_PORT));
         replyTo =
             Utils.getParameterValue(
-                transportIn.getParameter(MailConstants.RAPLY_TO));
+                transportIn.getParameter(MailSrvConstants.RAPLY_TO));
         if (user == null || host == null || password == null || port == null) {
             if (this.user == null) {
                 throw new AxisFault(

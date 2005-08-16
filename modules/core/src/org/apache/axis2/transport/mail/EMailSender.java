@@ -32,6 +32,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.transport.EmailReceiver;
+import org.apache.axis2.transport.mail.server.MailSrvConstants;
 
 /**
  * @author hemapani
@@ -78,13 +79,13 @@ public class EMailSender {
             msg.setSubject(subject);
 
             if (charSet == null){
-                charSet = MailConstants.DEFAULT_CHAR_SET;
+                charSet = MailSrvConstants.DEFAULT_CHAR_SET;
             }
 
-            msg.addHeaderLine("Content-Type: " + MailConstants.DEFAULT_CONTENT_TYPE + "; charset=" + charSet);
+            msg.addHeaderLine("Content-Type: " + MailSrvConstants.DEFAULT_CONTENT_TYPE + "; charset=" + charSet);
 
             msg.setText(message);
-            msg.setHeader("Content-Transfer-Encoding", MailConstants.DEFAULT_CHAR_SET_ENCODING);
+            msg.setHeader("Content-Transfer-Encoding", MailSrvConstants.DEFAULT_CHAR_SET_ENCODING);
             Transport.send(msg);
         } catch (AddressException e) {
             throw new AxisFault(e);
