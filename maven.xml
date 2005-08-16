@@ -431,6 +431,7 @@
                 <ant:exclude name="**/target/**"/>
                 <ant:exclude name="**/.svn/**"/>
                 <ant:exclude name="**/bin/**"/>
+                <ant:exclude name="**/*.log"/>
                 <ant:exclude name=".*"/>
                 <ant:exclude name="**/*.license"/>
             </ant:fileset>
@@ -441,6 +442,7 @@
                 <ant:exclude name="**/target/**"/>
                 <ant:exclude name="**/.svn/**"/>
                 <ant:exclude name="**/bin/**"/>
+                <ant:exclude name="**/*.log"/>
                 <ant:exclude name=".*"/>
                 <ant:exclude name="**/*.license"/>
             </ant:tarfileset>

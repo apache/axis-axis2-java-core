@@ -1,99 +1,104 @@
-<!-- saved from url=(0022)http://internet.e-mail -->
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD><TITLE>Migration.html</TITLE>
+<HTML><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" ><TITLE>Migration.html</TITLE>
 </HEAD>
-<BODY>
-<H3><BIG>Migrating from Axis 1.x to Axis 2</BIG><BR></H3>
-<P><BIG><BIG>Compatibility</BIG></BIG><BR><BR></P>
-<P>Axis1.x and Axis2 have been evolved 
-from different architectures.<BR><BR></P>
-<P>Speed – Axis2 is based on StAX API, 
-which gives greater speed than SAX event base parsing that has been used in 
-Axis1.x.<BR><BR></P>
-<P>Stability – Axis2 has fixed phases 
-and for extensions an area of user defined phases. This allows far more 
-stability and flexibility than Axis1.x.<BR><BR></P>
-<P>Transport framework - Simple 
-abstraction designing of transports (i.e., senders and listeners for SOAP over 
-various protocols such as SMTP, etc), allow far more flexibility and the core of 
-the engine is completely transport-independent.<BR><BR></P>
-<P>WSDL Support – Axis2 supports 
-version 1.1 and 2.0, which allow creating stubs and skeletons, to manipulate web 
-service arena.</P>
-<P>Component – Oriented Architecture – 
-This is merely through archives (.mar and .aar) . Easily reusable components 
-such as Handlers, Modules allow patterns processing for your applications, or to 
-distribute to partners. Axis2 more concern on the “Module” concept rather 
-Handler concept. Modules contain handlers that have been ordered through phase 
-rules. which being ordered to specific service(s). </P>
-<P><BR></P>
-<P><BIG><BIG>Getting Started</BIG></BIG></P>
-<P>Lets look at a simple example of echoing at client 
-API</P>
-<H5>Axis 1.x</H5><PRE>import ..<BR>public class TestClient {<BR>	public static void main(String [] args) {<BR>		try {<BR>			String endpoint = ...<BR>			Service service = new Service();<BR>			Call call = (Call) service.createCall();<BR>			call.setTargetEndpointAddress( new java.net.URL(endpoint) );<BR>			call.setOperationName(new QName("http://soapinterop.org/", echoString"));<BR>			String ret = (String) call.invoke( new Object[] { "Hello!" } );<BR>			System.out.println("Sent 'Hello!', got '" + ret + "'");<BR>		} catch (Exception e) {<BR>			System.err.println(e.toString());<BR>		}<BR>	}<BR>}<BR><BR></PRE>
-<H5>Axis 2</H5><PRE><B>import ....</B><BR><B>public class EchoBlockingClient {</B><BR><B>	private static EndpointReference targetEPR = new EndpointReference(</B><BR><B>	AddressingConstants.WSA_TO,</B><BR><B>				"http://127.0.0.1:8080/axis2/services/MyService/echo");</B><BR><B>	public static void main(String[] args) {</B><BR><B>		try {</B><BR><B>			OMElement payload = ClientUtil.getEchoOMElement();</B><BR><B>			Call call = new Call();</B><BR><B>			call.setTo(targetEPR);</B><BR><B>			call.setTransportInfo(Constants.TRANSPORT_HTTP,</B><B>Constants.TRANSPORT_HTTP,</B><B>false);</B><BR><B>			//Blocking invocation</B><BR><B>			OMElement result = (OMElement) call.invokeBlocking("echo",</B><B>payload);</B><BR><B>			...</B><BR><B>		} catch (AxisFault axisFault) {</B><BR><B>			axisFault.printStackTrace();</B><BR><B>		} catch (XMLStreamException e) {</B><BR><B>			e.printStackTrace();</B><BR><B>		}</B><BR><B>	}</B><BR><B>}</B></PRE>
-<P><BR></P>
-<P>It has clearly depicted that the 
-invocation in Axis2 is dealt with SOAP body element itself. Here the invocation 
-is synchronous, and Axis2 can handle Asynchronous invocation as well. Above 
-“payload” is the SOAP body element which should go in the Envelop. </P>
-<P>Once the service is called through 
-Stub in Axis2, “payload” is according to the data binding framework that will be 
-using. So the extra work of “payload” will be vanished. </P>
-<P>Apart from Synchronous invocation, 
-Axis2 support Asynchronous invocation through invokeNonBlocking(). 
-Synchronous/Asynchronous invocations can handle both single/double HTTP 
-connection. </P>
-<P>With the advance architecture Axis2 
-is capable of handling Megabytes of Requests and Responses, which is far form 
-Axis1.x. </P><BR>
-<P><BIG><BIG>Custom Deployment of 
-Services, Handlers and Modules </BIG></BIG></P>
-<P>In Axis 1.x deployment of services 
-is via WSDD, which is for my opinion highly cumbersome. Service deployment in 
-Axis2 is straight forward and dynamic. Dynamic behavior is from the 
-Administrator facility given by development in server side. It's just a matter 
-of creating a .aar file, and deploying it ,which more detail is given in the 
-Axis2 user guide. </P>
-<P>Axis2 is far way from Handler 
-concept and more into the Module concept, which is abstractly speaking, a 
-collection of handlers with Rules of governing. Modules created as a .mar file. 
-It has module.xml, which is the brain behind manipulating handlers. </P>
-<P>When a service is called through a 
-handler, it is just a matter of giving reference to the module that includes the 
-handler in the service.xml. Apart from that a handler can be directly called to 
-a particular service, via service.xml, no module is needed, and several handlers 
-can be invoked when the handlers are registered with the proper phases. </P>
-<P>Well, Services are hot deployable in 
-Axis2 and dynamic, but Modules. This is one features, which is unique to 
-Axis2.</P>
-<P>In addition this JWS services are 
-handle through archives. </P>
-<P><BIG><BIG>Transports for HTTP 
-Connection</BIG></BIG></P>
-<P>Axis2 comes with two basic HTTP 
-transport senders. HTTPTransportSender and CommonsHTTPTransportSender. The 
-configuration of the transport is as follows, </P><PRE><P align=justify>call.setTransportInfo(Constants.TRANSPORT_HTTP,</P> Constants.TRANSPORT_HTTP, false);<BR></PRE>
-<P></P>
-This code snippet for HTTPTransportSender. The 
-alternative transport sender is the CommonsHTTPTransportSender, which is called 
-through, <BR><PRE><P align=justify></P><P align=justify>call.setTransportInfo(Constants.TRANSPORT_COMMONS_HTTP,<BR></P> Constants.TRANSPORT_HTTP,false);<BR></PRE>
-<P align=justify>It should be noted that axis2.xml 
-should be configured to call the commos transports, with the statement,</P><PRE><P align=justify>...</P><P align=left>&lt;transportSender name="commons-http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender"&gt;</P> &lt;parameter name="PROTOCOL" locked="xsd:false"&gt;HTTP/1.1&lt;/parameter&gt;<P align=left> &lt;parameter name="Transfer-Encoding" locked="xsd:false"&gt;chunked&lt;/parameter&gt;</P><P align=left>&lt;/transportSender&gt;</P><P align=justify>...</P></PRE>
-<P align=justify>In above snippet it should be noted 
-that transport is configured to handle the chunked stream as well. Some web 
-services, such as .NET web service invocations are done through this transport, 
-as it handle all possible HTTP request and responses.</P>
-<P align=justify><BIG><BIG>Data Binding 
-Support</BIG></BIG></P>
-<P align=justify>Xml-beans support data binding. In 
-Axis2, xml is manipulated via AXIOM, which is based on StAX API. XML give full 
-schema support. Thus, serialization and deserialization of Xml is handle in 
-Axis2 via xml-data binding framework. </P>
-<P align=justify><BIG><BIG>Best Usage</BIG></BIG></P>
-<P align=justify>Axis1.x and Axis2 have different 
-ways of seen the SOAP stack. So the best way to migrate can be done through 
-following the User guide and Architecture guide properly in Axis2. Axis2 is 
-straight forward and friendly. </P>
-<P><BR></P>
-<P><BR></P></BODY></HTML>
+<body>
+<h1>Migrating from Axis 1.x to Axis 2</h1>
+<h2>Compatibility</h2>
+<p>Axis1.x and Axis2 have been evolved from different architectures.</p>
+<p>Speed - Axis2 is based on StAX API, which gives greater speed than SAX event base parsing that has been used in Axis1.x.</p>
+
+<p>Stability - Axis2 has fixed phases and for extensions an area of user defined phases. This allows far more stability and flexibility than Axis1.x.</p>
+
+<p>Transport framework - Simple abstraction designing of transports (i.e., senders and listeners for SOAP over various protocols such as SMTP, etc), allow far more flexibility and the core of the engine is completely transport-independent.</p>
+
+<p>WSDL Support - Axis2 supports version 1.1 and 2.0, which allow creating stubs and skeletons, to manipulate web service arena.</p>
+
+<p>Component - Oriented Architecture - This is merely through archives (.mar and .aar) . Easily reusable components such as Handlers, Modules allow patterns processing for your applications, or to distribute to partners. Axis2 more concern on the "Module" concept rather Handler concept. Modules contain handlers that have been ordered through phase rules. which being ordered to specific service(s). </p>
+
+<h2>Getting Started</h2>
+<p>Lets look at a simple example of echoing at client API</p>
+<p><b>Axis 1.x</b></p>
+<pre>
+import ..
+public class TestClient {
+	public static void main(String [] args) {
+		try {
+			String endpoint = ...
+			Service service = new Service();
+			Call call = (Call) service.createCall();
+			call.setTargetEndpointAddress( new java.net.URL(endpoint) );
+			call.setOperationName(new QName("http://soapinterop.org/", echoString"));
+			String ret = (String) call.invoke( new Object[] { "Hello!" } );
+			System.out.println("Sent 'Hello!', got '" + ret + "'");
+		} catch (Exception e) {
+			System.err.println(e.toString());
+		}
+	}
+}
+</pre>
+
+<p><b>Axis 2</b></p>
+<pre>
+import ....
+public class EchoBlockingClient {
+	private static EndpointReference targetEPR = new EndpointReference(
+	AddressingConstants.WSA_TO,
+				"http://127.0.0.1:8080/axis2/services/MyService/echo");
+	public static void main(String[] args) {
+		try {
+			OMElement payload = ClientUtil.getEchoOMElement();
+			Call call = new Call();
+			call.setTo(targetEPR);
+			call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP,false);
+			//Blocking invocation
+			OMElement result = (OMElement) call.invokeBlocking("echo",payload);
+			...
+		} catch (AxisFault axisFault) {
+			axisFault.printStackTrace();
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	}
+}
+</pre>
+
+<p>It has clearly depicted that the invocation in Axis2 is dealt with SOAP body element itself. Here the invocation is synchronous, and Axis2 can handle Asynchronous invocation as well. Above "payload" is the SOAP body element which should go in the Envelop.</p>
+
+<p>Once the service is called through Stub in Axis2, "payload" is according to the data binding framework that will be using. So the extra work of "payload" will be vanished.</p>
+
+<p>Apart from Synchronous invocation, Axis2 support Asynchronous invocation through invokeNonBlocking(). Synchronous/Asynchronous invocations can handle both single/double HTTP connection.</p>
+
+<p>With the advance architecture Axis2 is capable of handling Megabytes of Requests and Responses, which is far form Axis1.x. </p>
+
+<h2>Custom Deployment of Services, Handlers and Modules</h2>
+
+<p>In Axis 1.x deployment of services is via WSDD, which is for my opinion highly cumbersome. Service deployment in Axis2 is straight forward and dynamic. Dynamic behavior is from the Administrator facility given by development in server side. It's just a matter of creating a .aar file, and deploying it ,which more detail is given in the Axis2 user guide.</p>
+
+<p>Axis2 is far way from Handler concept and more into the Module concept, which is abstractly speaking, a collection of handlers with Rules of governing. Modules created as a .mar file. It has module.xml, which is the brain behind manipulating handlers.</p>
+
+<p>When a service is called through a handler, it is just a matter of giving reference to the module that includes the handler in the service.xml. Apart from that a handler can be directly called to a particular service, via service.xml, no module is needed, and several handlers can be invoked when the handlers are registered with the proper phases.</p>
+
+<p>Services are hot deployable in Axis2 and dynamic, but Modules. This is one feature, which is unique to Axis2.</p>
+
+<h2>Transports for HTTP Connection</h2>
+
+<p>Axis2 comes with two  CommonsHTTPTransportSender which is based on commons-httpclient. The configuration of the transport is as follows,</p>
+
+<pre>
+call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+</pre>
+
+<p>It should be noted that axis2.xml should be configured to call the commos transports, with the statement,</p>
+<pre><p align="justify">...</p><p align="left">&lt;transportSender name="commons-http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender"&gt;</p> &lt;parameter name="PROTOCOL" locked="xsd:false"&gt;HTTP/1.1&lt;/parameter&gt;<p align="left"> &lt;parameter name="Transfer-Encoding" locked="xsd:false"&gt;chunked&lt;/parameter&gt;</p><p align="left">&lt;/transportSender&gt;</p><p align="justify">...</p></pre>
+
+<p>In above snippet it should be noted that transport is configured to handle the chunked stream as well. Some web services, such as .NET web service invocations are done through this transport, as it handle all possible HTTP request and responses.</p>
+
+<p>Data Binding Support</p>
+<p>Xml-beans is ued to provide data binding support. In Axis2, xml is manipulated via AXIOM, which is based on StAX API. XML give full schema support. Thus, serialization and deserialization of Xml is handle in Axis2 via xml-data binding framework.</p>
+
+<h2>Best Usage</h2>
+
+<p>Axis1.x and Axis2 have different ways of seen the SOAP stack. So the best way to migrate can be done through following the User guide and Architecture guide properly in Axis2. Axis2 is straight forward and friendly.</p>
+
+</body>
+</HTML>
