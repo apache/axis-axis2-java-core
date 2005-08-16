@@ -45,7 +45,7 @@ Following is a short feature overview of OM.</p>
 </ul>
 <!-- Special section -->
 <p class="special">
-&nbsp;<table width="100%">
+<table width="100%">
 			 <tr>
 			 		 <td>
                      <img src="images/OM005.gif" alt="Rememeber this" width="35" height="57"/></td>
@@ -209,7 +209,7 @@ While(children.hasNext()){
 A more selective set can be chosen by using the getChildrenWithName(QName) methods. The getChildWithName(Qname) method returns the first child that matches the given QName and getChildrenWithName(QName) returns a collection containing all the matching children. The advantage of these iterators is that they won't build the whole object structure at once, until its required.</p>
 <!-- Special section -->
 <p class="special">
-&nbsp;<table width="100%">
+<table width="100%">
 			 <tr>
 			 		 <td>
                      <img src="images/OM005.gif" alt="Rememeber this" width="35" height="57"/></td>
@@ -302,7 +302,7 @@ The getXMLStreamReaderWithoutCaching() method is very useful when the events nee
 </p>
 <!-- Special section -->
 <p class="special">
-&nbsp;<table width="100%">
+<table width="100%">
 			 <tr>
 			 		 <td>
                      <img src="images/OM005.gif" alt="Rememeber this" width="35" height="57"/></td>
@@ -315,11 +315,6 @@ The getXMLStreamReaderWithoutCaching() method is very useful when the events nee
 
 <h3>&nbsp;</h3>
 <h2>Section 4 - Known Limitations of OM</h2>
-<h3>Incomplete XML Info set support</h3>
-<p>OM deliberately dropped the support for XML info set items such as DTDs. Hence 
-OM cannot be called a complete info set representation. The initial reason for 
-this was because the design goal of the OM was not to be 
-&quot;yet-another-object-model&quot; but to be a SOAP specific Object model since DTD's are not supposed to be present in SOAP messages.</p>
 <h3>Inefficient Namespace serialization</h3>
 <p>Although the serializer acts correctly in every situation, the code that it produces may not be efficient all the time. Take the following case where a similar code listing to 1.6 is used but with two elements having the same namespace. Note that the newly added items are in bold.</p>
 <pre class="code">OMFactory factory = OMAbstractFactory.getOMFactory();
