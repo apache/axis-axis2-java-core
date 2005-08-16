@@ -39,7 +39,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     private Hashtable errornesServices;
 
     private Hashtable errornesModules;
-     private Log log = LogFactory.getLog(getClass());
+    private Log log = LogFactory.getLog(getClass());
 
     /**
      * Field modules
@@ -340,6 +340,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     public void engageModule(QName moduleref) throws AxisFault {
         ModuleDescription module = getModule(moduleref);
         boolean isNewmodule = false;
+        boolean tobeEnaged = true;
         if (module == null) {
             File file = new ArchiveReader().creatModuleArchivefromResource(
                     moduleref.getLocalPart(), getRepository());
@@ -351,6 +352,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
                  iterator.hasNext();) {
                 QName qName = (QName) iterator.next();
                 if (moduleref.equals(qName)) {
+                    tobeEnaged = false;
                     //Instead of throwing the error, we can just log this problem
                     log.info("Attempt to engage an already engaged module "+ qName);
 //                    throw new AxisFault(moduleref.getLocalPart() +
@@ -358,19 +360,21 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 //                            "  operation terminated !!!");
                 }
             }
-            new PhaseResolver(this).engageModuleGlobally(module);
         } else {
             throw new AxisFault(
                     this + " Refer to invalid module "
                     + moduleref.getLocalPart() +
                     " has not bean deployed yet !");
         }
-        engagedModules.add(moduleref);
+        if (tobeEnaged) {
+            new PhaseResolver(this).engageModuleGlobally(module);
+            engagedModules.add(moduleref);
+        }
         if (isNewmodule) {
             addMdoule(module);
         }
     }
-
+    
     public boolean isEngaged(QName moduleName) {
         return engagedModules.contains(moduleName);
     }
