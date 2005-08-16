@@ -22,7 +22,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.transport.mail.server.MailConstants;
+import org.apache.axis2.transport.mail.server.MailSrvConstants;
 import org.apache.axis2.transport.mail.server.MailServer;
 
 import java.io.File;
@@ -46,8 +46,8 @@ public class UtilsMailServer {
             server =
                 new MailServer(
             SERVER_CONFIG_CONTEXT,
-                    MailConstants.POP_SERVER_PORT,
-                    MailConstants.SMTP_SERVER_PORT);
+                    MailSrvConstants.POP_SERVER_PORT,
+                    MailSrvConstants.SMTP_SERVER_PORT);
         }
         runningServerCount++;
         return SERVER_CONFIG_CONTEXT;

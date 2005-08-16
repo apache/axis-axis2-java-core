@@ -34,7 +34,7 @@ public class POP3Worker extends Thread {
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream(),
                     true);
 
-            printWriter.println(MailConstants.OK + " POP3 server ready");
+            printWriter.println(MailSrvConstants.OK + " POP3 server ready");
             String s;
             String ps; //ProcessedString
             while (!doneProcess) {
@@ -51,7 +51,7 @@ public class POP3Worker extends Thread {
     ArrayList messages = new ArrayList();
 
     private void processInput(String input, PrintWriter printWriter) {
-        int listLen = (MailConstants.LIST + " ").length();
+        int listLen = (MailSrvConstants.LIST + " ").length();
         byte[] CR_LF = new byte[]{0x0D, 0x0A};
         byte[] CR_LF_DOT_CR_LF = new byte[]{0x0D, 0x0A, '.', 0x0D, 0x0A};
         String user = "";
@@ -63,19 +63,19 @@ public class POP3Worker extends Thread {
             while (stk.hasMoreTokens()) {
                 tokens.add(stk.nextToken());
             }
-            if (tokens.get(0).equals(MailConstants.USER)) {
+            if (tokens.get(0).equals(MailSrvConstants.USER)) {
                 user = (String) tokens.get(1);
                 messages = st.popUserMails(user);
-                printWriter.println(MailConstants.OK);
-            } else if (tokens.get(0).equals(MailConstants.PASS)) {
-                printWriter.println(MailConstants.OK); // Passwords are not checked.
-            } else if (input.equals(MailConstants.QUIT)) {
+                printWriter.println(MailSrvConstants.OK);
+            } else if (tokens.get(0).equals(MailSrvConstants.PASS)) {
+                printWriter.println(MailSrvConstants.OK); // Passwords are not checked.
+            } else if (input.equals(MailSrvConstants.QUIT)) {
                 printWriter.println(
-                        MailConstants.OK + "POP3 server signing off");
+                        MailSrvConstants.OK + "POP3 server signing off");
                 doneProcess = true;
-            } else if (input.equals(MailConstants.STAT)) {
-                printWriter.println(MailConstants.OK + messages.size() + " 1"); // We take the maildrop size as one.
-            } else if (tokens.get(0).equals(MailConstants.LIST)) { // scan listing
+            } else if (input.equals(MailSrvConstants.STAT)) {
+                printWriter.println(MailSrvConstants.OK + messages.size() + " 1"); // We take the maildrop size as one.
+            } else if (tokens.get(0).equals(MailSrvConstants.LIST)) { // scan listing
                 if (tokens.size() > 1) {
                     try {
                         int optArg = Integer.parseInt((String) tokens.get(1));
@@ -83,11 +83,11 @@ public class POP3Worker extends Thread {
                         if ((messageArrayIndex < messages.size()) &&
                                 (messageArrayIndex >= 0)) { // that is OK careful with numbering
                             printWriter.println(
-                                    MailConstants.OK + messageArrayIndex + 1 +
+                                    MailSrvConstants.OK + messageArrayIndex + 1 +
                                     " 120"); // Mail size of 120 is just some number.
                         } else {
                             printWriter.println(
-                                    MailConstants.ERR +
+                                    MailSrvConstants.ERR +
                                     "no such message, only " +
                                     (messages.size() + 1) +
                                     " messages in maildrop");
@@ -95,23 +95,23 @@ public class POP3Worker extends Thread {
                     } catch (NumberFormatException e) {
                         log.info(e.getMessage());
                         printWriter.println(
-                                MailConstants.ERR +
+                                MailSrvConstants.ERR +
                                 "problem passing the index. Index submited was " +
                                 tokens.get(1));
                     }
                 } else {
-                    printWriter.println(MailConstants.OK + messages.size());
+                    printWriter.println(MailSrvConstants.OK + messages.size());
                     for (int i = 0; i < messages.size(); i++) {
                         int messageIndex = i + 1;
                         printWriter.println(messageIndex + " 120"); // List out all the messages with a message size octet of 120
                     }
                     printWriter.println(".");
                 }
-            } else if (tokens.get(0).equals(MailConstants.RETR)) {
+            } else if (tokens.get(0).equals(MailSrvConstants.RETR)) {
                 String i = (String) tokens.get(1);
                 try {
                     int index = Integer.parseInt(i);
-                    printWriter.println(MailConstants.OK);
+                    printWriter.println(MailSrvConstants.OK);
                     MimeMessage m = (MimeMessage) messages.get(index - 1);
 
                     m.writeTo(socket.getOutputStream());
@@ -122,31 +122,31 @@ public class POP3Worker extends Thread {
                     socket.getOutputStream().write(CR_LF_DOT_CR_LF);// This is a bit of a hack to get it working. Have to find a bette way to handle this.
                     socket.getOutputStream().flush();
                 } catch (NumberFormatException e) {
-                    printWriter.println(MailConstants.ERR);
+                    printWriter.println(MailSrvConstants.ERR);
                 } catch (IOException e1) {
-                    printWriter.println(MailConstants.ERR);
+                    printWriter.println(MailSrvConstants.ERR);
                 } catch (MessagingException e2) {
-                    printWriter.println(MailConstants.ERR);
+                    printWriter.println(MailSrvConstants.ERR);
                 }
-            } else if (tokens.get(0).equals(MailConstants.DELE)) {
+            } else if (tokens.get(0).equals(MailSrvConstants.DELE)) {
                 String smIndex = (String) tokens.get(1);
                 try {
                     int mIndex = Integer.parseInt(smIndex) - 1 - numDeleted; // When one mail is deleted the index of the other mails will reduce. Asumed that the delete will occure from bottom up.
                     if ((mIndex >= 0) && (mIndex < messages.size())) {
                         messages.remove(mIndex);
                         numDeleted++;
-                        printWriter.println(MailConstants.OK);
+                        printWriter.println(MailSrvConstants.OK);
                     } else {
-                        printWriter.println(MailConstants.ERR);
+                        printWriter.println(MailSrvConstants.ERR);
                     }
                 } catch (NumberFormatException e) {
-                    printWriter.println(MailConstants.ERR);
+                    printWriter.println(MailSrvConstants.ERR);
                 }
-            } else if (tokens.get(0).equals(MailConstants.NOOP) ||
-                    tokens.get(0).equals(MailConstants.RSET)) {
-                printWriter.println(MailConstants.OK);
+            } else if (tokens.get(0).equals(MailSrvConstants.NOOP) ||
+                    tokens.get(0).equals(MailSrvConstants.RSET)) {
+                printWriter.println(MailSrvConstants.OK);
             } else {
-                printWriter.println(MailConstants.ERR);
+                printWriter.println(MailSrvConstants.ERR);
             }
         }
     }

@@ -88,7 +88,7 @@ public class SMTPWorker extends Thread {
 
                 String retString = processInput(input);
 
-                if (MailConstants.COMMAND_EXIT.equals(retString)) {
+                if (MailSrvConstants.COMMAND_EXIT.equals(retString)) {
                     exitWorker();
                 } else {
                     if (retString != null) {
@@ -131,9 +131,9 @@ public class SMTPWorker extends Thread {
     private String processInput(String input) {
         byte[] CR_LF = new byte[] { 0x0D, 0x0A };
         if (input == null)
-            return MailConstants.COMMAND_UNKNOWN;
+            return MailSrvConstants.COMMAND_UNKNOWN;
         if (mail != null && transmitionEnd)
-            return MailConstants.COMMAND_TRANSMISSION_END;
+            return MailSrvConstants.COMMAND_TRANSMISSION_END;
 
         if (input.startsWith("MAIL")) {
             mail = new MimeMessage(Session.getInstance(new Properties(),
@@ -169,15 +169,15 @@ public class SMTPWorker extends Thread {
                 }
             }
 
-            return MailConstants.MAIL_OK;
+            return MailSrvConstants.MAIL_OK;
 
         }
         if (input.startsWith("HELO")) {
-            return MailConstants.HELO_REPLY;
+            return MailSrvConstants.HELO_REPLY;
 
         } else if (input.startsWith("RCPT")) {
 
-            String domain = MailConstants.SERVER_DOMAIN;
+            String domain = MailSrvConstants.SERVER_DOMAIN;
             //System.out.println("RCPT:" + input);
             //temp += input + "\n"; TODO Check this
             int start = input.indexOf("<") + 1;
@@ -187,12 +187,12 @@ public class SMTPWorker extends Thread {
                 start = input.indexOf("TO:") + 3;
                 /*
                  * if(!input.endsWith(domain)){ System.out.println("ERROR: wrong
-                 * donmain name"); return MailConstants.RCPT_ERROR; }
+                 * donmain name"); return MailSrvConstants.RCPT_ERROR; }
                  */
             } else {
                 /*
                  * if(!input.endsWith(domain + ">")){ System.out.println("ERROR:
-                 * wrong donmain name"); return MailConstants.RCPT_ERROR; }
+                 * wrong donmain name"); return MailSrvConstants.RCPT_ERROR; }
                  */
             }
 
@@ -208,20 +208,20 @@ public class SMTPWorker extends Thread {
                 // TODO Auto-generated catch block
 //                e.printStackTrace();
             }
-            return MailConstants.RCPT_OK;
+            return MailSrvConstants.RCPT_OK;
 
         } else if (input.equalsIgnoreCase("DATA")) {
             dataWriting = true;
-            return MailConstants.DATA_START_SUCCESS;
+            return MailSrvConstants.DATA_START_SUCCESS;
 
         } else if (input.equalsIgnoreCase("QUIT")) {
             dataWriting = true;
             transmitionEnd = true;
-            return MailConstants.COMMAND_TRANSMISSION_END;
+            return MailSrvConstants.COMMAND_TRANSMISSION_END;
 
         } else if (input.equals(".")) {
             dataWriting = false;
-            return MailConstants.DATA_END_SUCCESS;
+            return MailSrvConstants.DATA_END_SUCCESS;
         } else if (input.equals("") && !bodyData) {
             bodyData = true;
             return null;
@@ -241,7 +241,7 @@ public class SMTPWorker extends Thread {
             return null;
 
         } else {
-            return MailConstants.COMMAND_UNKNOWN;
+            return MailSrvConstants.COMMAND_UNKNOWN;
         }
 
     }

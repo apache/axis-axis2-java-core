@@ -51,7 +51,7 @@ import javax.xml.stream.XMLStreamException;
  */
 public class MailetRequestResponceRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
-            new EndpointReference("axis2-server@127.0.0.1" +
+            new EndpointReference("foo@127.0.0.1" +
             "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");

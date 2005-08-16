@@ -55,7 +55,7 @@ public class EMailSender {
         this.password = password;
     }
 
-    public void send(String subject, String targetEmail, String message, String charSetEn) throws AxisFault {
+    public void send(String subject, String targetEmail, String message, String charSet) throws AxisFault {
         try {
             final PasswordAuthentication authentication =
                     new PasswordAuthentication(user, password);
@@ -77,14 +77,14 @@ public class EMailSender {
                     new InternetAddress(targetEmail));
             msg.setSubject(subject);
 
-            if (charSetEn.equals("")){
-                charSetEn = MailConstants.DEFAULT_CHAR_SET_ENCODING;
+            if (charSet == null){
+                charSet = MailConstants.DEFAULT_CHAR_SET;
             }
 
-            msg.addHeaderLine("Content-Type: text/plain; charset=" + MailConstants.DEFAULT_CHAR_SET);
+            msg.addHeaderLine("Content-Type: " + MailConstants.DEFAULT_CONTENT_TYPE + "; charset=" + charSet);
 
             msg.setText(message);
-            msg.setHeader("Content-Transfer-Encoding", charSetEn);
+            msg.setHeader("Content-Transfer-Encoding", MailConstants.DEFAULT_CHAR_SET_ENCODING);
             Transport.send(msg);
         } catch (AddressException e) {
             throw new AxisFault(e);
@@ -103,7 +103,7 @@ public class EMailSender {
 
         sender.send("Testing mail sending",
                 "hemapani@127.0.0.1",
-                "Hellp, testing", "us-ascii");
+                "Hellp, testing", MailConstants.DEFAULT_CHAR_SET);
 
         EmailReceiver receiver = new EmailReceiver(user,
                 host,

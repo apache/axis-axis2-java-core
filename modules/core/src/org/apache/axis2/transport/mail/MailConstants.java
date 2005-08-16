@@ -34,4 +34,5 @@ public class MailConstants {
     
     public final static String DEFAULT_CHAR_SET = "us-ascii";
     public final static String DEFAULT_CHAR_SET_ENCODING = "7bit";
+    public final static String DEFAULT_CONTENT_TYPE = "text/xml";
 }

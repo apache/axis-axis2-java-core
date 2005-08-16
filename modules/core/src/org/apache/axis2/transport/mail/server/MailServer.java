@@ -77,8 +77,8 @@ public class MailServer {
     }
 
     public static void main(String args[]){
-        int smtpPost = MailConstants.SMTP_SERVER_PORT;
-        int popPort = MailConstants.POP_SERVER_PORT;
+        int smtpPost = MailSrvConstants.SMTP_SERVER_PORT;
+        int popPort = MailSrvConstants.POP_SERVER_PORT;
         if (args.length == 2) {
             try {
                 smtpPost = Integer.parseInt(args[0]);

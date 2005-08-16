@@ -68,7 +68,11 @@ public class MailTransportSender extends AbstractTransportSender {
                 //TODO this is just a temporary hack, fix this to use input streams
 
                 String eprAddress = msgContext.getTo().getAddress();
-                String charEncoding = (String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                // In mail char set is what is being used. Charset encoding is not what is expected here.
+                String charSet = (String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                if (charSet == null){
+                    charSet = MailConstants.DEFAULT_CHAR_SET;
+                }
                 int index = eprAddress.indexOf('/');
                 String subject = "";
                 String email = null;
@@ -82,7 +86,7 @@ public class MailTransportSender extends AbstractTransportSender {
                 sender.send(
                     subject,
                     email,
-                    new String(byteArrayOutputStream.toByteArray()), charEncoding);
+                    new String(byteArrayOutputStream.toByteArray()), charSet);
             } else {
                 if (user == null) {
                     throw new AxisFault(
