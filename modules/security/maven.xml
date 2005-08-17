@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Revision: 1.21 $ $Date: 2004-10-27 20:54:09 +0600 (Wed, 27 Oct 2004) $ -->
+
+<project default="jar"
+    xmlns:j="jelly:core"
+    xmlns:maven="jelly:maven"
+    xmlns:deploy="deploy"
+    xmlns:ant="jelly:ant">
+    <postGoal name="test:compile">
+        <mkdir dir="target/classes/META-INF"/>
+        <copy file="src/META-INF/module.xml"
+            tofile="target/classes/META-INF/module.xml"/>
+        <copy file="./test-resources/axis2.xml"
+            tofile="target/axis2.xml"/>
+        <mkdir dir="target/modules"/>
+        <jar jarfile="target/security.mar" basedir="target/classes">
+            <include name="**"/>
+        </jar>
+        <copy file="target/security.mar"
+            tofile="target/modules/security.mar"/>
+    </postGoal>
+</project>

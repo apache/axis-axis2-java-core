@@ -1,0 +1,129 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.axis2.security.handler;
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.Handler;
+import org.apache.ws.security.handler.WSHandler;
+
+import javax.xml.namespace.QName;
+
+/**
+ * Class WSDoAllHandler
+ */
+public abstract class WSDoAllHandler extends WSHandler implements Handler {
+
+    /**
+     * Field EMPTY_HANDLER_METADATA
+     */
+    private static HandlerDescription EMPTY_HANDLER_METADATA =
+            new HandlerDescription(new QName("deafult Handler"));
+
+    /**
+     * Field handlerDesc
+     */
+    protected HandlerDescription handlerDesc;
+
+    /**
+     * Constructor AbstractHandler
+     */
+    public WSDoAllHandler() {
+        handlerDesc = EMPTY_HANDLER_METADATA;
+    }
+
+    /**
+     * Method getName
+     *
+     * @return name
+     */
+    public QName getName() {
+        return handlerDesc.getName();
+    }
+
+    /**
+     * Method revoke
+     *
+     * @param msgContext
+     */
+    public void revoke(MessageContext msgContext) {
+    }
+
+    /**
+     * Method cleanup
+     *
+     * @throws org.apache.axis2.AxisFault
+     */
+    public void cleanup() throws AxisFault {
+    }
+
+    /**
+     * Method getParameter
+     *
+     * @param name
+     * @return parameter
+     */
+    public Parameter getParameter(String name) {
+        return handlerDesc.getParameter(name);
+    }
+
+    /**
+     * Method init
+     *
+     * @param handlerdesc
+     */
+    public void init(HandlerDescription handlerdesc) {
+        this.handlerDesc = handlerdesc;
+    }
+
+    /**
+     * To get the phaseRule of a handler it is required to get the HnadlerDescription of the handler
+     * so the argumnet pass when it call return as HnadlerDescription
+     *
+     * @return handler description
+     */
+    public HandlerDescription getHandlerDesc() {
+        return handlerDesc;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        QName name = this.getName();
+        return (name != null) ? name.toString() : null;
+    }
+
+
+    public Object getOption(String key) {
+        throw new RuntimeException("Not yet implemented");
+    }
+
+    public Object getProperty(Object msgContext, String key) {
+        throw new RuntimeException("Not yet implemented");
+    }
+
+    public String getPassword(Object msgContext) {
+        throw new RuntimeException("Not yet implemented");
+    }
+
+    public void setPassword(Object msgContext, String password) {
+        throw new RuntimeException("Not yet implemented");
+    }
+}
