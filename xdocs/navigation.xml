@@ -31,6 +31,7 @@
         <item name="Handling Binary Data with Axis2" href="mtom-guide.html"/>
         <item name="Axis2 Configuration Guide" href="axis2config.html"/>
         <item name="Migrating from Axis 1.x" href="migration.html"/>
+        <item name="Other Tutorials" href="otherTutorials.html"/>
       </item>
       <item name="Get Invloved" href="overview.html">
         <item name="Checkout the Source" href="svn.html"/>
