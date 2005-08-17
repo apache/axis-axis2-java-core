@@ -104,7 +104,7 @@ public class EMailSender {
 
         sender.send("Testing mail sending",
                 "hemapani@127.0.0.1",
-                "Hellp, testing", MailConstants.DEFAULT_CHAR_SET);
+                "Hellp, testing",  MailSrvConstants.DEFAULT_CHAR_SET);
 
         EmailReceiver receiver = new EmailReceiver(user,
                 host,
