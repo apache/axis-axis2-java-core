@@ -36,6 +36,10 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     private static HandlerDescription EMPTY_HANDLER_METADATA =
             new HandlerDescription(new QName("deafult Handler"));
 
+    private final static String WSS_PASSWORD = "password";
+    
+    private final static String WSS_USERNAME = "username";
+    
     /**
      * Field handlerDesc
      */
@@ -112,18 +116,28 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 
 
     public Object getOption(String key) {
-        throw new RuntimeException("Not yet implemented");
+        return this.handlerDesc.getParameter(key).getValue();
     }
 
     public Object getProperty(Object msgContext, String key) {
-        throw new RuntimeException("Not yet implemented");
+        return ((MessageContext)msgContext).getProperty(key);
     }
 
     public String getPassword(Object msgContext) {
-        throw new RuntimeException("Not yet implemented");
+        return (String)((MessageContext)msgContext).getProperty(WSS_PASSWORD);
     }
 
     public void setPassword(Object msgContext, String password) {
-        throw new RuntimeException("Not yet implemented");
+        ((MessageContext)msgContext).setProperty(WSS_PASSWORD,password);
     }
+    
+    public String getUsername(Object msgContext) {
+        return (String)((MessageContext)msgContext).getProperty(WSS_USERNAME);
+    }
+
+    public void setUsername(Object msgContext, String username) {
+        ((MessageContext)msgContext).setProperty(WSS_USERNAME,username);
+    }
+    
+        
 }
