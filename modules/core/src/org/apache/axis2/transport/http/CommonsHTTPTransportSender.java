@@ -519,7 +519,7 @@ public class CommonsHTTPTransportSender
                         .getParameterByName(HTTPConstants.CHAR_SET_ENCODING);
                 if (headers[i]
                         .getName()
-                        .equals(
+                        .equalsIgnoreCase(
                                 HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED)) {
                     OperationContext opContext =
                             msgContext.getOperationContext();
