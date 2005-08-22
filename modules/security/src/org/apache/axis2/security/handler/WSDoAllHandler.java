@@ -116,7 +116,8 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 
 
     public Object getOption(String key) {
-        return this.handlerDesc.getParameter(key).getValue();
+        Parameter parameter = this.handlerDesc.getParameter(key);
+		return (parameter== null)?null:parameter.getValue();
     }
 
     public Object getProperty(Object msgContext, String key) {

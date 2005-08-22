@@ -59,8 +59,9 @@ public class Axis2Util {
 			ByteArrayInputStream bais = new ByteArrayInputStream(baos
 					.toByteArray());
 
-			return DocumentBuilderFactory.newInstance().newDocumentBuilder()
-					.parse(bais);
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setNamespaceAware(true);
+			return factory.newDocumentBuilder().parse(bais);
 		} catch (Exception e) {
 			throw new WSSecurityException(
 					"Error in converting SOAP Envelope to Document", e);

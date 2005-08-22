@@ -41,6 +41,7 @@ public class WSDoAllSender extends WSDoAllHandler {
 	public void invoke(MessageContext msgContext) throws AxisFault {
 		
         doDebug = log.isDebugEnabled();
+        doDebug = true;
         if (doDebug) {
             log.debug("WSDoAllSender: enter invoke()");
         }
@@ -74,7 +75,7 @@ public class WSDoAllSender extends WSDoAllHandler {
 	                    getProperty(reqData.getMsgContext(), WSHandlerConstants.ACTOR);
 	        }
 	        reqData.setActor(actor);
-		
+	        		
             /*
              * For every action we need a username, so get this now. The
              * username defined in the deployment descriptor takes precedence.
@@ -181,7 +182,6 @@ public class WSDoAllSender extends WSDoAllHandler {
                     log.debug("Performing Action: " + actionToDo);
                 }
 
-                String password = null;
                 switch (actionToDo) {
                 case WSConstants.UT:
                     performUTAction(actionToDo, mu, doc, reqData);
@@ -217,7 +217,6 @@ public class WSDoAllSender extends WSDoAllHandler {
                 }
             }
 
-
             /*
                 * If required convert the resulting document into a message first.
                 * The outputDOM() method performs the necessary c14n call. After
@@ -247,6 +246,7 @@ public class WSDoAllSender extends WSDoAllHandler {
         } catch (WSSecurityException e) {
             throw new AxisFault(e.getMessage(), e);
         } finally {
+        	System.out.println("DONE");
             reqData.clear();
             reqData = null;
         }        
