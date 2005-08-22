@@ -649,7 +649,8 @@ public class OMElementImpl extends OMNodeImpl
                 //serialize children
                 Iterator children = this.getChildren();
                 while (children.hasNext()) {
-                    ((OMNode)children.next()).serializeWithCache(omOutput);
+                    //A call to the  Serialize or the serializeWithCache wont make a difference here
+                    ((OMNode)children.next()).serialize(omOutput);
                 }
                 OMSerializerUtil.serializeEndpart(omOutput);
             } else{

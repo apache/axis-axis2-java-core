@@ -164,7 +164,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     public void serializeWithCache(
             org.apache.axis2.om.impl.OMOutputImpl omOutput)
             throws XMLStreamException {
-        writeOutput(omOutput);
+        serializeLocal(omOutput);
 
     }
 
@@ -290,7 +290,10 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput)
             throws XMLStreamException {
-        
+           serializeLocal(omOutput);
+    }
+
+    private void serializeLocal(OMOutputImpl omOutput) throws XMLStreamException {
         if (!this.isBinary) {
              writeOutput(omOutput);
         } else {

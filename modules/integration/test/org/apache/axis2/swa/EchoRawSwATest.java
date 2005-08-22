@@ -98,7 +98,7 @@ public class EchoRawSwATest extends TestCase {
         Socket socket = new Socket("127.0.0.1", 5555);
         OutputStream outStream = socket.getOutputStream();
         InputStream inStream = socket.getInputStream();
-        InputStream requestMsgInStream = getResourceAsStream("org/apache/axis2/swa/swainput.bin");
+        InputStream requestMsgInStream = getResourceAsStream("/org/apache/axis2/swa/swainput.bin");
         int data;
         while ((data = requestMsgInStream.read()) != -1) {
             System.out.print(data);
@@ -119,14 +119,14 @@ public class EchoRawSwATest extends TestCase {
                 break;
             }
         }
+
         assertTrue(sb.toString().indexOf(
                 "Apache Axis2 - The NExt Generation Web Services Engine") > 0);
         assertTrue(sb.toString().indexOf("multipart/related") > 0);
     }
 
     private InputStream getResourceAsStream(String path) {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        return cl.getResourceAsStream(path);
+        return this.getClass().getResourceAsStream(path);
     }
 
     private void compareWithCreatedOMText(OMText actualTextData) {
