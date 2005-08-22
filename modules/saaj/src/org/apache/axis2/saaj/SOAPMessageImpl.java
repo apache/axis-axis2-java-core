@@ -201,8 +201,9 @@ public class SOAPMessageImpl extends SOAPMessage {
     public void writeTo(OutputStream out) throws SOAPException, IOException {
         try {
             XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
+            //the writeTo method forces the elements to be built!!!
             ((SOAPEnvelopeImpl) mSOAPPart.getEnvelope()).getOMEnvelope()
-                    .serialize(writer);
+                    .serializeWithCache(writer);
             writer.flush();
         } catch (Exception e) {
             throw new SOAPException(e);

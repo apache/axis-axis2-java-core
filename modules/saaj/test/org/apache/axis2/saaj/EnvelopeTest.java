@@ -45,11 +45,12 @@ public class EnvelopeTest extends TestCase {
     	MessageFactory mf = MessageFactory.newInstance();
     	SOAPMessage smsg =
     		mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(xmlString.getBytes()));
-    	SOAPPart sp = smsg.getSOAPPart();
-    	SOAPEnvelope se = sp.getEnvelope();
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	smsg.writeTo(baos);
-    	SOAPBody body = smsg.getSOAPPart().getEnvelope().getBody();
+        //It seems that the aim of this writing is to completely build the object tree. The
+        smsg.writeTo(System.out);
+
+        SOAPEnvelope envelope = smsg.getSOAPPart().getEnvelope();
+
+        SOAPBody body = envelope.getBody();
     	assertTrue(body != null);
     }
   

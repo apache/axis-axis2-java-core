@@ -630,54 +630,35 @@ public class OMElementImpl extends OMNodeImpl
 
     protected void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
 
-        // select the builder
-        short builderType = PULL_TYPE_BUILDER;    // default is pull type
-        if (builder != null) {
-            builderType = this.builder.getBuilderType();
-        }
-        if ((builderType == PUSH_TYPE_BUILDER)
-                && (builder.getRegisteredContentHandler() == null)) {
-            builder.registerExternalContentHandler(
-                    new StreamWriterToContentHandlerConverter(omOutput));
-        }
+        if (cache){
+            //in this case we don't care whether the elements are built or not
+            //we just call the serialize methods
+            OMSerializerUtil.serializeStartpart(this, omOutput);
+            //serilize children
+            Iterator children = this.getChildren();
+            while (children.hasNext()) {
+                ((OMNode)children.next()).serializeWithCache(omOutput);
+            }
+            OMSerializerUtil.serializeEndpart(omOutput);
 
-
-        if (!cache) {
-            //No caching
-            if (this.firstChild != null) {
+        }else{
+            //Now the caching is supposed to be off. However caching been switched off
+            //has nothing to do if the element is already built!
+            if (this.done){
                 OMSerializerUtil.serializeStartpart(this, omOutput);
-                firstChild.serialize(omOutput);
-                OMSerializerUtil.serializeEndpart(omOutput);
-            } else if (!this.done) {
-                if (builderType == PULL_TYPE_BUILDER) {
-                    OMSerializerUtil.serializeByPullStream(this, omOutput);
-                } else {
-                    OMSerializerUtil.serializeStartpart(this, omOutput);
-                    builder.setCache(cache);
-                    builder.next();
-                    OMSerializerUtil.serializeEndpart(omOutput);
+                //serialize children
+                Iterator children = this.getChildren();
+                while (children.hasNext()) {
+                    ((OMNode)children.next()).serializeWithCache(omOutput);
                 }
-            } else {
-                OMSerializerUtil.serializeNormal(this, omOutput, cache);
+                OMSerializerUtil.serializeEndpart(omOutput);
+            } else{
+                //take the XMLStream reader and feed it to the stream serilizer.
+                //todo is this right ?????
+                OMSerializerUtil.serializeByPullStream(this, omOutput,cache);
             }
 
-            //serilize siblings
-            if (this.nextSibling != null) {
-                nextSibling.serialize(omOutput);
-            } else if (this.parent != null) {
-                if (!this.parent.isComplete()) {
-                    builder.setCache(cache);
-                    builder.next();
-                }
-            }
-        } else {
-            //Cached
-            OMSerializerUtil.serializeNormal(this, omOutput, cache);
-            // serialize the siblings
-            OMNode nextSibling = this.getNextSibling();
-            if (nextSibling != null) {
-                nextSibling.serializeWithCache(omOutput);
-            }
+
         }
     }
 

@@ -123,7 +123,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
      * @throws SOAPException
      * @see javax.xml.soap.SOAPEnvelope#getBody()
      */
-    public SOAPBody getBody() throws SOAPException {
+    public SOAPBody   getBody() throws SOAPException {
 
         org.apache.axis2.soap.SOAPBody omSOAPBody = null;
         try {

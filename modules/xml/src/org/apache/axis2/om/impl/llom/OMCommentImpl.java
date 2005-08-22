@@ -55,10 +55,6 @@ public class OMCommentImpl extends OMNodeImpl implements OMComment {
     public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         writer.writeComment(this.value);
-        OMNode nextSibling = this.getNextSibling();
-        if (nextSibling != null) {
-            nextSibling.serializeWithCache(omOutput);
-        }
     }
 
     /**

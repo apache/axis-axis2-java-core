@@ -33,7 +33,7 @@ public class OMSerializerUtil {
     /**
      * Method serializeEndpart
      *
-     * @param writer
+     * @param omOutput
      * @throws javax.xml.stream.XMLStreamException
      *
      */
@@ -46,7 +46,7 @@ public class OMSerializerUtil {
      * Method serializeAttribute
      *
      * @param attr
-     * @param writer
+     * @param omOutput
      * @throws XMLStreamException
      */
     public static void serializeAttribute(OMAttribute attr, OMOutputImpl omOutput)
@@ -78,7 +78,7 @@ public class OMSerializerUtil {
      * Method serializeNamespace
      *
      * @param namespace
-     * @param writer
+     * @param omOutput
      * @throws XMLStreamException
      */
     public static void serializeNamespace(OMNamespace namespace, org.apache.axis2.om.impl.OMOutputImpl omOutput)
@@ -100,7 +100,7 @@ public class OMSerializerUtil {
     /**
      * Method serializeStartpart
      *
-     * @param writer
+     * @param omOutput
      * @throws XMLStreamException
      */
     public static void serializeStartpart(OMElementImpl element, OMOutputImpl omOutput)
@@ -173,7 +173,7 @@ public class OMSerializerUtil {
     /**
      * Method serializeNormal
      *
-     * @param writer
+     * @param omOutput
      * @param cache
      * @throws XMLStreamException
      */
@@ -197,9 +197,20 @@ public class OMSerializerUtil {
     }
 
     public static void serializeByPullStream(OMElementImpl element, org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
+        serializeByPullStream(element,omOutput,false);
+    }
+
+     public static void serializeByPullStream(OMElementImpl element, org.apache.axis2.om.impl.OMOutputImpl omOutput,boolean cache) throws XMLStreamException {
         StreamingOMSerializer streamingOMSerializer = new StreamingOMSerializer();
-        streamingOMSerializer.serialize(element.getXMLStreamReaderWithoutCaching(),
+        if (cache){
+               streamingOMSerializer.serialize(element.getXMLStreamReader(),
                 omOutput);
+        }else{
+            streamingOMSerializer.serialize(element.getXMLStreamReaderWithoutCaching(),
+                omOutput);
+        }
+
+
         return;
     }
 }

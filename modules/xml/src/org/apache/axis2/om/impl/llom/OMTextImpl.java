@@ -164,16 +164,22 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     public void serializeWithCache(
             org.apache.axis2.om.impl.OMOutputImpl omOutput)
             throws XMLStreamException {
+        writeOutput(omOutput);
+
+    }
+
+    /**
+     * Writes the relevant output
+     * @param omOutput
+     * @throws XMLStreamException
+     */
+    private void writeOutput(OMOutputImpl omOutput) throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         int type = getType();
         if (type == TEXT_NODE) {
-            writer.writeCharacters(this.value);
+            writer.writeCharacters(this.getText());
         } else if (type == CDATA_SECTION_NODE) {
-            writer.writeCData(this.value);
-        }
-        OMNode nextSibling = this.getNextSibling();
-        if (nextSibling != null) {
-            nextSibling.serializeWithCache(omOutput);
+            writer.writeCData(this.getText());
         }
     }
 
@@ -197,7 +203,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                 do {
                     data = new byte[3];
                     IOUtils.readFully(inStream, data, 0, 3);
-                    text.append(Base64.encode(data));                    
+                    text.append(Base64.encode(data));
                 }while (inStream.available()>0);
                 return text.toString();
             } catch (Exception e) {
@@ -284,8 +290,9 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput)
             throws XMLStreamException {
+        
         if (!this.isBinary) {
-            serializeWithCache(omOutput);
+             writeOutput(omOutput);
         } else {
             if (omOutput.isOptimized()) {
                 if (contentID == null) {
@@ -300,19 +307,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
             } else {
                 omOutput.getXmlStreamWriter().writeCharacters(this.getText());
             }
-            // TODO do we need these
-            OMNode nextSibling = this.getNextSibling();
-            if (nextSibling != null) {
-                // serilize next sibling
-                nextSibling.serialize(omOutput);
-            } else {
-                // TODO : See whether following part is really needed
-                if (parent != null && !parent.isComplete()) {
-                    // do the special serialization
-                    // Only the push serializer is left now
-                    builder.next();
-                }
-            }
+
         }
     }
 
