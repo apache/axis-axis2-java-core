@@ -157,7 +157,8 @@ public class HandlerFailureTest extends TestCase {
             value.setText("Isaac Assimov, the foundation Sega");
             method.addChild(value);
 
-            org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
+            org.apache.axis2.clientapi.Call call =
+                    new      org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
             //EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + Utils.TESTING_PORT + "/axis/services/EchoXMLService");
             
             call.setTransportInfo(Constants.TRANSPORT_HTTP,

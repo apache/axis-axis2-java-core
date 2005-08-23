@@ -85,7 +85,8 @@ public class ServiceDispatchingTest extends TestCase {
     public void testDispatchWithURLOnly() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
         OMElement payload = TestingUtils.createDummyOMElement();
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
+        org.apache.axis2.clientapi.Call call =
+                new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
         call.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis/services/EchoXMLService/echoOMElement"));
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
@@ -105,7 +106,8 @@ public class ServiceDispatchingTest extends TestCase {
         value.addChild(
                 fac.createText(value, "Isaac Assimov, the foundation Sega"));
         payload.addChild(value);
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
+        org.apache.axis2.clientapi.Call call =
+                new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
         call.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis/services/EchoXMLService/"));
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
@@ -130,7 +132,8 @@ public class ServiceDispatchingTest extends TestCase {
         payload.addChild(value);
 
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
+        org.apache.axis2.clientapi.Call call =
+                new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
         call.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis/services/"));
         call.setTransportInfo(Constants.TRANSPORT_HTTP,

@@ -257,14 +257,14 @@ public class DeploymentEngine implements DeploymentConstants {
             hotDeployment = false;
             hotUpdate = false;
             new RepositoryListenerImpl(folderName, this);
-            try {
-                ((AxisConfigurationImpl) axisConfig).setRepository(axis2repository);
-                engagdeModules();
-                ((AxisConfigurationImpl) axisConfig).setPhasesinfo(phasesinfo);
-            } catch (AxisFault axisFault) {
-                log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VAL_FAILED, axisFault.getMessage()));
-                throw new DeploymentException(axisFault);
-            }
+        }
+        try {
+            ((AxisConfigurationImpl) axisConfig).setRepository(axis2repository);
+            engagdeModules();
+            ((AxisConfigurationImpl) axisConfig).setPhasesinfo(phasesinfo);
+        } catch (AxisFault axisFault) {
+            log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VAL_FAILED, axisFault.getMessage()));
+            throw new DeploymentException(axisFault);
         }
         return axisConfig;
     }
@@ -476,7 +476,6 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public Class getHandlerClass(String className, ClassLoader loader1) throws AxisFault {
         Class handlerClass = null;
-
         try {
             handlerClass = Class.forName(className, true, loader1);
         } catch (ClassNotFoundException e) {

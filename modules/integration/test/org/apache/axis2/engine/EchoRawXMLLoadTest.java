@@ -127,7 +127,8 @@ public class EchoRawXMLLoadTest extends TestCase {
 
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
+        org.apache.axis2.clientapi.Call call =
+                new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
 
         call.setTo(targetEPR);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,

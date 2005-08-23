@@ -33,6 +33,10 @@ public class MyInOutMEPClient extends Call {
         super(assumeServiceContext(null));
     }
 
+    public MyInOutMEPClient(String clientHome) throws AxisFault {
+        super(clientHome);    
+    }
+
     public SOAPEnvelope invokeBlockingWithEnvelopeOut(String axisop,
                                                       OMElement toSend) throws AxisFault {
         OperationDescription axisConfig =

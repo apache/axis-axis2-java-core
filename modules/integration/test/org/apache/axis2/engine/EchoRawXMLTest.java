@@ -88,7 +88,8 @@ public class EchoRawXMLTest extends TestCase {
     public void testEchoXMLASync() throws Exception {
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
+        org.apache.axis2.clientapi.Call call =
+                new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
 
         call.setTo(targetEPR);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
@@ -131,7 +132,8 @@ public class EchoRawXMLTest extends TestCase {
 
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
+        org.apache.axis2.clientapi.Call call =
+                new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
 
         call.setTo(targetEPR);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
@@ -149,7 +151,8 @@ public class EchoRawXMLTest extends TestCase {
 
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
+        org.apache.axis2.clientapi.Call call =
+                new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
 
         call.setTo(targetEPR);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,

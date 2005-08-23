@@ -80,7 +80,7 @@ public class SOAPversionTest extends TestCase {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
         OMElement payload = createEnvelope();
-        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient();
+        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/intregrationRepo");
         inOutMEPClient.setSoapVersionURI(
                 SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         inOutMEPClient.setTo(targetEPR);
@@ -101,7 +101,7 @@ public class SOAPversionTest extends TestCase {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
         OMElement payload = createEnvelope();
-        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient();
+        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/intregrationRepo");
         inOutMEPClient.setSoapVersionURI(
                 SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         inOutMEPClient.setTo(targetEPR);
@@ -124,7 +124,7 @@ public class SOAPversionTest extends TestCase {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
         OMElement payload = createEnvelope();
-        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient();
+        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/intregrationRepo");
         inOutMEPClient.setSoapVersionURI(
                 SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 

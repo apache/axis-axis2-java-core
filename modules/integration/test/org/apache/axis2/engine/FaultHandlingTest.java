@@ -120,7 +120,7 @@ public class FaultHandlingTest extends TestCase {
     }
 
     private MyInOutMEPClient getMyInOutMEPClient() throws AxisFault {
-        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient();
+        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/intregrationRepo");
         inOutMEPClient.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         inOutMEPClient.setTo(targetEPR);
         inOutMEPClient.setTransportInfo(Constants.TRANSPORT_HTTP,

@@ -92,7 +92,7 @@ public class OneWayRawXMLTest extends TestCase {
 
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        MessageSender sender = new MessageSender();
+        MessageSender sender = new MessageSender("target/test-resources/intregrationRepo");
 
         sender.setTo(targetEPR);
         sender.setSenderTransport(Constants.TRANSPORT_HTTP);

@@ -6,26 +6,27 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * 
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*
+*/
 
 /**
  * Author : Deepal Jayasinghe
@@ -40,6 +41,8 @@ public class DeploymentClassLoader extends URLClassLoader {
     //To keep jar files inside /lib directory in the main jar
     private ArrayList lib_jars_list;
 
+    private HashMap loadedclass;
+
 
     /**
      * DeploymentClassLoader is exetend form URLClassLoader , and the constructor
@@ -53,6 +56,7 @@ public class DeploymentClassLoader extends URLClassLoader {
         super(urls, parent);
         this.urls = urls;
         lib_jars_list = new ArrayList();
+        loadedclass = new HashMap();
         findLibJars();
     }
 
@@ -109,10 +113,15 @@ public class DeploymentClassLoader extends URLClassLoader {
             throws ClassNotFoundException {
         Class cla = null;
         try {
+            cla = (Class)loadedclass.get(name);
+            if(cla != null){
+                return cla;
+            }
             boolean foundClass = false;
             try {
                 cla = super.findClass(name);
                 foundClass = true;
+                loadedclass.put(name, cla);
                 return cla;
             } catch (ClassNotFoundException e) {
                 foundClass = false;
@@ -120,12 +129,14 @@ public class DeploymentClassLoader extends URLClassLoader {
             if (!foundClass) {
                 byte raw[] = getBytes(name);
                 cla = defineClass(name, raw, 0, raw.length);
+                loadedclass.put(name, cla);
                 foundClass = true;
                 return cla;
             }
             if (!foundClass) {
 //                throw new ClassNotFoundException("Class Not found : " + name);
-                throw new ClassNotFoundException(Messages.getMessage(DeploymentErrorMsgs.CLASS_NOT_FOUND, name));
+                throw new ClassNotFoundException(Messages.getMessage(
+                        DeploymentErrorMsgs.CLASS_NOT_FOUND, name));
             }
 
         } catch (Exception e) {

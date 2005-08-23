@@ -104,7 +104,8 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
         value.setText("Isaac Assimov, the foundation Sega");
         method.addChild(value);
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+        org.apache.axis2.clientapi.Call call =
+                new org.apache.axis2.clientapi.Call(
                 serviceContext);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
 

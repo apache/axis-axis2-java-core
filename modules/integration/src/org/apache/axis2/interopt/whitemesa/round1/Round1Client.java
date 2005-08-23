@@ -29,7 +29,7 @@ public class Round1Client {
             throw new AxisFault(e);
         }
 
-        Call call = new Call();
+        Call call = new Call("target/test-resources/intregrationRepo");
         call.setTo(new EndpointReference(url.toString()));
         call.setSoapAction(soapAction);
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);

@@ -116,7 +116,8 @@ public class EchoRawMTOMTest extends TestCase {
     public void testEchoXMLASync() throws Exception {
         OMElement payload = createEnvelope();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
+        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+                "target/test-resources/intregrationRepo" );
 
         call.setTo(targetEPR);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
@@ -161,7 +162,8 @@ public class EchoRawMTOMTest extends TestCase {
 
         OMElement payload = createEnvelope();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
+        org.apache.axis2.clientapi.Call call =
+                new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
         call.setTo(targetEPR);
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,

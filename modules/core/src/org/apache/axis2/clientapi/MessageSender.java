@@ -42,7 +42,17 @@ public class MessageSender extends InOnlyMEPClient {
     }
 
     public MessageSender() throws AxisFault {
-        super(assumeServiceContext());
+        super(assumeServiceContext(null));
+    }
+
+    /**
+     * This constrctor is to take repository as aragumnet and build the Configurationcontext using that
+     * @param repo repository location
+     * @throws AxisFault
+     */
+
+    public MessageSender(String repo) throws AxisFault {
+        super(assumeServiceContext(repo));
     }
     /**
      * Send the SOAP Message, the actual worker
@@ -65,11 +75,11 @@ public class MessageSender extends InOnlyMEPClient {
      * @return
      * @throws AxisFault
      */
-    private static ServiceContext assumeServiceContext() throws AxisFault {
+    private static ServiceContext assumeServiceContext(String repo) throws AxisFault {
         ConfigurationContext sysContext = null;
         if (ListenerManager.configurationContext == null) {
             ConfigurationContextFactory efac = new ConfigurationContextFactory();
-            sysContext = efac.buildClientConfigurationContext(null);
+            sysContext = efac.buildClientConfigurationContext(repo);
         } else {
             sysContext = ListenerManager.configurationContext;
         }
