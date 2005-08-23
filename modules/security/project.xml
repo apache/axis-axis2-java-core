@@ -118,7 +118,7 @@
         </dependency>
 
         <dependency>
-            <groupId>xmlsec</groupId>
+            <groupId>xml-security</groupId>
             <artifactId>xmlsec</artifactId>
             <version>1.2.1</version>
             <properties>
@@ -126,7 +126,7 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>bcprov</groupId>
+            <groupId>bouncycastle</groupId>
             <artifactId>bcprov</artifactId>
             <version>jdk13-128</version>
             <properties>

@@ -260,7 +260,6 @@ public class CommonsHTTPTransportSender
                     out.write(bytes);
                 }
                out.flush();
-               System.out.println("test");
             } catch (XMLStreamException e) {
                 throw new AxisFault(e);
             } catch (FactoryConfigurationError e) {
