@@ -47,9 +47,12 @@ public class OMSerializerTest extends AbstractTestCase {
                         new FileReader(
                                 getTestResourceFile("soap/soapmessage.xml")));
         tempFile = File.createTempFile("temp", "xml");
-        writer =
+//        writer =
+//                XMLOutputFactory.newInstance().
+//                        createXMLStreamWriter(new FileOutputStream(tempFile));
+         writer =
                 XMLOutputFactory.newInstance().
-                        createXMLStreamWriter(new FileOutputStream(tempFile));
+                        createXMLStreamWriter(System.out);
     }
 
     public void testRawSerializer() throws Exception {
@@ -73,8 +76,7 @@ public class OMSerializerTest extends AbstractTestCase {
                 OMAbstractFactory.getSOAP11Factory(),
                 reader);
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
-        StreamingOMSerializer serializer = new StreamingOMSerializer();
-        serializer.serialize(env.getXMLStreamReader(), writer);
+        env.serialize(writer);
     }
 
     public void testElementPullStream2() throws Exception {
