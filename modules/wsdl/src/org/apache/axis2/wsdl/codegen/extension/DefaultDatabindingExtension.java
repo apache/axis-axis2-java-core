@@ -2,6 +2,7 @@ package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 
@@ -21,6 +22,7 @@ import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
  * limitations under the License.
  *
  *  The function of this class is to fill the default information if it's not already filled
+ *  Note - This extension is meant to be the last of the extensions
  */
 public class DefaultDatabindingExtension extends AbstractCodeGenerationExtension {
     private CodeGenConfiguration configuration;
@@ -30,8 +32,14 @@ public class DefaultDatabindingExtension extends AbstractCodeGenerationExtension
 
     public void engage() throws CodeGenerationException {
         TypeMapper mappper = configuration.getTypeMapper();
-        if (mappper==null){
+        if (configuration.getDatabindingType() == XSLTConstants.DataBindingTypes.NONE){
             configuration.setTypeMapper(new DefaultTypeMapper());
+        }else{
+            if (mappper==null){
+                //this shouldn't happen
+                throw new CodeGenerationException("No proper databinding has taken place");
+            }
         }
+
     }
 }

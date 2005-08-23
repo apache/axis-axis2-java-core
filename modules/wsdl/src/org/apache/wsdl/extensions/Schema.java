@@ -37,7 +37,7 @@ public interface Schema extends WSDLExtensibilityElement {
     public void setElelment(Element elelment);
     /**
      *
-     * @return
+     *
      */
     public Stack getImportedSchemaStack();
     /**

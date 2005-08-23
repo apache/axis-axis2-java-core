@@ -48,14 +48,14 @@ import java.util.*;
 public class WSDLPump {
 
     private static final String XSD_TYPE = "type";
-	private static final String XSD_SEQUENCE = "sequence";
-	private static final String XSD_NAME = "name";
-	private static final String XSD_COMPLEXTYPE = "complexType";
-	private static final String XSD_TARGETNAMESPACE = "targetNamespace";
-	private static final String XMLNS_AXIS2WRAPPED = "xmlns:axis2wrapped";
-	private static final String NAMESPACE_XMLSCHEMA = "http://www.w3.org/2001/XMLSchema";
-	private static final String XSD_ELEMENT = "element";
-	private static final String BOUND_INTERFACE_NAME = "BoundInterface";
+    private static final String XSD_SEQUENCE = "sequence";
+    private static final String XSD_NAME = "name";
+    private static final String XSD_COMPLEXTYPE = "complexType";
+    private static final String XSD_TARGETNAMESPACE = "targetNamespace";
+    private static final String XMLNS_AXIS2WRAPPED = "xmlns:axis2wrapped";
+    private static final String NAMESPACE_XMLSCHEMA = "http://www.w3.org/2001/XMLSchema";
+    private static final String XSD_ELEMENT = "element";
+    private static final String BOUND_INTERFACE_NAME = "BoundInterface";
 
     private WSDLDescription womDefinition;
 
@@ -115,8 +115,9 @@ public class WSDLPump {
         //Types may get changed inside the Operation pumping.
 
         Types wsdl4jTypes = wsdl4JDefinition.getTypes();
+        WSDLTypes wsdlTypes = null;
         if (null != wsdl4jTypes) {
-            WSDLTypes wsdlTypes = this.wsdlComponentFactory.createTypes();
+            wsdlTypes = this.wsdlComponentFactory.createTypes();
             this.copyExtensibleElements(wsdl4jTypes.getExtensibilityElements(),
                     wsdlTypes);
             this.womDefinition.setTypes(wsdlTypes);
@@ -144,8 +145,11 @@ public class WSDLPump {
 
                     if (wsdlImport.getDefinition()!=null){
                         Definition importedDef = wsdlImport.getDefinition();
+
+                        if (wsdlTypes==null){
+                            wsdlTypes = this.wsdlComponentFactory.createTypes();
+                        }
                         //add the imported types
-                        WSDLTypes wsdlTypes = this.wsdlComponentFactory.createTypes();
                         this.copyExtensibleElements(importedDef.getTypes().
                                 getExtensibilityElements(),
                                 wsdlTypes);
@@ -323,8 +327,6 @@ public class WSDLPump {
                 }
 
             }
-        }else{
-            return;
         }
     }
 
@@ -455,7 +457,7 @@ public class WSDLPump {
                 //out of it and add it to the schema.
                 Element schemaElement = null;
                 WSDLTypes types = womDefinition.getTypes();
-                
+
                 //If types is null create a new one to be used for multipart 
                 //resolution if any.
                 if (null == types) {
@@ -476,8 +478,8 @@ public class WSDLPump {
                     types.addExtensibilityElement(typesElement);
                     this.womDefinition.setTypes(types);
                 }
-                
-                
+
+
                 //
                 Iterator schemaEIIterator = types.getExtensibilityElements()
                         .iterator();
@@ -496,7 +498,7 @@ public class WSDLPump {
                 Element newType = doc.createElementNS(WSDLPump.NAMESPACE_XMLSCHEMA, WSDLPump.XSD_COMPLEXTYPE);
                 newType.setAttribute(WSDLPump.XSD_NAME, name);
 
-                
+
                 Element cmplxContent = doc.createElementNS(WSDLPump.NAMESPACE_XMLSCHEMA, WSDLPump.XSD_SEQUENCE);
                 Element child;
                 Element relaventElementInSchemaReferedByPart = null;
@@ -510,38 +512,38 @@ public class WSDLPump {
 
                     NodeList allSchemaElements = schemaElement.getChildNodes();
                     for(int idx = 0; idx < allSchemaElements.getLength(); idx++){
-                    	if(allSchemaElements.item(idx).getNodeType() == Node.ELEMENT_NODE && 
-                    			allSchemaElements.item(idx).getLocalName().equals(WSDLPump.XSD_ELEMENT)
-                    			&& elementName.getLocalPart().equals(((Element)allSchemaElements.item(idx)).getAttribute(WSDLPump.XSD_NAME))){
-                    		relaventElementInSchemaReferedByPart = (Element)allSchemaElements.item(idx);
-                    		break;
-                    	}
+                        if(allSchemaElements.item(idx).getNodeType() == Node.ELEMENT_NODE &&
+                                allSchemaElements.item(idx).getLocalName().equals(WSDLPump.XSD_ELEMENT)
+                                && elementName.getLocalPart().equals(((Element)allSchemaElements.item(idx)).getAttribute(WSDLPump.XSD_NAME))){
+                            relaventElementInSchemaReferedByPart = (Element)allSchemaElements.item(idx);
+                            break;
+                        }
                     }
                     child = doc.createElementNS(WSDLPump.NAMESPACE_XMLSCHEMA, WSDLPump.XSD_ELEMENT);
                     child.setAttribute(WSDLPump.XSD_NAME, elementName.getLocalPart());
                     if(null != relaventElementInSchemaReferedByPart){
-                    
-                    	
-                    	child.setAttribute(WSDLPump.XSD_TYPE, 
-                    			relaventElementInSchemaReferedByPart.getAttribute(WSDLPump.XSD_TYPE));
+
+
+                        child.setAttribute(WSDLPump.XSD_TYPE,
+                                relaventElementInSchemaReferedByPart.getAttribute(WSDLPump.XSD_TYPE));
                     }else{
-                    	child.setAttribute(WSDLPump.XSD_TYPE, elementName.getLocalPart());
+                        child.setAttribute(WSDLPump.XSD_TYPE, elementName.getLocalPart());
                     }
                     cmplxContent.appendChild(child);
-                    
+
                 }
 
 
                 newType.appendChild(cmplxContent);
 
                 schemaElement.appendChild(newType);
-                
-                
+
+
                 Element newElement = doc.createElementNS(WSDLPump.NAMESPACE_XMLSCHEMA, WSDLPump.XSD_ELEMENT);
                 newElement.setAttribute(WSDLPump.XSD_NAME,
                         wsdl4jMessage.getQName().getLocalPart());
                 newElement.setAttribute(WSDLPump.XSD_TYPE,
-                		"axis2wrapped:"+wsdl4jMessage.getQName().getLocalPart());
+                        "axis2wrapped:"+wsdl4jMessage.getQName().getLocalPart());
                 schemaElement.appendChild(newElement);
                 //Now since  a new type is created augmenting the parts add the QName
                 //of the newly created type as the messageReference's name.
@@ -627,8 +629,8 @@ public class WSDLPump {
         wsdlEndpoint.setBinding(
                 this.womDefinition.getBinding(
                         wsdl4jPort
-                .getBinding()
-                .getQName()));
+                                .getBinding()
+                                .getQName()));
 
     }
 
@@ -671,9 +673,9 @@ public class WSDLPump {
         newBoundInterface.setName(
                 new QName(service.getNamespace(),
                         service
-                .getName()
-                .getLocalPart()
-                + BOUND_INTERFACE_NAME));
+                                .getName()
+                                .getLocalPart()
+                                + BOUND_INTERFACE_NAME));
         Iterator interfaceIterator = this.womDefinition.getWsdlInterfaces()
                 .values().iterator();
         while (interfaceIterator.hasNext()) {

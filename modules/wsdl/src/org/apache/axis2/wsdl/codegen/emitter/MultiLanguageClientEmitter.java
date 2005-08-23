@@ -7,8 +7,9 @@ import org.apache.axis2.wsdl.codegen.writer.*;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.ExtensionConstants;
-import org.apache.wsdl.extensions.SOAPBody;
 import org.apache.wsdl.extensions.SOAPOperation;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -53,10 +54,13 @@ import java.util.Map;
 
 
 public abstract class MultiLanguageClientEmitter implements Emitter {
+
+    private Log log = LogFactory.getLog(getClass());
+
     /*
-     *  Important! These constants are used in some places in the templates. Care should
-     *  be taken when changing them
-     */
+    *  Important! These constants are used in some places in the templates. Care should
+    *  be taken when changing them
+    */
     private static final String CALL_BACK_HANDLER_SUFFIX = "CallbackHandler";
     private static final String STUB_SUFFIX = "Stub";
     private static final String TEST_SUFFIX = "Test";
@@ -91,7 +95,60 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     public void setCodeGenConfiguration(CodeGenConfiguration configuration) {
         this.configuration = configuration;
     }
+    /**
+     * @see org.apache.axis2.wsdl.codegen.emitter.Emitter#emitSkeleton()
+     */
+    public void emitSkeleton() throws CodeGenerationException {
+        try {
+            //get the binding
+            WSDLDescription wom = this.configuration.getWom();
+            Map interfaces = wom.getWsdlInterfaces();
 
+            //loop through the wsdlInterfaces to generate the interface code
+            //theoretically the interface should be the base for the interfaces
+            Collection interfaceCollection =interfaces.values();
+            for (Iterator iterator = interfaceCollection.iterator(); iterator.hasNext();) {
+                WSDLInterface axisInteface = (WSDLInterface) iterator.next();
+                //write skeleton
+                writeSkeleton(axisInteface);
+                //write interface implementations
+                writeServiceXml(axisInteface);
+            }
+
+            Map bindings = wom.getBindings();
+            if (bindings==null || bindings.isEmpty()){
+                //We may need a flag in the config to force code generation with the binding
+                //if so the following check needs to be uncommented. For now log the situation
+                //throw new CodeGenerationException("Binding needs to be present!");
+                log.info("No binding is present.The follwing items will not be generated");
+                log.info("1. Message Receiver");
+
+            }else{
+                WSDLBinding axisBinding;
+                Collection bindingCollection = bindings.values();
+                for (Iterator iterator = bindingCollection.iterator(); iterator.hasNext();) {
+                    axisBinding  =  (WSDLBinding)iterator.next();
+
+                    //write the local test classes
+                    //writeLocalTestClasses(axisBinding);
+                    //write a dummy implementation call for the tests to run.
+                    //writeTestSkeletonImpl(axisBinding);
+                    //write a testservice.xml that will load the dummy skeleton impl for testing
+                    //writeTestServiceXML(axisBinding);
+                    //write a MessageReceiver for this particular service.
+                    writeMessageReceiver(axisBinding);
+                }
+            }
+
+            // Call the emit stub method to generate the client side too
+            // Do we need to enforce this here ?????
+            // Perhaps we can introduce a flag to determine this!
+            emitStub();
+
+        } catch (Exception e) {
+            throw new CodeGenerationException(e);
+        }
+    }
     /**
      * @see org.apache.axis2.wsdl.codegen.emitter.Emitter#emitStub()
      */
@@ -99,45 +156,65 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         try {
             //get the binding
             WSDLDescription wom = this.configuration.getWom();
-            Map bindings = wom.getBindings();
-            WSDLBinding axisBinding = null;
-            WSDLService axisService = null;
-            if (bindings==null){
-                throw new CodeGenerationException("Binding needs to be present!");
+            Map interfaces = wom.getWsdlInterfaces();
+
+            //loop through the wsdlInterfaces to generate the interface code
+            //theoretically the interface should be the base for the interfaces
+            Collection interfaceCollection =interfaces.values();
+            for (Iterator iterator = interfaceCollection.iterator(); iterator.hasNext();) {
+                //Write the interfaces
+                writeInterface((WSDLInterface)iterator.next());
             }
 
-            Collection bindingCollection = bindings.values();
-            for (Iterator iterator = bindingCollection.iterator(); iterator.hasNext();) {
-                axisBinding  =  (WSDLBinding)iterator.next();
+            Map bindings = wom.getBindings();
+            if (bindings==null || bindings.isEmpty()){
+                //We may need a flag in the config to force code generation with the binding
+                //if so the following check needs to be uncommented. For now log the situation
+                //throw new CodeGenerationException("Binding needs to be present!");
+                log.info("No binding is present.The follwing items will not be generated");
+                log.info("1. Stub");
+                log.info("2. CallbackHandler");
+                log.info("3. Test Classes");
+                log.info("3. Databinding Supporters");
+            }else{
+                WSDLBinding axisBinding ;
+                WSDLService axisService = null;
+                Collection bindingCollection = bindings.values();
+                for (Iterator iterator = bindingCollection.iterator(); iterator.hasNext();) {
+                    axisBinding  =  (WSDLBinding)iterator.next();
+                    //Check the service
+                    axisService = checkService(wom, axisService);
 
-                //write interfaces
-                Map services = wom.getServices();
-                if (!services.isEmpty()) {
-                    if (services.size() == 1) {
-                        axisService = (WSDLService) services.values().toArray()[0];
-                    } else {
-                        throw new UnsupportedOperationException(
-                                "Single service WSDL files only");
-                    }
+                    //write interface implementations
+                    writeInterfaceImplementation(axisBinding, axisService);
+                    //write the call back handlers
+                    writeCallBackHandlers(axisBinding);
+                    //write the test classes
+                    writeTestClasses(axisBinding);
+                    //write the databinding supporters
+                    writeDatabindingSupporters(axisBinding);
+                    //write a dummy implementation call for the tests to run.
+                    //writeTestSkeletonImpl(axisBinding);
+                    //write a testservice.xml that will load the dummy skeleton impl for testing
+                    //writeTestServiceXML(axisBinding);
                 }
-                //
-                writeInterface(axisBinding);
-                //write interface implementations
-                writeInterfaceImplementation(axisBinding, axisService);
-                //write the call back handlers
-                writeCallBackHandlers(axisBinding);
-                //write the test classes
-                writeTestClasses(axisBinding);
-                //write the databinding supporters
-                writeDatabindingSupporters(axisBinding);
-                //write a dummy implementation call for the tests to run.
-                //writeTestSkeletonImpl(axisBinding);
-                //write a testservice.xml that will load the dummy skeleton impl for testing
-                //writeTestServiceXML(axisBinding);
             }
         } catch (Exception e) {
             throw new CodeGenerationException(e);
         }
+    }
+
+    private WSDLService checkService(WSDLDescription wom, WSDLService axisService) {
+        Map services = wom.getServices();
+        if (!services.isEmpty()) {
+            if (services.size() == 1) {
+                axisService = (WSDLService) services.values().toArray()[0];
+            } else {
+                throw new UnsupportedOperationException(
+                        "Single service WSDL files only");
+            }
+        }
+        return axisService;
     }
 
 
@@ -207,11 +284,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     /**
      * Writes the interfaces
      *
-     * @param axisBinding
+     * @param axisInterface
      * @throws Exception
      */
-    protected void writeInterface(WSDLBinding axisBinding) throws Exception {
-        Document interfaceModel = createDOMDocumentForInterface(axisBinding);
+    protected void writeInterface(WSDLInterface axisInterface) throws Exception {
+        Document interfaceModel = createDOMDocumentForInterface(axisInterface);
         InterfaceWriter interfaceWriter =
                 new InterfaceWriter(this.configuration.getOutputLocation(),
                         this.configuration.getOutputLanguage());
@@ -221,13 +298,13 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     /**
      * Writes the skeleton
      *
-     * @param axisBinding
+     * @param axisInteface
      * @throws Exception
      */
-    protected void writeSkeleton(WSDLBinding axisBinding) throws Exception {
+    protected void writeSkeleton(WSDLInterface axisInteface) throws Exception {
 
         //Note -  One can generate the skeleton using the interface XML
-        Document skeletonModel = createDOMDocumentForSkeleton(axisBinding);
+        Document skeletonModel = createDOMDocumentForSkeleton(axisInteface);
         ClassWriter skeletonWriter = new SkeletonWriter(
                 this.configuration.getOutputLocation(),
                 this.configuration.getOutputLanguage());
@@ -260,11 +337,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     }
 
-    protected void writeTestServiceXML(WSDLBinding axisBinding) throws Exception {
+    protected void writeTestServiceXML(WSDLInterface axisInterface) throws Exception {
         if (this.configuration.isWriteTestCase()) {
             //Note -  One can generate the service xml using the interface XML
             Document skeletonModel = createDOMDocumentForServiceXML(
-                    axisBinding, true);
+                    axisInterface, true);
             TestServiceXMLWriter testServiceXmlWriter = new TestServiceXMLWriter(
                     this.configuration.getOutputLocation(),
                     this.configuration.getOutputLanguage());
@@ -275,13 +352,13 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     /**
      * Writes the skeleton
      *
-     * @param axisBinding
+     * @param axisInterface
      * @throws Exception
      */
-    protected void writeServiceXml(WSDLBinding axisBinding) throws Exception {
+    protected void writeServiceXml(WSDLInterface axisInterface) throws Exception {
         if (this.configuration.isGenerateDeployementDescriptor()) {
             Document skeletonModel = createDOMDocumentForServiceXML(
-                    axisBinding, false);
+                    axisInterface, false);
             ClassWriter serviceXmlWriter = new ServiceXMLWriter(
                     this.configuration.getOutputLocation(),
                     this.configuration.getOutputLanguage());
@@ -368,47 +445,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 new ByteArrayInputStream(memoryStream.toByteArray()));
     }
 
-    /**
-     * @see org.apache.axis2.wsdl.codegen.emitter.Emitter#emitSkeleton()
-     */
-    public void emitSkeleton() throws CodeGenerationException {
-        try {
-            //get the binding
-            WSDLDescription wom = this.configuration.getWom();
-            Map bindings = wom.getBindings();
-            WSDLBinding axisBinding = null;
 
-            if (bindings==null){
-                throw new CodeGenerationException("Binding needs to be present!");
-            }
-
-            Collection bindingCollection = bindings.values();
-
-            for (Iterator iterator = bindingCollection.iterator(); iterator.hasNext();) {
-                axisBinding  =  (WSDLBinding)iterator.next();
-                //write interfaces
-                writeSkeleton(axisBinding);
-                //write interface implementations
-                writeServiceXml(axisBinding);
-                //write the local test classes
-//               writeLocalTestClasses(axisBinding);
-                //write a dummy implementation call for the tests to run.
-                //writeTestSkeletonImpl(axisBinding);
-                //write a testservice.xml that will load the dummy skeleton impl for testing
-                //writeTestServiceXML(axisBinding);
-                //write a MessageReceiver for this particular service.
-                writeMessageReceiver(axisBinding);
-            }
-            // Call the emit stub method to generate the client side too
-            // Do we need to enforce this here ?????
-            // Perhaps we can introduce a flag to determine this!
-            emitStub();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CodeGenerationException(e);
-        }
-    }
 
     protected Document createDocumentForTestSkeletonImpl(
             WSDLBinding binding) {
@@ -432,7 +469,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         addAttribute(doc,
                 "name",
                 boundInterface.getName().getLocalPart() +
-                TEST_SERVICE_CLASS_NAME_SUFFIX,
+                        TEST_SERVICE_CLASS_NAME_SUFFIX,
                 rootElement);
         addAttribute(doc,
                 "namespace",
@@ -457,7 +494,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      * Generating the callbacks
      *
      * @param binding
-     * @return
      */
     protected Document createDOMDocumentForCallbackHandler(
             WSDLBinding binding) {
@@ -471,7 +507,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         addAttribute(doc,
                 "name",
                 boundInterface.getName().getLocalPart() +
-                CALL_BACK_HANDLER_SUFFIX,
+                        CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
         addAttribute(doc,
                 "namespace",
@@ -491,7 +527,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      *
      * @param doc
      * @param operation
-     * @return
      */
     protected Element getInputElement(Document doc,
                                       WSDLOperation operation) {
@@ -528,7 +563,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      *
      * @param doc
      * @param operation
-     * @return
      */
     protected Element getOutputElement(Document doc,
                                        WSDLOperation operation) {
@@ -545,8 +579,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                                           WSDLOperation operation) {
         Element param = doc.createElement("param");
         MessageReference outputMessage = operation.getOutputMessage();
-        String typeMappingStr = null;
-        String parameterName = null;
+        String typeMappingStr;
+        String parameterName;
 
         if (outputMessage!=null){
             parameterName =  this.mapper.getParameterName(
@@ -559,8 +593,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             parameterName = "" ;
             typeMappingStr = "";
         }
-          addAttribute(doc,"name",parameterName,param);
-          addAttribute(doc,"type", typeMappingStr, param);
+        addAttribute(doc,"name",parameterName,param);
+        addAttribute(doc,"type", typeMappingStr, param);
 
         return param;
     }
@@ -568,15 +602,13 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     /**
      * Todo Finish this
      *
-     * @return
      */
     protected Document createDOMDocumentForBean() {
         return null;
     }
 
-    protected Document createDOMDocumentForServiceXML(WSDLBinding binding,
+    protected Document createDOMDocumentForServiceXML(WSDLInterface boundInterface,
                                                       boolean forTesting) {
-        WSDLInterface boundInterface = binding.getBoundInterface();
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
@@ -643,7 +675,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         addAttribute(doc,
                 "dbsupportpackage",
                 configuration.getPackageName() +
-                DATABINDING_PACKAGE_NAME_SUFFIX,
+                        DATABINDING_PACKAGE_NAME_SUFFIX,
                 rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement, binding);
@@ -656,11 +688,9 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     /**
      * Creates the DOM tree for the interface creation
      *
-     * @param binding
-     * @return
+     * @param wsdlInterface
      */
-    protected Document createDOMDocumentForInterface(WSDLBinding binding) {
-        WSDLInterface boundInterface = binding.getBoundInterface();
+    protected Document createDOMDocumentForInterface(WSDLInterface wsdlInterface) {
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
@@ -670,24 +700,23 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 rootElement);
         addAttribute(doc,
                 "name",
-                boundInterface.getName().getLocalPart(),
+                wsdlInterface.getName().getLocalPart(),
                 rootElement);
         addAttribute(doc,
                 "callbackname",
-                boundInterface.getName().getLocalPart() +
-                CALL_BACK_HANDLER_SUFFIX,
+                wsdlInterface.getName().getLocalPart() +
+                        CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
         fillSyncAttributes(doc, rootElement);
-        loadOperations(boundInterface, doc, rootElement);
+        loadOperations(wsdlInterface, doc, rootElement);
         doc.appendChild(rootElement);
         return doc;
 
     }
 
-    protected Document createDOMDocumentForSkeleton(WSDLBinding binding) {
-        WSDLInterface boundInterface = binding.getBoundInterface();
+    protected Document createDOMDocumentForSkeleton(WSDLInterface boundInterface) {
 
-        Document doc = getEmptyDocument();;
+        Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
         addAttribute(doc,
                 "package",
@@ -700,7 +729,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         addAttribute(doc,
                 "callbackname",
                 boundInterface.getName().getLocalPart() +
-                CALL_BACK_HANDLER_SUFFIX,
+                        CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
@@ -812,7 +841,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         addAttribute(doc,
                 "dbsupportpackage",
                 configuration.getPackageName() +
-                DATABINDING_PACKAGE_NAME_SUFFIX,
+                        DATABINDING_PACKAGE_NAME_SUFFIX,
                 rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
@@ -855,8 +884,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         addAttribute(doc,
                 "address",
                 "http://localhost:" + Constants.TEST_PORT + "/services/" +
-                boundInterface.getName().getLocalPart() +
-                TEST_SERVICE_CLASS_NAME_SUFFIX,
+                        boundInterface.getName().getLocalPart() +
+                        TEST_SERVICE_CLASS_NAME_SUFFIX,
                 rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement);
@@ -873,7 +902,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         addAttribute(doc,
                 "package",
                 configuration.getPackageName() +
-                DATABINDING_PACKAGE_NAME_SUFFIX,
+                        DATABINDING_PACKAGE_NAME_SUFFIX,
                 rootElement);
         String localPart = operation.getName().getLocalPart();
         addAttribute(doc,
@@ -905,7 +934,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      *
      * @param binding
      * @param service
-     * @return
      */
     protected Document createDOMDocumentForInterfaceImplementation(
             WSDLBinding binding, WSDLService service) {
@@ -933,7 +961,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         addAttribute(doc,
                 "dbsupportpackage",
                 configuration.getPackageName() +
-                DATABINDING_PACKAGE_NAME_SUFFIX,
+                        DATABINDING_PACKAGE_NAME_SUFFIX,
                 rootElement);
         addEndpoints(doc, rootElement, endpoints);
         fillSyncAttributes(doc, rootElement);
@@ -983,19 +1011,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         return word.replaceAll("\\W", "_");
     }
 
-    protected void foo(WSDLBindingOperation bindingOp) {
-        Iterator extIterator = bindingOp.getInput().getExtensibilityElements()
-                .iterator();
-        while (extIterator.hasNext()) {
-            WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
-            if (element.getType().equals(ExtensionConstants.SOAP_BODY)) {
-                if (WSDLConstants.WSDL_USE_ENCODED.equals(
-                        ((SOAPBody) element).getUse())) {
-                    throw new RuntimeException(
-                            "The use 'encoded' is not supported!");
-                }
-            }
-        }
-    }
+
 }
 

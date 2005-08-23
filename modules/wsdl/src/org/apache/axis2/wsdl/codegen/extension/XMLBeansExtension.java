@@ -4,16 +4,14 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLTypes;
+import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.Schema;
+import org.apache.wsdl.extensions.SOAPBody;
 import org.apache.xmlbeans.*;
 
 import java.io.*;
-import java.util.List;
-import java.util.Stack;
-import java.util.Vector;
+import java.util.*;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -48,12 +46,18 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             return;
         }
 
+        //check the comptibilty
+        checkCompatibility();
+
         //test whether the TCCL has the Xbeans classes
         //ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
 
         try {
+            //get the types from the types section
             WSDLTypes typesList = configuration.getWom().getTypes();
+
+            //check for the imported types
             if (typesList == null) {
                 //there are no types to be code generated
                 //However if the type mapper is left empty it will be a problem for the other
@@ -63,13 +67,18 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             }
 
             List typesArray = typesList.getExtensibilityElements();
-            WSDLExtensibilityElement extensiblityElt = null;
-            SchemaTypeSystem sts  = null;
-          
-            Vector xmlObjectsVector = new Vector();
+            WSDLExtensibilityElement extensiblityElt;
+            SchemaTypeSystem sts;
+            Vector schemabaseURIList=new Vector();
+            Vector xmlObjectsVector= new Vector();
+            String schemaBaseURI ;
+
+            //create the type mapper
+            JavaTypeMapper mapper = new JavaTypeMapper();
+
             for (int i = 0; i < typesArray.size(); i++) {
                 extensiblityElt = (WSDLExtensibilityElement) typesArray.get(i);
-                Schema schema = null;
+                Schema schema;
 
                 if (ExtensionConstants.SCHEMA.equals(extensiblityElt.getType())) {
                     schema = (Schema) extensiblityElt;
@@ -80,31 +89,35 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                     Stack importedSchemaStack = schema.getImportedSchemaStack();
                     //compile these schemas
                     while (!importedSchemaStack.isEmpty()){
-                        xmlObjectsVector.add(
-                                XmlObject.Factory.parse(
-                                        ((javax.wsdl.extensions.schema.Schema)importedSchemaStack.pop()).getElement()
-                                        ,options));
+                        javax.wsdl.extensions.schema.Schema tempSchema = (javax.wsdl.extensions.schema.Schema) importedSchemaStack.pop();
+                        schemaBaseURI = tempSchema.getDocumentBaseURI();
+                        //prevent the readdition of schama's that has already being added
+                        if (!schemabaseURIList.contains(schemaBaseURI)){
+                            schemabaseURIList.add(schemaBaseURI);
+                            xmlObjectsVector.add(
+                                    XmlObject.Factory.parse(
+                                            tempSchema.getElement()
+                                            ,options));
+                        }
+
                     }
+
+
                 }
 
             }
-
             sts = XmlBeans.compileXmlBeans(DEFAULT_STS_NAME, null,
                     convertToXMLObjectArray(xmlObjectsVector),
                     new BindingConfig(), XmlBeans.getContextTypeLoader(),
                     new Axis2Filer(),
                     null);
-
-            //create the type mapper
-            JavaTypeMapper mapper = new JavaTypeMapper();
             SchemaType[] schemaType = sts.documentTypes();
             SchemaType type;
-            for (int i = 0; i < schemaType.length; i++) {
-                type = schemaType[i];
+            for (int j = 0; j < schemaType.length; j++) {
+                type = schemaType[j];
                 mapper.addTypeMapping(type.getDocumentElementName(),
                         type.getFullJavaName());
             }
-
             //set the type mapper to the config
             configuration.setTypeMapper(mapper);
         } catch (Exception e) {
@@ -113,6 +126,39 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
 
     }
 
+
+    /**
+     * Checking the compatibilty has to do with generating RPC/encoded stubs.
+     * If the XMLBeans bindings are used encoded binding cannot be done.
+     */
+    private void checkCompatibility(){
+        Map bindingMap = this.configuration.getWom().getBindings();
+        Collection col = bindingMap.values();
+
+        for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+            WSDLBinding b = (WSDLBinding)iterator.next();
+            HashMap bindingOps = b.getBindingOperations();
+            Collection bindingOpsCollection = bindingOps.values();
+            for (Iterator iterator1 = bindingOpsCollection.iterator(); iterator1.hasNext();) {
+                foo((WSDLBindingOperation)iterator1.next());
+            }
+
+        }
+    }
+    protected void foo(WSDLBindingOperation bindingOp) {
+        Iterator extIterator = bindingOp.getInput().getExtensibilityElements()
+                .iterator();
+        while (extIterator.hasNext()) {
+            WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
+            if (element.getType().equals(ExtensionConstants.SOAP_BODY)) {
+                if (WSDLConstants.WSDL_USE_ENCODED.equals(
+                        ((SOAPBody) element).getUse())) {
+                    throw new RuntimeException(
+                            "The use 'encoded' is not supported!");
+                }
+            }
+        }
+    }
     private XmlObject[] convertToXMLObjectArray(Vector vec){
         XmlObject[] xmlObjects = new XmlObject[vec.size()];
         for (int i = 0; i < vec.size(); i++) {

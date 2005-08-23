@@ -481,8 +481,9 @@ public class WSDLDescriptionImpl extends ComponentImpl
         if (bindingIterator.hasNext()) {
             return (WSDLBinding) bindingIterator.next();
         }
-        throw new WSDLProcessingException(
-                "No Binding Components are available");
+        return null;
+       // throw new WSDLProcessingException(
+       //       "No Binding Components are available");
     }
 
     public WSDLExtensibilityAttribute createWSDLExtensibilityAttribute() {

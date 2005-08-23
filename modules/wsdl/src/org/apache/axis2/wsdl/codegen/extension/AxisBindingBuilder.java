@@ -21,8 +21,12 @@ import org.apache.wsdl.*;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Collection;
+import java.util.Vector;
 
 /**
+ * The purpose of this extension is to build the bindings. bindings however may not be present
  * @author chathura@opensource.lk
  */
 public class AxisBindingBuilder extends AbstractCodeGenerationExtension implements CodeGenExtension {
@@ -43,29 +47,47 @@ public class AxisBindingBuilder extends AbstractCodeGenerationExtension implemen
 
     public void engage() {
         WSDLDescription wom = this.configuration.getWom();
-        WSDLBinding binding = wom.getFirstBinding();
+        Map bindingMap = wom.getBindings();
+        Vector bindingVector = new Vector();
 
-        WSDLBinding newBinding = wom.createBinding();
-        newBinding.setName(AXIS_BINDING_QNAME);
+        if (bindingMap==null || bindingMap.isEmpty()) {
+            log.info(" bindings are not present in the original document");
+            //just fall through
+        }else{
+            Collection bindingCollection = bindingMap.values();
+            for (Iterator iterator = bindingCollection.iterator(); iterator.hasNext();) {
 
-        WSDLInterface boundInterface = binding.getBoundInterface();
-        newBinding.setBoundInterface(boundInterface);
+                WSDLBinding binding = (WSDLBinding)iterator.next();
 
-        newBinding.setBindingFaults(binding.getBindingFaults());
-        newBinding.setBindingOperations(binding.getBindingOperations());
-        Iterator elementIterator = binding.getExtensibilityElements().iterator();
-        while (elementIterator.hasNext()) {
-            newBinding.addExtensibilityElement(
-                    (WSDLExtensibilityElement) elementIterator.next());
+                WSDLBinding newBinding = wom.createBinding();
+                newBinding.setName(AXIS_BINDING_QNAME);
+
+                WSDLInterface boundInterface = binding.getBoundInterface();
+                newBinding.setBoundInterface(boundInterface);
+
+                newBinding.setBindingFaults(binding.getBindingFaults());
+                newBinding.setBindingOperations(binding.getBindingOperations());
+                Iterator elementIterator = binding.getExtensibilityElements().iterator();
+                while (elementIterator.hasNext()) {
+                    newBinding.addExtensibilityElement(
+                            (WSDLExtensibilityElement) elementIterator.next());
+                }
+
+                Iterator attributeIterator = binding.getExtensibilityAttributes()
+                        .iterator();
+                while (attributeIterator.hasNext()) {
+                    newBinding.addExtensibleAttributes(
+                            (WSDLExtensibilityAttribute) attributeIterator.next());
+                }
+                bindingVector.add(newBinding);
+
+            }
+            //drop all the bindings and add the new ones
+            wom.getBindings().clear();
+            for (int i = 0; i < bindingVector.size(); i++) {
+                wom.addBinding ((WSDLBinding) bindingVector.get(i));
+            }
+
         }
-
-        Iterator attributeIterator = binding.getExtensibilityAttributes()
-                .iterator();
-        while (attributeIterator.hasNext()) {
-            newBinding.addExtensibleAttributes(
-                    (WSDLExtensibilityAttribute) attributeIterator.next());
-        }
-
-        wom.addBinding(newBinding);
     }
 }
