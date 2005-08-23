@@ -246,7 +246,6 @@ public class WSDoAllSender extends WSDoAllHandler {
         } catch (WSSecurityException e) {
             throw new AxisFault(e.getMessage(), e);
         } finally {
-        	System.out.println("DONE");
             reqData.clear();
             reqData = null;
         }        

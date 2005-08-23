@@ -14,8 +14,12 @@
         <copy file="./test-resources/axis2.xml"
             tofile="target/axis2.xml"/>
         <mkdir dir="target/modules"/>
+        <mkdir dir="target/modules/lib"/>
+	<copy file="${maven.repo.local}/xmlsec/jars/xmlsec-1.2.1.jar" todir="target/classes/lib"/>
+	<copy file="${maven.repo.local}/bcprov/jars/bcprov-jdk13-128.jar" todir="target/classes/lib"/>
+	<copy file="${maven.repo.local}/opensaml/jars/opensaml-1.0.1.jar" todir="target/classes/lib"/>
         <jar jarfile="target/security.mar" basedir="target/classes">
-            <include name="**"/>
+            <include name="**/*"/>
         </jar>
         <copy file="target/security.mar"
             tofile="target/modules/security.mar"/>

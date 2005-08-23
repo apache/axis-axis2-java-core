@@ -125,6 +125,23 @@
                 <module>true</module>
             </properties>
         </dependency>
+        <dependency>
+            <groupId>bcprov</groupId>
+            <artifactId>bcprov</artifactId>
+            <version>jdk13-128</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>opensaml</groupId>
+            <artifactId>opensaml</artifactId>
+            <version>1.0.1</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+
     </dependencies>
 
     <reports/>
