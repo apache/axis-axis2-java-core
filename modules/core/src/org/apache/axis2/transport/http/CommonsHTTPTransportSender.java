@@ -259,7 +259,8 @@ public class CommonsHTTPTransportSender
                     }
                     out.write(bytes);
                 }
-                out.flush();
+               out.flush();
+               System.out.println("test");
             } catch (XMLStreamException e) {
                 throw new AxisFault(e);
             } catch (FactoryConfigurationError e) {
@@ -402,7 +403,7 @@ public class CommonsHTTPTransportSender
                         HTTPConstants.HEADER_EXPECT_100_Continue);
             }
         }
-
+        
         this.httpClient.executeMethod(postMethod);
 
         if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
