@@ -20,40 +20,40 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
+    <name>Apache Axis 2.0 - Samples</name>
     <id>axis2-samples</id>
-    <name>samples</name>
-    <description>Set of samples available for Axis 2.0.</description>
-
+    <groupId>axis2</groupId>
+    <description>Samples for Axis 2.0</description>
 
     <dependencies>
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-core</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-xml</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
 
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-wsdl</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
-            <groupId>axis</groupId>
-            <artifactId>addressing</artifactId>
+            <groupId>axis2</groupId>
+            <artifactId>axis2-addressing</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-tools</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-common</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>

@@ -20,24 +20,25 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
+    <name>Apache Axis 2.0 - Core</name>
     <id>axis2-core</id>
-    <name>core</name>
+    <groupId>axis2</groupId>
     <description>Core Parts of Axis 2.0. This includes Axis 2.0 engine, Client API, Addressing support, etc.,</description>
 
     <dependencies>
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-xml</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
 
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-wsdl</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-common</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>

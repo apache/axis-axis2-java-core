@@ -20,8 +20,9 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
-    <id>saaj-impl</id>
-    <name>axis2-saaj</name>
+    <name>Apache Axis 2.0 - SAAJ</name>
+    <id>axis2-saaj</id>
+    <groupId>axis2</groupId>
     <description>Axis2 SAAJ implementation</description>
 
     <build>
@@ -83,19 +84,19 @@
 
     <dependencies>
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-xml</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
 
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-core</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <!-- external JARs -->
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-common</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>

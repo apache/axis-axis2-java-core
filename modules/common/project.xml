@@ -20,9 +20,11 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
+    <name>Apache Axis 2.0 - Common</name>
     <id>axis2-common</id>
-    <name>common</name>
-    <description>Common things</description>
+    <groupId>axis2</groupId>
+    <description>Common implementation classes</description>
+
     <reports>
         <report>maven-junit-report-plugin</report>
     </reports>

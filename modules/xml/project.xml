@@ -20,10 +20,10 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
+    <name>Apache Axis 2.0 - XML</name>
     <id>axis2-xml</id>
-    <name>xml</name>
+    <groupId>axis2</groupId>
     <description>AXIOM, The Object Model of Axis 2.0. This helps Axis 2.0 to have a light weight, efficient object model on StAX</description>
-
 
     <build>
         <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
@@ -81,7 +81,7 @@
     <dependencies>
         <!-- external JARs -->
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-common</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>

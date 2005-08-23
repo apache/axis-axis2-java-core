@@ -19,8 +19,10 @@
 <project>
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
+
+    <name>Apache Axis 2.0 - Tools</name>
     <id>axis2-tools</id>
-    <name>tool</name>
+    <groupId>axis2</groupId>
     <description>Tools available for Axis 2.0.</description>
 
     <dependencies>
@@ -34,13 +36,13 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-common</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-wsdl</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>

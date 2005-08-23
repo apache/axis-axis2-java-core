@@ -19,17 +19,20 @@
 <project>
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
+
+    <name>Apache Axis 2.0 - WSDL</name>
     <id>axis2-wsdl</id>
-    <name>wsdl</name>
-    <description>WSDL Parts of Axis 2.0. This includes WSDL Object Model built based on the proposed WSDL 2.0 Component Model.</description>
+    <groupId>axis2</groupId>
+    <description>WSDL support for Axis 2.0. This includes WSDL Object Model built based on the proposed WSDL 2.0 Component Model.</description>
+
     <dependencies>
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-xml</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>axis2</groupId>
             <artifactId>axis2-common</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
@@ -38,11 +41,6 @@
             <artifactId>XmlSchema</artifactId>
             <version>0.9</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>axis</groupId>-->
-<!--            <artifactId>axis2-databinding</artifactId>-->
-<!--            <version>${pom.currentVersion}</version>-->
-<!--        </dependency>-->
 
         <!-- external JARs -->
         <dependency>
