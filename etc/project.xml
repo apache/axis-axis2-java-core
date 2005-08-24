@@ -26,7 +26,7 @@
     <shortDescription>Axis 2.0</shortDescription>
     <!-- the project home page -->
     <url>http://ws.apache.org/axis2/</url>
-    <issueTrackingUrl>http://nagoya.apache.org/jira/secure/BrowseProject.jspa?id=10611</issueTrackingUrl>
+    <issueTrackingUrl>http://issues.apache.org/jira/secure/BrowseProject.jspa?id=10611</issueTrackingUrl>
     <siteAddress>ws.apache.org/axis2</siteAddress>
     <siteDirectory>/www/ws.apache.org/axis2/</siteDirectory>
     <distributionDirectory>/www/ws.apache.org/builds/</distributionDirectory>
