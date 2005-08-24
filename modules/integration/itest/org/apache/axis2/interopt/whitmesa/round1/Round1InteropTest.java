@@ -50,7 +50,7 @@ public class Round1InteropTest extends TestCase {
     File file = null;
     String url = "http://soapinterop.java.sun.com:80/round2/base";
     String soapAction = "http://soapinterop.org/";
-    String resFilePath = "/interopt/whitemesa/round1/";
+    String resFilePath = "itest-resources/interopt/whitemesa/round1/";
     String tempPath = "";
     Round1ClientUtil util;
     Round1Client client = null;
@@ -167,25 +167,14 @@ public class Round1InteropTest extends TestCase {
                 SOAPBody body = retEnv.getBody();
                 if (!body.hasFault()) {
 
-                    Class clazz = Object.class;
-                    InputStream stream = clazz.getResourceAsStream(filePath);
-
-//                    File file = new File(filePath);
-//                    FileInputStream fin = new FileInputStream(file);
+                    File file = new File(filePath);
+                    FileInputStream stream = new FileInputStream(file);
 
                     OMElement firstChild = body.getFirstElement();
-
-//                    OMOutputImpl out = new OMOutputImpl(System.out, false);
-//                    firstChild.serialize(out);
-//                    out.flush();
-
                     XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
                     OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
                     SOAPEnvelope refEnv = (SOAPEnvelope) builder.getDocumentElement();
                     OMElement refNode = refEnv.getBody().getFirstElement();
-//                    out = new OMOutputImpl(System.out, false);
-//                    refNode.serialize(out);
-//                    out.flush();
                     XMLComparator comparator = new XMLComparator();
                     ok = comparator.compare(firstChild, refNode);
                 } else
@@ -195,6 +184,8 @@ public class Round1InteropTest extends TestCase {
         } catch (XMLStreamException e) {
             throw new AxisFault(e);
         } catch (XMLComparisonException e) {
+            throw new AxisFault(e);
+        } catch (FileNotFoundException e) {
             throw new AxisFault(e);
         }
 
