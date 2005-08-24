@@ -47,6 +47,7 @@
     xmlns:j="jelly:core"
     xmlns:u="jelly:util"
     xmlns:deploy="deploy"
+    xmlns:modules="local:modules"
     xmlns:ant="jelly:ant"
     xmlns:maven="jelly:maven"
     xmlns:define="jelly:define">
@@ -287,6 +288,10 @@
         </ant:delete>
     </goal>
 
+    <goal name="all-tests">
+        <modules:reactor goals="test,itest"/>
+    </goal>
+
     <goal name="create-jar" prereqs="init">
         <jar destfile="target/lib/axis2-${pom.currentVersion}.jar">
             <fileset dir="modules/core/target/classes"/>
@@ -498,6 +503,5 @@
         </j:if>
 
     </postGoal>
-
 </project>
 

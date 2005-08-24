@@ -4,6 +4,7 @@
 
 <project default="jar"
     xmlns:j="jelly:core"
+    xmlns:u="jelly:util"
     xmlns:maven="jelly:maven"
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
@@ -232,6 +233,4 @@
         </javac>
 
     </goal>
-    
- 
 </project>

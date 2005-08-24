@@ -4,6 +4,7 @@
 
 <project default="jar"
     xmlns:j="jelly:core"
+    xmlns:u="jelly:util"
     xmlns:maven="jelly:maven"
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
@@ -22,4 +23,10 @@
         <copy file="${maven.repo.local}/ant/jars/ant-1.6.2.jar" todir="target/jar-tool"/>
         <copy file="src/script/jar-tool-UI.bat" todir="target/jar-tool"></copy>
     </goal>
+    <preGoal name="itest:compile">
+        <u:file var="file" name="${maven.itest.src}"/>
+        <j:if test="${!file.exists()}">
+            <j:expr value="${context.setVariable('maven.itest.skip', 'true')}"/>
+        </j:if>
+    </preGoal>
 </project>

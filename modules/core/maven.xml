@@ -4,6 +4,7 @@
 
 <project default="jar"
     xmlns:j="jelly:core"
+    xmlns:u="jelly:util"
     xmlns:maven="jelly:maven"
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
@@ -18,4 +19,10 @@
         </j:jelly>
         <ant:copy file="${basedir}/test-resources/deployment/axis2.xml" tofile="${basedir}/target/test-resources/deployment/axis2.xml"/>
     </postGoal>
+    <preGoal name="itest:compile">
+        <u:file var="file" name="${maven.itest.src}"/>
+        <j:if test="${!file.exists()}">
+            <j:expr value="${context.setVariable('maven.itest.skip', 'true')}"/>
+        </j:if>
+    </preGoal>
 </project>

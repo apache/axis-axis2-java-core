@@ -48,6 +48,20 @@
             </properties>
             <url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
+        <dependency>
+            <groupId>maven-itest-plugin</groupId>
+            <artifactId>maven-itest-plugin</artifactId>
+            <version>1.0</version>
+            <type>plugin</type>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+                <properties>
+                    <classloader>root</classloader>
+            </properties>
+        </dependency>
     </dependencies>
     <reports/>
 </project>
