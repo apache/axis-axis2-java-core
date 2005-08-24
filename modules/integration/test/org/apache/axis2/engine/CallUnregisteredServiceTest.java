@@ -79,7 +79,7 @@ public class CallUnregisteredServiceTest extends TestCase {
             method.addChild(value);
 //            reqEnv.getBody().addChild(method);
 
-            Call call = new Call();
+            Call call = new Call("target/test-resources/intregrationRepo");
             EndpointReference targetEPR =
                     new EndpointReference("http://127.0.0.1:"
                     + (UtilServer.TESTING_PORT)
