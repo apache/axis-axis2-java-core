@@ -49,12 +49,23 @@
     xmlns:deploy="deploy"
     xmlns:modules="local:modules"
     xmlns:ant="jelly:ant"
+    xmlns:plugin="plugin"
     xmlns:maven="jelly:maven"
     xmlns:define="jelly:define">
 
     <j:set var="dist.name" value="${pom.artifactId}-${pom.currentVersion}"/>
     <j:set var="dist.dir" value="target/dist"/>
-    
+
+    <preGoal name="modules:reactor:init"> 
+        <j:set var="groupId" value="maven-itest-plugin"/> 
+        <j:set var="artifactId" value="maven-itest-plugin"/> 
+        <j:set var="version" value="1.0"/> 
+        <attainGoal name="plugin:download-artifact"/> 
+        <maven:installPlugin 
+            file="${maven.repo.local}/${groupId}/plugins/${artifactId}-${version}.jar" 
+            cache="true" /> 
+    </preGoal>
+      
     <!-- ======= -->
     <!-- Modules -->
     <!-- ======= -->
@@ -289,7 +300,7 @@
     </goal>
 
     <goal name="all-tests">
-        <modules:reactor goals="test,itest"/>
+        <modules:reactor goals="jar:install,test,itest"/>
     </goal>
 
     <goal name="create-jar" prereqs="init">
