@@ -8,6 +8,13 @@
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
     <j:set var="samples.dir" value="target/samples"/>
+
+    <postGoal name="itest:compile">
+        <mkdir dir="target/itest-classes/modules"/>
+        <copy file="../addressing/target/addressing.mar"
+              tofile="target/itest-classes/modules/addressing.mar"/>
+    </postGoal>
+
     <postGoal name="test:compile">
         <mkdir dir="target/test-resources/samples/modules"/>
         <mkdir dir="target/test-resources/repository-client/modules"/>
