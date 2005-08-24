@@ -57,7 +57,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             //get the types from the types section
             WSDLTypes typesList = configuration.getWom().getTypes();
 
-            //check for the imported types
+            //check for the imported types. Any imported types are supposed to be here also
             if (typesList == null) {
                 //there are no types to be code generated
                 //However if the type mapper is left empty it will be a problem for the other
@@ -69,9 +69,9 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             List typesArray = typesList.getExtensibilityElements();
             WSDLExtensibilityElement extensiblityElt;
             SchemaTypeSystem sts;
-            Vector schemabaseURIList=new Vector();
+            //Vector schemabaseURIList=new Vector();
             Vector xmlObjectsVector= new Vector();
-            String schemaBaseURI ;
+            //String schemaBaseURI ;
 
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
@@ -90,15 +90,10 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                     //compile these schemas
                     while (!importedSchemaStack.isEmpty()){
                         javax.wsdl.extensions.schema.Schema tempSchema = (javax.wsdl.extensions.schema.Schema) importedSchemaStack.pop();
-                        schemaBaseURI = tempSchema.getDocumentBaseURI();
-                        //prevent the readdition of schama's that has already being added
-                        if (!schemabaseURIList.contains(schemaBaseURI)){
-                            schemabaseURIList.add(schemaBaseURI);
-                            xmlObjectsVector.add(
-                                    XmlObject.Factory.parse(
-                                            tempSchema.getElement()
-                                            ,options));
-                        }
+                        xmlObjectsVector.add(
+                                XmlObject.Factory.parse(
+                                        tempSchema.getElement()
+                                        ,options));
 
                     }
 

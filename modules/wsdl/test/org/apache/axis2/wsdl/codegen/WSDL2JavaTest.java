@@ -70,18 +70,30 @@ public class WSDL2JavaTest extends TestCase{
         // The directory is now empty so delete it
         return dir.delete();
     }
-    /**
-     * Test for the WSAT wsdl
-     */
-    public void testCodeGenerationWSAT(){
+        /**
+         * Test for the WSAT wsdl
+         */
+        public void testCodeGenerationWSAT(){
 
-        try {
-            generateAndCompile("wsat.wsdl");
-        } catch (CodeGenerationException e) {
-            fail("Exception while codegeneration test!"+ e.getMessage());
+            try {
+                generateAndCompile("wsat.wsdl");
+            } catch (CodeGenerationException e) {
+                fail("Exception while codegeneration test!"+ e.getMessage());
+            }
         }
-    }
 
+
+    /**
+         * Test for the ping WSDL
+         */
+        public void testCodeGenerationPing(){
+
+            try {
+                generateAndCompile("ping.wsdl");
+            } catch (CodeGenerationException e) {
+                fail("Exception while codegeneration test!"+ e.getMessage());
+            }
+        }
 
     /**
      * Test for the interoptestdoclit.wsdl
