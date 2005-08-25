@@ -50,7 +50,7 @@ public class Round1InteropTest extends TestCase {
     File file = null;
     String url = "http://soapinterop.java.sun.com:80/round2/base";
     String soapAction = "http://soapinterop.org/";
-    String resFilePath = "itest-resources/interopt/whitemesa/round1/";
+    String resFilePath = "interopt/whitemesa/round1/";
     String tempPath = "";
     Round1ClientUtil util;
     Round1Client client = null;
@@ -167,8 +167,7 @@ public class Round1InteropTest extends TestCase {
                 SOAPBody body = retEnv.getBody();
                 if (!body.hasFault()) {
 
-                    File file = new File(filePath);
-                    FileInputStream stream = new FileInputStream(file);
+                    InputStream stream = Round1InteropTest.class.getClassLoader().getResourceAsStream("/" + filePath);
 
                     OMElement firstChild = body.getFirstElement();
                     XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
@@ -184,8 +183,6 @@ public class Round1InteropTest extends TestCase {
         } catch (XMLStreamException e) {
             throw new AxisFault(e);
         } catch (XMLComparisonException e) {
-            throw new AxisFault(e);
-        } catch (FileNotFoundException e) {
             throw new AxisFault(e);
         }
 

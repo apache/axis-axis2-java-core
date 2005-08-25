@@ -50,10 +50,10 @@ public class WhitemesaR4ComplexTest extends TestCase {
     }
 
     private boolean Compare(OMElement retEle,String filepath) throws XMLStreamException,
-            XMLComparisonException, java.io.FileNotFoundException {
+            XMLComparisonException {
         boolean compare=false;
         if(retEle!=null){
-            InputStream stream = new java.io.FileInputStream("itest-resources/" + filepath);
+            InputStream stream = WhitemesaR4ComplexTest.class.getClassLoader().getResourceAsStream("/" + filepath);
             javax.xml.stream.XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
             OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
             SOAPEnvelope resEnv = (SOAPEnvelope) builder.getDocumentElement();
