@@ -22,6 +22,7 @@ import org.apache.axis2.wsdl.codegen.emitter.Emitter;
 import org.apache.axis2.wsdl.codegen.emitter.JavaEmitter;
 import org.apache.axis2.wsdl.codegen.extension.*;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.WSDLException;
@@ -57,22 +58,29 @@ public class CodeGenerationEngine {
         loadExtensions();
     }
 
-    private void loadExtensions() {
-        //Ideally these extensions should be loaded through a configuration taken
-        //from some external location. Say a config file.
-        addExtension(new AxisBindingBuilder());
-        addExtension(new WSDLValidatorExtension());
-        addExtension(new PackageFinder());
-        //Xbeans extension
-        addExtension(new XMLBeansExtension());
-        //simple databinding extension
-        //addExtension(new SimpleDBExtension());
-        //default extension. Does the cleanup
-        addExtension(new DefaultDatabindingExtension());
+    private void loadExtensions() throws CodeGenerationException{
+        try {
+            String[] extensions = ConfigPropertyFileLoader.getExtensionClassNames();
+            Class extensionClass;
+            for (int i = 0; i < extensions.length; i++) {
+                //load the Extension class
+                extensionClass = this.getClass().getClassLoader().loadClass(extensions[i]);
+                addExtension((CodeGenExtension)extensionClass.newInstance());
+
+            }
+        } catch (ClassNotFoundException e) {
+            throw new CodeGenerationException("Extension class loading problem",e);
+        } catch (InstantiationException e) {
+            throw new CodeGenerationException("Extension class instantiation problem",e);
+        } catch (IllegalAccessException e) {
+            throw new CodeGenerationException("Illegal extension!",e);
+        } catch (Exception e) {
+            throw new CodeGenerationException(e);
+        }
 
     }
 
-    private void addExtension(AbstractCodeGenerationExtension ext){
+    private void addExtension(CodeGenExtension ext){
         ext.init(this.configuration);
         this.moduleEndpoints.add(ext);
     }
