@@ -32,7 +32,7 @@ public abstract class AbstractHandler implements Handler {
      * Field EMPTY_HANDLER_METADATA
      */
     private static HandlerDescription EMPTY_HANDLER_METADATA =
-            new HandlerDescription(new QName("deafult Handler"));
+            new HandlerDescription(new QName("default Handler"));
 
     /**
      * Field handlerDesc
