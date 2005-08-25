@@ -23,6 +23,8 @@ import org.apache.wsdl.WSDLTypes;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.Schema;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import java.util.Iterator;
 
@@ -49,7 +51,19 @@ public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
             boolean targetnamespaceFound = false;
             if (ExtensionConstants.SCHEMA.equals(element.getType())) {
                 Schema schema = (Schema) element;
-                NamedNodeMap attributes = schema.getElement().getAttributes();
+                Element schemaElement = schema.getElement();
+                //first check whether the schema include only a single import statement.
+                //As per the nature of WSDL if the schema has a single import ONLY, then the
+                //schema element need not contain a target namespace.
+                NodeList importNodeList =  schemaElement.getElementsByTagNameNS(schemaElement.getNamespaceURI(),"import");
+                NodeList allNodes = schemaElement.getElementsByTagName("*");
+                //checking the number of child elements and the number of import elements should get us what we need
+                if (importNodeList.getLength()==1 && allNodes.getLength()==1){
+                    return;
+                }
+
+
+                NamedNodeMap attributes = schemaElement.getAttributes();
                 for (int i = 0; i < attributes.getLength(); i++) {
                     if (TARGETNAMESPACE_STRING.equalsIgnoreCase(
                             attributes.item(i).getLocalName())){
