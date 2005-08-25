@@ -65,8 +65,8 @@ public class WSDoAllSender extends WSDoAllHandler {
         			inMsgCtx.getProperty(WSHandlerConstants.RECV_RESULTS));
         }
         
-        RequestData reqData = new RequestData();
-
+        reqData = new RequestData();
+        
         reqData.setNoSerialization(false);
         reqData.setMsgContext(msgContext);
         try {

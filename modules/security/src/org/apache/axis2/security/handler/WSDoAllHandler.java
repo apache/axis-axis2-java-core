@@ -26,6 +26,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.security.util.WSHandlerConstantsMapper;
 import org.apache.ws.security.handler.RequestData;
 import org.apache.ws.security.handler.WSHandler;
 
@@ -135,7 +136,8 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     }
 
 
-    public Object getProperty(Object msgContext, String key) {
+    public Object getProperty(Object msgContext, String axisKey) {
+    	String key = WSHandlerConstantsMapper.getMapping(axisKey,inHandler);
         return ((MessageContext)msgContext).getProperty(key);
     }
 
@@ -161,7 +163,9 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 	 * Values set in the service.xml takes prority over values of the
 	 * axis2.xml
 	 */
-    public Object getOption(String key) {
+    public Object getOption(String axisKey) {
+    	
+    	String key  = WSHandlerConstantsMapper.getMapping(axisKey,inHandler);
     	
     	MessageContext msgContext = (MessageContext)this.reqData.getMsgContext();
     	
@@ -178,19 +182,22 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     	
     	//if the operation desc is available
     	if(operationDesc != null) {
-    		value = operationDesc.getParameter(key); 
+    		Parameter parameter = operationDesc.getParameter(key);
+			value = (parameter!=null)?parameter.getValue():null; 
     	}
     	
     	//If the parameter is not found in the operation desc and if the 
     	//service desc is available
     	if(value == null && serviceDesc != null) {
-    		value = serviceDesc.getParameter(key);
+    		Parameter parameter = serviceDesc.getParameter(key);
+			value = (parameter!=null)?parameter.getValue():null;
     	}
     		
     	//If the parameter is not found in the service desc the look at the 
     	//global config - axis config
     	if(value == null && axisConfig != null) {
-    		value = axisConfig.getParameter(key);
+    		Parameter parameter = axisConfig.getParameter(key);
+			value = (parameter!=null)?parameter.getValue():null;
     	}
     	
     	//---------------------------------------------------------------------
