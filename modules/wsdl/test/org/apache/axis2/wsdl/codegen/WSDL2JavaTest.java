@@ -48,8 +48,8 @@ public class WSDL2JavaTest extends TestCase{
     protected void setUp() throws Exception {
         File outputFile = new File(OUTPUT_LOCATION_BASE);
         if (outputFile.exists() && outputFile.isDirectory()){
-           deleteDir(outputFile);
-           outputFile.mkdir();
+            deleteDir(outputFile);
+            outputFile.mkdir();
         }else{
             outputFile.mkdir();
         }
@@ -124,6 +124,19 @@ public class WSDL2JavaTest extends TestCase{
     }
 
     /**
+     * Test for the modified ping wsdl. it will be the test for the detached schema with only an import
+     * statement
+     */
+    public void testCodeGenerationPingModified(){
+
+        try {
+            generateAndCompile("ping-modified.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+FOLDER_COUNT++);
+        } catch (CodeGenerationException e) {
+            fail("Exception while code generation test!"+ e.getMessage());
+        }
+    }
+
+    /**
      *
      * @param wsdlName
      * @param outputLocation
@@ -132,7 +145,7 @@ public class WSDL2JavaTest extends TestCase{
     private void generateAndCompile(String wsdlName, String outputLocation) throws CodeGenerationException {
         codeGenerate(WSDL_BASE_DIR + wsdlName,outputLocation);
         //todo - Still the compilation fails (the original problem of the java.home was settled by setting fork
-        //todo - to true). Now the compiler fails for some unknown reason (inside maven)
+        //todo - to true). Now the compiler fails for some unknown reason (inside maven! works fine in the IDE though)
 
         //compile(outputLocation);
     }
