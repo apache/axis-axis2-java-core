@@ -250,4 +250,8 @@ public class StAXOMBuilder extends StAXBuilder {
             }
         }
     }
+
+    public OMDocumentImpl getDocument() {
+        return document;
+    }
 }

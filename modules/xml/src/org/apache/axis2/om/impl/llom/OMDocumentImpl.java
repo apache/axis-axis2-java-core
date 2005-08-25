@@ -31,7 +31,7 @@ public class OMDocumentImpl implements OMDocument {
     /**
      * Field rootElement
      */
-    private OMElement rootElement;
+    protected OMElement rootElement;
 
     /**
      * Field firstChild
@@ -41,7 +41,7 @@ public class OMDocumentImpl implements OMDocument {
     /**
      * Field lastChild
      */
-    private OMNode lastChild;
+    protected OMNode lastChild;
 
     /**
      * Field done
@@ -51,18 +51,18 @@ public class OMDocumentImpl implements OMDocument {
     /**
      * Field parserWrapper
      */
-    private OMXMLParserWrapper parserWrapper;
+    protected OMXMLParserWrapper parserWrapper;
 
     /**
      * Field charSetEncoding
      * Dafult : UTF-8
      */
-    private String charSetEncoding = "UTF-8";
+    protected String charSetEncoding = "UTF-8";
     
     /**
      * Field xmlVersion
      */
-    private String xmlVersion = "1.0";
+    protected String xmlVersion = "1.0";
     
 
     

@@ -5,6 +5,7 @@ import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.factory.OMLinkedListImplFactory;
 import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.SOAPEnvelopeImpl;
+import org.apache.axis2.soap.impl.llom.SOAPMessageImpl;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 
 /**
@@ -24,6 +25,14 @@ import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
  * <p/>
  */
 public class SOAPLinkedListImplFactory extends OMLinkedListImplFactory implements SOAPFactory {
+    public SOAPMessage createSOAPMessage(OMXMLParserWrapper builder) {
+        return new SOAPMessageImpl(builder);
+    }
+
+    public SOAPMessage createSOAPMessage(SOAPEnvelope envelope, OMXMLParserWrapper parserWrapper) {
+        return new SOAPMessageImpl(envelope, parserWrapper);
+    }
+
     /**
      * Eran Chinthaka (chinthaka@apache.org)
      */

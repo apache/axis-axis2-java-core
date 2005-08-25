@@ -27,6 +27,9 @@ public interface SOAPFactory extends OMFactory {
      * Eran Chinthaka (chinthaka@apache.org)
      */
 
+    public SOAPMessage createSOAPMessage(OMXMLParserWrapper builder);
+    public SOAPMessage createSOAPMessage(SOAPEnvelope envelope, OMXMLParserWrapper parserWrapper);
+
     /**
      * @param builder
      * @return

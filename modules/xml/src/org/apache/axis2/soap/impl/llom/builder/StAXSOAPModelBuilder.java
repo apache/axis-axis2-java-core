@@ -16,6 +16,7 @@
 package org.apache.axis2.soap.impl.llom.builder;
 
 import org.apache.axis2.om.*;
+import org.apache.axis2.om.impl.llom.OMDocumentImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
@@ -30,6 +31,8 @@ import javax.xml.stream.XMLStreamReader;
  * Class StAXSOAPModelBuilder
  */
 public class StAXSOAPModelBuilder extends StAXOMBuilder {
+
+    SOAPMessage soapMessage;
     /**
      * Field envelope
      */
@@ -86,6 +89,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     public StAXSOAPModelBuilder(XMLStreamReader parser, String soapVersion) {
         super(parser);
         soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+        soapMessage = soapFactory.createSOAPMessage(this);
         identifySOAPVersion(soapVersion);
         parseHeaders();
     }
@@ -102,8 +106,8 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     public StAXSOAPModelBuilder(XMLStreamReader parser, SOAPFactory factory, String soapVersion) {
         super(parser);
         soapFactory = factory;
+        soapMessage = soapFactory.createSOAPMessage(this);
         identifySOAPVersion(soapVersion);
-
         parseHeaders();
     }
 
@@ -176,6 +180,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
         String elementName = parser.getLocalName();
         if (lastNode == null) {
             node = constructNode(null, elementName, true);
+            soapMessage.setSOAPEnvelope((SOAPEnvelope) node);
         } else if (lastNode.isComplete()) {
             node =
                     constructNode((OMElement) lastNode.getParent(),
@@ -201,7 +206,6 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
      * @param parent
      * @param elementName
      * @param isEnvelope
-     * @return
      */
     protected OMElement constructNode(OMElement parent, String elementName,
                                       boolean isEnvelope) {
@@ -353,7 +357,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     protected OMNode createDTD() throws OMException {
     	throw new OMException("SOAP message MUST NOT contain a Document Type Declaration(DTD)");
     }
-    
+
     /**
      * Method createPI
      * 
@@ -363,7 +367,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     protected OMNode createPI() throws OMException {
     	throw new OMException("SOAP message MUST NOT contain Processing Instructions(PI)");
     }
-    
+
     /**
      * Method getDocumentElement
      *
@@ -401,7 +405,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
                 namespace = node.findNamespace(namespaceURI, prefix);
             }
             node.setNamespace(namespace);
-        } 
+        }
 
 
 
@@ -437,6 +441,14 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
 
     public void setProcessingDetailElements(boolean value) {
         processingDetailElements = value;
+    }
+
+    public SOAPMessage getSoapMessage() {
+        return soapMessage;
+    }
+
+    public OMDocumentImpl getDocument() {
+        return (OMDocumentImpl) this.soapMessage;
     }
 
 }
