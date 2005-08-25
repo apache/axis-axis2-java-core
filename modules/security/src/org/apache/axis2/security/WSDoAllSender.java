@@ -22,6 +22,7 @@ import java.util.Vector;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.security.handler.WSDoAllHandler;
 import org.apache.axis2.security.util.Axis2Util;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -32,11 +33,17 @@ import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.handler.RequestData;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.util.WSSecurityUtil;
+import org.apache.wsdl.WSDLConstants;
 import org.w3c.dom.Document;
 
 public class WSDoAllSender extends WSDoAllHandler {
 
 	protected static Log log = LogFactory.getLog(WSDoAllSender.class.getName());
+	
+    public WSDoAllSender() {
+    	super();
+    	inHandler = false;
+    }
 	
 	public void invoke(MessageContext msgContext) throws AxisFault {
 		
@@ -46,6 +53,18 @@ public class WSDoAllSender extends WSDoAllHandler {
             log.debug("WSDoAllSender: enter invoke()");
         }
 
+        /*
+         * Copy the RECV_RESULTS over to the current message context
+         * - IF available 
+         */
+        OperationContext opCtx = msgContext.getOperationContext();
+        MessageContext inMsgCtx;
+        if(opCtx != null && 
+        		(inMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN)) != null) {
+        	msgContext.setProperty(WSHandlerConstants.RECV_RESULTS, 
+        			inMsgCtx.getProperty(WSHandlerConstants.RECV_RESULTS));
+        }
+        
         RequestData reqData = new RequestData();
 
         reqData.setNoSerialization(false);

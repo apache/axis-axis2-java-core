@@ -16,14 +16,18 @@
 
 package org.apache.axis2.security.handler;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
+import org.apache.ws.security.handler.RequestData;
 import org.apache.ws.security.handler.WSHandler;
-
-import javax.xml.namespace.QName;
 
 /**
  * Class WSDoAllHandler
@@ -44,7 +48,23 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
      * Field handlerDesc
      */
     protected HandlerDescription handlerDesc;
-
+    
+    /**
+     * This is used to get hold of the message context to extract the
+     * configuration information (from axis2.xml and service.xml)
+     * out of it 
+     */
+    protected RequestData reqData;
+    
+    /**
+     * In Axis2 the user cannot set inflow and outflow parameters
+     * Therefore we need to map the Axis2 specific inflow and outflow 
+     * parameters to WSS4J params
+     * 
+     * Knowledge of inhandler and out handler is used to get the mapped value
+     */
+    protected boolean inHandler;
+    
     /**
      * Constructor AbstractHandler
      */
@@ -115,11 +135,6 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     }
 
 
-    public Object getOption(String key) {
-        Parameter parameter = this.handlerDesc.getParameter(key);
-		return (parameter== null)?null:parameter.getValue();
-    }
-
     public Object getProperty(Object msgContext, String key) {
         return ((MessageContext)msgContext).getProperty(key);
     }
@@ -140,5 +155,54 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
         ((MessageContext)msgContext).setProperty(WSS_USERNAME,username);
     }
     
-        
+	/**
+	 * Get optoin should extract the configuration 
+	 * values from the service.xml and/or axis2.xml
+	 * Values set in the service.xml takes prority over values of the
+	 * axis2.xml
+	 */
+    public Object getOption(String key) {
+    	
+    	MessageContext msgContext = (MessageContext)this.reqData.getMsgContext();
+    	
+    	//If the parameters are set globally in the axis2.xml 
+    	AxisConfiguration axisConfig = msgContext.getSystemContext().getAxisConfiguration();
+    	
+    	//If the parameters are set in the scope of the service in service.xml
+    	ServiceDescription serviceDesc = msgContext.getServiceContext().getServiceConfig();
+    	
+    	//If the parameters are set in the scope of an peration in service.xml
+    	OperationDescription operationDesc = msgContext.getOperationContext().getAxisOperation();
+    	
+    	Object value = null;
+    	
+    	//if the operation desc is available
+    	if(operationDesc != null) {
+    		value = operationDesc.getParameter(key); 
+    	}
+    	
+    	//If the parameter is not found in the operation desc and if the 
+    	//service desc is available
+    	if(value == null && serviceDesc != null) {
+    		value = serviceDesc.getParameter(key);
+    	}
+    		
+    	//If the parameter is not found in the service desc the look at the 
+    	//global config - axis config
+    	if(value == null && axisConfig != null) {
+    		value = axisConfig.getParameter(key);
+    	}
+    	
+    	//---------------------------------------------------------------------
+    	//If value is still null this point then the user has not set the value
+    	  
+    	
+    	//Look in the handlerDesc for the value
+    	if(value == null) {
+    		Parameter parameter = this.handlerDesc.getParameter(key);
+    		value = (parameter== null)?null:parameter.getValue();
+    	}
+    	
+    	return value;
+    }
 }

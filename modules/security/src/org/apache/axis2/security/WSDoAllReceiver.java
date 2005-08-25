@@ -48,8 +48,13 @@ import org.w3c.dom.Document;
 public class WSDoAllReceiver extends WSDoAllHandler {
 
     protected static Log log = LogFactory.getLog(WSDoAllReceiver.class.getName());
-
-	
+    
+    
+    public WSDoAllReceiver() {
+    	super();
+    	inHandler = true;
+    }
+    
 	public void invoke(MessageContext msgContext) throws AxisFault {
     	doDebug = log.isDebugEnabled();
 
@@ -57,7 +62,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             log.debug("WSDoAllReceiver: enter invoke() ");
         }
 
-        RequestData reqData = new RequestData();
+        reqData = new RequestData();
         
         try {
         	reqData.setMsgContext(msgContext);
@@ -269,6 +274,8 @@ public class WSDoAllReceiver extends WSDoAllHandler {
              /*
              * All ok up to this point. Now construct and setup the security
              * result structure. The service may fetch this and check it.
+             * Also the DoAllSender will use this in certain situations such as:
+             * USE_REQ_SIG_CERT to encrypt
              */
              Vector results = null;
              if ((results = (Vector) msgContext
@@ -282,6 +289,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
              if (doDebug) {
                  log.debug("WSDoAllReceiver: exit invoke()");
              }
+             
         } catch (WSSecurityException wssEx) {
         	throw new AxisFault(wssEx);
         } finally {
@@ -289,6 +297,6 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             reqData = null;
         }
         
-    	
     }
+
 }

@@ -4,6 +4,12 @@
 
     <messageReceiver mep="INOUT" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
 
+
+    <!-- This is only till we get the service specific parameters fixed in service.xml -->
+	<parameter name="InAction" locked="xsd:false">UsernameToken</parameter>
+	<parameter name="passwordCallbackClass" locked="xsd:false">org.apache.axis2.security.PWCallback</parameter>
+
+
     <transportReceiver name="http">
     </transportReceiver>
     <transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
@@ -11,6 +17,7 @@
     </transportSender>
 
     <module ref="security"/>
+    
     <phaseOrder type="inflow">
         <!--  System pre defined phases       -->
         <phase name="TransportIn"/>
