@@ -296,7 +296,7 @@ public class OMDocumentImpl implements OMDocument {
 		
 	}
 	
-	private void serialize(OMOutputImpl omOutput, boolean cache, boolean includeXMLDeclaration) throws XMLStreamException {
+	protected void serialize(OMOutputImpl omOutput, boolean cache, boolean includeXMLDeclaration) throws XMLStreamException {
 		if (includeXMLDeclaration) {
 			//Check whether the OMOutput char encoding and OMDocument char
 			//encoding matches, if not use char encoding of OMOutput

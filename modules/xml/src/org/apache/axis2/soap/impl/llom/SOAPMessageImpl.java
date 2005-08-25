@@ -65,18 +65,7 @@ public class SOAPMessageImpl extends OMDocumentImpl implements SOAPMessage {
         throw new UnsupportedOperationException("This is not allowed. Use set SOAPEnvelope instead");
     }
 
-    private void serialize(OMOutputImpl omOutput, boolean cache, boolean includeXMLDeclaration) throws XMLStreamException {
-        if (includeXMLDeclaration) {
-            //Check whether the OMOutput char encoding and OMDocument char
-            //encoding matches, if not use char encoding of OMOutput
-            String outputCharEncoding = omOutput.getCharSetEncoding();
-            if (!outputCharEncoding.equalsIgnoreCase(this.charSetEncoding)) {
-                this.charSetEncoding = outputCharEncoding;
-            }
-            omOutput.getXmlStreamWriter().writeStartDocument(charSetEncoding,
-                    xmlVersion);
-        }
-
+    protected void serialize(OMOutputImpl omOutput, boolean cache, boolean includeXMLDeclaration) throws XMLStreamException {
         if (cache) {
             this.rootElement.serializeWithCache(omOutput);
         } else {
