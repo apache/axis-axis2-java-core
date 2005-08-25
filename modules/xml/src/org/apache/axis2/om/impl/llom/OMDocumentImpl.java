@@ -58,21 +58,20 @@ public class OMDocumentImpl implements OMDocument {
      * Dafult : UTF-8
      */
     protected String charSetEncoding = "UTF-8";
-    
+
     /**
      * Field xmlVersion
      */
     protected String xmlVersion = "1.0";
-    
 
-    
+
     /**
      * Default constructor
      */
     public OMDocumentImpl() {
-    	
+      this.done = true;
     }
-    
+
     /**
      * @param rootElement
      * @param parserWrapper
@@ -234,86 +233,99 @@ public class OMDocumentImpl implements OMDocument {
     public void setFirstChild(OMNode firstChild) {
         this.firstChild = firstChild;
     }
-    
-    
+
+
     /**
      * Returns the character set encoding scheme to be used
+     *
      * @return
      */
-	public String getCharsetEncoding() {
-		return charSetEncoding;
-	}
-	
-	/**
-	 * Set the character set encoding scheme
-	 * @param charSetEncoding
-	 */
-	public void setCharsetEncoding(String charEncoding) {
-		this.charSetEncoding = charEncoding;
-	}
-	
-	public String getXMLVersion() {
-		return xmlVersion;
-	}
-	public void setXMLVersion(String xmlVersion) {
-		this.xmlVersion = xmlVersion;
-	}
-	
-	/**
-	 * Serialize the docuement with/without the XML declaration
-	 */
-	public void serialize(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException {
-		serialize(omOutput,false,includeXMLDeclaration);
-	}
+    public String getCharsetEncoding() {
+        return charSetEncoding;
+    }
 
-	/**
-	 * Serialize the document with the XML declaration
-	 * 
-	 * @see org.apache.axis2.om.OMDocument#serialize(org.apache.axis2.om.impl.OMOutputImpl,
-	 *      boolean)
-	 */
-	public void serialize(OMOutputImpl omOutput)
-			throws XMLStreamException {
-		serialize(omOutput, false, true);
-	}
-	
+    /**
+     * Set the character set encoding scheme
+     *
+     * @param charSetEncoding
+     */
+    public void setCharsetEncoding(String charEncoding) {
+        this.charSetEncoding = charEncoding;
+    }
 
-	/**
-	 * Serialize the document with cache
-	 * @see org.apache.axis2.om.OMDocument#serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl)
-	 */
-	public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
-		serialize(omOutput, true, true);
-		
-	}
+    public String getXMLVersion() {
+        return xmlVersion;
+    }
 
-	/**
-	 * Serialize the document with cache
-	 * @see org.apache.axis2.om.OMDocument#serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl, boolean)
-	 */
-	public void serializeWithCache(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException {
-		serialize(omOutput,true,includeXMLDeclaration);
-		
-	}
-	
-	protected void serialize(OMOutputImpl omOutput, boolean cache, boolean includeXMLDeclaration) throws XMLStreamException {
-		if (includeXMLDeclaration) {
-			//Check whether the OMOutput char encoding and OMDocument char
-			//encoding matches, if not use char encoding of OMOutput
-			String outputCharEncoding = omOutput.getCharSetEncoding();
-			if(!outputCharEncoding.equalsIgnoreCase(this.charSetEncoding)) {
-				this.charSetEncoding = outputCharEncoding;
-			}
-			omOutput.getXmlStreamWriter().writeStartDocument(charSetEncoding,
-					xmlVersion);
-		}
+    public void setXMLVersion(String xmlVersion) {
+        this.xmlVersion = xmlVersion;
+    }
 
-		if (cache) {
-			this.rootElement.serializeWithCache(omOutput);
-		} else {
-			this.rootElement.serialize(omOutput);
-		}
-	}
+    /**
+     * Serialize the docuement with/without the XML declaration
+     */
+    public void serialize(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException {
+        serialize(omOutput, false, includeXMLDeclaration);
+    }
 
-	
+    /**
+     * Serialize the document with the XML declaration
+     *
+     * @see org.apache.axis2.om.OMDocument#serialize(org.apache.axis2.om.impl.OMOutputImpl,
+     *      boolean)
+     */
+    public void serialize(OMOutputImpl omOutput)
+            throws XMLStreamException {
+        serialize(omOutput, false, true);
+    }
+
+
+    /**
+     * Serialize the document with cache
+     *
+     * @see org.apache.axis2.om.OMDocument#serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl)
+     */
+    public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
+        serialize(omOutput, true, true);
+
+    }
+
+    /**
+     * Serialize the document with cache
+     *
+     * @see org.apache.axis2.om.OMDocument#serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl, boolean)
+     */
+    public void serializeWithCache(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException {
+        serialize(omOutput, true, includeXMLDeclaration);
+
+    }
+
+    protected void serialize(OMOutputImpl omOutput, boolean cache, boolean includeXMLDeclaration) throws XMLStreamException {
+        if (includeXMLDeclaration) {
+            //Check whether the OMOutput char encoding and OMDocument char
+            //encoding matches, if not use char encoding of OMOutput
+            String outputCharEncoding = omOutput.getCharSetEncoding();
+            if (!outputCharEncoding.equalsIgnoreCase(this.charSetEncoding)) {
+                this.charSetEncoding = outputCharEncoding;
+            }
+            omOutput.getXmlStreamWriter().writeStartDocument(charSetEncoding,
+                    xmlVersion);
+        }
+
+        Iterator children = this.getChildren();
+
+        if (cache) {
+            while (children.hasNext()) {
+                OMNode omNode = (OMNode) children.next();
+                omNode.serializeWithCache(omOutput);
+            }
+        } else {
+            while (children.hasNext()) {
+                OMNode omNode = (OMNode) children.next();
+                omNode.serialize(omOutput);
+            }
+        }
+    }
+
+
 }

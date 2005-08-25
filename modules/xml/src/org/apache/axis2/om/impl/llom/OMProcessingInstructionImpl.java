@@ -57,10 +57,6 @@ public class OMProcessingInstructionImpl extends OMNodeImpl implements OMProcess
     public void serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         writer.writeProcessingInstruction(this.target+" ", this.value);
-        OMNode nextSibling = this.getNextSibling();
-        if (nextSibling != null) {
-            nextSibling.serializeWithCache(omOutput);
-        }
     }
 
     /**

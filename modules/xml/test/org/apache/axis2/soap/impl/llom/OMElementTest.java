@@ -1,5 +1,6 @@
-package org.apache.axis2.om;
+package org.apache.axis2.soap.impl.llom;
 
+import org.apache.axis2.om.*;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.commons.logging.Log;

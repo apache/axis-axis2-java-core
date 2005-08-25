@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.om;
+package org.apache.axis2.soap.impl.llom;
 
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMTestCase;
+import org.apache.axis2.om.OMTestUtils;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeader;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
