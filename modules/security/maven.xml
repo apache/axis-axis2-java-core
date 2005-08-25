@@ -67,13 +67,15 @@
 	<copy file="interop/org/apache/axis2/oasis/ping/PingPortSkeleton.java" 
 		tofile="${work.dir}/org/apache/axis2/oasis/ping/PingPortSkeleton.java" overwrite="yes"/>
 	
+	<!-- Password callback class for the interop service -->
 	<copy file="test-resources/PWCallback.java" 
 		tofile="${work.dir}/org/apache/axis2/security/PWCallback.java" overwrite="yes"/>
 
 	<!-- This doesn't seem to work :-( -->
-	<!--Trying javac on this also doesn't work -->
+	<!--Trying javac on this also doesn't work since it does not
+	 include the generated 'schema' package properly in the classpath -->
     	<path id="src.dir" location="${work.dir}"/>
-        <addPath id="maven.src.dir" refid="src.dir"/>
+        <addPath id="maven.src.dir" refid="src.dir"/>	
     </preGoal>
 
 	<!--Create the service.aar" -->
@@ -95,10 +97,6 @@
             <include name="**/*"/>
         </jar>
         
-        <jar jarfile="target/pwcb.mar" basedir="target/classes">
-            <include name="org/apache/axis2/security/PWCallback.class"/>
-        </jar>
-
     </postGoal>
 
 </project>
