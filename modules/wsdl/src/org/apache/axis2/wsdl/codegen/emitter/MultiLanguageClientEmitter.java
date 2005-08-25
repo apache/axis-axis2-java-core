@@ -71,6 +71,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     private static final String DATABINDING_PACKAGE_NAME_SUFFIX = ".databinding";
     private static final String TEST_SERVICE_CLASS_NAME_SUFFIX = "SkeletonTest";
     private static final String MESSAGE_RECEIVER_SUFFIX = "MessageReceiver";
+    private static final String SERVICE_XML_OUTPUT_FOLDER_NAME = "service_descriptors.";
 
 
     protected InputStream xsltStream = null;
@@ -120,7 +121,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 //We may need a flag in the config to force code generation with the binding
                 //if so the following check needs to be uncommented. For now log the situation
                 //throw new CodeGenerationException("Binding needs to be present!");
-                log.info("No binding is present.The follwing items will not be generated");
+                log.info("No binding is present.The following items will not be generated");
                 log.info("1. Message Receiver");
 
             }else{
@@ -163,7 +164,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             Collection interfaceCollection =interfaces.values();
             for (Iterator iterator = interfaceCollection.iterator(); iterator.hasNext();) {
                 //Write the interfaces
-                writeInterface((WSDLInterface)iterator.next());
+                WSDLInterface axisInterface = (WSDLInterface) iterator.next();
+                writeInterface(axisInterface);
+                //write the call back handlers
+                 writeCallBackHandlers(axisInterface);
             }
 
             Map bindings = wom.getBindings();
@@ -171,7 +175,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 //We may need a flag in the config to force code generation with the binding
                 //if so the following check needs to be uncommented. For now log the situation
                 //throw new CodeGenerationException("Binding needs to be present!");
-                log.info("No binding is present.The follwing items will not be generated");
+                log.info("No binding is present.The following items will not be generated");
                 log.info("1. Stub");
                 log.info("2. CallbackHandler");
                 log.info("3. Test Classes");
@@ -187,8 +191,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
                     //write interface implementations
                     writeInterfaceImplementation(axisBinding, axisService);
-                    //write the call back handlers
-                    writeCallBackHandlers(axisBinding);
+
                     //write the test classes
                     writeTestClasses(axisBinding);
                     //write the databinding supporters
@@ -232,11 +235,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     /**
      *
      */
-    protected void writeCallBackHandlers(WSDLBinding binding) throws Exception {
+    protected void writeCallBackHandlers(WSDLInterface wsdlInterface) throws Exception {
 
         if (configuration.isAsyncOn()) {
             Document interfaceModel = createDOMDocumentForCallbackHandler(
-                    binding);
+                    wsdlInterface);
             CallbackHandlerWriter callbackWriter =
                     new CallbackHandlerWriter(
                             this.configuration.getOutputLocation(),
@@ -357,6 +360,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
      */
     protected void writeServiceXml(WSDLInterface axisInterface) throws Exception {
         if (this.configuration.isGenerateDeployementDescriptor()) {
+            //Write the service xml in a folder with the
             Document skeletonModel = createDOMDocumentForServiceXML(
                     axisInterface, false);
             ClassWriter serviceXmlWriter = new ServiceXMLWriter(
@@ -493,11 +497,10 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     /**
      * Generating the callbacks
      *
-     * @param binding
+     * @param boundInterface
      */
     protected Document createDOMDocumentForCallbackHandler(
-            WSDLBinding binding) {
-        WSDLInterface boundInterface = binding.getBoundInterface();
+             WSDLInterface boundInterface) {
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("callback");
         addAttribute(doc,
@@ -627,8 +630,15 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                     localPart + TEST_SERVICE_CLASS_NAME_SUFFIX,
                     rootElement);
         } else {
+            //put the package to be SERVICE_XML_OUTPUT_FOLDER_NAME.interface name
+            //this forces the service XML to be written in a folder of it's porttype
+            //name
             addAttribute(doc,
                     "package",
+                    SERVICE_XML_OUTPUT_FOLDER_NAME+localPart,
+                    rootElement);
+            addAttribute(doc,
+                    "classpackage",
                     configuration.getPackageName(),
                     rootElement);
             addAttribute(doc,

@@ -80,7 +80,7 @@ public class MessageReuseTest extends AbstractTestCase {
             }
         }
         int numberOfBookQuote_getBookPrice = 0;
-        NodeList childNodes = types.getElelment().getChildNodes();
+        NodeList childNodes = types.getElement().getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
             if (item instanceof Element) {

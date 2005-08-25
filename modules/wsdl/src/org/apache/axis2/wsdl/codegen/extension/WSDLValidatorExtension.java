@@ -49,16 +49,19 @@ public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
             boolean targetnamespaceFound = false;
             if (ExtensionConstants.SCHEMA.equals(element.getType())) {
                 Schema schema = (Schema) element;
-                NamedNodeMap attributes = schema.getElelment().getAttributes();
+                NamedNodeMap attributes = schema.getElement().getAttributes();
                 for (int i = 0; i < attributes.getLength(); i++) {
                     if (TARGETNAMESPACE_STRING.equalsIgnoreCase(
-                            attributes.item(i).getLocalName()))
+                            attributes.item(i).getLocalName())){
                         targetnamespaceFound = true;
+                        break;
+                    }
                 }
+                if (!targetnamespaceFound)
+                    throw new CodeGenerationException(
+                            "Invalid WSDL: The WSDL Types Schema does not define a targetNamespace in "+schema.getName() );
             }
-            if (!targetnamespaceFound)
-                throw new CodeGenerationException(
-                        "Invalid WSDL: The WSDL Types Schema does not define a targetNamespace");
+
         }
     }
 }

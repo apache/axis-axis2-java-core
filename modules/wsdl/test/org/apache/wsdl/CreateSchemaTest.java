@@ -66,7 +66,7 @@ public class CreateSchemaTest extends AbstractTestCase {
         }
         assertNotNull(element);
         Schema schema = (Schema) element;
-        NodeList childNodes = schema.getElelment().getChildNodes();
+        NodeList childNodes = schema.getElement().getChildNodes();
         Element insertedElementForMessageReference = null;
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);

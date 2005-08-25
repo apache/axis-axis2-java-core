@@ -19,22 +19,35 @@ package org.apache.wsdl.extensions;
 import org.apache.wsdl.WSDLExtensibilityElement;
 import org.w3c.dom.Element;
 
+import javax.xml.namespace.QName;
 import java.util.Stack;
 
 /**
  * @author chathura@opensource.lk
  */
 public interface Schema extends WSDLExtensibilityElement {
+
+    /**
+     *
+     * @return The QName of this schema
+     */
+    public QName getName();
+
+    /**
+     *  @param  name of this schema
+     */
+     public void setName(QName name);
+
     /**
      * @return The schema Element as a DOM element
      */
-    public Element getElelment();
+    public Element getElement();
 
     /**
      * Sets the Schema Element as a DOM Element.
-     * @param elelment
+     * @param element
      */
-    public void setElelment(Element elelment);
+    public void setElement(Element element);
     /**
      *
      *

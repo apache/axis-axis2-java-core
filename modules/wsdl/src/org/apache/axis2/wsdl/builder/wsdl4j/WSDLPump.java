@@ -474,7 +474,7 @@ public class WSDLPump {
                     ExtensionFactory extensionFactory = wsdlComponentFactory.createExtensionFactory();
                     org.apache.wsdl.extensions.Schema typesElement = (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
                             ExtensionConstants.SCHEMA);
-                    typesElement.setElelment(newSchemaElement);
+                    typesElement.setElement(newSchemaElement);
                     types.addExtensibilityElement(typesElement);
                     this.womDefinition.setTypes(types);
                 }
@@ -487,7 +487,7 @@ public class WSDLPump {
                     WSDLExtensibilityElement temp = (WSDLExtensibilityElement) schemaEIIterator.next();
                     if (ExtensionConstants.SCHEMA.equals(temp.getType())) {
                         schemaElement =
-                                ((org.apache.wsdl.extensions.Schema) temp).getElelment();
+                                ((org.apache.wsdl.extensions.Schema) temp).getElement();
                         break;
                     }
                 }
@@ -726,6 +726,7 @@ public class WSDLPump {
                 component.addExtensibilityElement(extensibilityElement);
             } else if (wsdl4jElement instanceof Schema) {
                 Schema schema = (Schema) wsdl4jElement;
+                //schema.getDocumentBaseURI()
                 //populate the imported schema stack
                 Stack schemaStack = new Stack();
                 //recursivly load the schema elements. The best thing is to push these into
@@ -733,12 +734,14 @@ public class WSDLPump {
                 pushSchemaElement(schema, schemaStack);
                 org.apache.wsdl.extensions.Schema extensibilityElement = (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
                         schema.getElementType());
-                extensibilityElement.setElelment(schema.getElement());
+                extensibilityElement.setElement(schema.getElement());
                 extensibilityElement.setImportedSchemaStack(schemaStack);
                 Boolean required = schema.getRequired();
                 if (null != required) {
                     extensibilityElement.setRequired(required.booleanValue());
                 }
+                //set the name of this Schema element
+                extensibilityElement.setName(new QName("",schema.getDocumentBaseURI()));
                 component.addExtensibilityElement(extensibilityElement);
             } else if (SOAPConstants.Q_ELEM_SOAP_OPERATION.equals(
                     wsdl4jElement.getElementType())) {

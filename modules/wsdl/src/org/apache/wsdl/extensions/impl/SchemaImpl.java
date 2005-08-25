@@ -21,6 +21,7 @@ import org.apache.wsdl.extensions.Schema;
 import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 import org.w3c.dom.Element;
 
+import javax.xml.namespace.QName;
 import java.util.Stack;
 
 /**
@@ -29,7 +30,8 @@ import java.util.Stack;
 public class SchemaImpl extends WSDLExtensibilityElementImpl implements ExtensionConstants,
         Schema {
 
-    private Element elelment;
+    private Element element;
+    private QName name;
     private Stack importedSchemaStack= new Stack();
 
     public SchemaImpl() {
@@ -44,11 +46,19 @@ public class SchemaImpl extends WSDLExtensibilityElementImpl implements Extensio
         this.importedSchemaStack = importedSchemaStack;
     }
 
+    public QName getName() {
+        return name;
+    }
+
+    public void setName(QName name) {
+       this.name = name;
+    }
+
     /**
      * @return The schema Element as a DOM element
      */
-    public Element getElelment() {
-        return elelment;
+    public Element getElement() {
+        return element;
     }
 
     /**
@@ -56,7 +66,7 @@ public class SchemaImpl extends WSDLExtensibilityElementImpl implements Extensio
      *
      * @param elelment
      */
-    public void setElelment(Element elelment) {
-        this.elelment = elelment;
+    public void setElement(Element elelment) {
+        this.element = elelment;
     }
 }

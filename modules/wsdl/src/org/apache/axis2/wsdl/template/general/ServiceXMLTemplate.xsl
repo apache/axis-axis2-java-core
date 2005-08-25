@@ -2,7 +2,7 @@
     <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
     <xsl:template match="/interface">
     <xsl:variable name="receiver"><xsl:value-of select="@messagereceiver"/></xsl:variable>
-    <xsl:variable name="package"><xsl:value-of select="@package"/></xsl:variable>
+    <xsl:variable name="package"><xsl:value-of select="@classpackage"/></xsl:variable>
 
     <xsl:comment>Auto generated Axis Service XML</xsl:comment>
     <service><xsl:attribute name="name"><xsl:value-of select="@servicename"/></xsl:attribute>

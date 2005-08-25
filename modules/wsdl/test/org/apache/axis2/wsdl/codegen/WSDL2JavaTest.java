@@ -3,6 +3,7 @@ package org.apache.axis2.wsdl.codegen;
 import junit.framework.TestCase;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.types.Path;
 
@@ -29,33 +30,47 @@ import java.util.Map;
 */
 public class WSDL2JavaTest extends TestCase{
 
-    public static final String OUTPUT_LOCATION = "./out_put_classes";
-    // public static final String OUTPUT_LOCATION = "C:\\GeneratedCode\\test4\\src";
+    public static final String OUTPUT_LOCATION_BASE = "./out_put_classes";
+    public static final String OUTPUT_LOCATION_PREFIX = "/test";
+    private static int FOLDER_COUNT = 0;
+    // public static final String OUTPUT_LOCATION_BASE = "C:\\GeneratedCode\\test4\\src";
     public static final String WSDL_BASE_DIR = "./test-resources/";
     public static final String CLASSES_DIR = "/target/classes/";
     private String[] moduleNames={"xml","common","core"};
+    private static final String MODULE_PATH_PREFIX = "../modules/";
+    private static final String COMPILE_TARGET_NAME = "compile";
 
 
+    /**
+     * Make the root output directory
+     * @throws Exception
+     */
     protected void setUp() throws Exception {
-        File outputFile = new File(OUTPUT_LOCATION);
+        File outputFile = new File(OUTPUT_LOCATION_BASE);
         if (outputFile.exists() && outputFile.isDirectory()){
-            deleteDir(outputFile);
-            outputFile.mkdir();
+           deleteDir(outputFile);
+           outputFile.mkdir();
         }else{
             outputFile.mkdir();
         }
     }
 
+    /**
+     *  Remove the root output directory
+     * @throws Exception
+     */
     protected void tearDown() throws Exception {
-        File outputFile = new File(OUTPUT_LOCATION);
+        File outputFile = new File(OUTPUT_LOCATION_BASE);
         if (outputFile.exists() && outputFile.isDirectory()){
             deleteDir(outputFile);
         }
     }
 
-    // Deletes all files and subdirectories under dir.
-    // Returns true if all deletions were successful.
-    // If a deletion fails, the method stops attempting to delete and returns false.
+    /**
+     * Deletes all files and subdirectories under dir.
+     * Returns true if all deletions were successful.
+     * If a deletion fails, the method stops attempting to delete and returns false.
+     */
     private boolean deleteDir(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
@@ -70,113 +85,144 @@ public class WSDL2JavaTest extends TestCase{
         // The directory is now empty so delete it
         return dir.delete();
     }
-        /**
-         * Test for the WSAT wsdl
-         */
-        public void testCodeGenerationWSAT(){
 
-            try {
-                generateAndCompile("wsat.wsdl");
-            } catch (CodeGenerationException e) {
-                fail("Exception while codegeneration test!"+ e.getMessage());
-            }
+    /**
+     * Test for the WSAT wsdl
+     */
+    public void testCodeGenerationWSAT(){
+
+        try {
+            generateAndCompile("wsat.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+FOLDER_COUNT++);
+        } catch (CodeGenerationException e) {
+            fail("Exception while code generation test!"+ e.getMessage());
         }
+    }
 
 
     /**
-         * Test for the ping WSDL
-         */
-        public void testCodeGenerationPing(){
+     * Test for the ping WSDL
+     */
+    public void testCodeGenerationPing(){
 
-            try {
-                generateAndCompile("ping.wsdl");
-            } catch (CodeGenerationException e) {
-                fail("Exception while codegeneration test!"+ e.getMessage());
-            }
+        try {
+            generateAndCompile("ping.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+FOLDER_COUNT++);
+        } catch (CodeGenerationException e) {
+            fail("Exception while code generation test!"+ e.getMessage());
         }
+    }
 
     /**
-     * Test for the interoptestdoclit.wsdl
+     * Test for the wscoor.wsdl
      */
     public void testCodeGenerationWSCOOR(){
 
         try {
-            generateAndCompile("interoptestdoclit.wsdl");
+            generateAndCompile("interoptestdoclit.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+FOLDER_COUNT++);
         } catch (CodeGenerationException e) {
-            fail("Exception while codegeneration test!"+ e.getMessage());
+            fail("Exception while code generation test!"+ e.getMessage());
         }
     }
-    private void generateAndCompile(String wsdlName) throws CodeGenerationException {
-        codeGenerate(WSDL_BASE_DIR + wsdlName);
-        //todo - Strangely the java.home system variable does not point to the correct place
-        //todo - Need to find the prob and uncomment this
-        //compile();
+
+    /**
+     *
+     * @param wsdlName
+     * @param outputLocation
+     * @throws CodeGenerationException
+     */
+    private void generateAndCompile(String wsdlName, String outputLocation) throws CodeGenerationException {
+        codeGenerate(WSDL_BASE_DIR + wsdlName,outputLocation);
+        //todo - Still the compilation fails (the original problem of the java.home was settled by setting fork
+        //todo - to true). Now the compiler fails for some unknown reason (inside maven)
+
+        //compile(outputLocation);
     }
-    private void codeGenerate(String wsdlFile) throws CodeGenerationException {
+
+    /**
+     *
+     * @param wsdlFile
+     * @param outputLocation
+     * @throws CodeGenerationException
+     */
+    private void codeGenerate(String wsdlFile,String outputLocation) throws CodeGenerationException {
         //create the option map
-        Map optionMap = fillOptionMap(wsdlFile);
+        Map optionMap = fillOptionMap(wsdlFile,outputLocation);
         CommandLineOptionParser parser =
                 new CommandLineOptionParser(optionMap);
         new CodeGenerationEngine(parser).generate();
     }
 
-    private void compile(){
+    /**
+     *
+     * @param outputLocation
+     */
+    private void compile(String outputLocation){
         //using the ant javac task for compilation
         Javac javaCompiler = new Javac();
         Project codeGenProject = new Project();
         Target compileTarget = new Target();
 
-        compileTarget.setName("compile");
+        compileTarget.setName(COMPILE_TARGET_NAME);
         compileTarget.addTask(javaCompiler);
         codeGenProject.addTarget(compileTarget);
         codeGenProject.setSystemProperties();
         javaCompiler.setProject(codeGenProject);
         javaCompiler.setIncludejavaruntime(true);
         javaCompiler.setIncludeantruntime(true);
+        /*
+          This harmless looking setFork is actually very important. unless the compiler is
+          forked it wont work!
+        */
+        javaCompiler.setFork(true);
 
-        File outputLocationFile = new File(OUTPUT_LOCATION);
-
-        Path classPath = new Path(codeGenProject,OUTPUT_LOCATION) ;
+        //Create classpath - The generated output directories also become part of the classpath
+        //reason for this is that some codegenerators(XMLBeans) produce compiled classes as part of
+        //generated artifacts
+        File outputLocationFile = new File(outputLocation);
+        Path classPath = new Path(codeGenProject,outputLocation) ;
         classPath.addExisting(classPath.concatSystemClasspath(),false);
         for (int i = 0; i < moduleNames.length; i++) {
-            classPath.add(new Path(codeGenProject,"../modules/"+moduleNames[i]+CLASSES_DIR));
+            classPath.add(new Path(codeGenProject,MODULE_PATH_PREFIX +moduleNames[i]+CLASSES_DIR));
         }
         javaCompiler.setClasspath(classPath);
 
-
-        System.out.println("javaCompiler classpath = " + javaCompiler.getClasspath());
-        System.out.println("System java home setting = " + System.getProperty("java.home"));
-        System.out.println("Compiler name = " +javaCompiler.getExecutable());
-
-        Path sourcePath = new Path(codeGenProject,OUTPUT_LOCATION) ;
+        //set sourcePath - The generated output directories also become part of the sourcepath
+        Path sourcePath = new Path(codeGenProject,outputLocation) ;
         sourcePath.setLocation(outputLocationFile);
         javaCompiler.setSrcdir(sourcePath);
 
+        //output the classes into the output dir as well
         javaCompiler.setDestdir(outputLocationFile);
-
-        codeGenProject.executeTarget("compile");
+        javaCompiler.setVerbose(true);
+        try {
+            codeGenProject.executeTarget(COMPILE_TARGET_NAME);
+        } catch (BuildException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            fail();
+        }
 
     }
 
     /**
      *
      */
-    private Map fillOptionMap(String wsdlFileName) {
+    private Map fillOptionMap(String wsdlFileName,String outputLocation) {
         Map optionMap = new HashMap();
         optionMap.put(
                 CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION,
                         new String[]{wsdlFileName}));
+
         //use default sync option - No option is given
         //use default async option - No option is given
         //use default language option - No option is given
         //output location - code_gen_output
+
         optionMap.put(
                 CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
                 new CommandLineOption(
                         CommandLineOptionConstants.OUTPUT_LOCATION_OPTION,
-                        new String[]{OUTPUT_LOCATION}));
+                        new String[]{outputLocation}));
         //server side option is on
         optionMap.put(
                 CommandLineOptionConstants.SERVER_SIDE_CODE_OPTION,
