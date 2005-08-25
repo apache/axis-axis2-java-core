@@ -110,7 +110,7 @@ public class WhitemesaR4SimpleTest extends TestCase {
     public void testEchoMultipleFaults3() throws Exception{
         util=new EchoMultipleFaults3Clientutil();
         retEle =client.sendMsg(util,soapAction);
-        assertTrue(compare(retEle,"/interopt/whitemesa/round4/res/resMultiplefaults3.xml"));
+        assertTrue(compare(retEle,"/interopt/whitemesa/round4/res/resMultipleFaults3.xml"));
     }
     public void testEchoMultipleFaults4() throws Exception{
         util=new EchoMultipleFaults4ClientUtil();
