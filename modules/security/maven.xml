@@ -59,27 +59,44 @@
 		</java>
 
 		<!-- move/copy schema stuff into class.dir -->
-    	<copy todir="${class.dir}/schema">
-		<fileset dir="${work.dir}/schema"/>
-	</copy>
+    	<ant:move todir="${class.dir}">
+		    <ant:fileset dir="${work.dir}">
+                <ant:include name="**/schema/**/*.class"/>
+            </ant:fileset>
+	    </ant:move>
 		
-	<!-- copy the service impl -->
-	<copy file="interop/org/apache/axis2/oasis/ping/PingPortSkeleton.java" 
-		tofile="${work.dir}/org/apache/axis2/oasis/ping/PingPortSkeleton.java" overwrite="yes"/>
+	    <!-- copy the service impl -->
+	    <copy file="interop/org/apache/axis2/oasis/ping/PingPortSkeleton.java" 
+		    tofile="${work.dir}/org/apache/axis2/oasis/ping/PingPortSkeleton.java" overwrite="yes"/>
 	
-	<!-- Password callback class for the interop service -->
-	<copy file="test-resources/PWCallback.java" 
-		tofile="${work.dir}/org/apache/axis2/security/PWCallback.java" overwrite="yes"/>
+	    <!-- Password callback class for the interop service -->
+	    <copy file="test-resources/PWCallback.java" 
+		    tofile="${work.dir}/org/apache/axis2/security/PWCallback.java" overwrite="yes"/>
 
-	<!-- This doesn't seem to work :-( -->
-	<!--Trying javac on this also doesn't work since it does not
-	 include the generated 'schema' package properly in the classpath -->
-    	<path id="src.dir" location="${work.dir}"/>
-        <addPath id="maven.src.dir" refid="src.dir"/>	
+   	    <ant:path id="classes.dir" location="${class.dir}"/>
+        <maven:addPath id="maven.dependency.classpath" refid="classes.dir"/>
+
+   	    <ant:path id="src.dir" location="${work.dir}"/>
+        <maven:addPath id="maven.compile.src.set" refid="src.dir"/>	
     </preGoal>
 
 	<!--Create the service.aar" -->
     <postGoal name="java:compile">
+
+		<!-- move/copy interop classes into class.dir -->
+    	<ant:move todir="${class.dir}">
+		    <ant:fileset dir="${basedir}/target/classes">
+                <ant:include name="**/ping/**/*.class"/>
+                <ant:include name="**/oasisOpen/**/*.class"/>
+                <ant:include name="**/PWCallback.class"/>
+            </ant:fileset>
+	    </ant:move>
+
+        <delete includeEmptyDirs="true">
+            <fileset dir="${basedir}/target/classes/org/apache/axis2/oasis/"/>
+            <fileset dir="${basedir}/target/classes/org/xmlsoap/"/>
+            <fileset dir="${basedir}/target/classes/org/oasisOpen/"/>
+        </delete>
 
        	<j:set var="interop.dir" value="target/interop"/>
         <j:set var="work.dir" value="${interop.dir}/work"/>
@@ -91,7 +108,6 @@
     	<!-- copy the service.xml-->
 		<copy file="interop/service.xml" 
 			tofile="${class.dir}/META-INF/service.xml" overwrite="yes"/>		
-		
 		
 		<jar jarfile="target/interop_service.aar" basedir="target/interop/classes">
             <include name="**/*"/>
