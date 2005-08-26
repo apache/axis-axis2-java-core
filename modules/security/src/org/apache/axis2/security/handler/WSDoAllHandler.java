@@ -19,7 +19,10 @@ package org.apache.axis2.security.handler;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.Parameter;
@@ -138,6 +141,7 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 
     public Object getProperty(Object msgContext, String axisKey) {
     	String key = WSHandlerConstantsMapper.getMapping(axisKey,inHandler);
+    	System.out.println("Axis key: " + axisKey + " Key : " + key);
         return ((MessageContext)msgContext).getProperty(key);
     }
 
@@ -168,39 +172,49 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     	String key  = WSHandlerConstantsMapper.getMapping(axisKey,inHandler);
     	
     	MessageContext msgContext = (MessageContext)this.reqData.getMsgContext();
-    	
-    	//If the parameters are set globally in the axis2.xml 
-    	AxisConfiguration axisConfig = msgContext.getSystemContext().getAxisConfiguration();
-    	
-    	//If the parameters are set in the scope of the service in service.xml
-    	ServiceDescription serviceDesc = msgContext.getServiceContext().getServiceConfig();
-    	
-    	//If the parameters are set in the scope of an peration in service.xml
-    	OperationDescription operationDesc = msgContext.getOperationContext().getAxisOperation();
-    	
     	Object value = null;
     	
-    	//if the operation desc is available
-    	if(operationDesc != null) {
-    		Parameter parameter = operationDesc.getParameter(key);
-			value = (parameter!=null)?parameter.getValue():null; 
-    	}
     	
-    	//If the parameter is not found in the operation desc and if the 
-    	//service desc is available
-    	if(value == null && serviceDesc != null) {
-    		Parameter parameter = serviceDesc.getParameter(key);
-			value = (parameter!=null)?parameter.getValue():null;
-    	}
-    		
-    	//If the parameter is not found in the service desc the look at the 
-    	//global config - axis config
-    	if(value == null && axisConfig != null) {
-    		Parameter parameter = axisConfig.getParameter(key);
-			value = (parameter!=null)?parameter.getValue():null;
-    	}
-    	
-    	//---------------------------------------------------------------------
+    	// If the parameters are set in the scope of an peration in service.xml
+		OperationContext operationContext = msgContext.getOperationContext();
+		if (operationContext != null) {
+			OperationDescription operationDesc = operationContext
+					.getAxisOperation();
+
+			// if the operation desc is available
+			if (operationDesc != null) {
+				Parameter parameter = operationDesc.getParameter(key);
+				value = (parameter != null) ? parameter.getValue() : null;
+			}
+		}
+
+		// If the parameters are set in the scope of the service in service.xml
+		ServiceContext serviceContext = msgContext.getServiceContext();
+		if (serviceContext != null) {
+			ServiceDescription serviceDesc = serviceContext.getServiceConfig();
+
+			// If the parameter is not found in the operation desc and if the
+			// service desc is available
+			if (value == null && serviceDesc != null) {
+				Parameter parameter = serviceDesc.getParameter(key);
+				value = (parameter != null) ? parameter.getValue() : null;
+			}
+		}
+
+		// If the parameters are set globally in the axis2.xml
+		ConfigurationContext systemContext = msgContext.getSystemContext();
+		if (systemContext != null) {
+			AxisConfiguration axisConfig = systemContext.getAxisConfiguration();
+
+			// If the parameter is not found in the service desc the look at the
+			// global config - axis config
+			if (value == null && axisConfig != null) {
+				Parameter parameter = axisConfig.getParameter(key);
+				value = (parameter != null) ? parameter.getValue() : null;
+			}
+		}
+		
+    	// ---------------------------------------------------------------------
     	//If value is still null this point then the user has not set the value
     	  
     	

@@ -34,13 +34,16 @@ public class WSHandlerConstantsMapper {
 	
 	static {
 		//Mapping the in handler constants
-		inHandlerConstants.put(WSHandlerConstants.ACTION,WSSHandlerConstants.In.ACTION);
-		
-		
+		inHandlerConstants.put(WSHandlerConstants.ACTION, WSSHandlerConstants.In.ACTION);
+		inHandlerConstants.put(WSHandlerConstants.PW_CALLBACK_CLASS, WSSHandlerConstants.In.PW_CALLBACK_CLASS);
+		inHandlerConstants.put(WSHandlerConstants.SIG_PROP_FILE, WSSHandlerConstants.In.SIG_PROP_FILE);
+		inHandlerConstants.put(WSHandlerConstants.SIG_KEY_ID, WSSHandlerConstants.In.SIG_KEY_ID);
 		
 		//Mapping the out handler constants
 		outHandlerConstants.put(WSHandlerConstants.ACTION, WSSHandlerConstants.Out.ACTION);
-		
+		outHandlerConstants.put(WSHandlerConstants.PW_CALLBACK_CLASS, WSSHandlerConstants.Out.PW_CALLBACK_CLASS);
+		outHandlerConstants.put(WSHandlerConstants.SIG_PROP_FILE, WSSHandlerConstants.Out.SIG_PROP_FILE);
+		outHandlerConstants.put(WSHandlerConstants.SIG_KEY_ID, WSSHandlerConstants.Out.SIG_KEY_ID);
 		
 	}
 	

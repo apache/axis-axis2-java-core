@@ -4,14 +4,5 @@
 	<!--Mounting the method Ping-->
 	<operation name="Ping">
 		<messageReceiver class="org.apache.axis2.oasis.ping.PingPortMessageReceiver"/>
-	</operation>
-    <inflow>
-		<parameter name="action" locked="xsd:false">UsernameToken</parameter>
-		<parameter name="passwordCallbackClass" locked="xsd:false">org.ruchith.sample1.PWCallback</parameter>
-    </inflow>
-
-    <outflow>
-		<parameter name="action" locked="xsd:false">NoSecurity</parameter>
-    </outflow>
-    
+	</operation>    
 </service>

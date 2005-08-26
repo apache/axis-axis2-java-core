@@ -61,7 +61,6 @@ public class WSDoAllReceiver extends WSDoAllHandler {
         if (doDebug) {
             log.debug("WSDoAllReceiver: enter invoke() ");
         }
-
         reqData = new RequestData();
         
         try {
@@ -70,8 +69,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             Vector actions = new Vector();
             String action = null;
             if ((action = (String) getOption(WSHandlerConstants.ACTION)) == null) {
-                action = (String) msgContext
-                        .getProperty(WSHandlerConstants.ACTION);
+                action = (String) getProperty(msgContext, WSHandlerConstants.ACTION);
             }
             if (action == null) {
                 throw new AxisFault("WSDoAllReceiver: No action defined");
@@ -174,6 +172,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
 			Iterator headers = header.examineHeaderBlocks(actor);
 			
 			SOAPHeaderBlock headerBlock = null;
+			
 			while(headers.hasNext()) { //Find the wsse header
 				SOAPHeaderBlock hb = (SOAPHeaderBlock)headers.next();
                 if (hb.getLocalName().equals(WSConstants.WSSE_LN)
@@ -231,8 +230,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
                  if (timestamp != null) {
                      String ttl = null;
                      if ((ttl = (String) getOption(WSHandlerConstants.TTL_TIMESTAMP)) == null) {
-                         ttl = (String) msgContext
-                                 .getProperty(WSHandlerConstants.TTL_TIMESTAMP);
+                         ttl = (String) getProperty(msgContext,WSHandlerConstants.TTL_TIMESTAMP);
                      }
                      int ttl_i = 0;
                      if (ttl != null) {
@@ -278,8 +276,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
              * USE_REQ_SIG_CERT to encrypt
              */
              Vector results = null;
-             if ((results = (Vector) msgContext
-                     .getProperty(WSHandlerConstants.RECV_RESULTS)) == null) {
+             if ((results = (Vector) getProperty(msgContext, WSHandlerConstants.RECV_RESULTS)) == null) {
                  results = new Vector();
                  msgContext
                          .setProperty(WSHandlerConstants.RECV_RESULTS, results);
