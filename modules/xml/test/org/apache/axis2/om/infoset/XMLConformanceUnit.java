@@ -17,6 +17,8 @@ package org.apache.axis2.om.infoset;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMDocument;
+import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.custommonkey.xmlunit.Diff;
@@ -67,7 +69,8 @@ public class XMLConformanceUnit extends XMLTestCase implements EntityResolver {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         writer = XMLOutputFactory.newInstance().
                 createXMLStreamWriter(baos);
-        rootElement.serializeWithCache(writer);
+
+        ((OMDocument)rootElement.getParent()).serializeWithCache(new OMOutputImpl(writer));
 
         writer.flush();
         writer.close();
