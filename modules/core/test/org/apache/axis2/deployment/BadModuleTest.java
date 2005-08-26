@@ -18,6 +18,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.engine.AxisConfigurationImpl;
+import org.apache.axis2.engine.AxisConfiguration;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -35,9 +36,11 @@ public class BadModuleTest extends AbstractTestCase {
         try {
             InputStream in = new FileInputStream(
                     getTestResourceFile("deployment/Badmodule.xml"));
-            DeploymentParser parser = new DeploymentParser(in, null);
-            AxisConfigurationImpl glabl = new AxisConfigurationImpl();
-            parser.processGlobalConfig(glabl, DeploymentConstants.AXIS2CONFIG);
+//            DeploymentParser parser = new DeploymentParser(in, null);
+            AxisConfiguration glabl = new AxisConfigurationImpl();
+            AxisConfigBuilder builder =new AxisConfigBuilder(in,null,glabl);
+            builder.populateConfig();
+//            parser.processGlobalConfig(glabl, DeploymentConstants.AXIS2CONFIG);
             fail(
                     "this must failed gracefully with DeploymentException or FileNotFoundException");
         } catch (FileNotFoundException e) {

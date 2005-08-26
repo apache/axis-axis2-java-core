@@ -15,6 +15,8 @@
  */
 package org.apache.axis2.description;
 
+import org.apache.axis2.om.OMElement;
+
 /**
  * Interface Parameter
  */
@@ -32,14 +34,14 @@ public interface Parameter {
     /**
      * Method getName
      *
-     * @return
+     * @return int
      */
     public String getName();
 
     /**
      * Method getValue
      *
-     * @return
+     * @return Object
      */
     public Object getValue();
 
@@ -55,12 +57,12 @@ public interface Parameter {
      *
      * @param value
      */
-    public void setValue(String value);
+    public void setValue(Object value);
 
     /**
      * Method isLocked
      *
-     * @return
+     * @return boolean
      */
     public boolean isLocked();
 
@@ -74,7 +76,26 @@ public interface Parameter {
     /**
      * Method getParameterType
      *
-     * @return
+     * @return int
      */
     public int getParameterType();
+
+    public void setParamterType(int type);
+
+    /**
+     *  Paramter can be any thing it can be XML element with number of child elements , so if some
+     * one wants to access the XML elemet we need to store that , at the deployment time , to store
+     * the XMLelment of the parameter can use this method it will store whole
+     * <parameter name="ServiceClass1" locked="xsd:false">org.apache.axis2.sample.echo.EchoImpl</parameter>
+     * element
+     * @param element  <code>OMElement<code>
+     */
+
+    public void setParameterElement(OMElement element);
+
+    /**
+     *  To get the whole paramter element
+     * @return <code>OMElement<code>
+     */
+    public OMElement getParameterElement();
 }

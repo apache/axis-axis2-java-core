@@ -39,41 +39,14 @@ public class ArchiveReader implements DeploymentConstants {
 
     private Log log = LogFactory.getLog(getClass());
 
-//    public ServiceDescription createService(String filename) throws DeploymentException {
-//        String strArchive = filename;
-//        ZipInputStream zin;
-//        boolean foundwsdl = false;
-//        ServiceDescription service = null;
-//        Definition difinition = null;
-//        try {
-//            zin = new ZipInputStream(new FileInputStream(strArchive));
-//            ZipEntry entry;
-//            while ((entry = zin.getNextEntry()) != null) {
-//                if (entry.getName().equals(SERVICEWSDL)) {
-//                    WSDLVersionWrapper wsdlVersionWrapper = WOMBuilderFactory.getBuilder(
-//                            WOMBuilderFactory.WSDL11).build(zin, new AxisDescWSDLComponentFactory());
-//                    WSDLDescription      womDescription = wsdlVersionWrapper.getDescription();
-//                    Iterator iterator = womDescription.getServices().keySet().iterator();
-//                    if(iterator.hasNext()){
-//                        service = (ServiceDescription)iterator.next();
-//                    }
-//                    difinition = wsdlVersionWrapper.getDefinition();
-//                    foundwsdl = true;
-//                    break;
-//                }
-//            }
-//            zin.close();
-//            if (!foundwsdl) {
-//                service = new ServiceDescription();
-//                log.info("WSDL file not found for the service :  " + filename);
-//            }
-//            service.setWSDLDefinition(difinition);
-//        } catch (Exception e) {
-//            throw new DeploymentException(e);
-//        }
-//        return service;
-//    }
-
+    /**
+     * To create a ServiceDescrption <code>ServiceDescription</code>   using given wsdl , if the
+     * service.wsdl there in the arcive file ServiceDescription will be creted using that else
+     * default ServiceDescription will be crated
+     * @param file
+     * @return
+     * @throws DeploymentException
+     */
     public ServiceDescription createService(ArchiveFileData file) throws DeploymentException {
         ServiceDescription service = null;
         InputStream in = file.getClassLoader().getResourceAsStream(SERVICEWSDL);
@@ -120,10 +93,9 @@ public class ArchiveReader implements DeploymentConstants {
      * @param filename
      * @param engine
      */
-
-    public void readServiceArchive(String filename,
+    public void processServiceDescriptor(String filename,
                                    DeploymentEngine engine,
-                                   ServiceDescription service) throws DeploymentException {
+                                   ServiceDescription service)throws DeploymentException {
         // get attribute values
         boolean foundServiceXML = false;
         ZipInputStream zin;
@@ -133,15 +105,15 @@ public class ArchiveReader implements DeploymentConstants {
             while ((entry = zin.getNextEntry()) != null) {
                 if (entry.getName().equals(SERVICEXML)) {
                     foundServiceXML = true;
-                    DeploymentParser schme = new DeploymentParser(zin, engine);
-                    schme.parseServiceXML(service);
+                    ServiceBuilder builder = new ServiceBuilder(zin,engine,service);
+                    builder.populateService();
                     break;
                 }
             }
             zin.close();
             if (!foundServiceXML) {
-                throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND));
-//                "service.xml not found");
+                throw new DeploymentException(
+                        Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND));
             }
         } catch (Exception e) {
             throw new DeploymentException(e);
@@ -149,33 +121,33 @@ public class ArchiveReader implements DeploymentConstants {
     }
 
     public void readModuleArchive(String filename,
-                                  DeploymentEngine engine,
-                                  ModuleDescription module) throws DeploymentException {
-        // get attribute values
-        boolean foundmoduleXML = false;
-        ZipInputStream zin = null;
-        try {
-            zin = new ZipInputStream(new FileInputStream(filename));
-            ZipEntry entry;
-            while ((entry = zin.getNextEntry()) != null) {
-                if (entry.getName().equals(MODULEXML)) {
-                    foundmoduleXML = true;
-                    DeploymentParser schme = new DeploymentParser(zin, engine);
-                    schme.procesModuleXML(module);
-                    break;
+                                      DeploymentEngine engine,
+                                      ModuleDescription module) throws DeploymentException {
+            // get attribute values
+            boolean foundmoduleXML = false;
+            ZipInputStream zin ;
+            try {
+                zin = new ZipInputStream(new FileInputStream(filename));
+                ZipEntry entry;
+                while ((entry = zin.getNextEntry()) != null) {
+                    if (entry.getName().equals(MODULEXML)) {
+                        foundmoduleXML = true;
+                        ModuleBuilder builder = new ModuleBuilder(zin, engine,module);
+                        builder.populateModule();
+                        break;
+                    }
                 }
+                zin.close();
+                if (!foundmoduleXML) {
+                    throw new DeploymentException(Messages.getMessage(
+                            DeploymentErrorMsgs.MODULEXML_NOT_FOUND_FOR_THE_MODULE, filename));
+                }
+            } catch (Exception e) {
+                throw new DeploymentException(e);
             }
-            //  zin.closeEntry();
-            zin.close();
-            if (!foundmoduleXML) {
-                throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.MODULEXML_NOT_FOUND_FOR_THE_MODULE, filename));
-//                        "module.xml not found  for the module :  " +
-//                        strArchive);
-            }
-        } catch (Exception e) {
-            throw new DeploymentException(e);
         }
-    }
+
+
 
     /**
      * This method first check whether the given module is there in the user home dirctory if so return
@@ -188,8 +160,8 @@ public class ArchiveReader implements DeploymentConstants {
      */
     public File creatModuleArchivefromResource(String moduleName,
                                                String axis2repository) throws DeploymentException {
-        File modulearchiveFile = null;
-        File modules = null;
+        File modulearchiveFile;
+        File modules ;
         try {
             int BUFFER = 2048;
             if (axis2repository == null) {
@@ -237,7 +209,7 @@ public class ArchiveReader implements DeploymentConstants {
                 ZipOutputStream out = new ZipOutputStream(new
                         BufferedOutputStream(dest));
                 byte data[] = new byte[BUFFER];
-                ZipInputStream zin = null;
+                ZipInputStream zin ;
                 zin = new ZipInputStream(in);
                 ZipEntry entry;
                 while ((entry = zin.getNextEntry()) != null) {

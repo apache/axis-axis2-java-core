@@ -1,6 +1,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterInclude;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -25,12 +26,10 @@ import org.apache.axis2.description.Parameter;
  * Date: Jul 19, 2005
  * Time: 9:51:26 AM
  */
-public interface AxisObserver {
+public interface AxisObserver extends ParameterInclude {
     //The initilization code will go here
     void init();
     void update(AxisEvent event);
 
     //there can be parameters for the Observers
-    void addParameter(Parameter parameter);
-    Parameter getParameter(String name);
 }

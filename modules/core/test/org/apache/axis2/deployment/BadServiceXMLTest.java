@@ -35,9 +35,12 @@ public class BadServiceXMLTest extends AbstractTestCase {
         try {
             InputStream in = new FileInputStream(
                     getTestResourceFile("deployment/BadService.xml"));
-            DeploymentParser parser = new DeploymentParser(in, null);
+
+//            DeploymentParser parser = new DeploymentParser(in, null);
             ServiceDescription axisService = new ServiceDescription();
-            parser.parseServiceXML(axisService);
+            ServiceBuilder builder = new ServiceBuilder(in,null,axisService);
+            builder.populateService();
+           // parser.parseServiceXML(axisService);
             fail(
                     "this must failed gracefully with DeploymentException or FileNotFoundException");
         } catch (FileNotFoundException e) {

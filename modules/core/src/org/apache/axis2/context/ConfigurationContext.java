@@ -100,7 +100,7 @@ public class ConfigurationContext extends AbstractContext {
     /**
      * get a OperationContext given a Message ID
      * @param messageID
-     * @return
+     * @return OperationContext <code>OperationContext<code>
      */
     public OperationContext getOperationContext(String messageID) {
         return (OperationContext) this.operationContextMap.get(messageID);

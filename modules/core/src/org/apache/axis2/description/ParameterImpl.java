@@ -15,6 +15,8 @@
  */
 package org.apache.axis2.description;
 
+import org.apache.axis2.om.OMElement;
+
 /**
  * Class ParameterImpl
  */
@@ -27,7 +29,7 @@ public class ParameterImpl implements Parameter {
     /**
      * Field value
      */
-    private String value;
+    private Object value;
 
     /**
      * Field locked
@@ -38,6 +40,14 @@ public class ParameterImpl implements Parameter {
      * Field type
      */
     private int type = TEXT_PARAMETER;
+
+
+    /**
+     * to store the parameter lement
+     * <parameter name="ServiceClass1" locked="xsd:false">
+     * org.apache.axis2.sample.echo.EchoImpl</parameter>
+     */
+    private OMElement parameterElement ;
 
     /**
      * Constructor ParameterImpl
@@ -70,7 +80,7 @@ public class ParameterImpl implements Parameter {
      *
      * @param value
      */
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
@@ -117,5 +127,17 @@ public class ParameterImpl implements Parameter {
      */
     public int getParameterType() {
         return type;
+    }
+
+    public void setParamterType(int type) {
+        this.type =type;
+    }
+
+    public void setParameterElement(OMElement element) {
+        this.parameterElement = element;
+    }
+
+    public OMElement getParameterElement() {
+        return this.parameterElement;
     }
 }

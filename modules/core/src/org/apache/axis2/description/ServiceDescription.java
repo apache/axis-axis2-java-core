@@ -18,6 +18,7 @@ package org.apache.axis2.description;
 import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -58,8 +59,7 @@ public class ServiceDescription
      */
 //    protected final HashMap operationsMap = new HashMap();
 
-    private String serviceDescription = "Not Specified";
-
+    private String  serviceDescription ;
     private String fileName = "";
 
     private WSDLServiceImpl serviceimpl = null;
