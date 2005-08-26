@@ -141,7 +141,7 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 
     public Object getProperty(Object msgContext, String axisKey) {
     	String key = WSHandlerConstantsMapper.getMapping(axisKey,inHandler);
-    	System.out.println("Axis key: " + axisKey + " Key : " + key);
+    	log.debug("wss4j key: " + axisKey + " Key : " + key);
         return ((MessageContext)msgContext).getProperty(key);
     }
 
