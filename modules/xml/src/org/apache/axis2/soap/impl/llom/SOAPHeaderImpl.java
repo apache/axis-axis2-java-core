@@ -78,8 +78,14 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
      * @see #extractHeaderBlocks(String) extractHeaderBlocks(java.lang.String)
      */
     public Iterator examineHeaderBlocks(String paramRole) {
+//    	
         Iterator headerBlocksIter = this.getChildren();
         ArrayList headersWithGivenActor = new ArrayList();
+        
+        if(paramRole == null || "".equals(paramRole)){
+    		return returnAllSOAPHeaders(this.getChildren());
+    	}
+        
         while (headerBlocksIter.hasNext()) {
             Object o = headerBlocksIter.next();
             if (o instanceof SOAPHeaderBlock) {
@@ -93,7 +99,20 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
         return headersWithGivenActor.iterator();
     }
 
-    /**
+    private Iterator returnAllSOAPHeaders(Iterator children) {
+    	ArrayList headers = new ArrayList();
+    	while (children.hasNext()) {
+            Object o = children.next();
+            if (o instanceof SOAPHeaderBlock) {
+                headers.add(o);
+            }
+        }
+    	
+    	return headers.iterator();
+		
+	}
+
+	/**
      * Returns a list of all the <CODE>SOAPHeaderBlock</CODE> objects in this
      * <CODE>SOAPHeader</CODE> object that have the the specified role and
      * detaches them from this <CODE> SOAPHeader</CODE> object. <P>This method
