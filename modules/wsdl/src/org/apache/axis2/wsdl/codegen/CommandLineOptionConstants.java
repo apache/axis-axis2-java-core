@@ -44,4 +44,9 @@ public interface CommandLineOptionConstants {
         public static final String C_PLUS_PLUS = "cpp";
 
     }
+    
+    public interface Databinding {
+    	public static final String XML_BEANS = "xmlbeans";
+    	public static final String JAXB = "jaxb";
+    }
 }

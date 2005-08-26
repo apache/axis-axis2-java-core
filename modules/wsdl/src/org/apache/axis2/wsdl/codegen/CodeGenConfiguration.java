@@ -61,6 +61,16 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public void setDatabindingType(int databindingType) {
         this.databindingType = databindingType;
     }
+    
+    public void setDatabindingType(String databindingType) {
+    	if (Databinding.XML_BEANS.equalsIgnoreCase(databindingType)) {
+    		this.databindingType = XSLTConstants.DataBindingTypes.XML_BEANS;
+    	}else if(Databinding.JAXB.equalsIgnoreCase(databindingType)){
+    		this.databindingType = XSLTConstants.DataBindingTypes.JAXB;
+    	}else{
+    		throw new UnsupportedOperationException();
+    	}
+    }
 
     /**
      * @param wom
@@ -117,10 +127,9 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 // Unused code commented out by gdaniels...
         CommandLineOption dataBindingOption = (CommandLineOption) optionMap.get(
                 DATA_BINDING_TYPE_OPTION);
-        if (dataBindingOption!=null){
-            this.databindingType = Integer.parseInt(dataBindingOption.getOptionValue());
+        if(dataBindingOption != null){
+        	setDatabindingType(dataBindingOption.getOptionValue());
         }
-
     }
 
 
