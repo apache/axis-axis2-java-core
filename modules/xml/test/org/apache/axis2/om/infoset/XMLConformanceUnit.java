@@ -108,4 +108,11 @@ public class XMLConformanceUnit extends XMLTestCase implements EntityResolver {
         File f = new File(directory, systemId.substring(systemId.lastIndexOf('/')));
         return new InputSource(new FileInputStream(f));
     }
+
+    public String getName() {
+        String name = filePath;
+        if(name.lastIndexOf("xmlconf")!=-1)
+            name = name.substring(name.lastIndexOf("xmlconf"));
+        return name.replace('\\','/');
+    }
 }

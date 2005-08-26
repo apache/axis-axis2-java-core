@@ -164,5 +164,7 @@
         </dependency>
     </dependencies>
 
-    <reports/>
+    <reports>
+        <report>maven-junit-report-plugin</report>
+    </reports>
 </project>
