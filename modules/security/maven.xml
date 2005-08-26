@@ -62,6 +62,7 @@
     	<ant:move todir="${class.dir}">
 		    <ant:fileset dir="${work.dir}">
                 <ant:include name="**/schema/**/*.class"/>
+                <ant:include name="**/schema/**/*.xsb"/>
             </ant:fileset>
 	    </ant:move>
 		
@@ -89,6 +90,7 @@
                 <ant:include name="**/ping/**/*.class"/>
                 <ant:include name="**/oasisOpen/**/*.class"/>
                 <ant:include name="**/PWCallback.class"/>
+               
             </ant:fileset>
 	    </ant:move>
 
@@ -109,7 +111,7 @@
 		<copy file="interop/service.xml" 
 			tofile="${class.dir}/META-INF/service.xml" overwrite="yes"/>		
 		
-		<jar jarfile="target/interop_service.aar" basedir="target/interop/classes">
+		<jar jarfile="target/PingPort.aar" basedir="target/interop/classes">
             <include name="**/*"/>
         </jar>
         
