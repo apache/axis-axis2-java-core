@@ -174,12 +174,14 @@ public class DescriptionBuilder implements DeploymentConstants{
                 OMElement moduleref = (OMElement) moduleRefs.next();
                 OMAttribute moduleRefAttribute = moduleref.getAttribute(
                         new QName(REF));
-                String refName = moduleRefAttribute.getValue();
-                if(engine.getModule(new QName(refName)) == null) {
-                    throw new DeploymentException(Messages.getMessage(
-                            DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));
-                } else {
-                    engine.getCurrentFileItem().addModule(new QName(refName));
+                if(moduleRefAttribute !=null){
+                    String refName = moduleRefAttribute.getValue();
+                    if(engine.getModule(new QName(refName)) == null) {
+                        throw new DeploymentException(Messages.getMessage(
+                                DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));
+                    } else {
+                        engine.getCurrentFileItem().addModule(new QName(refName));
+                    }
                 }
             }
         }catch (AxisFault axisFault) {
@@ -225,11 +227,13 @@ public class DescriptionBuilder implements DeploymentConstants{
             //setting locking attribute
             OMAttribute paraLocked = paramterElement.getAttribute(
                     new QName(ATTLOCKED));
-            String lockedValue = paraLocked.getValue();
-            if("true".equals(lockedValue)){
-                paramter.setLocked(true);
-            } else {
-                paramter.setLocked(false);
+            if (paraLocked !=null) {
+                String lockedValue = paraLocked.getValue();
+                if("true".equals(lockedValue)){
+                    paramter.setLocked(true);
+                } else {
+                    paramter.setLocked(false);
+                }
             }
             parameterInclude.addParameter(paramter);
         }
@@ -243,16 +247,18 @@ public class DescriptionBuilder implements DeploymentConstants{
                 OMElement moduleref = (OMElement) moduleRefs.next();
                 OMAttribute moduleRefAttribute = moduleref.getAttribute(
                         new QName(REF));
-                String refName = moduleRefAttribute.getValue();
-                if(engine.getModule(new QName(refName)) == null) {
-                    throw new DeploymentException(Messages.getMessage(
-                            DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));
-                } else {
-                    opeartion.addModule(new QName(refName));
+                if (moduleRefAttribute !=null) {
+                    String refName = moduleRefAttribute.getValue();
+                    if(engine.getModule(new QName(refName)) == null) {
+                        throw new DeploymentException(Messages.getMessage(
+                                DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));
+                    } else {
+                        opeartion.addModule(new QName(refName));
+                    }
                 }
             }
         }catch (AxisFault axisFault) {
-            throw   new DeploymentException(axisFault);
+            throw   new DeploymentException("Porcessing Operations Modules" + axisFault);
         }
     }
 

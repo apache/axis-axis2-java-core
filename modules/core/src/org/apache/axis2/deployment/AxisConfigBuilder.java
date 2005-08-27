@@ -63,13 +63,18 @@ public class AxisConfigBuilder extends DescriptionBuilder{
             processParameters(itr,axisConfiguration);
 
             //process MessageReciver
-            OMElement messageReceiver = config_element.getFirstChildWithName(
-                    new QName(MESSAGERECEIVER));
-            MessageReceiver msgrecivere= loadMessageReceiver(
-                    Thread.currentThread().getContextClassLoader(),messageReceiver);
-            OMAttribute mepAtt = messageReceiver.getAttribute(new QName(MEP));
-            ((AxisConfigurationImpl)axisConfiguration).addMessageReceiver(
-                    mepAtt.getValue(),msgrecivere);
+
+            Iterator msgRecives = config_element.getChildrenWithName(new QName(MESSAGERECEIVER));
+            while (msgRecives.hasNext()) {
+                OMElement msgRev = (OMElement) msgRecives.next();
+                MessageReceiver msgrecivere= loadMessageReceiver(
+                        Thread.currentThread().getContextClassLoader(),msgRev);
+                OMAttribute mepAtt = msgRev.getAttribute(new QName(MEP));
+                ((AxisConfigurationImpl)axisConfiguration).addMessageReceiver(
+                        mepAtt.getValue(),msgrecivere);
+            }
+
+
 
             //Process Module refs
             Iterator moduleitr = config_element.getChildrenWithName(
@@ -142,6 +147,10 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                 //tranport impl class
                 OMAttribute trsClas = transport.getAttribute(
                         new QName(CLASSNAME));
+                if(trsClas == null){
+                    throw new DeploymentException("TransportSEnder Implementation class is required " +
+                            "for the transport" + name);
+                }
                 String clasName = trsClas.getValue();
                 Class sender;
                 try {
@@ -294,7 +303,12 @@ public class AxisConfigBuilder extends DescriptionBuilder{
             AxisObserver observer;
             OMAttribute trsClas = observerelement.getAttribute(
                     new QName(CLASSNAME));
-            String clasName = trsClas.getValue();
+            String clasName;
+            if (trsClas !=null) {
+                clasName = trsClas.getValue();
+            } else {
+                throw new DeploymentException("Observer Implementation Class is requird");
+            }
             try {
                 Class observerclass = Class.forName(clasName, true, Thread.currentThread().
                         getContextClassLoader());

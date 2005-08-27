@@ -86,17 +86,19 @@ public class ServiceBuilder extends DescriptionBuilder{
             //process service description
             OMElement descriptionElement = service_element.getFirstChildWithName(
                     new QName(DESCRIPTION));
-            OMElement descriptionValue = descriptionElement.getFirstElement();
-            if(descriptionValue !=null){
-                StringWriter writer = new StringWriter();
-                descriptionValue.build();
-                descriptionValue.serializeWithCache(new
-                        OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
-                writer.flush();
-                service.setServiceDescription(writer.toString());
-            } else {
-                service.setServiceDescription(descriptionElement.getText());
-            }
+            if (descriptionElement !=null) {
+                OMElement descriptionValue = descriptionElement.getFirstElement();
+                if(descriptionValue !=null){
+                    StringWriter writer = new StringWriter();
+                    descriptionValue.build();
+                    descriptionValue.serializeWithCache(new
+                            OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
+                    writer.flush();
+                    service.setServiceDescription(writer.toString());
+                } else {
+                    service.setServiceDescription(descriptionElement.getText());
+                }
+            } 
 
             //processing servicewide modules which required to engage gloabbly
             Iterator moduleRefs = service_element.getChildrenWithName(
