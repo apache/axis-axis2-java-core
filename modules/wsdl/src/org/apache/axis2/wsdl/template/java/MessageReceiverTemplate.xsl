@@ -1,12 +1,8 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="text"/>
 	<xsl:template match="/interface">
-		<xsl:variable name="skeletonname">
-			<xsl:value-of select="@skeletonname"/>
-		</xsl:variable>
-		<xsl:variable name="dbsupportpackage">
-			<xsl:value-of select="@dbsupportpackage"/>
-		</xsl:variable>
+		<xsl:variable name="skeletonname"><xsl:value-of select="@skeletonname"/></xsl:variable>
+		<xsl:variable name="dbsupportpackage"><xsl:value-of select="@dbsupportpackage"/></xsl:variable>
 	
     package <xsl:value-of select="@package"/>;
 
@@ -47,7 +43,7 @@
 			<xsl:variable name="style"><xsl:value-of select="@style"/></xsl:variable>
 					
 					
-					if(methodName.equals("<xsl:value-of select="@name"/>")){
+					if("<xsl:value-of select="@name"/>".equals(methodName)){
 											
 				
 			<xsl:if test="$returntype!=''">
@@ -106,7 +102,7 @@
 				<xsl:when test="$style='doc'">
 				//doc style
 					<xsl:if test="$returntype!=''">
-						<xsl:value-of select="$returnvariable"/> =</xsl:if> skel.<xsl:value-of select="@name"/>(<xsl:if test="input/param/@type!=''">(<xsl:value-of select="input/param/@type"/>)<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$dbsupportname"/>.fromOM((org.apache.axis2.om.OMElement)msgContext.getEnvelope().getBody().getFirstChild().detach(), <xsl:value-of select="input/param/@type"/>.class)</xsl:if>);
+						<xsl:value-of select="$returnvariable"/> =</xsl:if> skel.<xsl:value-of select="@name"/>(<xsl:if test="input/param/@type!=''">(<xsl:value-of select="input/param/@type"/>)<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$dbsupportname"/>.fromOM((org.apache.axis2.om.OMElement)msgContext.getEnvelope().getBody().getFirstElement().detach(), <xsl:value-of select="input/param/@type"/>.class)</xsl:if>);
 						
 					//Create a default envelop
 					envelope = getSOAPFactory().getDefaultEnvelope();

@@ -136,6 +136,19 @@ public class WSDL2JavaTest extends TestCase{
         }
     }
 
+     /**
+     * Test for the modified ping-unboond wsdl. The binding is removed
+     * statement
+     */
+    public void testCodeGenerationPingUnbound(){
+
+        try {
+            generateAndCompile("ping-unbound.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+FOLDER_COUNT++);
+        } catch (CodeGenerationException e) {
+            fail("Exception while code generation test!"+ e.getMessage());
+        }
+    }
+
     /**
      *
      * @param wsdlName
