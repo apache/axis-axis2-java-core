@@ -18,6 +18,7 @@ package org.apache.axis2.description;
 import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -144,6 +145,14 @@ public class ServiceDescription
         PhaseResolver pr = new PhaseResolver(axisConfig, this);
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             OperationDescription operation = (OperationDescription) iterator.next();
+            ArrayList paramters = operation.getParameters();
+            // Adding wsa-maping into service
+            for (int j = 0; j < paramters.size(); j++) {
+                Parameter parameter = (Parameter) paramters.get(j);
+                if(parameter.getName().equals(Constants.WSA_ACTION)){
+                    this.addMapping((String)parameter.getValue(),operation);
+                }
+            }
             this.addOperation(operation);
         }
     }
@@ -571,7 +580,7 @@ public class ServiceDescription
         } else {
             serviceContext =
                     msgContext.getSystemContext()
-                    .getServiceContext(msgContext.getServiceInstanceID());
+                            .getServiceContext(msgContext.getServiceInstanceID());
         }
 
         return serviceContext;

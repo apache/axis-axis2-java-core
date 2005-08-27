@@ -7,6 +7,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.Constants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -98,7 +99,7 @@ public class ServiceBuilder extends DescriptionBuilder{
                 } else {
                     service.setServiceDescription(descriptionElement.getText());
                 }
-            } 
+            }
 
             //processing servicewide modules which required to engage gloabbly
             Iterator moduleRefs = service_element.getChildrenWithName(
@@ -136,6 +137,15 @@ public class ServiceBuilder extends DescriptionBuilder{
             ArrayList ops = processOpeartions(opeartinsItr);
             for (int i = 0; i < ops.size(); i++) {
                 OperationDescription opeartionDesc = (OperationDescription) ops.get(i);
+                ArrayList paramters = opeartionDesc.getParameters();
+
+                // Adding wsa-maping into service
+                for (int j = 0; j < paramters.size(); j++) {
+                    Parameter parameter = (Parameter) paramters.get(j);
+                    if(parameter.getName().equals(Constants.WSA_ACTION)){
+                        service.addMapping((String)parameter.getValue(),opeartionDesc);
+                    }
+                }
                 service.addOperation(opeartionDesc);
             }
 
