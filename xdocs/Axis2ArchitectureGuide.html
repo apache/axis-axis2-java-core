@@ -298,7 +298,7 @@ for the template that is being used</p>
 <p><img border="0" src="images/codegen.gif"></p>
 <h3>Serialization and Dezerialization</h3>
 
-<p>Xml-beans supports StAX API and AXIOM is based on a StAX API. Data binding in Axis2 is achieved through interfacing the AXIOM with the Xml-beans using the StAX API which is supported by both parties. At the time of the code generation there will be supporter classes for each WSDL operation that will have the utility methods that can deserialize the from AXIOM to data bound object and serialize from data bound object to AXIOM. For example if the WSDL has an operation called “echoString”, once the code is generated there will be an echoStringDatabindingSupporter.java class generated that will have methods that will look like the following.</p>
+<p>Xml-beans supports StAX API and AXIOM is based on a StAX API. Data binding in Axis2 is achieved through interfacing the AXIOM with the Xml-beans using the StAX API which is supported by both parties. At the time of the code generation there will be supporter classes for each WSDL operation that will have the utility methods that can deserialize the from AXIOM to data bound object and serialize from data bound object to AXIOM. For example if the WSDL has an operation called "echoString", once the code is generated there will be an echoStringDatabindingSupporter.java class generated that will have methods that will look like the following.</p>
 
 <p>public  static org.apache.axis2.om.OMElement  toOM(org.soapinterop.xsd.EchoStringParamDocument param) : This method will handle the serialization.</p>
 

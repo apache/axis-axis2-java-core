@@ -447,7 +447,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
         return soapMessage;
     }
 
-    public OMDocumentImpl getDocument() {
+    public OMDocument getDocument() {
         return (OMDocumentImpl) this.soapMessage;
     }
 

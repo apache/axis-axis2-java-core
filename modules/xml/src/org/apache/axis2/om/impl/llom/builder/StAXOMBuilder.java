@@ -21,6 +21,7 @@ import org.apache.axis2.om.impl.llom.OMDocumentImpl;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
+
 /**
  * This will construct an OM without using SOAP specific classes like SOAPEnvelope, SOAPHeader, SOAPHeaderBlock and SOAPBody.
  * And this will habe the Document concept also.
@@ -29,7 +30,7 @@ public class StAXOMBuilder extends StAXBuilder {
     /**
      * Field document
      */
-    protected OMDocumentImpl document;
+    protected OMDocument document;
 
     /**
      * Constructor StAXOMBuilder
@@ -135,9 +136,9 @@ public class StAXOMBuilder extends StAXBuilder {
         }
         return node;
     }
-    
+
     protected void endElement(){
-    	if (lastNode.isComplete()) {
+        if (lastNode.isComplete()) {
             OMElement parent = (OMElement) lastNode.getParent();
             parent.setComplete(true);
             lastNode = parent;
@@ -145,8 +146,8 @@ public class StAXOMBuilder extends StAXBuilder {
             OMElement e = (OMElement) lastNode;
             e.setComplete(true);
         }
-    	
-    	//return lastNode;
+
+        //return lastNode;
     }
 
     /**
@@ -173,16 +174,19 @@ public class StAXOMBuilder extends StAXBuilder {
                     //We've already assumed that start document has passed!
                     break;
                 case XMLStreamConstants.CHARACTERS:
-                    lastNode = createOMText();
+                    lastNode = createOMText(XMLStreamConstants.CHARACTERS);
+                    break;
+                case XMLStreamConstants.CDATA:
+                    lastNode = createOMText(XMLStreamConstants.CDATA);
                     break;
                 case XMLStreamConstants.END_ELEMENT:
-                	endElement();
+                    endElement();
                     break;
                 case XMLStreamConstants.END_DOCUMENT:
                     done = true;
                     break;
                 case XMLStreamConstants.SPACE:
-                    next();
+                    handleSpace();
                     break;
                 case XMLStreamConstants.COMMENT:
                     createComment();
@@ -200,8 +204,13 @@ public class StAXOMBuilder extends StAXBuilder {
         } catch (OMException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new OMException(e);
         }
+    }
+
+    private void handleSpace() {
+        //TODO
     }
 
     /**
@@ -251,7 +260,7 @@ public class StAXOMBuilder extends StAXBuilder {
         }
     }
 
-    public OMDocumentImpl getDocument() {
+    public OMDocument getDocument() {
         return document;
     }
 }

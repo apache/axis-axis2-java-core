@@ -148,8 +148,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
             assertTrue("SOAP 1.2 :- Header block name space uri mismatch",
                     headerBlock.getNamespace().getName().equals(
                             "http://example.org/ts-tests"));
-            assertTrue("SOAP 1.2 :- Header block text mismatch",
-                    headerBlock.getText().trim().equals("foo"));
+            assertEquals("SOAP 1.2 :- Header block text mismatch",headerBlock.getText().trim(),"foo");
 
             Iterator headerBlockAttributes = headerBlock.getAttributes();
             OMAttribute roleAttribute = (OMAttribute) headerBlockAttributes.next();
@@ -446,8 +445,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
             assertTrue("SOAP 1.1 :- Fault code namespace uri mismatch",
                     code.getNamespace().getName().equals(
                             SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI));
-            assertEquals("SOAP 1.1 :- Fault code value mismatch",
-                    code.getValue().getText().trim(),
+            assertEquals("SOAP 1.1 :- Fault code value mismatch", code.getValue().getText().trim(),
                     "env:Sender");
 
             iteratorInFault.next();

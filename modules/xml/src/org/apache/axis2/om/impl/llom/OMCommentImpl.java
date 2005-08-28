@@ -34,6 +34,7 @@ public class OMCommentImpl extends OMNodeImpl implements OMComment {
         super(parentNode);
         this.value = contentText;
         nodeType = OMNode.COMMENT_NODE;
+        this.done = true;
     }
 
     /**

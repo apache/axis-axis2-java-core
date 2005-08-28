@@ -32,12 +32,12 @@ public interface OMNode {
     /**
      * The node is a <code>Text</code> node.
      */
-    public static final short TEXT_NODE = 3;
+    public static final short TEXT_NODE = 4;
 
     /**
      * The node is a <code>CDATASection</code>.
      */
-    public static final short CDATA_SECTION_NODE = 4;
+    public static final short CDATA_SECTION_NODE = 12;
 
     /**
      * The node is a <code>Comment</code>.

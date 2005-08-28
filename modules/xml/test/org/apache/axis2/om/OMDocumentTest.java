@@ -9,6 +9,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
+import java.util.Iterator;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -29,35 +30,48 @@ import java.io.StringReader;
  */
 
 public class OMDocumentTest extends TestCase {
-    private String sampleXML = "<?xml version='1.0' encoding='utf-8'?>\n" +
-            "<!--This is some comments at the start of the document-->\n" +
-            "<?PITarget PIData?>\n" +
-            "<Axis2>\n" +
-            "    <ProjectName>The Apache Web Sevices Project</ProjectName>\n" +
+    private String sampleXML = "<?xml version='1.0' encoding='utf-8'?>" +
+            "<!--This is some comments at the start of the document-->" +
+            "<?PITarget PIData?>" +
+            "<Axis2>" +
+            "    <ProjectName>The Apache Web Sevices Project</ProjectName>" +
             "</Axis2>";
 
-     public void testOMDocument() throws XMLStreamException {
-         // read the string in to the builder
-         OMDocument omDocument = getSampleOMDocument(sampleXML);
+    public void testOMDocument() throws XMLStreamException {
+        // read the string in to the builder
+        OMDocument omDocument = getSampleOMDocument(sampleXML);
 
-         // serialise it to a string
-         String outXML = "";
-         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-         OMOutputImpl output = new OMOutputImpl(outStream, false);
-         omDocument.serialize(output);
-         output.flush();
-         outXML = new String(outStream.toByteArray());
-         System.out.println("outXML = " + outXML);
+        // serialise it to a string
+        String outXML = "";
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        OMOutputImpl output = new OMOutputImpl(outStream, false);
+        omDocument.serialize(output);
+        output.flush();
+        outXML = new String(outStream.toByteArray());
+        System.out.println("outXML = " + outXML);
 
-         // again load that to another builder
-         OMDocument secondDocument = getSampleOMDocument(outXML);
+        // again load that to another builder
+        OMDocument secondDocument = getSampleOMDocument(outXML);
 
-         // compare the intial one with the later one
-         assertTrue(secondDocument.getFirstChild() instanceof OMComment);
-         assertTrue(secondDocument.getFirstChild().getNextSibling() instanceof OMProcessingInstruction);
+        // check for the comment and the PI
+        boolean commentFound = false;
+        boolean piFound = false;
+        Iterator children = secondDocument.getChildren();
+        while (children.hasNext()) {
+            OMNode omNode = (OMNode) children.next();
+            if (omNode instanceof OMComment) {
+                commentFound = true;
+            } else if (omNode instanceof OMProcessingInstruction) {
+                piFound = true;
+            } else if (omNode instanceof OMElement && !commentFound && !piFound) {
+               fail("OMElement should come after Comment and PI");
+
+            }
+        }
+        assertTrue(commentFound && piFound);
 
 
-     }
+    }
 
     private OMDocument getSampleOMDocument(String xml) {
         try {

@@ -131,6 +131,11 @@
             </properties>
         </dependency>
         <dependency>
+            <groupId>fastinfoset</groupId>
+            <artifactId>FastInfoset</artifactId>
+            <version>0.1</version>
+        </dependency>
+        <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-javamail</artifactId>
             <version>1.3.1-rc5</version>

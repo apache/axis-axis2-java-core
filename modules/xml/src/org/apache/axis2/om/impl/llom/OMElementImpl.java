@@ -17,7 +17,6 @@ package org.apache.axis2.om.impl.llom;
 
 import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
 import org.apache.axis2.om.impl.llom.util.EmptyIterator;

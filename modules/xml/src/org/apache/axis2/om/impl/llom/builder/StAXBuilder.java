@@ -68,6 +68,9 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
      * Field parserAccessed
      */
     protected boolean parserAccessed = false;
+    protected OMDocument document;
+
+
 
     /**
      * Constructor StAXBuilder
@@ -143,7 +146,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
      * @return
      * @throws OMException
      */
-    protected OMNode createOMText() throws OMException {
+    protected OMNode createOMText(int textType) throws OMException {
         if (lastNode == null) {
             throw new OMException();
         }
@@ -156,6 +159,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
             OMElement e = (OMElement) lastNode;
             node = omfactory.createText(e, parser.getText());
         }
+        node.setType(textType);
         return node;
     }
 
