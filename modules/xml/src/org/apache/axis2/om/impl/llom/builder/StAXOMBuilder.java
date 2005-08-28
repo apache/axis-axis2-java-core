@@ -32,6 +32,8 @@ public class StAXOMBuilder extends StAXBuilder {
      */
     protected OMDocument document;
 
+    private boolean doDebug = false;
+
     /**
      * Constructor StAXOMBuilder
      *
@@ -41,7 +43,6 @@ public class StAXOMBuilder extends StAXBuilder {
     public StAXOMBuilder(OMFactory ombuilderFactory, XMLStreamReader parser) {
         super(ombuilderFactory, parser);
         document = new OMDocumentImpl(this);
-        //omfactory = OMAbstractFactory.getOMFactory();
     }
 
     /**
@@ -167,35 +168,71 @@ public class StAXOMBuilder extends StAXBuilder {
             }
             switch (token) {
                 case XMLStreamConstants.START_ELEMENT:
+                    if(doDebug) {
+                        System.out.println("START_ELEMENT: " + parser.getName() + ":" + parser.getLocalName());
+                    }
                     lastNode = createOMElement();
                     break;
                 case XMLStreamConstants.START_DOCUMENT:
                     //Don't do anything in the start document event
                     //We've already assumed that start document has passed!
+                    if(doDebug) {
+                        System.out.println("START_DOCUMENT: ");
+                    }
                     break;
                 case XMLStreamConstants.CHARACTERS:
+                    if(doDebug) {
+                        System.out.println("CHARACTERS: [" + parser.getText() + "]");
+                    }
                     lastNode = createOMText(XMLStreamConstants.CHARACTERS);
                     break;
                 case XMLStreamConstants.CDATA:
+                    if(doDebug) {
+                        System.out.println("CDATA: [" + parser.getText() + "]");
+                    }
                     lastNode = createOMText(XMLStreamConstants.CDATA);
                     break;
                 case XMLStreamConstants.END_ELEMENT:
+                    if(doDebug) {
+                        System.out.println("END_ELEMENT: " + parser.getName() + ":" + parser.getLocalName());
+                    }
                     endElement();
                     break;
                 case XMLStreamConstants.END_DOCUMENT:
+                    if(doDebug) {
+                        System.out.println("END_DOCUMENT: ");
+                    }
                     done = true;
                     break;
                 case XMLStreamConstants.SPACE:
+                    if(doDebug) {
+                        System.out.println("SPACE: [" + parser.getText() + "]");
+                    }
                     handleSpace();
                     break;
                 case XMLStreamConstants.COMMENT:
+                    if(doDebug) {
+                        System.out.println("COMMENT: [" + parser.getText() + "]");
+                    }
                     createComment();
                     break;
                 case XMLStreamConstants.DTD:
+                    if(doDebug) {
+                        System.out.println("DTD: [" + parser.getText() + "]");
+                    }
                     createDTD();
                     break;
                 case XMLStreamConstants.PROCESSING_INSTRUCTION:
+                    if(doDebug) {
+                        System.out.println("PROCESSING_INSTRUCTION: [" + parser.getPITarget() + "][" + parser.getPIData() + "]");
+                    }
                     createPI();
+                    break;
+                case XMLStreamConstants.ENTITY_REFERENCE:
+                    if(doDebug) {
+                        System.out.println("ENTITY_REFERENCE: " + parser.getLocalName() + "[" + parser.getText() + "]");
+                    }
+                    handleEntityReference();
                     break;
                 default :
                     throw new OMException();
@@ -210,6 +247,10 @@ public class StAXOMBuilder extends StAXBuilder {
     }
 
     private void handleSpace() {
+        //TODO
+    }
+
+    private void handleEntityReference() {
         //TODO
     }
 
