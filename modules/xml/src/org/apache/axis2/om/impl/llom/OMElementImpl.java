@@ -325,7 +325,8 @@ public class OMElementImpl extends OMNodeImpl
             while (namespaceListIterator.hasNext()) {
                 OMNamespace omNamespace =
                         (OMNamespace) namespaceListIterator.next();
-                if (omNamespace.getName().equals(uri)) {
+                if (omNamespace.getName() != null &&
+                        omNamespace.getName().equals(uri)) {
                     return omNamespace;
                 }
             }
