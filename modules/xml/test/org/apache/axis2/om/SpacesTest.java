@@ -52,7 +52,7 @@ public class SpacesTest extends XMLTestCase {
     private void checkOMConformance(InputStream iStream) throws Exception {
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
-//            factory.setProperty("report-cdata-event", Boolean.TRUE);
+            factory.setProperty("http://java.sun.com/xml/stream/properties/report-cdata-event", Boolean.TRUE);
 
             StAXOMBuilder staxOMBuilder = OMXMLBuilderFactory.
                     createStAXOMBuilder(OMAbstractFactory.getOMFactory(),

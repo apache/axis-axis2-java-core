@@ -6,5 +6,5 @@
         <cheese/>
         baz
     </bar>
-    <!--<doc><![CDATA[<foo>]]></doc>-->
+    <doc><![CDATA[<foo>]]></doc>
 </foo>
