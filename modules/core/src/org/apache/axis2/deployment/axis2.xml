@@ -17,6 +17,14 @@
 <!--        <parameter name="RSS_URL" locked="xsd:false">http://127.0.0.1/rss</parameter>-->
 <!--    </listener>-->
 
+    <!--Registering Axis Storage Class if you comment this default one will -->
+    <!--does the job (org.apache.axis2.storage.impl.AxisMemoryStorage) , if you-->
+    <!--want to register new one write a class by extanding AbastractStorage-->
+    <!--and put that name here-->
+    <axisStorage class="org.apache.axis2.storage.impl.AxisMemoryStorage">
+        <parameter name="StoreLocation" locked="xsd:false">N:S</parameter>
+    </axisStorage>
+
 
 
     <!-- ================================================= -->

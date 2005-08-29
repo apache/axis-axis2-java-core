@@ -8,6 +8,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.storage.AxisStorage;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.TransportListener;
@@ -97,11 +98,80 @@ public class AxisConfigBuilder extends DescriptionBuilder{
             Iterator phaserders =config_element.getChildrenWithName(new QName(PHASE_ORDER)) ;
             processPhaseOrders(phaserders);
 
+            //processing Axis Storages
+            OMElement storages = config_element.getFirstChildWithName(new QName(AXIS_STORAGE)) ;
+            processAxisStorage(storages);
+
+
+
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         }
     }
 
+    private void processAxisStorage(OMElement storageElement) throws DeploymentException {
+        AxisStorage axisStorage;
+        if(storageElement !=null){
+            OMAttribute className =  storageElement.getAttribute(new QName(CLASSNAME));
+            if(className== null){
+                throw new DeploymentException("Invalid Storage Class defintion , class name missing");
+            }  else {
+                String classNameStr =className.getValue();
+                Class stoarge ;
+                if (classNameStr != null &&!"".equals(classNameStr)) {
+                    try {
+                        stoarge = Class.forName(classNameStr,true,
+                                Thread.currentThread().getContextClassLoader());
+                        axisStorage = (AxisStorage) stoarge.newInstance();
+                        axisConfiguration.setAxisStorage(axisStorage);
+
+                        // adding storage paramters
+                        Iterator paramters = storageElement.getChildrenWithName(
+                                new QName(PARAMETERST));
+                        processParameters(paramters,axisStorage);
+
+
+                    } catch (ClassNotFoundException e) {
+                        throw new DeploymentException
+                                ("ClassNotFoundException in Axis Storage processing " + e);
+                    } catch (InstantiationException e) {
+                        throw new DeploymentException
+                                ("InstantiationException in Axis Storage processing " + e);
+                    } catch (IllegalAccessException e) {
+                        throw new DeploymentException
+                                ("IllegalAccessException in Axis Storage processing " + e);
+                    }
+                } else {
+                    throw new DeploymentException("Invalid Storage Class defintion , class name missing");
+                }
+
+            }
+
+        }   else {
+            try {
+                //Default Storeg :  org.apache.axis2.storage.impl.AxisMemoryStorage
+                Class stoarge = Class.forName("org.apache.axis2.storage.impl.AxisMemoryStorage",true,
+                        Thread.currentThread().getContextClassLoader());
+                axisStorage = (AxisStorage) stoarge.newInstance();
+                axisConfiguration.setAxisStorage(axisStorage);
+            }catch (ClassNotFoundException e) {
+                throw new DeploymentException
+                        ("ClassNotFoundException in Axis Storage processing " + e);
+            } catch (InstantiationException e) {
+                throw new DeploymentException
+                        ("InstantiationException in Axis Storage processing " + e);
+            } catch (IllegalAccessException e) {
+                throw new DeploymentException
+                        ("IllegalAccessException in Axis Storage processing " + e);
+            }
+        }
+
+    }
+
+    /**
+     * To process all the phase orders which are defined in axis2.xml
+     * @param phaserders
+     */
     private void processPhaseOrders(Iterator phaserders){
         PhasesInfo info = engine.getPhasesinfo();
         while (phaserders.hasNext()) {

@@ -129,7 +129,7 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     public AxisStorage getStorage() {
-        return storage;
+        return  axisConfiguration.getAxisStorage();   //storage;
     }
 
     public void setStorage(AxisStorage storage) {

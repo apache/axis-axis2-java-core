@@ -16,6 +16,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.storage.AxisStorage;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
@@ -37,6 +38,9 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * To store Erroness services
      */
     private Hashtable errornesServices;
+
+    //to keep axis2 storage class
+    private AxisStorage axisStorage;
 
     private Hashtable errornesModules;
     private Log log = LogFactory.getLog(getClass());
@@ -245,6 +249,15 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     public HashMap getTransportsOut() {
         return transportsOut;
+    }
+
+    //to get and set Axis2 storges (the class which should handle storeg)
+    public void setAxisStorage(AxisStorage axisStorage) {
+        this.axisStorage =axisStorage;
+    }
+
+    public AxisStorage getAxisStorage() {
+        return axisStorage;
     }
 
 

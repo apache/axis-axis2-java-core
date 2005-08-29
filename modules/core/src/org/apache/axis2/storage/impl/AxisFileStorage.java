@@ -1,10 +1,15 @@
 package org.apache.axis2.storage.impl;
 
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterIncludeImpl;
+import org.apache.axis2.description.ParameterInclude;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -29,9 +34,11 @@ public class AxisFileStorage extends AbstractStorage {
     private File file;
     private FileOutputStream fos;
     private HashMap map;
+    private ParameterInclude paramter;
 
     public AxisFileStorage() {
         map = new HashMap();
+        paramter = new ParameterIncludeImpl();
     }
 
     public AxisFileStorage(File file) {
@@ -102,4 +109,15 @@ public class AxisFileStorage extends AbstractStorage {
     }
 
 
+    public void addParameter(Parameter param) {
+        paramter.addParameter(param);
+    }
+
+    public Parameter getParameter(String name) {
+        return paramter.getParameter(name);
+    }
+
+    public ArrayList getParameters() {
+        return paramter.getParameters();
+    }
 }

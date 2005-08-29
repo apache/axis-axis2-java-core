@@ -1,5 +1,7 @@
 package org.apache.axis2.storage;
 
+import org.apache.axis2.description.ParameterInclude;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -18,7 +20,7 @@ package org.apache.axis2.storage;
  * 
  */
 
-public interface AxisStorage {
+public interface AxisStorage extends ParameterInclude {
 
     /**
      * puts a value to the storage

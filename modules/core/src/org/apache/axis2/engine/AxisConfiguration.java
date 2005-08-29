@@ -16,6 +16,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.storage.AxisStorage;
 import org.apache.axis2.description.*;
 
 import javax.xml.namespace.QName;
@@ -129,5 +130,10 @@ public interface AxisConfiguration extends ParameterInclude {
     public HashMap getTransportsIn();
 
     public HashMap getTransportsOut();
+
+    //to get and set Axis2 storges (the class which should handle storeg)
+    public void setAxisStorage(AxisStorage axisStorage);
+
+    public AxisStorage getAxisStorage();
 
 }

@@ -1,6 +1,11 @@
 package org.apache.axis2.storage.impl;
 
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterInclude;
+import org.apache.axis2.description.ParameterIncludeImpl;
+
 import java.util.HashMap;
+import java.util.ArrayList;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -23,10 +28,12 @@ import java.util.HashMap;
 public class AxisMemoryStorage extends AbstractStorage {
 
     private HashMap objectMap;
+     private ParameterInclude paramter;
 
 
     public AxisMemoryStorage() {
         objectMap = new HashMap();
+        paramter = new ParameterIncludeImpl();
     }
 
     public Object put(Object value) {
@@ -55,5 +62,17 @@ public class AxisMemoryStorage extends AbstractStorage {
         return returnValue;
     }
 
+
+    public void addParameter(Parameter param) {
+        paramter.addParameter(param);
+    }
+
+    public Parameter getParameter(String name) {
+        return paramter.getParameter(name);
+    }
+
+    public ArrayList getParameters() {
+        return paramter.getParameters();
+    }
 
 }
