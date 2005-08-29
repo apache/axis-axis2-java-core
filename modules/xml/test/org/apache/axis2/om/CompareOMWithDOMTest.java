@@ -38,8 +38,8 @@ public class CompareOMWithDOMTest extends AbstractTestCase {
         File[] files = dir.listFiles();
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
-                if (files[i].isFile() && files[i].getName().endsWith(".xml")) {
-//                    System.out.println("files = " + files[i].getAbsolutePath());
+                System.out.println("Processing files:" + files[i].getAbsolutePath());
+                if (files[i].isFile() && files[i].getName().endsWith(".xml") && !files[i].getName().startsWith("wrong")) {
                     SOAPEnvelope soapEnvelope = (SOAPEnvelope) OMTestUtils.getOMBuilder(
                             files[i])
                             .getDocumentElement();
@@ -47,10 +47,6 @@ public class CompareOMWithDOMTest extends AbstractTestCase {
                     dbf.setNamespaceAware(true);
                     DocumentBuilder builder = dbf.newDocumentBuilder();
                     Document doc = builder.parse(files[i].getAbsolutePath());
-
-//                    XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out) ;
-//                    soapEnvelope.serializeWithCache(writer);
-//                    writer.flush();
                     OMTestUtils.compare(doc.getDocumentElement(),
                             soapEnvelope);
                 }
