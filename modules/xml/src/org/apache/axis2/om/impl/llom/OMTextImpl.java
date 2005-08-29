@@ -307,8 +307,10 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                 this.serializeStartpart(omOutput);
                 omOutput.writeOptimized(this);
                 omOutput.getXmlStreamWriter().writeEndElement();
-            } else {
+            } else if(this.getType() == OMNode.TEXT_NODE){
                 omOutput.getXmlStreamWriter().writeCharacters(this.getText());
+            }else if(this.getType() == OMNode.CDATA_SECTION_NODE){
+                omOutput.getXmlStreamWriter().writeCData(this.getText());
             }
 
         }

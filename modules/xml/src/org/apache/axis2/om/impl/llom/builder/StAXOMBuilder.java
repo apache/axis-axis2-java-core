@@ -304,4 +304,8 @@ public class StAXOMBuilder extends StAXBuilder {
     public OMDocument getDocument() {
         return document;
     }
+
+    public void setDoDebug(boolean doDebug) {
+        this.doDebug = doDebug;
+    }
 }
