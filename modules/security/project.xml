@@ -76,7 +76,7 @@
         <dependency>
             <groupId>sjsxp</groupId>
             <artifactId>sjsxp</artifactId>
-            <version>1.5</version>
+            <version>1.6</version>
             <properties>
                 <module>true</module>
             </properties>
@@ -84,7 +84,7 @@
         <dependency>
             <groupId>sjsxp</groupId>
             <artifactId>jsr173_api</artifactId>
-            <version>1.5</version>
+            <version>1.6</version>
             <properties>
                 <module>true</module>
             </properties>
