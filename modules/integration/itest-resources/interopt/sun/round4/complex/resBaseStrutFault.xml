@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-   <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-      <SOAP-ENV:Body>
-         <SOAP-ENV:Fault>
-            <faultcode xmlns:ns="http://schemas.xmlsoap.org/soap/envelope/">ns:Server</faultcode>
-            <faultstring>Fault in response to 'echoBaseStructFault'.</faultstring>
+   <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns0="http://soapinterop.org/types" xmlns:ns1="http://soapinterop.org/wsdl">
+      <env:Body>
+         <env:Fault xsi:type="env:Fault">
+            <faultcode>env:Server</faultcode>
+            <faultstring>round4.grouph.complexrpcenc.server.BaseStruct_Exception</faultstring>
             <detail>
-               <d:part2 SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:d="http://soapinterop.org/wsdl">
-                  <floatMessage>10.3</floatMessage>
-                  <shortMessage>1</shortMessage>
-               </d:part2>
+               <ns1:part2 env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xsi:type="ns0:BaseStruct">
+                  <floatMessage xsi:type="xsd:float">10.3</floatMessage>
+                  <shortMessage xsi:type="xsd:short">1</shortMessage>
+               </ns1:part2>
             </detail>
-         </SOAP-ENV:Fault>
-      </SOAP-ENV:Body>
-   </SOAP-ENV:Envelope>
+         </env:Fault>
+      </env:Body>
+   </env:Envelope>

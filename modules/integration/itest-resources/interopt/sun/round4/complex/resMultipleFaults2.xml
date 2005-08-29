@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-   <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-      <SOAP-ENV:Body>
-         <SOAP-ENV:Fault>
-            <faultcode xmlns:ns="http://schemas.xmlsoap.org/soap/envelope/">ns:Server</faultcode>
-            <faultstring>Fault in response to 'echoMultipleFaults2'.</faultstring>
+   <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns0="http://soapinterop.org/types" xmlns:ns1="http://soapinterop.org/wsdl">
+      <env:Body>
+         <env:Fault xsi:type="env:Fault">
+            <faultcode>env:Server</faultcode>
+            <faultstring>round4.grouph.complexrpcenc.server.ExtendedStruct_Exception</faultstring>
             <detail>
-               <d:part2 SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:d="http://soapinterop.org/wsdl">
-                  <floatMessage>0.1</floatMessage>
-                  <shortMessage>10</shortMessage>
-               </d:part2>
+               <ns1:part3 env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xsi:type="ns0:ExtendedStruct">
+                  <floatMessage xsi:type="xsd:float">0.555</floatMessage>
+                  <shortMessage xsi:type="xsd:short">9</shortMessage>
+                  <stringMessage xsi:type="xsd:string">hi</stringMessage>
+                  <intMessage xsi:type="xsd:int">10</intMessage>
+                  <anotherIntMessage xsi:type="xsd:int">20</anotherIntMessage>
+               </ns1:part3>
             </detail>
-         </SOAP-ENV:Fault>
-      </SOAP-ENV:Body>
-   </SOAP-ENV:Envelope>
+         </env:Fault>
+      </env:Body>
+   </env:Envelope>

@@ -13,31 +13,42 @@ import org.apache.axis2.soap.SOAP11Constants;
  * Time: 8:38:19 AM
  * To change this template use File | Settings | File Templates.
  */
-public class EchoSOAPStructFaultClientUtil implements SunGroupHClientUtil {
+public class EchoSOAPStructFaultClientUtil implements SunGroupHClientUtil{
 
     public OMElement getEchoOMElement() {
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
-        OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "mns");
+        OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
 
         OMElement method = fac.createOMElement("echoSOAPStructFault", omNs);
         OMNamespace soapEnvNS = method.declareNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
                 SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
         method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", soapEnvNS);
 
-        OMNamespace xsiNs = method.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
-        OMNamespace ns2 = method.declareNamespace("http://soapinterop.org/types","ns2");
-        method.declareNamespace("http://schemas.xmlsoap.org/wsdl/","wsdl");
-
 
         OMElement value1 = fac.createOMElement("param", null);
         method.addChild(value1);
 
-        value1.addAttribute("type","ns2:SOAPStructFault",xsiNs)  ;
+
+        OMElement value2 = fac.createOMElement("soapStruct", null);
+        OMElement value3 = fac.createOMElement("varInt", null);
+        OMElement value4 = fac.createOMElement("varFloat", null);
+        OMElement value5 = fac.createOMElement("varString", null);
+
+
+        value2.addChild(value3);
+        value2.addChild(value4);
+        value2.addChild(value5);
+
+        value1.addChild(value2);
+        value3.addChild(fac.createText(value3, "10"));
+        value4.addChild(fac.createText(value4, "0.568"));
+        value5.addChild(fac.createText(value5, "Hi"));
 
         return method;
     }
+
 
 
 }
