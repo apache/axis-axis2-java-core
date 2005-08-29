@@ -82,13 +82,14 @@ public class Axis2Util {
 			//Set the new SOAPEnvelope
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			XMLUtils.outputDOM(doc, os, true);
-
+			
 			ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
 			XMLStreamReader reader = XMLInputFactory.newInstance()
 					.createXMLStreamReader(is);
 
 			StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader,
 					envelopeNS);
+			builder.setCache(true);
 
 			return builder.getSOAPEnvelope();
 

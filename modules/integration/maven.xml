@@ -74,7 +74,36 @@
         <ant:copy file="../samples/target/samples/groovyService.aar" tofile="target/groovyRepo/services/groovyService.aar"/>   
         <copy file="../addressing/target/addressing.mar"
             tofile="target/groovyRepo/modules/addressing.mar"/>
-    
+
+	<!--Axis2 repositories for WS-Security interop tests -->
+
+	<!-- Scenario 1 -->
+        <mkdir dir="target/test-resources/scenario1_client_repo"/>
+        <mkdir dir="target/test-resources/scenario1_client_repo/modules"/>
+        <mkdir dir="target/test-resources/scenario1_client_repo/services"/>
+
+        <mkdir dir="target/test-resources/scenario1_service_repo"/>
+        <mkdir dir="target/test-resources/scenario1_service_repo/services"/>
+        <mkdir dir="target/test-resources/scenario1_service_repo/modules"/>
+
+	<!-- setup scenario1 client repository-->
+        <copy file="test-resources/security/s1.client.axis2.xml"
+            tofile="target/test-resources/scenario1_client_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario1_client_repo/modules/security.mar"/>
+
+   	<ant:path id="sec.interop.service.jar" location="../security/target/PingPort.aar"/>
+        <maven:addPath id="maven.dependency.classpath" refid="sec.interop.service.jar"/>
+
+	<!-- setup scenario1 service repository-->
+        <copy file="test-resources/security/s1.service.axis2.xml"
+            tofile="target/test-resources/scenario1_service_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario1_service_repo/modules/security.mar"/>
+        <copy file="../security/target/PingPort.aar"
+            tofile="target/test-resources/scenario1_service_repo/services/PingPort.aar"/>
+
+
     <!-- Standard repository -->
     <mkdir dir="target/Repository"/>
         <mkdir dir="target/Repository/services"/>

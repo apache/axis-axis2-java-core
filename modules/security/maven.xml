@@ -73,6 +73,10 @@
 	    <!-- Password callback class for the interop service -->
 	    <copy file="test-resources/PWCallback.java" 
 		    tofile="${work.dir}/org/apache/axis2/security/PWCallback.java" overwrite="yes"/>
+		
+	    <!-- Interop client -->
+	    <copy file="interop/org/apache/axis2/security/InteropScenarioClient.java" 
+		    tofile="${work.dir}/org/apache/axis2/security/InteropScenarioClient.java" overwrite="yes"/>
 
    	    <ant:path id="classes.dir" location="${class.dir}"/>
         <maven:addPath id="maven.dependency.classpath" refid="classes.dir"/>
@@ -86,13 +90,13 @@
 
 		<!-- move/copy interop classes into class.dir -->
     	<ant:move todir="${class.dir}">
-		    <ant:fileset dir="${basedir}/target/classes">
+            <ant:fileset dir="${basedir}/target/classes">
                 <ant:include name="**/ping/**/*.class"/>
                 <ant:include name="**/oasisOpen/**/*.class"/>
                 <ant:include name="**/PWCallback.class"/>
                
             </ant:fileset>
-	    </ant:move>
+	</ant:move>
 
         <delete includeEmptyDirs="true">
             <fileset dir="${basedir}/target/classes/org/apache/axis2/oasis/"/>

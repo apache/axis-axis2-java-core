@@ -76,6 +76,10 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             }
             int doAction = WSSecurityUtil.decodeAction(action, actions);
 
+            if(doAction == WSConstants.NO_SECURITY) {
+            	return;
+            }
+            
             String actor = (String) getOption(WSHandlerConstants.ACTOR);
 
             Document doc = null;

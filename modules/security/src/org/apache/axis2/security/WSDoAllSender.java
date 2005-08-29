@@ -263,6 +263,7 @@ public class WSDoAllSender extends WSDoAllHandler {
                 log.debug("WSDoAllSender: exit invoke()");
             }
         } catch (WSSecurityException e) {
+        	e.printStackTrace();
             throw new AxisFault(e.getMessage(), e);
         } finally {
             reqData.clear();
