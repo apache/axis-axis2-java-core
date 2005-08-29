@@ -71,7 +71,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     /**
      * Constructor OMTextImpl
-     * 
+     *
      * @param s
      */
     public OMTextImpl(String s) {
@@ -80,8 +80,18 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     }
 
     /**
+     * @param s
+     * @param nodeType - OMText can handler CHARACTERS, SPACES, CDATA and ENTITY REFERENCES.
+     *                 Constants for this can be found in OMNode.
+     */
+    public OMTextImpl(String s, int nodeType) {
+        this.value = s;
+        this.nodeType = nodeType;
+    }
+
+    /**
      * Constructor OMTextImpl
-     * 
+     *
      * @param parent
      * @param text
      */
@@ -93,10 +103,9 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     }
 
     /**
-     * @param s -
-     *            base64 encoded String representation of Binary
-     * @param mimeType
-     *            of the Binary
+     * @param s        -
+     *                 base64 encoded String representation of Binary
+     * @param mimeType of the Binary
      */
     public OMTextImpl(String s, String mimeType, boolean optimize) {
         this(null, s, mimeType, optimize);
@@ -104,13 +113,12 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     /**
      * @param parent
-     * @param s -
-     *            base64 encoded String representation of Binary
-     * @param mimeType
-     *            of the Binary
+     * @param s        -
+     *                 base64 encoded String representation of Binary
+     * @param mimeType of the Binary
      */
     public OMTextImpl(OMElement parent, String s, String mimeType,
-            boolean optimize) {
+                      boolean optimize) {
         this(parent, s);
         this.mimeType = mimeType;
         this.optimize = optimize;
@@ -119,8 +127,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     }
 
     /**
-     * @param dataHandler
-     *            To send binary optimised content Created programatically.
+     * @param dataHandler To send binary optimised content Created programatically.
      */
     public OMTextImpl(DataHandler dataHandler) {
         this(dataHandler, true);
@@ -128,8 +135,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     /**
      * @param dataHandler
-     * @param optimize
-     *            To send binary content. Created progrmatically.
+     * @param optimize    To send binary content. Created progrmatically.
      */
     public OMTextImpl(DataHandler dataHandler, boolean optimize) {
         this.dataHandler = dataHandler;
@@ -142,13 +148,12 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     /**
      * @param contentID
      * @param parent
-     * @param builder
-     *            Used when the builder is encountered with a XOP:Include tag
-     *            Stores a reference to the builder and the content-id. Supports
-     *            deffered parsing of MIME messages
+     * @param builder   Used when the builder is encountered with a XOP:Include tag
+     *                  Stores a reference to the builder and the content-id. Supports
+     *                  deffered parsing of MIME messages
      */
     public OMTextImpl(String contentID, OMElement parent,
-            OMXMLParserWrapper builder) {
+                      OMXMLParserWrapper builder) {
         super(parent);
         this.contentID = contentID;
         this.optimize = true;
@@ -170,16 +175,19 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     /**
      * Writes the relevant output
+     *
      * @param omOutput
      * @throws XMLStreamException
      */
     private void writeOutput(OMOutputImpl omOutput) throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         int type = getType();
-        if (type == TEXT_NODE) {
+        if (type == TEXT_NODE || type == SPACE_NODE) {
             writer.writeCharacters(this.getText());
         } else if (type == CDATA_SECTION_NODE) {
             writer.writeCData(this.getText());
+        } else if (type == ENTITY_REFERENCE_NODE) {
+            writer.writeEntityRef(this.getText());
         }
     }
 
@@ -195,7 +203,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                 inStream = this.getInputStream();
                 //int x = inStream.available();
                 byte[] data;
-                StringBuffer text= new StringBuffer();
+                StringBuffer text = new StringBuffer();
                 // There are times, this inStream reports the Available bytes
                 // incorrectly.
                 // Reading the First byte & then getting the available number of
@@ -204,7 +212,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                     data = new byte[3];
                     IOUtils.readFully(inStream, data, 0, 3);
                     text.append(Base64.encode(data));
-                }while (inStream.available()>0);
+                } while (inStream.available() > 0);
                 return text.toString();
             } catch (Exception e) {
                 throw new OMException(e);
@@ -227,7 +235,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     /**
      * @return
      * @throws org.apache.axis2.om.OMException
-     * 
+     *
      * @throws OMException
      */
     public DataHandler getDataHandler() {
@@ -294,12 +302,12 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput)
             throws XMLStreamException {
-           serializeLocal(omOutput);
+        serializeLocal(omOutput);
     }
 
     private void serializeLocal(OMOutputImpl omOutput) throws XMLStreamException {
         if (!this.isBinary) {
-             writeOutput(omOutput);
+            writeOutput(omOutput);
         } else {
             if (omOutput.isOptimized()) {
                 if (contentID == null) {
@@ -311,12 +319,9 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                 this.serializeStartpart(omOutput);
                 omOutput.writeOptimized(this);
                 omOutput.getXmlStreamWriter().writeEndElement();
-            } else if(this.getType() == OMNode.TEXT_NODE){
+            } else {
                 omOutput.getXmlStreamWriter().writeCharacters(this.getText());
-            }else if(this.getType() == OMNode.CDATA_SECTION_NODE){
-                omOutput.getXmlStreamWriter().writeCData(this.getText());
-            }
-
+            } 
         }
     }
 
@@ -366,7 +371,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     /**
      * Method serializeAttribute
-     * 
+     *
      * @param attr
      * @param omOutput
      * @throws XMLStreamException
@@ -396,13 +401,13 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     /**
      * Method serializeNamespace
-     * 
+     *
      * @param namespace
      * @param omOutput
      * @throws XMLStreamException
      */
     static void serializeNamespace(OMNamespace namespace,
-            org.apache.axis2.om.impl.OMOutputImpl omOutput)
+                                   org.apache.axis2.om.impl.OMOutputImpl omOutput)
             throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         if (namespace != null) {
@@ -415,7 +420,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     /**
      * Slightly different implementation of the discard method
-     * 
+     *
      * @throws OMException
      */
     public void discard() throws OMException {

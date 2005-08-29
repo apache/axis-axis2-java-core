@@ -121,6 +121,10 @@ public class OMLinkedListImplFactory implements OMFactory {
         return new OMTextImpl(s);
     }
 
+    public OMText createText(String s, int type) {
+        return new OMTextImpl(s, type);
+    }
+
     /**
      * create Text
      * @param s

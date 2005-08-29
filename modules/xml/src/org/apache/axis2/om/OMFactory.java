@@ -96,6 +96,15 @@ public interface OMFactory {
      */
     public OMText createText(String s);
 
+    /**
+     *
+     * @param s
+     * @param type - OMText node can handle SPACE, CHARACTERS, CDATA and ENTITY REFERENCES. For Constants, use either
+     * XMLStreamConstants or constants found in OMNode.
+     * @return
+     */
+    public OMText createText(String s, int type);
+
     public OMText createText(String s, String mimeType, boolean optimize);
 
     public OMText createText(DataHandler dataHandler, boolean optimize);

@@ -17,6 +17,7 @@ package org.apache.axis2.om;
 
 import org.apache.axis2.om.impl.OMOutputImpl;
 
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -32,27 +33,37 @@ public interface OMNode {
     /**
      * The node is a <code>Text</code> node.
      */
-    public static final short TEXT_NODE = 4;
+    public static final short TEXT_NODE = XMLStreamConstants.CHARACTERS;
 
     /**
      * The node is a <code>CDATASection</code>.
      */
-    public static final short CDATA_SECTION_NODE = 12;
+    public static final short CDATA_SECTION_NODE = XMLStreamConstants.CDATA;
 
     /**
      * The node is a <code>Comment</code>.
      */
-    public static final short COMMENT_NODE = 8;
+    public static final short COMMENT_NODE = XMLStreamConstants.COMMENT;
 
     /**
      * This node is a <code>DTD</code>.
      */
-    public static final short DTD_NODE = 9;
+    public static final short DTD_NODE = XMLStreamConstants.DTD;
 
     /**
      * This node is a <code>ProcessingInstruction</code>.
      */
-    public static final short PI_NODE = 10;
+    public static final short PI_NODE = XMLStreamConstants.PROCESSING_INSTRUCTION;
+
+    /**
+     * This node is a <code>Entity Reference</code>.
+     */
+    public static final short ENTITY_REFERENCE_NODE = XMLStreamConstants.ENTITY_REFERENCE;
+
+    /**
+     * This node is a <code>Entity Reference</code>.
+     */
+    public static final short SPACE_NODE = XMLStreamConstants.SPACE;
 
     /**
      * This method should return the immediate parent of the node.
@@ -210,6 +221,7 @@ public interface OMNode {
     /**
      * The build method will not read the information from stream and build MTOM stuff.
      * This method is to build the normal model and force build the MTOM stuff too.
+     *
      * @throws OMException
      */
     public void buildWithMTOM() throws OMException;

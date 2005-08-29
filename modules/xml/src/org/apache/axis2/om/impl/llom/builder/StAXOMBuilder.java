@@ -232,7 +232,7 @@ public class StAXOMBuilder extends StAXBuilder {
                     if(doDebug) {
                         System.out.println("SPACE: [" + parser.getText() + "]");
                     }
-                    handleSpace();
+                    lastNode = createOMText(XMLStreamConstants.SPACE);
                     break;
                 case XMLStreamConstants.COMMENT:
                     if(doDebug) {
@@ -256,7 +256,7 @@ public class StAXOMBuilder extends StAXBuilder {
                     if(doDebug) {
                         System.out.println("ENTITY_REFERENCE: " + parser.getLocalName() + "[" + parser.getText() + "]");
                     }
-                    handleEntityReference();
+                    lastNode = createOMText(XMLStreamConstants.ENTITY_REFERENCE);
                     break;
                 default :
                     throw new OMException();
@@ -270,15 +270,7 @@ public class StAXOMBuilder extends StAXBuilder {
         }
     }
 
-    private void handleSpace() {
-        //TODO
-    }
-
-    private void handleEntityReference() {
-        //TODO
-    }
-
-    /**
+   /**
      * Method getDocumentElement
      *
      * @return root element
