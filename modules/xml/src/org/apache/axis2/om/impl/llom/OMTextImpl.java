@@ -218,6 +218,10 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     public void setOptimize(boolean value) {
         this.optimize = value;
+	if (value)
+	{
+	     isBinary = true;
+	}
     }
 
     /**

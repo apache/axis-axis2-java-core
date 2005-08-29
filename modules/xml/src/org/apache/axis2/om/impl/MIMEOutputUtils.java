@@ -52,7 +52,7 @@ public class MIMEOutputUtils {
             
             rootMimeBodyPart.addHeader("content-type",
                     "application/xop+xml; charset=" + charSetEncoding + 
-					"; type=\""+SOAPContentType+";\"");
+					"; type=\""+SOAPContentType+"\";");
             rootMimeBodyPart.addHeader("content-transfer-encoding", "binary");
             rootMimeBodyPart.addHeader("content-id","<"+contentId+">");
 
@@ -138,7 +138,7 @@ public class MIMEOutputUtils {
         sb.append("; ");
         sb.append("start=\"<" + contentId + ">\"");
         sb.append("; ");
-        sb.append("start-info=\""+SOAPContentType+";\"");
+        sb.append("start-info=\""+SOAPContentType+"\";");
         return sb.toString();
     }
 
