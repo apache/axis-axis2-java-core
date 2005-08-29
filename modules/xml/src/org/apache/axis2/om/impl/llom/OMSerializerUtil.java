@@ -118,27 +118,19 @@ public class OMSerializerUtil {
                     writer.writeStartElement(nameSpaceName,
                             element.getLocalName());
                 } else {
-                    if (prefix != null) {
-                        writer.writeStartElement(prefix, element.getLocalName(),
-                                nameSpaceName);
-                        writer.writeNamespace(prefix, nameSpaceName);
-                        writer.setPrefix(prefix, nameSpaceName);
-                    } else {
-                        writer.writeStartElement(nameSpaceName,
-                                element.getLocalName());
-                        writer.writeDefaultNamespace(nameSpaceName);
-                        writer.setDefaultNamespace(nameSpaceName);
+                    if (prefix == null) {
+                        prefix = "";
                     }
+                    writer.writeStartElement(prefix, element.getLocalName(),
+                            nameSpaceName);
+                    writer.writeNamespace(prefix, nameSpaceName);
+                    writer.setPrefix(prefix, nameSpaceName);
                 }
             } else {
                 writer.writeStartElement(element.getLocalName());
-//                throw new OMException(
-//                        "Non namespace qualified elements are not allowed");
             }
         } else {
             writer.writeStartElement(element.getLocalName());
-//            throw new OMException(
-//                    "Non namespace qualified elements are not allowed");
         }
 
         // add the elements attributes
@@ -209,8 +201,5 @@ public class OMSerializerUtil {
             streamingOMSerializer.serialize(element.getXMLStreamReaderWithoutCaching(),
                 omOutput);
         }
-
-
-        return;
     }
 }

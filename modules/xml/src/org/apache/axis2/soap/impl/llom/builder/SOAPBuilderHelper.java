@@ -50,7 +50,7 @@ public abstract class SOAPBuilderHelper {
         String namespaceURI = parser.getNamespaceURI();
         String prefix = parser.getPrefix();
         OMNamespace namespace = null;
-        if (!"".equals(namespaceURI)) {
+        if (namespaceURI != null && namespaceURI.length() > 0) {
             if (prefix == null) {
                 // this means, this elements has a default namespace or it has inherited a default namespace from its parent
                 namespace = node.findNamespace(namespaceURI, "");

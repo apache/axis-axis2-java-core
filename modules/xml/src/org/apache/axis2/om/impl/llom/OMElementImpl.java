@@ -20,6 +20,7 @@ import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
 import org.apache.axis2.om.impl.llom.util.EmptyIterator;
+import org.apache.axis2.soap.impl.llom.SOAPConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -288,7 +289,7 @@ public class OMElementImpl extends OMNodeImpl
      *
      * @throws OMException
      */
-    public OMNamespace findNamespace(String uri, String prefix)
+    public OMNamespace  findNamespace(String uri, String prefix)
             throws OMException {
 
         // check in the current element
@@ -303,10 +304,17 @@ public class OMElementImpl extends OMNodeImpl
             //declarations, so going up the parent chain till the document
             //element should be enough.
             if (parent instanceof OMElement) {
-                return ((OMElementImpl) parent).findNamespace(uri, prefix);
+                namespace = ((OMElementImpl) parent).findNamespace(uri, prefix);
             }
         }
-        return null;
+
+        if (namespace == null && uri != null && prefix != null
+                && prefix.equals(SOAPConstants.XMLNS_PREFIX)
+                && uri.equals(SOAPConstants.XMLNS_URI)) {
+            declareNamespace(SOAPConstants.XMLNS_URI, SOAPConstants.XMLNS_PREFIX);
+            namespace = findNamespace(uri, prefix);
+        }
+        return namespace;
     }
 
     /**

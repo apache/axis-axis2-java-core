@@ -16,6 +16,7 @@
 package org.apache.axis2.om.impl.llom.builder;
 
 import org.apache.axis2.om.*;
+import org.apache.axis2.soap.impl.llom.SOAPConstants;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
@@ -25,12 +26,6 @@ import javax.xml.stream.XMLStreamReader;
  * or just an XML model. This class will give some common functionality of OM Building from StAX.
  */
 public abstract class StAXBuilder implements OMXMLParserWrapper {
-
-    private static final String XMLNS_URI =
-        "http://www.w3.org/XML/1998/namespace";
-
-    private static final String XMLNS_PREFIX =
-        "xml";
 
     /**
      * Field parser
@@ -124,13 +119,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
             OMNamespace ns = null;
             String uri = parser.getAttributeNamespace(i);
             String prefix = parser.getAttributePrefix(i);
-            if (uri.hashCode() != 0) {
-                ns = node.findNamespace(uri, prefix);
-            }
-            if (ns == null && prefix != null && uri != null
-                    && prefix.equals(XMLNS_PREFIX)
-                    && uri.equals(XMLNS_URI)) {
-                node.declareNamespace(XMLNS_URI, XMLNS_PREFIX);
+            if (uri != null && uri.hashCode() != 0) {
                 ns = node.findNamespace(uri, prefix);
             }
             // todo if the attributes are supposed to namespace qualified all the time
