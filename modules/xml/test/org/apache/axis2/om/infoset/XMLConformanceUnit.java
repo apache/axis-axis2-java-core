@@ -16,8 +16,8 @@
 package org.apache.axis2.om.infoset;
 
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMDocument;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
@@ -34,13 +34,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class XMLConformanceUnit extends XMLTestCase implements EntityResolver {
 
@@ -59,6 +53,7 @@ public class XMLConformanceUnit extends XMLTestCase implements EntityResolver {
 
         System.out.println("XML File:" + filePath);
         XMLInputFactory factory = XMLInputFactory.newInstance();
+//        factory.setProperty("report-cdata-event", Boolean.TRUE);
         StAXOMBuilder staxOMBuilder = OMXMLBuilderFactory.
                 createStAXOMBuilder(OMAbstractFactory.getOMFactory(),
                         factory.createXMLStreamReader(

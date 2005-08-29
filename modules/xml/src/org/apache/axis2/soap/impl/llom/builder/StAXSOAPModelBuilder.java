@@ -418,7 +418,10 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
             if (node.getNamespace() != null &&
                     !node.getNamespace().getName().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI) &&
                     !node.getNamespace().getName().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
-                throw new SOAPProcessingException("invalid SOAP namespace URI", getSenderFaultCode());
+                throw new SOAPProcessingException("invalid SOAP namespace URI. " +
+                        "Only " + SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI +
+                        " and "+ SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI +
+                        " are supported.", SOAP12Constants.FAULT_CODE_SENDER);
             }
         }
 
