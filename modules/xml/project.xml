@@ -94,17 +94,22 @@
                 <module>true</module>
             </properties>
         </dependency>
-
         <dependency>
-            <groupId>stax</groupId>
-            <artifactId>stax</artifactId>
-            <version>1.1.1-dev</version>
+            <groupId>sjsxp</groupId>
+            <artifactId>sjsxp</artifactId>
+            <version>1.5</version>
             <properties>
                 <module>true</module>
             </properties>
-            <url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
-        
+        <dependency>
+            <groupId>sjsxp</groupId>
+            <artifactId>jsr173_api</artifactId>
+            <version>1.5</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -124,17 +129,6 @@
             </properties>
             <url>http://www.ibiblio.org/maven/jaxen/jars/</url>
         </dependency>
-
-        <dependency>
-            <groupId>stax</groupId>
-            <artifactId>stax-api</artifactId>
-            <version>1.0</version>
-            <properties>
-                <module>true</module>
-            </properties>
-            <url>http://dist.codehaus.org/stax/jars/</url>
-        </dependency>
-        
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>

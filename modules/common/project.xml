@@ -46,7 +46,6 @@
             <properties>
                 <module>true</module>
             </properties>
-            <url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
         <dependency>
             <groupId>maven-itest-plugin</groupId>
