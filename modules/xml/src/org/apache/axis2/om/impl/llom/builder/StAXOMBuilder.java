@@ -18,8 +18,13 @@ package org.apache.axis2.om.impl.llom.builder;
 import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.llom.OMDocumentImpl;
 
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 
 /**
@@ -43,6 +48,25 @@ public class StAXOMBuilder extends StAXBuilder {
     public StAXOMBuilder(OMFactory ombuilderFactory, XMLStreamReader parser) {
         super(ombuilderFactory, parser);
         document = new OMDocumentImpl(this);
+    }
+
+    /**
+     *
+     * @param filePath - Path to the XML file
+     * @throws XMLStreamException
+     * @throws FileNotFoundException
+     */
+    public StAXOMBuilder(String filePath) throws XMLStreamException, FileNotFoundException {
+       this(XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream(filePath)));
+    }
+
+    /**
+     *
+     * @param inStream - instream which contains the XML
+     * @throws XMLStreamException
+     */
+    public StAXOMBuilder(InputStream inStream) throws XMLStreamException {
+       this(XMLInputFactory.newInstance().createXMLStreamReader(inStream));
     }
 
     /**
