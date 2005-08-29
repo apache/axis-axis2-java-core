@@ -94,7 +94,6 @@ public class EchoRawSwATest extends TestCase {
     }
 
     public void testEchoXMLSync() throws Exception {
-        Thread.sleep(1000);
         Socket socket = new Socket("127.0.0.1", 5555);
         OutputStream outStream = socket.getOutputStream();
         InputStream inStream = socket.getInputStream();
