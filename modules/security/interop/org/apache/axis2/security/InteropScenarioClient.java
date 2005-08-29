@@ -51,7 +51,7 @@ public class InteropScenarioClient {
 		PingResponse pingRes = pingResDoc.getPingResponse();
 		
 		System.out.println(pingRes.getText());
-		System.exit(0);
+		
 		
 	}
     
