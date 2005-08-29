@@ -144,7 +144,7 @@ public class TextTest extends TestCase {
 				"<soapenv:Header></soapenv:Header><soapenv:Body>" + 
 				"<Node:abc xmlns:Node=\"http://www.simpletest.org\">" + 
 				"This is some text" + 
-				"&lt;!--This is comment--&gt;This is other text</Node:abc>" + 
+				"<!--This is comment-->This is other text</Node:abc>" + 
 				"</soapenv:Body></soapenv:Envelope>";
 		
 		MessageFactory mf = MessageFactory.newInstance();
