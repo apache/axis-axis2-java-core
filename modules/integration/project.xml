@@ -34,6 +34,12 @@
         </dependency>
         <dependency>
             <groupId>axis2</groupId>
+            <artifactId>axis2-security</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>axis2</groupId>
             <artifactId>axis2-samples</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
