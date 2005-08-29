@@ -38,7 +38,6 @@ import java.io.IOException;
  */
 public class CharacterEncodingTest extends TestCase {
 
-	public static final String UTF_8 = "utf-8";
 	public static final String UTF_16 = "utf-16";
 	
 	public CharacterEncodingTest(String name) {
@@ -65,6 +64,7 @@ public class CharacterEncodingTest extends TestCase {
 		XMLStreamWriter writer = XMLOutputFactory
 				.newInstance().createXMLStreamWriter(byteOutStr,UTF_16);
 		OMOutputImpl outputImpl = new OMOutputImpl(writer);
+        outputImpl.setCharSetEncoding(UTF_16);
 		envelope.serializeWithCache(outputImpl);
 		outputImpl.flush();
 		
