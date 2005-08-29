@@ -526,14 +526,14 @@ public class DocumentNavigator extends DefaultNavigator {
             throws FunctionCallException {
         try {
             XMLStreamReader parser;
+            XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+            xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
             if (uri.indexOf(':') == -1) {
-                parser =
-                        XMLInputFactory.newInstance().createXMLStreamReader(
+                parser = xmlInputFactory.createXMLStreamReader(
                                 new FileInputStream(uri));
             } else {
                 URL url = new URL(uri);
-                parser =
-                        XMLInputFactory.newInstance().createXMLStreamReader(
+                parser = xmlInputFactory.createXMLStreamReader(
                                 url.openStream());
             }
             StAXOMBuilder builder =

@@ -124,7 +124,7 @@ public class OMElementImpl extends OMNodeImpl
 
         // first try to find a namespace from the scope
         String namespaceURI = qname.getNamespaceURI();
-        if (!"".equals(namespaceURI)) {
+        if (namespaceURI != null && namespaceURI.length() > 0) {
             ns = findNamespace(qname.getNamespaceURI(),
                     qname.getPrefix());
 
