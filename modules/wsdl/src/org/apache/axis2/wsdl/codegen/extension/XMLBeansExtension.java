@@ -4,12 +4,18 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
+import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.Schema;
 import org.apache.wsdl.extensions.SOAPBody;
 import org.apache.xmlbeans.*;
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.util.*;
 
@@ -49,6 +55,8 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
         //check the comptibilty
         checkCompatibility();
 
+        Element[] additionalSchemas = loadAdditionalSchemas();
+
         //test whether the TCCL has the Xbeans classes
         //ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
@@ -76,6 +84,14 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
 
+            // run the third party schemas
+//            for (int i = 0; i < additionalSchemas.length; i++) {
+//                System.out.println(additionalSchemas[i]);
+//                xmlObjectsVector.add(XmlObject.Factory.parse(
+//                        additionalSchemas[i]
+//                        ,null));
+//            }
+
             for (int i = 0; i < typesArray.size(); i++) {
                 extensiblityElt = (WSDLExtensibilityElement) typesArray.get(i);
                 Schema schema;
@@ -85,27 +101,32 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                     XmlOptions options = new XmlOptions();
                     options.setLoadAdditionalNamespaces(
                             configuration.getWom().getNamespaces()); //add the namespaces
+                    //        options.
 
                     Stack importedSchemaStack = schema.getImportedSchemaStack();
                     //compile these schemas
                     while (!importedSchemaStack.isEmpty()){
                         javax.wsdl.extensions.schema.Schema tempSchema = (javax.wsdl.extensions.schema.Schema) importedSchemaStack.pop();
+                        Element element = tempSchema.getElement();
                         xmlObjectsVector.add(
                                 XmlObject.Factory.parse(
-                                        tempSchema.getElement()
+                                        element
                                         ,options));
 
-                    }
 
+                    }
 
                 }
 
             }
+
+
             sts = XmlBeans.compileXmlBeans(DEFAULT_STS_NAME, null,
                     convertToXMLObjectArray(xmlObjectsVector),
                     new BindingConfig(), XmlBeans.getContextTypeLoader(),
                     new Axis2Filer(),
                     null);
+
             SchemaType[] schemaType = sts.documentTypes();
             SchemaType type;
             for (int j = 0; j < schemaType.length; j++) {
@@ -119,6 +140,33 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             throw new RuntimeException(e);
         }
 
+    }
+
+    private Element[] loadAdditionalSchemas() {
+        //load additional schemas
+        String[] schemaNames = ConfigPropertyFileLoader.getThirdPartySchemaNames();
+        Element[] schemaElements = null;
+
+        try {
+            ArrayList additionalSchemaElements = new ArrayList();
+            for (int i = 0; i < schemaNames.length; i++) {
+                InputStream schemaStream = this.getClass().getResourceAsStream("/org/apache/axis2/wsdl/codegen/schema/"+ schemaNames[i]);
+                Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(schemaStream);
+                additionalSchemaElements.add(doc.getDocumentElement());
+            }
+
+            //Create the Schema element array
+            schemaElements = new Element[additionalSchemaElements.size()];
+            for (int i = 0; i < additionalSchemaElements.size(); i++) {
+                schemaElements[i] = (Element) additionalSchemaElements.get(i);
+
+            }
+        } catch (Exception e) {
+            //log this and get going.
+            log.error("Additional schema loading failed!!",e);
+        }
+
+        return schemaElements;
     }
 
 
@@ -145,7 +193,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                 .iterator();
         while (extIterator.hasNext()) {
             WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
-            if (element.getType().equals(ExtensionConstants.SOAP_BODY)) {
+            if (ExtensionConstants.SOAP_BODY.equals(element.getType())) {
                 if (WSDLConstants.WSDL_USE_ENCODED.equals(
                         ((SOAPBody) element).getUse())) {
                     throw new RuntimeException(

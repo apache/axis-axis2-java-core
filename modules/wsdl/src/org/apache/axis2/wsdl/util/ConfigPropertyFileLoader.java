@@ -10,8 +10,10 @@ import java.util.Properties;
 public class ConfigPropertyFileLoader {
 
     private static String[] extensionClassNames;
+    private static String[] thirdPartySchemaNames;
 
     private static final String CODE_GEN_KEY = "codegen.extension";
+    private static final String THIRD_PARTY_SCHEMA_KEY = "codegen.thirdparty.schema";
 
     static{
         try {
@@ -25,6 +27,12 @@ public class ConfigPropertyFileLoader {
 
             }
 
+            String thirdPartySchemas = props.getProperty(THIRD_PARTY_SCHEMA_KEY);
+            if (thirdPartySchemas!=null){
+                thirdPartySchemaNames = thirdPartySchemas.split(",");
+
+            }
+
 
 
         } catch (IOException e) {
@@ -35,5 +43,9 @@ public class ConfigPropertyFileLoader {
 
     public static String[] getExtensionClassNames() {
         return extensionClassNames;
+    }
+
+    public static String[] getThirdPartySchemaNames() {
+        return thirdPartySchemaNames;
     }
 }
