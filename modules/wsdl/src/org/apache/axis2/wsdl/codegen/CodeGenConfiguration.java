@@ -43,8 +43,24 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private boolean writeMessageReceiver = true;
     private String packageName = XSLTConstants.DEFAULT_PACKAGE_NAME;
 
+    /* Code generation style means whether to use the binding or the interface for code generation.
+    * the default is automatic where the code generator looks for the binding and if the binding is
+    * absent, switches to the interface. The user however, can switch to the interface or the binding
+    * modes explicitly by specifying this parameter
+    */
+    private  int codeGenerationStyle = XSLTConstants.CodegenStyle.AUTOMATIC;
+
 
     private TypeMapper typeMapper;
+
+
+    public int getCodeGenerationStyle() {
+        return codeGenerationStyle;
+    }
+
+    public void setCodeGenerationStyle(int codeGenerationStyle) {
+        this.codeGenerationStyle = codeGenerationStyle;
+    }
 
     public TypeMapper getTypeMapper() {
         return typeMapper;

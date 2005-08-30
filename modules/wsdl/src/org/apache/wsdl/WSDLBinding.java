@@ -25,7 +25,7 @@ public interface WSDLBinding extends ExtensibleComponent {
     /**
      * Method getBoundInterface
      *
-     * @return
+     * @return WSDLInterface
      */
     public WSDLInterface getBoundInterface();
 
@@ -39,7 +39,7 @@ public interface WSDLBinding extends ExtensibleComponent {
     /**
      * Method getName
      *
-     * @return
+     * @return  QName
      */
     public QName getName();
 
@@ -53,14 +53,14 @@ public interface WSDLBinding extends ExtensibleComponent {
     /**
      * Method getTargetNameSpace
      *
-     * @return
+     * @return  String
      */
     public String getTargetNameSpace();
 
     /**
      * Method getBindingFaults
      *
-     * @return
+     * @return String
      */
     public HashMap getBindingFaults();
 
@@ -74,7 +74,7 @@ public interface WSDLBinding extends ExtensibleComponent {
     /**
      * Method getBindingOperations
      *
-     * @return
+     * @return  Hashmap
      */
     public HashMap getBindingOperations();
 
@@ -96,7 +96,7 @@ public interface WSDLBinding extends ExtensibleComponent {
      * Method getBindingOperation
      *
      * @param qName
-     * @return
+     * @return  Hashmap
      */
     public WSDLBindingOperation getBindingOperation(QName qName);
 
@@ -111,7 +111,7 @@ public interface WSDLBinding extends ExtensibleComponent {
      * Method getBindingFault
      *
      * @param ref
-     * @return
+     * @return  Hashmap
      */
     public WSDLBindingFault getBindingFault(QName ref);
 }

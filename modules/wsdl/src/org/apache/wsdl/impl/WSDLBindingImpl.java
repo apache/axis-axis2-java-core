@@ -51,7 +51,7 @@ public class WSDLBindingImpl extends ExtensibleComponentImpl
     /**
      * Method getBoundInterface
      *
-     * @return
+     * @return  WSDLInterface
      */
     public WSDLInterface getBoundInterface() {
         return boundInterface;
@@ -69,7 +69,7 @@ public class WSDLBindingImpl extends ExtensibleComponentImpl
     /**
      * Method getName
      *
-     * @return
+     * @return  QName
      */
     public QName getName() {
         return name;
@@ -87,7 +87,7 @@ public class WSDLBindingImpl extends ExtensibleComponentImpl
     /**
      * Method getTargetNameSpace
      *
-     * @return
+     * @return String
      */
     public String getTargetNameSpace() {
         return this.name.getNamespaceURI();
@@ -96,7 +96,7 @@ public class WSDLBindingImpl extends ExtensibleComponentImpl
     /**
      * Method getBindingFaults
      *
-     * @return
+     * @return  Hashmap
      */
     public HashMap getBindingFaults() {
         return bindingFaults;
@@ -114,7 +114,7 @@ public class WSDLBindingImpl extends ExtensibleComponentImpl
     /**
      * Method getBindingOperations
      *
-     * @return
+     * @return Hashmap
      */
     public HashMap getBindingOperations() {
         return bindingOperations;
@@ -145,7 +145,7 @@ public class WSDLBindingImpl extends ExtensibleComponentImpl
      * Method getBindingOperation
      *
      * @param qName
-     * @return
+     * @return WSDLBindingOperation
      */
     public WSDLBindingOperation getBindingOperation(QName qName) {
         return (WSDLBindingOperation) this.bindingOperations.get(qName);
@@ -166,7 +166,7 @@ public class WSDLBindingImpl extends ExtensibleComponentImpl
      * Method getBindingFault
      *
      * @param ref
-     * @return
+     * @return WSDLBindingFault
      */
     public WSDLBindingFault getBindingFault(QName ref) {
         return (WSDLBindingFault) this.bindingFaults.get(ref);

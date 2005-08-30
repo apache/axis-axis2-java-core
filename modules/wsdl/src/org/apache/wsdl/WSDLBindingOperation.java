@@ -22,10 +22,11 @@ import java.util.List;
  * @author chathura@opensource.lk
  */
 public interface WSDLBindingOperation extends ExtensibleComponent {
+  
     /**
      * Method getInput
      *
-     * @return
+     * @return messgae reference
      */
     public WSDLBindingMessageReference getInput();
 
@@ -39,7 +40,7 @@ public interface WSDLBindingOperation extends ExtensibleComponent {
     /**
      * Method getOperation
      *
-     * @return
+     * @return the wsl operation
      */
     public WSDLOperation getOperation();
 
@@ -53,7 +54,7 @@ public interface WSDLBindingOperation extends ExtensibleComponent {
     /**
      * Method getOutput
      *
-     * @return
+     * @return wsdl binding message reference
      */
     public WSDLBindingMessageReference getOutput();
 
@@ -67,7 +68,7 @@ public interface WSDLBindingOperation extends ExtensibleComponent {
     /**
      * Method getName
      *
-     * @return
+     * @return  QName of this element
      */
     public QName getName();
 

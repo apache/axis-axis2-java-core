@@ -37,6 +37,9 @@ public interface ExtensionConstants {
 
     public static final QName SOAP_BODY = new QName(
             "http://schemas.xmlsoap.org/wsdl/soap/", "body");
+    
+    public static final QName SOAP_HEADER = new QName(
+            "http://schemas.xmlsoap.org/wsdl/soap/", "header");
 
     public static final QName SOAP_BINDING = new QName(
             "http://schemas.xmlsoap.org/wsdl/soap/", "binding");

@@ -29,6 +29,8 @@ import java.util.List;
  */
 public class WSDLBindingOperationImpl extends ExtensibleComponentImpl
         implements WSDLBindingOperation {
+
+
     /**
      * Field name
      */
@@ -63,11 +65,13 @@ public class WSDLBindingOperationImpl extends ExtensibleComponentImpl
     /**
      * Method getInput
      *
-     * @return
+     * @return message reference
      */
     public WSDLBindingMessageReference getInput() {
         return input;
     }
+
+
 
     /**
      * Method setInput
@@ -81,7 +85,7 @@ public class WSDLBindingOperationImpl extends ExtensibleComponentImpl
     /**
      * Method getOperation
      *
-     * @return
+     * @return operation
      */
     public WSDLOperation getOperation() {
         return operation;
@@ -99,7 +103,7 @@ public class WSDLBindingOperationImpl extends ExtensibleComponentImpl
     /**
      * Method getOutput
      *
-     * @return
+     * @return message reference
      */
     public WSDLBindingMessageReference getOutput() {
         return output;
@@ -117,7 +121,7 @@ public class WSDLBindingOperationImpl extends ExtensibleComponentImpl
     /**
      * Method getName
      *
-     * @return
+     * @return QName
      */
     public QName getName() {
         return name;

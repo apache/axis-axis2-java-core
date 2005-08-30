@@ -32,10 +32,7 @@ import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.extensions.schema.SchemaImport;
-import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.soap.SOAPBinding;
-import javax.wsdl.extensions.soap.SOAPBody;
-import javax.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.extensions.soap.*;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -123,13 +120,6 @@ public class WSDLPump {
             this.womDefinition.setTypes(wsdlTypes);
         }
 
-//        Map importsMap = wsdl4JDefinition.getImports();
-//        if (null!=importsMap && importsMap.size()>0){
-//           Object[] imports = importsMap.values().toArray();
-//            for (int i = 0; i < imports.length; i++) {
-//                Import wsdl4jImport = (Import) importsMap.values().
-//            }
-//        }
 
         // There can be types that are imported. Check the imports and
         // These schemas are needed for code generation
@@ -179,8 +169,8 @@ public class WSDLPump {
 
         //////////////////(3)Copy the Bindings///////////////////////
         //pump the Bindings: Get the Bindings map from WSDL4J and create a new
-        // map of
-        //WSDLBinding elements
+        // map of WSDLBinding elements. At this point we need to do some extra work since there
+        //can be header parameters
 
         Iterator bindingIterator = wsdl4JDefinition.getBindings().values()
                 .iterator();
@@ -255,7 +245,7 @@ public class WSDLPump {
      */
     private void populateBindings(WSDLBinding wsdlBinding,
                                   Binding wsdl4JBinding) {
-        //Copy attrebutes
+        //Copy attributes
         wsdlBinding.setName(wsdl4JBinding.getQName());
         QName interfaceName = wsdl4JBinding.getPortType().getQName();
         WSDLInterface wsdlInterface =
@@ -581,8 +571,10 @@ public class WSDLPump {
         wsdlBindingOperation.setName(
                 new QName(nameSpaceOfTheBindingOperation,
                         wsdl4jBindingOperation.getName()));
+
         BindingInput wsdl4jInputBinding =
                 wsdl4jBindingOperation.getBindingInput();
+
         if (null != wsdl4jInputBinding) {
             WSDLBindingMessageReference wsdlInputBinding =
                     this.wsdlComponentFactory.createWSDLBindingMessageReference();
@@ -705,25 +697,25 @@ public class WSDLPump {
 
             if (wsdl4jElement instanceof UnknownExtensibilityElement) {
                 UnknownExtensibilityElement unknown = (UnknownExtensibilityElement) (wsdl4jElement);
-                DefaultExtensibilityElement extensibilityElement = (DefaultExtensibilityElement) extensionFactory
+                DefaultExtensibilityElement defaultExtensibilityElement = (DefaultExtensibilityElement) extensionFactory
                         .getExtensionElement(wsdl4jElement.getElementType());
-                extensibilityElement.setElement(unknown.getElement());
+                defaultExtensibilityElement.setElement(unknown.getElement());
                 Boolean required = unknown.getRequired();
                 if (null != required) {
-                    extensibilityElement.setRequired(required.booleanValue());
+                    defaultExtensibilityElement.setRequired(required.booleanValue());
                 }
-                component.addExtensibilityElement(extensibilityElement);
+                component.addExtensibilityElement(defaultExtensibilityElement);
             } else if (wsdl4jElement instanceof SOAPAddress) {
                 SOAPAddress soapAddress = (SOAPAddress) wsdl4jElement;
-                org.apache.wsdl.extensions.SOAPAddress extensibilityElement = (org.apache.wsdl.extensions.SOAPAddress) extensionFactory
+                org.apache.wsdl.extensions.SOAPAddress soapAddressExtensibilityElement = (org.apache.wsdl.extensions.SOAPAddress) extensionFactory
                         .getExtensionElement(soapAddress.getElementType());
-                extensibilityElement.setLocationURI(soapAddress
+                soapAddressExtensibilityElement.setLocationURI(soapAddress
                         .getLocationURI());
                 Boolean required = soapAddress.getRequired();
                 if (null != required) {
-                    extensibilityElement.setRequired(required.booleanValue());
+                    soapAddressExtensibilityElement.setRequired(required.booleanValue());
                 }
-                component.addExtensibilityElement(extensibilityElement);
+                component.addExtensibilityElement(soapAddressExtensibilityElement);
             } else if (wsdl4jElement instanceof Schema) {
                 Schema schema = (Schema) wsdl4jElement;
                 //schema.getDocumentBaseURI()
@@ -732,58 +724,77 @@ public class WSDLPump {
                 //recursivly load the schema elements. The best thing is to push these into
                 //a stack and then pop from the other side
                 pushSchemaElement(schema, schemaStack);
-                org.apache.wsdl.extensions.Schema extensibilityElement = (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
+                org.apache.wsdl.extensions.Schema schemaExtensibilityElement = (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
                         schema.getElementType());
-                extensibilityElement.setElement(schema.getElement());
-                extensibilityElement.setImportedSchemaStack(schemaStack);
+                schemaExtensibilityElement.setElement(schema.getElement());
+                schemaExtensibilityElement.setImportedSchemaStack(schemaStack);
                 Boolean required = schema.getRequired();
                 if (null != required) {
-                    extensibilityElement.setRequired(required.booleanValue());
+                    schemaExtensibilityElement.setRequired(required.booleanValue());
                 }
                 //set the name of this Schema element
-                extensibilityElement.setName(new QName("",schema.getDocumentBaseURI()));
-                component.addExtensibilityElement(extensibilityElement);
+                //todo this needs to be fixed
+                schemaExtensibilityElement.setName(new QName("",schema.getDocumentBaseURI()));
+                component.addExtensibilityElement(schemaExtensibilityElement);
             } else if (SOAPConstants.Q_ELEM_SOAP_OPERATION.equals(
                     wsdl4jElement.getElementType())) {
                 SOAPOperation soapOperation = (SOAPOperation) wsdl4jElement;
-                org.apache.wsdl.extensions.SOAPOperation extensibilityElement = (org.apache.wsdl.extensions.SOAPOperation) extensionFactory.getExtensionElement(
+                org.apache.wsdl.extensions.SOAPOperation soapOperationextensibilityElement = (org.apache.wsdl.extensions.SOAPOperation) extensionFactory.getExtensionElement(
                         soapOperation.getElementType());
-                extensibilityElement.setSoapAction(
+                soapOperationextensibilityElement.setSoapAction(
                         soapOperation.getSoapActionURI());
-                extensibilityElement.setStyle(soapOperation.getStyle());
+                soapOperationextensibilityElement.setStyle(soapOperation.getStyle());
                 Boolean required = soapOperation.getRequired();
                 if (null != required) {
-                    extensibilityElement.setRequired(required.booleanValue());
+                    soapOperationextensibilityElement.setRequired(required.booleanValue());
                 }
-                component.addExtensibilityElement(extensibilityElement);
+                component.addExtensibilityElement(soapOperationextensibilityElement);
             } else if (SOAPConstants.Q_ELEM_SOAP_BODY.equals(
                     wsdl4jElement.getElementType())) {
                 SOAPBody soapBody = (SOAPBody) wsdl4jElement;
-                org.apache.wsdl.extensions.SOAPBody extensibilityElement = (org.apache.wsdl.extensions.SOAPBody) extensionFactory.getExtensionElement(
+                org.apache.wsdl.extensions.SOAPBody soapBodyExtensibilityElement = (org.apache.wsdl.extensions.SOAPBody) extensionFactory.getExtensionElement(
                         soapBody.getElementType());
-                extensibilityElement.setNamespaceURI(
+                soapBodyExtensibilityElement.setNamespaceURI(
                         soapBody.getNamespaceURI());
-                extensibilityElement.setUse(soapBody.getUse());
+                soapBodyExtensibilityElement.setUse(soapBody.getUse());
                 Boolean required = soapBody.getRequired();
                 if (null != required) {
-                    extensibilityElement.setRequired(required.booleanValue());
+                    soapBodyExtensibilityElement.setRequired(required.booleanValue());
                 }
-                component.addExtensibilityElement(extensibilityElement);
+
+                component.addExtensibilityElement(soapBodyExtensibilityElement);
+                //add the header
+            } else if (SOAPConstants.Q_ELEM_SOAP_HEADER.equals(
+                    wsdl4jElement.getElementType())) {
+                SOAPHeader soapHeader = (SOAPHeader) wsdl4jElement;
+                org.apache.wsdl.extensions.SOAPHeader soapHeaderExtensibilityElement = (org.apache.wsdl.extensions.SOAPHeader) extensionFactory.getExtensionElement(
+                        soapHeader.getElementType());
+                soapHeaderExtensibilityElement.setNamespaceURI(
+                        soapHeader.getNamespaceURI());
+                soapHeaderExtensibilityElement.setUse(soapHeader.getUse());
+                Boolean required = soapHeader.getRequired();
+                if (null != required) {
+                    soapHeaderExtensibilityElement.setRequired(required.booleanValue());
+                }
+                soapHeaderExtensibilityElement.setMessage(soapHeader.getMessage());
+                soapHeaderExtensibilityElement.setPart(soapHeader.getPart());
+                soapHeader.getMessage();
+                component.addExtensibilityElement(soapHeaderExtensibilityElement);
             } else if (SOAPConstants.Q_ELEM_SOAP_BINDING.equals(
                     wsdl4jElement.getElementType())) {
                 SOAPBinding soapBinding = (SOAPBinding) wsdl4jElement;
-                org.apache.wsdl.extensions.SOAPBinding extensibilityElement = (org.apache.wsdl.extensions.SOAPBinding) extensionFactory.getExtensionElement(
+                org.apache.wsdl.extensions.SOAPBinding soapBindingExtensibilityElement = (org.apache.wsdl.extensions.SOAPBinding) extensionFactory.getExtensionElement(
                         soapBinding.getElementType());
-                extensibilityElement.setTransportURI(
+                soapBindingExtensibilityElement.setTransportURI(
                         soapBinding.getTransportURI());
-                extensibilityElement.setStyle(soapBinding.getStyle());
+                soapBindingExtensibilityElement.setStyle(soapBinding.getStyle());
                 Boolean required = soapBinding.getRequired();
                 if (null != required) {
-                    extensibilityElement.setRequired(required.booleanValue());
+                    soapBindingExtensibilityElement.setRequired(required.booleanValue());
                 }
-                component.addExtensibilityElement(extensibilityElement);
+                component.addExtensibilityElement(soapBindingExtensibilityElement);
             } else {
-//				throw new AxisError(
+               //	throw new AxisError(
 //						"An Extensible item "+wsdl4jElement.getElementType()+" went unparsed during WSDL Parsing");
             }
         }

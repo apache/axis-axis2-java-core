@@ -40,6 +40,11 @@ public interface XSLTConstants {
 
     }
 
+    public interface CodegenStyle{
+        public static final int AUTOMATIC = 0;
+        public static final int INTERFACE = 1;
+        public static final int BINDING = 2;
+    }
     /**
      * Interface templates
      */
