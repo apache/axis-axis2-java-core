@@ -92,6 +92,9 @@
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario1_client_repo/modules/security.mar"/>
 
+	<!-- This is to add the PWCallback in to the classpath for the client to pick
+	     the password callback class.
+	-->
    	<ant:path id="sec.interop.service.jar" location="../security/target/PingPort.aar"/>
         <maven:addPath id="maven.dependency.classpath" refid="sec.interop.service.jar"/>
 
@@ -103,6 +106,28 @@
         <copy file="../security/target/PingPort.aar"
             tofile="target/test-resources/scenario1_service_repo/services/PingPort.aar"/>
 
+	<!-- Scenario 2 -->
+        <mkdir dir="target/test-resources/scenario2_client_repo"/>
+        <mkdir dir="target/test-resources/scenario2_client_repo/modules"/>
+        <mkdir dir="target/test-resources/scenario2_client_repo/classes"/>
+
+        <mkdir dir="target/test-resources/scenario2_service_repo"/>
+        <mkdir dir="target/test-resources/scenario2_service_repo/services"/>
+        <mkdir dir="target/test-resources/scenario2_service_repo/modules"/>
+
+	<!-- setup scenario2 client repository-->
+        <copy file="test-resources/security/s2.client.axis2.xml"
+            tofile="target/test-resources/scenario2_client_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario2_client_repo/modules/security.mar"/>
+
+	<!-- setup scenario2 service repository-->
+        <copy file="test-resources/security/s2.service.axis2.xml"
+            tofile="target/test-resources/scenario2_service_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario2_service_repo/modules/security.mar"/>
+        <copy file="../security/target/PingPort.aar"
+            tofile="target/test-resources/scenario2_service_repo/services/PingPort.aar"/>
 
     <!-- Standard repository -->
     <mkdir dir="target/Repository"/>

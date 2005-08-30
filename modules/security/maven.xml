@@ -111,9 +111,15 @@
     	<!-- Create the META-INF directory -->
     	<mkdir dir="${class.dir}/META-INF"/>
     	
-    	<!-- copy the service.xml-->
+    		<!-- copy the service.xml-->
 		<copy file="interop/service.xml" 
-			tofile="${class.dir}/META-INF/service.xml" overwrite="yes"/>		
+			tofile="${class.dir}/META-INF/service.xml" overwrite="yes"/>
+		<!-- Copy interop.properties-->
+		<copy file="interop/interop.properties" 
+			tofile="${class.dir}/interop.properties" overwrite="yes"/>
+		<!-- Copy interop.jks -->
+		<copy file="interop/interop2.jks" 
+			tofile="${class.dir}/interop2.jks" overwrite="yes"/>
 		
 		<jar jarfile="target/PingPort.aar" basedir="target/interop/classes">
             <include name="**/*"/>
