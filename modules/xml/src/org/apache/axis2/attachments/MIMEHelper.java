@@ -10,19 +10,20 @@
  */
 package org.apache.axis2.attachments;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
-import java.util.HashMap;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.impl.MTOMConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
-
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.impl.MTOMConstants;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PushbackInputStream;
+import java.util.HashMap;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -78,6 +79,9 @@ public class MIMEHelper {
 
     int fileStorageThreshold;
 
+    protected Log log = LogFactory.getLog(getClass());
+
+
     /**
      * @param inStream
      * @param contentTypeString
@@ -88,8 +92,8 @@ public class MIMEHelper {
      *      read till first MIME boundary is found or end of stream reached.
      */
     public MIMEHelper(InputStream inStream, String contentTypeString,
-            boolean fileCacheEnable, String attachmentRepoDir,
-            String fileThreshold) throws OMException {
+                      boolean fileCacheEnable, String attachmentRepoDir,
+                      String fileThreshold) throws OMException {
         this.attachmentRepoDir = attachmentRepoDir;
         this.fileCacheEnable = fileCacheEnable;
         if (fileThreshold != null && (!fileThreshold.equals(""))) {
@@ -139,7 +143,7 @@ public class MIMEHelper {
                             "Mime parts not found. Stream ended while searching for the boundary");
                 }
             } catch (IOException e1) {
-                throw new OMException("Stream Error" + e1.toString());
+                throw new OMException("Stream Error" + e1.toString(), e1);
             }
         }
     }
@@ -229,6 +233,7 @@ public class MIMEHelper {
         try {
             return soapPart.getContentType();
         } catch (MessagingException e) {
+            log.error(e.getMessage());
             throw new OMException(e);
         }
     }

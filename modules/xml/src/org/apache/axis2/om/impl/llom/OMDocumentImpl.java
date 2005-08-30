@@ -276,7 +276,7 @@ public class OMDocumentImpl implements OMDocument {
      */
     public void serialize(OMOutputImpl omOutput)
             throws XMLStreamException {
-        serialize(omOutput, false, true);
+        serialize(omOutput, false, !omOutput.isIgnoreXMLDeclaration());
     }
 
 
@@ -286,7 +286,7 @@ public class OMDocumentImpl implements OMDocument {
      * @see org.apache.axis2.om.OMDocument#serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl)
      */
     public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
-        serialize(omOutput, true, true);
+        serialize(omOutput, true, !omOutput.isIgnoreXMLDeclaration());
 
     }
 

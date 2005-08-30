@@ -33,6 +33,7 @@
         <unitTest>
             <excludes>
                 <exclude>**/*SpacesTest.java</exclude>
+                <exclude>**/*AbstractOMSerializationTest.java</exclude>
             </excludes>
             <includes>
                 <include>**/*Test.java</include>

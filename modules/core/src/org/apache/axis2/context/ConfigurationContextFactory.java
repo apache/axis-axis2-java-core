@@ -129,7 +129,7 @@ public class ConfigurationContextFactory {
                 reolve.engageModuleToService(service, moduledecs);
             }
         } catch (PhaseException e) {
-            throw new PhaseException(e.getMessage());
+            throw e;
         } catch (AxisFault axisFault) {
             throw new PhaseException(axisFault);
         }

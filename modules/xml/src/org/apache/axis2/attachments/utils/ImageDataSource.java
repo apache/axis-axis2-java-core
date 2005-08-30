@@ -31,11 +31,11 @@ public class ImageDataSource implements DataSource {
 
     private ByteArrayOutputStream os;
 
-    public ImageDataSource(String name, Image data) {
+    public ImageDataSource(String name, Image data) throws Exception {
         this(name, CONTENT_TYPE, data);
     } // ctor
 
-    public ImageDataSource(String name, String contentType, Image data) {
+    public ImageDataSource(String name, String contentType, Image data) throws Exception {
         this.name = name;
         this.contentType = contentType == null ? CONTENT_TYPE : contentType;
         os = new ByteArrayOutputStream();
@@ -44,7 +44,7 @@ public class ImageDataSource implements DataSource {
                 new ImageIO().saveImage(this.contentType, data, os);
             }
         } catch (Exception e) {
-            // log.error(Messages.getMessage("exception00"), e);
+            throw e;
         }
     }
 

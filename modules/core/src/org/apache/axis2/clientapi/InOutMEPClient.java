@@ -243,9 +243,9 @@ public class InOutMEPClient extends MEPClient {
             }
 
         } catch (OMException e) {
-            throw AxisFault.makeFault(e);
+            throw new AxisFault(e.getMessage(), e);
         }catch (Exception e) {
-            e.printStackTrace();
+            throw new AxisFault(e.getMessage(), e);
         }
 
     }

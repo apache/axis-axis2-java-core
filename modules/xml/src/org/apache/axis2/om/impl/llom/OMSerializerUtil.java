@@ -133,11 +133,11 @@ public class OMSerializerUtil {
             writer.writeStartElement(element.getLocalName());
         }
 
-        // add the elements attributes
-        serializeAttributes(element, omOutput);
-
         // add the namespaces
         serializeNamespaces(element, omOutput);
+
+        // add the elements attributes
+        serializeAttributes(element, omOutput);
     }
 
     public static void serializeNamespaces(OMElementImpl element,
