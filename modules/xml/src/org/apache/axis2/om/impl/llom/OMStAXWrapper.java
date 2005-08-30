@@ -617,7 +617,8 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                 returnCount = getCount(elt.getAttributes());
             } else {
                 throw new IllegalStateException(
-                        "attribute count accessed in illegal event!");
+                        "attribute count accessed in illegal event (" +
+                        currentEvent + ")!");
             }
         }
         return returnCount;
@@ -633,7 +634,22 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @return
      */
     public String getAttributeValue(String s, String s1) {
-        throw new UnsupportedOperationException();
+        String returnString = null;
+        if (parser != null) {
+            returnString = parser.getAttributeValue(s, s1);
+        } else {
+            if (isStartElement() || (currentEvent == ATTRIBUTE)) {
+                QName qname = new QName(s, s1);
+                OMAttribute attrib = ((OMElement)lastNode).getAttribute(qname);
+                if (attrib != null) {
+                    returnString = attrib.getValue();
+                }
+            } else {
+                throw new IllegalStateException(
+                        "attribute type accessed in illegal event!");
+            }
+        }
+        return returnString;
     }
 
     /**

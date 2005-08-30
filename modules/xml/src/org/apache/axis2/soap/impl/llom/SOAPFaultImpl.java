@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.StringWriter;
+import java.io.PrintWriter;
 import java.util.Iterator;
 
 /**
@@ -136,7 +137,8 @@ public abstract class SOAPFaultImpl extends SOAPElement
 
     protected void putExceptionToSOAPFault(Exception e) throws SOAPProcessingException {
         StringWriter sw = new StringWriter();
-        sw.write(e.getMessage());
+//        sw.write(e.getMessage());
+        e.printStackTrace(new PrintWriter(sw));
         sw.flush();
         getDetail();
         if (getDetail() == null) {

@@ -134,8 +134,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
                 }
             }
         } else {
-//            throw new OMException(
-//                    "Non namespace qualified elements are not allowed");
+            writer.writeStartElement(reader.getLocalName());
         }
 
         // add attributes
