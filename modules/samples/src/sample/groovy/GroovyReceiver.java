@@ -70,7 +70,7 @@ public class GroovyReceiver
                     Messages.getMessage("paramIsNotSpecified", "ServiceClass"));
             }
             InputStream groovyFileStream =
-                this.getClass().getResourceAsStream(
+                service.getClassLoader().getResourceAsStream(
                     implInfoParam.getValue().toString());
 
             if (groovyFileStream == null) {

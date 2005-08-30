@@ -22,6 +22,8 @@ import org.apache.axis2.deployment.DeploymentClassLoader;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.net.URL;
+import java.net.MalformedURLException;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 
 /**
@@ -97,71 +99,70 @@ public class ArchiveFileData {
         this.moduleClass = moduleClass;
     }
 
-    public void setClassLoader() throws AxisFault {
+    public void setClassLoader(boolean extarctArichive) throws AxisFault {
         ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        ArrayList URLs = new ArrayList();
-        boolean tobeRecreated = false;// if there is a jar file inside a jar file then the URLClassLoader
-        // has to be craeted taking that file to the account
-        if (file != null) {
-            URL[] urlsToLoadFrom = new URL[0];
-            try {
-                if (!file.exists()) {
-                    throw new RuntimeException("file not found !!!!!!!!!!!!!!!");
+        if (! extarctArichive) {
+            // has to be craeted taking that file to the account
+            if (file != null) {
+                URL[] urlsToLoadFrom;
+                try {
+                    if (!file.exists()) {
+                        throw new RuntimeException("file not found !!!!!!!!!!!!!!!");
+                    }
+                    urlsToLoadFrom = new URL[]{file.toURL()};
+                    classLoader =
+                            new DeploymentClassLoader(urlsToLoadFrom, parent);
+                    //                classLoader = new URLClassLoader(urlsToLoadFrom, parent);
+                } catch (Exception e) {
+                    throw new AxisFault(e);
                 }
-                URLs.add(file.toURL());
-                urlsToLoadFrom = new URL[]{file.toURL()};
-                classLoader =
-                        new DeploymentClassLoader(urlsToLoadFrom, parent);
-//                classLoader = new URLClassLoader(urlsToLoadFrom, parent);
-            } catch (Exception e) {
-                throw new AxisFault(e);
+            }
+        } else {
+            if (file != null) {
+                try {
+                    ArrayList urls = new ArrayList();
+                    urls.add(file.toURL());
+
+                    //if lib is simple
+                    File libfiles = new File(file, "lib");
+                    if(libfiles.exists()){
+                        urls.add(libfiles.toURL());
+                        File jarfiles [] = libfiles.listFiles();
+                        for (int i = 0; i < jarfiles.length; i++) {
+                            File jarfile = jarfiles[i];
+                            if(jarfile.getName().endsWith(".jar")){
+                                urls.add(jarfile.toURL());
+                            }
+                        }
+                    }
+
+                    //if lib is capital
+                    libfiles = new File(file, "Lib");
+                    if(libfiles.exists()){
+                        urls.add(libfiles.toURL());
+                        File jarfiles [] = libfiles.listFiles();
+                        for (int i = 0; i < jarfiles.length; i++) {
+                            File jarfile = jarfiles[i];
+                            if(jarfile.getName().endsWith(".jar")){
+                                urls.add(jarfile.toURL());
+                            }
+                        }
+                    }
+
+                    URL urllist [] = new URL[urls.size()];
+                    for (int i = 0; i < urls.size(); i++) {
+                        urllist[i] = (URL) urls.get(i);
+                    }
+                    classLoader = new URLClassLoader(urllist,parent);
+
+
+                } catch (MalformedURLException e) {
+                    throw new AxisFault(e);
+                }
+
             }
         }
-//            try {
-//                ZipInputStream zin = new ZipInputStream(new FileInputStream(file));
-//                ZipEntry entry;
-//                String entryName = "";
-//                int BUFFER = 2048;
-//                while ((entry = zin.getNextEntry()) != null) {
-//                    entryName = entry.getName();
-//                    if (entryName != null && entryName.startsWith("lib/") && entryName.endsWith(".jar")) {
-//                        //extarcting jar file form the orignial jar file and copy it to the axis2 lib
-//                        File libFile = new File(DeploymentEngine.axis2repository, entryName);
-//                        FileOutputStream dest = new FileOutputStream(libFile);
-//                        ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
-//                        byte data[] = new byte[BUFFER];
-//                        InputStream in = classLoader.getResourceAsStream(entryName);
-//                        ZipInputStream jar_zin = null;
-//                        jar_zin = new ZipInputStream(in);
-//                        ZipEntry jarentry;
-//                        while ((jarentry = jar_zin.getNextEntry()) != null) {
-//                            ZipEntry zip = new ZipEntry(jarentry);
-//                            out.putNextEntry(zip);
-//                            int count;
-//                            while ((count = jar_zin.read(data, 0, BUFFER)) != -1) {
-//                                out.write(data, 0, count);
-//                            }
-//                        }
-//                        out.close();
-//                        jar_zin.close();
-//                        URLs.add(libFile.toURL());
-//                        tobeRecreated = true;
-//                    }
-//                }
-//                zin.close();
-//                if (tobeRecreated) {
-//                    URL[] urlstobeload = new URL[URLs.size()];
-//                    for (int i = 0; i < URLs.size(); i++) {
-//                        URL url = (URL) URLs.get(i);
-//                        urlstobeload[i] = url;
-//                    }
-//                    //recreating the classLoader
-//                    classLoader = new URLClassLoader(urlstobeload, parent);
-//                }
-//            } catch (IOException e) {
-//                throw new DeploymentException(e);
-//            }
-//        }
+
     }
 
     public void addModule(QName moduleName) {
@@ -170,5 +171,20 @@ public class ArchiveFileData {
 
     public ArrayList getModules() {
         return modules;
+    }
+
+
+    /**
+     * to check whthere a given file is  a  jar file
+     *
+     * @param filename
+     * @return boolean
+     */
+    public static  boolean isServiceArchiveFile(String filename) {
+        return ((filename.endsWith(".jar")) | (filename.endsWith(".aar")));
+    }
+
+    public static  boolean isModuleArchiveFile(String filename) {
+        return ((filename.endsWith(".jar")) || (filename.endsWith(".mar")));
     }
 }

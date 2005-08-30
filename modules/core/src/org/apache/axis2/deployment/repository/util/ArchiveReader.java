@@ -94,58 +94,85 @@ public class ArchiveReader implements DeploymentConstants {
      * @param engine
      */
     public void processServiceDescriptor(String filename,
-                                   DeploymentEngine engine,
-                                   ServiceDescription service)throws DeploymentException {
+                                         DeploymentEngine engine,
+                                         ServiceDescription service, boolean extarctService)throws DeploymentException {
         // get attribute values
         boolean foundServiceXML = false;
-        ZipInputStream zin;
+        ServiceBuilder builder;
+        if (! extarctService) {
+            ZipInputStream zin;
+            try {
+                zin = new ZipInputStream(new FileInputStream(filename));
+                ZipEntry entry;
+                while ((entry = zin.getNextEntry()) != null) {
+                    if (entry.getName().equals(SERVICEXML)) {
+                        foundServiceXML = true;
+                        builder = new ServiceBuilder(zin,engine,service);
+                        builder.populateService();
+                        break;
+                    }
+                }
+                zin.close();
+                if (!foundServiceXML) {
+                    throw new DeploymentException(
+                            Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND));
+                }
+            } catch (Exception e) {
+                throw new DeploymentException(e);
+            }
+        } else {
+            File file = new File(filename , SERVICEXML);
+            if(file.exists()){
+                InputStream in = null;
+                try {
+                    in = new FileInputStream(file);
+                    builder = new ServiceBuilder(in,engine,service);
+                    builder.populateService();
+
+                } catch (FileNotFoundException e) {
+                    throw new DeploymentException("FileNotFound : " + e);
+                }finally {
+                    try {
+                        if (in !=null) {
+                            in.close();
+                        }
+                    } catch (IOException e) {
+                        throw new DeploymentException("IOException : " + e);
+                    }
+                }
+            } else {
+                throw new DeploymentException(
+                        Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND));
+            }
+        }
+    }
+
+    public void readModuleArchive(String filename,
+                                  DeploymentEngine engine,
+                                  ModuleDescription module) throws DeploymentException {
+        // get attribute values
+        boolean foundmoduleXML = false;
+        ZipInputStream zin ;
         try {
             zin = new ZipInputStream(new FileInputStream(filename));
             ZipEntry entry;
             while ((entry = zin.getNextEntry()) != null) {
-                if (entry.getName().equals(SERVICEXML)) {
-                    foundServiceXML = true;
-                    ServiceBuilder builder = new ServiceBuilder(zin,engine,service);
-                    builder.populateService();
+                if (entry.getName().equals(MODULEXML)) {
+                    foundmoduleXML = true;
+                    ModuleBuilder builder = new ModuleBuilder(zin, engine,module);
+                    builder.populateModule();
                     break;
                 }
             }
             zin.close();
-            if (!foundServiceXML) {
-                throw new DeploymentException(
-                        Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND));
+            if (!foundmoduleXML) {
+                throw new DeploymentException(Messages.getMessage(
+                        DeploymentErrorMsgs.MODULEXML_NOT_FOUND_FOR_THE_MODULE, filename));
             }
         } catch (Exception e) {
             throw new DeploymentException(e);
         }
     }
-
-    public void readModuleArchive(String filename,
-                                      DeploymentEngine engine,
-                                      ModuleDescription module) throws DeploymentException {
-            // get attribute values
-            boolean foundmoduleXML = false;
-            ZipInputStream zin ;
-            try {
-                zin = new ZipInputStream(new FileInputStream(filename));
-                ZipEntry entry;
-                while ((entry = zin.getNextEntry()) != null) {
-                    if (entry.getName().equals(MODULEXML)) {
-                        foundmoduleXML = true;
-                        ModuleBuilder builder = new ModuleBuilder(zin, engine,module);
-                        builder.populateModule();
-                        break;
-                    }
-                }
-                zin.close();
-                if (!foundmoduleXML) {
-                    throw new DeploymentException(Messages.getMessage(
-                            DeploymentErrorMsgs.MODULEXML_NOT_FOUND_FOR_THE_MODULE, filename));
-                }
-            } catch (Exception e) {
-                throw new DeploymentException(e);
-            }
-        }
 
 
 

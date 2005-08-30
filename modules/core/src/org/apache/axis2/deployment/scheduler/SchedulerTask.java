@@ -38,8 +38,9 @@ public class SchedulerTask implements Runnable {
      * Creates a new scheduler task.
      */
 
-    public SchedulerTask(DeploymentEngine deploy_engine, String folderName) {
-        wsListener = new RepositoryListenerImpl(folderName, deploy_engine);
+    public SchedulerTask(DeploymentEngine deploy_engine, String folderName,
+                         boolean extarctServiceArchive) {
+        wsListener = new RepositoryListenerImpl(folderName, deploy_engine,extarctServiceArchive);
     }
 
     /**

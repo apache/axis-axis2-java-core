@@ -12,6 +12,13 @@
     <parameter name="userName" locked="xsd:false">admin</parameter>
     <parameter name="password" locked="xsd:false">axis2</parameter>
 
+
+    <!--if you want to extract the service archive file and work with that please uncomment this-->
+    <!--else , it wont exatract archive file or does not take into consideration if someone drop-->
+    <!--exploded directory into /service directory-->
+    <!--<parameter name="extarct_service_archieve" locked="xsd:false">true</parameter>-->
+
+
 <!--    The way of adding listener to the system-->
 <!--    <listener class="org.apache.axis2.ObserverIMPL">-->
 <!--        <parameter name="RSS_URL" locked="xsd:false">http://127.0.0.1/rss</parameter>-->
