@@ -40,8 +40,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     protected boolean isBinary = false;
 
-    private static Random rnd = new Random(new Date().getTime());
-
     /**
      * Field contentID for the mime part used when serialising Binary stuff as
      * MTOM optimised

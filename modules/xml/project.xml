@@ -32,6 +32,7 @@
 
         <unitTest>
             <excludes>
+                <exclude>**/*SpacesTest.java</exclude>
             </excludes>
             <includes>
                 <include>**/*Test.java</include>
@@ -95,17 +96,17 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>sjsxp</groupId>
-            <artifactId>sjsxp</artifactId>
-            <version>1.6</version>
+            <groupId>stax</groupId>
+            <artifactId>stax</artifactId>
+            <version>1.1.1-dev</version>
             <properties>
                 <module>true</module>
             </properties>
         </dependency>
         <dependency>
-            <groupId>sjsxp</groupId>
-            <artifactId>jsr173_api</artifactId>
-            <version>1.6</version>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+            <version>1.0</version>
             <properties>
                 <module>true</module>
             </properties>

@@ -136,19 +136,16 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
      * @throws OMException
      */
     protected OMNode createOMText(int textType) throws OMException {
+        OMNode node = null;
         if (lastNode == null) {
-            throw new OMException();
+            return null;
+        } else if (!lastNode.isComplete()) {
+            node = omfactory.createText((OMElement) lastNode, parser.getText());
+            node.setType(textType);
+        } else if (!(lastNode.getParent() instanceof OMDocument)) {
+            node = omfactory.createText((OMElement)lastNode.getParent(), parser.getText());
+            node.setType(textType);
         }
-        OMNode node;
-        if (lastNode.isComplete()) {
-            node =
-                    omfactory.createText((OMElement) lastNode.getParent(),
-                            parser.getText());
-        } else {
-            OMElement e = (OMElement) lastNode;
-            node = omfactory.createText(e, parser.getText());
-        }
-        node.setType(textType);
         return node;
     }
 
