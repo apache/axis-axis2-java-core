@@ -753,7 +753,7 @@ public class DeploymentEngine implements DeploymentConstants {
 //                    this);
 //            schme.parseServiceXML(axisService);
             loadServiceProperties(axisService);
-            axisConfig.addService(axisService);
+//            axisConfig.addService(axisService);
         }  catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
         }

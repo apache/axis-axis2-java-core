@@ -116,14 +116,30 @@ public class AxisConfigurationImpl implements AxisConfiguration {
                 new Phase(PhaseMetadata.PHASE_PRE_DISPATCH));
 
         Phase dispatch = new Phase(PhaseMetadata.PHASE_DISPATCH);
-        dispatch.addHandler(new AddressingBasedDispatcher(), 0);
-        dispatch.addHandler(new RequestURIBasedDispatcher(), 1);
-        dispatch.addHandler(new SOAPActionBasedDispatcher(), 2);
-        dispatch.addHandler(new SOAPMessageBodyBasedDispatcher(), 3);
+        AddressingBasedDispatcher add_dispatch = new AddressingBasedDispatcher();
+        add_dispatch.getHandlerDesc().setParent(this);
+        dispatch.addHandler(add_dispatch, 0);
+
+        RequestURIBasedDispatcher uri_diaptch = new RequestURIBasedDispatcher();
+        uri_diaptch.getHandlerDesc().setParent(this);
+        dispatch.addHandler(uri_diaptch, 1);
+
+        SOAPActionBasedDispatcher soapActionBased_dispatch = new SOAPActionBasedDispatcher();
+        soapActionBased_dispatch.getHandlerDesc().setParent(this);
+        dispatch.addHandler(soapActionBased_dispatch, 2);
+
+        SOAPMessageBodyBasedDispatcher soapMessageBodybased_dispatch =
+                new SOAPMessageBodyBasedDispatcher();
+        soapMessageBodybased_dispatch.getHandlerDesc().setParent(this);
+        dispatch.addHandler(soapMessageBodybased_dispatch, 3);
+
         inPhasesUptoAndIncludingPostDispatch.add(dispatch);
 
         Phase postDispatch = new Phase(PhaseMetadata.PHASE_POST_DISPATCH);
-        postDispatch.addHandler(new DispatchingChecker());
+        DispatchingChecker dispatchingChecker = new DispatchingChecker();
+        dispatchingChecker.getHandlerDesc().setParent(this);
+
+        postDispatch.addHandler(dispatchingChecker);
         inPhasesUptoAndIncludingPostDispatch.add(postDispatch);
     }
 
@@ -349,8 +365,12 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      *
      * @param param
      */
-    public void addParameter(Parameter param) {
-        paramInclude.addParameter(param);
+    public void addParameter(Parameter param) throws AxisFault{
+        if(isParamterLocked(param.getName())){
+            throw new AxisFault("Parmter is locked can not overide: " + param.getName());
+        } else{
+            paramInclude.addParameter(param);
+        }
     }
 
     /**
@@ -388,8 +408,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         } else {
             throw new AxisFault(
                     this + " Refer to invalid module "
-                    + moduleref.getLocalPart() +
-                    " has not bean deployed yet !");
+                            + moduleref.getLocalPart() +
+                            " has not bean deployed yet !");
         }
         if (tobeEnaged) {
             new PhaseResolver(this).engageModuleGlobally(module);
@@ -399,7 +419,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
             addMdoule(module);
         }
     }
-    
+
     public boolean isEngaged(QName moduleName) {
         return engagedModules.contains(moduleName);
     }

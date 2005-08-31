@@ -21,12 +21,15 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.handlers.AbstractHandler;
 
 import javax.xml.namespace.QName;
 
 public class RegistryTest extends AbstractTestCase {
-    private AxisConfiguration reg;
+    private AxisConfiguration reg = new AxisConfigurationImpl();
+    ServiceDescription service = new ServiceDescription(
+                new QName("Service1"));
 
     public RegistryTest(String testName) {
         super(testName);
@@ -55,33 +58,32 @@ public class RegistryTest extends AbstractTestCase {
 
     }
 
-    public void testHandlerMedatata() {
+    public void testHandlerMedatata() throws AxisFault {
         HandlerDescription hmd = new HandlerDescription();
         testParameteInClude(hmd);
     }
 
-    public void testService() {
-        ServiceDescription service = new ServiceDescription(
-                new QName("Service1"));
+    public void testService() throws AxisFault {
+        service.setParent(reg);
         testParameteInClude(service);
         testFlowIncludeTest(service);
-
-
     }
 
-    public void testModule() {
+    public void testModule() throws AxisFault {
         ModuleDescription module = new ModuleDescription(new QName("module1"));
+        module.setParent(reg);
         testParameteInClude(module);
         testFlowIncludeTest(module);
     }
 
-    public void testOpeartion() {
+    public void testOpeartion() throws AxisFault {
         OperationDescription op = new OperationDescription(new QName("op"));
+        op.setParent(service);
         testParameteInClude(op);
     }
 
 
-    public void testParameteInClude(ParameterInclude parmInclude) {
+    public void testParameteInClude(ParameterInclude parmInclude) throws AxisFault {
         String key = "value1";
         Parameter p = new ParameterImpl(key, "value2");
         parmInclude.addParameter(p);

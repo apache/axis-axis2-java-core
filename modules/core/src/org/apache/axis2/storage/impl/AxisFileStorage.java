@@ -3,6 +3,7 @@ package org.apache.axis2.storage.impl;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterIncludeImpl;
 import org.apache.axis2.description.ParameterInclude;
+import org.apache.axis2.AxisFault;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -109,7 +110,7 @@ public class AxisFileStorage extends AbstractStorage {
     }
 
 
-    public void addParameter(Parameter param) {
+    public void addParameter(Parameter param) throws AxisFault{
         paramter.addParameter(param);
     }
 

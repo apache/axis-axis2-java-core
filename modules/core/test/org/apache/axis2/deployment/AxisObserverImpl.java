@@ -4,6 +4,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterIncludeImpl;
 import org.apache.axis2.engine.AxisEvent;
 import org.apache.axis2.engine.AxisObserver;
+import org.apache.axis2.AxisFault;
 
 import java.util.ArrayList;
 
@@ -43,7 +44,7 @@ public class AxisObserverImpl implements AxisObserver{
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void addParameter(Parameter param) {
+    public void addParameter(Parameter param) throws AxisFault{
 //        paramterimpl.addParameter(param);
     }
 
@@ -57,6 +58,6 @@ public class AxisObserverImpl implements AxisObserver{
 
     //to check whether the paramter is locked at any levle
     public boolean isParamterLocked(String paramterName) {
-        return false;  
+        return false;
     }
 }

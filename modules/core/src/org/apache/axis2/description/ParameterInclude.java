@@ -15,6 +15,8 @@
  */
 package org.apache.axis2.description;
 
+import org.apache.axis2.AxisFault;
+
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
@@ -30,7 +32,7 @@ public interface ParameterInclude {
      *
      * @param param
      */
-    public void addParameter(Parameter param);
+    public void addParameter(Parameter param) throws AxisFault;
 
     /**
      * Method getParameter

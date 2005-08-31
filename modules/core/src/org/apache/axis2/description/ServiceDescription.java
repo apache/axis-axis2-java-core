@@ -334,13 +334,18 @@ public class ServiceDescription
      *
      * @param param
      */
-    public void addParameter(Parameter param) {
+    public void addParameter(Parameter param) throws AxisFault {
         if (param == null) {
             return;
         }
-        ParameterIncludeImpl paramInclude =
-                (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
-        paramInclude.addParameter(param);
+
+        if(isParamterLocked(param.getName())){
+            throw new AxisFault("Parmter is locked can not overide: " + param.getName());
+        } else{
+            ParameterIncludeImpl paramInclude =
+                    (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
+            paramInclude.addParameter(param);
+        }
     }
 
     /*
@@ -773,7 +778,11 @@ public class ServiceDescription
     //to check whether a given paramter is locked
     public boolean isParamterLocked(String paramterName) {
         // checking the locked value of parent
-        boolean loscked = getParent().isParamterLocked(paramterName);
+        boolean loscked = false;
+
+        if (getParent() !=null) {
+            loscked =  getParent().isParamterLocked(paramterName);
+        }
         if(loscked){
             return true;
         } else {

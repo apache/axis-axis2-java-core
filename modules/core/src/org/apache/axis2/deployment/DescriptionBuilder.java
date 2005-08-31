@@ -159,6 +159,7 @@ public class DescriptionBuilder implements DeploymentConstants{
                     new QName(PARAMETERST));
             processParameters(paramters,handler,parent);
         }
+        handler.setParent(parent);
         return handler;
     }
 
@@ -246,7 +247,11 @@ public class DescriptionBuilder implements DeploymentConstants{
                     paramter.setLocked(false);
                 }
             }
-            parameterInclude.addParameter(paramter);
+            try {
+                parameterInclude.addParameter(paramter);
+            } catch (AxisFault axisFault) {
+                throw new DeploymentException(axisFault);
+            }
         }
     }
 

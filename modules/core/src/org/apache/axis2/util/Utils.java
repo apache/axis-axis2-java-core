@@ -77,7 +77,7 @@ public class Utils {
     public static ServiceDescription createSimpleService(QName serviceName,
                                                          MessageReceiver messageReceiver,
                                                          String className,
-                                                         QName opName) {
+                                                         QName opName) throws AxisFault {
         ServiceDescription service = new ServiceDescription(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(
@@ -102,7 +102,7 @@ public class Utils {
 
     public static ServiceDescription createSimpleService(QName serviceName,
                                                          String className,
-                                                         QName opName) {
+                                                         QName opName) throws AxisFault {
         return createSimpleService(serviceName,
                 new RawXMLINOutMessageReceiver(),
                 className,

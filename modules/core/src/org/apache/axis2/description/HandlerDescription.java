@@ -16,6 +16,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -48,6 +49,8 @@ public class HandlerDescription implements ParameterInclude {
      * Field className
      */
     private String className;
+
+    private ParameterInclude parent;
 
     /**
      * Constructor HandlerDescription
@@ -102,8 +105,12 @@ public class HandlerDescription implements ParameterInclude {
     /**
      * @param param
      */
-    public void addParameter(Parameter param) {
-        parameterInclude.addParameter(param);
+    public void addParameter(Parameter param) throws AxisFault{
+        if(isParamterLocked(param.getName())){
+            throw new AxisFault("Parmter is locked can not overide: " + param.getName());
+        } else{
+            parameterInclude.addParameter(param);
+        }
     }
 
     /**
@@ -120,6 +127,11 @@ public class HandlerDescription implements ParameterInclude {
 
     //to check whether the paramter is locked at any levle
     public boolean isParamterLocked(String paramterName) {
+        if(parent != null){
+            if(parent.isParamterLocked(paramterName)){
+                return true;
+            }
+        }
         return parameterInclude.isParamterLocked(paramterName);
     }
 
@@ -153,5 +165,13 @@ public class HandlerDescription implements ParameterInclude {
      */
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    public ParameterInclude getParent() {
+        return parent;
+    }
+
+    public void setParent(ParameterInclude parent) {
+        this.parent = parent;
     }
 }
