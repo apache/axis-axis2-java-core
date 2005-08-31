@@ -14,6 +14,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 
 /*
@@ -44,14 +47,42 @@ public class AbstractOMSerializationTest extends XMLTestCase {
      * @param xmlString - remember this is not the file path. this is the xml string
      */
     public Diff getDiffForComparison(String xmlString) throws Exception {
-        return getDiff(new ByteArrayInputStream(xmlString.getBytes()));
+        return getDiffForComparison(new ByteArrayInputStream(xmlString.getBytes()));
     }
 
     public Diff getDiffForComparison(File xmlFile) throws Exception {
-        return getDiff(new FileInputStream(xmlFile));
+        return getDiffForComparison(new FileInputStream(xmlFile));
     }
 
-    private Diff getDiff(InputStream inStream) throws Exception {
+    public String getSerializedOM(String xmlString) throws Exception {
+        try {
+            XMLInputFactory factory = XMLInputFactory.newInstance();
+//            factory.setProperty("http://java.sun.com/xml/stream/properties/report-cdata-event", Boolean.TRUE);
+
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(xmlString.getBytes());
+            StAXOMBuilder staxOMBuilder = OMXMLBuilderFactory.
+                    createStAXOMBuilder(OMAbstractFactory.getOMFactory(),
+                            factory.createXMLStreamReader(byteArrayInputStream));
+            staxOMBuilder.setDoDebug(true);
+            OMElement rootElement = staxOMBuilder.getDocumentElement();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            OMOutputImpl omOutput = new OMOutputImpl(baos, false);
+            omOutput.ignoreXMLDeclaration(ignoreXMLDeclaration);
+
+//            rootElement.serializeWithCache(omOutput);
+            ((OMDocument) rootElement.getParent()).serializeWithCache(omOutput);
+            omOutput.flush();
+
+            return new String(baos.toByteArray());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public Diff getDiffForComparison(InputStream inStream) throws Exception {
 
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -66,7 +97,7 @@ public class AbstractOMSerializationTest extends XMLTestCase {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
             OMOutputImpl omOutput = new OMOutputImpl(baos, false);
-            omOutput.ignoreXMLDeclaration(ignoreXMLDeclaration);
+//            omOutput.ignoreXMLDeclaration(ignoreXMLDeclaration);
 
             if (ignoreDocument) {
                 rootElement.serializeWithCache(omOutput);
@@ -80,8 +111,8 @@ public class AbstractOMSerializationTest extends XMLTestCase {
             InputSource resultXML = new InputSource(new InputStreamReader(
                     new ByteArrayInputStream(baos.toByteArray())));
 
-            Document dom1 = newDocument(inStream);
             Document dom2 = newDocument(resultXML);
+            Document dom1 = newDocument(inStream);
 
             return compareXML(dom1, dom2);
 //            assertXMLEqual(diff, true);
@@ -92,9 +123,11 @@ public class AbstractOMSerializationTest extends XMLTestCase {
             fail(e.getMessage());
             throw new Exception(e);
         } catch (SAXException e) {
+            e.printStackTrace();
             fail(e.getMessage());
             throw new Exception(e);
         } catch (IOException e) {
+            e.printStackTrace();
             fail(e.getMessage());
             throw new Exception(e);
         }
@@ -116,5 +149,34 @@ public class AbstractOMSerializationTest extends XMLTestCase {
         return db.parse(in);
     }
 
+    public Document newDocument(String xml)
+            throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        return db.parse(new ByteArrayInputStream(xml.getBytes()));
+    }
+
+    public String writeXmlFile(Document doc) {
+        try {
+            // Prepare the DOM document for writing
+            Source source = new DOMSource(doc);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Result result = new StreamResult(baos);
+
+            // Write the DOM document to the file
+            Transformer xformer = TransformerFactory.newInstance().newTransformer();
+            xformer.transform(source, result);
+            return new String(baos.toByteArray());
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+
+        }
+        return null;
+
+    }
 
 }

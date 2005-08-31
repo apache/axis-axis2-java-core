@@ -18,54 +18,28 @@ package org.apache.axis2.om;
  * @author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import org.custommonkey.xmlunit.Diff;
+import org.w3c.dom.Document;
 
 public class AttrNsTest extends AbstractOMSerializationTest {
 
-    String xml = "<foo xmlns:a=\"http://opensource.lk\">\n" +
-            "<bar1 b:attr=\"test attr value1\" xmlns:b=\"http://opensource.lk/ns1\">test1</bar1>\n" +
-            "<bar2 b:attr=\"test attr value2\" xmlns:b=\"http://opensource.lk/ns1\">test2</bar2>\n" +
+    private String attrNamespaceTestXML = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+            "<foo xmlns:a=\"http://opensource.lk\">" +
+            "    <bar1 b:attr=\"test attr value1\" xmlns:b=\"http://opensource.lk/ns1\">test1</bar1>" +
+            "    <bar2 b:attr=\"test attr value2\" xmlns:b=\"http://opensource.lk/ns1\">test2</bar2>" +
             "</foo>";
 
     public void testAttributeNamespaces() throws Exception {
-//        ignoreXMLDeclaration = true;
-//        ignoreDocument = true;
-//        Diff diffForComparison = getDiffForComparison(xml);
-//        assertXMLEqual(diffForComparison, true);
-        assertTrue(true);
+        ignoreXMLDeclaration = true;
+        ignoreDocument = true;
+
+        Document document1 = newDocument(attrNamespaceTestXML);
+        String serializedOM = getSerializedOM(attrNamespaceTestXML);
+        Document document2 = newDocument(serializedOM);
+
+        Diff diff = compareXML(document1, document2);
+        assertXMLEqual(diff, true);
     }
 
-    public static void main(String[] args) {
-        //File f = new File("/home/ruchith/temp/attr.ns.1.xml");
-        String xml = "<foo xmlns:a=\"http://opensource.lk\">\n" +
-                "<bar1 b:attr=\"test attr value1\" xmlns:b=\"http://opensource.lk/ns1\">test1</bar1>\n" +
-                "<bar2 b:attr=\"test attr value2\" xmlns:b=\"http://opensource.lk/ns1\">test2</bar2>\n" +
-                "</foo>";
-        try {
 
-            ByteArrayInputStream bais = new ByteArrayInputStream(xml.getBytes());
-
-            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
-            StAXOMBuilder builder = new StAXOMBuilder(reader);
-            OMElement elem = builder.getDocumentElement();
-            elem.build();
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(baos);
-            OMOutputImpl output = new OMOutputImpl(writer);
-            elem.serialize(output);
-            output.flush();
-            System.out.println(new String(baos.toByteArray()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
