@@ -34,7 +34,7 @@ public class SOAPAddressImpl extends WSDLExtensibilityElementImpl implements Ext
 
 
     public SOAPAddressImpl() {
-        type = SOAP_ADDRESS;
+        type = SOAP_11_ADDRESS;
     }
 
 

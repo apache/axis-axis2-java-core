@@ -20,6 +20,8 @@ import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPOperation;
 import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 
+import javax.xml.namespace.QName;
+
 /**
  * @author chathura@opensource.lk
  */
@@ -31,9 +33,12 @@ public class SOAPOperationImpl extends WSDLExtensibilityElementImpl implements
     private String style;
 
     public SOAPOperationImpl() {
-        this.type = SOAP_OPERATION;
+        this.type = SOAP_11_OPERATION;
     }
 
+    public SOAPOperationImpl(QName type) {
+        this.type = type;
+    }
     public String getStyle() {
         return style;
     }

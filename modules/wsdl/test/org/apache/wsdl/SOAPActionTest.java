@@ -65,7 +65,7 @@ public class SOAPActionTest extends AbstractTestCase {
             WSDLExtensibilityElement element = (WSDLExtensibilityElement) iterator
                     .next();
             SOAPOperation soapOperation = null;
-            if (ExtensionConstants.SOAP_OPERATION.equals(element.getType())) {
+            if (ExtensionConstants.SOAP_11_OPERATION.equals(element.getType())) {
                 soapOperation = (SOAPOperation) element;
             }
             if (soapOperation == null) {

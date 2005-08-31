@@ -885,7 +885,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             methodElement.appendChild(getOutputElement(doc, operation, soapHeaderOutputParameterList));
 
             rootElement.appendChild(methodElement);
-          
+
         }
     }
 
@@ -899,7 +899,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         while (extIterator.hasNext()) {
             WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
-            if (element.getType().equals(ExtensionConstants.SOAP_HEADER)) {
+            if (element.getType().equals(ExtensionConstants.SOAP_11_HEADER)) {
                 SOAPHeader header = (SOAPHeader)element;
                 soapHeaderParameterQNameList.add(header.getElement());
             }
@@ -914,7 +914,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         boolean actionAdded = false;
         while (extIterator.hasNext()) {
             WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
-            if (element.getType().equals(ExtensionConstants.SOAP_OPERATION)) {
+            if (ExtensionConstants.SOAP_11_OPERATION.equals(element.getType())) {
                 addAttribute(doc,
                         "soapaction",
                         ((SOAPOperation) element).getSoapAction(),
@@ -1071,11 +1071,12 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             Iterator iterator = endpoint.getExtensibilityElements().iterator();
             while (iterator.hasNext()) {
                 WSDLExtensibilityElement element = (WSDLExtensibilityElement) iterator.next();
-                if (element.getType().equals(ExtensionConstants.SOAP_ADDRESS)) {
+                if (ExtensionConstants.SOAP_11_ADDRESS.equals(element.getType()) ||
+                     ExtensionConstants.SOAP_12_ADDRESS.equals(element.getType())){
                     address = (org.apache.wsdl.extensions.SOAPAddress) element;
                 }
             }
-            text = doc.createTextNode(address.getLocationURI());     //todo How to get the end point address
+            text = doc.createTextNode(address!=null?address.getLocationURI():"");     //todo How to get the end point address
             endpointElement.appendChild(text);
             rootElement.appendChild(endpointElement);
         }

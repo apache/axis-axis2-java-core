@@ -35,18 +35,28 @@ public class ExtensionFactoryImpl implements ExtensionFactory,
      * @return the Specific implementation for the particular QName given.
      */
     public WSDLExtensibilityElement getExtensionElement(QName qName) {
-        if (SOAP_ADDRESS.equals(qName))
+        if (SOAP_11_ADDRESS.equals(qName))
             return new SOAPAddressImpl();
         if (SCHEMA.equals(qName))
             return new SchemaImpl();
-        if (SOAP_OPERATION.equals(qName))
+        if (SOAP_11_OPERATION.equals(qName))
             return new SOAPOperationImpl();
-        if (SOAP_BODY.equals(qName))
+        if (SOAP_11_BODY.equals(qName))
             return new SOAPBodyImpl();
-        if (SOAP_BINDING.equals(qName))
+        if (SOAP_11_BINDING.equals(qName))
             return new SOAPBindingImpl();
-        if (SOAP_HEADER.equals(qName))
+        if (SOAP_11_HEADER.equals(qName))
             return new SOAPHeadeImpl();
+        //soap 1.2 objects.
+        if (SOAP_12_OPERATION.equals(qName))
+            return new SOAPOperationImpl(SOAP_12_OPERATION);
+        if (SOAP_12_BODY.equals(qName))
+            return new SOAPBodyImpl(SOAP_12_BODY);
+        if (SOAP_12_BINDING.equals(qName))
+            return new SOAPBindingImpl(SOAP_12_BINDING);
+        if (SOAP_12_HEADER.equals(qName))
+            return new SOAPHeadeImpl(SOAP_12_HEADER);
+        
         return new DefaultExtensibilityElementImpl();
     }
 

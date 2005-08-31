@@ -26,22 +26,33 @@ public interface ExtensionConstants {
     /**
      * The Type name for the SOAP Address defined in the Port/Endpoint
      */
-    public static final QName SOAP_ADDRESS = new QName(
+    public static final QName SOAP_11_ADDRESS = new QName(
             "http://schemas.xmlsoap.org/wsdl/soap/", "address");
+    public static final QName SOAP_12_ADDRESS = new QName(
+            "http://schemas.xmlsoap.org/wsdl/soap12/", "address");
 
-    public static final QName SOAP_OPERATION = new QName(
+
+    public static final QName SOAP_11_OPERATION = new QName(
             "http://schemas.xmlsoap.org/wsdl/soap/", "operation");
+     public static final QName SOAP_12_OPERATION = new QName(
+            "http://schemas.xmlsoap.org/wsdl/soap12/", "operation");
 
     public static final QName SCHEMA = new QName(
             "http://www.w3.org/2001/XMLSchema", "schema");
 
-    public static final QName SOAP_BODY = new QName(
+    public static final QName SOAP_11_BODY = new QName(
             "http://schemas.xmlsoap.org/wsdl/soap/", "body");
+    public static final QName SOAP_12_BODY = new QName(
+            "http://schemas.xmlsoap.org/wsdl/soap12/", "body");
     
-    public static final QName SOAP_HEADER = new QName(
+    public static final QName SOAP_11_HEADER = new QName(
             "http://schemas.xmlsoap.org/wsdl/soap/", "header");
+     public static final QName SOAP_12_HEADER = new QName(
+            "http://schemas.xmlsoap.org/wsdl/soap12/", "header");
 
-    public static final QName SOAP_BINDING = new QName(
+    public static final QName SOAP_11_BINDING = new QName(
             "http://schemas.xmlsoap.org/wsdl/soap/", "binding");
+     public static final QName SOAP_12_BINDING = new QName(
+            "http://schemas.xmlsoap.org/wsdl/soap12/", "binding");
 
 }

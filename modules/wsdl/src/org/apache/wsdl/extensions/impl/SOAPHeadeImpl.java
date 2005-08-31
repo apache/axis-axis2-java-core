@@ -18,7 +18,11 @@ public class SOAPHeadeImpl extends SOAPBodyImpl implements SOAPHeader {
     private QName element = null;
 
     public SOAPHeadeImpl() {
-        this.type = SOAP_HEADER;
+        this.type = SOAP_11_HEADER;
+    }
+
+    public SOAPHeadeImpl(QName type) {
+        this.type = type;
     }
 
     public QName getMessage() {

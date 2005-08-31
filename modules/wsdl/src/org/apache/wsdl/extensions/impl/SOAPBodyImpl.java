@@ -20,6 +20,8 @@ import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPBody;
 import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 
+import javax.xml.namespace.QName;
+
 /**
  * @author chathura@opensource.lk
  */
@@ -30,9 +32,12 @@ public class SOAPBodyImpl extends WSDLExtensibilityElementImpl implements Extens
     protected String namespaceURI;
 
     public SOAPBodyImpl() {
-        this.type = SOAP_BODY;
+        this.type = SOAP_11_BODY;
     }
 
+    public SOAPBodyImpl(QName type) {
+        this.type = type;
+    }
 
     public String getNamespaceURI() {
         return namespaceURI;

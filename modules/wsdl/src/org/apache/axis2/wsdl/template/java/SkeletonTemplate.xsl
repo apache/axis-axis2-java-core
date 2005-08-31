@@ -12,7 +12,8 @@
 	           java method -->
         /**
          * Auto generated method signature
-          <xsl:for-each select="input/param">
+         <!--  select only the body parameters  -->
+          <xsl:for-each select="input/param[@location='body']">
             <xsl:if test="@type!=''">* @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
          </xsl:text></xsl:if></xsl:for-each>
          */

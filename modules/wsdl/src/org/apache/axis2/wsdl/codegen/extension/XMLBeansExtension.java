@@ -12,10 +12,8 @@ import org.apache.wsdl.extensions.SOAPBody;
 import org.apache.xmlbeans.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.util.*;
 
@@ -193,7 +191,8 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                 .iterator();
         while (extIterator.hasNext()) {
             WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
-            if (ExtensionConstants.SOAP_BODY.equals(element.getType())) {
+            if (ExtensionConstants.SOAP_11_BODY.equals(element.getType()) ||
+                    ExtensionConstants.SOAP_12_BODY.equals(element.getType())) {
                 if (WSDLConstants.WSDL_USE_ENCODED.equals(
                         ((SOAPBody) element).getUse())) {
                     throw new RuntimeException(

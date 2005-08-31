@@ -20,6 +20,8 @@ import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPBinding;
 import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 
+import javax.xml.namespace.QName;
+
 /**
  * @author chathura@opensource.lk
  */
@@ -30,9 +32,12 @@ public class SOAPBindingImpl extends WSDLExtensibilityElementImpl implements Ext
     protected String transportURI;
 
     public SOAPBindingImpl() {
-        this.type = SOAP_BINDING;
+        this.type = SOAP_11_BINDING;
     }
 
+    public SOAPBindingImpl(QName type) {
+        this.type = type;
+    }
 
     public String getStyle() {
         return style;
