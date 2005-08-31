@@ -136,14 +136,27 @@ public class WSDL2JavaTest extends TestCase{
         }
     }
 
-     /**
-     * Test for the modified ping-unboond wsdl. The binding is removed
-     * statement
+    /**
+     * Test for the modified ping-unboond wsdl. The binding is removed in this wsdl
+     *
      */
     public void testCodeGenerationPingUnbound(){
 
         try {
             generateAndCompile("ping-unbound.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+FOLDER_COUNT++);
+        } catch (CodeGenerationException e) {
+            fail("Exception while code generation test!"+ e.getMessage());
+        }
+    }
+
+    /**
+     * Test for the mtom echo wsdl. This wsdl contains a restriction based on xmime
+     *
+     */
+    public void testCodeGenerationMTOMEcho(){
+
+        try {
+            generateAndCompile("mtomecho.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+FOLDER_COUNT++);
         } catch (CodeGenerationException e) {
             fail("Exception while code generation test!"+ e.getMessage());
         }
