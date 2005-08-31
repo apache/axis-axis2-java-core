@@ -48,6 +48,7 @@ public class Axis2Util {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
+			env.build();
 			/**
 			 * There are plans to deprecate the OmNode.serialize(XMLStreamWriter)
 			 * method therefore using OMOutoutImpl to serialize the env
@@ -55,9 +56,8 @@ public class Axis2Util {
 			OMOutputImpl output = new OMOutputImpl(baos, false);
 			env.serialize(output);
 			output.flush();
-
-			ByteArrayInputStream bais = new ByteArrayInputStream(baos
-					.toByteArray());
+			
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(true);

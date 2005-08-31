@@ -9,15 +9,16 @@
 
     <!-- This is only till we get the service specific parameters fixed in service.xml -->
 
-    <!-- Scenario 1: Service's Configuration: START-->
-    <!-- Also we can switch back to hte normal parameter names when we can seperately assign them to the flows -->
+    <!-- Scenario 2: Service's Configuration: START-->
+    <!-- Also we can switch back to the normal parameter names when we can seperately assign them to the flows -->
 
-    <parameter name="InAction" locked="xsd:false">UsernameToken</parameter>
+    <parameter name="InAction" locked="xsd:false">UsernameTokenSignature UsernameToken Encrypt Timestamp</parameter>
     <parameter name="InPasswordCallbackClass" locked="xsd:false">org.apache.axis2.security.PWCallback</parameter>
+    <parameter name="decryptionPropFile" locked="xsd:false">interop.properties</parameter>
 
     <parameter name="OutAction" locked="xsd:false">NoSecurity</parameter> -->
 
-    <!-- Scenario 1: Service's Configuration: END-->
+    <!-- Scenario 2: Service's Configuration: END-->
 
     <!-- ================================================= -->
     <!-- Transport Ins -->

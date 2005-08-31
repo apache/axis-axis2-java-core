@@ -85,7 +85,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             Document doc = null;
 
             try {
-            doc = Axis2Util.getDocumentFromSOAPEnvelope(msgContext.getEnvelope());
+            	doc = Axis2Util.getDocumentFromSOAPEnvelope(msgContext.getEnvelope());
             } catch (WSSecurityException wssEx) {
             	throw new AxisFault("WSDoAllReceiver: Error in converting to Document", wssEx);
             }

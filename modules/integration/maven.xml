@@ -109,7 +109,6 @@
 	<!-- Scenario 2 -->
         <mkdir dir="target/test-resources/scenario2_client_repo"/>
         <mkdir dir="target/test-resources/scenario2_client_repo/modules"/>
-        <mkdir dir="target/test-resources/scenario2_client_repo/classes"/>
 
         <mkdir dir="target/test-resources/scenario2_service_repo"/>
         <mkdir dir="target/test-resources/scenario2_service_repo/services"/>
@@ -128,6 +127,29 @@
             tofile="target/test-resources/scenario2_service_repo/modules/security.mar"/>
         <copy file="../security/target/PingPort.aar"
             tofile="target/test-resources/scenario2_service_repo/services/PingPort.aar"/>
+
+	<!-- Scenario 2a -->
+        <mkdir dir="target/test-resources/scenario2a_client_repo"/>
+        <mkdir dir="target/test-resources/scenario2a_client_repo/modules"/>
+
+        <mkdir dir="target/test-resources/scenario2a_service_repo"/>
+        <mkdir dir="target/test-resources/scenario2a_service_repo/services"/>
+        <mkdir dir="target/test-resources/scenario2a_service_repo/modules"/>
+
+	<!-- setup scenario2a client repository-->
+        <copy file="test-resources/security/s2a.client.axis2.xml"
+            tofile="target/test-resources/scenario2a_client_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario2a_client_repo/modules/security.mar"/>
+
+	<!-- setup scenario2a service repository-->
+        <copy file="test-resources/security/s2a.service.axis2.xml"
+            tofile="target/test-resources/scenario2a_service_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario2a_service_repo/modules/security.mar"/>
+        <copy file="../security/target/PingPort.aar"
+            tofile="target/test-resources/scenario2a_service_repo/services/PingPort.aar"/>
+
 
     <!-- Standard repository -->
     <mkdir dir="target/Repository"/>

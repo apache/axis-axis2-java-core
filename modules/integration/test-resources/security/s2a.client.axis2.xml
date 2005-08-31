@@ -10,16 +10,19 @@
     <!-- This is only till we get the service specific parameters fixed in service.xml -->
     <!-- Also we can switch back to hte normal parameter names when we can seperately assign them to the flows -->
 
-    <!-- Scenario 1: Client's Configuration:START-->
+    <!-- Scenario 2: Client's Configuration:START-->
 
-    <parameter name="OutAction" locked="xsd:false">UsernameToken</parameter>
+    <parameter name="OutAction" locked="xsd:false">UsernameTokenSignature Encrypt Timestamp</parameter>
     <parameter name="user" locked="xsd:false">Chris</parameter>
+    <parameter name="encryptionParts" locked="xsd:false">{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd}UsernameToken</parameter>
+    <parameter name="encryptionUser" locked="xsd:false">bob</parameter>
+    <parameter name="encryptionPropFile" locked="xsd:false">interop.properties</parameter>
     <parameter name="OutPasswordCallbackClass" locked="xsd:false">org.apache.axis2.security.PWCallback</parameter>
-    <parameter name="passwordType" locked="xsd:false">PasswordText</parameter>
+    <parameter name="encryptionKeyIdentifier" locked="xsd:false">SKIKeyIdentifier</parameter>
 
     <parameter name="InAction" locked="xsd:false">NoSecurity</parameter> 
 
-    <!-- Scenario 1: Client's Configuration:END-->
+    <!-- Scenario 2: Client's Configuration:END-->
 
 
     <transportReceiver name="http">
