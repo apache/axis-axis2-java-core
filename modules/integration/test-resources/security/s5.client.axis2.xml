@@ -13,7 +13,7 @@
     <!-- Scenario 1: Client's Configuration:START-->
 
     <parameter name="OutAction" locked="xsd:false">UsernameToken</parameter>
-    <parameter name="user" locked="xsd:false">Chris</parameter>
+    <parameter name="user" locked="xsd:false">alice</parameter>
     <parameter name="OutPasswordCallbackClass" locked="xsd:false">org.apache.axis2.security.PWCallback</parameter>
     <parameter name="passwordType" locked="xsd:false">PasswordText</parameter>
 

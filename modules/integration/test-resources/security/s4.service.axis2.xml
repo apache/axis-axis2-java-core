@@ -9,15 +9,23 @@
 
     <!-- This is only till we get the service specific parameters fixed in service.xml -->
 
-    <!-- Scenario 1: Service's Configuration: START-->
+    <!-- Scenario 4: Service's Configuration: START-->
     <!-- Also we can switch back to hte normal parameter names when we can seperately assign them to the flows -->
 
-    <parameter name="InAction" locked="xsd:false">UsernameToken</parameter>
+    <parameter name="InAction" locked="xsd:false">Signature Encrypt Timestamp</parameter>
+    <parameter name="InSignaturePropFile" locked="xsd:false">interop.properties</parameter>
     <parameter name="InPasswordCallbackClass" locked="xsd:false">org.apache.axis2.security.PWCallback</parameter>
 
-    <parameter name="OutAction" locked="xsd:false">NoSecurity</parameter> -->
+    <parameter name="OutAction" locked="xsd:false">Signature Encrypt Timestamp</parameter>
+    <parameter name="user" locked="xsd:false">bob</parameter>
+    <parameter name="OutPasswordCallbackClass" locked="xsd:false">org.apache.axis2.security.PWCallback</parameter>
+    <parameter name="OutSignatureKeyIdentifier" locked="xsd:false">SKIKeyIdentifier</parameter>
+    <parameter name="encryptionKeyIdentifier" locked="xsd:false">EmbeddedKeyName</parameter>
+    <parameter name="OutSignaturePropFile" locked="xsd:false">interop.properties</parameter>
+    <parameter name="EmbeddedKeyCallbackClass" locked="xsd:false">org.apache.axis2.security.PWCallback</parameter>
+    <parameter name="EmbeddedKeyName" locked="xsd:false">SessionKey</parameter>
 
-    <!-- Scenario 1: Service's Configuration: END-->
+    <!-- Scenario 4: Service's Configuration: END-->
 
     <!-- ================================================= -->
     <!-- Transport Ins -->

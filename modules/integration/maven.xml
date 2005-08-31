@@ -86,7 +86,7 @@
         <mkdir dir="target/test-resources/scenario1_service_repo/services"/>
         <mkdir dir="target/test-resources/scenario1_service_repo/modules"/>
 
-	<!-- setup scenario1 client repository-->
+	<!-- setup scenario 1 client repository-->
         <copy file="test-resources/security/s1.client.axis2.xml"
             tofile="target/test-resources/scenario1_client_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
@@ -98,7 +98,7 @@
    	<ant:path id="sec.interop.service.jar" location="../security/target/PingPort.aar"/>
         <maven:addPath id="maven.dependency.classpath" refid="sec.interop.service.jar"/>
 
-	<!-- setup scenario1 service repository-->
+	<!-- setup scenario 1 service repository-->
         <copy file="test-resources/security/s1.service.axis2.xml"
             tofile="target/test-resources/scenario1_service_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
@@ -114,13 +114,13 @@
         <mkdir dir="target/test-resources/scenario2_service_repo/services"/>
         <mkdir dir="target/test-resources/scenario2_service_repo/modules"/>
 
-	<!-- setup scenario2 client repository-->
+	<!-- setup scenario 2 client repository-->
         <copy file="test-resources/security/s2.client.axis2.xml"
             tofile="target/test-resources/scenario2_client_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario2_client_repo/modules/security.mar"/>
 
-	<!-- setup scenario2 service repository-->
+	<!-- setup scenario 2 service repository-->
         <copy file="test-resources/security/s2.service.axis2.xml"
             tofile="target/test-resources/scenario2_service_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
@@ -136,13 +136,13 @@
         <mkdir dir="target/test-resources/scenario2a_service_repo/services"/>
         <mkdir dir="target/test-resources/scenario2a_service_repo/modules"/>
 
-	<!-- setup scenario2a client repository-->
+	<!-- setup scenario 2a client repository-->
         <copy file="test-resources/security/s2a.client.axis2.xml"
             tofile="target/test-resources/scenario2a_client_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario2a_client_repo/modules/security.mar"/>
 
-	<!-- setup scenario2a service repository-->
+	<!-- setup scenario 2a service repository-->
         <copy file="test-resources/security/s2a.service.axis2.xml"
             tofile="target/test-resources/scenario2a_service_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
@@ -158,13 +158,13 @@
         <mkdir dir="target/test-resources/scenario3_service_repo/services"/>
         <mkdir dir="target/test-resources/scenario3_service_repo/modules"/>
 
-	<!-- setup scenario3 client repository-->
+	<!-- setup scenario 3 client repository-->
         <copy file="test-resources/security/s3.client.axis2.xml"
             tofile="target/test-resources/scenario3_client_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario3_client_repo/modules/security.mar"/>
 
-	<!-- setup scenario3 service repository-->
+	<!-- setup scenario 3 service repository-->
         <copy file="test-resources/security/s3.service.axis2.xml"
             tofile="target/test-resources/scenario3_service_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
@@ -172,6 +172,49 @@
         <copy file="../security/target/PingPort.aar"
             tofile="target/test-resources/scenario3_service_repo/services/PingPort.aar"/>
 
+	<!-- Scenario 4 -->
+        <mkdir dir="target/test-resources/scenario4_client_repo"/>
+        <mkdir dir="target/test-resources/scenario4_client_repo/modules"/>
+
+        <mkdir dir="target/test-resources/scenario4_service_repo"/>
+        <mkdir dir="target/test-resources/scenario4_service_repo/services"/>
+        <mkdir dir="target/test-resources/scenario4_service_repo/modules"/>
+
+	<!-- setup scenario 4 client repository-->
+        <copy file="test-resources/security/s4.client.axis2.xml"
+            tofile="target/test-resources/scenario4_client_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario4_client_repo/modules/security.mar"/>
+
+	<!-- setup scenario 4 service repository-->
+        <copy file="test-resources/security/s4.service.axis2.xml"
+            tofile="target/test-resources/scenario4_service_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario4_service_repo/modules/security.mar"/>
+        <copy file="../security/target/PingPort.aar"
+            tofile="target/test-resources/scenario4_service_repo/services/PingPort.aar"/>
+
+	<!-- Scenario 5 -->
+        <mkdir dir="target/test-resources/scenario5_client_repo"/>
+        <mkdir dir="target/test-resources/scenario5_client_repo/modules"/>
+
+        <mkdir dir="target/test-resources/scenario5_service_repo"/>
+        <mkdir dir="target/test-resources/scenario5_service_repo/services"/>
+        <mkdir dir="target/test-resources/scenario5_service_repo/modules"/>
+
+	<!-- setup scenario 5 client repository-->
+        <copy file="test-resources/security/s5.client.axis2.xml"
+            tofile="target/test-resources/scenario5_client_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario5_client_repo/modules/security.mar"/>
+
+	<!-- setup scenario 5 service repository-->
+        <copy file="test-resources/security/s5.service.axis2.xml"
+            tofile="target/test-resources/scenario5_service_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario5_service_repo/modules/security.mar"/>
+        <copy file="../security/target/PingPort.aar"
+            tofile="target/test-resources/scenario5_service_repo/services/PingPort.aar"/>
 
     <!-- Standard repository -->
     <mkdir dir="target/Repository"/>

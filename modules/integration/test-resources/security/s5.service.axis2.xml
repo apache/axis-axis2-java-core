@@ -15,7 +15,7 @@
     <parameter name="InAction" locked="xsd:false">UsernameToken</parameter>
     <parameter name="InPasswordCallbackClass" locked="xsd:false">org.apache.axis2.security.PWCallback</parameter>
 
-    <parameter name="OutAction" locked="xsd:false">NoSecurity</parameter> -->
+    <parameter name="OutAction" locked="xsd:false">NoSecurity</parameter> 
 
     <!-- Scenario 1: Service's Configuration: END-->
 
