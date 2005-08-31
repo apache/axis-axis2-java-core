@@ -983,21 +983,29 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 "namespace",
                 operation.getName().getNamespaceURI(),
                 rootElement);
+
+        //Add the parameters to a map with their type as the key
+        //this step is needed to remove repetitions
+        Map parameterMap = new HashMap();
         Element inputParamElement = getInputParamElement(doc, operation);
         if (inputParamElement!=null){
-            rootElement.appendChild(inputParamElement);
+            parameterMap.put(inputParamElement.getAttribute("type"),inputParamElement);
         }
+
         Element outputParamElement = getOutputParamElement(doc, operation);
         if (outputParamElement!=null){
-            rootElement.appendChild(outputParamElement);
+            parameterMap.put(outputParamElement.getAttribute("type"),outputParamElement);
         }
+        Element newChild;
 
         if (bindingOperation!=null) {
             List headerParameterQNameList= new ArrayList();
             addHeaderOperations(headerParameterQNameList,bindingOperation,true);
             List parameterElementList = getParameterElementList(doc,headerParameterQNameList, "header");
+
             for (int i = 0; i < parameterElementList.size(); i++) {
-                rootElement.appendChild((Element)parameterElementList.get(i));
+                newChild = (Element) parameterElementList.get(i);
+                parameterMap.put(newChild.getAttribute("type"),newChild);
             }
 
             headerParameterQNameList.clear();
@@ -1005,8 +1013,15 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             addHeaderOperations(headerParameterQNameList,bindingOperation,false);
             parameterElementList = getParameterElementList(doc,headerParameterQNameList, "header");
             for (int i = 0; i < parameterElementList.size(); i++) {
-                rootElement.appendChild((Element)parameterElementList.get(i));
+                 newChild = (Element) parameterElementList.get(i);
+                parameterMap.put(newChild.getAttribute("type"),newChild);
             }
+        }
+
+        //Now run through the parameters and ad them to the root element
+        Collection parameters = parameterMap.values();
+        for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
+           rootElement.appendChild((Element)iterator.next());
         }
 
         doc.appendChild(rootElement);
@@ -1072,7 +1087,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             while (iterator.hasNext()) {
                 WSDLExtensibilityElement element = (WSDLExtensibilityElement) iterator.next();
                 if (ExtensionConstants.SOAP_11_ADDRESS.equals(element.getType()) ||
-                     ExtensionConstants.SOAP_12_ADDRESS.equals(element.getType())){
+                        ExtensionConstants.SOAP_12_ADDRESS.equals(element.getType())){
                     address = (org.apache.wsdl.extensions.SOAPAddress) element;
                 }
             }

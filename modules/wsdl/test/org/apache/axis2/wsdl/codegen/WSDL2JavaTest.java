@@ -173,7 +173,7 @@ public class WSDL2JavaTest extends TestCase{
         //todo - Still the compilation fails (the original problem of the java.home was settled by setting fork
         //todo - to true). Now the compiler fails for some unknown reason (inside maven! works fine in the IDE though)
 
-        //compile(outputLocation);
+//        compile(outputLocation);
     }
 
     /**
