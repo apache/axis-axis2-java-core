@@ -10,7 +10,7 @@
     <!-- This is only till we get the service specific parameters fixed in service.xml -->
     <!-- Also we can switch back to hte normal parameter names when we can seperately assign them to the flows -->
 
-    <!-- Scenario 1: Client's Configuration:START-->
+    <!-- Scenario 5: Client's Configuration:START-->
 
     <parameter name="OutAction" locked="false">UsernameToken</parameter>
     <parameter name="user" locked="false">alice</parameter>
@@ -19,7 +19,7 @@
 
     <parameter name="InAction" locked="false">NoSecurity</parameter>
 
-    <!-- Scenario 1: Client's Configuration:END-->
+    <!-- Scenario 5: Client's Configuration:END-->
 
 
     <transportReceiver name="http">

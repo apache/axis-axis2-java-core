@@ -9,7 +9,7 @@
 
     <!-- This is only till we get the service specific parameters fixed in service.xml -->
 
-    <!-- Scenario 1: Service's Configuration: START-->
+    <!-- Scenario 5: Service's Configuration: START-->
     <!-- Also we can switch back to hte normal parameter names when we can seperately assign them to the flows -->
 
     <parameter name="InAction" locked="false">UsernameToken</parameter>
@@ -17,7 +17,7 @@
 
     <parameter name="OutAction" locked="false">NoSecurity</parameter>
 
-    <!-- Scenario 1: Service's Configuration: END-->
+    <!-- Scenario 5: Service's Configuration: END-->
 
     <!-- ================================================= -->
     <!-- Transport Ins -->

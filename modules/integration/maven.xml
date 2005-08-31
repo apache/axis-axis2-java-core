@@ -216,6 +216,50 @@
         <copy file="../security/target/PingPort.aar"
             tofile="target/test-resources/scenario5_service_repo/services/PingPort.aar"/>
 
+	<!-- Scenario 6 -->
+        <mkdir dir="target/test-resources/scenario6_client_repo"/>
+        <mkdir dir="target/test-resources/scenario6_client_repo/modules"/>
+
+        <mkdir dir="target/test-resources/scenario6_service_repo"/>
+        <mkdir dir="target/test-resources/scenario6_service_repo/services"/>
+        <mkdir dir="target/test-resources/scenario6_service_repo/modules"/>
+
+	<!-- setup scenario 6 client repository-->
+        <copy file="test-resources/security/s6.client.axis2.xml"
+            tofile="target/test-resources/scenario6_client_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario6_client_repo/modules/security.mar"/>
+
+	<!-- setup scenario 6 service repository-->
+        <copy file="test-resources/security/s6.service.axis2.xml"
+            tofile="target/test-resources/scenario6_service_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario6_service_repo/modules/security.mar"/>
+        <copy file="../security/target/PingPort.aar"
+            tofile="target/test-resources/scenario6_service_repo/services/PingPort.aar"/>
+
+	<!-- Scenario 7 -->
+        <mkdir dir="target/test-resources/scenario7_client_repo"/>
+        <mkdir dir="target/test-resources/scenario7_client_repo/modules"/>
+
+        <mkdir dir="target/test-resources/scenario7_service_repo"/>
+        <mkdir dir="target/test-resources/scenario7_service_repo/services"/>
+        <mkdir dir="target/test-resources/scenario7_service_repo/modules"/>
+
+	<!-- setup scenario 7 client repository-->
+        <copy file="test-resources/security/s7.client.axis2.xml"
+            tofile="target/test-resources/scenario7_client_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario7_client_repo/modules/security.mar"/>
+
+	<!-- setup scenario 7 service repository-->
+        <copy file="test-resources/security/s7.service.axis2.xml"
+            tofile="target/test-resources/scenario7_service_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario7_service_repo/modules/security.mar"/>
+        <copy file="../security/target/PingPort.aar"
+            tofile="target/test-resources/scenario7_service_repo/services/PingPort.aar"/>
+
     <!-- Standard repository -->
     <mkdir dir="target/Repository"/>
         <mkdir dir="target/Repository/services"/>
