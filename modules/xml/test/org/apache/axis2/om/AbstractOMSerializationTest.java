@@ -137,7 +137,7 @@ public class AbstractOMSerializationTest extends XMLTestCase {
             throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
-        DocumentBuilder db = dbf.newDocumentBuilder();
+        DocumentBuilder db = dbf.newDocumentBuilder();   
         return db.parse(in);
     }
 

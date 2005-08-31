@@ -33,7 +33,8 @@ import javax.xml.namespace.QName;
 import java.util.HashMap;
 
 /**
- * This class is the pretty convineance class for the user without see the comlplexites of Axis2.
+ * This class should be used only to invoke INOUT web services and will serve as a more convenient
+ * class to work with INOUT MEP.
  */
 public class Call extends InOutMEPClient {
 
@@ -42,8 +43,6 @@ public class Call extends InOutMEPClient {
     private MessageContext lastResponseMessage;
 
     /**
-     * this is a convenience Class, here the Call will assume a Annoynmous Service.
-     *
      * @throws AxisFault
      */
 
@@ -73,7 +72,7 @@ public class Call extends InOutMEPClient {
     /**
      * Invoke the blocking/Synchronous call
      *
-     * @param axisop
+     * @param axisop - this will be used to identify the operation in the client side, without dispatching
      * @param toSend - This should be OM Element (payload)
      * @return
      * @throws AxisFault
@@ -90,6 +89,28 @@ public class Call extends InOutMEPClient {
         this.lastResponseMessage = super.invokeBlocking(opDesc, msgctx);
         SOAPEnvelope resEnvelope = lastResponseMessage.getEnvelope();
         return resEnvelope.getBody().getFirstElement();
+    }
+
+    /**
+     * Invoke the blocking/Synchronous call
+     *
+     * @param axisop - this will be used to identify the operation in the client side, without dispatching
+     * @param toSend - This should be SOAPEnvelope
+     * @return
+     * @throws AxisFault
+     */
+    public SOAPEnvelope invokeBlocking(String axisop, SOAPEnvelope envelope)
+            throws AxisFault {
+
+        OperationDescription opDesc =
+                serviceContext.getServiceConfig().getOperation(new QName(axisop));
+        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop);
+
+        MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
+        msgctx.setEnvelope(envelope);
+
+        this.lastResponseMessage = super.invokeBlocking(opDesc, msgctx);
+        return lastResponseMessage.getEnvelope();
     }
 
     /**
@@ -111,6 +132,30 @@ public class Call extends InOutMEPClient {
                 serviceContext.getServiceConfig().getOperation(new QName(axisop));
         opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop);
         MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
+        //call the underline implementation
+        super.invokeNonBlocking(opDesc, msgctx, callback);
+    }
+/**
+     * Invoke the nonblocking/Asynchronous call
+     *
+     * @param axisop
+     * @param envelope   -  This should be a SOAP Envelope 
+     *                 invocation behaves accordingly
+     * @param callback
+     * @throws org.apache.axis2.AxisFault
+     */
+
+    public void invokeNonBlocking(
+            String axisop,
+            SOAPEnvelope envelope,
+            Callback callback)
+            throws AxisFault {
+        OperationDescription opDesc =
+                serviceContext.getServiceConfig().getOperation(new QName(axisop));
+        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop);
+
+        MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
+        msgctx.setEnvelope(envelope);
         //call the underline implementation
         super.invokeNonBlocking(opDesc, msgctx, callback);
     }

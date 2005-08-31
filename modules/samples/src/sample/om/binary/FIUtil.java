@@ -77,11 +77,13 @@ public class FIUtil {
             System.out.println("********** XML ==> OM **************");
             XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(inFileName));
             StAXOMBuilder omStAXOMBuilder = new StAXOMBuilder(xmlStreamReader);
+            omStAXOMBuilder.setDoDebug(true);
             System.out.println("StAXOMBuilder created from " + inFileName + " ........");
 
             System.out.println("********** OM ==> Binary **************");
             File binaryFile = getBinaryXML(inFileName);
             StAXDocumentSerializer binaryStAXSerializer = new StAXDocumentSerializer(new FileOutputStream(binaryFile));
+            omStAXOMBuilder.getDocumentElement().build();
             omStAXOMBuilder.getDocumentElement().serializeWithCache(binaryStAXSerializer);
 //            binaryStAXSerializer.flush();
             System.out.println("Created binary file " + binaryFile.getName() + " from OM ......");

@@ -232,8 +232,6 @@ public class InOutMEPClient extends MEPClient {
                 msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext));
                 msgctx.setServiceContext(serviceContext);
 
-                System.out.println("Reply To = " + msgctx.getReplyTo().getAddress());
-                System.out.println("To = " + msgctx.getTo().getAddress());
                 //send the message
                 engine.send(msgctx);
             } else {
