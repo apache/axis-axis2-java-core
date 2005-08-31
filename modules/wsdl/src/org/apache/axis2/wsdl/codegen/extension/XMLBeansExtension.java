@@ -14,6 +14,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
 import java.io.*;
 import java.util.*;
 
@@ -55,10 +56,6 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
 
         Element[] additionalSchemas = loadAdditionalSchemas();
 
-        //test whether the TCCL has the Xbeans classes
-        //ClassLoader cl = Thread.currentThread().getContextClassLoader();
-
-
         try {
             //get the types from the types section
             WSDLTypes typesList = configuration.getWom().getTypes();
@@ -75,20 +72,9 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             List typesArray = typesList.getExtensibilityElements();
             WSDLExtensibilityElement extensiblityElt;
             SchemaTypeSystem sts;
-            //Vector schemabaseURIList=new Vector();
             Vector xmlObjectsVector= new Vector();
-            //String schemaBaseURI ;
-
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
-
-            // run the third party schemas
-//            for (int i = 0; i < additionalSchemas.length; i++) {
-//                System.out.println(additionalSchemas[i]);
-//                xmlObjectsVector.add(XmlObject.Factory.parse(
-//                        additionalSchemas[i]
-//                        ,null));
-//            }
 
             for (int i = 0; i < typesArray.size(); i++) {
                 extensiblityElt = (WSDLExtensibilityElement) typesArray.get(i);
@@ -99,7 +85,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                     XmlOptions options = new XmlOptions();
                     options.setLoadAdditionalNamespaces(
                             configuration.getWom().getNamespaces()); //add the namespaces
-                    //        options.
+
 
                     Stack importedSchemaStack = schema.getImportedSchemaStack();
                     //compile these schemas
@@ -118,7 +104,14 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
 
             }
 
+            // add the third party schemas
+            for (int i = 0; i < additionalSchemas.length; i++) {
+                xmlObjectsVector.add(XmlObject.Factory.parse(
+                        additionalSchemas[i]
+                        ,null));
+            }
 
+            //compile the type system
             sts = XmlBeans.compileXmlBeans(DEFAULT_STS_NAME, null,
                     convertToXMLObjectArray(xmlObjectsVector),
                     new BindingConfig(), XmlBeans.getContextTypeLoader(),
@@ -140,6 +133,11 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
 
     }
 
+    /**
+     * Loading the external schemas.
+     * @return element array consisting of the the DOM element objects that represent schemas
+     *
+     */
     private Element[] loadAdditionalSchemas() {
         //load additional schemas
         String[] schemaNames = ConfigPropertyFileLoader.getThirdPartySchemaNames();
@@ -149,7 +147,10 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             ArrayList additionalSchemaElements = new ArrayList();
             for (int i = 0; i < schemaNames.length; i++) {
                 InputStream schemaStream = this.getClass().getResourceAsStream("/org/apache/axis2/wsdl/codegen/schema/"+ schemaNames[i]);
-                Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(schemaStream);
+                DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+                documentBuilderFactory.setNamespaceAware(true);
+                DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+                Document doc = documentBuilder.parse(schemaStream);
                 additionalSchemaElements.add(doc.getDocumentElement());
             }
 
