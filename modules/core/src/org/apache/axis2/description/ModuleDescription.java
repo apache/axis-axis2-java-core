@@ -16,6 +16,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.modules.Module;
+import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -37,6 +38,8 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
      * Field name
      */
     private QName name;
+
+    private AxisConfiguration parent;
 
     /**
      * Field flowInclude
@@ -174,6 +177,30 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
 
     public HashMap getOperations() {
         return opeartions;
+    }
+
+    public AxisConfiguration getParent() {
+        return parent;
+    }
+
+    public void setParent(AxisConfiguration parent) {
+        this.parent = parent;
+    }
+
+     //to check whether a given paramter is locked
+    public boolean isParamterLocked(String paramterName) {
+        // checking the locked value of parent
+        boolean loscked = getParent().isParamterLocked(paramterName);
+        if(loscked){
+            return true;
+        } else {
+            Parameter parameter = getParameter(paramterName);
+            if(parameter != null && parameter.isLocked()){
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
 }

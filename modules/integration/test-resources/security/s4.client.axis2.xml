@@ -1,6 +1,6 @@
 <axisconfig name="AxisJava2.0">
-    <parameter name="hotdeployment" locked="xsd:false">true</parameter>
-    <parameter name="hotupdate" locked="xsd:false">true</parameter>
+    <parameter name="hotdeployment" locked="false">true</parameter>
+    <parameter name="hotupdate" locked="false">true</parameter>
 
     <messageReceiver mep="INOUT" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
 
@@ -12,18 +12,18 @@
 
     <!-- Scenario 4: Client's Configuration:START-->
 
-    <parameter name="OutAction" locked="xsd:false">Signature Encrypt Timestamp</parameter>
-    <parameter name="user" locked="xsd:false">alice</parameter>
-    <parameter name="OutPasswordCallbackClass" locked="xsd:false">org.apache.axis2.security.PWCallback</parameter>
-    <parameter name="OutSignatureKeyIdentifier" locked="xsd:false">DirectReference</parameter>
-    <parameter name="encryptionKeyIdentifier" locked="xsd:false">EmbeddedKeyName</parameter>
-    <parameter name="OutSignaturePropFile" locked="xsd:false">interop.properties</parameter>
-    <parameter name="EmbeddedKeyCallbackClass" locked="xsd:false">org.apache.axis2.security.PWCallback</parameter>
-    <parameter name="EmbeddedKeyName" locked="xsd:false">SessionKey</parameter>    
+    <parameter name="OutAction" locked="false">Signature Encrypt Timestamp</parameter>
+    <parameter name="user" locked="false">alice</parameter>
+    <parameter name="OutPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
+    <parameter name="OutSignatureKeyIdentifier" locked="false">DirectReference</parameter>
+    <parameter name="encryptionKeyIdentifier" locked="false">EmbeddedKeyName</parameter>
+    <parameter name="OutSignaturePropFile" locked="false">interop.properties</parameter>
+    <parameter name="EmbeddedKeyCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
+    <parameter name="EmbeddedKeyName" locked="false">SessionKey</parameter>
 
-    <parameter name="InAction" locked="xsd:false">Signature Encrypt Timestamp</parameter>
-    <parameter name="InSignaturePropFile" locked="xsd:false">interop.properties</parameter>
-    <parameter name="InPasswordCallbackClass" locked="xsd:false">org.apache.axis2.security.PWCallback</parameter>
+    <parameter name="InAction" locked="false">Signature Encrypt Timestamp</parameter>
+    <parameter name="InSignaturePropFile" locked="false">interop.properties</parameter>
+    <parameter name="InPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
 
     <!-- Scenario 4: Client's Configuration:END-->
 
@@ -31,7 +31,7 @@
     <transportReceiver name="http">
     </transportReceiver>
     <transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
-        <parameter name="PROTOCOL" locked="xsd:false">HTTP/1.0</parameter>
+        <parameter name="PROTOCOL" locked="false">HTTP/1.0</parameter>
     </transportSender>
 
 

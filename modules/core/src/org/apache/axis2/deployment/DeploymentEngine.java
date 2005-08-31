@@ -546,6 +546,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 ServiceDescription service =
                                         archiveReader.createService(currentArchiveFile);
                                 service.setClassLoader(currentArchiveFile.getClassLoader());
+                                service.setParent(axisConfig);
                                 archiveReader.processServiceDescriptor(currentArchiveFile.getAbsolutePath(),
                                         this,
                                         service,extractServiceArchive);
@@ -595,6 +596,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             String moduleStatus = "";
                             try {
                                 ModuleDescription metaData = new ModuleDescription();
+                                metaData.setParent(axisConfig);
                                 archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(),
                                         this,
                                         metaData);
@@ -607,7 +609,8 @@ public class DeploymentEngine implements DeploymentConstants {
 //                                    metaData.getName());
                             } catch (DeploymentException e) {
 //                                e.printStackTrace();
-                                log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE, currentArchiveFile.getName(),
+                                log.info(Messages.getMessage(
+                                        DeploymentErrorMsgs.INVALID_MODULE, currentArchiveFile.getName(),
                                         e.getMessage()));
 //                                    "Invalid module" +
 //                                    currentArchiveFile.getName());

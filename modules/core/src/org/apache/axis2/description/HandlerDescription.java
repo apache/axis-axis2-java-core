@@ -118,6 +118,11 @@ public class HandlerDescription implements ParameterInclude {
         return parameterInclude.getParameters();
     }
 
+    //to check whether the paramter is locked at any levle
+    public boolean isParamterLocked(String paramterName) {
+        return parameterInclude.isParamterLocked(paramterName);
+    }
+
     /**
      * @return
      */

@@ -15,6 +15,7 @@
  */
 package org.apache.axis2.description;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 /**
@@ -44,5 +45,8 @@ public interface ParameterInclude {
      * @return
      */
     ArrayList getParameters();
+
+    //to check whether the paramter is locked at any levle
+    boolean isParamterLocked(String paramterName);
 
 }

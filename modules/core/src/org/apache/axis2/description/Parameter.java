@@ -86,7 +86,7 @@ public interface Parameter {
      *  Paramter can be any thing it can be XML element with number of child elements , so if some
      * one wants to access the XML elemet we need to store that , at the deployment time , to store
      * the XMLelment of the parameter can use this method it will store whole
-     * <parameter name="ServiceClass1" locked="xsd:false">org.apache.axis2.sample.echo.EchoImpl</parameter>
+     * <parameter name="ServiceClass1" locked="false">org.apache.axis2.sample.echo.EchoImpl</parameter>
      * element
      * @param element  <code>OMElement<code>
      */

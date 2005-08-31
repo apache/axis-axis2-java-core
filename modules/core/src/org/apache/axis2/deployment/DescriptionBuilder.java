@@ -79,7 +79,7 @@ public class DescriptionBuilder implements DeploymentConstants{
      * @return
      * @throws DeploymentException  <code>DeploymentException</code>
      */
-    protected Flow processFlow(OMElement flowelement) throws DeploymentException {
+    protected Flow processFlow(OMElement flowelement, ParameterInclude parent) throws DeploymentException {
         Flow flow = new FlowImpl();
         if(flowelement == null){
             return flow;
@@ -88,7 +88,7 @@ public class DescriptionBuilder implements DeploymentConstants{
                 new QName(HANDERST));
         while (handlers.hasNext()) {
             OMElement  handlerElement =  (OMElement)handlers.next();
-            flow.addHandler(processHandler(handlerElement));
+            flow.addHandler(processHandler(handlerElement,parent));
         }
         return flow;
     }
@@ -99,7 +99,7 @@ public class DescriptionBuilder implements DeploymentConstants{
      * @return
      * @throws DeploymentException    <code>DeploymentException</code>
      */
-    protected HandlerDescription processHandler(OMElement handler_element)
+    protected HandlerDescription processHandler(OMElement handler_element, ParameterInclude parent)
             throws DeploymentException {
         HandlerDescription handler = new HandlerDescription();
 
@@ -157,7 +157,7 @@ public class DescriptionBuilder implements DeploymentConstants{
             }
             Iterator paramters = handler_element.getChildrenWithName(
                     new QName(PARAMETERST));
-            processParameters(paramters,handler);
+            processParameters(paramters,handler,parent);
         }
         return handler;
     }
@@ -194,10 +194,14 @@ public class DescriptionBuilder implements DeploymentConstants{
      * To get the Paramter object out from the OM
      * @param paramters <code>Parameter</code>
      * @param parameterInclude <code>ParameterInclude</code>
+     * @param parent <code>ParameterInclude</code>
      */
-    protected void processParameters(Iterator paramters, ParameterInclude parameterInclude)
+    protected void processParameters(Iterator paramters, ParameterInclude parameterInclude,
+                                     ParameterInclude parent )
             throws DeploymentException {
         while (paramters.hasNext()) {
+            //this is to check whether some one has locked the parmter at the top level
+            boolean allowedtoadd = true;
             OMElement paramterElement = (OMElement) paramters.next();
 
             Parameter paramter = new ParameterImpl();
@@ -230,7 +234,14 @@ public class DescriptionBuilder implements DeploymentConstants{
             if (paraLocked !=null) {
                 String lockedValue = paraLocked.getValue();
                 if("true".equals(lockedValue)){
-                    paramter.setLocked(true);
+                    //if the parameter is locked at some levle paramer value replace by that
+                    if(parent.isParamterLocked(paramter.getName())){
+                        throw new DeploymentException("The paramter " + paramter.getName() + " has" +
+                                " locked at top levle can not overide");
+                    } else{
+                        paramter.setLocked(true);
+                    }
+
                 } else {
                     paramter.setLocked(false);
                 }

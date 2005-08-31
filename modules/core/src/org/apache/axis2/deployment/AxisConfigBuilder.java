@@ -61,7 +61,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
             //Processing service level paramters
             Iterator itr = config_element.getChildrenWithName(
                     new QName(PARAMETERST));
-            processParameters(itr,axisConfiguration);
+            processParameters(itr,axisConfiguration,axisConfiguration);
 
             //process MessageReciver
 
@@ -128,7 +128,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                         // adding storage paramters
                         Iterator paramters = storageElement.getChildrenWithName(
                                 new QName(PARAMETERST));
-                        processParameters(paramters,axisStorage);
+                        processParameters(paramters,axisStorage,axisConfiguration);
 
 
                     } catch (ClassNotFoundException e) {
@@ -236,7 +236,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                     //Processing service level paramters
                     Iterator itr = transport.getChildrenWithName(
                             new QName(PARAMETERST));
-                    processParameters(itr,transportout);
+                    processParameters(itr,transportout,axisConfiguration);
 
                     //process INFLOW
                     OMElement inFlow = transport.getFirstChildWithName(
@@ -250,7 +250,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                     OMElement outFlow = transport.getFirstChildWithName(
                             new QName(OUTFLOWST));
                     if(outFlow !=null){
-                        transportout.setOutFlow(processFlow(outFlow));
+                        transportout.setOutFlow(processFlow(outFlow,axisConfiguration));
                     }
 
                     OMElement inFaultFlow = transport.getFirstChildWithName(
@@ -264,7 +264,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                     OMElement outFaultFlow = transport.getFirstChildWithName(
                             new QName(OUT_FAILTFLOW));
                     if(outFaultFlow !=null){
-                        transportout.setFaultFlow(processFlow(outFaultFlow));
+                        transportout.setFaultFlow(processFlow(outFaultFlow,axisConfiguration));
                     }
 
                     //adding to axis config
@@ -322,7 +322,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                     //Processing service level paramters
                     Iterator itr = transport.getChildrenWithName(
                             new QName(PARAMETERST));
-                    processParameters(itr,transportIN);
+                    processParameters(itr,transportIN,axisConfiguration);
 
                     //process INFLOW
                     OMElement inFlow = transport.getFirstChildWithName(
@@ -336,13 +336,13 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                     OMElement outFlow = transport.getFirstChildWithName(
                             new QName(OUTFLOWST));
                     if(outFlow !=null){
-                        transportIN.setInFlow( processFlow(outFlow));
+                        transportIN.setInFlow( processFlow(outFlow,axisConfiguration));
                     }
 
                     OMElement inFaultFlow = transport.getFirstChildWithName(
                             new QName(IN_FAILTFLOW));
                     if(inFaultFlow !=null){
-                        transportIN.setFaultFlow(processFlow(inFaultFlow));
+                        transportIN.setFaultFlow(processFlow(inFaultFlow,axisConfiguration));
                     }
 
                     OMElement outFaultFlow = transport.getFirstChildWithName(
@@ -387,7 +387,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                 //Processing service level paramters
                 Iterator itr = observerelement.getChildrenWithName(
                         new QName(PARAMETERST));
-                processParameters(itr,observer);
+                processParameters(itr,observer,axisConfiguration);
 
                 // initilization
                 observer.init();

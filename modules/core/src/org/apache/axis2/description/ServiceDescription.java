@@ -48,6 +48,8 @@ public class ServiceDescription
         DescriptionConstants {
 
     private Definition difDefinition = null;
+
+    private  AxisConfiguration parent;
     //to store the wsdl definition , which is build at the deployment time
 
     //to keep the time that last update time of the service
@@ -214,7 +216,7 @@ public class ServiceDescription
      * @param operation
      */
     public void addOperation(OperationDescription operation) {
-
+        operation.setParent(this);
         this.getServiceInterface().setOperation(operation);
     }
 
@@ -754,5 +756,34 @@ public class ServiceDescription
      */
     public void addMapping(String mappingKey , OperationDescription operation){
         wasaction_opeartionmap.put(mappingKey,operation);
+    }
+
+    /**
+     * To get the parent (which is AxisConfiguration in this case)
+     * @return <code>AxisConfiguration</code>
+     */
+    public AxisConfiguration getParent() {
+        return parent;
+    }
+
+    public void setParent(AxisConfiguration parent) {
+        this.parent = parent;
+    }
+
+    //to check whether a given paramter is locked
+    public boolean isParamterLocked(String paramterName) {
+        // checking the locked value of parent
+        boolean loscked = getParent().isParamterLocked(paramterName);
+        if(loscked){
+            return true;
+        } else {
+            Parameter parameter = getParameter(paramterName);
+            if(parameter != null && parameter.isLocked()){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
     }
 }

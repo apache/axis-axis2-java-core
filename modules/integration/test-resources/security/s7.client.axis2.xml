@@ -1,6 +1,6 @@
 <axisconfig name="AxisJava2.0">
-    <parameter name="hotdeployment" locked="xsd:false">true</parameter>
-    <parameter name="hotupdate" locked="xsd:false">true</parameter>
+    <parameter name="hotdeployment" locked="false">true</parameter>
+    <parameter name="hotupdate" locked="false">true</parameter>
 
     <messageReceiver mep="INOUT" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
 
@@ -12,12 +12,12 @@
 
     <!-- Scenario 1: Client's Configuration:START-->
 
-    <parameter name="OutAction" locked="xsd:false">UsernameToken</parameter>
-    <parameter name="user" locked="xsd:false">Chris</parameter>
-    <parameter name="OutPasswordCallbackClass" locked="xsd:false">org.apache.axis2.security.PWCallback</parameter>
-    <parameter name="passwordType" locked="xsd:false">PasswordText</parameter>
+    <parameter name="OutAction" locked="false">UsernameToken</parameter>
+    <parameter name="user" locked="false">Chris</parameter>
+    <parameter name="OutPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
+    <parameter name="passwordType" locked="false">PasswordText</parameter>
 
-    <parameter name="InAction" locked="xsd:false">NoSecurity</parameter> 
+    <parameter name="InAction" locked="false">NoSecurity</parameter>
 
     <!-- Scenario 1: Client's Configuration:END-->
 
@@ -25,7 +25,7 @@
     <transportReceiver name="http">
     </transportReceiver>
     <transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
-        <parameter name="PROTOCOL" locked="xsd:false">HTTP/1.0</parameter>
+        <parameter name="PROTOCOL" locked="false">HTTP/1.0</parameter>
     </transportSender>
 
 

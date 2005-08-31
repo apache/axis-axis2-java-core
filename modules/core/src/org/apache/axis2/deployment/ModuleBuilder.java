@@ -89,31 +89,31 @@ public class ModuleBuilder extends DescriptionBuilder{
             //Processing service level paramters
             Iterator itr = moduleElement.getChildrenWithName(
                     new QName(PARAMETERST));
-            processParameters(itr,module);
+            processParameters(itr,module,module.getParent());
 
             //process INFLOW
             OMElement inFlow = moduleElement.getFirstChildWithName(
                     new QName(INFLOWST));
             if(inFlow !=null){
-                module.setInFlow(processFlow(inFlow));
+                module.setInFlow(processFlow(inFlow,module));
             }
 
             OMElement outFlow = moduleElement.getFirstChildWithName(
                     new QName(OUTFLOWST));
             if(outFlow !=null){
-                module.setOutFlow(processFlow(outFlow));
+                module.setOutFlow(processFlow(outFlow,module));
             }
 
             OMElement inFaultFlow = moduleElement.getFirstChildWithName(
                     new QName(IN_FAILTFLOW));
             if(inFaultFlow !=null){
-                module.setFaultInFlow(processFlow(inFaultFlow));
+                module.setFaultInFlow(processFlow(inFaultFlow,module));
             }
 
             OMElement outFaultFlow = moduleElement.getFirstChildWithName(
                     new QName(OUT_FAILTFLOW));
             if(outFaultFlow !=null){
-                module.setFaultOutFlow(processFlow(outFaultFlow));
+                module.setFaultOutFlow(processFlow(outFaultFlow,module));
             }
 
             //processing Operations
@@ -147,6 +147,12 @@ public class ModuleBuilder extends DescriptionBuilder{
             OperationDescription op_descrip = new OperationDescription();
             op_descrip.setName(new QName(opname));
 
+            //Opeartion Paramters
+            Iterator paramters = operation.getChildrenWithName(
+                    new QName(PARAMETERST));
+            processParameters(paramters,op_descrip,module);
+
+
             //setting the mep of the operation
             OMAttribute op_mep_att = operation.getAttribute(
                     new QName(MEP));
@@ -167,12 +173,6 @@ public class ModuleBuilder extends DescriptionBuilder{
                 MessageReceiver msgReceiver = loadDefaultMessageReciver();
                 op_descrip.setMessageReceiver(msgReceiver);
             }
-
-            //Opeartion Paramters
-            Iterator paramters = operation.getChildrenWithName(
-                    new QName(PARAMETERST));
-            processParameters(paramters,op_descrip);
-
             //Process Module Refs
             Iterator modules = operation.getChildrenWithName(
                     new QName(MODULEST));

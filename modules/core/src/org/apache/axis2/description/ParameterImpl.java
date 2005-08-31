@@ -44,7 +44,7 @@ public class ParameterImpl implements Parameter {
 
     /**
      * to store the parameter lement
-     * <parameter name="ServiceClass1" locked="xsd:false">
+     * <parameter name="ServiceClass1" locked="false">
      * org.apache.axis2.sample.echo.EchoImpl</parameter>
      */
     private OMElement parameterElement ;

@@ -33,6 +33,8 @@ public class OperationDescription extends WSDLOperationImpl implements
 
     private int mep = MEP_CONSTANT_INVALID;
 
+    private ServiceDescription parent;
+
     //To store deploytime module refs
     private ArrayList modulerefs;
 
@@ -331,6 +333,30 @@ public class OperationDescription extends WSDLOperationImpl implements
         return modulerefs;
     }
 
+    public ServiceDescription getParent() {
+        return parent;
+    }
+
+    public void setParent(ServiceDescription parent) {
+        this.parent = parent;
+    }
+
+     //to check whether a given paramter is locked
+    public boolean isParamterLocked(String paramterName) {
+        // checking the locked value of parent
+        boolean loscked = getParent().isParamterLocked(paramterName);
+        if(loscked){
+            return true;
+        } else {
+            Parameter parameter = getParameter(paramterName);
+            if(parameter != null && parameter.isLocked()){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+    }
 
 }
 

@@ -136,4 +136,7 @@ public interface AxisConfiguration extends ParameterInclude {
 
     public AxisStorage getAxisStorage();
 
+    //to check whether a given paramter is locked
+    public boolean isParamterLocked(String paramterName);
+
 }

@@ -1,13 +1,13 @@
 <axisconfig name="AxisJava2.0">
-    <parameter name="hotdeployment" locked="xsd:false">true</parameter>
-    <parameter name="hotupdate" locked="xsd:false">true</parameter>
+    <parameter name="hotdeployment" locked="false">true</parameter>
+    <parameter name="hotupdate" locked="false">true</parameter>
 
     <messageReceiver mep="INOUT" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
 
     <transportReceiver name="http">
     </transportReceiver>
      <transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
-        <parameter name="PROTOCOL" locked="xsd:false">HTTP/1.0</parameter>
+        <parameter name="PROTOCOL" locked="false">HTTP/1.0</parameter>
     </transportSender>
 
     <phaseOrder type="inflow">

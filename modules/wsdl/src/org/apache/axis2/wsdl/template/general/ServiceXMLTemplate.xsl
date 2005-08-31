@@ -6,7 +6,7 @@
 
     <xsl:comment>Auto generated Axis Service XML</xsl:comment>
     <service><xsl:attribute name="name"><xsl:value-of select="@servicename"/></xsl:attribute>
-    <parameter name="ServiceClass" locked="xsd:false">
+    <parameter name="ServiceClass" locked="false">
          <xsl:choose>
             <xsl:when test="$package=''"><xsl:value-of select="@name"/></xsl:when>
             <xsl:otherwise> <xsl:value-of select="$package"/>.<xsl:value-of select="@name"/></xsl:otherwise>

@@ -80,6 +80,11 @@ public class TransportOutDescription
         return paramInclude.getParameters();
     }
 
+    //to check whether the paramter is locked at any levle
+    public boolean isParamterLocked(String paramterName) {
+        return paramInclude.isParamterLocked(paramterName);
+    }
+
     /**
      * Method addParameter
      *

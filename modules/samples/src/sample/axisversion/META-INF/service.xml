@@ -2,7 +2,7 @@
     <description>
         This servics is to get the running Axis version
     </description>
-    <parameter name="ServiceClass" locked="xsd:false">sample.axisversion.Version</parameter>
+    <parameter name="ServiceClass" locked="false">sample.axisversion.Version</parameter>
     <operation name="getVersion">
     </operation>
 </service>

@@ -120,4 +120,9 @@ public class AxisFileStorage extends AbstractStorage {
     public ArrayList getParameters() {
         return paramter.getParameters();
     }
+
+    //to check whether the paramter is locked at any levle
+    public boolean isParamterLocked(String paramterName) {
+        return paramter.isParamterLocked(paramterName);
+    }
 }

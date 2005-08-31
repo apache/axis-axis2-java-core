@@ -151,6 +151,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @throws AxisFault
      */
     public synchronized void addMdoule(ModuleDescription module) throws AxisFault {
+        module.setParent(this);
         modules.put(module.getName(), module);
     }
 
@@ -166,6 +167,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         handlerResolver.buildchains();
         service.setLastupdate();
         notifyObserves(AxisEvent.SERVICE_DEPLOY ,service);
+        service.setParent(this);
     }
 
     /**
@@ -258,6 +260,16 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     public AxisStorage getAxisStorage() {
         return axisStorage;
+    }
+
+    //to check whether a given paramter is locked
+    public boolean isParamterLocked(String paramterName) {
+        Parameter parameter = getParameter(paramterName);
+        if(parameter != null && parameter.isLocked()){
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

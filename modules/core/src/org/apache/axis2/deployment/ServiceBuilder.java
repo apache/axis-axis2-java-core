@@ -82,7 +82,7 @@ public class ServiceBuilder extends DescriptionBuilder{
             //Processing service level paramters
             Iterator itr = service_element.getChildrenWithName(
                     new QName(PARAMETERST));
-            processParameters(itr,service);
+            processParameters(itr,service,service.getParent());
 
             //process service description
             OMElement descriptionElement = service_element.getFirstChildWithName(
@@ -110,25 +110,25 @@ public class ServiceBuilder extends DescriptionBuilder{
             OMElement inFlow = service_element.getFirstChildWithName(
                     new QName(INFLOWST));
             if(inFlow !=null){
-                service.setInFlow(processFlow(inFlow));
+                service.setInFlow(processFlow(inFlow,service));
             }
 
             OMElement outFlow = service_element.getFirstChildWithName(
                     new QName(OUTFLOWST));
             if(outFlow !=null){
-                service.setOutFlow(processFlow(outFlow));
+                service.setOutFlow(processFlow(outFlow,service));
             }
 
             OMElement inFaultFlow = service_element.getFirstChildWithName(
                     new QName(IN_FAILTFLOW));
             if(inFaultFlow !=null){
-                service.setFaultInFlow(processFlow(inFaultFlow));
+                service.setFaultInFlow(processFlow(inFaultFlow,service));
             }
 
             OMElement outFaultFlow = service_element.getFirstChildWithName(
                     new QName(OUT_FAILTFLOW));
             if(outFaultFlow !=null){
-                service.setFaultOutFlow(processFlow(outFaultFlow));
+                service.setFaultOutFlow(processFlow(outFaultFlow,service));
             }
 
             //processing operations
@@ -182,6 +182,11 @@ public class ServiceBuilder extends DescriptionBuilder{
                 op_descrip.setMessageExchangePattern(mep);
             }
 
+             //Opeartion Paramters
+            Iterator paramters = operation.getChildrenWithName(
+                    new QName(PARAMETERST));
+            processParameters(paramters,op_descrip,service);
+
             // loading the message recivers
             OMElement receiverElement = operation.getFirstChildWithName(
                     new QName(MESSAGERECEIVER));
@@ -194,11 +199,6 @@ public class ServiceBuilder extends DescriptionBuilder{
                 MessageReceiver msgReceiver = loadDefaultMessageReciver();
                 op_descrip.setMessageReceiver(msgReceiver);
             }
-
-            //Opeartion Paramters
-            Iterator paramters = operation.getChildrenWithName(
-                    new QName(PARAMETERST));
-            processParameters(paramters,op_descrip);
 
             //Process Module Refs
             Iterator modules = operation.getChildrenWithName(
