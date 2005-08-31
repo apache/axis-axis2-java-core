@@ -150,6 +150,28 @@
         <copy file="../security/target/PingPort.aar"
             tofile="target/test-resources/scenario2a_service_repo/services/PingPort.aar"/>
 
+	<!-- Scenario 3 -->
+        <mkdir dir="target/test-resources/scenario3_client_repo"/>
+        <mkdir dir="target/test-resources/scenario3_client_repo/modules"/>
+
+        <mkdir dir="target/test-resources/scenario3_service_repo"/>
+        <mkdir dir="target/test-resources/scenario3_service_repo/services"/>
+        <mkdir dir="target/test-resources/scenario3_service_repo/modules"/>
+
+	<!-- setup scenario3 client repository-->
+        <copy file="test-resources/security/s3.client.axis2.xml"
+            tofile="target/test-resources/scenario3_client_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario3_client_repo/modules/security.mar"/>
+
+	<!-- setup scenario3 service repository-->
+        <copy file="test-resources/security/s3.service.axis2.xml"
+            tofile="target/test-resources/scenario3_service_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenario3_service_repo/modules/security.mar"/>
+        <copy file="../security/target/PingPort.aar"
+            tofile="target/test-resources/scenario3_service_repo/services/PingPort.aar"/>
+
 
     <!-- Standard repository -->
     <mkdir dir="target/Repository"/>

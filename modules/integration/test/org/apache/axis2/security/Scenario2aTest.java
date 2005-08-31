@@ -17,7 +17,7 @@
 package org.apache.axis2.security;
 
 /**
- * 
+ * WS-Security interop scenario 2a
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class Scenario2aTest extends InteropTestBase {

@@ -17,14 +17,16 @@
 package org.apache.axis2.security;
 
 /**
- * WS-Security inteorp scenario 2
+ * WS-Security interop scenario 3
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
-public class Scenario2Test extends InteropTestBase {
-    
+public class Scenario3Test extends InteropTestBase {
+
 	protected void setUp() throws Exception {
-		this.setClientRepo(SCENARIO2_CLIENT_REPOSITORY);
-		this.setServiceRepo(SCENARIO2_SERVICE_REPOSITORY);
+		this.setClientRepo(SCENARIO3_CLIENT_REPOSITORY);
+		this.setServiceRepo(SCENARIO3_SERVICE_REPOSITORY);
 		super.setUp();
 	}
+
+	
 }
