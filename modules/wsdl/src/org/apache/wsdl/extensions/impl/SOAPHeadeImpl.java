@@ -15,6 +15,7 @@ public class SOAPHeadeImpl extends SOAPBodyImpl implements SOAPHeader {
 
     private QName messageName = null;
     private String part = null;
+    private QName element = null;
 
     public SOAPHeadeImpl() {
         this.type = SOAP_HEADER;
@@ -36,4 +37,11 @@ public class SOAPHeadeImpl extends SOAPBodyImpl implements SOAPHeader {
         this.part = part;
     }
 
+    public QName getElement() {
+        return element;
+    }
+
+    public void setElement(QName element) {
+        this.element = element;
+    }
 }

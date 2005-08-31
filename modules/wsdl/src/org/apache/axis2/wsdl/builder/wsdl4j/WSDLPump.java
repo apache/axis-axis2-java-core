@@ -94,7 +94,7 @@ public class WSDLPump {
                 .setTargetNameSpace(wsdl4JDefinition.getTargetNamespace());
         wsdlDefinition.setNamespaces(wsdl4JDefinition.getNamespaces());
         this.copyExtensibleElements(
-                wsdl4JDefinition.getExtensibilityElements(), wsdlDefinition);
+                wsdl4JDefinition.getExtensibilityElements(), wsdlDefinition, null);
 
         /////////////////////////////////////////////////////////////////////
         // Order of the following items shouldn't be changed unless you //
@@ -116,7 +116,7 @@ public class WSDLPump {
         if (null != wsdl4jTypes) {
             wsdlTypes = this.wsdlComponentFactory.createTypes();
             this.copyExtensibleElements(wsdl4jTypes.getExtensibilityElements(),
-                    wsdlTypes);
+                    wsdlTypes, null);
             this.womDefinition.setTypes(wsdlTypes);
         }
 
@@ -142,7 +142,7 @@ public class WSDLPump {
                         //add the imported types
                         this.copyExtensibleElements(importedDef.getTypes().
                                 getExtensibilityElements(),
-                                wsdlTypes);
+                                wsdlTypes, null);
                         this.womDefinition.setTypes(wsdlTypes);
                     }
                 }
@@ -179,10 +179,10 @@ public class WSDLPump {
         while (bindingIterator.hasNext()) {
             wsdlBinding = this.wsdlComponentFactory.createBinding();
             wsdl4jBinding = (Binding) bindingIterator.next();
-            this.populateBindings(wsdlBinding, wsdl4jBinding);
+            this.populateBindings(wsdlBinding, wsdl4jBinding, wsdl4JDefinition);
             this.copyExtensibleElements(
                     wsdl4jBinding.getExtensibilityElements(),
-                    wsdlBinding);
+                    wsdlBinding, null);
             wsdlDefinition.addBinding(wsdlBinding);
 
         }
@@ -199,7 +199,7 @@ public class WSDLPump {
             this.populateServices(wsdlService, wsdl4jService);
             this.copyExtensibleElements(
                     wsdl4jService.getExtensibilityElements(),
-                    wsdlService);
+                    wsdlService, null);
             wsdlDefinition.addService(wsdlService);
         }
 
@@ -235,7 +235,7 @@ public class WSDLPump {
                     wsdl4jOperation,
                     wsdl4jPortType.getQName().getNamespaceURI());
             this.copyExtensibleElements(
-                    wsdl4jOperation.getExtensibilityElements(), wsdloperation);
+                    wsdl4jOperation.getExtensibilityElements(), wsdloperation, null);
             wsdlInterface.setOperation(wsdloperation);
         }
     }
@@ -244,7 +244,7 @@ public class WSDLPump {
      * Pre Condition: The Interface Components must be copied by now.
      */
     private void populateBindings(WSDLBinding wsdlBinding,
-                                  Binding wsdl4JBinding) {
+                                  Binding wsdl4JBinding, Definition wsdl4jDefinition) {
         //Copy attributes
         wsdlBinding.setName(wsdl4JBinding.getQName());
         QName interfaceName = wsdl4JBinding.getPortType().getQName();
@@ -267,13 +267,13 @@ public class WSDLPump {
                     (BindingOperation) bindingoperationsIterator.next();
             this.populateBindingOperation(wsdlBindingOperation,
                     wsdl4jBindingOperation,
-                    wsdl4JBinding.getQName().getNamespaceURI());
+                    wsdl4JBinding.getQName().getNamespaceURI(), wsdl4jDefinition);
             wsdlBindingOperation.setOperation(
                     wsdlInterface.getOperation(
                             wsdl4jBindingOperation.getOperation().getName()));
             this.copyExtensibleElements(
                     wsdl4jBindingOperation.getExtensibilityElements(),
-                    wsdlBindingOperation);
+                    wsdlBindingOperation, wsdl4jDefinition);
             wsdlBinding.addBindingOperation(wsdlBindingOperation);
         }
 
@@ -294,7 +294,7 @@ public class WSDLPump {
                     wsdl4jPort,
                     wsdl4jService.getQName().getNamespaceURI());
             this.copyExtensibleElements(wsdl4jPort.getExtensibilityElements(),
-                    wsdlEndpoint);
+                    wsdlEndpoint, null);
             wsdlService.setEndpoint(wsdlEndpoint);
         }
 
@@ -348,7 +348,7 @@ public class WSDLPump {
                         this.generateReferenceQname(message));
                 this.copyExtensibleElements(
                         (message).getExtensibilityElements(),
-                        wsdlInputMessage);
+                        wsdlInputMessage, null);
             }
             this.copyExtensibilityAttribute(
                     wsdl4jInputMessage.getExtensionAttributes(),
@@ -372,7 +372,7 @@ public class WSDLPump {
                         this.generateReferenceQname(outputMessage));
                 this.copyExtensibleElements(
                         (outputMessage).getExtensibilityElements(),
-                        wsdlOutputMessage);
+                        wsdlOutputMessage, null);
             }
             this.copyExtensibilityAttribute(
                     wsdl4jOutputMessage.getExtensionAttributes(),
@@ -566,7 +566,7 @@ public class WSDLPump {
     private void populateBindingOperation(
             WSDLBindingOperation wsdlBindingOperation,
             BindingOperation wsdl4jBindingOperation,
-            String nameSpaceOfTheBindingOperation) {
+            String nameSpaceOfTheBindingOperation, Definition wsdl4jDefinition) {
 
         wsdlBindingOperation.setName(
                 new QName(nameSpaceOfTheBindingOperation,
@@ -582,7 +582,7 @@ public class WSDLPump {
                     WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
             this.copyExtensibleElements(
                     wsdl4jInputBinding.getExtensibilityElements(),
-                    wsdlInputBinding);
+                    wsdlInputBinding, wsdl4jDefinition);
             wsdlBindingOperation.setInput(wsdlInputBinding);
         }
 
@@ -596,7 +596,7 @@ public class WSDLPump {
 
             this.copyExtensibleElements(
                     wsdl4jOutputBinding.getExtensibilityElements(),
-                    wsdlOutputBinding);
+                    wsdlOutputBinding, null);
             wsdlBindingOperation.setOutput(wsdlOutputBinding);
         }
 
@@ -608,7 +608,7 @@ public class WSDLPump {
                     keyIterator.next());
             WSDLBindingFault womBindingFault = this.wsdlComponentFactory.createBindingFault();
             this.copyExtensibleElements(
-                    bindingFault.getExtensibilityElements(), womBindingFault);
+                    bindingFault.getExtensibilityElements(), womBindingFault, null);
             wsdlBindingOperation.addOutFault(womBindingFault);
         }
 
@@ -682,11 +682,15 @@ public class WSDLPump {
      * Get the Extensible elements form wsdl4jExtensibleElements
      * <code>Vector</code> if any and copy them to <code>Component</code>
      *
-     * @param wsdl4jExtensibleElements
-     * @param component
+
+
+     @param wsdl4jExtensibleElements
+      * @param component
+     * @param wsdl4jDefinition
+
      */
     private void copyExtensibleElements(List wsdl4jExtensibleElements,
-                                        Component component) {
+                                        Component component, Definition wsdl4jDefinition) {
         Iterator iterator = wsdl4jExtensibleElements.iterator();
         ExtensionFactory extensionFactory = this.wsdlComponentFactory
                 .createExtensionFactory();
@@ -776,7 +780,15 @@ public class WSDLPump {
                 if (null != required) {
                     soapHeaderExtensibilityElement.setRequired(required.booleanValue());
                 }
+                if (null!=wsdl4jDefinition){
+                    //find the relevant schema part from the massages
+                    Message msg = wsdl4jDefinition.getMessage(soapHeader.getMessage());
+                    Part msgPart = msg.getPart(soapHeader.getPart());
+                    soapHeaderExtensibilityElement.setElement(msgPart.getElementName());
+                }
+//                msgPart.
                 soapHeaderExtensibilityElement.setMessage(soapHeader.getMessage());
+
                 soapHeaderExtensibilityElement.setPart(soapHeader.getPart());
                 soapHeader.getMessage();
                 component.addExtensibilityElement(soapHeaderExtensibilityElement);
@@ -794,7 +806,7 @@ public class WSDLPump {
                 }
                 component.addExtensibilityElement(soapBindingExtensibilityElement);
             } else {
-               //	throw new AxisError(
+                //	throw new AxisError(
 //						"An Extensible item "+wsdl4jElement.getElementType()+" went unparsed during WSDL Parsing");
             }
         }

@@ -100,11 +100,16 @@
               new Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                       </xsl:when>
                       <xsl:when test="$style='doc'">
-                      <!-- for the doc lit case there can be only one element. So take the first element -->
+
                //Style is Doc.
-               setValueDoc(env,<xsl:value-of select="$fullsupporterclassname"/>.toOM(<xsl:value-of select="input/param[1]/@name"/>));
-                      </xsl:when>
-                      <xsl:otherwise>
+                <xsl:for-each select="input/param[@location='body']">
+               setValueDoc(env,<xsl:value-of select="$fullsupporterclassname"/>.toOM(<xsl:value-of select="@name"/>));
+                 </xsl:for-each>
+                 <xsl:for-each select="input/param[@location='header']">
+               setValueDoc(env,<xsl:value-of select="$fullsupporterclassname"/>.toOM(<xsl:value-of select="@name"/>),true);
+                 </xsl:for-each>
+                 </xsl:when>
+                 <xsl:otherwise>
                //Unknown style!! No code is generated
                throw java.lang.UnsupportedOperationException("Unknown Style");
                       </xsl:otherwise>
@@ -128,6 +133,7 @@
                   </xsl:choose>
              </xsl:otherwise>
             </xsl:choose>
+
              _messageContext.setEnvelope(env);
              <xsl:choose>
              <xsl:when test="$outputtype=''">

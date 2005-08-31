@@ -33,6 +33,7 @@ import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.wsdl.WSDLService;
 
@@ -163,9 +164,20 @@ public abstract class Stub{
     }
 
     protected void setValueDoc(SOAPEnvelope env, OMElement value) {
+        setValueDoc(env,value,false);
+    }
+
+    protected void setValueDoc(SOAPEnvelope env, OMElement value,boolean isHeader) {
+
         if (value != null) {
-            SOAPBody body = env.getBody();
-            body.addChild(value);
+            if (isHeader){
+                SOAPHeader header = env.getHeader();
+                header.addChild(value);
+            }else{
+                SOAPBody body = env.getBody();
+                body.addChild(value);
+            }
+
         }
     }
 

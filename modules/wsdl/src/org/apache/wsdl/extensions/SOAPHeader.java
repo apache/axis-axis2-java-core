@@ -26,4 +26,16 @@ public interface SOAPHeader extends SOAPBody {
     String part();
 
     void setPart(String part);
+
+    /**
+     * these are specifically for the convenience
+     * @return the schema element that is relevant to this header
+     */
+    QName getElement();
+
+    /**
+     *
+     * @param element
+     */
+    void setElement(QName element);
 }
