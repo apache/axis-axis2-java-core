@@ -20,6 +20,8 @@ import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPAddress;
 import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 
+import javax.xml.namespace.QName;
+
 /**
  * @author chathura@opensource.lk
  *         This Extensibility Element is extended to handle particularly the
@@ -34,7 +36,11 @@ public class SOAPAddressImpl extends WSDLExtensibilityElementImpl implements Ext
 
 
     public SOAPAddressImpl() {
-        type = SOAP_11_ADDRESS;
+        this.type = SOAP_11_ADDRESS;
+    }
+
+    public SOAPAddressImpl(QName type) {
+        this.type = type;
     }
 
 

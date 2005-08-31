@@ -56,7 +56,8 @@ public class ExtensionFactoryImpl implements ExtensionFactory,
             return new SOAPBindingImpl(SOAP_12_BINDING);
         if (SOAP_12_HEADER.equals(qName))
             return new SOAPHeadeImpl(SOAP_12_HEADER);
-        
+        if (SOAP_12_ADDRESS.equals(qName))
+            return new SOAPAddressImpl();
         return new DefaultExtensibilityElementImpl();
     }
 

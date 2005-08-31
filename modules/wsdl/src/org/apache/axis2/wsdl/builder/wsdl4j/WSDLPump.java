@@ -701,8 +701,8 @@ public class WSDLPump {
 
             if (wsdl4jElement instanceof UnknownExtensibilityElement) {
                 UnknownExtensibilityElement unknown = (UnknownExtensibilityElement) (wsdl4jElement);
-                //look for the SOAP 1.2 stuff here. WSDL4j does not understand SOAP 1.2 things
 
+                //look for the SOAP 1.2 stuff here. WSDL4j does not understand SOAP 1.2 things
                 if (ExtensionConstants.SOAP_12_OPERATION.equals(unknown.getElementType())){
                     org.apache.wsdl.extensions.SOAPOperation soapOperationExtensibiltyElement = (org.apache.wsdl.extensions.SOAPOperation) extensionFactory
                             .getExtensionElement(wsdl4jElement.getElementType());
@@ -732,7 +732,13 @@ public class WSDLPump {
                     soapBindingExtensibiltyElement.setStyle(element.getAttribute("style"));
 
                     component.addExtensibilityElement(soapBindingExtensibiltyElement);
-                } else{
+                } else if (ExtensionConstants.SOAP_12_ADDRESS.equals(unknown.getElementType())){
+                     org.apache.wsdl.extensions.SOAPAddress soapAddressExtensibiltyElement = (org.apache.wsdl.extensions.SOAPAddress) extensionFactory
+                            .getExtensionElement(wsdl4jElement.getElementType());
+                    Element element = unknown.getElement();
+                    soapAddressExtensibiltyElement.setLocationURI(element.getAttribute("location"));
+                    component.addExtensibilityElement(soapAddressExtensibiltyElement);
+                }else{
 
                     DefaultExtensibilityElement defaultExtensibilityElement = (DefaultExtensibilityElement) extensionFactory
                             .getExtensionElement(wsdl4jElement.getElementType());
