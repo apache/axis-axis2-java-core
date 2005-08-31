@@ -114,6 +114,23 @@
     		<!-- copy the service.xml-->
 		<copy file="interop/service.xml" 
 			tofile="${class.dir}/META-INF/service.xml" overwrite="yes"/>
+
+
+		<!-- copy axis2.crypto.properties -->
+		<copy file="interop/axis2.crypto.properties" 
+			tofile="${class.dir}/axis2.crypto.properties" overwrite="yes"/>
+		<!-- copy axis2.saml.properties -->
+		<copy file="interop/axis2.saml.properties" 
+			tofile="${class.dir}/axis2.saml.properties" overwrite="yes"/>
+		<!-- copy axis2.saml3.properties -->
+		<copy file="interop/axis2.saml3.properties" 
+			tofile="${class.dir}/axis2.saml3.properties" overwrite="yes"/>
+		<!-- copy axis2.saml4.properties -->
+		<copy file="interop/axis2.saml4.properties" 
+			tofile="${class.dir}/axis2.saml4.properties" overwrite="yes"/>
+		<!-- copy x509.PFX.MSFT -->
+		<copy file="interop/x509.PFX.MSFT" 
+			tofile="${class.dir}/x509.PFX.MSFT" overwrite="yes"/>
 		<!-- Copy interop.properties-->
 		<copy file="interop/interop.properties" 
 			tofile="${class.dir}/interop.properties" overwrite="yes"/>

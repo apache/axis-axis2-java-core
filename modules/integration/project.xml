@@ -218,7 +218,22 @@
                     <classloader>root</classloader>
             </properties>
         </dependency>
-
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xmlParserAPIs</artifactId>
+            <version>2.6.2</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.6.2</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
     </dependencies>
 
     <!-- build information for the project -->
@@ -228,14 +243,13 @@
         <unitTestSourceDirectory>test</unitTestSourceDirectory>
 
         <unitTest>
-
             <excludes>
                 <exclude>**/*Abstract*.java</exclude>
                 <exclude>**/*Util*.java</exclude>
                 <exclude>**/*InteropStubTest.java</exclude>
                 <exclude>**org/apache/axis2/mail/*.java</exclude>
                 <exclude>**org/apache/axis2/soap12testing/soap12testsuite/*.java</exclude>
-                
+                <exclude>**/ScenarioST1Test.java</exclude>
             </excludes>
             <includes>
                 <include>**/*Test.java</include>

@@ -57,7 +57,19 @@ public class InteropTestBase extends TestCase {
     protected static final String SCENARIO7_SERVICE_REPOSITORY = "scenario7_service_repo";
     
     protected static final String SCENARIO7_CLIENT_REPOSITORY = "scenario7_client_repo";
+
+    protected static final String SCENARIO_ST1_SERVICE_REPOSITORY = "scenarioST1_service_repo";
     
+    protected static final String SCENARIO_ST1_CLIENT_REPOSITORY = "scenarioST1_client_repo";
+
+    protected static final String SCENARIO_ST3_SERVICE_REPOSITORY = "scenarioST3_service_repo";
+    
+    protected static final String SCENARIO_ST3_CLIENT_REPOSITORY = "scenarioST3_client_repo";
+    
+    protected static final String SCENARIO_ST4_SERVICE_REPOSITORY = "scenarioST4_service_repo";
+    
+    protected static final String SCENARIO_ST4_CLIENT_REPOSITORY = "scenarioST4_client_repo";
+
     /*
      * We have to create different a client repository and a service repository
      * for each scenarion since we dont have the support to get the parameter 
@@ -67,7 +79,8 @@ public class InteropTestBase extends TestCase {
     
     private String clientRepo;
 
-    private String targetEpr = "http://127.0.0.1:" + 
+    private String targetEpr = "http://127.0.0.1:" +
+    		//5556 +
     		UtilServer.TESTING_PORT +
     		"/axis2/services/PingPort";
     
@@ -80,6 +93,9 @@ public class InteropTestBase extends TestCase {
 	}
 
 	/**
+	 * Each time an interop test is run the relevant service 
+	 * will be started with the given service repository
+	 *
 	 * set up the service
 	 */
 	protected void setUp() throws Exception {
@@ -110,11 +126,12 @@ public class InteropTestBase extends TestCase {
 	 */
     public void testInterop() {
     	try {
-    		InteropScenarioClient.main(new String[]{Constants.TESTING_PATH + clientRepo,targetEpr});
+    		InteropScenarioClient.main(new String[]{Constants.TESTING_PATH + clientRepo ,targetEpr});
     	} catch (Exception e) {
     		e.printStackTrace();
     		fail("Error in introperating with " + targetEpr + ", client configuration: " + clientRepo);
     	}
     }
-	
+    
+    
 }

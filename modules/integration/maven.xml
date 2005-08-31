@@ -260,6 +260,35 @@
         <copy file="../security/target/PingPort.aar"
             tofile="target/test-resources/scenario7_service_repo/services/PingPort.aar"/>
 
+	<!-- Copying the DOM3 stuff to teh endorsed dir -->
+        <mkdir dir="target/test-resources/endorsed"/>
+	<copy file="${maven.repo.local}/xerces/jars/xercesImpl-2.6.2.jar" todir="target/test-resources/endorsed"/>
+	<copy file="${maven.repo.local}/xerces/jars/xmlParserAPIs-2.6.2.jar" todir="target/test-resources/endorsed"/>
+
+	<echo>${java.endorsed.dirs}</echo>
+
+	<!-- Scenario ST1 -->
+        <mkdir dir="target/test-resources/scenarioST1_client_repo"/>
+        <mkdir dir="target/test-resources/scenarioST1_client_repo/modules"/>
+
+        <mkdir dir="target/test-resources/scenarioST1_service_repo"/>
+        <mkdir dir="target/test-resources/scenarioST1_service_repo/services"/>
+        <mkdir dir="target/test-resources/scenarioST1_service_repo/modules"/>
+
+	<!-- setup scenario ST1 client repository-->
+        <copy file="test-resources/security/sST1.client.axis2.xml"
+            tofile="target/test-resources/scenarioST1_client_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenarioST1_client_repo/modules/security.mar"/>
+
+	<!-- setup scenario ST1 service repository-->
+        <copy file="test-resources/security/sST1.service.axis2.xml"
+            tofile="target/test-resources/scenarioST1_service_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/scenarioST1_service_repo/modules/security.mar"/>
+        <copy file="../security/target/PingPort.aar"
+            tofile="target/test-resources/scenarioST1_service_repo/services/PingPort.aar"/>
+
     <!-- Standard repository -->
     <mkdir dir="target/Repository"/>
         <mkdir dir="target/Repository/services"/>
