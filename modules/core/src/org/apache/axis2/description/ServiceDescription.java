@@ -19,7 +19,6 @@ import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -542,7 +541,8 @@ public class ServiceDescription
                     .iterator();
             while (extIterator.hasNext()) {
                 WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
-                if (element.getType().equals(ExtensionConstants.SOAP_OPERATION)) {
+                if (ExtensionConstants.SOAP_11_OPERATION.equals(element.getType())||
+                        ExtensionConstants.SOAP_12_OPERATION.equals(element.getType())) {
                     if (((SOAPOperation) element).getSoapAction().equals(
                             soapAction)) {
                         WSDLOperation op = bindingOperation.getOperation();
