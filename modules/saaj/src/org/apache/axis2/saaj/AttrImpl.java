@@ -115,4 +115,5 @@ public class AttrImpl extends NodeImpl implements Attr {
         omAttr.setValue(value);
         setSpecified(true);
     }
+
 }

@@ -441,9 +441,17 @@ public class NodeImpl implements Node {
         Iterator iter = ((OMElement) omNode).getChildren();
         NodeListImpl list = new NodeListImpl();
         while (iter.hasNext()) {
-            OMNode omChild = (OMNode) iter.next();
-            Node child = new NodeImpl(omChild);
-            list.addNode(child);
+        	Object omChild =  iter.next();
+        	if(omChild instanceof OMText){
+        		OMText omTextChild = (OMText)omChild;
+        		TextImpl textChild = new TextImpl(omTextChild);
+        		list.addNode(textChild);
+        	}else{
+        		OMNode omNodeChild = (OMNode)omChild;
+        		Node nodeChild = new NodeImpl(omNodeChild);
+        		list.addNode(nodeChild);
+        	}
+            
         }
         return list;
     }

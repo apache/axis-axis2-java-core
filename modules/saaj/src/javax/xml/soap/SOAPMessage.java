@@ -15,7 +15,7 @@
  */
 package javax.xml.soap;
 
-//import javax.activation.DataHandler;
+import javax.activation.DataHandler;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -210,14 +210,14 @@ public abstract class SOAPMessage {
      * @see DataHandler DataHandler
      * @see javax.activation.DataContentHandler DataContentHandler
      */
-    /*public AttachmentPart createAttachmentPart(DataHandler datahandler) {
+    public AttachmentPart createAttachmentPart(DataHandler datahandler) {
 
         AttachmentPart attachmentpart = createAttachmentPart();
 
         attachmentpart.setDataHandler(datahandler);
 
         return attachmentpart;
-    }*/
+    }
 
     /**
      * Returns all the transport-specific MIME headers for this

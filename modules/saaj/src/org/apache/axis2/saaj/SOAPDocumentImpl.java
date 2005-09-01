@@ -388,5 +388,4 @@ public class SOAPDocumentImpl implements Document {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
     }
 
-
 }

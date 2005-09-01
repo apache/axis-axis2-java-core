@@ -132,24 +132,24 @@ public class EnvelopeTest extends TestCase {
     	}
     }
     
-////    public void testHeaderElements() throws Exception {
-//    	SOAPEnvelope envelope = getSOAPEnvelope();
-//    	SOAPBody body = envelope.getBody();
-//    	SOAPHeader hdr = envelope.getHeader();
-////
-//    	SOAPHeaderElement she1 = hdr.addHeaderElement(envelope.createName("foo1", "f1", "foo1-URI"));
-////    	she1.setActor("actor-URI");
-//    	java.util.Iterator iterator = hdr.extractHeaderElements("actor-URI");
-////    	int cnt = 0;
-////    	while (iterator.hasNext()) {
-////    		cnt++;
-//    		SOAPHeaderElement she = (SOAPHeaderElement) iterator.next();
-//    		assertTrue(she.equals(she1));
-//    	}
-//    	assertTrue(cnt == 1);
-//    	iterator = hdr.extractHeaderElements("actor-URI");
-//    	assertTrue(!iterator.hasNext());
-//    }
+    public void testHeaderElements() throws Exception {
+    	SOAPEnvelope envelope = getSOAPEnvelope();
+    	SOAPBody body = envelope.getBody();
+    	SOAPHeader hdr = envelope.getHeader();
+
+    	SOAPHeaderElement she1 = hdr.addHeaderElement(envelope.createName("foo1", "f1", "foo1-URI"));
+    	she1.setActor("actor-URI");
+    	java.util.Iterator iterator = hdr.extractHeaderElements("actor-URI");
+    	int cnt = 0;
+    	while (iterator.hasNext()) {
+    		cnt++;
+    		SOAPHeaderElement she = (SOAPHeaderElement) iterator.next();
+    		assertTrue(she.equals(she1));
+    	}
+    	assertTrue(cnt == 1);
+    	iterator = hdr.extractHeaderElements("actor-URI");
+    	assertTrue(!iterator.hasNext());
+    }
     
     public void testText1() throws Exception {
     	SOAPEnvelope envelope = getSOAPEnvelope();

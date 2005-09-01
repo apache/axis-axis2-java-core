@@ -93,7 +93,7 @@ public class SOAPPartImpl extends SOAPPart {
         this.msgObject = msg;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPPart#getEnvelope()
      */
     public SOAPEnvelope getEnvelope() throws SOAPException {
@@ -487,5 +487,5 @@ public class SOAPPartImpl extends SOAPPart {
     public boolean hasAttributes() {
         return document.hasAttributes();
     }
-
+    
 }

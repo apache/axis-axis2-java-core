@@ -19,13 +19,20 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMText;
 
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.AttachmentPart;
+import javax.xml.namespace.QName;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import java.util.Iterator;
 
 /**
  * Class SOAPConnectionImpl
@@ -40,18 +47,24 @@ public class SOAPConnectionImpl extends SOAPConnection {
     public SOAPMessage call(SOAPMessage request, Object endpoint)
             throws SOAPException {
         try {
-            org.apache.axis2.soap.SOAPEnvelope envelope = ((SOAPEnvelopeImpl) request.getSOAPPart()
+            OMElement envelope = ((SOAPEnvelopeImpl) request.getSOAPPart()
                     .getEnvelope()).getOMEnvelope();
+            
+            //parse the omEnvelope element and stuff it with the attachment
+            //specific omText nodes
+            insertAttachmentNodes(envelope, request);
 
             Call call = new Call();
             URL url = new URL(endpoint.toString());
+            call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
             call.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
                     true);
             call.setTo(
                     new EndpointReference(url.toString()));
+            String axisOp = request.getSOAPBody().getFirstChild().getNodeName();
             org.apache.axis2.soap.SOAPEnvelope responseEnv = (org.apache.axis2.soap.SOAPEnvelope) call.invokeBlocking(
-                    "echo", envelope);
+                    axisOp, envelope);
             SOAPEnvelopeImpl response = new SOAPEnvelopeImpl(responseEnv);
             return new SOAPMessageImpl(response);
 
@@ -70,5 +83,95 @@ public class SOAPConnectionImpl extends SOAPConnection {
         // TODO Auto-generated method stub
 
     }
-
+    
+    /**
+     * This method recursively stuffs the OMElement with appropriate OMText nodes
+     * that are prepared out of attachment contents whereever those attachments are referenced
+     * @param element
+     * @param soapMsg
+     */
+    private void insertAttachmentNodes(OMElement element, SOAPMessage soapMsg) throws SOAPException {
+    	Iterator childIter = element.getChildElements();
+    	while(childIter.hasNext()) {
+    		OMElement child = (OMElement)childIter.next();
+    		//check if there is an href attribute
+    		OMAttribute hrefAttr = (OMAttribute)child.getFirstAttribute(new QName("href"));
+    		String hrefContentId = validateHref(hrefAttr);
+    		
+    		if (hrefContentId!=null) {//This is an element referencing an attachment!
+    			/*
+    			//Get a handle to this element's parent and next sibling for later use.
+    			OMElement parent = (OMElement)child.getParent();
+    			OMNode nextSibling = child.getNextSibling();
+    			OMNode prevSibling = child.getPreviousSibling();
+    			
+    			OMText omText = getOMTextForReferencedAttachment(hrefContentId, soapMsg);
+    			
+    			child.build();
+    			child.detach();
+    			//We should now detach the element which referenced the attachment
+    			//and in its place put an OMText node created out of the attachment's
+    			//data handler, of course, preserving the order of attachments
+    			if(nextSibling!=null) {
+    				nextSibling.insertSiblingBefore(omText); //preserving the order of attachments
+    			} else if (prevSibling!=null) {
+    				prevSibling.insertSiblingAfter(omText);
+    			} else {//only child for its parent, so needn't bother about order
+    				parent.addChild(omText);
+    			}
+    			*/
+    			OMText omText = getOMTextForReferencedAttachment(hrefContentId, soapMsg);
+    			child.build();
+    			child.removeAttribute(hrefAttr);
+    			child.addChild(omText);
+    			
+    		} else { //possibly there can be references in the children of this element
+    				 //so recurse through.
+    			insertAttachmentNodes(child, soapMsg);
+    		}
+    	}
+    }
+    
+    /**
+     * This method checks the value of attribute and if it is a valid CID then
+     * returns the contentID (with cid: prefix stripped off) or else returns null.
+     * A null return value can be assumed that this attribute is not an attachment
+     * referencing attribute
+     */
+    private String validateHref(OMAttribute attr) {
+    	String contentId;
+    	if(attr!=null) {
+    		contentId = attr.getValue();
+    	} else {
+    		return null;
+    	}
+    	
+    	if (contentId.startsWith("cid:")) {
+    		contentId = contentId.substring(4);
+    		return contentId;
+    	}
+    	return null;
+    }
+    
+    /**
+     * This method looks up the attachment part corresponding to the given contentId and
+     * returns the OMText node thta has the content of the attachment.
+     * @param contentId
+     * @param soapMsg
+     * @return
+     */
+    private OMText getOMTextForReferencedAttachment(String contentId, SOAPMessage soapMsg) throws SOAPException{
+    	Iterator attachIter = soapMsg.getAttachments();
+		while(attachIter.hasNext()) {
+			AttachmentPart attachment = (AttachmentPart)attachIter.next();
+			if(attachment.getContentId().equals(contentId)) {
+				try {
+					return ((AttachmentPartImpl)attachment).getOMText();
+				} catch (Exception e) {
+					throw new SOAPException(e);
+				}
+			}
+		}
+    	throw new SOAPException("No attachment found with the given contentID");
+    }
 }

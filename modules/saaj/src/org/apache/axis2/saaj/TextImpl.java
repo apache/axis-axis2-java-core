@@ -59,6 +59,10 @@ public class TextImpl extends NodeImpl implements Text {
                 org.apache.axis2.om.OMAbstractFactory.getOMFactory()
                 .createText(data.getData());
     }
+    
+    public TextImpl(OMText omText){
+    	omNode = this.omText = omText;
+    }
 
     /*Overridden Method*/
     public SOAPElement getParentElement() {

@@ -24,6 +24,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -33,6 +34,7 @@ import java.util.Iterator;
 public class SOAPMessageImpl extends SOAPMessage {
 
     private SOAPPartImpl mSOAPPart;
+    private ArrayList attachments = new ArrayList();
     private java.util.Hashtable mProps = new java.util.Hashtable();
     private MimeHeaders headers;
     private Log log = LogFactory.getLog(getClass());
@@ -63,7 +65,36 @@ public class SOAPMessageImpl extends SOAPMessage {
     private void setup(Object initialContents, boolean bodyInStream,
                        String contentType, String contentLocation,
                        javax.xml.soap.MimeHeaders mimeHeaders) throws SOAPException {
-        if (null == mSOAPPart)
+        if(contentType == null && mimeHeaders != null) {
+            String contentTypes[] = mimeHeaders.getHeader("Content-Type");
+            contentType = (contentTypes != null)? contentTypes[0] : null;
+        }
+        
+        if(contentLocation == null && mimeHeaders != null) {
+            String contentLocations[] = mimeHeaders.getHeader("Content-Location");
+            contentLocation = (contentLocations != null)? contentLocations[0] : null;
+        }
+        
+        if (contentType != null) {
+            int delimiterIndex = contentType.lastIndexOf("charset");
+            if (delimiterIndex > 0) {
+                String charsetPart = contentType.substring(delimiterIndex);
+                int charsetIndex = charsetPart.indexOf('=');
+                String charset = charsetPart.substring(charsetIndex + 1).trim();
+                if ((charset.startsWith("\"") || charset.startsWith("\'"))) {
+                    charset = charset.substring(1, charset.length());
+                }
+                if ((charset.endsWith("\"") || charset.endsWith("\'"))) {
+                    charset = charset.substring(0, charset.length()-1);
+                }
+                try {
+                    setProperty(SOAPMessage.CHARACTER_SET_ENCODING, charset);
+                } catch (SOAPException e) {
+                }
+            }
+        }
+    	
+    	if (null == mSOAPPart)
             mSOAPPart = new SOAPPartImpl(this, initialContents, bodyInStream);
         else
             mSOAPPart.setMessage(this);
@@ -102,7 +133,7 @@ public class SOAPMessageImpl extends SOAPMessage {
                 description);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPMessage#getSOAPPart()
      */
     public SOAPPart getSOAPPart() {
@@ -125,55 +156,67 @@ public class SOAPMessageImpl extends SOAPMessage {
         return mProps.get(property);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPMessage#removeAllAttachments()
      */
     public void removeAllAttachments() {
-        // TODO Auto-generated method stub
-
+        
+    	attachments.clear();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPMessage#countAttachments()
      */
     public int countAttachments() {
-        // TODO Auto-generated method stub
-        return 0;
+        
+        return attachments.size();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPMessage#getAttachments()
      */
     public Iterator getAttachments() {
-        // TODO Auto-generated method stub
-        return null;
+        
+        return attachments.iterator();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPMessage#getAttachments(javax.xml.soap.MimeHeaders)
      */
     public Iterator getAttachments(javax.xml.soap.MimeHeaders headers) {
-        // TODO Auto-generated method stub
-        return null;
+        
+    	ArrayList temp = new ArrayList();
+    	Iterator iterator = getAttachments();
+    	while(iterator.hasNext()){
+    		AttachmentPartImpl part = (AttachmentPartImpl)iterator.next();
+    		if(part.matches(headers)){
+    			temp.add(part);
+    		}
+    	}
+        return temp.iterator();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPMessage#addAttachmentPart(javax.xml.soap.AttachmentPart)
      */
     public void addAttachmentPart(AttachmentPart attachmentpart) {
-        // TODO Auto-generated method stub
+        
+    	if(attachmentpart != null){
+    		attachments.add(attachmentpart);
+    		headers.setHeader("Content-Type","multipart/related");
+    	}
 
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPMessage#createAttachmentPart()
      */
     public AttachmentPart createAttachmentPart() {
-        // TODO Auto-generated method stub
-        return null;
+        
+        return new AttachmentPartImpl();
     }
 
-    /* (non-Javadoc)
+    /** 
      * @see javax.xml.soap.SOAPMessage#getMimeHeaders()
      */
     public javax.xml.soap.MimeHeaders getMimeHeaders() {
@@ -181,11 +224,11 @@ public class SOAPMessageImpl extends SOAPMessage {
         return headers;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPMessage#saveChanges()
      */
     public void saveChanges() throws SOAPException {
-        // TODO Auto-generated method stub
+        // TODO Not sure what we should do here
     }
 
     /**
