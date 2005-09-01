@@ -33,6 +33,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.util.threadpool.AxisWorker;
 import org.apache.wsdl.WSDLConstants;
@@ -282,8 +283,8 @@ public class InOutMEPClient extends MEPClient {
                     senderTransport.equals(listenerTransport);
             boolean isATwoWaytransport =
                     Constants.TRANSPORT_HTTP.equals(senderTransport)
-                    || Constants.TRANSPORT_TCP.equals(senderTransport)
-                    || Constants.TRANSPORT_HTTP.equals(senderTransport);
+                            || Constants.TRANSPORT_TCP.equals(senderTransport)
+                            || Constants.TRANSPORT_HTTP.equals(senderTransport);
             if ((!isTransportsEqual || !isATwoWaytransport)) {
                 throw new AxisFault(Messages.getMessage("useSeparateListenerLimited"));
             }
@@ -291,7 +292,7 @@ public class InOutMEPClient extends MEPClient {
             this.useSeparateListener = useSeparateListener;
 
         }
-        
+
         //find and set the transport details
         AxisConfiguration axisConfig =
                 serviceContext.getEngineContext().getAxisConfiguration();
@@ -305,7 +306,7 @@ public class InOutMEPClient extends MEPClient {
         if (this.listenerTransport == null) {
             throw new AxisFault(Messages.getMessage("unknownTransport", listenerTransport));
         }
-        
+
         //if seperate transport is used, start the required listeners
         if (useSeparateListener) {
             if (!serviceContext
@@ -332,9 +333,9 @@ public class InOutMEPClient extends MEPClient {
         if (listenerTransport == null) {
             listenerTransport =
                     serviceContext
-                    .getEngineContext()
-                    .getAxisConfiguration()
-                    .getTransportIn(senderTransport.getName());
+                            .getEngineContext()
+                            .getAxisConfiguration()
+                            .getTransportIn(senderTransport.getName());
         }
 
         if (msgctx.getTransportIn() == null) {
@@ -399,8 +400,20 @@ public class InOutMEPClient extends MEPClient {
                         TwoWayTransportBasedSender.send(msgctx, listenerTransport);
                 //call the callback                        
                 SOAPEnvelope resenvelope = response.getEnvelope();
-                AsyncResult asyncResult = new AsyncResult(response);
-                callback.onComplete(asyncResult);
+                SOAPBody body = resenvelope.getBody();
+                if (body.hasFault()){
+                    Exception ex = body.getFault().getException();
+                    if (ex !=null){
+                        callback.reportError(ex);
+                    }else{
+                        //todo this needs to be fixed
+                        callback.reportError(new Exception(body.getFault().getReason().getText()));
+                    }
+                }else{
+                    AsyncResult asyncResult = new AsyncResult(response);
+                    callback.onComplete(asyncResult);
+                }
+
                 callback.setComplete(true);
             } catch (Exception e) {
                 callback.reportError(e);

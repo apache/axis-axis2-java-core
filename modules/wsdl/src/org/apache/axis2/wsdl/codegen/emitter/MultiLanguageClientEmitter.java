@@ -1013,7 +1013,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             addHeaderOperations(headerParameterQNameList,bindingOperation,false);
             parameterElementList = getParameterElementList(doc,headerParameterQNameList, "header");
             for (int i = 0; i < parameterElementList.size(); i++) {
-                 newChild = (Element) parameterElementList.get(i);
+                newChild = (Element) parameterElementList.get(i);
                 parameterMap.put(newChild.getAttribute("type"),newChild);
             }
         }
@@ -1021,7 +1021,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         //Now run through the parameters and ad them to the root element
         Collection parameters = parameterMap.values();
         for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
-           rootElement.appendChild((Element)iterator.next());
+            rootElement.appendChild((Element)iterator.next());
         }
 
         doc.appendChild(rootElement);
@@ -1062,15 +1062,47 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 configuration.getPackageName() +
                         DATABINDING_PACKAGE_NAME_SUFFIX,
                 rootElement);
+        addAttribute(doc,
+                "dbsupportpackage",
+                configuration.getPackageName() +
+                        DATABINDING_PACKAGE_NAME_SUFFIX,
+                rootElement);
+        //add SOAP version
+        addSoapVersion(binding,doc,rootElement);
+        //add the end point
         addEndpoints(doc, rootElement, endpoints);
+        //set the sync/async attributes
         fillSyncAttributes(doc, rootElement);
+        //load the operations
         loadOperations(boundInterface, doc, rootElement, binding);
         doc.appendChild(rootElement);
-
-
+       
         return doc;
 
+
     }
+
+    protected void addSoapVersion(WSDLBinding binding,Document doc,Element rootElement){
+        //loop through the extensibility elements to get to the bindings element
+        List extensibilityElementsList = binding.getExtensibilityElements();
+        int count = extensibilityElementsList.size();
+        for (int i = 0; i < count; i++) {
+            WSDLExtensibilityElement extElement =  (WSDLExtensibilityElement)extensibilityElementsList.get(i);
+            if (ExtensionConstants.SOAP_11_BINDING.equals(extElement.getType())){
+                addAttribute(doc,"soap-version", "1.1",rootElement);
+                break;
+            }else if (ExtensionConstants.SOAP_12_BINDING.equals(extElement.getType())){
+                addAttribute(doc,"soap-version", "1.2",rootElement);
+                break;
+            }
+        }
+    }
+    /**
+     * Add the endpoint to the document
+     * @param doc
+     * @param rootElement
+     * @param endpointMap
+     */
 
     protected void addEndpoints(Document doc,
                                 Element rootElement,
@@ -1098,6 +1130,13 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     }
 
+    /**
+     * Utility method to add an attribute to a given element
+     * @param document
+     * @param AttribName
+     * @param attribValue
+     * @param element
+     */
     protected void addAttribute(Document document,
                                 String AttribName,
                                 String attribValue,
@@ -1107,6 +1146,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         element.setAttributeNode(attribute);
     }
 
+    /**
+     *
+     * @param word
+     * @return character removed string
+     */
     protected String removeUnsuitableCharacters(String word) {
         return word.replaceAll("\\W", "_");
     }

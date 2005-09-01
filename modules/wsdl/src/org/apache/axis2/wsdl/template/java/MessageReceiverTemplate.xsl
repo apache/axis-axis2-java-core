@@ -96,12 +96,18 @@
                 </xsl:when>
                 <xsl:when test="$style='doc'">
                     //doc style
-                    <xsl:if test="$returntype!=''">
-                        <xsl:value-of select="$returnvariable"/> =</xsl:if> skel.<xsl:value-of select="@name"/>(
-                    <xsl:for-each select="input/param[@location='body']">
-                    (<xsl:value-of select="@type"/>)<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$dbsupportname"/>.fromOM((org.apache.axis2.om.OMElement)msgContext.getEnvelope().getBody().getFirstElement().detach(), <xsl:value-of select="@type"/>.class)
-                     <xsl:if test="position() &gt; 1">,</xsl:if>                     
-                     </xsl:for-each>);
+                    <xsl:if test="$returntype!=''"><xsl:value-of select="$returnvariable"/> =</xsl:if>
+                    <xsl:variable name="paramCount"> <xsl:value-of select="count(input/param[@location='body'])"/></xsl:variable>
+                    <xsl:choose>
+                        <xsl:when test="$paramCount &gt; 0"> skel.<xsl:value-of select="@name"/>(
+                            <xsl:for-each select="input/param[@location='body']">
+                                <xsl:if test="@type!=''">(<xsl:value-of select="@type"/>)<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$dbsupportname"/>.fromOM((org.apache.axis2.om.OMElement)msgContext.getEnvelope().getBody().getFirstElement().detach(), <xsl:value-of select="@type"/>.class)<xsl:if test="position() &gt; 1">,</xsl:if></xsl:if>
+                            </xsl:for-each>);
+                        </xsl:when>
+                        <xsl:otherwise>skel.<xsl:value-of select="@name"/>();</xsl:otherwise>
+                    </xsl:choose>
+
+
                     //Create a default envelop
                     envelope = getSOAPFactory().getDefaultEnvelope();
                     //Create a Omelement of the result if a result exist

@@ -7,6 +7,7 @@
     <xsl:variable name="isSync"><xsl:value-of select="@isSync"/></xsl:variable>
     <xsl:variable name="isAsync"><xsl:value-of select="@isAsync"/></xsl:variable>
     <xsl:variable name="dbpackage"><xsl:value-of select="@dbsupportpackage"/></xsl:variable>
+    <xsl:variable name="soapVersion"><xsl:value-of select="@soap-version"/></xsl:variable>
     package <xsl:value-of select="$package"/>;
 
     /*
@@ -42,8 +43,15 @@
            _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory().buildClientConfigurationContext(axis2Home);
            _configurationContext.getAxisConfiguration().addService(_service);
            _serviceContext = _configurationContext.createServiceContext(_service.getName());
+        <!--  Set the soap version depending on the binding. Default is 1.1 so don't set anything for that case-->
+        <xsl:if test="$soapVersion='1.2'">
+            //Set the soap version
+            setSOAPVersion(SOAP_12);
+        </xsl:if>
 
-	    }
+
+
+        }
 
         /**
         * Default Constructor
@@ -141,8 +149,12 @@
                return;
               </xsl:when>
               <xsl:otherwise>
+             //set the exception throwing status     
+             _call.setExceptionToBeThrownOnSOAPFault(true);
              org.apache.axis2.context.MessageContext  _returnMessageContext = _call.invokeBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
              org.apache.axis2.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
+             //check for faults. This might throw an Axis fault
+             //checkFault(_returnEnv);
              java.lang.Object object = <xsl:value-of select="$fullsupporterclassname"/>.fromOM(getElement(_returnEnv,"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
              return (<xsl:value-of select="$outputtype"/>)object;
                  </xsl:otherwise>

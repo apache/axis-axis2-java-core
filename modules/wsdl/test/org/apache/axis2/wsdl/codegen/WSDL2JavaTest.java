@@ -47,12 +47,12 @@ public class WSDL2JavaTest extends TestCase{
      */
     protected void setUp() throws Exception {
         File outputFile = new File(OUTPUT_LOCATION_BASE);
-        if (outputFile.exists() && outputFile.isDirectory()){
-            deleteDir(outputFile);
-            outputFile.mkdir();
-        }else{
-            outputFile.mkdir();
-        }
+//        if (outputFile.exists() && outputFile.isDirectory()){
+//            deleteDir(outputFile);
+//            outputFile.mkdir();
+//        }else{
+//            outputFile.mkdir();
+//        }
     }
 
     /**
@@ -60,10 +60,10 @@ public class WSDL2JavaTest extends TestCase{
      * @throws Exception
      */
     protected void tearDown() throws Exception {
-        File outputFile = new File(OUTPUT_LOCATION_BASE);
-        if (outputFile.exists() && outputFile.isDirectory()){
-            deleteDir(outputFile);
-        }
+//        File outputFile = new File(OUTPUT_LOCATION_BASE);
+//        if (outputFile.exists() && outputFile.isDirectory()){
+//            deleteDir(outputFile);
+//        }
     }
 
     /**
@@ -150,7 +150,8 @@ public class WSDL2JavaTest extends TestCase{
     }
 
     /**
-     * Test for the mtom echo wsdl. This wsdl contains a restriction based on xmime
+     * Test for the mtom echo wsdl. This wsdl contains a restriction based on xmime and a
+     * SOAP 1.2 binding
      *
      */
     public void testCodeGenerationMTOMEcho(){
@@ -173,7 +174,7 @@ public class WSDL2JavaTest extends TestCase{
         //todo - Still the compilation fails (the original problem of the java.home was settled by setting fork
         //todo - to true). Now the compiler fails for some unknown reason (inside maven! works fine in the IDE though)
 
-//        compile(outputLocation);
+        //compile(outputLocation);
     }
 
     /**
@@ -198,7 +199,7 @@ public class WSDL2JavaTest extends TestCase{
         //using the ant javac task for compilation
         Javac javaCompiler = new Javac();
         Project codeGenProject = new Project();
-        Target compileTarget = new Target();
+         Target compileTarget = new Target();
 
         compileTarget.setName(COMPILE_TARGET_NAME);
         compileTarget.addTask(javaCompiler);
@@ -207,6 +208,7 @@ public class WSDL2JavaTest extends TestCase{
         javaCompiler.setProject(codeGenProject);
         javaCompiler.setIncludejavaruntime(true);
         javaCompiler.setIncludeantruntime(true);
+
         /*
           This harmless looking setFork is actually very important. unless the compiler is
           forked it wont work!

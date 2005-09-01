@@ -30,10 +30,7 @@ import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPHeader;
+import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.wsdl.WSDLService;
 
@@ -45,6 +42,10 @@ import javax.xml.stream.XMLStreamReader;
  */
 public abstract class Stub{
 
+    public static final int SOAP_11 =0;
+    public static final int SOAP_12 =1;
+
+
     protected ConfigurationContext _configurationContext;
     protected static ServiceDescription _service;
     protected ServiceContext _serviceContext;
@@ -55,6 +56,8 @@ public abstract class Stub{
     protected String senderTransport = Constants.TRANSPORT_HTTP;
     protected String listenerTransport =Constants.TRANSPORT_HTTP ;
     protected boolean useSeparateListener;
+    //Default SOAP version
+    protected int soapVesrion = SOAP_11;
 
     public void setTransportInfo(String senderTransport,String listenerTransport,boolean useSeparateListener)throws AxisFault{
         this.senderTransport = senderTransport;
@@ -78,6 +81,14 @@ public abstract class Stub{
 
     protected Stub() throws DeploymentException, AxisFault {
 
+    }
+
+    /**
+     * Set the soap version
+     * @param soapVersion
+     */
+    public void setSOAPVersion(int soapVersion){
+        this.soapVesrion = soapVersion;
     }
 
 //	public abstract void _setSessionInfo(Object key, Object value) throws Exception;
@@ -126,9 +137,9 @@ public abstract class Stub{
         return Long.toString(System.currentTimeMillis());
     }
 
-    //todo make this compliant with the SOAP12
+
     protected SOAPEnvelope createEnvelope() throws SOAPProcessingException {
-        return getFactory().getDefaultEnvelope();
+        return getFactory(this.soapVesrion).getDefaultEnvelope();
     }
 
     protected void setValueRPC(SOAPEnvelope env,
@@ -137,7 +148,7 @@ public abstract class Stub{
                                String[] paramNames,
                                Object[] values) {
         SOAPBody body = env.getBody();
-        OMFactory fac = this.getFactory();
+        OMFactory fac = this.getFactory(this.soapVesrion);
 
         OMNamespace methodNamespace = fac.createOMNamespace(methodNamespaceURI,
                 "ns1");
@@ -181,6 +192,34 @@ public abstract class Stub{
         }
     }
 
+//    /**
+//     * use this method to handle the faults
+//     * @param env
+//     */
+//    protected void checkFault(SOAPEnvelope env) throws AxisFault{
+//        SOAPBody body = env.getBody();
+//        if (body.hasFault()){
+//           SOAPFault fault = body.getFault();
+//           if (null!=fault.getException()){
+//               throw new AxisFault(fault.getException());
+//           }else{
+//               String message = "";
+//               message = message + "Code =" + fault.getCode()==null?"":
+//                       fault.getCode().getValue()==null?"":fault.getCode().getValue().getText();
+//               message = message + "Actor = "+fault.getRole()==null?"":
+//                                   fault.getRole().getRoleValue();
+//               //add the details here
+//               throw new AxisFault(message);
+//           }
+//        }
+//    }
+
+    /**
+     * Extract the correct element - A util method
+     * @param env
+     * @param type
+     * @return the relevant element to be databound
+     */
     protected OMElement getElement(SOAPEnvelope env, String type) {
         SOAPBody body = env.getBody();
         OMElement element = body.getFirstElement();
@@ -216,8 +255,14 @@ public abstract class Stub{
     }
 
 
-    private SOAPFactory getFactory() {
-        return OMAbstractFactory.getSOAP11Factory();
+    private SOAPFactory getFactory(int soapVersion) {
+        if (soapVersion==SOAP_11){
+            return OMAbstractFactory.getSOAP11Factory();
+        }else if (soapVersion==SOAP_12){
+            return OMAbstractFactory.getSOAP12Factory();
+        }else{
+            throw new RuntimeException("Unknown SOAP version");
+        }
     }
 }
 
