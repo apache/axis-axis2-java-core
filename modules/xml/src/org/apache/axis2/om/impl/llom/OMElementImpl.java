@@ -212,6 +212,13 @@ public class OMElementImpl extends OMNodeImpl
      * Method addChild
      */
     private void addChild(OMNodeImpl child) {
+        //the order of these statements is VERY important
+        //Since setting the parent has a detach method inside
+        //it strips down all the rerefences to siblings.
+        //setting the siblings should take place AFTER setting the parent
+
+        child.setParent(this);
+
         if (firstChild == null) {
             firstChild = child;
             child.setPreviousSibling(null);
@@ -219,8 +226,8 @@ public class OMElementImpl extends OMNodeImpl
             child.setPreviousSibling(lastChild);
             lastChild.setNextSibling(child);
         }
+
         child.setNextSibling(null);
-        child.setParent(this);
         lastChild = child;
 
     }
