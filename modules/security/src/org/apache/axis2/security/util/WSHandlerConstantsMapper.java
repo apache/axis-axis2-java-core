@@ -32,6 +32,10 @@ public class WSHandlerConstantsMapper {
 	private static Hashtable outHandlerConstants = new Hashtable();
 
 	
+	
+	/**
+	 * The parameter names that are shared across the two handlers are mapped in this situation
+	 */
 	static {
 		//Mapping the in handler constants
 		inHandlerConstants.put(WSHandlerConstants.ACTION, WSSHandlerConstants.In.ACTION);
@@ -53,12 +57,19 @@ public class WSHandlerConstantsMapper {
 	 * @param axiskey
 	 * @return
 	 */
-	public static String getMapping(String axiskey, boolean inHandler) {
+	public static String getMapping(String axiskey, boolean inHandler, int repetition) {
 		String newKey = null;
 		if(inHandler) {
 			newKey = (String)inHandlerConstants.get(axiskey);
 		} else {
-			newKey = (String)outHandlerConstants.get(axiskey);
+			newKey = (String)outHandlerConstants.get(axiskey);	
+		}
+		if(repetition > 0 && axiskey != WSSHandlerConstants.Out.SENDER_REPEAT_COUNT && !inHandler) {
+			if(newKey == null) {
+				return axiskey + repetition;
+			} else {
+				return newKey + repetition;
+			}
 		}
 		return (newKey == null)?axiskey:newKey;
 	}

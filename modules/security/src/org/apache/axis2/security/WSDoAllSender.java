@@ -24,6 +24,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.security.handler.WSDoAllHandler;
+import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.util.Axis2Util;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.commons.logging.Log;
@@ -262,12 +263,44 @@ public class WSDoAllSender extends WSDoAllHandler {
             if (doDebug) {
                 log.debug("WSDoAllSender: exit invoke()");
             }
+            
+            //Enable handler repetition
+            String repeat;
+            int repeatCount;
+	        if ((repeat = (String) getOption(WSSHandlerConstants.Out.SENDER_REPEAT_COUNT)) == null) {
+	            repeat = (String)
+	                    getProperty(reqData.getMsgContext(), WSSHandlerConstants.Out.SENDER_REPEAT_COUNT);
+	        }
+	        
+	        if(repeat != null) {
+		        try {
+		        	repeatCount = Integer.parseInt(repeat);
+		        } catch (NumberFormatException nfex) {
+		        	throw new AxisFault("Repetition count of WSDoAllSender should be an integer");
+		        }
+	            
+		        //Get the current repetition from message context
+		        int repetition = this.getRepetition(msgContext);
+		        
+		        if(repeatCount > 0 && repetition < repeatCount) {
+		        	reqData.clear();
+		        	reqData = null;
+		        	
+		        	//Increment the repetition to indicate the next repetition 
+		        	//of the same handler
+		        	repetition++;
+		        	msgContext.setProperty(WSSHandlerConstants.Out.REPETITON,new Integer(repetition));
+		        	this.invoke(msgContext);
+		        }
+	        }
         } catch (WSSecurityException e) {
         	e.printStackTrace();
             throw new AxisFault(e.getMessage(), e);
         } finally {
-            reqData.clear();
-            reqData = null;
+            if(reqData != null) {
+            	reqData.clear();
+            	reqData = null;
+            }
         }        
     }
 }

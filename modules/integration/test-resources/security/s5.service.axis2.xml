@@ -12,8 +12,9 @@
     <!-- Scenario 5: Service's Configuration: START-->
     <!-- Also we can switch back to hte normal parameter names when we can seperately assign them to the flows -->
 
-    <parameter name="InAction" locked="false">UsernameToken</parameter>
+    <parameter name="InAction" locked="false">Signature Signature Timestamp</parameter>
     <parameter name="InPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
+    <parameter name="InSignaturePropFile" locked="false">interop.properties</parameter>
 
     <parameter name="OutAction" locked="false">NoSecurity</parameter>
 

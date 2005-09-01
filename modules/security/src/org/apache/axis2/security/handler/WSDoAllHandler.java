@@ -140,10 +140,30 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 
 
     public Object getProperty(Object msgContext, String axisKey) {
-    	String key = WSHandlerConstantsMapper.getMapping(axisKey,inHandler);
+    	
+    	int repetition = getRepetition(msgContext);
+    	
+    	String key = WSHandlerConstantsMapper.getMapping(axisKey,inHandler, repetition);
     	log.debug("wss4j key: " + axisKey + " Key : " + key);
         return ((MessageContext)msgContext).getProperty(key);
     }
+
+    /**
+     * Returns the repetition number from the message context
+     * @param msgContext
+     * @return
+     */
+	protected int getRepetition(Object msgContext) {
+		//get the repetition from the message context
+    	int repetition = 0;
+    	if(!inHandler) {//We only need to repete the out handler
+    		Integer count = (Integer)((MessageContext)msgContext).getProperty(WSSHandlerConstants.Out.REPETITON);
+    		if(count != null) { //When we are repeting the handler
+    			repetition = count.intValue();
+    		}
+    	}
+		return repetition;
+	}
 
     public String getPassword(Object msgContext) {
         return (String)((MessageContext)msgContext).getProperty(WSS_PASSWORD);
@@ -169,11 +189,13 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 	 */
     public Object getOption(String axisKey) {
     	
-    	String key  = WSHandlerConstantsMapper.getMapping(axisKey,inHandler);
-    	
     	MessageContext msgContext = (MessageContext)this.reqData.getMsgContext();
-    	Object value = null;
     	
+    	int repetition  = this.getRepetition(msgContext);
+    	
+    	String key  = WSHandlerConstantsMapper.getMapping(axisKey,inHandler, repetition);
+
+    	Object value = null;
     	
     	// If the parameters are set in the scope of an peration in service.xml
 		OperationContext operationContext = msgContext.getOperationContext();
