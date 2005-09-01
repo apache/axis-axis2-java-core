@@ -1,0 +1,34 @@
+<axisconfig name="AxisJava2.0">
+
+    <messageReceiver mep="INOUT" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+
+    <parameter name="ServicePara1" locked="false">true</parameter>
+    <parameter name="ServicePara2" locked="true">true</parameter>
+
+    <parameter name="modulePara1" locked="false">true</parameter>
+    <parameter name="modulePara2" locked="true">true</parameter>
+
+    <phaseOrder type="inflow">
+        <!--  System pre defined phases       -->
+        <phase name="TransportIn"/>
+        <phase name="PreDispatch"/>
+        <phase name="Dispatch"/>
+        <phase name="PostDispatch"/>
+        <!--  System pre defined phases       -->
+        <!--   After Postdispatch phase module author or or service author can add any phase he want      -->
+        <phase name="userphase1"/>
+    </phaseOrder>
+    <phaseOrder type="outflow">
+        <!--      user can add his own phases to this area  -->
+        <phase name="userphase1"/>
+    </phaseOrder>
+    <phaseOrder type="INfaultflow">
+        <!--      user can add his own phases to this area  -->
+        <phase name="userphase1"/>
+    </phaseOrder>
+    <phaseOrder type="Outfaultflow">
+        <!--      user can add his own phases to this area  -->
+        <phase name="userphase1"/>
+    </phaseOrder>
+</axisconfig>
+

@@ -81,7 +81,9 @@ public class ModuleBuilder extends DescriptionBuilder{
             if(moduleClassAtt !=null){
                 String moduleClass = moduleClassAtt.getValue();
                 if(moduleClass !=null && !"".equals(moduleClass)){
-                    engine.getCurrentFileItem().setModuleClass(moduleClass);
+                    if (engine !=null) {
+                        engine.getCurrentFileItem().setModuleClass(moduleClass);
+                    }
                 }
             }
 

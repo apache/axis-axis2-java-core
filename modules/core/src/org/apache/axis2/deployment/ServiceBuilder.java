@@ -206,8 +206,10 @@ public class ServiceBuilder extends DescriptionBuilder{
             processOpeasrtionModuleRefs(modules, op_descrip);
 
             //setting Operation phase
-            PhasesInfo info = engine.getPhasesinfo();
-            info.setOperationPhases(op_descrip);
+            if (engine !=null) {
+                PhasesInfo info = engine.getPhasesinfo();
+                info.setOperationPhases(op_descrip);
+            }
 
             //adding the opeartion
             operations.add(op_descrip);
