@@ -17,38 +17,81 @@ package org.apache.axis2.om;
 
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis2.om.impl.llom.factory.OMLinkedListImplFactory;
 
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.namespace.QName;
 import java.io.FileReader;
 import java.util.Iterator;
 
-public class IteratorTester extends AbstractTestCase {
-    private SOAPEnvelope envelope = null;
+public class IteratorTest extends AbstractTestCase {
+    private OMElement envelope = null;
 
-    public IteratorTester(String testName) {
+    public IteratorTest(String testName) {
         super(testName);
     }
 
     protected void setUp() throws Exception {
+        //lets use a plain OM factory
         envelope =
-                new StAXSOAPModelBuilder(
+                new StAXOMBuilder(new OMLinkedListImplFactory(),
                         XMLInputFactory.newInstance().createXMLStreamReader(
                                 new FileReader(
                                         getTestResourceFile(
-                                                "soap/soapmessage1.xml"))), null).getSOAPEnvelope();
+                                                "soap/soapmessage1.xml")))).getDocumentElement();
     }
 
     protected void tearDown() throws Exception {
         envelope = null;
     }
 
+    /**
+     * Test the plain iterator which includes all the
+     * children (including the texts)
+     */
     public void testIterator() {
         OMElement elt = envelope;
         Iterator iter = elt.getChildren();
+        int counter = 0;
         while (iter.hasNext()) {
-            assertNotNull(iter.next());
+            counter ++;
+            assertNotNull("Must return not null objects!",iter.next());
         }
+        assertEquals("This element should contain only five children including the text ",5,counter);
+    }
 
+    /**
+     * Test the element iterator
+     */
+    public void testElementIterator() {
+        OMElement elt = envelope;
+        Iterator iter = elt.getChildElements();
+        int counter = 0;
+        while (iter.hasNext()) {
+            counter ++;
+            Object o = iter.next();
+            assertNotNull("Must return not null objects!",o);
+            assertTrue("All these should be elements!",((OMNode)o).getType()==OMNode.ELEMENT_NODE);
+        }
+        assertEquals("This element should contain only two elements ",2,counter);
+    }
+
+    /**
+     * Test the element iterator
+     */
+    public void testElementQNameIterator() {
+        OMElement elt = envelope;
+        QName qname = new QName("http://schemas.xmlsoap.org/soap/envelope/","body");
+        Iterator iter = elt.getChildrenWithName(qname);
+        int counter = 0;
+        while (iter.hasNext()) {
+            counter ++;
+            Object o = iter.next();
+            assertNotNull("Must return not null objects!",o);
+            assertTrue("All these should be elements!",((OMNode)o).getType()==OMNode.ELEMENT_NODE);
+        }
+        assertEquals("This element should contain only one element with the given QName ",1,counter);
     }
 
     /**
@@ -101,6 +144,7 @@ public class IteratorTester extends AbstractTestCase {
         }
         iter = elt.getChildren();
         if (iter.hasNext()) {
+            //we shouldn't reach here!
             fail("No children should remain after removing all!");
         }
 
@@ -120,7 +164,7 @@ public class IteratorTester extends AbstractTestCase {
             firstChildrenCount++;
         }
 
-        //this should remove the last node
+        //remove the last node
         iter.remove();
 
         //reloop and check the count

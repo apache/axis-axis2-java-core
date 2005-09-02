@@ -19,6 +19,7 @@ import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
+import org.apache.axis2.om.impl.llom.traverse.OMChildElementIterator;
 import org.apache.axis2.om.impl.llom.util.EmptyIterator;
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
 
@@ -258,11 +259,10 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * Returns a filtered list of children - just the elements.
-     *
      * @return an iterator over the child elements
      */
     public Iterator getChildElements() {
-        return new OMChildrenIterator(getFirstChild());
+        return new OMChildElementIterator(getFirstElement());
     }
 
     /**

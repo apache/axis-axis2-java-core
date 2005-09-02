@@ -47,12 +47,12 @@ public class WSDL2JavaTest extends TestCase{
      */
     protected void setUp() throws Exception {
         File outputFile = new File(OUTPUT_LOCATION_BASE);
-//        if (outputFile.exists() && outputFile.isDirectory()){
-//            deleteDir(outputFile);
-//            outputFile.mkdir();
-//        }else{
-//            outputFile.mkdir();
-//        }
+        if (outputFile.exists() && outputFile.isDirectory()){
+            deleteDir(outputFile);
+            outputFile.mkdir();
+        }else{
+            outputFile.mkdir();
+        }
     }
 
     /**
@@ -60,10 +60,10 @@ public class WSDL2JavaTest extends TestCase{
      * @throws Exception
      */
     protected void tearDown() throws Exception {
-//        File outputFile = new File(OUTPUT_LOCATION_BASE);
-//        if (outputFile.exists() && outputFile.isDirectory()){
-//            deleteDir(outputFile);
-//        }
+        File outputFile = new File(OUTPUT_LOCATION_BASE);
+        if (outputFile.exists() && outputFile.isDirectory()){
+            deleteDir(outputFile);
+        }
     }
 
     /**
