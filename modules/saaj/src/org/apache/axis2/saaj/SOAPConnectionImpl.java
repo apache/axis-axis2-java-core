@@ -15,6 +15,8 @@
  */
 package org.apache.axis2.saaj;
 
+import org.w3c.dom.Node;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -23,10 +25,13 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
+import org.apache.axis2.util.SessionUtils;
 
+import javax.activation.DataHandler;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.namespace.QName;
 import java.net.MalformedURLException;
@@ -59,14 +64,19 @@ public class SOAPConnectionImpl extends SOAPConnection {
             call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
             call.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
-                    true);
+                    false);
             call.setTo(
                     new EndpointReference(url.toString()));
             String axisOp = request.getSOAPBody().getFirstChild().getNodeName();
-            org.apache.axis2.soap.SOAPEnvelope responseEnv = (org.apache.axis2.soap.SOAPEnvelope) call.invokeBlocking(
-                    axisOp, envelope);
+            NodeImpl bodyContentNode = (NodeImpl)request.getSOAPBody().getFirstChild();
+            OMElement bodyContent = (OMElement)bodyContentNode.getOMNode();
+            OMElement result = call.invokeBlocking(axisOp, bodyContent);
+            org.apache.axis2.soap.SOAPEnvelope responseEnv = (org.apache.axis2.soap.SOAPEnvelope) ((OMElement)result.getParent()).getParent(); 
             SOAPEnvelopeImpl response = new SOAPEnvelopeImpl(responseEnv);
-            return new SOAPMessageImpl(response);
+            
+            SOAPMessageImpl sMsg = new SOAPMessageImpl(response);
+            extractAttachmentNodes(responseEnv, sMsg);
+            return sMsg;
 
         } catch (MalformedURLException mue) {
             throw new SOAPException(mue);
@@ -99,27 +109,6 @@ public class SOAPConnectionImpl extends SOAPConnection {
     		String hrefContentId = validateHref(hrefAttr);
     		
     		if (hrefContentId!=null) {//This is an element referencing an attachment!
-    			/*
-    			//Get a handle to this element's parent and next sibling for later use.
-    			OMElement parent = (OMElement)child.getParent();
-    			OMNode nextSibling = child.getNextSibling();
-    			OMNode prevSibling = child.getPreviousSibling();
-    			
-    			OMText omText = getOMTextForReferencedAttachment(hrefContentId, soapMsg);
-    			
-    			child.build();
-    			child.detach();
-    			//We should now detach the element which referenced the attachment
-    			//and in its place put an OMText node created out of the attachment's
-    			//data handler, of course, preserving the order of attachments
-    			if(nextSibling!=null) {
-    				nextSibling.insertSiblingBefore(omText); //preserving the order of attachments
-    			} else if (prevSibling!=null) {
-    				prevSibling.insertSiblingAfter(omText);
-    			} else {//only child for its parent, so needn't bother about order
-    				parent.addChild(omText);
-    			}
-    			*/
     			OMText omText = getOMTextForReferencedAttachment(hrefContentId, soapMsg);
     			child.build();
     			child.removeAttribute(hrefAttr);
@@ -132,6 +121,39 @@ public class SOAPConnectionImpl extends SOAPConnection {
     	}
     }
     
+    /**
+     * The method recursively looks for the binary text nodes and adds them as attachment
+     * to soapMessage at the same time removing them from soapEnv and putting appropriate
+     * contentId
+     * @param element
+     * @param soapMsg
+     */
+    private void extractAttachmentNodes(OMElement element, SOAPMessage soapMsg){
+    	Iterator childIter = element.getChildElements();
+    	while(childIter.hasNext()) {
+    		OMNode child = (OMNode)childIter.next();
+    		if(child instanceof OMText){
+    			OMText binaryNode = (OMText)child;
+    			DataHandler actualDH = binaryNode.getDataHandler();
+    			if(actualDH != null){
+    				AttachmentPart ap = soapMsg.createAttachmentPart(actualDH);
+    				String contentId = SessionUtils.generateSessionId();
+    				ap.setContentId(contentId);
+    				ap.setContentType(actualDH.getContentType());
+    				OMElement parent = (OMElement)child.getParent();
+    				OMAttribute attr = org.apache.axis2.om.OMAbstractFactory.getOMFactory().createOMAttribute("href", null,"cid:"+contentId);
+    				parent.addAttribute(attr);
+    				binaryNode.detach();
+    				soapMsg.addAttachmentPart(ap);
+    			}
+    		} else{
+				if(child instanceof OMElement) {
+					OMElement childElement = (OMElement)child;
+					extractAttachmentNodes(childElement, soapMsg);
+				}
+    		}
+    	}
+    }
     /**
      * This method checks the value of attribute and if it is a valid CID then
      * returns the contentID (with cid: prefix stripped off) or else returns null.
