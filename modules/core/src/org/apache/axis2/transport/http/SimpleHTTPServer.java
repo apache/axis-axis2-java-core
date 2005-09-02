@@ -28,6 +28,8 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * This is a simple implementation of an HTTP server for processing
@@ -185,8 +187,14 @@ public class SimpleHTTPServer extends TransportListener {
      *
      * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
      */
-    public EndpointReference replyToEPR(String serviceName) {
-        return new EndpointReference("http://127.0.0.1:" + (embedded.getLocalPort()) +
+    public EndpointReference replyToEPR(String serviceName) throws AxisFault {
+        String hostAddress = null;
+        try {
+            hostAddress = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            throw new AxisFault(e);
+        }
+        return new EndpointReference("http://"+ hostAddress + ":" + (embedded.getLocalPort()) +
                 "/axis2/services/" +
                 serviceName);
     }
