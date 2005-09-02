@@ -35,6 +35,9 @@ import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.stream.XMLStreamReader;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.Iterator;
 
 
 /**
@@ -56,15 +59,46 @@ public abstract class Stub{
     protected String senderTransport = Constants.TRANSPORT_HTTP;
     protected String listenerTransport =Constants.TRANSPORT_HTTP ;
     protected boolean useSeparateListener;
-    //Default SOAP version
-    protected int soapVesrion = SOAP_11;
 
+    //Default SOAP version is 11
+    protected int soapVesrion = SOAP_11;
+    protected HashMap propertyMap = new HashMap();
+
+    /**
+     *
+     * @param senderTransport
+     * @param listenerTransport
+     * @param useSeparateListener
+     * @throws AxisFault
+     */
     public void setTransportInfo(String senderTransport,String listenerTransport,boolean useSeparateListener)throws AxisFault{
         this.senderTransport = senderTransport;
         this.listenerTransport=listenerTransport;
         this.useSeparateListener=useSeparateListener;
     }
 
+    /**
+     *
+     * @param key
+     * @param value
+     */
+    public void _put(String key,Object value){
+        this.propertyMap.put(key,value);
+    }
+
+
+    /**
+     *
+     * @param key
+     * @return the object
+     */
+    public Object _get(String key){
+        return this.propertyMap.get(key);
+    }
+    /**
+     *
+     * @param doRest
+     */
     public void setDoREST(boolean doRest) {
         this.doRest = doRest;
     }
@@ -262,6 +296,15 @@ public abstract class Stub{
             return OMAbstractFactory.getSOAP12Factory();
         }else{
             throw new RuntimeException("Unknown SOAP version");
+        }
+    }
+
+    protected void populateProperties(Call call){
+        Iterator keys = this.propertyMap.keySet().iterator();
+        String key;
+        while (keys.hasNext()) {
+            key = keys.next().toString();
+            call.set(key,propertyMap.get(key));
         }
     }
 }

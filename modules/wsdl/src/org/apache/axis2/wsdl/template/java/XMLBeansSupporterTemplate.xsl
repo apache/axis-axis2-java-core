@@ -16,6 +16,10 @@
                     <xsl:for-each select="param">
                     <xsl:if test="@type!=''">
                     if (<xsl:value-of select="@type"/>.class.equals(type)){
+                        //////////////////////////////////////////////////
+                        /////////// Temporary hack to solve some streaming problems
+                        param.build();
+                        /////////////////////////////////////////////////
                         return <xsl:value-of select="@type"/>.Factory.parse(param.getXMLStreamReader()) ;
                     }
                      </xsl:if>

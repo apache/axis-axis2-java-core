@@ -15,6 +15,7 @@ import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.util.*;
 
@@ -145,11 +146,9 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
 
         try {
             ArrayList additionalSchemaElements = new ArrayList();
+            DocumentBuilder documentBuilder = getNamespaceAwareDocumentBuilder();
             for (int i = 0; i < schemaNames.length; i++) {
                 InputStream schemaStream = this.getClass().getResourceAsStream("/org/apache/axis2/wsdl/codegen/schema/"+ schemaNames[i]);
-                DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-                documentBuilderFactory.setNamespaceAware(true);
-                DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
                 Document doc = documentBuilder.parse(schemaStream);
                 additionalSchemaElements.add(doc.getDocumentElement());
             }
@@ -166,6 +165,12 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
         }
 
         return schemaElements;
+    }
+
+    private DocumentBuilder getNamespaceAwareDocumentBuilder() throws ParserConfigurationException {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
+        return documentBuilderFactory.newDocumentBuilder();
     }
 
 

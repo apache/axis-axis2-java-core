@@ -93,6 +93,9 @@
  		    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
             _call.setTo(this.toEPR);
             _call.setSoapAction("<xsl:value-of select="$soapAction"/>");
+
+             //set the properties
+            populateProperties(_call);
             org.apache.axis2.soap.SOAPEnvelope env = null;
             env = createEnvelope();
             <xsl:variable name="count"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
@@ -153,8 +156,6 @@
              _call.setExceptionToBeThrownOnSOAPFault(true);
              org.apache.axis2.context.MessageContext  _returnMessageContext = _call.invokeBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
              org.apache.axis2.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
-             //check for faults. This might throw an Axis fault
-             //checkFault(_returnEnv);
              java.lang.Object object = <xsl:value-of select="$fullsupporterclassname"/>.fromOM(getElement(_returnEnv,"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
              return (<xsl:value-of select="$outputtype"/>)object;
                  </xsl:otherwise>
