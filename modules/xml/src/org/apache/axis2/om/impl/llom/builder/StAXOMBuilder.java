@@ -35,7 +35,6 @@ public class StAXOMBuilder extends StAXBuilder {
     /**
      * Field document
      */
-    protected OMDocument document;
 
     private boolean doDebug = false;
 
@@ -198,8 +197,11 @@ public class StAXOMBuilder extends StAXBuilder {
                     lastNode = createOMElement();
                     break;
                 case XMLStreamConstants.START_DOCUMENT:
-                    //Don't do anything in the start document event
-                    //We've already assumed that start document has passed!
+                    // Document has already being created.
+                    
+                    document.setXMLVersion(parser.getVersion());
+                    document.setCharsetEncoding(parser.getEncoding());
+                    document.setStandalone(parser.isStandalone() ? "yes" : "no");
                     if(doDebug) {
                         System.out.println("START_DOCUMENT: ");
                     }
@@ -317,9 +319,7 @@ public class StAXOMBuilder extends StAXBuilder {
         }
     }
 
-    public OMDocument getDocument() {
-        return document;
-    }
+    
 
     public void setDoDebug(boolean doDebug) {
         this.doDebug = doDebug;

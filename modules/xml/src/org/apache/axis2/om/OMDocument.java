@@ -52,8 +52,8 @@ public interface OMDocument extends OMContainer {
 	
 	/**
 	 * Sets the XML version
-	 * @see OMDocumentImpl#XML_10 XML 1.0
-	 * @see OMDocumentImpl#XML_11 XML 1.1
+	 * @see org.apache.axis2.om.impl.llom.OMDocumentImpl#XML_10 XML 1.0
+	 * @see org.apache.axis2.om.impl.llom.OMDocumentImpl#XML_11 XML 1.1
 	 * @param version
 	 */
 	public void setXMLVersion(String version);
@@ -70,7 +70,15 @@ public interface OMDocument extends OMContainer {
 	 */
 	public void setCharsetEncoding(String charsetEncoding);
 
-	/**
+    /**
+     * XML standalone value
+     * This will be yes, no or null (if not available)
+     * @return
+     */
+    public String isStandalone();
+    public void setStandalone(String isStandalone);
+
+    /**
 	 * Serialize the OMDocument
 	 * @param omOutput
 	 * @throws XMLStreamException

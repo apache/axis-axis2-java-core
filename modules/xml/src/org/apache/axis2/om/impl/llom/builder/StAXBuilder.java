@@ -16,7 +16,6 @@
 package org.apache.axis2.om.impl.llom.builder;
 
 import org.apache.axis2.om.*;
-import org.apache.axis2.soap.impl.llom.SOAPConstants;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
@@ -404,5 +403,9 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
      */
     public Object getRegisteredContentHandler() {
         throw new UnsupportedOperationException();
+    }
+
+    public OMDocument getDocument() {
+        return document;
     }
 }

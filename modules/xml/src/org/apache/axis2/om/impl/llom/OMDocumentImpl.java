@@ -64,12 +64,14 @@ public class OMDocumentImpl implements OMDocument {
      */
     protected String xmlVersion = "1.0";
 
+    protected String isStandalone;
+
 
     /**
      * Default constructor
      */
     public OMDocumentImpl() {
-      this.done = true;
+        this.done = true;
     }
 
     /**
@@ -247,10 +249,18 @@ public class OMDocumentImpl implements OMDocument {
     /**
      * Set the character set encoding scheme
      *
-     * @param charSetEncoding
+     * @param charEncoding
      */
     public void setCharsetEncoding(String charEncoding) {
         this.charSetEncoding = charEncoding;
+    }
+
+    public String isStandalone() {
+        return isStandalone;
+    }
+
+    public void setStandalone(String isStandalone) {
+        this.isStandalone = isStandalone;
     }
 
     public String getXMLVersion() {
@@ -305,11 +315,13 @@ public class OMDocumentImpl implements OMDocument {
             //Check whether the OMOutput char encoding and OMDocument char
             //encoding matches, if not use char encoding of OMOutput
             String outputCharEncoding = omOutput.getCharSetEncoding();
-            if (!outputCharEncoding.equalsIgnoreCase(this.charSetEncoding)) {
-                this.charSetEncoding = outputCharEncoding;
+            if (outputCharEncoding == null || "".equals(outputCharEncoding)) {
+                omOutput.getXmlStreamWriter().writeStartDocument(charSetEncoding,
+                        xmlVersion);
+            } else {
+                omOutput.getXmlStreamWriter().writeStartDocument(outputCharEncoding,
+                        xmlVersion);
             }
-            omOutput.getXmlStreamWriter().writeStartDocument(charSetEncoding,
-                    xmlVersion);
         }
 
         Iterator children = this.getChildren();

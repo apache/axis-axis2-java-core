@@ -18,8 +18,6 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
@@ -31,6 +29,8 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -236,8 +236,10 @@ public class CommonsHTTPTransportSender
                         XMLOutputFactory.newInstance().createXMLStreamWriter(
                                 bytesOut,
                                 charSetEnc);
-                element.serialize(outputWriter);
-                outputWriter.flush();
+                OMOutputImpl out = new OMOutputImpl(outputWriter);
+                out.setCharSetEncoding(charSetEnc);
+                element.serialize(out);
+                out.flush();
                 return bytesOut.toByteArray();
             } catch (XMLStreamException e) {
                 throw new AxisFault(e);

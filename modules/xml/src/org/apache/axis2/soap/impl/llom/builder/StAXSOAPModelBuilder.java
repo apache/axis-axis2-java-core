@@ -181,6 +181,8 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
         if (lastNode == null) {
             node = constructNode(null, elementName, true);
             soapMessage.setSOAPEnvelope((SOAPEnvelope) node);
+            soapMessage.setXMLVersion(parser.getVersion());
+            soapMessage.setCharsetEncoding(parser.getCharacterEncodingScheme());
         } else if (lastNode.isComplete()) {
             node =
                     constructNode((OMElement) lastNode.getParent(),

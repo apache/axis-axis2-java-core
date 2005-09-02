@@ -87,13 +87,17 @@ public class OMDocumentSerilizationTest extends TestCase {
 	public void testCharsetEncoding() throws XMLStreamException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		OMOutputImpl output = new OMOutputImpl(baos,false);
-		document.serialize(output);
+        output.ignoreXMLDeclaration(false);
+        document.serialize(output);
 		output.flush();
-		
-		String xmlDocument = new String(baos.toByteArray());
-		
-		assertTrue("Charset declaration missing",-1<xmlDocument.indexOf(encoding) ||
-                                                 -1<xmlDocument.indexOf(encoding2));
+
+        String xmlDocument = new String(baos.toByteArray());
+        System.out.println("xmlDocument = " + xmlDocument);
+
+        assertTrue("Charset declaration missing",-1 < xmlDocument.indexOf(encoding) ||
+                                                 -1 < xmlDocument.indexOf(encoding.toLowerCase()) ||
+                                                 -1 < xmlDocument.indexOf(encoding2.toLowerCase()) ||
+                                                 -1 < xmlDocument.indexOf(encoding2));
 	}
 	
 	public void testCharsetEncodingUTF_16() throws XMLStreamException {

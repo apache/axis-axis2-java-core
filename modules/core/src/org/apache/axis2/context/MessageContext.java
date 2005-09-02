@@ -56,7 +56,7 @@ public class MessageContext extends AbstractContext {
      * Field UTF_8
      * This is the 'utf-8' value for CHARACTER_SET_ENCODING property
      */
-    public static final String UTF_8 = "utf-8";
+    public static final String UTF_8 = "UTF-8";
 
     /**
      * Field UTF_8

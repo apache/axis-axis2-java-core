@@ -95,8 +95,7 @@ public class HTTPTransportUtils {
                     //Figure out the char set encoding and create the reader
 
                     //If charset is not specified
-                    if (contentType.indexOf(HTTPConstants.CHAR_SET_ENCODING)
-                        == -1) {
+                    if ( getCharSetEncoding(contentType) == null ) {
                         xmlreader =
                             XMLInputFactory
                                 .newInstance()
@@ -170,6 +169,18 @@ public class HTTPTransportUtils {
 
             }
 
+            String charsetEncoding = builder.getDocument().getCharsetEncoding();
+            if(charsetEncoding != null && !"".equals(charsetEncoding) && !((String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING)).equalsIgnoreCase(charsetEncoding)){
+                String faultCode;
+                if(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(envelope.getNamespace().getName())){
+                   faultCode = SOAP12Constants.FAULT_CODE_SENDER;
+                }else {
+                    faultCode = SOAP11Constants.FAULT_CODE_SENDER;
+                }
+                throw new AxisFault("Character Set Encoding from transport information do not match with character set encoding in the received SOAP message", faultCode);
+            }
+
+
             msgContext.setEnvelope(envelope);
             AxisEngine engine = new AxisEngine(configurationContext);
             if (envelope.getBody().hasFault()) {
@@ -200,10 +211,10 @@ public class HTTPTransportUtils {
     }
 
     /**
-     * Extracts and returns the character set encoding from the 
+     * Extracts and returns the character set encoding from the
      * Content-type header
      * Example:
-     * Content-Type: text/xml; charset=utf-8 
+     * Content-Type: text/xml; charset=utf-8
      * @param contentType
      */
     private static String getCharSetEncoding(String contentType) {
@@ -212,7 +223,7 @@ public class HTTPTransportUtils {
         	//Using the default UTF-8
         	return MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
-        
+
         //If there are spaces around the '=' sign
         int indexOfEq = contentType.indexOf("=", index);
         //There can be situations where "charset" is not the last parameter of the Content-Type header
@@ -227,6 +238,10 @@ public class HTTPTransportUtils {
 
         //There might be "" around the value - if so remove them
         value = value.replaceAll("\"", "");
+
+        if("null".equalsIgnoreCase(value)){
+            return null;
+        }
 
         return value.trim();
 
@@ -331,12 +346,25 @@ public class HTTPTransportUtils {
         MIMEHelper mimeHelper = new MIMEHelper(inStream, contentTypeString,
                 fileCacheForAttachments, attachmentRepoDir,attachmentSizeThreshold);
 
-        XMLStreamReader reader = XMLInputFactory.newInstance()
+        String charSetEncoding = getCharSetEncoding(mimeHelper.getSOAPPartContentType());
+        XMLStreamReader reader;
+        if(charSetEncoding == null || "null".equalsIgnoreCase(charSetEncoding)){
+             reader = XMLInputFactory.newInstance()
                 .createXMLStreamReader(
                         new BufferedReader(new InputStreamReader(mimeHelper
                                 .getSOAPPartInputStream(),
-                                getCharSetEncoding(mimeHelper
-                                        .getSOAPPartContentType()))));
+                                charSetEncoding)));
+            msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, charSetEncoding);
+
+        }else {
+            reader = XMLInputFactory.newInstance()
+                .createXMLStreamReader(
+                        new BufferedReader(new InputStreamReader(mimeHelper
+                                .getSOAPPartInputStream())));
+            msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, MessageContext.UTF_8);
+
+        }
+
 
         /*
 		 * put a reference to Attachments in to the message context

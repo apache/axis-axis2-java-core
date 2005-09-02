@@ -15,18 +15,17 @@
  */
 package org.apache.axis2.om.impl;
 
-import org.apache.axis2.om.OMConstants;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
+    import org.apache.axis2.om.OMText;
+    import org.apache.axis2.soap.SOAP11Constants;
+    import org.apache.axis2.soap.SOAP12Constants;
 
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.util.LinkedList;
+    import javax.xml.stream.FactoryConfigurationError;
+    import javax.xml.stream.XMLOutputFactory;
+    import javax.xml.stream.XMLStreamException;
+    import javax.xml.stream.XMLStreamWriter;
+    import java.io.ByteArrayOutputStream;
+    import java.io.OutputStream;
+    import java.util.LinkedList;
 
 
 /**
@@ -49,10 +48,10 @@ public class OMOutputImpl {
      * Field DEFAULT_CHAR_SET_ENCODING specifies the default 
      * character encoding scheme to be used
      */
-    private static final String DEFAULT_CHAR_SET_ENCODING = "utf-8";
+    public static final String DEFAULT_CHAR_SET_ENCODING = "utf-8";
 
-    private String charSetEncoding = DEFAULT_CHAR_SET_ENCODING;
-    private String xmlVersion = OMConstants.DEFAULT_XML_VERSION;
+    private String charSetEncoding;
+    private String xmlVersion;
     private boolean ignoreXMLDeclaration = false;
 
 
