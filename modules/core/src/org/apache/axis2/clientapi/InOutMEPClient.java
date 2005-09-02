@@ -190,8 +190,9 @@ public class InOutMEPClient extends MEPClient {
                         String message = "";
                         message = message + "Code =" + soapFault.getCode()==null?"":
                                 soapFault.getCode().getValue()==null?"":soapFault.getCode().getValue().getText();
-                        message = message + "Role = "+soapFault.getRole()==null?"":soapFault.getRole().getRoleValue();
-                        message = message + "Reason =" + soapFault.getReason();
+                        //message = message + "Role = "+soapFault.getRole()==null?"":soapFault.getRole().getRoleValue();
+                        message = message + "Reason =" + soapFault.getReason()==null?"":
+                                soapFault.getReason().getSOAPText()==null?"":soapFault.getReason().getSOAPText().getText();
                         throw new AxisFault(message);
                     }
                 }
