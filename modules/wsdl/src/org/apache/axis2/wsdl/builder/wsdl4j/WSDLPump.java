@@ -780,7 +780,9 @@ public class WSDLPump {
                 }
                 //set the name of this Schema element
                 //todo this needs to be fixed
-                schemaExtensibilityElement.setName(new QName("",schema.getDocumentBaseURI()));
+                if(schema.getDocumentBaseURI() != null) {
+                    schemaExtensibilityElement.setName(new QName("",schema.getDocumentBaseURI()));
+                }
                 component.addExtensibilityElement(schemaExtensibilityElement);
             } else if (SOAPConstants.Q_ELEM_SOAP_OPERATION.equals(
                     wsdl4jElement.getElementType())) {
