@@ -178,7 +178,7 @@ public class DeploymentEngine implements DeploymentConstants {
         String value;
         Parameter parahotdeployment = axisConfig.getParameter(HOTDEPLOYMENT);
         Parameter parahotupdate = axisConfig.getParameter(HOTUPDATE);
-        Parameter exatrctServiceArchive = axisConfig.getParameter("extract_service_archieve");
+        Parameter paraextractServiceArchive = axisConfig.getParameter(EXTRACTSERVICEARCHIVE);
         if (parahotdeployment != null) {
             value = (String) parahotdeployment.getValue();
             if ("false".equalsIgnoreCase(value))
@@ -189,8 +189,8 @@ public class DeploymentEngine implements DeploymentConstants {
             if ("false".equalsIgnoreCase(value))
                 hotUpdate = false;
         }
-        if(exatrctServiceArchive != null){
-            value = (String) exatrctServiceArchive.getValue();
+        if(paraextractServiceArchive != null){
+            value = (String) paraextractServiceArchive.getValue();
             if ("true".equalsIgnoreCase(value))
                 extractServiceArchive = true;
         }

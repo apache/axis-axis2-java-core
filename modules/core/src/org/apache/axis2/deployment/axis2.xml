@@ -14,9 +14,9 @@
 
 
     <!--if you want to extract the service archive file and work with that please uncomment this-->
-    <!--else , it wont exatract archive file or does not take into consideration if someone drop-->
+    <!--else , it wont extract archive file or does not take into consideration if someone drop-->
     <!--exploded directory into /service directory-->
-    <!--<parameter name="extract_service_archieve" locked="false">true</parameter>-->
+    <!--<parameter name="extractServiceArchive" locked="false">true</parameter>-->
 
 
 <!--    The way of adding listener to the system-->

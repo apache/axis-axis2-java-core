@@ -86,6 +86,7 @@ public interface DeploymentConstants {
 
     String HOTDEPLOYMENT = "hotdeployment";
     String HOTUPDATE = "hotupdate";
+    String EXTRACTSERVICEARCHIVE = "extractServiceArchive";
 
     String AXIS_STORAGE = "axisStorage";
 

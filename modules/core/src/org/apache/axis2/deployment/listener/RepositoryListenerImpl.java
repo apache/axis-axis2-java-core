@@ -182,7 +182,7 @@ public class RepositoryListenerImpl implements RepositoryListener,
         ArrayList tobedelete = new ArrayList();
         ArrayList tobeextarct = new ArrayList();
         ArrayList allFiles = new ArrayList();
-        for (int i = 0; i < fileList.length; i++) {
+        for (int i = 0; fileList != null && i < fileList.length; i++) {
             File file_first = fileList[i];
             boolean isservice = ArchiveFileData.isServiceArchiveFile(file_first.getName());
             boolean found = false;
@@ -222,7 +222,7 @@ public class RepositoryListenerImpl implements RepositoryListener,
             allFiles.add(outFile);
         }
 
-        for (int i = 0; i < fileList.length; i++) {
+        for (int i = 0; fileList != null && i < fileList.length; i++) {
             File file = fileList[i];
             boolean found = false;
             boolean todo = ArchiveFileData.isServiceArchiveFile(file.getName());
