@@ -160,8 +160,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
 
             }
         } catch (Exception e) {
-            //log this and get going.
-            log.error("Additional schema loading failed!!",e);
+            throw new RuntimeException("Additional schema loading failed!!",e);
         }
 
         return schemaElements;
