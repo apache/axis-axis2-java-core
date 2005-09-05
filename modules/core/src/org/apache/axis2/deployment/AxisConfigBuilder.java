@@ -12,8 +12,7 @@ import org.apache.axis2.storage.AxisStorage;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.*;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.namespace.QName;
@@ -102,6 +101,8 @@ public class AxisConfigBuilder extends DescriptionBuilder{
             OMElement storages = config_element.getFirstChildWithName(new QName(AXIS_STORAGE)) ;
             processAxisStorage(storages);
 
+            Iterator moduleConfigs = config_element.getChildrenWithName(new QName(MODULECONFIG));
+            processModuleConfig(moduleConfigs,axisConfiguration,axisConfiguration);
 
 
         } catch (XMLStreamException e) {
@@ -416,7 +417,26 @@ public class AxisConfigBuilder extends DescriptionBuilder{
             String refName = moduleRefAttribute.getValue();
             engine.addModule(new QName(refName));
         }
+    }
 
+    protected void processModuleConfig(Iterator moduleConfigs ,
+                                              ParameterInclude parent, AxisConfiguration config)
+            throws DeploymentException {
+        while (moduleConfigs.hasNext()) {
+            OMElement moduleConfig = (OMElement) moduleConfigs.next();
+            OMAttribute moduleName_att = moduleConfig.getAttribute(
+                    new QName(ATTNAME));
+            if(moduleName_att == null){
+                throw new DeploymentException("Invalid module configuration");
+            } else {
+                String module = moduleName_att.getValue();
+                ModuleConfiguration moduleConfiguration =
+                        new ModuleConfiguration(new QName(module),parent);
+                Iterator paramters=  moduleConfig.getChildrenWithName(new QName(PARAMETERST));
+                processParameters(paramters,moduleConfiguration,parent);
+               ((AxisConfigurationImpl)config).addModuleConfig(moduleConfiguration);
+            }
+        }
     }
 
 }

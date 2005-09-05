@@ -17,6 +17,7 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk
@@ -30,6 +31,8 @@ public class OperationDescription extends WSDLOperationImpl implements
     private ArrayList phasesOutFlow;
     private ArrayList phasesInFaultFlow;
     private ArrayList phasesOutFaultFlow;
+
+    private HashMap moduleConfigmap;
 
     private int mep = MEP_CONSTANT_INVALID;
 
@@ -362,7 +365,21 @@ public class OperationDescription extends WSDLOperationImpl implements
                 return false;
             }
         }
+    }
 
+    /**
+     * Adding module configuration , if there is moduleConfig tag in operation
+     * @param moduleConfiguration
+     */
+    public void addModuleConfig(ModuleConfiguration moduleConfiguration){
+        if(moduleConfigmap == null){
+            moduleConfigmap = new HashMap();
+        }
+        moduleConfigmap.put(moduleConfiguration.getModuleName(),moduleConfiguration);
+    }
+
+    public ModuleConfiguration getModuleConfig(QName moduleName){
+        return  (ModuleConfiguration)moduleConfigmap.get(moduleName);
     }
 
 }

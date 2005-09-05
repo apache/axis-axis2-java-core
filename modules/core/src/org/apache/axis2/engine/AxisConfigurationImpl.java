@@ -39,6 +39,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      */
     private Hashtable errornesServices;
 
+    private HashMap moduleConfigmap;
+
     //to keep axis2 storage class
     private AxisStorage axisStorage;
 
@@ -451,5 +453,22 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     public void addObservers(AxisObserver axisObserver){
         observersList.add(axisObserver);
     }
+
+
+    /**
+     * Adding module configuration , if there is moduleConfig tag in service
+     * @param moduleConfiguration
+     */
+    public void addModuleConfig(ModuleConfiguration moduleConfiguration){
+        if(moduleConfigmap == null){
+            moduleConfigmap = new HashMap();
+        }
+        moduleConfigmap.put(moduleConfiguration.getModuleName(),moduleConfiguration);
+    }
+
+    public ModuleConfiguration getModuleConfig(QName moduleName){
+        return  (ModuleConfiguration)moduleConfigmap.get(moduleName);
+    }
+
 
 }

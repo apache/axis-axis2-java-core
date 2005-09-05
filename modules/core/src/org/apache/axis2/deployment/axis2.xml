@@ -88,6 +88,12 @@
     <!-- Comment this to disable Addressing -->
     <module ref="addressing"/>
 
+
+    <!--Configuring module , providing paramters for modules whether they refer or not-->
+    <!--<moduleConfig name="addressing">-->
+         <!--<parameter name="addressingPara" locked="false">N/A</parameter>-->
+    <!--</moduleConfig>-->
+    
     <!-- ================================================= -->
     <!-- Phases  -->
     <!-- ================================================= -->

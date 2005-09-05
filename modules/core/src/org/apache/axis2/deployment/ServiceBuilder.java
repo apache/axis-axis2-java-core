@@ -149,6 +149,9 @@ public class ServiceBuilder extends DescriptionBuilder{
                 service.addOperation(opeartionDesc);
             }
 
+            Iterator moduleConfigs = service_element.getChildrenWithName(new QName(MODULECONFIG));
+            processServiceModuleConfig(moduleConfigs,service,service);
+
 
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
@@ -182,7 +185,7 @@ public class ServiceBuilder extends DescriptionBuilder{
                 op_descrip.setMessageExchangePattern(mep);
             }
 
-             //Opeartion Paramters
+            //Opeartion Paramters
             Iterator paramters = operation.getChildrenWithName(
                     new QName(PARAMETERST));
             processParameters(paramters,op_descrip,service);
@@ -211,10 +214,54 @@ public class ServiceBuilder extends DescriptionBuilder{
                 info.setOperationPhases(op_descrip);
             }
 
+            Iterator moduleConfigs = operation.getChildrenWithName(new QName(MODULECONFIG));
+            processOperationModuleConfig(moduleConfigs,op_descrip,op_descrip);
+
             //adding the opeartion
             operations.add(op_descrip);
         }
         return operations;
+    }
+
+
+    protected void processServiceModuleConfig(Iterator moduleConfigs ,
+                                              ParameterInclude parent, ServiceDescription service)
+            throws DeploymentException {
+        while (moduleConfigs.hasNext()) {
+            OMElement moduleConfig = (OMElement) moduleConfigs.next();
+            OMAttribute moduleName_att = moduleConfig.getAttribute(
+                    new QName(ATTNAME));
+            if(moduleName_att == null){
+                throw new DeploymentException("Invalid module configuration");
+            } else {
+                String module = moduleName_att.getValue();
+                ModuleConfiguration moduleConfiguration =
+                        new ModuleConfiguration(new QName(module),parent);
+                Iterator paramters=  moduleConfig.getChildrenWithName(new QName(PARAMETERST));
+                processParameters(paramters,moduleConfiguration,parent);
+                service.addModuleConfig(moduleConfiguration);
+            }
+        }
+    }
+
+     protected void processOperationModuleConfig(Iterator moduleConfigs ,
+                                              ParameterInclude parent, OperationDescription opeartion)
+            throws DeploymentException {
+        while (moduleConfigs.hasNext()) {
+            OMElement moduleConfig = (OMElement) moduleConfigs.next();
+            OMAttribute moduleName_att = moduleConfig.getAttribute(
+                    new QName(ATTNAME));
+            if(moduleName_att == null){
+                throw new DeploymentException("Invalid module configuration");
+            } else {
+                String module = moduleName_att.getValue();
+                ModuleConfiguration moduleConfiguration =
+                        new ModuleConfiguration(new QName(module),parent);
+                Iterator paramters=  moduleConfig.getChildrenWithName(new QName(PARAMETERST));
+                processParameters(paramters,moduleConfiguration,parent);
+                opeartion.addModuleConfig(moduleConfiguration);
+            }
+        }
     }
 
 }

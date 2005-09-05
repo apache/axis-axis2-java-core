@@ -202,7 +202,6 @@ public class DescriptionBuilder implements DeploymentConstants{
             throws DeploymentException {
         while (paramters.hasNext()) {
             //this is to check whether some one has locked the parmter at the top level
-            boolean allowedtoadd = true;
             OMElement paramterElement = (OMElement) paramters.next();
 
             Parameter paramter = new ParameterImpl();
@@ -346,7 +345,6 @@ public class DescriptionBuilder implements DeploymentConstants{
         }
         return fileName;
     }
-
 
 
     /**

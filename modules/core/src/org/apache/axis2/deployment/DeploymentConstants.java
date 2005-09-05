@@ -30,6 +30,7 @@ public interface DeploymentConstants {
     String LISTENERST = "listener";// paramater start tag
     String HANDERST = "handler";
     String MODULEST = "module";
+    String MODULECONFIG = "moduleConfig";
     String PHASEST = "phase";
     String PHASE_ORDER = "phaseOrder";
     String TYPEMAPPINGST = "typeMapping";// typeMapping start tag

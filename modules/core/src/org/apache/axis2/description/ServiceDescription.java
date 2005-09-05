@@ -49,6 +49,8 @@ public class ServiceDescription
 
     private Definition difDefinition = null;
 
+    private HashMap moduleConfigmap;
+
     private  AxisConfiguration parent;
     //to store the wsdl definition , which is build at the deployment time
 
@@ -793,6 +795,21 @@ public class ServiceDescription
                 return false;
             }
         }
-
     }
+
+    /**
+     * Adding module configuration , if there is moduleConfig tag in service
+     * @param moduleConfiguration
+     */
+    public void addModuleConfig(ModuleConfiguration moduleConfiguration){
+        if(moduleConfigmap == null){
+            moduleConfigmap = new HashMap();
+        }
+        moduleConfigmap.put(moduleConfiguration.getModuleName(),moduleConfiguration);
+    }
+
+    public ModuleConfiguration getModuleConfig(QName moduleName){
+        return  (ModuleConfiguration)moduleConfigmap.get(moduleName);
+    }
+
 }
