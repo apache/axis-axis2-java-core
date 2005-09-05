@@ -123,6 +123,11 @@ public class InOutMEPClient extends MEPClient {
                                          final MessageContext msgctx)
             throws AxisFault {
         prepareInvocation(axisop, msgctx);
+
+        // The message ID is sent all the time
+        String messageID = String.valueOf(System.currentTimeMillis());
+        msgctx.setMessageID(messageID);
+        //
         if (useSeparateListener) {
             //This mean doing a Request-Response invocation using two channel. If the 
             //transport is two way transport (e.g. http) Only one channel is used (e.g. in http cases
@@ -217,12 +222,14 @@ public class InOutMEPClient extends MEPClient {
 
             AxisEngine engine = new AxisEngine(syscontext);
             checkTransport(msgctx);
-
+            //Use message id all the time!
+            String messageID = String.valueOf(System.currentTimeMillis());
+            msgctx.setMessageID(messageID);
+            ////
             if (useSeparateListener) {
                 //the invocation happen via a seperate Channel, so we should set up the
                 //information need to correlated the response message and invoke the call back
-                String messageID = String.valueOf(System.currentTimeMillis());
-                msgctx.setMessageID(messageID);
+
                 axisop.setMessageReceiver(callbackReceiver);
                 callbackReceiver.addCallback(messageID, callback);
                 //set the replyto such that the response will arrive at the transport listener started
