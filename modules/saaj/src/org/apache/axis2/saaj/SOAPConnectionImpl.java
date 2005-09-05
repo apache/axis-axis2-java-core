@@ -129,7 +129,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
      * @param soapMsg
      */
     private void extractAttachmentNodes(OMElement element, SOAPMessage soapMsg){
-    	Iterator childIter = element.getChildElements();
+    	Iterator childIter = element.getChildren();
     	while(childIter.hasNext()) {
     		OMNode child = (OMNode)childIter.next();
     		if(child instanceof OMText){
