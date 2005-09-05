@@ -19,6 +19,7 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.MIMEHelper;
 import org.apache.axis2.context.ConfigurationContext;
@@ -170,14 +171,18 @@ public class HTTPTransportUtils {
             }
 
             String charsetEncoding = builder.getDocument().getCharsetEncoding();
-            if(charsetEncoding != null && !"".equals(charsetEncoding) && !((String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING)).equalsIgnoreCase(charsetEncoding)){
+            if(charsetEncoding != null && !"".equals(charsetEncoding) &&
+                    !((String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING))
+                            .equalsIgnoreCase(charsetEncoding)){
                 String faultCode;
                 if(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(envelope.getNamespace().getName())){
                    faultCode = SOAP12Constants.FAULT_CODE_SENDER;
                 }else {
                     faultCode = SOAP11Constants.FAULT_CODE_SENDER;
                 }
-                throw new AxisFault("Character Set Encoding from transport information do not match with character set encoding in the received SOAP message", faultCode);
+                throw new AxisFault("Character Set Encoding from " +
+                        "transport information do not match with " +
+                        "character set encoding in the received SOAP message", faultCode);
             }
 
 
@@ -324,12 +329,19 @@ public class HTTPTransportUtils {
 			UnsupportedEncodingException {
         StAXBuilder builder = null;
 
-        boolean fileCacheForAttachments =
+
+        Parameter parameter_cache_attachment = msgContext.getParameter(
+                Constants.Configuration.CACHE_ATTACHMENTS);
+         boolean fileCacheForAttachments ;
+        if(parameter_cache_attachment == null){
+            fileCacheForAttachments = false;
+        }  else {
+           fileCacheForAttachments =
             (Constants
                 .VALUE_TRUE
                 .equals(
-                    msgContext.getProperty(
-                        Constants.Configuration.CACHE_ATTACHMENTS)));
+                    parameter_cache_attachment.getValue()));
+        }
         String attachmentRepoDir = null;
         String attachmentSizeThreshold = null;
         if (fileCacheForAttachments) {
@@ -410,12 +422,12 @@ public class HTTPTransportUtils {
 
     public static boolean doWriteMTOM(MessageContext msgContext) {
         boolean enableMTOM = false;
-        if (msgContext.getProperty(Constants.Configuration.ENABLE_MTOM)
+        if (msgContext.getParameter(Constants.Configuration.ENABLE_MTOM)
             != null) {
             enableMTOM =
                 Constants.VALUE_TRUE.equals(
-                    msgContext.getProperty(
-                        Constants.Configuration.ENABLE_MTOM));
+                    msgContext.getParameter(
+                        Constants.Configuration.ENABLE_MTOM).getValue());
         }
         boolean envelopeContainsOptimise =
             HTTPTransportUtils.checkEnvelopeForOptimise(

@@ -73,11 +73,9 @@ public class EchoRawSwATest extends TestCase {
         UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
         service = new ServiceDescription(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service
-                .addParameter(new ParameterImpl(
+        service.addParameter(new ParameterImpl(
                         AbstractMessageReceiver.SERVICE_CLASS, EchoSwA.class
                                 .getName()));
-
         OperationDescription axisOp = new OperationDescription(operationName);
         axisOp.setMessageReceiver(new RawXMLINOutMessageReceiver());
         axisOp.setStyle(WSDLService.STYLE_DOC);
@@ -119,6 +117,7 @@ public class EchoRawSwATest extends TestCase {
             }
         }
 
+        System.out.println("sb:" + sb.toString());
         assertTrue(sb.toString().indexOf(
                 "Apache Axis2 - The NExt Generation Web Services Engine") > 0);
         assertTrue(sb.toString().indexOf("multipart/related") > 0);

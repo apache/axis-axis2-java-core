@@ -50,7 +50,7 @@ public class MessageContext extends AbstractContext {
      * Field  CHARACTER_SET_ENCODING
      */
     public static final String CHARACTER_SET_ENCODING =
-        "CHARACTER_SET_ENCODING";
+            "CHARACTER_SET_ENCODING";
 
     /**
      * Field UTF_8
@@ -65,7 +65,7 @@ public class MessageContext extends AbstractContext {
     public static final String UTF_16 = "utf-16";
 
     /**
-     * Field DEFAULT_CHAR_SET_ENCODING 
+     * Field DEFAULT_CHAR_SET_ENCODING
      * This is the default value for CHARACTER_SET_ENCODING property
      */
     public static final String DEFAULT_CHAR_SET_ENCODING = UTF_8;
@@ -165,15 +165,15 @@ public class MessageContext extends AbstractContext {
      */
 
     public MessageContext(ConfigurationContext engineContext)
-        throws AxisFault {
+            throws AxisFault {
         this(engineContext, null, null, null);
     }
 
     public MessageContext(
-        ConfigurationContext engineContext,
-        TransportInDescription transportIn,
-        TransportOutDescription transportOut)
-        throws AxisFault {
+            ConfigurationContext engineContext,
+            TransportInDescription transportIn,
+            TransportOutDescription transportOut)
+            throws AxisFault {
         this(engineContext, null, transportIn, transportOut);
     }
 
@@ -185,11 +185,11 @@ public class MessageContext extends AbstractContext {
      */
 
     public MessageContext(
-        ConfigurationContext engineContext,
-        SessionContext sessionContext,
-        TransportInDescription transportIn,
-        TransportOutDescription transportOut)
-        throws AxisFault {
+            ConfigurationContext engineContext,
+            SessionContext sessionContext,
+            TransportInDescription transportIn,
+            TransportOutDescription transportOut)
+            throws AxisFault {
         super(null);
 
         if (sessionContext == null) {
@@ -316,12 +316,12 @@ public class MessageContext extends AbstractContext {
         this.envelope = envelope;
         String soapNamespaceURI = envelope.getNamespace().getName();
         if (SOAP12Constants
-            .SOAP_ENVELOPE_NAMESPACE_URI
-            .equals(soapNamespaceURI)) {
+                .SOAP_ENVELOPE_NAMESPACE_URI
+                .equals(soapNamespaceURI)) {
             isSOAP11 = false;
         } else if (
-            SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
-                soapNamespaceURI)) {
+                SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
+                        soapNamespaceURI)) {
             isSOAP11 = true;
         } else {
             throw new AxisFault("Unknown SOAP Version. Current Axis handles only SOAP 1.1 and SOAP 1.2 messages");
@@ -543,25 +543,21 @@ public class MessageContext extends AbstractContext {
         messageInformationHeaders = collection;
     }
 
-    /* (non-Javadoc)
-    * @see org.apache.axis2.context.AbstractContext#getProperty(java.lang.Object, boolean)
-    */
-    public Object getProperty(String key, boolean persistent) {
-        Object obj = super.getProperty(key, persistent);
 
-        //The context hirachy might not have constructed fully, the check should
-        //look for the disconnected grandparents
-        if (obj == null
-            && operationContext == null
-            && serviceContext != null) {
-            obj = serviceContext.getProperty(key, persistent);
-        }
-        if (obj == null && operationContext == null) {
-            obj = configurationContext.getProperty(key, persistent);
-        }
-        //Search the configurations
+    /**
+     *  To retrive configuration descriptor parameters , it is posible to get paramater specify at
+     * any levle via this method , and the preferance is as follows,
+     *  1. Search in operation description if its there
+     *  2. if the paramter not found or operationContext is null will search in
+     *      ServiceDescription
+     *  3. If the serviceDescription is null or , the paramter does not found will serach in
+     *     AxisConfiguration
+     * @param key
+     * @return  Paramter <code>Paramter</code>
+     */
+    public Parameter getParameter(String key){
         Parameter param = null;
-        if (obj == null && operationContext != null) {
+        if (operationContext != null) {
             OperationDescription opDesc = operationContext.getAxisOperation();
             param = opDesc.getParameter(key);
         }
@@ -571,13 +567,87 @@ public class MessageContext extends AbstractContext {
         }
         if (param == null && configurationContext != null) {
             AxisConfiguration baseConfig =
-                configurationContext.getAxisConfiguration();
+                    configurationContext.getAxisConfiguration();
             param = baseConfig.getParameter(key);
         }
-        if (param != null) {
-            obj = param.getValue();
+        return param;
+    }
+
+    public Parameter getModuleParameter(String key, String moduleName){
+        Parameter param = null;
+        if (operationContext != null) {
+            OperationDescription opDesc = operationContext.getAxisOperation();
+            param = opDesc.getParameter(key);
         }
-        return obj;
+        if (param == null && serviceContext != null) {
+            ServiceDescription serviceDesc = serviceContext.getServiceConfig();
+            param = serviceDesc.getParameter(key);
+        }
+        if (param == null && configurationContext != null) {
+            AxisConfiguration baseConfig =
+                    configurationContext.getAxisConfiguration();
+            param = baseConfig.getParameter(key);
+        }
+        return param;
+    }
+
+
+    /* (non-Javadoc)
+    * @see org.apache.axis2.context.AbstractContext#getProperty(java.lang.Object, boolean)
+    */
+    public Object getProperty(String key, boolean persistent) {
+        // search in MC
+        Object obj = super.getProperty(key, persistent);
+
+        //The context hirachy might not have constructed fully, the check should
+        //look for the disconnected grandparents
+        // Search in Operation Context
+        if(obj != null){
+            return obj;
+        }
+        if(operationContext != null) {
+            obj = operationContext.getProperty(key, persistent);
+            return obj;
+        }
+        //Search in ServiceContext
+        if(serviceContext != null){
+            obj = serviceContext.getProperty(key, persistent);
+            return obj;
+        } else {
+
+            // search in Configuration Context
+            obj = configurationContext.getProperty(key, persistent);
+            return obj;
+        }
+
+//
+//        if (obj == null
+//            && operationContext == null
+//            && serviceContext != null) {
+//            obj = serviceContext.getProperty(key, persistent);
+//        }
+//        if (obj == null && operationContext == null) {
+//            obj = configurationContext.getProperty(key, persistent);
+//        }
+        //Search the configurations
+//        Parameter param = null;
+//        if (obj == null && operationContext != null) {
+//            OperationDescription opDesc = operationContext.getAxisOperation();
+//            param = opDesc.getParameter(key);
+//        }
+//        if (param == null && serviceContext != null) {
+//            ServiceDescription serviceDesc = serviceContext.getServiceConfig();
+//            param = serviceDesc.getParameter(key);
+//        }
+//        if (param == null && configurationContext != null) {
+//            AxisConfiguration baseConfig =
+//                configurationContext.getAxisConfiguration();
+//            param = baseConfig.getParameter(key);
+//        }
+//        if (param != null) {
+//            obj = param.getValue();
+//        }
+//        return obj;
     }
 
     /**
