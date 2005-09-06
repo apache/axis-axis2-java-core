@@ -45,7 +45,8 @@ public class WhiteMesaIneterop extends TestCase {
                 if (!body.hasFault()) {
                     //OMElement firstChild = (OMElement) body.getFirstElement();
 
-                    InputStream stream = ESRound2InteropTest.class.getClassLoader().getResourceAsStream(filePath);
+                    InputStream stream = Thread.currentThread().getContextClassLoader()
+                            .getResourceAsStream(filePath);
 
                     XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
                     OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
