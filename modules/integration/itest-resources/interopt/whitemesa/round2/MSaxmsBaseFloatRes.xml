@@ -1,0 +1,7 @@
+ <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://soapinterop.org/" xmlns:types="http://soapinterop.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <soap:Body soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <types:echoFloatResponse>
+            <return xsi:type="xsd:float">50.25</return>
+         </types:echoFloatResponse>
+      </soap:Body>
+   </soap:Envelope>

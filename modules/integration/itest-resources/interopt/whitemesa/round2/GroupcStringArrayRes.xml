@@ -1,0 +1,19 @@
+<env:Envelope xmlns:enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns0="http://soapinterop.org/" xmlns:ns1="http://soapinterop.org/xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <env:Header>
+      <ns1:echoMeStringResponse xmlns:ns1="http://soapinterop.org/echoheader/">string</ns1:echoMeStringResponse>
+      <ns1:echoMeStructResponse xmlns:ns1="http://soapinterop.org/echoheader/">
+         <varInt>150</varInt>
+         <varFloat>456.321</varFloat>
+         <varString>string</varString>
+      </ns1:echoMeStructResponse>
+   </env:Header>
+   <env:Body>
+      <ns0:echoStringArrayResponse env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <return href="#ID1"/>
+      </ns0:echoStringArrayResponse>
+      <ns1:ArrayOfstring enc:arrayType="xsd:string[3]" env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" id="ID1" xsi:type="enc:Array">
+         <item xsi:type="xsd:string">Apache Axis2</item>
+         <item xsi:type="xsd:string">Lanka Software Foundation</item>
+         <item xsi:type="xsd:string">www.opensource.lk</item>
+      </ns1:ArrayOfstring>
+   </env:Body></env:Envelope>

@@ -1,0 +1,12 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://soapinterop.org/" xmlns:types="http://soapinterop.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <soap:Body soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <types:echoSimpleTypesAsStructResponse>
+            <return href="#id1" />
+         </types:echoSimpleTypesAsStructResponse>
+         <q1:SOAPStruct id="id1" xsi:type="q1:SOAPStruct" xmlns:q1="http://soapinterop.org/xsd">
+            <varString xsi:type="xsd:string">45ascasc  acasa asd52</varString>
+            <varInt xsi:type="xsd:int">4552</varInt>
+            <varFloat xsi:type="xsd:float">450.52</varFloat>
+         </q1:SOAPStruct>
+      </soap:Body>
+   </soap:Envelope>

@@ -1,0 +1,12 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://soapinterop.org/" xmlns:types="http://soapinterop.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <soap:Body soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <types:echoFloatArrayResponse>
+            <return href="#id1" />
+         </types:echoFloatArrayResponse>
+         <soapenc:Array id="id1" soapenc:arrayType="xsd:float[3]">
+            <Item>45.76876</Item>
+            <Item>43.454</Item>
+            <Item>2523.542</Item>
+         </soapenc:Array>
+      </soap:Body>
+   </soap:Envelope>

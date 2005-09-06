@@ -1,0 +1,12 @@
+<SOAP-ENV:Envelope SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+      <SOAP-ENV:Body>
+         <SOAPSDK1:echo2DStringArrayResponse xmlns:SOAPSDK1="http://soapinterop.org/">
+            <return xmlns:SOAPSDK2="http://www.w3.org/2001/XMLSchema" xmlns:SOAPSDK3="http://schemas.xmlsoap.org/soap/encoding/" SOAPSDK3:arrayType="SOAPSDK2:string[2,2]" xmlns:SOAPSDK4="http://www.w3.org/2001/XMLSchema-instance" SOAPSDK4:type="SOAPSDK3:Array">
+               <SOAPSDK3:string>strss fdfing1</SOAPSDK3:string>
+               <SOAPSDK3:string>sdfsdf25</SOAPSDK3:string>
+               <SOAPSDK3:string>25dsasd dfasdas23</SOAPSDK3:string>
+               <SOAPSDK3:string>25dsasd dfasdas23</SOAPSDK3:string>
+            </return>
+         </SOAPSDK1:echo2DStringArrayResponse>
+      </SOAP-ENV:Body>
+   </SOAP-ENV:Envelope>

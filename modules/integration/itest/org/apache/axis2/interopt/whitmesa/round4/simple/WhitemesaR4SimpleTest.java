@@ -9,6 +9,7 @@ import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
 import org.apache.axis2.om.impl.llom.util.XMLComparator;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.XMLComparatorInterop;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLInputFactory;
@@ -58,12 +59,14 @@ public class WhitemesaR4SimpleTest extends TestCase {
             XMLComparisonException {
         boolean compare = false;
         if(retEle!=null) {
-            InputStream stream = WhitemesaR4SimpleTest.class.getClassLoader().getResourceAsStream("/" + filePath);
-            javax.xml.stream.XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
+            InputStream stream = Thread.currentThread().
+                    getContextClassLoader().getResourceAsStream(filePath);
+            javax.xml.stream.XMLStreamReader parser =
+                    XMLInputFactory.newInstance().createXMLStreamReader(stream);
             OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
             SOAPEnvelope resEnv = (SOAPEnvelope) builder.getDocumentElement();
             OMElement resElementtobe = resEnv.getBody().getFirstElement();
-            XMLComparator comparator = new XMLComparator();
+            XMLComparatorInterop comparator = new XMLComparatorInterop();
             compare = comparator.compare(retEle,resElementtobe);
 
         }
@@ -74,48 +77,48 @@ public class WhitemesaR4SimpleTest extends TestCase {
     public void testEchoEmptyFault()  throws Exception{
         util=new EchoEmptyFaultClientUtil();
         retEle =client.sendMsg(util,soapAction);
-        assertTrue(compare(retEle,"/interopt/whitemesa/round4/res/resEmptyFault.xml"));
+        assertTrue(compare(retEle,"interopt/whitemesa/round4/res/resEmptyFault.xml"));
     }
 
     public void testEchoStringFault() throws Exception{
         //echoStringFault
         util=new EchoStringFaultClientUtil();
         retEle =client.sendMsg(util,soapAction);
-        assertTrue(compare(retEle,"/interopt/whitemesa/round4/res/resStringFault.xml"));
+        assertTrue(compare(retEle,"interopt/whitemesa/round4/res/resStringFault.xml"));
 
     }
 
     //todo the messages are received right but the comparison changes. Have to check the comparator
 
-//    public void testEchoIntArrayFault() throws Exception{
-//        util=new EchoIntArrayFaultClientUtil();
-//        retEle =client.sendMsg(util,soapAction);
-//        assertTrue(compare(retEle,"/testResource/res/resIntArray.xml"));
-//
-//
-//    }
+    public void testEchoIntArrayFault() throws Exception{
+        util=new EchoIntArrayFaultClientUtil();
+        retEle =client.sendMsg(util,soapAction);
+        assertTrue(compare(retEle,"interopt/whitemesa/round4/res/resIntArray.xml"));
+
+
+    }
 
     public void testEchoMultipleFaults1() throws Exception{
         util=new EchoMultipleFaults1ClientUtil();
         retEle =client.sendMsg(util,soapAction);
-        assertTrue(compare(retEle,"/interopt/whitemesa/round4/res/resMultipleFaults1.xml"));
+        assertTrue(compare(retEle,"interopt/whitemesa/round4/res/resMultipleFaults1.xml"));
 
     }
     public void testEchoMultipleFaults2() throws Exception{
         util=new EchoMultipleFaults2ClientUtil();
         retEle =client.sendMsg(util,soapAction);
-        assertTrue(compare(retEle,"/interopt/whitemesa/round4/res/resMultiplefaults2.xml"));
+        assertTrue(compare(retEle,"interopt/whitemesa/round4/res/resMultiplefaults2.xml"));
 
     }
     public void testEchoMultipleFaults3() throws Exception{
         util=new EchoMultipleFaults3Clientutil();
         retEle =client.sendMsg(util,soapAction);
-        assertTrue(compare(retEle,"/interopt/whitemesa/round4/res/resMultipleFaults3.xml"));
+        assertTrue(compare(retEle,"interopt/whitemesa/round4/res/resMultipleFaults3.xml"));
     }
     public void testEchoMultipleFaults4() throws Exception{
         util=new EchoMultipleFaults4ClientUtil();
         retEle =client.sendMsg(util,soapAction);
-        assertTrue( compare(retEle,"/interopt/whitemesa/round4/res/resMultipleFaults4.xml"));
+        assertTrue( compare(retEle,"interopt/whitemesa/round4/res/resMultipleFaults4.xml"));
     }
 
 }

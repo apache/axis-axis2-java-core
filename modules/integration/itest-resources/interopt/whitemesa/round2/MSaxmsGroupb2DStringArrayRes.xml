@@ -1,0 +1,12 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://soapinterop.org/" xmlns:types="http://soapinterop.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <soap:Body soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <types:echo2DStringArrayResponse>
+            <return href="#id1" />
+         </types:echo2DStringArrayResponse>
+         <soapenc:Array id="id1" soapenc:arrayType="xsd:string[3]">
+            <Item>Apache Axis2</Item>
+            <Item>Lanka Software Foundation</Item>
+            <Item>www.opensource.lk</Item>
+         </soapenc:Array>
+      </soap:Body>
+   </soap:Envelope>

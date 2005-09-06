@@ -1,0 +1,15 @@
+<E:Envelope	xmlns:E="http://schemas.xmlsoap.org/soap/envelope/"	xmlns:A="http://schemas.xmlsoap.org/soap/encoding/"	xmlns:s="http://www.w3.org/2001/XMLSchema-instance"	xmlns:y="http://www.w3.org/2001/XMLSchema"	E:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+   <E:Body>
+      <m:echoNestedArrayResponse	xmlns:m="http://soapinterop.org/">
+         <return	s:type="ns1:SOAPArrayStruct"	xmlns:ns1="http://soapinterop.org/xsd">
+            <varString	s:type="y:string">strss fdfing1</varString>
+            <varInt	s:type="y:int">25</varInt>
+            <varFloat	s:type="y:float">25.2299995</varFloat>
+            <varArray	s:type="A:Array"	A:arrayType="y:string[3]">
+               <item>strss fdfing1</item>
+               <item>strss fdfing2</item>
+               <item>strss fdfing3</item>
+            </varArray>
+         </return>
+      </m:echoNestedArrayResponse>
+   </E:Body></E:Envelope>

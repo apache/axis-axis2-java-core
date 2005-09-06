@@ -1,0 +1,10 @@
+<E:Envelope	xmlns:E="http://schemas.xmlsoap.org/soap/envelope/"	xmlns:A="http://schemas.xmlsoap.org/soap/encoding/"	xmlns:s="http://www.w3.org/2001/XMLSchema-instance"	xmlns:y="http://www.w3.org/2001/XMLSchema"	E:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+   <E:Body>
+      <m:echoIntegerArrayResponse	xmlns:m="http://soapinterop.org/">
+         <return	s:type="A:Array"	A:arrayType="y:int[3]">
+            <item>451</item>
+            <item>425</item>
+            <item>2523</item>
+         </return>
+      </m:echoIntegerArrayResponse>
+   </E:Body></E:Envelope>

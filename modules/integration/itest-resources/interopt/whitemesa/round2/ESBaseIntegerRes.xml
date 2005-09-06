@@ -1,0 +1,6 @@
+<E:Envelope	xmlns:E="http://schemas.xmlsoap.org/soap/envelope/"	xmlns:A="http://schemas.xmlsoap.org/soap/encoding/"	xmlns:s="http://www.w3.org/2001/XMLSchema-instance"	xmlns:y="http://www.w3.org/2001/XMLSchema"	E:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+   <E:Body>
+      <m:echoIntegerResponse	xmlns:m="http://soapinterop.org/">
+         <return	s:type="y:int">52</return>
+      </m:echoIntegerResponse>
+   </E:Body></E:Envelope>

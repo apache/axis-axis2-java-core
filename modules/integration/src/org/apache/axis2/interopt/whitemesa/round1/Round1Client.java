@@ -29,13 +29,12 @@ public class Round1Client {
             throw new AxisFault(e);
         }
 
-        Call call = new Call("target/itest-resources/intregrationRepo");
+        Call call = new Call("target/test-resources/intregrationRepo");
         call.setTo(new EndpointReference(url.toString()));
         call.setSoapAction(soapAction);
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
         SOAPEnvelope reqEnv = util.getEchoSoapEnvelope();
 
-        System.out.println("");
 
         AxisConfiguration axisConfig = new AxisConfigurationImpl();
         ConfigurationContext configCtx = new ConfigurationContext(axisConfig);

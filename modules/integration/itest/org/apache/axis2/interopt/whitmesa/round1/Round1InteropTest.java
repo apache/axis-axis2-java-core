@@ -1,25 +1,13 @@
 package org.apache.axis2.interopt.whitmesa.round1;
 
-import junit.framework.TestCase;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.interopt.whitemesa.round1.util.*;
 import org.apache.axis2.interopt.whitemesa.round1.Round1Client;
-import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
-import org.apache.axis2.om.impl.llom.util.XMLComparator;
-import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.interopt.whitemesa.WhiteMesaIneterop;
 import org.apache.axis2.AxisFault;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileInputStream;
-import java.io.InputStream;
+
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -43,7 +31,7 @@ import java.io.InputStream;
  * Date: Aug 23, 2005
  * Time: 4:27:20 PM
  */
-public class Round1InteropTest extends TestCase {
+public class Round1InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
     boolean success = false;
@@ -55,8 +43,6 @@ public class Round1InteropTest extends TestCase {
     Round1ClientUtil util;
     Round1Client client = null;
     boolean result = false;
-    private static boolean run = true;
-
 
 
     public void testEchoString() throws AxisFault {
@@ -81,16 +67,16 @@ public class Round1InteropTest extends TestCase {
         assertTrue(result);
     }
 
-//    public void testEchoStringArray() throws AxisFault {
-//        client = new Round1Client();
-//        url = "http://easysoap.sourceforge.net/cgi-bin/interopserver";
-//        soapAction = "urn:soapinterop";
-//        util = new Round1StringArrayUtil();
-//        retEnv = client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "Round1StringArrayRes.xml";
-//        result = compare(retEnv, tempPath);
-//        assertTrue(result);
-//    }
+    public void testEchoStringArray() throws AxisFault {
+        client = new Round1Client();
+        url = "http://easysoap.sourceforge.net/cgi-bin/interopserver";
+        soapAction = "urn:soapinterop";
+        util = new Round1StringArrayUtil();
+        retEnv = client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "Round1StringArrayRes.xml";
+        result = compare(retEnv, tempPath);
+        assertTrue(result);
+    }
 
     public void testInteger() throws AxisFault {
         client = new Round1Client();
@@ -159,35 +145,33 @@ public class Round1InteropTest extends TestCase {
 //        assertTrue(result);
 //    }
 
-    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-        boolean ok;
-
-        try {
-            if (retEnv != null) {
-                SOAPBody body = retEnv.getBody();
-                if (!body.hasFault()) {
-
-                    InputStream stream = Round1InteropTest.class.getClassLoader().getResourceAsStream("/" + filePath);
-
-                    OMElement firstChild = body.getFirstElement();
-                    XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-                    SOAPEnvelope refEnv = (SOAPEnvelope) builder.getDocumentElement();
-                    OMElement refNode = refEnv.getBody().getFirstElement();
-                    XMLComparator comparator = new XMLComparator();
-                    ok = comparator.compare(firstChild, refNode);
-                } else
-                    return false;
-            } else
-                return false;
-        } catch (XMLStreamException e) {
-            throw new AxisFault(e);
-        } catch (XMLComparisonException e) {
-            throw new AxisFault(e);
-        }
-
-
-        return ok;
-    }
+//    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
+//        boolean ok;
+//
+//        try {
+//            if (retEnv != null) {
+//                SOAPBody body = retEnv.getBody();
+//                if (!body.hasFault()) {
+//
+//                    InputStream stream = Round1InteropTest.class.getClassLoader().getResourceAsStream(filePath);
+//
+//                    OMElement firstChild = body.getFirstElement();
+//                    XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
+//                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
+//                    SOAPEnvelope refEnv = (SOAPEnvelope) builder.getDocumentElement();
+//                    OMElement refNode = refEnv.getBody().getFirstElement();
+//                    XMLComparator comparator = new XMLComparator();
+//                    ok = comparator.compare(firstChild, refNode);
+//                } else
+//                    return false;
+//            } else
+//                return false;
+//        } catch (XMLStreamException e) {
+//            throw new AxisFault(e);
+//        }
+//
+//
+//        return ok;
+//    }
 
 }

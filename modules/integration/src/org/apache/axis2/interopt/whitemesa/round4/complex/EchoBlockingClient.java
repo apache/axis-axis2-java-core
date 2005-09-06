@@ -6,7 +6,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.interopt.whitemesa.round4.complex.utils.WhitemesaR4ClientUtil;
 import org.apache.axis2.om.OMElement;
-import java.io.StringWriter;
+
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -28,7 +28,7 @@ import java.io.StringWriter;
 
 public class EchoBlockingClient {
 
-    public OMElement sendMsg(WhitemesaR4ClientUtil util, String soapAction) {
+    public OMElement sendMsg(WhitemesaR4ClientUtil util, String soapAction) throws AxisFault {
         OMElement firstchild = null;
 
         EndpointReference targetEPR = new EndpointReference("http://www.whitemesa.net/interop/r4/fault-rpc-complex");
@@ -36,7 +36,7 @@ public class EchoBlockingClient {
         try {
 
 
-            Call call = new Call();
+            Call call = new Call("target/test-resources/intregrationRepo");
             call.setTo(targetEPR);
             call.setExceptionToBeThrownOnSOAPFault(false);
             call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
@@ -46,13 +46,9 @@ public class EchoBlockingClient {
 
             firstchild = call.invokeBlocking("", util.getEchoOMElement());
 
-            StringWriter writer = new StringWriter();
 
-            System.out.println(writer.toString());
-
-        } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();
-
+        } catch (Exception e) {
+            throw new AxisFault(e);
         }
         return firstchild;
 

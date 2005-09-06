@@ -1,0 +1,18 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://soapinterop.org/" xmlns:types="http://soapinterop.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <soap:Body soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <types:echoNestedArrayResponse>
+            <return href="#id1" />
+         </types:echoNestedArrayResponse>
+         <q1:SOAPArrayStruct id="id1" xsi:type="q1:SOAPArrayStruct" xmlns:q1="http://soapinterop.org/xsd">
+            <varString xsi:type="xsd:string">strss fdfing1</varString>
+            <varInt xsi:type="xsd:int">25</varInt>
+            <varFloat xsi:type="xsd:float">25.23</varFloat>
+            <varArray href="#id2" />
+         </q1:SOAPArrayStruct>
+         <soapenc:Array id="id2" soapenc:arrayType="xsd:string[3]">
+            <Item>strss fdfing1</Item>
+            <Item>strss fdfing2</Item>
+            <Item>strss fdfing3</Item>
+         </soapenc:Array>
+      </soap:Body>
+   </soap:Envelope>

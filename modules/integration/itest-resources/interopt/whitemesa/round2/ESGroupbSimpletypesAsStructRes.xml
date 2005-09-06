@@ -1,0 +1,10 @@
+<E:Envelope	xmlns:E="http://schemas.xmlsoap.org/soap/envelope/"	xmlns:A="http://schemas.xmlsoap.org/soap/encoding/"	xmlns:s="http://www.w3.org/2001/XMLSchema-instance"	xmlns:y="http://www.w3.org/2001/XMLSchema"	E:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+   <E:Body>
+      <m:echoSimpleTypesAsStructResponse	xmlns:m="http://soapinterop.org/">
+         <return	s:type="ns1:SOAPStruct"	xmlns:ns1="http://soapinterop.org/xsd">
+            <varString	s:type="y:string">45ascasc  acasa asd52</varString>
+            <varInt	s:type="y:int">4552</varInt>
+            <varFloat	s:type="y:float">450.519989</varFloat>
+         </return>
+      </m:echoSimpleTypesAsStructResponse>
+   </E:Body></E:Envelope>

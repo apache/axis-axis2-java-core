@@ -6,19 +6,7 @@ import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.interopt.whitemesa.round4.simple.utils.WhitemesaR4ClientUtil;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.llom.util.XMLComparator;
-import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
-
-import java.io.*;
 
 
 /*
@@ -38,43 +26,34 @@ import java.io.*;
  *
  *
  */
+
 public class EchoBlockingClient {
 
 
-    public OMElement sendMsg(WhitemesaR4ClientUtil util,String soapAction){
-        OMElement firstchild=null;
+    public OMElement sendMsg(WhitemesaR4ClientUtil util, String soapAction) throws AxisFault {
+        OMElement firstchild = null;
 //        EndpointReference targetEPR = new EndpointReference("http://www.whitemesa.net:80/interop/r4/fault-rpc" );
-        EndpointReference targetEPR = new EndpointReference("http://www.whitemesa.net:80/interop/r4/fault-rpc" );
+        EndpointReference targetEPR = new EndpointReference("http://www.whitemesa.net:80/interop/r4/fault-rpc");
 
         try {
 
 
-            Call call = new Call();
+            Call call = new Call("target/test-resources/intregrationRepo");
             call.setTo(targetEPR);
             call.setExceptionToBeThrownOnSOAPFault(false);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP,false);
-             call.setSoapAction(soapAction);
+            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            call.setSoapAction(soapAction);
             //Blocking invocation
 
-            firstchild = call.invokeBlocking("",util.getEchoOMElement());
+            firstchild = call.invokeBlocking("", util.getEchoOMElement());
 
-            StringWriter writer = new StringWriter();
 
-//            firstchild.serializeWithCache(XMLOutputFactory.newInstance()
-//                    .createXMLStreamWriter(writer));
-//            writer.flush();
-
-            System.out.println(writer.toString());
-//
-        } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();
-//        } catch (XMLStreamException e) {
-//            e.printStackTrace();
-
+        } catch (Exception e) {
+            throw new AxisFault(e);
         }
         return firstchild;
 
     }
-  
+
 }
 
