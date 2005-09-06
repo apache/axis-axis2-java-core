@@ -125,7 +125,7 @@ public class ListenerManager {
             try {
                 return new ServerSocket(port + i);
             } catch (IOException e) {
-                throw new AxisFault(Messages.getMessage("failedToOpenSocket"), e);
+              //  throw new AxisFault(Messages.getMessage("failedToOpenSocket"), e);
             }
         }
         throw new AxisFault(Messages.getMessage("failedToOpenSocket"));
