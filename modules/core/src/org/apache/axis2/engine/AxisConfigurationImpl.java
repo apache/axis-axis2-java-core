@@ -195,7 +195,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @return
      * @throws AxisFault
      */
-    public ModuleDescription getModule(QName name) throws AxisFault {
+    public ModuleDescription getModule(QName name) {
         return (ModuleDescription) modules.get(name);
     }
 

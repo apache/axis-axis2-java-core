@@ -21,6 +21,7 @@ import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -573,20 +574,72 @@ public class MessageContext extends AbstractContext {
         return param;
     }
 
-    public Parameter getModuleParameter(String key, String moduleName){
+
+    /**
+     * This method is to retrive both module configuration parameters and othere paramerts
+     * The searching procedure is as follows;
+     *  1. Search in module configurations inside corresponding operation descripton if its three
+     *  2. Search in corresponding operation if its there
+     *  3. Search in module configurations inside corresponding service description if its there
+     *  4. Next search in Corresponding Service description if its there
+     *  5. Next sercah in module configurations inside axisConfiguration
+     *  6. Search in AxisConfiguration for paramters
+     *  7. Next get the corresponding module and search for the paramters
+     *  8. Search in HandlerDescription for the paramter
+     *
+     * and the way of specifing mdoule configuration is as follows
+     * <moduleConfig name="addressing">
+     *      <parameter name="addressingPara" locked="false">N/A</parameter>
+     * </moduleConfig>
+     * @param key   : Paramtre Name
+     * @param moduleName : Name of the module
+     * @param handler  <code>HandlerDescription</code>
+     * @return  Parameter <code>Parameter</code>
+     */
+    public Parameter getModuleParameter(String key, String moduleName , HandlerDescription handler){
         Parameter param = null;
+        ModuleConfiguration moduleConfig = null;
         if (operationContext != null) {
             OperationDescription opDesc = operationContext.getAxisOperation();
-            param = opDesc.getParameter(key);
+            moduleConfig = opDesc.getModuleConfig(new QName(moduleName));
+            if(moduleConfig != null){
+                param =  moduleConfig.getParameter(key);
+            }
+            if(param == null){
+                param = opDesc.getParameter(key);
+            }
         }
         if (param == null && serviceContext != null) {
             ServiceDescription serviceDesc = serviceContext.getServiceConfig();
-            param = serviceDesc.getParameter(key);
+            moduleConfig = serviceDesc.getModuleConfig(new QName(moduleName));
+            if(moduleConfig != null){
+                param =  moduleConfig.getParameter(key);
+            }
+            if(param == null){
+                param = serviceDesc.getParameter(key);
+            }
         }
-        if (param == null && configurationContext != null) {
+        if (param == null) {
             AxisConfiguration baseConfig =
                     configurationContext.getAxisConfiguration();
-            param = baseConfig.getParameter(key);
+
+            moduleConfig = ((AxisConfigurationImpl)baseConfig).getModuleConfig(new QName(moduleName));
+            if(moduleConfig != null){
+                param =  moduleConfig.getParameter(key);
+            }
+            if(param == null){
+                param = baseConfig.getParameter(key);
+            }
+        }
+        if(param == null){
+            AxisConfiguration baseConfig = configurationContext.getAxisConfiguration();
+            ModuleDescription module = baseConfig.getModule(new QName(moduleName));
+            if(module != null){
+                param = module.getParameter(key);
+            }
+        }
+        if(param == null ){
+            param = handler.getParameter(key);
         }
         return param;
     }
@@ -595,6 +648,15 @@ public class MessageContext extends AbstractContext {
     /* (non-Javadoc)
     * @see org.apache.axis2.context.AbstractContext#getProperty(java.lang.Object, boolean)
     */
+
+    /**
+     *  To acess any property set at the run time , a handler can add property to wherever he wants
+     * to MesageContext , to OperationContext , to ServiceContext and to ConfigurationContext.
+     * This method is to retrive those properties NOT paramters
+     * @param key  : property Name
+     * @param persistent : need to be persistent even when server re-start
+     * @return Object
+     */
     public Object getProperty(String key, boolean persistent) {
         // search in MC
         Object obj = super.getProperty(key, persistent);
@@ -602,22 +664,16 @@ public class MessageContext extends AbstractContext {
         //The context hirachy might not have constructed fully, the check should
         //look for the disconnected grandparents
         // Search in Operation Context
-        if(obj != null){
-            return obj;
-        }
-        if(operationContext != null) {
+        if(operationContext != null && obj == null ) {
             obj = operationContext.getProperty(key, persistent);
-            return obj;
         }
         //Search in ServiceContext
-        if(serviceContext != null){
+        if(serviceContext != null && obj == null ){
             obj = serviceContext.getProperty(key, persistent);
-            return obj;
-        } else {
-
+        }
+        if(obj == null) {
             // search in Configuration Context
             obj = configurationContext.getProperty(key, persistent);
-            return obj;
         }
 
 //
@@ -647,7 +703,7 @@ public class MessageContext extends AbstractContext {
 //        if (param != null) {
 //            obj = param.getValue();
 //        }
-//        return obj;
+        return obj;
     }
 
     /**

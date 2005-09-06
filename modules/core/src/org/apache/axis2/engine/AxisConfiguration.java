@@ -80,7 +80,7 @@ public interface AxisConfiguration extends ParameterInclude {
      * @return
      * @throws AxisFault
      */
-    public ModuleDescription getModule(QName name) throws AxisFault;
+    public ModuleDescription getModule(QName name);
 
     /**
      * Method addMdoule
