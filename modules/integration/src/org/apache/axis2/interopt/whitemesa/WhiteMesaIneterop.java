@@ -7,7 +7,6 @@ import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.XMLComparatorInterop;
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.interopt.whitmesa.round2.ESRound2InteropTest;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
