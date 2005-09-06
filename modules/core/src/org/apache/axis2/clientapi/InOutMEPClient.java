@@ -31,9 +31,9 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMException;
+import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFault;
-import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.util.threadpool.AxisWorker;
 import org.apache.wsdl.WSDLConstants;
@@ -46,6 +46,8 @@ import javax.xml.namespace.QName;
  * MessageContext and the more convients API is provided by the Call
  */
 public class InOutMEPClient extends MEPClient {
+    protected long timeOutInMilliSeconds = 2000;
+
     protected TransportListener listener;
     /**
      * transport that should be used for sending and reciving the message
@@ -136,10 +138,10 @@ public class InOutMEPClient extends MEPClient {
             SyncCallBack callback = new SyncCallBack();
             //this method call two channel non blocking method to do the work and wait on the callbck
             invokeNonBlocking(axisop, msgctx, callback);
-            int index = 0;
+            long index = timeOutInMilliSeconds / 100;
             while (!callback.isComplete()) {
                 //wait till the reponse arrives
-                if (index++ < 20) {
+                if (index-- >= 0) {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
@@ -430,6 +432,15 @@ public class InOutMEPClient extends MEPClient {
                 callback.reportError(e);
             }
         }
+    }
+
+    /**
+     * This will be used in invoke blocking scenario. Client will wait the amount of time specified here
+     * and if there is no response, call will timeout. This should be given in multiples of 100 and defaults to 2000.
+     * @param timeOutInMilliSeconds
+     */
+    public void setTimeOutInMilliSeconds(long timeOutInMilliSeconds) {
+        this.timeOutInMilliSeconds = timeOutInMilliSeconds;
     }
 
 }
