@@ -344,15 +344,14 @@ public class HTTPTransportUtils {
         }
         String attachmentRepoDir = null;
         String attachmentSizeThreshold = null;
+        Parameter parameter;
         if (fileCacheForAttachments) {
-            attachmentRepoDir = (String) msgContext
-                    .getProperty(Constants.Configuration.ATTACHMENT_TEMP_DIR);
-//            if (attachmentRepoDir==null | ("").equals(attachmentRepoDir))
-//            {
-//                msgContext.getServiceContext().getEngineContext().getRealPath("temp");
-//            }
-            attachmentSizeThreshold = (String) msgContext
-            .getProperty(Constants.Configuration.FILE_SIZE_THRESHOLD);
+            parameter = msgContext.getParameter(Constants.Configuration.ATTACHMENT_TEMP_DIR);
+            attachmentRepoDir = parameter==null?"":parameter.getValue().toString();
+
+            parameter = msgContext
+                    .getParameter(Constants.Configuration.FILE_SIZE_THRESHOLD);
+            attachmentSizeThreshold = parameter==null?"":parameter.getValue().toString();
         }
 
         MIMEHelper mimeHelper = new MIMEHelper(inStream, contentTypeString,
