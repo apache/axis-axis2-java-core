@@ -1,12 +1,25 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 
 package org.apache.axis2.security.util;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.xpath.AXIOMXPath;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -16,10 +29,15 @@ import org.jaxen.JaxenException;
 import org.jaxen.SimpleNamespaceContext;
 import org.jaxen.XPath;
 
+/**
+ * Utility class to handle MTOM-Optimizing Base64 Text values
+ *  
+ * @author Ruchith Fernando (ruchith.fernando@gmail.com)
+ */
 public class MessageOptimizer {
 
 	/**
-	 * 
+	 * Mark the requied Base64 text values as optimized
 	 * @param env
 	 * @param optimizeParts This is a set of xPath expressions 
 	 * (NOTE: Right now we support only one expression)
@@ -67,43 +85,5 @@ public class MessageOptimizer {
 	}
 	
 	
-	/**
-	 * Returns all the child elements under the given parent
-	 * It is assumend that the children of the given of elements
-	 * will not be of the same 
-	 * @param env
-	 * @param ln
-	 * @param ns
-	 * @return
-	 */
-	public void findElements(OMNode elem, String ln, String ns, Vector elements ) {
-		
-		if(elem == null || ln == null || ns == null) {
-			return;
-		}
-		
-		OMNode startNode = elem;
-		if (startNode.getType() == OMNode.ELEMENT_NODE
-				&& ((OMElement) startNode).getLocalName().equals(ln)
-				&& ns.equals(((OMElement) startNode).getNamespace().getName())) {
-
-			// An element found
-			elements.add(startNode);
-
-			// move to the next sibling
-			OMNode node = startNode.getNextSibling();
-			
-			if (startNode != null) {
-				findElements(node, ln, ns, elements);
-			}
-		} else {
-			if(startNode.getType() == OMNode.ELEMENT_NODE) {
-				OMNode node = ((OMElement)startNode).getFirstChild();
-				findElements(node, ln, ns, elements);
-			}
-		}
-		
-		
-	}
 	
 }
