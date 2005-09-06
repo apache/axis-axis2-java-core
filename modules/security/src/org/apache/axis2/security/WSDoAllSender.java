@@ -26,6 +26,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.security.handler.WSDoAllHandler;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.util.Axis2Util;
+import org.apache.axis2.security.util.MessageOptimizer;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +41,15 @@ import org.w3c.dom.Document;
 public class WSDoAllSender extends WSDoAllHandler {
 
 	protected static Log log = LogFactory.getLog(WSDoAllSender.class.getName());
+	
+	/**
+	 * Right now we convert the processed DOM - SOAP Envelope into
+	 * and OM-SOAPEnvelope
+	 * But in the simple case where only the wsse:Security header is inserted into the document
+	 * we can insert only the wsse:Security header into the OM-SOAPEnvelope and preserve the 
+	 * metadata of OM such as base64 MTOM optimization
+	 */
+	private boolean preserveOriginalEnvelope = true;
 	
     public WSDoAllSender() {
     	super();
@@ -209,6 +219,7 @@ public class WSDoAllSender extends WSDoAllHandler {
 
                 case WSConstants.ENCR:
                     performENCRAction(mu, actionToDo, doc, reqData);
+                    this.preserveOriginalEnvelope = false;
                     break;
 
                 case WSConstants.SIGN:
@@ -255,14 +266,33 @@ public class WSDoAllSender extends WSDoAllHandler {
                 ((MessageContext)reqData.getMsgContext()).setProperty(WSHandlerConstants.SND_SECURITY,
                         doc);
             } else {
-            	SOAPEnvelope processedEnv = Axis2Util.getSOAPEnvelopeFromDocument(doc, reqData.getSoapConstants().getEnvelopeURI());
+            	SOAPEnvelope processedEnv = null;
+            	if(preserveOriginalEnvelope) {
+            		processedEnv = Axis2Util.getSOAPEnvelopeFromDocument(doc,reqData.getSoapConstants(), msgContext.getEnvelope());
+            	} else {
+            		processedEnv = Axis2Util.getSOAPEnvelopeFromDocument(doc, reqData.getSoapConstants().getEnvelopeURI());
+            	}
             	msgContext.setEnvelope(processedEnv);
             	((MessageContext)reqData.getMsgContext()).setProperty(WSHandlerConstants.SND_SECURITY, null);
             }
             
-            if (doDebug) {
-                log.debug("WSDoAllSender: exit invoke()");
+            msgContext.getEnvelope().build();
+            
+    		
+            /**
+             * If the optimizeParts parts are set then optimize them
+             */
+			String optimizeParts;
+			
+			if((optimizeParts = (String) getOption(WSSHandlerConstants.Out.OPTIMIZE_PARTS)) == null) {
+				optimizeParts = (String)
+                	getProperty(reqData.getMsgContext(), WSSHandlerConstants.Out.OPTIMIZE_PARTS);
+			}
+            if(optimizeParts != null) {
+	            // Optimize the Envelope
+	            MessageOptimizer.optimize(msgContext.getEnvelope(),optimizeParts);
             }
+            
             
             //Enable handler repetition
             String repeat;
@@ -290,9 +320,19 @@ public class WSDoAllSender extends WSDoAllHandler {
 		        	//of the same handler
 		        	repetition++;
 		        	msgContext.setProperty(WSSHandlerConstants.Out.REPETITON,new Integer(repetition));
+		        	
+		        	/**
+		        	 * eserving the OM stuff doesn't work for the repeting case
+		        	 */
+		        	this.preserveOriginalEnvelope = false;
+		        	
 		        	this.invoke(msgContext);
 		        }
 	        }
+
+            if (doDebug) {
+				log.debug("WSDoAllSender: exit invoke()");
+			}
         } catch (WSSecurityException e) {
         	e.printStackTrace();
             throw new AxisFault(e.getMessage(), e);

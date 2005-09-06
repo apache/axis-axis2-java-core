@@ -24,6 +24,9 @@
     <parameter name="InAction" locked="false">Signature Encrypt Timestamp</parameter>
     <parameter name="InPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
     <parameter name="InSignaturePropFile" locked="false">interop.properties</parameter>
+
+    <parameter name="InSignaturePropFile" locked="false">interop.properties</parameter>
+
     <!-- Scenario 3: Client's Configuration:END-->
 
 

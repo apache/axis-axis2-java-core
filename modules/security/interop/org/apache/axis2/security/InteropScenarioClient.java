@@ -16,6 +16,7 @@
 
 package org.apache.axis2.security;
 
+import org.apache.axis2.Constants;
 import org.apache.axis2.oasis.ping.PingPortStub;
 import org.xmlsoap.ping.Ping;
 import org.xmlsoap.ping.PingDocument;
@@ -46,6 +47,9 @@ public class InteropScenarioClient {
 		pingDoc.setPing(ping);
 
 		PingPortStub stub = new PingPortStub(clientRepo,url);
+		
+		stub._put(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+		
 		PingResponseDocument pingResDoc = stub.Ping(pingDoc);
 		
 		PingResponse pingRes = pingResDoc.getPingResponse();

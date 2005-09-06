@@ -23,12 +23,19 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.security.SOAPConstants;
+import org.apache.ws.security.WSSConfig;
 import org.apache.ws.security.WSSecurityException;
+import org.apache.ws.security.util.WSSecurityUtil;
 import org.apache.xml.security.utils.XMLUtils;
+import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Utility class for the Axis2-WSS4J Module
@@ -99,5 +106,62 @@ public class Axis2Util {
 		}
 
 	}
+	
+	/**
+	 * This is to be used only in the signature situation
+	 * where the security header can be inserted into the original SOAPEnvelope
+	 * rather than replacing the whole envelope
+	 * @param doc
+	 * @param envelopeNS
+	 * @param reqEnv
+	 * @return
+	 * @throws WSSecurityException
+	 */
+	public static SOAPEnvelope getSOAPEnvelopeFromDocument(Document doc,
+			SOAPConstants constants, SOAPEnvelope reqEnv) throws WSSecurityException {
+		
+		//Get holdof the security header
+		Element secElem = WSSecurityUtil.getSecurityHeader(WSSConfig.getDefaultWSConfig(), doc,null, constants);
+		
+		//insert the header into the OM-SOAPEnvelope
+		
+		OMElement secOmElem = convertToOMelement(secElem, constants);
+		
+		reqEnv.getHeader().addChild(secOmElem);
+		
+		return reqEnv;
+		
+	}
+	
+	
+	private static OMElement convertToOMelement(Element elem, SOAPConstants constants) throws WSSecurityException {
 
+		try {
+			XMLSerializer xmlSer = new XMLSerializer();
+			
+			/*
+			 *When we extract the wsse:Security header by serializing it
+			 *The namespaces declared globally will not be copied into the
+			 *serialized element. Therefore we have to add the missing namespaces 
+			 *in to the element before DOm serialization 
+			 */
+			elem.setAttribute("xmlns:soapenv",constants.getEnvelopeURI());
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			
+			xmlSer.setOutputByteStream(baos);
+			
+			xmlSer.serialize(elem);
+			
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+			XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
+			StAXOMBuilder builder = new StAXOMBuilder(reader);
+			builder.setCache(true);
+			
+			return builder.getDocumentElement();
+			
+		} catch (Exception e) {
+			throw new WSSecurityException(e.getMessage(),e);
+		}
+
+	}
 }

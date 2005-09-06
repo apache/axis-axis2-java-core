@@ -37,6 +37,8 @@ public interface WSSHandlerConstants {
 		//Repetition count
 		public static final String SENDER_REPEAT_COUNT = "senderRepeteCount";
 		public static final String REPETITON = "repetition";
+		
+		public static final String OPTIMIZE_PARTS = "optimizeParts";
 	}
 	
 	

@@ -234,6 +234,15 @@
                 <module>true</module>
             </properties>
         </dependency>
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+            <version>1.1-beta-7</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+
     </dependencies>
 
     <!-- build information for the project -->

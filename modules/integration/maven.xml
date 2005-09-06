@@ -260,7 +260,7 @@
         <copy file="../security/target/PingPort.aar"
             tofile="target/test-resources/scenario7_service_repo/services/PingPort.aar"/>
 
-	<!-- Copying the DOM3 stuff to teh endorsed dir -->
+	<!-- Copying the DOM3 stuff to the endorsed dir -->
         <mkdir dir="target/test-resources/endorsed"/>
 	<copy file="${maven.repo.local}/xerces/jars/xercesImpl-2.6.2.jar" todir="target/test-resources/endorsed"/>
 	<copy file="${maven.repo.local}/xerces/jars/xmlParserAPIs-2.6.2.jar" todir="target/test-resources/endorsed"/>
@@ -288,6 +288,29 @@
             tofile="target/test-resources/scenarioST1_service_repo/modules/security.mar"/>
         <copy file="../security/target/PingPort.aar"
             tofile="target/test-resources/scenarioST1_service_repo/services/PingPort.aar"/>
+
+
+	<!-- MTOM Optimized Security Test -->
+        <mkdir dir="target/test-resources/mtom_sec_client_repo"/>
+        <mkdir dir="target/test-resources/mtom_sec_client_repo/modules"/>
+
+        <mkdir dir="target/test-resources/mtom_sec_service_repo"/>
+        <mkdir dir="target/test-resources/mtom_sec_service_repo/services"/>
+        <mkdir dir="target/test-resources/mtom_sec_service_repo/modules"/>
+
+	<!-- MTOM Optimized Security Test client repository-->
+        <copy file="test-resources/security/secMtom.client.axis2.xml"
+            tofile="target/test-resources/mtom_sec_client_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/mtom_sec_client_repo/modules/security.mar"/>
+
+	<!-- MTOM Optimized Security Test service repository-->
+        <copy file="test-resources/security/secMtom.service.axis2.xml"
+            tofile="target/test-resources/mtom_sec_service_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/mtom_sec_service_repo/modules/security.mar"/>
+        <copy file="../security/target/PingPort.aar"
+            tofile="target/test-resources/mtom_sec_service_repo/services/PingPort.aar"/>
 
     <!-- Standard repository -->
     <mkdir dir="target/Repository"/>

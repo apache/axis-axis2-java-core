@@ -70,6 +70,10 @@ public class InteropTestBase extends TestCase {
     
     protected static final String SCENARIO_ST4_CLIENT_REPOSITORY = "scenarioST4_client_repo";
 
+    protected static final String MTOM_SEC_SERVICE_REPOSITORY = "mtom_sec_service_repo";
+    
+    protected static final String MTOM_SEC_CLIENT_REPOSITORY = "mtom_sec_client_repo";
+    
     /*
      * We have to create different a client repository and a service repository
      * for each scenarion since we dont have the support to get the parameter 

@@ -427,6 +427,11 @@ public class HTTPTransportUtils {
                 Constants.VALUE_TRUE.equals(
                     msgContext.getParameter(
                         Constants.Configuration.ENABLE_MTOM).getValue());
+        } else if(msgContext.getProperty(Constants.Configuration.ENABLE_MTOM) != null) {
+            enableMTOM =
+                Constants.VALUE_TRUE.equals(
+                    msgContext.getProperty(
+                        Constants.Configuration.ENABLE_MTOM));
         }
         boolean envelopeContainsOptimise =
             HTTPTransportUtils.checkEnvelopeForOptimise(
