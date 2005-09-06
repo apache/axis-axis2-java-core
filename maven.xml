@@ -306,6 +306,8 @@
     <goal name="create-jar" prereqs="init">
         <jar destfile="target/lib/axis2-${pom.currentVersion}.jar">
             <fileset dir="modules/core/target/classes"/>
+            <!-- adding the tool classes. This is needed to get the ant task -->
+            <fileset dir="modules/tool/target/classes"/>
             <fileset dir="modules/xml/target/classes"/>
             <fileset dir="modules/wsdl/target/classes"/>
             <fileset dir="modules/saaj/target/classes"/>
