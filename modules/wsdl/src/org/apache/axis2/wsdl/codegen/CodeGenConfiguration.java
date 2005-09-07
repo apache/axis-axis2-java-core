@@ -21,6 +21,7 @@ import org.apache.wsdl.WSDLDescription;
 
 import java.io.File;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
  * @author chathura@opensource.lk
@@ -50,7 +51,23 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     */
     private  int codeGenerationStyle = XSLTConstants.CodegenStyle.AUTOMATIC;
 
+    /*
+    * A hashmap of properties that may be populated on the way. extensions can populate it
+    *
+    */
+    private Map configurationProperties = new HashMap();
 
+    public void put(Object key, Object value){
+        configurationProperties.put(key,value);
+    }
+
+    public Object get(Object key){
+       return configurationProperties.get(key);
+    }
+
+    public Map getProperties(){
+        return configurationProperties;
+    }
     private TypeMapper typeMapper;
 
 
@@ -77,15 +94,15 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public void setDatabindingType(int databindingType) {
         this.databindingType = databindingType;
     }
-    
+
     public void setDatabindingType(String databindingType) {
-    	if (Databinding.XML_BEANS.equalsIgnoreCase(databindingType)) {
-    		this.databindingType = XSLTConstants.DataBindingTypes.XML_BEANS;
-    	}else if(Databinding.JAXB.equalsIgnoreCase(databindingType)){
-    		this.databindingType = XSLTConstants.DataBindingTypes.JAXB;
-    	}else{
-    		throw new UnsupportedOperationException();
-    	}
+        if (Databinding.XML_BEANS.equalsIgnoreCase(databindingType)) {
+            this.databindingType = XSLTConstants.DataBindingTypes.XML_BEANS;
+        }else if(Databinding.JAXB.equalsIgnoreCase(databindingType)){
+            this.databindingType = XSLTConstants.DataBindingTypes.JAXB;
+        }else{
+            throw new UnsupportedOperationException();
+        }
     }
 
     /**
@@ -144,7 +161,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         CommandLineOption dataBindingOption = (CommandLineOption) optionMap.get(
                 DATA_BINDING_TYPE_OPTION);
         if(dataBindingOption != null){
-        	setDatabindingType(dataBindingOption.getOptionValue());
+            setDatabindingType(dataBindingOption.getOptionValue());
         }
     }
 

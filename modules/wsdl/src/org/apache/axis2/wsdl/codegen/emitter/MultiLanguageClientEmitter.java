@@ -47,7 +47,7 @@ import java.util.*;
 *
 * Abstract Client emitter
 * the XML will look like the following
-* todo Add references to relevant shcemas !
+* todo Add references to relevant schemas !
 */
 
 
@@ -1018,16 +1018,47 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             }
         }
 
-        //Now run through the parameters and ad them to the root element
+        //add the names of the elements that have base 64 content
+        //if the base64 name list is missing then this whole step is skipped
+        rootElement.appendChild(getBase64Elements(doc));
+
+        //Now run through the parameters and add them to the root element
         Collection parameters = parameterMap.values();
         for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
             rootElement.appendChild((Element)iterator.next());
         }
 
         doc.appendChild(rootElement);
+        ///////////////////////////////////////////////////
+        //System.out.println("rootElement = " + rootElement);
+        ///////////////////////////////////////////////////
         return doc;
     }
 
+    /**
+     * Get the base64 types. If not available this will be empty!!!
+     * @param doc
+     * @return element
+     */
+    private Element getBase64Elements(Document doc){
+        Element root = doc.createElement("base64Elements");
+        Element elt;
+        QName qname;
+        //this is a list of QNames
+        List list = (List)configuration.getProperties().get(XSLTConstants.BASE_64_PROPERTY_KEY);
+        if (list!=null && !list.isEmpty()){
+            int count = list.size();
+            for (int i = 0; i < count; i++) {
+              qname = (QName)list.get(i);
+              elt = doc.createElement("name") ;
+              addAttribute(doc,"ns-url",qname.getNamespaceURI(),elt);
+              addAttribute(doc,"localName",qname.getLocalPart(),elt);
+              root.appendChild(elt);
+            }
+        }
+
+        return root;
+    }
     /**
      * Creates the DOM tree for implementations
      *

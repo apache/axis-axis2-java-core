@@ -88,7 +88,7 @@ public class MIMEHelper {
      * @param fileCacheEnable
      * @param attachmentRepoDir
      * @throws OMException
-     * @see Will move the pointer to the begining of the first MIME part. Will
+     * Will move the pointer to the begining of the first MIME part. Will
      *      read till first MIME boundary is found or end of stream reached.
      */
     public MIMEHelper(InputStream inStream, String contentTypeString,
@@ -152,7 +152,7 @@ public class MIMEHelper {
      * @param inStream
      * @param contentTypeString
      * @throws OMException
-     * @see Will set file cache to false
+     * Will set file cache to false
      */
     public MIMEHelper(InputStream inStream, String contentTypeString)
             throws OMException {
@@ -259,9 +259,9 @@ public class MIMEHelper {
      * @param blobContentID
      * @return The Part refered by the content-Id
      * @throws OMException
-     * @see First checks whether the MIME part is already parsed by checking the
-     *      parts HashMap. If it is not parsed yet then call the getNextPart()
-     *      till we find the required part.
+     * First checks whether the MIME part is already parsed by checking the
+     * parts HashMap. If it is not parsed yet then call the getNextPart()
+     * till we find the required part.
      */
     public Part getPart(String blobContentID) {
         Part bodyPart;

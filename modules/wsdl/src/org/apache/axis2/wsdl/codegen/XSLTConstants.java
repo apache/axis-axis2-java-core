@@ -1,5 +1,7 @@
 package org.apache.axis2.wsdl.codegen;
 
+import javax.xml.namespace.QName;
+
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -20,7 +22,8 @@ package org.apache.axis2.wsdl.codegen;
 
 public interface XSLTConstants {
     String DEFAULT_PACKAGE_NAME = "codegen";
-
+    QName BASE_64_CONTENT_QNAME= new QName("http://www.w3.org/2001/XMLSchema","base64Binary");
+    String BASE_64_PROPERTY_KEY = "base64map";
     /**
      * Language constants
      */

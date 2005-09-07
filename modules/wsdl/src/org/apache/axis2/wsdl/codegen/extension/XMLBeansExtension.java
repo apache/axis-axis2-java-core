@@ -41,6 +41,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
     private static final String DEFAULT_STS_NAME = "foo";
 
 
+
     public void init(CodeGenConfiguration configuration) {
         this.configuration = configuration;
     }
@@ -106,6 +107,8 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             }
 
             // add the third party schemas
+            //todo pehaps checking the namespaces would be a good idea to
+            //make the generated code work efficiently
             for (int i = 0; i < additionalSchemas.length; i++) {
                 xmlObjectsVector.add(XmlObject.Factory.parse(
                         additionalSchemas[i]
@@ -119,6 +122,10 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                     new Axis2Filer(),
                     null);
 
+            // prune the generated schema type system and add the list of base64 types
+            FindBase64Types(sts);
+
+            //get the schematypes and add the document types to the type mapper
             SchemaType[] schemaType = sts.documentTypes();
             SchemaType type;
             for (int j = 0; j < schemaType.length; j++) {
@@ -132,6 +139,30 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             throw new RuntimeException(e);
         }
 
+    }
+
+    /**
+     * Populate the base64 types
+     * @param sts
+     */
+    private void FindBase64Types(SchemaTypeSystem sts) {
+        List allSeenTypes = new ArrayList();
+        List base64ElementQNamesList = new ArrayList();
+        //add the document types and global types
+        allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
+        allSeenTypes.addAll(Arrays.asList(sts.globalTypes()));
+        for (int i = 0; i < allSeenTypes.size(); i++){
+            SchemaType sType = (SchemaType)allSeenTypes.get(i);
+            if (sType.getContentType()==SchemaType.SIMPLE_CONTENT) {
+                if (XSLTConstants.BASE_64_CONTENT_QNAME.equals(sType.getPrimitiveType().getName())){
+                    base64ElementQNamesList.add(sType.getOuterType().getDocumentElementName());
+                }
+            }
+            //add any of the child types if there are any
+            allSeenTypes.addAll(Arrays.asList(sType.getAnonymousTypes()));
+        }
+
+        configuration.put(XSLTConstants.BASE_64_PROPERTY_KEY,base64ElementQNamesList);
     }
 
     /**
