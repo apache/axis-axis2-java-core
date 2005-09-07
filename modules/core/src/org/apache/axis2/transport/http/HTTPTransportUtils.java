@@ -19,11 +19,11 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.MIMEHelper;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.MTOMConstants;
@@ -199,6 +199,7 @@ public class HTTPTransportUtils {
         } catch (AxisFault e) {
             throw new AxisFault(e);
         } catch (OMException e) {
+            e.printStackTrace();
             throw new AxisFault(e);
         } catch (XMLStreamException e) {
             throw new AxisFault(e);

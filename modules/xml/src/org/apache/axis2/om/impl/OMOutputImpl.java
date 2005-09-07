@@ -145,10 +145,10 @@ public class OMOutputImpl {
             StringBuffer buf = new StringBuffer();
             if (!isSoap11) {
                 buf.append(SOAP12Constants.SOAP_12_CONTENT_TYPE);
-                buf.append("; charset=" + this.getCharSetEncoding());
+                buf.append("; charset=" + this.getCharSetEncoding() + ";");
             } else {
                 buf.append(SOAP11Constants.SOAP_11_CONTENT_TYPE)
-                    .append("; charset=" + this.getCharSetEncoding());
+                    .append("; charset=" + this.getCharSetEncoding() + ";");
             }
             return buf.toString();
         }

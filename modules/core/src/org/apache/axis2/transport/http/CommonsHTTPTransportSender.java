@@ -220,15 +220,22 @@ public class CommonsHTTPTransportSender
 
         private boolean doingMTOM = false;
 
+        private String soapActionString;
+
+        private MessageContext msgCtxt;
+
         public AxisRequestEntity(
                 OMElement element,
                 boolean chuncked,
-                boolean doingMTOM,
-                String charSetEncoding) {
+                MessageContext msgCtxt,
+                String charSetEncoding,
+                String soapActionString) {
             this.element = element;
             this.chuncked = chuncked;
-            this.doingMTOM = doingMTOM;
+            this.msgCtxt = msgCtxt;
+            this.doingMTOM = msgCtxt.isDoingMTOM();
             this.charSetEnc = charSetEncoding;
+            this.soapActionString = soapActionString;
         }
 
         public boolean isRepeatable() {
@@ -293,7 +300,13 @@ public class CommonsHTTPTransportSender
         }
 
         public String getContentType() {
-            return omOutput.getContentType();
+            String contentType = omOutput.getContentType();
+
+            // action header is not mandated in SOAP 1.2. So putting it, if available
+            if(!msgCtxt.isSOAP11() && soapActionString != null && !"".equals(soapActionString.trim())) {
+                contentType = contentType + " action=" + soapActionString + ";";
+            }
+            return contentType;
         }
     }
 
@@ -377,8 +390,10 @@ public class CommonsHTTPTransportSender
                 new AxisRequestEntity(
                         dataout,
                         chuncked,
-                        msgContext.isDoingMTOM(),
-                        charEncoding));
+                        msgContext,
+                        charEncoding,
+                        soapActionString));
+
 
         if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)
                 && chuncked) {
@@ -387,7 +402,7 @@ public class CommonsHTTPTransportSender
         postMethod.setRequestHeader(
                 HTTPConstants.HEADER_USER_AGENT,
                 "Axis/2.0");
-        if (!msgContext.isDoingREST()) {
+        if (msgContext.isSOAP11() && !msgContext.isDoingREST()) {
             postMethod.setRequestHeader(
                     HTTPConstants.HEADER_SOAP_ACTION,
                     soapActionString);
