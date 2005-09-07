@@ -218,7 +218,7 @@ public class WSDoAllSender extends WSDoAllHandler {
                     break;
 
                 case WSConstants.ENCR:
-                    performENCRAction(mu, actionToDo, doc, reqData);
+                    performENCRAction(actionToDo, mu, doc, reqData);
                     this.preserveOriginalEnvelope = false;
                     break;
 
