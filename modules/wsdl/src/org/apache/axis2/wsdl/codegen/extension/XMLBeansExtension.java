@@ -98,12 +98,8 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                                 XmlObject.Factory.parse(
                                         element
                                         ,options));
-
-
                     }
-
                 }
-
             }
 
             // add the third party schemas
@@ -143,19 +139,33 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
 
     /**
      * Populate the base64 types
+     * The algo is to look for simpletypes that have base64 content, and then step out of that
+     * onestep and get the element. For now there's an extended check to see whether the simple type
+     * is related to the Xmime:contentType!
      * @param sts
      */
     private void FindBase64Types(SchemaTypeSystem sts) {
         List allSeenTypes = new ArrayList();
         List base64ElementQNamesList = new ArrayList();
+        SchemaType outerType;
         //add the document types and global types
         allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
         allSeenTypes.addAll(Arrays.asList(sts.globalTypes()));
         for (int i = 0; i < allSeenTypes.size(); i++){
             SchemaType sType = (SchemaType)allSeenTypes.get(i);
+
             if (sType.getContentType()==SchemaType.SIMPLE_CONTENT) {
                 if (XSLTConstants.BASE_64_CONTENT_QNAME.equals(sType.getPrimitiveType().getName())){
-                    base64ElementQNamesList.add(sType.getOuterType().getDocumentElementName());
+                    outerType = sType.getOuterType();
+                    //check the outer type further to see whether it has the contenttype attribute from
+                    //XMime namespace
+                    SchemaProperty[] properties = sType.getProperties();
+                    for (int j = 0; j < properties.length; j++) {
+                        if (XSLTConstants.XMIME_CONTENT_TYPE_QNAME.equals(properties[j].getName())){
+                            base64ElementQNamesList.add(outerType.getDocumentElementName());
+                            break;
+                        }
+                    }
                 }
             }
             //add any of the child types if there are any
