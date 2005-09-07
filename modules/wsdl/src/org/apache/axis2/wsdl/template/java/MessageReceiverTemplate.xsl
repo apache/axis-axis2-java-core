@@ -20,6 +20,9 @@
         // get the implementation class for the Web Service
         Object obj = getTheImplementationObject(msgContext);
 
+        //Inject the Message Context if it is asked for
+        org.apache.axis2.engine.DependencyManager.configureBusinessLogicProvider(obj, msgContext, newMsgContext);
+
         <xsl:value-of select="$skeletonname"/> skel = (<xsl:value-of select="$skeletonname"/>)obj;
         //Out Envelop
         org.apache.axis2.soap.SOAPEnvelope envelope = null;

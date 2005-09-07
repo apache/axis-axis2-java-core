@@ -71,7 +71,7 @@ public class RawXMLINOutMessageReceiver
             Class ImplClass = obj.getClass();
 
             //Inject the Message Context if it is asked for
-            DependencyManager.configureBusinussLogicProvider(obj, msgContext);
+            DependencyManager.configureBusinessLogicProvider(obj, msgContext, newmsgContext);
 
             OperationDescription opDesc = msgContext.getOperationContext()
                     .getAxisOperation();

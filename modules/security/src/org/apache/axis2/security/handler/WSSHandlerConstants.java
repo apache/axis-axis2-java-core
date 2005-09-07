@@ -33,8 +33,9 @@ public interface WSSHandlerConstants {
 		public static final String PW_CALLBACK_CLASS = "OutPasswordCallbackClass";
 		public static final String SIG_PROP_FILE = "OutSignaturePropFile";
 		public static final String SIG_KEY_ID = "OutSignatureKeyIdentifier";
-		
-		//Repetition count
+        public static final String SIGNATURE_PARTS = "OutSignatureParts";
+
+        //Repetition count
 		public static final String SENDER_REPEAT_COUNT = "senderRepeteCount";
 		public static final String REPETITON = "repetition";
 		

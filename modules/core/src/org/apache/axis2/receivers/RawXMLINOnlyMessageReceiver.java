@@ -75,7 +75,7 @@ public class RawXMLINOnlyMessageReceiver
 
             // find the WebService method
             Class ImplClass = obj.getClass();
-            DependencyManager.configureBusinussLogicProvider(obj, msgContext);
+            DependencyManager.configureBusinessLogicProvider(obj, msgContext, null);
 
             OperationDescription op = msgContext.getOperationContext()
                     .getAxisOperation();

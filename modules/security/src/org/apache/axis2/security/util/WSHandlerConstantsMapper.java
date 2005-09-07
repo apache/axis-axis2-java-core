@@ -48,7 +48,8 @@ public class WSHandlerConstantsMapper {
 		outHandlerConstants.put(WSHandlerConstants.PW_CALLBACK_CLASS, WSSHandlerConstants.Out.PW_CALLBACK_CLASS);
 		outHandlerConstants.put(WSHandlerConstants.SIG_PROP_FILE, WSSHandlerConstants.Out.SIG_PROP_FILE);
 		outHandlerConstants.put(WSHandlerConstants.SIG_KEY_ID, WSSHandlerConstants.Out.SIG_KEY_ID);
-		
+        outHandlerConstants.put(WSHandlerConstants.SIGNATURE_PARTS, WSSHandlerConstants.Out.SIGNATURE_PARTS);
+
 	}
 	
 	/**

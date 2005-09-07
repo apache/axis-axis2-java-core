@@ -29,8 +29,9 @@ import java.lang.reflect.Method;
 public class DependencyManager {
     private final static String MESSAGE_CONTEXT_INJECTION_METHOD = "init";
 
-    public static void configureBusinussLogicProvider(Object obj,
-                                                      MessageContext msgctx)
+    public static void configureBusinessLogicProvider(Object obj,
+                                                      MessageContext msgctx,
+                                                      MessageContext newMsgCtx)
             throws AxisFault {
         try {
             Class classToLoad = obj.getClass();
@@ -41,8 +42,14 @@ public class DependencyManager {
                         methods[i].getName()) &&
                         methods[i].getParameterTypes().length == 1 &&
                         methods[i].getParameterTypes()[0] ==
-                        MessageContext.class) {
+                                MessageContext.class) {
                     methods[i].invoke(obj, new Object[]{msgctx});
+                } else if (MESSAGE_CONTEXT_INJECTION_METHOD.equals(
+                        methods[i].getName()) &&
+                        methods[i].getParameterTypes().length == 2 &&
+                        methods[i].getParameterTypes()[0] == MessageContext.class &&
+                        methods[i].getParameterTypes()[1] == MessageContext.class) {
+                    methods[i].invoke(obj, new Object[]{msgctx, newMsgCtx});
                 }
             }
         } catch (SecurityException e) {
