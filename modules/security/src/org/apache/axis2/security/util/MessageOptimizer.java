@@ -63,18 +63,13 @@ public class MessageOptimizer {
 			XPath xp = new AXIOMXPath(expression);
 			
 			//Set namespaces
-			SimpleNamespaceContext encNsCtx = new SimpleNamespaceContext();
-			encNsCtx.addNamespace(WSConstants.ENC_PREFIX,WSConstants.ENC_NS);
+			SimpleNamespaceContext nsCtx = new SimpleNamespaceContext();
+			nsCtx.addNamespace(WSConstants.ENC_PREFIX,WSConstants.ENC_NS);
+			nsCtx.addNamespace(WSConstants.SIG_PREFIX,WSConstants.SIG_NS);
+			nsCtx.addNamespace(WSConstants.WSSE_PREFIX,WSConstants.WSSE_NS);
+			nsCtx.addNamespace(WSConstants.WSU_PREFIX,WSConstants.WSU_NS);
 			
-//			SimpleNamespaceContext sigNsCtx = new SimpleNamespaceContext();
-//			encNsCtx.addNamespace(WSConstants.SIG_PREFIX,WSConstants.SIG_NS);
-//			
-//			SimpleNamespaceContext wsseNsCtx = new SimpleNamespaceContext();
-//			encNsCtx.addNamespace(WSConstants.WSSE_PREFIX,WSConstants.WSSE_NS);
-			
-			xp.setNamespaceContext(encNsCtx);
-//			xp.setNamespaceContext(sigNsCtx);
-//			xp.setNamespaceContext(wsseNsCtx);
+			xp.setNamespaceContext(nsCtx);
 			
 			return xp.selectNodes(elem);
 			

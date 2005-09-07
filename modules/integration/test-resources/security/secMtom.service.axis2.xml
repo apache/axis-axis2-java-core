@@ -24,6 +24,8 @@
     <parameter name="encryptionKeyIdentifier" locked="false">SKIKeyIdentifier</parameter>
     <parameter name="encryptionUser" locked="false">alice</parameter>
 
+    <parameter name="optimizeParts" locked="false">//xenc:EncryptedData/xenc:CipherData/xenc:CipherValue</parameter>
+
     <!-- Scenario 3: Service's Configuration: END-->
 
     <!-- ================================================= -->
