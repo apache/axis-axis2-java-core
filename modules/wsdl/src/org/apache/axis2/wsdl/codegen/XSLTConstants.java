@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 public interface XSLTConstants {
     String DEFAULT_PACKAGE_NAME = "codegen";
     QName BASE_64_CONTENT_QNAME= new QName("http://www.w3.org/2001/XMLSchema","base64Binary");
+    QName XMIME_CONTENT_TYPE_QNAME = new QName("http://www.w3.org/2004/06/xmlmime","contentType");
     String BASE_64_PROPERTY_KEY = "base64map";
     /**
      * Language constants
