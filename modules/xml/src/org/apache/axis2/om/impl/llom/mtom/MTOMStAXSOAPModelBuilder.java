@@ -1,4 +1,4 @@
-/**  
+/**
  * Copyright 2001-2004 The Apache Software Foundation.
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,8 @@ import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder implements MTOMConstants {
 
@@ -58,7 +60,7 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder implements MT
 
     protected OMNode createOMElement() throws OMException {
 
-    	elementLevel++;
+        elementLevel++;
         String elementName = parser.getLocalName();
 
         String namespaceURI = parser.getNamespaceURI();
@@ -86,8 +88,15 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder implements MT
                 if (contentIDName.equalsIgnoreCase("href")
                         & contentID.substring(0, 3).equalsIgnoreCase("cid")) {
                     contentID = contentID.substring(4);
+                    String charsetEncoding = getDocument().getCharsetEncoding();
+                    String charEnc = charsetEncoding == null || "".equals(charsetEncoding) ? "UTF-8" : charsetEncoding;
+                    try {
+                        contentID = URLDecoder.decode(contentID, charEnc);
+                    } catch (UnsupportedEncodingException e) {
+                        throw new OMException("Unsupported Character Encoding Found", e);
+                    }
                 } else if (!(contentIDName.equalsIgnoreCase("href")
-                       & (!contentID.equals("")))) {
+                        & (!contentID.equals("")))) {
                     throw new OMException(
                             "contentID not Found in XOP:Include element");
                 }
@@ -105,7 +114,7 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder implements MT
             } catch (ClassCastException e) {
                 throw new OMException(
                         "Last Node & Parent of an OMText should be an Element" +
-                        e);
+                                e);
             }
 
             return node;
