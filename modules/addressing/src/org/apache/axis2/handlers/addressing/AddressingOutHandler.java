@@ -116,9 +116,16 @@ public class AddressingOutHandler
         }
 
         epr = messageInformationHeaders.getReplyTo();
-        if (epr != null) {//optional
-            addToSOAPHeader(epr, AddressingConstants.WSA_REPLY_TO, soapHeader);
+        if (epr == null) {//optional
+            // setting anonymous URI. Defaulting to Final.
+            String anonymousURI = Final.WSA_ANONYMOUS_URL;
+            if (Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
+                anonymousURI = Submission.WSA_ANONYMOUS_URL;
+            }
+            epr = new EndpointReference(anonymousURI);
         }
+        addToSOAPHeader(epr, AddressingConstants.WSA_REPLY_TO, soapHeader);
+
 
         epr = messageInformationHeaders.getFrom();
         if (epr != null) {//optional
@@ -229,12 +236,12 @@ public class AddressingOutHandler
                     OMAbstractFactory.getOMFactory().createOMElement(
                             addressingNamespace.equals(
                                     Submission.WSA_NAMESPACE) ?
-                    Submission.EPR_PORT_TYPE : Final.WSA_INTERFACE_NAME,
+                                    Submission.EPR_PORT_TYPE : Final.WSA_INTERFACE_NAME,
                             addressingNamespaceObject);
             interfaceName.addChild(
                     OMAbstractFactory.getOMFactory().createText(
                             interfaceQName.getPrefix() + ":" +
-                    interfaceQName.getLocalPart()));
+                                    interfaceQName.getLocalPart()));
             parentElement.addChild(interfaceName);
         }
 
@@ -246,15 +253,15 @@ public class AddressingOutHandler
                             addressingNamespaceObject);
             serviceNameElement.addAttribute(
                     addressingNamespace.equals(Submission.WSA_NAMESPACE) ?
-                    Submission.EPR_SERVICE_NAME_PORT_NAME :
-                    Final.WSA_SERVICE_NAME_ENDPOINT_NAME,
+                            Submission.EPR_SERVICE_NAME_PORT_NAME :
+                            Final.WSA_SERVICE_NAME_ENDPOINT_NAME,
                     serviceName.getEndpointName(),
                     addressingNamespaceObject);
             serviceNameElement.addChild(
                     OMAbstractFactory.getOMFactory().createText(
                             serviceName.getName().getPrefix()
-                    + ":"
-                    + serviceName.getName().getLocalPart()));
+                                    + ":"
+                                    + serviceName.getName().getLocalPart()));
             parentElement.addChild(serviceNameElement);
         }
 
@@ -264,9 +271,9 @@ public class AddressingOutHandler
 
     private void processAnyContentType
             (AnyContentType
-            referenceValues,
+                    referenceValues,
              OMElement
-            parentElement) {
+                     parentElement) {
         if (referenceValues != null) {
             Iterator iterator = referenceValues.getKeys();
             while (iterator.hasNext()) {

@@ -49,6 +49,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
     }
 
     public void testAddToSOAPHeader() throws Exception {
+        EndpointReference replyTo = new EndpointReference("http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous");
         EndpointReference epr = new EndpointReference("http://www.to.org/service/");
         epr.setInterfaceName(
                 new QName("http://www.from.org/service/port/",
@@ -78,6 +79,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
                 "wsa");
         MessageContext msgCtxt = new MessageContext(null);
         msgCtxt.setTo(epr);
+        msgCtxt.setReplyTo(replyTo);
         msgCtxt.setEnvelope(defaultEnvelope);
         outHandler.invoke(msgCtxt);
 

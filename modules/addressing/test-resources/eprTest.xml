@@ -8,6 +8,9 @@
         <wsa:ServiceName wsa:PortName="port">serviceNS:Service</wsa:ServiceName>
         <wsa:PortType>portNS:Port</wsa:PortType>
         <wsa:To>http://www.to.org/service/</wsa:To>
+        <wsa:ReplyTo>
+            <wsa:Address>http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous</wsa:Address>
+        </wsa:ReplyTo>
     </soapenv:Header>
     <soapenv:Body></soapenv:Body>
 </soapenv:Envelope>
