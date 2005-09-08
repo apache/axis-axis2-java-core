@@ -15,6 +15,8 @@
 */
 package org.apache.axis2.databinding;
 
+import org.apache.axis.xsd.Constants;
+
 import javax.xml.namespace.QName;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamWriter;
@@ -28,9 +30,14 @@ import java.util.ArrayList;
  * SerializationContext
  */
 public class SerializationContext {
+    // Multiref modes
     public static final int NO_MULTIREFS = 0;
     public static final int SOAP11_MULTIREFS = 1;
     public static final int SOAP12_MULTIREFS = 2;
+
+    // Null handling modes
+    public static final int NULL_OMIT = 0;
+    public static final int NULL_NILLABLE = 1;
 
     static final QName MULTIREF_QNAME = new QName("MultiRef");
 
@@ -78,15 +85,29 @@ public class SerializationContext {
     public void serializeElement(QName qname,
                                  Object obj,
                                  Serializer serializer) throws Exception {
+        serializeElement(qname, obj, NULL_OMIT, serializer);
+    }
+
+    public void serializeElement(QName qname,
+                                 Object obj,
+                                 int nullHandlingMode,
+                                 Serializer serializer) throws Exception {
+        if (obj == null) {
+            switch (nullHandlingMode) {
+                case NULL_NILLABLE:
+                    // write xsi:nil
+                    writer.writeStartElement(qname.getNamespaceURI(), qname.getLocalPart());
+                    writer.writeAttribute(Constants.URI_2001_SCHEMA_XSI,
+                                          "nil",
+                                          "true");
+                    writer.writeEndElement();
+                default:
+                    return;
+            }
+
+        }
+
         writer.writeStartElement(qname.getNamespaceURI(), qname.getLocalPart());
-//        if (attributes != null) {
-//            for (Iterator i = attributes.keySet().iterator(); i.hasNext();) {
-//                QName attrQName = (QName) i.next();
-//                writer.writeAttribute(attrQName.getNamespaceURI(),
-//                                      attrQName.getLocalPart(),
-//                                      (String)attributes.get(attrQName));
-//            }
-//        }
         serializer.serialize(obj, this);
     }
 

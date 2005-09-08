@@ -89,9 +89,8 @@ public class OMSerializerUtil {
             String uri = namespace.getName();
             String prefix = writer.getPrefix(uri);
             String ns_prefix = namespace.getPrefix();
-            if (prefix == null && namespace.getName() != null) {
+            if (ns_prefix != null && !ns_prefix.equals(prefix)) {
                 writer.writeNamespace(ns_prefix, namespace.getName());
-                writer.setPrefix(ns_prefix, uri);
             }
         }
     }

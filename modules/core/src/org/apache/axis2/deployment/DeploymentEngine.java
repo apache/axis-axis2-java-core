@@ -221,7 +221,7 @@ public class DeploymentEngine implements DeploymentConstants {
             ((AxisConfigurationImpl) axisConfig).setRepository(axis2repository);
             validateSystemPredefinedPhases();
             ((AxisConfigurationImpl) axisConfig).setPhasesinfo(phasesinfo);
-            engagdeModules();
+            engageModules();
         } catch (AxisFault axisFault) {
             log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VAL_FAILED, axisFault.getMessage()));
             throw new DeploymentException(axisFault);
@@ -263,7 +263,7 @@ public class DeploymentEngine implements DeploymentConstants {
         try {
             ((AxisConfigurationImpl) axisConfig).setRepository(axis2repository);
             ((AxisConfigurationImpl) axisConfig).setPhasesinfo(phasesinfo);
-            engagdeModules();
+            engageModules();
         } catch (AxisFault axisFault) {
             log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VAL_FAILED, axisFault.getMessage()));
             throw new DeploymentException(axisFault);
@@ -316,7 +316,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * This methode used to check the modules referd by server.xml
      * are exist , or they have deployed
      */
-    private void engagdeModules() throws AxisFault {
+    private void engageModules() throws AxisFault {
         // ArrayList modules = DeploymentData.getInstance().getModules();
         // PhaseResolver resolver = new PhaseResolver(axisConfig);
         for (Iterator iterator = modulelist.iterator(); iterator.hasNext();) {

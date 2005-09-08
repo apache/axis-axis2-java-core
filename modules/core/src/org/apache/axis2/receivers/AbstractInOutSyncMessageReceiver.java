@@ -33,15 +33,15 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
                                              MessageContext outMessage)
             throws AxisFault;
 
-    public final void receive(MessageContext messgeCtx) throws AxisFault {
-        MessageContext newmsgCtx =
-                new MessageContext(messgeCtx.getSystemContext(),
-                        messgeCtx.getSessionContext(),
-                        messgeCtx.getTransportIn(),
-                        messgeCtx.getTransportOut());
+    public final void receive(MessageContext msgContext) throws AxisFault {
+        MessageContext outMsgContext =
+                new MessageContext(msgContext.getSystemContext(),
+                        msgContext.getSessionContext(),
+                        msgContext.getTransportIn(),
+                        msgContext.getTransportOut());
 
         MessageInformationHeaders oldMessageInfoHeaders =
-                messgeCtx.getMessageInformationHeaders();
+                msgContext.getMessageInformationHeaders();
         MessageInformationHeaders messageInformationHeaders =
                 new MessageInformationHeaders();
         messageInformationHeaders.setMessageId(UUIDGenerator.getUUID());
@@ -52,28 +52,28 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
         messageInformationHeaders.setRelatesTo(
                 new RelatesTo(oldMessageInfoHeaders.getMessageId(),
                         AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
-        newmsgCtx.setMessageInformationHeaders(messageInformationHeaders);
-        newmsgCtx.setOperationContext(messgeCtx.getOperationContext());
-        newmsgCtx.setServiceContext(messgeCtx.getServiceContext());
-        newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT,
-                messgeCtx.getProperty(MessageContext.TRANSPORT_OUT));
-        newmsgCtx.setProperty(HTTPConstants.HTTPOutTransportInfo,
-                messgeCtx.getProperty(HTTPConstants.HTTPOutTransportInfo));
+        outMsgContext.setMessageInformationHeaders(messageInformationHeaders);
+        outMsgContext.setOperationContext(msgContext.getOperationContext());
+        outMsgContext.setServiceContext(msgContext.getServiceContext());
+        outMsgContext.setProperty(MessageContext.TRANSPORT_OUT,
+                msgContext.getProperty(MessageContext.TRANSPORT_OUT));
+        outMsgContext.setProperty(HTTPConstants.HTTPOutTransportInfo,
+                msgContext.getProperty(HTTPConstants.HTTPOutTransportInfo));
         
         //Setting the charater set encoding
-        newmsgCtx.setProperty(MessageContext.CHARACTER_SET_ENCODING, messgeCtx
+        outMsgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, msgContext
 				.getProperty(MessageContext.CHARACTER_SET_ENCODING));
         
-        newmsgCtx.setDoingREST(messgeCtx.isDoingREST());
-        newmsgCtx.setDoingMTOM(messgeCtx.isDoingMTOM());
-        newmsgCtx.setServerSide(messgeCtx.isServerSide());
+        outMsgContext.setDoingREST(msgContext.isDoingREST());
+        outMsgContext.setDoingMTOM(msgContext.isDoingMTOM());
+        outMsgContext.setServerSide(msgContext.isServerSide());
 
-        invokeBusinessLogic(messgeCtx, newmsgCtx);
+        invokeBusinessLogic(msgContext, outMsgContext);
 
         AxisEngine engine =
                 new AxisEngine(
-                        messgeCtx.getOperationContext().getServiceContext()
+                        msgContext.getOperationContext().getServiceContext()
                 .getEngineContext());
-        engine.send(newmsgCtx);
+        engine.send(outMsgContext);
     }
 }
