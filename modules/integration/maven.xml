@@ -312,6 +312,32 @@
         <copy file="../security/target/PingPort.aar"
             tofile="target/test-resources/mtom_sec_service_repo/services/PingPort.aar"/>
 
+	<!-- Test with addressing and MTOM  -->
+        <mkdir dir="target/test-resources/complete_client_repo"/>
+        <mkdir dir="target/test-resources/complete_client_repo/modules"/>
+
+        <mkdir dir="target/test-resources/complete_service_repo"/>
+        <mkdir dir="target/test-resources/complete_service_repo/services"/>
+        <mkdir dir="target/test-resources/complete_service_repo/modules"/>
+
+	<!-- Test with addressing and MTOM client repository-->
+        <copy file="test-resources/security/complete.client.axis2.xml"
+            tofile="target/test-resources/complete_client_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/complete_client_repo/modules/security.mar"/>
+        <copy file="../addressing/target/addressing.mar"
+            tofile="target/test-resources/complete_client_repo/modules/addressing.mar"/>
+
+	<!-- Test with addressing and MTOMservice repository-->
+        <copy file="test-resources/security/complete.service.axis2.xml"
+            tofile="target/test-resources/complete_service_repo/axis2.xml"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/complete_service_repo/modules/security.mar"/>
+        <copy file="../security/target/PingPort.aar"
+            tofile="target/test-resources/complete_service_repo/services/PingPort.aar"/>
+        <copy file="../addressing/target/addressing.mar"
+            tofile="target/test-resources/complete_service_repo/modules/addressing.mar"/>
+
     <!-- Standard repository -->
     <mkdir dir="target/Repository"/>
         <mkdir dir="target/Repository/services"/>

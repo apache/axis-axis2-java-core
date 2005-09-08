@@ -48,6 +48,8 @@ public class InteropScenarioClient {
 
 		PingPortStub stub = new PingPortStub(clientRepo,url);
 		
+		//Enable MTOM to those scenarios where they are configured using:
+		//<parameter name="optimizeParts" locked="false">xpathExpression</parameter>
 		stub._put(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
 		
 		PingResponseDocument pingResDoc = stub.Ping(pingDoc);

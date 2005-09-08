@@ -4,29 +4,33 @@
 
     <messageReceiver mep="INOUT" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
 
+    <module ref="addressing"/>
+
     <!-- Engage the security module -->
     <module ref="security"/>
 
     <!-- This is only till we get the service specific parameters fixed in service.xml -->
 
-    <!-- Scenario 3 with MTOM: Service's Configuration: START-->
+    <!-- Test with addressing and MTOM: Service's Configuration: START-->
     <!-- Also we can switch back to hte normal parameter names when we can seperately assign them to the flows -->
 
-    <parameter name="InAction" locked="false">Signature Encrypt Timestamp</parameter>
+    <parameter name="InAction" locked="false">Timestamp Signature Encrypt</parameter>
     <parameter name="InPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
     <parameter name="InSignaturePropFile" locked="false">interop.properties</parameter>
 
-    <parameter name="OutAction" locked="false">Signature Encrypt Timestamp</parameter>
+    <parameter name="OutAction" locked="false">Timestamp Signature Encrypt</parameter>
     <parameter name="user" locked="false">bob</parameter>
     <parameter name="OutPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
     <parameter name="OutSignaturePropFile" locked="false">interop.properties</parameter>
     <parameter name="OutSignatureKeyIdentifier" locked="false">DirectReference</parameter>
     <parameter name="encryptionKeyIdentifier" locked="false">SKIKeyIdentifier</parameter>
     <parameter name="encryptionUser" locked="false">alice</parameter>
+    <parameter name="encryptionSymAlgorithm" locked="false">http://www.w3.org/2001/04/xmlenc#aes128-cbc</parameter>
+    <parameter name="OutSignatureParts" locked="false">{}{http://schemas.xmlsoap.org/ws/2004/08/addressing}To</parameter>
 
     <parameter name="optimizeParts" locked="false">//xenc:EncryptedData/xenc:CipherData/xenc:CipherValue</parameter>
 
-    <!-- Scenario 3 with MTOM: Service's Configuration: END-->
+    <!-- Test with addressing and MTOM: Service's Configuration: END-->
 
     <!-- ================================================= -->
     <!-- Transport Ins -->

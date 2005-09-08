@@ -15,19 +15,25 @@
  */
 package org.apache.axis2.om.impl.llom;
 
-import org.apache.axis2.attachments.Base64;
-import org.apache.axis2.attachments.ByteArrayDataSource;
-import org.apache.axis2.attachments.utils.IOUtils;
-import org.apache.axis2.om.*;
-import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
-import org.apache.axis2.util.UUIDGenerator;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.IOException;
-import java.io.InputStream;
+
+import org.apache.axis2.attachments.Base64;
+import org.apache.axis2.attachments.ByteArrayDataSource;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMConstants;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
+import org.apache.axis2.util.UUIDGenerator;
 
 public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     protected String value = null;
@@ -200,14 +206,15 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                 //int x = inStream.available();
                 byte[] data;
                 StringBuffer text = new StringBuffer();
-                // There are times, this inStream reports the Available bytes
-                // incorrectly.
-                // Reading the First byte & then getting the available number of
-                // bytes fixed it.
                 do {
-                    data = new byte[3];
-                    IOUtils.readFully(inStream, data, 0, 3);
-                    text.append(Base64.encode(data));
+                	data = new byte[1024];
+                	int len;
+                	while((len = inStream.read(data)) > 0) {
+                		byte[] temp = new byte[len];
+                		System.arraycopy(data,0,temp,0,len);
+                		text.append(Base64.encode(temp));
+                	}
+
                 } while (inStream.available() > 0);
                 return text.toString();
             } catch (Exception e) {

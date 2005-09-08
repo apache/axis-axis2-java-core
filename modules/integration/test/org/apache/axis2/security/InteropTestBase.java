@@ -74,6 +74,10 @@ public class InteropTestBase extends TestCase {
     
     protected static final String MTOM_SEC_CLIENT_REPOSITORY = "mtom_sec_client_repo";
     
+    protected static final String COMPLETE_SERVICE_REPOSITORY = "complete_service_repo";
+    
+    protected static final String COMPLETE_CLIENT_REPOSITORY = "complete_client_repo";
+    
     /*
      * We have to create different a client repository and a service repository
      * for each scenarion since we dont have the support to get the parameter 
