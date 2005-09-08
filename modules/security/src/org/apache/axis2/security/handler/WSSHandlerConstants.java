@@ -21,12 +21,14 @@ package org.apache.axis2.security.handler;
  */
 public interface WSSHandlerConstants {
 
-	interface In {
+    public static final String ENFORCE_ACTION_ORDER = "EnforceActionOrder";
+
+    interface In {
 		public static final String ACTION = "InAction";
 		public static final String PW_CALLBACK_CLASS = "InPasswordCallbackClass";
 		public static final String SIG_PROP_FILE = "InSignaturePropFile";
 		public static final String SIG_KEY_ID = "InSignatureKeyIdentifier";
-	}
+    }
 	
 	interface Out {
 		public static final String ACTION = "OutAction";

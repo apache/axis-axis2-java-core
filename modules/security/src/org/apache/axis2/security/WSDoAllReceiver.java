@@ -28,6 +28,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.security.handler.WSDoAllHandler;
+import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.util.Axis2Util;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeader;
@@ -265,20 +266,25 @@ public class WSDoAllReceiver extends WSDoAllHandler {
                  throw new AxisFault(
                          "WSDoAllReceiver: security processing failed (actions number mismatch)");
              }
-             for (int i = 0; i < size; i++) {
-                 if (((Integer) actions.get(i)).intValue() != ((WSSecurityEngineResult) wsResult
-                         .get(i)).getAction()) {
-                     throw new AxisFault(
-                             "WSDoAllReceiver: security processing failed (actions mismatch)");
-                 }
-             }
-
-             /*
-             * All ok up to this point. Now construct and setup the security
-             * result structure. The service may fetch this and check it.
-             * Also the DoAllSender will use this in certain situations such as:
-             * USE_REQ_SIG_CERT to encrypt
-             */
+            String enforce = null;
+            if ((enforce = (String) getOption(WSSHandlerConstants.ENFORCE_ACTION_ORDER)) == null) {
+                enforce = (String) getProperty(msgContext, WSSHandlerConstants.ENFORCE_ACTION_ORDER);
+            }
+            if (enforce != null && (enforce.equalsIgnoreCase("yes") || enforce.equalsIgnoreCase("true"))) {
+                for (int i = 0; i < size; i++) {
+                    if (((Integer) actions.get(i)).intValue() != ((WSSecurityEngineResult) wsResult
+                            .get(i)).getAction()) {
+                        throw new AxisFault(
+                                "WSDoAllReceiver: security processing failed (actions mismatch)");
+                    }
+                }
+            }
+            /*
+            * All ok up to this point. Now construct and setup the security
+            * result structure. The service may fetch this and check it.
+            * Also the DoAllSender will use this in certain situations such as:
+            * USE_REQ_SIG_CERT to encrypt
+            */
              Vector results = null;
              if ((results = (Vector) getProperty(msgContext, WSHandlerConstants.RECV_RESULTS)) == null) {
                  results = new Vector();
