@@ -96,6 +96,12 @@ public class DeploymentEngine implements DeploymentConstants {
     private PhasesInfo phasesinfo = new PhasesInfo(); //to store phases list in axis2.xml
 
     /**
+     * Resource that contains the configuration
+     */
+    protected static final String AXIS2_CONFIGURATION_RESOURCE = "org/apache/axis2/deployment/axis2.xml";
+    protected static final String SERVER_XML_FILE = "axis2.xml";
+
+    /**
      * Default constructor is need to deploye module and service programatically
      */
     public DeploymentEngine() {
@@ -110,32 +116,33 @@ public class DeploymentEngine implements DeploymentConstants {
      */
 
     public DeploymentEngine(String RepositaryName) throws DeploymentException {
-        this(RepositaryName, "axis2.xml");
+        this(RepositaryName, SERVER_XML_FILE);
     }
 
-    public DeploymentEngine(String RepositaryName, String serverXMLFile)
+    public DeploymentEngine(String RepositoryName, String serverXMLFile)
             throws DeploymentException {
-        if (RepositaryName == null || RepositaryName.trim().equals("")) {
+        if (RepositoryName == null || RepositoryName.trim().equals("")) {
             throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.REPO_CAN_NOT_BE_NULL));
         }
-        this.folderName = RepositaryName;
-        axis2repository = RepositaryName;
-        File repository = new File(RepositaryName);
+        this.folderName = RepositoryName;
+        axis2repository = RepositoryName;
+        File repository = new File(RepositoryName);
         if (!repository.exists()) {
             repository.mkdirs();
-            File servcies = new File(repository, "services");
+            File services = new File(repository, "services");
             File modules = new File(repository, "modules");
             modules.mkdirs();
-            servcies.mkdirs();
+            services.mkdirs();
         }
         File serverConf = new File(repository, serverXMLFile);
         if (!serverConf.exists()) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            InputStream in = cl.getResourceAsStream("org/apache/axis2/deployment/axis2.xml");
+            InputStream in = cl.getResourceAsStream(AXIS2_CONFIGURATION_RESOURCE);
+            FileOutputStream out = null;
             if (in != null) {
                 try {
                     serverConf.createNewFile();
-                    FileOutputStream out = new FileOutputStream(serverConf);
+                    out = new FileOutputStream(serverConf);
                     int BUFSIZE = 512; // since only a test file going to load , the size has selected
                     byte[] buf = new byte[BUFSIZE];
                     int read;
@@ -146,6 +153,19 @@ public class DeploymentEngine implements DeploymentConstants {
                     out.close();
                 } catch (IOException e) {
                     throw new DeploymentException(e);
+                } finally {
+                    if( out!=null) {
+                        try {
+                            out.close();
+                        } catch (IOException e) {
+                            //ignore
+                        }
+                    }
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        //ignore
+                    }
                 }
 
 
@@ -154,7 +174,7 @@ public class DeploymentEngine implements DeploymentConstants {
             }
         }
 //        factory = new ConfigurationContextFactory();
-        this.engineConfigName = RepositaryName + '/' + serverXMLFile;
+        this.engineConfigName = RepositoryName + '/' + serverXMLFile;
     }
 
     public ArchiveFileData getCurrentFileItem() {
@@ -247,7 +267,7 @@ public class DeploymentEngine implements DeploymentConstants {
         } else {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             in =
-                    cl.getResourceAsStream("org/apache/axis2/deployment/axis2.xml");
+                    cl.getResourceAsStream(AXIS2_CONFIGURATION_RESOURCE);
         }
         axisConfig = createEngineConfig();
         AxisConfigBuilder builder =new AxisConfigBuilder(in,this,axisConfig);
@@ -273,20 +293,20 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
     private void checkClientHome(String clientHome) throws DeploymentException {
-        String clientXML = "axis2.xml";
+        String clientXML = SERVER_XML_FILE;
         this.folderName = clientHome;
         File repository = new File(clientHome);
         if (!repository.exists()) {
             repository.mkdirs();
-            File servcies = new File(repository, "services");
+            File services = new File(repository, "services");
             File modules = new File(repository, "modules");
             modules.mkdirs();
-            servcies.mkdirs();
+            services.mkdirs();
         }
         File serverConf = new File(repository, clientXML);
         if (!serverConf.exists()) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            InputStream in = cl.getResourceAsStream("org/apache/axis2/deployment/axis2.xml");
+            InputStream in = cl.getResourceAsStream(AXIS2_CONFIGURATION_RESOURCE);
             if (in != null) {
                 try {
                     serverConf.createNewFile();
@@ -489,27 +509,27 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private void addNewModule(ModuleDescription moduelmetada) throws AxisFault {
+    private void addNewModule(ModuleDescription modulemetadata) throws AxisFault {
         // currentArchiveFile.setClassLoader();
-        Flow inflow = moduelmetada.getInFlow();
+        Flow inflow = modulemetadata.getInFlow();
         if (inflow != null) {
             addFlowHandlers(inflow);
         }
-        Flow outFlow = moduelmetada.getOutFlow();
+        Flow outFlow = modulemetadata.getOutFlow();
         if (outFlow != null) {
             addFlowHandlers(outFlow);
         }
-        Flow faultInFlow = moduelmetada.getFaultInFlow();
+        Flow faultInFlow = modulemetadata.getFaultInFlow();
         if (faultInFlow != null) {
             addFlowHandlers(faultInFlow);
         }
 
-        Flow faultOutFlow = moduelmetada.getFaultOutFlow();
+        Flow faultOutFlow = modulemetadata.getFaultOutFlow();
         if (faultOutFlow != null) {
             addFlowHandlers(faultOutFlow);
         }
-        loadModuleClass(moduelmetada);
-        axisConfig.addMdoule(moduelmetada);
+        loadModuleClass(modulemetadata);
+        axisConfig.addMdoule(modulemetadata);
         log.info(Messages.getMessage(DeploymentErrorMsgs.ADDING_NEW_MODULE));
     }
 
