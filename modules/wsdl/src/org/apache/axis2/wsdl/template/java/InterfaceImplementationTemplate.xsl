@@ -93,6 +93,7 @@
  		    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
             _call.setTo(this.toEPR);
             _call.setSoapAction("<xsl:value-of select="$soapAction"/>");
+            <xsl:for-each select="input/param[@Action!='']">_messageContext.setWSAAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
 
              //set the properties
             populateProperties(_call);
@@ -152,7 +153,7 @@
                return;
               </xsl:when>
               <xsl:otherwise>
-             //set the exception throwing status     
+             //set the exception throwing status
              _call.setExceptionToBeThrownOnSOAPFault(true);
              org.apache.axis2.context.MessageContext  _returnMessageContext = _call.invokeBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
              org.apache.axis2.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
@@ -180,8 +181,10 @@
 
              org.apache.axis2.clientapi.Call _call = new org.apache.axis2.clientapi.Call(_serviceContext);
  		     org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-             _call.setTo(this.toEPR);
+            _call.setTo(this.toEPR);
             _call.setSoapAction("<xsl:value-of select="$soapAction"/>");
+            <xsl:for-each select="input/param[@Action!='']">_messageContext.setWSAAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
+
              org.apache.axis2.soap.SOAPEnvelope env = createEnvelope();
              <xsl:choose>
              <!-- There are more than 1 parameter in the input-->
@@ -231,7 +234,7 @@
              _messageContext.setEnvelope(env);
              <xsl:choose>
              <xsl:when test="$outputtype=''">
-              //Nothing to pass as the callback!!!   
+              //Nothing to pass as the callback!!!
               _call.invokeNonBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext,null);
               </xsl:when>
               <xsl:otherwise>
@@ -266,7 +269,9 @@
  		    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
             _call.setTo(this.toEPR);
             _call.setSoapAction("<xsl:value-of select="$soapAction"/>");
-            org.apache.axis2.soap.SOAPEnvelope env = null;
+            <xsl:for-each select="input/param[@Action!='']">_messageContext.setWSAAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
+
+          org.apache.axis2.soap.SOAPEnvelope env = null;
             env = createEnvelope();
             <xsl:choose>
             <!-- test the number of input parameters

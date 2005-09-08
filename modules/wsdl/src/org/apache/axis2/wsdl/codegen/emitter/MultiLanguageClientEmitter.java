@@ -604,6 +604,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
             addAttribute(doc, "type", typeMappingStr, param);
             //add this as a body parameter
             addAttribute(doc,"location","body",param);
+            Iterator iter = inputMessage.getExtensibilityAttributes().iterator();
+            while(iter.hasNext()){
+                WSDLExtensibilityAttribute att = (WSDLExtensibilityAttribute) iter.next();
+                addAttribute(doc, att.getKey().getLocalPart(), att.getValue().toString(), param);
+            }
         }else{
             param = null;
         }
