@@ -37,7 +37,7 @@
 		<dependency>
 			<groupId>axis</groupId>
 			<artifactId>XmlSchema</artifactId>
-			<version>0.9</version>
+			<version>SNAPSHOT</version>
 		</dependency>
 		<!-- external JARs -->
 		<dependency>
