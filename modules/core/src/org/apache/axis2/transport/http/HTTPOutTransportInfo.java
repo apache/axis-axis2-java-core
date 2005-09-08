@@ -25,4 +25,5 @@ package org.apache.axis2.transport.http;
  */
 public interface HTTPOutTransportInfo {
     public abstract void setContentType(String contentType);
+    public abstract void setCharacterEncoding(String encoding);
 }

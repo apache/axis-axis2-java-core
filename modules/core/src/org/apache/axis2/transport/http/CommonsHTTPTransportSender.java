@@ -123,6 +123,7 @@ public class CommonsHTTPTransportSender
                                     HTTPConstants.HTTPOutTransportInfo);
                     if (transportInfo != null) {
                         omOutput.setSoap11(msgContext.isSOAP11());
+                        transportInfo.setCharacterEncoding(omOutput.getCharSetEncoding());
                         transportInfo.setContentType(omOutput.getContentType());
                     }else{
                         throw new AxisFault(HTTPConstants.HTTPOutTransportInfo + " does not set");
@@ -300,7 +301,11 @@ public class CommonsHTTPTransportSender
         }
 
         public String getContentType() {
+            String encoding = omOutput.getCharSetEncoding();
             String contentType = omOutput.getContentType();
+            if(encoding != null){
+                contentType += "charset=" + encoding;
+            }
 
             // action header is not mandated in SOAP 1.2. So putting it, if available
             if(!msgCtxt.isSOAP11() && soapActionString != null && !"".equals(soapActionString.trim())) {

@@ -22,12 +22,20 @@ import org.apache.commons.httpclient.Header;
 
 public class SimpleHTTPOutTransportInfo implements HTTPOutTransportInfo {
     private SimpleResponse outInfo;
+    private String encoding;
 
     public SimpleHTTPOutTransportInfo(SimpleResponse outInfo) {
         this.outInfo = outInfo;
     }
 
     public void setContentType(String contentType) {
+        if(encoding != null){
+            contentType = contentType + ";charset=" + encoding;
+        }
         outInfo.setHeader(new Header(HTTPConstants.HEADER_CONTENT_TYPE,contentType));
+    }
+
+    public void setCharacterEncoding(String encoding) {
+        this.encoding = encoding;
     }
 }

@@ -46,7 +46,7 @@ public class OMOutputImpl {
     private boolean isSoap11 = true;
 
     /**
-     * Field DEFAULT_CHAR_SET_ENCODING specifies the default 
+     * Field DEFAULT_CHAR_SET_ENCODING specifies the default
      * character encoding scheme to be used
      */
     public static final String DEFAULT_CHAR_SET_ENCODING = "utf-8";
@@ -127,31 +127,22 @@ public class OMOutputImpl {
     public String getContentType() {
         String SOAPContentType;
         if (isOptimized()) {
-            if (isSoap11)
-            {
+            if (isSoap11) {
                 SOAPContentType = SOAP11Constants.SOAP_11_CONTENT_TYPE;
-            }
-            else
-            {
+            } else {
                 SOAPContentType = SOAP12Constants.SOAP_12_CONTENT_TYPE;
             }
             return MIMEOutputUtils.getContentTypeForMime(
-                getMimeBoundary(),
-                getRootContentId(),
-                this.getCharSetEncoding(),SOAPContentType);
+                    getMimeBoundary(),
+                    getRootContentId(),
+                    this.getCharSetEncoding(), SOAPContentType);
         } else {
-
-            StringBuffer buf = new StringBuffer();
             if (!isSoap11) {
-                buf.append(SOAP12Constants.SOAP_12_CONTENT_TYPE);
-                buf.append("; charset=" + this.getCharSetEncoding() + ";");
+                return SOAP12Constants.SOAP_12_CONTENT_TYPE;
             } else {
-                buf.append(SOAP11Constants.SOAP_11_CONTENT_TYPE)
-                    .append("; charset=" + this.getCharSetEncoding() + ";");
+                return SOAP11Constants.SOAP_11_CONTENT_TYPE;
             }
-            return buf.toString();
         }
-
     }
 
     public void writeOptimized(OMText node) {
