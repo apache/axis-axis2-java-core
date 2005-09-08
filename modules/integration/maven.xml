@@ -382,7 +382,7 @@
                     <include name="axis/jars/axis2-wsdl-0.9.jar"/>
                     <include name="axis/jars/axis-wsdl4j-1.2.jar"/>
                     <include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
-                    <include name="stax/jars/stax-1.1.1-dev.jar"/>
+                    <include name="stax/jars/stax-1.1.2-dev.jar"/>
                     <include name="stax/jars/stax-api-1.0.jar"/>
                 </fileset>
                 <pathelement location="target/test-classes"/>

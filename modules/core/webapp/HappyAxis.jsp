@@ -390,7 +390,7 @@
             "Axis2 will not work",
             "http://dist.codehaus.org/stax/jars/");
     needed+=needClass(out, "com.bea.xml.stream.MXParser",
-            "stax-1.1.1-dev.jar",
+            "stax-1.1.2-dev.jar",
             "Streaming API for XML implementation",
             "Axis2 will not work",
             "http://dist.codehaus.org/stax/jars/");

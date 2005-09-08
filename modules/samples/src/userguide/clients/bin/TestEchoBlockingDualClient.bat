@@ -1,7 +1,7 @@
 @echo off
 set CLASSPATH=%CLASSPATH%;..\..\..\..\..\..\lib\axis2-0.9.jar
 set CLASSPATH=%CLASSPATH%;..\..\..\..\..\..\lib\stax-api-1.0.jar
-set CLASSPATH=%CLASSPATH%;..\..\..\..\..\..\lib\stax-1.1.1-dev.jar
+set CLASSPATH=%CLASSPATH%;..\..\..\..\..\..\lib\stax-1.1.2-dev.jar
 set CLASSPATH=%CLASSPATH%;..\..\..\..\..\..\lib\log4j-1.2.8.jar
 set CLASSPATH=%CLASSPATH%;..\..\..\..\..\..\lib\commons-logging-1.0.3.jar
 set CLASSPATH=%CLASSPATH%;..\..\..\..\..\..\lib\commons-fileupload-1.0.jar

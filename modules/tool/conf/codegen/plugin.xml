@@ -41,7 +41,7 @@
       <library name="lib/saaj.jar">
          <export name="*"/>
       </library>
-      <library name="lib/stax-1.1.1-dev.jar">
+      <library name="lib/stax-1.1.2-dev.jar">
          <export name="*"/>
       </library>
    </runtime>

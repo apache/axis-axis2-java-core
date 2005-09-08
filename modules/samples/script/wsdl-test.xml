@@ -21,7 +21,7 @@
 					<include name="axis/jars/axis-wsdl4j-1.2.jar"/>
 					<include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
 					<include name="commons-httpclient/jars/commons-httpclient-3.0-rc2.jar"/>
-					<include name="stax/jars/stax-1.1.1-dev.jar"/>
+					<include name="stax/jars/stax-1.1.2-dev.jar"/>
 					<include name="stax/jars/stax-api-1.0.jar"/>
 					<include name="log4j/jars/log4j-1.2.8.jar"/>
 					<include name="junit/jars/*.jar"/>
