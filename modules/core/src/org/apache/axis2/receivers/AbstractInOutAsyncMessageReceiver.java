@@ -22,6 +22,7 @@ import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -61,12 +62,11 @@ public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageR
                                 messgeCtx.getTransportIn(),
                                 messgeCtx.getTransportOut());
                     
-                    newmsgCtx.setMessageInformationHeaders(
-                            new MessageInformationHeaders());
                     MessageInformationHeaders oldMessageInfoHeaders =
                             messgeCtx.getMessageInformationHeaders();
                     MessageInformationHeaders messageInformationHeaders =
                             new MessageInformationHeaders();
+                    messageInformationHeaders.setMessageId(UUIDGenerator.getUUID());
                     messageInformationHeaders.setTo(oldMessageInfoHeaders.getReplyTo());
                     messageInformationHeaders.setFaultTo(
                             oldMessageInfoHeaders.getFaultTo());
