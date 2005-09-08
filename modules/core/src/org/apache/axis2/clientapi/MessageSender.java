@@ -85,7 +85,7 @@ public class MessageSender extends InOnlyMEPClient {
         }
 
         //create new service
-        QName assumedServiceName = new QName("AnonnoymousService");
+        QName assumedServiceName = new QName("AnonymousService");
         ServiceDescription axisService = new ServiceDescription(
                 assumedServiceName);
         sysContext.getAxisConfiguration().addService(axisService);

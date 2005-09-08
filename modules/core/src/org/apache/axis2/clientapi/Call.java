@@ -30,7 +30,6 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
 
 import javax.xml.namespace.QName;
-import java.util.HashMap;
 
 /**
  * This class should be used only to invoke INOUT web services and will serve as a more convenient
@@ -38,7 +37,8 @@ import java.util.HashMap;
  */
 public class Call extends InOutMEPClient {
 
-    private HashMap properties;
+// Unused? --GD
+//    private HashMap properties;
     protected static OperationDescription operationTemplate;
     private MessageContext lastResponseMessage;
 
@@ -95,7 +95,7 @@ public class Call extends InOutMEPClient {
      * Invoke the blocking/Synchronous call
      *
      * @param axisop - this will be used to identify the operation in the client side, without dispatching
-     * @param toSend - This should be SOAPEnvelope
+     * @param envelope - This should be SOAPEnvelope
      * @return
      * @throws AxisFault
      */
@@ -191,7 +191,7 @@ public class Call extends InOutMEPClient {
      * @return ServiceContext that has a ConfigurationContext set in and has assumed values.
      * @throws org.apache.axis2.AxisFault
      */
-    protected static ServiceContext assumeServiceContext(String clinetHome)
+    protected static ServiceContext assumeServiceContext(String clientHome)
             throws AxisFault {
         ConfigurationContext sysContext = null;
         //we are trying to keep one configuration Context at the Client side. That make it easier to
@@ -199,17 +199,17 @@ public class Call extends InOutMEPClient {
         if (ListenerManager.configurationContext == null) {
             ConfigurationContextFactory efac =
                     new ConfigurationContextFactory();
-            sysContext = efac.buildClientConfigurationContext(clinetHome);
+            sysContext = efac.buildClientConfigurationContext(clientHome);
         } else {
             sysContext = ListenerManager.configurationContext;
         }
 
         //we will assume a Service and operations
-        QName assumedServiceName = new QName("AnonnoymousService");
+        QName assumedServiceName = new QName("AnonymousService");
         ServiceDescription axisService =
                 new ServiceDescription(assumedServiceName);
         operationTemplate =
-                new OperationDescription(new QName("TemplateOperatin"));
+                new OperationDescription(new QName("TemplateOperation"));
 
         PhasesInfo info =((AxisConfigurationImpl)sysContext.getAxisConfiguration()).getPhasesinfo();
         //to set the operation flows
@@ -232,7 +232,6 @@ public class Call extends InOutMEPClient {
     /**
      * @param key
      * @param value
-     * @return
      */
     public void set(String key, Object value) {
         serviceContext.getEngineContext().setProperty(key, value);

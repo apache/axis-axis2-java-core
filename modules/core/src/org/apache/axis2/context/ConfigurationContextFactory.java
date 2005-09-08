@@ -53,14 +53,14 @@ public class ConfigurationContextFactory {
         }
         return configurationContext;
     }
+
     /**
      * Built the Configuration for the Client
-     * @param axis2home, the value can be null and it is resolved to the default
+     * @param axis2home the value can be null and it is resolved to the default
      * axis2.xml file
      * @return
      * @throws DeploymentException
      */
-
     public ConfigurationContext buildClientConfigurationContext(
             String axis2home)
             throws DeploymentException {
