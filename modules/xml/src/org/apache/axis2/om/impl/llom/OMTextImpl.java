@@ -19,9 +19,9 @@ import org.apache.axis2.attachments.Base64;
 import org.apache.axis2.attachments.ByteArrayDataSource;
 import org.apache.axis2.attachments.utils.IOUtils;
 import org.apache.axis2.om.*;
-import org.apache.axis2.om.impl.MIMEOutputUtils;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
+import org.apache.axis2.util.UUIDGenerator;
 
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLStreamException;
@@ -286,7 +286,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     public String getContentID() {
         if (contentID == null) {
-            contentID = MIMEOutputUtils.getRandomStringOf18Characters()
+            contentID = UUIDGenerator.getUUID()
                     + "@apache.org";
         }
         return this.contentID;

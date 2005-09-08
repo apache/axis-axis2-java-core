@@ -18,6 +18,7 @@ package org.apache.axis2.om.impl;
     import org.apache.axis2.om.OMText;
     import org.apache.axis2.soap.SOAP11Constants;
     import org.apache.axis2.soap.SOAP12Constants;
+    import org.apache.axis2.util.UUIDGenerator;
 
     import javax.xml.stream.FactoryConfigurationError;
     import javax.xml.stream.XMLOutputFactory;
@@ -169,7 +170,7 @@ public class OMOutputImpl {
         if (mimeBoundary == null) {
             mimeBoundary =
                 "MIMEBoundary"
-                    + MIMEOutputUtils.getRandomStringOf18Characters();
+                    + UUIDGenerator.getUUID();
         }
         return mimeBoundary;
     }
@@ -178,7 +179,7 @@ public class OMOutputImpl {
         if (rootContentId == null) {
             rootContentId =
                 "0."
-                    + MIMEOutputUtils.getRandomStringOf18Characters()
+                    + UUIDGenerator.getUUID()
                     + "@apache.org";
         }
         return rootContentId;
@@ -188,7 +189,7 @@ public class OMOutputImpl {
         nextid++;
         return nextid
             + "."
-            + MIMEOutputUtils.getRandomStringOf18Characters()
+            + UUIDGenerator.getUUID()
             + "@apache.org";
     }
 

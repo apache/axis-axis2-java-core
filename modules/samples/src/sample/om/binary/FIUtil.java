@@ -106,6 +106,7 @@ public class FIUtil {
         } catch (XMLStreamException e) {
             throw new UnsupportedOperationException();
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
             throw new UnsupportedOperationException();
         } catch (IOException e) {
             throw new UnsupportedOperationException();
