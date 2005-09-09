@@ -1,6 +1,7 @@
 <axisconfig name="AxisJava2.0">
     <parameter name="hotdeployment" locked="false">true</parameter>
     <parameter name="hotupdate" locked="false">true</parameter>
+    <parameter name="enableMTOM" locked="false">true</parameter>
 
     <messageReceiver mep="INOUT" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
 

@@ -23,6 +23,20 @@ public interface WSSHandlerConstants {
 
     public static final String ENFORCE_ACTION_ORDER = "EnforceActionOrder";
 
+    
+    /**
+     * The following two seot the constants are used to introduce new 
+     * parameter names for the two handlers since wss4j expects
+     * the same param name irrespective of the param name.
+     * 
+     * It should be noted that we should only introduce names that are in
+     * conflict. For example both handlers expects 'action' param and in 
+     * the axis2.xml this should be given as InAction and OutAction to 
+     * specify the 'action' to values for the two handlers. Whereas 
+     * parameters such as 'encryptionKeyIdentifier' need not be mapped into 
+     * new param names since they are specific to a handler
+     */
+    
     interface In {
 		public static final String ACTION = "InAction";
 		public static final String PW_CALLBACK_CLASS = "InPasswordCallbackClass";

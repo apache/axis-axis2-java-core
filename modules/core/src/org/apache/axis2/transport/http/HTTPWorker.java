@@ -132,7 +132,7 @@ public class HTTPWorker implements HttpRequestHandler {
                 ByteArrayOutputStream baosIn = new ByteArrayOutputStream();
                 byte[] bytes = new byte[8192];
                 int size = 0;
-                while ((size = inStream.read(bytes)) != -1) {
+                while ((size = inStream.read(bytes)) > 0) {
                     baosIn.write(bytes, 0, size);
                 }
                 inStream = new ByteArrayInputStream(baosIn.toByteArray());
