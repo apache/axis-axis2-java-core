@@ -31,17 +31,17 @@ public class ConfigurationContextFactory {
 
     /**
      * Build the configuration for the Server
-     * @param RepositaryName
+     * @param repositoryName
      * @return
      * @throws DeploymentException
      */
     public ConfigurationContext buildConfigurationContext(
-            String RepositaryName)
+            String repositoryName)
             throws DeploymentException {
         ConfigurationContext configurationContext = null;
         try {
             DeploymentEngine deploymentEngine =
-                    new DeploymentEngine(RepositaryName);
+                    new DeploymentEngine(repositoryName);
             AxisConfiguration configuration = deploymentEngine.load();
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
             configurationContext = new ConfigurationContext(configuration);

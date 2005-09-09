@@ -118,7 +118,7 @@ public class UtilServer {
         ConfigurationContext sysContext =
                 efac.buildClientConfigurationContext("target/test-resources/intregrationRepo");
 
-        sysContext.getAxisConfiguration().addMdoule(moduleDesc);
+        sysContext.getAxisConfiguration().addModule(moduleDesc);
         //sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
 
         sysContext.getAxisConfiguration().addService(service);

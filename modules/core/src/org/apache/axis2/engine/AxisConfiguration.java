@@ -78,7 +78,6 @@ public interface AxisConfiguration extends ParameterInclude {
      *
      * @param name
      * @return
-     * @throws AxisFault
      */
     public ModuleDescription getModule(QName name);
 
@@ -88,7 +87,7 @@ public interface AxisConfiguration extends ParameterInclude {
      * @param module
      * @throws AxisFault
      */
-    public void addMdoule(ModuleDescription module) throws AxisFault;
+    public void addModule(ModuleDescription module) throws AxisFault;
 
     public boolean isEngaged(QName moduleName);
 

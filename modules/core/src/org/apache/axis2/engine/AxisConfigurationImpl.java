@@ -168,7 +168,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @param module
      * @throws AxisFault
      */
-    public synchronized void addMdoule(ModuleDescription module) throws AxisFault {
+    public synchronized void addModule(ModuleDescription module) throws AxisFault {
         module.setParent(this);
         modules.put(module.getName(), module);
     }
@@ -418,7 +418,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
             engagedModules.add(moduleref);
         }
         if (isNewmodule) {
-            addMdoule(module);
+            addModule(module);
         }
     }
 

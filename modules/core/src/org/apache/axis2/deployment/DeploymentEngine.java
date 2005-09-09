@@ -111,22 +111,22 @@ public class DeploymentEngine implements DeploymentConstants {
      * This the constructor which is used by Engine inorder to start
      * Deploymenat module,
      *
-     * @param RepositaryName is the path to which Repositary Listner should
+     * @param repositoryName is the path to which Repositary Listner should
      *                       listent.
      */
 
-    public DeploymentEngine(String RepositaryName) throws DeploymentException {
-        this(RepositaryName, SERVER_XML_FILE);
+    public DeploymentEngine(String repositoryName) throws DeploymentException {
+        this(repositoryName, SERVER_XML_FILE);
     }
 
-    public DeploymentEngine(String RepositoryName, String serverXMLFile)
+    public DeploymentEngine(String repositoryName, String serverXMLFile)
             throws DeploymentException {
-        if (RepositoryName == null || RepositoryName.trim().equals("")) {
+        if (repositoryName == null || repositoryName.trim().equals("")) {
             throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.REPO_CAN_NOT_BE_NULL));
         }
-        this.folderName = RepositoryName;
-        axis2repository = RepositoryName;
-        File repository = new File(RepositoryName);
+        this.folderName = repositoryName;
+        axis2repository = repositoryName;
+        File repository = new File(repositoryName);
         if (!repository.exists()) {
             repository.mkdirs();
             File services = new File(repository, "services");
@@ -174,7 +174,7 @@ public class DeploymentEngine implements DeploymentConstants {
             }
         }
 //        factory = new ConfigurationContextFactory();
-        this.engineConfigName = RepositoryName + '/' + serverXMLFile;
+        this.engineConfigName = repositoryName + '/' + serverXMLFile;
     }
 
     public ArchiveFileData getCurrentFileItem() {
@@ -529,7 +529,7 @@ public class DeploymentEngine implements DeploymentConstants {
             addFlowHandlers(faultOutFlow);
         }
         loadModuleClass(modulemetadata);
-        axisConfig.addMdoule(modulemetadata);
+        axisConfig.addModule(modulemetadata);
         log.info(Messages.getMessage(DeploymentErrorMsgs.ADDING_NEW_MODULE));
     }
 
