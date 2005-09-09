@@ -199,7 +199,6 @@ public class HTTPTransportUtils {
         } catch (AxisFault e) {
             throw new AxisFault(e);
         } catch (OMException e) {
-            e.printStackTrace();
             throw new AxisFault(e);
         } catch (XMLStreamException e) {
             throw new AxisFault(e);

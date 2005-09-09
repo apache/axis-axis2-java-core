@@ -18,16 +18,16 @@ package org.apache.axis2.deployment.listener;
 
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentEngine;
-import org.apache.axis2.deployment.repository.util.WSInfoList;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
+import org.apache.axis2.deployment.repository.util.WSInfoList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class RepositoryListenerImpl implements RepositoryListener,
         DeploymentConstants {
@@ -322,7 +322,7 @@ public class RepositoryListenerImpl implements RepositoryListener,
             }
             zis.close();
         } catch(Exception e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 
