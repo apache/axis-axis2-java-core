@@ -26,7 +26,9 @@ import org.apache.axis2.transport.http.server.SimpleResponse;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.threadpool.AxisWorker;
 import org.apache.commons.logging.Log;
@@ -40,10 +42,12 @@ import java.net.Socket;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 public class HTTPWorker implements HttpRequestHandler {
     protected Log log = LogFactory.getLog(getClass().getName());
     private ConfigurationContext configurationContext;
+
 
     public HTTPWorker(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
@@ -81,7 +85,10 @@ public class HTTPWorker implements HttpRequestHandler {
                 httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
             } else if (HttpVersion.HTTP_1_1.equals(ver)) {
                 httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
-                response.setHeader(new Header(HTTPConstants.HEADER_TRANSFER_ENCODING, HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED));
+                /**
+                 * Transport Sender configuration via axis2.xml
+                 */
+                this.transportOutConfiguration(configurationContext,response);
             } else {
                 throw new AxisFault("Unknown supported protocol version " + ver);
             }
@@ -117,7 +124,7 @@ public class HTTPWorker implements HttpRequestHandler {
                 if (!processed) {
                     response.setStatusLine(request.getRequestLine().getHttpVersion(), 200, "OK");
                     response.setBodyString(HTTPTransportReceiver.getServicesHTML(configurationContext));
-                    setResponseHeaders(conn, request, response);
+                    setResponseHeaders(conn, request, response,0);
                     conn.writeResponse(response);
                     return true;
                 }
@@ -142,7 +149,7 @@ public class HTTPWorker implements HttpRequestHandler {
             }
             response.setStatusLine(request.getRequestLine().getHttpVersion(), 200, "OK");
             response.setBody(new ByteArrayInputStream(baos.toByteArray()));
-            setResponseHeaders(conn, request, response);
+            setResponseHeaders(conn, request, response,baos.toByteArray().length);
             conn.writeResponse(response);
         } catch (Throwable e) {
             try {
@@ -153,7 +160,7 @@ public class HTTPWorker implements HttpRequestHandler {
                     response.setStatusLine(request.getRequestLine().getHttpVersion(), 500, "Internal server error");
                     engine.sendFault(faultContext);
                     response.setBody(new ByteArrayInputStream(baos.toByteArray()));
-                    setResponseHeaders(conn, request, response);
+                    setResponseHeaders(conn, request, response,baos.toByteArray().length);
                     conn.writeResponse(response);
                 } else {
                     log.error(e, e);
@@ -166,7 +173,7 @@ public class HTTPWorker implements HttpRequestHandler {
         return true;
     }
 
-    private void setResponseHeaders(final SimpleHttpServerConnection conn, SimpleRequest request, SimpleResponse response) {
+    private void setResponseHeaders(final SimpleHttpServerConnection conn, SimpleRequest request, SimpleResponse response, long contentLength) {
         if (!response.containsHeader("Connection")) {
             // See if the the client explicitly handles connection persistence
             Header connheader = request.getFirstHeader("Connection");
@@ -190,6 +197,10 @@ public class HTTPWorker implements HttpRequestHandler {
                 }
             }
         }
+        if (!response.containsHeader("Transfer-Encoding")){
+            Header header = new Header("Content-Length",String.valueOf(contentLength));
+            response.addHeader(header);
+        }
     }
 
     private Map getHeaders(SimpleRequest request) {
@@ -200,4 +211,47 @@ public class HTTPWorker implements HttpRequestHandler {
         }
         return headerMap;
     }
+
+
+    /**
+     *   Simple Axis Transport Selection via deployment
+     * @param configContext
+     * @param response
+     *
+     */
+
+    private void transportOutConfiguration(ConfigurationContext configContext, SimpleResponse response) {
+        AxisConfiguration axisConf = configContext.getAxisConfiguration();
+        HashMap trasportOuts = axisConf.getTransportsOut();
+        Iterator values = trasportOuts.values().iterator();
+
+        String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+        while (values.hasNext()) {
+            TransportOutDescription transportOut = (TransportOutDescription) values.next();
+            // reading axis2.xml for transport senders..
+            Parameter version =
+                    transportOut.getParameter(HTTPConstants.PROTOCOL_VERSION);
+            if (version != null) {
+                if (HTTPConstants.HEADER_PROTOCOL_11.equals(version.getValue())) {
+                    httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+                    Parameter transferEncoding =
+                            transportOut.getParameter(HTTPConstants.HEADER_TRANSFER_ENCODING);
+                    if (transferEncoding != null){
+                        if (HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(transferEncoding.getValue())) {
+                            response.setHeader(new Header(HTTPConstants.HEADER_TRANSFER_ENCODING,
+                                    HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED));
+                        }
+                    } else {
+                        continue;
+                    }
+                } else {
+                    if (HTTPConstants.HEADER_PROTOCOL_10.equals(version.getValue())) {
+                        httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
+                    } 
+                }
+            }
+
+        }
+    }
+
 }

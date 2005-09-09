@@ -44,12 +44,12 @@ import org.apache.commons.httpclient.StatusLine;
 
 /**
  * A connection to the SimpleHttpServer.
- * 
+ *
  * @author Christian Kohlschuetter
  * @author Oleg Kalnichevski
  */
 public class SimpleHttpServerConnection {
-    
+
     private static final String HTTP_ELEMENT_CHARSET = "US-ASCII";
 
     private Socket socket = null;
@@ -57,7 +57,7 @@ public class SimpleHttpServerConnection {
     private OutputStream out = null;
     private boolean keepAlive = false;
 
-    public SimpleHttpServerConnection(final Socket socket) 
+    public SimpleHttpServerConnection(final Socket socket)
     throws IOException {
         super();
         if (socket == null) {
@@ -85,7 +85,7 @@ public class SimpleHttpServerConnection {
     public synchronized boolean isOpen() {
         return this.socket != null;
     }
-    
+
     public void setKeepAlive(boolean b) {
         this.keepAlive = b;
     }
@@ -104,7 +104,7 @@ public class SimpleHttpServerConnection {
 
     /**
      * Returns the ResponseWriter used to write the output to the socket.
-     * 
+     *
      * @return This connection's ResponseWriter
      */
     public ResponseWriter getWriter() throws UnsupportedEncodingException {
@@ -122,7 +122,7 @@ public class SimpleHttpServerConnection {
                 setKeepAlive(false);
                 return null;
             }
-            SimpleRequest request = new SimpleRequest( 
+            SimpleRequest request = new SimpleRequest(
                     RequestLine.parseLine(line),
                     HttpParser.parseHeaders(this.in, HTTP_ELEMENT_CHARSET),
                     this.in);
@@ -168,9 +168,9 @@ public class SimpleHttpServerConnection {
         }
         writer.println();
         writer.flush();
-        
+
         OutputStream outsream = this.out;
-        InputStream content = request.getBody(); 
+        InputStream content = request.getBody();
         if (content != null) {
 
             Header transferenc = request.getFirstHeader("Transfer-Encoding");
@@ -184,14 +184,14 @@ public class SimpleHttpServerConnection {
             int i = 0;
             while ((i = content.read(tmp)) >= 0) {
                 outsream.write(tmp, 0, i);
-            }        
+            }
             if (outsream instanceof ChunkedOutputStream) {
                 ((ChunkedOutputStream)outsream).finish();
             }
         }
         outsream.flush();
     }
-    
+
     public void writeResponse(final SimpleResponse response) throws IOException {
         if (response == null) {
             return;
@@ -205,9 +205,9 @@ public class SimpleHttpServerConnection {
         }
         writer.println();
         writer.flush();
-        
+
         OutputStream outsream = this.out;
-        InputStream content = response.getBody(); 
+        InputStream content = response.getBody();
         if (content != null) {
 
             Header transferenc = response.getFirstHeader("Transfer-Encoding");
@@ -215,28 +215,38 @@ public class SimpleHttpServerConnection {
                 response.removeHeaders("Content-Length");
                 if (transferenc.getValue().indexOf("chunked") != -1) {
                     outsream = new ChunkedOutputStream(outsream);
+
+
+                    byte[] tmp = new byte[1024];
+                    int i = 0;
+                    while ((i = content.read(tmp)) >= 0) {
+                        outsream.write(tmp, 0, i);
+                    }
+                    if (outsream instanceof ChunkedOutputStream) {
+                        ((ChunkedOutputStream) outsream).finish();
+                    }
                 }
-            }
-                        
-            byte[] tmp = new byte[1024];
-            int i = 0;
-            while ((i = content.read(tmp)) >= 0) {
-                outsream.write(tmp, 0, i);
-            }
-            if (outsream instanceof ChunkedOutputStream) {
-                ((ChunkedOutputStream)outsream).finish();
+            } else {
+                /**
+                 * read the content when needed to embed content-length
+                 */
+                byte[] tmp = new byte[1024];
+                int i = 0;
+                while ((i = content.read(tmp)) >= 0) {
+                    outsream.write(tmp, 0, i);
+                }
+
             }
         }
+
         outsream.flush();
     }
 
     public int getSocketTimeout() throws SocketException {
         return this.socket.getSoTimeout();
     }
-    
+
     public void setSocketTimeout(int timeout) throws SocketException {
         this.socket.setSoTimeout(timeout);
     }
-        
 }
-    
