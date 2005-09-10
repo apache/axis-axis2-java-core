@@ -18,6 +18,9 @@ public class ConfigPropertyFileLoader {
     static{
         try {
             InputStream stream = Object.class.getResourceAsStream("/org/apache/axis2/wsdl/codegen/codegen-config.properties");
+			if(stream == null) {
+				stream = ConfigPropertyFileLoader.class.getClassLoader().getResourceAsStream("org/apache/axis2/wsdl/codegen/codegen-config.properties");
+			}
             Properties props = new Properties();
             props.load(stream);
 
