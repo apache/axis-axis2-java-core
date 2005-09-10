@@ -228,8 +228,16 @@
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
+            <artifactId>xmlParserAPIs</artifactId>
             <version>2.6.2</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <version>2.6.0</version>
             <properties>
                 <module>true</module>
             </properties>

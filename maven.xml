@@ -517,5 +517,19 @@
         </j:if>
 
     </postGoal>
+
+
+    <!-- ================================================================ -->
+    <!--- Create JUnit test reports -->
+    <!-- ================================================================ -->
+    <goal name="test-reports">
+      <mkdir dir="${basedir}/target/test-reports"/>
+      <ant:junitreport todir="${basedir}/target/test-reports">
+        <ant:fileset dir="${basedir}/">
+          <ant:include name="**/test-reports/TEST-*.xml"/>
+        </ant:fileset>
+        <ant:report format="frames" todir="${basedir}/target/test-reports" styledir="${basedir}/etc"/>
+      </ant:junitreport>
+    </goal>
 </project>
 

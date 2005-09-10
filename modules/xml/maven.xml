@@ -16,14 +16,4 @@
             <j:expr value="${context.setVariable('maven.itest.skip', 'true')}"/>
         </j:if>
     </preGoal>
-
-    <goal name="test-reports">
-      <mkdir dir="${basedir}/target/test-reports"/>
-      <ant:junitreport todir="${basedir}/target/test-reports">
-        <ant:fileset dir="${basedir}/target/test-reports/">
-          <ant:include name="TEST-*.xml"/>
-        </ant:fileset>
-        <ant:report format="frames" todir="${basedir}/target/test-reports" styledir="${basedir}/../../etc"/>
-      </ant:junitreport>
-    </goal>
 </project>
