@@ -132,7 +132,7 @@ public class MIMEOutputUtils {
         sb.append("; ");
         sb.append("start=\"<" + contentId + ">\"");
         sb.append("; ");
-        sb.append("start-info=\""+SOAPContentType+"\";");
+        sb.append("start-info=\""+SOAPContentType+"\"");
         return sb.toString();
     }
 
