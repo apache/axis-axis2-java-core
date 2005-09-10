@@ -16,20 +16,26 @@
 package org.apache.axis2.databinding;
 
 import org.apache.axis.xsd.Constants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 import javax.xml.namespace.NamespaceContext;
-import javax.xml.stream.XMLStreamWriter;
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.HashMap;
+import javax.xml.stream.XMLStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * SerializationContext
  */
 public class SerializationContext {
+
+    protected Log log = LogFactory.getLog(getClass());
+
+
     // Multiref modes
     public static final int NO_MULTIREFS = 0;
     public static final int SOAP11_MULTIREFS = 1;
@@ -207,7 +213,7 @@ public class SerializationContext {
                 writer.writeNamespace(prefix, ns);
             }
         } catch (XMLStreamException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            log.error(e.getMessage(), e);
         }
         return null;
     }

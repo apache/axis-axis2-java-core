@@ -4,16 +4,8 @@ import junit.framework.TestCase;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MessageFactory;
+import javax.xml.soap.*;
 import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -36,7 +28,6 @@ public class AttachmentSerializationTest extends TestCase {
             int count = saveMsgWithAttachments(bais);
             assertEquals(count, 2);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new Exception("Fault returned from test: " + e);
         }
     }

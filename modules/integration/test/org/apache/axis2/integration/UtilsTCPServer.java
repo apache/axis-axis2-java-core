@@ -34,7 +34,7 @@ public class UtilsTCPServer {
     private static ConfigurationContext configurationContext;
     public static final int TESTING_PORT = 5555;
     public static final String FAILURE_MESSAGE = "Intentional Failure";
-    private Log log = LogFactory.getLog(getClass());
+    private static Log log = LogFactory.getLog(UtilsTCPServer.class);
 
     public static synchronized void deployService(ServiceDescription service)
             throws AxisFault {
@@ -88,7 +88,7 @@ public class UtilsTCPServer {
                 count--;
             }
         } catch (AxisFault e) {
-            e.printStackTrace();
+           log.error(e.getMessage(), e);
         }
     }
 

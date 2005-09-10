@@ -186,7 +186,6 @@ public class AntCodegenTask extends Task {
             new CodeGenerationEngine(parser).generate();
         } catch (Throwable e) {
             //System.out.println("Thrown here $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$b");
-            e.printStackTrace();
             throw new BuildException(e);
         }
 

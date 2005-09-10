@@ -1,9 +1,9 @@
 package org.apache.axis2.wsdl.codegen;
 
 import junit.framework.TestCase;
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.types.Path;
 
@@ -237,7 +237,6 @@ public class WSDL2JavaTest extends TestCase{
         try {
             codeGenProject.executeTarget(COMPILE_TARGET_NAME);
         } catch (BuildException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             fail();
         }
 

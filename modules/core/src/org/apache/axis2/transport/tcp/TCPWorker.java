@@ -96,7 +96,6 @@ public class TCPWorker implements AxisWorker {
                 }
             } catch (Exception e1) {
                 log.error(e);
-//                e.printStackTrace();
             }
 
         } finally {

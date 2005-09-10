@@ -90,7 +90,6 @@ public class SimpleMailListener extends TransportListener implements Runnable {
             configurationContext = builder.buildConfigurationContext(dir);
         } catch (Exception e) {
             log.info(e.getMessage());
-//            e.printStackTrace();
         }
         try {
             log.info("Sleeping for a bit to let the engine start up.");

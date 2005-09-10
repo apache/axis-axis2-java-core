@@ -17,7 +17,6 @@
 package org.apache.axis2.security;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.integration.UtilServer;
 /**
@@ -136,7 +135,6 @@ public class InteropTestBase extends TestCase {
     	try {
     		InteropScenarioClient.main(new String[]{Constants.TESTING_PATH + clientRepo ,targetEpr});
     	} catch (Exception e) {
-    		e.printStackTrace();
     		fail("Error in introperating with " + targetEpr + ", client configuration: " + clientRepo);
     	}
     }

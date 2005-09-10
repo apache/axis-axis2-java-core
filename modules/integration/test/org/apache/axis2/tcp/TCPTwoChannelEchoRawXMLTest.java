@@ -141,7 +141,6 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
 
                 public void reportError(Exception e) {
                     log.info(e.getMessage());
-//                    e.printStackTrace();
                     finish = true;
                 }
             };

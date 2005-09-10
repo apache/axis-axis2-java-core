@@ -103,7 +103,6 @@ public class EchoRawXMLLoadTest extends TestCase {
 //            }
 //
 //            public void reportError(Exception e) {
-//                e.printStackTrace();
 //                finish = true;
 //            }
 //        };

@@ -81,10 +81,8 @@ public class SOAP12TestClient {
             return socket.getInputStream();
         } catch (MalformedURLException e) {
             log.info(e.getMessage());
-//            e.printStackTrace();
         } catch (IOException e) {
             log.info(e.getMessage());
-//            e.printStackTrace();
         }
         return null;
     }

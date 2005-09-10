@@ -68,8 +68,7 @@ public class SOAPCreater {
             OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
             return (SOAPEnvelope) builder.getDocumentElement();
         } catch (Exception e) {
-            log.info(e.getMessage());
-//            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return null;
     }

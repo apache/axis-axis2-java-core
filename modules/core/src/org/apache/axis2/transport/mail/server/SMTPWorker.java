@@ -165,7 +165,6 @@ public class SMTPWorker extends Thread {
                 } catch (MessagingException e) {
                     log.info(e.getMessage());
                     // TODO Auto-generated catch block
-//                    e.printStackTrace();
                 }
             }
 
@@ -206,7 +205,6 @@ public class SMTPWorker extends Thread {
             } catch (MessagingException e) {
                 log.info(e.getMessage());
                 // TODO Auto-generated catch block
-//                e.printStackTrace();
             }
             return MailSrvConstants.RCPT_OK;
 
@@ -236,7 +234,6 @@ public class SMTPWorker extends Thread {
             } catch (MessagingException e) {
                 log.info(e.getMessage());
                 // TODO Auto-generated catch block
-//                e.printStackTrace();
             }
             return null;
 

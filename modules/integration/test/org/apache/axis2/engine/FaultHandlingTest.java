@@ -85,7 +85,6 @@ public class FaultHandlingTest extends TestCase {
 //             printElement(response);
 //            assertTrue(true);
 //        } catch (Exception e) {
-//            e.printStackTrace();
 //        }
 //    }
 

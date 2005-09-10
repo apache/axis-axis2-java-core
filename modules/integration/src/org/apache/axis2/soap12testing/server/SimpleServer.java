@@ -45,7 +45,6 @@ public class SimpleServer {
             receiver.start();
         } catch (Exception e) {
             log.info(e.getMessage());
-//            e.printStackTrace();
         }
     }
 }

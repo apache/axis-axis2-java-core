@@ -3,6 +3,8 @@ package org.apache.axis2.om;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
@@ -41,6 +43,7 @@ public class AbstractOMSerializationTest extends XMLTestCase {
 
     protected boolean ignoreXMLDeclaration = true;
     protected boolean ignoreDocument = false;
+    protected Log log = LogFactory.getLog(getClass());
 
 
     /**
@@ -77,7 +80,6 @@ public class AbstractOMSerializationTest extends XMLTestCase {
 
             return new String(baos.toByteArray());
         } catch (Exception e) {
-            e.printStackTrace();
             throw e;
         }
     }
@@ -123,11 +125,9 @@ public class AbstractOMSerializationTest extends XMLTestCase {
             fail(e.getMessage());
             throw new Exception(e);
         } catch (SAXException e) {
-            e.printStackTrace();
             fail(e.getMessage());
             throw new Exception(e);
         } catch (IOException e) {
-            e.printStackTrace();
             fail(e.getMessage());
             throw new Exception(e);
         }
@@ -137,7 +137,7 @@ public class AbstractOMSerializationTest extends XMLTestCase {
             throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
-        DocumentBuilder db = dbf.newDocumentBuilder();   
+        DocumentBuilder db = dbf.newDocumentBuilder();
         return db.parse(in);
     }
 
@@ -170,10 +170,9 @@ public class AbstractOMSerializationTest extends XMLTestCase {
             xformer.transform(source, result);
             return new String(baos.toByteArray());
         } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } catch (TransformerException e) {
-            e.printStackTrace();
-
+            log.error(e.getMessage(), e);
         }
         return null;
 

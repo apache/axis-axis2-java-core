@@ -103,7 +103,6 @@ public class EchoRawXMLChunckedTest extends TestCase {
 //            }
 //
 //            public void reportError(Exception e) {
-//                e.printStackTrace();
 //                finish = true;
 //            }
 //        };

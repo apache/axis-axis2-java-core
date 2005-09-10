@@ -35,7 +35,6 @@ public class SOAPMessageTest extends OMTestCase {
             assertNotNull(soapMessage.getSOAPEnvelope());
         } catch (Exception e) {
             fail("Exception thrown "+ e);
-            e.printStackTrace();
         }
     }
 }

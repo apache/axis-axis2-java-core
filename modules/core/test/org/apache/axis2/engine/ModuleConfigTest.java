@@ -1,18 +1,18 @@
 package org.apache.axis2.engine;
 
+import junit.framework.TestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.ServiceBuilder;
 import org.apache.axis2.description.ModuleConfiguration;
+import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.OperationDescription;
-import junit.framework.TestCase;
 
 import javax.xml.namespace.QName;
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -59,7 +59,6 @@ public class ModuleConfigTest extends TestCase {
             para = moduleConfiguration.getParameter("testModulePara2");
             assertNotNull(para);
         } catch (DeploymentException e) {
-            e.printStackTrace();
             fail("This can not fail with this DeploymentException " + e) ;
         }
     }
