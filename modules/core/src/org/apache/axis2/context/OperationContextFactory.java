@@ -28,7 +28,7 @@ import org.apache.wsdl.WSDLConstants;
 
 public class OperationContextFactory implements WSDLConstants {
 
-    public static OperationContext createMEPContext(
+    public static OperationContext createOperationContext(
         int mepURI,
         OperationDescription axisOp,
         ServiceContext serviceContext)

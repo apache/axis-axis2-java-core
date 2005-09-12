@@ -580,16 +580,16 @@ public class ServiceDescription
      */
     public ServiceContext findServiceContext(MessageContext msgContext) {
         ServiceContext serviceContext = null;
-        if (null == msgContext.getServiceInstanceID()) {
+        if (null == msgContext.getServiceContextID()) {
             serviceContext =
                     new ServiceContext(this, msgContext.getSystemContext());
             //TODO Once the ServiceContext is bound to an incomming serviceContext ID(like a cookie,reference Property) FIX this
-            //			msgContext.getSystemContext().registerServiceContext(serviceContext.getServiceInstanceID(),
+            //			msgContext.getSystemContext().registerServiceContext(serviceContext.getServiceContextID(),
             // serviceContext);
         } else {
             serviceContext =
                     msgContext.getSystemContext()
-                            .getServiceContext(msgContext.getServiceInstanceID());
+                            .getServiceContext(msgContext.getServiceContextID());
         }
 
         return serviceContext;

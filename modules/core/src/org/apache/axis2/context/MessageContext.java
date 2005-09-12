@@ -141,7 +141,7 @@ public class MessageContext extends AbstractContext {
 
     public boolean outPutWritten = false;
 
-    private String serviceInstanceID;
+    private String serviceContextID;
 
     private String pausedPhaseName;
 
@@ -496,17 +496,17 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @return Returns the serviceInstanceID.
+     * @return Returns the serviceContextID.
      */
-    public String getServiceInstanceID() {
-        return serviceInstanceID;
+    public String getServiceContextID() {
+        return serviceContextID;
     }
 
     /**
-     * @param serviceInstanceID The serviceInstanceID to set.
+     * @param serviceContextID The serviceContextID to set.
      */
-    public void setServiceInstanceID(String serviceInstanceID) {
-        this.serviceInstanceID = serviceInstanceID;
+    public void setServiceContextID(String serviceContextID) {
+        this.serviceContextID = serviceContextID;
     }
 
     public ConfigurationContext getSystemContext() {

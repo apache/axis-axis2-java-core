@@ -194,7 +194,7 @@ public class OperationDescription extends WSDLOperationImpl implements
             //Its a new incomming message so get the factory to create a new
             // one
             operationContext =
-                    OperationContextFactory.createMEPContext(
+                    OperationContextFactory.createOperationContext(
                             getAxisSpecifMEPConstant(), this,
                             serviceContext);
 
