@@ -54,7 +54,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
         }
 
         //check the comptibilty
-        checkCompatibility();
+        //checkCompatibility();
 
         Element[] additionalSchemas = loadAdditionalSchemas();
 
@@ -154,7 +154,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
         for (int i = 0; i < allSeenTypes.size(); i++){
             SchemaType sType = (SchemaType)allSeenTypes.get(i);
 
-            if (sType.getContentType()==SchemaType.SIMPLE_CONTENT) {
+            if (sType.getContentType()==SchemaType.SIMPLE_CONTENT && sType.getPrimitiveType()!=null) {
                 if (XSLTConstants.BASE_64_CONTENT_QNAME.equals(sType.getPrimitiveType().getName())){
                     outerType = sType.getOuterType();
                     //check the outer type further to see whether it has the contenttype attribute from
