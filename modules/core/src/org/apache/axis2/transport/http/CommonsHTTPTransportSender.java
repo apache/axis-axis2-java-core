@@ -246,15 +246,24 @@ public class CommonsHTTPTransportSender
         public byte[] writeBytes() throws AxisFault {
             try {
                 ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-                XMLStreamWriter outputWriter =
-                        XMLOutputFactory.newInstance().createXMLStreamWriter(
-                                bytesOut,
-                                charSetEnc);
-                OMOutputImpl out = new OMOutputImpl(outputWriter);
-                out.setCharSetEncoding(charSetEnc);
-                element.serialize(out);
-                out.flush();
-                return bytesOut.toByteArray();
+
+                if (!doingMTOM) {
+                    XMLStreamWriter outputWriter =
+                            XMLOutputFactory.newInstance()
+                            .createXMLStreamWriter(bytesOut,
+                                    charSetEnc);
+                    OMOutputImpl output = new OMOutputImpl(outputWriter);
+                    output.setCharSetEncoding(charSetEnc);
+                    element.serialize(output);
+                    output.flush();
+                    return bytesOut.toByteArray();
+                } else {
+                    omOutput.setCharSetEncoding(charSetEnc);
+                    omOutput.setOutputStream(bytesOut, true);  //changed...
+                    element.serialize(omOutput);
+                    omOutput.flush();
+                    return bytesOut.toByteArray();
+                }
             } catch (XMLStreamException e) {
                 throw new AxisFault(e);
             } catch (FactoryConfigurationError e) {
@@ -262,20 +271,36 @@ public class CommonsHTTPTransportSender
             }
         }
 
+        private void handleOMOutput(OutputStream out, boolean doingMTOM)
+                throws XMLStreamException {
+            omOutput.setOutputStream(out, doingMTOM);
+            element.serialize(omOutput);
+            omOutput.flush();
+        }
+
         public void writeRequest(OutputStream out) throws IOException {
             try {
-                if (chuncked || doingMTOM) {
-                    omOutput.setOutputStream(out, doingMTOM);
-                    element.serialize(omOutput);
-                    omOutput.flush();
+                if (doingMTOM) { //chagened ..
+                    if (chuncked) {
+                        this.handleOMOutput(out, doingMTOM);
+                    } else {
+                        if (bytes == null) {
+                            bytes = writeBytes();
+                        }
+                        out.write(bytes);
+                    }
 
                 } else {
-                    if (bytes == null) {
-                        bytes = writeBytes();
+                    if (chuncked) {
+                        this.handleOMOutput(out, doingMTOM);
+                    } else {
+                        if (bytes == null) {
+                            bytes = writeBytes();
+                        }
+                        out.write(bytes);
                     }
-                    out.write(bytes);
                 }
-               out.flush();
+                out.flush();
             } catch (XMLStreamException e) {
                 throw new AxisFault(e);
             } catch (FactoryConfigurationError e) {
@@ -286,18 +311,29 @@ public class CommonsHTTPTransportSender
         }
 
         public long getContentLength() {
-            try {
-                if (chuncked || doingMTOM) {
-                    return -1;
-                } else {
-                    if (bytes == null) {
-                        bytes = writeBytes();
+                try {
+                    if (doingMTOM) {    //chagened
+                        if (chuncked) {
+                            return -1;
+                        } else {
+                            if (bytes == null) {
+                                bytes = writeBytes();
+                            }
+                            return bytes.length;
+                        }
+                    } else {
+                        if (chuncked) {
+                            return -1;
+                        } else {
+                            if (bytes == null) {
+                                bytes = writeBytes();
+                            }
+                            return bytes.length;
+                        }
                     }
-                    return bytes.length;
+                } catch (AxisFault e) {
+                    return -1;
                 }
-            } catch (AxisFault e) {
-                return -1;
-            }
         }
 
         public String getContentType() {
