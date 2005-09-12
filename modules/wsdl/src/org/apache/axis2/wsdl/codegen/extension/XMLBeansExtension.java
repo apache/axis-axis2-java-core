@@ -54,7 +54,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
         }
 
         //check the comptibilty
-        //checkCompatibility();
+        checkCompatibility();
 
         Element[] additionalSchemas = loadAdditionalSchemas();
 
