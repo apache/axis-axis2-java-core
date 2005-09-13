@@ -41,7 +41,7 @@ public class InvalidServiceTest extends TestCase {
             er =
                     builder.buildConfigurationContext(filename)
                     .getAxisConfiguration();
-            String msg = (String) er.getFaulytServices().get("invalidService");
+            String msg = (String) er.getFaultyServices().get("invalidService");
             if (msg == null || msg.equals("")) {
                 fail("this must failed gracefully with AxisFault ervice specifi module can not" +
                         "refer system pre defined phases");

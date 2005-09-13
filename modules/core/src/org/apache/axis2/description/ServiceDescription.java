@@ -47,7 +47,7 @@ public class ServiceDescription
         FlowInclude,
         DescriptionConstants {
 
-    private Definition difDefinition = null;
+    private Definition definition = null;
 
     private HashMap moduleConfigmap;
 
@@ -112,7 +112,8 @@ public class ServiceDescription
      * @param moduleref
      * @throws AxisFault
      */
-    public void engageModule(ModuleDescription moduleref , AxisConfiguration axisConfig)
+    public void engageModule(ModuleDescription moduleref,
+                             AxisConfiguration axisConfig)
             throws AxisFault {
         if (moduleref == null) {
             return;
@@ -142,7 +143,8 @@ public class ServiceDescription
      *
      * @param module
      */
-    public void addModuleOperations(ModuleDescription module ,AxisConfiguration axisConfig) {
+    public void addModuleOperations(ModuleDescription module,
+                                    AxisConfiguration axisConfig) {
         HashMap map = module.getOperations();
         Collection col = map.values();
         PhaseResolver pr = new PhaseResolver(axisConfig, this);
@@ -615,11 +617,11 @@ public class ServiceDescription
     }
 
     public Definition getWSDLDefinition() {
-        return difDefinition;
+        return definition;
     }
 
     public void setWSDLDefinition(Definition difDefinition) {
-        this.difDefinition = difDefinition;
+        this.definition = difDefinition;
     }
 
     public void printWSDL(Writer out, String PortURL) throws AxisFault {

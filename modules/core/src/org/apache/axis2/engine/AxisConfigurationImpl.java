@@ -36,16 +36,16 @@ import java.util.*;
  */
 public class AxisConfigurationImpl implements AxisConfiguration {
     /**
-     * To store Erroness services
+     * To store faulty services
      */
-    private Hashtable errornesServices;
+    private Hashtable faultyServices;
 
     private HashMap moduleConfigmap;
 
     //to keep axis2 storage class
     private AxisStorage axisStorage;
 
-    private Hashtable errornesModules;
+    private Hashtable faultyModules;
     private Log log = LogFactory.getLog(getClass());
 
     /**
@@ -57,7 +57,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * Field services
      */
     private final HashMap services = new HashMap();
-
 
     private final HashMap transportsIn = new HashMap();
 
@@ -108,8 +107,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         outPhases = new ArrayList();
         inFaultPhases = new ArrayList();
         outFaultPhases = new ArrayList();
-        errornesServices = new Hashtable();
-        errornesModules = new Hashtable();
+        faultyServices = new Hashtable();
+        faultyModules = new Hashtable();
         observersList = new ArrayList();
 
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
@@ -209,12 +208,12 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         return services;
     }
 
-    public Hashtable getFaulytServices() {
-        return errornesServices;
+    public Hashtable getFaultyServices() {
+        return faultyServices;
     }
 
-    public Hashtable getFaulytModules() {
-        return errornesModules;
+    public Hashtable getFaultyModules() {
+        return faultyModules;
     }
 
     /**
@@ -248,7 +247,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      *
      * @param name
      * @return
-     * @throws AxisFault
      */
     public ModuleDescription getModule(QName name) {
         return (ModuleDescription) modules.get(name);

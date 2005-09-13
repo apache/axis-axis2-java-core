@@ -185,7 +185,7 @@ public class ListingAgent {
         HashMap services = configContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
-                configContext.getAxisConfiguration().getFaulytServices());
+                configContext.getAxisConfiguration().getFaultyServices());
         res.sendRedirect(LIST_MULTIPLE_SERVICE_JSP_NAME);
     }
 
@@ -200,7 +200,7 @@ public class ListingAgent {
         HashMap services = configContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
-                configContext.getAxisConfiguration().getFaulytServices());
+                configContext.getAxisConfiguration().getFaultyServices());
         res.sendRedirect(LIST_SRVICES_JSP_NAME);
     }
 
@@ -251,7 +251,7 @@ public class ListingAgent {
                 ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         req.getSession().setAttribute(Constants.ERROR_MODULE_MAP,
-                configContext.getAxisConfiguration().getFaulytModules());
+                configContext.getAxisConfiguration().getFaultyModules());
         res.sendRedirect(LIST_AVAILABLE_MODULES_JSP_NAME);
     }
 

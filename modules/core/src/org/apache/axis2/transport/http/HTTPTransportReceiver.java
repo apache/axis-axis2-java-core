@@ -292,7 +292,7 @@ public class HTTPTransportReceiver {
         Map services =
                 configurationContext.getAxisConfiguration().getServices();
         Hashtable erroneousServices =
-                configurationContext.getAxisConfiguration().getFaulytServices();
+                configurationContext.getAxisConfiguration().getFaultyServices();
         boolean status = false;
 
         if (services != null && !services.isEmpty()) {

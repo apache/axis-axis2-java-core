@@ -15,12 +15,6 @@
 */
 package org.apache.axis2.rpc;
 
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
 import java.util.ArrayList;

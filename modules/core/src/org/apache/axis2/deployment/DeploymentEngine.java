@@ -604,7 +604,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                         errorWriter.toString();
                             } finally {
                                 if (serviceStatus.startsWith("Error:")) {
-                                    axisConfig.getFaulytServices().put(getAxisServiceName(currentArchiveFile.getName()),
+                                    axisConfig.getFaultyServices().put(getAxisServiceName(currentArchiveFile.getName()),
                                             serviceStatus);
                                 }
                                 currentArchiveFile = null;
@@ -647,7 +647,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 moduleStatus = "Error:\n" + errorWriter.toString();
                             } finally {
                                 if (moduleStatus.startsWith("Error:")) {
-                                    axisConfig.getFaulytModules().put(getAxisServiceName(currentArchiveFile.getName()),
+                                    axisConfig.getFaultyModules().put(getAxisServiceName(currentArchiveFile.getName()),
                                             moduleStatus);
                                 }
                                 currentArchiveFile = null;
@@ -677,7 +677,7 @@ public class DeploymentEngine implements DeploymentConstants {
                         log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
                                 wsInfo.getFilename()));
                     }
-                    axisConfig.getFaulytServices().remove(serviceName);
+                    axisConfig.getFaultyServices().remove(serviceName);
                 }
 
             }

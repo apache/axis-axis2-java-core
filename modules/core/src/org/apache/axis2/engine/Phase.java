@@ -31,7 +31,6 @@ import java.util.ArrayList;
  * Should this exttends Hanlders?
  */
 public class Phase {
-
     /**
      * Field phaseName
      */
