@@ -32,7 +32,7 @@ public class WSDL2JavaTest extends TestCase{
 
     public static final String OUTPUT_LOCATION_BASE = "./out_put_classes";
     public static final String OUTPUT_LOCATION_PREFIX = "/test";
-    private static int FOLDER_COUNT = 0;
+    private static int folderCount = 0;
     // public static final String OUTPUT_LOCATION_BASE = "C:\\GeneratedCode\\test4\\src";
     public static final String WSDL_BASE_DIR = "./test-resources/";
     public static final String CLASSES_DIR = "/target/classes/";
@@ -92,7 +92,7 @@ public class WSDL2JavaTest extends TestCase{
     public void testCodeGenerationWSAT(){
 
         try {
-            generateAndCompile("wsat.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+FOLDER_COUNT++);
+            generateAndCompile("wsat.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
             fail("Exception while code generation test!"+ e.getMessage());
         }
@@ -105,19 +105,67 @@ public class WSDL2JavaTest extends TestCase{
     public void testCodeGenerationPing(){
 
         try {
-            generateAndCompile("ping.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+FOLDER_COUNT++);
+            generateAndCompile("ping.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+        } catch (CodeGenerationException e) {
+            fail("Exception while code generation test!"+ e.getMessage());
+        }
+    }
+
+
+    /**
+     * Test for the interoptestdoclitparameters
+     */
+    public void testCodeGenerationInteropTestDocLitParams(){
+
+        try {
+            generateAndCompile("interoptestdoclitparameters.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
             fail("Exception while code generation test!"+ e.getMessage());
         }
     }
 
     /**
+     * Test for the sales rank and price!
+     */
+    public void testCodeGenerationSalesRankNPrice(){
+
+        try {
+            generateAndCompile("SalesRankNPrice.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+        } catch (CodeGenerationException e) {
+            fail("Exception while code generation test!"+ e.getMessage());
+        }
+    }
+
+     /**
+     * Test for the mime doc
+     */
+    public void testCodeGenerationMimeDoc(){
+
+        try {
+            generateAndCompile("mime-doc.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+        } catch (CodeGenerationException e) {
+            fail("Exception while code generation test!"+ e.getMessage());
+        }
+    }
+
+//     /**
+//     * Test for the dime doc
+//     */
+//    public void testCodeGenerationDimeDoc(){
+//
+//        try {
+//            generateAndCompile("dime-doc.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+//        } catch (CodeGenerationException e) {
+//            fail("Exception while code generation test!"+ e.getMessage());
+//        }
+//    }
+    /**
      * Test for the wscoor.wsdl
      */
     public void testCodeGenerationWSCOOR(){
 
         try {
-            generateAndCompile("interoptestdoclit.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+FOLDER_COUNT++);
+            generateAndCompile("interoptestdoclit.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
             fail("Exception while code generation test!"+ e.getMessage());
         }
@@ -130,7 +178,7 @@ public class WSDL2JavaTest extends TestCase{
     public void testCodeGenerationPingModified(){
 
         try {
-            generateAndCompile("ping-modified.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+FOLDER_COUNT++);
+            generateAndCompile("ping-modified.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
             fail("Exception while code generation test!"+ e.getMessage());
         }
@@ -143,12 +191,37 @@ public class WSDL2JavaTest extends TestCase{
     public void testCodeGenerationPingUnbound(){
 
         try {
-            generateAndCompile("ping-unbound.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+FOLDER_COUNT++);
+            generateAndCompile("ping-unbound.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
             fail("Exception while code generation test!"+ e.getMessage());
         }
     }
 
+    /**
+     * Test for the simple doc lit from Axis 1
+     *
+     */
+    public void testCodeGenerationSimpleDocLiteral(){
+
+        try {
+            generateAndCompile("simple-doc-literal.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+        } catch (CodeGenerationException e) {
+            fail("Exception while code generation test!"+ e.getMessage());
+        }
+    }
+
+    /**
+     * Test for the simple doc lit from Axis 1
+     *
+     */
+    public void testCodeGenerationComplexDocLiteral(){
+
+        try {
+            generateAndCompile("complex-doc-literal.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+        } catch (CodeGenerationException e) {
+            fail("Exception while code generation test!"+ e.getMessage());
+        }
+    }
     /**
      * Test for the mtom echo wsdl. This wsdl contains a restriction based on xmime and a
      * SOAP 1.2 binding
@@ -157,7 +230,7 @@ public class WSDL2JavaTest extends TestCase{
     public void testCodeGenerationMTOMEcho(){
 
         try {
-            generateAndCompile("mtomecho.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+FOLDER_COUNT++);
+            generateAndCompile("mtomecho.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
             fail("Exception while code generation test!"+ e.getMessage());
         }
@@ -199,7 +272,7 @@ public class WSDL2JavaTest extends TestCase{
         //using the ant javac task for compilation
         Javac javaCompiler = new Javac();
         Project codeGenProject = new Project();
-         Target compileTarget = new Target();
+        Target compileTarget = new Target();
 
         compileTarget.setName(COMPILE_TARGET_NAME);
         compileTarget.addTask(javaCompiler);
