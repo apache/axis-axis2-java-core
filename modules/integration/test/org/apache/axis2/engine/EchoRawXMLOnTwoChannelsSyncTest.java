@@ -39,7 +39,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
             + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoOMElement");
+            + "/axis/services/EchoXMLService");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -108,6 +108,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 true);
+        call.setWsaAction(operationName.getLocalPart());
 
         OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), method);

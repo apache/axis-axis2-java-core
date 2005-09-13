@@ -76,7 +76,7 @@ public class GroovyServiceTest extends TestCase {
     }
 
 
-    public void testServiceExsit() throws Exception {
+    public void testServiceExists() throws Exception {
         ServiceDescription desc = UtilServer.getConfigurationContext().
                 getAxisConfiguration().getService(serviceName);
         assertNotNull(desc);
@@ -95,6 +95,7 @@ public class GroovyServiceTest extends TestCase {
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
+        call.setWsaAction(operationName.getLocalPart());
 
         OMElement result = call.invokeBlocking(operationName.getLocalPart(),
                 payload);

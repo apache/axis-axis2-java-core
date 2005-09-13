@@ -74,6 +74,7 @@ public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageR
                     messageInformationHeaders.setRelatesTo(
                             new RelatesTo(oldMessageInfoHeaders.getMessageId(),
                                     AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
+                    messageInformationHeaders.setAction(oldMessageInfoHeaders.getAction());
                     newmsgCtx.setMessageInformationHeaders(messageInformationHeaders);
                     newmsgCtx.setOperationContext(messgeCtx.getOperationContext());
                     newmsgCtx.setServiceContext(messgeCtx.getServiceContext());

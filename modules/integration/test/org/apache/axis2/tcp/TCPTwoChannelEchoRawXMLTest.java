@@ -127,6 +127,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
             call.setTransportInfo(Constants.TRANSPORT_TCP,
                     Constants.TRANSPORT_TCP,
                     true);
+            call.setWsaAction(operationName.getLocalPart());
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
                     try {

@@ -52,6 +52,7 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
         messageInformationHeaders.setRelatesTo(
                 new RelatesTo(oldMessageInfoHeaders.getMessageId(),
                         AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
+        messageInformationHeaders.setAction(oldMessageInfoHeaders.getAction());
         outMsgContext.setMessageInformationHeaders(messageInformationHeaders);
         outMsgContext.setOperationContext(msgContext.getOperationContext());
         outMsgContext.setServiceContext(msgContext.getServiceContext());

@@ -71,7 +71,7 @@ public class TCPEchoRawXMLTest extends TestCase {
     protected void setUp() throws Exception {
         UtilsTCPServer.start();
 
-        
+
         //create and deploy the service
         service =
                 Utils.createSimpleService(serviceName,
@@ -187,6 +187,7 @@ public class TCPEchoRawXMLTest extends TestCase {
                 serviceContext);
         call.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
+        call.setWsaAction(operationName.getLocalPart());
         call.setTransportInfo(Constants.TRANSPORT_TCP,
                 Constants.TRANSPORT_TCP,
                 true);
