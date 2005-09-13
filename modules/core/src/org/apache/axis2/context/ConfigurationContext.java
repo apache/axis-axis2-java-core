@@ -22,6 +22,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.storage.AxisStorage;
+import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.util.threadpool.ThreadPool;
 
 import javax.xml.namespace.QName;
@@ -31,7 +32,7 @@ import java.util.Map;
 
 /**
  * This is the biggest memeber of the Axis2 information hierachy, and if this is serialized completly
- * the whole Axis2 is saved to the disc.  
+ * the whole Axis2 is saved to the disc.
  */
 
 public class ConfigurationContext extends AbstractContext {
@@ -52,6 +53,8 @@ public class ConfigurationContext extends AbstractContext {
 
     private final Map serviceContextMap;
 
+    private final Map serviceGroupContextMap = new HashMap();
+
     public ConfigurationContext(AxisConfiguration registry) {
         super(null);
         this.axisConfiguration = registry;
@@ -62,6 +65,7 @@ public class ConfigurationContext extends AbstractContext {
 
     /**
      * The method is used to do the intialization of the EngineContext
+     *
      * @throws AxisFault
      */
 
@@ -86,19 +90,22 @@ public class ConfigurationContext extends AbstractContext {
     public void setAxisConfiguration(AxisConfiguration configuration) {
         axisConfiguration = configuration;
     }
-    
+
     /**
      * Register a OperationContext agienst a given Message ID.
+     *
      * @param messageID
      * @param mepContext
      */
     public synchronized void registerOperationContext(
-        String messageID,
-        OperationContext mepContext) {
+            String messageID,
+            OperationContext mepContext) {
         this.operationContextMap.put(messageID, mepContext);
     }
+
     /**
      * get a OperationContext given a Message ID
+     *
      * @param messageID
      * @return OperationContext <code>OperationContext<code>
      */
@@ -109,18 +116,19 @@ public class ConfigurationContext extends AbstractContext {
     public Map getOperationContextMap() {
         return this.operationContextMap;
     }
-    
+
     /**
      * Register a ServiceContext agienst a given Message ID.
      */
     public synchronized void registerServiceContext(
-        String serviceInstanceID,
-        ServiceContext serviceContext) {
+            String serviceInstanceID,
+            ServiceContext serviceContext) {
         this.serviceContextMap.put(serviceInstanceID, serviceContext);
     }
 
     /**
      * get the ServiceContext given a id
+     *
      * @param serviceInstanceID
      * @return
      */
@@ -129,7 +137,7 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     public AxisStorage getStorage() {
-        return  axisConfiguration.getAxisStorage();   //storage;
+        return axisConfiguration.getAxisStorage();   //storage;
     }
 
     public void setStorage(AxisStorage storage) {
@@ -137,13 +145,13 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     public ServiceContext createServiceContext(QName serviceName)
-        throws AxisFault {
+            throws AxisFault {
         ServiceDescription service = axisConfiguration.getService(serviceName);
         if (service != null) {
             return new ServiceContext(service, this);
         } else {
             throw new AxisFault(
-                "Service not found service name = " + serviceName);
+                    "Service not found service name = " + serviceName);
         }
     }
 
@@ -156,9 +164,11 @@ public class ConfigurationContext extends AbstractContext {
         }
         return threadPool;
     }
+
     /**
-     * This method allows users to reolve the paths relative to the 
+     * This method allows users to reolve the paths relative to the
      * root diretory
+     *
      * @param path
      * @return
      */
@@ -177,4 +187,51 @@ public class ConfigurationContext extends AbstractContext {
         rootDir = file;
     }
 
+    /**
+     * This method should search for a SGC in the map with given id as the key.
+     * If(key != null && found)
+     * check for a service context for the intended service.
+     * if (!found)
+     * create one and hook up to SGC
+     * else
+     * create new sgc with the given key or if key is null with a new key
+     * create a new service context for the service
+     *
+     * @param messageContext
+     * @return
+     */
+    public ServiceGroupContext fillServiceContextAndServiceGroupContext(MessageContext messageContext) {
+        String serviceGroupContextId = messageContext.getServiceGroupContextId();
+
+        ServiceGroupContext serviceGroupContext = null;
+        ServiceContext serviceContext = null;
+        if (!isNull(serviceGroupContextId) && serviceGroupContextMap.get(serviceGroupContextId) != null) {
+            serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
+            serviceContext = serviceGroupContext.getServiceContext(messageContext.getServiceDescription().getName().
+                    getLocalPart());
+            if (serviceContext == null) {
+                serviceContext = messageContext.getServiceDescription().findServiceContext(messageContext);
+                serviceContext.setParent(serviceGroupContext);
+            }
+        } else {
+            // either the key is null or no SGC is found from the give key
+            if (isNull(serviceGroupContextId)) {
+                serviceGroupContextId = UUIDGenerator.getUUID();
+                messageContext.setServiceGroupContextId(serviceGroupContextId);
+            }
+            serviceGroupContext = new ServiceGroupContext(this);
+            serviceGroupContextMap.put(serviceGroupContextId, serviceGroupContext);
+            serviceContext = messageContext.getServiceDescription().findServiceContext(messageContext);
+            serviceContext.setParent(serviceGroupContext);
+        }
+
+        messageContext.getOperationContext().setParent(serviceContext);
+        messageContext.setServiceContext(serviceContext);
+        messageContext.setServiceGroupContext(serviceGroupContext);
+        return serviceGroupContext;
+    }
+
+    private boolean isNull(String string) {
+        return "".equals(string) || string == null;
+    }
 }

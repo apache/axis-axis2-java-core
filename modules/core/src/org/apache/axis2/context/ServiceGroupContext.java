@@ -1,4 +1,7 @@
 package org.apache.axis2.context;
+
+import java.util.HashMap;
+import java.util.Map;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -19,8 +22,27 @@ package org.apache.axis2.context;
 
 /**
  * Author: Deepal Jayasinghe
- * Date: Sep 13, 2005
- * Time: 9:54:22 AM
+ *       : Eran Chinthaka
  */
-public class ServiceGroupContext {
+public class ServiceGroupContext extends AbstractContext{
+
+    private String id;
+    private Map serviceContextMap;
+
+    protected ServiceGroupContext(AbstractContext parent) {
+        super(parent);
+        serviceContextMap = new HashMap();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public ServiceContext getServiceContext(String serviceName){
+        return (ServiceContext) serviceContextMap.get(serviceName);
+    }
 }

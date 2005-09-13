@@ -62,7 +62,7 @@ public class ServiceContext extends AbstractContext {
     }
 
     public ConfigurationContext getEngineContext() {
-        return (ConfigurationContext) parent;
+        return (ConfigurationContext) parent.getParent();
     }
 
     public OperationContext createOperationContext(QName name) {

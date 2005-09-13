@@ -1,11 +1,7 @@
 package org.apache.axis2;
 
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.OperationContextFactory;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.ServiceGroupDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 
 /*
@@ -45,28 +41,25 @@ public class InstanceDispatcher extends AbstractHandler {
         System.out.println("Instance Dispatcher invoked .........");
 
         OperationDescription operationDesc = msgContext.getOperationDescription();
-        ServiceDescription serviceDesc = msgContext.getServiceDescription();
-        ServiceGroupDescription serviceGroupDesc = msgContext.getServiceGroupDescription();
-        String serviceGroupContextId = msgContext.getServiceGroupContextId();
 
         //  1. look up opCtxt using mc.addressingHeaders.relatesTo[0]
         OperationContext operationContext = operationDesc.findForExistingOperationContext(msgContext);
         if (operationContext != null) {
             operationDesc.registerOperationContext(msgContext, operationContext);
+            ServiceContext serviceContext = (ServiceContext) operationContext.getParent();
+            ServiceGroupContext serviceGroupContext = (ServiceGroupContext) serviceContext.getParent();
+            msgContext.setServiceContext(serviceContext);
+            msgContext.setServiceGroupContext(serviceGroupContext);
+            return;
+
         } else { //  2. if null, create new opCtxt
             operationContext =
                     OperationContextFactory.createOperationContext(operationDesc.getAxisSpecifMEPConstant(), operationDesc);
             operationDesc.registerOperationContext(msgContext, operationContext);
 
+            //  fill the service group context and service context info
+            msgContext.getSystemContext().
+                    fillServiceContextAndServiceGroupContext(msgContext);
         }
-
-//  4. look up SGC using mc.getServiceGroupContextID() as the key
-//  5. if null create new sgc
-//  6. look up service ctxt as service name as the key
-//  7. if null create new
-//  8. set opCtxt.setServiceCtxt(sc)
-// 9. return
-
-
     }
 }

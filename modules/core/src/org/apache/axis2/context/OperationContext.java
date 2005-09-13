@@ -77,8 +77,6 @@ public class OperationContext extends AbstractContext {
         super(null);
         this.axisOperation = axisOperation;
         this.operationMEP = axisOperation.getAxisSpecifMEPConstant();
-        this.operationContextMap = getServiceContext().getEngineContext()
-                .getOperationContextMap();
     }
 
     /**
@@ -196,5 +194,11 @@ public class OperationContext extends AbstractContext {
 //    public MessageContext createMessageContext(AxisM){
 //    
 //    }
+
+    public void setParent(AbstractContext context) {
+        super.setParent(context);
+        this.operationContextMap = getServiceContext().getEngineContext()
+                .getOperationContextMap();
+    }
 
 }

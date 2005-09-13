@@ -60,8 +60,8 @@ public abstract class AbstractDispatcher extends AbstractHandler {
      */
     public final void invoke(MessageContext msgctx) throws AxisFault {
 
-        ServiceDescription serviceDescription = null;
-        if(msgctx.getServiceDescription() == null){
+        ServiceDescription serviceDescription = msgctx.getServiceDescription();
+        if(serviceDescription == null){
             serviceDescription = findService(msgctx);
             if (serviceDescription != null) {
                 msgctx.setServiceDescription(serviceDescription);
