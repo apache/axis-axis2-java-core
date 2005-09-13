@@ -38,7 +38,6 @@ public class InstanceDispatcher extends AbstractHandler {
      * @throws AxisFault
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        System.out.println("Instance Dispatcher invoked .........");
 
         OperationDescription operationDesc = msgContext.getOperationDescription();
 
