@@ -17,6 +17,7 @@ package org.apache.axis2.util;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
@@ -156,6 +157,31 @@ public class Utils {
             }
         }
         return values;
+    }
+
+    public static void extractServiceGroupAndServiceInfo(String filePart, MessageContext messageContext) throws AxisFault {
+        String[] values = parseRequestURLForServiceAndOperation(
+                filePart);
+        String serviceNameAndGroup = values[0];
+        if (serviceNameAndGroup != null) {
+            String[] serviceNameAndGroupStrings = serviceNameAndGroup.split(":");
+            AxisConfiguration registry =
+                    messageContext.getSystemContext().getAxisConfiguration();
+            if(serviceNameAndGroupStrings[0] != null){
+                ServiceGroupDescription serviceGroup = registry.getServiceGroup(serviceNameAndGroupStrings[0]);
+                String serviceNameStr = "";
+                if(serviceNameAndGroupStrings.length == 1){
+                    // This means user has not given a service name.
+                    // the notations is ...../axis2/services/<ServiceGroupName>
+                    serviceNameStr = serviceNameAndGroupStrings[0];
+                }
+                ServiceDescription serviceDescription = registry.getService(new QName(serviceNameStr));
+                if(serviceGroup != null && serviceDescription != null){
+                    messageContext.setServiceGroupDescription(serviceGroup);
+                    messageContext.setServiceDescription(serviceDescription);
+                }
+            }
+        }
     }
 
 }

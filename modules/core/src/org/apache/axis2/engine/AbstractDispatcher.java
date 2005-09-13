@@ -18,7 +18,6 @@ package org.apache.axis2.engine;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
@@ -58,24 +57,40 @@ public abstract class AbstractDispatcher extends AbstractHandler implements Hand
      */
     public final void invoke(MessageContext msgctx) throws AxisFault {
 
-        if (msgctx.getServiceContext() == null) {
-            ServiceDescription axisService = findService(msgctx);
-            if (axisService != null) {
-                msgctx.setServiceContext(
-                        axisService.findServiceContext(msgctx));
+        ServiceDescription serviceDescription = null;
+        if(msgctx.getServiceDescription() == null){
+            serviceDescription = findService(msgctx);
+            if (serviceDescription != null) {
+                msgctx.setServiceDescription(serviceDescription);
+                // TODO Chinthaka : set the Service Group Context to the message Context
             }
         }
 
-        if (msgctx.getServiceContext() != null &&
-                msgctx.getOperationContext() == null) {
-            OperationDescription axisOperation = findOperation(
-                    msgctx.getServiceContext().getServiceConfig(), msgctx);
-            if (axisOperation != null) {
-                OperationContext operationContext = axisOperation.findOperationContext(
-                        msgctx, msgctx.getServiceContext());
-                msgctx.setOperationContext(operationContext);
+        if(msgctx.getServiceDescription() != null && msgctx.getOperationDescription() == null){
+            OperationDescription operationDescription = findOperation(serviceDescription, msgctx);
+            if(operationDescription != null){
+                msgctx.setOperationDescription(operationDescription);
             }
         }
+
+//        if (msgctx.getServiceContext() == null) {
+//            ServiceDescription axisService = findService(msgctx);
+//            if (axisService != null) {
+//                msgctx.setServiceContext(
+//                        axisService.findServiceContext(msgctx));
+//            }
+//        }
+//
+//        if (msgctx.getServiceContext() != null &&
+//                msgctx.getOperationContext() == null) {
+//            OperationDescription axisOperation = findOperation(
+//                    msgctx.getServiceContext().getServiceConfig(), msgctx);
+//            if (axisOperation != null) {
+//                OperationContext operationContext = axisOperation.findOperationContext(
+//                        msgctx, msgctx.getServiceContext());
+//                msgctx.setOperationContext(operationContext);
+//            }
+//        }
 
     }
 

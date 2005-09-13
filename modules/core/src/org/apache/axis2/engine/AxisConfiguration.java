@@ -16,8 +16,8 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.storage.AxisStorage;
 import org.apache.axis2.description.*;
+import org.apache.axis2.storage.AxisStorage;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -138,4 +138,5 @@ public interface AxisConfiguration extends ParameterInclude {
     //to check whether a given paramter is locked
     public boolean isParamterLocked(String paramterName);
 
+    public ServiceGroupDescription getServiceGroup(String serviceNameAndGroupString);
 }

@@ -53,21 +53,17 @@ public class DispatchingChecker extends AbstractHandler implements Handler {
      */
     public final void invoke(MessageContext msgctx) throws AxisFault {
         EndpointReference toEPR = msgctx.getTo();
-        if (msgctx.getServiceContext() == null) {
+        if (msgctx.getServiceDescription() == null) {
             throw new AxisFault(
                     "Service Not found EPR is " +
-                    ((toEPR != null) ? toEPR.getAddress() : ""));
-        }
-
-        if (msgctx.getServiceContext() != null &&
-                msgctx.getOperationContext() == null) {
+                            ((toEPR != null) ? toEPR.getAddress() : ""));
+        } else if (msgctx.getOperationDescription() == null) {
             throw new AxisFault(
                     "Operation Not found EPR is " +
-                    ((toEPR != null) ? toEPR.getAddress() : "") +
-                    " and WSA Action = " +
-                    msgctx.getWSAAction());
+                            ((toEPR != null) ? toEPR.getAddress() : "") +
+                            " and WSA Action = " +
+                            msgctx.getWSAAction());
         }
-
     }
 
 }

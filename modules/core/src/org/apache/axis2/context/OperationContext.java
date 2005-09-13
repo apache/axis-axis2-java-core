@@ -73,6 +73,14 @@ public class OperationContext extends AbstractContext {
                 .getOperationContextMap();
     }
 
+    public OperationContext(OperationDescription axisOperation) {
+        super(null);
+        this.axisOperation = axisOperation;
+        this.operationMEP = axisOperation.getAxisSpecifMEPConstant();
+        this.operationContextMap = getServiceContext().getEngineContext()
+                .getOperationContextMap();
+    }
+
     /**
      * @return Returns the axisOperation.
      */

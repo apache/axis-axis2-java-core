@@ -48,4 +48,30 @@ public class OperationContextFactory implements WSDLConstants {
         }
     }
 
+    /**
+     * When you call this make sure you set the parent later.
+     * @param mepURI
+     * @param axisOp
+     * @return
+     * @throws AxisFault
+     */
+    public static OperationContext createOperationContext(
+        int mepURI,
+        OperationDescription axisOp)
+        throws AxisFault {
+        if (MEP_CONSTANT_IN_OUT == mepURI
+            || MEP_CONSTANT_IN_ONLY == mepURI
+            || MEP_CONSTANT_IN_OPTIONAL_OUT == mepURI
+            || MEP_CONSTANT_ROBUST_IN_ONLY == mepURI
+            || MEP_CONSTANT_OUT_ONLY == mepURI
+            || MEP_CONSTANT_OUT_IN == mepURI
+            || MEP_CONSTANT_OUT_OPTIONAL_IN == mepURI
+            || MEP_CONSTANT_ROBUST_OUT_ONLY == mepURI) {
+            return new OperationContext(axisOp);
+
+        } else {
+            throw new AxisFault(Messages.getMessage("unSupportedMEP","ID is "+ mepURI));
+        }
+    }
+
 }

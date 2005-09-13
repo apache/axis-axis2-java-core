@@ -112,6 +112,7 @@ public class AxisServlet extends HttpServlet {
             msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getTransportHeaders(httpServletRequest));
 
             out = httpServletResponse.getOutputStream();
+            msgContext.setServiceGroupContextId(httpServletRequest.getSession().getId());
             boolean processed =
                     HTTPTransportUtils.processHTTPGetRequest(msgContext,
                             httpServletRequest.getInputStream(),

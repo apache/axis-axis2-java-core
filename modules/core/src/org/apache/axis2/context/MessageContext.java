@@ -92,6 +92,11 @@ public class MessageContext extends AbstractContext {
 
     private OperationContext operationContext;
     private ServiceContext serviceContext;
+    private ServiceGroupContext serviceGroupContext;
+
+    private OperationDescription operationDescription;
+    private ServiceDescription serviceDescription;
+    private ServiceGroupDescription serviceGroupDescription;
     private ConfigurationContext configurationContext;
 
     private TransportInDescription transportIn;
@@ -157,6 +162,11 @@ public class MessageContext extends AbstractContext {
     private boolean doRESTthroughPOST = true;
 
     private boolean isSOAP11 = true;
+
+    /**
+     * This will hold a key to retrieve the correct ServiceGroupContext.
+     */
+    private String serviceGroupContextId;
 
     /**
      * Conveniance Method, but before call engine.send() or  engine.receive() one must send transport in/out
@@ -780,4 +790,46 @@ public class MessageContext extends AbstractContext {
     public boolean isSOAP11() {
         return isSOAP11;
     }
+
+    public ServiceGroupContext getServiceGroupContext() {
+        return serviceGroupContext;
+    }
+
+    public void setServiceGroupContext(ServiceGroupContext serviceGroupContext) {
+        this.serviceGroupContext = serviceGroupContext;
+    }
+
+    public OperationDescription getOperationDescription() {
+        return operationDescription;
+    }
+
+    public void setOperationDescription(OperationDescription operationDescription) {
+        this.operationDescription = operationDescription;
+    }
+
+    public ServiceDescription getServiceDescription() {
+        return serviceDescription;
+    }
+
+    public void setServiceDescription(ServiceDescription serviceDescription) {
+        this.serviceDescription = serviceDescription;
+    }
+
+    public ServiceGroupDescription getServiceGroupDescription() {
+        return serviceGroupDescription;
+    }
+
+    public void setServiceGroupDescription(ServiceGroupDescription serviceGroupDescription) {
+        this.serviceGroupDescription = serviceGroupDescription;
+    }
+
+    public String getServiceGroupContextId() {
+        return serviceGroupContextId;
+    }
+
+    public void setServiceGroupContextId(String serviceGroupContextId) {
+        this.serviceGroupContextId = serviceGroupContextId;
+    }
+
+
 }

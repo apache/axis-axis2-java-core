@@ -16,8 +16,8 @@ import org.apache.wsdl.impl.WSDLOperationImpl;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * @author chathura@opensource.lk
@@ -186,8 +186,7 @@ public class OperationDescription extends WSDLOperationImpl implements
      * @param msgContext
      * @return
      */
-    public OperationContext findOperationContext(MessageContext msgContext,
-                                                 ServiceContext serviceContext) throws AxisFault {
+    public OperationContext findOperationContext(MessageContext msgContext, ServiceContext serviceContext) throws AxisFault {
         OperationContext operationContext = null;
 
         if (null == msgContext.getRelatesTo()) {
@@ -195,8 +194,7 @@ public class OperationDescription extends WSDLOperationImpl implements
             // one
             operationContext =
                     OperationContextFactory.createOperationContext(
-                            getAxisSpecifMEPConstant(), this,
-                            serviceContext);
+                            getAxisSpecifMEPConstant(),  this, serviceContext);
 
         } else {
             // So this message is part of an ongoing MEP
@@ -213,6 +211,51 @@ public class OperationDescription extends WSDLOperationImpl implements
 
         }
 
+        registerOperationContext(msgContext, operationContext);
+
+        return operationContext;
+
+    }
+
+    /**
+     * This will not create a new operation context if there is no one already.
+     * @param msgContext
+     * @return
+     * @throws AxisFault
+     */
+    public OperationContext findForExistingOperationContext(MessageContext msgContext) throws AxisFault {
+        OperationContext operationContext = null;
+
+        if (null == msgContext.getRelatesTo()) {
+//            //Its a new incomming message so get the factory to create a new
+//            // one
+//            operationContext =
+//                    OperationContextFactory.createOperationContext(
+//                            getAxisSpecifMEPConstant(), this);
+            return null;
+
+        } else {
+            // So this message is part of an ongoing MEP
+            //			operationContext =
+            ConfigurationContext configContext = msgContext.getSystemContext();
+            operationContext =
+                    configContext.getOperationContext(
+                            msgContext.getRelatesTo().getValue());
+
+            if (null == operationContext) {
+                throw new AxisFault(Messages.getMessage("cannotCorrealteMsg",
+                        this.getName().toString(),msgContext.getRelatesTo().getValue()));
+            }
+
+        }
+
+        registerOperationContext(msgContext, operationContext);
+
+        return operationContext;
+
+    }
+
+    public void registerOperationContext(MessageContext msgContext, OperationContext operationContext) throws AxisFault {
         msgContext.getSystemContext().registerOperationContext(
                 msgContext.getMessageID(), operationContext);
         operationContext.addMessageContext(msgContext);
@@ -220,9 +263,6 @@ public class OperationDescription extends WSDLOperationImpl implements
         if (operationContext.isComplete()) {
             operationContext.cleanup();
         }
-
-        return operationContext;
-
     }
 
     public MessageReceiver getMessageReceiver() {
