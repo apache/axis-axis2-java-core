@@ -245,7 +245,7 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     		Parameter parameter = this.handlerDesc.getParameter(key);
     		value = (parameter== null)?null:parameter.getValue();
     	}
-    	
+
     	return value;
     }
 }

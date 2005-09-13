@@ -103,8 +103,14 @@
             tofile="target/test-resources/scenario1_service_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario1_service_repo/modules/security.mar"/>
-        <copy file="../security/target/PingPort.aar"
-            tofile="target/test-resources/scenario1_service_repo/services/PingPort.aar"/>
+
+	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<copy file="test-resources/security/s1.service.xml"
+            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+
+	<!-- Create the .aar file -->
+	<jar jarfile="target/test-resources/scenario1_service_repo/services/PingPort.aar" 
+	    basedir="../security/target/interop/classes" />
 
 	<!-- Scenario 2 -->
         <mkdir dir="target/test-resources/scenario2_client_repo"/>
@@ -125,8 +131,14 @@
             tofile="target/test-resources/scenario2_service_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario2_service_repo/modules/security.mar"/>
-        <copy file="../security/target/PingPort.aar"
-            tofile="target/test-resources/scenario2_service_repo/services/PingPort.aar"/>
+
+	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<copy file="test-resources/security/s2.service.xml"
+            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+
+	<!-- Create the .aar file -->
+	<jar jarfile="target/test-resources/scenario2_service_repo/services/PingPort.aar" 
+	    basedir="../security/target/interop/classes" />
 
 	<!-- Scenario 2a -->
         <mkdir dir="target/test-resources/scenario2a_client_repo"/>
@@ -147,8 +159,14 @@
             tofile="target/test-resources/scenario2a_service_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario2a_service_repo/modules/security.mar"/>
-        <copy file="../security/target/PingPort.aar"
-            tofile="target/test-resources/scenario2a_service_repo/services/PingPort.aar"/>
+
+	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<copy file="test-resources/security/s2a.service.xml"
+            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+
+	<!-- Create the .aar file -->
+	<jar jarfile="target/test-resources/scenario2a_service_repo/services/PingPort.aar" 
+	    basedir="../security/target/interop/classes" />
 
 	<!-- Scenario 3 -->
         <mkdir dir="target/test-resources/scenario3_client_repo"/>
@@ -169,8 +187,15 @@
             tofile="target/test-resources/scenario3_service_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario3_service_repo/modules/security.mar"/>
-        <copy file="../security/target/PingPort.aar"
-            tofile="target/test-resources/scenario3_service_repo/services/PingPort.aar"/>
+
+	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<copy file="test-resources/security/s3.service.xml"
+            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+
+	<!-- Create the .aar file -->
+	<jar jarfile="target/test-resources/scenario3_service_repo/services/PingPort.aar" 
+	    basedir="../security/target/interop/classes" />
+
 
 	<!-- Scenario 4 -->
         <mkdir dir="target/test-resources/scenario4_client_repo"/>
@@ -191,8 +216,15 @@
             tofile="target/test-resources/scenario4_service_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario4_service_repo/modules/security.mar"/>
-        <copy file="../security/target/PingPort.aar"
-            tofile="target/test-resources/scenario4_service_repo/services/PingPort.aar"/>
+
+	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<copy file="test-resources/security/s4.service.xml"
+            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+
+	<!-- Create the .aar file -->
+	<jar jarfile="target/test-resources/scenario4_service_repo/services/PingPort.aar" 
+	    basedir="../security/target/interop/classes" />
+
 
 	<!-- Scenario 5 -->
         <mkdir dir="target/test-resources/scenario5_client_repo"/>
@@ -213,8 +245,15 @@
             tofile="target/test-resources/scenario5_service_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario5_service_repo/modules/security.mar"/>
-        <copy file="../security/target/PingPort.aar"
-            tofile="target/test-resources/scenario5_service_repo/services/PingPort.aar"/>
+
+	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<copy file="test-resources/security/s5.service.xml"
+            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+
+	<!-- Create the .aar file -->
+	<jar jarfile="target/test-resources/scenario5_service_repo/services/PingPort.aar" 
+	    basedir="../security/target/interop/classes" />
+
 
 	<!-- Scenario 6 -->
         <mkdir dir="target/test-resources/scenario6_client_repo"/>
@@ -235,8 +274,15 @@
             tofile="target/test-resources/scenario6_service_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario6_service_repo/modules/security.mar"/>
-        <copy file="../security/target/PingPort.aar"
-            tofile="target/test-resources/scenario6_service_repo/services/PingPort.aar"/>
+
+	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<copy file="test-resources/security/s6.service.xml"
+            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+
+	<!-- Create the .aar file -->
+	<jar jarfile="target/test-resources/scenario6_service_repo/services/PingPort.aar" 
+	    basedir="../security/target/interop/classes" />
+
 
 	<!-- Scenario 7 -->
         <mkdir dir="target/test-resources/scenario7_client_repo"/>
@@ -257,15 +303,21 @@
             tofile="target/test-resources/scenario7_service_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario7_service_repo/modules/security.mar"/>
-        <copy file="../security/target/PingPort.aar"
-            tofile="target/test-resources/scenario7_service_repo/services/PingPort.aar"/>
+
+	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<copy file="test-resources/security/s7.service.xml"
+            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+
+	<!-- Create the .aar file -->
+	<jar jarfile="target/test-resources/scenario7_service_repo/services/PingPort.aar" 
+	    basedir="../security/target/interop/classes" />
+
 
 	<!-- Copying the DOM3 stuff to the endorsed dir -->
         <mkdir dir="target/test-resources/endorsed"/>
 	<copy file="${maven.repo.local}/xerces/jars/xercesImpl-2.6.2.jar" todir="target/test-resources/endorsed"/>
 	<copy file="${maven.repo.local}/xerces/jars/xmlParserAPIs-2.6.2.jar" todir="target/test-resources/endorsed"/>
 
-	<echo>${java.endorsed.dirs}</echo>
 
 	<!-- Scenario ST1 -->
         <mkdir dir="target/test-resources/scenarioST1_client_repo"/>
@@ -286,10 +338,16 @@
             tofile="target/test-resources/scenarioST1_service_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenarioST1_service_repo/modules/security.mar"/>
-        <copy file="../security/target/PingPort.aar"
-            tofile="target/test-resources/scenarioST1_service_repo/services/PingPort.aar"/>
 
+	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<copy file="test-resources/security/sST1.service.xml"
+            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
 
+	<!-- Create the .aar file -->
+	<jar jarfile="target/test-resources/scenarioST1_service_repo/services/PingPort.aar" 
+	    basedir="../security/target/interop/classes" />
+
+
 	<!-- MTOM Optimized Security Test -->
         <mkdir dir="target/test-resources/mtom_sec_client_repo"/>
         <mkdir dir="target/test-resources/mtom_sec_client_repo/modules"/>
@@ -309,8 +367,16 @@
             tofile="target/test-resources/mtom_sec_service_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/mtom_sec_service_repo/modules/security.mar"/>
-        <copy file="../security/target/PingPort.aar"
-            tofile="target/test-resources/mtom_sec_service_repo/services/PingPort.aar"/>
+
+	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<copy file="test-resources/security/secMtom.service.xml"
+            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+
+	<!-- Create the .aar file -->
+	<jar jarfile="target/test-resources/mtom_sec_service_repo/services/PingPort.aar" 
+	    basedir="../security/target/interop/classes" />
+
+
 
 	<!-- Test with addressing and MTOM  -->
         <mkdir dir="target/test-resources/complete_client_repo"/>
@@ -333,10 +399,16 @@
             tofile="target/test-resources/complete_service_repo/axis2.xml"/>
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/complete_service_repo/modules/security.mar"/>
-        <copy file="../security/target/PingPort.aar"
-            tofile="target/test-resources/complete_service_repo/services/PingPort.aar"/>
         <copy file="../addressing/target/addressing.mar"
             tofile="target/test-resources/complete_service_repo/modules/addressing.mar"/>
+
+	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<copy file="test-resources/security/complete.service.xml"
+            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+
+	<!-- Create the .aar file -->
+	<jar jarfile="target/test-resources/complete_service_repo/services/PingPort.aar" 
+	    basedir="../security/target/interop/classes" />
 
     <!-- Standard repository -->
     <mkdir dir="target/Repository"/>

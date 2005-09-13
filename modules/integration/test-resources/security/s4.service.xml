@@ -1,0 +1,21 @@
+<service name="PingPort">
+	<parameter locked="false" name="ServiceClass">org.apache.axis2.oasis.ping.PingPortSkeleton</parameter>
+	<!--Mounting the method Ping-->
+	<operation name="Ping">
+		<messageReceiver class="org.apache.axis2.oasis.ping.PingPortMessageReceiver"/>
+	</operation>    
+
+    <parameter name="InAction" locked="false">Signature Encrypt Timestamp</parameter>
+    <parameter name="InSignaturePropFile" locked="false">interop.properties</parameter>
+    <parameter name="InPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
+
+    <parameter name="OutAction" locked="false">Signature Encrypt Timestamp</parameter>
+    <parameter name="user" locked="false">bob</parameter>
+    <parameter name="OutPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
+    <parameter name="OutSignatureKeyIdentifier" locked="false">SKIKeyIdentifier</parameter>
+    <parameter name="encryptionKeyIdentifier" locked="false">EmbeddedKeyName</parameter>
+    <parameter name="OutSignaturePropFile" locked="false">interop.properties</parameter>
+    <parameter name="EmbeddedKeyCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
+    <parameter name="EmbeddedKeyName" locked="false">SessionKey</parameter>
+
+</service>

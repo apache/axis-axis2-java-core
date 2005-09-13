@@ -1,0 +1,25 @@
+<service name="PingPort">
+	<parameter locked="false" name="ServiceClass">org.apache.axis2.oasis.ping.PingPortSkeleton</parameter>
+	<!--Mounting the method Ping-->
+	<operation name="Ping">
+		<messageReceiver class="org.apache.axis2.oasis.ping.PingPortMessageReceiver"/>
+	</operation>    
+
+    <parameter name="InAction" locked="false">Timestamp Signature Encrypt</parameter>
+    <parameter name="InPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
+    <parameter name="InSignaturePropFile" locked="false">interop.properties</parameter>
+
+    <parameter name="OutAction" locked="false">Timestamp Signature Encrypt</parameter>
+    <parameter name="user" locked="false">bob</parameter>
+    <parameter name="OutPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
+    <parameter name="OutSignaturePropFile" locked="false">interop.properties</parameter>
+    <parameter name="OutSignatureKeyIdentifier" locked="false">SKIKeyIdentifier</parameter>
+    <parameter name="encryptionKeyIdentifier" locked="false">SKIKeyIdentifier</parameter>
+    <parameter name="encryptionUser" locked="false">alice</parameter>
+    <parameter name="encryptionSymAlgorithm" locked="false">http://www.w3.org/2001/04/xmlenc#aes128-cbc</parameter>
+    <parameter name="OutSignatureParts" locked="false">{Element}{http://schemas.xmlsoap.org/ws/2004/08/addressing}To;{Element}{http://schemas.xmlsoap.org/ws/2004/08/addressing}ReplyTo;{Element}{http://schemas.xmlsoap.org/ws/2004/08/addressing}From;{Element}{http://schemas.xmlsoap.org/ws/2004/08/addressing}RelatesTo;{Element}{http://schemas.xmlsoap.org/ws/2004/08/addressing}MessageID;{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp</parameter>
+
+    <parameter name="optimizeParts" locked="false">//xenc:EncryptedData/xenc:CipherData/xenc:CipherValue</parameter>
+
+
+</service>

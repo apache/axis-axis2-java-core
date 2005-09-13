@@ -7,19 +7,6 @@
     <!-- Engage the security module -->
     <module ref="security"/>
 
-    <!-- This is only till we get the service specific parameters fixed in service.xml -->
-
-    <!-- Scenario 2: Service's Configuration: START-->
-    <!-- Also we can switch back to the normal parameter names when we can seperately assign them to the flows -->
-
-    <parameter name="InAction" locked="false">UsernameTokenSignature UsernameToken Encrypt Timestamp</parameter>
-    <parameter name="InPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
-    <parameter name="decryptionPropFile" locked="false">interop.properties</parameter>
-
-    <parameter name="OutAction" locked="false">NoSecurity</parameter> -->
-
-    <!-- Scenario 2: Service's Configuration: END-->
-
     <!-- ================================================= -->
     <!-- Transport Ins -->
     <!-- ================================================= -->
