@@ -43,6 +43,7 @@ public class ArchiveReader implements DeploymentConstants {
      * To create a ServiceDescrption <code>ServiceDescription</code>   using given wsdl , if the
      * service.wsdl there in the arcive file ServiceDescription will be creted using that else
      * default ServiceDescription will be crated
+     *
      * @param file
      * @return
      * @throws DeploymentException
@@ -61,7 +62,10 @@ public class ArchiveReader implements DeploymentConstants {
                         .iterator();
                 if (iterator.hasNext()) {
                     foundservice = true;
-                    WSDLServiceImpl serviceimpl = (WSDLServiceImpl)womDescription.getServices().get(iterator.next());
+                    // remove <wsdl:service> and <wsdl:binding> elements from the service
+                    // description we read in as we will be replacing them anyway.
+
+                    WSDLServiceImpl serviceimpl = (WSDLServiceImpl) womDescription.getServices().get(iterator.next());
                     service = new ServiceDescription(serviceimpl);
 //                    service =
 //                            (ServiceDescription) womDescription.getServices()
@@ -95,7 +99,7 @@ public class ArchiveReader implements DeploymentConstants {
      */
     public void processServiceDescriptor(String filename,
                                          DeploymentEngine engine,
-                                         ServiceDescription service, boolean extarctService)throws DeploymentException {
+                                         ServiceDescription service, boolean extarctService) throws DeploymentException {
         // get attribute values
         boolean foundServiceXML = false;
         ServiceBuilder builder;
@@ -107,7 +111,7 @@ public class ArchiveReader implements DeploymentConstants {
                 while ((entry = zin.getNextEntry()) != null) {
                     if (entry.getName().equals(SERVICEXML)) {
                         foundServiceXML = true;
-                        builder = new ServiceBuilder(zin,engine,service);
+                        builder = new ServiceBuilder(zin, engine, service);
                         builder.populateService();
                         break;
                     }
@@ -121,19 +125,19 @@ public class ArchiveReader implements DeploymentConstants {
                 throw new DeploymentException(e);
             }
         } else {
-            File file = new File(filename , SERVICEXML);
-            if(file.exists()){
+            File file = new File(filename, SERVICEXML);
+            if (file.exists()) {
                 InputStream in = null;
                 try {
                     in = new FileInputStream(file);
-                    builder = new ServiceBuilder(in,engine,service);
+                    builder = new ServiceBuilder(in, engine, service);
                     builder.populateService();
 
                 } catch (FileNotFoundException e) {
                     throw new DeploymentException("FileNotFound : " + e);
-                }finally {
+                } finally {
                     try {
-                        if (in !=null) {
+                        if (in != null) {
                             in.close();
                         }
                     } catch (IOException e) {
@@ -152,14 +156,14 @@ public class ArchiveReader implements DeploymentConstants {
                                   ModuleDescription module) throws DeploymentException {
         // get attribute values
         boolean foundmoduleXML = false;
-        ZipInputStream zin ;
+        ZipInputStream zin;
         try {
             zin = new ZipInputStream(new FileInputStream(filename));
             ZipEntry entry;
             while ((entry = zin.getNextEntry()) != null) {
                 if (entry.getName().equals(MODULEXML)) {
                     foundmoduleXML = true;
-                    ModuleBuilder builder = new ModuleBuilder(zin, engine,module);
+                    ModuleBuilder builder = new ModuleBuilder(zin, engine, module);
                     builder.populateModule();
                     break;
                 }
@@ -175,7 +179,6 @@ public class ArchiveReader implements DeploymentConstants {
     }
 
 
-
     /**
      * This method first check whether the given module is there in the user home dirctory if so return
      * that , else try to read the given module form classpath (from resources ) if found first get the module.mar
@@ -188,7 +191,7 @@ public class ArchiveReader implements DeploymentConstants {
     public File creatModuleArchivefromResource(String moduleName,
                                                String axis2repository) throws DeploymentException {
         File modulearchiveFile;
-        File modules ;
+        File modules;
         try {
             int BUFFER = 2048;
             if (axis2repository == null) {
@@ -201,7 +204,7 @@ public class ArchiveReader implements DeploymentConstants {
                     modules.mkdirs();
                 } else {
                     modules = new File(repository, "modules");
-                    if(!modules.exists()){
+                    if (!modules.exists()) {
                         modules.mkdirs();
                     }
                 }
@@ -236,7 +239,7 @@ public class ArchiveReader implements DeploymentConstants {
                 ZipOutputStream out = new ZipOutputStream(new
                         BufferedOutputStream(dest));
                 byte data[] = new byte[BUFFER];
-                ZipInputStream zin ;
+                ZipInputStream zin;
                 zin = new ZipInputStream(in);
                 ZipEntry entry;
                 while ((entry = zin.getNextEntry()) != null) {

@@ -52,7 +52,6 @@ public interface DeploymentConstants {
     String AXIS2CONFIG = "axisconfig";
 
     // for serviemetadat
-    String PROVIDERNAME = "provider";
     String STYLENAME = "style";
     String CONTEXTPATHNAME = "contextPath";
 
@@ -88,6 +87,8 @@ public interface DeploymentConstants {
     String HOTDEPLOYMENT = "hotdeployment";
     String HOTUPDATE = "hotupdate";
     String EXTRACTSERVICEARCHIVE = "extractServiceArchive";
+    String DIPSTCH_ORDER ="dispatchOrder";
+    String DIPSTCHER ="dispatcher";
 
     String AXIS_STORAGE = "axisStorage";
 

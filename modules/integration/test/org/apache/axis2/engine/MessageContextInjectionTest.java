@@ -71,8 +71,10 @@ public class MessageContextInjectionTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
+        AxisConfiguration config =   new AxisConfigurationImpl();
+        ((AxisConfigurationImpl)config).setDefaultDispatchers();
         LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(
-                new AxisConfigurationImpl());
+                config);
 
         ServiceDescription service = new ServiceDescription(serviceName);
         service.addParameter(

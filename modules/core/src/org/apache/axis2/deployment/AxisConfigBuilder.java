@@ -1,13 +1,11 @@
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.engine.AxisConfigurationImpl;
-import org.apache.axis2.engine.AxisObserver;
+import org.apache.axis2.engine.*;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.storage.AxisStorage;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.transport.TransportSender;
@@ -74,6 +72,16 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                         mepAtt.getValue(),msgrecivere);
             }
 
+            //processing Dispatching Order
+            OMElement dispatch_order = config_element.getFirstChildWithName(
+                    new QName(DIPSTCH_ORDER));
+            if(dispatch_order !=null){
+                processDispatchingOrder(dispatch_order);
+                log.info("found the custom disptaching order and continue with that order");
+            } else {
+               ((AxisConfigurationImpl)axisConfiguration).setDefaultDispatchers();
+                log.info("no custom diaptching order found continue with default dispatcing order");
+            }
 
 
             //Process Module refs
@@ -108,6 +116,43 @@ public class AxisConfigBuilder extends DescriptionBuilder{
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         }
+    }
+
+
+    private void processDispatchingOrder(OMElement dispatch_order) throws DeploymentException {
+        Iterator dispatchers = dispatch_order.getChildrenWithName(new QName(DIPSTCHER));
+        boolean foundDiaptcher= false;
+        Phase dispatchPhae = new Phase(PhaseMetadata.PHASE_DISPATCH);
+        int count =0;
+        while (dispatchers.hasNext()) {
+            foundDiaptcher = true;
+            OMElement dispchter = (OMElement) dispatchers.next();
+            String clssName = dispchter.getAttribute(new QName(CLASSNAME)).getValue();
+            AbstractDispatcher disptachClas;
+            Class classInstance;
+            try {
+                classInstance = Class.forName(
+                        clssName,true,Thread.currentThread().getContextClassLoader());
+                disptachClas =(AbstractDispatcher)classInstance.newInstance();
+                disptachClas.initDispatcher();
+                disptachClas.getHandlerDesc().setParent(axisConfiguration);
+                dispatchPhae.addHandler(disptachClas, count);
+                count ++;
+            } catch (ClassNotFoundException e) {
+                throw new DeploymentException(e);
+            } catch (IllegalAccessException e) {
+                throw new DeploymentException(e);
+            } catch (InstantiationException e) {
+                throw new DeploymentException(e);
+            }
+        }
+
+        if(!foundDiaptcher){
+            throw new DeploymentException("No dispatcher found , can  not continue ....");
+        }  else {
+            ((AxisConfigurationImpl)axisConfiguration).setDispatchPhase(dispatchPhae);
+        }
+
     }
 
     private void processAxisStorage(OMElement storageElement) throws DeploymentException {
@@ -420,7 +465,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
     }
 
     protected void processModuleConfig(Iterator moduleConfigs ,
-                                              ParameterInclude parent, AxisConfiguration config)
+                                       ParameterInclude parent, AxisConfiguration config)
             throws DeploymentException {
         while (moduleConfigs.hasNext()) {
             OMElement moduleConfig = (OMElement) moduleConfigs.next();
@@ -434,7 +479,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                         new ModuleConfiguration(new QName(module),parent);
                 Iterator paramters=  moduleConfig.getChildrenWithName(new QName(PARAMETERST));
                 processParameters(paramters,moduleConfiguration,parent);
-               ((AxisConfigurationImpl)config).addModuleConfig(moduleConfiguration);
+                ((AxisConfigurationImpl)config).addModuleConfig(moduleConfiguration);
             }
         }
     }

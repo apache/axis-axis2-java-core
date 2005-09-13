@@ -43,7 +43,11 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
     /**
      * Constructor Dispatcher
      */
-    public SOAPMessageBodyBasedDispatcher() {
+//    public SOAPMessageBodyBasedDispatcher() {
+//        init(new HandlerDescription(NAME));
+//    }
+
+     public void initDispatcher() {
         init(new HandlerDescription(NAME));
     }
 

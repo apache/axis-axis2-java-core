@@ -118,6 +118,40 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         inPhasesUptoAndIncludingPostDispatch.add(
                 new Phase(PhaseMetadata.PHASE_PRE_DISPATCH));
 
+//        Phase dispatch = new Phase(PhaseMetadata.PHASE_DISPATCH);
+//        AddressingBasedDispatcher add_dispatch = new AddressingBasedDispatcher();
+//        add_dispatch.getHandlerDesc().setParent(this);
+//        dispatch.addHandler(add_dispatch, 0);
+//
+//        RequestURIBasedDispatcher uri_diaptch = new RequestURIBasedDispatcher();
+//        uri_diaptch.getHandlerDesc().setParent(this);
+//        dispatch.addHandler(uri_diaptch, 1);
+//
+//        SOAPActionBasedDispatcher soapActionBased_dispatch = new SOAPActionBasedDispatcher();
+//        soapActionBased_dispatch.getHandlerDesc().setParent(this);
+//        dispatch.addHandler(soapActionBased_dispatch, 2);
+//
+//        SOAPMessageBodyBasedDispatcher soapMessageBodybased_dispatch =
+//                new SOAPMessageBodyBasedDispatcher();
+//        soapMessageBodybased_dispatch.getHandlerDesc().setParent(this);
+//        dispatch.addHandler(soapMessageBodybased_dispatch, 3);
+//
+//        inPhasesUptoAndIncludingPostDispatch.add(dispatch);
+//
+//        Phase postDispatch = new Phase(PhaseMetadata.PHASE_POST_DISPATCH);
+//        DispatchingChecker dispatchingChecker = new DispatchingChecker();
+//        dispatchingChecker.getHandlerDesc().setParent(this);
+//
+//        postDispatch.addHandler(dispatchingChecker);
+//        inPhasesUptoAndIncludingPostDispatch.add(postDispatch);
+    }
+
+
+    /**
+     * setting the default dispatching order
+     */
+    public void setDefaultDispatchers(){
+
         Phase dispatch = new Phase(PhaseMetadata.PHASE_DISPATCH);
         AddressingBasedDispatcher add_dispatch = new AddressingBasedDispatcher();
         add_dispatch.getHandlerDesc().setParent(this);
@@ -148,6 +182,21 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
         postDispatch.addHandler(dispatchingChecker,0);
         postDispatch.addHandler(instanceDispatcher,1);
+        inPhasesUptoAndIncludingPostDispatch.add(postDispatch);
+    }
+
+
+    /**
+     * Setting the custom dispatching order
+     * @param dispatch
+     */
+    public void setDispatchPhase(Phase dispatch){
+        inPhasesUptoAndIncludingPostDispatch.add(dispatch);
+        Phase postDispatch = new Phase(PhaseMetadata.PHASE_POST_DISPATCH);
+        DispatchingChecker dispatchingChecker = new DispatchingChecker();
+        dispatchingChecker.getHandlerDesc().setParent(this);
+
+        postDispatch.addHandler(dispatchingChecker);
         inPhasesUptoAndIncludingPostDispatch.add(postDispatch);
     }
 

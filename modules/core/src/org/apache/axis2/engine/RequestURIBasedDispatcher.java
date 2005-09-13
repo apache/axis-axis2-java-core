@@ -38,12 +38,6 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
     QName serviceName = null;
     QName operationName = null;
 
-    /**
-     * Constructor Dispatcher
-     */
-    public RequestURIBasedDispatcher() {
-        init(new HandlerDescription(NAME));
-    }
 
     public OperationDescription findOperation(ServiceDescription service,
                                               MessageContext messageContext)
@@ -75,5 +69,9 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
             }
         }
         return null;
+    }
+
+    public void initDispatcher() {
+        init(new HandlerDescription(NAME));
     }
 }

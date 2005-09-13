@@ -32,7 +32,7 @@ import javax.xml.namespace.QName;
  * Axis2 service dispatching is model via a Chain of diapatchers, each trying to
  * Diaptach but let go without throwing a execption in case they fail.
  */
-public abstract class AbstractDispatcher extends AbstractHandler implements Handler {
+public abstract class AbstractDispatcher extends AbstractHandler {
     /**
      * Field NAME
      */
@@ -48,6 +48,9 @@ public abstract class AbstractDispatcher extends AbstractHandler implements Hand
     public AbstractDispatcher() {
         init(new HandlerDescription(NAME));
     }
+
+    //just to put the parent
+    public abstract void initDispatcher();
 
     /**
      * This is final, obivously not for overiding

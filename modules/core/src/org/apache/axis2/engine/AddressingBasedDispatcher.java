@@ -36,10 +36,13 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
             new QName("http://axis.ws.apache.org",
                     "AddressingBasedDispatcher");
 
-    public AddressingBasedDispatcher() {
+//    public AddressingBasedDispatcher() {
+//        init(new HandlerDescription(NAME));
+//    }
+
+    public void initDispatcher() {
         init(new HandlerDescription(NAME));
     }
-
     //TODO this logic needed to be improved, as the Dispatching is almost garentnee to fail
     public OperationDescription findOperation(ServiceDescription service,
                                               MessageContext messageContext)

@@ -31,6 +31,7 @@ public class PhaseRuleTest extends AbstractTestCase {
         //TODO fix me
         phaserul = new PhaseRuleTest("");
         axisSytem = new AxisConfigurationImpl();
+        ((AxisConfigurationImpl)axisSytem).setDefaultDispatchers();
         ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
 
         Handler han = null;//(Handler)Class.forName("org.apache.axis2.handlers.AbstractHandler",true, Thread.currentThread().getContextClassLoader()).newInstance();

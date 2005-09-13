@@ -47,6 +47,7 @@ public class EnginePausingTest extends TestCase {
         super(arg0);
         executedHandlers = new ArrayList();
         AxisConfiguration engineRegistry = new AxisConfigurationImpl();
+        ((AxisConfigurationImpl)engineRegistry).setDefaultDispatchers();
         engineContext = new ConfigurationContext(engineRegistry);
         transportOut = new TransportOutDescription(new QName("null"));
         transportOut.setSender(new CommonsHTTPTransportSender());
