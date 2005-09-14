@@ -19,9 +19,9 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
@@ -40,7 +40,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
                     + (UtilServer.TESTING_PORT)
-                    + "/axis/services/EchoXMLService");
+                    + "/axis2/services/EchoXMLService");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -75,7 +75,6 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
-        serviceContext = service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
 
     }
 
