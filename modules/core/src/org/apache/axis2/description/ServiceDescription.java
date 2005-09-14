@@ -29,7 +29,10 @@ import org.apache.wsdl.extensions.SOAPOperation;
 import org.apache.wsdl.impl.WSDLInterfaceImpl;
 import org.apache.wsdl.impl.WSDLServiceImpl;
 
-import javax.wsdl.*;
+import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
@@ -51,7 +54,7 @@ public class ServiceDescription
 
     private HashMap moduleConfigmap;
 
-    private  AxisConfiguration parent;
+    private  ServiceGroupDescription parent;
     //to store the wsdl definition , which is build at the deployment time
 
     //to keep the time that last update time of the service
@@ -581,10 +584,12 @@ public class ServiceDescription
      * @return
      */
     public ServiceContext findServiceContext(MessageContext msgContext) {
+        // TODO : Fix me. Can't look up a service context in the system context
+
         ServiceContext serviceContext = null;
-        if (null == msgContext.getServiceContextID()) {
+        if (null == msgContext.getServiceGroupContextId()) {
             serviceContext =
-                    new ServiceContext(this, msgContext.getSystemContext());
+                    new ServiceContext(this, msgContext.getServiceGroupContext());
             //TODO Once the ServiceContext is bound to an incomming serviceContext ID(like a cookie,reference Property) FIX this
             //			msgContext.getSystemContext().registerServiceContext(serviceContext.getServiceContextID(),
             // serviceContext);
@@ -771,11 +776,11 @@ public class ServiceDescription
      * To get the parent (which is AxisConfiguration in this case)
      * @return <code>AxisConfiguration</code>
      */
-    public AxisConfiguration getParent() {
+    public ServiceGroupDescription getParent() {
         return parent;
     }
 
-    public void setParent(AxisConfiguration parent) {
+    public void setParent(ServiceGroupDescription parent) {
         this.parent = parent;
     }
 
@@ -785,7 +790,7 @@ public class ServiceDescription
         boolean loscked = false;
 
         if (getParent() !=null) {
-            loscked =  getParent().isParamterLocked(paramterName);
+            loscked =  getParent().getAxisDescription().isParamterLocked(paramterName);
         }
         if(loscked){
             return true;

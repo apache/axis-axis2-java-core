@@ -19,7 +19,6 @@ package org.apache.axis2.context;
  */
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.storage.AxisStorage;
 import org.apache.axis2.util.UUIDGenerator;
@@ -144,16 +143,16 @@ public class ConfigurationContext extends AbstractContext {
         this.storage = storage;
     }
 
-    public ServiceContext createServiceContext(QName serviceName)
-            throws AxisFault {
-        ServiceDescription service = axisConfiguration.getService(serviceName);
-        if (service != null) {
-            return new ServiceContext(service, this);
-        } else {
-            throw new AxisFault(
-                    "Service not found service name = " + serviceName);
-        }
-    }
+//    public ServiceContext createServiceContext(QName serviceName)
+//            throws AxisFault {
+//        ServiceDescription service = axisConfiguration.getService(serviceName);
+//        if (service != null) {
+//            return new ServiceContext(service, this);
+//        } else {
+//            throw new AxisFault(
+//                    "Service not found service name = " + serviceName);
+//        }
+//    }
 
     /**
      * @return the Gloal ThradPool
@@ -200,18 +199,21 @@ public class ConfigurationContext extends AbstractContext {
      * @param messageContext
      * @return
      */
-    public ServiceGroupContext fillServiceContextAndServiceGroupContext(MessageContext messageContext) {
+    public ServiceGroupContext fillServiceContextAndServiceGroupContext(MessageContext messageContext) throws AxisFault {
         String serviceGroupContextId = messageContext.getServiceGroupContextId();
 
         ServiceGroupContext serviceGroupContext = null;
         ServiceContext serviceContext = null;
         if (!isNull(serviceGroupContextId) && serviceGroupContextMap.get(serviceGroupContextId) != null) {
+            // SGC is already there
             serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
+
+            // check service context is there or not
             serviceContext = serviceGroupContext.getServiceContext(messageContext.getServiceDescription().getName().
                     getLocalPart());
             if (serviceContext == null) {
-                serviceContext = messageContext.getServiceDescription().findServiceContext(messageContext);
-                serviceContext.setParent(serviceGroupContext);
+                serviceContext = new ServiceContext(messageContext.getServiceDescription(), serviceGroupContext);
+                serviceGroupContext.registerServiceContext(serviceContext);
             }
         } else {
             // either the key is null or no SGC is found from the give key
@@ -220,15 +222,24 @@ public class ConfigurationContext extends AbstractContext {
                 messageContext.setServiceGroupContextId(serviceGroupContextId);
             }
             serviceGroupContext = new ServiceGroupContext(this);
-            serviceGroupContextMap.put(serviceGroupContextId, serviceGroupContext);
-            serviceContext = messageContext.getServiceDescription().findServiceContext(messageContext);
-            serviceContext.setParent(serviceGroupContext);
+            this.registerServiceGroupContext(serviceGroupContext);
+            serviceContext = new ServiceContext(messageContext.getServiceDescription(), serviceGroupContext);
+            serviceGroupContext.registerServiceContext(serviceContext);
         }
 
+        // when you come here operation context MUST already been assigned to the message context
         messageContext.getOperationContext().setParent(serviceContext);
         messageContext.setServiceContext(serviceContext);
         messageContext.setServiceGroupContext(serviceGroupContext);
         return serviceGroupContext;
+    }
+
+    public void registerServiceGroupContext(ServiceGroupContext serviceGroupContext) {
+        String id = serviceGroupContext.getId();
+        if (serviceGroupContextMap.get(id) == null) {
+            serviceGroupContextMap.put(id, serviceGroupContext);
+            serviceGroupContext.setParent(this);
+        }
     }
 
     private boolean isNull(String string) {

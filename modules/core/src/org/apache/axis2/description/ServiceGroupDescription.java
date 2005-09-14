@@ -1,4 +1,12 @@
 package org.apache.axis2.description;
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.AxisEvent;
+import org.apache.axis2.phaseresolver.PhaseResolver;
+
+import javax.xml.namespace.QName;
+import java.util.HashMap;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -17,10 +25,46 @@ package org.apache.axis2.description;
 *
 */
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Sep 13, 2005
- * Time: 9:53:55 AM
- */
 public class ServiceGroupDescription {
+    private final HashMap services = new HashMap();
+    private AxisConfiguration axisDescription;
+
+
+    public ServiceGroupDescription(AxisConfiguration axisDescription) {
+        this.axisDescription = axisDescription;
+    }
+
+    public synchronized void addService(ServiceDescription service) throws AxisFault {
+        services.put(service.getName(), service);
+        PhaseResolver handlerResolver = new PhaseResolver(this.axisDescription, service);
+        handlerResolver.buildchains();
+        service.setLastupdate();
+        this.axisDescription.notifyObservers(AxisEvent.SERVICE_DEPLOY ,service);
+        service.setParent(this);
+    }
+
+    public AxisConfiguration getAxisDescription() {
+        return axisDescription;
+    }
+
+    public void setAxisDescription(AxisConfiguration axisDescription) {
+        this.axisDescription = axisDescription;
+    }
+
+    public ServiceDescription getService(QName name) throws AxisFault {
+        return (ServiceDescription) services.get(name);
+    }
+
+    public HashMap getServices() {
+        return services;
+    }
+
+
+    public synchronized void removeService(QName name) throws AxisFault {
+        ServiceDescription service = getService(name);
+        if (service != null) {
+            this.axisDescription.notifyObservers(AxisEvent.SERVICE_DEPLOY , service);
+        }
+        services.remove(name);
+    }
 }

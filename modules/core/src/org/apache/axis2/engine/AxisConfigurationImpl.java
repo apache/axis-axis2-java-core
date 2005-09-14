@@ -202,7 +202,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     /**
      * Method getServices
      *
-     * @return
      */
     public HashMap getServices() {
         return services;
@@ -233,56 +232,28 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @param service
      * @throws AxisFault
      */
-    public synchronized void addService(ServiceDescription service) throws AxisFault {
-        services.put(service.getName(), service);
-        PhaseResolver handlerResolver = new PhaseResolver(this, service);
-        handlerResolver.buildchains();
-        service.setLastupdate();
-        notifyObserves(AxisEvent.SERVICE_DEPLOY ,service);
-        service.setParent(this);
-    }
+//    public synchronized void addService(ServiceDescription service) throws AxisFault {
+//        services.put(service.getName(), service);
+//        PhaseResolver handlerResolver = new PhaseResolver(this, service);
+//        handlerResolver.buildchains();
+//        service.setLastupdate();
+//        notifyObservers(AxisEvent.SERVICE_DEPLOY ,service);
+//        service.setParent(this);
+//    }
 
     /**
      * Method getModule
      *
      * @param name
-     * @return
      */
     public ModuleDescription getModule(QName name) {
         return (ModuleDescription) modules.get(name);
     }
 
     /**
-     * @return
      */
     public HashMap getModules() {
         return modules;
-    }
-
-
-    /**
-     * Method getService
-     *
-     * @param name
-     * @return
-     * @throws AxisFault
-     */
-    public ServiceDescription getService(QName name) throws AxisFault {
-        return (ServiceDescription) services.get(name);
-    }
-
-    /**
-     * Method removeService
-     *
-     * @param name
-     * @throws AxisFault
-     */
-    public synchronized void removeService(QName name) throws AxisFault {
-        ServiceDescription service = getService(name);
-        if (service != null) {
-            notifyObserves(AxisEvent.SERVICE_DEPLOY , service);
-        }
-        services.remove(name);
     }
 
 
@@ -367,14 +338,12 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
 
     /**
-     * @return
      */
     public ArrayList getInFaultFlow() {
         return inFaultPhases;
     }
 
     /**
-     * @return
      */
     public ArrayList getOutFaultFlow() {
         return outFaultPhases;
@@ -409,7 +378,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * Method getParameter
      *
      * @param name
-     * @return
      */
     public Parameter getParameter(String name) {
         return paramInclude.getParameter(name);
@@ -435,7 +403,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     /**
      * Method getEngadgedModules
      *
-     * @return
      */
     public Collection getEngadgedModules() {
         return engagedModules;
@@ -499,7 +466,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         this.axis2Repository = axis2Repository;
     }
 
-    private void notifyObserves(int event_type , ServiceDescription service){
+    public void notifyObservers(int event_type , ServiceDescription service){
         AxisEvent event = new AxisEvent(service,event_type);
         for (int i = 0; i < observersList.size(); i++) {
             AxisObserver axisObserver = (AxisObserver) observersList.get(i);

@@ -34,8 +34,8 @@ public class ServiceContext extends AbstractContext {
 
     public ServiceContext(
         ServiceDescription serviceConfig,
-        ConfigurationContext engineContext) {
-        super(engineContext);
+        ServiceGroupContext serviceGroupContext) {
+        super(serviceGroupContext);
         this.serviceConfig = serviceConfig;
 
     }

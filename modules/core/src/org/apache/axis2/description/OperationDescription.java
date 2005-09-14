@@ -227,13 +227,7 @@ public class OperationDescription extends WSDLOperationImpl implements
         OperationContext operationContext = null;
 
         if (null == msgContext.getRelatesTo()) {
-//            //Its a new incomming message so get the factory to create a new
-//            // one
-//            operationContext =
-//                    OperationContextFactory.createOperationContext(
-//                            getAxisSpecifMEPConstant(), this);
             return null;
-
         } else {
             // So this message is part of an ongoing MEP
             //			operationContext =

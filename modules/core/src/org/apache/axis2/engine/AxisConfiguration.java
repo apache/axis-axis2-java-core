@@ -49,29 +49,12 @@ public interface AxisConfiguration extends ParameterInclude {
     public static final int FAULT_OUT_FLOW = 10006;
 
     /**
-     * Method getService
-     *
-     * @param name
-     * @return
-     * @throws AxisFault
-     */
-    public ServiceDescription getService(QName name) throws AxisFault;
-
-    /**
-     * Method addService
-     *
-     * @param service
-     * @throws AxisFault
-     */
-    public void addService(ServiceDescription service) throws AxisFault;
-
-    /**
      * Method removeService
      *
      * @param name
      * @throws AxisFault
      */
-    public void removeService(QName name) throws AxisFault;
+//    public void removeService(QName name) throws AxisFault;
 
     /**
      * Modules is read only as they can not deployed while runing
@@ -112,7 +95,7 @@ public interface AxisConfiguration extends ParameterInclude {
      *
      * @return
      */
-    public HashMap getServices();
+//    public HashMap getServices();
 
     public Hashtable getFaultyServices();
 
@@ -139,4 +122,6 @@ public interface AxisConfiguration extends ParameterInclude {
     public boolean isParamterLocked(String paramterName);
 
     public ServiceGroupDescription getServiceGroup(String serviceNameAndGroupString);
+
+    public void notifyObservers(int event_type , ServiceDescription service);
 }

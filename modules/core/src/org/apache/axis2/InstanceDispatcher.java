@@ -44,6 +44,7 @@ public class InstanceDispatcher extends AbstractHandler {
         //  1. look up opCtxt using mc.addressingHeaders.relatesTo[0]
         OperationContext operationContext = operationDesc.findForExistingOperationContext(msgContext);
         if (operationContext != null) {
+            // register operation context and message context
             operationDesc.registerOperationContext(msgContext, operationContext);
             ServiceContext serviceContext = (ServiceContext) operationContext.getParent();
             ServiceGroupContext serviceGroupContext = (ServiceGroupContext) serviceContext.getParent();

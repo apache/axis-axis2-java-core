@@ -1,5 +1,7 @@
 package org.apache.axis2.context;
 
+import org.apache.axis2.AxisFault;
+
 import java.util.HashMap;
 import java.util.Map;
 /*
@@ -22,14 +24,14 @@ import java.util.Map;
 
 /**
  * Author: Deepal Jayasinghe
- *       : Eran Chinthaka
+ * : Eran Chinthaka
  */
-public class ServiceGroupContext extends AbstractContext{
+public class ServiceGroupContext extends AbstractContext {
 
     private String id;
     private Map serviceContextMap;
 
-    protected ServiceGroupContext(AbstractContext parent) {
+    public ServiceGroupContext(ConfigurationContext parent) {
         super(parent);
         serviceContextMap = new HashMap();
     }
@@ -42,7 +44,17 @@ public class ServiceGroupContext extends AbstractContext{
         this.id = id;
     }
 
-    public ServiceContext getServiceContext(String serviceName){
+    public ServiceContext getServiceContext(String serviceName) {
         return (ServiceContext) serviceContextMap.get(serviceName);
+    }
+
+    public void registerServiceContext(ServiceContext serviceContext) throws AxisFault {
+        String serviceName = serviceContext.getServiceConfig().
+                getName().getLocalPart();
+        ServiceContext serviceContextAlreadyRegistered = (ServiceContext) serviceContextMap.get(serviceName);
+        if (serviceContextAlreadyRegistered == null) {
+            serviceContextMap.put(serviceName, serviceContext);
+            serviceContext.setParent(this);
+        }
     }
 }
