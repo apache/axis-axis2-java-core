@@ -29,22 +29,10 @@ public class MessageReceiverWriter extends ClassWriter {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
-    public MessageReceiverWriter(File outputFileLocation, int language) {
+    public MessageReceiverWriter(File outputFileLocation, String language) {
         this.outputFileLocation = outputFileLocation;
         this.language = language;
     }
 
-    public void loadTemplate() {
-        Class clazz = this.getClass();
-        switch (language) {
-            case XSLTConstants.LanguageTypes.JAVA:
-                this.xsltStream =
-                        clazz.getResourceAsStream(
-                                XSLTConstants.XSLTMessageReceiverTemplates.JAVA_TEMPLATE);
-                break;
-            default:
-                throw new UnsupportedOperationException();
-        }
-    }
-
+    
 }

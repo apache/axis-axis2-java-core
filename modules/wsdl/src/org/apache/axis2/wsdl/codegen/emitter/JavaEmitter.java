@@ -24,6 +24,9 @@ import org.apache.axis2.wsdl.databinding.TypeMapper;
 
 public class JavaEmitter extends MultiLanguageClientEmitter {
 
+    public JavaEmitter() {
+    }
+
     /**
      * @param configuration
      */

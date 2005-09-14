@@ -30,7 +30,7 @@ public class TestServiceXMLWriter extends ServiceXMLWriter {
         super(outputFileLocation);
     }
 
-    public TestServiceXMLWriter(File outputFileLocation, int language) {
+    public TestServiceXMLWriter(File outputFileLocation, String language) {
         super(outputFileLocation, language);
     }
 

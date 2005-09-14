@@ -29,30 +29,10 @@ public class CallbackHandlerWriter extends ClassWriter {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
-    public CallbackHandlerWriter(File outputFileLocation, int language) {
+    public CallbackHandlerWriter(File outputFileLocation, String language) {
         this.outputFileLocation = outputFileLocation;
         this.language = language;
     }
 
-    public void loadTemplate() {
-        Class clazz = this.getClass();
-        switch (language) {
-            case XSLTConstants.LanguageTypes.JAVA:
-                this.xsltStream =
-                        clazz.getResourceAsStream(
-                                XSLTConstants.XSLTCallbackHandlerTemplates.JAVA_TEMPLATE);
-                break;
-            case XSLTConstants.LanguageTypes.C_SHARP:
-                this.xsltStream =
-                        clazz.getResourceAsStream(
-                                XSLTConstants.XSLTCallbackHandlerTemplates.CSHARP_TEMPLATE);
-                break;
-            case XSLTConstants.LanguageTypes.C_PLUS_PLUS:
-            case XSLTConstants.LanguageTypes.VB_DOT_NET:
-            default:
-                throw new UnsupportedOperationException();
-        }
-
-    }
-
+    
 }

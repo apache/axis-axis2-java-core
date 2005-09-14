@@ -28,28 +28,10 @@ public class TestClassWriter extends ClassWriter {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
-    public TestClassWriter(File outputFileLocation, int language) {
+    public TestClassWriter(File outputFileLocation, String language) {
         this.outputFileLocation = outputFileLocation;
         this.language = language;
     }
 
-    public void loadTemplate() {
-        Class clazz = this.getClass();
-        switch (language) {
-            case XSLTConstants.LanguageTypes.JAVA:
-                this.xsltStream =
-                        clazz.getResourceAsStream(
-                                XSLTConstants.XSLTTestClassTemplates.JAVA_TEMPLATE);
-                break;
-            case XSLTConstants.LanguageTypes.C_SHARP:
-                this.xsltStream =
-                        clazz.getResourceAsStream(
-                                XSLTConstants.XSLTTestClassTemplates.CSHARP_TEMPLATE);
-                break;
-            case XSLTConstants.LanguageTypes.C_PLUS_PLUS:
-            case XSLTConstants.LanguageTypes.VB_DOT_NET:
-            default:
-                throw new UnsupportedOperationException();
-        }
-    }
+    
 }

@@ -1,6 +1,5 @@
 package org.apache.axis2.wsdl.util;
 
-import org.apache.axis2.wsdl.codegen.XSLTConstants;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,55 +68,5 @@ public class FileWriter {
         return returnFile;
     }
 
-    /**
-     * Creates/ returns a file object
-     *
-     * @param rootLocation - Location to be written
-     * @param packageName  - package, can be '.' seperated
-     * @param fileName     name of the file
-     * @param fileType     type of the file, java, csharp, cpp etc. Guesses the extension with the
-     *                     file type
-     * @return the File that was created
-     * @throws IOException
-     * @throws Exception
-     */
-    public static File createClassFile(File rootLocation,
-                                       String packageName,
-                                       String fileName,
-                                       int fileType) throws IOException,
-            Exception {
-        return createClassFile(rootLocation,
-                packageName,
-                fileName,
-                getExtension(fileType));
-
-    }
-
-    /**
-     * Find the extension for a given file type
-     *
-     * @param fileType
-     * @return
-     */
-    private static String getExtension(int fileType) {
-        String extension = "";
-        switch (fileType) {
-            case XSLTConstants.LanguageTypes.JAVA:
-                extension = ".java";
-                break;
-            case XSLTConstants.LanguageTypes.C_SHARP:
-                extension = ".cs";
-                break;
-            case XSLTConstants.LanguageTypes.C_PLUS_PLUS:
-                extension = ".cpp";
-                break;
-            case XSLTConstants.LanguageTypes.VB_DOT_NET:
-                extension = ".vb";
-                break;
-            default:
-                extension = ".xml";
-        }
-        return extension;
-    }
 
 }

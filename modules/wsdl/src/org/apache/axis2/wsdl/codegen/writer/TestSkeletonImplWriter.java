@@ -29,22 +29,11 @@ public class TestSkeletonImplWriter extends ClassWriter {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
-    public TestSkeletonImplWriter(File outputFileLocation, int language) {
+    public TestSkeletonImplWriter(File outputFileLocation, String language) {
         this.outputFileLocation = outputFileLocation;
         this.language = language;
     }
 
-    public void loadTemplate() {
-        Class clazz = this.getClass();
-        switch (language) {
-            case XSLTConstants.LanguageTypes.JAVA:
-                this.xsltStream =
-                        clazz.getResourceAsStream(
-                                XSLTConstants.XSLTTestSkeletonImplTemplates.JAVA_TEMPLATE);
-                break;
-            default:
-                throw new UnsupportedOperationException();
-        }
-    }
+   
 
 }

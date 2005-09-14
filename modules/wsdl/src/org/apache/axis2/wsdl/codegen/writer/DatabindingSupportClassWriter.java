@@ -3,6 +3,8 @@ package org.apache.axis2.wsdl.codegen.writer;
 import org.apache.axis2.wsdl.codegen.XSLTConstants;
 
 import java.io.File;
+import java.util.Map;
+import java.util.Iterator;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -31,7 +33,7 @@ public class DatabindingSupportClassWriter extends ClassWriter {
     }
 
     public DatabindingSupportClassWriter(File outputFileLocation,
-                                         int language,
+                                         String language,
                                          int databindingFramework) {
         this.outputFileLocation = outputFileLocation;
         this.language = language;
@@ -42,31 +44,44 @@ public class DatabindingSupportClassWriter extends ClassWriter {
         this.databindingFramework = databindingFramework;
     }
 
-    public void loadTemplate() {
-        Class clazz = this.getClass();
-        if ( XSLTConstants.DataBindingTypes.XML_BEANS ==
-                this.databindingFramework) {
-            switch (language) {
-                case XSLTConstants.LanguageTypes.JAVA:
-                    this.xsltStream =
-                            clazz.getResourceAsStream(
-                                    XSLTConstants.XSLTDatabindingSupporterTemplates.JAVA_TEMPLATE);
-                    break;
-                case XSLTConstants.LanguageTypes.C_SHARP:
-                case XSLTConstants.LanguageTypes.C_PLUS_PLUS:
-                case XSLTConstants.LanguageTypes.VB_DOT_NET:
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        } else if (XSLTConstants.DataBindingTypes.JAXB ==
-        	this.databindingFramework) {
-        	this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTDatabindingSupporterTemplates.JAXB_TEMPLATE);
-        } else if (XSLTConstants.DataBindingTypes.NONE ==
-                this.databindingFramework) {
-             this.xsltStream = clazz.getResourceAsStream(XSLTConstants.XSLTDatabindingSupporterTemplates.DEFAULT_TEMPLATE);
-        }else{
-            throw new UnsupportedOperationException(
-                    "Unsupported Data binding Framework!");
+    //overridden to get the correct behavior
+    protected String findTemplate(Map languageSpecificPropertyMap) {
+        String ownClazzName =  this.getClass().getName();
+        String key;
+        String propertyValue;
+        String templateName = null;
+        Iterator keys = languageSpecificPropertyMap.keySet().iterator();
+        String databindString;
+        
+        //set the correct databinding type string
+        switch(this.databindingFramework)  {
+            case XSLTConstants.DataBindingTypes.XML_BEANS:
+                databindString = "xmlbeans";
+                break;
+            case XSLTConstants.DataBindingTypes.JAXB:
+                databindString = "jaxb";
+                break;
+            default:
+                databindString = "default";
         }
+
+        while (keys.hasNext()) {
+            //check for template entries
+            key = keys.next().toString();
+            if (key.endsWith(TEMPLATE_SUFFIX)){
+                // check if the class name is there
+                propertyValue = languageSpecificPropertyMap.get(key).toString();
+                if (propertyValue.startsWith(ownClazzName)){
+                    if (key.indexOf(databindString)!=-1){
+                        templateName = propertyValue.substring(propertyValue.indexOf(SEPERATOR_STRING)+1) ;
+                        break;
+                    }
+                }
+            }
+
+        }
+
+        return templateName;
+
     }
 }

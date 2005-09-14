@@ -29,6 +29,7 @@ import javax.wsdl.WSDLException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author chathura@opensource.lk
@@ -40,10 +41,10 @@ public class CodeGenerationEngine {
     private CodeGenConfiguration configuration;
 
     public CodeGenerationEngine(CodeGenConfiguration config) throws CodeGenerationException{
-       this.configuration = config;
-       loadExtensions();
+        this.configuration = config;
+        loadExtensions();
     }
-    
+
     public CodeGenerationEngine(CommandLineOptionParser parser) throws CodeGenerationException {
         WSDLDescription wom;
         try {
@@ -59,23 +60,12 @@ public class CodeGenerationEngine {
     }
 
     private void loadExtensions() throws CodeGenerationException{
-        try {
-            String[] extensions = ConfigPropertyFileLoader.getExtensionClassNames();
-            Class extensionClass;
-            for (int i = 0; i < extensions.length; i++) {
-                //load the Extension class
-                extensionClass = this.getClass().getClassLoader().loadClass(extensions[i]);
-                addExtension((CodeGenExtension)extensionClass.newInstance());
 
-            }
-        } catch (ClassNotFoundException e) {
-            throw new CodeGenerationException("Extension class loading problem",e);
-        } catch (InstantiationException e) {
-            throw new CodeGenerationException("Extension class instantiation problem",e);
-        } catch (IllegalAccessException e) {
-            throw new CodeGenerationException("Illegal extension!",e);
-        } catch (Exception e) {
-            throw new CodeGenerationException(e);
+        String[] extensions = ConfigPropertyFileLoader.getExtensionClassNames();
+        for (int i = 0; i < extensions.length; i++) {
+            //load the Extension class
+            addExtension((CodeGenExtension)getObjectFromClassName(extensions[i]));
+
         }
 
     }
@@ -90,27 +80,31 @@ public class CodeGenerationEngine {
                 ((CodeGenExtension) this.moduleEndpoints.get(i)).engage();
             }
 
-            Emitter emitter = null;
+            Emitter emitter;
             TypeMapper mapper = configuration.getTypeMapper();
 
-            switch (configuration.getOutputLanguage()) {
-                case XSLTConstants.LanguageTypes.JAVA:
-                    emitter = new JavaEmitter(this.configuration, mapper);
-                    break;
-                case XSLTConstants.LanguageTypes.C_SHARP:
-                    emitter = new CSharpEmitter(this.configuration, mapper);
-                    break;
-                case XSLTConstants.LanguageTypes.C_PLUS_PLUS:
-                case XSLTConstants.LanguageTypes.VB_DOT_NET:
+            Map emitterMap = ConfigPropertyFileLoader.getLanguageEmitterMap();
+            String className = emitterMap.get(this.configuration.getOutputLanguage()).toString();
+            if (className!=null){
+                
+                emitter = (Emitter)getObjectFromClassName(className);
+                emitter.setCodeGenConfiguration(this.configuration);
+                emitter.setMapper(mapper);
 
-                default:
-                    throw new UnsupportedOperationException();
-
+            }else{
+                throw new Exception("Emitter class not found!");
             }
-            if (this.configuration.isServerSide())
+
+
+            if (this.configuration.isServerSide()){
                 emitter.emitSkeleton();
-            else
+            }else{
                 emitter.emitStub();
+            }
+
+        } catch (ClassCastException e) {
+            throw new CodeGenerationException("Non emitter class found!",e);
+
         } catch (Exception e) {
             throw new CodeGenerationException(e);
         }
@@ -128,4 +122,24 @@ public class CodeGenerationEngine {
     }
 
 
+    /**
+     * gets a object from the class
+     * @param className
+     * @return
+     */
+    private Object getObjectFromClassName(String className) throws CodeGenerationException{
+        try {
+            Class extensionClass = this.getClass().getClassLoader().loadClass(className);
+            return extensionClass.newInstance();
+        } catch (ClassNotFoundException e) {
+            throw new CodeGenerationException("Extension class loading problem",e);
+        } catch (InstantiationException e) {
+            throw new CodeGenerationException("Extension class instantiation problem",e);
+        } catch (IllegalAccessException e) {
+            throw new CodeGenerationException("Illegal extension!",e);
+        } catch (Exception e) {
+            throw new CodeGenerationException(e);
+        }
+
+    }
 }

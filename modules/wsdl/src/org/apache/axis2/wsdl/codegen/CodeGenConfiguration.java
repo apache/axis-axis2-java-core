@@ -17,6 +17,7 @@
 package org.apache.axis2.wsdl.codegen;
 
 import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.wsdl.WSDLDescription;
 
 import java.io.File;
@@ -31,7 +32,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private WSDLDescription wom;
     private CommandLineOptionParser parser;
     private File outputLocation;
-    private int outputLanguage = XSLTConstants.LanguageTypes.JAVA;
+    private String outputLanguage = ConfigPropertyFileLoader.getDefaultLanguage();
     private int databindingType = XSLTConstants.DataBindingTypes.XML_BEANS; //default is XML beans
     private boolean advancedCodeGenEnabled = false;
 
@@ -153,8 +154,9 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
         CommandLineOption langOption = (CommandLineOption) optionMap.get(
                 STUB_LANGUAGE_OPTION);
+        //The language here
         if (langOption != null) {
-            loadLanguge(langOption.getOptionValue());
+            outputLanguage = langOption.getOptionValue();
         }
 
 // Unused code commented out by gdaniels...
@@ -166,17 +168,17 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
 
-    private void loadLanguge(String langName) {
-        if (LanguageNames.JAVA.equalsIgnoreCase(langName)) {
-            this.outputLanguage = XSLTConstants.LanguageTypes.JAVA;
-        } else if (LanguageNames.C_SHARP.equalsIgnoreCase(langName)) {
-            this.outputLanguage = XSLTConstants.LanguageTypes.C_SHARP;
-        } else if (LanguageNames.C_PLUS_PLUS.equalsIgnoreCase(langName)) {
-            this.outputLanguage = XSLTConstants.LanguageTypes.C_PLUS_PLUS;
-        } else if (LanguageNames.VB_DOT_NET.equalsIgnoreCase(langName)) {
-            this.outputLanguage = XSLTConstants.LanguageTypes.VB_DOT_NET;
-        }
-    }
+//    private void loadLanguge(String langName) {
+//        if (LanguageNames.JAVA.equalsIgnoreCase(langName)) {
+//            this.outputLanguage = XSLTConstants.LanguageTypes.JAVA;
+//        } else if (LanguageNames.C_SHARP.equalsIgnoreCase(langName)) {
+//            this.outputLanguage = XSLTConstants.LanguageTypes.C_SHARP;
+//        } else if (LanguageNames.C_PLUS_PLUS.equalsIgnoreCase(langName)) {
+//            this.outputLanguage = XSLTConstants.LanguageTypes.C_PLUS_PLUS;
+//        } else if (LanguageNames.VB_DOT_NET.equalsIgnoreCase(langName)) {
+//            this.outputLanguage = XSLTConstants.LanguageTypes.VB_DOT_NET;
+//        }
+//    }
 
     /**
      * @return Returns the parser.
@@ -200,7 +202,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         return outputLocation;
     }
 
-    public int getOutputLanguage() {
+    public String getOutputLanguage() {
         return outputLanguage;
     }
 
