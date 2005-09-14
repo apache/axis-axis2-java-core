@@ -20,15 +20,20 @@ import org.apache.axis2.deployment.*;
 import org.apache.axis2.description.AxisDescWSDLComponentFactory;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.ServiceGroupDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis2.om.OMElement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.impl.WSDLServiceImpl;
 
+import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
@@ -90,6 +95,84 @@ public class ArchiveReader implements DeploymentConstants {
         return service;
     }
 
+
+    private void processWSDLFile(InputStream in , DeploymentEngine depengine) throws DeploymentException {
+        try {
+            WOMBuilder builder = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11);
+            WSDLVersionWrapper wsdlVersionWrapper = builder.build(in,
+                    new AxisDescWSDLComponentFactory());
+            WSDLDescription womDescription = wsdlVersionWrapper.getDescription();
+            Iterator iterator = womDescription.getServices().keySet()
+                    .iterator();
+            if (iterator.hasNext()) {
+                // remove <wsdl:service> and <wsdl:binding> elements from the service
+                // description we read in as we will be replacing them anyway.
+                WSDLServiceImpl serviceimpl = (WSDLServiceImpl)
+                        womDescription.getServices().get(iterator.next());
+                ServiceDescription service = new ServiceDescription(serviceimpl);
+                service.setName(serviceimpl.getName());
+                service.setWSDLDefinition(wsdlVersionWrapper.getDefinition());
+                depengine.getCurrentFileItem().addService(service);
+            }
+        } catch (WSDLException e) {
+            throw new DeploymentException(e);
+        }
+    }
+
+    /**
+     * To create service objects out form wsdls file inside a service archive file
+     * @param file <code>ArchiveFileData</code>
+     * @param depengine <code>DeploymentEngine</code>
+     * @throws DeploymentException  <code>DeploymentException</code>
+     */
+    public void processWSDLs(ArchiveFileData file , DeploymentEngine depengine) throws DeploymentException {
+        File serviceFile = file.getFile();
+        boolean isDirectory = serviceFile.isDirectory();
+        if(isDirectory){
+            try {
+                File meta_inf = new File(serviceFile,META_INF);
+                if(meta_inf.exists()){
+                    File files [] = meta_inf.listFiles();
+                    for (int i = 0; i < files.length; i++) {
+                        File file1 = files[i];
+                        String fileName = file1.getName();
+                        if(fileName.endsWith(".wsdl") || fileName.endsWith(".WSDL")){
+                            InputStream in = new FileInputStream(file1);
+                            processWSDLFile(in,depengine);
+                            in.close();
+                        }
+                    }
+                } else {
+                    throw new DeploymentException("In valid service META-INF file not found");
+                }
+            } catch (FileNotFoundException e) {
+                throw new DeploymentException(e);
+            } catch (IOException e) {
+                throw new DeploymentException(e);
+            }
+        }   else {
+
+            ZipInputStream zin;
+            try {
+                zin = new ZipInputStream(new FileInputStream(serviceFile));
+                ZipEntry entry;
+                while ((entry = zin.getNextEntry()) != null) {
+                    String entryName = entry.getName();
+                    if (entryName.startsWith(META_INF) && (entryName.endsWith(".wsdl")
+                            || entryName.endsWith(".WSDL"))) {
+                        processWSDLFile(zin,depengine);
+                    }
+                }
+                zin.close();
+            } catch (FileNotFoundException e) {
+                throw new DeploymentException(e);
+            } catch (IOException e) {
+                throw new DeploymentException(e);
+            }
+        }
+
+    }
+
     /**
      * This method will readServiceArchive the given jar or aar.
      * it take two arguments filename and refereance to DeployEngine
@@ -97,12 +180,12 @@ public class ArchiveReader implements DeploymentConstants {
      * @param filename
      * @param engine
      */
-    public void processServiceDescriptor(String filename,
-                                         DeploymentEngine engine,
-                                         ServiceDescription service, boolean extarctService) throws DeploymentException {
+    public void processServiceGroup(String filename,
+                                    DeploymentEngine engine,
+                                    ServiceGroupDescription serviceGroupDesc, boolean extarctService)
+            throws DeploymentException {
         // get attribute values
         boolean foundServiceXML = false;
-        ServiceBuilder builder;
         if (! extarctService) {
             ZipInputStream zin;
             try {
@@ -111,9 +194,7 @@ public class ArchiveReader implements DeploymentConstants {
                 while ((entry = zin.getNextEntry()) != null) {
                     if (entry.getName().equals(SERVICEXML)) {
                         foundServiceXML = true;
-                        builder = new ServiceBuilder(zin, engine, service);
-                        builder.populateService();
-                        break;
+                        buildServiceGroup(zin, engine, serviceGroupDesc);
                     }
                 }
                 zin.close();
@@ -130,11 +211,11 @@ public class ArchiveReader implements DeploymentConstants {
                 InputStream in = null;
                 try {
                     in = new FileInputStream(file);
-                    builder = new ServiceBuilder(in, engine, service);
-                    builder.populateService();
-
+                    buildServiceGroup(in,engine,serviceGroupDesc);
                 } catch (FileNotFoundException e) {
                     throw new DeploymentException("FileNotFound : " + e);
+                } catch (XMLStreamException e) {
+                    throw new DeploymentException("XMLStreamException : " + e);
                 } finally {
                     try {
                         if (in != null) {
@@ -148,6 +229,36 @@ public class ArchiveReader implements DeploymentConstants {
                 throw new DeploymentException(
                         Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND));
             }
+        }
+    }
+
+    private void buildServiceGroup(InputStream zin, DeploymentEngine engine,
+                                   ServiceGroupDescription serviceGroupDesc)
+            throws XMLStreamException, DeploymentException {
+        DescriptionBuilder builder;
+        String rootelementName;
+        builder = new DescriptionBuilder(zin, engine);
+        OMElement services = builder.buildOM();
+        rootelementName = services.getLocalName();
+        if(SERVICE_ELEMENT.equals(rootelementName)){
+            ServiceDescription serviceDesc = engine.getCurrentFileItem().
+                    getService(new QName(builder.getShortFileName(
+                            engine.getCurrentFileItem().getName())));
+            if(serviceDesc == null){
+                serviceDesc = new ServiceDescription(
+                        new QName(builder.getShortFileName(
+                                engine.getCurrentFileItem().getName())));
+                engine.getCurrentFileItem().addService(serviceDesc);
+            }
+            serviceDesc.setParent(serviceGroupDesc);
+            serviceDesc.setClassLoader(engine.getCurrentFileItem().getClassLoader());
+            ServiceBuilder serviceBuilder = new ServiceBuilder(engine,serviceDesc);
+            serviceBuilder.populateService(services);
+            //todo fix me deepal
+            //serviceGroupDesc.addService(serviceDesc);
+        } else if(SERVICE_GROUP_ELEMENT.equals(rootelementName)){
+            ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(services,engine);
+            groupBuilder.populateServiceGroup(serviceGroupDesc);
         }
     }
 

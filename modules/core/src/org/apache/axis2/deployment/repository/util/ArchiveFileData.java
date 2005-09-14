@@ -17,6 +17,7 @@
 package org.apache.axis2.deployment.repository.util;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.deployment.DeploymentClassLoader;
 
 import javax.xml.namespace.QName;
@@ -25,6 +26,7 @@ import java.net.URL;
 import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * ArchiveFileData = Hot Deployment File Item , to store infromation of the module or servise
@@ -39,8 +41,11 @@ public class ArchiveFileData {
     private String moduleClass;
     private String name;
 
-    private ArrayList modules = new ArrayList();
 
+    //To store services in a serviceGroup , if there are wsdl for those servics ,
+    //so wsdl service will be created for each wsdl an those will be temeororaly store
+    //in this table
+    private HashMap service = new HashMap();
 
     public ArchiveFileData(int type, String name) {
         this.type = type;
@@ -165,15 +170,6 @@ public class ArchiveFileData {
 
     }
 
-    public void addModule(QName moduleName) {
-        modules.add(moduleName);
-    }
-
-    public ArrayList getModules() {
-        return modules;
-    }
-
-
     /**
      * to check whthere a given file is  a  jar file
      *
@@ -187,4 +183,18 @@ public class ArchiveFileData {
     public static  boolean isModuleArchiveFile(String filename) {
         return ((filename.endsWith(".jar")) || (filename.endsWith(".mar")));
     }
+
+
+    public void addService(ServiceDescription servicedesc){
+        service.put(servicedesc.getName(),servicedesc);
+    }
+
+    public ServiceDescription getService(QName serviceName){
+        return (ServiceDescription)service.get(serviceName);
+    }
+
+    public HashMap getService() {
+        return service;
+    }
+
 }

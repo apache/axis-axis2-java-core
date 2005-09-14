@@ -73,6 +73,9 @@ public class ServiceDescription
 
     private HashMap wasaction_opeartionmap = null;
 
+    //to store module ref at deploy time parsing
+    private ArrayList mdoulesList = new ArrayList();
+
     /**
      * Constructor ServiceDescription
      */
@@ -812,6 +815,15 @@ public class ServiceDescription
 
     public ModuleConfiguration getModuleConfig(QName moduleName){
         return  (ModuleConfiguration)moduleConfigmap.get(moduleName);
+    }
+
+
+    public void addModuleref(QName moduleref){
+        mdoulesList.add(moduleref);
+    }
+
+    public ArrayList getModules(){
+        return mdoulesList;
     }
 
 }

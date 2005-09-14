@@ -56,13 +56,16 @@ public class DescriptionBuilder implements DeploymentConstants{
         this.engine = engine;
     }
 
+    public DescriptionBuilder() {
+    }
+
     /**
      * This will creat OMElemnt for a given service.xml
      *
      * @return OMElement <code>OMElement</code>
      * @throws javax.xml.stream.XMLStreamException
      */
-    protected OMElement buildOM() throws XMLStreamException {
+    public OMElement buildOM() throws XMLStreamException {
         XMLStreamReader xmlReader =
                 XMLInputFactory.newInstance().createXMLStreamReader(serviceInputSteram);
         OMFactory fac = OMAbstractFactory.getOMFactory();
@@ -169,26 +172,26 @@ public class DescriptionBuilder implements DeploymentConstants{
      * @param moduleRefs  <code>java.util.Iterator</code>
      * @throws DeploymentException   <code>DeploymentException</code>
      */
-    protected void processModuleRefs(Iterator moduleRefs) throws DeploymentException {
-        try {
-            while (moduleRefs.hasNext()) {
-                OMElement moduleref = (OMElement) moduleRefs.next();
-                OMAttribute moduleRefAttribute = moduleref.getAttribute(
-                        new QName(REF));
-                if(moduleRefAttribute !=null){
-                    String refName = moduleRefAttribute.getValue();
-                    if(engine.getModule(new QName(refName)) == null) {
-                        throw new DeploymentException(Messages.getMessage(
-                                DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));
-                    } else {
-                        engine.getCurrentFileItem().addModule(new QName(refName));
-                    }
-                }
-            }
-        }catch (AxisFault axisFault) {
-            throw   new DeploymentException(axisFault);
-        }
-    }
+//    protected void processModuleRefs(Iterator moduleRefs) throws DeploymentException {
+//        try {
+//            while (moduleRefs.hasNext()) {
+//                OMElement moduleref = (OMElement) moduleRefs.next();
+//                OMAttribute moduleRefAttribute = moduleref.getAttribute(
+//                        new QName(REF));
+//                if(moduleRefAttribute !=null){
+//                    String refName = moduleRefAttribute.getValue();
+//                    if(engine.getModule(new QName(refName)) == null) {
+//                        throw new DeploymentException(Messages.getMessage(
+//                                DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));
+//                    } else {
+//                        engine.getCurrentFileItem().addModule(new QName(refName));
+//                    }
+//                }
+//            }
+//        }catch (AxisFault axisFault) {
+//            throw   new DeploymentException(axisFault);
+//        }
+//    }
 
 
     /**
@@ -335,7 +338,7 @@ public class DescriptionBuilder implements DeploymentConstants{
      * @param fileName
      * @return String
      */
-    protected String getShortFileName(String fileName) {
+    public String getShortFileName(String fileName) {
         char seperator = '.';
         String value;
         int index = fileName.lastIndexOf(seperator);

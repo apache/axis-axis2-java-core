@@ -23,6 +23,7 @@ public interface DeploymentConstants {
     int SERVICE = 0; // if it is a servise
     int MODULE = 1; // if it is a module
 
+    String META_INF ="META-INF";
     String SERVICEXML = "META-INF/service.xml";
     String SERVICEWSDL = "META-INF/service.wsdl";
     String MODULEXML = "META-INF/module.xml";
@@ -92,5 +93,7 @@ public interface DeploymentConstants {
 
     String AXIS_STORAGE = "axisStorage";
 
-
+    //element in a services.xml
+    String SERVICE_ELEMENT ="service";
+    String SERVICE_GROUP_ELEMENT ="serviceGroup";
 }

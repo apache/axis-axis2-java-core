@@ -8,6 +8,7 @@ import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.Constants;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -57,28 +58,17 @@ public class ServiceBuilder extends DescriptionBuilder{
         this.service = service;
     }
 
+    public ServiceBuilder(DeploymentEngine engine,ServiceDescription service) {
+        this.service = service;
+        super.engine = engine;
+    }
+
     /**
      * top most method that used to populate service from corresponding OM
      */
-    public void populateService() throws DeploymentException {
+    public void populateService(OMElement service_element) throws DeploymentException {
         try {
-            OMElement service_element = buildOM();
 
-            //setting service Name
-            OMAttribute serviceNameatt = service_element.getAttribute(
-                    new QName(ATTNAME));
-            if(serviceNameatt !=null){
-                String serviceName = serviceNameatt.getValue();
-                if (serviceName != null && !"".equals(serviceName)) {
-                    service.setName(new QName(serviceName));
-                } else {
-                    service.setName(new QName(getShortFileName(engine.getCurrentFileItem()
-                            .getServiceName())));
-                }
-            } else {
-                service.setName(new QName(getShortFileName(engine.getCurrentFileItem()
-                        .getServiceName())));
-            }
             //Processing service level paramters
             Iterator itr = service_element.getChildrenWithName(
                     new QName(PARAMETERST));
@@ -244,8 +234,8 @@ public class ServiceBuilder extends DescriptionBuilder{
         }
     }
 
-     protected void processOperationModuleConfig(Iterator moduleConfigs ,
-                                              ParameterInclude parent, OperationDescription opeartion)
+    protected void processOperationModuleConfig(Iterator moduleConfigs ,
+                                                ParameterInclude parent, OperationDescription opeartion)
             throws DeploymentException {
         while (moduleConfigs.hasNext()) {
             OMElement moduleConfig = (OMElement) moduleConfigs.next();
@@ -261,6 +251,32 @@ public class ServiceBuilder extends DescriptionBuilder{
                 processParameters(paramters,moduleConfiguration,parent);
                 opeartion.addModuleConfig(moduleConfiguration);
             }
+        }
+    }
+
+    /**
+     * To get the list og modules that is requird to be engage globally
+     * @param moduleRefs  <code>java.util.Iterator</code>
+     * @throws DeploymentException   <code>DeploymentException</code>
+     */
+    protected void processModuleRefs(Iterator moduleRefs) throws DeploymentException {
+        try {
+            while (moduleRefs.hasNext()) {
+                OMElement moduleref = (OMElement) moduleRefs.next();
+                OMAttribute moduleRefAttribute = moduleref.getAttribute(
+                        new QName(REF));
+                if(moduleRefAttribute !=null){
+                    String refName = moduleRefAttribute.getValue();
+                    if(engine.getModule(new QName(refName)) == null) {
+                        throw new DeploymentException(Messages.getMessage(
+                                DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));
+                    } else {
+                        service.addModuleref(new QName(refName));
+                    }
+                }
+            }
+        }catch (AxisFault axisFault) {
+            throw   new DeploymentException(axisFault);
         }
     }
 

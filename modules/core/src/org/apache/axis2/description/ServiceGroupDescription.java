@@ -51,6 +51,9 @@ public class ServiceGroupDescription implements ParameterInclude{
     // to store service Group modules name
     private ArrayList modules;
 
+     //to store module ref at deploy time parsing
+    private ArrayList mdoulesList = new ArrayList();
+
 
     public ServiceGroupDescription() {
         paramInclude = new ParameterIncludeImpl();
@@ -185,6 +188,13 @@ public class ServiceGroupDescription implements ParameterInclude{
         return (ServiceDescription) services.get(name);
     }
 
+    public void addModuleref(QName moduleref){
+        mdoulesList.add(moduleref);
+    }
+
+    public ArrayList getModules(){
+        return mdoulesList;
+    }
 
 
     public synchronized void removeService(QName name) throws AxisFault {
