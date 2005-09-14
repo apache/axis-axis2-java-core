@@ -41,8 +41,8 @@
 			this.toEPR = new org.apache.axis2.addressing.EndpointReference(targetEndpoint);
 		    //creating the configuration
            _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory().buildClientConfigurationContext(axis2Home);
-           _configurationContext.getAxisConfiguration().addService(_service);
-           _serviceContext = _configurationContext.createServiceContext(_service.getName());
+           //_configurationContext.getAxisConfiguration().addService(_service);
+           _serviceContext =_service.getParent().getServiceGroupContext(_configurationContext).getServiceContext(_service.getName().getLocalPart());
         <!--  Set the soap version depending on the binding. Default is 1.1 so don't set anything for that case-->
         <xsl:if test="$soapVersion='1.2'">
             //Set the soap version

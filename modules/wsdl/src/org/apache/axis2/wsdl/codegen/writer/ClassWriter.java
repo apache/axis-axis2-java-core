@@ -42,6 +42,7 @@ public abstract class ClassWriter {
     protected String language = ConfigPropertyFileLoader.getDefaultLanguage(); //default would java
 
     protected static final String TEMPLATE_SUFFIX = ".template";
+    protected static final String EXTENSION_SUFFIX = ".extension";
     protected static final String SEPERATOR_STRING = ",";
 
     /**
@@ -115,8 +116,31 @@ public abstract class ClassWriter {
         File outputFile = FileWriter.createClassFile(outputFileLocation,
                 packageName,
                 fileName,
-                language);
+                getFileExtensionForLanguage(language));
         this.stream = new FileOutputStream(outputFile);
+    }
+
+    /**
+     * Find the file name extension
+     * @param language
+     * @return
+     */
+    protected String getFileExtensionForLanguage(String language){
+        Map languageSpecificPropertyMap = (Map)ConfigPropertyFileLoader.getLanguageSpecificPropertiesMap().get(this.language);
+        Iterator keys = languageSpecificPropertyMap.keySet().iterator();
+        String key;
+        String extension = null;
+        while (keys.hasNext()) {
+            //check for template entries
+            key = keys.next().toString();
+            if (key.endsWith(EXTENSION_SUFFIX)){
+                extension = languageSpecificPropertyMap.get(key).toString();
+                //add a . to the front
+                extension = "." + extension;
+            }
+        }
+
+        return extension;
     }
 
     /**

@@ -98,6 +98,29 @@ public class WSDL2JavaTest extends TestCase{
         }
     }
 
+    /**
+     * Test for the WSDL that's missing a service
+     */
+    public void testCodeGenerationNoService(){
+
+        try {
+            generateAndCompile("no-service.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+        } catch (CodeGenerationException e) {
+            fail("Exception while code generation test!"+ e.getMessage());
+        }
+    }
+
+     /**
+     * Test for the Headers
+     */
+    public void testCodeGenerationHeaders(){
+
+        try {
+            generateAndCompile("headers.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+        } catch (CodeGenerationException e) {
+            fail("Exception while code generation test!"+ e.getMessage());
+        }
+    }
 
     /**
      * Test for the ping WSDL

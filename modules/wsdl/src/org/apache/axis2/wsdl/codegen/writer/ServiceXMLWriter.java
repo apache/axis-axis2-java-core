@@ -41,7 +41,7 @@ public class ServiceXMLWriter extends ClassWriter {
     public void createOutFile(String packageName, String fileName) throws Exception {
         File outputFile = FileWriter.createClassFile(outputFileLocation,
                 packageName,
-                "service",
+                "services",
                 ".xml");
         this.stream = new FileOutputStream(outputFile);
     }

@@ -1054,11 +1054,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         if (list!=null && !list.isEmpty()){
             int count = list.size();
             for (int i = 0; i < count; i++) {
-              qname = (QName)list.get(i);
-              elt = doc.createElement("name") ;
-              addAttribute(doc,"ns-url",qname.getNamespaceURI(),elt);
-              addAttribute(doc,"localName",qname.getLocalPart(),elt);
-              root.appendChild(elt);
+                qname = (QName)list.get(i);
+                elt = doc.createElement("name") ;
+                addAttribute(doc,"ns-url",qname.getNamespaceURI(),elt);
+                addAttribute(doc,"localName",qname.getLocalPart(),elt);
+                root.appendChild(elt);
             }
         }
 
@@ -1073,8 +1073,11 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     protected Document createDOMDocumentForInterfaceImplementation(
             WSDLBinding binding, WSDLService service) {
         WSDLInterface boundInterface = binding.getBoundInterface();
+        HashMap endpoints = new HashMap(1);
+        if (service!=null){
+            endpoints = service.getEndpoints();
+        }
 
-        HashMap endpoints = service.getEndpoints();
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("class");
         addAttribute(doc,
@@ -1112,7 +1115,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         //load the operations
         loadOperations(boundInterface, doc, rootElement, binding);
         doc.appendChild(rootElement);
-       
+
         return doc;
 
 
