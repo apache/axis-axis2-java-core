@@ -73,6 +73,7 @@ public class ModuleConfigTest extends TestCase {
 
 
             ServiceDescription service = new ServiceDescription();
+            service.setName(new QName("testService"));
             ar.addService(service);
 //            service.setParent(ar);
             InputStream in = new FileInputStream(repo + "/service1.xml");

@@ -39,8 +39,8 @@ public class OperationContextTest extends AbstractTestCase {
 
     public void testMEPfindingOnRelatesTO() throws Exception {
 
-//        ServiceContext sessionContext = new ServiceContext(
-//                new ServiceDescription(), new ConfigurationContext(null));
+        ServiceContext sessionContext = new ServiceContext(new ServiceDescription(),
+                new ServiceGroupContext(new ConfigurationContext(null),null));
         MessageContext messageContext1 = this.getBasicMessageContext();
 
         messageContext1.setMessageID(
@@ -48,7 +48,7 @@ public class OperationContextTest extends AbstractTestCase {
         OperationDescription axisOperation = new OperationDescription(
                 new QName("test"));
         OperationContext operationContext1 = axisOperation.findOperationContext(
-                messageContext1, null);
+                messageContext1, sessionContext);
 
         MessageContext messageContext2 = this.getBasicMessageContext();
         messageContext2.setMessageID(
@@ -56,7 +56,7 @@ public class OperationContextTest extends AbstractTestCase {
         messageContext2.getMessageInformationHeaders().setRelatesTo(
                 new RelatesTo(messageContext1.getMessageID()));
         OperationContext operationContext2 = axisOperation.findOperationContext(
-                messageContext2, null);
+                messageContext2, sessionContext);
         assertEquals(operationContext1, operationContext2);
     }
 
