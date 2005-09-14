@@ -43,6 +43,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
     public void initDispatcher() {
         init(new HandlerDescription(NAME));
     }
+
     //TODO this logic needed to be improved, as the Dispatching is almost garentnee to fail
     public OperationDescription findOperation(ServiceDescription service,
                                               MessageContext messageContext)
@@ -61,22 +62,17 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
     public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
         ServiceDescription service = null;
-        if (toEPR != null) {
-            QName serviceName = new QName(toEPR.getAddress());
-            service =
-                    messageContext.getSystemContext().getAxisConfiguration()
-                            .getService(serviceName.getLocalPart());
-            if (service == null) {
-                String filePart = toEPR.getAddress();
-                String[] values = Utils.parseRequestURLForServiceAndOperation(
-                        filePart);
-                if (values[0] != null) {
-                    serviceName = new QName(values[0]);
-                    AxisConfiguration registry =
-                            messageContext.getSystemContext().getAxisConfiguration();
-                    return registry.getService(serviceName.getLocalPart());
-                }
-            }
+        QName serviceName = new QName(toEPR.getAddress());
+
+        String filePart = toEPR.getAddress();
+        String[] values = Utils.parseRequestURLForServiceAndOperation(
+                filePart);
+        if (values[0] != null) {
+            serviceName = new QName(values[0]);
+            AxisConfiguration registry =
+                    messageContext.getSystemContext().getAxisConfiguration();
+            return registry.getService(serviceName.getLocalPart());
+
         }
         return service;
     }

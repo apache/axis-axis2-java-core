@@ -16,8 +16,8 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.InstanceDispatcher;
 import org.apache.axis2.Constants;
+import org.apache.axis2.InstanceDispatcher;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
@@ -270,12 +270,12 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         String [] nameParts = splitServiceName(name);
         ServiceGroupDescription sg = getServiceGroup(nameParts[0]);
         if(sg == null){
-            throw new AxisFault("Service Not Found : " + name);
+            return null;
         } else {
             String servicName = nameParts[1];
             ServiceDescription service = sg.getService(new QName(servicName));
             if(service == null){
-                throw new AxisFault("Service Not Found : " + name);
+                return null;
             } else {
                 return  service;
             }
