@@ -21,6 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.om.OMElement;
@@ -86,10 +87,12 @@ public class MessageSender extends InOnlyMEPClient {
 
         //create new service
         QName assumedServiceName = new QName("AnonymousService");
-        ServiceDescription axisService = new ServiceDescription(
-                assumedServiceName);
+        ServiceDescription axisService = new ServiceDescription(assumedServiceName);
         sysContext.getAxisConfiguration().addService(axisService);
-        return null;
+        ServiceGroupContext serviceGroupContext = axisService.getParent().getServiceGroupContext(sysContext);
+        serviceGroupContext.fillServiceContexts();
+
+        return serviceGroupContext.getServiceContext(assumedServiceName.getLocalPart());
         //todo fixme Chinthaka
 //        return sysContext.createServiceContext(
 //                assumedServiceName);
