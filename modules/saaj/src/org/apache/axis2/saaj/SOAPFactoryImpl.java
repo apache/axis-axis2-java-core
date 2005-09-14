@@ -17,6 +17,7 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMNamespace;
 
 import javax.xml.soap.Detail;
 import javax.xml.soap.Name;
@@ -26,28 +27,34 @@ import javax.xml.soap.SOAPException;
 /**
  * @author shaas02
  *         <p/>
- *         TODO To change the template for this generated type comment go to
- *         Window - Preferences - Java - Code Style - Code Templates
+ *
  */
 public class SOAPFactoryImpl extends javax.xml.soap.SOAPFactory {
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPFactory#createElement(javax.xml.soap.Name)
      */
     public SOAPElement createElement(Name name) throws SOAPException {
-        // TODO Auto-generated method stub
-        return null;
+    	String localName = name.getLocalName();
+    	String prefix = name.getPrefix();
+    	String uri = name.getURI();
+    	OMElement newOMElement = OMAbstractFactory.getOMFactory()
+        .createOMElement(localName, uri, prefix);
+    	return new SOAPElementImpl(newOMElement);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPFactory#createElement(java.lang.String)
      */
     public SOAPElement createElement(String localName) throws SOAPException {
-        // TODO Auto-generated method stub
-        return null;
+    	OMNamespace ns = OMAbstractFactory.getOMFactory()
+    	.createOMNamespace(null, null);
+    	OMElement newOMElement = OMAbstractFactory.getOMFactory()
+        .createOMElement(localName, ns);
+    	return new SOAPElementImpl(newOMElement);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPFactory#createElement(java.lang.String, java.lang.String, java.lang.String)
      */
     public SOAPElement createElement(String localName,
@@ -59,7 +66,7 @@ public class SOAPFactoryImpl extends javax.xml.soap.SOAPFactory {
         return new SOAPElementImpl(newOMElement);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.xml.soap.SOAPFactory#createDetail()
      */
     public Detail createDetail() throws SOAPException {
