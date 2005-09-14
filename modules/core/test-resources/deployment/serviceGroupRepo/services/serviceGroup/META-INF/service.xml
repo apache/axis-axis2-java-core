@@ -1,0 +1,14 @@
+<serviceGroup>
+    <service name="service1">
+        <operation name="op1">
+        </operation>
+        <operation name="op2">
+        </operation>
+    </service>
+    <service name="service2">
+        <operation name="op1">
+        </operation>
+        <operation name="op2">
+        </operation>
+    </service>
+</serviceGroup>
