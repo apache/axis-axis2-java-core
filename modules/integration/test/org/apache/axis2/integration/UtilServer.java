@@ -35,6 +35,7 @@ public class UtilServer {
     private static SimpleHTTPServer receiver;
     public static final int TESTING_PORT = 5555;
     public static final String FAILURE_MESSAGE = "Intentional Failure";
+    public static ConfigurationContext er ;
 
     public static synchronized void deployService(ServiceDescription service) throws AxisFault {
         receiver.getSystemContext().getAxisConfiguration().addService(service);
@@ -47,20 +48,20 @@ public class UtilServer {
                 service.getLocalPart());
     }
 
-    public static synchronized void start() throws Exception {
-        start(org.apache.axis2.Constants.TESTING_REPOSITORY);
+    public static synchronized ConfigurationContext start() throws Exception {
+        return start(org.apache.axis2.Constants.TESTING_REPOSITORY);
     }
 
-    public static synchronized void start(String repositry) throws Exception {
+    public static synchronized ConfigurationContext start(String repositry) throws Exception {
         if (count == 0) {
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
             File file = new File(repositry);
             if (!file.exists()) {
                 throw new Exception(
                         "repository directory " + file.getAbsolutePath() +
-                        " does not exists");
+                                " does not exists");
             }
-            ConfigurationContext er = erfac.buildConfigurationContext(
+            er = erfac.buildConfigurationContext(
                     file.getAbsolutePath());
 
             receiver = new SimpleHTTPServer(er, Constants.TESTING_PORT);
@@ -69,7 +70,7 @@ public class UtilServer {
                 receiver.start();
                 System.out.print(
                         "Server started on port " + Constants.TESTING_PORT +
-                        ".....");
+                                ".....");
             } finally {
 
             }
@@ -82,6 +83,7 @@ public class UtilServer {
 
         }
         count++;
+        return er;
     }
 
     public static synchronized void stop() {
@@ -110,7 +112,7 @@ public class UtilServer {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
         File file = new File(
                 org.apache.axis2.Constants.TESTING_REPOSITORY +
-                "/modules/addressing.mar");
+                        "/modules/addressing.mar");
         TestCase.assertTrue(file.exists());
         ModuleDescription moduleDesc = deploymentEngine.buildModule(file);
 
@@ -123,9 +125,9 @@ public class UtilServer {
 
         sysContext.getAxisConfiguration().addService(service);
 
-        return service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
+        return service.getParent().getServiceGroupContext(er).getServiceContext(service.getName().getLocalPart());
 
-       
+
 
     }
 

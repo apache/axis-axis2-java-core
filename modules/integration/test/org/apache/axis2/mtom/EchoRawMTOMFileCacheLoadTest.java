@@ -18,6 +18,7 @@ package org.apache.axis2.mtom;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
@@ -37,6 +38,7 @@ public class EchoRawMTOMFileCacheLoadTest extends EchoRawMTOMLoadTest {
     private ServiceContext serviceContext;
 
     private ServiceDescription service;
+    private ConfigurationContext config;
 
     public EchoRawMTOMFileCacheLoadTest() {
         super(EchoRawMTOMFileCacheLoadTest.class.getName());
@@ -47,11 +49,11 @@ public class EchoRawMTOMFileCacheLoadTest extends EchoRawMTOMLoadTest {
     }
 
     protected void setUp() throws Exception {
-        UtilServer.start(Constants.TESTING_PATH + "MTOM-fileCache-enabledRepository");
+        config = UtilServer.start(Constants.TESTING_PATH + "MTOM-fileCache-enabledRepository");
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
                 operationName);
         UtilServer.deployService(service);
-        serviceContext = service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
+        serviceContext = service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
     }
 
     protected void tearDown() throws Exception {
@@ -59,7 +61,7 @@ public class EchoRawMTOMFileCacheLoadTest extends EchoRawMTOMLoadTest {
         UtilServer.stop();
     }
 
-   
+
     public void testEchoXMLSync() throws Exception {
         super.testEchoXMLSync();
     }

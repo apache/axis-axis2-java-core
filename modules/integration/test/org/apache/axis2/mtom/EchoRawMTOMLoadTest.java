@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
@@ -52,11 +53,12 @@ public class EchoRawMTOMLoadTest extends TestCase {
     private ServiceContext serviceContext;
 
     private ServiceDescription service;
-    
+
     private OMText textData;
 
-    
+
     byte[] expectedByteArray;
+    private ConfigurationContext config;
 
     public EchoRawMTOMLoadTest() {
         super(EchoRawMTOMLoadTest.class.getName());
@@ -67,11 +69,11 @@ public class EchoRawMTOMLoadTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
+        config = UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
                 operationName);
         UtilServer.deployService(service);
-        serviceContext = service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
+        serviceContext = service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
     }
 
     protected void tearDown() throws Exception {
@@ -86,15 +88,15 @@ public class EchoRawMTOMLoadTest extends TestCase {
         OMElement rpcWrapEle = fac.createOMElement("echoOMElement", omNs);
         OMElement data = fac.createOMElement("data", omNs);
         expectedByteArray = new byte[]{13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
-                                      98};
+                98};
         for (int i = 0; i < 4; i++) {
             OMElement subData = fac.createOMElement("subData", omNs);
             DataHandler dataHandler = new DataHandler("Thilina","text/plain");
-                    //new ByteArrayDataSource(expectedByteArray));
+            //new ByteArrayDataSource(expectedByteArray));
             textData = new OMTextImpl(dataHandler, true);
             subData.addChild(textData);
             data.addChild(subData);
-            
+
         }
 
         rpcWrapEle.addChild(data);

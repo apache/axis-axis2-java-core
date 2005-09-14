@@ -22,6 +22,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.ServiceDescription;
@@ -65,6 +66,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
     private Thread thread;
 
     private final MessageInformation messageInfo = new MessageInformation();
+     private ConfigurationContext config;
 
     public RESTBasedEchoRawXMLTest() {
         super(RESTBasedEchoRawXMLTest.class.getName());
@@ -75,7 +77,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        UtilServer.start();
+        config = UtilServer.start();
         Parameter parameter = new ParameterImpl(
                 Constants.Configuration.ENABLE_REST, "true");
         UtilServer.getConfigurationContext()
@@ -86,7 +88,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
                         operationName);
         UtilServer.deployService(service);
         serviceContext =
-                service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
+                service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
 //                
 //         Runnable runnable = new Runnable() {
 //            public void run() {

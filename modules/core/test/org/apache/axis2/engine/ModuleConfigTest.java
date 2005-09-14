@@ -11,6 +11,7 @@ import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -76,7 +77,7 @@ public class ModuleConfigTest extends TestCase {
 //            service.setParent(ar);
             InputStream in = new FileInputStream(repo + "/service1.xml");
             ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
-            sbuilder.populateService();
+            sbuilder.populateService(sbuilder.buildOM());
 
             ModuleConfiguration moduleConfiguration = service.getModuleConfig(new QName("Servie_module"));
             assertNotNull(moduleConfiguration);
@@ -98,6 +99,8 @@ public class ModuleConfigTest extends TestCase {
              fail("This can not fail with this FileNotFoundException  " + e) ;
         } catch (AxisFault axisFault) {
             fail("This can not fail with this AxisFault  " + axisFault) ;
+        } catch (XMLStreamException e) {
+            fail("This can not fail with this AxisFault  " + e) ;
         }
      }
 }

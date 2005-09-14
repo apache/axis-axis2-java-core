@@ -52,7 +52,7 @@ public class ContextHierarchyTest extends TestCase {
         ConfigurationContext configurationContext =
                 new ConfigurationContext(axisConfiguration);
         ServiceContext serviceCOntext =
-                serviceDescription.getParent().getServiceGroupContext().getServiceContext(serviceDescription.getName().getLocalPart());
+                serviceDescription.getParent().getServiceGroupContext(configurationContext).getServiceContext(serviceDescription.getName().getLocalPart());
         MessageContext msgctx =
                 new MessageContext(configurationContext);
         OperationContext opContext =

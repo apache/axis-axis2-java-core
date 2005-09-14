@@ -39,7 +39,7 @@ public class BadServiceXMLTest extends AbstractTestCase {
 //            DeploymentParser parser = new DeploymentParser(in, null);
             ServiceDescription axisService = new ServiceDescription();
             ServiceBuilder builder = new ServiceBuilder(in,null,axisService);
-            builder.populateService();
+            builder.populateService(builder.buildOM());
            // parser.parseServiceXML(axisService);
             fail(
                     "this must failed gracefully with DeploymentException or FileNotFoundException");

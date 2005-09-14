@@ -2,6 +2,7 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEvent;
 import org.apache.axis2.phaseresolver.PhaseResolver;
@@ -205,8 +206,9 @@ public class ServiceGroupDescription implements ParameterInclude{
         services.remove(name);
     }
 
-    public ServiceGroupContext getServiceGroupContext(){
-        //TODO Deepal
-        return null;
+    public ServiceGroupContext getServiceGroupContext(ConfigurationContext parent){
+        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(parent,this) ;
+        serviceGroupContext.fillServiceContexts();
+        return serviceGroupContext;
     }
 }

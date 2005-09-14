@@ -349,7 +349,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     }
 
     public ServiceGroupDescription getServiceGroup(String serviceNameAndGroupString) {
-        return (ServiceGroupDescription)serviceGroups.get(serviceNameAndGroupString);
+        String serviceGroup [] =  splitServiceName(serviceNameAndGroupString);
+        return (ServiceGroupDescription)serviceGroups.get(serviceGroup[0]);
     }
 
     public Iterator getServiceGroups() {
@@ -371,20 +372,20 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
 
     /**
-<<<<<<< .mine
+     <<<<<<< .mine
      * @return ArrayList
-=======
->>>>>>> .r280753
+    =======
+    >>>>>>> .r280753
      */
     public ArrayList getInFaultFlow() {
         return inFaultPhases;
     }
 
     /**
-<<<<<<< .mine
+     <<<<<<< .mine
      * @return ArrayList
-=======
->>>>>>> .r280753
+    =======
+    >>>>>>> .r280753
      */
     public ArrayList getOutFaultFlow() {
         return outFaultPhases;
@@ -419,10 +420,10 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * Method getParameter
      *
      * @param name
-<<<<<<< .mine
+    <<<<<<< .mine
      * @return Parameter
-=======
->>>>>>> .r280753
+    =======
+    >>>>>>> .r280753
      */
     public Parameter getParameter(String name) {
         return paramInclude.getParameter(name);
@@ -448,10 +449,10 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     /**
      * Method getEngadgedModules
      *
-<<<<<<< .mine
+     <<<<<<< .mine
      * @return  Collection
-=======
->>>>>>> .r280753
+    =======
+    >>>>>>> .r280753
      */
     public Collection getEngadgedModules() {
         return engagedModules;
@@ -552,7 +553,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @param serviceName
      * @return String [] <code>String</code>
      */
-    private String [] splitServiceName(String serviceName){
+    public static String [] splitServiceName(String serviceName){
         String namePart [] = new String[2];
         int index = serviceName.indexOf(Constants.SERVICE_NAME_SPLIT_CHAR);
         if(index > 0){

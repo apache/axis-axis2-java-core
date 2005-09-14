@@ -62,6 +62,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
     private SOAPEnvelope envelope;
 
     private boolean finish = false;
+     private ConfigurationContext config;
 
     public MailRequestResponseRawXMLTest() {
         super(MailRequestResponseRawXMLTest.class.getName());
@@ -89,7 +90,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
                         operationName);
         configContext.getAxisConfiguration().addService(service);
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
-        ServiceContext serviceContext = service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
+        ServiceContext serviceContext = service.getParent().getServiceGroupContext(configContext).getServiceContext(service.getName().getLocalPart());
     }
 
     protected void tearDown() throws Exception {
@@ -122,7 +123,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         service.addOperation(operation);
         configContext.getAxisConfiguration().addService(service);
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
-        ServiceContext serviceContext = service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
+        ServiceContext serviceContext = service.getParent().getServiceGroupContext(configContext).getServiceContext(service.getName().getLocalPart());
 
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
                 serviceContext);

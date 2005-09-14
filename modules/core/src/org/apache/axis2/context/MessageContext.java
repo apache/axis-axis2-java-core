@@ -575,6 +575,9 @@ public class MessageContext extends AbstractContext {
         if (param == null && serviceContext != null) {
             ServiceDescription serviceDesc = serviceContext.getServiceConfig();
             param = serviceDesc.getParameter(key);
+        }   if (param == null && serviceGroupContext != null) {
+            ServiceGroupDescription serviceDesc = serviceGroupContext.getDescription();
+            param = serviceDesc.getParameter(key);
         }
         if (param == null && configurationContext != null) {
             AxisConfiguration baseConfig =
@@ -621,6 +624,17 @@ public class MessageContext extends AbstractContext {
         }
         if (param == null && serviceContext != null) {
             ServiceDescription serviceDesc = serviceContext.getServiceConfig();
+            moduleConfig = serviceDesc.getModuleConfig(new QName(moduleName));
+            if(moduleConfig != null){
+                param =  moduleConfig.getParameter(key);
+            }
+            if(param == null){
+                param = serviceDesc.getParameter(key);
+            }
+        }
+
+        if (param == null && serviceGroupContext != null) {
+            ServiceGroupDescription serviceDesc = serviceGroupContext.getDescription();
             moduleConfig = serviceDesc.getModuleConfig(new QName(moduleName));
             if(moduleConfig != null){
                 param =  moduleConfig.getParameter(key);
@@ -680,6 +694,9 @@ public class MessageContext extends AbstractContext {
         //Search in ServiceContext
         if(serviceContext != null && obj == null ){
             obj = serviceContext.getProperty(key, persistent);
+        }
+         if(serviceGroupContext != null && obj == null ){
+            obj = serviceGroupContext.getProperty(key, persistent);
         }
         if(obj == null) {
             // search in Configuration Context

@@ -25,6 +25,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.InOutMEPClient;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
@@ -44,9 +45,9 @@ import javax.xml.namespace.QName;
 
 public class SoapProcessingModelTest extends TestCase {
     private EndpointReference targetEPR =
-        new EndpointReference("http://127.0.0.1:"
-                + (UtilServer.TESTING_PORT)
-                + "/axis/services/EchoXMLService/echoOMElement");
+            new EndpointReference("http://127.0.0.1:"
+                    + (UtilServer.TESTING_PORT)
+                    + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -56,6 +57,8 @@ public class SoapProcessingModelTest extends TestCase {
     private MessageContext mc;
     private ServiceContext serviceContext;
     private ServiceDescription service;
+
+    private ConfigurationContext config;
 
     private boolean finish = false;
 
@@ -68,11 +71,11 @@ public class SoapProcessingModelTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        UtilServer.start();
+        config=   UtilServer.start();
         service = Utils.createSimpleService(serviceName, Echo.class.getName(), operationName);
         UtilServer.deployService(service);
         serviceContext =
-            service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
+                service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
 
     }
 
@@ -80,12 +83,12 @@ public class SoapProcessingModelTest extends TestCase {
         UtilServer.unDeployService(serviceName);
         UtilServer.stop();
     }
-    
-    
+
+
     public void sendMessageWithHeader(SOAPEnvelope envelope) throws AxisFault{
         InOutMEPClient inOutMC;
         ServiceContext serviceContext =
-           service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
+                service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
         inOutMC = new InOutMEPClient(serviceContext);
         try{
             MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
@@ -96,9 +99,9 @@ public class SoapProcessingModelTest extends TestCase {
             inOutMC.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
 
             MessageContext result =
-                inOutMC.invokeBlocking(
-                    serviceContext.getServiceConfig().getOperation(operationName),
-                    msgctx);
+                    inOutMC.invokeBlocking(
+                            serviceContext.getServiceConfig().getOperation(operationName),
+                            msgctx);
         }finally{
             inOutMC.close();
         }
@@ -125,7 +128,7 @@ public class SoapProcessingModelTest extends TestCase {
             SOAPEnvelope envelope = fac.getDefaultEnvelope();
             OMNamespace headerNs = fac.createOMNamespace("http://dummyHeader", "dh");
             SOAPHeaderBlock h1 =
-                fac.createSOAPHeaderBlock("DummyHeader", headerNs, envelope.getHeader());
+                    fac.createSOAPHeaderBlock("DummyHeader", headerNs, envelope.getHeader());
             h1.setMustUnderstand(true);
             h1.addChild(fac.createText("Dummy String"));
             h1.setRole("http://myOwnRole");

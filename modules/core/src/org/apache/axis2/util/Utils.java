@@ -197,11 +197,11 @@ public class Utils {
 
     private static ServiceContext fillServiceContextAndServiceGroupContext(ServiceDescription serviceDesc, ConfigurationContext configurationContext) throws AxisFault {
         String serviceGroupContextId = UUIDGenerator.getUUID();
-        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configurationContext);
+        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configurationContext,serviceDesc.getParent());
+        serviceGroupContext.fillServiceContexts();
         serviceGroupContext.setId(serviceGroupContextId);
         configurationContext.registerServiceGroupContext(serviceGroupContext);
         ServiceContext serviceContext = new ServiceContext(serviceDesc, serviceGroupContext);
-        serviceGroupContext.registerServiceContext(serviceContext);
         return serviceContext;
     }
 

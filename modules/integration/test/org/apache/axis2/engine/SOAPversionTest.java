@@ -6,6 +6,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.util.MyInOutMEPClient;
 import org.apache.axis2.integration.UtilServer;
@@ -55,6 +56,7 @@ public class SOAPversionTest extends TestCase {
             "NullTransport");
 
     private AxisConfiguration engineRegistry;
+    private ConfigurationContext config;
     private MessageContext mc;
     //private Thread thisThread;
     // private SimpleHTTPServer sas;
@@ -64,14 +66,14 @@ public class SOAPversionTest extends TestCase {
     private boolean finish = false;
 
     protected void setUp() throws Exception {
-        UtilServer.start();
+       config = UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
         serviceContext =
-                service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
+                service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
 
     }
 

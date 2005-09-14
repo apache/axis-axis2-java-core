@@ -23,6 +23,7 @@ package org.apache.axis2.swa;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.ServiceDescription;
@@ -50,7 +51,7 @@ public class EchoRawSwATest extends TestCase {
     private QName serviceName = new QName("EchoSwAService");
 
     private QName operationName = new QName("echoAttachment");
-    
+
     private ServiceContext serviceContext;
 
     private ServiceDescription service;
@@ -58,6 +59,7 @@ public class EchoRawSwATest extends TestCase {
     private boolean finish = false;
 
     private OMTextImpl expectedTextData;
+     private ConfigurationContext config;
 
     public EchoRawSwATest() {
         super(EchoRawSwATest.class.getName());
@@ -68,7 +70,7 @@ public class EchoRawSwATest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
+        config = UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
         service = new ServiceDescription(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new ParameterImpl(
@@ -79,7 +81,7 @@ public class EchoRawSwATest extends TestCase {
         axisOp.setStyle(WSDLService.STYLE_DOC);
         service.addOperation(axisOp);
         UtilServer.deployService(service);
-        serviceContext = service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
+        serviceContext = service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
 
     }
 

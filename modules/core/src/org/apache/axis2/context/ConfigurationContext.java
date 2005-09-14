@@ -19,6 +19,7 @@ package org.apache.axis2.context;
  */
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.ServiceGroupDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.storage.AxisStorage;
 import org.apache.axis2.util.UUIDGenerator;
@@ -200,22 +201,34 @@ public class ConfigurationContext extends AbstractContext {
             serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
 
             // check service context is there or not
+
+            //todo Chinthka : I think we do not need to do this
+            // ckecking here , inside ServiceGropContext I have done that  , please take a look at taht
+
             serviceContext = serviceGroupContext.getServiceContext(messageContext.getServiceDescription().getName().
                     getLocalPart());
-            if (serviceContext == null) {
-                serviceContext = new ServiceContext(messageContext.getServiceDescription(), serviceGroupContext);
-                serviceGroupContext.registerServiceContext(serviceContext);
-            }
+//            if (serviceContext == null) {
+//                serviceContext = new ServiceContext(messageContext.getServiceDescription(), serviceGroupContext);
+//                serviceGroupContext.registerServiceContext(serviceContext);
+//            }
         } else {
             // either the key is null or no SGC is found from the give key
             if (isNull(serviceGroupContextId)) {
                 serviceGroupContextId = UUIDGenerator.getUUID();
                 messageContext.setServiceGroupContextId(serviceGroupContextId);
             }
-            serviceGroupContext = new ServiceGroupContext(this);
-            this.registerServiceGroupContext(serviceGroupContext);
-            serviceContext = new ServiceContext(messageContext.getServiceDescription(), serviceGroupContext);
-            serviceGroupContext.registerServiceContext(serviceContext);
+            if(messageContext.getServiceDescription() !=null){
+                String servicName = messageContext.getServiceDescription().getName().getLocalPart();
+                ServiceGroupDescription servicGroupDescription =
+                        this.getAxisConfiguration().getServiceGroup(servicName);
+                serviceGroupContext =  servicGroupDescription.getServiceGroupContext(this);
+                serviceContext = serviceGroupContext.getServiceContext(
+                        messageContext.getServiceDescription().getName().
+                        getLocalPart());
+                this.registerServiceGroupContext(serviceGroupContext);
+            } else {
+                throw new AxisFault("ServiceDescription Not found yet");
+            }
         }
 
         // when you come here operation context MUST already been assigned to the message context

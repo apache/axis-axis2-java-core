@@ -1,9 +1,13 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfigurationImpl;
+import org.apache.axis2.description.ServiceGroupDescription;
+import org.apache.axis2.description.ServiceDescription;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -30,9 +34,12 @@ public class ServiceGroupContext extends AbstractContext {
 
     private String id;
     private Map serviceContextMap;
+    private ServiceGroupDescription description;
 
-    public ServiceGroupContext(ConfigurationContext parent) {
+
+    public ServiceGroupContext(ConfigurationContext parent ,ServiceGroupDescription description) {
         super(parent);
+        this.description = description;
         serviceContextMap = new HashMap();
     }
 
@@ -44,17 +51,40 @@ public class ServiceGroupContext extends AbstractContext {
         this.id = id;
     }
 
+    //if the servic name is foo:bar , you should pass only bar
     public ServiceContext getServiceContext(String serviceName) {
         return (ServiceContext) serviceContextMap.get(serviceName);
     }
 
-    public void registerServiceContext(ServiceContext serviceContext) throws AxisFault {
-        String serviceName = serviceContext.getServiceConfig().
-                getName().getLocalPart();
-        ServiceContext serviceContextAlreadyRegistered = (ServiceContext) serviceContextMap.get(serviceName);
-        if (serviceContextAlreadyRegistered == null) {
-            serviceContextMap.put(serviceName, serviceContext);
-            serviceContext.setParent(this);
+    /**
+     * This will create one ServiceContext per each serviceDesc in descrpition
+     * if serviceGroup desc has 2 service init , then two serviceContext will be
+     * created
+     */
+    public void fillServiceContexts(){
+        Iterator services = description.getServices();
+        while (services.hasNext()) {
+            ServiceDescription serviceDescription = (ServiceDescription) services.next();
+            ServiceContext serviceContext = new ServiceContext(serviceDescription,this);
+            String [] servicNams = AxisConfigurationImpl.splitServiceName(
+                    serviceDescription.getName().getLocalPart());
+            serviceContextMap.put(servicNams[1],serviceContext);
         }
+    }
+
+
+
+//    public void registerServiceContext(ServiceContext serviceContext) throws AxisFault {
+//        String serviceName = serviceContext.getServiceConfig().
+//                getName().getLocalPart();
+//        ServiceContext serviceContextAlreadyRegistered = (ServiceContext) serviceContextMap.get(serviceName);
+//        if (serviceContextAlreadyRegistered == null) {
+//            serviceContextMap.put(serviceName, serviceContext);
+//            serviceContext.setParent(this);
+//        }
+//    }
+
+    public ServiceGroupDescription getDescription() {
+        return description;
     }
 }

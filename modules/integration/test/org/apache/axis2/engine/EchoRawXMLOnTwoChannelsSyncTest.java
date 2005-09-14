@@ -21,6 +21,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
@@ -54,6 +55,8 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
 
     private boolean finish = false;
 
+    private ConfigurationContext config;
+
     public EchoRawXMLOnTwoChannelsSyncTest() {
         super(EchoRawXMLOnTwoChannelsSyncTest.class.getName());
     }
@@ -63,7 +66,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        UtilServer.start();
+        config = UtilServer.start();
         UtilServer.getConfigurationContext().getAxisConfiguration()
                 .engageModule(new QName("addressing"));
 
@@ -72,7 +75,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
-        serviceContext = service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
+        serviceContext = service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
 
     }
 
