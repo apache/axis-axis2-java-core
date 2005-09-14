@@ -27,7 +27,11 @@ import org.apache.axis2.util.threadpool.ThreadPool;
 
 import javax.xml.namespace.QName;
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -37,12 +41,14 @@ import java.util.Map;
 
 public class ConfigurationContext extends AbstractContext {
 
-    private AxisConfiguration axisConfiguration;
+    private transient AxisConfiguration axisConfiguration;
     private AxisStorage storage;
 
     private Map sessionContextMap;
     private Map moduleContextMap;
-    private ThreadPool threadPool;
+    
+    private transient ThreadPool threadPool;
+    
     private File rootDir;
 
     /**
@@ -51,26 +57,57 @@ public class ConfigurationContext extends AbstractContext {
      */
     private final Map operationContextMap = new HashMap();
 
-    private final Map serviceContextMap;
+    private final Map serviceContextMap = new HashMap ();
 
     private final Map serviceGroupContextMap = new HashMap();
 
+    /**
+     * The method is used to do the intialization of the EngineContext
+     * @throws AxisFault
+     */
+    public void init(AxisConfiguration axisConfiguration) throws AxisFault {
+    	this.axisConfiguration = axisConfiguration;
+    	
+    	Iterator operationContextIt = operationContextMap.keySet().iterator();
+    	while (operationContextIt.hasNext()) {
+    		Object key = operationContextIt.next();
+    		OperationContext operationContext = (OperationContext) operationContextMap.get(key);
+    		if (operationContext!=null)
+    			operationContext.init(axisConfiguration);
+    	}
+    	
+    	Iterator serviceContextIt = serviceContextMap.keySet().iterator();
+    	while (serviceContextIt.hasNext()) {
+    		Object key = serviceContextIt.next();
+    		ServiceContext serviceContext = (ServiceContext) serviceContextMap.get(key);
+    		if (serviceContext!=null)
+    			serviceContext.init(axisConfiguration);
+    	}
+    	
+    	Iterator serviceGroupContextIt = serviceGroupContextMap.keySet().iterator();
+    	while (serviceGroupContextIt.hasNext()) {
+    		Object key = serviceGroupContextIt.next();
+    		ServiceGroupContext serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(key);
+    		if (serviceGroupContext!=null)
+    			serviceGroupContext.init(axisConfiguration);
+    	}
+    }
+    
+    private void writeObject(ObjectOutputStream out) throws IOException {
+    	out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    	in.defaultReadObject();
+    	threadPool = new ThreadPool ();
+    }
+    
     public ConfigurationContext(AxisConfiguration registry) {
         super(null);
         this.axisConfiguration = registry;
-        serviceContextMap = new HashMap();
+        //serviceContextMap = new HashMap();
         moduleContextMap = new HashMap();
         sessionContextMap = new HashMap();
-    }
-
-    /**
-     * The method is used to do the intialization of the EngineContext
-     *
-     * @throws AxisFault
-     */
-
-    public void init() throws AxisFault {
-
     }
 
     public synchronized void removeService(QName name) {

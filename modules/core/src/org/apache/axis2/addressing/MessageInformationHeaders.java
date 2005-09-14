@@ -19,12 +19,13 @@ import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPHeader;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * This holds the WSA Message Information Headers
  */
-public class MessageInformationHeaders {
+public class MessageInformationHeaders implements Serializable {
 
     /**
      * The address of the intended receiver of the message. This is mandatory

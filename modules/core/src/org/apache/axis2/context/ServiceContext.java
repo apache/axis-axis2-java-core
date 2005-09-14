@@ -18,8 +18,14 @@ package org.apache.axis2.context;
  * 
  */
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
 
@@ -28,15 +34,37 @@ import javax.xml.namespace.QName;
  * So I advised to NOT to use this .. as it might not live up to your expectation.
  */
 public class ServiceContext extends AbstractContext {
-    private ServiceDescription serviceConfig;
+	
+    private transient ServiceDescription serviceConfig;
 
     private String serviceInstanceID;
 
+    private QName serviceDescName = null;
+    
+    /**
+     * The method is used to do the intialization of the EngineContext
+     * @throws AxisFault
+     */
+    public void init(AxisConfiguration axisConfiguration) throws AxisFault {
+    	serviceConfig = axisConfiguration.getService(serviceDescName.getLocalPart());
+    }
+    
+    private void writeObject(ObjectOutputStream out) throws IOException {	
+    	out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    	in.defaultReadObject();
+    }
+    
     public ServiceContext(
         ServiceDescription serviceConfig,
         ServiceGroupContext serviceGroupContext) {
         super(serviceGroupContext);
         this.serviceConfig = serviceConfig;
+        
+        if (serviceConfig!=null)
+        	this.serviceDescName = serviceConfig.getName();
 
     }
 

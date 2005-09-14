@@ -1,7 +1,13 @@
 package org.apache.axis2.context;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -26,10 +32,21 @@ import java.util.HashMap;
  */
 public abstract class AbstractContext implements Serializable {
 
-    protected transient final HashMap nonPersistentMap;
+    protected transient HashMap nonPersistentMap;
     protected final HashMap persistentMap;
     protected AbstractContext parent;
 
+	public abstract void init (AxisConfiguration axisConfiguration) throws AxisFault;
+	
+    private void writeObject(ObjectOutputStream out) throws IOException {
+    	out.defaultWriteObject();    	
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    	in.defaultReadObject();
+    	nonPersistentMap = new HashMap ();
+    }
+    
     protected AbstractContext(AbstractContext parent) {
         this.persistentMap = new HashMap();
         this.nonPersistentMap = new HashMap();

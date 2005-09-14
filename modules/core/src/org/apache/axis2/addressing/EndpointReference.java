@@ -15,6 +15,8 @@
  */
 package org.apache.axis2.addressing;
 
+import java.io.Serializable;
+
 import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
@@ -23,7 +25,7 @@ import javax.xml.namespace.QName;
  * Class EndpointReference
  * TODO : Policy has not been integrated to this
  */
-public class EndpointReference {
+public class EndpointReference implements Serializable {
     /**
      * Required property. may be a logical address or identifier for the service endpoint
      */

@@ -18,11 +18,18 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.i18n.Messages;
 import org.apache.wsdl.WSDLConstants;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 /**
  * An OperationContext represents a running "instance" of an operation, which is
@@ -46,7 +53,7 @@ public class OperationContext extends AbstractContext {
 
     // the OperationDescription of which this is a running instance. The MEP of this
     // OperationDescription must be one of the 8 predefined ones in WSDL 2.0.
-    private OperationDescription axisOperation;
+    private transient OperationDescription axisOperation;
 
     private int operationMEP;
 
@@ -56,6 +63,36 @@ public class OperationContext extends AbstractContext {
     // the EngineContext. We're caching it here for faster acccess.
     private Map operationContextMap;
 
+    private QName operationDescName = null;
+    
+    private QName serviceDescName = null;
+    
+    /**
+     * The method is used to do the intialization of the EngineContext
+     * @throws AxisFault
+     */
+
+    public void init(AxisConfiguration axisConfiguration) throws AxisFault {
+    	if (operationDescName!=null && serviceDescName!=null){
+    		axisOperation = axisConfiguration.getService(serviceDescName.getLocalPart()).
+							getOperation(operationDescName);
+    	}
+    	
+    	if (inMessageContext!=null)
+    		inMessageContext.init(axisConfiguration);
+    	
+    	if (outMessageContext!=null)
+    		outMessageContext.init(axisConfiguration);
+    }
+    
+    private void writeObject(ObjectOutputStream out) throws IOException {
+    	out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {	
+    	in.defaultReadObject();
+    }
+    
     /**
      * Construct a new OperationContext.
      *
@@ -71,12 +108,22 @@ public class OperationContext extends AbstractContext {
         this.operationMEP = axisOperation.getAxisSpecifMEPConstant();
         this.operationContextMap = getServiceContext().getEngineContext()
                 .getOperationContextMap();
+        
+        operationDescName = axisOperation.getName();
+        ServiceDescription serviceDescription = axisOperation.getParent();
+        if (serviceDescription!=null)
+        	serviceDescName = serviceDescription.getName();
     }
 
     public OperationContext(OperationDescription axisOperation) {
         super(null);
         this.axisOperation = axisOperation;
         this.operationMEP = axisOperation.getAxisSpecifMEPConstant();
+
+        operationDescName = axisOperation.getName();
+        ServiceDescription serviceDescription = axisOperation.getParent();
+        if (serviceDescription!=null)
+        	serviceDescName = serviceDescription.getName();
     }
 
     /**

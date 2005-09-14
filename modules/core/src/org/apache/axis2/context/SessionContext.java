@@ -15,6 +15,9 @@
  */
 package org.apache.axis2.context;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
+
 /**
  * All the engine componets are stateless accross the executions and all the states should be kept in the
  * Contexts, there are three context Global, Session and Message
@@ -26,5 +29,10 @@ public class SessionContext extends AbstractContext {
     public SessionContext(AbstractContext parent) {
         super(parent);
     }
+    
+	public void init(AxisConfiguration axisConfiguration) throws AxisFault {
+		
+	}
+	
 
 }

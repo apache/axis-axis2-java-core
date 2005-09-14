@@ -15,10 +15,12 @@
  */
 package org.apache.axis2.addressing.miheaders;
 
+import java.io.Serializable;
+
 /**
  * Class RelatesTo
  */
-public class RelatesTo {
+public class RelatesTo implements Serializable{
     /**
      * Field value
      */

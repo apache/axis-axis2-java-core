@@ -1,13 +1,18 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.description.ServiceGroupDescription;
 import org.apache.axis2.description.ServiceDescription;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
+
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -34,13 +39,30 @@ public class ServiceGroupContext extends AbstractContext {
 
     private String id;
     private Map serviceContextMap;
-    private ServiceGroupDescription description;
+    private transient ServiceGroupDescription description;
+    private String serviceGroupDescName=null;
+    
+	public void init(AxisConfiguration axisConfiguration) throws AxisFault {
+		if (serviceGroupDescName!=null)
+			description = axisConfiguration.getServiceGroup(serviceGroupDescName);
+	}
+	
+    private void writeObject(ObjectOutputStream out) throws IOException {
+    	out.defaultWriteObject();    	
+    }
 
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    	in.defaultReadObject();
+    	nonPersistentMap = new HashMap ();
+    }
 
     public ServiceGroupContext(ConfigurationContext parent ,ServiceGroupDescription description) {
         super(parent);
         this.description = description;
         serviceContextMap = new HashMap();
+        
+        if (description!=null)
+        	this.serviceGroupDescName = description.getServiceGroupName();
     }
 
     public String getId() {

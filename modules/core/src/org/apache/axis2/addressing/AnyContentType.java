@@ -16,13 +16,15 @@
 package org.apache.axis2.addressing;
 
 import javax.xml.namespace.QName;
+
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 
 /**
  * Class AnyContentType
  */
-public class AnyContentType {
+public class AnyContentType implements Serializable {
     /**
      * Field anyContentTypeName
      */

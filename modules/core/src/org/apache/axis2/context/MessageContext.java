@@ -15,6 +15,10 @@
 */
 package org.apache.axis2.context;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
@@ -94,14 +98,14 @@ public class MessageContext extends AbstractContext {
     private ServiceContext serviceContext;
     private ServiceGroupContext serviceGroupContext;
 
-    private OperationDescription operationDescription;
-    private ServiceDescription serviceDescription;
-    private ServiceGroupDescription serviceGroupDescription;
+    private transient OperationDescription operationDescription;
+    private transient ServiceDescription serviceDescription;
+    private transient ServiceGroupDescription serviceGroupDescription;
+    
     private ConfigurationContext configurationContext;
 
-    private TransportInDescription transportIn;
-
-    private TransportOutDescription transportOut;
+    private transient TransportInDescription transportIn;
+    private transient TransportOutDescription transportOut;
 
     /**
      * Field sessionContext
@@ -167,6 +171,42 @@ public class MessageContext extends AbstractContext {
      * This will hold a key to retrieve the correct ServiceGroupContext.
      */
     private String serviceGroupContextId;
+    
+    QName transportInName = null;
+    
+	QName transportOutname = null;
+	
+	String serviceGroupDescId = null;
+	
+	QName serviceDescName = null;
+	
+	QName operationDescName = null;
+    
+    /**
+     * The method is used to do the intialization of the EngineContext
+     * @throws AxisFault
+     */
+    public void init(AxisConfiguration axisConfiguration) throws AxisFault {
+    	if (transportInName!=null)
+    		transportIn = axisConfiguration.getTransportIn(transportInName);
+    	if (transportOutname!=null)
+    		transportOut = axisConfiguration.getTransportOut(transportOutname);
+    	if (serviceGroupDescId!=null)
+    		serviceGroupDescription = axisConfiguration.getServiceGroup(serviceGroupDescId);
+    	if (serviceDescName!=null)
+    		serviceDescription = axisConfiguration.getService(serviceDescName.getLocalPart());
+    	if (serviceDescription!=null)
+    		operationDescription = serviceDescription.getOperation(operationDescName);	
+    }
+    
+    private void writeObject(ObjectOutputStream out) throws IOException {
+    	out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    	in.defaultReadObject();
+    }
+
 
     /**
      * Conveniance Method, but before call engine.send() or  engine.receive() one must send transport in/out
@@ -186,6 +226,9 @@ public class MessageContext extends AbstractContext {
             TransportOutDescription transportOut)
             throws AxisFault {
         this(engineContext, null, transportIn, transportOut);
+        
+        this.transportInName = transportIn.getName();
+        this.transportOutname = transportOut.getName();
     }
 
     /**
@@ -212,7 +255,11 @@ public class MessageContext extends AbstractContext {
         this.transportIn = transportIn;
         this.transportOut = transportOut;
         this.configurationContext = engineContext;
-
+        
+        if (transportIn!=null)
+        	this.transportInName = transportIn.getName();
+        if (transportOut!=null)
+        	this.transportOutname = transportOut.getName();
     }
 
     /**
@@ -464,6 +511,8 @@ public class MessageContext extends AbstractContext {
      */
     public void setTransportIn(TransportInDescription in) {
         transportIn = in;
+        if (in!=null)
+        	this.transportInName = in.getName();
     }
 
     /**
@@ -471,6 +520,8 @@ public class MessageContext extends AbstractContext {
      */
     public void setTransportOut(TransportOutDescription out) {
         transportOut = out;
+        if (out!=null)
+        	this.transportOutname = out.getName();
     }
 
     /**
@@ -822,6 +873,9 @@ public class MessageContext extends AbstractContext {
 
     public void setOperationDescription(OperationDescription operationDescription) {
         this.operationDescription = operationDescription;
+        this.operationDescName = operationDescription.getName(); 
+        if (operationDescription!=null)
+        	this.operationDescName = operationDescription.getName();
     }
 
     public ServiceDescription getServiceDescription() {
@@ -830,6 +884,8 @@ public class MessageContext extends AbstractContext {
 
     public void setServiceDescription(ServiceDescription serviceDescription) {
         this.serviceDescription = serviceDescription;
+        if (serviceDescription!=null)
+        	this.serviceDescName = serviceDescription.getName();
     }
 
     public ServiceGroupDescription getServiceGroupDescription() {
@@ -838,6 +894,9 @@ public class MessageContext extends AbstractContext {
 
     public void setServiceGroupDescription(ServiceGroupDescription serviceGroupDescription) {
         this.serviceGroupDescription = serviceGroupDescription;
+        this.serviceGroupDescId = serviceGroupDescription.getServiceGroupName();
+        if (serviceGroupDescription!=null)
+        	this.serviceGroupDescId = serviceGroupDescription.getServiceGroupName();
     }
 
     public String getServiceGroupContextId() {

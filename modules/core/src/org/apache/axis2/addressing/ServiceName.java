@@ -15,12 +15,14 @@
  */
 package org.apache.axis2.addressing;
 
+import java.io.Serializable;
+
 import javax.xml.namespace.QName;
 
 /**
  * Class ServiceName
  */
-public class ServiceName {
+public class ServiceName implements Serializable{
     /**
      * Field name
      */
