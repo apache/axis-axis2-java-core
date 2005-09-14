@@ -19,8 +19,10 @@ package org.apache.axis2.integration;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.transport.tcp.TCPServer;
+import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,6 +41,11 @@ public class UtilsTCPServer {
     public static synchronized void deployService(ServiceDescription service)
             throws AxisFault {
         configurationContext.getAxisConfiguration().addService(service);
+
+        Utils.resolvePhases(configurationContext.getAxisConfiguration(),
+                service);
+        ServiceGroupContext serviceGroupContext = service.getParent().getServiceGroupContext(configurationContext);
+        serviceGroupContext.fillServiceContexts();
 
     }
 

@@ -109,6 +109,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
                 Constants.TRANSPORT_HTTP,
                 true);
         call.setWsaAction(operationName.getLocalPart());
+//        call.setTimeOutInMilliSeconds(60*10000);
 
         OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), method);

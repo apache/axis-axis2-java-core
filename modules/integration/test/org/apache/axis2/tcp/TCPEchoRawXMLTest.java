@@ -79,10 +79,6 @@ public class TCPEchoRawXMLTest extends TestCase {
                         operationName);
         UtilsTCPServer.deployService(service);
 
-        ServiceDescription service =
-                Utils.createSimpleService(serviceName,
-                        org.apache.axis2.engine.Echo.class.getName(),
-                        operationName);
         serviceContext = UtilServer.createAdressedEnabledClientSide(service);
     }
 

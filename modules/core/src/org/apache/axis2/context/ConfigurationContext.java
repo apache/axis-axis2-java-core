@@ -51,7 +51,7 @@ public class ConfigurationContext extends AbstractContext {
      * Map containing <code>MessageID</code> to
      * <code>OperationContext</code> mapping.
      */
-    private static final Map operationContextMap = new HashMap();
+    private final Map operationContextMap = new HashMap();
 
     private final Map serviceContextMap = new HashMap ();
 
