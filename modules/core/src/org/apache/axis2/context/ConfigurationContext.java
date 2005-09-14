@@ -27,11 +27,7 @@ import org.apache.axis2.util.threadpool.ThreadPool;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -46,28 +42,44 @@ public class ConfigurationContext extends AbstractContext {
 
     private Map sessionContextMap;
     private Map moduleContextMap;
-    
+
     private transient ThreadPool threadPool;
-    
+
     private File rootDir;
 
     /**
      * Map containing <code>MessageID</code> to
      * <code>OperationContext</code> mapping.
      */
-    private final Map operationContextMap = new HashMap();
+    private static final Map operationContextMap = new HashMap();
 
     private final Map serviceContextMap = new HashMap ();
 
     private final Map serviceGroupContextMap = new HashMap();
 
+    public ConfigurationContext(AxisConfiguration axisConfiguration) {
+        super(null);
+        this.axisConfiguration = axisConfiguration;
+    }
+
     /**
      * The method is used to do the intialization of the EngineContext
+     *
      * @throws AxisFault
      */
+
+    public void init() throws AxisFault {
+
+    }
+
+    public synchronized void removeService(QName name) {
+        serviceContextMap.remove(name);
+    }
+
+    /**
     public void init(AxisConfiguration axisConfiguration) throws AxisFault {
     	this.axisConfiguration = axisConfiguration;
-    	
+
     	Iterator operationContextIt = operationContextMap.keySet().iterator();
     	while (operationContextIt.hasNext()) {
     		Object key = operationContextIt.next();
@@ -75,7 +87,7 @@ public class ConfigurationContext extends AbstractContext {
     		if (operationContext!=null)
     			operationContext.init(axisConfiguration);
     	}
-    	
+
     	Iterator serviceContextIt = serviceContextMap.keySet().iterator();
     	while (serviceContextIt.hasNext()) {
     		Object key = serviceContextIt.next();
@@ -83,7 +95,7 @@ public class ConfigurationContext extends AbstractContext {
     		if (serviceContext!=null)
     			serviceContext.init(axisConfiguration);
     	}
-    	
+
     	Iterator serviceGroupContextIt = serviceGroupContextMap.keySet().iterator();
     	while (serviceGroupContextIt.hasNext()) {
     		Object key = serviceGroupContextIt.next();
@@ -92,7 +104,7 @@ public class ConfigurationContext extends AbstractContext {
     			serviceGroupContext.init(axisConfiguration);
     	}
     }
-    
+
     private void writeObject(ObjectOutputStream out) throws IOException {
     	out.defaultWriteObject();
     }
@@ -101,13 +113,14 @@ public class ConfigurationContext extends AbstractContext {
     	in.defaultReadObject();
     	threadPool = new ThreadPool ();
     }
-    
+
     public ConfigurationContext(AxisConfiguration registry) {
         super(null);
         this.axisConfiguration = registry;
         //serviceContextMap = new HashMap();
         moduleContextMap = new HashMap();
         sessionContextMap = new HashMap();
+
     }
 
     public synchronized void removeService(QName name) {
@@ -115,7 +128,6 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     /**
-     * @return
      */
     public AxisConfiguration getAxisConfiguration() {
         return axisConfiguration;
@@ -167,7 +179,6 @@ public class ConfigurationContext extends AbstractContext {
      * get the ServiceContext given a id
      *
      * @param serviceInstanceID
-     * @return
      */
     public ServiceContext getServiceContext(String serviceInstanceID) {
         return (ServiceContext) this.serviceContextMap.get(serviceInstanceID);
@@ -198,7 +209,6 @@ public class ConfigurationContext extends AbstractContext {
      * root diretory
      *
      * @param path
-     * @return
      */
     public File getRealPath(String path) {
         if (rootDir == null) {
@@ -226,7 +236,6 @@ public class ConfigurationContext extends AbstractContext {
      * create a new service context for the service
      *
      * @param messageContext
-     * @return
      */
     public ServiceGroupContext fillServiceContextAndServiceGroupContext(MessageContext messageContext) throws AxisFault {
         String serviceGroupContextId = messageContext.getServiceGroupContextId();
@@ -285,5 +294,9 @@ public class ConfigurationContext extends AbstractContext {
 
     private boolean isNull(String string) {
         return "".equals(string) || string == null;
+    }
+
+    public void init(AxisConfiguration axisConfiguration) throws AxisFault {
+        this.axisConfiguration = axisConfiguration;
     }
 }

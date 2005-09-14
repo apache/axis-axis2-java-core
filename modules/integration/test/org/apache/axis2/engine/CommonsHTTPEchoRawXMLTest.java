@@ -24,6 +24,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.AsyncResult;
 import org.apache.axis2.clientapi.Callback;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.ServiceDescription;
@@ -66,12 +67,14 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        UtilServer.start();
+        ConfigurationContext configurationContext = UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
+        service.getParent().getServiceGroupContext(configurationContext).fillServiceContexts();
+        ServiceContext serviceContext = service.getParent().getServiceGroupContext(configurationContext).getServiceContext(serviceName.getLocalPart());
 
     }
 
@@ -86,7 +89,9 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
                 Constants.TESTING_PATH + "commons-http-enabledRepository");
 
+
         call.setTo(targetEPR);
+//        call.setWsaAction(operationName.getLocalPart());
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);

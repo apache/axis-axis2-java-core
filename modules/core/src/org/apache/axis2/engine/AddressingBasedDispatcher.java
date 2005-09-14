@@ -16,6 +16,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
@@ -28,7 +29,7 @@ import javax.xml.namespace.QName;
 /**
  * Dispatcher based on the WS-Addressing properties
  */
-public class AddressingBasedDispatcher extends AbstractDispatcher {
+public class AddressingBasedDispatcher extends AbstractDispatcher implements AddressingConstants {
     /**
      * Field NAME
      */
@@ -62,17 +63,23 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
     public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
         ServiceDescription service = null;
-        QName serviceName = new QName(toEPR.getAddress());
+        if (toEPR != null) {
+            String address = toEPR.getAddress();
+            if (Final.WSA_ANONYMOUS_URL.equals(address) || Submission.WSA_ANONYMOUS_URL.equals(address)) {
+                return null;
+            }
+            QName serviceName = new QName(address);
 
-        String filePart = toEPR.getAddress();
-        String[] values = Utils.parseRequestURLForServiceAndOperation(
-                filePart);
-        if (values[0] != null) {
-            serviceName = new QName(values[0]);
-            AxisConfiguration registry =
-                    messageContext.getSystemContext().getAxisConfiguration();
-            return registry.getService(serviceName.getLocalPart());
+            String filePart = toEPR.getAddress();
+            String[] values = Utils.parseRequestURLForServiceAndOperation(
+                    filePart);
+            if (values[0] != null) {
+                serviceName = new QName(values[0]);
+                AxisConfiguration registry =
+                        messageContext.getSystemContext().getAxisConfiguration();
+                return registry.getService(serviceName.getLocalPart());
 
+            }
         }
         return service;
     }

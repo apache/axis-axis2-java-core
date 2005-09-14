@@ -242,6 +242,7 @@ public class InOutMEPClient extends MEPClient {
                         + "/"
                         + axisop.getName().getLocalPart(),
                         listenerTransport.getName().getLocalPart()));
+                msgctx.setTo(this.to);
                 //create and set the Operation context
                 msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext));
                 msgctx.setServiceContext(serviceContext);

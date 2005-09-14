@@ -21,6 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.ServiceDescription;
@@ -41,6 +42,8 @@ public class UtilServer {
         receiver.getSystemContext().getAxisConfiguration().addService(service);
         Utils.resolvePhases(receiver.getSystemContext().getAxisConfiguration(),
                 service);
+        ServiceGroupContext serviceGroupContext = service.getParent().getServiceGroupContext(receiver.getSystemContext());
+        serviceGroupContext.fillServiceContexts();
     }
 
     public static synchronized void unDeployService(QName service) throws AxisFault {

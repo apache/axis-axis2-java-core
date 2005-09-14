@@ -52,6 +52,14 @@ public class DispatchingChecker extends AbstractHandler implements Handler {
      * @throws AxisFault
      */
     public final void invoke(MessageContext msgctx) throws AxisFault {
+        if(msgctx.getOperationDescription() == null && msgctx.getOperationContext() != null ){
+            msgctx.setOperationDescription(msgctx.getOperationContext().getAxisOperation());
+        }
+
+        if(msgctx.getServiceDescription() == null && msgctx.getServiceContext() != null){
+            msgctx.setServiceDescription(msgctx.getServiceContext().getServiceConfig());
+        }
+        
         EndpointReference toEPR = msgctx.getTo();
         if (msgctx.getServiceDescription() == null) {
             throw new AxisFault(

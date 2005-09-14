@@ -25,9 +25,9 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.AsyncResult;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.clientapi.Callback;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
@@ -126,7 +126,7 @@ public class EchoRawXMLTest extends TestCase {
         call.close();
 
 
-        log.info("send the reqest");
+        log.info("send the request");
     }
 
     public void testEchoXMLSync() throws Exception {
