@@ -50,7 +50,7 @@ public class ModuleEngageTest extends TestCase {
         ModuleDescription module = ac.getModule(new QName("module1"));
         assertNotNull(module);
         ac.engageModule(new QName("module1"));
-        ServiceDescription service = ac.getService(new QName("service2"));
+        ServiceDescription service = ac.getService("service2");
         assertNotNull(service);
         OperationDescription moduleOperation = service.getOperation(
                 new QName("creatSeq"));

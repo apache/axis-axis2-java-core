@@ -182,11 +182,12 @@ public class ListingAgent {
      * @throws IOException
      */
     private void listServices(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        HashMap services = configContext.getAxisConfiguration().getServices();
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
-                configContext.getAxisConfiguration().getFaultyServices());
-        res.sendRedirect(LIST_MULTIPLE_SERVICE_JSP_NAME);
+        //todo fix me Deepal
+//        HashMap services = configContext.getAxisConfiguration().getServices();
+//        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+//        req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
+//                configContext.getAxisConfiguration().getFaulytServices());
+//        res.sendRedirect(LIST_MULTIPLE_SERVICE_JSP_NAME);
     }
 
     /**
@@ -197,20 +198,22 @@ public class ListingAgent {
     private void listAdminServices(HttpServletRequest req,
                                    HttpServletResponse res)
             throws IOException {
-        HashMap services = configContext.getAxisConfiguration().getServices();
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
-                configContext.getAxisConfiguration().getFaultyServices());
-        res.sendRedirect(LIST_SRVICES_JSP_NAME);
+        //todo fix me Deepal
+//        HashMap services = configContext.getAxisConfiguration().getServices();
+//        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+//        req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
+//                configContext.getAxisConfiguration().getFaulytServices());
+//        res.sendRedirect(LIST_SRVICES_JSP_NAME);
     }
 
     private void selectService(HttpServletRequest req,
                                HttpServletResponse res)
             throws IOException {
-        HashMap services = configContext.getAxisConfiguration().getServices();
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "VIEW");
-        res.sendRedirect(SELECT_SERVICE_JSP_NAME);
+        //todo fix me Deepal
+//        HashMap services = configContext.getAxisConfiguration().getServices();
+//        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+//        req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "VIEW");
+//        res.sendRedirect(SELECT_SERVICE_JSP_NAME);
     }
 
     private void adminLogging(HttpServletRequest req, HttpServletResponse res) throws AdminAppException, IOException {
@@ -298,7 +301,7 @@ public class ListingAgent {
         req.getSession().setAttribute(Constants.OPEARTION_MAP,
                 configContext
                 .getAxisConfiguration()
-                .getService(new QName(serviceName))
+                .getService(serviceName)
                 .getOperations());
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
         String operationName = req.getParameter("operation");
@@ -306,7 +309,7 @@ public class ListingAgent {
             try {
                 OperationDescription od =
                         configContext.getAxisConfiguration().getService(
-                                new QName(serviceName))
+                                serviceName)
                         .getOperation(new QName(operationName));
                 od.engageModule(
                         configContext.getAxisConfiguration().getModule(
@@ -326,34 +329,35 @@ public class ListingAgent {
     private void engageModulesToService(HttpServletRequest req,
                                         HttpServletResponse res)
             throws IOException {
-        HashMap modules =
-                ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
-        req.getSession().setAttribute(Constants.MODULE_MAP, modules);
-        HashMap services = configContext.getAxisConfiguration().getServices();
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        String moduleName = req.getParameter("modules");
-        req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
-        req.getSession().setAttribute("modules", null);
-        String serviceName = req.getParameter("service");
-        req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
-        if (serviceName != null && moduleName != null) {
-            try {
-
-                configContext.getAxisConfiguration().getService(
-                        new QName(serviceName))
-                        .engageModule(
-                                configContext.getAxisConfiguration().getModule(
-                                        new QName(moduleName)),configContext.getAxisConfiguration());
-                req.getSession().setAttribute(Constants.ENGAGE_STATUS,
-                        moduleName +
-                        " module engaged to the service Successfully");
-            } catch (AxisFault axisFault) {
-                req.getSession().setAttribute(Constants.ENGAGE_STATUS,
-                        axisFault.getMessage());
-            }
-        }
-        req.getSession().setAttribute("service", null);
-        res.sendRedirect(ENGAGING_MODULE_TO_SERVICE_JSP_NAME);
+        //todo fix me Deepal
+//        HashMap modules =
+//                ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
+//        req.getSession().setAttribute(Constants.MODULE_MAP, modules);
+//        HashMap services = configContext.getAxisConfiguration().getServices();
+//        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+//        String moduleName = req.getParameter("modules");
+//        req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
+//        req.getSession().setAttribute("modules", null);
+//        String serviceName = req.getParameter("service");
+//        req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
+//        if (serviceName != null && moduleName != null) {
+//            try {
+//
+//                configContext.getAxisConfiguration().getService(
+//                        new QName(serviceName))
+//                        .engageModule(
+//                                configContext.getAxisConfiguration().getModule(
+//                                        new QName(moduleName)),configContext.getAxisConfiguration());
+//                req.getSession().setAttribute(Constants.ENGAGE_STATUS,
+//                        moduleName +
+//                        " module engaged to the service Successfully");
+//            } catch (AxisFault axisFault) {
+//                req.getSession().setAttribute(Constants.ENGAGE_STATUS,
+//                        axisFault.getMessage());
+//            }
+//        }
+//        req.getSession().setAttribute("service", null);
+//        res.sendRedirect(ENGAGING_MODULE_TO_SERVICE_JSP_NAME);
     }
 
     private void listGloballyModules(HttpServletRequest req,
@@ -368,19 +372,21 @@ public class ListingAgent {
     private void lsitServiceformodules(HttpServletRequest req,
                                        HttpServletResponse res)
             throws IOException {
-        HashMap services = configContext.getAxisConfiguration().getServices();
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "MODULE");
-        res.sendRedirect(SELECT_SERVICE_JSP_NAME);
+        //todo fix me Deepal
+//        HashMap services = configContext.getAxisConfiguration().getServices();
+//        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+//        req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "MODULE");
+//        res.sendRedirect(SELECT_SERVICE_JSP_NAME);
     }
 
     private void lsitServiceforParameterChanged(HttpServletRequest req,
                                                 HttpServletResponse res)
             throws IOException {
-        HashMap services = configContext.getAxisConfiguration().getServices();
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "SERVICE_PARAMETER");
-        res.sendRedirect(SELECT_SERVICE_JSP_NAME);
+        //todo fix me Deepal
+//        HashMap services = configContext.getAxisConfiguration().getServices();
+//        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+//        req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "SERVICE_PARAMETER");
+//        res.sendRedirect(SELECT_SERVICE_JSP_NAME);
     }
 
 
@@ -391,7 +397,7 @@ public class ListingAgent {
         if(req.getParameter("changePara")!=null){
             String serviceName = req.getParameter("service");
             ServiceDescription service =  configContext.getAxisConfiguration().
-                    getService(new QName(serviceName));
+                    getService(serviceName);
             if(service !=null){
                 ArrayList service_para = service.getParameters();
                 for (int i = 0; i < service_para.size(); i++) {
@@ -427,7 +433,7 @@ public class ListingAgent {
             if (service != null) {
                 req.getSession().setAttribute(Constants.SERVICE,
                         configContext.getAxisConfiguration().getService(
-                                new QName(service)));
+                                service));
             }
         }
         res.sendRedirect(SERVICE_PARA_EDIT_JSP_NAME);
@@ -455,7 +461,7 @@ public class ListingAgent {
 //                    }
 //                }
                 if(turnoff !=null){
-                    configContext.getAxisConfiguration().removeService(new QName(serviceName));
+                    configContext.getAxisConfiguration().removeService(serviceName);
                     res.setContentType("text/css");
                     PrintWriter out_writer = new PrintWriter(out);
                     out_writer.println("Service removed from the system Successfully");
@@ -466,8 +472,9 @@ public class ListingAgent {
             }
 
         } else {
-            HashMap services = configContext.getAxisConfiguration().getServices();
-            req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+            //todo fix me Deepal
+//            HashMap services = configContext.getAxisConfiguration().getServices();
+//            req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         }
         res.sendRedirect(REMOVE_SERVICE_JSP_NAME);
     }
@@ -487,7 +494,7 @@ public class ListingAgent {
         if (service != null) {
             req.getSession().setAttribute(Constants.SERVICE_HANDLERS,
                     configContext.getAxisConfiguration().getService(
-                            new QName(service)));
+                            service));
         }
         res.sendRedirect(VIEW_SERVICE_HANDLERS_JSP_NAME);
     }
@@ -522,26 +529,27 @@ public class ListingAgent {
             throws IOException {
         String serviceName = filePart.substring(filePart.lastIndexOf("/") + 1,
                 filePart.length());
-        HashMap services = configContext.getAxisConfiguration().getServices();
-        String wsdl = req.getParameter("wsdl");
-        if ((services != null) && !services.isEmpty()) {
-            Object serviceObj = services.get(new QName(serviceName));
-            if (serviceObj != null) {
-                if (wsdl != null) {
-                    res.setContentType("text/html");
-                    PrintWriter out_writer = new PrintWriter(out);
-                    ((ServiceDescription) serviceObj).printWSDL(out_writer,
-                            filePart);
-                    out.flush();
-                    out.close();
-                    wsdl = null;
-                    return;
-                } else {
-                    req.getSession().setAttribute(Constants.SINGLE_SERVICE,
-                            serviceObj);
-                }
-            }
-        }
+        //todo fix me Deepal
+//        HashMap services = configContext.getAxisConfiguration().getServices();
+//        String wsdl = req.getParameter("wsdl");
+//        if ((services != null) && !services.isEmpty()) {
+//            Object serviceObj = services.get(new QName(serviceName));
+//            if (serviceObj != null) {
+//                if (wsdl != null) {
+//                    res.setContentType("text/html");
+//                    PrintWriter out_writer = new PrintWriter(out);
+//                    ((ServiceDescription) serviceObj).printWSDL(out_writer,
+//                            filePart);
+//                    out.flush();
+//                    out.close();
+//                    wsdl = null;
+//                    return;
+//                } else {
+//                    req.getSession().setAttribute(Constants.SINGLE_SERVICE,
+//                            serviceObj);
+//                }
+//            }
+//        }
         String URI = req.getRequestURI();
         URI = URI.substring(0, URI.indexOf("services"));
         res.sendRedirect(URI + LIST_SINGLE_SERVICE_JSP_NAME);

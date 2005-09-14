@@ -120,7 +120,7 @@ public class MailCharSetEncodingTest extends TestCase {
                     envelope = messgeCtx.getEnvelope();
                 }
             });
-            engineRegistry.removeService(serviceName);
+            engineRegistry.removeService(serviceName.getLocalPart());
             clientService.addOperation(clientOperation);
             engineRegistry.addService(clientService);
             Utils.resolvePhases(engineRegistry, clientService);

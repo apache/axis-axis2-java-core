@@ -44,7 +44,7 @@ public class UtilsTCPServer {
 
     public static synchronized void unDeployService(QName service)
             throws AxisFault {
-        configurationContext.getAxisConfiguration().removeService(service);
+        configurationContext.getAxisConfiguration().removeService(service.getLocalPart());
     }
 
     public static synchronized void start() throws Exception {

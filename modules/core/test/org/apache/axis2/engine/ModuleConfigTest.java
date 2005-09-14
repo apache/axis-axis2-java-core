@@ -8,6 +8,7 @@ import org.apache.axis2.description.ModuleConfiguration;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import java.io.FileInputStream;
@@ -71,7 +72,8 @@ public class ModuleConfigTest extends TestCase {
 
 
             ServiceDescription service = new ServiceDescription();
-            service.setParent(ar);
+            ar.addService(service);
+//            service.setParent(ar);
             InputStream in = new FileInputStream(repo + "/service1.xml");
             ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
             sbuilder.populateService();
@@ -94,6 +96,8 @@ public class ModuleConfigTest extends TestCase {
             fail("This can not fail with this DeploymentException " + e) ;
         } catch (FileNotFoundException e) {
              fail("This can not fail with this FileNotFoundException  " + e) ;
+        } catch (AxisFault axisFault) {
+            fail("This can not fail with this AxisFault  " + axisFault) ;
         }
      }
 }

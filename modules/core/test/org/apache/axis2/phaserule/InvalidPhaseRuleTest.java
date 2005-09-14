@@ -101,7 +101,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
             ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
 
             inPhase.add("global");
-            ((AxisConfigurationImpl) axisSytem).setInPhases(inPhase);
+//            ((AxisConfigurationImpl) axisSytem).setInPhases(inPhase);
             ((AxisConfigurationImpl) axisSytem).setInFaultPhases(inPhase);
             ((AxisConfigurationImpl) axisSytem).setOutFaultPhases(inPhase);
             ((AxisConfigurationImpl) axisSytem).setOutPhases(inPhase);

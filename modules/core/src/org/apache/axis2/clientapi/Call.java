@@ -220,7 +220,9 @@ public class Call extends InOutMEPClient {
         }
         axisService.addOperation(operationTemplate);
         serviceGroupDescription.addService(axisService);
-        return sysContext.createServiceContext(assumedServiceName);
+//        return sysContext.createServiceContext(assumedServiceName);
+        //todo fix me Chinthaka
+        return null;
     }
 
     /**

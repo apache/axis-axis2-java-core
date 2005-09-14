@@ -78,7 +78,7 @@ public class GroovyServiceTest extends TestCase {
 
     public void testServiceExists() throws Exception {
         ServiceDescription desc = UtilServer.getConfigurationContext().
-                getAxisConfiguration().getService(serviceName);
+                getAxisConfiguration().getService(serviceName.getLocalPart());
         assertNotNull(desc);
     }
 

@@ -143,16 +143,7 @@ public class ConfigurationContext extends AbstractContext {
         this.storage = storage;
     }
 
-//    public ServiceContext createServiceContext(QName serviceName)
-//            throws AxisFault {
-//        ServiceDescription service = axisConfiguration.getService(serviceName);
-//        if (service != null) {
-//            return new ServiceContext(service, this);
-//        } else {
-//            throw new AxisFault(
-//                    "Service not found service name = " + serviceName);
-//        }
-//    }
+
 
     /**
      * @return the Gloal ThradPool

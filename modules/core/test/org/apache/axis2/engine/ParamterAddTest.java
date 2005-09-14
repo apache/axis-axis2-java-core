@@ -45,7 +45,8 @@ public class ParamterAddTest extends TestCase {
             reg.addParameter(para);
 
             ServiceDescription service = new ServiceDescription(new QName("Service1"));
-            service.setParent(reg);
+            reg.addService(service);
+//            service.setParent(reg);
             service.addParameter(para);
             fail("This should fails with Parmter is locked can not overide");
         } catch (AxisFault axisFault) {
@@ -78,7 +79,8 @@ public class ParamterAddTest extends TestCase {
             reg.addParameter(para);
 
             ServiceDescription service = new ServiceDescription(new QName("Service1"));
-            service.setParent(reg);
+            reg.addService(service);
+          //  service.setParent(reg);
 
             OperationDescription opertion = new OperationDescription();
             opertion.setParent(service);
@@ -99,7 +101,8 @@ public class ParamterAddTest extends TestCase {
             para.setLocked(true);
 
             ServiceDescription service = new ServiceDescription(new QName("Service1"));
-            service.setParent(reg);
+//            service.setParent(reg);
+            reg.addService(service);
             service.addParameter(para);
 
             OperationDescription opertion = new OperationDescription();

@@ -17,6 +17,7 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.InstanceDispatcher;
+import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
@@ -56,8 +57,9 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     /**
      * Field services
      */
-    private final HashMap services = new HashMap();
+//    private final HashMap services = new HashMap();
 
+    private final HashMap serviceGroups = new HashMap();
     private final HashMap transportsIn = new HashMap();
 
     private final HashMap transportsOut = new HashMap();
@@ -65,7 +67,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     /**
      * Field phases
      */
-    private ArrayList inPhases;
+    // private ArrayList inPhases;
     private ArrayList outPhases;
     private ArrayList inFaultPhases;
     private ArrayList outFaultPhases;
@@ -103,7 +105,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         engagedModules = new ArrayList();
         messagReceivers = new HashMap();
 
-        inPhases = new ArrayList();
         outPhases = new ArrayList();
         inFaultPhases = new ArrayList();
         outFaultPhases = new ArrayList();
@@ -199,13 +200,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         inPhasesUptoAndIncludingPostDispatch.add(postDispatch);
     }
 
-    /**
-     * Method getServices
-     *
-     */
-    public HashMap getServices() {
-        return services;
-    }
 
     public Hashtable getFaultyServices() {
         return faultyServices;
@@ -232,30 +226,74 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @param service
      * @throws AxisFault
      */
-//    public synchronized void addService(ServiceDescription service) throws AxisFault {
-//        services.put(service.getName(), service);
-//        PhaseResolver handlerResolver = new PhaseResolver(this, service);
-//        handlerResolver.buildchains();
-//        service.setLastupdate();
-//        notifyObservers(AxisEvent.SERVICE_DEPLOY ,service);
-//        service.setParent(this);
-//    }
+    public synchronized void addService(ServiceDescription service) throws AxisFault {
+        ServiceGroupDescription serviceGroup = new ServiceGroupDescription();
+        serviceGroup.setServiceGroupName(service.getName().getLocalPart());
+        serviceGroup.setParent(this);
+        serviceGroup.addService(service);
+        addServiceGroup(serviceGroup);
+    }
+
+    public void addServiceGroup(ServiceGroupDescription serviceGroup){
+        serviceGroups.put(serviceGroup.getServiceGroupName(),serviceGroup);
+        Iterator services = serviceGroup.getServices();
+        while (services.hasNext()) {
+            ServiceDescription description = (ServiceDescription) services.next();
+            notifyObservers(AxisEvent.SERVICE_DEPLOY ,description);
+        }
+    }
 
     /**
      * Method getModule
      *
      * @param name
+     * @return ModuleDescription
      */
     public ModuleDescription getModule(QName name) {
         return (ModuleDescription) modules.get(name);
     }
 
     /**
+     * @return HashMap
      */
     public HashMap getModules() {
         return modules;
     }
+    /**
+     * Method getService
+     *
+     * @param name
+     * @return
+     * @throws AxisFault
+     */
+    public ServiceDescription getService(String name) throws AxisFault {
+        String [] nameParts = splitServiceName(name);
+        ServiceGroupDescription sg = getServiceGroup(nameParts[0]);
+        if(sg == null){
+            throw new AxisFault("Service Not Found : " + name);
+        } else {
+            ServiceDescription service = sg.getService(new QName(nameParts[1]));
+            if(service == null){
+                throw new AxisFault("Service Not Found : " + name);
+            } else {
+                return  service;
+            }
+        }
+    }
 
+    /**
+     * Method removeService
+     *
+     * @param name
+     * @throws AxisFault
+     */
+    public synchronized void removeService(String name) throws AxisFault {
+        String [] nameParts = splitServiceName(name);
+        ServiceGroupDescription sg = getServiceGroup(nameParts[0]);
+        if(sg != null){
+            sg.removeService(new QName(nameParts[1]));
+        }
+    }
 
     public TransportInDescription getTransportIn(QName name) throws AxisFault {
         return (TransportInDescription) transportsIn.get(name);
@@ -307,20 +345,15 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     //to check whether a given paramter is locked
     public boolean isParamterLocked(String paramterName) {
         Parameter parameter = getParameter(paramterName);
-        if(parameter != null && parameter.isLocked()){
-            return true;
-        } else {
-            return false;
-        }
+        return parameter != null && parameter.isLocked();
     }
 
     public ServiceGroupDescription getServiceGroup(String serviceNameAndGroupString) {
-        return null;  //TODO Deepal please implement this
+        return (ServiceGroupDescription)serviceGroups.get(serviceNameAndGroupString);
     }
 
-
-    public void setInPhases(ArrayList inPhases) {
-        this.inPhases = inPhases;
+    public Iterator getServiceGroups() {
+        return serviceGroups.values().iterator();
     }
 
     public void setOutPhases(ArrayList outPhases) {
@@ -338,12 +371,20 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
 
     /**
+<<<<<<< .mine
+     * @return ArrayList
+=======
+>>>>>>> .r280753
      */
     public ArrayList getInFaultFlow() {
         return inFaultPhases;
     }
 
     /**
+<<<<<<< .mine
+     * @return ArrayList
+=======
+>>>>>>> .r280753
      */
     public ArrayList getOutFaultFlow() {
         return outFaultPhases;
@@ -378,6 +419,10 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * Method getParameter
      *
      * @param name
+<<<<<<< .mine
+     * @return Parameter
+=======
+>>>>>>> .r280753
      */
     public Parameter getParameter(String name) {
         return paramInclude.getParameter(name);
@@ -403,6 +448,10 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     /**
      * Method getEngadgedModules
      *
+<<<<<<< .mine
+     * @return  Collection
+=======
+>>>>>>> .r280753
      */
     public Collection getEngadgedModules() {
         return engagedModules;
@@ -492,6 +541,28 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     public ModuleConfiguration getModuleConfig(QName moduleName){
         return  (ModuleConfiguration)moduleConfigmap.get(moduleName);
+    }
+
+
+    /**
+     * To split a given service name into it serviceGroupName and Service Name
+     * if the service Name is foo:bar then serviceGroupName ="foo" and ServiceName ="bar"
+     * but if the service name is only the foo we asume ServiceGroupName="foo" ans ServiceName="foo"
+     * meaning foo := foo:foo
+     * @param serviceName
+     * @return String [] <code>String</code>
+     */
+    private String [] splitServiceName(String serviceName){
+        String namePart [] = new String[2];
+        int index = serviceName.indexOf(Constants.SERVICE_NAME_SPLIT_CHAR);
+        if(index > 0){
+            namePart[0] = serviceName.substring(0,index);
+            namePart[1] = serviceName.substring(index +1 ,serviceName.length());
+        } else {
+            namePart[0] = serviceName;
+            namePart[0] = serviceName;
+        }
+        return namePart;
     }
 
 

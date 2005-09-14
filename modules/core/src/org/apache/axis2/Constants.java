@@ -172,6 +172,9 @@ public class Constants {
     public static final String LOGGED = "Logged";
 
 
+    public static final char SERVICE_NAME_SPLIT_CHAR =':';
+
+
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
         // globally enable MTOM
@@ -199,6 +202,8 @@ public class Constants {
         public static final String GET_PARAMETER_URL = "http://ws.apache.org/goGetWithREST";
 
     }
+
+
 
 
 }

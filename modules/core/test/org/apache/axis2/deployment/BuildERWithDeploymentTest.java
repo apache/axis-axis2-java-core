@@ -40,7 +40,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
                 .getAxisConfiguration();
 
         assertNotNull(er);
-        ServiceDescription service = er.getService(new QName("service2"));
+        ServiceDescription service = er.getService("service2");
         assertNotNull(service);
         //commentd since there is no service based messgeReceivers
         /*MessageReceiver provider = service.getMessageReceiver();

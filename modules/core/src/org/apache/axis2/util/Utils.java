@@ -175,7 +175,7 @@ public class Utils {
                     // the notations is ...../axis2/services/<ServiceGroupName>
                     serviceNameStr = serviceNameAndGroupStrings[0];
                 }
-                ServiceDescription serviceDescription = registry.getService(new QName(serviceNameStr));
+                ServiceDescription serviceDescription = registry.getService(serviceNameStr);
                 if(serviceGroup != null && serviceDescription != null){
                     messageContext.setServiceGroupDescription(serviceGroup);
                     messageContext.setServiceDescription(serviceDescription);

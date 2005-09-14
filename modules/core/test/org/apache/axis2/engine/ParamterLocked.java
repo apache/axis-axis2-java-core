@@ -7,6 +7,7 @@ import org.apache.axis2.deployment.ServiceBuilder;
 import org.apache.axis2.deployment.ModuleBuilder;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.AxisFault;
 
 import java.io.InputStream;
 import java.io.FileInputStream;
@@ -50,7 +51,8 @@ public class ParamterLocked extends TestCase {
         try {
             assertNotNull(ar);
             ServiceDescription service = new ServiceDescription();
-            service.setParent(ar);
+            ar.addService(service);
+//            service.setParent(ar);
             InputStream in = new FileInputStream(repo + "/service_overide_non_locked_para.xml");
             ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
             sbuilder.populateService();
@@ -60,6 +62,8 @@ public class ParamterLocked extends TestCase {
             fail("This can not fail with this FileNotFoundException " + e) ;
         } catch (DeploymentException e) {
             fail("This can not fail with this DeploymentException " + e) ;
+        } catch (AxisFault axisFault) {
+            fail("This can not fail with this AxisFault " + axisFault) ;
         }
     }
 
@@ -67,7 +71,8 @@ public class ParamterLocked extends TestCase {
         try {
             assertNotNull(ar);
             ServiceDescription service = new ServiceDescription();
-            service.setParent(ar);
+            ar.addService(service);
+//            service.setParent(ar);
             InputStream in = new FileInputStream(repo + "/service_overide_locked_para.xml");
             ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
             sbuilder.populateService();
@@ -77,6 +82,8 @@ public class ParamterLocked extends TestCase {
             fail("This can not fail with this FileNotFoundException " + e) ;
         } catch (DeploymentException e) {
 
+        } catch (AxisFault axisFault) {
+            fail("This can not fail with this AxisFault " + axisFault) ;
         }
      }
 
@@ -84,7 +91,8 @@ public class ParamterLocked extends TestCase {
         try {
             assertNotNull(ar);
             ServiceDescription service = new ServiceDescription();
-            service.setParent(ar);
+            ar.addService(service);
+//            service.setParent(ar);
             InputStream in = new FileInputStream(repo + "/op_overide_global_para.xml");
             ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
             sbuilder.populateService();
@@ -94,14 +102,17 @@ public class ParamterLocked extends TestCase {
             fail("This can not fail with this FileNotFoundException " + e) ;
         } catch (DeploymentException e) {
 
+        } catch (AxisFault axisFault) {
+            fail("This can not fail with this AxisFault " + axisFault) ;
         }
-     }
+    }
 
     public void testOveride_Service_locked_Para_Operation(){
         try {
             assertNotNull(ar);
             ServiceDescription service = new ServiceDescription();
-            service.setParent(ar);
+            ar.addService(service);
+//            service.setParent(ar);
             InputStream in = new FileInputStream(repo + "/Op_overide_Service_para.xml");
             ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
             sbuilder.populateService();
@@ -110,8 +121,10 @@ public class ParamterLocked extends TestCase {
             fail("This can not fail with this FileNotFoundException " + e) ;
         } catch (DeploymentException e) {
 
+        } catch (AxisFault axisFault) {
+            fail("This can not fail with this AxisFault " + axisFault) ;
         }
-     }
+    }
 
      public void testOveride_Non_locked_Para_Module(){
         try {

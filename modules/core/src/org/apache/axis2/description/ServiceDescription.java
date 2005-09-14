@@ -121,23 +121,19 @@ public class ServiceDescription
         if (moduleref == null) {
             return;
         }
-        if (moduleref != null) {
-            Collection collectionModule = (Collection) this.getComponentProperty(
-                    MODULEREF_KEY);
-            for (Iterator iterator = collectionModule.iterator();
-                 iterator.hasNext();) {
-                ModuleDescription modu = (ModuleDescription) iterator.next();
-                if (modu.getName().equals(moduleref.getName())) {
-                    throw new AxisFault(moduleref.getName().getLocalPart() +
-                            " module has alredy been engaged on the service. " +
-                            " Operation terminated !!!");
-                }
-
-            }
-        }
-        new PhaseResolver(axisConfig).engageModuleToService(this, moduleref);
         Collection collectionModule = (Collection) this.getComponentProperty(
                 MODULEREF_KEY);
+        for (Iterator iterator = collectionModule.iterator();
+             iterator.hasNext();) {
+            ModuleDescription modu = (ModuleDescription) iterator.next();
+            if (modu.getName().equals(moduleref.getName())) {
+                throw new AxisFault(moduleref.getName().getLocalPart() +
+                        " module has alredy been engaged on the service. " +
+                        " Operation terminated !!!");
+            }
+
+        }
+        new PhaseResolver(axisConfig).engageModuleToService(this, moduleref);
         collectionModule.add(moduleref);
     }
 
@@ -146,11 +142,13 @@ public class ServiceDescription
      *
      * @param module
      */
+
     public void addModuleOperations(ModuleDescription module,
-                                    AxisConfiguration axisConfig) {
+                                    AxisConfiguration axisConfig) throws AxisFault {
         HashMap map = module.getOperations();
         Collection col = map.values();
         PhaseResolver pr = new PhaseResolver(axisConfig, this);
+
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             OperationDescription operation = (OperationDescription) iterator.next();
             ArrayList paramters = operation.getParameters();
@@ -161,6 +159,7 @@ public class ServiceDescription
                     this.addMapping((String)parameter.getValue(),operation);
                 }
             }
+            pr.buildModuleOperation(operation);
             this.addOperation(operation);
         }
     }
@@ -187,7 +186,7 @@ public class ServiceDescription
     /**
      * Method getEngadgedModules
      *
-     * @return
+     * @return Collection
      */
     public Collection getEngagedModules() {
         return (Collection) this.getComponentProperty(MODULEREF_KEY);
@@ -197,7 +196,7 @@ public class ServiceDescription
      * Method getOperation
      *
      * @param operationName
-     * @return
+     * @return   OperationDescription
      */
     public OperationDescription getOperation(QName operationName) {
         String opStr = operationName.getLocalPart();
@@ -253,7 +252,7 @@ public class ServiceDescription
     /**
      * Method getClassLoader
      *
-     * @return
+     * @return  ClassLoader
      */
     public ClassLoader getClassLoader() {
         return (ClassLoader) this.getComponentProperty(CLASSLOADER_KEY);
@@ -285,7 +284,7 @@ public class ServiceDescription
     /**
      * Method getContextPath
      *
-     * @return
+     * @return  String
      */
     public String getContextPath() {
         return (String) this.getComponentProperty(CONTEXTPATH_KEY);
@@ -317,7 +316,7 @@ public class ServiceDescription
     /**
      * Method getStyle
      *
-     * @return
+     * @return String
      */
     public String getStyle() {
         return (String) this.getComponentProperty(STYLE_KEY);
@@ -365,7 +364,7 @@ public class ServiceDescription
      * Method getParameter
      *
      * @param name
-     * @return
+     * @return Parameter
      */
     public Parameter getParameter(String name) {
         ParameterIncludeImpl paramInclude =
@@ -388,7 +387,7 @@ public class ServiceDescription
     /**
      * Method getInFlow
      *
-     * @return
+     * @return Flow
      */
     public Flow getInFlow() {
         return (Flow) this.getComponentProperty(INFLOW_KEY);
@@ -420,7 +419,7 @@ public class ServiceDescription
     /**
      * Method getOutFlow
      *
-     * @return
+     * @return Flow
      */
     public Flow getOutFlow() {
         return (Flow) this.getComponentProperty(OUTFLOW_KEY);
@@ -452,7 +451,7 @@ public class ServiceDescription
     /**
      * Method getFaultInFlow
      *
-     * @return
+     * @return Flow
      */
     public Flow getFaultInFlow() {
         return (Flow) this.getComponentProperty(IN_FAULTFLOW_KEY);
@@ -488,7 +487,7 @@ public class ServiceDescription
     /**
      * Method getOperations
      *
-     * @return
+     * @return  HashMap
      */
     public HashMap getOperations() {
         return this.getServiceInterface().getOperations();
@@ -581,7 +580,7 @@ public class ServiceDescription
      * EngineContext's ServiceContextMap.
      *
      * @param msgContext
-     * @return
+     * @return  ServiceContext
      */
     public ServiceContext findServiceContext(MessageContext msgContext) {
         // TODO : Fix me. Can't look up a service context in the system context
@@ -606,7 +605,7 @@ public class ServiceDescription
     /**
      * To get the description about the service
      *
-     * @return
+     * @return String
      */
     public String getServiceDescription() {
         return serviceDescription;
@@ -796,11 +795,7 @@ public class ServiceDescription
             return true;
         } else {
             Parameter parameter = getParameter(paramterName);
-            if(parameter != null && parameter.isLocked()){
-                return true;
-            } else {
-                return false;
-            }
+            return parameter != null && parameter.isLocked();
         }
     }
 

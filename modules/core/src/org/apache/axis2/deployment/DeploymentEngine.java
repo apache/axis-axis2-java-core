@@ -566,7 +566,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 ServiceDescription service =
                                         archiveReader.createService(currentArchiveFile);
                                 service.setClassLoader(currentArchiveFile.getClassLoader());
-                                service.setParent(axisConfig);
+                              //  service.setParent(axisConfig);
                                 archiveReader.processServiceDescriptor(currentArchiveFile.getAbsolutePath(),
                                         this,
                                         service,extractServiceArchive);
@@ -673,7 +673,8 @@ public class DeploymentEngine implements DeploymentConstants {
                     WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
                     if (wsInfo.getType() == SERVICE) {
                         serviceName = getAxisServiceName(wsInfo.getFilename());
-                        axisConfig.removeService(new QName(serviceName));
+                        //todo fix me deepal
+                        //   axisConfig.removeService(new QName(serviceName));
                         log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
                                 wsInfo.getFilename()));
                     }
@@ -681,7 +682,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
 
             }
-        } catch (AxisFault e) {
+        } catch (Exception e) {
             log.info(e);
         }
         wsToUnDeploy.clear();

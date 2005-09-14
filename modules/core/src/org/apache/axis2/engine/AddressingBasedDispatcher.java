@@ -65,7 +65,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
             QName serviceName = new QName(toEPR.getAddress());
             service =
                     messageContext.getSystemContext().getAxisConfiguration()
-                            .getService(serviceName);
+                            .getService(serviceName.getLocalPart());
             if (service == null) {
                 String filePart = toEPR.getAddress();
                 String[] values = Utils.parseRequestURLForServiceAndOperation(
@@ -74,7 +74,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher {
                     serviceName = new QName(values[0]);
                     AxisConfiguration registry =
                             messageContext.getSystemContext().getAxisConfiguration();
-                    return registry.getService(serviceName);
+                    return registry.getService(serviceName.getLocalPart());
                 }
             }
         }

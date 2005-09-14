@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 /**
  * The palce where all the Global states of Axis is kept.
@@ -49,12 +50,33 @@ public interface AxisConfiguration extends ParameterInclude {
     public static final int FAULT_OUT_FLOW = 10006;
 
     /**
+<<<<<<< .mine
+     * Method getService
+     *
+     * @param name
+     * @return
+     * @throws AxisFault
+     */
+    public ServiceDescription getService(String name) throws AxisFault;
+
+    /**
+     * Method addService
+     *
+     * @param service
+     * @throws AxisFault
+     */
+    public void addService(ServiceDescription service) throws AxisFault;
+
+    //to Add service Groups
+     public void addServiceGroup(ServiceGroupDescription serviceGroup);
+
+    /**
      * Method removeService
      *
      * @param name
      * @throws AxisFault
      */
-//    public void removeService(QName name) throws AxisFault;
+    public void removeService(String name) throws AxisFault;
 
     /**
      * Modules is read only as they can not deployed while runing
@@ -90,13 +112,6 @@ public interface AxisConfiguration extends ParameterInclude {
 
     public ArrayList getInFaultFlow();
 
-    /**
-     * Method getServices
-     *
-     * @return
-     */
-//    public HashMap getServices();
-
     public Hashtable getFaultyServices();
 
     public Hashtable getFaultyModules();
@@ -122,6 +137,8 @@ public interface AxisConfiguration extends ParameterInclude {
     public boolean isParamterLocked(String paramterName);
 
     public ServiceGroupDescription getServiceGroup(String serviceNameAndGroupString);
+
+    Iterator getServiceGroups();
 
     public void notifyObservers(int event_type , ServiceDescription service);
 }

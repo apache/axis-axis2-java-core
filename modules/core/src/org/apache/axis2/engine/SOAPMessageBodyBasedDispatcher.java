@@ -37,7 +37,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
     public static final QName NAME =
             new QName("http://axis.ws.apache.org",
                     "SOAPMessageBodyBasedDispatcher");
-    QName serviceName = null;
+    String serviceName = null;
     QName operationName = null;
 
     /**
@@ -78,7 +78,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
                     operationName = new QName(values[1]);
                 }
                 if (values[0] != null) {
-                    serviceName = new QName(values[0]);
+                    serviceName = values[0];
                     AxisConfiguration registry =
                             messageContext.getSystemContext().getAxisConfiguration();
                     return registry.getService(serviceName);

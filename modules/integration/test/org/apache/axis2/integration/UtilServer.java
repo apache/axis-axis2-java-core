@@ -44,7 +44,7 @@ public class UtilServer {
 
     public static synchronized void unDeployService(QName service) throws AxisFault {
         receiver.getSystemContext().getAxisConfiguration().removeService(
-                service);
+                service.getLocalPart());
     }
 
     public static synchronized void start() throws Exception {
