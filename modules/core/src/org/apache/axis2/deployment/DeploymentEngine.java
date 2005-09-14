@@ -438,6 +438,7 @@ public class DeploymentEngine implements DeploymentConstants {
             }
             serviceMetaData.addService(serviceDescription);
         }
+        axisConfig.addServiceGroup(serviceMetaData);
 //        System.out.println("Adding service = " + serviceMetaData.getName().getLocalPart());
     }
 
@@ -597,9 +598,9 @@ public class DeploymentEngine implements DeploymentConstants {
                                 de.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" +
                                         errorWriter.toString();
-//                                de.printStackTrace();
+                                de.printStackTrace();
                             } catch (AxisFault axisFault) {
-//                                axisFault.printStackTrace();
+                                axisFault.printStackTrace();
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
                                         currentArchiveFile.getName()));
 //                            log.info("AxisFault  " + axisFault);
@@ -608,7 +609,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 serviceStatus = "Error:\n" +
                                         errorWriter.toString();
                             } catch (Exception e) {
-//                                e.printStackTrace();
+                                e.printStackTrace();
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
                                         currentArchiveFile.getName()));
 //                            log.info("Exception  " + e);

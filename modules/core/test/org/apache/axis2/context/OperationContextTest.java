@@ -22,6 +22,7 @@ import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.ServiceDescription;
 
 import javax.xml.namespace.QName;
 

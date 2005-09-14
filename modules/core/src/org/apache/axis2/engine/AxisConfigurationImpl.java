@@ -272,7 +272,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         if(sg == null){
             throw new AxisFault("Service Not Found : " + name);
         } else {
-            ServiceDescription service = sg.getService(new QName(nameParts[1]));
+            String servicName = nameParts[1];
+            ServiceDescription service = sg.getService(new QName(servicName));
             if(service == null){
                 throw new AxisFault("Service Not Found : " + name);
             } else {
@@ -561,7 +562,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
             namePart[1] = serviceName.substring(index +1 ,serviceName.length());
         } else {
             namePart[0] = serviceName;
-            namePart[0] = serviceName;
+            namePart[1] = serviceName;
         }
         return namePart;
     }

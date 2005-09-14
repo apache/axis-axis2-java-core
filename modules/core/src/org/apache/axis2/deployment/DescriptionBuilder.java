@@ -338,7 +338,7 @@ public class DescriptionBuilder implements DeploymentConstants{
      * @param fileName
      * @return String
      */
-    public String getShortFileName(String fileName) {
+    public static String getShortFileName(String fileName) {
         char seperator = '.';
         String value;
         int index = fileName.lastIndexOf(seperator);

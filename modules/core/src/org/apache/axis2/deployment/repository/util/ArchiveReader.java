@@ -195,10 +195,12 @@ public class ArchiveReader implements DeploymentConstants {
                     if (entry.getName().equals(SERVICEXML)) {
                         foundServiceXML = true;
                         buildServiceGroup(zin, engine, serviceGroupDesc);
-                        serviceGroupDesc.setServiceGroupName(engine.getCurrentFileItem().getName());
+                        serviceGroupDesc.setServiceGroupName(DescriptionBuilder.getShortFileName(
+                                engine.getCurrentFileItem().getName()));
+                        break;
                     }
                 }
-                zin.close();
+            //    zin.close();
                 if (!foundServiceXML) {
                     throw new DeploymentException(
                             Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND));
@@ -218,14 +220,6 @@ public class ArchiveReader implements DeploymentConstants {
                     throw new DeploymentException("FileNotFound : " + e);
                 } catch (XMLStreamException e) {
                     throw new DeploymentException("XMLStreamException : " + e);
-                } finally {
-                    try {
-                        if (in != null) {
-                            in.close();
-                        }
-                    } catch (IOException e) {
-                        throw new DeploymentException("IOException : " + e);
-                    }
                 }
             } else {
                 throw new DeploymentException(

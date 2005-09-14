@@ -51,8 +51,9 @@ public class ContextHierarchyTest extends TestCase {
     public void testCompleteHiracy() throws AxisFault {
         ConfigurationContext configurationContext =
                 new ConfigurationContext(axisConfiguration);
+        ServiceGroupContext serviceGroupContext = serviceDescription.getParent().getServiceGroupContext(configurationContext);
         ServiceContext serviceCOntext =
-                serviceDescription.getParent().getServiceGroupContext(configurationContext).getServiceContext(serviceDescription.getName().getLocalPart());
+                serviceGroupContext.getServiceContext(serviceDescription.getName().getLocalPart());
         MessageContext msgctx =
                 new MessageContext(configurationContext);
         OperationContext opContext =
@@ -63,7 +64,7 @@ public class ContextHierarchyTest extends TestCase {
         //test the complte Hisracy built
         assertEquals(msgctx.getParent(), opContext);
         assertEquals(opContext.getParent(), serviceCOntext);
-        assertEquals(serviceCOntext.getParent(), configurationContext);
+        assertEquals(serviceCOntext.getParent(), serviceGroupContext);
 
         String key1 = "key1";
         String value1 = "Val1";

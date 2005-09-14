@@ -52,7 +52,7 @@ public class ServiceGroupDescription implements ParameterInclude{
     // to store service Group modules name
     private ArrayList modules;
 
-     //to store module ref at deploy time parsing
+    //to store module ref at deploy time parsing
     private ArrayList mdoulesList = new ArrayList();
 
 
@@ -61,6 +61,11 @@ public class ServiceGroupDescription implements ParameterInclude{
         services = new HashMap();
         moduleConfigmap = new HashMap();
         modules = new ArrayList();
+    }
+
+    public ServiceGroupDescription(AxisConfiguration axisDescription) {
+        this();
+        this.parent = axisDescription;
     }
 
     public void addParameter(Parameter param) throws AxisFault {
@@ -162,11 +167,6 @@ public class ServiceGroupDescription implements ParameterInclude{
 
     public Iterator getServices(){
         return services.values().iterator();
-    }
-
-
-    public ServiceGroupDescription(AxisConfiguration axisDescription) {
-        this.parent = axisDescription;
     }
 
     public synchronized void addService(ServiceDescription service) throws AxisFault {
