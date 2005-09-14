@@ -17,25 +17,25 @@
 package org.apache.axis2.mtom;
 
 import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.swa.EchoRawSwATest;
-import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.Constants;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
+import org.apache.axis2.swa.EchoRawSwATest;
+import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Author: Saminda Abeyruwan <saminda@wso2.com>
@@ -47,8 +47,6 @@ public class EchoRawMTOMFaultReportTest extends TestCase {
     private QName serviceName = new QName("EchoService");
 
     private QName operationName = new QName("mtomSample");
-
-    private ServiceContext serviceContext;
 
     private ServiceDescription service;
 
@@ -72,8 +70,6 @@ public class EchoRawMTOMFaultReportTest extends TestCase {
         axisOp.setStyle(WSDLService.STYLE_DOC);
         service.addOperation(axisOp);
         UtilServer.deployService(service);
-        serviceContext = UtilServer.getConfigurationContext()
-                .createServiceContext(service.getName());
 
     }
 

@@ -17,7 +17,7 @@ package org.apache.axis2.util;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
@@ -167,21 +167,42 @@ public class Utils {
             String[] serviceNameAndGroupStrings = serviceNameAndGroup.split(":");
             AxisConfiguration registry =
                     messageContext.getSystemContext().getAxisConfiguration();
-            if(serviceNameAndGroupStrings[0] != null){
+            if (serviceNameAndGroupStrings[0] != null) {
                 ServiceGroupDescription serviceGroup = registry.getServiceGroup(serviceNameAndGroupStrings[0]);
                 String serviceNameStr = "";
-                if(serviceNameAndGroupStrings.length == 1){
+                if (serviceNameAndGroupStrings.length == 1) {
                     // This means user has not given a service name.
                     // the notations is ...../axis2/services/<ServiceGroupName>
                     serviceNameStr = serviceNameAndGroupStrings[0];
                 }
                 ServiceDescription serviceDescription = registry.getService(serviceNameStr);
-                if(serviceGroup != null && serviceDescription != null){
+                if (serviceGroup != null && serviceDescription != null) {
                     messageContext.setServiceGroupDescription(serviceGroup);
                     messageContext.setServiceDescription(serviceDescription);
                 }
             }
         }
+    }
+
+    public static ServiceContext fillContextInformation(OperationDescription operationDesc, ServiceDescription serviceDesc, ConfigurationContext configurationContext) throws AxisFault {
+        MessageContext msgContext;
+        //  2. if null, create new opCtxt
+        OperationContext operationContext =
+                OperationContextFactory.createOperationContext(operationDesc.getAxisSpecifMEPConstant(), operationDesc);
+
+        //  fill the service group context and service context info
+        return fillServiceContextAndServiceGroupContext(serviceDesc, configurationContext);
+
+    }
+
+    private static ServiceContext fillServiceContextAndServiceGroupContext(ServiceDescription serviceDesc, ConfigurationContext configurationContext) throws AxisFault {
+        String serviceGroupContextId = UUIDGenerator.getUUID();
+        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configurationContext);
+        serviceGroupContext.setId(serviceGroupContextId);
+        configurationContext.registerServiceGroupContext(serviceGroupContext);
+        ServiceContext serviceContext = new ServiceContext(serviceDesc, serviceGroupContext);
+        serviceGroupContext.registerServiceContext(serviceContext);
+        return serviceContext;
     }
 
 }

@@ -21,7 +21,6 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContextFactory;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.description.TransportInDescription;
@@ -76,8 +75,8 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
         service.setStyle(WSDLService.STYLE_DOC);
         service.addOperation(axisOp);
 
-        ServiceContext serviceContext = engineContext.createServiceContext(
-                serviceName);
+//        ServiceContext serviceContext = engineContext.createServiceContext(
+//                serviceName);
 
         mc =
                 new MessageContext(engineContext,
@@ -87,8 +86,8 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
         mc.setOperationContext(
                 OperationContextFactory.createOperationContext(
                         WSDLConstants.MEP_CONSTANT_IN_OUT,
-                        axisOp,
-                        serviceContext));
+                        axisOp
+                        ));
         mc.setTransportOut(transport);
         mc.setProperty(MessageContext.TRANSPORT_OUT, System.out);
         mc.setServerSide(true);

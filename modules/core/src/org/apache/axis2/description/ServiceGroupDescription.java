@@ -1,13 +1,14 @@
 package org.apache.axis2.description;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEvent;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 
 import javax.xml.namespace.QName;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /*
@@ -192,5 +193,10 @@ public class ServiceGroupDescription implements ParameterInclude{
             this.parent.notifyObservers(AxisEvent.SERVICE_DEPLOY , service);
         }
         services.remove(name);
+    }
+
+    public ServiceGroupContext getServiceGroupContext(){
+        //TODO Deepal
+        return null;
     }
 }

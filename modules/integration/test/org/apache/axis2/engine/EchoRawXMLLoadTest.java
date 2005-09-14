@@ -22,7 +22,6 @@ import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
@@ -50,7 +49,7 @@ public class EchoRawXMLLoadTest extends TestCase {
     private MessageContext mc;
     //private Thread thisThread;
     // private SimpleHTTPServer sas;
-    private ServiceContext serviceContext;
+//    private ServiceContext serviceContext;
     private ServiceDescription service;
 
     private boolean finish = false;
@@ -70,9 +69,7 @@ public class EchoRawXMLLoadTest extends TestCase {
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
-        serviceContext =
-                UtilServer.getConfigurationContext().createServiceContext(
-                        service.getName());
+
 
     }
 

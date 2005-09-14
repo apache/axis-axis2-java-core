@@ -38,8 +38,8 @@ import javax.xml.namespace.QName;
 public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService");
+                    + (UtilServer.TESTING_PORT)
+                    + "/axis/services/EchoXMLService");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -72,9 +72,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
-        serviceContext =
-                UtilServer.getConfigurationContext().createServiceContext(
-                        service.getName());
+        serviceContext = service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
 
     }
 

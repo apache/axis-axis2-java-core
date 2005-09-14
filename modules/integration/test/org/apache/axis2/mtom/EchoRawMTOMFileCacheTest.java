@@ -16,14 +16,14 @@
  */
 package org.apache.axis2.mtom;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
+
+import javax.xml.namespace.QName;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -51,8 +51,7 @@ public class EchoRawMTOMFileCacheTest extends EchoRawMTOMTest{
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
                 operationName);
         UtilServer.deployService(service);
-        serviceContext = UtilServer.getConfigurationContext()
-                .createServiceContext(service.getName());
+        serviceContext = service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
     }
 
     protected void tearDown() throws Exception {

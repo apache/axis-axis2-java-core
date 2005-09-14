@@ -21,7 +21,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.*;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -110,10 +109,10 @@ public class EnginePausingTest extends TestCase {
         phase3.addHandler(new TempHandler(26));
         phase3.addHandler(new TempHandler(27));
 
-        ServiceContext serviceContext = new ServiceContext(service,
-                engineContext);
-        engineContext.registerServiceContext(
-                serviceContext.getServiceInstanceID(), serviceContext);
+//        ServiceContext serviceContext = new ServiceContext(service,
+//                engineContext);
+//        engineContext.registerServiceContext(
+//                serviceContext.getServiceInstanceID(), serviceContext);
 
         //TODO
         axisOp.getRemainingPhasesInFlow().add(phase1);

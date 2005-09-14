@@ -72,7 +72,7 @@ public class SoapProcessingModelTest extends TestCase {
         service = Utils.createSimpleService(serviceName, Echo.class.getName(), operationName);
         UtilServer.deployService(service);
         serviceContext =
-            UtilServer.getConfigurationContext().createServiceContext(service.getName());
+            service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
 
     }
 
@@ -85,7 +85,7 @@ public class SoapProcessingModelTest extends TestCase {
     public void sendMessageWithHeader(SOAPEnvelope envelope) throws AxisFault{
         InOutMEPClient inOutMC;
         ServiceContext serviceContext =
-            UtilServer.getConfigurationContext().createServiceContext(service.getName());
+           service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
         inOutMC = new InOutMEPClient(serviceContext);
         try{
             MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());

@@ -17,10 +17,7 @@
 
 package org.apache.axis2.mail;
 
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -43,6 +40,8 @@ import org.apache.axis2.transport.mail.SimpleMailListener;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
 
 /**
  * These tests willcheck wheather the mail transport works ok with charactor set
@@ -78,19 +77,19 @@ public class MailCharSetEncodingTest extends TestCase {
 
     ConfigurationContext clientConfigContext;
 
+    ConfigurationContext configContext;
+
     public MailCharSetEncodingTest() {
         super(MailCharSetEncodingTest.class.getName());
     }
 
     protected void setUp() throws Exception {
-        ConfigurationContext configContext = UtilsMailServer.start();
+        configContext = UtilsMailServer.start();
 
         ServiceDescription service = Utils.createSimpleService(serviceName,
                 Echo.class.getName(), operationName);
         configContext.getAxisConfiguration().addService(service);
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
-        ServiceContext serviceContext = configContext
-                .createServiceContext(serviceName);
 
         SimpleMailListener ml = new SimpleMailListener();
 
@@ -124,8 +123,7 @@ public class MailCharSetEncodingTest extends TestCase {
             clientService.addOperation(clientOperation);
             engineRegistry.addService(clientService);
             Utils.resolvePhases(engineRegistry, clientService);
-            clientServiceContext = clientConfigContext
-                    .createServiceContext(serviceName);
+            clientServiceContext = Utils.fillContextInformation(clientOperation,  clientService, clientConfigContext);
 
             org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
                     clientServiceContext);

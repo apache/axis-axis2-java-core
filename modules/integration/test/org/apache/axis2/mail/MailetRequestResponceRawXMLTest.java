@@ -85,8 +85,6 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
                         operationName);
         configContext.getAxisConfiguration().addService(service);
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
-        ServiceContext serviceContext = configContext.createServiceContext(
-                serviceName);
     }
 
     protected void tearDown() throws Exception {
@@ -120,8 +118,10 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
         service.addOperation(operation);
         configContext.getAxisConfiguration().addService(service);
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
-        ServiceContext serviceContext = configContext.createServiceContext(
-                serviceName);
+
+
+
+        ServiceContext serviceContext = Utils.fillContextInformation(operation,  service, configContext);
 
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
                 serviceContext);

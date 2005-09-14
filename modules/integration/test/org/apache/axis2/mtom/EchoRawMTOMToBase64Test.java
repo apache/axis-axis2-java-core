@@ -21,14 +21,12 @@ package org.apache.axis2.mtom;
  */
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.ByteArrayDataSource;
 import org.apache.axis2.clientapi.AsyncResult;
 import org.apache.axis2.clientapi.Callback;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
@@ -55,8 +53,6 @@ public class EchoRawMTOMToBase64Test extends TestCase {
 
     private QName operationName = new QName("echoMTOMtoBase64");
 
-    private ServiceContext serviceContext;
-
     private ServiceDescription service;
 
     OMText expectedTextData;
@@ -76,8 +72,6 @@ public class EchoRawMTOMToBase64Test extends TestCase {
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
                 operationName);
         UtilServer.deployService(service);
-        serviceContext = UtilServer.getConfigurationContext()
-                .createServiceContext(service.getName());
     }
 
     protected void tearDown() throws Exception {

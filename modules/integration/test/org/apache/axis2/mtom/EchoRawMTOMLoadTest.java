@@ -20,28 +20,23 @@ package org.apache.axis2.mtom;
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
  */
 
-import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
 
 public class EchoRawMTOMLoadTest extends TestCase {
     private EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:"
@@ -76,8 +71,7 @@ public class EchoRawMTOMLoadTest extends TestCase {
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
                 operationName);
         UtilServer.deployService(service);
-        serviceContext = UtilServer.getConfigurationContext()
-                .createServiceContext(service.getName());
+        serviceContext = service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
     }
 
     protected void tearDown() throws Exception {

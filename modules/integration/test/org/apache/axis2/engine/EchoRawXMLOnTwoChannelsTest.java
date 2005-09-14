@@ -53,7 +53,6 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
     private MessageContext mc;
     private Thread thisThread;
     private SimpleHTTPServer sas;
-    private ServiceContext serviceContext;
 
     private boolean finish = false;
 
@@ -75,9 +74,6 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
-        serviceContext =
-                UtilServer.getConfigurationContext().createServiceContext(
-                        service.getName());
 
     }
 

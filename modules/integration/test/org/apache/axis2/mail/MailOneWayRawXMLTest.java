@@ -86,8 +86,7 @@ public class MailOneWayRawXMLTest extends TestCase {
         service.addOperation(operation);
         configContext.getAxisConfiguration().addService(service);
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
-        ServiceContext serviceContext = configContext.createServiceContext(
-                serviceName);
+        ServiceContext serviceContext = Utils.fillContextInformation(operation,  service, configContext);
     }
 
     protected void tearDown() throws Exception {
@@ -118,8 +117,7 @@ public class MailOneWayRawXMLTest extends TestCase {
         service.addOperation(operation);
         configContext.getAxisConfiguration().addService(service);
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
-        ServiceContext serviceContext = configContext.createServiceContext(
-                serviceName);
+        ServiceContext serviceContext = Utils.fillContextInformation(operation,  service, configContext);
 
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 

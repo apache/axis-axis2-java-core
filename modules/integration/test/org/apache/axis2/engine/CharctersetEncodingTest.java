@@ -21,7 +21,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -53,8 +52,6 @@ public class CharctersetEncodingTest extends TestCase {
 
 	private QName operationName = new QName("echoOMElement");
 
-	private ServiceContext serviceContext;
-
 	private ServiceDescription service;
 
 	private boolean finish = false;
@@ -71,11 +68,6 @@ public class CharctersetEncodingTest extends TestCase {
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
-        serviceContext =
-                UtilServer.getConfigurationContext().createServiceContext(
-                        service.getName());
-
-
     }
     
     protected void tearDown() throws Exception {

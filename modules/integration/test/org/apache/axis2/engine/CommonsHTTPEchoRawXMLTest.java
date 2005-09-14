@@ -72,9 +72,6 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
-        serviceContext =
-                UtilServer.getConfigurationContext().createServiceContext(
-                        service.getName());
 
     }
 

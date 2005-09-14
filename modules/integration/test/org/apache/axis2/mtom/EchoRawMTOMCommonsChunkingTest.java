@@ -72,8 +72,7 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase {
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
                 operationName);
         UtilServer.deployService(service);
-        serviceContext = UtilServer.getConfigurationContext()
-                .createServiceContext(service.getName());
+        serviceContext = service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
     }
 
     protected void tearDown() throws Exception {

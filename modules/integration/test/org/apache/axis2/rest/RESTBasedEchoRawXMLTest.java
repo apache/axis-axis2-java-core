@@ -86,8 +86,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
                         operationName);
         UtilServer.deployService(service);
         serviceContext =
-                UtilServer.getConfigurationContext().createServiceContext(
-                        service.getName());
+                service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
 //                
 //         Runnable runnable = new Runnable() {
 //            public void run() {

@@ -89,8 +89,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
                         operationName);
         configContext.getAxisConfiguration().addService(service);
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
-        ServiceContext serviceContext = configContext.createServiceContext(
-                serviceName);
+        ServiceContext serviceContext = service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
     }
 
     protected void tearDown() throws Exception {
@@ -123,8 +122,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         service.addOperation(operation);
         configContext.getAxisConfiguration().addService(service);
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
-        ServiceContext serviceContext = configContext.createServiceContext(
-                serviceName);
+        ServiceContext serviceContext = service.getParent().getServiceGroupContext().getServiceContext(service.getName().getLocalPart());
 
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
                 serviceContext);
