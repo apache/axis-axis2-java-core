@@ -1,5 +1,3 @@
-package org.apache.axis2.handlers.addressing;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -14,9 +12,9 @@ package org.apache.axis2.handlers.addressing;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * author : Eran Chinthaka (chinthaka@apache.org)
  */
+
+package org.apache.axis2.handlers.addressing;
 
 public class AddressingException extends Exception {
     public AddressingException() {

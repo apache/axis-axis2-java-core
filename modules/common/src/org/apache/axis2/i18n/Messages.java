@@ -1,12 +1,12 @@
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
- * 
+ * Copyright 2004,2005 The Apache Software Foundation.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,22 +21,6 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 
-/**
- * @author Richard A. Sitze (rsitze@us.ibm.com)
- * @author Karl Moss (kmoss@macromedia.com)
- * @author Glen Daniels (gdaniels@apache.org)
- * @see org.apache.axis.i18n.Messages
- *      <p/>
- *      FUNCTIONAL TEMPLATE for Messages classes.
- *      <p/>
- *      Copy this template to your package.
- *      <p/>
- *      For subpackages of org.apache.axis.*, the internal constants
- *      are set appropriately.  To adapt this scheme to an extension project
- *      (package prefix differs from org.apache.axis.*), edit the projectName
- *      attribute.  The others shouldn't need to be changed unless this is
- *      being adapted to a non-AXIS related project..
- */
 public class Messages {
     private static final Class thisClass = Messages.class;
 

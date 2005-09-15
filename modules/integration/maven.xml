@@ -347,7 +347,7 @@
 	<jar jarfile="target/test-resources/scenarioST1_service_repo/services/PingPort.aar" 
 	    basedir="../security/target/interop/classes" />
 
-
+
 	<!-- MTOM Optimized Security Test -->
         <mkdir dir="target/test-resources/mtom_sec_client_repo"/>
         <mkdir dir="target/test-resources/mtom_sec_client_repo/modules"/>
