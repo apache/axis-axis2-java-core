@@ -1,11 +1,3 @@
-package org.apache.axis2.om.impl.llom.traverse;
-
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMElement;
-
-import java.util.Iterator;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -21,6 +13,14 @@ import java.util.Iterator;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.apache.axis2.om.impl.llom.traverse;
+
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMElement;
+
+import java.util.Iterator;
 
 public class OMChildElementIterator implements Iterator {
 

@@ -1,17 +1,5 @@
-package org.apache.axis2.soap.impl.llom;
-
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.llom.OMDocumentImpl;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPMessage;
-
-import javax.xml.stream.XMLStreamException;
-
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
+ * Copyright 2004,2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +12,19 @@ import javax.xml.stream.XMLStreamException;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author : Eran Chinthaka (chinthaka@apache.org)
  */
+
+package org.apache.axis2.soap.impl.llom;
+
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.llom.OMDocumentImpl;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPMessage;
+
+import javax.xml.stream.XMLStreamException;
 
 public class SOAPMessageImpl extends OMDocumentImpl implements SOAPMessage {
 

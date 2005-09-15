@@ -1,14 +1,3 @@
-package org.apache.axis2.soap.impl.llom.builder;
-
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.impl.llom.exception.OMBuilderException;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
-
-import javax.xml.stream.XMLStreamReader;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -23,9 +12,18 @@ import javax.xml.stream.XMLStreamReader;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * author : Eran Chinthaka (chinthaka@apache.org)
  */
+
+package org.apache.axis2.soap.impl.llom.builder;
+
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.impl.llom.exception.OMBuilderException;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAP12Constants;
+import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
+
+import javax.xml.stream.XMLStreamReader;
 
 public abstract class SOAPBuilderHelper {
     protected StAXSOAPModelBuilder builder;

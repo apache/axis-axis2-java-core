@@ -1,16 +1,3 @@
-package org.apache.axis2.soap.impl.llom;
-
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.llom.OMSerializerUtil;
-import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPFault;
-import org.apache.axis2.soap.SOAPFaultDetail;
-
-import javax.xml.stream.XMLStreamException;
-import java.util.Iterator;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -25,9 +12,20 @@ import java.util.Iterator;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * author : Eran Chinthaka (chinthaka@apache.org)
  */
+
+package org.apache.axis2.soap.impl.llom;
+
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.llom.OMSerializerUtil;
+import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
+import org.apache.axis2.soap.SOAP12Constants;
+import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.soap.SOAPFaultDetail;
+
+import javax.xml.stream.XMLStreamException;
+import java.util.Iterator;
 
 public abstract class SOAPFaultDetailImpl extends SOAPElement implements SOAPFaultDetail {
 

@@ -1,17 +1,3 @@
-package org.apache.axis2.soap.impl.llom.soap11;
-
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.llom.OMSerializerUtil;
-import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAPFault;
-import org.apache.axis2.soap.impl.llom.SOAPFaultDetailImpl;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -26,9 +12,21 @@ import javax.xml.stream.XMLStreamWriter;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * author : Eran Chinthaka (chinthaka@apache.org)
  */
+
+package org.apache.axis2.soap.impl.llom.soap11;
+
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.llom.OMSerializerUtil;
+import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.soap.impl.llom.SOAPFaultDetailImpl;
+import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
     public SOAP11FaultDetailImpl(SOAPFault parent) throws SOAPProcessingException {

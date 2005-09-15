@@ -1,15 +1,3 @@
-package org.apache.axis2.soap.impl.llom.builder;
-
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.impl.llom.exception.OMBuilderException;
-import org.apache.axis2.soap.*;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -24,9 +12,19 @@ import javax.xml.stream.XMLStreamReader;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * author : Eran Chinthaka (chinthaka@apache.org)
  */
+
+package org.apache.axis2.soap.impl.llom.builder;
+
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.impl.llom.exception.OMBuilderException;
+import org.apache.axis2.soap.*;
+import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Constants {
     private SOAPFactory factory;

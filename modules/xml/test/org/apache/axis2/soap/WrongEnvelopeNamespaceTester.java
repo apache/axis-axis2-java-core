@@ -1,17 +1,5 @@
-package org.apache.axis2.soap;
-
-import junit.framework.TestCase;
-import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
+ * Copyright 2004,2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +12,19 @@ import java.io.FileNotFoundException;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author : Eran Chinthaka (chinthaka@apache.org)
  */
+
+package org.apache.axis2.soap;
+
+import junit.framework.TestCase;
+import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
+import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
+import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class WrongEnvelopeNamespaceTester extends TestCase {
     public void testCode() {

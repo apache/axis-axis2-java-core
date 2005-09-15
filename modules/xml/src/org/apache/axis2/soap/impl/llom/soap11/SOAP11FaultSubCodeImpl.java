@@ -1,14 +1,3 @@
-package org.apache.axis2.soap.impl.llom.soap11;
-
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPFaultCode;
-import org.apache.axis2.soap.SOAPFaultSubCode;
-import org.apache.axis2.soap.SOAPFaultValue;
-import org.apache.axis2.soap.impl.llom.SOAPFaultSubCodeImpl;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -23,9 +12,18 @@ import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * author : Eran Chinthaka (chinthaka@apache.org)
  */
+
+package org.apache.axis2.soap.impl.llom.soap11;
+
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.soap.SOAP12Constants;
+import org.apache.axis2.soap.SOAPFaultCode;
+import org.apache.axis2.soap.SOAPFaultSubCode;
+import org.apache.axis2.soap.SOAPFaultValue;
+import org.apache.axis2.soap.impl.llom.SOAPFaultSubCodeImpl;
+import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 
 public class SOAP11FaultSubCodeImpl extends SOAPFaultSubCodeImpl {
     //changed
