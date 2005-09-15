@@ -540,6 +540,7 @@ public class MessageContext extends AbstractContext {
             operationContext.setParent(serviceContext);
         }
         this.setParent(operationContext);
+        this.setOperationDescription(operationContext.getAxisOperation());
     }
 
     /**
@@ -596,6 +597,7 @@ public class MessageContext extends AbstractContext {
         if (operationContext != null && operationContext.getParent() != null) {
             operationContext.setParent(context);
         }
+        this.setServiceDescription(context.getServiceConfig());
     }
 
     /**

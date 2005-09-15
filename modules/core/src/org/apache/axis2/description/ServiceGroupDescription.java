@@ -208,7 +208,6 @@ public class ServiceGroupDescription implements ParameterInclude{
 
     public ServiceGroupContext getServiceGroupContext(ConfigurationContext parent){
         ServiceGroupContext serviceGroupContext = new ServiceGroupContext(parent,this) ;
-        serviceGroupContext.fillServiceContexts();
         return serviceGroupContext;
     }
 }

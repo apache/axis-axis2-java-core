@@ -47,6 +47,7 @@ public class TwoWayTransportBasedSender {
         response.setServerSide(false);
         response.setOperationContext(msgctx.getOperationContext());
         response.setServiceContext(msgctx.getServiceContext());
+        response.setServiceGroupContext(msgctx.getServiceGroupContext());
 
         //If request is REST we assume the response is REST, so set the variable
         response.setDoingREST(msgctx.isDoingREST());

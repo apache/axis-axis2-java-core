@@ -58,7 +58,6 @@ public class EchoRawMTOMLoadTest extends TestCase {
 
 
     byte[] expectedByteArray;
-    private ConfigurationContext config;
 
     public EchoRawMTOMLoadTest() {
         super(EchoRawMTOMLoadTest.class.getName());
@@ -69,11 +68,10 @@ public class EchoRawMTOMLoadTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        config = UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
+        UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
                 operationName);
         UtilServer.deployService(service);
-        serviceContext = service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
     }
 
     protected void tearDown() throws Exception {

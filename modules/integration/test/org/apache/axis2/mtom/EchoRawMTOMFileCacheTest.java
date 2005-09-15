@@ -39,8 +39,7 @@ public class EchoRawMTOMFileCacheTest extends EchoRawMTOMTest{
 
     private ServiceDescription service;
 
-     private ConfigurationContext config;
-    
+
     public EchoRawMTOMFileCacheTest() {
         super(EchoRawMTOMFileCacheTest.class.getName());
     }
@@ -50,11 +49,10 @@ public class EchoRawMTOMFileCacheTest extends EchoRawMTOMTest{
     }
 
     protected void setUp() throws Exception {
-        config =UtilServer.start(Constants.TESTING_PATH + "MTOM-fileCache-enabledRepository");
+        UtilServer.start(Constants.TESTING_PATH + "MTOM-fileCache-enabledRepository");
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
                 operationName);
         UtilServer.deployService(service);
-        serviceContext = service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
     }
 
     protected void tearDown() throws Exception {

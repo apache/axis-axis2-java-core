@@ -90,7 +90,6 @@ public class MessageSender extends InOnlyMEPClient {
         ServiceDescription axisService = new ServiceDescription(assumedServiceName);
         sysContext.getAxisConfiguration().addService(axisService);
         ServiceGroupContext serviceGroupContext = axisService.getParent().getServiceGroupContext(sysContext);
-        serviceGroupContext.fillServiceContexts();
 
         return serviceGroupContext.getServiceContext(assumedServiceName.getLocalPart());
         //todo fixme Chinthaka

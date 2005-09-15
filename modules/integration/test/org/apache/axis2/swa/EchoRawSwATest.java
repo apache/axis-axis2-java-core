@@ -59,7 +59,6 @@ public class EchoRawSwATest extends TestCase {
     private boolean finish = false;
 
     private OMTextImpl expectedTextData;
-     private ConfigurationContext config;
 
     public EchoRawSwATest() {
         super(EchoRawSwATest.class.getName());
@@ -70,7 +69,7 @@ public class EchoRawSwATest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        config = UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
+        UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
         service = new ServiceDescription(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new ParameterImpl(
@@ -81,7 +80,6 @@ public class EchoRawSwATest extends TestCase {
         axisOp.setStyle(WSDLService.STYLE_DOC);
         service.addOperation(axisOp);
         UtilServer.deployService(service);
-        serviceContext = service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
 
     }
 

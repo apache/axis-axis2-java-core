@@ -67,15 +67,12 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        ConfigurationContext configurationContext = UtilServer.start();
+        UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
-        service.getParent().getServiceGroupContext(configurationContext).fillServiceContexts();
-        ServiceContext serviceContext = service.getParent().getServiceGroupContext(configurationContext).getServiceContext(serviceName.getLocalPart());
-
     }
 
     protected void tearDown() throws Exception {

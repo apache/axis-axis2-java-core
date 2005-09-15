@@ -232,8 +232,7 @@ public class OperationDescription extends WSDLOperationImpl implements
             // So this message is part of an ongoing MEP
             //			operationContext =
             ConfigurationContext configContext = msgContext.getSystemContext();
-            operationContext =
-                    configContext.getOperationContext(
+            operationContext = configContext.getOperationContext(
                             msgContext.getRelatesTo().getValue());
 
             if (null == operationContext) {

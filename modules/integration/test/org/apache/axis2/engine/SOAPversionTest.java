@@ -47,7 +47,8 @@ import javax.xml.stream.XMLStreamException;
 public class SOAPversionTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
+            + (5000)
+//            + (UtilServer.TESTING_PORT)
             + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
@@ -56,7 +57,6 @@ public class SOAPversionTest extends TestCase {
             "NullTransport");
 
     private AxisConfiguration engineRegistry;
-    private ConfigurationContext config;
     private MessageContext mc;
     //private Thread thisThread;
     // private SimpleHTTPServer sas;
@@ -66,15 +66,12 @@ public class SOAPversionTest extends TestCase {
     private boolean finish = false;
 
     protected void setUp() throws Exception {
-       config = UtilServer.start();
+       UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
-        serviceContext =
-                service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
-
     }
 
     public void testSOAP11() throws AxisFault {

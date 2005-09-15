@@ -59,7 +59,6 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase {
     private OMElement data;
 
     private boolean finish = false;
-    private ConfigurationContext config;
 
     public EchoRawMTOMCommonsChunkingTest() {
         super(EchoRawMTOMCommonsChunkingTest.class.getName());
@@ -70,11 +69,10 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        config = UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
+        UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
                 operationName);
         UtilServer.deployService(service);
-        serviceContext = service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
     }
 
     protected void tearDown() throws Exception {

@@ -58,7 +58,6 @@ public class SoapProcessingModelTest extends TestCase {
     private ServiceContext serviceContext;
     private ServiceDescription service;
 
-    private ConfigurationContext config;
 
     private boolean finish = false;
 
@@ -71,11 +70,9 @@ public class SoapProcessingModelTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        config=   UtilServer.start();
+        UtilServer.start();
         service = Utils.createSimpleService(serviceName, Echo.class.getName(), operationName);
         UtilServer.deployService(service);
-        serviceContext =
-                service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
 
     }
 
@@ -86,25 +83,26 @@ public class SoapProcessingModelTest extends TestCase {
 
 
     public void sendMessageWithHeader(SOAPEnvelope envelope) throws AxisFault{
-        InOutMEPClient inOutMC;
-        ServiceContext serviceContext =
-                service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
-        inOutMC = new InOutMEPClient(serviceContext);
-        try{
-            MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
-
-            msgctx.setEnvelope(envelope);
-
-            inOutMC.setTo(targetEPR);
-            inOutMC.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
-
-            MessageContext result =
-                    inOutMC.invokeBlocking(
-                            serviceContext.getServiceConfig().getOperation(operationName),
-                            msgctx);
-        }finally{
-            inOutMC.close();
-        }
+//        InOutMEPClient inOutMC;
+//        ServiceContext serviceContext =
+//                service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
+//        inOutMC = new InOutMEPClient(serviceContext);
+//        try{
+//            MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
+//
+//            msgctx.setEnvelope(envelope);
+//
+//            inOutMC.setTo(targetEPR);
+//            inOutMC.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+//
+//            MessageContext result =
+//                    inOutMC.invokeBlocking(
+//                            serviceContext.getServiceConfig().getOperation(operationName),
+//                            msgctx);
+//        }finally{
+//            inOutMC.close();
+//        }
+        fail("Fix Me Deepal");
     }
 //    
 //    public void testSendingMustUnderstandWithNextRole() throws Exception {

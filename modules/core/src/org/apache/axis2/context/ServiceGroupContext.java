@@ -63,6 +63,7 @@ public class ServiceGroupContext extends AbstractContext {
         
         if (description!=null)
         	this.serviceGroupDescName = description.getServiceGroupName();
+        fillServiceContexts();
     }
 
     public String getId() {
@@ -83,7 +84,7 @@ public class ServiceGroupContext extends AbstractContext {
      * if serviceGroup desc has 2 service init , then two serviceContext will be
      * created
      */
-    public void fillServiceContexts(){
+    private void fillServiceContexts(){
         Iterator services = description.getServices();
         while (services.hasNext()) {
             ServiceDescription serviceDescription = (ServiceDescription) services.next();

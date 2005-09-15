@@ -85,6 +85,7 @@ public class Call extends InOutMEPClient {
         OperationDescription opDesc =
                 serviceContext.getServiceConfig().getOperation(new QName(axisop));
         opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop);
+        opDesc.setParent(serviceContext.getServiceConfig());
         MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
 
         this.lastResponseMessage = super.invokeBlocking(opDesc, msgctx);
@@ -201,17 +202,17 @@ public class Call extends InOutMEPClient {
             ConfigurationContextFactory efac =
                     new ConfigurationContextFactory();
             sysContext = efac.buildClientConfigurationContext(clientHome);
+            ListenerManager.configurationContext = sysContext;
         } else {
             sysContext = ListenerManager.configurationContext;
         }
 
         //we will assume a Service and operations
         QName assumedServiceName = new QName("AnonymousService");
-        ServiceDescription axisService =
-                new ServiceDescription(assumedServiceName);
-        operationTemplate =
-                new OperationDescription(new QName("TemplateOperation"));
-        ServiceGroupDescription serviceGroupDescription = new ServiceGroupDescription(sysContext.getAxisConfiguration());
+        ServiceDescription axisService = new ServiceDescription(assumedServiceName);
+        operationTemplate = new OperationDescription(new QName("TemplateOperation"));
+        ServiceGroupDescription serviceGroupDescription =
+                new ServiceGroupDescription(sysContext.getAxisConfiguration());
 
         PhasesInfo info =((AxisConfigurationImpl)sysContext.getAxisConfiguration()).getPhasesinfo();
         //to set the operation flows
@@ -220,11 +221,14 @@ public class Call extends InOutMEPClient {
         }
         axisService.addOperation(operationTemplate);
         serviceGroupDescription.addService(axisService);
-        serviceGroupDescription.getServiceGroupContext(sysContext).fillServiceContexts();
+        serviceGroupDescription.getServiceGroupContext(sysContext);
+        serviceGroupDescription.setServiceGroupName(assumedServiceName.getLocalPart());
+        sysContext.getAxisConfiguration().addServiceGroup(serviceGroupDescription);
 
 //        return sysContext.createServiceContext(assumedServiceName);
         //todo fix me Chinthaka
-        return serviceGroupDescription.getServiceGroupContext(sysContext).getServiceContext(assumedServiceName.getLocalPart());
+        return serviceGroupDescription.getServiceGroupContext(sysContext).getServiceContext(
+                assumedServiceName.getLocalPart());
     }
 
     /**

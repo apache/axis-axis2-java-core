@@ -66,7 +66,6 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
     private Thread thread;
 
     private final MessageInformation messageInfo = new MessageInformation();
-     private ConfigurationContext config;
 
     public RESTBasedEchoRawXMLTest() {
         super(RESTBasedEchoRawXMLTest.class.getName());
@@ -77,7 +76,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        config = UtilServer.start();
+        UtilServer.start();
         Parameter parameter = new ParameterImpl(
                 Constants.Configuration.ENABLE_REST, "true");
         UtilServer.getConfigurationContext()
@@ -87,8 +86,6 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
-        serviceContext =
-                service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
 //                
 //         Runnable runnable = new Runnable() {
 //            public void run() {

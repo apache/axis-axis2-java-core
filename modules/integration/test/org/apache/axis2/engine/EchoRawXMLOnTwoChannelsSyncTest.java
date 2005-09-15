@@ -55,7 +55,6 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
 
     private boolean finish = false;
 
-    private ConfigurationContext config;
 
     public EchoRawXMLOnTwoChannelsSyncTest() {
         super(EchoRawXMLOnTwoChannelsSyncTest.class.getName());
@@ -66,7 +65,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        config = UtilServer.start();
+        UtilServer.start();
         UtilServer.getConfigurationContext().getAxisConfiguration()
                 .engageModule(new QName("addressing"));
 

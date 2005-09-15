@@ -55,7 +55,6 @@ public class EchoRawXMLChunckedTest extends TestCase {
     private ServiceDescription service;
 
     private boolean finish = false;
-     private ConfigurationContext config;
 
     public EchoRawXMLChunckedTest() {
         super(EchoRawXMLChunckedTest.class.getName());
@@ -66,16 +65,12 @@ public class EchoRawXMLChunckedTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-       config = UtilServer.start(Constants.TESTING_PATH + "chuncked-enabledRepository");
+       UtilServer.start(Constants.TESTING_PATH + "chuncked-enabledRepository");
         service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
-        serviceContext =
-                service.getParent().getServiceGroupContext(config).getServiceContext(service.getName().getLocalPart());
-
-
     }
 
     protected void tearDown() throws Exception {

@@ -45,7 +45,6 @@ public class UtilsTCPServer {
         Utils.resolvePhases(configurationContext.getAxisConfiguration(),
                 service);
         ServiceGroupContext serviceGroupContext = service.getParent().getServiceGroupContext(configurationContext);
-        serviceGroupContext.fillServiceContexts();
 
     }
 
