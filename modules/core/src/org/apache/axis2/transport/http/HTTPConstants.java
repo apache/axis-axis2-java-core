@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -14,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+
 package org.apache.axis2.transport.http;
 
 import java.io.UnsupportedEncodingException;

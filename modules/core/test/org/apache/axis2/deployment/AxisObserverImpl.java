@@ -1,13 +1,3 @@
-package org.apache.axis2.deployment;
-
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterIncludeImpl;
-import org.apache.axis2.engine.AxisEvent;
-import org.apache.axis2.engine.AxisObserver;
-import org.apache.axis2.AxisFault;
-
-import java.util.ArrayList;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -22,15 +12,18 @@ import java.util.ArrayList;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * 
  */
 
-/**
- * Author : Deepal Jayasinghe
- * Date: Jul 19, 2005
- * Time: 10:55:51 AM
- */
+package org.apache.axis2.deployment;
+
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterIncludeImpl;
+import org.apache.axis2.engine.AxisEvent;
+import org.apache.axis2.engine.AxisObserver;
+import org.apache.axis2.AxisFault;
+
+import java.util.ArrayList;
+
 public class AxisObserverImpl implements AxisObserver{
 
     ParameterIncludeImpl paramterimpl;

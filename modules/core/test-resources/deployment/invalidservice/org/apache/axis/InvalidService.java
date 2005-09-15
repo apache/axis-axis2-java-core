@@ -1,7 +1,3 @@
-package org.apache.axis2;
-
-import org.apache.axis2.soap.SOAPEnvelope;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -16,15 +12,12 @@ import org.apache.axis2.soap.SOAPEnvelope;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * 
  */
 
-/**
- * Author : Deepal Jayasinghe
- * Date: May 16, 2005
- * Time: 11:49:07 AM
- */
+package org.apache.axis2;
+
+import org.apache.axis2.soap.SOAPEnvelope;
+
 public class InvalidService {
     public SOAPEnvelope echo(SOAPEnvelope in){
         return in;

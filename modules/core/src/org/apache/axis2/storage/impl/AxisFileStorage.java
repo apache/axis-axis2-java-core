@@ -1,17 +1,3 @@
-package org.apache.axis2.storage.impl;
-
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterIncludeImpl;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.AxisFault;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.ArrayList;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -26,9 +12,21 @@ import java.util.ArrayList;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * 
  */
+
+package org.apache.axis2.storage.impl;
+
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterIncludeImpl;
+import org.apache.axis2.description.ParameterInclude;
+import org.apache.axis2.AxisFault;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 public class AxisFileStorage extends AbstractStorage {
 

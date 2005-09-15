@@ -1,13 +1,3 @@
-package org.apache.axis2;
-
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.Handler;
-import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -22,15 +12,18 @@ import javax.xml.namespace.QName;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * 
  */
 
-/**
- * Author : Deepal Jayasinghe
- * Date: May 16, 2005
- * Time: 11:39:25 AM
- */
+package org.apache.axis2;
+
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.Handler;
+import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+
 public class ModuleHandler1  extends AbstractHandler implements Handler {
     private Log log = LogFactory.getLog(getClass());
     private String message;

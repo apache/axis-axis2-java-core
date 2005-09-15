@@ -1,5 +1,3 @@
-package org.apache.axis2.transport.http.server;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -14,9 +12,10 @@ package org.apache.axis2.transport.http.server;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * 
  */
+
+package org.apache.axis2.transport.http.server;
+
 public class AdminAppException extends Exception{
 
     public AdminAppException() {

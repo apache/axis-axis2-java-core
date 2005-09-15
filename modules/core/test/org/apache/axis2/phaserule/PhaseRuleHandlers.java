@@ -1,14 +1,3 @@
-package org.apache.axis2.phaserule;
-
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.Handler;
-import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -23,15 +12,19 @@ import javax.xml.namespace.QName;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * 
  */
 
-/**
- * Author : Deepal Jayasinghe
- * Date: May 20, 2005
- * Time: 11:46:55 AM
- */
+package org.apache.axis2.phaserule;
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.Handler;
+import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+
 public class PhaseRuleHandlers extends AbstractHandler implements Handler {
 
     private Log log = LogFactory.getLog(getClass());

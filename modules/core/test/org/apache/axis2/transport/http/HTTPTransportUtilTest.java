@@ -1,14 +1,3 @@
-package org.apache.axis2.transport.http;
-
-import junit.framework.TestCase;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-
-import javax.xml.namespace.QName;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -23,9 +12,18 @@ import javax.xml.namespace.QName;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * author : Eran Chinthaka (chinthaka@apache.org)
  */
+
+package org.apache.axis2.transport.http;
+
+import junit.framework.TestCase;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+
+import javax.xml.namespace.QName;
 
 public class HTTPTransportUtilTest extends TestCase {
     private HTTPTransportUtils httpTransportUtils;

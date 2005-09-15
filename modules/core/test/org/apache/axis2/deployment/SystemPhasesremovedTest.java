@@ -1,11 +1,3 @@
-package org.apache.axis2.deployment;
-
-import junit.framework.TestCase;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -20,15 +12,16 @@ import org.apache.commons.logging.LogFactory;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * 
  */
 
-/**
- * Author : Deepal Jayasinghe
- * Date: May 14, 2005
- * Time: 3:30:53 PM
- */
+package org.apache.axis2.deployment;
+
+import junit.framework.TestCase;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class SystemPhasesremovedTest extends TestCase {
 
     AxisConfiguration er;

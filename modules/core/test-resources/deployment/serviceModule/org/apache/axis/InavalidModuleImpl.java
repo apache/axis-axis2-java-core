@@ -1,8 +1,3 @@
-package org.apache.axis2;
-
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.modules.Module;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,15 +12,13 @@ import org.apache.axis2.modules.Module;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * 
  */
 
-/**
- * Author : Deepal Jayasinghe
- * Date: May 16, 2005
- * Time: 11:41:08 AM
- */
+package org.apache.axis2;
+
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.modules.Module;
+
 public class InavalidModuleImpl implements Module{
     // initialize the module
     public void init(AxisConfiguration axisSystem) throws AxisFault {

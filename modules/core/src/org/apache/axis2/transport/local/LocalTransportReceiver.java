@@ -12,9 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *  Runtime state of the engine
  */
+
 package org.apache.axis2.transport.local;
 
 import org.apache.axis2.AxisFault;
