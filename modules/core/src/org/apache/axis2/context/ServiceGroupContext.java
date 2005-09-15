@@ -48,6 +48,9 @@ public class ServiceGroupContext extends AbstractContext {
 	}
 	
     private void writeObject(ObjectOutputStream out) throws IOException {
+    	if (description!=null)
+    		this.serviceGroupDescName = description.getServiceGroupName();
+    	
     	out.defaultWriteObject();    	
     }
 

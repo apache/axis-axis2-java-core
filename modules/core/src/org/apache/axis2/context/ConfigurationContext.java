@@ -27,7 +27,11 @@ import org.apache.axis2.util.threadpool.ThreadPool;
 
 import javax.xml.namespace.QName;
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -76,7 +80,7 @@ public class ConfigurationContext extends AbstractContext {
         serviceContextMap.remove(name);
     }
 
-    /**
+    
     public void init(AxisConfiguration axisConfiguration) throws AxisFault {
     	this.axisConfiguration = axisConfiguration;
 
@@ -112,19 +116,6 @@ public class ConfigurationContext extends AbstractContext {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     	in.defaultReadObject();
     	threadPool = new ThreadPool ();
-    }
-
-    public ConfigurationContext(AxisConfiguration registry) {
-        super(null);
-        this.axisConfiguration = registry;
-        //serviceContextMap = new HashMap();
-        moduleContextMap = new HashMap();
-        sessionContextMap = new HashMap();
-
-    }
-
-    public synchronized void removeService(QName name) {
-        serviceContextMap.remove(name);
     }
 
     /**
@@ -296,7 +287,4 @@ public class ConfigurationContext extends AbstractContext {
         return "".equals(string) || string == null;
     }
 
-    public void init(AxisConfiguration axisConfiguration) throws AxisFault {
-        this.axisConfiguration = axisConfiguration;
-    }
 }

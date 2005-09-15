@@ -50,6 +50,9 @@ public class ServiceContext extends AbstractContext {
     }
     
     private void writeObject(ObjectOutputStream out) throws IOException {	
+    	if (serviceConfig!=null)
+    		this.serviceDescName = serviceConfig.getName();
+    	
     	out.defaultWriteObject();
     }
 

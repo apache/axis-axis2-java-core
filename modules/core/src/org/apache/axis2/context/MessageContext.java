@@ -195,11 +195,22 @@ public class MessageContext extends AbstractContext {
             serviceGroupDescription = axisConfiguration.getServiceGroup(serviceGroupDescId);
         if (serviceDescName != null)
             serviceDescription = axisConfiguration.getService(serviceDescName.getLocalPart());
-        if (serviceDescription != null)
+        if (operationDescName != null)
             operationDescription = serviceDescription.getOperation(operationDescName);
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
+    	if (transportIn != null)
+            transportInName = transportIn.getName();
+        if (transportOut != null)
+            transportOutname = transportOut.getName();
+        if (serviceGroupDescription != null)
+            serviceGroupDescId = serviceGroupDescription.getServiceGroupName();
+        if (serviceDescription != null)
+            serviceDescName = serviceDescription.getName();
+        if (operationDescription != null)
+            operationDescName = operationDescription.getName();
+        
         out.defaultWriteObject();
     }
 

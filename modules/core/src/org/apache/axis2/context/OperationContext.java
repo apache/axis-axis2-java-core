@@ -86,6 +86,11 @@ public class OperationContext extends AbstractContext {
     }
     
     private void writeObject(ObjectOutputStream out) throws IOException {
+    	if (axisOperation!=null)
+    		operationDescName = axisOperation.getName();
+    	if (axisOperation.getParent()!=null)
+    		serviceDescName = axisOperation.getParent().getName();
+    	
     	out.defaultWriteObject();
     }
 
