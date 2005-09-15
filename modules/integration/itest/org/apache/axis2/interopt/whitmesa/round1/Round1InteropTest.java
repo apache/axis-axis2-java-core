@@ -6,8 +6,6 @@ import org.apache.axis2.interopt.whitemesa.round1.Round1Client;
 import org.apache.axis2.interopt.whitemesa.WhiteMesaIneterop;
 import org.apache.axis2.AxisFault;
 
-import java.io.File;
-
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -35,7 +33,6 @@ public class Round1InteropTest extends WhiteMesaIneterop {
 
     SOAPEnvelope retEnv = null;
     boolean success = false;
-    File file = null;
     String url = "http://soapinterop.java.sun.com:80/round2/base";
     String soapAction = "http://soapinterop.org/";
     String resFilePath = "interopt/whitemesa/round1/";
@@ -44,9 +41,12 @@ public class Round1InteropTest extends WhiteMesaIneterop {
     Round1Client client = null;
     boolean result = false;
 
+    public void setUp(){
+        client = new Round1Client();
+    }
 
     public void testEchoString() throws AxisFault {
-        client = new Round1Client();
+
         url = "http://easysoap.sourceforge.net/cgi-bin/interopserver";
         soapAction = "urn:soapinterop";
         util = new Round1StringUtil();
@@ -57,7 +57,6 @@ public class Round1InteropTest extends WhiteMesaIneterop {
     }
 
     public void testEchoVoid() throws AxisFault {
-        client = new Round1Client();
         url = "http://easysoap.sourceforge.net/cgi-bin/interopserver";
         soapAction = "urn:soapinterop";
         util = new Round1VoidUtil();
@@ -68,7 +67,6 @@ public class Round1InteropTest extends WhiteMesaIneterop {
     }
 
     public void testEchoStringArray() throws AxisFault {
-        client = new Round1Client();
         url = "http://easysoap.sourceforge.net/cgi-bin/interopserver";
         soapAction = "urn:soapinterop";
         util = new Round1StringArrayUtil();
@@ -79,7 +77,6 @@ public class Round1InteropTest extends WhiteMesaIneterop {
     }
 
     public void testInteger() throws AxisFault {
-        client = new Round1Client();
         url = "http://easysoap.sourceforge.net/cgi-bin/interopserver";
         soapAction = "urn:soapinterop";
         util = new Round1IntegerUtil();
@@ -89,19 +86,17 @@ public class Round1InteropTest extends WhiteMesaIneterop {
         assertTrue(result);
     }
 
-//    public void testIntegerArray() throws AxisFault {
-//        client = new Round1Client();
-//        url = "http://easysoap.sourceforge.net/cgi-bin/interopserver";
-//        soapAction = "urn:soapinterop";
-//        util = new Round1IntArrayUtil();
-//        retEnv = client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "Round1IntArrayRes.xml";
-//        result = compare(retEnv, tempPath);
-//        assertTrue(result);
-//    }
+    public void testIntegerArray() throws AxisFault {
+        url = "http://easysoap.sourceforge.net/cgi-bin/interopserver";
+        soapAction = "urn:soapinterop";
+        util = new Round1IntArrayUtil();
+        retEnv = client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "Round1IntArrayRes.xml";
+        result = compare(retEnv, tempPath);
+        assertTrue(result);
+    }
 
     public void testEchoFloat() throws AxisFault {
-        client = new Round1Client();
         url = "http://easysoap.sourceforge.net/cgi-bin/interopserver";
         soapAction = "urn:soapinterop";
         util = new Round1FloatUtil();
@@ -112,19 +107,17 @@ public class Round1InteropTest extends WhiteMesaIneterop {
     }
 
 
-//    public void testEchoFloatArray() throws AxisFault {
-//        client = new Round1Client();
-//        url = "http://easysoap.sourceforge.net/cgi-bin/interopserver";
-//        soapAction = "urn:soapinterop";
-//        util = new Round1FloatArrayUtil();
-//        retEnv = client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "Round1FloatArrayRes.xml";
-//        result = compare(retEnv, tempPath);
-//        assertTrue(result);
-//    }
+    public void testEchoFloatArray() throws AxisFault {
+        url = "http://easysoap.sourceforge.net/cgi-bin/interopserver";
+        soapAction = "urn:soapinterop";
+        util = new Round1FloatArrayUtil();
+        retEnv = client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "Round1FloatArrayRes.xml";
+        result = compare(retEnv, tempPath);
+        assertTrue(result);
+    }
 
     public void testEchoStruct() throws AxisFault {
-        client = new Round1Client();
         url = "http://easysoap.sourceforge.net/cgi-bin/interopserver";
         soapAction = "urn:soapinterop";
         util = new Round1StructUtil();
@@ -134,16 +127,15 @@ public class Round1InteropTest extends WhiteMesaIneterop {
         assertTrue(result);
     }
 
-//    public void testEchoStructArray() throws AxisFault {
-//        client = new Round1Client();
-//        url = "http://easysoap.sourceforge.net/cgi-bin/interopserver";
-//        soapAction = "urn:soapinterop";
-//        util = new Round1StructArrayUtil();
-//        retEnv = client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "Round1StructArrayRes.xml";
-//        result = compare(retEnv, tempPath);
-//        assertTrue(result);
-//    }
+    public void testEchoStructArray() throws AxisFault {
+        url = "http://easysoap.sourceforge.net/cgi-bin/interopserver";
+        soapAction = "urn:soapinterop";
+        util = new Round1StructArrayUtil();
+        retEnv = client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "Round1StructArrayRes.xml";
+        result = compare(retEnv, tempPath);
+        assertTrue(result);
+    }
 
 //    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
 //        boolean ok;
