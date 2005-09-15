@@ -18,6 +18,7 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.TransportInDescription;
@@ -31,7 +32,7 @@ import javax.xml.namespace.QName;
  */
 public class OperationContextTest extends AbstractTestCase {
 
-    private ConfigurationContext engineCtx = new ConfigurationContext(null);
+    private ConfigurationContext engineCtx = new ConfigurationContext(new AxisConfigurationImpl());
 
     public OperationContextTest(String arg0) {
         super(arg0);
@@ -39,8 +40,12 @@ public class OperationContextTest extends AbstractTestCase {
 
     public void testMEPfindingOnRelatesTO() throws Exception {
 
-        ServiceContext sessionContext = new ServiceContext(new ServiceDescription(),
-                new ServiceGroupContext(new ConfigurationContext(null),null));
+        ServiceDescription serviceConfig = new ServiceDescription(new QName("TempSC"));
+        engineCtx.getAxisConfiguration().addService(serviceConfig);
+       ServiceGroupContext sgc =  serviceConfig.getParent().getServiceGroupContext(engineCtx);
+
+        ServiceContext sessionContext = sgc.getServiceContext("TempSC");
+//        ServiceContext sessionContext = new ServiceContext(serviceConfig,new ServiceGroupContext(new ConfigurationContext(null),serviceConfig));
         MessageContext messageContext1 = this.getBasicMessageContext();
 
         messageContext1.setMessageID(

@@ -169,6 +169,7 @@ public class InOutMEPClient extends MEPClient {
             msgctx.setTo(to);
             msgctx.setServiceContext(serviceContext);
             ConfigurationContext syscontext = serviceContext.getEngineContext();
+            msgctx.setConfigurationContext(syscontext);
 
             checkTransport(msgctx);
 
@@ -227,8 +228,6 @@ public class InOutMEPClient extends MEPClient {
             //Use message id all the time!
             String messageID = String.valueOf(System.currentTimeMillis());
             msgctx.setMessageID(messageID);
-            msgctx.getOperationContext().getServiceContext().getEngineContext().
-                    registerOperationContext(messageID, msgctx.getOperationContext());
             ////
             if (useSeparateListener) {
                 //the invocation happen via a seperate Channel, so we should set up the
@@ -260,6 +259,7 @@ public class InOutMEPClient extends MEPClient {
         } catch (OMException e) {
             throw new AxisFault(e.getMessage(), e);
         }catch (Exception e) {
+            e.printStackTrace();
             throw new AxisFault(e.getMessage(), e);
         }
 

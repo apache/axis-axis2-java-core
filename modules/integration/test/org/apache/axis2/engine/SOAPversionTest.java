@@ -47,8 +47,7 @@ import javax.xml.stream.XMLStreamException;
 public class SOAPversionTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
-            + (5000)
-//            + (UtilServer.TESTING_PORT)
+            + (UtilServer.TESTING_PORT)
             + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");

@@ -232,8 +232,7 @@ public class OperationDescription extends WSDLOperationImpl implements
             // So this message is part of an ongoing MEP
             //			operationContext =
             ConfigurationContext configContext = msgContext.getSystemContext();
-            operationContext = configContext.getOperationContext(
-                            msgContext.getRelatesTo().getValue());
+            operationContext = configContext.getOperationContext(msgContext.getRelatesTo().getValue());
 
             if (null == operationContext) {
                 throw new AxisFault(Messages.getMessage("cannotCorrealteMsg",
