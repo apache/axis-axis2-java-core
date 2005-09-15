@@ -74,12 +74,13 @@ public class AddressingInHandlerTest extends TestCase {
                     messageInformationHeaders.getAction(),
                     action);
             assertEquals("action header is not correct",
-                    messageInformationHeaders.getMessageId(),
-                    messageID);
+                    messageInformationHeaders.getMessageId().trim(),
+                    messageID.trim());
 
             assertFromEPR(messageInformationHeaders.getFrom());
 
         } catch (Exception e) {
+            e.printStackTrace();
             log.info(e.getMessage());
             fail(" An Exception has occured " + e.getMessage());
         }
@@ -87,8 +88,8 @@ public class AddressingInHandlerTest extends TestCase {
 
     private void assertFromEPR(EndpointReference fromEPR) {
         assertEquals("Address in EPR is not valid",
-                fromEPR.getAddress(),
-                fromAddress);
+                fromEPR.getAddress().trim(),
+                fromAddress.trim());
     }
 
 

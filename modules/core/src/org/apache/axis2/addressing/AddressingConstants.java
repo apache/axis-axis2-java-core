@@ -63,6 +63,7 @@ public interface AddressingConstants {
         public static final String WSA_INTERFACE_NAME = "InterfaceName";
         public static final String WSA_SERVICE_NAME_ENDPOINT_NAME = "EndpointName";
         public static final String WSA_POLICIES = "Policies";
+        public static final String WSA_METADATA = "Metadata";
         // ==================================================================================
 
     }

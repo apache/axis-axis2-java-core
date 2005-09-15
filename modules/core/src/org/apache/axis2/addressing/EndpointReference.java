@@ -15,11 +15,10 @@
  */
 package org.apache.axis2.addressing;
 
-import java.io.Serializable;
-
 import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
+import java.io.Serializable;
 
 /**
  * Class EndpointReference
@@ -52,6 +51,8 @@ public class EndpointReference implements Serializable {
     private ServiceName serviceName;
 
     private OMElement policies;
+
+    private AnyContentType metadata;
 
     /**
      * @param address
@@ -156,6 +157,14 @@ public class EndpointReference implements Serializable {
 
     public void setPolicies(OMElement policies) {
         this.policies = policies;
+    }
+
+    public AnyContentType getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(AnyContentType metadata) {
+        this.metadata = metadata;
     }
 
 

@@ -201,8 +201,7 @@ public class Utils {
         ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configurationContext,serviceDesc.getParent());
         serviceGroupContext.setId(serviceGroupContextId);
         configurationContext.registerServiceGroupContext(serviceGroupContext);
-        ServiceContext serviceContext = new ServiceContext(serviceDesc, serviceGroupContext);
-        return serviceContext;
+        return new ServiceContext(serviceDesc, serviceGroupContext);
     }
 
     public static ConfigurationContext getNewConfigurationContext(String repositry) throws Exception {
