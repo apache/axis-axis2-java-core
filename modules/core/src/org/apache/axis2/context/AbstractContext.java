@@ -1,14 +1,3 @@
-package org.apache.axis2.context;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.HashMap;
-
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.AxisConfiguration;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -23,9 +12,19 @@ import org.apache.axis2.engine.AxisConfiguration;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * 
  */
+
+package org.apache.axis2.context;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.HashMap;
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
+
 /**
  *  This is the topmost level of the Context hierachy, is potentially a bag of 
  *  properties. 

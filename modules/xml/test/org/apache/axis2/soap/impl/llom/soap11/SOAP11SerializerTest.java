@@ -1,14 +1,4 @@
-package org.apache.axis2.soap.impl.llom.soap11;
-
-import org.apache.axis2.om.OMTestCase;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;/*
+/*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,10 +12,19 @@ import javax.xml.stream.XMLStreamWriter;/*
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * author : Eran Chinthaka (chinthaka@apache.org)
  */
 
+package org.apache.axis2.soap.impl.llom.soap11;
+
+import org.apache.axis2.om.OMTestCase;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 public class SOAP11SerializerTest extends OMTestCase {
 
     private Log log = LogFactory.getLog(getClass());

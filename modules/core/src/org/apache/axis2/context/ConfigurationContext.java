@@ -1,5 +1,3 @@
-package org.apache.axis2.context;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -14,9 +12,9 @@ package org.apache.axis2.context;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *  Runtime state of the engine
  */
+
+package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.ServiceGroupDescription;

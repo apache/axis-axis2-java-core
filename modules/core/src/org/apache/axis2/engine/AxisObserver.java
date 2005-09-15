@@ -1,8 +1,3 @@
-package org.apache.axis2.engine;
-
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterInclude;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,15 +12,13 @@ import org.apache.axis2.description.ParameterInclude;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * 
  */
 
-/**
- * Author : Deepal Jayasinghe
- * Date: Jul 19, 2005
- * Time: 9:51:26 AM
- */
+package org.apache.axis2.engine;
+
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterInclude;
+
 public interface AxisObserver extends ParameterInclude {
     //The initilization code will go here
     void init();

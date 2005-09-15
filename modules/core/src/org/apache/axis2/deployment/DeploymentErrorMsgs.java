@@ -1,5 +1,3 @@
-package org.apache.axis2.deployment;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -14,15 +12,10 @@ package org.apache.axis2.deployment;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * 
  */
 
-/**
- * Author : Deepal Jayasinghe
- * Date: Aug 2, 2005
- * Time: 6:20:48 PM
- */
+package org.apache.axis2.deployment;
+
 public class DeploymentErrorMsgs {
     public static final String WSDL_FILE_NOT_FOUND = "wsdlfilenotfound";
     public static final String SERVICE_XML_NOT_FOUND = "servicexmlnotfound";
