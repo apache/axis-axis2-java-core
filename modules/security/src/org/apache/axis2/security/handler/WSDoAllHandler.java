@@ -197,46 +197,10 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 
     	Object value = null;
     	
-    	// If the parameters are set in the scope of an peration in service.xml
-		OperationContext operationContext = msgContext.getOperationContext();
-		if (operationContext != null) {
-			OperationDescription operationDesc = operationContext
-					.getAxisOperation();
+        Parameter param = msgContext.getParameter(key);
+		value = (param== null)?null:param.getValue();
 
-			// if the operation desc is available
-			if (operationDesc != null) {
-				Parameter parameter = operationDesc.getParameter(key);
-				value = (parameter != null) ? parameter.getValue() : null;
-			}
-		}
-
-		// If the parameters are set in the scope of the service in service.xml
-		ServiceContext serviceContext = msgContext.getServiceContext();
-		if (serviceContext != null) {
-			ServiceDescription serviceDesc = serviceContext.getServiceConfig();
-
-			// If the parameter is not found in the operation desc and if the
-			// service desc is available
-			if (value == null && serviceDesc != null) {
-				Parameter parameter = serviceDesc.getParameter(key);
-				value = (parameter != null) ? parameter.getValue() : null;
-			}
-		}
-
-		// If the parameters are set globally in the axis2.xml
-		ConfigurationContext systemContext = msgContext.getSystemContext();
-		if (systemContext != null) {
-			AxisConfiguration axisConfig = systemContext.getAxisConfiguration();
-
-			// If the parameter is not found in the service desc the look at the
-			// global config - axis config
-			if (value == null && axisConfig != null) {
-				Parameter parameter = axisConfig.getParameter(key);
-				value = (parameter != null) ? parameter.getValue() : null;
-			}
-		}
-		
-    	// ---------------------------------------------------------------------
+        // ---------------------------------------------------------------------
     	//If value is still null this point then the user has not set the value
     	  
     	

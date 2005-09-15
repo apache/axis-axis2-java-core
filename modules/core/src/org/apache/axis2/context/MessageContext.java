@@ -30,6 +30,7 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 /**
  * The palce where all the service specific states are kept.
@@ -622,16 +623,16 @@ public class MessageContext extends AbstractContext {
      */
     public Parameter getParameter(String key) {
         Parameter param = null;
-        if (operationContext != null) {
-            OperationDescription opDesc = operationContext.getAxisOperation();
+        if (getOperationDescription() != null) {
+            OperationDescription opDesc = getOperationDescription();
             param = opDesc.getParameter(key);
         }
-        if (param == null && serviceContext != null) {
-            ServiceDescription serviceDesc = serviceContext.getServiceConfig();
+        if (param == null && getServiceDescription() != null) {
+            ServiceDescription serviceDesc = getServiceDescription();
             param = serviceDesc.getParameter(key);
         }
-        if (param == null && serviceGroupContext != null) {
-            ServiceGroupDescription serviceDesc = serviceGroupContext.getDescription();
+        if (param == null && getServiceGroupDescription() != null) {
+            ServiceGroupDescription serviceDesc = getServiceGroupDescription();
             param = serviceDesc.getParameter(key);
         }
         if (param == null && configurationContext != null) {
@@ -668,8 +669,8 @@ public class MessageContext extends AbstractContext {
     public Parameter getModuleParameter(String key, String moduleName, HandlerDescription handler) {
         Parameter param = null;
         ModuleConfiguration moduleConfig = null;
-        if (operationContext != null) {
-            OperationDescription opDesc = operationContext.getAxisOperation();
+        if (getOperationDescription() != null) {
+            OperationDescription opDesc = getOperationDescription();
             moduleConfig = opDesc.getModuleConfig(new QName(moduleName));
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);
@@ -678,8 +679,8 @@ public class MessageContext extends AbstractContext {
                 param = opDesc.getParameter(key);
             }
         }
-        if (param == null && serviceContext != null) {
-            ServiceDescription serviceDesc = serviceContext.getServiceConfig();
+        if (param == null && getServiceDescription() != null) {
+            ServiceDescription serviceDesc = getServiceDescription();
             moduleConfig = serviceDesc.getModuleConfig(new QName(moduleName));
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);
@@ -689,8 +690,8 @@ public class MessageContext extends AbstractContext {
             }
         }
 
-        if (param == null && serviceGroupContext != null) {
-            ServiceGroupDescription serviceDesc = serviceGroupContext.getDescription();
+        if (param == null && getServiceGroupDescription() != null) {
+            ServiceGroupDescription serviceDesc = getServiceGroupDescription();
             moduleConfig = serviceDesc.getModuleConfig(new QName(moduleName));
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);

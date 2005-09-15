@@ -21,10 +21,12 @@ package org.apache.axis2.security;
 import java.security.cert.X509Certificate;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.security.auth.callback.CallbackHandler;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.security.handler.WSDoAllHandler;
@@ -66,7 +68,6 @@ public class WSDoAllReceiver extends WSDoAllHandler {
         
         try {
         	reqData.setMsgContext(msgContext);
-
             Vector actions = new Vector();
             String action = null;
             if ((action = (String) getOption(WSHandlerConstants.ACTION)) == null) {
