@@ -24,8 +24,6 @@ import java.awt.event.KeyListener;
 
 /**
  * Listeners for relevent Components in the IN operation
- *
- * @author Saminda Abeyruwan <saminda@opensource.lk>
  */
 public class ListenersIn implements KeyListener {
     JTextField createQueue;

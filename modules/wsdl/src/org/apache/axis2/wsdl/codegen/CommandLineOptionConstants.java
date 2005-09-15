@@ -16,9 +16,6 @@
 
 package org.apache.axis2.wsdl.codegen;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface CommandLineOptionConstants {
 
     public static final String SOLE_INPUT = "SOLE_INPUT";

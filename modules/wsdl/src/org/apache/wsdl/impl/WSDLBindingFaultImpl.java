@@ -20,9 +20,6 @@ import org.apache.wsdl.WSDLBindingFault;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDLBindingFaultImpl extends ExtensibleComponentImpl
         implements WSDLBindingFault {
     /**

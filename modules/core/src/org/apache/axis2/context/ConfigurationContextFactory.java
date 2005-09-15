@@ -21,12 +21,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-/**
- * Created by IntelliJ IDEA.
- * Author : Deepal Jayasinghe
- * Date: Apr 19, 2005
- * Time: 10:44:38 AM
- */
 public class ConfigurationContextFactory {
 
     /**

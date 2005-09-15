@@ -19,9 +19,6 @@ package org.apache.axis2.wsdl.codegen.extension;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 
 
-/**
- * @author chathura@opensource.lk
- */
 public class PolicyEvaluator implements CodeGenExtension {
 
     CodeGenConfiguration configuration;

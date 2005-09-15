@@ -40,11 +40,6 @@ import java.io.File;
  * This is a simple implementation of an SMTP/POP3 server for processing SOAP
  * requests via Apache's xml-axis. This is not intended for production use. Its
  * intended uses are for demos, debugging, and performance profiling.
- *
- * @author Davanum Srinivas <dims@yahoo.com>
- * @author Rob Jellinghaus (robj@unrealities.com)
- * @author Chamil Thanthrimudalige <chamilt@gmail.com>Changes done to make the
- *         Class work inside Axis 2.
  */
 
 /*

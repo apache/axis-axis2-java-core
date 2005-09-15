@@ -28,9 +28,6 @@ import java.util.Iterator;
 
 /**
  * Class DetailImpl
- *
- * @author Ashutosh Shahi
- *         ashutosh.shahi@gmail.com
  */
 public class DetailImpl extends SOAPFaultElementImpl implements Detail {
 

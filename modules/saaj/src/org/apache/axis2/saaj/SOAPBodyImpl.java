@@ -27,9 +27,6 @@ import java.util.Locale;
 
 /**
  * Class SOAPBodeImpl
- *
- * @author Jayachandra
- *         jayachandra@gmail.com
  */
 public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
     /**

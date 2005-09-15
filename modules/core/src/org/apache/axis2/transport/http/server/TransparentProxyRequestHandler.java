@@ -42,8 +42,6 @@ import org.apache.commons.httpclient.HttpVersion;
 /**
  * This request handler can handle the CONNECT method. It does nothing for any
  * other HTTP methods.
- * 
- * @author Ortwin Glueck
  */
 public class TransparentProxyRequestHandler implements HttpRequestHandler {
 

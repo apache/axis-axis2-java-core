@@ -44,9 +44,6 @@ import org.apache.commons.httpclient.StatusLine;
 
 /**
  * A connection to the SimpleHttpServer.
- *
- * @author Christian Kohlschuetter
- * @author Oleg Kalnichevski
  */
 public class SimpleHttpServerConnection {
 

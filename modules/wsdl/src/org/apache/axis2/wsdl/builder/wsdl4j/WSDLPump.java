@@ -40,9 +40,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.util.*;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDLPump {
 
     private static final String XSD_TYPE = "type";

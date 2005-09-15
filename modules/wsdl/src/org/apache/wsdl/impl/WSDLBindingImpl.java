@@ -24,9 +24,6 @@ import org.apache.wsdl.WSDLInterface;
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDLBindingImpl extends ExtensibleComponentImpl
         implements WSDLBinding {
     /**

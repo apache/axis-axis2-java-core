@@ -32,10 +32,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
- */
-
 public class MTOMStAXSOAPModelBuilderTest extends AbstractTestCase {
     MIMEHelper mimeHelper;
 

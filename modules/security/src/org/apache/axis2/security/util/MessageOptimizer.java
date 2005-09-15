@@ -31,8 +31,6 @@ import org.jaxen.XPath;
 
 /**
  * Utility class to handle MTOM-Optimizing Base64 Text values
- *  
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class MessageOptimizer {
 

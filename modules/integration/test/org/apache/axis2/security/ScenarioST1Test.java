@@ -18,7 +18,6 @@ package org.apache.axis2.security;
 
 /**
  * SAML Scenario 1
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class ScenarioST1Test extends InteropTestBase {
 	

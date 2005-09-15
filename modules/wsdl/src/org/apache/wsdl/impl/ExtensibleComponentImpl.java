@@ -24,9 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-/**
- * @author chathura@opensource.lk
- */
 public class ExtensibleComponentImpl extends ComponentImpl
         implements ExtensibleComponent {
     /**

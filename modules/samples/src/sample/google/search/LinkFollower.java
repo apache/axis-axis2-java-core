@@ -25,8 +25,6 @@ import java.io.IOException;
 /**
  * class LinkFollower
  * Listen to HyperLink actions and Open Simple web browser to open URLs
- *
- * @author Gayan Asanka  (gayan@opensource.lk)
  */
 class LinkFollower implements HyperlinkListener, Runnable {
 

@@ -48,9 +48,6 @@ import org.apache.commons.httpclient.StatusLine;
 
 /**
  * A generic HTTP response.
- * 
- * @author Christian Kohlschuetter
- * @author Oleg Kalnichevski
  */
 public class SimpleResponse {
     

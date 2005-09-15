@@ -25,10 +25,6 @@ import java.util.ResourceBundle;
  * Accept parameters for ProjectResourceBundle,
  * but defer object instantiation (and therefore
  * resource bundle loading) until required.
- *
- * @author Richard A. Sitze (rsitze@us.ibm.com)
- * @author Karl Moss (kmoss@macromedia.com)
- * @author Glen Daniels (gdaniels@apache.org)
  */
 public class MessageBundle {
     private boolean loaded = false;

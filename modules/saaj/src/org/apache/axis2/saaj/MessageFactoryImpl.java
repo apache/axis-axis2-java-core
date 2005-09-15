@@ -22,12 +22,6 @@ import javax.xml.soap.SOAPMessage;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * @author Ashutosh Shahi ashutosh.shahi@gmail.com
- *         <p/>
- *         TODO To change the template for this generated type comment go to
- *         Window - Preferences - Java - Code Style - Code Templates
- */
 public class MessageFactoryImpl extends MessageFactory {
 
     /* (non-Javadoc)

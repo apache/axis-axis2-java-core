@@ -55,9 +55,6 @@ import java.util.*;
  * variables. Any dynamic variable defined in PropertiesUtil.getVariableValue()
  * can be used (such as {date}), as well as arguments in the form {0}, {1}, etc.
  * Argument values are specified in the various overloaded getString() methods.</p>
- *
- * @author Karl Moss (kmoss@macromedia.com)
- * @author Glen Daniels (gdaniels@apache.org)
  */
 public class RB {
     // The static cache of properties. The key is the basename + the local +

@@ -28,8 +28,6 @@ import java.util.ArrayList;
  * being sent to the Axis engine. If a mail is to be sent to the engine then a
  * new Axis engine is created using the configuration in the MailServer class
  * and the receive method is called.
- *
- * @author Chamil Thanthrimudalige
  */
 public class MailSorter {
     Storage st = null;

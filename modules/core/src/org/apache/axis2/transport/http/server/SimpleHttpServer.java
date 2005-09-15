@@ -39,9 +39,6 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * A simple, but extensible HTTP server, mostly for testing purposes.
- * 
- * @author Christian Kohlschuetter
- * @author Oleg Kalnichevski
  */
 public class SimpleHttpServer implements Runnable {
     private static final Log LOG = LogFactory.getLog(SimpleHttpServer.class);

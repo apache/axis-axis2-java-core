@@ -23,7 +23,6 @@ import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 import javax.xml.namespace.QName;
 
 /**
- * @author chathura@opensource.lk
  *         This Extensibility Element is extended to handle particularly the
  *         SOAP Adress or the Endpoint URL.
  */

@@ -35,9 +35,6 @@ import org.apache.commons.httpclient.Credentials;
 
 /**
  * Simple server that registers default request handlers to act as a proxy.
- * 
- * @author Ortwin Glueck
- * @author Oleg Kalnichevski
  */
 public class SimpleProxy extends SimpleHttpServer {
     

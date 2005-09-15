@@ -28,8 +28,6 @@ import javax.swing.*;
 
 /**
  * This will create the Excutable code which runs seperately of GUI interations
- *
- * @author Saminda Abeyruwan <saminda@opensource.lk>
  */
 public class RunnableDeleteQueue extends QueueManager implements Runnable {
     JTextField createQueue;

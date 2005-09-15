@@ -37,8 +37,6 @@ import org.apache.commons.httpclient.HttpVersion;
 
 /**
  * This request handler provides service interface similar to that of Servlet API.
- * 
- * @author Oleg Kalnichevski
  */
 public class HttpServiceHandler implements HttpRequestHandler {
 

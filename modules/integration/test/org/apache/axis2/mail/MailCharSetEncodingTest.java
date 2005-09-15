@@ -45,8 +45,6 @@ import javax.xml.namespace.QName;
 /**
  * These tests willcheck wheather the mail transport works ok with charactor set
  * encoding changes.
- * 
- * @author Chamil Thanthrimudalige <chamilt@gmail.com>
  */
 public class MailCharSetEncodingTest extends TestCase {
 

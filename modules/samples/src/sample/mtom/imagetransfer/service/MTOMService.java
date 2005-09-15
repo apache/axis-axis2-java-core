@@ -23,9 +23,6 @@ import javax.activation.DataHandler;
 import java.awt.*;
 import java.io.FileOutputStream;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
- */
 public class MTOMService {
     public OMElement mtomSample(OMElement element) throws Exception {
     	

@@ -18,9 +18,6 @@ package org.apache.wsdl.extensions;
 
 import org.apache.wsdl.WSDLExtensibilityElement;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface SOAPOperation extends WSDLExtensibilityElement {
     public String getSoapAction();
 

@@ -27,9 +27,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WOMBuilderFactory {
 
     public static final int WSDL11 = 1;

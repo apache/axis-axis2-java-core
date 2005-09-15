@@ -20,9 +20,6 @@ import junit.framework.TestCase;
 import javax.xml.soap.*;
 import java.io.ByteArrayOutputStream;
 
-/**
- * @author Ashutosh Shahi
- */
 public class PrefixesTest extends TestCase {
 
     public PrefixesTest(String name) {

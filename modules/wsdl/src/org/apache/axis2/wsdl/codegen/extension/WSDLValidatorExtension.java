@@ -28,9 +28,6 @@ import org.w3c.dom.NodeList;
 
 import java.util.Iterator;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
     private static String TARGETNAMESPACE_STRING = "targetNamespace";
 

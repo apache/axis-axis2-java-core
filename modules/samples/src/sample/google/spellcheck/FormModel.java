@@ -20,8 +20,6 @@ import java.net.URL;
 /**
  * class sample.google.spellcheck.FormModel
  * This is the Impementation of the Asynchronous Client
- *
- * @author Nadana Gunarathna
  */
 public class FormModel {
 

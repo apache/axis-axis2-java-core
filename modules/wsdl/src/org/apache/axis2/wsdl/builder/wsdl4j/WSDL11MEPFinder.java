@@ -22,9 +22,6 @@ import org.apache.wsdl.impl.WSDLProcessingException;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDL11MEPFinder {
 
     public static String getMEP(Operation operation) {

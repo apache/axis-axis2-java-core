@@ -21,7 +21,6 @@ import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 import org.w3c.dom.Element;
 
 /**
- * @author chathura@opensource.lk
  *         This would be the default Extension class in case that the Extensibility Element
  *         in the WSDL file could not be mapped to a particular Extensibility Element. In
  *         which case the entire Extensibility Element will be kept as a DOM Element

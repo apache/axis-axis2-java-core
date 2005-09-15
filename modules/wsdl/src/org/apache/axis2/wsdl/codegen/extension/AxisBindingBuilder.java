@@ -27,7 +27,6 @@ import java.util.Vector;
 
 /**
  * The purpose of this extension is to build the bindings. bindings however may not be present
- * @author chathura@opensource.lk
  */
 public class AxisBindingBuilder extends AbstractCodeGenerationExtension implements CodeGenExtension {
 

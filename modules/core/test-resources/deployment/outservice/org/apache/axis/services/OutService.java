@@ -9,13 +9,6 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.Date;
 
-/**
- * Created by IntelliJ IDEA.
- * Author : Deepal Jayasinghe
- * Date: Mar 16, 2005
- * Time: 3:56:50 PM
- */
-
 public class OutService extends Thread{
     protected Log log = LogFactory.getLog(getClass());
 

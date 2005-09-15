@@ -19,8 +19,6 @@ package org.apache.axis2.security;
 /**
  * Testing optimizing the base 64 elements with 
  * <code><parameter name="optimizeParts" locked="false">//xenc:EncryptedData/xenc:CipherData/xenc:CipherValue</parameter></code>
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class MTOMOptimizedSecurityTest extends InteropTestBase {
 

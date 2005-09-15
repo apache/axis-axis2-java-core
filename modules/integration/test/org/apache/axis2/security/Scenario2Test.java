@@ -18,7 +18,6 @@ package org.apache.axis2.security;
 
 /**
  * WS-Security inteorp scenario 2
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class Scenario2Test extends InteropTestBase {
     

@@ -21,9 +21,6 @@ import javax.xml.soap.SOAPBodyElement;
 
 /**
  * Class SOAPBodeElementImpl
- *
- * @author Ashutosh Shahi
- *         ashutosh.shahi@gmail.com
  */
 public class SOAPBodyElementImpl extends SOAPElementImpl implements
         SOAPBodyElement {

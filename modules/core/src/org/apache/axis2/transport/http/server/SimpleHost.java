@@ -29,9 +29,6 @@
 
 package org.apache.axis2.transport.http.server;
 
-/**
- * @author Oleg Kalnichevski
- */
 public class SimpleHost implements Cloneable {
 
     private String hostname = null;

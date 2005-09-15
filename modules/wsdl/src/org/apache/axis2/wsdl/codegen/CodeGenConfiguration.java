@@ -24,9 +24,6 @@ import java.io.File;
 import java.util.Map;
 import java.util.HashMap;
 
-/**
- * @author chathura@opensource.lk
- */
 public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     private WSDLDescription wom;

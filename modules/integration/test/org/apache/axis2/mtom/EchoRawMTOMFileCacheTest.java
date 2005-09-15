@@ -26,9 +26,6 @@ import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class EchoRawMTOMFileCacheTest extends EchoRawMTOMTest{
   
     private QName serviceName = new QName("EchoXMLService");

@@ -22,9 +22,6 @@ import org.apache.wsdl.WSDLTypes;
 import javax.xml.namespace.QName;
 import java.util.Iterator;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDLTypesImpl extends ComponentImpl implements WSDLTypes {
 
 

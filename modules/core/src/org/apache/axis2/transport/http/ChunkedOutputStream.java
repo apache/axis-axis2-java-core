@@ -22,9 +22,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 
-/**
- * @author Rick Rineholt
- */
 public class ChunkedOutputStream extends FilterOutputStream {
 
     boolean eos = false;

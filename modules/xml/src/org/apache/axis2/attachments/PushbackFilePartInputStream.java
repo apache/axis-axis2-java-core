@@ -19,9 +19,6 @@ package org.apache.axis2.attachments;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class PushbackFilePartInputStream extends InputStream {
 
     MIMEBodyPartInputStream inStream;

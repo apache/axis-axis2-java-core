@@ -25,8 +25,6 @@ import java.awt.event.*;
 
 /**
  * This will create the OMElement needed to be used in invokeNonBlocking() method
- *
- * @author Saminda Abeyruwan <saminda@opensource.lk>
  */
 public class ListenersOut implements KeyListener,
         ActionListener,

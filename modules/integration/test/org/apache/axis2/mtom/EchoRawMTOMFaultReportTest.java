@@ -37,9 +37,6 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Author: Saminda Abeyruwan <saminda@wso2.com>
- */
 public class EchoRawMTOMFaultReportTest extends TestCase {
 
     private Log log = LogFactory.getLog(getClass());

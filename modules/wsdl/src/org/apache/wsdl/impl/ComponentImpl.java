@@ -27,9 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Chathura Herath
- */
 public class ComponentImpl implements WSDLConstants, Component {
     /**
      * Field componentProperties

@@ -16,10 +16,6 @@
 
 package sample.amazon.amazonSimpleQueueService;
 
-
-/**
- * @author Saminda Abeyruwan <saminda@opensource.lk>
- */
 public class RunGUIRQ {
     public static void main(String[] args) {
         AmazonSimpleQueueServiceOut frame = new AmazonSimpleQueueServiceOut();

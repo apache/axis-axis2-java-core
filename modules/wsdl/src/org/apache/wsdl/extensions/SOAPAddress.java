@@ -19,7 +19,6 @@ package org.apache.wsdl.extensions;
 import org.apache.wsdl.WSDLExtensibilityElement;
 
 /**
- * @author chathura@opensource.lk
  *         This Extensibility Element is extended to handle particularly the
  *         SOAP Adress or the Endpoint URL.
  */

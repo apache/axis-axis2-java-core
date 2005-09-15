@@ -16,9 +16,6 @@
 
 package org.apache.axis2.wsdl.codegen;
 
-/**
- * @author chathura@opensource.lk
- */
 public class CodeGenerationException extends Exception {
 
     public CodeGenerationException(String message) {

@@ -34,8 +34,6 @@ import java.net.ServerSocket;
 
 /**
  * Defines a socket factory interface
- * 
- * @author Oleg Kalnichevski
  */
 public interface SimpleSocketFactory {
     

@@ -40,9 +40,6 @@ import java.util.Set;
 import java.util.Iterator;
 
 
-/**
- * @author chathura@opensource.lk
- */
 public abstract class Stub{
 
     public static final int SOAP_11 =0;

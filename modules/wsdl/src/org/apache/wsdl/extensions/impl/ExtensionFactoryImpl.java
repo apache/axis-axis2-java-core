@@ -22,9 +22,6 @@ import org.apache.wsdl.extensions.ExtensionFactory;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author chathura@opensource.lk
- */
 public class ExtensionFactoryImpl implements ExtensionFactory,
         ExtensionConstants {
     /**

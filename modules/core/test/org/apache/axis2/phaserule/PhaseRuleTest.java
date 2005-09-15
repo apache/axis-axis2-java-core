@@ -11,12 +11,6 @@ import org.apache.axis2.phaseresolver.PhaseHolder;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
-/**
- * Created by IntelliJ IDEA.
- * Author : Deepal Jayasinghe
- * Date: Apr 26, 2005
- * Time: 4:31:18 PM
- */
 public class PhaseRuleTest extends AbstractTestCase {
 
     PhaseRuleTest phaserul;

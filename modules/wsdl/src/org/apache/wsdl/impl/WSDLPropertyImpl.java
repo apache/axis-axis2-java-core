@@ -18,9 +18,6 @@ package org.apache.wsdl.impl;
 
 import org.apache.wsdl.WSDLProperty;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDLPropertyImpl extends ComponentImpl implements WSDLProperty {
     /**
      * Field constraint

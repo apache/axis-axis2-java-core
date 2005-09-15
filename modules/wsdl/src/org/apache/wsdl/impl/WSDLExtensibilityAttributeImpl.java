@@ -20,9 +20,6 @@ import org.apache.wsdl.WSDLExtensibilityAttribute;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDLExtensibilityAttributeImpl implements WSDLExtensibilityAttribute {
 
     private QName key;

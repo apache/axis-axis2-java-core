@@ -20,11 +20,6 @@ import java.util.Hashtable;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerConstants;
 
-/**
- * 
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class WSHandlerConstantsMapper {
 
 	private static Hashtable inHandlerConstants = new Hashtable();

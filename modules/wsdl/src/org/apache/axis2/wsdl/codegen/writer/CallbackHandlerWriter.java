@@ -20,9 +20,6 @@ import org.apache.axis2.wsdl.codegen.XSLTConstants;
 
 import java.io.File;
 
-/**
- * @author chathura@opensource.lk
- */
 public class CallbackHandlerWriter extends ClassWriter {
 
     public CallbackHandlerWriter(String outputFileLocation) {

@@ -27,9 +27,6 @@ import org.apache.axis2.description.ServiceDescription;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author chathura@opensource.lk
- */
 public class OperationContextTest extends AbstractTestCase {
 
     private ConfigurationContext engineCtx = new ConfigurationContext(new AxisConfigurationImpl());

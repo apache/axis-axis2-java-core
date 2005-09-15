@@ -5,8 +5,6 @@ import javax.mail.Address;
 /**
  * This is a simple implementation to simplify the usage
  * of the Addresses.
- *
- * @author Chamil Thanthrimudalige
  */
 public class MailAddress extends Address {
     String mailAddy = null;

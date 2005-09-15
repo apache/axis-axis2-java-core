@@ -16,9 +16,6 @@
 
 package org.apache.wsdl;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface WSDLConstants {
     /**
      * Field WSDL2_0_NAMESPACE

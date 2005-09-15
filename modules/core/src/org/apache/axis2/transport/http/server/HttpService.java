@@ -35,8 +35,6 @@ import java.io.IOException;
 
 /**
  * Defines an HTTP request/response service for the SimpleHttpServer
- * 
- * @author Oleg Kalnichevski
  */
 public interface HttpService {
     /**

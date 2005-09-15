@@ -27,8 +27,6 @@ import java.util.Iterator;
 
 /**
  * Callback class which deals with the outcome of the operation
- *
- * @author Saminda Abeyruwan <saminda@opensource.lk>
  */
 public class SimpleQueueCreateQueueCallbackHandler extends Callback {
     private static String returnString = "";

@@ -20,9 +20,6 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.util.URLProcessor;
 import org.apache.wsdl.WSDLBinding;
 
-/**
- * @author chathura@opensource.lk
- */
 public class PackageFinder extends AbstractCodeGenerationExtension {
 
     public void init(CodeGenConfiguration configuration) {

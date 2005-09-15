@@ -26,10 +26,6 @@ import java.util.Locale;
 
 /**
  * Class SOAPFaultImpl
- *
- * @author Ashutosh Shahi
- *         ashutosh.shahi@gmail.com
- *         <p/>
  *         SOAPFault specific classes not implemented in OM, so
  *         throwing unsupported operation for the time being
  */

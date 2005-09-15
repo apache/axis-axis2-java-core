@@ -31,8 +31,6 @@ import java.util.Iterator;
  * receives the Response
  * process the soap with OM to extract the data
  * Find the <NavigationURL> element and get the text from it
- *
- * @author Gayan Asanka  (gayan@opensource.lk)
  */
 public class ClientCallbackHandler extends Callback {
 

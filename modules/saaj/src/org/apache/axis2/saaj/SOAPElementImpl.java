@@ -29,9 +29,6 @@ import java.util.Iterator;
 
 /**
  * Class SOAPElementImpl
- *
- * @author Jayachandra
- *         jayachandra@gmail.com
  */
 public class SOAPElementImpl extends NodeImpl implements SOAPElement {
     /**

@@ -35,9 +35,6 @@ import java.io.IOException;
 
 /**
  * Defines an HTTP request handler for the SimpleHttpServer
- * 
- * @author Christian Kohlschuetter
- * @author Oleg Kalnichevski
  */
 public interface HttpRequestHandler {
     /**

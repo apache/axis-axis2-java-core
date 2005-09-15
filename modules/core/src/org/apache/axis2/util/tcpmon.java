@@ -47,9 +47,6 @@ import java.util.Vector;
  * TCP monitor to log http messages and responses, both SOAP and plain HTTP.
  * If you want to choose a different Swing look and feel, set the property
  * tcpmon.laf to the classname of the new look and feel
- *
- * @author Doug Davis (dug@us.ibm.com)
- * @author Steve Loughran
  */
 public class tcpmon extends JFrame {
     /**

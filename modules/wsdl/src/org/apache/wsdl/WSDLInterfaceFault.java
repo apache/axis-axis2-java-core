@@ -18,10 +18,6 @@ package org.apache.wsdl;
 
 import javax.xml.namespace.QName;
 
-
-/**
- * @author chathura@opensource.lk
- */
 public interface WSDLInterfaceFault extends Component {
     public QName getElement();
 

@@ -19,9 +19,6 @@ package org.apache.wsdl;
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface WSDLBinding extends ExtensibleComponent {
     /**
      * Method getBoundInterface

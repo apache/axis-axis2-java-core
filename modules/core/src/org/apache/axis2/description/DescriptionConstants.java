@@ -16,9 +16,6 @@
 
 package org.apache.axis2.description;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface DescriptionConstants {
     /**
      * Field EXECUTION_CHAIN_KEY

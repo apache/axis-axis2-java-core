@@ -23,12 +23,6 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.Text;
 
-/**
- * @author Ashutosh Shahi ashutosh.shahi@gmail.com
- *         <p/>
- *         TODO To change the template for this generated type comment go to
- *         Window - Preferences - Java - Code Style - Code Templates
- */
 public class TextImpl extends NodeImpl implements Text {
 
     private OMText omText;

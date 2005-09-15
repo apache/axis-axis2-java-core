@@ -20,9 +20,6 @@ import org.apache.wsdl.WSDLInterfaceFault;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDLInterfaceFaultImpl extends ComponentImpl implements WSDLInterfaceFault {
 
     /**

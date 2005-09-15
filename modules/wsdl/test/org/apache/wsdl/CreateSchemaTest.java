@@ -27,9 +27,6 @@ import org.w3c.dom.NodeList;
 import javax.wsdl.Definition;
 import java.util.Iterator;
 
-/**
- * @author chathura@opensource.lk
- */
 public class CreateSchemaTest extends AbstractTestCase {
 
     private WSDLDescription womDescription;

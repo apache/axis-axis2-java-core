@@ -27,7 +27,6 @@ import org.xmlsoap.ping.TicketType;
 /**
  * Client for the interop service
  * This MUST be used with the codegen'ed classes
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class InteropScenarioClient {
 	

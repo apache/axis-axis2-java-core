@@ -20,9 +20,6 @@ import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.Definition;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDLVersionWrapper {
 
     private Definition definition;

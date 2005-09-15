@@ -25,9 +25,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * @author Srinath Perera(hemapani@opensource.lk)
- */
 public class Utils {
     /**
      * Method newDocument

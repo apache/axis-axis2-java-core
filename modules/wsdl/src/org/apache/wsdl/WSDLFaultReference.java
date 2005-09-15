@@ -18,9 +18,6 @@ package org.apache.wsdl;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface WSDLFaultReference extends Component {
     /**
      * Returns the direction of the Fault according the MEP

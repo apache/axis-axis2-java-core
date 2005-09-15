@@ -19,9 +19,6 @@ package org.apache.wsdl;
 import javax.xml.namespace.QName;
 import java.util.List;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface WSDLOperation extends ExtensibleComponent {
     /**
      * Method getInfaults

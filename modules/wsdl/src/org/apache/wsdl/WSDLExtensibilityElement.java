@@ -18,9 +18,6 @@ package org.apache.wsdl;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface WSDLExtensibilityElement {
     public boolean isRequired();
 

@@ -22,9 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public interface Part{
 
     

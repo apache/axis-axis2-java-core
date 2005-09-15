@@ -41,8 +41,6 @@ import java.util.Iterator;
 
 /**
  * Class SOAPConnectionImpl
- *
- * @author Ashutosh Shahi (ashutosh.shahi@gmail.com)
  */
 public class SOAPConnectionImpl extends SOAPConnection {
 

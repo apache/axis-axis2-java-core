@@ -22,9 +22,6 @@ import org.w3c.dom.Element;
 import javax.xml.namespace.QName;
 import java.util.Stack;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface Schema extends WSDLExtensibilityElement {
 
     /**

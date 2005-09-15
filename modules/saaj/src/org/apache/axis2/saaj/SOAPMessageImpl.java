@@ -28,10 +28,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-/**
- * @author Ashutosh Shahi ashutosh.shahi@gmail.com
- *         <p/>
- */
 public class SOAPMessageImpl extends SOAPMessage {
 
     private SOAPPartImpl mSOAPPart;

@@ -21,9 +21,6 @@ import org.apache.axis2.om.OMText;
 
 import java.util.Iterator;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class interopService {
     public OMElement mtomSample(OMElement element) throws Exception {
         if (element.getLocalName().equalsIgnoreCase("Data")

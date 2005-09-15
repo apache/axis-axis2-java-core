@@ -22,12 +22,6 @@ import java.util.Vector;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.fromJava.Emitter;
 
-/**
- * @author Ajith
- * 
- * TODO To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Style - Code Templates
- */
 public class Java2WSDLGenerator {
 
     public void emit(String classPath, 

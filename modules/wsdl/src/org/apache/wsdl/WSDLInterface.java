@@ -20,9 +20,6 @@ import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface WSDLInterface extends ExtensibleComponent {
     /**
      * Method getDefinedOperations

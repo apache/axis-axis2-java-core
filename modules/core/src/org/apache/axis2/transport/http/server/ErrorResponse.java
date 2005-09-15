@@ -39,8 +39,6 @@ import org.apache.commons.httpclient.HttpVersion;
 
 /**
  * Default error responses.
- * 
- * @author Christian Kohlschuetter
  */
 public class ErrorResponse {
     

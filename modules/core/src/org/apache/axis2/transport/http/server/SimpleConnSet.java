@@ -35,8 +35,6 @@ import java.util.Set;
 
 /**
  * A simple set of connections.
- * 
- * @author Oleg Kalnichevski
  */
 public class SimpleConnSet {
     

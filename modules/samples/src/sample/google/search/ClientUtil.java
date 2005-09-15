@@ -31,8 +31,6 @@ import org.apache.axis2.soap.SOAPFactory;
  * Builds the MessageContext as called by AsynchronousClient
  * First build the request soap envilope
  * then build a messageContext and soap envelope is attached to it
- *
- * @author Gayan Asanka  (gayan@opensource.lk)
  */
 public class ClientUtil {
 

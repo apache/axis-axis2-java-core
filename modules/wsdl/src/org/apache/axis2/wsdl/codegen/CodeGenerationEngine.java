@@ -31,9 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author chathura@opensource.lk
- */
 public class CodeGenerationEngine {
     private List moduleEndpoints = new ArrayList();
 

@@ -7,9 +7,6 @@ import org.apache.axis2.transport.mail.SimpleMailListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * @author Chamil Thanthrimudalige
- */
 public class MailServer {
     Storage st = null;
     private SMTPServer smtpServer;

@@ -28,8 +28,6 @@ import java.io.IOException;
 
 /**
  * GUI which handles the IN operations of the queue
- *
- * @author Saminda Abeyruwan <saminda@opensource.lk>
  */
 public class AmazonSimpleQueueServiceIn extends JFrame {
     private static final String HELP_FILE_NAME = "/docs/AmazonSimpleWebService.html";

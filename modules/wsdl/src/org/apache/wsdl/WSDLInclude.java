@@ -16,9 +16,6 @@
 
 package org.apache.wsdl;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface WSDLInclude extends Component {
     /**
      * Gets the location URI of the Include.

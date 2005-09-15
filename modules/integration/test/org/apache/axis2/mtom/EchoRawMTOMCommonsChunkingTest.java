@@ -16,9 +16,6 @@
 
 package org.apache.axis2.mtom;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
- */
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;

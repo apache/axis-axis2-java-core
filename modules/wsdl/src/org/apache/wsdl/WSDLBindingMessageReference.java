@@ -16,9 +16,6 @@
 
 package org.apache.wsdl;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface WSDLBindingMessageReference extends ExtensibleComponent {
     /**
      * Method getDirection

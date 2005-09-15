@@ -19,9 +19,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-/**
- * @author chathura@opensource.lk
- */
 public class OperationDescription extends WSDLOperationImpl implements
         ParameterInclude, WSDLOperation, DescriptionConstants,
         WSDLConstants {

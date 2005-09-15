@@ -21,12 +21,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
 
-/**
- * Created by IntelliJ IDEA.
- * Author : Deepal Jayasinghe
- * Date: Apr 19, 2005
- * Time: 3:16:14 PM
- */
 public class LoggingModule implements Module {
 
 

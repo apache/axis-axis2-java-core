@@ -37,8 +37,6 @@ import java.util.Map;
 
 /**
  * A REALLY simple connection manager.
- * 
- * @author Oleg Kalnichevski
  */
 public class SimpleConnManager {
     

@@ -29,9 +29,6 @@ import java.util.Iterator;
 
 /**
  * Class NodeImpl
- *
- * @author Ashutosh Shahi
- *         ashutosh.shahi@gmail.com
  */
 public class NodeImpl implements Node {
 

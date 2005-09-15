@@ -26,9 +26,6 @@ import java.util.Map;
  * Used to get methods by their signature and stores them in a local
  * cache for performance reasons.
  * This class is a singleton - so use getInstance to get an instance of it.
- *
- * @author Davanum Srinivas <dims@yahoo.com>
- * @author Sebastian Dietrich <sebastian.dietrich@anecon.com>
  */
 public class MethodCache {
     /**

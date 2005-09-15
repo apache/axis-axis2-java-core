@@ -20,9 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface Component {
     /**
      * Returns the properties that are specific to this WSDL Component.

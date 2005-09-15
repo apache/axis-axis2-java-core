@@ -18,9 +18,6 @@ package org.apache.wsdl.impl;
 
 import org.apache.wsdl.WSDLInclude;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDLIncludeImpl extends ComponentImpl implements WSDLInclude {
     /**
      * URI of the include Location.

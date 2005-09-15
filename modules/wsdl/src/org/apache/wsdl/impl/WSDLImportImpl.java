@@ -18,9 +18,6 @@ package org.apache.wsdl.impl;
 
 import org.apache.wsdl.WSDLImport;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDLImportImpl extends ComponentImpl implements WSDLImport {
     /**
      * Field location

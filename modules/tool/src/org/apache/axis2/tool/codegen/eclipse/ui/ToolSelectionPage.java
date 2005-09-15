@@ -27,12 +27,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-/**
- * @author Ajith
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 public class ToolSelectionPage extends AbstractWizardPage {
    
     private Button java2WSDLRadioButton;

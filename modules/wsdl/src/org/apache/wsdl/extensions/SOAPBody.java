@@ -18,9 +18,6 @@ package org.apache.wsdl.extensions;
 
 import org.apache.wsdl.WSDLExtensibilityElement;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface SOAPBody extends WSDLExtensibilityElement {
     public String getNamespaceURI();
 

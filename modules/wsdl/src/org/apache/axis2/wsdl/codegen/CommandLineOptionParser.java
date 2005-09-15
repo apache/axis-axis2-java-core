@@ -18,9 +18,6 @@ package org.apache.axis2.wsdl.codegen;
 
 import java.util.*;
 
-/**
- * @author chathura@opensource.lk
- */
 public class CommandLineOptionParser implements CommandLineOptionConstants {
 
     private Map commandLineOptions;

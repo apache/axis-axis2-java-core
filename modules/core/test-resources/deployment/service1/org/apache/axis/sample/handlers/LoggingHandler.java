@@ -22,10 +22,6 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * @author chathura@opensource.lk
- * 
- */
 public class LoggingHandler extends AbstractHandler {
 
 	private Log log = LogFactory.getLog(getClass());

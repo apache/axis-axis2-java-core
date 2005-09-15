@@ -24,8 +24,6 @@ import org.apache.axis2.soap.SOAPFactory;
 /**
  * This will create the OMElement needed to be used in invokeNonBlocking() method
  * OMElements are created for CreateQueueu, ListMyQueues, Read, and Enqueue operations
- *
- * @author Saminda Abeyruwan <saminda@opensource.lk>
  */
 public class OMElementCreator {
     public static OMElement creatQueueElement(String createQueueElement,

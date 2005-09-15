@@ -19,9 +19,6 @@ package org.apache.axis2.description;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.impl.MessageReferenceImpl;
 
-/**
- * @author chathura@opensource.lk
- */
 public class MessageDescription extends MessageReferenceImpl implements
         MessageReference {
 

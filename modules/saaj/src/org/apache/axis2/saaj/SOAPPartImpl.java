@@ -30,12 +30,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 
-/**
- * @author Ashutosh Shahi ashutosh.shahi@gmail.com
- *         <p/>
- *         TODO To change the template for this generated type comment go to
- *         Window - Preferences - Java - Code Style - Code Templates
- */
 public class SOAPPartImpl extends SOAPPart {
 
     private SOAPMessageImpl msgObject;

@@ -19,9 +19,6 @@ import org.apache.axis2.om.OMAttribute;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
-/**
- * @author Jayachandra
- */
 public class AttrImpl extends NodeImpl implements Attr {
 
     private boolean specified = false;

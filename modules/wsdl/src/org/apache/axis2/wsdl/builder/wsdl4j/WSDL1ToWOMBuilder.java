@@ -34,9 +34,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDL1ToWOMBuilder implements WOMBuilder {
 
 	/**

@@ -28,8 +28,6 @@ import java.io.IOException;
 
 /**
  * GUI class which handles the OUT operations of the queue
- *
- * @author Saminda Abeyruwan <saminda@opensource.lk>
  */
 public class AmazonSimpleQueueServiceOut extends JFrame {
     private static final String HELP_FILE_NAME = "/docs/AmazonSimpleWebService.html";

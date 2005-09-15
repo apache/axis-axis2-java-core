@@ -21,9 +21,6 @@ import javax.xml.soap.SOAPHeaderElement;
 
 /**
  * Class SOAPHeaderImpl
- *
- * @author Ashutosh Shahi
- *         ashutosh.shahi@gmail.com
  */
 public class SOAPHeaderElementImpl extends SOAPElementImpl implements
         SOAPHeaderElement {

@@ -20,9 +20,6 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface Emitter {
 
     public void setCodeGenConfiguration(CodeGenConfiguration configuration);

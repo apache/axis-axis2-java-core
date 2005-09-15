@@ -24,9 +24,6 @@ import org.w3c.dom.Element;
 import javax.xml.namespace.QName;
 import java.util.Stack;
 
-/**
- * @author chathura@opensource.lk
- */
 public class SchemaImpl extends WSDLExtensibilityElementImpl implements ExtensionConstants,
         Schema {
 

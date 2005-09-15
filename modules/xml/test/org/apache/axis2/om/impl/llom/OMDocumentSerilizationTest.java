@@ -25,8 +25,6 @@ import java.io.ByteArrayOutputStream;
 
 /**
  * This tests the serialize method 
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class OMDocumentSerilizationTest extends TestCase {
 

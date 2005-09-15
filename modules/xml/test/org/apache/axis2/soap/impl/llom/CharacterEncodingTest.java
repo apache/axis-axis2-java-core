@@ -33,8 +33,6 @@ import java.io.IOException;
 /**
  * Test for serialization and deserialization using UTF-16
  * character encoding 
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class CharacterEncodingTest extends TestCase {
 

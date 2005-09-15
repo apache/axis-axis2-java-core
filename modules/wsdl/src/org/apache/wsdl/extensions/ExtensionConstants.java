@@ -18,9 +18,6 @@ package org.apache.wsdl.extensions;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface ExtensionConstants {
 
     /**

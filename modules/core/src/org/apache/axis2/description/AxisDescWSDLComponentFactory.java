@@ -6,9 +6,6 @@ import org.apache.wsdl.extensions.ExtensionFactory;
 import org.apache.wsdl.extensions.impl.ExtensionFactoryImpl;
 import org.apache.wsdl.impl.*;
 
-/**
- * @author chathura@opensource.lk
- */
 public class AxisDescWSDLComponentFactory implements WSDLComponentFactory {
 
 

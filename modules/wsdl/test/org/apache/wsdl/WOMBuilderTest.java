@@ -26,9 +26,6 @@ import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import java.util.Iterator;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WOMBuilderTest extends AbstractTestCase {
 
     private WSDLDescription womDescription = null;

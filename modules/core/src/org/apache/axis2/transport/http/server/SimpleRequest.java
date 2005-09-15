@@ -43,8 +43,6 @@ import org.apache.commons.httpclient.NameValuePair;
 
 /**
  * A generic HTTP request.
- * 
- * @author Oleg Kalnichevski
  */
 public class SimpleRequest {
     

@@ -41,9 +41,6 @@ import org.apache.commons.httpclient.ProtocolException;
 /**
  * Defines a HTTP request-line, consisting of method name, URI and protocol.
  * Instances of this class are immutable.
- * 
- * @author Christian Kohlschuetter
- * @author Oleg Kalnichevski
  */
 public class RequestLine {
 

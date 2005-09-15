@@ -19,9 +19,6 @@ import javax.xml.soap.DetailEntry;
 
 /**
  * Class DetailEntryImpl
- *
- * @author Ashutosh Shahi
- *         ashutosh.shahi@gmail.com
  */
 public class DetailEntryImpl extends SOAPElementImpl implements DetailEntry {
 

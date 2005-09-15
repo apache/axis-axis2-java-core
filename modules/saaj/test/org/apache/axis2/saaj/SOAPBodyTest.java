@@ -20,9 +20,6 @@ import junit.framework.TestCase;
 import javax.xml.soap.*;
 import java.util.Iterator;
 
-/**
- * @author Ashutosh Shahi ashutosh.shahi@gmail.com
- */
 public class SOAPBodyTest extends TestCase {
 
     /**

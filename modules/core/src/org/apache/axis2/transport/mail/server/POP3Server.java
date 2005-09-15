@@ -8,10 +8,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-/**
- * @author Chamil Thanthrimudalige
- */
-
 public class POP3Server extends Thread {
     protected static Log log = LogFactory.getLog(POP3Server.class.getName());
     private ServerSocket serverSocket;

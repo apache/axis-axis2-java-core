@@ -29,10 +29,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
 
-/**
- * Author: Deepal Jayasinghe
- * : Eran Chinthaka
- */
 public class ServiceGroupContext extends AbstractContext {
 
     private String id;

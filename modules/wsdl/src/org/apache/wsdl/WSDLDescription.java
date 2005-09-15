@@ -22,9 +22,6 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Map;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface WSDLDescription extends Component, WSDLComponentFactory {
     /**
      * Returns a Map of <code>WSDLBindings</code> Objects keyed by the <code>QName</code>

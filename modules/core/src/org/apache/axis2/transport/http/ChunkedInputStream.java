@@ -21,10 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-/**
- * @author Rick Rineholt
- */
-
 public class ChunkedInputStream extends java.io.FilterInputStream {
     protected long chunkSize = 0l;
     protected volatile boolean closed = false;

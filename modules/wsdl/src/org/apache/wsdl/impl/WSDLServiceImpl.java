@@ -23,9 +23,6 @@ import org.apache.wsdl.WSDLService;
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDLServiceImpl extends ComponentImpl implements WSDLService {
     /**
      * The QName that identifies the Service. This namespace of the QName

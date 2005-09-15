@@ -21,9 +21,6 @@ import org.apache.wsdl.WSDLEndpoint;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDLEndpointImpl extends ComponentImpl implements WSDLEndpoint {
     /**
      * Field name

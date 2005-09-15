@@ -18,10 +18,6 @@ package org.apache.axis2.attachments;
 
 import junit.framework.TestCase;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
- */
-
 public class MIMEHelperTest extends TestCase {
 
 

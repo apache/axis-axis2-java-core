@@ -34,7 +34,6 @@ import javax.xml.namespace.QName;
 
 /**
  * Testing charater encoding support
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class CharctersetEncodingTest extends TestCase {
 	

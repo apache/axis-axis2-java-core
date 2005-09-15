@@ -25,9 +25,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author Chathura Herath
- */
 public class WSDLInterfaceImpl extends ExtensibleComponentImpl
         implements WSDLInterface {
     /**

@@ -38,8 +38,6 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * Provides a hybrid Writer/OutputStream for sending HTTP response data
- * 
- * @author Christian Kohlschuetter
  */
 public class ResponseWriter extends FilterWriter {
     public static final String CRLF = "\r\n";

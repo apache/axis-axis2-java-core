@@ -37,9 +37,6 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Simple HTTP connection thread.
- * 
- * @author Christian Kohlschuetter
- * @author Oleg Kalnichevski
  */
 public class SimpleConnectionThread extends Thread {
 

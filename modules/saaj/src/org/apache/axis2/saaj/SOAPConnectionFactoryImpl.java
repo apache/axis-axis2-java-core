@@ -21,9 +21,6 @@ import javax.xml.soap.SOAPException;
 
 /**
  * Class SOAPConnectionFactoryImpl
- *
- * @author Ashutosh Shahi
- *         ashutosh.shahi@gmail.com
  */
 public class SOAPConnectionFactoryImpl extends SOAPConnectionFactory {
 

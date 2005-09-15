@@ -21,12 +21,6 @@ import org.w3c.dom.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.SOAPException;
 
-/**
- * @author Ashutosh Shahi	ashutosh.shahi@gmail.com
- *         <p/>
- *         TODO To change the template for this generated type comment go to
- *         Window - Preferences - Java - Code Style - Code Templates
- */
 public class SOAPDocumentImpl implements Document {
 
     // Depending on the user's parser preference

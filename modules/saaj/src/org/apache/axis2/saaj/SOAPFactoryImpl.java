@@ -24,11 +24,6 @@ import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 
-/**
- * @author shaas02
- *         <p/>
- *
- */
 public class SOAPFactoryImpl extends javax.xml.soap.SOAPFactory {
 
     /**

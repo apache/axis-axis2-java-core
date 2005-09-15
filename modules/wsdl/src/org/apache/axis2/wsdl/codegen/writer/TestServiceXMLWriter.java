@@ -21,9 +21,6 @@ import org.apache.axis2.wsdl.util.FileWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 
-/**
- * @author chathura@opensource.lk
- */
 public class TestServiceXMLWriter extends ServiceXMLWriter {
 
     public TestServiceXMLWriter(String outputFileLocation) {

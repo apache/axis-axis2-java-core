@@ -39,8 +39,6 @@ import org.w3c.dom.Element;
 
 /**
  * Utility class for the Axis2-WSS4J Module
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class Axis2Util {
 

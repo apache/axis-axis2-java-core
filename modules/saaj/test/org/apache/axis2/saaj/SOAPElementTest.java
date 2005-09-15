@@ -20,9 +20,6 @@ import junit.framework.TestCase;
 import javax.xml.soap.SOAPElement;
 import java.util.List;
 
-/**
- * @author Ashutosh Shahi ashutosh.shahi@gmail.com
- */
 public class SOAPElementTest extends TestCase {
 
     private SOAPElement soapElem;

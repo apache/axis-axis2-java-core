@@ -20,9 +20,6 @@ import junit.framework.TestCase;
 import javax.xml.soap.SOAPElement;
 import java.util.Iterator;
 
-/**
- * @author Ashutosh Shahi ashutosh.shahi@gmail.com
- */
 public class HeadersTest extends TestCase {
 
     private final String actor = "ACTOR#1";

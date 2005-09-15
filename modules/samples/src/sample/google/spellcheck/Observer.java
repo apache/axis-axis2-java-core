@@ -3,8 +3,6 @@ package sample.google.spellcheck;
 
 /**
  * interface sample.google.spellcheck.Observer
- *
- * @author Nadana Gunarathna
  */
 public interface Observer {
     // updates the message to the main test display area

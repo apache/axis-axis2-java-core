@@ -33,12 +33,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.transport.EmailReceiver;
 import org.apache.axis2.transport.mail.server.MailSrvConstants;
 
-/**
- * @author hemapani
- *         <p/>
- *         To change the template for this generated type comment go to
- *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 public class EMailSender {
     private String user;
     private String host;

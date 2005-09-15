@@ -34,8 +34,6 @@ import java.io.IOException;
  * KeyListner is used to detect space or Enter key at textField
  * ActionListner is used for menu cammands
  * Thread is run to isolate the GUI from internal actions
- *
- * @author Gayan Asanka  (gayan@opensource.lk)
  */
 public class GUIHandler {
     private static final String HELP_FILE_NAME = "/docs/GoogleSearchHelp.html";

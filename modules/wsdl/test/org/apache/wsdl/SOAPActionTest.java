@@ -25,9 +25,6 @@ import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
 import java.util.Iterator;
 
-/**
- * @author chathura@opensource.lk
- */
 public class SOAPActionTest extends AbstractTestCase {
 
     private WSDLDescription womDescription = null;

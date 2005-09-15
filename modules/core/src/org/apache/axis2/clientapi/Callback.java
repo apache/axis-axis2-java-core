@@ -4,9 +4,6 @@ package org.apache.axis2.clientapi;
 /**
  * This Class is the abstract representation of the Callback that would be called in the completion of a 
  * Async invocation
- * Author : Deepal Jayasinghe
- * Date: Apr 9, 2005
- * Time: 8:03:41 PM
  */
 public abstract class Callback {
     /**

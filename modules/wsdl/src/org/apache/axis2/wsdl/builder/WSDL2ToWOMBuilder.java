@@ -21,9 +21,6 @@ import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import javax.wsdl.WSDLException;
 import java.io.InputStream;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDL2ToWOMBuilder implements WOMBuilder {
 
 	/**

@@ -32,12 +32,6 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-/**
- * @author Ajith
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
     
     private Text outputFolderTextBox;

@@ -35,8 +35,6 @@ import java.util.List;
 
 /**
  * A simple list of connections.
- * 
- * @author Oleg Kalnichevski
  */
 public class SimpleConnList {
     

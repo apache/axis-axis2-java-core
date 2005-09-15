@@ -1,8 +1,5 @@
 package org.apache.axis2.engine;
 
-/**
- * @author chathura@opensource.lk
- */
 public class AxisError extends RuntimeException {
 
     public AxisError() {

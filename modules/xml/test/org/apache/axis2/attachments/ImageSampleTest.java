@@ -33,10 +33,6 @@ import javax.xml.stream.XMLStreamReader;
 import java.awt.*;
 import java.io.*;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
- */
-
 public class ImageSampleTest extends AbstractTestCase {
 
     public ImageSampleTest(String testName) {

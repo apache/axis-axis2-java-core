@@ -25,9 +25,6 @@ import javax.xml.namespace.QName;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDLBindingOperationImpl extends ExtensibleComponentImpl
         implements WSDLBindingOperation {
 

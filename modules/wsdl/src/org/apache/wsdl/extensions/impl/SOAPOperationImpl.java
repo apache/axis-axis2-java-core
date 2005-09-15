@@ -22,9 +22,6 @@ import org.apache.wsdl.impl.WSDLExtensibilityElementImpl;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author chathura@opensource.lk
- */
 public class SOAPOperationImpl extends WSDLExtensibilityElementImpl implements
         ExtensionConstants, SOAPOperation {
 

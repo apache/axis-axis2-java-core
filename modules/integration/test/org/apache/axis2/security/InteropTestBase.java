@@ -19,10 +19,7 @@ package org.apache.axis2.security;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.integration.UtilServer;
-/**
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
+
 public class InteropTestBase extends TestCase {
 
     protected static final String SCENARIO1_SERVICE_REPOSITORY = "scenario1_service_repo";

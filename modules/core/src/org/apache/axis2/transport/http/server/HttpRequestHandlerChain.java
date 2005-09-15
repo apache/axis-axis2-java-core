@@ -43,8 +43,6 @@ import java.util.List;
  * For each call to {@link #processRequest(ResponseWriter,SimpleHttpServerConnection,RequestLine,Header[])}
  * we iterate over the chain from the start to the end, stopping as soon as a handler
  * has claimed the output.
- * 
- * @author Christian Kohlschuetter
  */
 public class HttpRequestHandlerChain implements HttpRequestHandler {
     

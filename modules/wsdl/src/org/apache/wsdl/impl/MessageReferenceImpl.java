@@ -20,9 +20,6 @@ import org.apache.wsdl.MessageReference;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author Chathura Herath
- */
 public class MessageReferenceImpl extends ExtensibleComponentImpl
         implements MessageReference {
 

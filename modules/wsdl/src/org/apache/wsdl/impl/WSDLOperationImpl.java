@@ -25,9 +25,6 @@ import javax.xml.namespace.QName;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author Chathura Herath
- */
 public class WSDLOperationImpl extends ExtensibleComponentImpl
         implements WSDLOperation {
     /**

@@ -41,9 +41,6 @@ import org.apache.commons.httpclient.auth.BasicScheme;
  * This request handler guards access to a proxy when used in a request handler
  * chain. It checks the headers for valid credentials and performs the
  * authentication handshake if necessary.
- * 
- * @author Ortwin Glueck
- * @author Oleg Kalnichevski
  */
 public class ProxyAuthRequestHandler implements HttpRequestHandler {
 

@@ -16,10 +16,6 @@
 
 package org.apache.axis2.security.handler;
 
-/**
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public interface WSSHandlerConstants {
 
     public static final String ENFORCE_ACTION_ORDER = "EnforceActionOrder";

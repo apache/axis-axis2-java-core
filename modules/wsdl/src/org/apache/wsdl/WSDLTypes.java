@@ -18,10 +18,6 @@ package org.apache.wsdl;
 
 import javax.xml.namespace.QName;
 
-
-/**
- * @author chathura@opensource.lk
- */
 public interface WSDLTypes extends Component {
     /**
      * Adds the <code>ExtensionElement</code> to the map keyed with the <code>QName</code>

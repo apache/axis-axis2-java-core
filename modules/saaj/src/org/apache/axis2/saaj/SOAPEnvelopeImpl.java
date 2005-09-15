@@ -23,9 +23,6 @@ import javax.xml.soap.*;
 
 /**
  * Class SOAPEnvelopeImpl
- *
- * @author Jayachandra
- *         jayachandra@gmail.com
  */
 public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
 

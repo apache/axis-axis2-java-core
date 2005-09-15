@@ -3,9 +3,6 @@ package org.apache.axis2.wsdl.builder;
 import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.ExtensionFactory;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface WSDLComponentFactory {
 
     /**

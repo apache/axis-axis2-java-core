@@ -19,9 +19,6 @@ package org.apache.wsdl;
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 
-/**
- * @author chathura@opensource.lk
- */
 public interface WSDLService extends Component {
     public static final String STYLE_RPC = "rpc";
     public static final String STYLE_DOC = "doc";

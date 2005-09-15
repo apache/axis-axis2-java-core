@@ -16,12 +16,6 @@
 
 package org.apache.axis2.tool.service.eclipse.util;
 
-/**
- * @author Ajith
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 public interface SettingsConstants {
    //#####################################################
    static final String PREF_CLASS_FILE_LOCATION = "CLASS_FILE_LOCATION" ;

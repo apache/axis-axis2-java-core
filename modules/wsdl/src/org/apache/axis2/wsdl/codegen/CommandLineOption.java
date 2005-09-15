@@ -18,9 +18,6 @@ package org.apache.axis2.wsdl.codegen;
 
 import java.util.ArrayList;
 
-/**
- * @author chathura@opensource.lk
- */
 public class CommandLineOption implements CommandLineOptionConstants {
 
     private String type;

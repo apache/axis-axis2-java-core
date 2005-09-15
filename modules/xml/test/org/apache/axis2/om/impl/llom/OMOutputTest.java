@@ -25,10 +25,6 @@ import javax.activation.DataHandler;
 import java.io.File;
 import java.io.FileOutputStream;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
- */
-
 public class OMOutputTest extends AbstractTestCase {
 
     /**

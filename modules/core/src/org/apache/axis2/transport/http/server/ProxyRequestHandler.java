@@ -41,10 +41,6 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * @author Ortwin Glueck
- * @author Oleg Kalnichevski
- */
 public class ProxyRequestHandler implements HttpRequestHandler {
 
     private static final Log LOG = LogFactory.getLog(ProxyRequestHandler.class);

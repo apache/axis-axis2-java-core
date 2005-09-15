@@ -8,8 +8,6 @@ import java.awt.event.KeyListener;
 /**
  * class sample.google.spellcheck.AsyncPanel
  * This Impements its own GUI of the Asynchronous Client and it updates the string after getting the response to textarea
- *
- * @author Nadana Gunarathna
  */
 public class AsyncPanel extends javax.swing.JPanel implements Observer,
         KeyListener {

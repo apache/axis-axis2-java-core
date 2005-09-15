@@ -8,8 +8,6 @@ import java.awt.event.ActionListener;
 /**
  * class sample.google.spellcheck.SyncPanel
  * This Impements its own GUI of the Synchronous Client and it send the SOAP request after the mouse event.
- *
- * @author Nadana Gunarathna
  */
 public class SyncPanel extends javax.swing.JPanel implements Observer,
         ActionListener {

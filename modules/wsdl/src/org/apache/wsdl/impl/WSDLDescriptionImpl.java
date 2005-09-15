@@ -26,9 +26,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * @author chathura@opensource.lk
- */
 public class WSDLDescriptionImpl extends ComponentImpl
         implements WSDLDescription {
     /**

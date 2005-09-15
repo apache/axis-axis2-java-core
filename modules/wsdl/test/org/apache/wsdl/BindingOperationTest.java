@@ -20,9 +20,6 @@ import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author chathura@opensource.lk
- */
 public class BindingOperationTest extends AbstractTestCase {
 
     public BindingOperationTest(String arg) {

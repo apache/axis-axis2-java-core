@@ -33,9 +33,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-/**
- * @author Thilina
- */
 public class MIMEOutputUtilsTest extends TestCase {
     byte[] buffer;
     byte[] byteArray = new byte[]{13, 56, 65, 32, 12, 12, 7, -3, -2, -1,

@@ -28,12 +28,6 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
 
-/**
- * @author Ajith
- *         <p/>
- *         TODO To change the template for this generated type comment go to Window -
- *         Preferences - Java - Code Style - Code Templates
- */
 public class ServiceArchiveWizard extends Wizard implements INewWizard {
 
     private ClassFileLocationPage classFileLocationPage;

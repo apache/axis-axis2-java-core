@@ -15,8 +15,6 @@ import java.io.IOException;
 /**
  * class sample.google.spellcheck.SuggestionForm
  * This is the implementation of the GUI
- *
- * @author Nadana Gunarathna
  */
 public class SuggestionForm extends javax.swing.JFrame implements HyperlinkListener {
     private AsyncPanel asyncPanel;

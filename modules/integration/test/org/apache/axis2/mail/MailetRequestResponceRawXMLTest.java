@@ -47,8 +47,6 @@ import javax.xml.stream.XMLStreamException;
 /**
  * This will use the In out functionality to test the mailet functionality. This code was
  * based on the code on the MailRequestResponceRawXMLTest.java.
- *
- * @author Chamil Thanthrimudalige <chamilt@gmail.com>
  */
 public class MailetRequestResponceRawXMLTest extends TestCase {
     private EndpointReference targetEPR =

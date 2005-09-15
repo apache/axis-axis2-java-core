@@ -19,10 +19,6 @@ package org.apache.axis2.wsdl.codegen.extension;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 
-
-/**
- * @author chathura@opensource.lk
- */
 public interface CodeGenExtension {
 
 
