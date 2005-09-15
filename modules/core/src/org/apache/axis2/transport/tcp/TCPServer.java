@@ -132,7 +132,10 @@ public class TCPServer extends TransportListener implements Runnable {
         if (param != null) {
             int port = Integer.parseInt((String) param.getValue());
         }
+    }
 
+     public ConfigurationContext getSystemContext() {
+        return this.configContext;
     }
 
     public static void main(String[] args) throws AxisFault,

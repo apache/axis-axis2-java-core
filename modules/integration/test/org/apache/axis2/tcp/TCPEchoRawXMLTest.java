@@ -56,6 +56,7 @@ public class TCPEchoRawXMLTest extends TestCase {
     private MessageContext mc;
     private SimpleHTTPServer sas;
     private ServiceDescription service;
+    private ServiceDescription clientService;
     private ServiceContext serviceContext;
 
     private boolean finish = false;
@@ -78,8 +79,10 @@ public class TCPEchoRawXMLTest extends TestCase {
                         Echo.class.getName(),
                         operationName);
         UtilsTCPServer.deployService(service);
-
-        serviceContext = UtilServer.createAdressedEnabledClientSide(service);
+        clientService = Utils.createSimpleService(serviceName,
+                        Echo.class.getName(),
+                        operationName);
+        serviceContext = UtilServer.createAdressedEnabledClientSide(clientService);
     }
 
     protected void tearDown() throws Exception {
