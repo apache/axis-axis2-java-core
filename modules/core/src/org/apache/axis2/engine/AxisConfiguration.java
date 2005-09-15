@@ -105,6 +105,9 @@ public interface AxisConfiguration extends ParameterInclude {
     public void engageModule(QName moduleref) throws AxisFault;
 
 
+
+    //
+    public HashMap getServices();
     /**
      * This returns
      */

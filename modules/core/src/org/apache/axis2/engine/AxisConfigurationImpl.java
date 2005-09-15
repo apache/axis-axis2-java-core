@@ -95,6 +95,9 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     //to store AxisObserver Objects
     private ArrayList observersList = null;
 
+    private HashMap allservices = new HashMap();
+
+
     protected HashMap messagReceivers;
     /////////////////////// From AxisGlobal /////////////////////////////////////
     /**
@@ -499,6 +502,20 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         if (isNewmodule) {
             addModule(module);
         }
+    }
+
+    //to get all the services in the system
+    public HashMap getServices() {
+        Iterator sgs = getServiceGroups();
+        while (sgs.hasNext()) {
+            ServiceGroupDescription groupDescription = (ServiceGroupDescription) sgs.next();
+            Iterator servics =  groupDescription.getServices();
+            while (servics.hasNext()) {
+                ServiceDescription serviceDescription = (ServiceDescription) servics.next();
+                allservices.put(serviceDescription.getName().getLocalPart(),serviceDescription);
+            }
+        }
+        return allservices;  
     }
 
     public boolean isEngaged(QName moduleName) {
