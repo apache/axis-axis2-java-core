@@ -15,10 +15,6 @@
 */
 package org.apache.axis2.context;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
@@ -31,6 +27,9 @@ import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
 
 import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * The palce where all the service specific states are kept.
@@ -101,7 +100,6 @@ public class MessageContext extends AbstractContext {
     private transient OperationDescription operationDescription;
     private transient ServiceDescription serviceDescription;
     private transient ServiceGroupDescription serviceGroupDescription;
-    
     private ConfigurationContext configurationContext;
 
     private transient TransportInDescription transportIn;
@@ -171,40 +169,41 @@ public class MessageContext extends AbstractContext {
      * This will hold a key to retrieve the correct ServiceGroupContext.
      */
     private String serviceGroupContextId;
-    
+
     QName transportInName = null;
-    
-	QName transportOutname = null;
-	
-	String serviceGroupDescId = null;
-	
-	QName serviceDescName = null;
-	
-	QName operationDescName = null;
-    
+
+    QName transportOutname = null;
+
+    String serviceGroupDescId = null;
+
+    QName serviceDescName = null;
+
+    QName operationDescName = null;
+
     /**
      * The method is used to do the intialization of the EngineContext
+     *
      * @throws AxisFault
      */
     public void init(AxisConfiguration axisConfiguration) throws AxisFault {
-    	if (transportInName!=null)
-    		transportIn = axisConfiguration.getTransportIn(transportInName);
-    	if (transportOutname!=null)
-    		transportOut = axisConfiguration.getTransportOut(transportOutname);
-    	if (serviceGroupDescId!=null)
-    		serviceGroupDescription = axisConfiguration.getServiceGroup(serviceGroupDescId);
-    	if (serviceDescName!=null)
-    		serviceDescription = axisConfiguration.getService(serviceDescName.getLocalPart());
-    	if (serviceDescription!=null)
-    		operationDescription = serviceDescription.getOperation(operationDescName);	
+        if (transportInName != null)
+            transportIn = axisConfiguration.getTransportIn(transportInName);
+        if (transportOutname != null)
+            transportOut = axisConfiguration.getTransportOut(transportOutname);
+        if (serviceGroupDescId != null)
+            serviceGroupDescription = axisConfiguration.getServiceGroup(serviceGroupDescId);
+        if (serviceDescName != null)
+            serviceDescription = axisConfiguration.getService(serviceDescName.getLocalPart());
+        if (serviceDescription != null)
+            operationDescription = serviceDescription.getOperation(operationDescName);
     }
-    
+
     private void writeObject(ObjectOutputStream out) throws IOException {
-    	out.defaultWriteObject();
+        out.defaultWriteObject();
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    	in.defaultReadObject();
+        in.defaultReadObject();
     }
 
 
@@ -226,7 +225,6 @@ public class MessageContext extends AbstractContext {
             TransportOutDescription transportOut)
             throws AxisFault {
         this(engineContext, null, transportIn, transportOut);
-        
         this.transportInName = transportIn.getName();
         this.transportOutname = transportOut.getName();
     }
@@ -255,11 +253,11 @@ public class MessageContext extends AbstractContext {
         this.transportIn = transportIn;
         this.transportOut = transportOut;
         this.configurationContext = engineContext;
-        
-        if (transportIn!=null)
-        	this.transportInName = transportIn.getName();
-        if (transportOut!=null)
-        	this.transportOutname = transportOut.getName();
+
+        if (transportIn != null)
+            this.transportInName = transportIn.getName();
+        if (transportOut != null)
+            this.transportOutname = transportOut.getName();
     }
 
     /**
@@ -511,8 +509,8 @@ public class MessageContext extends AbstractContext {
      */
     public void setTransportIn(TransportInDescription in) {
         transportIn = in;
-        if (in!=null)
-        	this.transportInName = in.getName();
+        if (in != null)
+            this.transportInName = in.getName();
     }
 
     /**
@@ -520,8 +518,8 @@ public class MessageContext extends AbstractContext {
      */
     public void setTransportOut(TransportOutDescription out) {
         transportOut = out;
-        if (out!=null)
-        	this.transportOutname = out.getName();
+        if (out != null)
+            this.transportOutname = out.getName();
     }
 
     /**
@@ -540,7 +538,9 @@ public class MessageContext extends AbstractContext {
             operationContext.setParent(serviceContext);
         }
         this.setParent(operationContext);
-        this.setOperationDescription(operationContext.getAxisOperation());
+        if (operationContext != null) {
+            this.setOperationDescription(operationContext.getAxisOperation());
+        }
     }
 
     /**
@@ -609,17 +609,18 @@ public class MessageContext extends AbstractContext {
 
 
     /**
-     *  To retrive configuration descriptor parameters , it is posible to get paramater specify at
+     * To retrive configuration descriptor parameters , it is posible to get paramater specify at
      * any levle via this method , and the preferance is as follows,
-     *  1. Search in operation description if its there
-     *  2. if the paramter not found or operationContext is null will search in
-     *      ServiceDescription
-     *  3. If the serviceDescription is null or , the paramter does not found will serach in
-     *     AxisConfiguration
+     * 1. Search in operation description if its there
+     * 2. if the paramter not found or operationContext is null will search in
+     * ServiceDescription
+     * 3. If the serviceDescription is null or , the paramter does not found will serach in
+     * AxisConfiguration
+     *
      * @param key
-     * @return  Paramter <code>Paramter</code>
+     * @return Paramter <code>Paramter</code>
      */
-    public Parameter getParameter(String key){
+    public Parameter getParameter(String key) {
         Parameter param = null;
         if (operationContext != null) {
             OperationDescription opDesc = operationContext.getAxisOperation();
@@ -628,7 +629,8 @@ public class MessageContext extends AbstractContext {
         if (param == null && serviceContext != null) {
             ServiceDescription serviceDesc = serviceContext.getServiceConfig();
             param = serviceDesc.getParameter(key);
-        }   if (param == null && serviceGroupContext != null) {
+        }
+        if (param == null && serviceGroupContext != null) {
             ServiceGroupDescription serviceDesc = serviceGroupContext.getDescription();
             param = serviceDesc.getParameter(key);
         }
@@ -644,44 +646,45 @@ public class MessageContext extends AbstractContext {
     /**
      * This method is to retrive both module configuration parameters and othere paramerts
      * The searching procedure is as follows;
-     *  1. Search in module configurations inside corresponding operation descripton if its three
-     *  2. Search in corresponding operation if its there
-     *  3. Search in module configurations inside corresponding service description if its there
-     *  4. Next search in Corresponding Service description if its there
-     *  5. Next sercah in module configurations inside axisConfiguration
-     *  6. Search in AxisConfiguration for paramters
-     *  7. Next get the corresponding module and search for the paramters
-     *  8. Search in HandlerDescription for the paramter
-     *
+     * 1. Search in module configurations inside corresponding operation descripton if its three
+     * 2. Search in corresponding operation if its there
+     * 3. Search in module configurations inside corresponding service description if its there
+     * 4. Next search in Corresponding Service description if its there
+     * 5. Next sercah in module configurations inside axisConfiguration
+     * 6. Search in AxisConfiguration for paramters
+     * 7. Next get the corresponding module and search for the paramters
+     * 8. Search in HandlerDescription for the paramter
+     * <p/>
      * and the way of specifing mdoule configuration is as follows
      * <moduleConfig name="addressing">
-     *      <parameter name="addressingPara" locked="false">N/A</parameter>
+     * <parameter name="addressingPara" locked="false">N/A</parameter>
      * </moduleConfig>
-     * @param key   : Paramtre Name
+     *
+     * @param key        : Paramtre Name
      * @param moduleName : Name of the module
-     * @param handler  <code>HandlerDescription</code>
-     * @return  Parameter <code>Parameter</code>
+     * @param handler    <code>HandlerDescription</code>
+     * @return Parameter <code>Parameter</code>
      */
-    public Parameter getModuleParameter(String key, String moduleName , HandlerDescription handler){
+    public Parameter getModuleParameter(String key, String moduleName, HandlerDescription handler) {
         Parameter param = null;
         ModuleConfiguration moduleConfig = null;
         if (operationContext != null) {
             OperationDescription opDesc = operationContext.getAxisOperation();
             moduleConfig = opDesc.getModuleConfig(new QName(moduleName));
-            if(moduleConfig != null){
-                param =  moduleConfig.getParameter(key);
+            if (moduleConfig != null) {
+                param = moduleConfig.getParameter(key);
             }
-            if(param == null){
+            if (param == null) {
                 param = opDesc.getParameter(key);
             }
         }
         if (param == null && serviceContext != null) {
             ServiceDescription serviceDesc = serviceContext.getServiceConfig();
             moduleConfig = serviceDesc.getModuleConfig(new QName(moduleName));
-            if(moduleConfig != null){
-                param =  moduleConfig.getParameter(key);
+            if (moduleConfig != null) {
+                param = moduleConfig.getParameter(key);
             }
-            if(param == null){
+            if (param == null) {
                 param = serviceDesc.getParameter(key);
             }
         }
@@ -689,10 +692,10 @@ public class MessageContext extends AbstractContext {
         if (param == null && serviceGroupContext != null) {
             ServiceGroupDescription serviceDesc = serviceGroupContext.getDescription();
             moduleConfig = serviceDesc.getModuleConfig(new QName(moduleName));
-            if(moduleConfig != null){
-                param =  moduleConfig.getParameter(key);
+            if (moduleConfig != null) {
+                param = moduleConfig.getParameter(key);
             }
-            if(param == null){
+            if (param == null) {
                 param = serviceDesc.getParameter(key);
             }
         }
@@ -700,37 +703,37 @@ public class MessageContext extends AbstractContext {
             AxisConfiguration baseConfig =
                     configurationContext.getAxisConfiguration();
 
-            moduleConfig = ((AxisConfigurationImpl)baseConfig).getModuleConfig(new QName(moduleName));
-            if(moduleConfig != null){
-                param =  moduleConfig.getParameter(key);
+            moduleConfig = ((AxisConfigurationImpl) baseConfig).getModuleConfig(new QName(moduleName));
+            if (moduleConfig != null) {
+                param = moduleConfig.getParameter(key);
             }
-            if(param == null){
+            if (param == null) {
                 param = baseConfig.getParameter(key);
             }
         }
-        if(param == null){
+        if (param == null) {
             AxisConfiguration baseConfig = configurationContext.getAxisConfiguration();
             ModuleDescription module = baseConfig.getModule(new QName(moduleName));
-            if(module != null){
+            if (module != null) {
                 param = module.getParameter(key);
             }
         }
-        if(param == null ){
+        if (param == null) {
             param = handler.getParameter(key);
         }
         return param;
     }
-
 
     /* (non-Javadoc)
     * @see org.apache.axis2.context.AbstractContext#getProperty(java.lang.Object, boolean)
     */
 
     /**
-     *  To acess any property set at the run time , a handler can add property to wherever he wants
+     * To acess any property set at the run time , a handler can add property to wherever he wants
      * to MesageContext , to OperationContext , to ServiceContext and to ConfigurationContext.
      * This method is to retrive those properties NOT paramters
-     * @param key  : property Name
+     *
+     * @param key        : property Name
      * @param persistent : need to be persistent even when server re-start
      * @return Object
      */
@@ -741,17 +744,17 @@ public class MessageContext extends AbstractContext {
         //The context hirachy might not have constructed fully, the check should
         //look for the disconnected grandparents
         // Search in Operation Context
-        if(operationContext != null && obj == null ) {
+        if (operationContext != null && obj == null) {
             obj = operationContext.getProperty(key, persistent);
         }
         //Search in ServiceContext
-        if(serviceContext != null && obj == null ){
+        if (serviceContext != null && obj == null) {
             obj = serviceContext.getProperty(key, persistent);
         }
-         if(serviceGroupContext != null && obj == null ){
+        if (serviceGroupContext != null && obj == null) {
             obj = serviceGroupContext.getProperty(key, persistent);
         }
-        if(obj == null) {
+        if (obj == null) {
             // search in Configuration Context
             obj = configurationContext.getProperty(key, persistent);
         }
@@ -875,9 +878,9 @@ public class MessageContext extends AbstractContext {
 
     public void setOperationDescription(OperationDescription operationDescription) {
         this.operationDescription = operationDescription;
-        this.operationDescName = operationDescription.getName(); 
-        if (operationDescription!=null)
-        	this.operationDescName = operationDescription.getName();
+        this.operationDescName = operationDescription.getName();
+        if (operationDescription != null)
+            this.operationDescName = operationDescription.getName();
     }
 
     public ServiceDescription getServiceDescription() {
@@ -886,8 +889,8 @@ public class MessageContext extends AbstractContext {
 
     public void setServiceDescription(ServiceDescription serviceDescription) {
         this.serviceDescription = serviceDescription;
-        if (serviceDescription!=null)
-        	this.serviceDescName = serviceDescription.getName();
+        if (serviceDescription != null)
+            this.serviceDescName = serviceDescription.getName();
     }
 
     public ServiceGroupDescription getServiceGroupDescription() {
@@ -897,8 +900,8 @@ public class MessageContext extends AbstractContext {
     public void setServiceGroupDescription(ServiceGroupDescription serviceGroupDescription) {
         this.serviceGroupDescription = serviceGroupDescription;
         this.serviceGroupDescId = serviceGroupDescription.getServiceGroupName();
-        if (serviceGroupDescription!=null)
-        	this.serviceGroupDescId = serviceGroupDescription.getServiceGroupName();
+        if (serviceGroupDescription != null)
+            this.serviceGroupDescId = serviceGroupDescription.getServiceGroupName();
     }
 
     public String getServiceGroupContextId() {

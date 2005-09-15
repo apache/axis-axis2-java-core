@@ -39,7 +39,7 @@ public class InstanceDispatcher extends AbstractHandler {
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
 
-        if (msgContext.getOperationContext() != null && msgContext.getServiceContext() != null) {
+        if(msgContext.getOperationContext() != null && msgContext.getServiceContext() != null){
             return;
         }
 
