@@ -6,9 +6,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -19,6 +17,8 @@ import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
+import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.http.server.SimpleHttpServer;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,6 +72,13 @@ public class MessageContextInjectionTest extends TestCase {
 
     protected void setUp() throws Exception {
         AxisConfiguration config =   new AxisConfigurationImpl();
+
+        TransportInDescription tIn = new TransportInDescription(new QName(Constants.TRANSPORT_LOCAL));
+        config.addTransportIn(tIn);
+
+        TransportOutDescription tOut = new TransportOutDescription(new QName(Constants.TRANSPORT_LOCAL));
+        config.addTransportOut(tOut);
+        
         ((AxisConfigurationImpl)config).setDefaultDispatchers();
         LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(
                 config);
