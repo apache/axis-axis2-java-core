@@ -1,10 +1,3 @@
-package org.apache.axis2.interopt.whitemesa.round4.simple.utils;
-
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMNamespace;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -19,9 +12,15 @@ import org.apache.axis2.om.OMNamespace;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *
  */
+
+package org.apache.axis2.interopt.whitemesa.round4.simple.utils;
+
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMNamespace;
+
 public class EchoEmptyFaultClientUtil implements WhitemesaR4ClientUtil {
 
     public OMElement getEchoOMElement() {
