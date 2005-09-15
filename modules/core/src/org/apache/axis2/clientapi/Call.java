@@ -226,7 +226,6 @@ public class Call extends InOutMEPClient {
         sysContext.getAxisConfiguration().addServiceGroup(serviceGroupDescription);
 
 //        return sysContext.createServiceContext(assumedServiceName);
-        //todo fix me Chinthaka
         return serviceGroupDescription.getServiceGroupContext(sysContext).getServiceContext(
                 assumedServiceName.getLocalPart());
     }

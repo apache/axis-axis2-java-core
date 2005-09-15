@@ -55,15 +55,7 @@ public class UtilServer {
 
     public static synchronized void start(String repositry) throws Exception {
         if (count == 0) {
-            ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-            File file = new File(repositry);
-            if (!file.exists()) {
-                throw new Exception(
-                        "repository directory " + file.getAbsolutePath() +
-                                " does not exists");
-            }
-            ConfigurationContext er  = erfac.buildConfigurationContext(
-                    file.getAbsolutePath());
+            ConfigurationContext er = getNewConfigurationContext(repositry);
 
             receiver = new SimpleHTTPServer(er, Constants.TESTING_PORT);
 
@@ -84,6 +76,18 @@ public class UtilServer {
 
         }
         count++;
+    }
+
+    public static ConfigurationContext getNewConfigurationContext(String repositry) throws Exception {
+        ConfigurationContextFactory erfac = new ConfigurationContextFactory();
+        File file = new File(repositry);
+        if (!file.exists()) {
+            throw new Exception(
+                    "repository directory " + file.getAbsolutePath() +
+                            " does not exists");
+        }
+        return erfac.buildConfigurationContext(
+                file.getAbsolutePath());
     }
 
     public static synchronized void stop() {

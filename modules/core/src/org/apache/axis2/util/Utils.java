@@ -29,6 +29,7 @@ import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
+import java.io.File;
 
 public class Utils {
 
@@ -202,6 +203,18 @@ public class Utils {
         configurationContext.registerServiceGroupContext(serviceGroupContext);
         ServiceContext serviceContext = new ServiceContext(serviceDesc, serviceGroupContext);
         return serviceContext;
+    }
+
+    public static ConfigurationContext getNewConfigurationContext(String repositry) throws Exception {
+        ConfigurationContextFactory erfac = new ConfigurationContextFactory();
+        File file = new File(repositry);
+        if (!file.exists()) {
+            throw new Exception(
+                    "repository directory " + file.getAbsolutePath() +
+                            " does not exists");
+        }
+        return erfac.buildConfigurationContext(
+                file.getAbsolutePath());
     }
 
 }
