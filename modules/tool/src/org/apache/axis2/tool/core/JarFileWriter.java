@@ -1,11 +1,3 @@
-package org.apache.axis2.tool.core;
-
-import java.io.File;
-import java.io.IOException;
-
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Jar;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -21,6 +13,15 @@ import org.apache.tools.ant.taskdefs.Jar;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.apache.axis2.tool.core;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Jar;
+
 public class JarFileWriter extends Jar{
 
 

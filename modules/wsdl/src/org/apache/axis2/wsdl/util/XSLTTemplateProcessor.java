@@ -1,13 +1,3 @@
-package org.apache.axis2.wsdl.util;
-
-
-import javax.xml.transform.*;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -22,10 +12,17 @@ import java.io.OutputStream;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *  The XSLT template processor
- * this is based on the JDK built in transformers
  */
+
+package org.apache.axis2.wsdl.util;
+
+
+import javax.xml.transform.*;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 
 public class XSLTTemplateProcessor {
 

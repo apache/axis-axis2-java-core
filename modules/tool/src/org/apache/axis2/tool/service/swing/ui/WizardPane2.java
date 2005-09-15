@@ -1,19 +1,3 @@
-package org.apache.axis2.tool.service.swing.ui;
-
-import org.apache.axis2.tool.service.bean.Page2Bean;
-import org.apache.axis2.tool.service.bean.WizardBean;
-import org.apache.axis2.tool.service.control.Controller;
-import org.apache.axis2.tool.service.control.ProcessException;
-import org.apache.axis2.tool.util.Constants;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.ArrayList;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -29,6 +13,22 @@ import java.util.ArrayList;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.apache.axis2.tool.service.swing.ui;
+
+import org.apache.axis2.tool.service.bean.Page2Bean;
+import org.apache.axis2.tool.service.bean.WizardBean;
+import org.apache.axis2.tool.service.control.Controller;
+import org.apache.axis2.tool.service.control.ProcessException;
+import org.apache.axis2.tool.util.Constants;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 public class WizardPane2 extends WizardPane {
 

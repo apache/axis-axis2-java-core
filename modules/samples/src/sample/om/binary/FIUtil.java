@@ -1,18 +1,5 @@
-package sample.om.binary;
-
-import com.sun.xml.fastinfoset.stax.StAXDocumentParser;
-import com.sun.xml.fastinfoset.stax.StAXDocumentSerializer;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.*;
-
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
+ * Copyright 2004,2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +12,20 @@ import java.io.*;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @author : Eran Chinthaka (chinthaka@apache.org)
  */
+
+package sample.om.binary;
+
+import com.sun.xml.fastinfoset.stax.StAXDocumentParser;
+import com.sun.xml.fastinfoset.stax.StAXDocumentSerializer;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.*;
 
 public class FIUtil {
 

@@ -1,14 +1,3 @@
-package org.apache.axis2.tool.core;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Enumeration;
-
-import sun.misc.URLClassPath;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -24,6 +13,18 @@ import sun.misc.URLClassPath;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.apache.axis2.tool.core;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Enumeration;
+
+import sun.misc.URLClassPath;
 public class ClassFileHandler {
 
 

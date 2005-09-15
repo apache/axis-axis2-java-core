@@ -1,14 +1,3 @@
-package org.apache.axis2.engine.util;
-
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.clientapi.Call;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPEnvelope;
-
-import javax.xml.namespace.QName;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -23,9 +12,18 @@ import javax.xml.namespace.QName;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * author : Eran Chinthaka (chinthaka@apache.org)
  */
+
+package org.apache.axis2.engine.util;
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.clientapi.Call;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.soap.SOAPEnvelope;
+
+import javax.xml.namespace.QName;
 
 public class MyInOutMEPClient extends Call {
 

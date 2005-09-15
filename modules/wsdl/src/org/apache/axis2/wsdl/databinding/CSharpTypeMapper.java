@@ -1,6 +1,3 @@
-package org.apache.axis2.wsdl.databinding;
-
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -15,9 +12,10 @@ package org.apache.axis2.wsdl.databinding;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *  the C# type mapper
  */
+
+package org.apache.axis2.wsdl.databinding;
+
 
 public class CSharpTypeMapper extends TypeMappingAdapter {
 

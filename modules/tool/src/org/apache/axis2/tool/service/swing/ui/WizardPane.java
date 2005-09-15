@@ -1,10 +1,3 @@
-package org.apache.axis2.tool.service.swing.ui;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import java.awt.*;
-import java.io.File;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -20,6 +13,13 @@ import java.io.File;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.apache.axis2.tool.service.swing.ui;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.io.File;
 
 public abstract class WizardPane extends JPanel {
     protected JTextArea descriptionLabel;

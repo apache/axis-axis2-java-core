@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.wsdl;
 
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;

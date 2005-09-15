@@ -1,15 +1,3 @@
-package org.apache.axis2.tool.service.swing.ui;
-
-import org.apache.axis2.tool.service.bean.ClassFileSelectionBean;
-import org.apache.axis2.tool.service.bean.WizardBean;
-import org.apache.axis2.tool.util.Constants;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -25,6 +13,18 @@ import java.awt.event.KeyListener;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.apache.axis2.tool.service.swing.ui;
+
+import org.apache.axis2.tool.service.bean.ClassFileSelectionBean;
+import org.apache.axis2.tool.service.bean.WizardBean;
+import org.apache.axis2.tool.util.Constants;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class WizardPane1 extends WizardPane {
 

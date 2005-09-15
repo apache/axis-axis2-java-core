@@ -1,5 +1,4 @@
 /*
- *
  * Copyright 2004,2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.axis2.om.impl.llom;
 
 import org.apache.axis2.om.OMContainer;

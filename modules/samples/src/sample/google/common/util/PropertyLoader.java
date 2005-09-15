@@ -1,9 +1,3 @@
-package sample.google.common.util;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -18,9 +12,13 @@ import java.util.Properties;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * 
  */
+
+package sample.google.common.util;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class PropertyLoader {
 

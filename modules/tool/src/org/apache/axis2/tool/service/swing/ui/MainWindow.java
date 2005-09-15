@@ -1,14 +1,3 @@
-package org.apache.axis2.tool.service.swing.ui;
-
-import org.apache.axis2.tool.service.bean.WizardBean;
-import org.apache.axis2.tool.service.control.Controller;
-import org.apache.axis2.tool.service.control.ProcessException;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -24,6 +13,17 @@ import java.awt.event.ActionListener;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.apache.axis2.tool.service.swing.ui;
+
+import org.apache.axis2.tool.service.bean.WizardBean;
+import org.apache.axis2.tool.service.control.Controller;
+import org.apache.axis2.tool.service.control.ProcessException;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class MainWindow extends JFrame {
 

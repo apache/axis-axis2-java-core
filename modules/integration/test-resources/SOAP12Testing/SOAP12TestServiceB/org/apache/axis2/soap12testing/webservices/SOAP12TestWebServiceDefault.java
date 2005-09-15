@@ -1,5 +1,3 @@
-package org.apache.axis2.soap12testing.webservices;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -14,15 +12,9 @@ package org.apache.axis2.soap12testing.webservices;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * 
  */
 
-/**
- * Author : Deepal Jayasinghe
- * Date: Jul 26, 2005
- * Time: 3:00:47 PM
- */
+package org.apache.axis2.soap12testing.webservices;
 
 import org.apache.axis2.om.OMElement;
 

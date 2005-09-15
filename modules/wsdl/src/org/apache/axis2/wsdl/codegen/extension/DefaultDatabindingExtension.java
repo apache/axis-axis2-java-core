@@ -1,11 +1,3 @@
-package org.apache.axis2.wsdl.codegen.extension;
-
-import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis2.wsdl.codegen.CodeGenerationException;
-import org.apache.axis2.wsdl.codegen.XSLTConstants;
-import org.apache.axis2.wsdl.databinding.TypeMapper;
-import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -20,10 +12,16 @@ import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *  The function of this class is to fill the default information if it's not already filled
- *  Note - This extension is meant to be the last of the extensions
  */
+
+package org.apache.axis2.wsdl.codegen.extension;
+
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.wsdl.codegen.XSLTConstants;
+import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
+
 public class DefaultDatabindingExtension extends AbstractCodeGenerationExtension {
     private CodeGenConfiguration configuration;
     public void init(CodeGenConfiguration configuration) {

@@ -1,7 +1,3 @@
-package org.apache.axis2.tool.service.bean;
-
-import java.util.ArrayList;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,6 +13,10 @@ import java.util.ArrayList;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.apache.axis2.tool.service.bean;
+
+import java.util.ArrayList;
 
 public class Page2Bean {
     private boolean manual;

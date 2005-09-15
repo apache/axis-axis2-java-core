@@ -1,9 +1,3 @@
-package org.apache.axis2.wsdl.codegen.emitter;
-
-import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
-import org.apache.axis2.wsdl.databinding.TypeMapper;
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -18,9 +12,13 @@ import org.apache.axis2.wsdl.databinding.TypeMapper;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * 
  */
+
+package org.apache.axis2.wsdl.codegen.emitter;
+
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
+import org.apache.axis2.wsdl.databinding.TypeMapper;
 
 public class CSharpEmitter extends MultiLanguageClientEmitter {
 
