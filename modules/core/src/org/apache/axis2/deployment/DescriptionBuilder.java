@@ -16,22 +16,28 @@
 
 package org.apache.axis2.deployment;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.description.*;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.Flow;
+import org.apache.axis2.description.FlowImpl;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.AxisFault;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.namespace.QName;
 import java.io.InputStream;
 import java.util.Iterator;
 /**

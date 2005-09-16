@@ -17,8 +17,8 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEvent;
 import org.apache.axis2.phaseresolver.PhaseResolver;

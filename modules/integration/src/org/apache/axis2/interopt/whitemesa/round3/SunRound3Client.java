@@ -18,7 +18,6 @@ package org.apache.axis2.interopt.whitemesa.round3;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.interopt.whitemesa.round3.util.SunRound3ClientUtil;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.context.ConfigurationContext;
@@ -26,6 +25,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
+import org.apache.axis2.interopt.whitemesa.round3.util.SunRound3ClientUtil;
 import org.apache.axis2.soap.SOAPEnvelope;
 
 import javax.xml.namespace.QName;

@@ -19,8 +19,8 @@ package org.apache.axis2.wsdl.codegen.extension;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.XSLTConstants;
-import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
+import org.apache.axis2.wsdl.databinding.TypeMapper;
 
 public class DefaultDatabindingExtension extends AbstractCodeGenerationExtension {
     private CodeGenConfiguration configuration;

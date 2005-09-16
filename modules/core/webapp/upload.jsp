@@ -1,9 +1,11 @@
-<%@ page import="javax.servlet.ServletContext,
+<%@ page import="org.apache.commons.fileupload.DiskFileUpload,
+                 org.apache.commons.fileupload.FileItem,
+                 org.apache.commons.fileupload.FileUpload,
+                 javax.servlet.ServletContext,
                  java.io.File,
-                 java.io.IOException,
-                 java.util.Iterator,
-                 java.util.List,
-                 org.apache.commons.fileupload.*"%>
+                 java.io.IOException"%>
+<%@ page import="java.util.Iterator"%>
+<%@ page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"
  %>
 <html>                                                                                                       

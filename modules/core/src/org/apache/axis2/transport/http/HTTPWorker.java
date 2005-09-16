@@ -18,30 +18,30 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.server.HttpRequestHandler;
 import org.apache.axis2.transport.http.server.SimpleHttpServerConnection;
 import org.apache.axis2.transport.http.server.SimpleRequest;
 import org.apache.axis2.transport.http.server.SimpleResponse;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.util.threadpool.AxisWorker;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.httpclient.HttpVersion;
-import org.apache.commons.httpclient.Header;
 
 import javax.xml.namespace.QName;
-import java.io.*;
-import java.net.Socket;
-import java.util.Map;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Map;
 
 public class HTTPWorker implements HttpRequestHandler {
     protected Log log = LogFactory.getLog(getClass().getName());

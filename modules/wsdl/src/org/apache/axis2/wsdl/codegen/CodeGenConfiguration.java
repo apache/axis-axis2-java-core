@@ -21,8 +21,8 @@ import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.wsdl.WSDLDescription;
 
 import java.io.File;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class CodeGenConfiguration implements CommandLineOptionConstants {
 

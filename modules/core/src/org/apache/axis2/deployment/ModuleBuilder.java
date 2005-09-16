@@ -16,19 +16,19 @@
 
 package org.apache.axis2.deployment;
 
+import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.deployment.util.PhasesInfo;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Iterator;
 /**
  * This class is to convert OM->ServiceDescrption , where first create OM from service.xml and
  * then populate service description by using OM

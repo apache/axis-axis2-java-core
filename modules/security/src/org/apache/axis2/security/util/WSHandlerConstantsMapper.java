@@ -15,10 +15,10 @@
  */
 package org.apache.axis2.security.util;
 
-import java.util.Hashtable;
-
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerConstants;
+
+import java.util.Hashtable;
 
 public class WSHandlerConstantsMapper {
 

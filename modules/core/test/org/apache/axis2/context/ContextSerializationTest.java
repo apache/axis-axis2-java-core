@@ -16,15 +16,7 @@
 
 package org.apache.axis2.context;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
-import javax.xml.namespace.QName;
-
+import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.description.OperationDescription;
@@ -32,11 +24,15 @@ import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.description.ServiceGroupDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
-import org.apache.axis2.util.Utils;
-import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
 import org.apache.wsdl.WSDLConstants;
 
-import junit.framework.TestCase;
+import javax.xml.namespace.QName;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * This TestCase check weather the context serialization and deserialization happens correctly.

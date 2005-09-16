@@ -16,19 +16,24 @@
 
 package org.apache.axis2.interopt.sun.complex;
 
-import org.apache.axis2.interopt.sun.round4.complex.*;
+import junit.framework.TestCase;
+import org.apache.axis2.interopt.sun.round4.complex.EchoBaseStructFaultClientutil;
+import org.apache.axis2.interopt.sun.round4.complex.EchoBlockingClient;
+import org.apache.axis2.interopt.sun.round4.complex.EchoExtendedStructFaultClientUtil;
+import org.apache.axis2.interopt.sun.round4.complex.EchoMultipleFaults1ClientUtil;
+import org.apache.axis2.interopt.sun.round4.complex.EchoMultipleFaults2ClientUtil;
+import org.apache.axis2.interopt.sun.round4.complex.EchoSOAPStructFaultClientUtil;
+import org.apache.axis2.interopt.sun.round4.complex.SunGroupHClientUtil;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
 import org.apache.axis2.om.impl.llom.util.XMLComparator;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
-
-import junit.framework.TestCase;
 public class SunGroupHMain extends TestCase {
 
     EchoBlockingClient client=null;

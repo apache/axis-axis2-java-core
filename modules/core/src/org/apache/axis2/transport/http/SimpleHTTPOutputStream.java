@@ -17,7 +17,6 @@
 package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.MessageContext;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;

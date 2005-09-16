@@ -31,11 +31,11 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.util.HashMap;
-
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
+
+import java.util.HashMap;
 
 /**
  * Default error responses.

@@ -17,15 +17,15 @@
 package org.apache.axis2.interopt.whitemesa;
 
 import junit.framework.TestCase;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.XMLComparatorInterop;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 public class WhiteMesaIneterop extends TestCase {
 

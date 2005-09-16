@@ -18,7 +18,6 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
 
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 /**

@@ -17,13 +17,11 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
-import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisEngine;
 
 import javax.xml.stream.XMLStreamException;
 public class AxisStorageTest extends TestCase {

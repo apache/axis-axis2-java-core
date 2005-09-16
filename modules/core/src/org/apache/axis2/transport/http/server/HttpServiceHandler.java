@@ -29,11 +29,11 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpVersion;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * This request handler provides service interface similar to that of Servlet API.

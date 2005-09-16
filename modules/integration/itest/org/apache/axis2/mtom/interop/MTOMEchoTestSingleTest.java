@@ -16,13 +16,12 @@
 
 package org.apache.axis2.mtom.interop;
 import junit.framework.TestCase;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
-import org.apache.axis2.Constants;
-import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.mtom.interop.util.BodyElements;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMText;
+import org.apache.axis2.soap.SOAP12Constants;
 
 /**
  * white mesa interop test

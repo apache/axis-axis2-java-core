@@ -29,9 +29,9 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.io.IOException;
-
 import org.apache.commons.httpclient.Credentials;
+
+import java.io.IOException;
 
 /**
  * Simple server that registers default request handlers to act as a proxy.

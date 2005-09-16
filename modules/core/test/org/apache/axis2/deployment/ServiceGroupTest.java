@@ -17,13 +17,11 @@
 package org.apache.axis2.deployment;
 
 import junit.framework.TestCase;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.description.ServiceGroupDescription;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.AxisFault;
-
-import javax.xml.namespace.QName;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.ServiceGroupDescription;
+import org.apache.axis2.engine.AxisConfiguration;
 public class ServiceGroupTest extends TestCase {
     AxisConfiguration ar;
     String repo ="./test-resources/deployment/serviceGroupRepo";

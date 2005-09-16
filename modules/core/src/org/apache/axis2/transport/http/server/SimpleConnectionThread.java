@@ -29,11 +29,11 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.io.IOException;
-import java.io.InterruptedIOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.io.IOException;
+import java.io.InterruptedIOException;
 
 /**
  * Simple HTTP connection thread.

@@ -17,13 +17,13 @@
 package org.apache.axis2.deployment.repository.util;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.deployment.DeploymentClassLoader;
+import org.apache.axis2.description.ServiceDescription;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;

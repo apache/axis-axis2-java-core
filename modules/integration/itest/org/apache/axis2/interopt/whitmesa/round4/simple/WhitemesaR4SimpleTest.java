@@ -17,20 +17,25 @@
 package org.apache.axis2.interopt.whitmesa.round4.simple;
 
 import junit.framework.TestCase;
+import org.apache.axis2.XMLComparatorInterop;
 import org.apache.axis2.interopt.whitemesa.round4.simple.EchoBlockingClient;
-import org.apache.axis2.interopt.whitemesa.round4.simple.utils.*;
+import org.apache.axis2.interopt.whitemesa.round4.simple.utils.EchoEmptyFaultClientUtil;
+import org.apache.axis2.interopt.whitemesa.round4.simple.utils.EchoIntArrayFaultClientUtil;
+import org.apache.axis2.interopt.whitemesa.round4.simple.utils.EchoMultipleFaults1ClientUtil;
+import org.apache.axis2.interopt.whitemesa.round4.simple.utils.EchoMultipleFaults2ClientUtil;
+import org.apache.axis2.interopt.whitemesa.round4.simple.utils.EchoMultipleFaults3Clientutil;
+import org.apache.axis2.interopt.whitemesa.round4.simple.utils.EchoMultipleFaults4ClientUtil;
+import org.apache.axis2.interopt.whitemesa.round4.simple.utils.EchoStringFaultClientUtil;
+import org.apache.axis2.interopt.whitemesa.round4.simple.utils.WhitemesaR4ClientUtil;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
-import org.apache.axis2.om.impl.llom.util.XMLComparator;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.XMLComparatorInterop;
+import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
-import java.io.File;
 public class WhitemesaR4SimpleTest extends TestCase {
 
 

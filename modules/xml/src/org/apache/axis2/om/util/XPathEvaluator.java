@@ -1,7 +1,6 @@
 package org.apache.axis2.om.util;
 
 import org.apache.axis2.om.xpath.AXIOMXPath;
-import org.jaxen.NamespaceContext;
 import org.jaxen.SimpleNamespaceContext;
 
 import java.util.List;

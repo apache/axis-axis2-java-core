@@ -16,13 +16,44 @@
 
 package org.apache.axis2.interopt.whitmesa.round2.Soap12;
 
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.interopt.whitemesa.round2.util.*;
-import org.apache.axis2.interopt.whitemesa.round2.util.soap12.*;
-import org.apache.axis2.interopt.whitemesa.round2.SunRound2Client;
-import org.apache.axis2.interopt.whitemesa.WhiteMesaIneterop;
 import org.apache.axis2.AxisFault;
-import java.io.*;
+import org.apache.axis2.interopt.whitemesa.WhiteMesaIneterop;
+import org.apache.axis2.interopt.whitemesa.round2.SunRound2Client;
+import org.apache.axis2.interopt.whitemesa.round2.util.Round2Soap12StringUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.SunRound2ClientUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.GroupbSoap12Echo2DStringArrayUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.GroupbSoap12EchoNestedArrayUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.GroupbSoap12EchoNestedStructUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.GroupbSoap12EchoSimpleTypesAsStructUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.GroupbSoap12EchoStructAsSimpleTypesUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.Round2SOAP12EchoIntegerArrayclientUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.Round2Soap12EchoBase64ClientUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.Round2Soap12EchoBooleanClientUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.Round2Soap12EchoDateClientUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.Round2Soap12EchoDecimalClientUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.Round2Soap12EchoFloatArrayClientUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.Round2Soap12EchoFloatClientUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.Round2Soap12EchoHexBinaryUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.Round2Soap12EchoStructArrayClientUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.Round2Soap12EchoStructClientUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.Round2Soap12EchoVoidClientUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.Round2Soap12IntegerUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.Round2Soap12StringArrayUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.WMRound2Saop12GroupcFloatUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.WMRound2Soap12GroupcBase64Util;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.WMRound2Soap12GroupcBooleanUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.WMRound2Soap12GroupcEchoStringUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.WMRound2Soap12GroupcFloatArrayUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.WMRound2Soap12GroupcHexBinaryUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.WMRound2Soap12GroupcIntegerArrayUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.WMRound2Soap12GroupcIntergerUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.WMRound2Soap12GroupcStringArrayUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.WMRound2Soap12GroupcStructArrayUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.WMRound2Soap12GroupcStructUtil;
+import org.apache.axis2.interopt.whitemesa.round2.util.soap12.WMRound2Soap12GroupcVoidUtil;
+import org.apache.axis2.soap.SOAPEnvelope;
+
+import java.io.File;
 
 /**
  * class

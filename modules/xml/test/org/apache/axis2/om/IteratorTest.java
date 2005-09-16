@@ -16,13 +16,11 @@
 
 package org.apache.axis2.om;
 
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMLinkedListImplFactory;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
 import java.io.FileReader;
 import java.util.Iterator;
 

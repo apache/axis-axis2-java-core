@@ -15,9 +15,8 @@
  */
 package org.apache.axis2.addressing;
 
-import java.io.Serializable;
-
 import javax.xml.namespace.QName;
+import java.io.Serializable;
 
 /**
  * Class ServiceName

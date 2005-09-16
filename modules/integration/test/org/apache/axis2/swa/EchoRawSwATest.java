@@ -19,7 +19,6 @@ package org.apache.axis2.swa;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.ServiceDescription;

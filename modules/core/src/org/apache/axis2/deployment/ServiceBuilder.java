@@ -16,15 +16,19 @@
 
 package org.apache.axis2.deployment;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.ModuleConfiguration;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterInclude;
+import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.Constants;
-import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;

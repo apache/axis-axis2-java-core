@@ -16,11 +16,11 @@
 
 package org.apache.axis2.tool.core;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Jar;
+
+import java.io.File;
+import java.io.IOException;
 
 public class JarFileWriter extends Jar{
 

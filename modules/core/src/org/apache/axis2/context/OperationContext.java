@@ -24,12 +24,11 @@ import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.i18n.Messages;
 import org.apache.wsdl.WSDLConstants;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
-
-import javax.xml.namespace.QName;
 
 /**
  * An OperationContext represents a running "instance" of an operation, which is

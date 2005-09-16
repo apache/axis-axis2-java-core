@@ -30,13 +30,15 @@ import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis2.soap.*;
+import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.stream.XMLStreamReader;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.Iterator;
 
 

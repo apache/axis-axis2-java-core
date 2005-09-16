@@ -29,13 +29,13 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.io.IOException;
-
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.BasicScheme;
+
+import java.io.IOException;
 
 /**
  * This request handler guards access to a proxy when used in a request handler

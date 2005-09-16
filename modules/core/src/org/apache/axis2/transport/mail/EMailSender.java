@@ -16,7 +16,9 @@
 
 package org.apache.axis2.transport.mail;
 
-import java.util.Properties;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.transport.EmailReceiver;
+import org.apache.axis2.transport.mail.server.MailSrvConstants;
 
 import javax.mail.Authenticator;
 import javax.mail.Flags;
@@ -28,10 +30,7 @@ import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.transport.EmailReceiver;
-import org.apache.axis2.transport.mail.server.MailSrvConstants;
+import java.util.Properties;
 
 public class EMailSender {
     private String user;

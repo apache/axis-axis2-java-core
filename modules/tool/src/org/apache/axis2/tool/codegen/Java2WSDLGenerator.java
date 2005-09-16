@@ -17,10 +17,10 @@
 package org.apache.axis2.tool.codegen;
 
 
-import java.util.Vector;
-
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.fromJava.Emitter;
+
+import java.util.Vector;
 
 public class Java2WSDLGenerator {
 

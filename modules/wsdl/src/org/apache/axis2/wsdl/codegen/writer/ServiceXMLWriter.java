@@ -16,7 +16,6 @@
 
 package org.apache.axis2.wsdl.codegen.writer;
 
-import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.util.FileWriter;
 
 import java.io.File;

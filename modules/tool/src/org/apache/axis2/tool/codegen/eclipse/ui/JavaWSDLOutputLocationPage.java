@@ -16,8 +16,6 @@
 
 package org.apache.axis2.tool.codegen.eclipse.ui;
 
-import java.io.File;
-
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -31,6 +29,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import java.io.File;
 
 public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
     

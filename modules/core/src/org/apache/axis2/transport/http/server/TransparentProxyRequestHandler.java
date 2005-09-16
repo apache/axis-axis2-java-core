@@ -29,15 +29,15 @@
 
 package org.apache.axis2.transport.http.server;
 
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.HttpVersion;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.net.Socket;
-
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.HttpVersion;
 
 /**
  * This request handler can handle the CONNECT method. It does nothing for any

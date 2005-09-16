@@ -25,7 +25,11 @@
         %>
 <%@ page import="org.apache.axis2.Constants,
                  org.apache.axis2.description.ModuleDescription,
-                 java.util.*"%>
+                 java.util.Collection"%>
+ <%@ page import="java.util.Enumeration"%>
+ <%@ page import="java.util.HashMap"%>
+ <%@ page import="java.util.Hashtable"%>
+ <%@ page import="java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
   <head><title>List Available Moules</title>

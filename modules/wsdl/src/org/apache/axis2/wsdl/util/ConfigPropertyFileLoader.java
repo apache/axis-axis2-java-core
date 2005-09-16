@@ -1,11 +1,11 @@
 package org.apache.axis2.wsdl.util;
 
-import java.io.InputStream;
 import java.io.IOException;
-import java.util.Properties;
-import java.util.Map;
-import java.util.HashMap;
+import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Tries to load the properties from the config properties

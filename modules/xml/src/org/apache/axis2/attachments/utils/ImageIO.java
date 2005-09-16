@@ -17,13 +17,10 @@
 package org.apache.axis2.attachments.utils;
 
 
-import sun.awt.image.codec.JPEGImageEncoderImpl;
-
 import javax.imageio.IIOImage;
 import javax.imageio.ImageWriter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;

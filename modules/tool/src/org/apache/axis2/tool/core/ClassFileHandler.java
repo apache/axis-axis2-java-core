@@ -16,6 +16,8 @@
 
 package org.apache.axis2.tool.core;
 
+import sun.misc.URLClassPath;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -23,8 +25,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
-
-import sun.misc.URLClassPath;
 public class ClassFileHandler {
 
 

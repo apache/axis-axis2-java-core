@@ -16,13 +16,6 @@
 
 package org.apache.axis2.om.impl.llom;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.activation.DataHandler;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.axis2.attachments.Base64;
 import org.apache.axis2.attachments.ByteArrayDataSource;
 import org.apache.axis2.om.OMAttribute;
@@ -35,6 +28,12 @@ import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
 import org.apache.axis2.util.UUIDGenerator;
+
+import javax.activation.DataHandler;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     protected String value = null;

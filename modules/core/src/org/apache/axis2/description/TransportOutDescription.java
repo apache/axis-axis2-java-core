@@ -16,10 +16,10 @@
 
 package org.apache.axis2.description;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.transport.TransportSender;
-import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

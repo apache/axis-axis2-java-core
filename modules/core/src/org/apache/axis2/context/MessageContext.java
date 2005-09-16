@@ -20,7 +20,15 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.ModuleConfiguration;
+import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.ServiceGroupDescription;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.soap.SOAP11Constants;
@@ -31,7 +39,6 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 
 /**
  * The palce where all the service specific states are kept.

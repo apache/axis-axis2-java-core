@@ -17,15 +17,12 @@
 package org.apache.axis2.clientapi;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.transport.TransportUtils;
-
-import javax.xml.stream.XMLStreamException;
 
 /**
  * This works for only a two way transport, this class send the SOAP Message and wait till the\result arrives

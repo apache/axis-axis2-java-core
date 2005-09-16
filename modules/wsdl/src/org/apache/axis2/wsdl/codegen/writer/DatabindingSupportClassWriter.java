@@ -19,8 +19,8 @@ package org.apache.axis2.wsdl.codegen.writer;
 import org.apache.axis2.wsdl.codegen.XSLTConstants;
 
 import java.io.File;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
 
 public class DatabindingSupportClassWriter extends ClassWriter {
 

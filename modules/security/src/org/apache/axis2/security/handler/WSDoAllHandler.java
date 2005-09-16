@@ -16,22 +16,16 @@
 
 package org.apache.axis2.security.handler;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.security.util.WSHandlerConstantsMapper;
 import org.apache.ws.security.handler.RequestData;
 import org.apache.ws.security.handler.WSHandler;
+
+import javax.xml.namespace.QName;
 
 /**
  * Class WSDoAllHandler

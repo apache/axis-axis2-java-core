@@ -16,9 +16,9 @@
 
 package org.apache.axis2.om.impl.llom.traverse;
 
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNode;
 
 import java.util.Iterator;
 

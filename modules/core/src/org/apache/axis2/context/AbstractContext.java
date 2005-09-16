@@ -16,14 +16,14 @@
 
 package org.apache.axis2.context;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
-
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.AxisConfiguration;
 
 /**
  *  This is the topmost level of the Context hierachy, is potentially a bag of 

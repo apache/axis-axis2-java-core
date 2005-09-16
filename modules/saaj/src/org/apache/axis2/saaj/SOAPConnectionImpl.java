@@ -15,28 +15,24 @@
  */
 package org.apache.axis2.saaj;
 
-import org.w3c.dom.Node;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.util.SessionUtils;
 
 import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
+import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.namespace.QName;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import java.util.Iterator;
 
 /**

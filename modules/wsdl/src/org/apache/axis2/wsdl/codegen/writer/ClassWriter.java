@@ -16,18 +16,16 @@
 
 package org.apache.axis2.wsdl.codegen.writer;
 
-import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.axis2.wsdl.util.FileWriter;
 import org.apache.axis2.wsdl.util.XSLTTemplateProcessor;
-import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.Map;
-import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Map;
 
 public abstract class ClassWriter {
 

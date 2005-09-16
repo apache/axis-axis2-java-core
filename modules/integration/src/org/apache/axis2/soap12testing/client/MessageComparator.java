@@ -18,8 +18,8 @@ package org.apache.axis2.soap12testing.client;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.transport.http.HTTPTransportReceiver;
@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStream;
-import java.util.Map;
 
 public class MessageComparator {
     //public static final String TEST_MAIN_DIR = "./modules/samples/";

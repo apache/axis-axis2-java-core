@@ -16,13 +16,6 @@
 
 package org.apache.axis2.tool.service.eclipse.ui;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-
 import org.apache.axis2.tool.service.bean.Page2Bean;
 import org.apache.axis2.tool.service.bean.WSDLAutoGenerateOptionBean;
 import org.eclipse.swt.SWT;
@@ -39,6 +32,13 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
 
 
 public class ServiceXMLGenerationPage extends AbstractServiceWizardPage{

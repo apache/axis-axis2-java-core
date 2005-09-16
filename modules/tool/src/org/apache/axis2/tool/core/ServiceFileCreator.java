@@ -16,17 +16,17 @@
 
 package org.apache.axis2.tool.core;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
 import org.apache.axis2.wsdl.codegen.writer.ServiceXMLWriter;
 import org.apache.crimson.tree.XmlDocument;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class ServiceFileCreator {
     

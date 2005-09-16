@@ -16,11 +16,11 @@
 
 package org.apache.axis2.interopt.whitmesa.round2;
 
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.interopt.whitemesa.round2.util.*;
 import org.apache.axis2.interopt.whitemesa.WhiteMesaIneterop;
+import org.apache.axis2.interopt.whitemesa.round2.util.SunRound2ClientUtil;
+import org.apache.axis2.soap.SOAPEnvelope;
 
-import java.io.*;
+import java.io.File;
 
 /**
  * class FrtrRound2InteropTest

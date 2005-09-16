@@ -16,11 +16,11 @@
 
 package org.apache.axis2.interopt.whitemesa.round3.util;
 
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
 
 public class GDRpcStructUtil implements SunRound3ClientUtil{
 

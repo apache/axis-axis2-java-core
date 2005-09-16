@@ -1,10 +1,9 @@
 package org.apache.axis2.interopt.whitemesa.round1.util;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMElement;
 
 /**
  * Created by IntelliJ IDEA.

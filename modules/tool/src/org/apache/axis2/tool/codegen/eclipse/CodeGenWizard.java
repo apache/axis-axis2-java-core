@@ -1,8 +1,5 @@
 package org.apache.axis2.tool.codegen.eclipse;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
-
 import org.apache.axis2.tool.codegen.Java2WSDLGenerator;
 import org.apache.axis2.tool.codegen.WSDL2JavaGenerator;
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
@@ -29,6 +26,9 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 /**
  * The main wizard for the codegen wizard

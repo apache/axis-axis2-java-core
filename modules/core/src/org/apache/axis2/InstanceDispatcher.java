@@ -16,7 +16,11 @@
 
 package org.apache.axis2;
 
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.OperationContextFactory;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 

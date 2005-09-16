@@ -16,15 +16,15 @@
 
 package org.apache.axis2;
 
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMAttribute;
 
-import java.util.Vector;
 import java.util.Iterator;
+import java.util.Vector;
 public class XMLComparatorInterop {
     /**
      * Eran Chinthaka (chinthaka@apache.org)

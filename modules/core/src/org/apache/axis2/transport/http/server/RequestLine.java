@@ -31,12 +31,12 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.util.NoSuchElementException;
-import java.util.StringTokenizer;
-
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.ProtocolException;
+
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 
 /**
  * Defines a HTTP request-line, consisting of method name, URI and protocol.

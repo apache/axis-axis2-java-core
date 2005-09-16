@@ -16,9 +16,6 @@
 
 package org.apache.axis2.security.util;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.xpath.AXIOMXPath;
@@ -28,6 +25,9 @@ import org.apache.ws.security.WSSecurityException;
 import org.jaxen.JaxenException;
 import org.jaxen.SimpleNamespaceContext;
 import org.jaxen.XPath;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Utility class to handle MTOM-Optimizing Base64 Text values

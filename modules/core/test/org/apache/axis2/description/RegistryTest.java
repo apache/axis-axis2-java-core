@@ -20,8 +20,8 @@ import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.AxisConfigurationImpl;
+import org.apache.axis2.engine.Handler;
 import org.apache.axis2.handlers.AbstractHandler;
 
 import javax.xml.namespace.QName;

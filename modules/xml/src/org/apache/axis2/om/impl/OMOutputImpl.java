@@ -16,18 +16,18 @@
 
 package org.apache.axis2.om.impl;
 
-    import org.apache.axis2.om.OMText;
-    import org.apache.axis2.soap.SOAP11Constants;
-    import org.apache.axis2.soap.SOAP12Constants;
-    import org.apache.axis2.util.UUIDGenerator;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAP12Constants;
+import org.apache.axis2.util.UUIDGenerator;
 
-    import javax.xml.stream.FactoryConfigurationError;
-    import javax.xml.stream.XMLOutputFactory;
-    import javax.xml.stream.XMLStreamException;
-    import javax.xml.stream.XMLStreamWriter;
-    import java.io.ByteArrayOutputStream;
-    import java.io.OutputStream;
-    import java.util.LinkedList;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.util.LinkedList;
 
 
 /**

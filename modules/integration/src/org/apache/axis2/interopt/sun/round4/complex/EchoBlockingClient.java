@@ -1,21 +1,12 @@
 package org.apache.axis2.interopt.sun.round4.complex;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
-import org.apache.axis2.Constants;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.llom.util.XMLComparator;
-import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
 
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
-import java.io.*;
+import java.io.StringWriter;
 
 /**
  * Created by IntelliJ IDEA.

@@ -17,10 +17,8 @@
 package org.apache.axis2.wsdl.codegen;
 
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
-import org.apache.axis2.wsdl.codegen.emitter.CSharpEmitter;
 import org.apache.axis2.wsdl.codegen.emitter.Emitter;
-import org.apache.axis2.wsdl.codegen.emitter.JavaEmitter;
-import org.apache.axis2.wsdl.codegen.extension.*;
+import org.apache.axis2.wsdl.codegen.extension.CodeGenExtension;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.wsdl.WSDLDescription;

@@ -17,6 +17,7 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.ServiceBuilder;
@@ -24,7 +25,6 @@ import org.apache.axis2.description.ModuleConfiguration;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

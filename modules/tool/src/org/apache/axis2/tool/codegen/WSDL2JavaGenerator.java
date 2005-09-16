@@ -16,20 +16,19 @@
 
 package org.apache.axis2.tool.codegen;
 
+import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
+import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis2.wsdl.codegen.CommandLineOption;
+import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
+import org.apache.wsdl.WSDLDescription;
+
+import javax.wsdl.WSDLException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.wsdl.WSDLException;
-
-import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
-import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
-import org.apache.axis2.wsdl.codegen.CommandLineOption;
-import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
-import org.apache.wsdl.WSDLDescription;
 
 
 public class WSDL2JavaGenerator {

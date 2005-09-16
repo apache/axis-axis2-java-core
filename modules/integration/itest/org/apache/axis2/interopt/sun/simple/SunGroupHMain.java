@@ -1,20 +1,25 @@
 
 package org.apache.axis2.interopt.sun.simple;
 
+import junit.framework.TestCase;
+import org.apache.axis2.interopt.sun.round4.simple.EchoBlockingClient;
+import org.apache.axis2.interopt.sun.round4.simple.util.EchoEmptyFaultClientUtil;
+import org.apache.axis2.interopt.sun.round4.simple.util.EchoMultipleFaults1ClientUtil;
+import org.apache.axis2.interopt.sun.round4.simple.util.EchoMultipleFaults2ClientUtil;
+import org.apache.axis2.interopt.sun.round4.simple.util.EchoMultipleFaults3Clientutil;
+import org.apache.axis2.interopt.sun.round4.simple.util.EchoMultipleFaults4ClientUtil;
+import org.apache.axis2.interopt.sun.round4.simple.util.EchoStringFaultClientUtil;
+import org.apache.axis2.interopt.sun.round4.simple.util.SunGroupHClientUtil;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
 import org.apache.axis2.om.impl.llom.util.XMLComparator;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.interopt.sun.round4.simple.EchoBlockingClient;
-import org.apache.axis2.interopt.sun.round4.simple.util.*;
+import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
-
-import junit.framework.TestCase;
 
 /**
  * Created by IntelliJ IDEA.

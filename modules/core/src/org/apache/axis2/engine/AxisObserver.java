@@ -16,7 +16,6 @@
 
 package org.apache.axis2.engine;
 
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterInclude;
 
 public interface AxisObserver extends ParameterInclude {

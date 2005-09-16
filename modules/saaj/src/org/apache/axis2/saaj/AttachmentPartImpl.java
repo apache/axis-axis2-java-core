@@ -1,18 +1,16 @@
 package org.apache.axis2.saaj;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Iterator;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.util.SessionUtils;
 
 import javax.activation.DataHandler;
 import javax.activation.UnsupportedDataTypeException;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
-
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.util.SessionUtils;
+import java.io.ByteArrayOutputStream;
+import java.util.Iterator;
 
 public class AttachmentPartImpl extends AttachmentPart {
 	
