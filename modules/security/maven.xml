@@ -111,9 +111,9 @@
     	<!-- Create the META-INF directory -->
     	<mkdir dir="${class.dir}/META-INF"/>
     	
-    		<!-- copy the service.xml-->
-		<copy file="interop/service.xml" 
-			tofile="${class.dir}/META-INF/service.xml" overwrite="yes"/>
+    		<!-- copy the services.xml-->
+		<copy file="interop/services.xml"
+			tofile="${class.dir}/META-INF/services.xml" overwrite="yes"/>
 
 
 		<!-- copy axis2.crypto.properties -->

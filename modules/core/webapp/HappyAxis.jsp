@@ -46,7 +46,7 @@
 <%IP=request.getRequestURL().toString();
     int lastindex = IP.lastIndexOf('/');
     IP = IP.substring(0,lastindex);
-    targetEPR = new EndpointReference(IP + "/services/Version/getVersion");
+    targetEPR = new EndpointReference(IP + "/services/version");
 %>
 <%!
     /*
@@ -327,7 +327,7 @@
     private OMElement createEnvelope() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement method = fac.createOMElement("Version", omNs);
+        OMElement method = fac.createOMElement("getVersion", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         method.addChild(value);
         return method;

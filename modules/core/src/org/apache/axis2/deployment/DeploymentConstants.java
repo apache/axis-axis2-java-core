@@ -24,7 +24,7 @@ public interface DeploymentConstants {
     int MODULE = 1; // if it is a module
 
     String META_INF ="META-INF";
-    String SERVICEXML = "META-INF/service.xml";
+    String SERVICEXML = "META-INF/services.xml";
     String SERVICEWSDL = "META-INF/service.wsdl";
     String MODULEXML = "META-INF/module.xml";
     String PARAMETERST = "parameter";// paramater start tag

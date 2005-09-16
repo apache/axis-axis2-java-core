@@ -30,7 +30,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 /**
- * This class is to convert OM->ServiceDescrption , where first create OM from service.xml and
+ * This class is to convert OM->ServiceDescrption , where first create OM from services.xml and
  * then populate service description by using OM
  */
 public class ModuleBuilder extends DescriptionBuilder{

@@ -74,7 +74,7 @@
             <fileset dir="${classes.dir}"/>
         </jar>
 
-        <copy file="${conf.dir}/service.xml" todir="${build.dir}/META-INF" overwrite="true"/>
+        <copy file="${conf.dir}/services.xml" todir="${build.dir}/META-INF" overwrite="true"/>
 
         <jar destfile="${jardrop.dir}/sample1.jar">
 
@@ -82,12 +82,12 @@
                 <include name="**/EchoXML.class"/>
             </fileset>
             <fileset dir="${build.dir}">
-                <include name="META-INF/service.xml"/>
+                <include name="META-INF/services.xml"/>
             </fileset>
         </jar>
 
 
-        <copy file="${conf.dir}/service4withhandler.xml" tofile="${build.dir}/META-INF/service.xml" overwrite="true"/>
+        <copy file="${conf.dir}/service4withhandler.xml" tofile="${build.dir}/META-INF/services.xml" overwrite="true"/>
 
         <jar destfile="${jardrop.dir}/sample1WithHandler.jar">
 
@@ -96,7 +96,7 @@
                 <include name="**/LoggingHandler.class"/>
             </fileset>
             <fileset dir="${build.dir}">
-                <include name="META-INF/service.xml"/>
+                <include name="META-INF/services.xml"/>
             </fileset>
         </jar>
         <delete dir="${classes.dir}" failonerror="false"/>

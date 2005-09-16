@@ -780,7 +780,7 @@ public class DeploymentEngine implements DeploymentConstants {
 */
 
     /**
-     * This method is used to fill a axisservice object using service.xml , first it should create
+     * This method is used to fill a axisservice object using services.xml , first it should create
      * an axisservice object using WSDL and then fill that using given servic.xml and load all the requed
      * class and build the chains , finally add the  servicecontext to EngineContext and axisservice into
      * EngineConfiguration

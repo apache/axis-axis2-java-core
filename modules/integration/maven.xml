@@ -104,9 +104,9 @@
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario1_service_repo/modules/security.mar"/>
 
-	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
 	<copy file="test-resources/security/s1.service.xml"
-            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+            tofile="../security/target/interop/classes/META-INF/services.xml" overwrite="true"/>
 
 	<!-- Create the .aar file -->
 	<jar jarfile="target/test-resources/scenario1_service_repo/services/PingPort.aar" 
@@ -132,9 +132,9 @@
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario2_service_repo/modules/security.mar"/>
 
-	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
 	<copy file="test-resources/security/s2.service.xml"
-            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+            tofile="../security/target/interop/classes/META-INF/services.xml" overwrite="true"/>
 
 	<!-- Create the .aar file -->
 	<jar jarfile="target/test-resources/scenario2_service_repo/services/PingPort.aar" 
@@ -160,9 +160,9 @@
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario2a_service_repo/modules/security.mar"/>
 
-	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
 	<copy file="test-resources/security/s2a.service.xml"
-            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+            tofile="../security/target/interop/classes/META-INF/services.xml" overwrite="true"/>
 
 	<!-- Create the .aar file -->
 	<jar jarfile="target/test-resources/scenario2a_service_repo/services/PingPort.aar" 
@@ -188,9 +188,9 @@
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario3_service_repo/modules/security.mar"/>
 
-	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
 	<copy file="test-resources/security/s3.service.xml"
-            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+            tofile="../security/target/interop/classes/META-INF/services.xml" overwrite="true"/>
 
 	<!-- Create the .aar file -->
 	<jar jarfile="target/test-resources/scenario3_service_repo/services/PingPort.aar" 
@@ -217,9 +217,9 @@
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario4_service_repo/modules/security.mar"/>
 
-	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
 	<copy file="test-resources/security/s4.service.xml"
-            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+            tofile="../security/target/interop/classes/META-INF/services.xml" overwrite="true"/>
 
 	<!-- Create the .aar file -->
 	<jar jarfile="target/test-resources/scenario4_service_repo/services/PingPort.aar" 
@@ -246,9 +246,9 @@
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario5_service_repo/modules/security.mar"/>
 
-	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
 	<copy file="test-resources/security/s5.service.xml"
-            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+            tofile="../security/target/interop/classes/META-INF/services.xml" overwrite="true"/>
 
 	<!-- Create the .aar file -->
 	<jar jarfile="target/test-resources/scenario5_service_repo/services/PingPort.aar" 
@@ -275,9 +275,9 @@
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario6_service_repo/modules/security.mar"/>
 
-	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
 	<copy file="test-resources/security/s6.service.xml"
-            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+            tofile="../security/target/interop/classes/META-INF/services.xml" overwrite="true"/>
 
 	<!-- Create the .aar file -->
 	<jar jarfile="target/test-resources/scenario6_service_repo/services/PingPort.aar" 
@@ -304,9 +304,9 @@
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenario7_service_repo/modules/security.mar"/>
 
-	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
 	<copy file="test-resources/security/s7.service.xml"
-            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+            tofile="../security/target/interop/classes/META-INF/services.xml" overwrite="true"/>
 
 	<!-- Create the .aar file -->
 	<jar jarfile="target/test-resources/scenario7_service_repo/services/PingPort.aar" 
@@ -339,9 +339,9 @@
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/scenarioST1_service_repo/modules/security.mar"/>
 
-	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
 	<copy file="test-resources/security/sST1.service.xml"
-            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+            tofile="../security/target/interop/classes/META-INF/services.xml" overwrite="true"/>
 
 	<!-- Create the .aar file -->
 	<jar jarfile="target/test-resources/scenarioST1_service_repo/services/PingPort.aar" 
@@ -368,9 +368,9 @@
         <copy file="../security/target/security.mar"
             tofile="target/test-resources/mtom_sec_service_repo/modules/security.mar"/>
 
-	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
 	<copy file="test-resources/security/secMtom.service.xml"
-            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+            tofile="../security/target/interop/classes/META-INF/services.xml" overwrite="true"/>
 
 	<!-- Create the .aar file -->
 	<jar jarfile="target/test-resources/mtom_sec_service_repo/services/PingPort.aar" 
@@ -402,9 +402,9 @@
         <copy file="../addressing/target/addressing.mar"
             tofile="target/test-resources/complete_service_repo/modules/addressing.mar"/>
 
-	<!-- Copy service.xml to ../security/target/interop/classes/META-INF/ -->
+	<!-- Copy services.xml to ../security/target/interop/classes/META-INF/ -->
 	<copy file="test-resources/security/complete.service.xml"
-            tofile="../security/target/interop/classes/META-INF/service.xml" overwrite="true"/>
+            tofile="../security/target/interop/classes/META-INF/services.xml" overwrite="true"/>
 
 	<!-- Create the .aar file -->
 	<jar jarfile="target/test-resources/complete_service_repo/services/PingPort.aar" 

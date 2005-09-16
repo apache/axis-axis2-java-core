@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 
 /**
- * This class hold all the phases found in the service.xml and server.xml
+ * This class hold all the phases found in the services.xml and server.xml
  */
 public class PhaseHolder {
 

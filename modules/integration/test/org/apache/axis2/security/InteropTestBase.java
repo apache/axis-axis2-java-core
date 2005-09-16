@@ -77,7 +77,7 @@ public class InteropTestBase extends TestCase {
     /*
      * We have to create different a client repository and a service repository
      * for each scenarion since we dont have the support to get the parameter 
-     * values off the service.xml yet
+     * values off the services.xml yet
      */
     private String serviceRepo;
     

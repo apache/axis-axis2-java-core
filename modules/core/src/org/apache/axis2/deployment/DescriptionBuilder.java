@@ -58,7 +58,7 @@ public class DescriptionBuilder implements DeploymentConstants{
     }
 
     /**
-     * This will creat OMElemnt for a given service.xml
+     * This will creat OMElemnt for a given services.xml
      *
      * @return OMElement <code>OMElement</code>
      * @throws javax.xml.stream.XMLStreamException
@@ -75,7 +75,7 @@ public class DescriptionBuilder implements DeploymentConstants{
 
 
     /**
-     * To process Flow elements in service.xml
+     * To process Flow elements in services.xml
      * @param flowelement       <code>OMElement</code>
      * @return
      * @throws DeploymentException  <code>DeploymentException</code>
