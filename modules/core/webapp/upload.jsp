@@ -77,8 +77,10 @@
                         if (!item.isFormField()) {
 
                             String fileName = item.getName();
-                            fileName = fileName.toLowerCase();
-                            if (!(fileName.endsWith(".jar")||fileName.endsWith(".aar"))){
+                            String fileExtesion =fileName;
+                            fileExtesion =fileExtesion.toLowerCase();
+//                            fileName = fileName.toLowerCase();
+                            if (!(fileExtesion.endsWith(".jar")||fileExtesion.endsWith(".aar"))){
                                 throw new Exception(" Wrong file type! ");
                             }
 
