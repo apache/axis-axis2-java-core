@@ -37,6 +37,7 @@
         <attainGoal name="version"/>
         <attainGoal name="mtomSample"/>
         <attainGoal name="groovy"/>
+        <attainGoal name="securitySample"/>
     </goal>
 
     <!-- ================================================================ -->
@@ -237,6 +238,46 @@
             <fileset dir="target/classes/sample/groovy">
             </fileset>
         </jar>
+    </goal>
+
+    <!-- ================================================================ -->
+    <!--- Security Sample -->
+    <!-- ================================================================ -->
+    <goal name="securitySample">
+
+	<mkdir dir="target/security"/>
+	<mkdir dir="target/security/META-INF"/>
+	
+        <!-- Create the service archive -->
+    	<ant:move todir="target/security">
+	     <ant:fileset dir="target/classes">
+                <ant:include name="sample/security/*.class"/>
+            </ant:fileset>
+	</ant:move>
+	<ant:copy file="src/sample/security/META-INF/services.xml" tofile="target/security/META-INF/services.xml"/>
+        <jar destfile="target/security/SecureService.aar">
+            <fileset dir="target/security"></fileset>
+        </jar>
+        
+	<!-- Create a jar to hold the password callback class-->
+	<mkdir dir="target/security/secUtil/sample/security/" />
+	<ant:copy file="target/security/sample/security/PWCallback.class" toFile="target/security/secUtil/sample/security/PWCallback.class" />
+	<ant:copy file="resources/security/sec.jks" tofile="target/security/secUtil/sec.jks"/>
+	<ant:copy file="resources/security/sec.properties" tofile="target/security/secUtil/sec.properties"/>
+        <jar destfile="target/security/secUtil.jar">
+            <fileset dir="target/security/secUtil"></fileset>
+        </jar>
+
+	<!-- Create the client repository -->
+	<mkdir dir="target/security/client_repo"/>
+	<mkdir dir="target/security/client_repo/modules"/>
+	<ant:copy file="../security/target/modules/security.mar" tofile="target/security/client_repo/modules/security.mar"/>
+	<ant:copy file="../addressing/target/modules/addressing.mar" tofile="target/security/client_repo/modules/addressing.mar"/>
+	<ant:copy file="resources/security/client.axis2.xml" tofile="target/security/client_repo/axis2.xml"/>
+
+	<ant:copy file="../security/target/modules/security.mar" tofile="target/toWar/modules/security.mar"/>
+	<ant:copy file="../addressing/target/modules/addressing.mar" tofile="target/toWar/modules/addressing.mar"/>
+
     </goal>
 
     <preGoal name="itest:compile">
