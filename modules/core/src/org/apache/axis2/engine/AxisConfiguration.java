@@ -56,7 +56,6 @@ public interface AxisConfiguration extends ParameterInclude {
     public static final int FAULT_OUT_FLOW = 10006;
 
     /**
-<<<<<<< .mine
      * Method getService
      *
      * @param name

@@ -394,20 +394,14 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
 
     /**
-     <<<<<<< .mine
      * @return ArrayList
-    =======
-    >>>>>>> .r280753
      */
     public ArrayList getInFaultFlow() {
         return inFaultPhases;
     }
 
     /**
-     <<<<<<< .mine
      * @return ArrayList
-    =======
-    >>>>>>> .r280753
      */
     public ArrayList getOutFaultFlow() {
         return outFaultPhases;
@@ -442,10 +436,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * Method getParameter
      *
      * @param name
-    <<<<<<< .mine
      * @return Parameter
-    =======
-    >>>>>>> .r280753
      */
     public Parameter getParameter(String name) {
         return paramInclude.getParameter(name);
@@ -471,10 +462,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     /**
      * Method getEngadgedModules
      *
-     <<<<<<< .mine
      * @return  Collection
-    =======
-    >>>>>>> .r280753
      */
     public Collection getEngadgedModules() {
         return engagedModules;
