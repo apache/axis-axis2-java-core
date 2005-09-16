@@ -22,7 +22,6 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -42,7 +41,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 
-public abstract class Stub{
+public abstract class Stub {
 
     public static final int SOAP_11 =0;
     public static final int SOAP_12 =1;
@@ -112,8 +111,7 @@ public abstract class Stub{
     protected String _currentSessionId = null;
 
 
-    protected Stub() throws DeploymentException, AxisFault {
-
+    protected Stub() {
     }
 
     /**

@@ -79,7 +79,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     private static final String CALL_BACK_HANDLER_SUFFIX = "CallbackHandler";
     private static final String STUB_SUFFIX = "Stub";
     private static final String TEST_SUFFIX = "Test";
-    private static final String LOCAL_TEST_SUFFIX = "LocalTest";
+//    private static final String LOCAL_TEST_SUFFIX = "LocalTest";
     private static final String SERVICE_CLASS_SUFFIX = "Skeleton";
     private static final String TEST_PACKAGE_NAME_SUFFIX = ".test";
     private static final String DATABINDING_SUPPORTER_NAME_SUFFIX = "DatabindingSupporter";
@@ -617,7 +617,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                     param);
             String typeMapping = this.mapper.getTypeMapping(
                     inputMessage.getElement());
-            String typeMappingStr = typeMapping == null ? "" : typeMapping;
+            String typeMappingStr = typeMapping == null ? "org.apache.axis2.om.OMElement" : typeMapping;
             addAttribute(doc, "type", typeMappingStr, param);
             //add this as a body parameter
             addAttribute(doc,"location","body",param);

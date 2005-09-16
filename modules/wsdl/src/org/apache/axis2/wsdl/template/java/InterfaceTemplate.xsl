@@ -21,12 +21,10 @@
         <!-- start of the sync block -->                                          
          <xsl:if test="$isSync='1'">
         /**
-         * Auto generated method signature
-         <xsl:for-each select="input/param[@type!='']">
-         *@param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
-         </xsl:text></xsl:for-each>
+         * Auto generated method signatures
+         <xsl:for-each select="input/param[@type!='']">* @param <xsl:value-of select="@name"></xsl:value-of></xsl:for-each>
          */
-         public  <xsl:choose><xsl:when test="$outputtype=''">void</xsl:when><xsl:otherwise><xsl:value-of select="$outputtype"/></xsl:otherwise></xsl:choose>
+         public <xsl:choose><xsl:when test="$outputtype=''">void</xsl:when><xsl:otherwise><xsl:value-of select="$outputtype"/></xsl:otherwise></xsl:choose>
         <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
          <xsl:for-each select="input/param[@type!='']">
             <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
@@ -37,13 +35,11 @@
        <!-- start of the async block -->
         <xsl:if test="$isAsync='1'">
          /**
-         * Auto generated method signature
-            <xsl:for-each select="input/param">
-            <xsl:if test="@type!=''">* @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
-         </xsl:text></xsl:if></xsl:for-each>
-         */
+          * Auto generated method signature
+          <xsl:for-each select="input/param"><xsl:if test="@type!=''">* @param <xsl:value-of select="@name"></xsl:value-of></xsl:if></xsl:for-each>
+          */
 
-        public  void start<xsl:value-of select="@name"/>(
+        public void start<xsl:value-of select="@name"/>(
          <xsl:variable name="paramCount"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
                <xsl:for-each select="input/param">
             <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"></xsl:value-of></xsl:if></xsl:for-each>

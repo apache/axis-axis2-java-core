@@ -45,5 +45,6 @@ public interface CommandLineOptionConstants {
     public interface Databinding {
     	public static final String XML_BEANS = "xmlbeans";
     	public static final String JAXB = "jaxb";
+        public static final String NONE = "none";
     }
 }
