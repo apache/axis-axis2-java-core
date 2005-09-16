@@ -28,7 +28,7 @@ exit
 :okHome
 cd %CURRENT_DIR%
 rem get the classes
-set AXIS2_CLASS_PATH="%AXIS_HOME%";"%AXIS_HOME%\lib\axis2-0.91.jar"
+set AXIS2_CLASS_PATH="%AXIS_HOME%";"%AXIS_HOME%\lib\axis2-alpha.jar"
 set AXIS2_CLASS_PATH= %AXIS2_CLASS_PATH%;"%AXIS_HOME%\lib\axis-wsdl4j-1.2.jar"
 set AXIS2_CLASS_PATH= %AXIS2_CLASS_PATH%;"%AXIS_HOME%\lib\commons-logging-1.0.3.jar"
 set AXIS2_CLASS_PATH= %AXIS2_CLASS_PATH%;"%AXIS_HOME%\lib\log4j-1.2.8.jar"

@@ -1,4 +1,4 @@
-export AXIS2_HOME=../../../../../..
+export AXIS2_HOME=../..
 AXIS2_CLASSPATH=$AXIS2_HOME/lib/axis2-alpha.jar
 AXIS2_CLASSPATH=$AXIS2_CLASSPATH:$AXIS2_HOME/lib/axis-wsdl4j-1.2.jar
 AXIS2_CLASSPATH=$AXIS2_CLASSPATH:$AXIS2_HOME/lib/commons-logging-1.0.3.jar
@@ -14,6 +14,9 @@ AXIS2_CLASSPATH=$AXIS2_CLASSPATH:$AXIS2_HOME/lib/jaxen-1.1-beta-7.jar
 AXIS2_CLASSPATH=$AXIS2_CLASSPATH:$AXIS2_HOME/lib/xbean-2.0.0-beta1.jar
 AXIS2_CLASSPATH=$AXIS2_CLASSPATH:$AXIS2_HOME/lib/XmlSchema-0.9.jar
 AXIS2_CLASSPATH=$AXIS2_CLASSPATH:$AXIS2_HOME/lib/xmlunit-1.0.jar
-AXIS2_CLASSPATH=$AXIS2_CLASSPATH:../../../../sample.jar
+
+AXIS2_CLASSPATH=$AXIS2_CLASSPATH:mtomClient.jar
 export AXIS2_CLASSPATH
-java -classpath $AXIS2_CLASSPATH userguide.clients.EchoBlockingDualClient
+echo the classpath $AXIS2_CLASSPATH
+java -classpath $AXIS2_CLASSPATH sample.mtom.imagetransfer.client.MTOMClient &
+

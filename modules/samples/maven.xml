@@ -206,6 +206,9 @@
                 <ant:include name="sample/mtom/**"/>
             </ant:fileset>
         </ant:copy>
+        <ant:copy todir="${samples.dir}/mtom">
+            <ant:fileset dir="script/mtomSample"/>
+        </ant:copy>
         <jar destfile="${samples.dir}/mtom/mtomSample.aar">
             <fileset dir="src/sample/mtom/imagetransfer/service/">
                 <include name="META-INF/**"/>
