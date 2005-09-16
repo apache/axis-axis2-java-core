@@ -30,13 +30,11 @@ import javax.xml.stream.XMLStreamException;
 import java.io.StringWriter;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Jaliya
- * Date: Jun 4, 2005
- * Time: 5:08:44 PM
+ * Sample for asynchronous single channel non-blocking service invocation.
+ * Message Exchage Pattern IN-OUT
  */
 public class EchoNonBlockingClient {
-    private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8070/axis2/services/MyService/echo");
+    private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/myservice");
 
     public static void main(String[] args) {
         try {

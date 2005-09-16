@@ -31,10 +31,9 @@ import javax.xml.stream.XMLStreamException;
 import java.io.StringWriter;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Jaliya
- * Date: Jun 4, 2005
- * Time: 5:30:52 PM
+ * Sample for asynchronous dual channel non-blocking service invocation.
+ * Message Exchage Pattern IN-OUT
+ * Ulitmate asynchronous service invocation sample.
  */
 public class EchoNonBlockingDualClient {
     private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService/echo");

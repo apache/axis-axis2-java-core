@@ -27,9 +27,12 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.StringWriter;
 
-
+/**
+ * Sample for synchronous single channel blocking service invocation.
+ * Message Exchage Pattern IN-OUT
+ */
 public class EchoBlockingClient {
-    private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService/echo");
+    private static EndpointReference targetEPR = new EndpointReference("http://localhost:8080/axis2/services/myservice");
 
     public static void main(String[] args) {
         try {

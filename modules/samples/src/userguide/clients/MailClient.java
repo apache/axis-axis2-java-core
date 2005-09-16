@@ -30,7 +30,7 @@ import org.apache.axis2.om.OMNamespace;
  */
 public class MailClient {
 
-    private static String toEpr = "http://localhost:8080/axis2/services/MyService";
+    private static String toEpr = "http://localhost:8080/axis2/services/myservice";
 
     public static void main(String[] args) throws AxisFault {
         MessageSender msgSender = new MessageSender();
