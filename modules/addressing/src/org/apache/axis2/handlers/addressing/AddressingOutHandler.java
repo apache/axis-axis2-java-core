@@ -49,7 +49,11 @@ public class AddressingOutHandler
     OMNamespace addressingNamespaceObject;
     String addressingNamespace;
 
+    private String axis2NamespacePrefix = "axis2";
+    private String axis2NamespaceURI = "http://ws.apache.org/namespaces/axis2";
+
     public void invoke(MessageContext msgContext) throws AxisFault {
+
 
         if (!isAddressingEnabled) {
             return;
@@ -115,6 +119,12 @@ public class AddressingOutHandler
                 anonymousURI = Submission.WSA_ANONYMOUS_URL;
             }
             epr = new EndpointReference(anonymousURI);
+        }
+        // add the service group id as a reference parameter
+        String serviceGroupContextId = msgContext.getServiceGroupContextId();
+        if (serviceGroupContextId != null && "".equals(serviceGroupContextId)) {
+            epr.getReferenceParameters().addReferenceValue(new QName(axis2NamespaceURI,
+                    "ServiceGroupId", axis2NamespacePrefix), serviceGroupContextId);
         }
         addToSOAPHeader(epr, AddressingConstants.WSA_REPLY_TO, soapHeader);
 
