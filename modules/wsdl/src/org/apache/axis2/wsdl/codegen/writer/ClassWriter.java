@@ -38,6 +38,8 @@ public abstract class ClassWriter {
     protected static final String EXTENSION_SUFFIX = ".extension";
     protected static final String SEPERATOR_STRING = ",";
 
+    protected boolean fileExists = false;//a flag saying the file is existing
+
     /**
      * Sets the language
      *
@@ -110,6 +112,8 @@ public abstract class ClassWriter {
                 packageName,
                 fileName,
                 getFileExtensionForLanguage(language));
+        //set the existing flag
+        fileExists = outputFile.exists();
         this.stream = new FileOutputStream(outputFile);
     }
 
@@ -143,12 +147,13 @@ public abstract class ClassWriter {
      * @throws Exception
      */
     public void writeOutFile(InputStream documentStream) throws Exception {
-        XSLTTemplateProcessor.parse(this.stream,
-                documentStream,
-                this.xsltStream);
-        this.stream.flush();
-        this.stream.close();
-
+        if (!fileExists){
+            XSLTTemplateProcessor.parse(this.stream,
+                    documentStream,
+                    this.xsltStream);
+            this.stream.flush();
+            this.stream.close();
+        }
 
     }
 

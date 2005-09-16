@@ -36,6 +36,8 @@ public class TestServiceXMLWriter extends ServiceXMLWriter {
                 packageName,
                 "testservice",
                 ".xml");
+         //set the existing flag
+        fileExists = outputFile.exists();
         this.stream = new FileOutputStream(outputFile);
     }
 }

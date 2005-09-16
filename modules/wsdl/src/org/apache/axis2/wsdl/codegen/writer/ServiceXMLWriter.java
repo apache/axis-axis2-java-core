@@ -40,6 +40,8 @@ public class ServiceXMLWriter extends ClassWriter {
                 packageName,
                 "services",
                 ".xml");
+         //set the existing flag
+        fileExists = outputFile.exists();
         this.stream = new FileOutputStream(outputFile);
     }
 }
