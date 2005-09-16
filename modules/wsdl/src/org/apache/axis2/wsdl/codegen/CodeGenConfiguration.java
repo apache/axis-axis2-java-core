@@ -99,7 +99,8 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         }else if(Databinding.JAXB.equalsIgnoreCase(databindingType)){
             this.databindingType = XSLTConstants.DataBindingTypes.JAXB;
         }else{
-            throw new UnsupportedOperationException();
+             this.databindingType = XSLTConstants.DataBindingTypes.NONE;
+//            throw new UnsupportedOperationException();
         }
     }
 
