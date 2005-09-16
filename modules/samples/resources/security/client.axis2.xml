@@ -16,8 +16,8 @@
 
     <parameter name="OutAction" locked="false">Timestamp Signature Encrypt</parameter>
     <parameter name="user" locked="false">alice</parameter>
-    <parameter name="OutPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
-    <parameter name="OutSignaturePropFile" locked="false">interop.properties</parameter>
+    <parameter name="OutPasswordCallbackClass" locked="false">sample.security.PWCallback</parameter>
+    <parameter name="OutSignaturePropFile" locked="false">sec.properties</parameter>
     <parameter name="OutSignatureKeyIdentifier" locked="false">SKIKeyIdentifier</parameter>
     <parameter name="encryptionKeyIdentifier" locked="false">SKIKeyIdentifier</parameter>
     <parameter name="encryptionUser" locked="false">bob</parameter>
@@ -28,10 +28,10 @@
     <parameter name="optimizeParts" locked="false">//xenc:EncryptedData/xenc:CipherData/xenc:CipherValue</parameter>
 
     <parameter name="InAction" locked="false">Timestamp Signature Encrypt</parameter>
-    <parameter name="InPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
-    <parameter name="InSignaturePropFile" locked="false">interop.properties</parameter>
+    <parameter name="InPasswordCallbackClass" locked="false">sample.security.PWCallback</parameter>
+    <parameter name="InSignaturePropFile" locked="false">sec.properties</parameter>
 
-    <parameter name="InSignaturePropFile" locked="false">interop.properties</parameter>
+    <parameter name="InSignaturePropFile" locked="false">sec.properties</parameter>
 
     <!-- Test with addressing and MTOM: Client's Configuration:END-->
 

@@ -8,9 +8,13 @@
     <path id="mtom.classpath">
         <pathelement location="mtom/mtomClient.jar"/>
     </path>
+    <path id="security.classpath">
+        <pathelement location="security/secUtil.jar"/>
+    </path>
     <path id="sample.classpath">
         <path refid="axis.classpath"/>
         <path refid="mtom.classpath"/>
+        <path refid="security.classpath"/>
     </path>
 
     <target name="alltests" depends="testEchoBlockingClient,testEchoBlockingDualClient,testEchoNonBlockingDualClient,testPingClient,testWebServiceWithModuleClient">
@@ -37,5 +41,11 @@
     </target>
     <target name="mtomSample">
         <java classname="sample.mtom.imagetransfer.client.MTOMClient" classpathref="sample.classpath" fork="true"/>
+    </target>
+    <target name="securitySample">
+        <java classname="sample.security.Client" classpathref="sample.classpath" fork="true">
+		<arg value="security/client_repo"/>
+		<arg value="8080"/>
+	</java>
     </target>
 </project>

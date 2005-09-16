@@ -93,6 +93,7 @@
             <ant:fileset dir="${basedir}/target/classes">
                 <ant:include name="**/ping/**/*.class"/>
                 <ant:include name="**/oasisOpen/**/*.class"/>
+                <ant:include name="**/xmlmime/**/*.class"/>
                 <ant:include name="**/PWCallback.class"/>
                
             </ant:fileset>
