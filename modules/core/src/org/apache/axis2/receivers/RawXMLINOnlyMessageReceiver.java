@@ -110,33 +110,16 @@ public class RawXMLINOnlyMessageReceiver
                 if (WSDLService.STYLE_DOC.equals(style)) {
                     parmeter = methodElement;
                     Object[] parms = new Object[]{parmeter};
-
-                    // invoke the WebService
-                    OMElement result = (OMElement) method.invoke(obj, parms);
-                    envelope =
-                            OMAbstractFactory.getSOAP11Factory()
-                            .getDefaultEnvelope();
-                    envelope.getBody().setFirstChild(result);
+                    //Need not have a return here
+                     method.invoke(obj, parms);
 
                 } else if (WSDLService.STYLE_RPC.equals(style)) {
                     parmeter = methodElement.getFirstElement();
                     Object[] parms = new Object[]{parmeter};
 
                     // invoke the WebService
-                    OMElement result = (OMElement) method.invoke(obj, parms);
-                    SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-                    envelope = fac.getDefaultEnvelope();
+                     method.invoke(obj, parms);
 
-                    OMNamespace ns = fac.createOMNamespace("http://soapenc/",
-                            "res");
-                    OMElement responseMethodName = fac.createOMElement(
-                            methodName + "Response", ns);
-                    if (result != null) {
-                        responseMethodName.addChild(result);
-                    }
-                    if (responseMethodName != null) {
-                        envelope.getBody().addChild(responseMethodName);
-                    }
                 } else {
                     throw new AxisFault(Messages.getMessage("unknownStyle",style));
                 }
