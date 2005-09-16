@@ -5,6 +5,13 @@
         </fileset>
         <pathelement location="userguide/sample.jar"/>
     </path>
+    <path id="mtom.classpath">
+        <pathelement location="mtom/mtomClient.jar"/>
+    </path>
+    <path id="sample.classpath">
+        <path refid="axis.classpath"/>
+        <path refid="mtom.classpath"/>
+    </path>
 
     <target name="alltests" depends="testEchoBlockingClient,testEchoBlockingDualClient,testEchoNonBlockingDualClient,testPingClient,testWebServiceWithModuleClient">
     </target>
@@ -27,5 +34,8 @@
 
     <target name="testEchoNonBlockingClient">
         <java classname="userguide.clients.EchoNonBlockingClient" classpathref="axis.classpath"/>
+    </target>
+    <target name="mtomSample">
+        <java classname="sample.mtom.imagetransfer.client.MTOMClient" classpathref="sample.classpath" fork="true"/>
     </target>
 </project>
