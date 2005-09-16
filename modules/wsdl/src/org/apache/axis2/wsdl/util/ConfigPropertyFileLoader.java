@@ -2,10 +2,12 @@ package org.apache.axis2.wsdl.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileInputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.net.URL;
 
 /**
  * Tries to load the properties from the config properties
@@ -31,7 +33,13 @@ public class ConfigPropertyFileLoader {
 
     static{
         try {
-            InputStream stream = Object.class.getResourceAsStream("/org/apache/axis2/wsdl/codegen/codegen-config.properties");
+
+            InputStream stream =ConfigPropertyFileLoader.class.getResourceAsStream("/org/apache/axis2/wsdl/codegen/codegen-config.properties");
+            if (stream ==null) {
+                URL url = ConfigPropertyFileLoader.class.getResource("/org/apache/axis2/wsdl/codegen/codegen-config.properties");
+                stream = new FileInputStream(url.toString());
+            }
+//            InputStream stream = Object.class.getResourceAsStream("/org/apache/axis2/wsdl/codegen/codegen-config.properties");
             Properties props = new Properties();
             props.load(stream);
 
