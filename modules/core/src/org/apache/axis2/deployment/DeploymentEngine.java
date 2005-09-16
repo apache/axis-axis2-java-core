@@ -68,7 +68,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private boolean hotDeployment = true;   //to do hot deployment or not
     private boolean hotUpdate = true;  // to do hot update or not
-    private boolean extractServiceArchive = false;// need to exatract service archive file
+    private boolean explodedDir = false;// need to exatract service archive file
 
 
     /**
@@ -229,7 +229,7 @@ public class DeploymentEngine implements DeploymentConstants {
         if(paraextractServiceArchive != null){
             value = (String) paraextractServiceArchive.getValue();
             if ("true".equalsIgnoreCase(value))
-                extractServiceArchive = true;
+                explodedDir = true;
         }
     }
 
@@ -252,7 +252,7 @@ public class DeploymentEngine implements DeploymentConstants {
         if (hotDeployment) {
             startSearch(this);
         } else {
-            new RepositoryListenerImpl(folderName, this,extractServiceArchive);
+            new RepositoryListenerImpl(folderName, this);
         }
         try {
             ((AxisConfigurationImpl) axisConfig).setRepository(axis2repository);
@@ -295,7 +295,7 @@ public class DeploymentEngine implements DeploymentConstants {
         if (isRepositoryExist) {
             hotDeployment = false;
             hotUpdate = false;
-            new RepositoryListenerImpl(folderName, this,extractServiceArchive);
+            new RepositoryListenerImpl(folderName, this);
         }
         try {
             ((AxisConfigurationImpl) axisConfig).setRepository(axis2repository);
@@ -392,7 +392,7 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     private void startSearch(DeploymentEngine engine) {
         scheduler = new Scheduler();
-        scheduler.schedule(new SchedulerTask(engine, folderName,extractServiceArchive),
+        scheduler.schedule(new SchedulerTask(engine, folderName),
                 new DeploymentIterator());
     }
 
@@ -584,13 +584,14 @@ public class DeploymentEngine implements DeploymentConstants {
         if (wsToDeploy.size() > 0) {
             for (int i = 0; i < wsToDeploy.size(); i++) {
                 currentArchiveFile = (ArchiveFileData) wsToDeploy.get(i);
+                explodedDir = currentArchiveFile.getFile().isDirectory();
                 int type = currentArchiveFile.getType();
                 try {
                     ArchiveReader archiveReader;
                     StringWriter errorWriter = new StringWriter();
                     switch (type) {
                         case SERVICE:
-                            currentArchiveFile.setClassLoader(extractServiceArchive);
+                            currentArchiveFile.setClassLoader(explodedDir);
                             archiveReader = new ArchiveReader();
                             String serviceStatus = "";
                             try {
@@ -599,7 +600,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                         new ServiceGroupDescription(axisConfig);
                                 archiveReader.processServiceGroup(currentArchiveFile.getAbsolutePath(),
                                         this,
-                                        sericeGroup,extractServiceArchive);
+                                        sericeGroup,explodedDir);
 //                                archiveReader.readServiceArchive(currentArchiveFile.getAbsolutePath(),
 //                                        this,
 //                                        service);
@@ -614,9 +615,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 de.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" +
                                         errorWriter.toString();
-                                de.printStackTrace();
                             } catch (AxisFault axisFault) {
-                                axisFault.printStackTrace();
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
                                         currentArchiveFile.getName()));
 //                            log.info("AxisFault  " + axisFault);
@@ -625,7 +624,6 @@ public class DeploymentEngine implements DeploymentConstants {
                                 serviceStatus = "Error:\n" +
                                         errorWriter.toString();
                             } catch (Exception e) {
-                                e.printStackTrace();
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
                                         currentArchiveFile.getName()));
 //                            log.info("Exception  " + e);
@@ -642,7 +640,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             }
                             break;
                         case MODULE:
-                            currentArchiveFile.setClassLoader(false);
+                            currentArchiveFile.setClassLoader(explodedDir);
                             archiveReader = new ArchiveReader();
                             String moduleStatus = "";
                             try {
@@ -650,7 +648,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 metaData.setParent(axisConfig);
                                 archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(),
                                         this,
-                                        metaData);
+                                        metaData,explodedDir);
                                 addNewModule(metaData);
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
                                         metaData.getName().getLocalPart()));
@@ -828,7 +826,7 @@ public class DeploymentEngine implements DeploymentConstants {
             currentArchiveFile = new ArchiveFileData(modulearchive, MODULE);
             axismodule = new ModuleDescription();
             ArchiveReader archiveReader = new ArchiveReader();
-            archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(), this, axismodule);
+            archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(), this, axismodule,false);
             currentArchiveFile.setClassLoader(false);
             Flow inflow = axismodule.getInFlow();
             if (inflow != null) {

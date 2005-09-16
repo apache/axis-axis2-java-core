@@ -56,7 +56,6 @@ public class RepositoryListenerImpl implements RepositoryListener,
     private String folderName;
 
 
-    private boolean extarctServiceArchive = false;
 
     /**
      * This constructor take two argumnets folder name and referance to Deployment Engine
@@ -67,10 +66,9 @@ public class RepositoryListenerImpl implements RepositoryListener,
      * @param deploy_engine refearnce to engine registry  inorder to inform the updates
      */
     public RepositoryListenerImpl(String folderName,
-                                  DeploymentEngine deploy_engine, boolean serviceExtarct) {
+                                  DeploymentEngine deploy_engine) {
         this.folderName = folderName;
         wsinfoList = new WSInfoList(deploy_engine);
-        this.extarctServiceArchive = serviceExtarct;
         init();
     }
 
@@ -103,6 +101,18 @@ public class RepositoryListenerImpl implements RepositoryListener,
                 }
             }
         }
+
+        //adding exploded dir
+        File rootDir = new File(modulepath);
+        File [] fileList = rootDir.listFiles();
+        if (fileList !=null) {
+            for (int i = 0; i < fileList.length; i++) {
+                File file = fileList[i];
+                if(file.isDirectory()){
+                    wsinfoList.addWSInfoItem(file, MODULE);
+                }
+            }
+        }
     }
 
     /**
@@ -111,11 +121,16 @@ public class RepositoryListenerImpl implements RepositoryListener,
      */
     public void checkServices() {
         String modulepath = folderName + SERVICE_PATH;
-        if(extarctServiceArchive){
-            searchExploedServies(modulepath);
-        }else {
-            searchWS(modulepath, SERVICE);
-        }
+
+        // exploded dir
+        searchExplodedDir(modulepath);
+        //service archives
+        searchWS(modulepath, SERVICE);
+//        if(extarctServiceArchive){
+//            searchExploedServies(modulepath);
+//        }else {
+//            searchWS(modulepath, SERVICE);
+//        }
     }
 
     /**
@@ -180,74 +195,87 @@ public class RepositoryListenerImpl implements RepositoryListener,
     }
 
 
-    private void searchExploedServies(String rootDirName){
+    private void searchExplodedDir(String rootDirName){
         File rootDir = new File(rootDirName);
         File [] fileList = rootDir.listFiles();
-        ArrayList tobedelete = new ArrayList();
-        ArrayList tobeextarct = new ArrayList();
-        ArrayList allFiles = new ArrayList();
-        for (int i = 0; fileList != null && i < fileList.length; i++) {
-            File file_first = fileList[i];
-            boolean isservice = ArchiveFileData.isServiceArchiveFile(file_first.getName());
-            boolean found = false;
-            if(isservice){
-                for (int j = 0; j < fileList.length; j++) {
-                    File file_second = fileList[j];
-                    if(file_second.getName().equalsIgnoreCase(
-                            getShortFileName(file_first.getName()))){
-                        if(file_second.lastModified() >= file_first.lastModified()){
-                            found = true;
-                            allFiles.add(file_second);
-                            break;
-                        } else if (file_second.lastModified() < file_first.lastModified()){
-                            tobedelete.add(file_second);
-                            tobeextarct.add(file_first);
-                            found = true;
-                        }
-                    }
-                }
-                if(!found){
-                    tobeextarct.add(file_first);
+        if (fileList !=null) {
+            for (int i = 0; i < fileList.length; i++) {
+                File file = fileList[i];
+                if(file.isDirectory()){
+                    wsinfoList.addWSInfoItem(file, SERVICE);
                 }
             }
-        }
-        for (int i = 0; i < tobedelete.size(); i++) {
-            File file1 = (File) tobedelete.get(i);
-            deleteDir(file1);
-        }
-
-        for (int i = 0; i < tobeextarct.size(); i++) {
-            File file1 = (File) tobeextarct.get(i);
-            File outFile = new File(rootDirName,getShortFileName(file1.getName()));
-            if(!outFile.exists()){
-                outFile.mkdir();
-            }
-            extarctServiceArchive(file1,outFile);
-            allFiles.add(outFile);
-        }
-
-        for (int i = 0; fileList != null && i < fileList.length; i++) {
-            File file = fileList[i];
-            boolean found = false;
-            boolean todo = ArchiveFileData.isServiceArchiveFile(file.getName());
-            if (!todo) {
-                for (int j = 0; j < allFiles.size(); j++) {
-                    File file1 = (File) allFiles.get(j);
-                    if(file1.getName().equals(file.getName())){
-                        found = true;
-                    }
-                }
-                if(!found){
-                    allFiles.add(file);
-                }
-            }
-        }
-
-        for (int i = 0; i < allFiles.size(); i++) {
-            File file = (File) allFiles.get(i);
-            wsinfoList.addWSInfoItem(file, SERVICE);
         }
     }
+
+//    private void searchExploedServies(String rootDirName){
+//        File rootDir = new File(rootDirName);
+//        File [] fileList = rootDir.listFiles();
+//        ArrayList tobedelete = new ArrayList();
+//        ArrayList tobeextarct = new ArrayList();
+//        ArrayList allFiles = new ArrayList();
+//        for (int i = 0; fileList != null && i < fileList.length; i++) {
+//            File file_first = fileList[i];
+//            boolean isservice = ArchiveFileData.isServiceArchiveFile(file_first.getName());
+//            boolean found = false;
+//            if(isservice){
+//                for (int j = 0; j < fileList.length; j++) {
+//                    File file_second = fileList[j];
+//                    if(file_second.getName().equalsIgnoreCase(
+//                            getShortFileName(file_first.getName()))){
+//                        if(file_second.lastModified() >= file_first.lastModified()){
+//                            found = true;
+//                            allFiles.add(file_second);
+//                            break;
+//                        } else if (file_second.lastModified() < file_first.lastModified()){
+//                            tobedelete.add(file_second);
+//                            tobeextarct.add(file_first);
+//                            found = true;
+//                        }
+//                    }
+//                }
+//                if(!found){
+//                    tobeextarct.add(file_first);
+//                }
+//            }
+//        }
+//        for (int i = 0; i < tobedelete.size(); i++) {
+//            File file1 = (File) tobedelete.get(i);
+//            deleteDir(file1);
+//        }
+//
+//        for (int i = 0; i < tobeextarct.size(); i++) {
+//            File file1 = (File) tobeextarct.get(i);
+//            File outFile = new File(rootDirName,getShortFileName(file1.getName()));
+//            if(!outFile.exists()){
+//                outFile.mkdir();
+//            }
+//            extarctServiceArchive(file1,outFile);
+//            allFiles.add(outFile);
+//        }
+//
+//        for (int i = 0; fileList != null && i < fileList.length; i++) {
+//            File file = fileList[i];
+//            boolean found = false;
+//            boolean todo = ArchiveFileData.isServiceArchiveFile(file.getName());
+//            if (!todo) {
+//                for (int j = 0; j < allFiles.size(); j++) {
+//                    File file1 = (File) allFiles.get(j);
+//                    if(file1.getName().equals(file.getName())){
+//                        found = true;
+//                    }
+//                }
+//                if(!found){
+//                    allFiles.add(file);
+//                }
+//            }
+//        }
+//
+//        for (int i = 0; i < allFiles.size(); i++) {
+//            File file = (File) allFiles.get(i);
+//            wsinfoList.addWSInfoItem(file, SERVICE);
+//        }
+//    }
 
     /**
      * To delete a given directory with its all childerns
