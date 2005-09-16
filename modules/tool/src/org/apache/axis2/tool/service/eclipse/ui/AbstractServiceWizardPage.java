@@ -67,7 +67,6 @@ public abstract class AbstractServiceWizardPage extends WizardPage implements Se
         return false;
     }
     
-    //public abstract WizardBean getBean();
     
     
     

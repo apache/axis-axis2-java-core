@@ -72,23 +72,6 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
         setWindowTitle(ServiceArchiver.getResourceString("main.title"));
     }
 
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.IWizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
-     */
-//    public IWizardPage getNextPage(IWizardPage page) {
-//       
-//        AbstractServiceWizardPage thisPage = (AbstractServiceWizardPage)page.getNextPage();
-//        while (thisPage!=null && thisPage.isSkipNext()) {
-//            if (thisPage.getNextPage()!=null) {
-//                thisPage = (AbstractServiceWizardPage)thisPage.getNextPage();
-//            }else{
-//                break;
-//            }
-//        }
-//        return thisPage;
-//    }
-
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizard#addPages()
      */

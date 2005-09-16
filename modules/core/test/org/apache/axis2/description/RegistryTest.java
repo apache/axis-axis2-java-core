@@ -65,7 +65,6 @@ public class RegistryTest extends AbstractTestCase {
 
     public void testService() throws AxisFault {
         reg.addService(service);
-//        service.setParent(reg);
         testParameteInClude(service);
         testFlowIncludeTest(service);
     }

@@ -71,7 +71,7 @@ public class ContextHierarchyTest extends TestCase {
         assertEquals(value1, msgctx.getProperty(key1));
 
         axisConfiguration.addParameter(new ParameterImpl(key2, value2));
-//        assertEquals(value2, msgctx.getParameter(key2).getValue());
+        assertEquals(value2, msgctx.getParameter(key2).getValue());
 
         opContext.setProperty(key1, value3);
         assertEquals(value3, msgctx.getProperty(key1));
@@ -98,7 +98,7 @@ public class ContextHierarchyTest extends TestCase {
         assertEquals(value1, msgctx.getProperty(key1));
 
         axisConfiguration.addParameter(new ParameterImpl(key2, value2));
-//        assertEquals(value2, msgctx.getParameter(key2).getValue());
+        assertEquals(value2, msgctx.getParameter(key2).getValue());
     }
 
     protected void tearDown() throws Exception {

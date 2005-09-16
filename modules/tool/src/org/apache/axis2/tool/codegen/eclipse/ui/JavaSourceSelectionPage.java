@@ -129,7 +129,6 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
                 updateTable();
             }
         });
-        //searchButton.setEnabled(false);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 3;
         

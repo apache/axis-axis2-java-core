@@ -44,10 +44,8 @@ public class TransportDeploymentTest extends AbstractTestCase {
         AxisConfiguration er = engine.getAxisConfig();
         TransportInDescription transport = er.getTransportIn(new QName("http"));
         assertNotNull(transport);
-        //  assertNotNull(transport.getInFlow());
         TransportOutDescription transport1 = er.getTransportOut(
                 new QName("http"));
         assertNotNull(transport1);
-        //  assertNotNull(transport1.getOutFlow());
     }
 }

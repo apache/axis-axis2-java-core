@@ -124,9 +124,6 @@ public abstract class Stub{
         this.soapVesrion = soapVersion;
     }
 
-//	public abstract void _setSessionInfo(Object key, Object value) throws Exception;
-//
-//	public abstract Object _getSessionInfo(Object key) throws Exception ;
 
     public void _setSessionInfo(String key, Object value) throws java.lang.Exception {
         if (!_maintainSession) {
@@ -225,27 +222,6 @@ public abstract class Stub{
         }
     }
 
-//    /**
-//     * use this method to handle the faults
-//     * @param env
-//     */
-//    protected void checkFault(SOAPEnvelope env) throws AxisFault{
-//        SOAPBody body = env.getBody();
-//        if (body.hasFault()){
-//           SOAPFault fault = body.getFault();
-//           if (null!=fault.getException()){
-//               throw new AxisFault(fault.getException());
-//           }else{
-//               String message = "";
-//               message = message + "Code =" + fault.getCode()==null?"":
-//                       fault.getCode().getValue()==null?"":fault.getCode().getValue().getText();
-//               message = message + "Actor = "+fault.getRole()==null?"":
-//                                   fault.getRole().getRoleValue();
-//               //add the details here
-//               throw new AxisFault(message);
-//           }
-//        }
-//    }
 
     /**
      * Extract the correct element - A util method
@@ -267,19 +243,6 @@ public abstract class Stub{
 
     }
 
-//    protected Object getValue(SOAPEnvelope env,String type,Class outputType){
-//        SOAPBody body = env.getBody();
-//        OMElement element = body.getFirstElement();
-//
-//        if (WSDLService.STYLE_RPC.equals(type)){
-//            return StubSupporter.getRPCMappedElementValue(element.getFirstElement(),outputType);
-//        }else if (WSDLService.STYLE_DOC.equals(type)){
-//            return element;
-//        }else {
-//            throw new UnsupportedOperationException("Unsupported type");
-//        }
-//
-//    }
     /**
      * get the message context
      */

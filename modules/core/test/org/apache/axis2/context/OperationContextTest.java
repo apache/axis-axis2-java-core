@@ -24,6 +24,7 @@ import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfigurationImpl;
+import org.apache.axis2.util.UUIDGenerator;
 
 import javax.xml.namespace.QName;
 
@@ -42,11 +43,10 @@ public class OperationContextTest extends AbstractTestCase {
        ServiceGroupContext sgc =  serviceConfig.getParent().getServiceGroupContext(engineCtx);
 
         ServiceContext sessionContext = sgc.getServiceContext("TempSC");
-//        ServiceContext sessionContext = new ServiceContext(serviceConfig,new ServiceGroupContext(new ConfigurationContext(null),serviceConfig));
         MessageContext messageContext1 = this.getBasicMessageContext();
 
         messageContext1.setMessageID(
-                new Long(System.currentTimeMillis()).toString());
+                UUIDGenerator.getUUID());
         OperationDescription axisOperation = new OperationDescription(
                 new QName("test"));
         OperationContext operationContext1 = axisOperation.findOperationContext(
@@ -54,7 +54,7 @@ public class OperationContextTest extends AbstractTestCase {
 
         MessageContext messageContext2 = this.getBasicMessageContext();
         messageContext2.setMessageID(
-                new Long(System.currentTimeMillis()).toString());
+                UUIDGenerator.getUUID());
         messageContext2.getMessageInformationHeaders().setRelatesTo(
                 new RelatesTo(messageContext1.getMessageID()));
         OperationContext operationContext2 = axisOperation.findOperationContext(

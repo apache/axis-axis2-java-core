@@ -94,9 +94,6 @@ public class OutputPage extends AbstractWizardPage {
             }
         });
 
-        // locationSelectCheckBox = new Button(container, SWT.CHECK);
-        // locationSelectCheckBox.setText("Workspace projects only");
-
         setControl(container);
 
         /*

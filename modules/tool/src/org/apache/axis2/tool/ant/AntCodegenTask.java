@@ -57,7 +57,6 @@ public class AntCodegenTask extends Task {
      */
     public AntCodegenTask() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
     
@@ -137,7 +136,6 @@ public class AntCodegenTask extends Task {
                     CommandLineOptionConstants.GENERATE_TEST_CASE_OPTION,
                     new String[0]));
         }
-        //System.out.println(page3.getOutputLocation());
         return optionMap;
     }
 
@@ -169,20 +167,15 @@ public class AntCodegenTask extends Task {
                                     classpath,
                                     false);
             
-     //       log("path is "+cl.getClasspath());                                    
-//            ClassLoader cl = new URLClassLoader(new URL[]{new File(output).toURL()},getClass().getClassLoader());
             Thread.currentThread().setContextClassLoader(cl);
             cl.addPathElement(output);
             System.out.println("path is "+cl.getClasspath());    
 
             Map commandLineOptions = this.fillOptionMap();
-            //System.out.println("options =" + commandLineOptions);
             CommandLineOptionParser parser =
                 new CommandLineOptionParser(commandLineOptions);
-            //System.out.println(" parser" + parser);
             new CodeGenerationEngine(parser).generate();
         } catch (Throwable e) {
-            //System.out.println("Thrown here $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$b");
             throw new BuildException(e);
         }
 

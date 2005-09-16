@@ -9,7 +9,7 @@
     <groupId>axis2</groupId>
     <package>org.apache.axis2</package>
 
-    <currentVersion>0.91</currentVersion>
+    <currentVersion>0.92</currentVersion>
 
     <!-- details about the organization that 'owns' the project -->
     <organization>
@@ -26,7 +26,7 @@
     <shortDescription>Axis 2.0</shortDescription>
     <!-- the project home page -->
     <url>http://ws.apache.org/axis2/</url>
-    <issueTrackingUrl>http://issues.apache.org/jira/secure/BrowseProject.jspa?id=10611</issueTrackingUrl>
+    <issueTrackingUrl>http://issues.apache.org/jira/browse/AXIS2</issueTrackingUrl>
     <siteAddress>ws.apache.org/axis2</siteAddress>
     <siteDirectory>/www/ws.apache.org/axis2/</siteDirectory>
     <distributionDirectory>/www/ws.apache.org/builds/</distributionDirectory>
@@ -41,7 +41,6 @@
             <subscribe>axis-dev-subscribe@ws.apache.org</subscribe>
             <unsubscribe>axis-dev-unsubscribe@ws.apache.org</unsubscribe>
             <archive>http://marc.theaimsgroup.com/?l=axis-dev&amp;r=1&amp;w=2</archive>
-
         </mailingList>
         <mailingList>
             <name>Axis User List</name>
@@ -160,6 +159,12 @@
             <email>ruchithf@apache.lk</email>
             <organization>Lanka Software Foundation</organization>
         </developer>
+        <developer>
+            <name>Saminda Abeyruwan</name>
+            <id>saminda</id>
+            <email>saminda@opensource.lk</email>
+            <organization>Lanka Software Foundation</organization>
+        </developer>
 
 
     </developers>
@@ -182,11 +187,6 @@
         <contributor>
             <name>Nadana Gunarathna</name>
             <email>nadana@opensource.lk</email>
-            <organization>Lanka Software Foundation</organization>
-        </contributor>
-        <contributor>
-            <name>Saminda Abeyruwan</name>
-            <email>saminda@opensource.lk</email>
             <organization>Lanka Software Foundation</organization>
         </contributor>
         <contributor>

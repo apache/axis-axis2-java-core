@@ -152,9 +152,6 @@ public class XMLComparatorInterop {
             if (omNode instanceof OMElement) {
                 OMElement elementOneChild = (OMElement) omNode;
                 OMElement elementTwoChild = null;
-//                if ("Reference4".equals(elementOneChild.getLocalName())) {
-//                    log.info("Reference4");
-//                }
                 //Do the comparison only if the element is not ignorable
                 if (!isIgnorable(elementOneChild)) {
                     Iterator elementTwoChildren = elementTwo.getChildren();
@@ -168,10 +165,6 @@ public class XMLComparatorInterop {
                                 if (!isIgnorable(elementTwoChild)) {
                                     if (elementTwoChild == null) {
                                         return false;
-//                            throw new XMLComparisonException(
-//                                    " There is no " + elementOneChild.getLocalName() +
-//                                    " element under " +
-//                                    elementTwo.getLocalName());
                                     }
                                 }
 

@@ -103,11 +103,6 @@ public class InOutMEPClient extends MEPClient {
         callbackReceiver = new CallbackReceiver();
     }
 
-    //    this method is commented out, till we implemented it     
-    //    public InOutMEPClient(String wsdlfile) {
-    //        super(null, WSDLConstants.MEP_URI_OUT_IN);
-    //        throw new UnsupportedOperationException();
-    //    }
 
     /**
      * This invocation done via this method blocks till the result arrives, using this method does not indicate
@@ -197,7 +192,6 @@ public class InOutMEPClient extends MEPClient {
                         String message = "";
                         message = message + "Code =" + soapFault.getCode()==null?"":
                                 soapFault.getCode().getValue()==null?"":soapFault.getCode().getValue().getText();
-                        //message = message + "Role = "+soapFault.getRole()==null?"":soapFault.getRole().getRoleValue();
                         message = message + "Reason =" + soapFault.getReason()==null?"":
                                 soapFault.getReason().getSOAPText()==null?"":soapFault.getReason().getSOAPText().getText();
                         throw new AxisFault(message);

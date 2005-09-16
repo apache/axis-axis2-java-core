@@ -46,7 +46,6 @@ public class ParamterLocked extends TestCase {
             assertNotNull(ar);
             ServiceDescription service = new ServiceDescription();
             ar.addService(service);
-//            service.setParent(ar);
             InputStream in = new FileInputStream(repo + "/service_overide_non_locked_para.xml");
             ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
             sbuilder.populateService(sbuilder.buildOM());
@@ -68,7 +67,6 @@ public class ParamterLocked extends TestCase {
             assertNotNull(ar);
             ServiceDescription service = new ServiceDescription();
             ar.addService(service);
-//            service.setParent(ar);
             InputStream in = new FileInputStream(repo + "/service_overide_locked_para.xml");
             ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
             sbuilder.populateService(sbuilder.buildOM());
@@ -90,7 +88,6 @@ public class ParamterLocked extends TestCase {
             assertNotNull(ar);
             ServiceDescription service = new ServiceDescription();
             ar.addService(service);
-//            service.setParent(ar);
             InputStream in = new FileInputStream(repo + "/op_overide_global_para.xml");
             ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
             sbuilder.populateService(sbuilder.buildOM());
@@ -112,7 +109,6 @@ public class ParamterLocked extends TestCase {
             assertNotNull(ar);
             ServiceDescription service = new ServiceDescription();
             ar.addService(service);
-//            service.setParent(ar);
             InputStream in = new FileInputStream(repo + "/Op_overide_Service_para.xml");
             ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
             sbuilder.populateService(sbuilder.buildOM());

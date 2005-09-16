@@ -83,7 +83,6 @@ public class ServiceXMLGenerationPage extends AbstractServiceWizardPage{
         serviceNameTextBox.setLayoutData(gd);
         serviceNameTextBox.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e){
-                //updateDirtyStatus(true);
             }
         });
         
@@ -244,7 +243,6 @@ public class ServiceXMLGenerationPage extends AbstractServiceWizardPage{
     }
     
     public Page2Bean getBean(Page2Bean previousBean){
-        //previousBean.setAutomatic(true);
         previousBean.setAutomaticClassName(classNameTextBox.getText());
         ArrayList list = new ArrayList();
         TableItem[] items = table.getItems();

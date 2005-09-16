@@ -18,11 +18,7 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.*;
 
 import javax.xml.namespace.QName;
 /**
@@ -42,7 +38,6 @@ public class ParamterAddTest extends TestCase {
 
             ServiceDescription service = new ServiceDescription(new QName("Service1"));
             reg.addService(service);
-//            service.setParent(reg);
             service.addParameter(para);
             fail("This should fails with Parmter is locked can not overide");
         } catch (AxisFault axisFault) {
@@ -76,7 +71,6 @@ public class ParamterAddTest extends TestCase {
 
             ServiceDescription service = new ServiceDescription(new QName("Service1"));
             reg.addService(service);
-          //  service.setParent(reg);
 
             OperationDescription opertion = new OperationDescription();
             opertion.setParent(service);
@@ -97,7 +91,6 @@ public class ParamterAddTest extends TestCase {
             para.setLocked(true);
 
             ServiceDescription service = new ServiceDescription(new QName("Service1"));
-//            service.setParent(reg);
             reg.addService(service);
             service.addParameter(para);
 

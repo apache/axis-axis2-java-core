@@ -35,26 +35,6 @@ public class AbstractEngineTest extends TestCase {
         super(arg0);
     }
 
-    //    public class TempHandler extends AbstractHandler {
-    //        private Integer index;
-    //        private boolean pause = false;
-    //        public TempHandler(int index, boolean pause) {
-    //            this.index = new Integer(index);
-    //            this.pause = pause;
-    //        }
-    //        public TempHandler(int index) {
-    //            this.index = new Integer(index);
-    //        }
-    //
-    //        public void invoke(MessageContext msgContext) throws AxisFault {
-    //            executedHandlers.add(index);
-    //            if (pause) {
-    //                msgContext.setPaused(true);
-    //            }
-    //        }
-    //
-    //    }
-
     public class NullMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
         public void invokeBusinessLogic(MessageContext inMessage,

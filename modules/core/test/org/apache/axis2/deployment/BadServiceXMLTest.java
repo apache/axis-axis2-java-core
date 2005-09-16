@@ -19,6 +19,7 @@ package org.apache.axis2.deployment;
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.description.ServiceDescription;
 
+import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -40,15 +41,14 @@ public class BadServiceXMLTest extends AbstractTestCase {
             ServiceDescription axisService = new ServiceDescription();
             ServiceBuilder builder = new ServiceBuilder(in,null,axisService);
             builder.populateService(builder.buildOM());
-           // parser.parseServiceXML(axisService);
             fail(
-                    "this must failed gracefully with DeploymentException or FileNotFoundException");
+                    "this must fail gracefully with DeploymentException or FileNotFoundException");
         } catch (FileNotFoundException e) {
-            return;
+            fail("File not found ");
         } catch (DeploymentException e) {
-            return;
-        } catch (Exception e) {
-            return;
+            assertTrue(true);
+        } catch (XMLStreamException e) {
+            fail(" XMLStreamException " + e.getMessage());
         }
 
     }

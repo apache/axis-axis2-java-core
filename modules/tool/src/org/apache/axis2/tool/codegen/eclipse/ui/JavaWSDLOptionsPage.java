@@ -136,7 +136,6 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         inputWSDLNameTextBox.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 settings.put(PREF_JAVA_INPUT_WSDL_NAME, inputWSDLNameTextBox.getText());
-                //dialogChanged();
             }
         });
 
@@ -151,7 +150,6 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         serviceLocationURLTextBox.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 settings.put(PREF_JAVA_LOCATION, serviceLocationURLTextBox.getText());
-                //dialogChanged();
             }
         });
         
@@ -166,7 +164,6 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         bindingTextBox.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 settings.put(PREF_JAVA_BINDING_NAME, bindingTextBox.getText());
-                //dialogChanged();
             }
         });
         
@@ -181,7 +178,6 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         portTypeNameTextBox.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 settings.put(PREF_JAVA_PORTYPE_NAME, portTypeNameTextBox.getText());
-                //dialogChanged();
             }
         });
 
