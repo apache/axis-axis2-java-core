@@ -37,6 +37,5 @@ public class CollectionDeserializer implements Deserializer {
     }
 
     public void setTarget(DeserializationTarget target) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 }
