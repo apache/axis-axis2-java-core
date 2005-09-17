@@ -4,6 +4,9 @@
 		<messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
 	</operation>    
 
+    <parameter name="InflowSecurity">on</parameter>
+    <parameter name="OutflowSecurity">on</parameter>
+
     <parameter name="InAction" locked="false">Timestamp Signature Encrypt</parameter>
     <parameter name="InPasswordCallbackClass" locked="false">sample.security.PWCallback</parameter>
     <parameter name="InSignaturePropFile" locked="false">sec.properties</parameter>

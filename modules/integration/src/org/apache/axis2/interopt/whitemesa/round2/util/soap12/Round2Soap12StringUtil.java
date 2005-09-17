@@ -1,5 +1,6 @@
-package org.apache.axis2.interopt.whitemesa.round2.util;
+package org.apache.axis2.interopt.whitemesa.round2.util.soap12;
        //org.apache.axis2.interopt.whitemesa.round2.util
+import org.apache.axis2.interopt.whitemesa.round2.util.SunRound2ClientUtil;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPBody;

@@ -13,7 +13,6 @@ Please follow each of the following steps:
 
 1.) To engage the security (WSS4J) module add the following line to axis2.xml in axis
 	<module ref="security"/>
-	IMPORTANT: Please read [NOTE 1]
 2.) Copy samples/security/SecureService.aar to axis2/WEB-INF/services/ directory
 3.) Copy samples/security/secUtil.jar to axis2/WEB-INF/lib/
 4.) Start Tomcat
@@ -35,13 +34,3 @@ BUILD SUCCESSFUL
 Total time: XX seconds
 
 If you want to see the signed and encrypted messages fireup tcpmon and change the securitySample ant task in the samples directory to set the required port number.
-
-------------------------------------------------------------------------------
-NOTE 1: When the WSS4J module is engaged it will be engaged globally. Then all services will require them to be provide configuration parameters for the security module. If a certain service(s) does not require any WS-Security functionality the relevant services.xml file should contain the following entries for service(s) in defined.
-
-    <parameter name="OutAction" locked="false">NoSecurity</parameter>
-    <parameter name="InAction" locked="false">NoSecurity</parameter>
-
-The above two lines will disable the WSS4J module for the defined scope.
-
-

@@ -7,10 +7,10 @@
     <!-- Engage the security module -->
     <module ref="security"/>
 
-    <!-- This is only till we get the service specific parameters fixed in service.xml -->
-    <!-- Also we can switch back to hte normal parameter names when we can seperately assign them to the flows -->
-
     <!-- Scenario 4: Client's Configuration:START-->
+
+    <parameter name="InflowSecurity">on</parameter>
+    <parameter name="OutflowSecurity">on</parameter>
 
     <parameter name="OutAction" locked="false">Signature Encrypt Timestamp</parameter>
     <parameter name="user" locked="false">alice</parameter>

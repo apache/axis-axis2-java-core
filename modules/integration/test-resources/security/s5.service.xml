@@ -5,9 +5,11 @@
 		<messageReceiver class="org.apache.axis2.oasis.ping.PingPortMessageReceiver"/>
 	</operation>    
 
+    <parameter name="InflowSecurity">on</parameter>
+    <parameter name="OutflowSecurity">off</parameter>
+
     <parameter name="InAction" locked="false">Signature Signature Timestamp</parameter>
     <parameter name="InPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
     <parameter name="InSignaturePropFile" locked="false">interop.properties</parameter>
 
-    <parameter name="OutAction" locked="false">NoSecurity</parameter>
 </service>

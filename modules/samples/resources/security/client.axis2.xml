@@ -13,6 +13,8 @@
     <!-- Also we can switch back to hte normal parameter names when we can seperately assign them to the flows -->
 
     <!-- Test with addressing and MTOM: Client's Configuration:START-->
+    <parameter name="InflowSecurity">on</parameter>
+    <parameter name="OutflowSecurity">on</parameter>
 
     <parameter name="OutAction" locked="false">Timestamp Signature Encrypt</parameter>
     <parameter name="user" locked="false">alice</parameter>

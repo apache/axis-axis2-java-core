@@ -7,10 +7,10 @@
     <!-- Engage the security module -->
     <module ref="security"/>
 
-    <!-- This is only till we get the service specific parameters fixed in service.xml -->
-    <!-- Also we can switch back to the normal parameter names when we can seperately assign them to the flows -->
-
     <!-- Scenario 2: Client's Configuration:START-->
+
+    <parameter name="OutflowSecurity">on</parameter>
+    <parameter name="InflowSecurity">off</parameter>
 
     <parameter name="OutAction" locked="false">UsernameToken Encrypt</parameter>
     <parameter name="user" locked="false">Chris</parameter>
@@ -21,8 +21,6 @@
     <parameter name="OutPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
     <parameter name="passwordType" locked="false">PasswordText</parameter>
     <parameter name="encryptionKeyIdentifier" locked="false">SKIKeyIdentifier</parameter>
-
-    <parameter name="InAction" locked="false">NoSecurity</parameter>
 
     <!-- Scenario 2: Client's Configuration:END-->
 

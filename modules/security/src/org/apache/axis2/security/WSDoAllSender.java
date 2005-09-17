@@ -16,6 +16,8 @@
 
 package org.apache.axis2.security;
 
+import java.util.Vector;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -33,8 +35,6 @@ import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.apache.wsdl.WSDLConstants;
 import org.w3c.dom.Document;
-
-import java.util.Vector;
 
 public class WSDoAllSender extends WSDoAllHandler {
 
@@ -61,7 +61,7 @@ public class WSDoAllSender extends WSDoAllHandler {
         if (doDebug) {
             log.debug("WSDoAllSender: enter invoke()");
         }
-
+    	
         /*
          * Copy the RECV_RESULTS over to the current message context
          * - IF available 
@@ -78,6 +78,18 @@ public class WSDoAllSender extends WSDoAllHandler {
         
         reqData.setNoSerialization(false);
         reqData.setMsgContext(msgContext);
+        
+    	//Figureout if the handler should run
+    	String outFlowSecurity;
+    	if((outFlowSecurity = (String) getOption(WSSHandlerConstants.OUTFLOW_SECURITY)) == null) {
+    		outFlowSecurity = (String) getProperty(msgContext, WSSHandlerConstants.OUTFLOW_SECURITY);
+    	}
+    	//If the option is not specified or if it is set to false do not do
+    	//any security processing
+    	if(outFlowSecurity == null || outFlowSecurity.equals(WSSHandlerConstants.OFF_OPTION)) {
+    		return;
+    	}
+    	
         try {
 	        Vector actions = new Vector();
 	        String action = null;
@@ -318,7 +330,7 @@ public class WSDoAllSender extends WSDoAllHandler {
 		        	//of the same handler
 		        	repetition++;
 		        	msgContext.setProperty(WSSHandlerConstants.Out.REPETITON,new Integer(repetition));
-		        	
+		        	msgContext.setProperty(WSSHandlerConstants.OUTFLOW_SECURITY,outFlowSecurity);
 		        	/**
 		        	 * eserving the OM stuff doesn't work for the repeting case
 		        	 */

@@ -20,6 +20,28 @@ public interface WSSHandlerConstants {
 
     public static final String ENFORCE_ACTION_ORDER = "EnforceActionOrder";
 
+    /**
+     * A service that requires the security module to be activated in the 
+     * inflow, can use this option by specifying (in services.xml):
+     * <parameter name="InflowSecurity">on</parameter>
+     * And if a certain service does NOT require security module to be
+     * activated in the inflow  the it should include (in services.xml):
+     * <parameter name="InflowSecurity">off</parameter>
+     */
+    public static final String INFLOW_SECURITY = "InflowSecurity";
+
+    /**
+     * A service that requires the security module to be activated in the 
+     * outflow, can use this option by specifying (in services.xml):
+     * <parameter name="OutflowSecurity">on</parameter>
+     * And if a certain service does NOT require security module to be
+     * activated in the outflow  the it should include (in services.xml):
+     * <parameter name="OutflowSecurity">off</parameter>
+     */
+    public static final String OUTFLOW_SECURITY = "OutflowSecurity";
+    
+    public static final String ON_OPTION = "on";
+    public static final String OFF_OPTION = "off";
     
     /**
      * The following two seot the constants are used to introduce new 

@@ -3,7 +3,10 @@
 	<!--Mounting the method Ping-->
 	<operation name="Ping">
 		<messageReceiver class="org.apache.axis2.oasis.ping.PingPortMessageReceiver"/>
-	</operation>    
+	</operation> 
+
+    <parameter name="InflowSecurity">on</parameter>
+    <parameter name="OutflowSecurity">on</parameter>   
 
     <parameter name="InAction" locked="false">Signature Encrypt Timestamp</parameter>
     <parameter name="InSignaturePropFile" locked="false">interop.properties</parameter>

@@ -60,7 +60,7 @@ public class WSHandlerConstantsMapper {
 		} else {
 			newKey = (String)outHandlerConstants.get(axiskey);	
 		}
-		if(repetition > 0 && axiskey != WSSHandlerConstants.Out.SENDER_REPEAT_COUNT && !inHandler) {
+		if(repetition > 0 && axiskey != WSSHandlerConstants.Out.SENDER_REPEAT_COUNT && axiskey != WSSHandlerConstants.OUTFLOW_SECURITY && !inHandler) {
 			if(newKey == null) {
 				return axiskey + repetition;
 			} else {

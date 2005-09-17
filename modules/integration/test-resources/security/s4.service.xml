@@ -5,6 +5,9 @@
 		<messageReceiver class="org.apache.axis2.oasis.ping.PingPortMessageReceiver"/>
 	</operation>    
 
+    <parameter name="InflowSecurity">on</parameter>
+    <parameter name="OutflowSecurity">on</parameter>
+
     <parameter name="InAction" locked="false">Signature Encrypt Timestamp</parameter>
     <parameter name="InSignaturePropFile" locked="false">interop.properties</parameter>
     <parameter name="InPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>

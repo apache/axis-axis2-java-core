@@ -5,8 +5,10 @@
 		<messageReceiver class="org.apache.axis2.oasis.ping.PingPortMessageReceiver"/>
 	</operation>    
 
+    <parameter name="InflowSecurity">on</parameter>
+    <parameter name="OutflowSecurity">off</parameter>
+
     <parameter name="InAction" locked="false">Timestamp SAMLTokenUnsigned</parameter>
 
-    <parameter name="OutAction" locked="false">NoSecurity</parameter>
 
 </service>

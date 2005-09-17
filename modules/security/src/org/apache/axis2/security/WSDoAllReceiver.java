@@ -16,6 +16,12 @@
 
 package org.apache.axis2.security;
 
+import java.security.cert.X509Certificate;
+import java.util.Iterator;
+import java.util.Vector;
+
+import javax.security.auth.callback.CallbackHandler;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMException;
@@ -38,11 +44,6 @@ import org.apache.ws.security.message.token.Timestamp;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.w3c.dom.Document;
 
-import javax.security.auth.callback.CallbackHandler;
-import java.security.cert.X509Certificate;
-import java.util.Iterator;
-import java.util.Vector;
-
 public class WSDoAllReceiver extends WSDoAllHandler {
 
     protected static Log log = LogFactory.getLog(WSDoAllReceiver.class.getName());
@@ -63,6 +64,18 @@ public class WSDoAllReceiver extends WSDoAllHandler {
         
         try {
         	reqData.setMsgContext(msgContext);
+        	
+        	//Figureout if the handler should run
+        	String inFlowSecurity = null;
+        	if((inFlowSecurity = (String) getOption(WSSHandlerConstants.INFLOW_SECURITY)) == null) {
+        		inFlowSecurity = (String) getProperty(msgContext, WSSHandlerConstants.INFLOW_SECURITY);
+        	}
+        	//If the option is not specified or if it is set to false do not do
+        	//any security processing
+        	if(inFlowSecurity == null || inFlowSecurity.equals(WSSHandlerConstants.OFF_OPTION)) {
+        		return;
+        	}
+        	
             Vector actions = new Vector();
             String action = null;
             if ((action = (String) getOption(WSHandlerConstants.ACTION)) == null) {
