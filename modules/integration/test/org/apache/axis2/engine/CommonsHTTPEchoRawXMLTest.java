@@ -41,8 +41,8 @@ import javax.xml.namespace.QName;
 public class CommonsHTTPEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoOMElement");
+                    + (UtilServer.TESTING_PORT)
+                    + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -77,6 +77,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.stop();
+        UtilServer.unDeployClientService();
     }
 
     public void testEchoXMLASync() throws Exception {
@@ -125,7 +126,6 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
 
     public void testEchoXMLSync() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
         OMElement payload = TestingUtils.createDummyOMElement();
 
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(

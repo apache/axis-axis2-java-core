@@ -308,7 +308,10 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @throws AxisFault
      */
     public synchronized void removeService(String name) throws AxisFault {
-        allservices.remove(name);
+        ServiceDescription service =(ServiceDescription)allservices.remove(name);
+        if(service != null){
+            log.info("Removed service " + name);
+        }
     }
 
     public TransportInDescription getTransportIn(QName name) throws AxisFault {

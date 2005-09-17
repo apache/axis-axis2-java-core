@@ -83,6 +83,7 @@ public class EchoRawMTOMTest extends TestCase {
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.stop();
+         UtilServer.unDeployClientService();
     }
 
     protected OMElement createEnvelope() throws Exception {

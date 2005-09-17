@@ -43,8 +43,8 @@ import javax.xml.namespace.QName;
 public class EchoRawXMLTest extends TestCase {
     protected EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoOMElement");
+                    + (UtilServer.TESTING_PORT)
+                    + "/axis/services/EchoXMLService/echoOMElement");
     protected Log log = LogFactory.getLog(getClass());
     protected QName serviceName = new QName("EchoXMLService");
     protected QName operationName = new QName("echoOMElement");
@@ -53,7 +53,7 @@ public class EchoRawXMLTest extends TestCase {
 
     protected AxisConfiguration engineRegistry;
     protected MessageContext mc;
-     private ConfigurationContext config;
+    private ConfigurationContext config;
     //private Thread thisThread;
     // private SimpleHTTPServer sas;
     protected ServiceContext serviceContext;
@@ -81,6 +81,7 @@ public class EchoRawXMLTest extends TestCase {
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.stop();
+        UtilServer.unDeployClientService();
     }
 
 

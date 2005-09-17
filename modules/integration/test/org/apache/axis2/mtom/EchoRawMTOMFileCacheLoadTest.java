@@ -53,6 +53,7 @@ public class EchoRawMTOMFileCacheLoadTest extends EchoRawMTOMLoadTest {
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.stop();
+        UtilServer.unDeployClientService();
     }
 
 

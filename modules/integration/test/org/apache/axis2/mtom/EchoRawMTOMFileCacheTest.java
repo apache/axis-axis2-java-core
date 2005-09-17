@@ -26,7 +26,7 @@ import org.apache.axis2.util.Utils;
 import javax.xml.namespace.QName;
 
 public class EchoRawMTOMFileCacheTest extends EchoRawMTOMTest{
-  
+
     private QName serviceName = new QName("EchoXMLService");
 
     private QName operationName = new QName("echoOMElement");
@@ -54,12 +54,13 @@ public class EchoRawMTOMFileCacheTest extends EchoRawMTOMTest{
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.stop();
+        UtilServer.unDeployClientService();
     }
 
     public void testEchoXMLASync() throws Exception {
         super.testEchoXMLASync();
     }
-    
+
     public void testEchoXMLSync() throws Exception {
         super.testEchoXMLSync();
     }

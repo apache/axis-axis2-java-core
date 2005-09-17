@@ -136,7 +136,7 @@ public class Call extends InOutMEPClient {
         //call the underline implementation
         super.invokeNonBlocking(opDesc, msgctx, callback);
     }
-/**
+    /**
      * Invoke the nonblocking/Asynchronous call
      *
      * @param axisop
@@ -210,8 +210,7 @@ public class Call extends InOutMEPClient {
         QName assumedServiceName = new QName("AnonymousService");
         ServiceDescription axisService = new ServiceDescription(assumedServiceName);
         operationTemplate = new OperationDescription(new QName("TemplateOperation"));
-        ServiceGroupDescription serviceGroupDescription =
-                new ServiceGroupDescription(sysContext.getAxisConfiguration());
+//        ServiceGroupDescription serviceGroupDescription = new ServiceGroupDescription(sysContext.getAxisConfiguration());
 
         PhasesInfo info =((AxisConfigurationImpl)sysContext.getAxisConfiguration()).getPhasesinfo();
         //to set the operation flows
@@ -219,14 +218,16 @@ public class Call extends InOutMEPClient {
             info.setOperationPhases(operationTemplate);
         }
         axisService.addOperation(operationTemplate);
-        serviceGroupDescription.addService(axisService);
-        serviceGroupDescription.getServiceGroupContext(sysContext);
-        serviceGroupDescription.setServiceGroupName(assumedServiceName.getLocalPart());
-        sysContext.getAxisConfiguration().addServiceGroup(serviceGroupDescription);
+        sysContext.getAxisConfiguration().addService(axisService);
+//        serviceGroupDescription.addService(axisService);
+//        serviceGroupDescription.getServiceGroupContext(sysContext);
+//        serviceGroupDescription.setServiceGroupName(assumedServiceName.getLocalPart());
+//        sysContext.getAxisConfiguration().addServiceGroup(serviceGroupDescription);
 
 //        return sysContext.createServiceContext(assumedServiceName);
-        return serviceGroupDescription.getServiceGroupContext(sysContext).getServiceContext(
-                assumedServiceName.getLocalPart());
+        return     axisService.getParent().getServiceGroupContext(sysContext).getServiceContext(assumedServiceName.getLocalPart());
+//        return serviceGroupDescription.getServiceGroupContext(sysContext).getServiceContext(
+//                assumedServiceName.getLocalPart());
     }
 
     /**

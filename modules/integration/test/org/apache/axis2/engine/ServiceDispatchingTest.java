@@ -39,8 +39,8 @@ import javax.xml.namespace.QName;
 public class ServiceDispatchingTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoOMElement");
+                    + (UtilServer.TESTING_PORT)
+                    + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -77,7 +77,9 @@ public class ServiceDispatchingTest extends TestCase {
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.stop();
+        UtilServer.unDeployClientService();
     }
+
 
     public void testDispatchWithURLOnly() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();

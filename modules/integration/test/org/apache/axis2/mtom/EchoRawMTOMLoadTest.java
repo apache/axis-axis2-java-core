@@ -76,7 +76,9 @@ public class EchoRawMTOMLoadTest extends TestCase {
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.stop();
+        UtilServer.unDeployClientService();
     }
+
 
     protected OMElement createEnvelope() {
 
@@ -123,6 +125,7 @@ public class EchoRawMTOMLoadTest extends TestCase {
             OMText binaryNode = (OMText) ele1.getFirstChild();
             compareWithActualOMText(binaryNode);
             log.info("" + i);
+            UtilServer.unDeployClientService();
         }
     }
     protected void compareWithActualOMText(OMText binaryNode)

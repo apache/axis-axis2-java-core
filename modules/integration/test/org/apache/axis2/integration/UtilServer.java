@@ -18,6 +18,7 @@ package org.apache.axis2.integration;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.clientapi.ListenerManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
@@ -41,12 +42,19 @@ public class UtilServer {
         receiver.getSystemContext().getAxisConfiguration().addService(service);
         Utils.resolvePhases(receiver.getSystemContext().getAxisConfiguration(),
                 service);
-        ServiceGroupContext serviceGroupContext = service.getParent().getServiceGroupContext(receiver.getSystemContext());
+//        ServiceGroupContext serviceGroupContext = service.getParent().getServiceGroupContext(receiver.getSystemContext());
     }
 
     public static synchronized void unDeployService(QName service) throws AxisFault {
         receiver.getSystemContext().getAxisConfiguration().removeService(
                 service.getLocalPart());
+    }
+
+    public static synchronized void unDeployClientService() throws AxisFault {
+        if(ListenerManager.configurationContext !=null){
+            ListenerManager.configurationContext.getAxisConfiguration()
+                    .removeService("AnonymousService");
+        }
     }
 
     public static synchronized void start() throws Exception {

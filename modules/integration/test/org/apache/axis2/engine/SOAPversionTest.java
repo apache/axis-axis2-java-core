@@ -44,13 +44,14 @@ import javax.xml.stream.XMLStreamException;
 public class SOAPversionTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoOMElement");
+                    + (UtilServer.TESTING_PORT)
+                    + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
     private QName transportName = new QName("http://localhost/my",
             "NullTransport");
+    QName assumedServiceName = new QName("AnonymousService");
 
     private AxisConfiguration engineRegistry;
     private MessageContext mc;
@@ -62,13 +63,20 @@ public class SOAPversionTest extends TestCase {
     private boolean finish = false;
 
     protected void setUp() throws Exception {
-       UtilServer.start();
+        UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
     }
+
+    protected void tearDown() throws Exception {
+        UtilServer.unDeployService(serviceName);
+        UtilServer.stop();
+        UtilServer.unDeployClientService();
+    }
+
 
     public void testSOAP11() throws AxisFault {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
