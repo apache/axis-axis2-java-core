@@ -38,7 +38,7 @@ import java.io.FileInputStream;
 public class MTOMClientModel {
     private File inputFile = null;
 
-    private EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService");
+    private EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/mtomSample");
 
     private QName operationName = new QName("mtomSample");
 

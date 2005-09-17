@@ -77,7 +77,7 @@ public class UserInterface extends JPanel implements ActionListener {
         label.setBounds(20, 90, 200, 20);
         EPR.setBounds(150, 90, 270, 20);
 
-        EPR.setText("http://127.0.0.1:8080/axis2/services/MTOMService");
+        EPR.setText("http://127.0.0.1:8080/axis2/services/mtomSample");
 
         send.setBounds(140, 120, 150, 20);
 
