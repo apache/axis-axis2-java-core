@@ -36,9 +36,9 @@ public class ServiceGroupTest extends TestCase {
     public void testServiceGroup() throws AxisFault {
         ServiceGroupDescription sgd = ar.getServiceGroup("serviceGroup");
         assertNotNull(sgd);
-        ServiceDescription service1 = ar.getService("serviceGroup:service1");
+        ServiceDescription service1 = ar.getService("service1");
         assertNotNull(service1);
-        ServiceDescription service2 = ar.getService("serviceGroup:service2");
+        ServiceDescription service2 = ar.getService("service2");
         assertNotNull(service2);
     }
 

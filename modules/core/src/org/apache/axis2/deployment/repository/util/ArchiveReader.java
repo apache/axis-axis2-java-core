@@ -224,7 +224,7 @@ public class ArchiveReader implements DeploymentConstants {
         } else {
             File file = new File(filename, SERVICEXML);
             if (file.exists()) {
-                InputStream in = null;
+                InputStream in ;
                 try {
                     in = new FileInputStream(file);
                     buildServiceGroup(in,engine,serviceGroupDesc);
@@ -251,11 +251,11 @@ public class ArchiveReader implements DeploymentConstants {
         rootelementName = services.getLocalName();
         if(SERVICE_ELEMENT.equals(rootelementName)){
             ServiceDescription serviceDesc = engine.getCurrentFileItem().
-                    getService(new QName(builder.getShortFileName(
+                    getService(new QName(DescriptionBuilder.getShortFileName(
                             engine.getCurrentFileItem().getName())));
             if(serviceDesc == null){
                 serviceDesc = new ServiceDescription(
-                        new QName(builder.getShortFileName(
+                        new QName(DescriptionBuilder.getShortFileName(
                                 engine.getCurrentFileItem().getName())));
                 engine.getCurrentFileItem().addService(serviceDesc);
             }
@@ -298,7 +298,7 @@ public class ArchiveReader implements DeploymentConstants {
         } else {
             File file = new File(filename, MODULEXML);
             if (file.exists()) {
-                InputStream in = null;
+                InputStream in;
                 try {
                     in = new FileInputStream(file);
                     ModuleBuilder builder = new ModuleBuilder(in, engine, module);

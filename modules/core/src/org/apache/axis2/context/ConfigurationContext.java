@@ -229,8 +229,8 @@ public class ConfigurationContext extends AbstractContext {
     public ServiceGroupContext fillServiceContextAndServiceGroupContext(MessageContext messageContext) throws AxisFault {
         String serviceGroupContextId = messageContext.getServiceGroupContextId();
 
-        ServiceGroupContext serviceGroupContext = null;
-        ServiceContext serviceContext = null;
+        ServiceGroupContext serviceGroupContext;
+        ServiceContext serviceContext ;
         if (!isNull(serviceGroupContextId) && serviceGroupContextMap.get(serviceGroupContextId) != null) {
             // SGC is already there
             serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
@@ -253,9 +253,11 @@ public class ConfigurationContext extends AbstractContext {
                 messageContext.setServiceGroupContextId(serviceGroupContextId);
             }
             if(messageContext.getServiceDescription() !=null){
-                String servicName = messageContext.getServiceDescription().getName().getLocalPart();
+//                String servicName = messageContext.getServiceDescription().getName().getLocalPart();
                 ServiceGroupDescription servicGroupDescription =
-                        this.getAxisConfiguration().getServiceGroup(servicName);
+                        messageContext.getServiceDescription().getParent();
+//                ServiceGroupDescription servicGroupDescription =
+//                        this.getAxisConfiguration().getServiceGroup(servicName);
                 serviceGroupContext =  servicGroupDescription.getServiceGroupContext(this);
                 serviceContext = serviceGroupContext.getServiceContext(
                         messageContext.getServiceDescription().getName().

@@ -35,31 +35,31 @@ public class ServiceGroupContext extends AbstractContext {
     private Map serviceContextMap;
     private transient ServiceGroupDescription description;
     private String serviceGroupDescName=null;
-    
-	public void init(AxisConfiguration axisConfiguration) throws AxisFault {
-		if (serviceGroupDescName!=null)
-			description = axisConfiguration.getServiceGroup(serviceGroupDescName);
-	}
-	
+
+    public void init(AxisConfiguration axisConfiguration) throws AxisFault {
+        if (serviceGroupDescName!=null)
+            description = axisConfiguration.getServiceGroup(serviceGroupDescName);
+    }
+
     private void writeObject(ObjectOutputStream out) throws IOException {
-    	if (description!=null)
-    		this.serviceGroupDescName = description.getServiceGroupName();
-    	
-    	out.defaultWriteObject();    	
+        if (description!=null)
+            this.serviceGroupDescName = description.getServiceGroupName();
+
+        out.defaultWriteObject();
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    	in.defaultReadObject();
-    	nonPersistentMap = new HashMap ();
+        in.defaultReadObject();
+        nonPersistentMap = new HashMap ();
     }
 
     public ServiceGroupContext(ConfigurationContext parent ,ServiceGroupDescription description) {
         super(parent);
         this.description = description;
         serviceContextMap = new HashMap();
-        
+
         if (description!=null)
-        	this.serviceGroupDescName = description.getServiceGroupName();
+            this.serviceGroupDescName = description.getServiceGroupName();
         fillServiceContexts();
     }
 
@@ -86,9 +86,8 @@ public class ServiceGroupContext extends AbstractContext {
         while (services.hasNext()) {
             ServiceDescription serviceDescription = (ServiceDescription) services.next();
             ServiceContext serviceContext = new ServiceContext(serviceDescription,this);
-            String [] servicNams = AxisConfigurationImpl.splitServiceName(
-                    serviceDescription.getName().getLocalPart());
-            serviceContextMap.put(servicNams[1],serviceContext);
+            String servicNams = serviceDescription.getName().getLocalPart();
+            serviceContextMap.put(servicNams,serviceContext);
         }
     }
 

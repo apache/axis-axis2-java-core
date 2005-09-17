@@ -73,7 +73,7 @@ public interface AxisConfiguration extends ParameterInclude {
     public void addService(ServiceDescription service) throws AxisFault;
 
     //to Add service Groups
-     public void addServiceGroup(ServiceGroupDescription serviceGroup);
+     public void addServiceGroup(ServiceGroupDescription serviceGroup) throws AxisFault;
 
     /**
      * Method removeService

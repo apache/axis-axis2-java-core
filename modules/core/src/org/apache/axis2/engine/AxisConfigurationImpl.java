@@ -255,13 +255,23 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         addServiceGroup(serviceGroup);
     }
 
-    public void addServiceGroup(ServiceGroupDescription serviceGroup){
-        serviceGroups.put(serviceGroup.getServiceGroupName(),serviceGroup);
+    public void addServiceGroup(ServiceGroupDescription serviceGroup) throws AxisFault {
         Iterator services = serviceGroup.getServices();
+        ServiceDescription description ;
         while (services.hasNext()) {
-            ServiceDescription description = (ServiceDescription) services.next();
+            description = (ServiceDescription) services.next();
+            if(allservices.get(description.getName().getLocalPart()) !=null){
+                throw new AxisFault("Two service can not have same name, a service with " +
+                        description.getName().getLocalPart() + " alredy exist in the system");
+            }
+        }
+        services = serviceGroup.getServices();
+        while (services.hasNext()) {
+            description = (ServiceDescription) services.next();
+            allservices.put(description.getName().getLocalPart(),description);
             notifyObservers(AxisEvent.SERVICE_DEPLOY ,description);
         }
+        serviceGroups.put(serviceGroup.getServiceGroupName(),serviceGroup);
     }
 
     /**
@@ -288,19 +298,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @throws AxisFault
      */
     public ServiceDescription getService(String name) throws AxisFault {
-        String [] nameParts = splitServiceName(name);
-        ServiceGroupDescription sg = getServiceGroup(nameParts[0]);
-        if(sg == null){
-            return null;
-        } else {
-            String servicName = nameParts[1];
-            ServiceDescription service = sg.getService(new QName(servicName));
-            if(service == null){
-                return null;
-            } else {
-                return  service;
-            }
-        }
+        return  (ServiceDescription)allservices.get(name);
     }
 
     /**
@@ -310,11 +308,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @throws AxisFault
      */
     public synchronized void removeService(String name) throws AxisFault {
-        String [] nameParts = splitServiceName(name);
-        ServiceGroupDescription sg = getServiceGroup(nameParts[0]);
-        if(sg != null){
-            sg.removeService(new QName(nameParts[1]));
-        }
+        allservices.remove(name);
     }
 
     public TransportInDescription getTransportIn(QName name) throws AxisFault {
@@ -371,8 +365,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     }
 
     public ServiceGroupDescription getServiceGroup(String serviceNameAndGroupString) {
-        String serviceGroup [] =  splitServiceName(serviceNameAndGroupString);
-        return (ServiceGroupDescription)serviceGroups.get(serviceGroup[0]);
+        return (ServiceGroupDescription)serviceGroups.get(serviceNameAndGroupString);
     }
 
     public Iterator getServiceGroups() {
@@ -517,7 +510,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
                 allservices.put(serviceDescription.getName().getLocalPart(),serviceDescription);
             }
         }
-        return allservices;  
+        return allservices;
     }
 
     public boolean isEngaged(QName moduleName) {
@@ -569,26 +562,26 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     }
 
 
-    /**
-     * To split a given service name into it serviceGroupName and Service Name
-     * if the service Name is foo:bar then serviceGroupName ="foo" and ServiceName ="bar"
-     * but if the service name is only the foo we asume ServiceGroupName="foo" ans ServiceName="foo"
-     * meaning foo := foo:foo
-     * @param serviceName
-     * @return String [] <code>String</code>
-     */
-    public static String [] splitServiceName(String serviceName){
-        String namePart [] = new String[2];
-        int index = serviceName.indexOf(Constants.SERVICE_NAME_SPLIT_CHAR);
-        if(index > 0){
-            namePart[0] = serviceName.substring(0,index);
-            namePart[1] = serviceName.substring(index +1 ,serviceName.length());
-        } else {
-            namePart[0] = serviceName;
-            namePart[1] = serviceName;
-        }
-        return namePart;
-    }
+//    /**
+//     * To split a given service name into it serviceGroupName and Service Name
+//     * if the service Name is foo:bar then serviceGroupName ="foo" and ServiceName ="bar"
+//     * but if the service name is only the foo we asume ServiceGroupName="foo" ans ServiceName="foo"
+//     * meaning foo := foo:foo
+//     * @param serviceName
+//     * @return String [] <code>String</code>
+//     */
+//    public static String [] splitServiceName(String serviceName){
+//        String namePart [] = new String[2];
+//        int index = serviceName.indexOf(Constants.SERVICE_NAME_SPLIT_CHAR);
+//        if(index > 0){
+//            namePart[0] = serviceName.substring(0,index);
+//            namePart[1] = serviceName.substring(index +1 ,serviceName.length());
+//        } else {
+//            namePart[0] = serviceName;
+//            namePart[1] = serviceName;
+//        }
+//        return namePart;
+//    }
 
 
 }
