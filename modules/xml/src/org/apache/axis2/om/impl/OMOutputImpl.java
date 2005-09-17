@@ -87,7 +87,7 @@ public class OMOutputImpl {
             this.charSetEncoding = DEFAULT_CHAR_SET_ENCODING;
 
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        factory.setProperty("javax.xml.stream.isRepairingNamespaces", Boolean.TRUE);
+        //factory.setProperty("javax.xml.stream.isRepairingNamespaces", Boolean.TRUE);
         if (doOptimize) {
             bufferedSoapOutStream = new ByteArrayOutputStream();
             xmlWriter = factory.createXMLStreamWriter(bufferedSoapOutStream,
