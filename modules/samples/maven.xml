@@ -289,7 +289,9 @@
 	<ant:copy file="resources/security/client.axis2.xml" tofile="target/samples/security/client_repo/axis2.xml"/>
 	<ant:copy file="target/security/SecureService.aar" tofile="target/samples/security/SecureService.aar"/>
 	<ant:copy file="target/security/secUtil.jar" tofile="target/samples/security/secUtil.jar"/>
-	<ant:copy file="resources/security/README.txt" tofile="target/samples/security/README.txt"/>	
+	<ant:copy file="resources/security/README.txt" tofile="target/samples/security/README.txt"/>
+
+	<delete dir="target/security/"/>
 
     </goal>
 

@@ -1,9 +1,11 @@
 Using WS-Security with Axis2
+==============================================================================
 
 This sample uses the WSS4J module with the addressing module to secure the messages as follows:
 
-First a Timestam is added to the message and then the Timestamp and the WS-addressing headers are signed with the sender's private key.
-The the message body is encrypted with the receiver's public key. The CipherValue of the encrpted body is included as a MTOM part.
+- First a Timestamp is added to the message and then the Timestamp and the WS-addressing headers are signed with the sender's private key.
+- The the message body is encrypted with the receiver's public key. 
+- The CipherValue of the encrpted body is included as an MTOM part.
 
 Setup the service
 ------------------------------------------------------------------------------
@@ -12,8 +14,8 @@ Please follow each of the following steps:
 1.) To engage the security (WSS4J) module add the following line to axis2.xml in axis
 	<module ref="security"/>
 	IMPORTANT: Please read [NOTE 1]
-2.) Copy samples/securitySecureService.aar to axis2/WEB-INF/services/ directory
-3.) Copy samples/securitysecUtil.jar to axis2/WEB-INF/lib
+2.) Copy samples/security/SecureService.aar to axis2/WEB-INF/services/ directory
+3.) Copy samples/security/secUtil.jar to axis2/WEB-INF/lib/
 4.) Start Tomcat
 
 Run the sample
@@ -41,4 +43,5 @@ NOTE 1: When the WSS4J module is engaged it will be engaged globally. Then all s
     <parameter name="InAction" locked="false">NoSecurity</parameter>
 
 The above two lines will disable the WSS4J module for the defined scope.
+
 
