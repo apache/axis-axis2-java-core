@@ -4,7 +4,7 @@ Using WS-Security with Axis2
 This sample uses the WSS4J module with the addressing module to secure the messages as follows:
 
 - First a Timestamp is added to the message and then the Timestamp and the WS-addressing headers are signed with the sender's private key.
-- The the message body is encrypted with the receiver's public key. 
+- Then the message body is encrypted with the receiver's public key. 
 - The CipherValue of the encrpted body is included as an MTOM part.
 
 Setup the service
