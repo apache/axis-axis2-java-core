@@ -1,5 +1,5 @@
 @echo off
-set CLASSPATH=%CLASSPATH%;..\..\..\..\..\..\lib\axis2-alpha.jar
+set CLASSPATH=%CLASSPATH%;..\..\..\..\..\..\lib\axis2-1.0-alpha.jar
 set CLASSPATH=%CLASSPATH%;..\..\..\..\..\..\lib\axis-wsdl4j-1.2.jar
 set CLASSPATH=%CLASSPATH%;..\..\..\..\..\..\lib\commons-logging-1.0.3.jar
 set CLASSPATH=%CLASSPATH%;..\..\..\..\..\..\lib\log4j-1.2.8.jar
