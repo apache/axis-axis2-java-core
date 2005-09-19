@@ -1,0 +1,11 @@
+<project name="samples" default="run">
+    <path id="axis.classpath">
+        <fileset dir="../../lib">
+            <include name="*.jar"/>
+        </fileset>
+        <pathelement location="./googleSpellcheck.jar"/>
+    </path>
+    <target name="run">
+        <java classname="sample.google.spellcheck.SuggestionForm" classpathref="axis.classpath" fork="true"/>
+    </target>
+</project>
