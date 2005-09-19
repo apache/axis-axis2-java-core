@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.interopt.whitemesa.round2;
+package org.apache.axis2.interop.whitemesa.round2;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -25,7 +25,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
-import org.apache.axis2.interopt.whitemesa.round2.util.SunRound2ClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.SunRound2ClientUtil;
 import org.apache.axis2.soap.SOAPEnvelope;
 
 import javax.xml.namespace.QName;

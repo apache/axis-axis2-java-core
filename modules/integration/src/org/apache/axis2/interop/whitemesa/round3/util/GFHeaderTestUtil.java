@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.interopt.whitemesa.round3.util;
+package org.apache.axis2.interop.whitemesa.round3.util;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;

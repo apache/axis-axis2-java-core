@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.interopt.whitmesa.round4.complex;
+package org.apache.axis2.interop.whitmesa.round4.complex;
 
 import junit.framework.TestCase;
 import org.apache.axis2.XMLComparatorInterop;
-import org.apache.axis2.interopt.whitemesa.round4.complex.EchoBlockingClient;
-import org.apache.axis2.interopt.whitemesa.round4.complex.utils.EchoBaseStructFaultClientutil;
-import org.apache.axis2.interopt.whitemesa.round4.complex.utils.EchoExtendedStructFaultClientUtil;
-import org.apache.axis2.interopt.whitemesa.round4.complex.utils.EchoMultipleFaults1ClientUtil;
-import org.apache.axis2.interopt.whitemesa.round4.complex.utils.EchoMultipleFaults2ClientUtil;
-import org.apache.axis2.interopt.whitemesa.round4.complex.utils.EchoSOAPStructFaultClientUtil;
-import org.apache.axis2.interopt.whitemesa.round4.complex.utils.WhitemesaR4ClientUtil;
+import org.apache.axis2.interop.whitemesa.round4.complex.EchoBlockingClient;
+import org.apache.axis2.interop.whitemesa.round4.complex.utils.EchoBaseStructFaultClientutil;
+import org.apache.axis2.interop.whitemesa.round4.complex.utils.EchoExtendedStructFaultClientUtil;
+import org.apache.axis2.interop.whitemesa.round4.complex.utils.EchoMultipleFaults1ClientUtil;
+import org.apache.axis2.interop.whitemesa.round4.complex.utils.EchoMultipleFaults2ClientUtil;
+import org.apache.axis2.interop.whitemesa.round4.complex.utils.EchoSOAPStructFaultClientUtil;
+import org.apache.axis2.interop.whitemesa.round4.complex.utils.WhitemesaR4ClientUtil;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;

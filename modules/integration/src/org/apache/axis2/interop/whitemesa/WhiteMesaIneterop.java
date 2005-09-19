@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.interopt.whitemesa;
+package org.apache.axis2.interop.whitemesa;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;

@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.interopt.whitmesa.round2;
+package org.apache.axis2.interop.whitmesa.round2;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.interopt.whitemesa.WhiteMesaIneterop;
-import org.apache.axis2.interopt.whitemesa.round2.SunRound2Client;
-import org.apache.axis2.interopt.whitemesa.round2.util.Round2EchoBase64ClientUtil;
-import org.apache.axis2.interopt.whitemesa.round2.util.Round2EchoBooleanClientUtil;
-import org.apache.axis2.interopt.whitemesa.round2.util.Round2EchoDecimalClientUtil;
-import org.apache.axis2.interopt.whitemesa.round2.util.Round2EchoFloatArrayClientUtil;
-import org.apache.axis2.interopt.whitemesa.round2.util.Round2EchoFloatClientUtil;
-import org.apache.axis2.interopt.whitemesa.round2.util.Round2EchoHexBinaryClientUtil;
-import org.apache.axis2.interopt.whitemesa.round2.util.Round2EchoIntegerArrayclientUtil;
-import org.apache.axis2.interopt.whitemesa.round2.util.Round2EchoIntegerClientUtil;
-import org.apache.axis2.interopt.whitemesa.round2.util.Round2EchoStringArrayClientUtil;
-import org.apache.axis2.interopt.whitemesa.round2.util.Round2EchoStringclientUtil;
-import org.apache.axis2.interopt.whitemesa.round2.util.Round2EchoStructArrayClientUtil;
-import org.apache.axis2.interopt.whitemesa.round2.util.Round2EchoStructClientUtil;
-import org.apache.axis2.interopt.whitemesa.round2.util.Round2EchoVoidClientUtil;
-import org.apache.axis2.interopt.whitemesa.round2.util.SunRound2ClientUtil;
+import org.apache.axis2.interop.whitemesa.WhiteMesaIneterop;
+import org.apache.axis2.interop.whitemesa.round2.SunRound2Client;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoBase64ClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoBooleanClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoDecimalClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoFloatArrayClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoFloatClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoHexBinaryClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoIntegerArrayclientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoIntegerClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStringArrayClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStringclientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStructArrayClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStructClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoVoidClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.SunRound2ClientUtil;
 import org.apache.axis2.soap.SOAPEnvelope;
 
 import java.io.File;

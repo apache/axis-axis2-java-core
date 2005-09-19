@@ -1,15 +1,15 @@
 
-package org.apache.axis2.interopt.sun.simple;
+package org.apache.axis2.interop.sun.simple;
 
 import junit.framework.TestCase;
-import org.apache.axis2.interopt.sun.round4.simple.EchoBlockingClient;
-import org.apache.axis2.interopt.sun.round4.simple.util.EchoEmptyFaultClientUtil;
-import org.apache.axis2.interopt.sun.round4.simple.util.EchoMultipleFaults1ClientUtil;
-import org.apache.axis2.interopt.sun.round4.simple.util.EchoMultipleFaults2ClientUtil;
-import org.apache.axis2.interopt.sun.round4.simple.util.EchoMultipleFaults3Clientutil;
-import org.apache.axis2.interopt.sun.round4.simple.util.EchoMultipleFaults4ClientUtil;
-import org.apache.axis2.interopt.sun.round4.simple.util.EchoStringFaultClientUtil;
-import org.apache.axis2.interopt.sun.round4.simple.util.SunGroupHClientUtil;
+import org.apache.axis2.interop.sun.round4.simple.EchoBlockingClient;
+import org.apache.axis2.interop.sun.round4.simple.util.EchoEmptyFaultClientUtil;
+import org.apache.axis2.interop.sun.round4.simple.util.EchoMultipleFaults1ClientUtil;
+import org.apache.axis2.interop.sun.round4.simple.util.EchoMultipleFaults2ClientUtil;
+import org.apache.axis2.interop.sun.round4.simple.util.EchoMultipleFaults3Clientutil;
+import org.apache.axis2.interop.sun.round4.simple.util.EchoMultipleFaults4ClientUtil;
+import org.apache.axis2.interop.sun.round4.simple.util.EchoStringFaultClientUtil;
+import org.apache.axis2.interop.sun.round4.simple.util.SunGroupHClientUtil;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;

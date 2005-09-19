@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.interopt.whitmesa.round2.Soap12;
+package org.apache.axis2.interop.whitmesa.round2.Soap12;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.interopt.whitemesa.WhiteMesaIneterop;
-import org.apache.axis2.interopt.whitemesa.round2.SunRound2Client;
-import org.apache.axis2.interopt.whitemesa.round2.util.SunRound2ClientUtil;
-import org.apache.axis2.interopt.whitemesa.round2.util.soap12.*;
+import org.apache.axis2.interop.whitemesa.WhiteMesaIneterop;
+import org.apache.axis2.interop.whitemesa.round2.SunRound2Client;
+import org.apache.axis2.interop.whitemesa.round2.util.SunRound2ClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.soap12.*;
 import org.apache.axis2.soap.SOAPEnvelope;
 
 import java.io.File;

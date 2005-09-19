@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.interopt.whitemesa.round4.simple.utils;
+package org.apache.axis2.interop.whitemesa.round4.simple.utils;
 
 import org.apache.axis2.om.OMElement;
 

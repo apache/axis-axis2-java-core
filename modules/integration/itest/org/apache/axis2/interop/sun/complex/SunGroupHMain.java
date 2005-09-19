@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.interopt.sun.complex;
+package org.apache.axis2.interop.sun.complex;
 
 import junit.framework.TestCase;
-import org.apache.axis2.interopt.sun.round4.complex.EchoBaseStructFaultClientutil;
-import org.apache.axis2.interopt.sun.round4.complex.EchoBlockingClient;
-import org.apache.axis2.interopt.sun.round4.complex.EchoExtendedStructFaultClientUtil;
-import org.apache.axis2.interopt.sun.round4.complex.EchoMultipleFaults1ClientUtil;
-import org.apache.axis2.interopt.sun.round4.complex.EchoMultipleFaults2ClientUtil;
-import org.apache.axis2.interopt.sun.round4.complex.EchoSOAPStructFaultClientUtil;
-import org.apache.axis2.interopt.sun.round4.complex.SunGroupHClientUtil;
+import org.apache.axis2.interop.sun.round4.complex.EchoBaseStructFaultClientutil;
+import org.apache.axis2.interop.sun.round4.complex.EchoBlockingClient;
+import org.apache.axis2.interop.sun.round4.complex.EchoExtendedStructFaultClientUtil;
+import org.apache.axis2.interop.sun.round4.complex.EchoMultipleFaults1ClientUtil;
+import org.apache.axis2.interop.sun.round4.complex.EchoMultipleFaults2ClientUtil;
+import org.apache.axis2.interop.sun.round4.complex.EchoSOAPStructFaultClientUtil;
+import org.apache.axis2.interop.sun.round4.complex.SunGroupHClientUtil;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;

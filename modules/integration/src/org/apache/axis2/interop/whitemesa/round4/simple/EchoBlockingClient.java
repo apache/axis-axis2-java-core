@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.interopt.whitemesa.round4.simple;
+package org.apache.axis2.interop.whitemesa.round4.simple;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
-import org.apache.axis2.interopt.whitemesa.round4.simple.utils.WhitemesaR4ClientUtil;
+import org.apache.axis2.interop.whitemesa.round4.simple.utils.WhitemesaR4ClientUtil;
 import org.apache.axis2.om.OMElement;
 
 

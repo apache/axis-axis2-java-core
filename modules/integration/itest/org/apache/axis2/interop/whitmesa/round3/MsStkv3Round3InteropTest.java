@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.interopt.whitmesa.round3;
+package org.apache.axis2.interop.whitmesa.round3;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.interopt.whitemesa.WhiteMesaIneterop;
-import org.apache.axis2.interopt.whitemesa.round3.SunRound3Client;
-import org.apache.axis2.interopt.whitemesa.round3.util.GDImport1EchoStringUtil;
-import org.apache.axis2.interopt.whitemesa.round3.util.GDImport2EchoStructUtil;
-import org.apache.axis2.interopt.whitemesa.round3.util.GDImport3StructArrayUtil;
-import org.apache.axis2.interopt.whitemesa.round3.util.GDRpcStringUtil;
-import org.apache.axis2.interopt.whitemesa.round3.util.GDRpcStructUtil;
-import org.apache.axis2.interopt.whitemesa.round3.util.GDRpcVoidUtil;
-import org.apache.axis2.interopt.whitemesa.round3.util.GEListUtil;
-import org.apache.axis2.interopt.whitemesa.round3.util.Round3EmptySAEchoStringUtil;
-import org.apache.axis2.interopt.whitemesa.round3.util.SunRound3ClientUtil;
+import org.apache.axis2.interop.whitemesa.WhiteMesaIneterop;
+import org.apache.axis2.interop.whitemesa.round3.SunRound3Client;
+import org.apache.axis2.interop.whitemesa.round3.util.GDImport1EchoStringUtil;
+import org.apache.axis2.interop.whitemesa.round3.util.GDImport2EchoStructUtil;
+import org.apache.axis2.interop.whitemesa.round3.util.GDImport3StructArrayUtil;
+import org.apache.axis2.interop.whitemesa.round3.util.GDRpcStringUtil;
+import org.apache.axis2.interop.whitemesa.round3.util.GDRpcStructUtil;
+import org.apache.axis2.interop.whitemesa.round3.util.GDRpcVoidUtil;
+import org.apache.axis2.interop.whitemesa.round3.util.GEListUtil;
+import org.apache.axis2.interop.whitemesa.round3.util.Round3EmptySAEchoStringUtil;
+import org.apache.axis2.interop.whitemesa.round3.util.SunRound3ClientUtil;
 import org.apache.axis2.soap.SOAPEnvelope;
 
 /**
