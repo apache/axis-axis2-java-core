@@ -36,5 +36,5 @@ If the everything work fine, you will get the conformation or an exception
 via a Dialog box.  End point reference is given. You can change it according to
 you host.
 
-Please contact axis-dve list if you have found any trouble running the sample
+Please contact axis-dev list if you have found any trouble running the sample.
 
