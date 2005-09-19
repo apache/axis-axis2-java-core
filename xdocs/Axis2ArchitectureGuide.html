@@ -6,11 +6,25 @@
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.4  (Win32)">
 	<META NAME="CREATED" CONTENT="20050916;22455288">
 	<META NAME="CHANGEDBY" CONTENT="Chamikara Jayalath">
-	<META NAME="CHANGED" CONTENT="20050917;2505816">
+	<META NAME="CHANGED" CONTENT="20050918;22325179">
 </HEAD>
 <BODY LANG="en-US" DIR="LTR">
 <H1>Axis2 Architecture Guide</H1>
-<H2>The Big Picture</H2>
+<H2>Contents</H2>
+<UL>
+	<LI><P><A HREF="#bmBP">The Big Picture</A></P>
+	<LI><P><A HREF="#bmInfoMod">Information Model</A></P>
+	<LI><P><A HREF="#bmXML">XML Processing Model</A></P>
+	<LI><P><A HREF="#bmSOAPPM">SOAP Processing Model</A></P>
+	<LI><P><A HREF="#bmDeployment">Deployment</A></P>
+	<LI><P><A HREF="#bmWSDL">WSDL and code generation</A></P>
+	<LI><P><A HREF="#bmDB">Data Binding</A></P>
+	<LI><P><A HREF="#bmClientAPI">Client API</A></P>
+	<LI><P><A HREF="#bmTransports">Transports</A></P>
+</UL>
+<P><BR><BR>
+</P>
+<H2><A NAME="bmBP"></A>The Big Picture</H2>
 <P>Any architecture is a result of what that architecture should
 yield, the success of an architecture should be evaluated bases on
 the requirements the architecture should meet. Let us start our
@@ -138,7 +152,7 @@ server side and client side code along a test case. The generated
 code would simplify the service deployment and the service
 invocation. This would make the Axis2 easier to use. 
 </P>
-<H2>Information Model</H2>
+<H2><A NAME="bmInfoMod"></A>Information Model</H2>
 <P>Information Model has two main hierarchies, the Contexts and
 Descriptions. 
 </P>
@@ -273,9 +287,9 @@ the deserialization of the ConfigurationContext object. He can
 restore the description hierarchy by calling the init
 (axisConfiguration) method of the deserialized ConfigurationContext
 object.</P>
-<H2>XML Processing Model</H2>
+<H2><A NAME="bmXML"></A>XML Processing Model</H2>
 <P>Please refer to the <A HREF="OMTutorial.html">OM Tutorial</A></P>
-<H2>SOAP Processing Model</H2>
+<H2><A NAME="bmSOAPPM"></A>SOAP Processing Model</H2>
 <P><IMG SRC="images/archi-guide/soap-processing.gif" NAME="Graphic4" ALIGN=BOTTOM WIDTH=755 HEIGHT=348 BORDER=0></P>
 <P>The architecture identified two basic actions a SOAP processor
 should perform, sending and receiving SOAP messages. The architecture
@@ -463,7 +477,7 @@ module is engaged the handlers and the operations defined in the
 module are added to the entity that engages them. Modules can not be
 added while the Axis2 is running but rater it ll be available once
 the system is restarted.</P>
-<H2>Deployment</H2>
+<H2><A NAME="bmDeployment"></A>Deployment</H2>
 <P>There deployment Model provides a concrete mechanism to configure
 Axis2. Deployment Model has four entities that provide the
 configuration. 
@@ -486,9 +500,9 @@ server, and provide following information.</P>
 	</P>
 </OL>
 <H3>Service Archive</H3>
-<P>Service archive must have a <EM>META-INF/service.xml</EM> file and
-may contain the dependent classes. the <EM>service.xml</EM> file has
-following information.</P>
+<P>Service archive must have a <EM>META-INF/services.xml</EM> file
+and may contain the dependent classes. the <EM>services.xml</EM> file
+has following information.</P>
 <OL>
 	<LI><P STYLE="margin-bottom: 0in">Service level parameters 
 	</P>
@@ -513,7 +527,7 @@ that case a thread will check the repository repeatedly, and add the
 Service corresponds to the new found Service archives to the
 repository. 
 </P>
-<H2>WSDL and code generation</H2>
+<H2><A NAME="bmWSDL"></A>WSDL and code generation</H2>
 <P>Although the basic objective of the code generation tool has not
 changed, the Code generation module of Axis2 has taken a different
 approach to generate code. Primarily the change is in the use of
@@ -531,7 +545,7 @@ passes that information to the emitter which emits an XML. the XML is
 then parsed with the relevant XSL to generate the code. No matter
 what the language, the process is the same except for the template
 that is being used</P>
-<H2>Data Binding</H2>
+<H2><A NAME="bmDB"></A>Data Binding</H2>
 <H3>Integration with the code generation engine</H3>
 <P>Axis2 M2 was released with code generation support but without
 data binding. The version 0.9 was shipped with data binding support
@@ -565,7 +579,7 @@ This method will handle the deserialization.</P>
 getTestObject(java.lang.Class type) : This will be a utility method
 that can be used to create sample objects of the given data bound
 object.</P>
-<H2>Client API</H2>
+<H2><A NAME="bmClientAPI"></A>Client API</H2>
 <P>There are three parameters that decide the nature of the Web
 Service interaction.</P>
 <OL>
@@ -615,7 +629,7 @@ four ways to configure a given Message Exchange</P>
 </OL>
 <P>Depend on the values for the above four parameter, Axis2 behave
 differently</P>
-<H2>Transports</H2>
+<H2><A NAME="bmTransports"></A>Transports</H2>
 <P>Axis2 has two basic constructs for transports, named as Transport
 In Configuration and Transport Out Configuration. The <A HREF="#messageContext">Message
 Context</A> has two fields to put the input and the out put transport
