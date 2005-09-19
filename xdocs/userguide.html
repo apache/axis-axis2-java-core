@@ -6,7 +6,7 @@
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.4  (Win32)">
 	<META NAME="CREATED" CONTENT="20050918;20224042">
 	<META NAME="CHANGEDBY" CONTENT="Chamikara Jayalath">
-	<META NAME="CHANGED" CONTENT="20050918;22300666">
+	<META NAME="CHANGED" CONTENT="20050919;1140420">
 </HEAD>
 <BODY LANG="en-US" DIR="LTR">
 <H1 ALIGN=CENTER><A NAME="_Toc96697849"></A>Axis 2.0 User's Guide 
@@ -311,9 +311,24 @@ available in this service with respective message receivers. For the
 &quot;echo&quot; operation we have used a <STRONG>RawXMLINOutMessageReceiver</STRONG>
 since it is an IN-OUT operation. For IN-ONLY operation, &quot;ping&quot;
 we have used <STRONG>RawXMLINOnlyMessageReceiver</STRONG> as the
-message receiver. 
-</P>
-<H4>Step3 :Create the Web Service Archive</H4>
+message receiver.</P>
+<P>You can write a services.xml file to include a group of services
+instead of a single service. This makes management and deployment of
+a set of related services very easy. At runtime you can share
+information between these services withing a single interaction,
+using the ServiceGroupContext. If you hope to use this functionality
+the services.xml file should have following format.</P>
+<PRE>&lt;serviceGroup&gt;
+  &lt;service name=&quot;Service1&quot;&gt;
+    &lt;!-- details for Service1 --&gt;
+  &lt;/service&gt;
+  &lt;service name=&quot;Service2&quot;&gt;
+    &lt;!-- details for Service2 --&gt;
+  &lt;/service&gt;
+  &lt;module ref=&quot;ModuleName&quot; /&gt;
+  &lt;parameter name=&quot;serviceGroupParam1&quot; locked=&quot;xsd:false&quot;&gt;value 1&lt;/parameter&gt;
+&lt;/serviceGroup&gt;</PRE><H4>
+Step3 :Create the Web Service Archive</H4>
 <P>Axis2 use &quot;.aar&quot; (Axis Archive) file as the deployment
 package for Web Services. So, for MyService we will use
 &quot;MyService.aar&quot; with the &quot;services.xml&quot; packaged
