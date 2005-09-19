@@ -19,16 +19,7 @@ package org.apache.axis2.interop.whitmesa.round1;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.interop.whitemesa.WhiteMesaIneterop;
 import org.apache.axis2.interop.whitemesa.round1.Round1Client;
-import org.apache.axis2.interop.whitemesa.round1.util.Round1ClientUtil;
-import org.apache.axis2.interop.whitemesa.round1.util.Round1FloatArrayUtil;
-import org.apache.axis2.interop.whitemesa.round1.util.Round1FloatUtil;
-import org.apache.axis2.interop.whitemesa.round1.util.Round1IntArrayUtil;
-import org.apache.axis2.interop.whitemesa.round1.util.Round1IntegerUtil;
-import org.apache.axis2.interop.whitemesa.round1.util.Round1StringArrayUtil;
-import org.apache.axis2.interop.whitemesa.round1.util.Round1StringUtil;
-import org.apache.axis2.interop.whitemesa.round1.util.Round1StructArrayUtil;
-import org.apache.axis2.interop.whitemesa.round1.util.Round1StructUtil;
-import org.apache.axis2.interop.whitemesa.round1.util.Round1VoidUtil;
+import org.apache.axis2.interop.whitemesa.round1.util.*;
 import org.apache.axis2.soap.SOAPEnvelope;
 
 public class Round1InteropTest extends WhiteMesaIneterop {
@@ -37,7 +28,7 @@ public class Round1InteropTest extends WhiteMesaIneterop {
     boolean success = false;
     String url = "http://soapinterop.java.sun.com:80/round2/base";
     String soapAction = "http://soapinterop.org/";
-    String resFilePath = "interopt/whitemesa/round1/";
+    String resFilePath = "interop/whitemesa/round1/";
     String tempPath = "";
     Round1ClientUtil util;
     Round1Client client = null;

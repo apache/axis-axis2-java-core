@@ -37,7 +37,7 @@ public class KSRoun2InteropTest extends WhiteMesaIneterop {
     File file = null;
     String url = "";
     String soapAction = "";
-    String resFilePath = "interopt/whitemesa/round2/";
+    String resFilePath = "interop/whitemesa/round2/";
     String tempPath = "";
     SunRound2ClientUtil util;
     private boolean results = false;

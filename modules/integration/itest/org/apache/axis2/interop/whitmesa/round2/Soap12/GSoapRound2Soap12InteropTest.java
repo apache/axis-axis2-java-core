@@ -42,7 +42,7 @@ public class GSoapRound2Soap12InteropTest extends WhiteMesaIneterop {
     File file = null;
     String url = "";
     String soapAction = "";
-    String resFilePath = "interopt/whitemesa/round2/SOAP12/";
+    String resFilePath = "interop/whitemesa/round2/SOAP12/";
     String tempPath = "";
     SunRound2ClientUtil util;
     private boolean results = false;

@@ -17,13 +17,7 @@
 package org.apache.axis2.interop.sun.complex;
 
 import junit.framework.TestCase;
-import org.apache.axis2.interop.sun.round4.complex.EchoBaseStructFaultClientutil;
-import org.apache.axis2.interop.sun.round4.complex.EchoBlockingClient;
-import org.apache.axis2.interop.sun.round4.complex.EchoExtendedStructFaultClientUtil;
-import org.apache.axis2.interop.sun.round4.complex.EchoMultipleFaults1ClientUtil;
-import org.apache.axis2.interop.sun.round4.complex.EchoMultipleFaults2ClientUtil;
-import org.apache.axis2.interop.sun.round4.complex.EchoSOAPStructFaultClientUtil;
-import org.apache.axis2.interop.sun.round4.complex.SunGroupHClientUtil;
+import org.apache.axis2.interop.sun.round4.complex.*;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
@@ -68,7 +62,7 @@ public class SunGroupHMain extends TestCase {
         util=new EchoSOAPStructFaultClientUtil();
         retEle = client.sendMsg(util,soapAction);
         assertTrue(
-                Compare(retEle,"/interopt/sun/round4/complex/resSoapStructFault.xml"));
+                Compare(retEle,"/interop/sun/round4/complex/resSoapStructFault.xml"));
     }
 
 
@@ -77,7 +71,7 @@ public class SunGroupHMain extends TestCase {
         util=new EchoBaseStructFaultClientutil();
         retEle = client.sendMsg(util,soapAction);
         assertTrue(
-                Compare( retEle,"/interopt/sun/round4/complex/resBaseStrutFault.xml"));
+                Compare( retEle,"/interop/sun/round4/complex/resBaseStrutFault.xml"));
 
     }
 
@@ -86,7 +80,7 @@ public class SunGroupHMain extends TestCase {
         util=new EchoExtendedStructFaultClientUtil();
         retEle = client.sendMsg(util,soapAction);
         assertTrue(
-                Compare(retEle,"/interopt/sun/round4/complex/resExtendedStructFault.xml"));
+                Compare(retEle,"/interop/sun/round4/complex/resExtendedStructFault.xml"));
 
     }
 
@@ -95,7 +89,7 @@ public class SunGroupHMain extends TestCase {
         util=new EchoMultipleFaults1ClientUtil();
         retEle = client.sendMsg(util,soapAction);
         assertTrue(
-                Compare( retEle,"/interopt/sun/round4/complex/resMultipleFaults1.xml"));
+                Compare( retEle,"/interop/sun/round4/complex/resMultipleFaults1.xml"));
     }
 
     //echomultiplefaults2
@@ -103,7 +97,7 @@ public class SunGroupHMain extends TestCase {
         util=new EchoMultipleFaults2ClientUtil();
         retEle = client.sendMsg(util,soapAction);
         assertTrue(
-                Compare( retEle,"/interopt/sun/round4/complex/resMultipleFaults2.xml"));
+                Compare( retEle,"/interop/sun/round4/complex/resMultipleFaults2.xml"));
     }
 
 }

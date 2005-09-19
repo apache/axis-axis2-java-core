@@ -41,7 +41,7 @@ public class SLRound2InteropTest extends WhiteMesaIneterop {
     String url = "";
     String soapAction = "";
     String FS = System.getProperty("file.separator");
-    String resFilePath = "interopt/whitemesa/round2/";
+    String resFilePath = "interop/whitemesa/round2/";
     String tempPath = "";
     SunRound2ClientUtil util;
     private boolean results = false;

@@ -19,13 +19,7 @@ package org.apache.axis2.interop.whitmesa.round2;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.interop.whitemesa.WhiteMesaIneterop;
 import org.apache.axis2.interop.whitemesa.round2.SunRound2Client;
-import org.apache.axis2.interop.whitemesa.round2.util.GroupbEcho2DStringArrayUtil;
-import org.apache.axis2.interop.whitemesa.round2.util.GroupbEchoNestedArrayUtil;
-import org.apache.axis2.interop.whitemesa.round2.util.GroupbEchoNestedStructUtil;
-import org.apache.axis2.interop.whitemesa.round2.util.GroupbEchoSimpleTypesAsStructUtil;
-import org.apache.axis2.interop.whitemesa.round2.util.GroupbEchoStructAsSimpleTypesUtil;
-import org.apache.axis2.interop.whitemesa.round2.util.GroupcVoidUtil;
-import org.apache.axis2.interop.whitemesa.round2.util.SunRound2ClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.*;
 import org.apache.axis2.soap.SOAPEnvelope;
 
 import java.io.File;
@@ -47,7 +41,7 @@ public class MStk2Round2InteropTest extends WhiteMesaIneterop {
     String url = "";
     String soapAction = "";
     String FS = System.getProperty("file.separator");
-    String resFilePath = "interopt/whitemesa/round2/";
+    String resFilePath = "interop/whitemesa/round2/";
     String tempPath = "";
     SunRound2ClientUtil util;
     private boolean results = false;

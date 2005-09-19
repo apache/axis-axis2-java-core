@@ -19,12 +19,7 @@ package org.apache.axis2.interop.whitmesa.round4.complex;
 import junit.framework.TestCase;
 import org.apache.axis2.XMLComparatorInterop;
 import org.apache.axis2.interop.whitemesa.round4.complex.EchoBlockingClient;
-import org.apache.axis2.interop.whitemesa.round4.complex.utils.EchoBaseStructFaultClientutil;
-import org.apache.axis2.interop.whitemesa.round4.complex.utils.EchoExtendedStructFaultClientUtil;
-import org.apache.axis2.interop.whitemesa.round4.complex.utils.EchoMultipleFaults1ClientUtil;
-import org.apache.axis2.interop.whitemesa.round4.complex.utils.EchoMultipleFaults2ClientUtil;
-import org.apache.axis2.interop.whitemesa.round4.complex.utils.EchoSOAPStructFaultClientUtil;
-import org.apache.axis2.interop.whitemesa.round4.complex.utils.WhitemesaR4ClientUtil;
+import org.apache.axis2.interop.whitemesa.round4.complex.utils.*;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
@@ -68,14 +63,14 @@ public class WhitemesaR4ComplexTest extends TestCase {
     public void testSoapStructFault() throws Exception {
         util=new EchoSOAPStructFaultClientUtil();
         retEle = client.sendMsg(util,soapAction);
-        assertTrue(Compare(retEle,"interopt/whitemesa/round4/complex/resSoapStructFault.xml"));
+        assertTrue(Compare(retEle,"interop/whitemesa/round4/complex/resSoapStructFault.xml"));
     }
 
     //echoBaseSoapStructFault
     public void testBaseStructFault()throws Exception{
         util=new EchoBaseStructFaultClientutil();
         retEle = client.sendMsg(util,soapAction);
-        assertTrue(Compare( retEle,"interopt/whitemesa/round4/complex/resBaseStructFault.xml"));
+        assertTrue(Compare( retEle,"interop/whitemesa/round4/complex/resBaseStructFault.xml"));
 
     }
 
@@ -83,7 +78,7 @@ public class WhitemesaR4ComplexTest extends TestCase {
     public void testExtendedStructFault()throws Exception{
         util=new EchoExtendedStructFaultClientUtil();
         retEle = client.sendMsg(util,soapAction);
-        assertTrue(Compare( retEle,"interopt/whitemesa/round4/complex/resExtendedStructFault.xml"));
+        assertTrue(Compare( retEle,"interop/whitemesa/round4/complex/resExtendedStructFault.xml"));
 
     }
 
@@ -91,14 +86,14 @@ public class WhitemesaR4ComplexTest extends TestCase {
     public void testMultiplefaults1()throws Exception{
         util=new EchoMultipleFaults1ClientUtil();
         retEle = client.sendMsg(util,soapAction);
-        assertTrue(Compare( retEle,"interopt/whitemesa/round4/complex/resMultipleFaults1.xml"));
+        assertTrue(Compare( retEle,"interop/whitemesa/round4/complex/resMultipleFaults1.xml"));
     }
 
     //echomultiplefaults2
     public void testMultiplefaults2()throws Exception{
         util=new EchoMultipleFaults2ClientUtil();
         retEle = client.sendMsg(util,soapAction);
-        assertTrue(Compare( retEle,"interopt/whitemesa/round4/complex/resMultipleFaults2.xml"));
+        assertTrue(Compare( retEle,"interop/whitemesa/round4/complex/resMultipleFaults2.xml"));
 
 
     }
