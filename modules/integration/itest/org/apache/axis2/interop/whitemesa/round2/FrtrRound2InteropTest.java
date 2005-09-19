@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.interop.whitmesa.round2;
+package org.apache.axis2.interop.whitemesa.round2;
 
 import org.apache.axis2.interop.whitemesa.WhiteMesaIneterop;
 import org.apache.axis2.interop.whitemesa.round2.util.SunRound2ClientUtil;
@@ -41,7 +41,6 @@ public class FrtrRound2InteropTest extends WhiteMesaIneterop {
     String resFilePath = "interop/whitemesa/round2/";
     String tempPath = "";
     SunRound2ClientUtil util;
-    private boolean results = false;
 
     public void testChack(){
             //just addding a test case , since all the tase casea are fail

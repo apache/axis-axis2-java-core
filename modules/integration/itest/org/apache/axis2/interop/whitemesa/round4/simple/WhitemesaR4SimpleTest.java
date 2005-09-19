@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.interop.whitmesa.round4.simple;
+package org.apache.axis2.interop.whitemesa.round4.simple;
 
 import junit.framework.TestCase;
 import org.apache.axis2.XMLComparatorInterop;

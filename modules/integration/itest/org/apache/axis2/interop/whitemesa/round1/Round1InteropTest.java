@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.interop.whitmesa.round1;
+package org.apache.axis2.interop.whitemesa.round1;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.interop.whitemesa.WhiteMesaIneterop;
