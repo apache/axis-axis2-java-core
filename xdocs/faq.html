@@ -70,21 +70,26 @@
 
     <h1>Maven</h1>
     <ol>
-      <li><strong>I have problems building with maven 1.1 </strong>....<br>
-
-        <p>It seems that maven 1.1 doesn't come bundled with the required
-        itest plugin and artifact plugin. Run followings to get it updated<br>
-        </p>
+      <li><strong>I just installed maven and it gives an error when I was
+        trying to run maven on Axis2 ......</strong>
+        <p>Axis2 requires itest plugin to run some of the tests. Better get
+        it using following command.</p>
         <ul>
           <li>maven plugin:download -DgroupId=maven-itest-plugin
             -DartifactId=maven-itest-plugin -Dversion=1.0
             -Dmaven.repo.remote=http://www.openejb.org/maven,http://www.ibiblio.org/maven</li>
         </ul>
+      </li>
+      <li><p><strong>I have problems building with maven 1.1</strong> ....<br>
+        </p>
+        <p>It seems that maven 1.1 doesn't come bundled with the required
+        artifact plugin. Run following to get it updated<br>
+        </p>
         <ul>
           <li>maven plugin:Download -DgroupId=maven
-            -DartifactId=maven-artifact-plugin -Dversion=1.6
-            <p><strong></strong></p>
-          </li>
+            -DartifactId=maven-artifact-plugin -Dversion=1.6.</li>
+          <p>You may need to update the itest plugin too, using the above
+          command in #1.</p>
         </ul>
       </li>
       <li><strong>What are the frequently used maven commands ?</strong></li>
@@ -146,8 +151,8 @@
             </td>
             <td>
               <div align="left">
-              To run the online-mode tests for say the modules/integration   
-               Run "maven itest" from modules/intergration</div>
+              To run the online-mode tests for say the modules/integration
+              Run "maven itest" from modules/intergration</div>
             </td>
           </tr>
           <tr>
