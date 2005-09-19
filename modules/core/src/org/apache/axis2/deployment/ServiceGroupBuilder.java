@@ -62,7 +62,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder{
                     throw new DeploymentException("Service Name required");
                 } else {
                     ServiceDescription serviceDecs = engine.getCurrentFileItem().getService(
-                            new QName(serviceName));
+                            serviceName);
                     if(serviceDecs == null){
                         serviceDecs = new ServiceDescription(new QName(serviceName));
                         engine.getCurrentFileItem().addService(serviceDecs);

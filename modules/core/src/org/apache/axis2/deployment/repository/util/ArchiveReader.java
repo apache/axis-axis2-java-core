@@ -251,8 +251,8 @@ public class ArchiveReader implements DeploymentConstants {
         rootelementName = services.getLocalName();
         if(SERVICE_ELEMENT.equals(rootelementName)){
             ServiceDescription serviceDesc = engine.getCurrentFileItem().
-                    getService(new QName(DescriptionBuilder.getShortFileName(
-                            engine.getCurrentFileItem().getName())));
+                    getService(DescriptionBuilder.getShortFileName(
+                            engine.getCurrentFileItem().getName()));
             if(serviceDesc == null){
                 serviceDesc = new ServiceDescription(
                         new QName(DescriptionBuilder.getShortFileName(

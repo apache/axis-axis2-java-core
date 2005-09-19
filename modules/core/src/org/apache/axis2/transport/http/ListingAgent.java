@@ -465,9 +465,8 @@ public class ListingAgent {
             }
 
         } else {
-            //todo fix me Deepal
-//            HashMap services = configContext.getAxisConfiguration().getServices();
-//            req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+            HashMap services = configContext.getAxisConfiguration().getServices();
+            req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         }
         res.sendRedirect(REMOVE_SERVICE_JSP_NAME);
     }
@@ -525,7 +524,7 @@ public class ListingAgent {
         HashMap services = configContext.getAxisConfiguration().getServices();
         String wsdl = req.getParameter("wsdl");
         if ((services != null) && !services.isEmpty()) {
-            Object serviceObj = services.get(new QName(serviceName));
+            Object serviceObj = services.get(serviceName);
             if (serviceObj != null) {
                 if (wsdl != null) {
                     res.setContentType("text/html");

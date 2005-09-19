@@ -186,10 +186,10 @@ public class ArchiveFileData {
 
 
     public void addService(ServiceDescription servicedesc){
-        service.put(servicedesc.getName(),servicedesc);
+        service.put(servicedesc.getName().getLocalPart(),servicedesc);
     }
 
-    public ServiceDescription getService(QName serviceName){
+    public ServiceDescription getService(String serviceName){
         return (ServiceDescription)service.get(serviceName);
     }
 

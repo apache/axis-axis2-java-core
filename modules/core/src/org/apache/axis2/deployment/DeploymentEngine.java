@@ -595,6 +595,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             archiveReader = new ArchiveReader();
                             String serviceStatus = "";
                             try {
+                                archiveReader.processWSDLs(currentArchiveFile,this);
                                 // ServiceDescription service = archiveReader.createService(currentArchiveFile.getAbsolutePath());
                                 ServiceGroupDescription sericeGroup =
                                         new ServiceGroupDescription(axisConfig);
