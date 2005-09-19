@@ -201,7 +201,7 @@ public class Call extends InOutMEPClient {
             ConfigurationContextFactory efac =
                     new ConfigurationContextFactory();
             sysContext = efac.buildClientConfigurationContext(clientHome);
-            ListenerManager.configurationContext = sysContext;
+           // ListenerManager.configurationContext = sysContext;
         } else {
             sysContext = ListenerManager.configurationContext;
         }
