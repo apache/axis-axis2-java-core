@@ -1,0 +1,17 @@
+<project name="samples" default="mtomSample">
+    <path id="axis.classpath">
+        <fileset dir="../../lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+    <path id="mtom.classpath">
+        <pathelement location="./mtomClient.jar"/>
+    </path>
+    <path id="sample.classpath">
+        <path refid="axis.classpath"/>
+        <path refid="mtom.classpath"/>
+    </path>
+    <target name="mtomSample">
+        <java classname="sample.mtom.imagetransfer.client.MTOMClient" classpathref="sample.classpath" fork="true"/>
+    </target>
+</project>
