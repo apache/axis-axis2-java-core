@@ -143,8 +143,9 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             //compile the type system
             XmlObject[] objeArray = convertToXMLObjectArray(xmlObjectsVector);
             BindingConfig config = new Axis2BindingConfig();
-            //todo Need to pick up the STS name dynamically so that different code can co-exist 
-            sts = XmlBeans.compileXmlBeans(DEFAULT_STS_NAME, null,
+
+            //set the STS name to null. it makes the generated class include a unique (but random) STS name
+            sts = XmlBeans.compileXmlBeans(null, null,
                     objeArray,
                     config, XmlBeans.getContextTypeLoader(),
                     new Axis2Filer(),

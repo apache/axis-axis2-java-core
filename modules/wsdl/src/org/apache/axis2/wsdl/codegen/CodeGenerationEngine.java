@@ -112,6 +112,7 @@ public class CodeGenerationEngine {
             IOException {
         String uri = ((CommandLineOption) parser.getAllOptions().get(
                 CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION)).getOptionValue();
+        //todo check the wsdl URI here
         return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(uri)
                 .getDescription();
     }

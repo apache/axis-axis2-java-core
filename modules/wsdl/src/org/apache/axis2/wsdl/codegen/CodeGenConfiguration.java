@@ -119,12 +119,12 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public CodeGenConfiguration(WSDLDescription wom, Map optionMap) {
         this.wom = wom;
 
+        String outputLocation = "."; //default output directory is the current working directory
         CommandLineOption clo =
                 ((CommandLineOption)optionMap.get(OUTPUT_LOCATION_OPTION));
-        if (clo == null) {
-            throw new RuntimeException("Cannot codegenerate! WSDL file is missing!");
+        if (clo != null) {
+            outputLocation = clo.getOptionValue();
         }
-        String outputLocation = clo.getOptionValue();
         this.outputLocation = new File(outputLocation);
 
         serverSide = (optionMap.get(SERVER_SIDE_CODE_OPTION) != null);
@@ -159,7 +159,6 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
             outputLanguage = langOption.getOptionValue();
         }
 
-// Unused code commented out by gdaniels...
         CommandLineOption dataBindingOption = (CommandLineOption) optionMap.get(
                 DATA_BINDING_TYPE_OPTION);
         if(dataBindingOption != null){
@@ -168,17 +167,6 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
 
-//    private void loadLanguge(String langName) {
-//        if (LanguageNames.JAVA.equalsIgnoreCase(langName)) {
-//            this.outputLanguage = XSLTConstants.LanguageTypes.JAVA;
-//        } else if (LanguageNames.C_SHARP.equalsIgnoreCase(langName)) {
-//            this.outputLanguage = XSLTConstants.LanguageTypes.C_SHARP;
-//        } else if (LanguageNames.C_PLUS_PLUS.equalsIgnoreCase(langName)) {
-//            this.outputLanguage = XSLTConstants.LanguageTypes.C_PLUS_PLUS;
-//        } else if (LanguageNames.VB_DOT_NET.equalsIgnoreCase(langName)) {
-//            this.outputLanguage = XSLTConstants.LanguageTypes.VB_DOT_NET;
-//        }
-//    }
 
     /**
      * @return Returns the parser.
