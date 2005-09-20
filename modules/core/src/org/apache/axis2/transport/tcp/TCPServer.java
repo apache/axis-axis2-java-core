@@ -110,13 +110,8 @@ public class TCPServer extends TransportListener implements Runnable {
      * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
      */
     public EndpointReference replyToEPR(String serviceName) throws AxisFault {
-        String hostAddress;
-        try {
-            hostAddress = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            throw new AxisFault(e);
-        }
-        return new EndpointReference("tcp://"+ hostAddress + (serversocket.getLocalPort()) +
+        //todo this has to fix
+        return new EndpointReference("tcp://127.0.0.1:" + (serversocket.getLocalPort()) +
                 "/axis/services/" +
                 serviceName);
     }
