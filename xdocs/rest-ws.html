@@ -1,69 +1,90 @@
-<html><head><TITLE>RESTful Web Services Support</TITLE></head>
-<body>
+<html>
+<head>
+  <meta http-equiv="content-type" content="">
+  <title>RESTful Web Services Support</title>
+</head>
+
+<body lang="en">
 <h1>RESTful Web Services Support</h1>
 
-<p>REST is providing accses to the resources through the two methods GET and POST. The REST 
-Web services are reduced subset of the usual Web Service stack, and the Axis2 REST implementation 
-assumes following properties. 
+<p>REST is providing access to the resources through the two methods GET and
+POST. The REST Web services are reduced subset of the usual Web Service
+stack, and the Axis2 REST implementation assumes following properties.</p>
 <ol>
-<li>REST Web services are Synchronous, and Request Response in nature.</li>
-<li>When the rest Web Services are accessed via GET the service and the operations are identified based on the url and the parameters are assumed as parameters of the Web Service. In this case the GET based REST web services supports only simple types as arguments.</li>
-<li>POST based web services  do not need a SOAP Envelope or SOAP Body,REST Web Services do not have Headers and the payload is directly sent.</li>
+  <li>REST Web services are Synchronous, and Request Response in nature.</li>
+  <li>When the rest Web Services are accessed via GET the service and the
+    operations are identified based on the url and the parameters are assumed
+    as parameters of the Web Service. In this case the GET based REST web
+    services supports only simple types as arguments.</li>
+  <li>POST based web services  do not need a SOAP Envelope or SOAP Body,REST
+    Web Services do not have Headers and the payload is directly sent.</li>
 </ol>
 
-<p>Axis2 can be configured as REST Cantainer and can be used to send and receive restful web services
- requests and responses. The REST Web Services can be access in two ways, using HTTP GET and POST. </p> 
- 
- <h2>Doing REST web services with HTTP POST</h2>   
-<p>REST support can be enabled in the Server side by adding the following line to the axis.xml file.</p>
+<p>Axis2 can be configured as REST Container and can be used to send and
+receive restful web services requests and responses. The REST Web Services
+can be access in two ways, using HTTP GET and POST.</p>
 
-<font color="blue"> &lt; parameter name="enableREST" locked="xsd:false" &gt; true &lt;/parameter&gt; </font> 
-<p>But it acts both as a REST endpoint as well as a SOAP endpoint. When a Message is received if the 
-content type is text/xml andif the SOAP Action Headers are missing, then the Message is treated as a 
-RESTful Message. Else they are treated as usual SOAP Messages.</p>      
+<h2>Doing REST web services with HTTP POST</h2>
 
-<p>On sending a message out, the fact that the message is RESTful or not, can be decided 
-from the client API or by deployment descriptor of the client.</p>
-<ol>   
-<li> By adding an entry in the client.xml file similar to that of the axis.xml.</li>
-<li>Through client API e.g. <source><pre>call.setDoREST(true);</pre></source></li>
+<p>REST support can be enabled in the Server side by adding the following
+line to the axis.xml file.</p>
+<font color="blue">&lt; parameter name="enableREST" locked="xsd:false" &gt;
+true &lt;/parameter&gt; </font>
+
+<p>But it acts both as a REST endpoint as well as a SOAP endpoint. When a
+Message is received if the content type is text/xml and if the SOAP Action
+Headers are missing, then the Message is treated as a RESTful Message. Else
+they are treated as usual SOAP Messages.</p>
+
+<p>On sending a message out, the fact that the message is RESTful or not, can
+be decided from the client API or by deployment descriptor of the client.</p>
+<ol>
+  <li>By adding an entry in the client.xml file similar to that of the
+    axis.xml.</li>
+  <li>Through client API e.g. <source>
+    <pre>call.setDoREST(true);</pre>
+    </source></li>
 </ol>
 
 <h3>Sample REST - HTTP POST Client</h3>
-<p>There's a userguide.clients.RESTClient.java which demonstrates the usage of the above, using 
-the <source><pre>echo</pre></source> operation of the <source><pre>userguide.example1.MyService</pre></source> of the samples. 
-And the class source will be as follows
-<source>
-<pre>
-public class MyServiceClient {
+
+<p>There's a userguide.clients.RESTClient.java which demonstrates the usage
+of the above, using the <source></p>
+<pre>echo</pre>
+</source>operation of the <source>
+<pre>userguide.example1.MyService</pre>
+</source>of the samples. And the class source will be as follows <source>
+<pre>public class MyServiceClient {
     private static String toEpr = "http://localhost:9080/axis2/services/MyService/echo";
     
     public static void main(String[] args) throws AxisFault {
         OMElement payload = ...
-		Call  call = new Call();
-		call.setTo(new EndpointReference(toEpr));
-		call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP,false);
-		call.setDoREST(true);
-			
-		OMElement result = call.invokeBlocking("thiscanbeanything", payload);
-		.... use the result
-		call.close();
-	}
-}
-</pre>
+                Call  call = new Call();
+                call.setTo(new EndpointReference(toEpr));
+                call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP,false);
+                call.setDoREST(true);
+                        
+                OMElement result = call.invokeBlocking("thiscanbeanything", payload);
+                .... use the result
+                call.close();
+        }
+}</pre>
 </source>
+<h2>Access a REST Web Service Via HTTP GET</h2>
 
-  <h2>Access a REST Web Service Via HTTP GET</h2>   
-  <p>Axis2 let the users access Web Service that has simple type parameters via the HTTP GET. 
-  For example following URL requests the version service Via HTTP GET. But the Web Services 
-  arrived via GET assumes REST . Other parameter are converted in to the XML and put them in to the SOAP Body.</p> 
-    <source><pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre></source>
-    <p>Result can be shown in the browser as follows.</p>   
-    <img src="images/userguide/http-get-ws.png"/>         
-    
-    <p>For an example  request <source><pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre></source> 
-    will be converted to the following SOAP Message for processing by Axis2</p>   
-<source>    
+<p>Axis2 let the users access Web Service that has simple type parameters via
+the HTTP GET. For example following URL requests the version service Via HTTP
+GET. But the Web Services arrived via GET assumes REST . Other parameter are
+converted in to the XML and put them in to the SOAP Body.</p>
+<source><pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre>
+</source>
+<p>Result can be shown in the browser as follows.</p>
+<img src="images/userguide/http-get-ws.png">
+
+<p>For an example  request <source></p>
+<pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre>
+</source>will be converted to the following SOAP Message for processing by
+Axis2<source>
 <pre> 
    &lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"&gt;
       &lt;soapenv:Body&gt;   
@@ -71,5 +92,5 @@ public class MyServiceClient {
       &lt;/soapenv:Body&gt;
    &lt;/soapenv:Envelope&gt;
     </pre>
-</source>
-  </body></html>
+</source></body>
+</html>

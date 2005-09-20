@@ -4,11 +4,11 @@
   <title>Axis2 FAQ</title>
 </head>
 
-<body>
+<body lang="en">
 <h1>General</h1>
 <ol>
   <li><strong>I see OMElements in all the signatures, in the stubs, Client
-    API and in skeltons. Where is data binding?</strong><br>
+    API and in skeletons. Where is data binding?</strong><br>
 
     <p>Axis2 supports databinding using XML-Beans from 0.9 release. For more
     information please read the <a href="userguide.html">user guide</a></p>
@@ -17,9 +17,9 @@
     represents?</strong></a><br>
 
     <p>OMElement is Axis2 representation of XML, it provide a tree model like
-    DOM. If you are familer with DOM or JDOM you can soon get familerize with
-    OM quickly. For more information read<a href="OMTutorial.html"> Axiom
-    Tutorial</a></p>
+    DOM. If you are familiar with DOM or JDOM you can soon get familiarize
+    with OM quickly. For more information read<a href="OMTutorial.html">
+    Axiom Tutorial</a></p>
   </li>
 </ol>
 
@@ -49,18 +49,18 @@
     care by the Client API and the Addressing Headers are under the Control
     of Axis2.</p>
   </li>
-  <li><strong>When I try to do a non blocking call with use Seperate Listener
+  <li><strong>When I try to do a non blocking call with use Separate Listener
     true I get the error <i>to do two Transport Channels the Addressing
-    Modules must be engeged</i>, Why is this?</strong><br>
+    Modules must be engaged</i>, Why is this?</strong><br>
 
     <p>To do the two transport Channel invocation you need to engage the
-    addressing module. You can enable it by uncommenting the entry in the
+    addressing module. You can enable it by un-commenting the entry in the
     axis2.xml file or Call.engageModule(QName).</p>
   </li>
   <li><a name="b5"><strong>What is the Axis Repository?</strong></a><br>
 
     <p>Repository store the configuration of Axis2, the users should specify
-    the repository folder starting the Aixs Server (HTTP ot TCP). In the case
+    the repository folder starting the Axis Server (HTTP or TCP). In the case
     of tomcat it is the webapps/axis2/WEB-INF folder. Following picture shows
     a sample repository.</p>
     <img src="images/faq/1.jpg">
@@ -152,7 +152,7 @@
             <td>
               <div align="left">
               To run the online-mode tests for say the modules/integration
-              Run "maven itest" from modules/intergration</div>
+              Run "maven itest" from modules/integration</div>
             </td>
           </tr>
           <tr>
