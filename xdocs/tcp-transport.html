@@ -7,8 +7,8 @@
 <body lang="en">
 <h1>TCP transport</h1>
 
-<p>Axis2 supports TCP as a default transport, Axis2 has support for both send
-and receive SOAP Messages. TCP transports do not have any Application level
+<p>Axis2 supports TCP as a transport. Axis2 has support for both send
+and receive SOAP Messages via TCP. TCP transports do not have any Application level
 Headers and the SOAP Message that sends should be self contained. This make
 the interaction fast and simple. Yet the main limitation of the TCP transport
 is absence of the request URI, and the Service dispatching should use a
@@ -16,10 +16,11 @@ alternative method. There is two main alternatives methods.</p>
 <ol>
   <li>Use the name space URI of the first child element for the
   dispatching</li>
-  <li>Enable the WS-Addressing</li>
+  <li>Enable the WS-Addressing, in the case of Alpha release, Addressing
+   is default</li>
 </ol>
 
-<p>When the TCP request is sent it is users responsibility either to use
+<p>When the TCP request is sent, it is users responsibility either to use
 addressing or use alternative method.</p>
 
 <h2>How to start the TCPServer</h2>
@@ -42,17 +43,16 @@ code segment demonstrate how it can be done.</p>
 
 org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(serviceContext);
 call.setTo(targetEPR);
-call.engageModule(new QName(Constants.MODULE_ADDRESSING));
 call.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, false);
 
 OMElement result =
-        (OMElement) call.invokeBlocking("echo", payload);
+        (OMElement) call.invokeBlocking("operation", payload);
 call.close();</pre>
 </source>
 <p>The method to note is setTransportInfo that accepts sender transport,
-Listener transport and should the return path of the TCP Channel need to be
-used. It is good Idea to engage the addressing module to make the SOAP
-Message self contained. Only other option I can think of is to use the URI of
+Listener transport and return path of the TCP Channel need to be
+used. Since the addressing is engage SOAP Message itself contained. Only other option 
+I can think of is to use the URI of
 the first child of the SOAP Body to dispatch the service. The Parameter is of
 the type <a href="faq.html#a2">OMElement</a>, the XML representation of
 Axis2.</p>
@@ -71,7 +71,7 @@ while trying the userguide it will be automatically avaliable.</p>
 <p>Axis2 TCP transport has two parts, a transport Listener for receiving the
 Messages and transport Sender to send the SOAP Messages. Axis2 installation
 has both the components built in to itself  by default. In the axis2.xml
-configuration file the two would look like follows.</p>
+configuration file, two would look like follows.</p>
 
 <p>If the TCP server is started manually this configuration does not take
 effect, this affect the transport Listeners starts by Axis2. (e.g. Listener
