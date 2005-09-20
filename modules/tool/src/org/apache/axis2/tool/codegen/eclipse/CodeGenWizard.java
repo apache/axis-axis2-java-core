@@ -1,5 +1,9 @@
 package org.apache.axis2.tool.codegen.eclipse;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+import java.util.Vector;
+
 import org.apache.axis2.tool.codegen.Java2WSDLGenerator;
 import org.apache.axis2.tool.codegen.WSDL2JavaGenerator;
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
@@ -26,9 +30,6 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 
 /**
  * The main wizard for the codegen wizard
@@ -135,7 +136,6 @@ public class CodeGenWizard extends Wizard implements INewWizard
       }
       catch (Exception e)
       {
-          e.printStackTrace();
          MessageDialog.openError(getShell(), CodegenWizardPlugin.getResourceString("general.Error"), e.getMessage());
          return false;
       }
@@ -143,6 +143,7 @@ public class CodeGenWizard extends Wizard implements INewWizard
          CodegenWizardPlugin.getResourceString("wizard.success"));
       return true;
    }
+   
 
    /**
     * The worker method, generates the code itself.
@@ -194,7 +195,7 @@ public class CodeGenWizard extends Wizard implements INewWizard
             }
             catch (Exception e)
             {
-                
+               e.printStackTrace(); 
                throw new RuntimeException(e);
             }
 
@@ -242,18 +243,37 @@ public class CodeGenWizard extends Wizard implements INewWizard
                  try
                  {
                      monitor.worked(1);
-                     
-                     new Java2WSDLGenerator().emit(
-                             javaSourceSelectionPage.getClassLocation(),
-                             javaSourceSelectionPage.getClassName(),
-                             java2wsdlOptionsPage.getLocationURL(),
-                             java2wsdlOptionsPage.getInputWSDLName(),
-                             java2wsdlOptionsPage.getBindingName(),
-                             java2wsdlOptionsPage.getPortypeName(),
-                             java2wsdlOptionsPage.getStyle(),
-                             java2wsdlOutputLocationPage.getFullFileName(),
-                             java2wsdlOptionsPage.getMode(),
-                             javaSourceSelectionPage.getSelectedMethods()
+                    String classLocation = javaSourceSelectionPage.getClassLocation();
+                    monitor.worked(1);
+                    String className = javaSourceSelectionPage.getClassName();
+                    monitor.worked(1);
+                    String locationURL = java2wsdlOptionsPage.getLocationURL();
+                    monitor.worked(1);
+                    String inputWSDLName = java2wsdlOptionsPage.getInputWSDLName();
+                    monitor.worked(1);
+                    String bindingName = java2wsdlOptionsPage.getBindingName();
+                    monitor.worked(1);
+                    String portypeName = java2wsdlOptionsPage.getPortypeName();
+                    monitor.worked(1);
+                    String style = java2wsdlOptionsPage.getStyle();
+                    monitor.worked(1);
+                    String fullFileName = java2wsdlOutputLocationPage.getFullFileName();
+                    monitor.worked(1);
+                    int mode = java2wsdlOptionsPage.getMode();
+                    monitor.worked(1);
+                    Vector selectedMethods = javaSourceSelectionPage.getSelectedMethods();
+                    monitor.worked(1);
+                    new Java2WSDLGenerator().emit(
+                             classLocation,
+                             className,
+                             locationURL,
+                             inputWSDLName,
+                             bindingName,
+                             portypeName,
+                             style,
+                             fullFileName,
+                             mode,
+                             selectedMethods
                      );
                      monitor.worked(1);
                  }

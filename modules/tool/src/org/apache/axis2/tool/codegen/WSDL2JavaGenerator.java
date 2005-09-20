@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.axis2.tool.codegen;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.wsdl.WSDLException;
 
 import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.wsdl.codegen.CommandLineOption;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
 import org.apache.wsdl.WSDLDescription;
-
-import javax.wsdl.WSDLException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class WSDL2JavaGenerator {
@@ -69,7 +71,7 @@ public class WSDL2JavaGenerator {
             		  boolean isServerSide,
             		  boolean isServerXML,
             		  boolean isTestCase,
-            		  String WSDLFileName,
+            		  String WSDLURI,
             		  String packageName,
             		  String selectedLanguage,
             		  String outputLocation
@@ -78,7 +80,7 @@ public class WSDL2JavaGenerator {
        Map optionMap = new HashMap();
        //WSDL file name
        optionMap.put(CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION, new CommandLineOption(
-          CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION, getStringArray(WSDLFileName)));
+          CommandLineOptionConstants.WSDL_LOCATION_URI_OPTION, getStringArray(WSDLURI)));
        
        //Async only
        if (isAyncOnly)
@@ -125,21 +127,38 @@ public class WSDL2JavaGenerator {
        // This is set to the default NONE option since eclipse cannot load the XBeans thingy
        //###########################################################################################
        optionMap.put(CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, new CommandLineOption(
-               CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, getStringArray(0+"")));
+               CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION, getStringArray("none")));
        return optionMap;
     }
     /**
      * Reads the WSDL Object Model from the given location.
      * 
-     * @param wsdlLocation the filesystem location (full path) of the WSDL file to read in.
+     * @param wsdlURI the filesystem location (full path) of the WSDL file to read in.
      * @return the WSDLDescription object containing the WSDL Object Model of the given WSDL file
      * @throws WSDLException when WSDL File is invalid
      * @throws IOException on errors reading the WSDL file
      */
-    public WSDLDescription getWOM(String wsdlLocation) throws WSDLException, IOException
+    public WSDLDescription getWOM(String wsdlURI) throws WSDLException, IOException
     {
-       InputStream in = new FileInputStream(new File(wsdlLocation));
-       return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in).getDescription();
+       try {
+           InputStream in = null;
+           if (wsdlURI.startsWith("http")){
+              in = new URL(wsdlURI).openStream();
+           }else{
+               //treat the uri as a file name
+               in = new FileInputStream(new File(wsdlURI)); 
+           }
+         
+        return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in).getDescription();
+    } catch (FileNotFoundException e) {
+       throw e;
+    } catch (WSDLException e) {
+       throw e;
+    } catch (Exception e){
+        e.printStackTrace();
+        throw new RuntimeException(e);
+    }
+    
     }
 
     /**

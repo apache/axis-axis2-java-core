@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.axis2.tool.codegen.eclipse.ui;
 
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
