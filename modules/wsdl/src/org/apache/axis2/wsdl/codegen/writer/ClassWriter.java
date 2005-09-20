@@ -114,7 +114,9 @@ public abstract class ClassWriter {
                 getFileExtensionForLanguage(language));
         //set the existing flag
         fileExists = outputFile.exists();
-        this.stream = new FileOutputStream(outputFile);
+        if (!fileExists){
+            this.stream = new FileOutputStream(outputFile);
+        }
     }
 
     /**

@@ -29,14 +29,7 @@ import org.apache.wsdl.WSDLTypes;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPBody;
 import org.apache.wsdl.extensions.Schema;
-import org.apache.xmlbeans.BindingConfig;
-import org.apache.xmlbeans.Filer;
-import org.apache.xmlbeans.SchemaProperty;
-import org.apache.xmlbeans.SchemaType;
-import org.apache.xmlbeans.SchemaTypeSystem;
-import org.apache.xmlbeans.XmlBeans;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -59,9 +52,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class XMLBeansExtension extends AbstractCodeGenerationExtension {
-    private static final String DEFAULT_STS_NAME = "foo";
+    private static final String DEFAULT_STS_NAME = "axis2";
 
 
 
@@ -96,7 +91,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
 
             List typesArray = typesList.getExtensibilityElements();
             WSDLExtensibilityElement extensiblityElt;
-            SchemaTypeSystem sts;
+            SchemaTypeSystem sts = null;
             Vector xmlObjectsVector= new Vector();
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
@@ -108,6 +103,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                 if (ExtensionConstants.SCHEMA.equals(extensiblityElt.getType())) {
                     schema = (Schema) extensiblityElt;
                     XmlOptions options = new XmlOptions();
+
                     options.setLoadAdditionalNamespaces(
                             configuration.getWom().getNamespaces()); //add the namespaces
 
@@ -134,12 +130,26 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                         ,null));
             }
 
+//            //////////////////////////////////////////////////////////////////////////
+//            for (int i = 0; i < xmlObjectsVector.size(); i++) {
+//                XmlObject xmlObject = (XmlObject) xmlObjectsVector.get(i);
+//                //System.out.println("xmlObject = " + xmlObject.toString());
+//                System.out.println("xmlObject = " + xmlObject.getClass().getName());
+//
+//            }
+//            //System.out.println("xmlObjectsVector = " + xmlObjectsVector);
+            //////////////////////////////////////////////////////////////////////////
+
             //compile the type system
+            XmlObject[] objeArray = convertToXMLObjectArray(xmlObjectsVector);
+            BindingConfig config = new Axis2BindingConfig();
+            //todo Need to pick up the STS name dynamically so that different code can co-exist 
             sts = XmlBeans.compileXmlBeans(DEFAULT_STS_NAME, null,
-                    convertToXMLObjectArray(xmlObjectsVector),
-                    new BindingConfig(), XmlBeans.getContextTypeLoader(),
+                    objeArray,
+                    config, XmlBeans.getContextTypeLoader(),
                     new Axis2Filer(),
                     null);
+
 
             // prune the generated schema type system and add the list of base64 types
             FindBase64Types(sts);
@@ -212,6 +222,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             ArrayList additionalSchemaElements = new ArrayList();
             DocumentBuilder documentBuilder = getNamespaceAwareDocumentBuilder();
             for (int i = 0; i < schemaNames.length; i++) {
+                //the location for the third party schema;s is hardcoded
                 InputStream schemaStream = this.getClass().getResourceAsStream("/org/apache/axis2/wsdl/codegen/schema/"+ schemaNames[i]);
                 Document doc = documentBuilder.parse(schemaStream);
                 additionalSchemaElements.add(doc.getDocumentElement());
@@ -301,5 +312,37 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             return new FileWriter(file);
         }
     }
+
+    /**
+     * Custom binding configuration for the code generator. This controls
+     * how the namespaces are suffixed/prefixed
+     */
+    private class Axis2BindingConfig extends BindingConfig{
+        Pattern pattern = Pattern.compile("//[\\w\\.]*");
+        private static final String DATABINDING_PACKAGE_SUFFIX = "databinding";
+
+        public String lookupPackageForNamespace(String uri) {
+            //take the **.**.** part from the uri
+            Matcher matcher = pattern.matcher(uri);
+            String packageName = "";
+            if (matcher.find()){
+                String tempPackageName = matcher.group().replaceFirst("//","");
+                //reverse the names
+                String[] parts =  tempPackageName.split("\\.");
+                for (int i = parts.length-1; i >= 0; i--) {
+                    packageName= packageName + "." + parts[i];
+
+                }
+
+            }else{
+                //replace all none word chars with an underscore
+                packageName = uri.replaceAll("\\W","_");
+            }
+
+            return configuration.getPackageName()==null?"":(configuration.getPackageName()+".") + DATABINDING_PACKAGE_SUFFIX +packageName;
+        }
+
+    }
+
 }
 

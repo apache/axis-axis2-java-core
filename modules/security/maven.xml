@@ -101,8 +101,8 @@
 
         <delete includeEmptyDirs="true">
             <fileset dir="${basedir}/target/classes/org/apache/axis2/oasis/"/>
-            <fileset dir="${basedir}/target/classes/org/xmlsoap/"/>
-            <fileset dir="${basedir}/target/classes/org/oasisOpen/"/>
+            <!--<fileset dir="${basedir}/target/classes/org/xmlsoap/"/>-->
+            <!--<fileset dir="${basedir}/target/classes/org/oasisOpen/"/>-->
         </delete>
 
        	<j:set var="interop.dir" value="target/interop"/>
