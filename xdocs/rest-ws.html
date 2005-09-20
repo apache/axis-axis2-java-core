@@ -27,7 +27,7 @@ can be access in two ways, using HTTP GET and POST.</p>
 <h2>Doing REST web services with HTTP POST</h2>
 
 <p>REST support can be enabled in the Server side by adding the following
-line to the axis.xml file.</p>
+line to the axis2.xml file.</p>
 <font color="blue">&lt; parameter name="enableREST" locked="xsd:false" &gt;
 true &lt;/parameter&gt; </font>
 
@@ -39,8 +39,7 @@ they are treated as usual SOAP Messages.</p>
 <p>On sending a message out, the fact that the message is RESTful or not, can
 be decided from the client API or by deployment descriptor of the client.</p>
 <ol>
-  <li>By adding an entry in the client.xml file similar to that of the
-    axis.xml.</li>
+  <li>By adding an entry in the client repositories axis2.xml file.</li>
   <li>Through client API e.g. <source>
     <pre>call.setDoREST(true);</pre>
     </source></li>
@@ -55,7 +54,7 @@ of the above, using the <source></p>
 <pre>userguide.example1.MyService</pre>
 </source>of the samples. And the class source will be as follows <source>
 <pre>public class MyServiceClient {
-    private static String toEpr = "http://localhost:9080/axis2/services/MyService/echo";
+    private static String toEpr = "http://localhost:8080/axis2/services/MyService/echo";
     
     public static void main(String[] args) throws AxisFault {
         OMElement payload = ...
@@ -76,13 +75,13 @@ of the above, using the <source></p>
 the HTTP GET. For example following URL requests the version service Via HTTP
 GET. But the Web Services arrived via GET assumes REST . Other parameter are
 converted in to the XML and put them in to the SOAP Body.</p>
-<source><pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre>
+<source><pre>http://127.0.0.1:8080/axis2/services/version/getVersion</pre>
 </source>
 <p>Result can be shown in the browser as follows.</p>
 <img src="images/userguide/http-get-ws.png">
 
 <p>For an example  request <source></p>
-<pre>http://127.0.0.1:8080/axis2/services/Version/getVersion</pre>
+<pre>http://127.0.0.1:8080/axis2/services/version/getVersion</pre>
 </source>will be converted to the following SOAP Message for processing by
 Axis2<source>
 <pre> 
