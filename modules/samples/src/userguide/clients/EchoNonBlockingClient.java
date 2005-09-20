@@ -34,7 +34,7 @@ import java.io.StringWriter;
  * Message Exchage Pattern IN-OUT
  */
 public class EchoNonBlockingClient {
-    private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/myservice");
+    private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService");
 
     public static void main(String[] args) {
         try {

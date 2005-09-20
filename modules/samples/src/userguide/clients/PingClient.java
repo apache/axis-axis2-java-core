@@ -26,7 +26,7 @@ import org.apache.axis2.om.OMElement;
  * Message Exchage Pattern IN-Only 
  */
 public class PingClient {
-    private static EndpointReference targetEPR = new EndpointReference("http://localhost:8080/axis2/services/myservice");
+    private static EndpointReference targetEPR = new EndpointReference("http://localhost:8080/axis2/services/MyService");
 
     public static void main(String[] args) {
         try {

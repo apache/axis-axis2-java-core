@@ -36,7 +36,7 @@ import java.io.StringWriter;
  * Ulitmate asynchronous service invocation sample.
  */
 public class EchoNonBlockingDualClient {
-    private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService/echo");
+    private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService");
 
     public static void main(String[] args) {
         try {

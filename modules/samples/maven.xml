@@ -106,6 +106,8 @@
                 <include name="userguide/loggingmodule/**/*.class"/>
             </fileset>
         </jar>
+	<ant:copy file="script/userguide/build.xml" tofile="target/samples/userguide/build.xml"/>
+
     </goal>
     <!-- ================================================================ -->
     <!--- Amazon Qaueing Service Sample -->
@@ -290,6 +292,7 @@
 	<ant:copy file="target/security/SecureService.aar" tofile="target/samples/security/SecureService.aar"/>
 	<ant:copy file="target/security/secUtil.jar" tofile="target/samples/security/secUtil.jar"/>
 	<ant:copy file="resources/security/README.txt" tofile="target/samples/security/README.txt"/>
+	<ant:copy file="resources/security/build.xml" tofile="target/samples/security/build.xml"/>
 
 	<delete dir="target/security/"/>
 
