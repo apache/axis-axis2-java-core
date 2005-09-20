@@ -271,6 +271,11 @@ public class AxisConfigurationImpl implements AxisConfiguration {
             allservices.put(description.getName().getLocalPart(),description);
             notifyObservers(AxisEvent.SERVICE_DEPLOY ,description);
         }
+        Iterator enModule = engagedModules.iterator();
+        while (enModule.hasNext()) {
+            QName moduleDescription = (QName) enModule.next();
+            serviceGroup.addModule(moduleDescription);
+        }
         serviceGroups.put(serviceGroup.getServiceGroupName(),serviceGroup);
     }
 

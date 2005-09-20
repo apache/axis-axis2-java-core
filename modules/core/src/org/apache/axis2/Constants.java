@@ -112,6 +112,8 @@ public class Constants {
     public static final String ENGAGE_GLOBAL_MODULE = "engagingglobally";
     public static final String ENGAGE_MODULE_TO_SERVICE = "engageToService";
 
+    public static final String ENGAGE_MODULE_TO_SERVICE_GROUP = "engageToServiceGroup";
+
     public static final String ADMIN_LOGGING = "adminloging";
 
     public static final String VIEW_GLOBAL_HANDLERS = "viewGlobalHandlers";
@@ -119,11 +121,13 @@ public class Constants {
     public static final String EDIR_SERVICE_PARA = "editServicepara";
     public static final String SELECT_SERVICE_FOR_PARA_EDIT = "selectServiceParaEdit";
     public static final String VIEW_SERVICE_HANDLERS = "viewServiceHandlers";
+    public static final String LIST_SERVIC_GROUPS = "listServciceGroups";
 
     /**
      * Field SERVICE_MAP
      */
     public static final String SERVICE_MAP = "servicemap";
+    public static final String SERVICE_GROUP_MAP = "serviceGroupmap";
 
     public static final String SERVICE = "service";
 

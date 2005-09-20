@@ -46,6 +46,8 @@ public class ListingAgent {
      */
     private static final String LIST_MULTIPLE_SERVICE_JSP_NAME = "listServices.jsp";
 
+    private static final String LIST_SERVICE_GROUP_JSP = "ListServiceGroup.jsp";
+
     private static final String LIST_SRVICES_JSP_NAME = "listService.jsp";
 
     private static final String SELECT_SERVICE_JSP_NAME = "SelectService.jsp";
@@ -63,6 +65,7 @@ public class ListingAgent {
     private static final String ENGAGING_MODULE_GLOBALLY_JSP_NAME = "engagingglobally.jsp";
 
     private static final String ENGAGING_MODULE_TO_SERVICE_JSP_NAME = "engagingtoaservice.jsp";
+    private static final String ENGAGING_MODULE_TO_SERVICE_GROUP_JSP_NAME = "EngageToServiceGroup.jsp";
 
     /**
      * Field LIST_SINGLE_SERVICE_JSP_NAME
@@ -106,7 +109,7 @@ public class ListingAgent {
             return;
         } else if (
                 (filePart != null) &&
-                filePart.endsWith(Constants.LIST_GLOABLLY_ENGAGED_MODULES)) {
+                        filePart.endsWith(Constants.LIST_GLOABLLY_ENGAGED_MODULES)) {
             listGloballyModules(httpServletRequest, httpServletResponse);
             return;
         } else if ((filePart != null) &&
@@ -120,6 +123,10 @@ public class ListingAgent {
         } else if ((filePart != null) &&
                 filePart.endsWith(Constants.ENGAGE_MODULE_TO_SERVICE)) {
             engageModulesToService(httpServletRequest, httpServletResponse);
+            return;
+        }  else if ((filePart != null) &&
+                filePart.endsWith(Constants.ENGAGE_MODULE_TO_SERVICE_GROUP)) {
+            engageModulesToServiceGroup(httpServletRequest, httpServletResponse);
             return;
         } else if ((filePart != null) &&
                 filePart.endsWith(Constants.ADMIN_LOGGING)) {
@@ -139,12 +146,12 @@ public class ListingAgent {
             return;
         } else if (
                 (filePart != null) &&
-                filePart.endsWith(Constants.LIST_SERVICE_FOR_MODULE_ENGAMNET)) {
+                        filePart.endsWith(Constants.LIST_SERVICE_FOR_MODULE_ENGAMNET)) {
             lsitServiceformodules(httpServletRequest, httpServletResponse);
             return;
         } else if (
                 (filePart != null) &&
-                filePart.endsWith(Constants.LIST_OPERATIONS_FOR_THE_SERVICE)) {
+                        filePart.endsWith(Constants.LIST_OPERATIONS_FOR_THE_SERVICE)) {
             engageModulesToOpeartion(httpServletRequest, httpServletResponse);
             return;
         } else if ((filePart != null) &&
@@ -159,7 +166,13 @@ public class ListingAgent {
                 filePart.endsWith(Constants.EDIR_SERVICE_PARA)) {
             chageParameters(httpServletRequest, httpServletResponse);
             return;
+        }else if ((filePart != null) &&
+                filePart.endsWith(Constants.LIST_SERVIC_GROUPS)) {
+            listServiceGroups(httpServletRequest, httpServletResponse);
+            return;
         }
+
+
 
         if ((filePart != null) &&
                 filePart.endsWith(Constants.LISTSERVICES)) {
@@ -186,6 +199,14 @@ public class ListingAgent {
         req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
                 configContext.getAxisConfiguration().getFaultyServices());
         res.sendRedirect(LIST_MULTIPLE_SERVICE_JSP_NAME);
+    }
+
+    private void listServiceGroups(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        Iterator serviceGroups = configContext.getAxisConfiguration().getServiceGroups();
+        HashMap services = configContext.getAxisConfiguration().getServices();
+        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        req.getSession().setAttribute(Constants.SERVICE_GROUP_MAP, serviceGroups);
+        res.sendRedirect(LIST_SERVICE_GROUP_JSP);
     }
 
     /**
@@ -223,12 +244,12 @@ public class ListingAgent {
         }
         String adminUserName =
                 (String) configContext.getAxisConfiguration()
-                .getParameter(Constants.USER_NAME)
-                .getValue();
+                        .getParameter(Constants.USER_NAME)
+                        .getValue();
         String adminPassword =
                 (String) configContext.getAxisConfiguration()
-                .getParameter(Constants.PASSWORD)
-                .getValue();
+                        .getParameter(Constants.PASSWORD)
+                        .getValue();
         if (username != null
                 && password != null
                 && username.equals(adminUserName)
@@ -296,9 +317,9 @@ public class ListingAgent {
         }
         req.getSession().setAttribute(Constants.OPEARTION_MAP,
                 configContext
-                .getAxisConfiguration()
-                .getService(serviceName)
-                .getOperations());
+                        .getAxisConfiguration()
+                        .getService(serviceName)
+                        .getOperations());
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
         String operationName = req.getParameter("operation");
         if (serviceName != null && moduleName != null && operationName != null) {
@@ -306,13 +327,13 @@ public class ListingAgent {
                 OperationDescription od =
                         configContext.getAxisConfiguration().getService(
                                 serviceName)
-                        .getOperation(new QName(operationName));
+                                .getOperation(new QName(operationName));
                 od.engageModule(
                         configContext.getAxisConfiguration().getModule(
                                 new QName(moduleName)));
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                         moduleName +
-                        " module engaged to the operation Successfully");
+                                " module engaged to the operation Successfully");
             } catch (AxisFault axisFault) {
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                         axisFault.getMessage());
@@ -320,6 +341,39 @@ public class ListingAgent {
         }
         req.getSession().setAttribute("operation", null);
         res.sendRedirect(ENGAGE_TO_OPERATION_JSP_NAME);
+    }
+
+
+
+    private void engageModulesToServiceGroup(HttpServletRequest req,
+                                        HttpServletResponse res)
+            throws IOException {
+        HashMap modules =
+                ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
+        req.getSession().setAttribute(Constants.MODULE_MAP, modules);
+        Iterator services = configContext.getAxisConfiguration().getServiceGroups();
+        req.getSession().setAttribute(Constants.SERVICE_GROUP_MAP, services);
+        String moduleName = req.getParameter("modules");
+        req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
+        req.getSession().setAttribute("modules", null);
+        String serviceName = req.getParameter("service");
+        req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
+        if (serviceName != null && moduleName != null) {
+            try {
+
+                configContext.getAxisConfiguration().getServiceGroup(
+                        serviceName)
+                        .engageModuleToGroup(new QName(moduleName));
+                req.getSession().setAttribute(Constants.ENGAGE_STATUS,
+                        moduleName +
+                                " module engaged to the serviceGroup Successfully");
+            } catch (AxisFault axisFault) {
+                req.getSession().setAttribute(Constants.ENGAGE_STATUS,
+                        axisFault.getMessage());
+            }
+        }
+        req.getSession().setAttribute("service", null);
+        res.sendRedirect(ENGAGING_MODULE_TO_SERVICE_GROUP_JSP_NAME);
     }
 
     private void engageModulesToService(HttpServletRequest req,
@@ -345,7 +399,7 @@ public class ListingAgent {
                                         new QName(moduleName)),configContext.getAxisConfiguration());
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                         moduleName +
-                        " module engaged to the service Successfully");
+                                " module engaged to the service Successfully");
             } catch (AxisFault axisFault) {
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                         axisFault.getMessage());

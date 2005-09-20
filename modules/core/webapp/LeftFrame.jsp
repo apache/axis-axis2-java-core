@@ -50,6 +50,14 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
+      <a href="listServciceGroups" target="mainFrame">Available ServiceGroups</a>
+    </td>
+ </tr>
+ <tr>
+    <td>
+       &nbsp;&nbsp;&nbsp;&nbsp;
+    </td>
+    <td >
       <a href="listModules" target="mainFrame">Available Modules</a>
     </td>
  </tr>
@@ -113,6 +121,15 @@
          <a href="engagingglobally" target="mainFrame">Gloabally</a>
        </td>
     </tr>
+     <tr>
+        <td>
+         &nbsp;&nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+          <a href="engageToServiceGroup" target="mainFrame">To Service Group</a>
+        </td>
+     </tr>
+
 
     <tr>
        <td>

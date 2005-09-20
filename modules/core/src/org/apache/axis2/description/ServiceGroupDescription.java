@@ -138,8 +138,8 @@ public class ServiceGroupDescription implements ParameterInclude{
         }
         for (Iterator iterator = modules.iterator();
              iterator.hasNext();) {
-            ModuleDescription modu = (ModuleDescription) iterator.next();
-            if (modu.getName().equals(moduleName)) {
+            QName modu = (QName) iterator.next();
+            if (modu.getLocalPart().equals(moduleName.getLocalPart())) {
                 throw new AxisFault(moduleName.getLocalPart() +
                         " module has alredy been engaged on the service Group. " +
                         " Operation terminated !!!");
