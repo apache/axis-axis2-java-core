@@ -35,7 +35,7 @@
 			<version>${pom.currentVersion}</version>
 		</dependency>
 		<dependency>
-			<groupId>axis</groupId>
+			<groupId>ws-commons</groupId>
 			<artifactId>XmlSchema</artifactId>
 			<version>SNAPSHOT</version>
 		</dependency>
