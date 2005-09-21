@@ -29,7 +29,7 @@
 <title>Axis2 :: Administrations Page</title>
 </head>
 
-<frameset rows="200,*" frameborder="NO" border="0" framespacing="0">
+<frameset rows="215,*" frameborder="NO" border="0" framespacing="0">
 <frame src="TopFrame.jsp" name="topFrame" scrolling="NO"  >
 <frameset rows="*" cols="300,*" framespacing="0" frameborder="NO" border="0">
 <frame src="LeftFrame.jsp" name="leftFrame"  border="0" noresize>

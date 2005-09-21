@@ -31,6 +31,6 @@
 </style></head>
 
 <body>
-<jsp:include page="include/header.inc"></jsp:include>
+<jsp:include page="include/adminheader.inc"></jsp:include>
 </body>
 </html>
