@@ -32,19 +32,19 @@ public class JavaUtils {
      *    ****** PLEASE KEEP THIS LIST SORTED IN ASCENDING ORDER ******
      */
     static final String keywords[] =
-    {
-        "abstract",  "assert",       "boolean",    "break",      "byte",      "case",
-        "catch",     "char",         "class",      "const",     "continue",
-        "default",   "do",           "double",     "else",      "extends",
-        "false",     "final",        "finally",    "float",     "for",
-        "goto",      "if",           "implements", "import",    "instanceof",
-        "int",       "interface",    "long",       "native",    "new",
-        "null",      "package",      "private",    "protected", "public",
-        "return",    "short",        "static",     "strictfp",  "super",
-        "switch",    "synchronized", "this",       "throw",     "throws",
-        "transient", "true",         "try",        "void",      "volatile",
-        "while"
-    };
+            {
+                    "abstract",  "assert",       "boolean",    "break",      "byte",      "case",
+                    "catch",     "char",         "class",      "const",     "continue",
+                    "default",   "do",           "double",     "else",      "extends",
+                    "false",     "final",        "finally",    "float",     "for",
+                    "goto",      "if",           "implements", "import",    "instanceof",
+                    "int",       "interface",    "long",       "native",    "new",
+                    "null",      "package",      "private",    "protected", "public",
+                    "return",    "short",        "static",     "strictfp",  "super",
+                    "switch",    "synchronized", "this",       "throw",     "throws",
+                    "transient", "true",         "try",        "void",      "volatile",
+                    "while"
+            };
 
     /** Collator for comparing the strings */
     static final Collator englishCollator = Collator.getInstance(Locale.ENGLISH);
@@ -58,12 +58,12 @@ public class JavaUtils {
     private static boolean isPunctuation(char c)
     {
         return '-' == c
-            || '.' == c
-            || ':' == c
-            || '\u00B7' == c
-            || '\u0387' == c
-            || '\u06DD' == c
-            || '\u06DE' == c;
+                || '.' == c
+                || ':' == c
+                || '\u00B7' == c
+                || '\u0387' == c
+                || '\u06DD' == c
+                || '\u06DE' == c;
     } // isPunctuation
 
     /**
@@ -71,7 +71,7 @@ public class JavaUtils {
      * @return boolean true/false
      */
     public static boolean isJavaKeyword(String keyword) {
-      return (Arrays.binarySearch(keywords, keyword, englishCollator) >= 0);
+        return (Arrays.binarySearch(keywords, keyword, englishCollator) >= 0);
     }
 
     /**
@@ -80,10 +80,13 @@ public class JavaUtils {
      */
     public static String makeNonJavaKeyword(String keyword){
         return  keywordPrefix + keyword;
-     }
+    }
 
-    public static String xmlNameToJava(String name)
-    {
+    public static String xmlNameToJava(String name) {
+        return xmlNameToJava(name,true);
+    }
+
+    public static String xmlNameToJava(String name,boolean decapitalizeFirst) {
         // protect ourselves from garbage
         if (name == null || name.equals(""))
             return name;
@@ -154,9 +157,11 @@ public class JavaUtils {
 
         // Follow JavaBean rules, but we need to check if the first
         // letter is uppercase first
-        if (Character.isUpperCase(newName.charAt(0)))
-            newName = Introspector.decapitalize(newName);
-
+        // do the decapitalization only if requested
+        if (decapitalizeFirst){
+            if (Character.isUpperCase(newName.charAt(0)))
+                newName = Introspector.decapitalize(newName);
+        }
         // check for Java keywords
         if (isJavaKeyword(newName))
             newName = makeNonJavaKeyword(newName);

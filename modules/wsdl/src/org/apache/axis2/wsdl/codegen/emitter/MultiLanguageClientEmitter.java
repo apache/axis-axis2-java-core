@@ -29,6 +29,7 @@ import org.apache.axis2.wsdl.codegen.writer.ServiceXMLWriter;
 import org.apache.axis2.wsdl.codegen.writer.SkeletonWriter;
 import org.apache.axis2.wsdl.codegen.writer.TestClassWriter;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.MessageReference;
@@ -534,7 +535,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 rootElement);
         addAttribute(doc,
                 "name",
-                boundInterface.getName().getLocalPart() +
+                reformatName(boundInterface.getName().getLocalPart(),false) +
                         CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
         addAttribute(doc,
@@ -691,7 +692,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
-        String localPart = boundInterface.getName().getLocalPart();
+        String localPart = reformatName(boundInterface.getName().getLocalPart(),false);
         if (forTesting) {
             addAttribute(doc,
                     "package",
@@ -719,7 +720,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                     rootElement);
             addAttribute(doc,
                     "name",
-                    localPart + SERVICE_CLASS_SUFFIX,
+                    reformatName(localPart) + SERVICE_CLASS_SUFFIX,
                     rootElement);
             addAttribute(doc, "servicename", localPart, rootElement);
         }
@@ -745,7 +746,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 "package",
                 configuration.getPackageName(),
                 rootElement);
-        String localPart = boundInterface.getName().getLocalPart();
+        String localPart = reformatName(boundInterface.getName().getLocalPart(),false);
         addAttribute(doc,
                 "name",
                 localPart + MESSAGE_RECEIVER_SUFFIX,
@@ -780,13 +781,15 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
+        String localPart = reformatName(wsdlInterface.getName().getLocalPart(),false);
         addAttribute(doc,
                 "package",
                 configuration.getPackageName(),
                 rootElement);
+
         addAttribute(doc,
                 "name",
-                wsdlInterface.getName().getLocalPart(),
+                localPart,
                 rootElement);
         addAttribute(doc,
                 "callbackname",
@@ -811,13 +814,15 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
+        String localpart = reformatName(boundInterface.getName().getLocalPart(),false);
         addAttribute(doc,
                 "package",
                 configuration.getPackageName(),
                 rootElement);
+
         addAttribute(doc,
                 "name",
-                boundInterface.getName().getLocalPart() + SERVICE_CLASS_SUFFIX,
+                localpart + SERVICE_CLASS_SUFFIX,
                 rootElement);
         addAttribute(doc,
                 "callbackname",
@@ -868,7 +873,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                                 WSDLBinding binding) {
 
         Collection col = boundInterface.getOperations().values();
-        String portTypeName = boundInterface.getName().getLocalPart();
+        String portTypeName = reformatName(boundInterface.getName().getLocalPart(),false);
 
         List soapHeaderInputParameterList = new ArrayList();
         List soapHeaderOutputParameterList = new ArrayList();
@@ -878,7 +883,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             operation = (WSDLOperation) iterator.next();
             methodElement = doc.createElement("method");
-            String localPart = operation.getName().getLocalPart();
+            String localPart = reformatName(operation.getName().getLocalPart(),false);
             addAttribute(doc, "name", localPart, methodElement);
             addAttribute(doc,
                     "namespace",
@@ -952,14 +957,14 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
 
     protected Document createDOMDocumentForTestCase(WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
-
+        String localPart = reformatName(boundInterface.getName().getLocalPart(),false);
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("class");
         addAttribute(doc,
                 "package",
                 configuration.getPackageName(),
                 rootElement);
-        String localPart = boundInterface.getName().getLocalPart();
+
         addAttribute(doc, "name", localPart + TEST_SUFFIX, rootElement);
         addAttribute(doc,
                 "namespace",
@@ -995,7 +1000,8 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 configuration.getPackageName() +
                         DATABINDING_PACKAGE_NAME_SUFFIX,
                 rootElement);
-        String localPart = operation.getName().getLocalPart();
+        String localPart = reformatName(operation.getName().getLocalPart(),false);
+        portTypeName = reformatName(portTypeName,false);
         addAttribute(doc,
                 "name",
                 portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
@@ -1101,7 +1107,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                 "package",
                 configuration.getPackageName(),
                 rootElement);
-        String localPart = boundInterface.getName().getLocalPart();
+        String localPart = reformatName(boundInterface.getName().getLocalPart(),false);
         addAttribute(doc, "name", localPart + STUB_SUFFIX, rootElement);
         addAttribute(doc, "servicename", localPart, rootElement);
         addAttribute(doc,
@@ -1179,7 +1185,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                     address = (org.apache.wsdl.extensions.SOAPAddress) element;
                 }
             }
-            text = doc.createTextNode(address!=null?address.getLocationURI():"");     //todo How to get the end point address
+            text = doc.createTextNode(address!=null?address.getLocationURI():"");
             endpointElement.appendChild(text);
             rootElement.appendChild(endpointElement);
         }
@@ -1202,13 +1208,26 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         element.setAttributeNode(attribute);
     }
 
+
     /**
      *
      * @param word
      * @return character removed string
      */
-    protected String removeUnsuitableCharacters(String word) {
-        return word.replaceAll("\\W", "_");
+    protected String reformatName(String word) {
+        return reformatName(word,true);
+    }
+    /**
+     *
+     * @param word
+     * @return character removed string
+     */
+    protected String reformatName(String word, boolean decapitalizaFirst) {
+        if (JavaUtils.isJavaKeyword(word)){
+            return JavaUtils.makeNonJavaKeyword(word);
+        }else{
+            return JavaUtils.xmlNameToJava(word,decapitalizaFirst);
+        }
     }
 
 

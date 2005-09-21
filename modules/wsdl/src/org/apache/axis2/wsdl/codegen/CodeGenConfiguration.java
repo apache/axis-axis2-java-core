@@ -127,6 +127,15 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         }
         this.outputLocation = new File(outputLocation);
 
+        //check and create the directories
+        if (this.outputLocation.exists()){
+            if (this.outputLocation.isFile()){
+               throw  new RuntimeException("The specified output location is not a directory!"); 
+            }
+         }else{
+            this.outputLocation.mkdirs();
+        }
+
         serverSide = (optionMap.get(SERVER_SIDE_CODE_OPTION) != null);
         generateDeployementDescriptor = (optionMap.get(
                 GENERATE_SERVICE_DESCRIPTION_OPTION) !=
