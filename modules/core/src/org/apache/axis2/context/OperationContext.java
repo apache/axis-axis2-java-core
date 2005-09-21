@@ -73,7 +73,8 @@ public class OperationContext extends AbstractContext {
 
     public void init(AxisConfiguration axisConfiguration) throws AxisFault {
     	if (operationDescName!=null && serviceDescName!=null){
-    		axisOperation = axisConfiguration.getService(serviceDescName.getLocalPart()).
+            //todo this lead to NPE : Chamikara
+            axisOperation = axisConfiguration.getService(serviceDescName.getLocalPart()).
 							getOperation(operationDescName);
     	}
     	

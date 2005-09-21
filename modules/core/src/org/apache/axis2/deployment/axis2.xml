@@ -12,6 +12,9 @@
     <parameter name="userName" locked="false">admin</parameter>
     <parameter name="password" locked="false">axis2</parameter>
 
+    <parameter name="seralizeLocation" locked="false">.</parameter>
+
+
 
     <!--if you want to extract the service archive file and work with that please uncomment this-->
     <!--else , it wont extract archive file or does not take into consideration if someone drop-->

@@ -23,6 +23,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAP11Constants;
@@ -39,6 +40,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
+import java.io.*;
 
 /**
  * There is one engine for the Server and the Client. the send() and receive()
@@ -140,7 +142,7 @@ public class AxisEngine {
                 operationDescription.getRemainingPhasesInFlow();
             invokePhases(operationSpecificPhases, msgContext);
         }
-        
+
         if (msgContext.isServerSide() && !msgContext.isPaused()) {
             // invoke the Message Receivers
             MessageReceiver receiver =
@@ -403,7 +405,7 @@ public class AxisEngine {
             }else{
                 fault.setException(new Exception(e));
             }
-            
+
         }
     }
 
@@ -497,7 +499,7 @@ public class AxisEngine {
     public boolean clearStorage(ConfigurationContext context) {
         return context.getStorage().clean();
     }
-    
+
 
 
     private String getSenderFaultCode(String soapNamespace) {
@@ -512,6 +514,28 @@ public class AxisEngine {
             soapNamespace)
             ? SOAP12Constants.FAULT_CODE_RECEIVER
             : SOAP11Constants.FAULT_CODE_RECEIVER;
+    }
+
+    /**
+     * To serilze the entier context heirarachy to a given location from top to bottom
+     * @throws AxisFault
+     */
+    public synchronized void   serialize() throws AxisFault{
+        try {
+             String serailzeLocaion =".";
+            //output location
+            Parameter parameter = engineContext.getAxisConfiguration().getParameter("seralizeLocation");
+            if (parameter !=null) {
+                serailzeLocaion = ((String)parameter.getValue()).trim();
+            }
+            FileOutputStream fileOut = new FileOutputStream(new File(serailzeLocaion,"Axis2.obj"));
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(engineContext);
+        } catch (FileNotFoundException e) {
+            throw new AxisFault(e);
+        } catch (IOException e) {
+            throw new AxisFault(e);
+        }
     }
 
 }

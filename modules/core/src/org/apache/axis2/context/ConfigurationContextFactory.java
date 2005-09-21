@@ -3,10 +3,7 @@ package org.apache.axis2.context;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.modules.Module;
@@ -14,14 +11,19 @@ import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.io.*;
 
 public class ConfigurationContextFactory {
+
+    private Log log = LogFactory.getLog(getClass());
 
     /**
      * Build the configuration for the Server
@@ -38,7 +40,32 @@ public class ConfigurationContextFactory {
                     new DeploymentEngine(repositoryName);
             AxisConfiguration configuration = deploymentEngine.load();
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
-            configurationContext = new ConfigurationContext(configuration);
+
+            Parameter parameter = configuration.getParameter("seralizeLocation");
+            String serailzeLocaion = ".";
+            if (parameter !=null) {
+                serailzeLocaion = ((String)parameter.getValue()).trim();
+            }
+            File objFile = new File(serailzeLocaion,"Axis2.obj");
+            if(objFile.exists()){
+                try {
+                    FileInputStream filein = new FileInputStream(objFile);
+                    ObjectInputStream in = new ObjectInputStream(filein);
+                    Object obj = in.readObject();
+                    if(obj instanceof ConfigurationContext){
+                        configurationContext = (ConfigurationContext)obj;
+                        configurationContext.init(configuration);
+                    }
+                } catch (IOException e) {
+                    log.info(e.getMessage());
+                } catch (ClassNotFoundException e) {
+                    log.info(e.getMessage());
+                }
+            }
+            if(configurationContext == null){
+                configurationContext = new ConfigurationContext(configuration);
+            }
+//            configurationContext = new ConfigurationContext(configuration);
             phaseResolver.buildTranspotsChains();
             initModules(configurationContext);
             initTransports(configurationContext);
@@ -63,7 +90,28 @@ public class ConfigurationContextFactory {
             AxisConfiguration configuration =
                     new DeploymentEngine().loadClient(axis2home);
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
-            engineContext = new ConfigurationContext(configuration);
+
+            File objFile = new File("./Axis2.obj");
+            if(objFile.exists()){
+                try {
+                    FileInputStream filein = new FileInputStream(objFile);
+                    ObjectInputStream in = new ObjectInputStream(filein);
+                    Object obj = in.readObject();
+                    if(obj instanceof ConfigurationContext){
+                        engineContext = (ConfigurationContext)obj;
+                        engineContext.init(configuration);
+                    }
+                } catch (IOException e) {
+                    log.info(e.getMessage());
+                } catch (ClassNotFoundException e) {
+                    log.info(e.getMessage());
+                }
+            }
+            if(engineContext == null){
+                engineContext = new ConfigurationContext(configuration);
+            }
+
+//            engineContext = new ConfigurationContext(configuration);
             phaseResolver.buildTranspotsChains();
             initModules(engineContext);
             initTransports(engineContext);
@@ -86,7 +134,7 @@ public class ConfigurationContextFactory {
         try {
             HashMap modules =
                     ((AxisConfigurationImpl) context.getAxisConfiguration())
-                    .getModules();
+                            .getModules();
             Collection col = modules.values();
             for (Iterator iterator = col.iterator(); iterator.hasNext();) {
                 ModuleDescription axismodule =
@@ -128,7 +176,7 @@ public class ConfigurationContextFactory {
             throw new PhaseException(axisFault);
         }
     }
-    
+
     /**
      * This method initilize the transports, passing the information taken from the
      * deployment to the real instance, for and example here the <code>TransportSender</code>
@@ -139,7 +187,7 @@ public class ConfigurationContextFactory {
     public void initTransports(ConfigurationContext configContext)
             throws AxisFault {
         AxisConfiguration axisConf = configContext.getAxisConfiguration();
-        
+
         //Initzialize Transport Ins
         HashMap transportIns = axisConf.getTransportsIn();
         Iterator values = transportIns.values().iterator();
