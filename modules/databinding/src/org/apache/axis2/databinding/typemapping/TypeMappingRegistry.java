@@ -16,15 +16,14 @@
 
 package org.apache.axis2.databinding.typemapping;
 
-import org.apache.axis2.databinding.metadata.BeanManager;
 import org.apache.axis2.databinding.DeserializerFactory;
 import org.apache.axis2.databinding.Serializer;
-import org.apache.axis2.databinding.metadata.BeanManager;
 import org.apache.axis2.databinding.deserializers.BeanDeserializerFactory;
 import org.apache.axis2.databinding.deserializers.SimpleDeserializerFactory;
+import org.apache.axis2.databinding.metadata.BeanManager;
 import org.apache.axis2.databinding.serializers.BeanSerializer;
 import org.apache.axis2.databinding.serializers.SimpleSerializer;
-import org.apache.axis.xsd.Constants;
+import org.apache.ws.commons.schema.constants.Constants;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;

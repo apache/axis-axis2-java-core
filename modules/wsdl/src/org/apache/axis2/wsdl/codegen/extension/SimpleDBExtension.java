@@ -16,11 +16,11 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
-import org.apache.axis.xsd.xml.schema.XmlSchema;
-import org.apache.axis.xsd.xml.schema.XmlSchemaCollection;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLTypes;
 import org.apache.wsdl.extensions.ExtensionConstants;

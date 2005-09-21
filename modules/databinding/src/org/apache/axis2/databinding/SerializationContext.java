@@ -16,9 +16,9 @@
 
 package org.apache.axis2.databinding;
 
-import org.apache.axis.xsd.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.commons.schema.constants.Constants;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
