@@ -13,11 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.axis2.tool.service.eclipse.ui;
+
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
 
 import org.apache.axis2.tool.service.bean.Page2Bean;
 import org.apache.axis2.tool.service.bean.WSDLAutoGenerateOptionBean;
+import org.apache.axis2.tool.service.eclipse.plugin.ServiceArchiver;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -32,13 +39,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
-import java.io.File;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
 
 
 public class ServiceXMLGenerationPage extends AbstractServiceWizardPage{
@@ -59,8 +59,9 @@ public class ServiceXMLGenerationPage extends AbstractServiceWizardPage{
      * @see org.apache.axis2.tool.service.eclipse.ui.AbstractServiceWizardPage#initializeDefaultSettings()
      */
     protected void initializeDefaultSettings() {
-        // TODO Auto-generated method stub
-
+      settings.put(PREF_SERVICE_GEN_SERVICE_NAME,"MyService");
+      settings.put(PREF_SERVICE_GEN_CLASSNAME,"");
+      settings.put(PREF_SERVICE_GEN_LOAD_ALL,false);
     }
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
@@ -71,37 +72,43 @@ public class ServiceXMLGenerationPage extends AbstractServiceWizardPage{
         layout.numColumns=3;
         container.setLayout(layout);
         
-      
-       
-        
         Label label = new Label(container,SWT.NULL);
-        label.setText("Service name");
+        label.setText(ServiceArchiver.getResourceString("page3.servicename.lable"));
         
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
         serviceNameTextBox = new Text(container,SWT.BORDER);
         serviceNameTextBox.setLayoutData(gd);
+        serviceNameTextBox.setToolTipText(ServiceArchiver.getResourceString("page3.servicename.tooltip"));
+        serviceNameTextBox.setText(settings.get(PREF_SERVICE_GEN_SERVICE_NAME));
         serviceNameTextBox.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e){
+                updateDirtyStatus(true);
+                settings.put(PREF_SERVICE_GEN_SERVICE_NAME,serviceNameTextBox.getText());
+                //validate
             }
         });
-        
+       
         
         label = new Label(container,SWT.NULL);
-        label.setText("Class Name");
+        label.setText(ServiceArchiver.getResourceString("page3.classname.lable"));
         
         gd = new GridData(GridData.FILL_HORIZONTAL);
         classNameTextBox = new Text(container,SWT.BORDER);
         classNameTextBox.setLayoutData(gd);
+        classNameTextBox.setToolTipText(ServiceArchiver.getResourceString("page3.classname.tooltip"));
+        classNameTextBox.setText(settings.get(PREF_SERVICE_GEN_CLASSNAME));
         classNameTextBox.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e){
                 updateDirtyStatus(true);
+                settings.put(PREF_SERVICE_GEN_CLASSNAME,classNameTextBox.getText());
             }
         });
+       
         
         gd = new GridData(GridData.FILL_HORIZONTAL);
         loadButton = new Button(container,SWT.PUSH);
-        loadButton.setText("Load");
+        loadButton.setText(ServiceArchiver.getResourceString("page3.loadbutton.lable"));
         loadButton.setLayoutData(gd);
         loadButton.addSelectionListener(new SelectionListener(){
             public void widgetSelected(SelectionEvent e){
@@ -115,13 +122,19 @@ public class ServiceXMLGenerationPage extends AbstractServiceWizardPage{
         
         searchDeclaredMethodsCheckBox = new Button(container,SWT.CHECK);
         searchDeclaredMethodsCheckBox.setLayoutData(gd);
-        searchDeclaredMethodsCheckBox.setText("List Declared Methods Only");
+        searchDeclaredMethodsCheckBox.setText(ServiceArchiver.getResourceString("page3.declared.lable"));
         searchDeclaredMethodsCheckBox.addSelectionListener(new SelectionListener(){
             public void widgetSelected(SelectionEvent e){
                 updateDirtyStatus(true);//dirty
+                settings.put(PREF_SERVICE_GEN_LOAD_ALL,searchDeclaredMethodsCheckBox.getSelection());
+                if(table.isVisible()){
+                    updateTable();
+                }
+                
             }
             public void widgetDefaultSelected(SelectionEvent e){} 
         });
+        searchDeclaredMethodsCheckBox.setSelection(settings.getBoolean(PREF_SERVICE_GEN_LOAD_ALL));
         
         gd = new GridData(GridData.FILL_BOTH);
         gd.horizontalSpan = 2;
@@ -132,12 +145,18 @@ public class ServiceXMLGenerationPage extends AbstractServiceWizardPage{
         table.setHeaderVisible(true); 
         table.setLayoutData(gd);
         declareColumn(table,20,"");
-        declareColumn(table,100,"Method Name");
-        declareColumn(table,100,"Return Type");
-        declareColumn(table,100,"Parameter Count");
+        declareColumn(table,100,ServiceArchiver.getResourceString("page3.table.col1"));
+        declareColumn(table,100,ServiceArchiver.getResourceString("page3.table.col2"));
+        declareColumn(table,100,ServiceArchiver.getResourceString("page3.table.col3"));
         
         table.setVisible(false);
 		
+        if (restoredFromPreviousSettings){
+            //try running the update
+            updateTable();
+        }
+        
+        
 		setControl(container);
 
     }
@@ -198,7 +217,7 @@ public class ServiceXMLGenerationPage extends AbstractServiceWizardPage{
         try {
             String classFileLocation = getClassFileLocation();
             URL classFileURL = new File(classFileLocation).toURL();
-            ClassLoader loader = new URLClassLoader(new URL[] { classFileURL });
+            ClassLoader loader = new URLClassLoader(new URL[] { classFileURL },Thread.currentThread().getContextClassLoader());
 
             Class clazz = loader.loadClass(classNameTextBox.getText());
             Method[] methods = null;
@@ -228,9 +247,12 @@ public class ServiceXMLGenerationPage extends AbstractServiceWizardPage{
             }
 
         } catch (MalformedURLException e) {
-           updateStatus("Error : invalid location " +e.getMessage());
+           updateStatus(ServiceArchiver.getResourceString("page3.error.url") +e.getMessage());
         } catch (ClassNotFoundException e) {
-           updateStatus("Error : Class not found " + e.getMessage());
+           updateStatus(ServiceArchiver.getResourceString("page3.error.class")+ e.getMessage());
+        } catch (Exception e){
+            e.printStackTrace();
+            updateStatus(ServiceArchiver.getResourceString("page3.error.unknown") + e.getMessage()); 
         }
     }
     
@@ -243,17 +265,20 @@ public class ServiceXMLGenerationPage extends AbstractServiceWizardPage{
     }
     
     public Page2Bean getBean(Page2Bean previousBean){
-        previousBean.setAutomaticClassName(classNameTextBox.getText());
-        ArrayList list = new ArrayList();
-        TableItem[] items = table.getItems();
-        int itemLength = items.length;
-        for(int i=0;i<itemLength;i++){
-           if(items[i].getChecked()){
-               list.add(items[i].getText(1));//get the selected method name only
-           }
+        if (!previousBean.isManual()){
+	        previousBean.setAutomatic(true);
+	        previousBean.setAutomaticClassName(classNameTextBox.getText());
+	        ArrayList list = new ArrayList();
+	        TableItem[] items = table.getItems();
+	        int itemLength = items.length;
+	        for(int i=0;i<itemLength;i++){
+	           if(items[i].getChecked()){
+	               list.add(items[i].getText(1));//get the selected method name only
+	           }
+	        }
+	        previousBean.setSelectedMethodNames(list);
+	        previousBean.setServiceName(this.serviceNameTextBox.getText());
         }
-        previousBean.setSelectedMethodNames(list);
-        previousBean.setServiceName(this.serviceNameTextBox.getText());
         return previousBean;
     }
 }

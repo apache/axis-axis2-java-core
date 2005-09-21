@@ -13,21 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.axis2.tool.service.eclipse.ui;
+
+
+import java.lang.reflect.InvocationTargetException;
 
 
 import org.apache.axis2.tool.service.bean.WizardBean;
 import org.apache.axis2.tool.service.control.Controller;
-import org.apache.axis2.tool.service.control.ProcessException;
 import org.apache.axis2.tool.service.eclipse.plugin.ServiceArchiver;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 
+/**
+ * @author Ajith
+ *         <p/>
+ *         TODO To change the template for this generated type comment go to Window -
+ *         Preferences - Java - Code Style - Code Templates
+ */
 public class ServiceArchiveWizard extends Wizard implements INewWizard {
 
     private ClassFileLocationPage classFileLocationPage;
@@ -35,11 +46,13 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
     private ServiceXMLFileSelectionPage serviceXMLFileSelectionPage;
     private ServiceXMLGenerationPage serviceXMLGenerationPage;
     private ServiceArchiveOutputLocationPage serviceArchiveOutputLocationPage;
+    private LibraryAddingPage libPage;
 
     private boolean updateServiceGenerationStatus;
     private String classFileLocation;
     private String wsdlFileGenerationStatus;
     
+  
     
     /**
      * @return Returns the wsdlFileGenerationStatus.
@@ -61,7 +74,7 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
         this.classFileLocation = location;
     }
     
-    public void updateServiceGeneration(boolean status){
+    public void updateServiceXMLGeneration(boolean status){
         updateServiceGenerationStatus = status;
     }
     /**
@@ -69,7 +82,26 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
      */
     public ServiceArchiveWizard() {
         super();
+        setNeedsProgressMonitor(true);
         setWindowTitle(ServiceArchiver.getResourceString("main.title"));
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.IWizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
+     */
+    public IWizardPage getNextPage(IWizardPage page) {
+        AbstractServiceWizardPage thisPage = (AbstractServiceWizardPage)page;
+        AbstractServiceWizardPage nextPage = (AbstractServiceWizardPage)super.getNextPage(page);
+        while (thisPage!=null && thisPage.isSkipNext()) {
+            if (nextPage!=null) {
+                thisPage = nextPage;
+                nextPage = (AbstractServiceWizardPage)super.getNextPage(nextPage);
+            }else{
+                break;
+            }
+        }
+        return nextPage;
     }
 
     /* (non-Javadoc)
@@ -82,8 +114,10 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
         this.addPage(wsdlFileSelectionPage);
         serviceXMLFileSelectionPage = new ServiceXMLFileSelectionPage();
         this.addPage(serviceXMLFileSelectionPage);
-//        serviceXMLGenerationPage = new ServiceXMLGenerationPage();
-//        this.addPage(serviceXMLGenerationPage);
+        serviceXMLGenerationPage = new ServiceXMLGenerationPage();
+        this.addPage(serviceXMLGenerationPage);
+        libPage = new LibraryAddingPage();
+        this.addPage(libPage);
         serviceArchiveOutputLocationPage = new ServiceArchiveOutputLocationPage();
         this.addPage(serviceArchiveOutputLocationPage);
     }
@@ -92,26 +126,72 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
      * @see org.eclipse.jface.wizard.IWizard#performFinish()
      */
     public boolean performFinish() {
-        //create a wizard bean
-        WizardBean wizBean = new WizardBean();
-        wizBean.setPage1bean(classFileLocationPage.getBean());
-        wizBean.setWsdlBean(wsdlFileSelectionPage.getBean());
-        wizBean.setPage2bean(serviceXMLFileSelectionPage.getBean());
-        wizBean.setPage3bean(serviceArchiveOutputLocationPage.getBean());
+                
+        WorkspaceModifyOperation op = new WorkspaceModifyOperation()
+        {
+           protected void execute(IProgressMonitor monitor)
+           {
+              if (monitor == null)
+                 monitor = new NullProgressMonitor();
+
+              /*
+               * "7" is the total amount of steps, see below monitor.worked(amount)
+               */
+              monitor.beginTask(ServiceArchiver.getResourceString("wizard.codegen.startmsg"), 8);
+
+              try
+              {
+                  monitor.worked(1);
+//                create a wizard bean
+                  WizardBean wizBean = new WizardBean();
+                  monitor.worked(1);
+                  wizBean.setPage1bean(classFileLocationPage.getBean());
+                  monitor.worked(1);
+                  wizBean.setWsdlBean(wsdlFileSelectionPage.getBean());
+                  monitor.worked(1);
+                  wizBean.setPage2bean(serviceXMLGenerationPage.getBean(serviceXMLFileSelectionPage.getBean()));
+                  monitor.worked(1);
+                  wizBean.setLibraryBean(libPage.getBean());
+                  monitor.worked(1);
+                  wizBean.setPage3bean(serviceArchiveOutputLocationPage.getBean());
+                  monitor.worked(1);
+                  new Controller().process(wizBean);
+                  monitor.worked(1);
+              }
+              catch (Throwable e)
+              {
+                 throw new RuntimeException(e);
+              }
+
+              monitor.done();
+           }
+        };
         
-        
-        try {
-            new Controller().process(wizBean);
-            showSuccessMessage(" jar file creation successful! ");
-            return true;
-        } catch (ProcessException e) {
-            showErrorMessage(e.getMessage());
-            return false;
-        } catch (Exception e) {
-            showErrorMessage("Unknown Error! " + e.getMessage());
+        /*
+         * Start the generation as new Workbench Operation, so the user
+         * can see the progress and, if needed, can stop the operation.
+         */
+        try
+        {
+           getContainer().run(false, true, op);
+           showSuccessMessage(ServiceArchiver.getResourceString("wizard.codegen.success"));
+           return true;
+        }
+        catch (InvocationTargetException e1)
+        {
+            showErrorMessage(e1.getTargetException().getMessage());
             return false;
         }
-
+        catch (InterruptedException e1)
+        {
+            showErrorMessage(e1.getMessage());
+            return false;
+        }
+        catch (Exception e)
+        {
+            showErrorMessage(ServiceArchiver.getResourceString("wizard.codegen.unknown.error") + e.getMessage());
+            return false;
+        }
 
     }
 
@@ -125,10 +205,10 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
     }
 
     private void showErrorMessage(String message) {
-        MessageDialog.openError(this.getShell(), "Error", message);
+        MessageDialog.openError(this.getShell(), ServiceArchiver.getResourceString("wizard.codegen.error.msg.heading"), message);
     }
 
     private void showSuccessMessage(String message) {
-        MessageDialog.openInformation(this.getShell(), "Success", message);
+        MessageDialog.openInformation(this.getShell(), ServiceArchiver.getResourceString("wizard.codegen.success.msg.heading"), message);
     }
 }

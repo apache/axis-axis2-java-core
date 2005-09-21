@@ -1,3 +1,21 @@
+package org.apache.axis2.tool.service.control;
+
+import org.apache.axis2.tool.core.ClassFileHandler;
+import org.apache.axis2.tool.core.FileCopier;
+import org.apache.axis2.tool.core.JarFileWriter;
+import org.apache.axis2.tool.core.ServiceFileCreator;
+import org.apache.axis2.tool.service.bean.ClassFileSelectionBean;
+import org.apache.axis2.tool.service.bean.LibrarySelectionBean;
+import org.apache.axis2.tool.service.bean.Page2Bean;
+import org.apache.axis2.tool.service.bean.Page3Bean;
+import org.apache.axis2.tool.service.bean.WSDLFileLocationBean;
+import org.apache.axis2.tool.service.bean.WizardBean;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -13,22 +31,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.apache.axis2.tool.service.control;
-
-import org.apache.axis2.tool.core.ClassFileHandler;
-import org.apache.axis2.tool.core.FileCopier;
-import org.apache.axis2.tool.core.JarFileWriter;
-import org.apache.axis2.tool.core.ServiceFileCreator;
-import org.apache.axis2.tool.service.bean.ClassFileSelectionBean;
-import org.apache.axis2.tool.service.bean.Page2Bean;
-import org.apache.axis2.tool.service.bean.Page3Bean;
-import org.apache.axis2.tool.service.bean.WSDLFileLocationBean;
-import org.apache.axis2.tool.service.bean.WizardBean;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 
 public class Controller {
 
@@ -57,6 +59,7 @@ public class Controller {
 
         ClassFileSelectionBean page1Bean = bean.getPage1bean();
         WSDLFileLocationBean wsdlBean = bean.getWsdlBean();
+        LibrarySelectionBean libBean = bean.getLibraryBean();
         Page2Bean page2Bean = bean.getPage2bean();
         Page3Bean page3Bean = bean.getPage3bean();
 
@@ -94,7 +97,7 @@ public class Controller {
             }
             serviceFile =
                     new ServiceFileCreator().createServiceFile(
-                            page2Bean.getProviderClassName(),
+                            page2Bean.getServiceName(),
                             page2Bean.getAutomaticClassName(),
                             page2Bean.getSelectedMethodNames());//create the file here
             isServiceCreated = true;
@@ -111,6 +114,22 @@ public class Controller {
             }
         }
         
+        List fileList = new ArrayList();
+        //check the libs
+        if (libBean!=null){
+            String[] files = libBean.getFileList();
+            File tempFile = null;
+            if (files!=null){
+               for (int i=0;i<files.length;i++){
+                 tempFile = new File(files[i]); 
+                 if (!tempFile.exists()||tempFile.isDirectory()){
+                     throw new ProcessException("Invalid libraries");
+                 }else{
+                     fileList.add(tempFile);
+                 }
+               }
+            }
+        }
         
         outputFolder = new File(page3Bean.getOutputFolderName());
         outputFileName = page3Bean.getOutputFileName();
@@ -124,11 +143,23 @@ public class Controller {
             //create a temporary directory and copy the files
             tempFileFolder = new File("Service-copy");
             tempFileFolder.mkdir();
+            
             File metaInfFolder = new File(tempFileFolder, "META-INF");
             metaInfFolder.mkdir();
-
-            new FileCopier().copyFiles(classFileFolder, tempFileFolder,null);
-            new FileCopier().copyFiles(serviceFile, metaInfFolder,null);
+            
+            File libFolder = new File(tempFileFolder,"lib");
+            libFolder.mkdir();
+            
+            FileCopier copier = new FileCopier();
+            //copy the classes
+            copier.copyFiles(classFileFolder, tempFileFolder,page1Bean.getFilter());
+            //copy the service.xml
+            copier.copyFiles(serviceFile, metaInfFolder,null);
+            //copy the libs
+            for (int i=0;i < fileList.size();i++){
+               copier.copyFiles((File)fileList.get(i),libFolder,null); 
+            }
+            
             if (isWSDLAvailable){
                 new FileCopier().copyFiles(wsdlFile, metaInfFolder,null);
             }

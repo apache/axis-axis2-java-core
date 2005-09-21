@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Axis-CodegenWizard</name>
+	<name>Axis-ServiceArchiver</name>
 	<comment></comment>
 	<projects>
+		<project>Axis-CodegenWizard</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -1,19 +1,18 @@
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
-
 package org.apache.axis2.tool.service.eclipse.ui;
 
 import org.apache.axis2.tool.service.bean.Page2Bean;
@@ -25,6 +24,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class ServiceXMLFileSelectionPage extends AbstractServiceWizardPage {
    
+    private static final String SERVICES_XML_NAME = "services.xml";
     private Text serviceXMLText;
     private Label manualSelectionLabel;
     private Label recommendationTextLable;
@@ -101,8 +102,8 @@ public class ServiceXMLFileSelectionPage extends AbstractServiceWizardPage {
 		    public void widgetDefaultSelected(SelectionEvent e){}
 		});
 		/////////////////////////////////////////
-		//disable the selection combo for now
-		selectAutoFileGenerationCheckBox.setEnabled(false);
+		//enable the selection combo for now
+		//selectAutoFileGenerationCheckBox.setEnabled(false);
 		selectAutoFileGenerationCheckBox.setToolTipText(ServiceArchiver.getResourceString("page2.autogen.tooltip"));
 		////////////////////////////////////////////
 		
@@ -127,7 +128,7 @@ public class ServiceXMLFileSelectionPage extends AbstractServiceWizardPage {
     
     private void handleBrowse(){
         FileDialog fileDialog = new FileDialog(this.getShell());
-        fileDialog.setFilterExtensions(new String[]{"service.xml"});
+        fileDialog.setFilterExtensions(new String[]{SERVICES_XML_NAME});
         String returnFileName = fileDialog.open() ;
         if (returnFileName!=null){
             this.serviceXMLText.setText(returnFileName);
@@ -141,20 +142,20 @@ public class ServiceXMLFileSelectionPage extends AbstractServiceWizardPage {
             changeManualSelectionStatus(false); 
             this.skipNextPage = false;
             updateStatus(null);
-            updateGenerationPage(false);
+            //updateGenerationPage(false);
         }else{
             changeManualSelectionStatus(true);
             this.skipNextPage = true;
             handleModify();
-            updateGenerationPage(true);
+            //updateGenerationPage(true);
         }
     }
     
-    private void updateGenerationPage(boolean status){
-        ServiceArchiveWizard wizard = (ServiceArchiveWizard)this.getWizard();
-        wizard.updateServiceGeneration(status);
-       
-    }
+//    private void updateGenerationPage(boolean status){
+//        ServiceArchiveWizard wizard = (ServiceArchiveWizard)this.getWizard();
+//        wizard.updateServiceXMLGeneration(status);
+//       
+//    }
     
     private void changeManualSelectionStatus(boolean state){
         this.serviceXMLText.setEnabled(state);
@@ -167,7 +168,7 @@ public class ServiceXMLFileSelectionPage extends AbstractServiceWizardPage {
         settings.put(PREF_SERVICE_XML_FILE,serviceXMLString);
         if (serviceXMLString.equals("")){
            this.updateStatus(ServiceArchiver.getResourceString("page2.error.servicenameempty")); 
-        }else if(!serviceXMLString.endsWith("service.xml")){
+        }else if(!serviceXMLString.endsWith(SERVICES_XML_NAME)){
             this.updateStatus(ServiceArchiver.getResourceString("page2.error.servicenamewrong"));  
         }else{
             this.updateStatus(null);

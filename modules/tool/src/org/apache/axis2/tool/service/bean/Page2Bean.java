@@ -1,3 +1,7 @@
+package org.apache.axis2.tool.service.bean;
+
+import java.util.ArrayList;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -14,13 +18,9 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.tool.service.bean;
-
-import java.util.ArrayList;
-
 public class Page2Bean {
-    private boolean manual;
-    private boolean automatic;
+    private boolean manual = false;
+    private boolean automatic = false;
 
     private String manualFileName;
     private String automaticClassName;

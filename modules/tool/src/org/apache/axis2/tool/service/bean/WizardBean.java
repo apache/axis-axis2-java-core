@@ -1,3 +1,5 @@
+package org.apache.axis2.tool.service.bean;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -14,14 +16,27 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.tool.service.bean;
-
 public class WizardBean {
     private ClassFileSelectionBean classFileBean;
     private WSDLFileLocationBean wsdlBean;
+    private LibrarySelectionBean libraryBean;
+    
     private Page2Bean page2bean;
     private Page3Bean page3bean;
+    
 
+    /**
+     * @return Returns the libraryBean.
+     */
+    public LibrarySelectionBean getLibraryBean() {
+        return libraryBean;
+    }
+    /**
+     * @param libraryBean The libraryBean to set.
+     */
+    public void setLibraryBean(LibrarySelectionBean libraryBean) {
+        this.libraryBean = libraryBean;
+    }
     
     /**
      * @return Returns the wsdlBean.

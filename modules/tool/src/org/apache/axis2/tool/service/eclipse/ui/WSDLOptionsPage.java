@@ -13,8 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.axis2.tool.service.eclipse.ui;
+
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 import org.apache.axis2.tool.service.bean.WSDLAutoGenerateOptionBean;
 import org.apache.axis2.tool.service.eclipse.plugin.ServiceArchiver;
@@ -34,12 +39,12 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-
+/**
+ * @author Ajith
+ *
+ * TODO To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Style - Code Templates
+ */
 public class WSDLOptionsPage extends AbstractServiceWizardPage {
 
     private static final String SERVICE_WSDL_DEFAULT_NAME = "service.wsdl";

@@ -11,6 +11,9 @@
       <library name="Axis_Service_Archiver.jar">
          <export name="*"/>
       </library>
+      <library name="lib/axis2-1.0-alpha.jar">
+         <export name="*"/>
+      </library>
    </runtime>
 
    <requires>
@@ -19,7 +22,6 @@
       <import plugin="org.apache.ant"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="Axis2_Codegen_Wizard"/>
    </requires>
 
 <extension

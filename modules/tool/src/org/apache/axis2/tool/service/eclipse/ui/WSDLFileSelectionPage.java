@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.axis2.tool.service.eclipse.ui;
 
 import org.apache.axis2.tool.service.bean.WSDLFileLocationBean;
@@ -35,7 +34,8 @@ import org.eclipse.swt.widgets.Text;
 
 public class WSDLFileSelectionPage extends AbstractServiceWizardPage {
     
-    private boolean skipNextPage = true;
+    //  set the default to false. This step cannot be skipped
+    private boolean skipNextPage = false;
     
     private Text wsdlTextBox;
     private Label selectionLabel;
@@ -114,6 +114,10 @@ public class WSDLFileSelectionPage extends AbstractServiceWizardPage {
 		skipWSDLCheckButton.setText(ServiceArchiver.getResourceString("page5.skipWSDL.caption"));
 		skipWSDLCheckButton.setLayoutData(gd);
 		skipWSDLCheckButton.setSelection(settings.getBoolean(PREF_CHECK_SKIP_WSDL));
+		////////////////////////////////////////
+		// Disable the skip check box
+		skipWSDLCheckButton.setEnabled(false);
+		///////////////////////////////////////
 		skipWSDLCheckButton.addSelectionListener(new SelectionListener(){
 		    public void widgetSelected(SelectionEvent e){
 		        handleSkip();
@@ -125,6 +129,7 @@ public class WSDLFileSelectionPage extends AbstractServiceWizardPage {
 		setControl(container);
 		
 		if (restoredFromPreviousSettings){
+		    handleSkip();
 		    if (!skipWSDLCheckButton.getSelection()){
 		    handleSelection();
 		    }
@@ -209,7 +214,8 @@ public class WSDLFileSelectionPage extends AbstractServiceWizardPage {
      * @see org.apache.axis2.tool.service.eclipse.ui.AbstractServiceWizardPage#isSkipNext()
      */
     public boolean isSkipNext() {
-        return this.skipNextPage;
+        return false;
+        //return this.skipNextPage;
     }
     
     public WSDLFileLocationBean getBean(){

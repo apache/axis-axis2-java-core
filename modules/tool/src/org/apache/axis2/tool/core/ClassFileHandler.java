@@ -1,3 +1,14 @@
+package org.apache.axis2.tool.core;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Enumeration;
+
+import sun.misc.URLClassPath;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -13,18 +24,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.apache.axis2.tool.core;
-
-import sun.misc.URLClassPath;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Enumeration;
 public class ClassFileHandler {
 
 
@@ -42,10 +41,10 @@ public class ClassFileHandler {
             throw new IOException("the location is invalid");
         URL[] urlList = {fileEndpoint.toURL()};
         URLClassPath classLoader = new URLClassPath(urlList);
-        Enumeration enumeration = classLoader.getResources("");
+        Enumeration enum = classLoader.getResources("");
 
-        while (enumeration.hasMoreElements()) {
-            Object o = enumeration.nextElement();
+        while (enum.hasMoreElements()) {
+            Object o =  enum.nextElement();
             System.out.println("o = " + o);
         }
         return null;

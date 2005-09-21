@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.axis2.tool.service.eclipse.util;
 
+/**
+ * @author Ajith
+ *
+ */
 public interface SettingsConstants {
    //#####################################################
    static final String PREF_CLASS_FILE_LOCATION = "CLASS_FILE_LOCATION" ;
@@ -33,6 +36,12 @@ public interface SettingsConstants {
    //#######################################################
    static final String PREF_OUTPUT_LOCATION="OUT_LOCATION";
    static final String PREF_OUTPUT_NAME="OUT_NAME";
+// #######################################################
+   static final String PREF_SERVICE_GEN_SERVICE_NAME="SERVICE_NAME";
+   static final String PREF_SERVICE_GEN_CLASSNAME="CLASSNAME";
+   static final String PREF_SERVICE_GEN_LOAD_ALL="LOAD_ALL";
+   //######################################################
+   static final String PREF_LIB_LIBNAMES="LIB_NAMES";
    
    
    
