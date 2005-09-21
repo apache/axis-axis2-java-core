@@ -179,6 +179,21 @@
        </td>
     </tr>
 
+
+    <tr>
+     <td colspan="2" >
+       <b>View Contexts </b>
+     </td>
+    </tr>
+    <tr>
+       <td>
+       &nbsp;&nbsp;&nbsp;&nbsp;
+       </td>
+       <td>
+         <a href="listContexts" target="mainFrame">View Context Hierachy</a>
+       </td>
+    </tr>
+
      <tr>
        <td>
        &nbsp;&nbsp;&nbsp;&nbsp;
@@ -193,6 +208,14 @@
        </td>
        <td>
          <a href="index.jsp" target="_parent" >Back</a>
+       </td>
+    </tr>
+    <tr>
+       <td>
+       &nbsp;&nbsp;&nbsp;&nbsp;
+       </td>
+       <td>
+         <a href="logout" target="_parent" >Log out</a>
        </td>
     </tr>
 </table>

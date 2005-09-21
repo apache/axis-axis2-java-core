@@ -1,4 +1,5 @@
- <%--
+<%@ page import="org.apache.axis2.Constants"%>
+<%@ page import="org.apache.axis2.transport.http.ListingAgent"%> <%--
  /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -28,6 +29,9 @@
   <head><title>Login to Axis2:: Administartion page</title></head>
   <body>
   <jsp:include page="include/header.inc"></jsp:include>
+  <% String isLoged = (String)request.getSession().getAttribute(Constants.LOGGED);
+   if(!"Yes".equals(isLoged)){
+   %>
     <form method="get" name="LogingForm" action="adminloging">
         <table border="0" width="100%" cellspacing="1" cellpadding="1">
             <tr>
@@ -61,6 +65,9 @@
              </tr>
          </table>
        </form>
+  <%} else {
+      response.sendRedirect(ListingAgent.ADMIN_JSP_NAME);
+  }%>
        <jsp:include page="include/footer.inc"></jsp:include>
      </body>
   </html>

@@ -36,6 +36,8 @@ public class ServiceGroupContext extends AbstractContext {
     private transient ServiceGroupDescription description;
     private String serviceGroupDescName=null;
 
+
+
     public void init(AxisConfiguration axisConfiguration) throws AxisFault {
         if (serviceGroupDescName!=null)
             description = axisConfiguration.getServiceGroup(serviceGroupDescName);
@@ -105,5 +107,9 @@ public class ServiceGroupContext extends AbstractContext {
 
     public ServiceGroupDescription getDescription() {
         return description;
+    }
+
+    public Iterator getServiceContexts(){
+        return serviceContextMap.values().iterator();
     }
 }

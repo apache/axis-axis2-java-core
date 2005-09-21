@@ -116,6 +116,9 @@ public class Constants {
 
     public static final String ADMIN_LOGGING = "adminloging";
 
+    public static final String LIST_CONTEXTS = "listContexts";
+    public static final String LOGOUT = "logout";
+
     public static final String VIEW_GLOBAL_HANDLERS = "viewGlobalHandlers";
     public static final String SELECT_SERVICE = "selectService";
     public static final String EDIR_SERVICE_PARA = "editServicepara";
@@ -128,6 +131,8 @@ public class Constants {
      */
     public static final String SERVICE_MAP = "servicemap";
     public static final String SERVICE_GROUP_MAP = "serviceGroupmap";
+
+    public static final String CONFIG_CONTEXT = "config_context";
 
     public static final String SERVICE = "service";
 

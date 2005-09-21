@@ -37,7 +37,8 @@ public class ServiceContext extends AbstractContext {
     private String serviceInstanceID;
 
     private QName serviceDescName = null;
-    
+
+
     /**
      * The method is used to do the intialization of the EngineContext
      * @throws AxisFault
@@ -63,8 +64,10 @@ public class ServiceContext extends AbstractContext {
         super(serviceGroupContext);
         this.serviceConfig = serviceConfig;
         
-        if (serviceConfig!=null)
+        if (serviceConfig!=null){
         	this.serviceDescName = serviceConfig.getName();
+            serviceInstanceID = serviceConfig.getName().getLocalPart(); 
+        }
 
     }
 
@@ -79,6 +82,7 @@ public class ServiceContext extends AbstractContext {
      * @param serviceInstanceID The serviceInstanceID to set.
      */
     public void setServiceInstanceID(String serviceInstanceID) {
+        //todo we do not need this , this ID should equal to serviceName
         this.serviceInstanceID = serviceInstanceID;
     }
 

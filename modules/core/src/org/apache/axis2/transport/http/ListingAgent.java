@@ -54,7 +54,7 @@ public class ListingAgent {
 
     private static final String REMOVE_SERVICE_JSP_NAME = "RemoveService.jsp";
 
-    private static final String ADMIN_JSP_NAME = "admin.jsp";
+    public static final String ADMIN_JSP_NAME = "admin.jsp";
 
     private static final String LIST_AVAILABLE_MODULES_JSP_NAME = "listModules.jsp";
 
@@ -170,9 +170,15 @@ public class ListingAgent {
                 filePart.endsWith(Constants.LIST_SERVIC_GROUPS)) {
             listServiceGroups(httpServletRequest, httpServletResponse);
             return;
+        }else if ((filePart != null) &&
+                filePart.endsWith(Constants.LIST_CONTEXTS)) {
+            listContexts(httpServletRequest, httpServletResponse);
+            return;
+        }  else if ((filePart != null) &&
+                filePart.endsWith(Constants.LOGOUT)) {
+            logout(httpServletRequest, httpServletResponse);
+            return;
         }
-
-
 
         if ((filePart != null) &&
                 filePart.endsWith(Constants.LISTSERVICES)) {
@@ -209,6 +215,16 @@ public class ListingAgent {
         res.sendRedirect(LIST_SERVICE_GROUP_JSP);
     }
 
+
+    private void listContexts(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        req.getSession().setAttribute(Constants.CONFIG_CONTEXT, configContext);
+        res.sendRedirect("ViewContexts.jsp");
+    }
+
+     private void logout(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        req.getSession().invalidate();
+        res.sendRedirect("index.jsp");
+    }
     /**
      * @param req
      * @param res

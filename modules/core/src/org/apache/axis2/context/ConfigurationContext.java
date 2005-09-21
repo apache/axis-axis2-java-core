@@ -83,7 +83,6 @@ public class ConfigurationContext extends AbstractContext {
 
     public void init(AxisConfiguration axisConfiguration) throws AxisFault {
         this.axisConfiguration = axisConfiguration;
-
         Iterator operationContextIt = operationContextMap.keySet().iterator();
         while (operationContextIt.hasNext()) {
             Object key = operationContextIt.next();
@@ -91,7 +90,6 @@ public class ConfigurationContext extends AbstractContext {
             if (operationContext != null)
                 operationContext.init(axisConfiguration);
         }
-
         Iterator serviceContextIt = serviceContextMap.keySet().iterator();
         while (serviceContextIt.hasNext()) {
             Object key = serviceContextIt.next();
@@ -99,7 +97,6 @@ public class ConfigurationContext extends AbstractContext {
             if (serviceContext != null)
                 serviceContext.init(axisConfiguration);
         }
-
         Iterator serviceGroupContextIt = serviceGroupContextMap.keySet().iterator();
         while (serviceGroupContextIt.hasNext()) {
             Object key = serviceGroupContextIt.next();
@@ -272,6 +269,8 @@ public class ConfigurationContext extends AbstractContext {
                 serviceContext = serviceGroupContext.getServiceContext(
                         messageContext.getServiceDescription().getName().
                                 getLocalPart());
+                //set the serviceGroupContextID
+                serviceGroupContext.setId(serviceGroupContextId);
                 this.registerServiceGroupContext(serviceGroupContext);
             } else {
                 throw new AxisFault("ServiceDescription Not found yet");
@@ -295,6 +294,14 @@ public class ConfigurationContext extends AbstractContext {
 
     private boolean isNull(String string) {
         return "".equals(string) || string == null;
+    }
+
+    /**
+     * To get all the service groups in the system
+     * @return
+     */
+    public HashMap getServiceGroupContexts(){
+        return (HashMap)serviceGroupContextMap;
     }
 
 }
