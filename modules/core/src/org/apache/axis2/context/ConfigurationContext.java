@@ -17,11 +17,9 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.description.ServiceGroupDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.storage.AxisStorage;
-import org.apache.axis2.transport.http.AxisServlet;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.util.threadpool.ThreadPool;
 
@@ -225,17 +223,10 @@ public class ConfigurationContext extends AbstractContext {
      * @param messageContext
      */
     public ServiceGroupContext fillServiceContextAndServiceGroupContext(MessageContext messageContext) throws AxisFault {
+
         String serviceGroupContextId = messageContext.getServiceGroupContextId();
 
-        if (isNull(serviceGroupContextId)) {
-            // try to get the id from addressing
-            serviceGroupContextId = (String) messageContext.getProperty(AddressingConstants.PARAM_SERVICE_GROUP_CONTEXT_ID);
-            if (serviceContextMap.get(serviceGroupContextId) == null) {
-                // try session id
-                serviceGroupContextId = (String) messageContext.getProperty(AxisServlet.SESSION_ID);
-            }
-        }
-
+        // by this time service group context id must have a value. Either from transport or from addressing
         ServiceGroupContext serviceGroupContext;
         ServiceContext serviceContext;
         if (!isNull(serviceGroupContextId) && serviceGroupContextMap.get(serviceGroupContextId) != null) {
@@ -290,6 +281,13 @@ public class ConfigurationContext extends AbstractContext {
             serviceGroupContextMap.put(id, serviceGroupContext);
             serviceGroupContext.setParent(this);
         }
+    }
+
+    public ServiceGroupContext getServiceGroupContext(String serviceGroupContextId){
+        if(serviceGroupContextMap != null){
+            return (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
+        }
+        return null;
     }
 
     private boolean isNull(String string) {

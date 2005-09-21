@@ -57,6 +57,7 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
         outMsgContext.setMessageInformationHeaders(messageInformationHeaders);
         outMsgContext.setOperationContext(msgContext.getOperationContext());
         outMsgContext.setServiceContext(msgContext.getServiceContext());
+        outMsgContext.setServiceGroupContextId(msgContext.getServiceGroupContextId());
         outMsgContext.setProperty(MessageContext.TRANSPORT_OUT,
                 msgContext.getProperty(MessageContext.TRANSPORT_OUT));
         outMsgContext.setProperty(HTTPConstants.HTTPOutTransportInfo,

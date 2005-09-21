@@ -29,6 +29,7 @@ import org.apache.axis2.transport.http.server.HttpRequestHandler;
 import org.apache.axis2.transport.http.server.SimpleHttpServerConnection;
 import org.apache.axis2.transport.http.server.SimpleRequest;
 import org.apache.axis2.transport.http.server.SimpleResponse;
+import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.logging.Log;
@@ -97,6 +98,7 @@ public class HTTPWorker implements HttpRequestHandler {
 
             //set the transport Headers
             msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getHeaders(request));
+            msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
 
             //This is way to provide Accsess to the transport information to the transport Sender
             msgContext.setProperty(

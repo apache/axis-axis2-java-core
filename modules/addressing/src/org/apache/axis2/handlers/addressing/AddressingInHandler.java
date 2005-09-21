@@ -24,6 +24,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
@@ -90,11 +91,17 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
 
     }
 
-    private void extractServiceGroupContextId(SOAPHeader header, MessageContext msgContext) {
+    private void extractServiceGroupContextId(SOAPHeader header, MessageContext msgContext) throws AxisFault {
         OMElement serviceGroupId = header.getFirstChildWithName(new QName(Constants.AXIS2_NAMESPACE_URI,
                 Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX));
         if (serviceGroupId != null) {
-            msgContext.setProperty( PARAM_SERVICE_GROUP_CONTEXT_ID, serviceGroupId.getText());
+            String groupId = serviceGroupId.getText();
+            ServiceGroupContext serviceGroupContext = msgContext.getSystemContext().getServiceGroupContext(groupId);
+            if (serviceGroupContext == null) {
+                throw new AxisFault("Invalid Service Group Id." + groupId);
+            }
+            msgContext.setServiceGroupContextId(serviceGroupId.getText());
+//            msgContext.setProperty( PARAM_SERVICE_GROUP_CONTEXT_ID, serviceGroupId.getText());
         }
     }
 

@@ -6,10 +6,8 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.util.RequestCounter;
 import org.apache.axis2.engine.util.RequestCounterMessageReceiver;
-import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
@@ -20,25 +18,39 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
-
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @author : Eran Chinthaka (chinthaka@apache.org)
- */
+* Copyright 2001-2004 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+* @author : Eran Chinthaka (chinthaka@apache.org)
+*/
 public class ServiceGroupContextTest extends TestCase {
+
+    /**
+     * This test will first sends a request to a dummy service deployed. That service will get
+     * message contexts as inputs and will put a property in the service group context to count the
+     * number of requests.
+     * Then the client, upon receiving the response, extracts the sgc id from the received message
+     * (this will come as a reference parameter in the ReplyTo EPR) and sets that as a top level
+     * soap header in the next request to the same service group.
+     * Server will correctly identify the service group from the information sent by the client and
+     * retrieve the sgc earlier used and will use that for the current request as well.
+     * The service will retrieve the request count from the sgc and increase that by one.
+     *
+     * Test will asserts whether the client gets the number of requests as 2, when he invokes two times.
+     */
+
     protected EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:" +
                                                                   (UtilServer.TESTING_PORT) +
                                                                   "/axis/services/RequestCounter");
@@ -64,7 +76,7 @@ public class ServiceGroupContextTest extends TestCase {
     public void testEchoXMLSync() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
-        OMElement payload = TestingUtils.createDummyOMElement();
+        SOAPEnvelope payload = fac.getDefaultEnvelope();
 
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
 
@@ -72,28 +84,25 @@ public class ServiceGroupContextTest extends TestCase {
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
         call.setWsaAction(operationName.getLocalPart());
 
-        OMElement result = call.invokeBlocking(operationName.getLocalPart(), payload);
+        SOAPEnvelope result = call.invokeBlocking(operationName.getLocalPart(), payload);
 
-//        print(result);
 
         OMNamespace axis2Namespace = fac.createOMNamespace(Constants.AXIS2_NAMESPACE_URI,
                                                            Constants.AXIS2_NAMESPACE_PREFIX);
         SOAPEnvelope defaultEnvelope = fac.getDefaultEnvelope();
         SOAPHeaderBlock soapHeaderBlock = defaultEnvelope.getHeader().addHeaderBlock(Constants.SERVICE_GROUP_ID,
                                                                                      axis2Namespace);
-        soapHeaderBlock.setText(result.getText());
+
+        String serviceGroupId = result.getHeader().getFirstChildWithName(new QName("ReplyTo"))
+                .getFirstChildWithName(new QName("ReferenceParameters")).
+                getFirstChildWithName(new QName("ServiceGroupId")).getText();
+
+        soapHeaderBlock.setText(serviceGroupId);
 
         SOAPEnvelope soapEnvelope = call.invokeBlocking(operationName.getLocalPart(),
                                                         defaultEnvelope);
-//        print(soapEnvelope.getBody().getFirstElement());
+        String text = soapEnvelope.getBody().getFirstElement().getText();
+        assertEquals("Number of requests should be 2", 2, Integer.parseInt(text));
     }
 
-//    private void print(OMElement result) throws XMLStreamException {
-//        System.out.println("*******************************************");
-//        OMOutputImpl out = new OMOutputImpl(System.out, false);
-//        result.serializeWithCache(out);
-//        out.flush();
-//        System.out.println("*******************************************");
-//
-//    }
 }

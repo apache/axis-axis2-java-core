@@ -118,7 +118,10 @@ public class AddressingOutHandler
         }
         // add the service group id as a reference parameter
         String serviceGroupContextId = msgContext.getServiceGroupContextId();
-        if (serviceGroupContextId != null && "".equals(serviceGroupContextId)) {
+        if (serviceGroupContextId != null && !"".equals(serviceGroupContextId)) {
+            if(epr.getReferenceParameters() == null){
+                epr.setReferenceParameters(new AnyContentType());
+            }
             epr.getReferenceParameters().addReferenceValue(new QName(Constants.AXIS2_NAMESPACE_URI,
                     Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX), serviceGroupContextId);
         }
