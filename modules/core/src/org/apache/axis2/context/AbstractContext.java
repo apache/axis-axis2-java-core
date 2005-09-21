@@ -63,6 +63,7 @@ public abstract class AbstractContext implements Serializable {
      */
     public void setProperty(String key, Object value, boolean persistent) {
         if (persistent) {
+            //todo has to check the seralizabilty 
             persistentMap.put(key, value);
         } else {
             nonPersistentMap.put(key, value);
@@ -122,6 +123,14 @@ public abstract class AbstractContext implements Serializable {
      */
     public AbstractContext getParent() {
         return parent;
+    }
+
+    public HashMap getNonPersistentMap() {
+        return nonPersistentMap;
+    }
+
+    public HashMap getPersistentMap() {
+        return persistentMap;
     }
 
 }

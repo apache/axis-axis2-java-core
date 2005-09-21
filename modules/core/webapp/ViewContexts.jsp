@@ -30,8 +30,8 @@
         String groupContextID = (String)serviceGroupContext.next();
         ServiceGroupContext groupContext = (ServiceGroupContext)serviceGroupContextsMap.get(groupContextID);
         %>
-           <li><%=groupContextID%><font color="blue"><a href="viewServiceGroupContext.jsp?V=Y&ID=<%=groupContextID%>">
-                    View</a></font>  <font color="red"><a href="viewServiceGroupContext.jsp?R=Y&ID=<%=groupContextID%>">
+           <li><%=groupContextID%><font color="blue"><a href="viewServiceGroupContext.jsp?TYPE=VIEW&ID=<%=groupContextID%>">
+                    View</a></font>  <font color="red"><a href="viewServiceGroupContext.jsp?TYPE=DELETE&ID=<%=groupContextID%>">
                     Remove</a> </font></li>
         <%
         Iterator serviceContextItr = groupContext.getServiceContexts();
@@ -40,9 +40,8 @@
             ServiceContext serviceContext = (ServiceContext)serviceContextItr.next();
              String serviceConID = serviceContext.getServiceInstanceID();
         %>
-            <li><%=serviceConID%><font color="blue"><a href="viewServiceContext.jsp?V=y&ID=<%=serviceConID%>&PID=<%=groupContextID%>">
-                    View</a></font>  <font color="red"><a href="viewServiceContext.jsp?R=Y&ID=<%=serviceConID%>&PID=<%=groupContextID%>">
-                    Reomove</a></font></li>
+            <li><%=serviceConID%><font color="blue"><a href="viewServiceContext.jsp?TYPE=VIEW&ID=<%=serviceConID%>&PID=<%=groupContextID%>">
+                    View</a></font></li>
         <%
         }
                 %></ul><hr><%
