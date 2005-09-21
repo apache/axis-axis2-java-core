@@ -169,9 +169,9 @@ public class MIMEHelper {
     public String getAttachmentSpecType() {
         if (this.applicationType == null) {
             applicationType = contentType.getParameter("type");
-            if (applicationType.equalsIgnoreCase(MTOMConstants.MTOM_TYPE)) {
+            if ((MTOMConstants.MTOM_TYPE).equalsIgnoreCase(applicationType)) {
                 this.applicationType = MTOMConstants.MTOM_TYPE;
-            } else if (applicationType.equalsIgnoreCase(MTOMConstants.SWA_TYPE)) {
+            } else if ((MTOMConstants.SWA_TYPE).equalsIgnoreCase(applicationType)) {
                 this.applicationType = MTOMConstants.SWA_TYPE;
             } else {
                 throw new OMException(
