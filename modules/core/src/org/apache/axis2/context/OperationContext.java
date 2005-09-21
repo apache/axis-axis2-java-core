@@ -233,10 +233,10 @@ public class OperationContext extends AbstractContext {
      * being complete due to the optional nature of the MEP.
      */
     public void cleanup() {
-        if (null != this.inMessageContext) {
+        if (null != this.inMessageContext && operationContextMap != null) {
             operationContextMap.remove(inMessageContext.getMessageID());
         }
-        if (null != this.outMessageContext) {
+        if (null != this.outMessageContext && operationContextMap != null) {
             operationContextMap.remove(outMessageContext.getMessageID());
         }
     }

@@ -45,6 +45,7 @@ public class AxisServlet extends HttpServlet {
     private ListingAgent lister;
     private static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     private ConfigurationContext configContext;
+    public static final String SESSION_ID = "SessionId";
 
     /**
      * Method init
@@ -113,7 +114,7 @@ public class AxisServlet extends HttpServlet {
             msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getTransportHeaders(httpServletRequest));
 
             out = httpServletResponse.getOutputStream();
-            msgContext.setServiceGroupContextId(httpServletRequest.getSession().getId());
+            msgContext.setProperty(SESSION_ID, httpServletRequest.getSession().getId());
             boolean processed =
                     HTTPTransportUtils.processHTTPGetRequest(msgContext,
                             httpServletRequest.getInputStream(),
@@ -175,6 +176,7 @@ public class AxisServlet extends HttpServlet {
             msgContext.setProperty(HTTPConstants.HTTPOutTransportInfo,
                     new ServletBasedOutTransportInfo(res));
             msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getTransportHeaders(req));
+            msgContext.setProperty(SESSION_ID, req.getSession().getId());
 
             out =  res.getOutputStream();
             HTTPTransportUtils.processHTTPPostRequest(msgContext,

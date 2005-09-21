@@ -16,11 +16,7 @@
 
 package org.apache.axis2;
 
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.OperationContextFactory;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 
@@ -42,6 +38,7 @@ public class InstanceDispatcher extends AbstractHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
 
         if(msgContext.getOperationContext() != null && msgContext.getServiceContext() != null){
+            msgContext.setServiceGroupContextId(((ServiceGroupContext) msgContext.getServiceContext().getParent()).getId());
             return;
         }
 

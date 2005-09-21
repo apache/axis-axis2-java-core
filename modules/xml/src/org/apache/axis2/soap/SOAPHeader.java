@@ -30,7 +30,7 @@ public interface SOAPHeader extends OMElement {
     /**
      * Creates a new <CODE>SOAPHeaderBlock</CODE> object initialized with the
      * specified name and adds it to this <CODE>SOAPHeader</CODE> object.
-     * 
+     *
      * @param localName
      * @param ns
      * @return the new <CODE>SOAPHeaderBlock</CODE> object that was inserted
@@ -50,7 +50,7 @@ public interface SOAPHeader extends OMElement {
      * recipient for the message, so if no role attribute is included in a
      * <CODE>SOAPHeader</CODE> object, the message is sent to its ultimate
      * destination.
-     * 
+     *
      * @param role
      *            a <CODE>String</CODE> giving the URI of the role for which
      *            to search
@@ -69,7 +69,7 @@ public interface SOAPHeader extends OMElement {
      * This method allows an role to process only the parts of the <CODE>
      * SOAPHeader</CODE> object that apply to it and to remove them before
      * passing the message on to the next role.
-     * 
+     *
      * @param role
      *            a <CODE>String</CODE> giving the URI of the role for which
      *            to search
@@ -85,7 +85,7 @@ public interface SOAPHeader extends OMElement {
      * <code>SOAPHeaderBlock</code> objects in this <code>SOAPHeader</code>
      * object that have the specified role and that have a MustUnderstand
      * attribute whose value is equivalent to <code>true</code>.
-     * 
+     *
      * @param role
      *            a <code>String</code> giving the URI of the role for which
      *            to search
@@ -99,7 +99,7 @@ public interface SOAPHeader extends OMElement {
      * Returns an <code>Iterator</code> over all the
      * <code>SOAPHeaderBlock</code> objects in this <code>SOAPHeader</code>
      * object.
-     * 
+     *
      * @return an <code>Iterator</code> object over all the
      *         <code>SOAPHeaderBlock</code> objects contained by this
      *         <code>SOAPHeader</code>. If there are no header blocks then an
@@ -111,7 +111,7 @@ public interface SOAPHeader extends OMElement {
      * Returns an <code>Iterator</code> over all the
      * <code>SOAPHeaderBlock</code> objects in this <code>SOAPHeader </code>
      * object and detaches them from this <code>SOAPHeader</code> object.
-     * 
+     *
      * @return an <code>Iterator</code> object over all the
      *         <code>SOAPHeaderBlock</code> objects contained by this
      *         <code>SOAPHeader</code>
@@ -120,7 +120,7 @@ public interface SOAPHeader extends OMElement {
 
     /**
      * Return all the Headers that has the Namespace URI to given NS URI
-     * 
+     *
      * @param nsURI
      * @return
      */

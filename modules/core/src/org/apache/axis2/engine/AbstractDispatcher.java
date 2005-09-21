@@ -17,10 +17,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
@@ -74,6 +71,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
                     msgctx.setServiceContext((ServiceContext) operationContext.getParent());
                     msgctx.setServiceDescription(((ServiceContext) operationContext.getParent()).getServiceConfig());
                     msgctx.getOperationDescription().registerOperationContext(msgctx, operationContext);
+                    msgctx.setServiceGroupContextId(((ServiceGroupContext) msgctx.getServiceContext().getParent()).getId());
                 }
             }
             return;

@@ -17,11 +17,8 @@
 package org.apache.axis2.handlers.addressing;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AnyContentType;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.MessageInformationHeaders;
-import org.apache.axis2.addressing.ServiceName;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.*;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
@@ -49,8 +46,7 @@ public class AddressingOutHandler
     OMNamespace addressingNamespaceObject;
     String addressingNamespace;
 
-    private String axis2NamespacePrefix = "axis2";
-    private String axis2NamespaceURI = "http://ws.apache.org/namespaces/axis2";
+
 
     public void invoke(MessageContext msgContext) throws AxisFault {
 
@@ -123,8 +119,8 @@ public class AddressingOutHandler
         // add the service group id as a reference parameter
         String serviceGroupContextId = msgContext.getServiceGroupContextId();
         if (serviceGroupContextId != null && "".equals(serviceGroupContextId)) {
-            epr.getReferenceParameters().addReferenceValue(new QName(axis2NamespaceURI,
-                    "ServiceGroupId", axis2NamespacePrefix), serviceGroupContextId);
+            epr.getReferenceParameters().addReferenceValue(new QName(Constants.AXIS2_NAMESPACE_URI,
+                    Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX), serviceGroupContextId);
         }
         addToSOAPHeader(epr, AddressingConstants.WSA_REPLY_TO, soapHeader);
 

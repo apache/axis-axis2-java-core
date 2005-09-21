@@ -17,6 +17,7 @@
 package org.apache.axis2.handlers.addressing;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
@@ -78,11 +79,23 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                 }
             }
             msgContext.setProperty(WS_ADDRESSING_VERSION, addressingNamespace, true);
+
+            // extract service group context, if available
+            extractServiceGroupContextId(header, msgContext);
+
         } catch (AddressingException e) {
             logger.info("Exception occurred in Addressing Module");
             throw new AxisFault(e);
         }
 
+    }
+
+    private void extractServiceGroupContextId(SOAPHeader header, MessageContext msgContext) {
+        OMElement serviceGroupId = header.getFirstChildWithName(new QName(Constants.AXIS2_NAMESPACE_URI,
+                Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX));
+        if (serviceGroupId != null) {
+            msgContext.setProperty( PARAM_SERVICE_GROUP_CONTEXT_ID, serviceGroupId.getText());
+        }
     }
 
     /**
@@ -154,6 +167,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                 //here the addressing epr overidde what ever already there is 
                 epr = new EndpointReference(soapHeaderBlock.getText());
                 messageInformationHeaders.setTo(epr);
+                soapHeaderBlock.setProcessed();
             } else if (AddressingConstants.WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
                 epr = messageInformationHeaders.getFrom();
                 if (epr == null) {
@@ -161,6 +175,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                     messageInformationHeaders.setFrom(epr);
                 }
                 extractEPRInformation(soapHeaderBlock, epr, addressingNamespace);
+                soapHeaderBlock.setProcessed();
             } else if (AddressingConstants.WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName())) {
                 epr = messageInformationHeaders.getReplyTo();
                 if (epr == null) {
@@ -168,6 +183,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                     messageInformationHeaders.setReplyTo(epr);
                 }
                 extractEPRInformation(soapHeaderBlock, epr, addressingNamespace);
+                soapHeaderBlock.setProcessed();
             } else if (AddressingConstants.WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName())) {
                 epr = messageInformationHeaders.getFaultTo();
                 if (epr == null) {
@@ -175,10 +191,13 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                     messageInformationHeaders.setFaultTo(epr);
                 }
                 extractEPRInformation(soapHeaderBlock, epr, addressingNamespace);
+                soapHeaderBlock.setProcessed();
             } else if (AddressingConstants.WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
                 messageInformationHeaders.setMessageId(soapHeaderBlock.getText());
+                soapHeaderBlock.setProcessed();
             } else if (AddressingConstants.WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
                 messageInformationHeaders.setAction(soapHeaderBlock.getText());
+                soapHeaderBlock.setProcessed();
             } else if (AddressingConstants.WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
                 String address = soapHeaderBlock.getText();
                 OMAttribute relationshipType =
@@ -195,6 +214,8 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                                         ? relationshipTypeDefaultValue
                                         : relationshipType.getValue());
                 messageInformationHeaders.setRelatesTo(relatesTo);
+                soapHeaderBlock.setProcessed();
+
             }
         }
 
@@ -209,11 +230,11 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         Iterator childElements = headerBlock.getChildElements();
         while (childElements.hasNext()) {
             OMElement eprChildElement = (OMElement) childElements.next();
-            if (checkElement(new QName(addressingNamespace, AddressingConstants.EPR_ADDRESS), eprChildElement.getQName())){
+            if (checkElement(new QName(addressingNamespace, AddressingConstants.EPR_ADDRESS), eprChildElement.getQName())) {
                 epr.setAddress(eprChildElement.getText());
-            } else if (checkElement(new QName(addressingNamespace, AddressingConstants.EPR_REFERENCE_PARAMETERS), eprChildElement.getQName())){
+            } else if (checkElement(new QName(addressingNamespace, AddressingConstants.EPR_REFERENCE_PARAMETERS), eprChildElement.getQName())) {
                 AnyContentType anyContentType = new AnyContentType();
-                if(epr.getReferenceParameters() == null){
+                if (epr.getReferenceParameters() == null) {
                     epr.setReferenceParameters(anyContentType);
                 }
                 Iterator referenceParameters = eprChildElement.getChildElements();
@@ -221,9 +242,9 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                     OMElement element = (OMElement) referenceParameters.next();
                     epr.getReferenceParameters().addReferenceValue(element.getQName(), element.getText());
                 }
-            } else if (checkElement(new QName(addressingNamespace, AddressingConstants.Final.WSA_METADATA), eprChildElement.getQName())){
+            } else if (checkElement(new QName(addressingNamespace, AddressingConstants.Final.WSA_METADATA), eprChildElement.getQName())) {
                 AnyContentType anyContentType = new AnyContentType();
-                if(epr.getMetadata() == null){
+                if (epr.getMetadata() == null) {
                     epr.setMetadata(anyContentType);
                 }
                 Iterator metadataChildren = eprChildElement.getChildElements();

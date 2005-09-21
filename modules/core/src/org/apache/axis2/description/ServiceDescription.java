@@ -24,13 +24,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.phaseresolver.PhaseResolver;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLExtensibilityAttribute;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLInterface;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPOperation;
 import org.apache.wsdl.impl.WSDLInterfaceImpl;
@@ -45,13 +39,7 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class ServiceDescription
@@ -598,7 +586,7 @@ public class ServiceDescription
      * @param msgContext
      * @return  ServiceContext
      */
-    public ServiceContext findServiceContext(MessageContext msgContext) {
+    public ServiceContext u(MessageContext msgContext) {
         // TODO : Fix me. Can't look up a service context in the system context
 
         ServiceContext serviceContext = null;
@@ -620,7 +608,7 @@ public class ServiceDescription
 
     /**
      * To get the description about the service
-     *
+     *                                                                   ty67tyuio
      * @return String
      */
     public String getServiceDescription() {

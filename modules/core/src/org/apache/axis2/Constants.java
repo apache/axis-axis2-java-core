@@ -208,6 +208,10 @@ public class Constants {
     }
 
 
+    public static final String AXIS2_NAMESPACE_PREFIX = "axis2";
+    public static final String AXIS2_NAMESPACE_URI = "http://ws.apache.org/namespaces/axis2";
+
+    public static final String SERVICE_GROUP_ID = "ServiceGroupId";
 
 
 }

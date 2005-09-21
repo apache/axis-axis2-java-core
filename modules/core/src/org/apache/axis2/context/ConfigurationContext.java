@@ -17,9 +17,11 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.description.ServiceGroupDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.storage.AxisStorage;
+import org.apache.axis2.transport.http.AxisServlet;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.util.threadpool.ThreadPool;
 
@@ -55,7 +57,7 @@ public class ConfigurationContext extends AbstractContext {
      */
     private final Map operationContextMap = new HashMap();
 
-    private final Map serviceContextMap = new HashMap ();
+    private final Map serviceContextMap = new HashMap();
 
     private final Map serviceGroupContextMap = new HashMap();
 
@@ -78,42 +80,42 @@ public class ConfigurationContext extends AbstractContext {
         serviceContextMap.remove(name);
     }
 
-    
+
     public void init(AxisConfiguration axisConfiguration) throws AxisFault {
-    	this.axisConfiguration = axisConfiguration;
+        this.axisConfiguration = axisConfiguration;
 
-    	Iterator operationContextIt = operationContextMap.keySet().iterator();
-    	while (operationContextIt.hasNext()) {
-    		Object key = operationContextIt.next();
-    		OperationContext operationContext = (OperationContext) operationContextMap.get(key);
-    		if (operationContext!=null)
-    			operationContext.init(axisConfiguration);
-    	}
+        Iterator operationContextIt = operationContextMap.keySet().iterator();
+        while (operationContextIt.hasNext()) {
+            Object key = operationContextIt.next();
+            OperationContext operationContext = (OperationContext) operationContextMap.get(key);
+            if (operationContext != null)
+                operationContext.init(axisConfiguration);
+        }
 
-    	Iterator serviceContextIt = serviceContextMap.keySet().iterator();
-    	while (serviceContextIt.hasNext()) {
-    		Object key = serviceContextIt.next();
-    		ServiceContext serviceContext = (ServiceContext) serviceContextMap.get(key);
-    		if (serviceContext!=null)
-    			serviceContext.init(axisConfiguration);
-    	}
+        Iterator serviceContextIt = serviceContextMap.keySet().iterator();
+        while (serviceContextIt.hasNext()) {
+            Object key = serviceContextIt.next();
+            ServiceContext serviceContext = (ServiceContext) serviceContextMap.get(key);
+            if (serviceContext != null)
+                serviceContext.init(axisConfiguration);
+        }
 
-    	Iterator serviceGroupContextIt = serviceGroupContextMap.keySet().iterator();
-    	while (serviceGroupContextIt.hasNext()) {
-    		Object key = serviceGroupContextIt.next();
-    		ServiceGroupContext serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(key);
-    		if (serviceGroupContext!=null)
-    			serviceGroupContext.init(axisConfiguration);
-    	}
+        Iterator serviceGroupContextIt = serviceGroupContextMap.keySet().iterator();
+        while (serviceGroupContextIt.hasNext()) {
+            Object key = serviceGroupContextIt.next();
+            ServiceGroupContext serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(key);
+            if (serviceGroupContext != null)
+                serviceGroupContext.init(axisConfiguration);
+        }
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-    	out.defaultWriteObject();
+        out.defaultWriteObject();
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    	in.defaultReadObject();
-    	threadPool = new ThreadPool ();
+        in.defaultReadObject();
+        threadPool = new ThreadPool();
     }
 
     /**
@@ -182,7 +184,6 @@ public class ConfigurationContext extends AbstractContext {
     }
 
 
-
     /**
      * @return the Gloal ThradPool
      */
@@ -229,8 +230,17 @@ public class ConfigurationContext extends AbstractContext {
     public ServiceGroupContext fillServiceContextAndServiceGroupContext(MessageContext messageContext) throws AxisFault {
         String serviceGroupContextId = messageContext.getServiceGroupContextId();
 
+        if (isNull(serviceGroupContextId)) {
+            // try to get the id from addressing
+            serviceGroupContextId = (String) messageContext.getProperty(AddressingConstants.PARAM_SERVICE_GROUP_CONTEXT_ID);
+            if (serviceContextMap.get(serviceGroupContextId) == null) {
+                // try session id
+                serviceGroupContextId = (String) messageContext.getProperty(AxisServlet.SESSION_ID);
+            }
+        }
+
         ServiceGroupContext serviceGroupContext;
-        ServiceContext serviceContext ;
+        ServiceContext serviceContext;
         if (!isNull(serviceGroupContextId) && serviceGroupContextMap.get(serviceGroupContextId) != null) {
             // SGC is already there
             serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
@@ -252,16 +262,16 @@ public class ConfigurationContext extends AbstractContext {
                 serviceGroupContextId = UUIDGenerator.getUUID();
                 messageContext.setServiceGroupContextId(serviceGroupContextId);
             }
-            if(messageContext.getServiceDescription() !=null){
+            if (messageContext.getServiceDescription() != null) {
 //                String servicName = messageContext.getServiceDescription().getName().getLocalPart();
                 ServiceGroupDescription servicGroupDescription =
                         messageContext.getServiceDescription().getParent();
 //                ServiceGroupDescription servicGroupDescription =
 //                        this.getAxisConfiguration().getServiceGroup(servicName);
-                serviceGroupContext =  servicGroupDescription.getServiceGroupContext(this);
+                serviceGroupContext = servicGroupDescription.getServiceGroupContext(this);
                 serviceContext = serviceGroupContext.getServiceContext(
                         messageContext.getServiceDescription().getName().
-                        getLocalPart());
+                                getLocalPart());
                 this.registerServiceGroupContext(serviceGroupContext);
             } else {
                 throw new AxisFault("ServiceDescription Not found yet");
