@@ -69,7 +69,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             if (implInfoParam != null) {
                 Class implClass =
                     Class.forName(
-                        (String) implInfoParam.getValue(),
+                        ((String) implInfoParam.getValue()).trim(),
                         true,
                         classLoader);
                 return implClass.newInstance();
