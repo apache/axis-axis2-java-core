@@ -16,6 +16,18 @@
 
 package org.apache.axis2.transport.http;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -44,17 +56,8 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class CommonsHTTPTransportSender
         extends AbstractHandler
@@ -71,6 +74,8 @@ public class CommonsHTTPTransportSender
 
     protected OMOutputImpl omOutput = new OMOutputImpl();
 
+    protected Log log = LogFactory.getLog(getClass().getName());
+    
     public CommonsHTTPTransportSender() {
     } //default
 
@@ -418,10 +423,51 @@ public class CommonsHTTPTransportSender
         //hostConfig handles the socket functions..
         //HostConfiguration hostConfig = getHostConfiguration(msgContext, url);
 
+
+        int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
+        int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
+        
+        try {
+			// First try getting the SO_TIMEOUT and CONNECTION_TIMEOUT values
+			// form the static configuration
+			Parameter tempSoTimeoutParam = msgContext
+					.getParameter(HTTPConstants.SO_TIMEOUT);
+			Parameter tempConnTimeoutParam = msgContext
+					.getParameter(HTTPConstants.CONNECTION_TIMEOUT);
+
+			if (tempSoTimeoutParam != null) {
+				soTimeout = Integer.parseInt((String) tempSoTimeoutParam
+						.getValue());
+			}
+
+			if (tempConnTimeoutParam != null) {
+				connectionTimeout = Integer
+						.parseInt((String) tempConnTimeoutParam.getValue());
+			}
+
+			// If the SO_TIMEOUT of CONNECTION_TIMEOUT is set by dynamically the
+			// override the static config
+			Integer tempSoTimeoutProperty = (Integer) msgContext
+					.getProperty(HTTPConstants.SO_TIMEOUT);
+			Integer tempConnTimeoutProperty = (Integer) msgContext
+					.getProperty(HTTPConstants.CONNECTION_TIMEOUT);
+
+			if (tempSoTimeoutProperty != null) {
+				connectionTimeout = tempSoTimeoutProperty.intValue();
+			}
+
+			if (tempConnTimeoutProperty != null) {
+				connectionTimeout = tempConnTimeoutProperty.intValue();
+			}
+		} catch (NumberFormatException nfe) {
+			//If there's a problem log it and use the default values
+			log.error("Invalid timeout value format: not a number", nfe);
+		}
+		
         // SO_TIMEOUT -- timeout for blocking reads
-        httpClient.getHttpConnectionManager().getParams().setSoTimeout(60000);
+        httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
         // timeout for initial connection
-        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(60000);
+        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(connectionTimeout);
 
         PostMethod postMethod = new PostMethod(url.toString());
         postMethod.setPath(url.getFile());

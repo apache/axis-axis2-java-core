@@ -401,6 +401,27 @@ public class HTTPConstants {
     public static final String HTTP_ELEMENT_CHARSET = "US-ASCII";
 
     /**
+     * Field SO_TIMEOUT
+     */
+    public static final String SO_TIMEOUT = "SO_TIMEOUT";
+    
+    /**
+     * Field CONNECTION_TIMEOUT
+     */
+    public static final String CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT";
+    
+    /**
+     * Field DEFAULT_SO_TIMEOUT
+     */
+    public static final int DEFAULT_SO_TIMEOUT = 60000;
+    
+    /**
+     * Field DEFAULT_CONNECTION_TIMEOUT
+     */
+    public static final int DEFAULT_CONNECTION_TIMEOUT = 60000;
+    
+    
+    /**
      * Method getBytes
      *
      * @param data
