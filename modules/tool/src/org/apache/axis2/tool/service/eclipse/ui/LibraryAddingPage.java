@@ -110,7 +110,7 @@ public class LibraryAddingPage extends AbstractServiceWizardPage {
 		dummyLabel.setText(ServiceArchiver.getResourceString("page6.liblist.caption"));
 		dummyLabel.setLayoutData(gd);
 		
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 3;
 		gd.verticalSpan = 5;
 		
@@ -158,7 +158,7 @@ public class LibraryAddingPage extends AbstractServiceWizardPage {
     }
     
     private void updateList(){
-        jarFilecountLabel.setText(jarFileList.getItemCount() + ServiceArchiver.getResourceString("page6.liblist.count.caption"));
+        jarFilecountLabel.setText(jarFileList.getItemCount() + " " + ServiceArchiver.getResourceString("page6.liblist.count.caption"));
         settings.put(PREF_LIB_LIBNAMES,jarFileList.getItems());
     }
     

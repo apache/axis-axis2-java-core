@@ -8,9 +8,14 @@
     <property name="source.dir.name" value="src"></property>
     <property name="lib.dir.name" value="lib"></property>
     <property name="bin.dir.name" value="bin"></property>
+    <property name="help.dir.name" value="help"></property>
 
     <property name="codegen.resource.dir" value="./conf/codegen"></property>
     <property name="service.resource.dir" value="./conf/service"></property>
+
+    <property name="codegen.help.resource.dir" value="./help/codegen"></property>
+    <property name="service.help.resource.dir" value="./help/service"></property>
+
 
     <!-- Default target to generate all the services -->
     <target name="all">
@@ -18,7 +23,7 @@
         <antcall target="generate-codegen-project"/>
     </target>
 
-    <!-- inith-->
+    <!-- init-->
     <target name="init">
         <mkdir dir="${output}"></mkdir>
         <mkdir dir="${service.output.dir}"></mkdir>
@@ -35,9 +40,19 @@
         <copy todir="${service.output.dir}">
             <fileset dir="${service.resource.dir}"></fileset>
         </copy>
-		<!-- create bin directory -->
-		<mkdir dir="${bin.dir.name}"></mkdir>
-        
+	  <!-- create bin directory -->
+	  <mkdir dir="${service.output.dir}/${bin.dir.name}"></mkdir>
+	  <!-- create the help directory -->
+        <mkdir dir="${service.output.dir}/${help.dir.name}"></mkdir>
+	  <!-- copy the help directory -->
+        <copy todir="${service.output.dir}/${help.dir.name}">
+            <fileset dir="${service.help.resource.dir}"></fileset>
+        </copy>
+	 <available property="images.dir" file="../../xdocs/images/tools" type="dir" value="../../xdocs/images/tools"/>
+         <copy todir="${service.output.dir}/${help.dir.name}">
+          <fileset dir="${images.dir}"/>
+         </copy> 
+
     </target>
 
     <!--generate the codegen project-->
@@ -52,8 +67,20 @@
             <fileset dir="${codegen.resource.dir}"></fileset>
         </copy>
         <!-- create bin directory -->
-		<mkdir dir="${bin.dir.name}"></mkdir>
+		<mkdir dir="${codegen.output.dir}/${bin.dir.name}"></mkdir>
+        <!-- create the help directory -->
+        <mkdir dir="${codegen.output.dir}/${help.dir.name}"></mkdir>
+	  <!-- copy the help directory -->
+        <copy todir="${codegen.output.dir}/${help.dir.name}">
+            <fileset dir="${codegen.help.resource.dir}"></fileset>
+        </copy>
+          <available property="images.dir" file="../../xdocs/images/tools" type="dir" value="../../xdocs/images/tools"/>
+          <copy todir="${codegen.output.dir}/${help.dir.name}">
+            <fileset dir="${images.dir}"/>
+         </copy>
+
     </target>
+
 
     <!-- Clean the directory -->
     <target name="clean">

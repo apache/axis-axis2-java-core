@@ -154,6 +154,8 @@ public class ServiceXMLGenerationPage extends AbstractServiceWizardPage{
         if (restoredFromPreviousSettings){
             //try running the update
             updateTable();
+        }else{
+            setPageComplete(false);  
         }
         
         
@@ -217,10 +219,10 @@ public class ServiceXMLGenerationPage extends AbstractServiceWizardPage{
         try {
             String classFileLocation = getClassFileLocation();
             URL classFileURL = new File(classFileLocation).toURL();
-            ClassLoader loader = new URLClassLoader(new URL[] { classFileURL },Thread.currentThread().getContextClassLoader());
-
-            Class clazz = loader.loadClass(classNameTextBox.getText());
+            ClassLoader loader = new URLClassLoader(new URL[] { classFileURL });
+            Class clazz = Class.forName(classNameTextBox.getText(),false,loader);
             Method[] methods = null;
+            
             
             if (searchDeclaredMethodsCheckBox.getSelection()){
                 methods = clazz.getDeclaredMethods();

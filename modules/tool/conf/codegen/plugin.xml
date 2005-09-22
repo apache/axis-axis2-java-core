@@ -55,5 +55,8 @@
             id="org.apache.axis2.tool.codegen.eclipse.CodeGenWizard">
       </wizard>
    </extension>
+    <extension point="org.eclipse.help.toc">
+    <toc file="help_toc.xml" primary="true" />
+</extension>
 
 </plugin>

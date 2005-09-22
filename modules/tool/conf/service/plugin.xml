@@ -38,4 +38,7 @@
             id="org.apache.axis2.tool.service.serviceWizard">
       </wizard>
    </extension>
+   <extension point="org.eclipse.help.toc">
+    <toc file="help_toc.xml" primary="true" />
+</extension>
 </plugin>

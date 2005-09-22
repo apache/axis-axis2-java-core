@@ -121,6 +121,7 @@ public class ServiceXMLFileSelectionPage extends AbstractServiceWizardPage {
 		    handleSelection();
 		}else{
 		    setPageComplete(false);
+		    updateGenerationPage(false);
 		}
 		
 		
@@ -142,20 +143,20 @@ public class ServiceXMLFileSelectionPage extends AbstractServiceWizardPage {
             changeManualSelectionStatus(false); 
             this.skipNextPage = false;
             updateStatus(null);
-            //updateGenerationPage(false);
+            updateGenerationPage(false);
         }else{
             changeManualSelectionStatus(true);
             this.skipNextPage = true;
             handleModify();
-            //updateGenerationPage(true);
+            updateGenerationPage(true);
         }
     }
     
-//    private void updateGenerationPage(boolean status){
-//        ServiceArchiveWizard wizard = (ServiceArchiveWizard)this.getWizard();
-//        wizard.updateServiceXMLGeneration(status);
-//       
-//    }
+    private void updateGenerationPage(boolean status){
+        ServiceArchiveWizard wizard = (ServiceArchiveWizard)this.getWizard();
+        wizard.updateServiceXMLGeneration(status);
+       
+    }
     
     private void changeManualSelectionStatus(boolean state){
         this.serviceXMLText.setEnabled(state);

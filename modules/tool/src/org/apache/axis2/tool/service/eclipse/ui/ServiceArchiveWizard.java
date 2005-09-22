@@ -75,7 +75,7 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
     }
     
     public void updateServiceXMLGeneration(boolean status){
-        updateServiceGenerationStatus = status;
+        serviceXMLGenerationPage.setPageComplete(status);
     }
     /**
      * 
