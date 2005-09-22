@@ -205,7 +205,8 @@ public class HTTPTransportUtils {
             throw new AxisFault(e);
 
         } catch (AxisFault e) {
-            throw new AxisFault(e);
+            //rethrow
+            throw e;
         } catch (OMException e) {
             throw new AxisFault(e);
         } catch (XMLStreamException e) {
@@ -295,7 +296,7 @@ public class HTTPTransportUtils {
         }
     }
 
-    public static final SOAPEnvelope createEnvelopeFromGetRequest(
+    public static SOAPEnvelope createEnvelopeFromGetRequest(
         String requestUrl,
         Map map) {
         String[] values =
