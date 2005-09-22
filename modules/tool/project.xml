@@ -30,7 +30,7 @@
         <dependency>
             <groupId>ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.6.2</version>
+            <version>${ant.version}</version>
             <properties>
                 <module>true</module>
             </properties>
@@ -49,7 +49,7 @@
         <dependency>
             <groupId>axis</groupId>
             <artifactId>axis-wsdl4j</artifactId>
-            <version>1.2</version>
+            <version>${axis.wsdl4j.version}</version>
             <properties>
                 <module>true</module>
             </properties>

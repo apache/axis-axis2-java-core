@@ -104,7 +104,7 @@
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            <version>1.0.3</version>
+            <version>${commons.logging.version}</version>
             <properties>
                 <module>true</module>
             </properties>
@@ -112,7 +112,7 @@
         <dependency>
             <groupId>stax</groupId>
             <artifactId>stax</artifactId>
-            <version>1.1.2-dev</version>
+            <version>${stax.version}</version>
             <properties>
                 <module>true</module>
             </properties>
@@ -120,7 +120,7 @@
         <dependency>
             <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
-            <version>1.0</version>
+            <version>${stax.api.version}</version>
             <properties>
                 <module>true</module>
             </properties>
@@ -128,7 +128,7 @@
         <dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-activation</artifactId>
-            <version>1.0.2-rc4</version>
+            <version>${geronimo.spec.activation.version}</version>
             <properties>
                 <module>true</module>
             </properties>
@@ -136,7 +136,7 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.8</version>
+            <version>${log4j.version}</version>
             <properties>
                 <module>true</module>
             </properties>
