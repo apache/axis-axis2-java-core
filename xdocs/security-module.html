@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><title>The Security Module</title>
+<body>
+<h1>Securing SOAP Messages with WSS4J</h1>
+
+<p>Axis2 comes with a module based on WSS4J [1] to provide WS-Security features. This section explains how to engage and configure the security module. Since the security module inserts handlers in the system specific pre-dispatch phase, it must be engaged globally. But it is possible to activate the security module for the inflow or the outflow when required by the service or the clients.</p>
+
+<p>The security module (security.mar) is available in the axis2.war but it is not engaged by default.</p>
+<p>First it should be engaged by inserting the following in the axis2.xml file.</p>
+<source><pre>
+	&lt;module ref="security"/&gt;
+</pre></source>
+<p>The web admin interface can be used when Axis2 is deployed in a servlet container such as Apache Tomcat.</p>
+
+<p>At the server it is possible to provide security on a per service basis. The configuration parameters should be set in the service.xml file of the service. The client side config parameters should be set in the axis2.xml of the client's Axis2 repository.</p>
+
+<p>Even though the security module is engaged globally it must be turned on to be applied to the flows where its required. Two main configuration parameters are provided for this purpose:</p>
+	<ul>
+		<li>InflowSecurity</li>
+		<li>OutflowSecurity</li>
+	</ul>
+
+<p>For example if one need to turn on security in the inflow and turn off security in the outflow the following should be specified in the respective configuration file (axis2.xml or service.xml)</p>
+<source>
+<pre>
+    &lt;parameter name="InflowSecurity"&gt;on&lt;/parameter&gt;
+    &lt;parameter name="OutflowSecurity"&gt;off&lt;/parameter&gt;
+</pre>
+</source>
+
+Then the module should be configured using the parameters available in the following table for the inflow and the outflow.
+<br>
+<br>
+<table border="1">
+<tr>
+<td><b>Parameter</b></td>
+<td><b>Description</b></td>
+<td><b>Example</b></td>
+</tr>
+<tr>
+<td colspan="3"><br><i>Inflow parameters</i></td>
+</tr>
+<tr>
+<td>InAction</td>
+<td>Security actions for the inflow</td>
+<td>first the incoming message should be decrypted and then the signatures should be verified and should be checked for the availability of the Timestamp <br>&lt;parameter name="InAction"&gt; Timestamp Signature Encrypt&lt;/parameter&gt;</td>
+</tr>
+<tr>
+<td>InPasswordCallbackClass</td>
+<td>Callback class used to obtain password for decryption and UsernameToken verification</td>
+<td><br>&lt;parameter name="InPasswordCallbackClass"&gt; org.apache.axis2.security.PWCallback&lt;/parameter&gt;</td>
+</tr>
+<tr>
+<td>InSignaturePropFile</td>
+<td>Property file used for signature verification</td>
+<td><br>&lt;parameter name="InSignaturePropFile"&gt; sig.properties&lt;/parameter&gt;</td>
+</tr>
+<td>decryptionPropFile</td>
+<td>Property file used for decryption</td>
+<td> <br>&lt;parameter name="decryptionPropFile"&gt; dec.properties&lt;/parameter&gt;</td>
+</tr>
+
+<tr>
+<td colspan="3"><br><i>Outflow parameters</i></td>
+</tr>
+<tr>
+<td>OutAction</td>
+<td>Security actions for the inflow</td>
+<td>Add a Timestamp, Sign the SOAP body and Encrypt the SOAP body <br>&lt;parameter name="OutAction"&gt; Timestamp Signature Encrypt&lt;/parameter&gt;</td>
+</tr>
+<tr>
+<td>user</td>
+<td>The user's name</td>
+<td>Set alias of the key to be used to sign<br>&lt;parameter name="user"&gt; bob&lt;/parameter&gt;</td>
+</tr>
+<tr>
+<td>OutPasswordCallbackClass</td>
+<td>Callback class used to provide the password required to create the UsernameToken or to sign the message</td>
+<td>&lt;parameter name="OutPasswordCallbackClass"&gt; org.apache.axis2.security.PWCallback&lt;/parameter&gt;</td>
+</tr>
+<tr>
+<td>OutSignaturePropFile</td>
+<td>property file used to get the signature parameters such as crypto provider, keystore and its password</td>
+<td>Set example.properties file as the signature property file<br>&lt;parameter name="OutSignaturePropFile"&gt; example.properties&lt;/parameter&gt;</td>
+</tr>
+<tr>
+<td>OutSignatureKeyIdentifier</td>
+<td>Key identifier to be used in referring the key in the signature</td>
+<td>Use the serial number of the certificate<br>&lt;parameter name="OutSignatureKeyIdentifier"&gt; IssuerSerial&lt;/parameter&gt;</td>
+</tr>
+<tr>
+<td>encryptionKeyIdentifier</td>
+<td>Key identifier to be used in referring the key in encryption</td>
+<td>Use the serial number of the certificate <br>&lt;parameter name="encryptionKeyIdentifier"&gt;IssuerSerial&lt;/parameter&gt;</td>
+</tr>
+<tr>
+<td>encryptionUser</td>
+<td>The user's name for encryption.</td>
+<td><br>&lt;parameter name="encryptionUser"&gt;alice&lt;/parameter&gt;</td>
+</tr>
+<tr>
+<td>encryptionSymAlgorithm</td>
+<td>Symmetric algorithm to be used for encryption</td>
+<td>Use AES-128<br>&lt;parameter name="encryptionSymAlgorithm"&gt; http://www.w3.org/2001/04/xmlenc#aes128-cbc&lt;/parameter&gt;</td>
+</tr>
+<tr>
+<td>OutSignatureParts</td>
+<td>Sign multiple parts in the SOAP message</td>
+<td>Sign Foo and Bar elements qualified by "http://app.ns/ns"<br>&lt;parameter name="OutSignatureParts"&gt; {Element}{http://app.ns/ns}Foo;{Element}{http://app.ns/ns}Bar &lt;/parameter&gt;</td>
+</tr>
+<tr>
+<td>optimizeParts</td>
+<td>MTOM Optimize the elements specified by the XPath query</td>
+<td>Optimize the CipherValue<br>&lt;parameter name="optimizeParts"&gt; //xenc:EncryptedData/xenc:CipherData/xenc:CipherValue &lt;/parameter&gt;</td>
+</tr>
+</table>
+<br>
+<p>Please note that the '.properties' files used in properties such as OutSignaturePropFile are the same property files that are using in the WSS4J project. 
+Following shows the properties defined in a sample property file</p>
+
+<source>
+<pre>
+org.apache.ws.security.crypto.provider=org.apache.ws.security.components.crypto.Merlin
+org.apache.ws.security.crypto.merlin.keystore.type=pkcs12
+org.apache.ws.security.crypto.merlin.keystore.password=security
+org.apache.ws.security.crypto.merlin.keystore.alias=16c73ab6-b892-458f-abf5-2f875f74882e
+org.apache.ws.security.crypto.merlin.alias.password=security
+org.apache.ws.security.crypto.merlin.file=keys/x509.PFX.MSFT
+</pre>
+</source>
+
+org.apache.ws.security.crypto.provider defines the implementation of the org.apache.ws.security.components.crypto.Crypto 
+interface to provide the crypto information required by WSS4J. The other properties defined are the configuration
+ properties used by the implementation class (org.apache.ws.security.components.crypto.Merlin).
+ 
+<p><b>References</b></p>
+<p>1. <a href="http://ws.apache.org/wss4j">Apache WSS4J</a></p>
+</body></html>
