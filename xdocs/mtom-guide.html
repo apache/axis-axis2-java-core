@@ -170,7 +170,7 @@ public class MTOMService {
 </pre>
 </source><p><a name="3"></a></p>
 <h1>SOAP with Attachments (SwA) with Axis2</h1>
-<p>Axis2 Handles SwA messages at the inflow only. When Axis2 receives a SwA message it extracts the binary attachment parts and put a reference to those parts in the Message Context. Users can access binary attachments using the content-id. Care should be taken to rip off the "cid" prefix when content-id is taken from the "Href" attributes. When accessing the message context from a service users need to use the message context injection mechanism by introducing an "init" method to the service class.(see the following service example) </p>
+<p>Axis2 Handles SwA messages at the inflow only. When Axis2 receives a SwA message it extracts the binary attachment parts and puts a reference to those parts in the Message Context. Users can access binary attachments using the content-id. Care should be taken to rip off the "cid" prefix when content-id is taken from the "Href" attributes. When accessing the message context from a service users need to use the message context injection mechanism by introducing an "init" method to the service class.(see the following service example) </p>
 <p>Note: Axis2 supports content-id referencing only. Axis2 does not support Content Location referencing of MIME parts. </p>
 <ul>
   <li><strong>Sample service which accepts a SwA message</strong></li>
@@ -276,7 +276,7 @@ ability to handle very large attachments without buffering them in memory at any
 caching streams the incoming MIME parts directly in to files, after reading the MIME part headers.</p>
 <P>Also a user can specify a size threshold for the File caching. When this threshold value is specified, only the attachments whose size is bigger than the threshold value will get 
 cached in files. Smaller attachments will remain in Memory. </p>
-<p>NOTE : It is a must to specify a directory to temporary store the attachments. Also care should be taken to *clean that directory* time to time.</p>
+<p>NOTE : It is a must to specify a directory to temporary store the attachments. Also care should be taken to *clean that directory* from time to time.</p>
 <p>The following parameters need to be set in Axis2.xml in order to enable file caching.</p>
 <source><pre>
 <em>&lt;axisconfig name="AxisJava2.0"&gt;
