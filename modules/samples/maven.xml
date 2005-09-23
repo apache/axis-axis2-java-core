@@ -38,6 +38,7 @@
         <attainGoal name="mtomSample"/>
         <attainGoal name="groovy"/>
         <attainGoal name="securitySample"/>
+	  <attainGoal name="sgccalculator"/>
     </goal>
 
     <!-- ================================================================ -->
@@ -296,6 +297,32 @@
 
 	<delete dir="target/security/"/>
 
+    </goal>
+
+    <!-- ================================================================ -->
+    <!--- ServiceGroupContext Calculator Sample -->
+    <!-- ================================================================ -->
+    <goal name="sgccalculator">
+        <mkdir dir="target/samples"/>
+        <mkdir dir="${samples.dir}/SGCCalculator"/>
+        <mkdir dir="${samples.dir}/SGCCalculator/src"/>
+        <ant:copy todir="${samples.dir}/SGCCalculator/src">
+            <ant:fileset dir="src">
+                <ant:include name="sample/sgccalculator/**"/>
+            </ant:fileset>
+        </ant:copy>
+        <jar destfile="${samples.dir}/SGCCalculator/SGCCalculator.jar">
+            <fileset dir="target/classes">
+                <include name="sample/sgccalculator/**"/>
+            </fileset>
+            <fileset dir="src/sample/sgccalculator/">
+                <include name="META-INF/**"/>
+            </fileset>
+        </jar>
+        <copy file="${samples.dir}/SGCCalculator/SGCCalculator.jar"
+            tofile="target/toWar/services/SGCCalculator.aar"/>
+	  <copy toDir="${samples.dir}/SGCCalculator"
+            file="script/SGCCalculator/run.bat"/>
     </goal>
 
     <preGoal name="itest:compile">
