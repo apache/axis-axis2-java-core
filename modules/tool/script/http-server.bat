@@ -5,6 +5,11 @@ rem
 rem ---------------------------------------------------------------------------
 
 rem get the classes for the simple axis server
-set AXIS2_CLASS_PATH="%AXIS_HOME%";"%AXIS_HOME%\lib\axis2-0.91.jar";"%AXIS_HOME%\lib\axis-wsdl4j-1.2.jar";"%AXIS_HOME%\lib\commons-logging-1.0.3.jar";"%AXIS_HOME%\lib\log4j-1.2.8.jar";"%AXIS_HOME%\lib\stax-1.1.2-dev.jar";"%AXIS_HOME%\lib\stax-api-1.0.jar";"%AXIS_HOME%\lib\geronimo-spec-activation-1.0.2-rc3.jar";"%AXIS_HOME%\lib\geronimo-spec-javamail-1.3.1-rc3.jar";"%AXIS_HOME%\lib\xbean-2.0.0-beta1.jar";%AXIS_HOME%\lib\commons-codec-1.3.jar
+rem set the AXIS_HOME as the default classpath
+setlocal EnableDelayedExpansion
+rem loop through the libs and add them to the class path
+set AXIS2_CLASS_PATH=%AXIS_HOME%
+FOR %%c in (%AXIS_HOME%\lib\*.jar) DO set AXIS2_CLASS_PATH=!AXIS2_CLASS_PATH!;%%c
 
 java -cp %AXIS2_CLASS_PATH% org.apache.axis2.transport.http.SimpleHTTPServer %1 %2
+endlocal

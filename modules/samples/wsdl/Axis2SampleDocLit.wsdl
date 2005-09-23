@@ -57,8 +57,8 @@
     <message name="echoStructResponse">
         <part element="xsd1:echoStructReturn" name="result"/>
     </message>
-    <message name="echoVoid"/>
-    <message name="echoVoidResponse"/>
+    <!--<message name="echoVoid"/>
+    <message name="echoVoidResponse"/>-->
 
     <portType name="Axis2SampleDocLitPortType">
         <operation name="echoString">
@@ -73,10 +73,10 @@
             <input message="tns:echoStruct" name="echoStruct"/>
             <output message="tns:echoStructResponse" name="echoStructResponse"/>
         </operation>
-        <operation name="echoVoid">
+        <!--<operation name="echoVoid">
             <input message="tns:echoVoid" name="echoVoid"/>
             <output message="tns:echoVoidResponse" name="echoVoidResponse"/>
-        </operation>
+        </operation>-->
     </portType>
     <binding name="Axis2SampleDocLitPortBinding"
         type="tns:Axis2SampleDocLitPortType">
@@ -114,7 +114,7 @@
                     use="literal"/>
             </output>
         </operation>
-        <operation name="echoVoid">
+        <!--<operation name="echoVoid">
             <soap:operation soapAction="echoVoid" style="rpc"/>
             <input name="echoVoid">
                 <soap:body namespace="http://userguide.axis2.apache.org/Axis2SampleDocLit"
@@ -124,7 +124,7 @@
                 <soap:body namespace="http://userguide.axis2.apache.org/Axis2SampleDocLit"
                     use="literal"/>
             </output>
-        </operation>
+        </operation>-->
     </binding>
     <service name="Axis2SampleDocLitService">
         <port binding="tns:Axis2SampleDocLitPortBinding"
