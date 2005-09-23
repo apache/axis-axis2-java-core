@@ -41,13 +41,7 @@ import org.apache.wsdl.impl.WSDLServiceImpl;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -152,7 +146,11 @@ public class ArchiveReader implements DeploymentConstants {
                         if(fileName.endsWith(".wsdl") || fileName.endsWith(".WSDL")){
                             InputStream in = new FileInputStream(file1);
                             processWSDLFile(in,depengine);
-                            in.close();
+                            try {
+                                in.close();
+                            } catch (IOException e) {
+                                log.info(e);
+                            }
                         }
                     }
                 } else {
@@ -169,14 +167,26 @@ public class ArchiveReader implements DeploymentConstants {
             try {
                 zin = new ZipInputStream(new FileInputStream(serviceFile));
                 ZipEntry entry;
+                byte[] buf = new byte[1024];
+                int read;
+                ByteArrayOutputStream out ;
                 while ((entry = zin.getNextEntry()) != null) {
                     String entryName = entry.getName();
                     if (entryName.startsWith(META_INF) && (entryName.endsWith(".wsdl")
                             || entryName.endsWith(".WSDL"))) {
-                        processWSDLFile(zin,depengine);
+                        out = new ByteArrayOutputStream();
+                        while ((read = zin.read(buf)) > 0) {
+                            out.write(buf, 0, read);
+                        }
+                        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+                        processWSDLFile(in,depengine);
                     }
                 }
-                zin.close();
+                try {
+                    zin.close();
+                } catch (IOException e) {
+                    log.info(e);
+                }
             } catch (FileNotFoundException e) {
                 throw new DeploymentException(e);
             } catch (IOException e) {
@@ -308,7 +318,7 @@ public class ArchiveReader implements DeploymentConstants {
                 }
             } else {
                 throw new DeploymentException(Messages.getMessage(
-                            DeploymentErrorMsgs.MODULEXML_NOT_FOUND_FOR_THE_MODULE, filename));
+                        DeploymentErrorMsgs.MODULEXML_NOT_FOUND_FOR_THE_MODULE, filename));
             }
 
         }
