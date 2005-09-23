@@ -61,6 +61,7 @@ public class OperationDescription extends WSDLOperationImpl implements
         phasesInFaultFlow = new ArrayList();
         phasesOutFaultFlow = new ArrayList();
         modulerefs = new ArrayList();
+        moduleConfigmap = new HashMap();
     }
 
     public OperationDescription(QName name) {
@@ -405,9 +406,6 @@ public class OperationDescription extends WSDLOperationImpl implements
      * @param moduleConfiguration
      */
     public void addModuleConfig(ModuleConfiguration moduleConfiguration){
-        if(moduleConfigmap == null){
-            moduleConfigmap = new HashMap();
-        }
         moduleConfigmap.put(moduleConfiguration.getModuleName(),moduleConfiguration);
     }
 

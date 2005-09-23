@@ -87,6 +87,7 @@ public class ServiceDescription
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setServiceInterface(new WSDLInterfaceImpl());
+         moduleConfigmap = new HashMap();
     }
 
     public ServiceDescription() {
@@ -95,6 +96,7 @@ public class ServiceDescription
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setServiceInterface(new WSDLInterfaceImpl());
+         moduleConfigmap = new HashMap();
     }
 
     /**
@@ -808,9 +810,6 @@ public class ServiceDescription
      * @param moduleConfiguration
      */
     public void addModuleConfig(ModuleConfiguration moduleConfiguration){
-        if(moduleConfigmap == null){
-            moduleConfigmap = new HashMap();
-        }
         moduleConfigmap.put(moduleConfiguration.getModuleName(),moduleConfiguration);
     }
 

@@ -118,6 +118,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * Constructor EngineRegistryImpl
      */
     public AxisConfigurationImpl() {
+        moduleConfigmap = new HashMap();
         paramInclude = new ParameterIncludeImpl();
         engagedModules = new ArrayList();
         messagReceivers = new HashMap();
@@ -559,9 +560,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @param moduleConfiguration
      */
     public void addModuleConfig(ModuleConfiguration moduleConfiguration){
-        if(moduleConfigmap == null){
-            moduleConfigmap = new HashMap();
-        }
         moduleConfigmap.put(moduleConfiguration.getModuleName(),moduleConfiguration);
     }
 

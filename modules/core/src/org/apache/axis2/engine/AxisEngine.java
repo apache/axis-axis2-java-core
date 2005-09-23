@@ -520,7 +520,7 @@ public class AxisEngine {
      * To serilze the entier context heirarachy to a given location from top to bottom
      * @throws AxisFault
      */
-    public synchronized void   serialize() throws AxisFault{
+    public synchronized void   serialize() {
         try {
              String serailzeLocaion =".";
             //output location
@@ -532,10 +532,11 @@ public class AxisEngine {
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(engineContext);
         } catch (FileNotFoundException e) {
-            throw new AxisFault(e);
+            //todo has to be improved
         } catch (IOException e) {
-            throw new AxisFault(e);
+             //todo has to be improved
         }
+
     }
 
 }

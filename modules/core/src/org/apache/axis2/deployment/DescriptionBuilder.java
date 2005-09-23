@@ -232,11 +232,15 @@ public class DescriptionBuilder implements DeploymentConstants{
             //setting locking attribute
             OMAttribute paraLocked = paramterElement.getAttribute(
                     new QName(ATTLOCKED));
+            Parameter parentpara = null;
+            if (parent !=null) {
+                parentpara = parent.getParameter(paramter.getName());
+            }
             if (paraLocked !=null) {
                 String lockedValue = paraLocked.getValue();
                 if("true".equals(lockedValue)){
                     //if the parameter is locked at some levle paramer value replace by that
-                    if(parent.isParamterLocked(paramter.getName())){
+                    if(parent!=null && parent.isParamterLocked(paramter.getName())){
                         throw new DeploymentException("The paramter " + paramter.getName() + " has" +
                                 " locked at top levle can not overide");
                     } else{
@@ -248,7 +252,13 @@ public class DescriptionBuilder implements DeploymentConstants{
                 }
             }
             try {
-                parameterInclude.addParameter(paramter);
+                if(parent !=null){
+                    if(parentpara == null | !parent.isParamterLocked(paramter.getName())){
+                        parameterInclude.addParameter(paramter);
+                    }
+                } else {
+                    parameterInclude.addParameter(paramter);
+                }
             } catch (AxisFault axisFault) {
                 throw new DeploymentException(axisFault);
             }

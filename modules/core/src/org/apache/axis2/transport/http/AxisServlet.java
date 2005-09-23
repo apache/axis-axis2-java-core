@@ -186,15 +186,15 @@ public class AxisServlet extends HttpServlet {
                     req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
                     req.getRequestURL().toString(),
                     configContext);
-            
+
             Object contextWritten =
                     msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
-            
+
             //Getting the 
             res.setContentType("text/xml; charset="+
                     msgContext
-                        .getProperty(MessageContext.CHARACTER_SET_ENCODING));
-            
+                            .getProperty(MessageContext.CHARACTER_SET_ENCODING));
+
             if (contextWritten == null
                     || !Constants.VALUE_TRUE.equals(contextWritten)) {
                 res.setStatus(HttpServletResponse.SC_ACCEPTED);
@@ -223,6 +223,11 @@ public class AxisServlet extends HttpServlet {
             headerMap.put(key, value);
         }
         return headerMap;
+    }
+
+    public void destroy() {
+        super.destroy();
+        new AxisEngine(configContext).serialize();
     }
 
 }
