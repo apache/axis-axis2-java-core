@@ -48,7 +48,7 @@
         <copy todir="${service.output.dir}/${help.dir.name}">
             <fileset dir="${service.help.resource.dir}"></fileset>
         </copy>
-	 <available property="images.dir" file="../../xdocs/images/tools" type="dir" value="../../xdocs/images/tools"/>
+	 <available property="images.dir" file="../../xdocs/images/tools/service" type="dir" value="../../xdocs/images/tools/service"/>
          <copy todir="${service.output.dir}/${help.dir.name}">
           <fileset dir="${images.dir}"/>
          </copy> 
@@ -74,7 +74,7 @@
         <copy todir="${codegen.output.dir}/${help.dir.name}">
             <fileset dir="${codegen.help.resource.dir}"></fileset>
         </copy>
-          <available property="images.dir" file="../../xdocs/images/tools" type="dir" value="../../xdocs/images/tools"/>
+          <available property="images.dir" file="../../xdocs/images/tools/wsdl" type="dir" value="../../xdocs/images/tools/wsdl"/>
           <copy todir="${codegen.output.dir}/${help.dir.name}">
             <fileset dir="${images.dir}"/>
          </copy>
