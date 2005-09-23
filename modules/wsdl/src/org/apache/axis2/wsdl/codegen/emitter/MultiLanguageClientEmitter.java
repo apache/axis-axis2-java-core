@@ -720,7 +720,7 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
                     rootElement);
             addAttribute(doc,
                     "name",
-                    reformatName(localPart) + SERVICE_CLASS_SUFFIX,
+                    localPart + SERVICE_CLASS_SUFFIX,
                     rootElement);
             addAttribute(doc, "servicename", localPart, rootElement);
         }
