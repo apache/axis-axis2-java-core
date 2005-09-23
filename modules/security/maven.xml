@@ -61,8 +61,8 @@
 		<!-- move/copy schema stuff into class.dir -->
     	<ant:move todir="${class.dir}">
 		    <ant:fileset dir="${work.dir}">
-                <ant:include name="**/schema/**/*.class"/>
-                <ant:include name="**/schema/**/*.xsb"/>
+                <ant:include name="**/schema*/**/*.class"/>
+                <ant:include name="**/schema*/**/*.xsb"/>
             </ant:fileset>
 	    </ant:move>
 		
