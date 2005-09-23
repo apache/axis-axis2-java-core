@@ -59,5 +59,13 @@ public abstract class AbstractTestCase
     public File getTestResourceFile(String relativePath) {
         return new File(testResourceDir, relativePath);
     }
+
+    public File getTempOutputFile(String filename) {
+        File f = new File(tempDir);
+        if(!f.exists()) {
+            f.mkdirs();
+        }
+        return new File(f, filename);
+    }
 }
 

@@ -52,10 +52,10 @@ public class OMOutputTest extends AbstractTestCase {
         Object object;
         DataHandler dataHandler;
 
-        outFileName = "mtom/OMSerializeMTOMOut.txt";
-        outBase64FileName = "mtom/OMSerializeBase64Out.xml";
-        outMTOMFile = getTestResourceFile(outFileName);
-        outBase64File = getTestResourceFile(outBase64FileName);
+        outFileName = "OMSerializeMTOMOut.txt";
+        outBase64FileName = "OMSerializeBase64Out.xml";
+        outMTOMFile = getTempOutputFile(outFileName);
+        outBase64File = getTempOutputFile(outBase64FileName);
 
         OMNamespaceImpl soap = new OMNamespaceImpl(
                 "http://schemas.xmlsoap.org/soap/envelope/", "soap");
