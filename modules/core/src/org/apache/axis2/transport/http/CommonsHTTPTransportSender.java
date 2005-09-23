@@ -65,6 +65,10 @@ public class CommonsHTTPTransportSender
     private boolean chuncked = false;
 
     private String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+    
+    int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
+    
+    int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
 
     public static final String HTTP_METHOD = "HTTP_METHOD";
 
@@ -409,6 +413,27 @@ public class CommonsHTTPTransportSender
             }
         }
 
+        //Get the timeout values from the configuration
+        try {
+			Parameter tempSoTimeoutParam = transportOut
+					.getParameter(HTTPConstants.SO_TIMEOUT);
+			Parameter tempConnTimeoutParam = transportOut
+					.getParameter(HTTPConstants.CONNECTION_TIMEOUT);
+
+			if (tempSoTimeoutParam != null) {
+				soTimeout = Integer.parseInt((String) tempSoTimeoutParam
+						.getValue());
+			}
+
+			if (tempConnTimeoutParam != null) {
+				connectionTimeout = Integer
+						.parseInt((String) tempConnTimeoutParam.getValue());
+			}
+        
+        } catch (NumberFormatException nfe) {
+			//If there's a problem log it and use the default values
+			log.error("Invalid timeout value format: not a number", nfe);
+        }
     }
 
     private void transportConfigurationPOST(
@@ -422,47 +447,9 @@ public class CommonsHTTPTransportSender
         httpClient = new HttpClient();
         //hostConfig handles the socket functions..
         //HostConfiguration hostConfig = getHostConfiguration(msgContext, url);
-
-
-        int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
-        int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
         
-        try {
-			// First try getting the SO_TIMEOUT and CONNECTION_TIMEOUT values
-			// form the static configuration
-			Parameter tempSoTimeoutParam = msgContext
-					.getParameter(HTTPConstants.SO_TIMEOUT);
-			Parameter tempConnTimeoutParam = msgContext
-					.getParameter(HTTPConstants.CONNECTION_TIMEOUT);
-
-			if (tempSoTimeoutParam != null) {
-				soTimeout = Integer.parseInt((String) tempSoTimeoutParam
-						.getValue());
-			}
-
-			if (tempConnTimeoutParam != null) {
-				connectionTimeout = Integer
-						.parseInt((String) tempConnTimeoutParam.getValue());
-			}
-
-			// If the SO_TIMEOUT of CONNECTION_TIMEOUT is set by dynamically the
-			// override the static config
-			Integer tempSoTimeoutProperty = (Integer) msgContext
-					.getProperty(HTTPConstants.SO_TIMEOUT);
-			Integer tempConnTimeoutProperty = (Integer) msgContext
-					.getProperty(HTTPConstants.CONNECTION_TIMEOUT);
-
-			if (tempSoTimeoutProperty != null) {
-				connectionTimeout = tempSoTimeoutProperty.intValue();
-			}
-
-			if (tempConnTimeoutProperty != null) {
-				connectionTimeout = tempConnTimeoutProperty.intValue();
-			}
-		} catch (NumberFormatException nfe) {
-			//If there's a problem log it and use the default values
-			log.error("Invalid timeout value format: not a number", nfe);
-		}
+        //Get the timeout values set in the runtime
+        getTimoutValues(msgContext);
 		
         // SO_TIMEOUT -- timeout for blocking reads
         httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
@@ -549,6 +536,34 @@ public class CommonsHTTPTransportSender
 
     }
 
+    /**
+     * This is used to get the dynamically set time out values from the 
+     * message context. If the values are not available or invalid then
+     * teh default values or the values set by teh configuration will be used
+     * @param msgContext
+     */
+	private void getTimoutValues(MessageContext msgContext) {
+		try {
+			// If the SO_TIMEOUT of CONNECTION_TIMEOUT is set by dynamically the
+			// override the static config
+			Integer tempSoTimeoutProperty = (Integer) msgContext
+					.getProperty(HTTPConstants.SO_TIMEOUT);
+			Integer tempConnTimeoutProperty = (Integer) msgContext
+					.getProperty(HTTPConstants.CONNECTION_TIMEOUT);
+
+			if (tempSoTimeoutProperty != null) {
+				connectionTimeout = tempSoTimeoutProperty.intValue();
+			}
+
+			if (tempConnTimeoutProperty != null) {
+				connectionTimeout = tempConnTimeoutProperty.intValue();
+			}
+		} catch (NumberFormatException nfe) {
+			//If there's a problem log it and use the default values
+			log.error("Invalid timeout value format: not a number", nfe);
+		}
+	}
+
     private void processResponse(HttpMethodBase httpMethod, MessageContext msgContext) throws IOException {
         obatainHTTPHeaderInformation(httpMethod, msgContext);
         InputStream in = httpMethod.getResponseBodyAsStream();
@@ -582,6 +597,14 @@ public class CommonsHTTPTransportSender
         this.httpClient = new HttpClient();
         HostConfiguration hostConfig =
                 this.getHostConfiguration(msgContext, url);
+
+        //Get the timeout values set in the runtime
+        getTimoutValues(msgContext);
+		
+        // SO_TIMEOUT -- timeout for blocking reads
+        httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
+        // timeout for initial connection
+        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(connectionTimeout);
 
         this.httpClient.executeMethod(hostConfig, getMethod);
 

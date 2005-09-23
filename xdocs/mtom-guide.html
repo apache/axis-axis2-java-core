@@ -23,7 +23,7 @@
     </ul>
   </li>
 </ul><p><a name="1"></a></p><h2>Introduction</h2><p>Despite the flexibility, interoperability and global acceptance of XML, there are times when serializing data into XML does not make sense. Web services users may need to transmit binary attachments of various sorts like images, drawings, xml docs, etc together with SOAP message. Such data are often in a particular binary format.<br></br>
-Traditionally, two techniques for dealing with opaque data in XML have been used;</p><ol>
+Traditionally, two techniques have been used in dealing with opaque data in XML;</p><ol>
   <li><strong> "By value"</strong>  </li>
   <blockquote>
     <p>Sending binary data by value is achieved by embedding opaque data (of course after some form of encoding) as element or attribute content of the XML component of data.
@@ -118,7 +118,7 @@ User can specify whether an OMText node which contains raw binary data or base64
 </ul><p><source><pre>&lt;parameter name="enableMTOM" locked="xsd:false"&gt;true&lt;/parameter&gt;</pre>
 </source></p><ul>
   <ul>
-      <p>User might need to restart the server after setting this parameter.</p>
+      <p>User must restart the server after setting this parameter.</p>
   </ul>
 </ul><p><a name="24"></a></p><h2>Accessing received Binary Data</h2><ul>
   <li><strong><a name="241"></a>Service </strong></li>
