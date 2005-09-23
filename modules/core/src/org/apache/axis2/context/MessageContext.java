@@ -20,15 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.ServiceGroupDescription;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.soap.SOAP11Constants;
@@ -774,7 +766,7 @@ public class MessageContext extends AbstractContext {
         if (serviceGroupContext != null && obj == null) {
             obj = serviceGroupContext.getProperty(key, persistent);
         }
-        if (obj == null) {
+        if (configurationContext != null && obj == null ) {
             // search in Configuration Context
             obj = configurationContext.getProperty(key, persistent);
         }

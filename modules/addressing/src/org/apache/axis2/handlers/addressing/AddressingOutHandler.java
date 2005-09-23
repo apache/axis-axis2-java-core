@@ -55,6 +55,16 @@ public class AddressingOutHandler
             return;
         }
 
+        // first check whether current message context can be used to determind the addressing version to be used
+        Object addressingVersionFromCurrentMsgCtxt = msgContext.getProperty(WS_ADDRESSING_VERSION);
+        if(addressingVersionFromCurrentMsgCtxt != null){
+            // since we support only two addressing versions I can avoid multiple  ifs here.
+            // see that if message context property holds something other than Final.WSA_NAMESPACE
+            // we always defaults to Submission.WSA_NAMESPACE. Hope this is fine.
+            addressingNamespace = Final.WSA_NAMESPACE.equals(addressingVersionFromCurrentMsgCtxt)
+                    ? Final.WSA_NAMESPACE : Submission.WSA_NAMESPACE;
+        }
+
         // check for a IN message context, else default to WSA Submission
         if (msgContext.getOperationContext() != null) {
             MessageContext inMessageContext = msgContext.getOperationContext()

@@ -24,7 +24,6 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.ServiceGroupDescription;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
