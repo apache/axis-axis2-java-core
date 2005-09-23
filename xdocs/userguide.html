@@ -408,7 +408,11 @@ values depending on their requirements.</p>
 
 <p>We will use the tool with the following parameters and generate the
 skeleton and the other required classes.</p>
+<p>Windows users can use the following command in the console </p>
 <pre style="margin-bottom: 0.2in">WSDL2Java -uri ..\samples\wsdl\Axis2SampleDocLit.wsdl -ss -sd -o ..\samples\src -p org.apache.axis2.userguide</pre>
+
+<p>Linux users should switch the file seperator</p>
+<pre style="margin-bottom: 0.2in">WSDL2Java -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd -o ../samples/src -p org.apache.axis2.userguide</pre>
 
 <p>This will generate the required classes in the <b>src</b> directory inside
 samples. This will also generate the schema classes in a directory named
@@ -420,12 +424,12 @@ availed in the class path in order to compile the generated classes</p>
 <p>Locate the skeleton class that can be found under src/userguide directory
 with the name "Axis2SampleDocLitPortTypeSkeleton.java". This is the skeleton
 for our web service and we can easily fill the business logic now. The WSDL
-we have used has four operations as follows.</p>
+we have used has three operations as follows.</p>
 <ul>
-  <li><p style="margin-bottom: 0in">echoVoid   - Operation that does not
+  <!--<li><p style="margin-bottom: 0in">echoVoid   - Operation that does not
     accept any input parameters  and also provide no out put parameters. Just
     perform some task </p>
-  </li>
+  </li>-->
   <li><p style="margin-bottom: 0in">echoString  - Operation that echos a
     String value </p>
   </li>
@@ -437,14 +441,14 @@ we have used has four operations as follows.</p>
   </li>
 </ul>
 
-<h4>echoVoid   </h4>
+<!--<h4>echoVoid   </h4>
 
 <p>Locate the following code segment  in the
 "Axis2SampleDocLitPortTypeSkeleton.java"  and fill the business logic. For
 the explanation purpose we do not need anything to be implemented here.</p>
 <pre>public  void echoVoid(){
      //Todo fill this with the necessary business logic
-}</pre>
+}</pre> -->
 
 <h4>echoString  </h4>
 
@@ -524,10 +528,6 @@ The generated services.xml is as follows.</p>
 <pre>&lt;!--Auto generated Axis Service XML--&gt;
 &lt;service name="Axis2SampleDocLitPortTypeSkeletonTest"&gt;
 &lt;parameter locked="xsd:false" name="ServiceClass"&gt;userguide.Axis2SampleDocLitPortTypeSkeleton&lt;/parameter&gt;
-&lt;!--Mounting the method echoVoid--&gt;
-&lt;operation name="echoVoid"&gt;
-&lt;messageReceiver class="userguide.Axis2SampleDocLitPortTypeMessageReceiver"/&gt;
-&lt;/operation&gt;
 &lt;!--Mounting the method echoStringArray--&gt;
 &lt;operation name="echoStringArray"&gt;
 &lt;messageReceiver class="userguide.Axis2SampleDocLitPortTypeMessageReceiver"/&gt;
@@ -565,7 +565,7 @@ align="bottom" width="164" height="142" border="0"></p>
 <p>Go to the top level directory where you can find the class files for the
 above service (i.e. one level up in the directory structure shown above) and
 type the following command in a command line.</p>
-<pre style="margin-bottom: 0.2in">jar -cf echo.aar .</pre>
+<pre style="margin-bottom: 0.2in">jar -cf Axis2SampleDocLitPortType.aar .</pre>
 
 <p>Deploying the service  is just a matter of dropping the ".aar" in to
 "services" directory that can be found in the "\webapps\axis2\WEB-INF" of
