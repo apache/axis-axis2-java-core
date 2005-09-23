@@ -132,7 +132,7 @@ public class ImageSampleTest extends AbstractTestCase {
          */
 
         DataHandler actualDH;
-        actualDH = blob.getDataHandler();
+        actualDH = (DataHandler)blob.getDataHandler();
         Image actualObject = new ImageIO().loadImage(actualDH.getDataSource()
                 .getInputStream());
         FileOutputStream imageOutStream = new FileOutputStream(

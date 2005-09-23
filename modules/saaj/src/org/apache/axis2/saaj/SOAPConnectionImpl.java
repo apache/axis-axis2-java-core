@@ -128,7 +128,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
     		OMNode child = (OMNode)childIter.next();
     		if(child instanceof OMText){
     			OMText binaryNode = (OMText)child;
-    			DataHandler actualDH = binaryNode.getDataHandler();
+    			DataHandler actualDH = (DataHandler)binaryNode.getDataHandler();
     			if(actualDH != null){
     				AttachmentPart ap = soapMsg.createAttachmentPart(actualDH);
     				String contentId = SessionUtils.generateSessionId();

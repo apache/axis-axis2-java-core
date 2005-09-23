@@ -16,7 +16,6 @@
 
 package org.apache.axis2.om;
 
-import javax.activation.DataHandler;
 
 /**
  * Interface OMText
@@ -33,7 +32,7 @@ public interface OMText extends OMNode {
      * get the datahandler
      * @return datahandler
      */
-    DataHandler getDataHandler();
+    Object getDataHandler();
 
     /**
      * @return boolean flag saying whether the node contains

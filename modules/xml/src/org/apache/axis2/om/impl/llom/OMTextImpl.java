@@ -16,8 +16,15 @@
 
 package org.apache.axis2.om.impl.llom;
 
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+
 import org.apache.axis2.attachments.Base64;
-import org.apache.axis2.attachments.ByteArrayDataSource;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMConstants;
 import org.apache.axis2.om.OMElement;
@@ -28,12 +35,6 @@ import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
 import org.apache.axis2.util.UUIDGenerator;
-
-import javax.activation.DataHandler;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     protected String value = null;
@@ -51,9 +52,11 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     private String contentID = null;
 
     /**
-     * Field dataHandler
+     * Field dataHandler contains the DataHandler
+     * Declaring as Object to remove the depedency on 
+     * Javax.activation.DataHandler
      */
-    private DataHandler dataHandler = null;
+    private Object dataHandlerObject = null;
 
     /**
      * Field nameSpace used when serialising Binary stuff as MTOM optimised
@@ -124,6 +127,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         this(parent, s);
         this.mimeType = mimeType;
         this.optimize = optimize;
+        this.isBinary = true;
         done = true;
         this.nodeType = TEXT_NODE;
     }
@@ -131,7 +135,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
     /**
      * @param dataHandler To send binary optimised content Created programatically.
      */
-    public OMTextImpl(DataHandler dataHandler) {
+    public OMTextImpl(Object dataHandler) {
         this(dataHandler, true);
     }
 
@@ -139,8 +143,8 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      * @param dataHandler
      * @param optimize    To send binary content. Created progrmatically.
      */
-    public OMTextImpl(DataHandler dataHandler, boolean optimize) {
-        this.dataHandler = dataHandler;
+    public OMTextImpl(Object dataHandler, boolean optimize) {
+        this.dataHandlerObject = dataHandler;
         this.isBinary = true;
         this.optimize = optimize;
         done = true;
@@ -235,37 +239,28 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 	}
     }
 
+    
     /**
-     * @return
-     * @throws org.apache.axis2.om.OMException
-     *
-     * @throws OMException
+     * To get the datahandler
+     * @return javax.activation.DataHandler
      */
-    public DataHandler getDataHandler() {
+    public Object getDataHandler() {
         /*
          * this should return a DataHandler containing the binary data
          * reperesented by the Base64 strings stored in OMText
          */
-        if (value != null) {
-            ByteArrayDataSource dataSource;
-            byte[] data = Base64.decode(value);
-            if (mimeType != null) {
-                dataSource = new ByteArrayDataSource(data, mimeType);
-            } else {
-                // Assumes type as application/octet-stream
-                dataSource = new ByteArrayDataSource(data);
-            }
-            return new DataHandler(dataSource);
+        if (value != null & isBinary) {
+            return org.apache.axis2.attachments.DataHandlerUtils.getDataHandlerFromText(value,mimeType);
         } else {
 
-            if (dataHandler == null) {
+            if (dataHandlerObject == null) {
                 if (contentID == null) {
                     throw new RuntimeException("ContentID is null");
                 }
-                dataHandler = ((MTOMStAXSOAPModelBuilder) builder)
+                dataHandlerObject = ((MTOMStAXSOAPModelBuilder) builder)
                         .getDataHandler(contentID);
             }
-            return dataHandler;
+            return dataHandlerObject;
         }
     }
 
@@ -275,10 +270,11 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
     public java.io.InputStream getInputStream() throws OMException {
         if (isBinary) {
-            if (dataHandler == null) {
+            if (dataHandlerObject == null) {
                 getDataHandler();
             }
             InputStream inStream;
+            javax.activation.DataHandler dataHandler = (javax.activation.DataHandler)dataHandlerObject;
             try {
                 inStream = dataHandler.getDataSource().getInputStream();
             } catch (IOException e) {

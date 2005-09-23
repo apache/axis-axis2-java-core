@@ -36,7 +36,7 @@ public class MTOMService {
         String fileName = imageName.getText();
         //Extracting the data and saving
         DataHandler actualDH;
-        actualDH = binaryNode.getDataHandler();
+        actualDH = (DataHandler)binaryNode.getDataHandler();
         Image actualObject = new ImageIO().loadImage(actualDH.getDataSource()
                 .getInputStream());
         FileOutputStream imageOutStream = new FileOutputStream(fileName);

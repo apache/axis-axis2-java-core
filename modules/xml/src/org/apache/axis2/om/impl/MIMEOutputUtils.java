@@ -21,7 +21,6 @@ import org.apache.axis2.om.OMText;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.activation.DataHandler;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import java.io.IOException;
@@ -40,7 +39,7 @@ public class MIMEOutputUtils {
         try {
             startWritingMime(outStream, boundary);
 
-            DataHandler dh = new DataHandler(bufferedSoapOutStream.toString(),
+            javax.activation.DataHandler dh = new javax.activation.DataHandler(bufferedSoapOutStream.toString(),
                     "text/xml");
             MimeBodyPart rootMimeBodyPart = new MimeBodyPart();
             rootMimeBodyPart.setDataHandler(dh);
@@ -70,7 +69,7 @@ public class MIMEOutputUtils {
     public static MimeBodyPart createMimeBodyPart(OMText node)
             throws MessagingException {
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
-        mimeBodyPart.setDataHandler(node.getDataHandler());
+        mimeBodyPart.setDataHandler((javax.activation.DataHandler)node.getDataHandler());
         mimeBodyPart.addHeader("content-id", "<"+node.getContentID()+">");
         mimeBodyPart.addHeader("content-type", "application/octet-stream");
         mimeBodyPart.addHeader("content-transfer-encoding", "binary");
@@ -136,5 +135,4 @@ public class MIMEOutputUtils {
         sb.append("start-info=\""+SOAPContentType+"\"");
         return sb.toString();
     }
-
 }

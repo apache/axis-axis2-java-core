@@ -16,13 +16,12 @@
 
 package org.apache.axis2.attachments;
 
-import javax.activation.DataSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class ByteArrayDataSource implements DataSource {
+public class ByteArrayDataSource implements javax.activation.DataSource {
 
     private byte[] data;
 

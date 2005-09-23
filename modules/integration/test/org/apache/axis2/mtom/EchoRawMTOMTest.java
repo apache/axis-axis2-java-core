@@ -176,7 +176,7 @@ public class EchoRawMTOMTest extends TestCase {
         
         // Save the image
         DataHandler actualDH;
-        actualDH = binaryNode.getDataHandler();
+        actualDH = (DataHandler)binaryNode.getDataHandler();
         Image actualObject = new ImageIO().loadImage(actualDH.getDataSource()
                 .getInputStream());
 //        FileOutputStream imageOutStream = new FileOutputStream("target/testout.jpg");

@@ -37,7 +37,6 @@ import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis2.om.impl.llom.OMProcessingInstructionImpl;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 
-import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 
 /**
@@ -161,7 +160,7 @@ public class OMLinkedListImplFactory implements OMFactory {
      * @param optimize
      * @return text
      */
-    public OMText createText(DataHandler dataHandler, boolean optimize) {
+    public OMText createText(Object dataHandler, boolean optimize) {
         return new OMTextImpl(dataHandler, optimize);
     }
 

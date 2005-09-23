@@ -16,7 +16,6 @@
 
 package org.apache.axis2.om;
 
-import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 
 /**
@@ -108,7 +107,7 @@ public interface OMFactory {
 
     public OMText createText(String s, String mimeType, boolean optimize);
 
-    public OMText createText(DataHandler dataHandler, boolean optimize);
+    public OMText createText(Object dataHandler, boolean optimize);
 
     public OMText createText(OMElement parent, String s, String mimeType,
                              boolean optimize);

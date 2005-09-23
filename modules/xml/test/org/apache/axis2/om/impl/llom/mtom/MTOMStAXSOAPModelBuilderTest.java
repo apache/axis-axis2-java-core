@@ -83,7 +83,7 @@ public class MTOMStAXSOAPModelBuilderTest extends AbstractTestCase {
         byte[] expectedObject = new byte[]{13, 56, 65, 32, 12, 12, 7, -3, -2,
                                            -1, 98};
         DataHandler actualDH;
-        actualDH = blob.getDataHandler();
+        actualDH = (DataHandler)blob.getDataHandler();
         //ByteArrayInputStream object = (ByteArrayInputStream) actualDH
         //.getContent();
         //byte[] actualObject= null;
