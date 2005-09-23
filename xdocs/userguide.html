@@ -314,7 +314,7 @@ what each parameter means later.</p>
     &lt;description&gt;
         This is a sample Web Service with two operations, echo and ping.
     &lt;/description&gt;
-    &lt;parameter name="ServiceClass" locked="xsd:false"&gt;userguide.example1.MyService&lt;/parameter&gt;
+    &lt;parameter name="ServiceClass" locked="false"&gt;userguide.example1.MyService&lt;/parameter&gt;
     &lt;operation name="echo"&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;
@@ -346,7 +346,7 @@ format.</p>
     &lt;!-- details for Service2 --&gt;
   &lt;/service&gt;
   &lt;module ref="ModuleName" /&gt;
-  &lt;parameter name="serviceGroupParam1" locked="xsd:false"&gt;value 1&lt;/parameter&gt;
+  &lt;parameter name="serviceGroupParam1" locked="false"&gt;value 1&lt;/parameter&gt;
 &lt;/serviceGroup&gt;</pre>
 
 <h4>Step3 :Create the Web Service Archive</h4>
