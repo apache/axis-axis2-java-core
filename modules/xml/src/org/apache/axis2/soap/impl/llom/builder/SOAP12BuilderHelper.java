@@ -19,6 +19,7 @@ package org.apache.axis2.soap.impl.llom.builder;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.llom.exception.OMBuilderException;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPFault;
@@ -220,7 +221,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
                     element =
                             factory.createSOAPFaultText(
                                     (SOAPFaultReason) parent, builder);
-                    element.setComplete(false);
+                    ((OMNodeEx)element).setComplete(false);
                     reasonProcessing = false;
                     builder.setBooleanProcessingMandatoryFaultElements(false);
                 } else {

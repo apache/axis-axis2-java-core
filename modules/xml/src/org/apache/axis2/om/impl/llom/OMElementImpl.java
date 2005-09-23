@@ -27,6 +27,8 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.OMContainerEx;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.llom.traverse.OMChildElementIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
@@ -43,7 +45,7 @@ import java.util.Iterator;
  * Class OMElementImpl
  */
 public class OMElementImpl extends OMNodeImpl
-        implements OMElement, OMConstants {
+        implements OMElement, OMConstants, OMContainerEx {
     /**
      * Field ns
      */
@@ -235,7 +237,7 @@ public class OMElementImpl extends OMNodeImpl
             child.setPreviousSibling(null);
         } else {
             child.setPreviousSibling(lastChild);
-            lastChild.setNextSibling(child);
+            ((OMNodeEx)lastChild).setNextSibling(child);
         }
 
         child.setNextSibling(null);
@@ -494,18 +496,9 @@ public class OMElementImpl extends OMNodeImpl
      */
     public void setFirstChild(OMNode firstChild) {
         if (firstChild != null) {
-            firstChild.setParent(this);
+            ((OMNodeEx)firstChild).setParent(this);
         }
         this.firstChild = firstChild;
-//
-//        OMNode currentFirstChild = getFirstChild();
-//        if (currentFirstChild != null) {
-//            currentFirstChild.insertSiblingBefore(firstChild);
-//        } else {
-//            this.firstChild = firstChild;
-//        }
-//        if (firstChild != null)
-//            firstChild.setParent(this);
     }
 
     /**

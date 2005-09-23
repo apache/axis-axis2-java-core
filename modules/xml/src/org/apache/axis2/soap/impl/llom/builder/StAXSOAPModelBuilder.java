@@ -24,6 +24,7 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.llom.OMDocumentImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPBody;
@@ -200,8 +201,8 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
                     constructNode((OMElement) lastNode.getParent(),
                             elementName,
                             false);
-            lastNode.setNextSibling(node);
-            node.setPreviousSibling(lastNode);
+            ((OMNodeEx)lastNode).setNextSibling(node);
+            ((OMNodeEx)node).setPreviousSibling(lastNode);
         } else {
             OMElement e = (OMElement) lastNode;
             node = constructNode((OMElement) lastNode, elementName, false);
@@ -339,25 +340,11 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     public void endElement(){
     	 if (lastNode.isComplete()) {
              OMElement parent = (OMElement) lastNode.getParent();
-
-//             //added
-//             /*check whether all mandatory fault elements are present
-//             */
-//             if (parent.getLocalName().equals(SOAP12Constants.SOAPFAULT_LOCAL_NAME) && processingMandatoryFaultElements) {
-//                 throw new OMBuilderException("Missing mandatory fault elements");
-//             }
-//             //added
-//             /*finish processing detail element in soap 1.2 builderhelper
-//             */
-//             if (parser.getLocalName().equals(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME)) {
-//                 this.setProcessingDetailElements(false);
-//             }
-
-             parent.setComplete(true);
+             ((OMNodeEx)parent).setComplete(true);
              lastNode = parent;
          } else {
              OMNode e = lastNode;
-             e.setComplete(true);
+             ((OMNodeEx)e).setComplete(true);
          }
          elementLevel--;
     }

@@ -76,26 +76,12 @@ public interface OMNode {
     public OMContainer getParent() throws OMException;
 
     /**
-     * Method setParent
-     *
-     * @param element
-     */
-    public void setParent(OMContainer element);
-
-    /**
      * This will give the next sibling. This can be an OMAttribute for OMAttribute or OMText or OMELement for others.
      *
      * @return
      * @throws OMException
      */
     public OMNode getNextSibling() throws OMException;
-
-    /**
-     * Method setNextSibling
-     *
-     * @param node
-     */
-    public void setNextSibling(OMNode node);
 
     /**
      * this will indicate whether parser has parsed this information item completely or not.
@@ -105,13 +91,6 @@ public interface OMNode {
      * @return boolean
      */
     public boolean isComplete();
-
-    /**
-     * Method setComplete
-     *
-     * @param state
-     */
-    public void setComplete(boolean state);
 
     /**
      * This will remove this information item and its children, from the model completely.
@@ -155,26 +134,11 @@ public interface OMNode {
     public int getType() throws OMException;
 
     /**
-     * Method setType
-     *
-     * @param nodeType
-     * @throws OMException
-     */
-    public void setType(int nodeType) throws OMException;
-
-    /**
      * get the previous sibling
      *
      * @return node
      */
     public OMNode getPreviousSibling();
-
-    /**
-     * Set the previous sibling
-     *
-     * @param previousSibling
-     */
-    public void setPreviousSibling(OMNode previousSibling);
 
     /**
      * Serialize the node with caching

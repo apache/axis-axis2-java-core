@@ -25,6 +25,7 @@ import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.OMNodeEx;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
@@ -149,10 +150,10 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
             return null;
         } else if (!lastNode.isComplete()) {
             node = omfactory.createText((OMElement) lastNode, parser.getText());
-            node.setType(textType);
+            ((OMNodeEx)node).setType(textType);
         } else if (!(lastNode.getParent() instanceof OMDocument)) {
             node = omfactory.createText((OMElement)lastNode.getParent(), parser.getText());
-            node.setType(textType);
+            ((OMNodeEx)node).setType(textType);
         }
         return node;
     }
@@ -188,7 +189,7 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
             } while (!parser.getName().equals(element.getQName()));
             lastNode = element.getPreviousSibling();
             if (lastNode != null) {
-                lastNode.setNextSibling(null);
+                ((OMNodeEx)lastNode).setNextSibling(null);
             } else {
                 OMElement parent = (OMElement) element.getParent();
                 if (parent == null) {

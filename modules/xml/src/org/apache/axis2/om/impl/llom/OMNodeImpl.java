@@ -21,6 +21,8 @@ import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.OMContainerEx;
+import org.apache.axis2.om.impl.OMNodeEx;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -28,11 +30,11 @@ import javax.xml.stream.XMLStreamWriter;
 /**
  * Class OMNodeImpl
  */
-public abstract class OMNodeImpl implements OMNode {
+public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     /**
      * Field parent
      */
-    protected OMContainer parent;
+    protected OMContainerEx parent;
 
     /**
      * Field nextSibling
@@ -71,7 +73,7 @@ public abstract class OMNodeImpl implements OMNode {
      */
     public OMNodeImpl(OMContainer parent) {
         if ((parent != null)) {
-            this.parent = parent;
+            this.parent = (OMContainerEx)parent;
             parent.addChild(this);
         }
     }
@@ -106,7 +108,7 @@ public abstract class OMNodeImpl implements OMNode {
         if (this.parent != null) {
             this.detach();
         }
-        this.parent = element;
+        this.parent = (OMContainerEx)element;
     }
 
     /**
@@ -170,7 +172,7 @@ public abstract class OMNodeImpl implements OMNode {
         if (previousSibling == null) {
             parent.setFirstChild(nextSibling);
         } else {
-            getPreviousSibling().setNextSibling(nextSibling);
+            ((OMNodeEx)getPreviousSibling()).setNextSibling(nextSibling);
         }
         if (nextSibling != null) {
             nextSibling.setPreviousSibling(getPreviousSibling());
@@ -191,7 +193,7 @@ public abstract class OMNodeImpl implements OMNode {
         if (parent == null) {
             throw new OMException();
         }
-        sibling.setParent(parent);
+        ((OMNodeEx)sibling).setParent(parent);
         if (sibling instanceof OMNodeImpl) {
             OMNodeImpl siblingImpl = (OMNodeImpl) sibling;
             if (nextSibling == null) {
@@ -201,7 +203,7 @@ public abstract class OMNodeImpl implements OMNode {
             if (nextSibling != null) {
                 nextSibling.setPreviousSibling(sibling);
             }
-            sibling.setNextSibling(nextSibling);
+            ((OMNodeEx)sibling).setNextSibling(nextSibling);
             nextSibling = siblingImpl;
         }
     }
@@ -218,7 +220,7 @@ public abstract class OMNodeImpl implements OMNode {
         if (parent == null) {
             throw new OMException();
         }
-        sibling.setParent(parent);
+        ((OMNodeEx)sibling).setParent(parent);
         if (sibling instanceof OMNodeImpl) {
             OMNodeImpl siblingImpl = (OMNodeImpl) sibling;
             siblingImpl.setPreviousSibling(previousSibling);

@@ -17,6 +17,7 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.w3c.dom.DOMException;
 
 import javax.xml.soap.SOAPElement;
@@ -67,7 +68,7 @@ public class TextImpl extends NodeImpl implements Text {
     /*Overridden Method*/
     public void setParentElement(SOAPElement parent) throws SOAPException {
         OMElement omParent = ((SOAPElementImpl) parent).getOMElement();
-        omText.setParent(omParent);
+        ((OMNodeEx)omText).setParent(omParent);
     }
 
     /*Overridden Method*/

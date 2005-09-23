@@ -20,6 +20,7 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.exception.OMBuilderException;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPFault;
@@ -65,7 +66,7 @@ public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Cons
                 processAttributes(code);
 
                 processText(parser, value);
-                code.setComplete(true);
+                ((OMNodeEx)code).setComplete(true);
                 element = code;
                 builder.elementLevel--;
 
@@ -83,7 +84,7 @@ public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Cons
                 processAttributes(reason);
 
                 processText(parser, faultText);
-                reason.setComplete(true);
+                ((OMNodeEx)reason).setComplete(true);
                 element = reason;
                 builder.elementLevel--;
 

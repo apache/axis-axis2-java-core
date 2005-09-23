@@ -29,13 +29,9 @@ public interface OMContainer {
 
     public Iterator getChildren();
 
-    public void setFirstChild(OMNode omNode);
-
     public OMNode getFirstChild();
 
     public boolean isComplete();
-
-    public void setComplete(boolean state);
 
     public void buildNext();
 }

@@ -20,6 +20,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.util.Dom2OmUtils;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -124,7 +125,7 @@ public class NodeImpl implements Node {
     public void setParentElement(SOAPElement parent) throws SOAPException {
 
         OMElement omParent = ((SOAPElementImpl) parent).getOMElement();
-        omNode.setParent(omParent);
+        ((OMNodeEx)omNode).setParent(omParent);
     }
 
     /**

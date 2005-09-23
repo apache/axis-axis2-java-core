@@ -20,6 +20,7 @@ import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIterator;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeaderBlock;
@@ -68,7 +69,7 @@ public class SOAP12HeaderImpl extends SOAPHeaderImpl {
         } catch (SOAPProcessingException e) {
             throw new OMException(e);
         }
-        soapHeaderBlock.setComplete(true);
+        ((OMNodeEx)soapHeaderBlock).setComplete(true);
         return soapHeaderBlock;
     }
 

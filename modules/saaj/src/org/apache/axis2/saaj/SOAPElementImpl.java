@@ -16,6 +16,7 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.NodeList;
@@ -162,7 +163,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         //resolved using appropriate namespace declarations within the fragment itself.
 
         org.apache.axis2.om.OMElement omElementToAdd = ((SOAPElementImpl) element).getOMElement();
-        omElementToAdd.setParent(omElement);
+        ((OMNodeEx)omElementToAdd).setParent(omElement);
         omElement.addChild(omElementToAdd);
         return new SOAPElementImpl(omElementToAdd);
     }

@@ -22,6 +22,8 @@ import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.OMContainerEx;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
 
@@ -32,7 +34,7 @@ import java.util.Iterator;
 /**
  * Class OMDocumentImpl
  */
-public class OMDocumentImpl implements OMDocument {
+public class OMDocumentImpl implements OMDocument, OMContainerEx {
     /**
      * Field rootElement
      */
@@ -165,7 +167,7 @@ public class OMDocumentImpl implements OMDocument {
             child.setPreviousSibling(null);
         } else {
             child.setPreviousSibling(lastChild);
-            lastChild.setNextSibling(child);
+            ((OMNodeEx)lastChild).setNextSibling(child);
         }
         child.setNextSibling(null);
         child.setParent(this);

@@ -22,6 +22,7 @@ import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.MTOMConstants;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
@@ -128,8 +129,8 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder implements MT
                         constructNode((OMElement) lastNode.getParent(),
                                 elementName,
                                 false);
-                lastNode.setNextSibling(node);
-                node.setPreviousSibling(lastNode);
+                ((OMNodeEx)lastNode).setNextSibling(node);
+                ((OMNodeEx)node).setPreviousSibling(lastNode);
             } else {
                 OMElement e = (OMElement) lastNode;
                 node = constructNode((OMElement) lastNode, elementName, false);

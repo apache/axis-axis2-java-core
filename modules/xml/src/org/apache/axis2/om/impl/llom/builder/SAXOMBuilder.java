@@ -22,6 +22,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -58,8 +59,8 @@ public class SAXOMBuilder extends DefaultHandler {
         } else if (lastNode.isComplete()) {
             e = factory.createOMElement(localName, null, lastNode.getParent(),
                     null);
-            lastNode.setNextSibling(e);
-            e.setPreviousSibling(lastNode);
+            ((OMNodeEx)lastNode).setNextSibling(e);
+            ((OMNodeEx)e).setPreviousSibling(lastNode);
         } else {
             OMElement parent = (OMElement) lastNode;
             e = factory.createOMElement(localName, null, (OMElement) lastNode,
@@ -119,11 +120,11 @@ public class SAXOMBuilder extends DefaultHandler {
             throws SAXException {
         if (lastNode.isComplete()) {
             OMContainer parent = lastNode.getParent();
-            parent.setComplete(true);
+            ((OMNodeEx)parent).setComplete(true);
             lastNode = (OMNode) parent;
         } else {
             OMElement e = (OMElement) lastNode;
-            e.setComplete(true);
+            ((OMNodeEx)e).setComplete(true);
         }
     }
 
@@ -143,8 +144,8 @@ public class SAXOMBuilder extends DefaultHandler {
                     factory.createText((OMElement) lastNode.getParent(),
                             new String(ch,
                                     start, length));
-            lastNode.setNextSibling(node);
-            node.setPreviousSibling(lastNode);
+            ((OMNodeEx)lastNode).setNextSibling(node);
+            ((OMNodeEx)node).setPreviousSibling(lastNode);
         } else {
             OMElement e = (OMElement) lastNode;
             node = factory.createText(e, new String(ch, start, length));
