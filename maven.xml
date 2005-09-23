@@ -486,6 +486,10 @@
                 <ant:pathelement location="modules/core/src"/>
                 <ant:pathelement location="modules/wsdl/src"/>
                 <ant:pathelement location="modules/xml/src"/>
+                <ant:pathelement location="modules/addressing/src"/>
+                <ant:pathelement location="modules/saaj/src"/>
+                <ant:pathelement location="modules/security/src"/>
+                <ant:pathelement location="modules/databinding/src"/>
             </ant:sourcepath>
         </ant:javadoc>
     </goal>
