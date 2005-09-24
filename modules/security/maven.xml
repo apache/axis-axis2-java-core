@@ -29,12 +29,25 @@
 	<copy file="${maven.repo.local}/xml-security/jars/xmlsec-1.2.1.jar" todir="target/classes/lib"/>
 	<copy file="${maven.repo.local}/bouncycastle/jars/bcprov-jdk13-128.jar" todir="target/classes/lib"/>
 	<copy file="${maven.repo.local}/opensaml/jars/opensaml-1.0.1.jar" todir="target/classes/lib"/>
+	<copy file="${maven.repo.local}/wss4j/jars/wss4j-SNAPSHOT.jar" todir="target/classes/lib"/>
+	<copy file="${maven.repo.local}/jaxen/jars/jaxen-1.1-beta-7.jar" todir="target/classes/lib"/>
+	<copy file="${maven.repo.local}/xerces/jars/xmlParserAPIs-2.6.2.jar" todir="target/classes/lib"/>
+	<copy file="${maven.repo.local}/xerces/jars/xercesImpl-2.6.2.jar" todir="target/classes/lib"/>
+
 
         <jar jarfile="target/security.mar" basedir="target/classes">
             <include name="**/*"/>
         </jar>
         <copy file="target/security.mar" tofile="target/modules/security.mar"/>
 
+	<!-- Create the client specific security module -->
+	<copy file="src/META-INF/client.module.xml"
+            tofile="target/classes/META-INF/module.xml"/>
+
+        <jar jarfile="target/client.security.mar" basedir="target/classes">
+            <include name="**/*"/>
+        </jar>
+        <copy file="target/client.security.mar" tofile="target/modules/client.security.mar"/>
     </postGoal>
 
     <preGoal name="java:compile">
@@ -139,7 +152,7 @@
 		<copy file="interop/interop2.jks" 
 			tofile="${class.dir}/interop2.jks" overwrite="yes"/>
 		
-		<jar jarfile="target/PingPort.aar" basedir="target/interop/classes">
+	<jar jarfile="target/PingPort.aar" basedir="target/interop/classes">
             <include name="**/*"/>
         </jar>
         

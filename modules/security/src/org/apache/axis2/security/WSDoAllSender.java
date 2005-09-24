@@ -47,7 +47,7 @@ public class WSDoAllSender extends WSDoAllHandler {
 	 * we can insert only the wsse:Security header into the OM-SOAPEnvelope and preserve the 
 	 * metadata of OM such as base64 MTOM optimization
 	 */
-	private boolean preserveOriginalEnvelope = true;
+	private boolean preserveOriginalEnvelope = false;
 	
     public WSDoAllSender() {
     	super();
@@ -56,7 +56,8 @@ public class WSDoAllSender extends WSDoAllHandler {
 	
 	public void invoke(MessageContext msgContext) throws AxisFault {
 		
-        doDebug = log.isDebugEnabled();
+        boolean doDebug = log.isDebugEnabled();
+        
         
         if (doDebug) {
             log.debug("WSDoAllSender: enter invoke()");
@@ -105,17 +106,6 @@ public class WSDoAllSender extends WSDoAllHandler {
 	            return;
 	        }
 	
-	        boolean mu = decodeMustUnderstand(reqData);
-	
-	        secEngine.setPrecisionInMilliSeconds(decodeTimestampPrecision(reqData));
-	
-	        String actor = null;
-	        if ((actor = (String) getOption(WSHandlerConstants.ACTOR)) == null) {
-	            actor = (String)
-	                    getProperty(reqData.getMsgContext(), WSHandlerConstants.ACTOR);
-	        }
-	        reqData.setActor(actor);
-	        		
             /*
              * For every action we need a username, so get this now. The
              * username defined in the deployment descriptor takes precedence.
@@ -144,10 +134,6 @@ public class WSDoAllSender extends WSDoAllHandler {
              }
          }
          
-         if (doDebug) {
-             log.debug("Action: " + doAction);
-             log.debug("Actor: " + reqData.getActor() + ", mu: " + mu);
-         }
          /*
 		  * Now get the SOAPEvelope from the message context and convert it into
 		  * a Document
@@ -169,94 +155,12 @@ public class WSDoAllSender extends WSDoAllHandler {
             		throw new AxisFault("WSDoAllReceiver: Error in converting to Document", wssEx);
             	}
             }
-	     	
-            reqData.setSoapConstants(WSSecurityUtil.getSOAPConstants(doc
-                    .getDocumentElement()));
-            /*
-                * Here we have action, username, password, and actor,
-                * mustUnderstand. Now get the action specific parameters.
-                */
-            if ((doAction & WSConstants.UT) == WSConstants.UT) {
-                decodeUTParameter(reqData);
-            }
-            /*
-                * Here we have action, username, password, and actor,
-                * mustUnderstand. Now get the action specific parameters.
-                */
-            if ((doAction & WSConstants.UT_SIGN) == WSConstants.UT_SIGN) {
-                decodeUTParameter(reqData);
-                decodeSignatureParameter(reqData);
-            }
-            /*
-                * Get and check the Signature specific parameters first because
-                * they may be used for encryption too.
-                */
-            if ((doAction & WSConstants.SIGN) == WSConstants.SIGN) {
-                reqData.setSigCrypto(loadSignatureCrypto(reqData));
-                decodeSignatureParameter(reqData);
-            }
-            /*
-                * If we need to handle signed SAML token then we need may of the
-                * Signature parameters. The handle procedure loads the signature
-                * crypto file on demand, thus don't do it here.
-                */
-            if ((doAction & WSConstants.ST_SIGNED) == WSConstants.ST_SIGNED) {
-                decodeSignatureParameter(reqData);
-            }
-            /*
-                * Set and check the encryption specific parameters, if necessary
-                * take over signature parameters username and crypto instance.
-                */
-            if ((doAction & WSConstants.ENCR) == WSConstants.ENCR) {
-                reqData.setEncCrypto(loadEncryptionCrypto(reqData));
-                decodeEncryptionParameter(reqData);
-            }
-            /*
-                * Here we have all necessary information to perform the requested
-                * action(s).
-                */
-            for (int i = 0; i < actions.size(); i++) {
+	     
 
-                int actionToDo = ((Integer) actions.get(i)).intValue();
-                if (doDebug) {
-                    log.debug("Performing Action: " + actionToDo);
-                }
-
-                switch (actionToDo) {
-                case WSConstants.UT:
-                    performUTAction(actionToDo, mu, doc, reqData);
-                    break;
-
-                case WSConstants.ENCR:
-                    performENCRAction(actionToDo, mu, doc, reqData);
-                    this.preserveOriginalEnvelope = false;
-                    break;
-
-                case WSConstants.SIGN:
-                    performSIGNAction(actionToDo, mu, doc, reqData);
-                    break;
-
-                case WSConstants.ST_SIGNED:
-                    performST_SIGNAction(actionToDo, mu, doc, reqData);
-                    break;
-
-                case WSConstants.ST_UNSIGNED:
-                    performSTAction(actionToDo, mu, doc, reqData);
-                    break;
-
-                case WSConstants.TS:
-                    performTSAction(actionToDo, mu, doc, reqData);
-                    break;
-
-                case WSConstants.UT_SIGN:
-                    performUT_SIGNAction(actionToDo, mu, doc, reqData);
-                    break;
-
-                case WSConstants.NO_SERIALIZE:
-                    reqData.setNoSerialization(true);
-                    break;
-                }
-            }
+            //Setting the class loader
+        	//Thread.currentThread().setContextClassLoader(msgContext.getServiceDescription().getClassLoader());
+        	
+        	doSenderAction(doAction, doc, reqData, actions, !msgContext.isServerSide());
 
             /*
                 * If required convert the resulting document into a message first.
@@ -277,6 +181,7 @@ public class WSDoAllSender extends WSDoAllHandler {
                         doc);
             } else {
             	SOAPEnvelope processedEnv = null;
+
             	if(preserveOriginalEnvelope) {
             		processedEnv = Axis2Util.getSOAPEnvelopeFromDocument(doc,reqData.getSoapConstants(), msgContext.getEnvelope());
             	} else {
@@ -332,7 +237,7 @@ public class WSDoAllSender extends WSDoAllHandler {
 		        	msgContext.setProperty(WSSHandlerConstants.Out.REPETITON,new Integer(repetition));
 		        	msgContext.setProperty(WSSHandlerConstants.OUTFLOW_SECURITY,outFlowSecurity);
 		        	/**
-		        	 * eserving the OM stuff doesn't work for the repeting case
+		        	 * Preserving the OM stuff doesn't work for the repeting case
 		        	 */
 		        	this.preserveOriginalEnvelope = false;
 		        	

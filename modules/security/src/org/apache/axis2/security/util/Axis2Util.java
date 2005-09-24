@@ -16,25 +16,25 @@
 
 package org.apache.axis2.security.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.ws.security.SOAPConstants;
-import org.apache.ws.security.WSSConfig;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.apache.xml.security.utils.XMLUtils;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 
 /**
  * Utility class for the Axis2-WSS4J Module
@@ -118,7 +118,7 @@ public class Axis2Util {
 			SOAPConstants constants, SOAPEnvelope reqEnv) throws WSSecurityException {
 		
 		//Get holdof the security header
-		Element secElem = WSSecurityUtil.getSecurityHeader(WSSConfig.getDefaultWSConfig(), doc,null, constants);
+		Element secElem = WSSecurityUtil.getSecurityHeader(doc,null, constants);
 		
 		//insert the header into the OM-SOAPEnvelope
 		

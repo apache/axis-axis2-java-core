@@ -261,6 +261,8 @@
             </ant:fileset>
 	</ant:move>
 	<ant:copy file="src/sample/security/META-INF/services.xml" tofile="target/security/META-INF/services.xml"/>
+	<ant:copy file="resources/security/sec.jks" tofile="target/security/sec.jks"/>
+	<ant:copy file="resources/security/sec.properties" tofile="target/security/sec.properties"/>
         <jar destfile="target/security/SecureService.aar">
             <fileset dir="target/security"></fileset>
         </jar>

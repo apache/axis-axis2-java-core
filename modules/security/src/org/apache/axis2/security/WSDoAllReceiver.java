@@ -24,6 +24,7 @@ import javax.security.auth.callback.CallbackHandler;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.security.handler.WSDoAllHandler;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
@@ -42,6 +43,7 @@ import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
 import org.apache.ws.security.message.token.Timestamp;
 import org.apache.ws.security.util.WSSecurityUtil;
+import org.apache.wsdl.WSDLConstants;
 import org.w3c.dom.Document;
 
 public class WSDoAllReceiver extends WSDoAllHandler {
@@ -55,8 +57,16 @@ public class WSDoAllReceiver extends WSDoAllHandler {
     }
     
 	public void invoke(MessageContext msgContext) throws AxisFault {
-    	doDebug = log.isDebugEnabled();
+    	boolean doDebug = log.isDebugEnabled();
 
+    	//Copy the WSHandlerConstants.SEND_SIGV over to the new message 
+    	//context - if it exists
+    	if(!msgContext.isServerSide()) {//To make sure this is a response message 
+    		OperationContext opCtx = msgContext.getOperationContext();
+    		MessageContext outMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT);
+    		msgContext.setProperty(WSHandlerConstants.SEND_SIGV,outMsgCtx.getProperty(WSHandlerConstants.SEND_SIGV));
+    	}
+    	
         if (doDebug) {
             log.debug("WSDoAllReceiver: enter invoke() ");
         }
@@ -116,19 +126,16 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             if ((doAction & (WSConstants.ENCR | WSConstants.UT)) != 0) {
                 cbHandler = getPasswordCB(reqData);
             }
-
+            
+//          Setting the class loader
+        	//Thread.currentThread().setContextClassLoader(msgContext.getServiceDescription().getClassLoader());
+        	
             /*
             * Get and check the Signature specific parameters first because
             * they may be used for encryption too.
             */
 
-            if ((doAction & WSConstants.SIGN) == WSConstants.SIGN) {
-                decodeSignatureParameter2(reqData);
-            }
-
-            if ((doAction & WSConstants.ENCR) == WSConstants.ENCR) {
-                decodeDecryptionParameter(reqData);
-            }
+            doReceiverAction(doAction, reqData);
 
             Vector wsResult = null;
             try {
@@ -147,7 +154,10 @@ public class WSDoAllReceiver extends WSDoAllHandler {
                             "WSDoAllReceiver: Request does not contain required Security header");
                 }
             }
-            
+
+            if (reqData.getWssConfig().isEnableSignatureConfirmation() && !msgContext.isServerSide()) {
+                checkSignatureConfirmation(reqData, wsResult);
+            }
             //TODO: Copy the processed headers
             
             
@@ -265,28 +275,13 @@ public class WSDoAllReceiver extends WSDoAllHandler {
                  }
              }
        
-
              /*
              * now check the security actions: do they match, in right order?
              */
-             int resultActions = wsResult.size();
-             int size = actions.size();
-             if (size != resultActions) {
-                 throw new AxisFault(
-                         "WSDoAllReceiver: security processing failed (actions number mismatch)");
-             }
-            String enforce = null;
-            if ((enforce = (String) getOption(WSSHandlerConstants.ENFORCE_ACTION_ORDER)) == null) {
-                enforce = (String) getProperty(msgContext, WSSHandlerConstants.ENFORCE_ACTION_ORDER);
-            }
-            if (enforce != null && (enforce.equalsIgnoreCase("yes") || enforce.equalsIgnoreCase("true"))) {
-                for (int i = 0; i < size; i++) {
-                    if (((Integer) actions.get(i)).intValue() != ((WSSecurityEngineResult) wsResult
-                            .get(i)).getAction()) {
+             if (!checkReceiverResults(wsResult, actions)) {
                         throw new AxisFault(
                                 "WSDoAllReceiver: security processing failed (actions mismatch)");
-                    }
-                }
+
             }
             /*
             * All ok up to this point. Now construct and setup the security
@@ -314,5 +309,6 @@ public class WSDoAllReceiver extends WSDoAllHandler {
         }
         
     }
+
 
 }

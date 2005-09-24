@@ -206,4 +206,8 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 
     	return value;
     }
+
+	public void setProperty(Object msgContext, String key, Object value) {
+		((MessageContext)msgContext).setProperty(key, value);
+	}
 }
