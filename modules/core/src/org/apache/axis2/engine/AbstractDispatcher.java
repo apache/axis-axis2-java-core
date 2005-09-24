@@ -38,7 +38,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
      */
     public static final QName NAME =
             new QName("http://axis.ws.apache.org",
-                    "AddressingBasedDispatcher");
+                    "AddressingBasedDispatcher");           
 
     /**
      * Constructor Dispatcher
