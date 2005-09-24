@@ -20,6 +20,12 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMException;
 
+/**
+ * Interface OMNodeEx
+ *
+ * Internal Implementation detail. Adding special interface to stop folks from accidently using OMNode.
+ * Please use at your own risk. May corrupt the data integrity
+ */
 public interface OMNodeEx extends OMNode {
     public void setNextSibling(OMNode node);
 
