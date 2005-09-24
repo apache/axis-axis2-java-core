@@ -18,6 +18,7 @@ package org.apache.axis2.security.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLInputFactory;
@@ -41,6 +42,9 @@ import org.w3c.dom.Element;
  */
 public class Axis2Util {
 
+	private static ThreadLocal signatureValues = new ThreadLocal();
+	
+	
 	/**
 	 * Create a DOM Document using the SOAP Envelope
 	 * @param env An org.apache.axis2.soap.SOAPEnvelope instance 
@@ -160,5 +164,13 @@ public class Axis2Util {
 			throw new WSSecurityException(e.getMessage(),e);
 		}
 
+	}
+
+	public static Vector getSignatureValues() {
+		return (Vector)signatureValues.get();
+	}
+
+	public static void setSignatureValues(Vector signatureValues) {
+		Axis2Util.signatureValues.set(signatureValues);
 	}
 }

@@ -24,7 +24,6 @@ import javax.security.auth.callback.CallbackHandler;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.security.handler.WSDoAllHandler;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
@@ -43,7 +42,6 @@ import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
 import org.apache.ws.security.message.token.Timestamp;
 import org.apache.ws.security.util.WSSecurityUtil;
-import org.apache.wsdl.WSDLConstants;
 import org.w3c.dom.Document;
 
 public class WSDoAllReceiver extends WSDoAllHandler {
@@ -59,12 +57,30 @@ public class WSDoAllReceiver extends WSDoAllHandler {
 	public void invoke(MessageContext msgContext) throws AxisFault {
     	boolean doDebug = log.isDebugEnabled();
 
-    	//Copy the WSHandlerConstants.SEND_SIGV over to the new message 
-    	//context - if it exists
-    	if(!msgContext.isServerSide()) {//To make sure this is a response message 
-    		OperationContext opCtx = msgContext.getOperationContext();
-    		MessageContext outMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT);
-    		msgContext.setProperty(WSHandlerConstants.SEND_SIGV,outMsgCtx.getProperty(WSHandlerConstants.SEND_SIGV));
+    	/**
+    	 * Cannot do the following right now since we cannot access the req 
+    	 * mc when this handler runs in the client side.
+    	 * This is the same even if the handler is placed at the end of the 
+    	 * post dispatch phase
+    	 *     <inflow>
+         *			<handler name="SecurityInHandler" class="org.apache.axis2.security.WSDoAllReceiver">
+         *				<order phase="PostDispatch" phaseLast="true"/>
+         *			</handler>
+         *		</inflow> 
+    	 */
+    	
+//    	//Copy the WSHandlerConstants.SEND_SIGV over to the new message 
+//    	//context - if it exists
+//    	if(!msgContext.isServerSide()) {//To make sure this is a response message 
+//    		OperationContext opCtx = msgContext.getOperationContext();
+//    		MessageContext outMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT);
+//    		msgContext.setProperty(WSHandlerConstants.SEND_SIGV,outMsgCtx.getProperty(WSHandlerConstants.SEND_SIGV));
+//    	}
+//    	
+    	
+    	//Getting the signature values using a static hook
+    	if(!msgContext.isServerSide()) {
+    		msgContext.setProperty(WSHandlerConstants.SEND_SIGV,Axis2Util.getSignatureValues());
     	}
     	
         if (doDebug) {
