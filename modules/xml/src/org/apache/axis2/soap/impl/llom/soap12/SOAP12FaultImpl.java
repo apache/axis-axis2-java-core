@@ -107,7 +107,7 @@ public class SOAP12FaultImpl extends SOAPFaultImpl {
         }
     }
 
-    protected void serialiseFaultNode(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
+    protected void serializeFaultNode(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         SOAPFaultNode faultNode = getNode();
         if (faultNode != null) {
             faultNode.serializeWithCache(omOutput);

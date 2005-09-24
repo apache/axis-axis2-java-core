@@ -213,7 +213,7 @@ public abstract class SOAPFaultImpl extends SOAPElement
             faultReason.serializeWithCache(omOutput);
         }
 
-        serialiseFaultNode(omOutput);
+        serializeFaultNode(omOutput);
 
         SOAPFaultRole faultRole = getRole();
         if (faultRole != null) {
@@ -228,7 +228,7 @@ public abstract class SOAPFaultImpl extends SOAPElement
         OMSerializerUtil.serializeEndpart(omOutput);
     }
 
-    protected abstract void serialiseFaultNode(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException;
+    protected abstract void serializeFaultNode(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException;
         
 
 }

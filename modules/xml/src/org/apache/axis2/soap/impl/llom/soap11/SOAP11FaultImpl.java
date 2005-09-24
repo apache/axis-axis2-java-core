@@ -61,21 +61,6 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
 
     public void serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         super.serializeWithCache(omOutput);
-//        OMSerializerUtil.serializeStartpart(this, omOutput);
-//        if (getCode() != null) {
-//            getCode().serializeWithCache(omOutput);
-//        }
-//        if (getReason() != null) {
-//            getReason().serializeWithCache(omOutput);
-//        }
-//        if (getReason() != null) {
-//            getReason().serializeWithCache(omOutput);
-//        }
-//
-//        if (getDetail() != null) {
-//            getDetail().serializeWithCache(omOutput);
-//        }
-//        OMSerializerUtil.serializeEndpart(omOutput);
     }
 
     public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
@@ -129,7 +114,7 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
         super.setDetail(detail);
     }
 
-    protected void serialiseFaultNode(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
+    protected void serializeFaultNode(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         
     }
 
