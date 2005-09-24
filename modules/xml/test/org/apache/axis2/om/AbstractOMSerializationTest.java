@@ -32,21 +32,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class AbstractOMSerializationTest extends XMLTestCase {
 
@@ -116,8 +105,6 @@ public class AbstractOMSerializationTest extends XMLTestCase {
                 ((OMDocument) rootElement.getParent()).serializeWithCache(omOutput);
             }
             omOutput.flush();
-
-            System.out.println("XML = " + new String(baos.toByteArray()));
 
             InputSource resultXML = new InputSource(new InputStreamReader(
                     new ByteArrayInputStream(baos.toByteArray())));

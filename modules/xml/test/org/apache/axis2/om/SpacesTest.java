@@ -32,12 +32,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class SpacesTest extends XMLTestCase {
     private String filePath = "test-resources/xml/spaces.xml";
@@ -73,7 +68,6 @@ public class SpacesTest extends XMLTestCase {
             writer.flush();
             writer.close();
 
-            System.out.println("XML = " + new String(baos.toByteArray()));
 
             InputSource resultXML = new InputSource(new InputStreamReader(
                     new ByteArrayInputStream(baos.toByteArray())));

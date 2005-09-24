@@ -46,7 +46,6 @@ public class OMDocumentTest extends TestCase {
         omDocument.serialize(output);
         output.flush();
         outXML = new String(outStream.toByteArray());
-        System.out.println("outXML = " + outXML);
 
         // again load that to another builder
         OMDocument secondDocument = getSampleOMDocument(outXML);

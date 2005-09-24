@@ -17,11 +17,7 @@
 package org.apache.axis2.om.impl.llom;
 
 import junit.framework.TestCase;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMDocument;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.OMOutputImpl;
 
 import javax.xml.stream.XMLStreamException;
@@ -95,7 +91,6 @@ public class OMDocumentSerilizationTest extends TestCase {
 		output.flush();
 
         String xmlDocument = new String(baos.toByteArray());
-        System.out.println("xmlDocument = " + xmlDocument);
 
         assertTrue("Charset declaration missing",-1 < xmlDocument.indexOf(encoding) ||
                                                  -1 < xmlDocument.indexOf(encoding.toLowerCase()) ||

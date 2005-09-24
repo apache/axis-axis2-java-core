@@ -29,7 +29,6 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -39,7 +38,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 public class SOAPversionTest extends TestCase {
     private EndpointReference targetEPR =
@@ -139,13 +137,6 @@ public class SOAPversionTest extends TestCase {
                 inOutMEPClient.invokeBlockingWithEnvelopeOut(
                         operationName.getLocalPart(), payload);
 //        assertEquals("SOAP Version received is not compatible", SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, result.getNamespace().getName());
-        try {
-            OMOutputImpl output = new org.apache.axis2.om.impl.OMOutputImpl(System.out, false);
-            result.serializeWithCache(output);
-            output.flush();
-        } catch (XMLStreamException e) {
-            log.info(e.getMessage());
-        }
 
         inOutMEPClient.close();
     }

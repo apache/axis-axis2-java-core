@@ -16,21 +16,21 @@
 
 package org.apache.axis2.databinding.deserializers;
 
-import org.apache.axis2.databinding.DeserializationTarget;
 import org.apache.axis2.databinding.DeserializationContext;
+import org.apache.axis2.databinding.DeserializationTarget;
 import org.apache.axis2.databinding.Deserializer;
 import org.apache.axis2.databinding.metadata.TypeDesc;
 import org.apache.axis2.i18n.Messages;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
 import java.lang.reflect.Constructor;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 import java.util.GregorianCalendar;
-import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 /**
  * SimpleDeserializer
@@ -80,7 +80,6 @@ public class SimpleDeserializer implements Deserializer {
             if (eventType == XMLStreamConstants.START_ELEMENT) {
                 int numAttrs = reader.getAttributeCount();
                 eventType = reader.next();
-                System.out.println("There are " + numAttrs + " attr(s)");
             }
             if (eventType == XMLStreamConstants.CHARACTERS) {
                 text = text.concat(reader.getText());

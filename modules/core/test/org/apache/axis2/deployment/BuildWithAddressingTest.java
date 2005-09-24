@@ -42,7 +42,6 @@ public class BuildWithAddressingTest extends AbstractTestCase {
                  if (metadata.getHandlerCount() <= 0) {
                      fail("this must failed Since there are addressing handlers ");
                  } else {
-                     System.out.println("Found pre-dispatch handlers");
                  }
              }
          }*/

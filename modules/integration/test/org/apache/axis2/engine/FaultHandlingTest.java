@@ -23,13 +23,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.engine.util.MyInOutMEPClient;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -89,14 +83,6 @@ public class FaultHandlingTest extends TestCase {
 //        } catch (Exception e) {
 //        }
 //    }
-
-    private void printElement(OMElement element) throws XMLStreamException {
-        OMOutputImpl output = new OMOutputImpl(System.out, false);
-        element.serializeWithCache(output);
-        output.flush();
-    }
-
-
 
     private void checkSOAPFaultContent(SOAPEnvelope soapEnvelope) {
         assertTrue(soapEnvelope.getBody().hasFault());
