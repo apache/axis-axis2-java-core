@@ -791,14 +791,4 @@ public class OMElementImpl extends OMNodeImpl
             builder.discard(this);
         }
     }
-
-    public void buildWithMTOM() throws OMException {
-        if (!done) {
-            this.build();
-        }
-        Iterator childrenIterator = this.getChildren();
-        while (childrenIterator.hasNext()) {
-            ((OMNode) childrenIterator.next()).buildWithMTOM();
-        }
-    }
 }
