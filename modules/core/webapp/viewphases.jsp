@@ -27,16 +27,12 @@
                  org.apache.axis2.engine.Phase,
                  java.util.ArrayList"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head><title>View Phases</title>
-<link href="css/axis-style.css" rel="stylesheet" type="text/css">
-</head>
-<body>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Available Phases</h1>
      <%
          ArrayList phases = (ArrayList)request.getSession().getAttribute(Constants.PHASE_LIST);
          ArrayList tempList;
-     %><hr><h2><font color="blue">System pre-defined phases</font></h2>
+     %><h2><font color="blue">System pre-defined phases</font></h2>
      <b>InFlow Upto Dispatcher</b>
      <blockquote>
          <%
@@ -78,7 +74,6 @@
 <%--         %>--%>
          </blockquote>
          <br>
-         <hr>
          <h2><font color="blue">User defined phases</font></h2>
          <b>Inflow after Dispatcher</b>
          <blockquote>
@@ -120,5 +115,4 @@
              }
          %>
          </blockquote>
-         </body>
-</html>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>

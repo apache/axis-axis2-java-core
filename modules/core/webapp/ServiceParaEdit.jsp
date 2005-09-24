@@ -7,9 +7,8 @@
                  java.util.HashMap,
                  java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-  <head><title>Service Parameter EDIT </title></head>
-  <body>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
+<h1>Edit Service Parameters</h1>
   <form method="get" name="editServicepara" action="editServicepara">
    <%
             ServiceDescription service = (ServiceDescription)request.getSession().
@@ -35,7 +34,7 @@
                      <tr>
                      <td><%=parameter.getName()%></td>
                      <td><input type="text" value="<%=parameter.getValue()%>"
-                           name="<%=(servicName + "_" + parameter.getName())%>">
+                           name="<%=(servicName + "_" + parameter.getName())%>" size="50">
                            </td>
                      </tr>
                      <%
@@ -74,7 +73,7 @@
                      <tr>
                      <td><%=parameter.getName()%></td>
                      <td><input type="text" value="<%=parameter.getValue()%>"
-                           name="<%=(opeartionName + "_" + parameter.getName())%>">
+                           name="<%=(opeartionName + "_" + parameter.getName())%>" size="50">
                            </td>
                      </tr>
                      <%
@@ -82,7 +81,7 @@
                  }
                  %>
                  <tr>
-                    <td>.</td>
+                    <td>&nbsp;</td>
                 <td>
                      <input name="changePara" type="submit" value=" Change " >
                </td>
@@ -93,5 +92,4 @@
 
        %>
        <form>
-  </body>
-</html>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>

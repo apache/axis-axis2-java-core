@@ -25,23 +25,13 @@
  * Time: 7:14:26 PM
  */
         %>
-        <head>
-<title>Axis2 :: Administrations Page</title>
-</head>
-
-<frameset rows="215,*" frameborder="NO" border="0" framespacing="0">
-<frame src="TopFrame.jsp" name="topFrame" scrolling="NO"  >
-<frameset rows="*" cols="300,*" framespacing="0" frameborder="NO" border="0">
-<frame src="LeftFrame.jsp" name="leftFrame"  border="0" noresize>
-<frame src="MainFrame.jsp"  border="0" name="mainFrame">
-</frameset>
-</frameset>
-<noframes><body>
   <%
       String status = (String)request.getSession().getAttribute(Constants.LOGGED);
       if(status == null || (! status.equals("Yes"))) {
           throw new Exception("Invalid logging");
       }
   %>
-</body></noframes>
-</html>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
+<h1>Welcome to the Axis2 administration system!</h1><p>There are several things that you can do from within this system. You can check the status of your axis system from these pages.
+There are also some functionality provided to change some internel setting while the system is online.
+<jsp:include page="include/adminfooter.jsp"></jsp:include>

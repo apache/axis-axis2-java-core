@@ -12,9 +12,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head><title>View ServiceGroup Context property :: Delete Context</title></head>
-<body>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Runing Context hierachy</h1>
 <%
     ConfigurationContext configContext = (ConfigurationContext)request.getSession().getAttribute(Constants.CONFIG_CONTEXT);
@@ -76,5 +74,4 @@
 %> <h4>No Service Context found</h4><%
     }
 %>
-</body>
-</html>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>

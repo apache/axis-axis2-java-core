@@ -8,7 +8,6 @@
 <%@ page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"
  %>
-<html>                                                                                                       
 <%
 /*
 * Copyright 2002,2004 The Apache Software Foundation.
@@ -53,12 +52,7 @@
 
     }
 %>
-<head>
-<title> Upload a service </title>
-<link href="css/axis-style.css" rel="stylesheet" type="text/css">
-</head>
-<body>
-	    <jsp:include page="include/header.inc"></jsp:include>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
          <h2>Upload a service jar file</h2>
         <%
             boolean isMultipart = FileUpload.isMultipartContent(request);
@@ -104,13 +98,14 @@
             }
         %>
 
-        You can upload a properly packaged Axis 2 service by selecting the file and clicking upload
-        <form method="post"  name="Axis2upload" action="upload.jsp" enctype="multipart/form-data">
-        <input type="file" name="filename" chars="50"/><br/>
-        <input name="<%=SUBMIT_NAME%>" type="submit" value=" Upload "/>
-        </form>
-
-       <jsp:include page="include/link-footer.inc"></jsp:include>
-       <jsp:include page="include/footer.inc"></jsp:include>
-       </body>
-</html>
+        <p>You can upload a packaged Axis 2 service using this page with two small steps.</p>
+	<ul><li>Browse to the location and select the service archive file you wish to upload</li>
+	<li>Click Upload</li></ul>
+	<p>Simple as that!</p>
+<form method="post"  name="Axis2upload" action="upload.jsp" enctype="multipart/form-data">
+        <table><tr><td>Service archive : </td><td>
+        <input type="file" name="filename" size="50"/></td></tr>
+        <tr><td>&nbsp;</td><td><input name="<%=SUBMIT_NAME%>" type="submit" value=" Upload "/></td></tr>
+	</table>
+</form>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>

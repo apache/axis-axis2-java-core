@@ -29,10 +29,8 @@
  */
 %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
-<html>
-  <head><title>Simple jsp page</title></head>
-  <body>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
+<h1>Select a Service to view Operation's Chains</h1>
   <%
       String action ="";
       String buttonName="" ;
@@ -50,23 +48,8 @@
   %>
 <form method="get" name="engaginModule" action="<%=action%>">
 <table border="0" width="100%" cellspacing="1" cellpadding="1">
-    <tr>
-        <td>
-            &nbsp;
-            &nbsp;
-        </td>
-    </tr>
-    <tr>
-           <td>
-             &nbsp;
-             &nbsp;
-           </td>
-         </tr>
          <tr>
-        <td>Select a Service :</td>
-    </tr>
-    <tr>
-        <td>
+        <td width="20%">Select a Service :&nbsp;
             <select name="service">
             <%
                 HashMap services = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
@@ -81,30 +64,10 @@
            </td>
         </tr>
         <tr>
-           <td>
-             &nbsp;
-             &nbsp;
-           </td>
-         </tr>
-         <tr>
              <td>
                 <input name="submit" type="submit" value="<%=buttonName%>" >
              </td>
          </tr>
-         <tr>
-             <td>
-             &nbsp;
-             &nbsp;
-             </td>
-         </tr>
-         <tr>
-             <td>
-             &nbsp;
-             &nbsp;
-             </td>
-         </tr>
       </table>
    </form>
-</body>
-</html>
-
+<jsp:include page="include/adminfooter.jsp"></jsp:include>

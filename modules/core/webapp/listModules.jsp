@@ -31,14 +31,11 @@
  <%@ page import="java.util.Hashtable"%>
  <%@ page import="java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-  <head><title>List Available Moules</title>
-  <link href="css/axis-style.css" rel="stylesheet" type="text/css">
-  </head>
-  <body>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
   <h1>Available Modules</h1>
      <%
          boolean foundModules = false;
+	boolean wroteUL = false;
          HashMap moduleMap = (HashMap)request.getSession().getAttribute(Constants.MODULE_MAP);
          Hashtable errornesModules =(Hashtable)request.getSession().getAttribute(Constants.ERROR_MODULE_MAP);
          if (moduleMap!=null && !moduleMap.isEmpty()){
@@ -48,22 +45,32 @@
                  foundModules = true;
                  ModuleDescription  moduleQName = (ModuleDescription) iterator.next();
                  modulename = moduleQName.getName().getLocalPart();
-     %><hr><h2><font color="blue"><%=modulename%></font></h2>
-     <br>
+		if (!wroteUL){
+			wroteUL = true;
+%>
+	<ul>
+<%
+		}
+     %><li><%=modulename%></li>
       <%
              }
+		if (wroteUL){
+%>
+	</ul>
+<%
+		}
         }
       %>
       <%if(errornesModules.size()>0){
           %>
-      <hr><h3><font color="blue">Faulty Modules</font></h3>
+      <h3><font color="red">Faulty Modules</font></h3>
              <%
              Enumeration faultyModules = errornesModules.keys();
              while (faultyModules.hasMoreElements()) {
                  foundModules = true;
                  String faultyModuleName = (String) faultyModules.nextElement();
-             %><h3><font color="blue"><a href="errorModule.jsp?moduleName=<%=faultyModuleName%>">
-                    <%=faultyModuleName%></a></font></h3>
+             %><a href="errorModule.jsp?moduleName=<%=faultyModuleName%>">
+                    <%=faultyModuleName%></a>
                     <%
              }
       }
@@ -73,5 +80,4 @@
                  <%
              }
      %>
-  </body>
-</html>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>

@@ -31,8 +31,7 @@
   <body>
   <jsp:include page="include/header.inc"></jsp:include>
   <h1>Available services</h1>
-  <br/><a href="<%=Constants.LISTSERVICES%>"> Refresh  </a><br/>
-      <%String IP=request.getRequestURL().toString();
+  <%String IP=request.getRequestURL().toString();
         int lastindex = IP.lastIndexOf('/');
         IP = IP.substring(0,lastindex);
         String prifix = IP + "/services/";
@@ -51,7 +50,7 @@
             operations = axisService.getOperations();
             operationsList = operations.values();
             serviceName = axisService.getName().getLocalPart();
-            %><hr><h2><font color="blue"><a href="<%=prifix + axisService.getName().getLocalPart()%>?wsdl"><%=serviceName%></a></font></h2>
+            %><h2><font color="blue"><a href="<%=prifix + axisService.getName().getLocalPart()%>?wsdl"><%=serviceName%></a></font></h2>
            <font color="blue">Service EPR : <font color="black"><%=prifix + axisService.getName().getLocalPart()%></font>
            <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
            <%
@@ -92,7 +91,7 @@
             %> There seems to be no services listed! Try hitting refresh <%
         }
        %>
-    <jsp:include page="include/link-footer.inc"></jsp:include>
+    <jsp:include page="include/link-footer.jsp"></jsp:include>
     <jsp:include page="include/footer.inc"></jsp:include>
   </body>
 </html>

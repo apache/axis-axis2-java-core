@@ -4,15 +4,7 @@
                  java.util.HashMap,
                  java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<title>Engaging Module to a Service</title>
-<style type="text/css">
-
-</style></head>
-
-<body>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
 <form method="get" name="serviceRemove" action="removeService">
   <table width="100%"  border="0">
 <tr>
@@ -21,17 +13,14 @@
   </tr>
 <tr>
   <td colspan="2" >
-    <b>Turn off service :</b> Will be removed  the web service from the running system , and if the system
-    &nbsp; restart then the service will be available again      &nbsp;
-    <br>
+    <h1>Turn off service</h1> <p>The service will be removed the from the running system, but if the system restarts then the service will be available again</p>
 <%--    <b>Remove Service :</b> The selected service will be removed from the file system and if the--%>
 <%--    &nbsp; system restart it wont be there next time--%>
   </td>
   </tr>
    <tr>
-    <td>&nbsp;<hr></td>
+    <td>&nbsp;</td>
     <td>&nbsp;
-    <hr>
     </td>
   </tr>
   <tr>
@@ -73,7 +62,7 @@
     <td>&nbsp;</td>
   </tr>
   <tr>
-  <td>.</td>
+  <td>&nbsp;</td>
   <td>
     <input name="submit" type="submit" value=" Save " >
    <input name="reset" type="reset" value=" Clear " >
@@ -87,6 +76,4 @@
 
 </table>
 </form>
-</body>
-
-</html>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>

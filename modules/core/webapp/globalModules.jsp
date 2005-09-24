@@ -28,28 +28,35 @@
                  java.util.Collection,
                  java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head><title>Globally Engaged Modules </title>
-<link href="css/axis-style.css" rel="stylesheet" type="text/css">
-</head>
-<body>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Globally Engaged Modules</h1>
      <%
-         boolean foundModules = false;
+	boolean foundModules = false;
+	boolean wroteUL = false;
          String modulename = "";
          Collection moduleCol = (Collection)request.getSession().getAttribute(Constants.MODULE_MAP);
          if(moduleCol != null && moduleCol.size() > 0) {
              for (Iterator iterator = moduleCol.iterator(); iterator.hasNext();) {
                  QName description = (QName) iterator.next();
                  modulename = description.getLocalPart();
-     %><hr><h2><font color="blue"><%=modulename%></font></h2>
+		if (!wroteUL){
+			wroteUL = true;
+%>
+	<ul>
+<%
+		}
+     %><li><%=modulename%></li>
      <br> <%
              }
+		if (wroteUL){
+%>
+	</ul>
+<%
+		}
          } else{
      %>
      <h2><font color="blue">There is no module engaged globally</font></h2>
                  <%
          }
                  %>
-                 </body>
-</html>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>

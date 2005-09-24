@@ -32,6 +32,7 @@
 <body>
         <jsp:include page="include/header.inc"></jsp:include>
         <br/>
+	<h1>Welcome!</h1>
         Welcome to the new generation of Axis. If you can see this it means you have
         successfuly deployed the Axis 2 web application. However to ensure that Axis 2
         is properly working, we encourage you to go to the validate link.
@@ -45,10 +46,6 @@
         <br/>
         This will probe the system to see whether all the required libraries are in place.
         It will also provide the system information.
-        </li>
-        <li><a href="upload.jsp">Upload a service</a>
-        <br/>
-        You can upload a properly packaged service here. Note : Security constraints may affect this operation.
         </li>
         <%--<li><a href="interop.jsp">Do an interop test</a>
         <br/>

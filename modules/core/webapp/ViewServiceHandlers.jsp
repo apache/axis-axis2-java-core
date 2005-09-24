@@ -34,8 +34,8 @@
         %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-  <head><title>Simple jsp page</title></head>
-  <body> <body>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
+<h1>View Operation's Chains</h1>
    <%
             ServiceDescription service = (ServiceDescription)request.getSession().
                     getAttribute(Constants.SERVICE_HANDLERS);
@@ -152,6 +152,4 @@
                  }
 
               %>
-
-  </body>
-</html>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>

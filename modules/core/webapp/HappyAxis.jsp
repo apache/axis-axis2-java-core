@@ -355,11 +355,9 @@
         }
     }
 %>
-<html><head><title>Axis2 Happiness Page</title></head>
-<body>
+
 <h1>Axis2 Happiness Page</h1>
 <h2>Examining webapp configuration</h2>
-
 <p>
 <h3>Needed Components</h3>
 <%
@@ -430,7 +428,7 @@
 <B><I>Note:</I></B> Even if everything this page probes for is present, there is no guarantee your
 web service will work, because there are many configuration options that we do
 not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
-<hr>
+
 <h2>Examining echo service</h2>
     <%
         boolean serviceStatus = inVokeTheService();
@@ -439,13 +437,13 @@ not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
     <p>
     <font color="blue" >
     Found the Axis2 default Version service and Axis2 is working properly.Now you can drop any web service in
-    to axis2/WEB-INF/service and check it is working.
+    to axis2/WEB-INF/service and check if it is working.
 
-    While invoking the version service got the following out put.
+    Following output was produced while invoking the version service
     <br>
        <%= value%> </font>
        </p>
-       <hr>
+       
    <%
         }   else {
    %>
@@ -456,7 +454,7 @@ not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
    <br>
      </font>
      </p>
-     <hr>
+     
     <%
         }
     %>
@@ -488,8 +486,8 @@ not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
     }
 %>
 
- <jsp:include page="include/link-footer.inc"></jsp:include>
-       <jsp:include page="include/footer.inc"></jsp:include>
+	<jsp:include page="include/link-footer.jsp"></jsp:include>
+	<jsp:include page="include/footer.inc"></jsp:include>
 </body>
 </html>
 

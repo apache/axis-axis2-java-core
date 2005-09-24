@@ -5,12 +5,7 @@
 <%@ page import="org.apache.axis2.description.ServiceGroupDescription" %>
 <%@ page import="javax.xml.namespace.QName"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head><title>List Services Groups</title>
-    <link href="css/axis-style.css" rel="stylesheet" type="text/css">
-</head>
-
-<body>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Available Service Groups</h1>
 <%
     Iterator serviceGroup = (Iterator)request.getSession().getAttribute(
@@ -46,11 +41,6 @@
     }
         %></ul><%
     }
-
-%>
-<hr>
-<%
     }
 %>
-</body>
-</html>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>

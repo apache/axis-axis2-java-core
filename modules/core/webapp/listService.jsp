@@ -33,11 +33,8 @@
  */
 %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-  <head><title>List Services</title>
-  <link href="css/axis-style.css" rel="stylesheet" type="text/css">
-  </head>
-  <body>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
+
   <h1>Available services</h1>
     <%String IP=request.getRequestURL().toString();
         int lastindex = IP.lastIndexOf('/');
@@ -58,7 +55,7 @@
                  operations = axisService.getOperations();
                  operationsList = operations.values();
                  serviceName = axisService.getName().getLocalPart();
-     %><hr><h2><font color="blue"><a href="<%=prifix + axisService.getName().getLocalPart()%>?wsdl"><%=serviceName%></a></font></h2>
+     %><h2><font color="blue"><a href="<%=prifix + axisService.getName().getLocalPart()%>?wsdl"><%=serviceName%></a></font></h2>
      <font color="blue">Service EPR : <font color="black"><%=prifix + axisService.getName().getLocalPart()%></font>
      <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
            <%
@@ -128,5 +125,4 @@
                     %> There seems to be no services listed! Try hitting refresh <%
                }
                     %>
-  </body>
-</html>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>

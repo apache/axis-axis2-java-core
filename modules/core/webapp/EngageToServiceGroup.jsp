@@ -5,19 +5,11 @@
                                                                              java.util.HashMap,
                                                                              java.util.Iterator" errorPage="" %>
 <%@ page import="org.apache.axis2.description.ServiceGroupDescription"%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <title>Engaging Module to a Service Group</title>
-    <style type="text/css">
-
-    </style></head>
-
-<body>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
 <%
     String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);
 %>
+<h1>Engage Module for a Service Group</h1>
 <form method="get" name="engaginModule" action="engageToServiceGroup">
     <table border="0" width="100%" cellspacing="1" cellpadding="1">
         <tr>
@@ -105,7 +97,5 @@
         </tr>
     </table>
 </form>
-</body>
-</html>
-
+<jsp:include page="include/adminfooter.jsp"></jsp:include>
 

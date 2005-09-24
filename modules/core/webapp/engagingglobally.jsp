@@ -29,18 +29,11 @@
                  java.util.Collection,
                  java.util.HashMap,
                  java.util.Iterator"%><html>
-<head>
-<title>Engaging Module Globally</title>
-<style type="text/css">
-</style></head>
-
-<body>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
 <%
     String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);
 %>
-
-
-
+<h1>Engage Module Gloabally</h1>
 <form method="get" name="engaginModule" action="engagingglobally">
 <table border="0" width="100%" cellspacing="1" cellpadding="1">
 <tr>
@@ -102,7 +95,6 @@
              </tr>
              </table>
              </form>
-             </body>
-             </html>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>
 
 

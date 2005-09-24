@@ -29,9 +29,8 @@
  */
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-  <head><title>View Global Handlers</title></head>
-  <body>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
+<h1>View Global Execution Chains</h1>
    <%
             AxisConfigurationImpl axisConfig = (AxisConfigurationImpl)request.getSession().
                     getAttribute(Constants.GLOBAL_HANDLERS);
@@ -40,7 +39,6 @@
                  ArrayList phases = axisConfig.getInPhasesUptoAndIncludingPostDispatch();
                  %>
                  <h3> In Flow upto and including dispatcher </h3>
-                 <hr>
                  <ul>
                  <%
                  for (int i = 0; i < phases.size(); i++) {
@@ -66,7 +64,6 @@
                  phases = axisConfig.getInFaultFlow();
                  %>
                  <h3> In Fault Flow </h3>
-                 <hr>
                  <ul>
                  <%
                  for (int i = 0; i < phases.size(); i++) {
@@ -93,7 +90,6 @@
                  phases = axisConfig.getOutFlow();
                  %>
                  <h3> Out Flow </h3>
-                 <hr>
                  <ul>
                  <%
                  for (int i = 0; i < phases.size(); i++) {
@@ -119,7 +115,6 @@
                  phases = axisConfig.getOutFaultFlow();
                  %>
                  <h3> Out Fault Flow </h3>
-                 <hr>
                  <ul>
                  <%
                  for (int i = 0; i < phases.size(); i++) {
@@ -145,6 +140,4 @@
 
              }
               %>
-
-  </body>
-</html>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>
