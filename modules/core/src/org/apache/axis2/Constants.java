@@ -114,7 +114,7 @@ public class Constants {
 
     public static final String ENGAGE_MODULE_TO_SERVICE_GROUP = "engageToServiceGroup";
 
-    public static final String ADMIN_LOGGING = "adminloging";
+    public static final String ADMIN_LOGIN = "adminlogin";
 
     public static final String LIST_CONTEXTS = "listContexts";
     public static final String LOGOUT = "logout";

@@ -667,7 +667,7 @@ public class ServiceDescription
             } else {
                 WSDLFactory.newInstance().newWSDLWriter().writeWSDL(
                         wsdlDefinition, out);
-                out.write("<wsdl>WSDL is NOT found</wsdl>");
+                out.write("<wsdl>This service does not have a WSDL</wsdl>");
                 out.flush();
             }
 

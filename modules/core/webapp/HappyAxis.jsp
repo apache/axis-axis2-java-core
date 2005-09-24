@@ -359,7 +359,7 @@
 <h1>Axis2 Happiness Page</h1>
 <h2>Examining webapp configuration</h2>
 <p>
-<h3>Needed Components</h3>
+<h3>Essential Components</h3>
 <%
     int needed=0,wanted=0;
 
@@ -436,10 +436,10 @@ not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
     %>
     <p>
     <font color="blue" >
-    Found the Axis2 default Version service and Axis2 is working properly.Now you can drop any web service in
-    to axis2/WEB-INF/service and check if it is working.
+    Found the Axis2 default Version service and Axis2 is working properly.Now you can drop a web service in
+    axis2/WEB-INF/services and refresh this page.
 
-    Following output was produced while invoking the version service
+    Following output was produced while invoking the version service:
     <br>
        <%= value%> </font>
        </p>

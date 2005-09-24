@@ -35,7 +35,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
-<h1>View Operation's Chains</h1>
+<h1>View Operation specific Chains</h1>
    <%
             ServiceDescription service = (ServiceDescription)request.getSession().
                     getAttribute(Constants.SERVICE_HANDLERS);

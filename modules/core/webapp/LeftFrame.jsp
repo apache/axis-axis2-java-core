@@ -100,7 +100,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="selectService">Operation's Chains</a>
+         <a href="selectService">Operation specific Chains</a>
        </td>
     </tr>
     <tr>
@@ -113,7 +113,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="engagingglobally">Gloabally</a>
+         <a href="engagingglobally">For all Services</a>
        </td>
     </tr>
      <tr>
@@ -146,7 +146,7 @@
 
     <tr>
      <td colspan="2" >
-       <b>Edit Service</b>
+       <b>Services</b>
      </td>
   </tr>
     <tr>
@@ -154,7 +154,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="removeService">Turn off service</a>
+         <a href="removeService">Undeploy service</a>
        </td>
     </tr>
     <tr>
@@ -162,12 +162,12 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="selectServiceParaEdit">Edit Service Parameters</a>
+         <a href="selectServiceParaEdit">Edit Parameters</a>
        </td>
     </tr>
     <tr>
      <td colspan="2" >
-       <b>View Contexts </b>
+       <b>Contexts</b>
      </td>
     </tr>
     <tr>
@@ -175,7 +175,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="listContexts">View Context Hierachy</a>
+         <a href="listContexts">View Hierachy</a>
        </td>
     </tr>
 </table>

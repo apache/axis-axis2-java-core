@@ -42,13 +42,13 @@
 
 </td>
 <td valign="middle" align="left">
-    <form method="get" name="LogingForm" action="adminloging">
+    <form method="get" name="LoginForm" action="adminlogin">
         <table class="LOG_IN_FORM">
             <tr>
                 <td align="center" colspan="2" bgcolor="#b0b0b0" color="#FFFFFF"><font color="#FFFFFF">Login</font></td>
              </tr>
             <tr>
-                <td align="right" >User Name :</td>
+                <td align="right">User         :</td>
                 <td> <INPUT align="left" TYPE=TEXT NAME="userName" tabindex="1">
                 </td>
              </tr>
@@ -81,7 +81,7 @@
  <jsp:include page="include/footer.inc"></jsp:include>
 <script language="JavaScript">
 <!--
-document.LogingForm.userName.focus();
+document.LoginForm.userName.focus();
 //-->
 </script>
      </body>

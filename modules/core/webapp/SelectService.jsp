@@ -30,7 +30,7 @@
 %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
-<h1>Select a Service to view Operation's Chains</h1>
+<h1>Select a Service to view Operation specific Chains</h1>
   <%
       String action ="";
       String buttonName="" ;

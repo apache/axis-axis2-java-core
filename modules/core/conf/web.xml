@@ -55,7 +55,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>
-        <url-pattern>/adminloging</url-pattern>
+        <url-pattern>/adminlogin</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>

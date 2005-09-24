@@ -129,7 +129,7 @@ public class ListingAgent {
             engageModulesToServiceGroup(httpServletRequest, httpServletResponse);
             return;
         } else if ((filePart != null) &&
-                filePart.endsWith(Constants.ADMIN_LOGGING)) {
+                filePart.endsWith(Constants.ADMIN_LOGIN)) {
             adminLogging(httpServletRequest, httpServletResponse);
             return;
         } else if ((filePart != null) &&
