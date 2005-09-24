@@ -60,13 +60,6 @@ public class WSDoAllReceiver extends WSDoAllHandler {
     	/**
     	 * Cannot do the following right now since we cannot access the req 
     	 * mc when this handler runs in the client side.
-    	 * This is the same even if the handler is placed at the end of the 
-    	 * post dispatch phase
-    	 *     <inflow>
-         *			<handler name="SecurityInHandler" class="org.apache.axis2.security.WSDoAllReceiver">
-         *				<order phase="PostDispatch" phaseLast="true"/>
-         *			</handler>
-         *		</inflow> 
     	 */
     	
 //    	//Copy the WSHandlerConstants.SEND_SIGV over to the new message 
@@ -120,6 +113,15 @@ public class WSDoAllReceiver extends WSDoAllHandler {
 
             Document doc = null;
 
+            ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+            
+           //Setting the class loader
+            if(msgContext.isServerSide()) {
+            	Thread.currentThread().setContextClassLoader(msgContext.getServiceDescription().getClassLoader());
+            } else {
+            	//Thread.currentThread().setContextClassLoader(msgContext.getClass().getClassLoader());
+            }
+            
             try {
             	doc = Axis2Util.getDocumentFromSOAPEnvelope(msgContext.getEnvelope());
             } catch (WSSecurityException wssEx) {
@@ -132,8 +134,8 @@ public class WSDoAllReceiver extends WSDoAllHandler {
 					soapConstants.getEnvelopeURI()) != null) {
 				return;
 			}
-            
 
+            
             /*
             * To check a UsernameToken or to decrypt an encrypted message we
             * need a password.
@@ -143,9 +145,8 @@ public class WSDoAllReceiver extends WSDoAllHandler {
                 cbHandler = getPasswordCB(reqData);
             }
             
-//          Setting the class loader
-        	//Thread.currentThread().setContextClassLoader(msgContext.getServiceDescription().getClassLoader());
-        	
+
+            
             /*
             * Get and check the Signature specific parameters first because
             * they may be used for encryption too.
@@ -174,6 +175,10 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             if (reqData.getWssConfig().isEnableSignatureConfirmation() && !msgContext.isServerSide()) {
                 checkSignatureConfirmation(reqData, wsResult);
             }
+            
+            //Setting the original class loader
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+            
             //TODO: Copy the processed headers
             
             

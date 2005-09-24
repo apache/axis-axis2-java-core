@@ -46,6 +46,11 @@ public class WSDoAllSender extends WSDoAllHandler {
 	 * But in the simple case where only the wsse:Security header is inserted into the document
 	 * we can insert only the wsse:Security header into the OM-SOAPEnvelope and preserve the 
 	 * metadata of OM such as base64 MTOM optimization
+	 * 
+	 * TODO: Get this as an option from the user or 
+	 * go through the actions and set it appropriately
+	 * Earlier this handler traversed the actions and at that point we used to
+	 * set this value, but now WSS4J goes through the action vector
 	 */
 	private boolean preserveOriginalEnvelope = false;
 	
@@ -105,41 +110,42 @@ public class WSDoAllSender extends WSDoAllHandler {
 	        if (doAction == WSConstants.NO_SECURITY) {
 	            return;
 	        }
-	
+	        
             /*
              * For every action we need a username, so get this now. The
              * username defined in the deployment descriptor takes precedence.
              */
-         reqData.setUsername((String) getOption(WSHandlerConstants.USER));
-         if (reqData.getUsername() == null || reqData.getUsername().equals("")) {
-             String username = (String) getProperty(reqData.getMsgContext(), WSHandlerConstants.USER);
-             if (username != null) {
-                 reqData.setUsername(username);
-             }
-         }
+	        reqData.setUsername((String) getOption(WSHandlerConstants.USER));
+	        if (reqData.getUsername() == null || reqData.getUsername().equals("")) {
+	        	String username = (String) getProperty(reqData.getMsgContext(), WSHandlerConstants.USER);
+	        	if (username != null) {
+	        		reqData.setUsername(username);
+	        	}
+	        }
+         
+	        /*
+			 * Now we perform some set-up for UsernameToken and Signature
+			 * functions. No need to do it for encryption only. Check if
+			 * username is available and then get a passowrd.
+			 */
+			if ((doAction & (WSConstants.SIGN | WSConstants.UT | WSConstants.UT_SIGN)) != 0) {
+				/*
+				 * We need a username - if none throw an AxisFault. For
+				 * encryption there is a specific parameter to get a username.
+				 */
+				if (reqData.getUsername() == null
+						|| reqData.getUsername().equals("")) {
+					throw new AxisFault(
+							"WSDoAllSender: Empty username for specified action");
+				}
+			}
          
          /*
-             * Now we perform some set-up for UsernameToken and Signature
-             * functions. No need to do it for encryption only. Check if
-             * username is available and then get a passowrd.
-             */
-         if ((doAction & (WSConstants.SIGN | WSConstants.UT | WSConstants.UT_SIGN)) != 0) {
-             /*
-                  * We need a username - if none throw an AxisFault. For
-                  * encryption there is a specific parameter to get a username.
-                  */
-             if (reqData.getUsername() == null || reqData.getUsername().equals("")) {
-                 throw new AxisFault(
-                         "WSDoAllSender: Empty username for specified action");
-             }
-         }
-         
-         /*
-		  * Now get the SOAPEvelope from the message context and convert it into
-		  * a Document
-		  * 
-		  * Now we can perform our security operations on this request.
-		  */
+			 * Now get the SOAPEvelope from the message context and convert it
+			 * into a Document
+			 * 
+			 * Now we can perform our security operations on this request.
+			 */
 	     	
          
          Document doc = null;
@@ -158,10 +164,15 @@ public class WSDoAllSender extends WSDoAllHandler {
 	     
 
             //Setting the class loader
-        	//Thread.currentThread().setContextClassLoader(msgContext.getServiceDescription().getClassLoader());
+            ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+            
+        	Thread.currentThread().setContextClassLoader(msgContext.getServiceDescription().getClassLoader());
         	
         	doSenderAction(doAction, doc, reqData, actions, !msgContext.isServerSide());
 
+        	//Setting the original class loader
+        	Thread.currentThread().setContextClassLoader(originalClassLoader);
+        	
             /*
                 * If required convert the resulting document into a message first.
                 * The outputDOM() method performs the necessary c14n call. After

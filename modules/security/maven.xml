@@ -42,7 +42,7 @@
 
 	<!-- Create the client specific security module -->
 	<copy file="src/META-INF/client.module.xml"
-            tofile="target/classes/META-INF/module.xml"/>
+            tofile="target/classes/META-INF/module.xml" overwrite="true"/>
 
         <jar jarfile="target/client.security.mar" basedir="target/classes">
             <include name="**/*"/>

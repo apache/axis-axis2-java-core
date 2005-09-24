@@ -45,7 +45,7 @@ public class Client {
 			OMElement payload = getEchoElement();
 			Call call = new Call(repo);
 			
-			call.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/SecureService/echo"));
+			call.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/SecureService"));
 			call.setTransportInfo(Constants.TRANSPORT_HTTP,
 					Constants.TRANSPORT_HTTP, false);
 			call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
