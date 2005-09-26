@@ -31,7 +31,11 @@ package org.apache.axis2.transport.http.server;
 
 import org.apache.commons.httpclient.*;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 
 /**

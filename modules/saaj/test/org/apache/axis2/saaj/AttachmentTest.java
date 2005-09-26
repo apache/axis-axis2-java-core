@@ -4,7 +4,11 @@ import junit.framework.TestCase;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.xml.soap.*;
+import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPConnection;
+import javax.xml.soap.SOAPConnectionFactory;
+import javax.xml.soap.SOAPMessage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;

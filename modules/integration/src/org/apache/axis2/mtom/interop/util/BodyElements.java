@@ -15,7 +15,11 @@
  */
 
 package org.apache.axis2.mtom.interop.util;
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
 
 import javax.activation.DataHandler;

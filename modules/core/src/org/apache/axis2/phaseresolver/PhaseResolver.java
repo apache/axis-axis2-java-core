@@ -18,7 +18,14 @@ package org.apache.axis2.phaseresolver;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.Flow;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.ServiceGroupDescription;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.Phase;

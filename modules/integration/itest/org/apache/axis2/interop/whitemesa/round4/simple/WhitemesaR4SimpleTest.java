@@ -18,7 +18,14 @@ package org.apache.axis2.interop.whitemesa.round4.simple;
 
 import junit.framework.TestCase;
 import org.apache.axis2.XMLComparatorInterop;
-import org.apache.axis2.interop.whitemesa.round4.simple.utils.*;
+import org.apache.axis2.interop.whitemesa.round4.simple.utils.EchoEmptyFaultClientUtil;
+import org.apache.axis2.interop.whitemesa.round4.simple.utils.EchoIntArrayFaultClientUtil;
+import org.apache.axis2.interop.whitemesa.round4.simple.utils.EchoMultipleFaults1ClientUtil;
+import org.apache.axis2.interop.whitemesa.round4.simple.utils.EchoMultipleFaults2ClientUtil;
+import org.apache.axis2.interop.whitemesa.round4.simple.utils.EchoMultipleFaults3Clientutil;
+import org.apache.axis2.interop.whitemesa.round4.simple.utils.EchoMultipleFaults4ClientUtil;
+import org.apache.axis2.interop.whitemesa.round4.simple.utils.EchoStringFaultClientUtil;
+import org.apache.axis2.interop.whitemesa.round4.simple.utils.WhitemesaR4ClientUtil;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;

@@ -19,7 +19,11 @@ package org.apache.axis2.i18n;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.Properties;
 
 /**
  * CURRENTLY NOT USED

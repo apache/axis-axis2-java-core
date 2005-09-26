@@ -29,7 +29,12 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FilterWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Provides a hybrid Writer/OutputStream for sending HTTP response data

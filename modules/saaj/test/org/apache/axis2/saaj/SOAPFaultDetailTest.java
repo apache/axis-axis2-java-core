@@ -2,8 +2,12 @@ package org.apache.axis2.saaj;
 
 import junit.framework.TestCase;
 
-import javax.xml.soap.*;
+import javax.xml.soap.DetailEntry;
+import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPMessage;
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 

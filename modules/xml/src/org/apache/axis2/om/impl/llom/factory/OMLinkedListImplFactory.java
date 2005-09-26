@@ -17,7 +17,14 @@
 package org.apache.axis2.om.impl.llom.factory;
 
 import org.apache.axis2.om.*;
-import org.apache.axis2.om.impl.llom.*;
+import org.apache.axis2.om.impl.llom.OMAttributeImpl;
+import org.apache.axis2.om.impl.llom.OMCommentImpl;
+import org.apache.axis2.om.impl.llom.OMDocTypeImpl;
+import org.apache.axis2.om.impl.llom.OMDocumentImpl;
+import org.apache.axis2.om.impl.llom.OMElementImpl;
+import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
+import org.apache.axis2.om.impl.llom.OMProcessingInstructionImpl;
+import org.apache.axis2.om.impl.llom.OMTextImpl;
 
 import javax.xml.namespace.QName;
 

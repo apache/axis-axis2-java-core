@@ -1,7 +1,11 @@
 <%@ page import="org.apache.axis2.Constants,
                  org.apache.axis2.description.OperationDescription,
                  org.apache.axis2.description.ServiceDescription,
-                 java.util.*"%>
+                 java.util.Collection"%>
+<%@ page import="java.util.Enumeration"%>
+<%@ page import="java.util.HashMap"%>
+<%@ page import="java.util.Hashtable"%>
+<%@ page import="java.util.Iterator"%>
 <%--
     /*
  * Copyright 2002,2004 The Apache Software Foundation.
