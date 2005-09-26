@@ -8,7 +8,6 @@
         <item name="Releases" href="download.cgi"/>
         <item name="Source Code"
           href="http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/?root=Apache-SVN"/>
-        <item name="Tools" href="axis2tools.html"/>
       </item>
       <item name="Getting Started with Axis2">
         <item name="Installation Guide" href="installationguide.html"/>
