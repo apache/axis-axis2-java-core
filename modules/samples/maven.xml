@@ -99,6 +99,15 @@
                 <include name="userguide/example2/**/*.class"/>
             </fileset>
         </jar>
+        <jar destfile="${samples.dir}/userguide/WsaMappingService.aar">
+            <fileset dir="src/userguide/example3/">
+                <include name="META-INF/**"/>
+            </fileset>
+            <fileset dir="target/classes">
+                <include name="userguide/example3/**/*.class"/>
+            </fileset>
+        </jar>
+
         <jar destfile="${samples.dir}/userguide/LoggingModule.mar">
             <fileset dir="src/userguide/loggingmodule/">
                 <include name="META-INF/**"/>

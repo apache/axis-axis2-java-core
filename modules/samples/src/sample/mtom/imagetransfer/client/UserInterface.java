@@ -149,7 +149,6 @@ public class UserInterface extends JPanel implements ActionListener {
             mtomTest.setInputFile(file);
             mtomTest.setTargetEPR(EPRName);
             OMElement result = mtomTest.sendFile(fileName);
-            jTextArea.setText(result.toString());
             jTextArea.append("\n"+result.getText());
             if (result.getText().equalsIgnoreCase("Image Saved"))
             {
