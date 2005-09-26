@@ -9,7 +9,7 @@
     <groupId>axis2</groupId>
     <package>org.apache.axis2</package>
 
-    <currentVersion>1.0-alpha</currentVersion>
+    <currentVersion>0.92</currentVersion>
 
     <!-- details about the organization that 'owns' the project -->
     <organization>

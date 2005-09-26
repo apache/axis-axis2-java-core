@@ -16,12 +16,7 @@
 
 package org.apache.axis2.om.impl.llom;
 
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.llom.exception.OMStreamingException;
 
 import javax.xml.namespace.NamespaceContext;
@@ -1185,5 +1180,9 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                             index);
         }
         return returnAttrib;
+    }
+
+    public void setParser(XMLStreamReader parser) {
+        this.parser = parser;
     }
 }
