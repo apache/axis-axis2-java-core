@@ -45,7 +45,7 @@ public class StAXOMBuilder extends StAXBuilder {
      * Field document
      */
 
-    private boolean doDebug = true;
+    private boolean doDebug = false;
 
     /**
      * Constructor StAXOMBuilder
