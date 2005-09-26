@@ -35,13 +35,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class XMLConformanceUnit extends XMLTestCase implements EntityResolver {
 

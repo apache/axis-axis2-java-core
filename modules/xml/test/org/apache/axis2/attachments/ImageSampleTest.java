@@ -31,12 +31,7 @@ import javax.activation.DataHandler;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class ImageSampleTest extends AbstractTestCase {
 

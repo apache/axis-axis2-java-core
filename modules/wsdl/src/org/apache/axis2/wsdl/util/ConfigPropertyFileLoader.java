@@ -1,13 +1,13 @@
 package org.apache.axis2.wsdl.util;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileInputStream;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.net.URL;
 
 /**
  * Tries to load the properties from the config properties

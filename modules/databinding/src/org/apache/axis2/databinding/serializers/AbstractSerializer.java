@@ -16,8 +16,8 @@
 
 package org.apache.axis2.databinding.serializers;
 
-import org.apache.axis2.databinding.Serializer;
 import org.apache.axis2.databinding.SerializationContext;
+import org.apache.axis2.databinding.Serializer;
 
 /**
  * AbstractSerializer

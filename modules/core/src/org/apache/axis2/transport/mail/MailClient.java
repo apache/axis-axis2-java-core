@@ -3,15 +3,7 @@ package org.apache.axis2.transport.mail;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.mail.Authenticator;
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Store;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.Properties;

@@ -22,11 +22,7 @@ import org.apache.axis2.soap.SOAPFactory;
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPBodyElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
+import javax.xml.soap.*;
 import java.util.Locale;
 
 /**

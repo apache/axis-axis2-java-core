@@ -16,16 +16,8 @@
 
 package org.apache.axis2.soap.impl.llom;
 
-import org.apache.axis2.om.OMConstants;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.om.*;
+import org.apache.axis2.soap.*;
 
 /**
  * Class SOAPBodyImpl

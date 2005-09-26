@@ -22,25 +22,19 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFault;
-import org.apache.axis2.soap.SOAPFaultCode;
-import org.apache.axis2.soap.SOAPFaultDetail;
-import org.apache.axis2.soap.SOAPFaultReason;
+import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.ArrayList;
 import java.io.*;
+import java.util.ArrayList;
 
 /**
  * There is one engine for the Server and the Client. the send() and receive()

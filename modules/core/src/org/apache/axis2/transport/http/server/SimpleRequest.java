@@ -29,12 +29,7 @@
 
 package org.apache.axis2.transport.http.server;
 
-import org.apache.commons.httpclient.ChunkedInputStream;
-import org.apache.commons.httpclient.ContentLengthInputStream;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HeaderElement;
-import org.apache.commons.httpclient.HeaderGroup;
-import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

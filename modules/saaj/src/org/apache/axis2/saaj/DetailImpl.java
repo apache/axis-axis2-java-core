@@ -22,11 +22,7 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPFaultDetail;
 
-import javax.xml.soap.Detail;
-import javax.xml.soap.DetailEntry;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
+import javax.xml.soap.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 

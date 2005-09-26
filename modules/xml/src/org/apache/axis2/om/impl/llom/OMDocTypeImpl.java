@@ -16,11 +16,7 @@
 
 package org.apache.axis2.om.impl.llom;
 
-import org.apache.axis2.om.OMContainer;
-import org.apache.axis2.om.OMDocType;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.OMOutputImpl;
 
 import javax.xml.stream.XMLStreamException;

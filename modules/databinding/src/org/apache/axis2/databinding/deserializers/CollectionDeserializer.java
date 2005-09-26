@@ -16,9 +16,9 @@
 
 package org.apache.axis2.databinding.deserializers;
 
-import org.apache.axis2.databinding.Deserializer;
 import org.apache.axis2.databinding.DeserializationContext;
 import org.apache.axis2.databinding.DeserializationTarget;
+import org.apache.axis2.databinding.Deserializer;
 
 import javax.xml.stream.XMLStreamReader;
 

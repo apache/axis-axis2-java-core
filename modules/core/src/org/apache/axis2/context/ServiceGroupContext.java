@@ -20,7 +20,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.description.ServiceGroupDescription;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

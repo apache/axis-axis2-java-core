@@ -18,11 +18,7 @@ package org.apache.axis2.attachments.utils;
 
 import javax.activation.DataSource;
 import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 public class ImageDataSource implements DataSource {
 

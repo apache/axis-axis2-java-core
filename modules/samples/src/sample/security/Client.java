@@ -16,11 +16,6 @@
 
 package sample.security;
 
-import java.io.StringWriter;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -29,6 +24,10 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import java.io.StringWriter;
 
 public class Client {
 

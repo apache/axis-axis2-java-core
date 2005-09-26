@@ -19,11 +19,11 @@ package org.apache.axis2.databinding.metadata;
 import org.apache.axis2.util.MethodCache;
 
 import javax.xml.namespace.QName;
-import java.util.Iterator;
-import java.util.Map;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * TypeDesc

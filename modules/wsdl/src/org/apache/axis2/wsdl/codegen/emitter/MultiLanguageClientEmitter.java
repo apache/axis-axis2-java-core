@@ -16,32 +16,15 @@
 
 package org.apache.axis2.wsdl.codegen.emitter;
 
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.XSLTConstants;
-import org.apache.axis2.wsdl.codegen.writer.CallbackHandlerWriter;
-import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
-import org.apache.axis2.wsdl.codegen.writer.DatabindingSupportClassWriter;
-import org.apache.axis2.wsdl.codegen.writer.InterfaceImplementationWriter;
-import org.apache.axis2.wsdl.codegen.writer.InterfaceWriter;
-import org.apache.axis2.wsdl.codegen.writer.MessageReceiverWriter;
-import org.apache.axis2.wsdl.codegen.writer.ServiceXMLWriter;
-import org.apache.axis2.wsdl.codegen.writer.SkeletonWriter;
-import org.apache.axis2.wsdl.codegen.writer.TestClassWriter;
+import org.apache.axis2.wsdl.codegen.writer.*;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wsdl.MessageReference;
-import org.apache.wsdl.WSDLBinding;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLDescription;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLExtensibilityAttribute;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLInterface;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPHeader;
 import org.apache.wsdl.extensions.SOAPOperation;
@@ -62,12 +45,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class MultiLanguageClientEmitter implements Emitter {
 

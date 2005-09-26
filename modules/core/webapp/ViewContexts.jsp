@@ -1,9 +1,9 @@
-<%@ page import="java.util.Iterator"%>
 <%@ page import="org.apache.axis2.Constants"%>
 <%@ page import="org.apache.axis2.context.ConfigurationContext"%>
-<%@ page import="org.apache.axis2.context.ServiceGroupContext"%>
 <%@ page import="org.apache.axis2.context.ServiceContext"%>
+<%@ page import="org.apache.axis2.context.ServiceGroupContext"%>
 <%@ page import="java.util.HashMap"%>
+<%@ page import="java.util.Iterator"%>
 <%--
   Created by IntelliJ IDEA.
   User: Indika Deepal

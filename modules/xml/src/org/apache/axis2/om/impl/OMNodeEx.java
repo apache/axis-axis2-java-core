@@ -16,9 +16,9 @@
 
 package org.apache.axis2.om.impl;
 
-import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNode;
 
 /**
  * Interface OMNodeEx

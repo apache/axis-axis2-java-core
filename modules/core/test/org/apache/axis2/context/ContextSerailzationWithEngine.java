@@ -1,18 +1,17 @@
 package org.apache.axis2.context;
 
 import junit.framework.TestCase;
-import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.ServiceGroupDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.description.ServiceGroupDescription;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.AxisFault;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
-import java.io.File;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

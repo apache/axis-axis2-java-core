@@ -19,11 +19,7 @@ package org.apache.axis2.om;
 import junit.framework.TestCase;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;

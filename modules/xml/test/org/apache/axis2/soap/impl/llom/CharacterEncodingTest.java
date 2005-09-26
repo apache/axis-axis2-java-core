@@ -24,11 +24,7 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

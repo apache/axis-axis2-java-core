@@ -16,11 +16,7 @@
 
 package org.apache.axis2.soap.impl.llom;
 
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.*;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;

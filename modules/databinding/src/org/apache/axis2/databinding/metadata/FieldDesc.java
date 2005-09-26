@@ -17,8 +17,8 @@
 package org.apache.axis2.databinding.metadata;
 
 import org.apache.axis2.databinding.Deserializer;
-import org.apache.axis2.databinding.Serializer;
 import org.apache.axis2.databinding.DeserializerFactory;
+import org.apache.axis2.databinding.Serializer;
 
 import javax.xml.namespace.QName;
 

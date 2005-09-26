@@ -1,9 +1,9 @@
 <%@ page import="org.apache.axis2.Constants" %>
 <%@ page import="org.apache.axis2.description.ServiceDescription" %>
-<%@ page import="org.apache.axis2.description.ModuleDescription" %>
-<%@ page import="java.util.*" %>
 <%@ page import="org.apache.axis2.description.ServiceGroupDescription" %>
-<%@ page import="javax.xml.namespace.QName"%>
+<%@ page import="javax.xml.namespace.QName" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Available Service Groups</h1>

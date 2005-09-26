@@ -15,19 +15,14 @@
  */
 package sample.sgccalculator;
 
-import java.util.Iterator;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
+
+import java.util.Iterator;
 
 public class AddService {
 

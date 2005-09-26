@@ -16,11 +16,7 @@
 
 package org.apache.axis2.om.impl.builder;
 
-import org.apache.axis2.om.AbstractTestCase;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 

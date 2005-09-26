@@ -18,7 +18,6 @@ package org.apache.axis2.interop.whitemesa.round4.complex;
 
 import junit.framework.TestCase;
 import org.apache.axis2.XMLComparatorInterop;
-import org.apache.axis2.interop.whitemesa.round4.complex.EchoBlockingClient;
 import org.apache.axis2.interop.whitemesa.round4.complex.utils.*;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;

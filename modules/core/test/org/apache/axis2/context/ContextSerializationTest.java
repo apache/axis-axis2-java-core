@@ -27,12 +27,7 @@ import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 
 /**
  * This TestCase check weather the context serialization and deserialization happens correctly.

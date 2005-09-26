@@ -16,15 +16,7 @@
 
 package org.apache.axis2.om.impl.llom.builder;
 
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMConstants;
-import org.apache.axis2.om.OMDocument;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMException;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.OMNodeEx;
 
 import javax.xml.stream.XMLStreamConstants;

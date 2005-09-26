@@ -20,13 +20,7 @@ package org.apache.axis2.i18n;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * <p>Wrapper class for resource bundles. Property files are used to store

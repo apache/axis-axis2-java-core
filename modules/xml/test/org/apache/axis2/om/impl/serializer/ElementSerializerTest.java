@@ -16,14 +16,7 @@
 
 package org.apache.axis2.om.impl.serializer;
 
-import org.apache.axis2.om.AbstractTestCase;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.*;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;

@@ -16,9 +16,9 @@
 package org.apache.axis2.util;
 
 import java.beans.Introspector;
+import java.text.Collator;
 import java.util.Arrays;
 import java.util.Locale;
-import java.text.Collator;
 
 /**
  * JavaUtils

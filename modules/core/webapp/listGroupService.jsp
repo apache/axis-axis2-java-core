@@ -1,8 +1,10 @@
 <%@ page import="org.apache.axis2.Constants"%>
-<%@ page import="org.apache.axis2.description.ServiceDescription"%>
 <%@ page import="org.apache.axis2.description.ModuleDescription"%>
 <%@ page import="org.apache.axis2.description.OperationDescription"%>
-<%@ page import="java.util.*"%>
+<%@ page import="org.apache.axis2.description.ServiceDescription"%>
+<%@ page import="java.util.Collection"%>
+<%@ page import="java.util.HashMap"%>
+<%@ page import="java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head><title>List Services</title>

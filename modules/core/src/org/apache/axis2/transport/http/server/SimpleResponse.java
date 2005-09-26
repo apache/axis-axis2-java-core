@@ -29,21 +29,9 @@
 
 package org.apache.axis2.transport.http.server;
 
-import org.apache.commons.httpclient.ChunkedInputStream;
-import org.apache.commons.httpclient.ContentLengthInputStream;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HeaderElement;
-import org.apache.commons.httpclient.HeaderGroup;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.HttpVersion;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.StatusLine;
+import org.apache.commons.httpclient.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.Iterator;
 
 /**

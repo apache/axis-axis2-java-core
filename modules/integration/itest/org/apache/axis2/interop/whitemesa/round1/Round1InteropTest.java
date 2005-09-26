@@ -18,7 +18,6 @@ package org.apache.axis2.interop.whitemesa.round1;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.interop.whitemesa.WhiteMesaIneterop;
-import org.apache.axis2.interop.whitemesa.round1.Round1Client;
 import org.apache.axis2.interop.whitemesa.round1.util.*;
 import org.apache.axis2.soap.SOAPEnvelope;
 

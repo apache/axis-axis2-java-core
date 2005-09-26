@@ -16,11 +16,7 @@
 
 package org.apache.axis2.wsdl.codegen;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CommandLineOptionParser implements CommandLineOptionConstants {
 

@@ -18,14 +18,9 @@ package org.apache.axis2.soap.impl.llom.builder;
 
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.impl.llom.exception.OMBuilderException;
 import org.apache.axis2.om.impl.OMNodeEx;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPFault;
-import org.apache.axis2.soap.SOAPFaultCode;
-import org.apache.axis2.soap.SOAPFaultReason;
-import org.apache.axis2.soap.SOAPFaultSubCode;
+import org.apache.axis2.om.impl.llom.exception.OMBuilderException;
+import org.apache.axis2.soap.*;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 
 import javax.xml.stream.XMLStreamReader;

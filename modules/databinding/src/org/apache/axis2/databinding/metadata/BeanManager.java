@@ -16,18 +16,18 @@
 
 package org.apache.axis2.databinding.metadata;
 
-import org.apache.axis2.databinding.beans.BeanPropertyDescriptor;
-import org.apache.axis2.databinding.typemapping.TypeMappingRegistry;
 import org.apache.axis2.databinding.DeserializerFactory;
 import org.apache.axis2.databinding.Serializer;
+import org.apache.axis2.databinding.beans.BeanPropertyDescriptor;
+import org.apache.axis2.databinding.typemapping.TypeMappingRegistry;
 
 import javax.xml.namespace.QName;
-import java.beans.Introspector;
 import java.beans.BeanInfo;
-import java.beans.PropertyDescriptor;
 import java.beans.IndexedPropertyDescriptor;
-import java.util.Map;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * BeanManager

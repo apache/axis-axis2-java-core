@@ -27,11 +27,7 @@ import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.Schema;
 import org.w3c.dom.Element;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-import java.util.Vector;
+import java.util.*;
 
 /**
   * Work in progress to test simple DataBinding with the XmlSchema lib

@@ -17,18 +17,18 @@
 package org.apache.axis2.databinding.deserializers;
 
 import org.apache.axis2.databinding.DeserializationContext;
-import org.apache.axis2.databinding.Deserializer;
 import org.apache.axis2.databinding.DeserializationTarget;
-import org.apache.axis2.databinding.metadata.TypeDesc;
+import org.apache.axis2.databinding.Deserializer;
 import org.apache.axis2.databinding.metadata.AttributeDesc;
 import org.apache.axis2.databinding.metadata.ElementDesc;
+import org.apache.axis2.databinding.metadata.TypeDesc;
 
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * BeanDeserializer

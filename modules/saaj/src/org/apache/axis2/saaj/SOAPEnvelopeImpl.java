@@ -18,11 +18,7 @@ package org.apache.axis2.saaj;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
 
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.*;
 
 
 /**
