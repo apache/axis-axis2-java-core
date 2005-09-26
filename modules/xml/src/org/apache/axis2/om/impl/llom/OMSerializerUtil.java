@@ -24,6 +24,7 @@ import org.apache.axis2.om.impl.llom.serialize.StreamingOMSerializer;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLStreamReader;
 import java.util.Iterator;
 
 public class OMSerializerUtil {
@@ -195,7 +196,8 @@ public class OMSerializerUtil {
                streamingOMSerializer.serialize(element.getXMLStreamReader(),
                 omOutput);
         }else{
-            streamingOMSerializer.serialize(element.getXMLStreamReaderWithoutCaching(),
+            XMLStreamReader xmlStreamReaderWithoutCaching = element.getXMLStreamReaderWithoutCaching();
+            streamingOMSerializer.serialize(xmlStreamReaderWithoutCaching,
                 omOutput);
         }
     }

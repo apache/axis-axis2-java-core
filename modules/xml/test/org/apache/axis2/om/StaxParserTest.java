@@ -18,10 +18,7 @@ package org.apache.axis2.om;
 
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.*;
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 
@@ -67,8 +64,8 @@ public class StaxParserTest extends AbstractTestCase {
         parser3 =
                 builder2.getDocumentElement().getXMLStreamReaderWithoutCaching();
 
-       //parser4 is another instance of our parser accessing the same stream as parser3.
-       // Note - The implementation returns a *new* instance but with reference to
+        //parser4 is another instance of our parser accessing the same stream as parser3.
+        // Note - The implementation returns a *new* instance but with reference to
         //the same underlying stream!
         parser4 = builder2.getDocumentElement().getXMLStreamReaderWithoutCaching();
 
@@ -131,7 +128,7 @@ public class StaxParserTest extends AbstractTestCase {
         //consume the parser. this should force the xml stream to be exhausted without
         //building the tree
         while(originalParser.hasNext()){
-           originalParser.next();
+            originalParser.next();
         }
 
         //try to find the children of the document element. This should produce an
@@ -139,8 +136,8 @@ public class StaxParserTest extends AbstractTestCase {
         Iterator childElements = documentElement.getChildElements();
         try {
             while (childElements.hasNext()) {
-               childElements.next();
-               fail("The stream should've been consumed by now!");
+                childElements.next();
+                fail("The stream should've been consumed by now!");
             }
         } catch (Exception e) {
             //if we are here without failing, then we are successful
@@ -150,36 +147,71 @@ public class StaxParserTest extends AbstractTestCase {
 
     public void testParserBehaviorCaching() throws Exception{
 
-           OMXMLParserWrapper builder2 = OMXMLBuilderFactory.createStAXOMBuilder(
-                   OMAbstractFactory.getSOAP11Factory(),
-                   XMLInputFactory.newInstance().createXMLStreamReader(
-                           new ByteArrayInputStream(xmlDocument.getBytes())));
+        OMXMLParserWrapper builder2 = OMXMLBuilderFactory.createStAXOMBuilder(
+                OMAbstractFactory.getSOAP11Factory(),
+                XMLInputFactory.newInstance().createXMLStreamReader(
+                        new ByteArrayInputStream(xmlDocument.getBytes())));
 
-           OMElement documentElement = builder2.getDocumentElement();
-           XMLStreamReader originalParser =
-                   documentElement.getXMLStreamReader();
+        OMElement documentElement = builder2.getDocumentElement();
+        XMLStreamReader originalParser =
+                documentElement.getXMLStreamReader();
 
-           //consume the parser. this should force the xml stream to be exhausted but the
-           //tree to be fully built
-           while(originalParser.hasNext()){
-              originalParser.next();
-           }
+        //consume the parser. this should force the xml stream to be exhausted but the
+        //tree to be fully built
+        while(originalParser.hasNext()){
+            originalParser.next();
+        }
 
-           //try to find the children of the document element. This should *NOT* produce an
-           //error even when the underlying stream is fully consumed , the object tree is already complete
-           Iterator childElements = documentElement.getChildElements();
-           int count = 0;
-           try {
-               while (childElements.hasNext()) {
-                 childElements.next();
-                 count++;
-               }
-           } catch (Exception e) {
-               fail("The object tree needs to be built and traversing the children is to be a success!");
-           }
+        //try to find the children of the document element. This should *NOT* produce an
+        //error even when the underlying stream is fully consumed , the object tree is already complete
+        Iterator childElements = documentElement.getChildElements();
+        int count = 0;
+        try {
+            while (childElements.hasNext()) {
+                childElements.next();
+                count++;
+            }
+        } catch (Exception e) {
+            fail("The object tree needs to be built and traversing the children is to be a success!");
+        }
 
         assertEquals("Number of elements need to be 2",count,2);
-       }
+    }
+
+
+    public void testParserBehaviorNonCaching2() throws Exception{
+
+        OMXMLParserWrapper builder2 = OMXMLBuilderFactory.createStAXOMBuilder(
+                OMAbstractFactory.getSOAP11Factory(),
+                XMLInputFactory.newInstance().createXMLStreamReader(
+                        new ByteArrayInputStream(xmlDocument.getBytes())));
+
+        OMElement documentElement = builder2.getDocumentElement();
+
+        XMLStreamReader originalParser =
+                documentElement.getXMLStreamReaderWithoutCaching();
+
+        //consume the parser. this should force the xml stream to be exhausted without
+        //building the tree
+        while(originalParser.hasNext()){
+            originalParser.next();
+        }
+
+        //try to find the children of the document element. This should produce an
+        //error since the underlying stream is fully consumed without building the object tree
+        Iterator childElements = documentElement.getChildElements();
+        try {
+            XMLStreamWriter writer =
+                    XMLOutputFactory.newInstance().
+                            createXMLStreamWriter(System.out);
+            documentElement.serialize(writer);
+            fail("Stream should be consumed by now");
+        }catch(XMLStreamException e){
+           //wea re cool
+        } catch (Exception e) {
+           fail("This should throw an XMLStreamException");
+        }
+    }
 
 }
 

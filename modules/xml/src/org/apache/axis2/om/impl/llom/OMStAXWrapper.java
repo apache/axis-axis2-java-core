@@ -828,11 +828,8 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                 try {
                     parser = (XMLStreamReader) builder.getParser();
                 } catch (Exception e) {
-                    throw new UnsupportedOperationException(
-                            "incompatible parser found!");                         
+                   throw new XMLStreamException("problem accessing the parser",e);
                 }
-//                log.info(
-//                        "Switching to the Real Stax parser to generated the future events");
 
                 if ((currentEvent == START_DOCUMENT) &&
                         (currentEvent == parser.getEventType())) {

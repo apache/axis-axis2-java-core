@@ -238,9 +238,7 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * This will give the next sibling. This can be an OMAttribute for OMAttribute or OMText or OMELement for others.
-     *
      * @throws org.apache.axis2.om.OMException
-     *
      * @throws OMException
      */
     public OMNode getNextSibling() throws OMException {
@@ -555,6 +553,10 @@ public class OMElementImpl extends OMNodeImpl
         if ((builder == null) && !cache) {
             throw new UnsupportedOperationException(
                     "This element was not created in a manner to be switched");
+        }
+        if (builder.isCompleted() && !cache){
+               throw new UnsupportedOperationException(
+                    "The parser is already consumed!");
         }
         return new OMStAXWrapper(builder, this, cache);
     }

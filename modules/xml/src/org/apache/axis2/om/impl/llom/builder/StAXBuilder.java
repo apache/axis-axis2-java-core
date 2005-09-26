@@ -344,6 +344,10 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
      * @return
      */
     public Object getParser() {
+        if (parserAccessed){
+            throw new UnsupportedOperationException(
+                    "Parser already accessed!");  
+        }
         if (!cache) {
             parserAccessed = true;
             return parser;
