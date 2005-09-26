@@ -58,7 +58,7 @@ public class OMNavigatorTest extends AbstractTestCase {
         //dump the out put to a  temporary file
         envelope.serializeWithCache(output);
 
-        //now the OM is fully created test the navigation
+        //now the OM is fully created -> test the navigation
         OMNavigator navigator = new OMNavigator(envelope);
         OMNode node = null;
         while (navigator.isNavigable()) {

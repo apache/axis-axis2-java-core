@@ -20,13 +20,17 @@ import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLOutputFactory;
 import java.io.ByteArrayInputStream;
+import java.util.Iterator;
 
 public class StaxParserTest extends AbstractTestCase {
 
     XMLStreamReader parser1;
     XMLStreamReader parser2;
     XMLStreamReader parser3;
+    XMLStreamReader parser4;
     String xmlDocument = "<purchase-order xmlns=\"http://openuri.org/easypo\">" +
             "<customer>" +
             "    <name>Gladys Kravitz</name>" +
@@ -41,16 +45,21 @@ public class StaxParserTest extends AbstractTestCase {
 
     protected void setUp() throws Exception {
         //make the parsers
+        //Parser 1 is a plain parser from the stax implementation
         parser1 =
                 XMLInputFactory.newInstance().createXMLStreamReader(
                         new ByteArrayInputStream(xmlDocument.getBytes()));
 
+        //parser 2 is one of our parsers taken with cache. i.e. when the parser
+        //proceeds the object model will be built
         OMXMLParserWrapper builder = OMXMLBuilderFactory.createStAXOMBuilder(
                 OMAbstractFactory.getSOAP11Factory(),
                 XMLInputFactory.newInstance().createXMLStreamReader(
                         new ByteArrayInputStream(xmlDocument.getBytes())));
         parser2 = builder.getDocumentElement().getXMLStreamReader();
 
+        //same as parser2 but this time the parser is not a caching parser. Once the
+        //parser proceeds, it's gone forever.
         OMXMLParserWrapper builder2 = OMXMLBuilderFactory.createStAXOMBuilder(
                 OMAbstractFactory.getSOAP11Factory(),
                 XMLInputFactory.newInstance().createXMLStreamReader(
@@ -58,12 +67,19 @@ public class StaxParserTest extends AbstractTestCase {
         parser3 =
                 builder2.getDocumentElement().getXMLStreamReaderWithoutCaching();
 
+       //parser4 is another instance of our parser accessing the same stream as parser3.
+       // Note - The implementation returns a *new* instance but with reference to
+        //the same underlying stream!
+        parser4 = builder2.getDocumentElement().getXMLStreamReaderWithoutCaching();
+
     }
 
     public void testParserEventsWithCache() throws Exception {
 
+        //check the initial event
         assertEquals(parser1.getEventType(), parser2.getEventType());
 
+        //check the other events
         while (parser1.hasNext()) {
 
             int parser1Event = parser1.next();
@@ -99,17 +115,71 @@ public class StaxParserTest extends AbstractTestCase {
 
 
     }
+
+
+    public void testParserBehaviornonCaching() throws Exception{
+
+        OMXMLParserWrapper builder2 = OMXMLBuilderFactory.createStAXOMBuilder(
+                OMAbstractFactory.getSOAP11Factory(),
+                XMLInputFactory.newInstance().createXMLStreamReader(
+                        new ByteArrayInputStream(xmlDocument.getBytes())));
+
+        OMElement documentElement = builder2.getDocumentElement();
+        XMLStreamReader originalParser =
+                documentElement.getXMLStreamReaderWithoutCaching();
+
+        //consume the parser. this should force the xml stream to be exhausted without
+        //building the tree
+        while(originalParser.hasNext()){
+           originalParser.next();
+        }
+
+        //try to find the children of the document element. This should produce an
+        //error since the underlying stream is fully consumed without building the object tree
+        Iterator childElements = documentElement.getChildElements();
+        try {
+            while (childElements.hasNext()) {
+               childElements.next();
+               fail("The stream should've been consumed by now!");
+            }
+        } catch (Exception e) {
+            //if we are here without failing, then we are successful
+        }
+    }
+
+
+    public void testParserBehaviorCaching() throws Exception{
+
+           OMXMLParserWrapper builder2 = OMXMLBuilderFactory.createStAXOMBuilder(
+                   OMAbstractFactory.getSOAP11Factory(),
+                   XMLInputFactory.newInstance().createXMLStreamReader(
+                           new ByteArrayInputStream(xmlDocument.getBytes())));
+
+           OMElement documentElement = builder2.getDocumentElement();
+           XMLStreamReader originalParser =
+                   documentElement.getXMLStreamReader();
+
+           //consume the parser. this should force the xml stream to be exhausted but the
+           //tree to be fully built
+           while(originalParser.hasNext()){
+              originalParser.next();
+           }
+
+           //try to find the children of the document element. This should *NOT* produce an
+           //error even when the underlying stream is fully consumed , the object tree is already complete
+           Iterator childElements = documentElement.getChildElements();
+           int count = 0;
+           try {
+               while (childElements.hasNext()) {
+                 childElements.next();
+                 count++;
+               }
+           } catch (Exception e) {
+               fail("The object tree needs to be built and traversing the children is to be a success!");
+           }
+
+        assertEquals("Number of elements need to be 2",count,2);
+       }
+
 }
-
-//     public void testParserEvents2() throws Exception{
-//
-//        System.out.println("parser2 initial = " + parser2.getEventType());
-//        while(parser2.hasNext()){
-//            System.out.println(" event "+ parser2.next() + parser2.getLocalName());
-//        }
-
-
-//}
-
-
 
