@@ -21,109 +21,116 @@ import javax.xml.stream.XMLStreamReader;
 import java.util.Iterator;
 
 /**
- * Interface OMElement
+ * A particular kind of node that represents an element infoset information item.
+ *
+ * <p>An element has a collection of children, attributes, and namespaces.</p>
+ *
+ * <p>In contrast with DOM, this interface exposes namespaces separately from the
+ * attributes.</p>
  */
 public interface OMElement extends OMNode, OMContainer {
-    /**
-     * This will add child to the element. One must preserve the order of children, in this operation
-     * Tip : appending the new child is prefered
-     *
-     * @param omNode
-     */
-    public void addChild(OMNode omNode);
-
-    /**
-     * This will search for children with a given QName and will return an iterator to traverse through
-     * the OMNodes.
-     * This will match localName and namespaceURI only. localName only or namespaceURI only can also be given. But
-     * the other parameter should be set to null
-     * Example : If you want to get all the addressing headers, header.getChildrenWithName(new QName(AddressingNamespace, null))
-     * will do.
-     *
-     * @param elementQName
-     * @return
-     * @throws OMException
-     */
-    public Iterator getChildrenWithName(QName elementQName) throws OMException;
-
-    /**
-     * This will return the first matched child, return null if none found
-     *
-     * @param elementQName
-     * @return
-     * @throws OMException
-     */
-    public OMElement getFirstChildWithName(QName elementQName) throws OMException;
-
-
-    /**
-     * This returns a collection of this element.
-     * Children can be of types OMElement, OMText.
-     *
-     * @return
-     */
-    public Iterator getChildren();
 
     /**
      * Returns a filtered list of children - just the elements.
      *
      * @return an iterator over the child elements
+     *
+     * @see #getChildren()
+     * @see #getChildrenWithName(javax.xml.namespace.QName)
      */ 
     public Iterator getChildElements();
 
     /**
      * THis will create a namespace in the current element scope
      *
-     * @param uri
-     * @param prefix
-     * @return
+     * @param uri   The namespace to declare in the current scope.  The
+     *  caller is expected to ensure that the URI is a valid namespace name.
+     * @param prefix    The prefix to associate with the given namespace.
+     *  The caller is expected to ensure that this is a valid XML prefix.
+     *
+     * @return The created namespace information item.
+     *
+     * @see #declareNamespace(OMNamespace)
+     * @see #findNamespace(String, String)
+     * @see #getAllDeclaredNamespaces()
      */
     public OMNamespace declareNamespace(String uri, String prefix);
 
     /**
-     * @param namespace
-     * @return
+     * Declare a namespace with the element as its scope.
+     *
+     * @param namespace The namespace to declare
+     *
+     * @return The namespace parameter passed.
+     *
+     * @see #declareNamespace(String, String)
+     * @see #findNamespace(String, String)
+     * @see #getAllDeclaredNamespaces()
      */
     public OMNamespace declareNamespace(OMNamespace namespace);
 
     /**
      * This will find a namespace with the given uri and prefix, in the scope of the hierarchy.
-     * This will start to find from the current element and goes up in the hiararchy until this finds one.
-     * If none is found, return null
      *
-     * @param uri
-     * @param prefix
-     * @return
-     * @throws OMException
+     * <p>This will search from the current element and go up the hiararchy until a match is found.
+     * If no match is found, return <tt>null</tt>.</p>
+     *
+     * <p>Either <tt>prefix</tt> or <tt>uri</tt> should be null.  Results are undefined
+     * if both are specified.</p>
+     *
+     * @param uri   The namespace to look for.  If this is specified, <tt>prefix</tt> should be null.
+     * @param prefix    The prefix to look for.  If this is specified, <tt>uri</tt> should be null.
+     *
+     * @return The matching namespace declaration, or <tt>null</tt> if none was found.
+     *
+     * @see #declareNamespace(String, String)
+     * @see #declareNamespace(OMNamespace)
+     * @see #getAllDeclaredNamespaces()
      */
-    public OMNamespace findNamespace(String uri, String prefix)
-            throws OMException;
+    public OMNamespace findNamespace(String uri, String prefix);
 
     /**
-     * @return
-     * @throws OMException
+     * Returns an iterator for all of the namespaces declared on this element.
+     *
+     * <p>If you're interested in all namespaces in scope, you need to call this function
+     * for all parent elements as well.  Note that the iterator may be invalidated by
+     * any call to either <tt>declareNamespace</tt> function.
+     * </p>
+     *
+     * @return  An iterator over the {@link OMNamespace} items declared on the current element.
+     *
+     * @see #findNamespace(String, String)
+     * @see #declareNamespace(String, String)
+     * @see #declareNamespace(OMNamespace)
      */
     public Iterator getAllDeclaredNamespaces() throws OMException;
 
 
     /**
-     * This will help to search for an attribute with a given QName within this Element
+     * This will search for an attribute with a given QName within this Element
      *
-     * @param qname
-     * @return
-     * @throws OMException
+     * @param qname The attribute name to match.
+     * @return The attribute, if found, or <tt>null</tt> otherwise.
      */
-    public OMAttribute getFirstAttribute(QName qname) throws OMException;
+    public OMAttribute getFirstAttribute(QName qname);
 
     /**
-     * This will return a List of OMAttributes
+     * This will return a List of OMAttributes.
      *
-     * @return
+     * <p>Note that the iterator returned by this function will be invalidated by
+     * any <tt>addAttribute</tt> call.
+     * </p>
+     *
+     * @return Returns an {@link Iterator} of {@link OMAttribute} items associated with the element.
+     *
+     * @see #getAttribute
+     * @see #addAttribute(OMAttribute)
+     * @see #addAttribute(String, String, OMNamespace)
      */
     public Iterator getAttributes();
 
     /**
-     * Return a named attribute if present
+     * Return a named attribute if present.
      *
      * @param qname the qualified name to search for
      * @return an OMAttribute with the given name if found, or null
@@ -131,20 +138,27 @@ public interface OMElement extends OMNode, OMContainer {
     public OMAttribute getAttribute(QName qname);
 
     /**
-     * This will insert attribute to this element. Implementor can decide as to insert this
-     * in the front or at the end of set of attributes
+     * This will add an attribute to this element.
      *
-     * @param attr
-     * @return
+     * <p>There is no order implied by added attributes.</p>
+     *
+     * @param attr The attribute to add.
+     *
+     * @return The passed in attribute.
      */
     public OMAttribute addAttribute(OMAttribute attr);
 
     /**
-     * @param attributeName
-     * @param value
-     * @param ns            - the namespace has to be one of the in scope namespace. i.e. the passed namespace
-     *                      must be declared in the parent element of this attribute or ancestors of the parent element of the attribute
-     * @return
+     * Add an attribute to the current element.
+     *
+     * <p>This function does not check to make sure that the given attribute value can be serialized directly
+     * as an XML value.  The caller may, for example, pass a string with the character 0x01.
+     * @param attributeName The "local name" for the attribute.
+     * @param value The string value of the attribute.
+     * @param ns  The namespace has to be one of the in scope namespace. i.e. the passed namespace
+     *  must be declared in the parent element of this attribute or ancestors of the parent element of the attribute.
+     *
+     * @return The added attribute.
      */
     public OMAttribute addAttribute(String attributeName, String value,
                                     OMNamespace ns);
@@ -164,9 +178,9 @@ public interface OMElement extends OMNode, OMContainer {
     public void setBuilder(OMXMLParserWrapper wrapper);
 
     /**
-     * Method getBuilder
+     * Returns the builder object.
      *
-     * @return
+     * @return The builder object used to construct the underlying XML infoset on the fly.
      */
     public OMXMLParserWrapper getBuilder();
 
@@ -178,16 +192,9 @@ public interface OMElement extends OMNode, OMContainer {
     public void setFirstChild(OMNode node);
 
     /**
-     * Get the first child
+     * Returns the first child element of the element.
      *
-     * @return
-     */
-    public OMNode getFirstChild();
-
-    /**
-     * Convenience extension of the getFirstChild
-     *
-     * @return
+     * @return The first child element of the element, or <tt>null</tt> if none was found.
      */
 
     public OMElement getFirstElement();
@@ -195,17 +202,21 @@ public interface OMElement extends OMNode, OMContainer {
 
     /**
      * Returns the pull parser that will generate the pull
-     * events relevant to THIS element. Caching is on
+     * events relevant to THIS element.
      *
-     * @return
+     * <p>Caching is on.</p>
+     *
+     * @return Return an XMLStreamReader relative to this element.
      */
     public XMLStreamReader getXMLStreamReader();
 
     /**
      * Returns the pull parser that will generate the pull
-     * events relevant to THIS element.caching is off
+     * events relevant to THIS element.
      *
-     * @return
+     * <p>Caching is off.</p>
+     *
+     * @return Return an XMLStreamReader relative to this element, with no caching.
      */
     public XMLStreamReader getXMLStreamReaderWithoutCaching();
 
@@ -217,14 +228,14 @@ public interface OMElement extends OMNode, OMContainer {
     /**
      * This will return the non-empty text children as a String
      *
-     * @return
+     * @return A String representing the concatenation of the child text nodes.
      */
     public String getText();
 
     /**
-     * Method getLocalName
+     * Returns the local name of the element.
      *
-     * @return
+     * @return The local name of the element.
      */
     public String getLocalName();
 
@@ -249,9 +260,9 @@ public interface OMElement extends OMNode, OMContainer {
     public void setNamespace(OMNamespace namespace);
 
     /**
-     * Get the Qname of this node
+     * Get the QName of this node
      *
-     * @return
+     * @return The {@link QName} for the element.
      */
     public QName getQName();
 

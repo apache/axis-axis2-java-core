@@ -188,7 +188,7 @@ public class OMElementImpl extends OMNodeImpl
      *
      * @throws OMException
      */
-    public Iterator getChildrenWithName(QName elementQName) throws OMException {
+    public Iterator getChildrenWithName(QName elementQName) {
         return new OMChildrenQNameIterator(getFirstChild(),
                 elementQName);
     }
@@ -292,13 +292,8 @@ public class OMElementImpl extends OMNodeImpl
      * This will find a namespace with the given uri and prefix, in the scope of the docuemnt.
      * This will start to find from the current element and goes up in the hiararchy until this finds one.
      * If none is found, return null
-     *
-     * @throws org.apache.axis2.om.OMException
-     *
-     * @throws OMException
      */
-    public OMNamespace  findNamespace(String uri, String prefix)
-            throws OMException {
+    public OMNamespace findNamespace(String uri, String prefix) {
 
         // check in the current element
         OMNamespace namespace = findDeclaredNamespace(uri, prefix);
@@ -326,13 +321,11 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * This will ckeck for the namespace <B>only</B> in the current Element
-     * This can also be used to retrieve the prefix of a known namespace URI
+     * This will ckeck for the namespace <B>only</B> in the current Element.
      *
-     * @throws OMException
+     * This can also be used to retrieve the prefix of a known namespace URI
      */
-    private OMNamespace findDeclaredNamespace(String uri, String prefix)
-            throws OMException {
+    private OMNamespace findDeclaredNamespace(String uri, String prefix) {
         if (namespaces == null) {
             return null;
         }
@@ -366,12 +359,8 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * This will help to search for an attribute with a given QName within this Element
-     *
-     * @throws org.apache.axis2.om.OMException
-     *
-     * @throws OMException
      */
-    public OMAttribute getFirstAttribute(QName qname) throws OMException {
+    public OMAttribute getFirstAttribute(QName qname) {
         if (attributes == null) {
             return null;
         }
@@ -517,12 +506,8 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * This is to get the type of node, as this is the super class of all the nodes
-     *
-     * @throws org.apache.axis2.om.OMException
-     *
-     * @throws OMException
      */
-    public int getType() throws OMException {
+    public int getType() {
         return OMNode.ELEMENT_NODE;
     }
 

@@ -19,16 +19,80 @@ package org.apache.axis2.om;
 import javax.xml.namespace.QName;
 import java.util.Iterator;
 
+/**
+ * Captures the operations related to containment shared by both a document and an element.
+ *
+ * <p>Exposes the ability to add, find, and iterate over the children of a document or
+ * element.</p>
+ */
 public interface OMContainer {
 
+    /**
+     * This will add the given node as the last child.
+     *
+     * child to the element. One must preserve the order of children, in this operation
+     * Tip : appending the new child is prefered
+     *
+     * @param omNode
+     */
     public void addChild(OMNode omNode);
 
-    public Iterator getChildrenWithName(QName elementQName) throws OMException;
+    /**
+     * Returns an iterator for child nodes matching the criteria indicated by the given QName.
+     *
+     * <p>This function searches in three ways:
+     *  <ul>
+     *   <li>Exact match - Both parts of the passed QName are non-null.  Only children with the
+     *      same namespace and local name will be returned.
+     *   </li>
+     *  <li>Namespace match - The local name of the passed QName is null.  All children matching the
+     *      namespace will be returned by the iterator.
+     *  </li>
+     *  <li>Local name match - The namespace of the passed QName is null.  All children with the
+     *      matching local name will be returned by the iterator.
+     *  </li>
+     * </ul>
+     *
+     * <p>
+     * <b>Example:</b> <code>header.getChildrenWithName( new QName(ADDRESSING_NAMESPACE, null));</code>
+     *  will return all of the "addressing" headers.
+     * </p>
+     *
+     * @param elementQName The QName specifying namespace and local name to match.
+     * @return An iterator of {@link OMElement} items that match the given QName appropriately.
+     */
+    public Iterator getChildrenWithName(QName elementQName);
 
+    /**
+     * Returns the first child in document order that matches the given QName criteria.
+     *
+     * <p>The QName filter is applied as in the function {@link #getChildrenWithName}.</p>
+     *
+     * @param elementQName The QName to use for matching.
+     *
+     * @return The first element in document order that matches the <tt>elementQName</tt> criteria.
+     *
+     * @see #getChildrenWithName
+     *
+     * @throws OMException Could indirectly trigger building of child nodes.
+     */
     public OMElement getFirstChildWithName(QName elementQName) throws OMException;
 
+    /**
+     * Returns an iterator for the children of the container.
+     *
+     * @return Returns a {@link Iterator} of children, all of which implement {@link OMNode}.
+     *
+     * @see #getFirstChildWithName
+     * @see #getChildrenWithName
+     */
     public Iterator getChildren();
 
+    /**
+     * Get the first child.
+     *
+     * @return Returns the first child.  May return null if the container has no children.
+     */
     public OMNode getFirstChild();
 
     public boolean isComplete();

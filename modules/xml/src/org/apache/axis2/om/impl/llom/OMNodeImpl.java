@@ -83,11 +83,10 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
      * Parent is always an Element
      *
      * @return
-     * @throws org.apache.axis2.om.OMException
      *
      * @throws OMException
      */
-    public OMContainer getParent() throws OMException {
+    public OMContainer getParent() {
         return parent;
     }
 
@@ -237,12 +236,11 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     /**
      * This is to get the type of node, as this is the super class of all the nodes
      *
-     * @return
-     * @throws org.apache.axis2.om.OMException
+     * @return Returns the type of node as indicated by {@link #setType}
      *
-     * @throws OMException
+     * @see #setType 
      */
-    public int getType() throws OMException {
+    public int getType() {
         return nodeType;
     }
 

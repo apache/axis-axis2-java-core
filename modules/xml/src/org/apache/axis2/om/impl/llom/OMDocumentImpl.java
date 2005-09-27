@@ -193,10 +193,8 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
      * @param elementQName
      * @return
      * @throws org.apache.axis2.om.OMException
-     *
-     * @throws OMException
      */
-    public Iterator getChildrenWithName(QName elementQName) throws OMException {
+    public Iterator getChildrenWithName(QName elementQName) {
         return new OMChildrenQNameIterator(getFirstChild(),
                 elementQName);
     }
