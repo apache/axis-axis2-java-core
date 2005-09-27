@@ -15,7 +15,8 @@
     */
 
     public class <xsl:value-of select="@name"/> extends org.apache.axis2.clientapi.Stub implements <xsl:value-of select="$interfaceName"/>{
-        public static final String AXIS2_HOME = ".";
+        //default axis home being null forces the system to pick up the mars from the axis2 library
+        public static final String AXIS2_HOME = null;
         protected static org.apache.axis2.description.OperationDescription[] _operations;
 
         static{
