@@ -344,22 +344,26 @@ public class ArchiveReader implements DeploymentConstants {
                 String userHome = System.getProperty("user.home");
                 File userHomedir = new File(userHome);
                 File repository = new File(userHomedir, ".axis2home");
-                if (!repository.exists()) {
-                    repository.mkdirs();
-                    modules = new File(repository, "modules");
-                    modules.mkdirs();
-                } else {
-                    modules = new File(repository, "modules");
-                    if (!modules.exists()) {
-                        modules.mkdirs();
-                    }
-                }
+                modules = new File(repository, "modules");
+
+//
+//
+//                if (!repository.exists()) {
+//                    repository.mkdirs();
+//                    modules = new File(repository, "modules");
+//                    modules.mkdirs();
+//                } else {
+//                    modules = new File(repository, "modules");
+//                    if (!modules.exists()) {
+//                        modules.mkdirs();
+//                    }
+//                }
             } else {
                 modules = new File(axis2repository, "modules");
-                if (!modules.exists()) {
-                    modules = new File(axis2repository, "modules");
-                    modules.mkdirs();
-                }
+//                if (!modules.exists()) {
+//                    modules = new File(axis2repository, "modules");
+//                    modules.mkdirs();
+//                }
             }
             String modulearchiveName = moduleName + ".mar";
             modulearchiveFile = new File(modules, modulearchiveName);
@@ -379,6 +383,9 @@ public class ArchiveReader implements DeploymentConstants {
             if (in == null) {
                 throw new DeploymentException(moduleName + " module is not found");
             } else {
+                if(!modules.exists()) {
+                    modules.mkdirs();
+                }
                 modulearchiveFile.createNewFile();
                 FileOutputStream dest = new
                         FileOutputStream(modulearchiveFile);
