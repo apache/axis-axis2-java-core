@@ -46,11 +46,11 @@ import java.util.Iterator;
 public class DescriptionBuilder implements DeploymentConstants{
 
     protected Log log = LogFactory.getLog(getClass());
-    protected InputStream serviceInputSteram;
+    protected InputStream des_inputStream;
     protected DeploymentEngine engine;
 
     public DescriptionBuilder(InputStream serviceInputSteram, DeploymentEngine engine) {
-        this.serviceInputSteram = serviceInputSteram;
+        this.des_inputStream = serviceInputSteram;
         this.engine = engine;
     }
 
@@ -58,14 +58,15 @@ public class DescriptionBuilder implements DeploymentConstants{
     }
 
     /**
-     * This will creat OMElemnt for a given services.xml
+     * This will creat OMElemnt for a given descrition document (axis2.xml , services.xml and
+     * module.xml)
      *
      * @return OMElement <code>OMElement</code>
      * @throws javax.xml.stream.XMLStreamException
      */
     public OMElement buildOM() throws XMLStreamException {
         XMLStreamReader xmlReader =
-                XMLInputFactory.newInstance().createXMLStreamReader(serviceInputSteram);
+                XMLInputFactory.newInstance().createXMLStreamReader(des_inputStream);
         OMFactory fac = OMAbstractFactory.getOMFactory();
         StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
         OMElement element = staxOMBuilder.getDocumentElement();
