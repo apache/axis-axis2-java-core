@@ -60,7 +60,7 @@ public class FirstFrame extends JPanel implements ObjectKeeper {
         cbgservoceType.add(serviGroup);
         add(serviGroup);
 
-        label_1 = new JLabel("Do you want to generete services.xml");
+        label_1 = new JLabel("Do you want to generate services.xml");
         add(label_1);
 
         cbggenerateserviceDesc = new ButtonGroup();
@@ -68,7 +68,7 @@ public class FirstFrame extends JPanel implements ObjectKeeper {
         cbggenerateserviceDesc.add(radioGenerate);
         add(radioGenerate);
 
-        radihaveService = new JRadioButton("I alrady have services.xml", false);
+        radihaveService = new JRadioButton("I already have services.xml", false);
         cbggenerateserviceDesc.add(radihaveService);
         add(radihaveService);
 

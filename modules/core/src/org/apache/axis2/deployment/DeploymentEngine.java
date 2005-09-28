@@ -609,7 +609,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                         DeploymentErrorMsgs.DEPLOYING_WS, currentArchiveFile.getName()));
                             } catch (DeploymentException de) {
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
-                                        currentArchiveFile.getName()));
+                                        currentArchiveFile.getName(),de.getMessage()));
 //                            log.info("DeploymentException  " + de);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 de.printStackTrace(error_ptintWriter);
@@ -617,7 +617,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                         errorWriter.toString();
                             } catch (AxisFault axisFault) {
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
-                                        currentArchiveFile.getName()));
+                                        currentArchiveFile.getName(),axisFault.getMessage()));
 //                            log.info("AxisFault  " + axisFault);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 axisFault.printStackTrace(error_ptintWriter);
@@ -625,7 +625,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                         errorWriter.toString();
                             } catch (Exception e) {
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
-                                        currentArchiveFile.getName()));
+                                        currentArchiveFile.getName(),e.getMessage()));
 //                            log.info("Exception  " + e);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 e.printStackTrace(error_ptintWriter);

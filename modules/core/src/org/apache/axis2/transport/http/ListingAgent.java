@@ -597,7 +597,7 @@ public class ListingAgent {
             Object serviceObj = services.get(serviceName);
             if (serviceObj != null) {
                 if (wsdl != null) {
-                    res.setContentType("text/html");
+                    res.setContentType("text/xml");
                     PrintWriter out_writer = new PrintWriter(out);
                     ((ServiceDescription) serviceObj).printWSDL(out_writer,
                             filePart);
