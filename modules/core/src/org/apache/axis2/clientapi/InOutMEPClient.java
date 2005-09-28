@@ -21,6 +21,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.OperationContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.OperationDescription;
@@ -168,11 +169,11 @@ public class InOutMEPClient extends MEPClient {
             checkTransport(msgctx);
 
             //find and set the Operation Context
-            ConfigurationContext sysContext = serviceContext.getEngineContext();
-            AxisConfiguration registry = sysContext.getAxisConfiguration();
-            msgctx.setOperationContext(OperationContextFactory.createOperationContext(WSDLConstants.MEP_CONSTANT_IN_OUT,
+            OperationContext operationContext = OperationContextFactory.createOperationContext(WSDLConstants.MEP_CONSTANT_IN_OUT,
                     axisop,
-                    serviceContext));
+                    serviceContext);
+            axisop.registerOperationContext(msgctx,operationContext);
+
             //Send the SOAP Message and receive a response                
             MessageContext response =
                     TwoWayTransportBasedSender.send(msgctx, listenerTransport);

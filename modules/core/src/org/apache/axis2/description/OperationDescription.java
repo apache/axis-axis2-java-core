@@ -207,7 +207,7 @@ public class OperationDescription extends WSDLOperationImpl implements
                             msgContext.getRelatesTo().getValue());
 
             if (null == operationContext) {
-                throw new AxisFault(Messages.getMessage("cannotCorrealteMsg",
+                throw new AxisFault(Messages.getMessage("cannotCorrelateMsg",
                         this.getName().toString(),msgContext.getRelatesTo().getValue()));
             }
 
@@ -228,6 +228,10 @@ public class OperationDescription extends WSDLOperationImpl implements
     public OperationContext findForExistingOperationContext(MessageContext msgContext) throws AxisFault {
         OperationContext operationContext = null;
 
+        if((operationContext = msgContext.getOperationContext()) != null) {
+        	return operationContext;
+        }
+        
         if (null == msgContext.getRelatesTo()) {
             return null;
         } else {

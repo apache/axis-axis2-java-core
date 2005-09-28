@@ -29,21 +29,18 @@ import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.Vector;
 
 /**
  * Utility class for the Axis2-WSS4J Module
  */
 public class Axis2Util {
 
-	private static ThreadLocal signatureValues = new ThreadLocal();
-	
-	
 	/**
 	 * Create a DOM Document using the SOAP Envelope
 	 * @param env An org.apache.axis2.soap.SOAPEnvelope instance 
@@ -165,11 +162,4 @@ public class Axis2Util {
 
 	}
 
-	public static Vector getSignatureValues() {
-		return (Vector)signatureValues.get();
-	}
-
-	public static void setSignatureValues(Vector signatureValues) {
-		Axis2Util.signatureValues.set(signatureValues);
-	}
 }

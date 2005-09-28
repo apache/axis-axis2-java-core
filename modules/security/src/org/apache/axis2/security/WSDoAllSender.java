@@ -255,20 +255,7 @@ public class WSDoAllSender extends WSDoAllHandler {
 		        }
 	        }
 	        
-            /**
-             * Set the signature values
-             * this is a bad way of doing this
-             * we shoudl be able to keep this in the message context and 
-             * retrieve the value at the response. But right now this is not 
-             * possible since we don't have access to the req mc at the response
-             * in the CLIENT side
-             */
-            if(!msgContext.isServerSide()) {
-            	Axis2Util.setSignatureValues((Vector)msgContext.getProperty(WSHandlerConstants.SEND_SIGV));
-            	
-            }
-
-            if (doDebug) {
+	        if (doDebug) {
 				log.debug("WSDoAllSender: exit invoke()");
 			}
         } catch (WSSecurityException e) {
