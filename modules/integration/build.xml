@@ -176,10 +176,10 @@
                 <antcall target="run"/>
 
         <!-- Server MS stk v3.0-->
-                <copy file="${dir.wsdl}/Stkv3Compound1.wsdl" tofile="${dir.temp}/current.wsdl"/>
+                <copy file="${dir.wsdl}/stkv3Compound1.wsdl" tofile="${dir.temp}/current.wsdl"/>
                 <copy file="${dir.clients}/test/MsStkv3Round3Compound1InteropTest.java" todir="${dir.src}/test"  />
                 <antcall target="run"/>
-                <copy file="${dir.wsdl}/Stkv3Compound2.wsdl" tofile="${dir.temp}/current.wsdl"/>
+                <copy file="${dir.wsdl}/stkv3Compound2.wsdl" tofile="${dir.temp}/current.wsdl"/>
                 <copy file="${dir.clients}/test/MsStkv3Round3Compound2InteropTest.java" todir="${dir.src}/test"  />
                 <antcall target="run"/>
 
