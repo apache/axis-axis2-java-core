@@ -18,6 +18,7 @@ package org.apache.axis2.clientapi;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -29,6 +30,7 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.soap.SOAPBody;
@@ -100,7 +102,7 @@ public class InOutMEPClient extends MEPClient {
 
     public InOutMEPClient(ServiceContext serviceContext) {
         super(serviceContext, WSDLConstants.MEP_URI_OUT_IN);
-        //service context has the engine context set in to it ! 
+        //service context has the engine context set in to it !
         callbackReceiver = new CallbackReceiver();
     }
 
@@ -126,9 +128,9 @@ public class InOutMEPClient extends MEPClient {
         msgctx.setMessageID(messageID);
         //
         if (useSeparateListener) {
-            //This mean doing a Request-Response invocation using two channel. If the 
+            //This mean doing a Request-Response invocation using two channel. If the
             //transport is two way transport (e.g. http) Only one channel is used (e.g. in http cases
-            //202 OK is sent to say no repsone avalible). Axis2 get blocked return when the response is avalible. 
+            //202 OK is sent to say no repsone avalible). Axis2 get blocked return when the response is avalible.
 
             SyncCallBack callback = new SyncCallBack();
             //this method call two channel non blocking method to do the work and wait on the callbck
@@ -167,7 +169,6 @@ public class InOutMEPClient extends MEPClient {
             msgctx.setConfigurationContext(syscontext);
 
             checkTransport(msgctx);
-
             //find and set the Operation Context
             OperationContext operationContext = OperationContextFactory.createOperationContext(WSDLConstants.MEP_CONSTANT_IN_OUT,
                     axisop,
@@ -292,8 +293,7 @@ public class InOutMEPClient extends MEPClient {
                     senderTransport.equals(listenerTransport);
             boolean isATwoWaytransport =
                     Constants.TRANSPORT_HTTP.equals(senderTransport)
-                            || Constants.TRANSPORT_TCP.equals(senderTransport)
-                            || Constants.TRANSPORT_HTTP.equals(senderTransport);
+                            || Constants.TRANSPORT_TCP.equals(senderTransport);
             if ((!isTransportsEqual || !isATwoWaytransport)) {
                 throw new AxisFault(Messages.getMessage("useSeparateListenerLimited"));
             }

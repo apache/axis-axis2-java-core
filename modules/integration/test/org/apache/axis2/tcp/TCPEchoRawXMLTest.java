@@ -20,13 +20,19 @@ package org.apache.axis2.tcp;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.AsyncResult;
 import org.apache.axis2.clientapi.Callback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.engine.Echo;
+import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilsTCPServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -34,6 +40,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -46,8 +53,8 @@ import javax.xml.stream.XMLStreamException;
 public class TCPEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("tcp://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoOMElement");
+                    + (UtilServer.TESTING_PORT)
+                    + "/axis/services/EchoXMLService/echoOMElement");
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
     private QName transportName = new QName("http://localhost/my",
@@ -80,8 +87,8 @@ public class TCPEchoRawXMLTest extends TestCase {
                         operationName);
         UtilsTCPServer.deployService(service);
         clientService = Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                Echo.class.getName(),
+                operationName);
         serviceContext = UtilServer.createAdressedEnabledClientSide(clientService);
     }
 
@@ -164,7 +171,7 @@ public class TCPEchoRawXMLTest extends TestCase {
                 call.invokeBlocking(operationName.getLocalPart(),
                         payload);
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(
-                                System.out));
+                System.out));
         call.close();
     }
 
@@ -194,9 +201,49 @@ public class TCPEchoRawXMLTest extends TestCase {
         OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), method);
         result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(
-                                System.out));
+                System.out));
         call.close();
 
+    }
+
+    public void testEchoXMLSyncMC() throws Exception {
+        ConfigurationContextFactory confac = new ConfigurationContextFactory();
+        ConfigurationContext configContext= confac.buildClientConfigurationContext(Constants.TESTING_REPOSITORY);
+
+        OperationDescription opdesc = new OperationDescription(new QName("echoOMElement"));
+        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(Constants.TESTING_REPOSITORY);
+        call.setTo(targetEPR);
+
+        call.setWsaAction(operationName.getLocalPart());
+        call.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, false);
+
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+
+        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMElement method = fac.createOMElement("echoOMElement", omNs);
+        OMElement value = fac.createOMElement("myValue", omNs);
+        value.setText("Isaac Assimov, the foundation Sega");
+        method.addChild(value);
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope envelope = factory.getDefaultEnvelope();
+        envelope.getBody().addChild(method);
+
+        MessageContext requestContext = new MessageContext(configContext);
+        ServiceDescription srevice = new ServiceDescription(serviceName);
+        srevice.addOperation(opdesc);
+        configContext.getAxisConfiguration().addService(srevice);
+        requestContext.setServiceDescription(service);
+        requestContext.setOperationDescription(opdesc);
+
+        //  requestContext.setTo(targetEPR);
+
+        requestContext.setEnvelope(envelope);
+        MessageContext res= call.invokeBlocking(opdesc, requestContext);
+
+        SOAPEnvelope env=   call.invokeBlocking("echoOMElement", envelope);
+//        SOAPEnvelope env=  res.getEnvelope();
+        env.getBody().serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(
+                System.out));
     }
 
 
