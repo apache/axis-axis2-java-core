@@ -56,9 +56,9 @@ public class CommonsHTTPTransportSender
     private boolean chuncked = false;
 
     private String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
-    
+
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
-    
+
     int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
 
     public static final String HTTP_METHOD = "HTTP_METHOD";
@@ -70,7 +70,7 @@ public class CommonsHTTPTransportSender
     protected OMOutputImpl omOutput = new OMOutputImpl();
 
     protected Log log = LogFactory.getLog(getClass().getName());
-    
+
     public CommonsHTTPTransportSender() {
     } //default
 
@@ -98,16 +98,16 @@ public class CommonsHTTPTransportSender
             omOutput.setDoOptimize(msgContext.isDoingMTOM());
 
             omOutput.setCharSetEncoding(charSetEnc);
-            
+
             //Check for the REST behaviour, if you desire rest beahaviour
             //put a <parameter name="doREST" value="true"/> at the
             // server.xml/client.xml file
             EndpointReference epr = null;
             if (msgContext.getTo() != null
                     && !AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(
-                            msgContext.getTo().getAddress())
+                    msgContext.getTo().getAddress())
                     && !AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(
-                            msgContext.getTo().getAddress())) {
+                    msgContext.getTo().getAddress())) {
                 epr = msgContext.getTo();
             }
 
@@ -258,8 +258,8 @@ public class CommonsHTTPTransportSender
                 if (!doingMTOM) {
                     XMLStreamWriter outputWriter =
                             XMLOutputFactory.newInstance()
-                            .createXMLStreamWriter(bytesOut,
-                                    charSetEnc);
+                                    .createXMLStreamWriter(bytesOut,
+                                            charSetEnc);
                     OMOutputImpl output = new OMOutputImpl(outputWriter);
                     output.setCharSetEncoding(charSetEnc);
                     element.serialize(output);
@@ -319,29 +319,29 @@ public class CommonsHTTPTransportSender
         }
 
         public long getContentLength() {
-                try {
-                    if (doingMTOM) {    //chagened
-                        if (chuncked) {
-                            return -1;
-                        } else {
-                            if (bytes == null) {
-                                bytes = writeBytes();
-                            }
-                            return bytes.length;
-                        }
+            try {
+                if (doingMTOM) {    //chagened
+                    if (chuncked) {
+                        return -1;
                     } else {
-                        if (chuncked) {
-                            return -1;
-                        } else {
-                            if (bytes == null) {
-                                bytes = writeBytes();
-                            }
-                            return bytes.length;
+                        if (bytes == null) {
+                            bytes = writeBytes();
                         }
+                        return bytes.length;
                     }
-                } catch (AxisFault e) {
-                    return -1;
+                } else {
+                    if (chuncked) {
+                        return -1;
+                    } else {
+                        if (bytes == null) {
+                            bytes = writeBytes();
+                        }
+                        return bytes.length;
+                    }
                 }
+            } catch (AxisFault e) {
+                return -1;
+            }
         }
 
         public String getContentType() {
@@ -390,7 +390,7 @@ public class CommonsHTTPTransportSender
                                 HTTPConstants.HEADER_TRANSFER_ENCODING);
                 if (transferEncoding != null
                         && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(
-                                transferEncoding.getValue())) {
+                        transferEncoding.getValue())) {
                     this.chuncked = true;
                 }
             } else if (
@@ -399,31 +399,31 @@ public class CommonsHTTPTransportSender
             } else {
                 throw new AxisFault(
                         "Parameter "
-                        + HTTPConstants.PROTOCOL_VERSION
-                        + " Can have values only HTTP/1.0 or HTTP/1.1");
+                                + HTTPConstants.PROTOCOL_VERSION
+                                + " Can have values only HTTP/1.0 or HTTP/1.1");
             }
         }
 
         //Get the timeout values from the configuration
         try {
-			Parameter tempSoTimeoutParam = transportOut
-					.getParameter(HTTPConstants.SO_TIMEOUT);
-			Parameter tempConnTimeoutParam = transportOut
-					.getParameter(HTTPConstants.CONNECTION_TIMEOUT);
+            Parameter tempSoTimeoutParam = transportOut
+                    .getParameter(HTTPConstants.SO_TIMEOUT);
+            Parameter tempConnTimeoutParam = transportOut
+                    .getParameter(HTTPConstants.CONNECTION_TIMEOUT);
 
-			if (tempSoTimeoutParam != null) {
-				soTimeout = Integer.parseInt((String) tempSoTimeoutParam
-						.getValue());
-			}
+            if (tempSoTimeoutParam != null) {
+                soTimeout = Integer.parseInt((String) tempSoTimeoutParam
+                        .getValue());
+            }
 
-			if (tempConnTimeoutParam != null) {
-				connectionTimeout = Integer
-						.parseInt((String) tempConnTimeoutParam.getValue());
-			}
-        
+            if (tempConnTimeoutParam != null) {
+                connectionTimeout = Integer
+                        .parseInt((String) tempConnTimeoutParam.getValue());
+            }
+
         } catch (NumberFormatException nfe) {
-			//If there's a problem log it and use the default values
-			log.error("Invalid timeout value format: not a number", nfe);
+            //If there's a problem log it and use the default values
+            log.error("Invalid timeout value format: not a number", nfe);
         }
     }
 
@@ -438,10 +438,10 @@ public class CommonsHTTPTransportSender
         httpClient = new HttpClient();
         //hostConfig handles the socket functions..
         //HostConfiguration hostConfig = getHostConfiguration(msgContext, url);
-        
+
         //Get the timeout values set in the runtime
         getTimoutValues(msgContext);
-		
+
         // SO_TIMEOUT -- timeout for blocking reads
         httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
         // timeout for initial connection
@@ -498,7 +498,7 @@ public class CommonsHTTPTransportSender
                         HTTPConstants.HEADER_EXPECT_100_Continue);
             }
         }
-        
+
         this.httpClient.executeMethod(postMethod);
 
         if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
@@ -515,6 +515,15 @@ public class CommonsHTTPTransportSender
                 if(value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE)>=0||
                         value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >=0){
                     processResponse(postMethod, msgContext);
+                }  else {
+                    /**
+                     * if the content type is  text/html;charset=utf-8
+                     */
+                    throw new AxisFault(
+                            Messages.getMessage(
+                                    "transportError",
+                                    String.valueOf(postMethod.getStatusCode()),
+                                    postMethod.getResponseBodyAsString()));
                 }
             }
         }else{
@@ -533,27 +542,27 @@ public class CommonsHTTPTransportSender
      * teh default values or the values set by teh configuration will be used
      * @param msgContext
      */
-	private void getTimoutValues(MessageContext msgContext) {
-		try {
-			// If the SO_TIMEOUT of CONNECTION_TIMEOUT is set by dynamically the
-			// override the static config
-			Integer tempSoTimeoutProperty = (Integer) msgContext
-					.getProperty(HTTPConstants.SO_TIMEOUT);
-			Integer tempConnTimeoutProperty = (Integer) msgContext
-					.getProperty(HTTPConstants.CONNECTION_TIMEOUT);
+    private void getTimoutValues(MessageContext msgContext) {
+        try {
+            // If the SO_TIMEOUT of CONNECTION_TIMEOUT is set by dynamically the
+            // override the static config
+            Integer tempSoTimeoutProperty = (Integer) msgContext
+                    .getProperty(HTTPConstants.SO_TIMEOUT);
+            Integer tempConnTimeoutProperty = (Integer) msgContext
+                    .getProperty(HTTPConstants.CONNECTION_TIMEOUT);
 
-			if (tempSoTimeoutProperty != null) {
-				connectionTimeout = tempSoTimeoutProperty.intValue();
-			}
+            if (tempSoTimeoutProperty != null) {
+                connectionTimeout = tempSoTimeoutProperty.intValue();
+            }
 
-			if (tempConnTimeoutProperty != null) {
-				connectionTimeout = tempConnTimeoutProperty.intValue();
-			}
-		} catch (NumberFormatException nfe) {
-			//If there's a problem log it and use the default values
-			log.error("Invalid timeout value format: not a number", nfe);
-		}
-	}
+            if (tempConnTimeoutProperty != null) {
+                connectionTimeout = tempConnTimeoutProperty.intValue();
+            }
+        } catch (NumberFormatException nfe) {
+            //If there's a problem log it and use the default values
+            log.error("Invalid timeout value format: not a number", nfe);
+        }
+    }
 
     private void processResponse(HttpMethodBase httpMethod, MessageContext msgContext) throws IOException {
         obatainHTTPHeaderInformation(httpMethod, msgContext);
@@ -579,7 +588,7 @@ public class CommonsHTTPTransportSender
             getMethod.setRequestHeader(
                     HTTPConstants.HEADER_CONTENT_TYPE,
                     "text/xml; charset="
-                    + MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                            + MessageContext.DEFAULT_CHAR_SET_ENCODING);
         else
             getMethod.setRequestHeader(
                     HTTPConstants.HEADER_CONTENT_TYPE,
@@ -591,7 +600,7 @@ public class CommonsHTTPTransportSender
 
         //Get the timeout values set in the runtime
         getTimoutValues(msgContext);
-		
+
         // SO_TIMEOUT -- timeout for blocking reads
         httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
         // timeout for initial connection
@@ -619,7 +628,7 @@ public class CommonsHTTPTransportSender
             Header contenttypeHheader = getMethod.getResponseHeader(
                     HTTPConstants.HEADER_CONTENT_TYPE);
 
-             String value = contenttypeHheader.getValue();
+            String value = contenttypeHheader.getValue();
             if(value != null){
                 if(value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE)>=0||
                         value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >=0){
