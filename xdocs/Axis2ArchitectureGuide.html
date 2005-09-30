@@ -629,7 +629,7 @@ Pattern that Axis2 Client API supports.</p>
 <h3>One Way Messaging Support</h3>
 
 <p>The One-Way support is provided by the <code>InOnlyMEPClient</code> and
-Axis2 provides a class called <code>Call</code> that provides a much simpler
+Axis2 provides a class called <code>MessageSender</code> that provides a much simpler
 interface for the user. The Axis2 supports HTTP/SMTP and TCP transports, in
 the case of the HTTP transport the return channel is not used and the HTTP
 202 OK is returned in the return Channel.</p>
@@ -638,7 +638,7 @@ the case of the HTTP transport the return channel is not used and the HTTP
 
 <p>The Request-Response support is provided by the
 <code>InOutMEPClient</code> and Axis2 provides a class called
-<code>MessageSender</code> that provides a much simpler interface for the
+<code>Call</code> that provides a much simpler interface for the
 user. The Client API has four ways to configure a given Message Exchange</p>
 <ol>
   <li><p style="margin-bottom: 0in">Blocking or Non-Blocking nature - this
