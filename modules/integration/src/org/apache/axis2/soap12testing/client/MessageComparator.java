@@ -60,7 +60,7 @@ public class MessageComparator {
             SOAPComparator soapComparator = new SOAPComparator();
             //ignore elements that belong to the addressing namespace
             soapComparator.addIgnorableNamespace("http://schemas.xmlsoap.org/ws/2004/08/addressing");
-//            ////////////////////////////////////////////////////
+
             System.out.println("######################################################");
             OMOutputImpl omOutput = new OMOutputImpl(System.out,false);
             requiredMessageEnvelope.serializeWithCache(omOutput);
@@ -72,9 +72,6 @@ public class MessageComparator {
             omOutput1.flush();
             System.out.println("");
                    System.out.println("`######################################################");
-            /////////////////////////////////////////////////////
-
-
 
             return soapComparator.compare(requiredMessageEnvelope,replyMessageEnvelope);
 

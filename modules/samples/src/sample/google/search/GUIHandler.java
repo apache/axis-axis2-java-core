@@ -175,7 +175,6 @@ public class GUIHandler {
 
         SpringLayout.Constraints scrollConstraints = layout.getConstraints(
                 scroll);
-//        SpringLayout.Constraints scrollConstraints = layout.getConstraints(textEditorPane);
         xSpring = Spring.constant(0); // Spring we’ll use for X
         ySpring = Spring.constant(30); // Spring we’ll use for Y
         wSpring = Spring.constant(frame.getBounds().width - 8); // Spring we’ll use for width

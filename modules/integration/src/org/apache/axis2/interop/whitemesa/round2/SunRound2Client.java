@@ -36,7 +36,6 @@ public class SunRound2Client {
     public static SOAPEnvelope sendMsg(SunRound2ClientUtil util, String epUrl, String soapAction) throws AxisFault {
 
         SOAPEnvelope resEnv = null;
-//                   EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO,"http://demo.openlinksw.com:80/Interop");
         Call call = null;
         URL url = null;
         try {

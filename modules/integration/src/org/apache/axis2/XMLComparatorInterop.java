@@ -232,7 +232,7 @@ public class XMLComparatorInterop {
             return false;
         }
 
-// Do we need to compare prefixes as well
+        // Do we need to compare prefixes as well
         return true;
     }
 }

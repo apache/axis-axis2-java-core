@@ -189,7 +189,6 @@ public class SuggestionForm extends javax.swing.JFrame implements HyperlinkListe
             try {
                 String url = e.getURL().toString();
                 helpDisplayPane.setPage(url);
-//                
             } catch (Exception err) {
                 JOptionPane.showMessageDialog(this, "Help file not detected", err.getMessage(),
                         JOptionPane.ERROR_MESSAGE);

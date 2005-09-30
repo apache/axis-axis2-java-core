@@ -101,7 +101,6 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                 throw new AxisFault("Invalid Service Group Id." + groupId);
             }
             msgContext.setServiceGroupContextId(serviceGroupId.getText());
-//            msgContext.setProperty( PARAM_SERVICE_GROUP_CONTEXT_ID, serviceGroupId.getText());
         }
     }
 
@@ -261,13 +260,6 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                 }
             }
         }
-//        OMElement address =
-//                headerBlock.getFirstChildWithName(
-//                        new QName(addressingNamespace, AddressingConstants.EPR_ADDRESS));
-//        if (address != null) {
-//            epr.setAddress(address.getText());
-//        }
-
     }
 
     private boolean checkElement(QName expectedQName, QName actualQName) {

@@ -96,7 +96,6 @@ public class BeanManager {
                 type = iProp.getIndexedPropertyType();
                 elDesc.setIndexedAccessor(beanDesc);
                 isCollection = true;
-//                elDesc.setItemQName(new QName("http://foo", "item"));
             } else {
                 type = propDesc.getPropertyType();
                 // TODO : notice if this is a supported collection type

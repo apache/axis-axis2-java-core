@@ -82,12 +82,6 @@ public class CollectionSerializer extends AbstractSerializer {
             }
         }
 
-//        Collection coll = (Collection)object;
-//        for (Iterator i = coll.iterator(); i.hasNext();) {
-//            Object item = i.next();
-//            context.serializeElement(itemQName, item, serializer);
-//        }
-
         if (isWrapped) {
             writer.writeEndElement();
         }

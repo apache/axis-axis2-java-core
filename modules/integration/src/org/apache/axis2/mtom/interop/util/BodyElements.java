@@ -56,7 +56,7 @@ public class BodyElements {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNS = fac.createOMNamespace("http://example.org/mtom/data", "x");
         OMElement echoTest = fac.createOMElement("EchoTest", omNS);
-//
+
         File file = null;
         DataHandler handler = null;
         file = new File("modules/integration/itest-resources/mtom/mtom.bin");

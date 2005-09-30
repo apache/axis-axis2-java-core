@@ -100,7 +100,7 @@ public class WSDLOptionsPage extends AbstractServiceWizardPage {
             }
         });
 
-//      ########################################################
+        //########################################################
         gd = new GridData(GridData.FILL_HORIZONTAL);
         label = new Label(container, SWT.NULL);
         label.setText(ServiceArchiver.getResourceString("page6.class.label"));

@@ -34,7 +34,6 @@ public class RunnableCreateQueue extends QueueManager implements Runnable {
     JTextArea result;
     JTextField queueCode;
     JTextField enqueue;
-//    private Log log = LogFactory.getLog(getClass());
 
     public RunnableCreateQueue(JTextField createQueue, JTextField queueCode, JTextField enqueue,
                                JTextArea result) {

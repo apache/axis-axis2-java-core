@@ -15,7 +15,6 @@
  */
 package org.apache.axis2.tool.codegen.eclipse.ui;
 
-//import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -240,16 +239,6 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
         styleSelectionCombo.select(settings.getInt(PREF_JAVA_STYLE_INDEX));
     }
     public int getMode(){
-//        String selectedOption = modeSelectionCombo.getItem(modeSelectionCombo.getSelectionIndex());
-//        if (WSDL_ALL.equals(selectedOption)){
-//            return Emitter.MODE_ALL;
-//        }else if (WSDL_INTERFACE_ONLY.equals(selectedOption)){
-//            return Emitter.MODE_INTERFACE;
-//        }else if (WSDL_IMPLEMENTATION_ONLY.equals(selectedOption)){
-//            return Emitter.MODE_IMPLEMENTATION;
-//        }else{
-//            throw new RuntimeException("Unknown Exception");
-//        }
         return 0;
     }
     

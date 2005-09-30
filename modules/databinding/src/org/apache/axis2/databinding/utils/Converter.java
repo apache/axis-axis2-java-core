@@ -44,15 +44,6 @@ public class Converter {
         // Get the destination held type or the argument held type if they exist
         Class destHeldType = getHolderValueType(destClass);
 
-        // Convert between Axis special purpose HexBinary and byte[]
-//        if (arg instanceof HexBinary &&
-//            destClass == byte[].class) {
-//            return ((HexBinary) arg).getBytes();
-//        } else if (arg instanceof byte[] &&
-//                   destClass == HexBinary.class) {
-//            return new HexBinary((byte[]) arg);
-//        }
-
         // Convert between Calendar and Date
         if (arg instanceof Calendar && destClass == Date.class) {
             return ((Calendar) arg).getTime();
@@ -93,30 +84,6 @@ public class Converter {
              (destHeldType != null && argHeldType != null))) {
             return arg;
         }
-
-        // Take care of Holder conversion
-/*
-        if (destHeldType != null) {
-            // Convert arg into Holder holding arg.
-            Object newArg = convert(arg, destHeldType);
-            Object argHolder = null;
-            try {
-                argHolder = destClass.newInstance();
-                setHolderValue(argHolder, newArg);
-                return argHolder;
-            } catch (Exception e) {
-                return arg;
-            }
-        } else if (argHeldType != null) {
-            // Convert arg into the held type
-            try {
-                Object newArg = getHolderValue(arg);
-                return convert(newArg, destClass);
-            } catch (HolderException e) {
-                return arg;
-            }
-        }
-*/
 
         // Flow to here indicates that neither arg or destClass is a Holder
 

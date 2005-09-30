@@ -29,7 +29,6 @@ public class EchoBlockingClient {
 
     public OMElement sendMsg(WhitemesaR4ClientUtil util, String soapAction) throws AxisFault {
         OMElement firstchild = null;
-//        EndpointReference targetEPR = new EndpointReference("http://www.whitemesa.net:80/interop/r4/fault-rpc" );
         EndpointReference targetEPR = new EndpointReference("http://www.whitemesa.net:80/interop/r4/fault-rpc");
 
         try {

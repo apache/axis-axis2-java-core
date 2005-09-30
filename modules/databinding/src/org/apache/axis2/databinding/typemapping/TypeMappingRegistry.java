@@ -45,7 +45,6 @@ public class TypeMappingRegistry {
         if (javaType == String.class) return true;
         if (Calendar.class.isAssignableFrom(javaType)) return true;
         if (Date.class.isAssignableFrom(javaType)) return true;
-//        if (HexBinary.class.isAssignableFrom(javaType)) return true;
         if (Element.class.isAssignableFrom(javaType)) return true;
         if (javaType == byte[].class) return true;
         if (Number.class.isAssignableFrom(javaType)) return true;

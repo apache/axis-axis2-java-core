@@ -39,14 +39,10 @@ public class SOAP12TestClient {
 
             Socket socket =  new Socket("127.0.0.1",port);
 
-//            HttpURLConnection connection = (HttpURLConnection) netUrl.openConnection();
-//            connection.setDoOutput(true);
-
             SOAPCreater soapCreater = new SOAPCreater();
             String requestMessage = soapCreater.getStringFromSOAPMessage(testNumber,netUrl);
             PrintWriter out = new PrintWriter(
                     socket.getOutputStream());
-//                              connection.getOutputStream());
             out.println(requestMessage);
             out.flush();
             out.close();
@@ -60,7 +56,6 @@ public class SOAP12TestClient {
             }
             replyMessage = sb.toString();
             socket.close();
-//            connection.disconnect();
 
         } catch (MalformedURLException e) {
             log.info(e.getMessage());
@@ -78,7 +73,6 @@ public class SOAP12TestClient {
             String requestMessage = soapCreater.getStringFromSOAPMessage(testNumber,netUrl);
             PrintWriter out = new PrintWriter(
                     socket.getOutputStream());
-//            System.out.println("Message: " + requestMessage);
             out.println(requestMessage);
             out.flush();
             socket.shutdownOutput();

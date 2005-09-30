@@ -142,7 +142,7 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
               try
               {
                   monitor.worked(1);
-//                create a wizard bean
+                  // create a wizard bean
                   WizardBean wizBean = new WizardBean();
                   monitor.worked(1);
                   wizBean.setPage1bean(classFileLocationPage.getBean());

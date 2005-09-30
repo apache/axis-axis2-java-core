@@ -42,8 +42,6 @@ public class SOAPCreater {
             new File(
                 MessageComparator.TEST_MAIN_DIR + "test-resources/SOAP12Testing/RequestMessages/SOAP12ReqT" + testNumber + ".xml");
         FileInputStream stream = new FileInputStream(file);
-//        BufferedInputStream bf = new BufferedInputStream(stream);
-//        DataInputStream ds = new DataInputStream(bf);
         StringBuffer sb = new StringBuffer();
 
         sb.append(HTTPConstants.HEADER_POST).append(" ");
@@ -58,10 +56,6 @@ public class SOAPCreater {
         while ((record = reder.readLine()) != null) {
             sb.append(record.trim());
         }
-//
-//        while ((record = ds.readLine()) != null) {
-//            sb.append(record.trim());
-//        }
         return sb.toString();
     }
 

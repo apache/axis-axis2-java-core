@@ -61,12 +61,4 @@ public class Round2Soap12StringUtil implements SunRound2ClientUtil{
             return reqEnv;
 
         }
-
-//}   <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-//	<SOAP-ENV:Body>
-//		<m:echoString xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
-//			<inputString xsi:type="xsd:string">String</inputString>
-//		</m:echoString>
-//	</SOAP-ENV:Body>
-//</SOAP-ENV:Envelope>
 }

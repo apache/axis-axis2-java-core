@@ -81,7 +81,7 @@ public class MainWindow extends JFrame {
             }
 
         });
-//
+
         this.nextButton = new JButton("Next");
         this.getContentPane().add(this.nextButton);
         this.nextButton.setBounds(hgap + bWidth + hgap,

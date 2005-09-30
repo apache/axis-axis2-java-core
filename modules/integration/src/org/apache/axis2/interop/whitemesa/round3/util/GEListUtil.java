@@ -77,19 +77,6 @@ public class GEListUtil implements SunRound3ClientUtil {
         OMElement value12 = omfactory.createOMElement("child", "", null);
         value12.addAttribute("xsi:type", "xsd:anyType", null);
         value12.addAttribute(" xsi:nil", "1", null);
-//
-//        OMElement item2 = omfactory.createOMElement("item0", null);
-//
-//        OMElement value20 = omfactory.createOMElement("varString", "", null);
-//        value20.addAttribute("xsi:type", "xsd:string", null);
-//        value20.addChild(omfactory.createText("strss fdfing1"));
-//        OMElement value21 = omfactory.createOMElement("varInt", "", null);
-//        value21.addAttribute("xsi:type", "xsd:int", null);
-//        value21.addChild(omfactory.createText("25"));
-//        OMElement value22 = omfactory.createOMElement("varFloat", "", null);
-//        value22.addAttribute("xsi:type", "xsd:float", null);
-//        value22.addChild(omfactory.createText("25.23"));
-
         part.addChild(value00);
         part.addChild(value01);
         part.addChild(value02);
@@ -97,19 +84,10 @@ public class GEListUtil implements SunRound3ClientUtil {
         part2.addChild(value10);
         part2.addChild(value11);
         part2.addChild(value12);
-//
-//        item2.addChild(value20);
-//        item2.addChild(value21);
-//        item2.addChild(value22);
-
-//        part.addChild(item0);
-//        part.addChild(item1);
-//        part.addChild(item2);
 
         operation.addChild(part);
         body.addChild(part2);
 
-        //reqEnv.getBody().addChild(method);
         return reqEnv;
 
     }

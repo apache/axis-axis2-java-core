@@ -31,11 +31,6 @@ public class EchoMultipleFaults2ClientUtil implements WhitemesaR4ClientUtil{
 
         OMElement method = fac.createOMElement("echoMultipleFaults2", omNs);
         method.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",null);
-//        method.addAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance", null);
-//        method.addAttribute("xmlns:xsd","http://www.w3.org/2001/XMLSchema", null);
-//        method.addAttribute("xmlns:ns2","http://soapinterop.org/types", null);
-//        method.addAttribute("xmlns:soap-enc","http://schemas.xmlsoap.org/soap/encoding/", null);
-//        method.addAttribute("xmlns:wsdl","http://schemas.xmlsoap.org/wsdl/", null);
 
         OMElement value = fac.createOMElement("whichFault", null);
         OMElement value1 = fac.createOMElement("param1", null);
@@ -45,11 +40,6 @@ public class EchoMultipleFaults2ClientUtil implements WhitemesaR4ClientUtil{
         OMElement value4 = fac.createOMElement("Item", null);
         OMElement value5 = fac.createOMElement("Item", null);
        OMElement value6 = fac.createOMElement("Item", null);
-
-
-//        value.addAttribute("xsi:type", "xsd:int", null);
-//        value1.addAttribute("xsi:type", "xsd:string", null);
-//
 
         value3.addAttribute("xmlns:nsa","http://www.w3.org/2001/XMLSchema",null);
         value3.addAttribute("soapenc:arrayType","nsa:string[3]", null);

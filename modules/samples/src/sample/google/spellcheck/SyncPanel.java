@@ -20,10 +20,6 @@ public class SyncPanel extends javax.swing.JPanel implements Observer,
     public SyncPanel() {
         GridBagLayout gbLayout = new GridBagLayout();
         GridBagConstraints constraint = new GridBagConstraints();
-
-//        GridLayout layout = new GridLayout();
-//        layout.setColumns(1);
-//        layout.setRows(3);
         this.setLayout(gbLayout);
 
         formModel = new FormModel(this);

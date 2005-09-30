@@ -90,22 +90,6 @@ public class ClientCallbackHandler extends Callback {
         SOAPBody body;
         OMElement operation, elem;
         SOAPEnvelope resEnvelope;
-//        /////////////////////////////////////////
-//        try {
-//            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(
-//                    System.out);
-//            result.getResponseEnvelope().serializeWithCache(writer);
-//            //part.serialize(writer,false);
-//            writer.flush();
-//
-//        } catch (XMLStreamException e) {
-//           // System.out.println("Error occured after responce is received");
-//            e.printStackTrace();
-//        } catch (FactoryConfigurationError e) {
-//            //System.out.println("Error occured after responce is received");
-//            e.printStackTrace();
-//        }
-//        ////////////////////////////////////////////////
         resEnvelope = result.getResponseEnvelope();
         body = resEnvelope.getBody();
         operation = body.getFirstElement();

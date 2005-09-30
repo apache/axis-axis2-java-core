@@ -158,7 +158,6 @@ public class AsynchronousClient {
                     Constants.TRANSPORT_HTTP,
                     false);
 
-//            System.out.println("Sending the Async message ....");
             requestContext.getEnvelope().serialize(
                     XMLOutputFactory.newInstance()
                             .createXMLStreamWriter

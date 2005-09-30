@@ -29,19 +29,10 @@ public class EchoMultipleFaults4ClientUtil implements WhitemesaR4ClientUtil{
 
         OMElement method = fac.createOMElement("echoMultipleFaults4", omNs);
         method.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",null);
-//        method.addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance", null);
-//        method.addAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema", null);
-//        method.addAttribute("xmlns:ns2", "http://soapinterop.org/types", null);
-//        method.addAttribute("xmlns:soap-enc", "http://schemas.xmlsoap.org/soap/encoding/", null);
-//        method.addAttribute("xmlns:wsdl", "http://schemas.xmlsoap.org/wsdl/", null);
 
         OMElement value = fac.createOMElement("whichFault", null);
         OMElement value1 = fac.createOMElement("param1", null);
         OMElement value2 = fac.createOMElement("param2", null);
-
-//        value.addAttribute("xsi:type", "xsd:int", null);
-//        value1.addAttribute("xsi:type", "xsd:int", null);
-//        value2.addAttribute("xsi:type", "ns2:Enum", null);
 
         value.addChild(fac.createText(value, "10"));
         value1.addChild(fac.createText(value1, "11"));

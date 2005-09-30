@@ -36,7 +36,7 @@ public interface SettingsConstants {
    //#######################################################
    static final String PREF_OUTPUT_LOCATION="OUT_LOCATION";
    static final String PREF_OUTPUT_NAME="OUT_NAME";
-// #######################################################
+   // #######################################################
    static final String PREF_SERVICE_GEN_SERVICE_NAME="SERVICE_NAME";
    static final String PREF_SERVICE_GEN_CLASSNAME="CLASSNAME";
    static final String PREF_SERVICE_GEN_LOAD_ALL="LOAD_ALL";
