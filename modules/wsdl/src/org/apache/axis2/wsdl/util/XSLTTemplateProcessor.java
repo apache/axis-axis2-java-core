@@ -45,15 +45,6 @@ public class XSLTTemplateProcessor {
                              InputStream xmlStream,
                              InputStream xsltStream)
             throws TransformerFactoryConfigurationError, TransformerException {
-
-//        byte [] bytes = new byte[10000];
-//        try {
-//            IOUtils.readFully(xmlStream, bytes);
-//        } catch (IOException e) {
-//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        }
-//        System.out.print(new String(bytes));
-
         Source xmlSource = new StreamSource(xmlStream);
         Source xsltSource = new StreamSource(xsltStream);
         Result result = new StreamResult(out);

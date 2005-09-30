@@ -129,16 +129,6 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                         ,null));
             }
 
-//            //////////////////////////////////////////////////////////////////////////
-//            for (int i = 0; i < xmlObjectsVector.size(); i++) {
-//                XmlObject xmlObject = (XmlObject) xmlObjectsVector.get(i);
-//                //System.out.println("xmlObject = " + xmlObject.toString());
-//                System.out.println("xmlObject = " + xmlObject.getClass().getName());
-//
-//            }
-//            //System.out.println("xmlObjectsVector = " + xmlObjectsVector);
-            //////////////////////////////////////////////////////////////////////////
-
             //compile the type system
             XmlObject[] objeArray = convertToXMLObjectArray(xmlObjectsVector);
             BindingConfig config = new Axis2BindingConfig();

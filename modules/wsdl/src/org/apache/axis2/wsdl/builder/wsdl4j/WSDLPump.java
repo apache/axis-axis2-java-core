@@ -838,7 +838,6 @@ public class WSDLPump {
                     Part msgPart = msg.getPart(soapHeader.getPart());
                     soapHeaderExtensibilityElement.setElement(msgPart.getElementName());
                 }
-//                msgPart.
                 soapHeaderExtensibilityElement.setMessage(soapHeader.getMessage());
 
                 soapHeaderExtensibilityElement.setPart(soapHeader.getPart());
@@ -857,10 +856,6 @@ public class WSDLPump {
                     soapBindingExtensibilityElement.setRequired(required.booleanValue());
                 }
                 component.addExtensibilityElement(soapBindingExtensibilityElement);
-            } else {
-                 //	throw new AxisError(
-//						"An Extensible item "+wsdl4jElement.getElementType()+" went unparsed during WSDL Parsing");
-
             }
         }
     }

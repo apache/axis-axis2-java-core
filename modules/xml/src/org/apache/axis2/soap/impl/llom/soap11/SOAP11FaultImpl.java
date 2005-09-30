@@ -82,7 +82,7 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
         }
         super.setReason(reason);
     }
-//
+
     public void setNode(SOAPFaultNode node) throws SOAPProcessingException {
         if (!(node instanceof SOAP11FaultNodeImpl)) {
             throw new SOAPProcessingException(

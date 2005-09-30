@@ -44,14 +44,6 @@ public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
         }
     }
 
-//    public void addDetailEntry(OMElement detailElement) {
-//        throw new UnsupportedOperationException();
-//    }
-//
-//    public Iterator getAllDetailEntries() {
-//        throw new UnsupportedOperationException();
-//    }
-
     public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
 
         // select the builder
@@ -86,12 +78,6 @@ public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
             firstChild.serialize(omOutput);
         }
         writer.writeEndElement();
-
-//        //serilize siblings
-//        if (this.nextSibling != null) {
-//            nextSibling.serialize(omOutput);
-//        }
-
     }
 
 

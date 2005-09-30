@@ -234,12 +234,12 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
                     (SOAPEnvelopeImpl) soapFactory.createSOAPEnvelope(this);
             element = envelope;
             processNamespaceData(element, true);
-// fill in the attributes
+            // fill in the attributes
             processAttributes(element);
 
         } else if (elementLevel == 2) {
 
-// this is either a header or a body
+            // this is either a header or a body
             if (elementName.equals(SOAPConstants.HEADER_LOCAL_NAME)) {
                 if (headerPresent) {
                     throw new SOAPProcessingException("Multiple headers encountered!", getSenderFaultCode());
@@ -252,7 +252,6 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
                         soapFactory.createSOAPHeader((SOAPEnvelope) parent,
                                 this);
 
-// envelope.setHeader((SOAPHeader)element);
                 processNamespaceData(element, true);
                 processAttributes(element);
 
@@ -265,7 +264,6 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
                         soapFactory.createSOAPBody((SOAPEnvelope) parent,
                                 this);
 
-// envelope.setBody((SOAPBody)element);
                 processNamespaceData(element, true);
                 processAttributes(element);
 
@@ -278,7 +276,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
                 &&
                 parent.getLocalName().equalsIgnoreCase(SOAPConstants.HEADER_LOCAL_NAME)) {
 
-// this is a headerblock
+            // this is a headerblock
             try {
                 element =
                         soapFactory.createSOAPHeaderBlock(elementName, null,
@@ -293,15 +291,13 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
                 parent.getLocalName().equalsIgnoreCase(SOAPConstants.BODY_LOCAL_NAME) &&
                 elementName.equalsIgnoreCase(SOAPConstants.BODY_FAULT_LOCAL_NAME)) {
 
-// this is a headerblock
+            // this is a headerblock
             element = soapFactory.createSOAPFault((SOAPBody) parent, this);
             processNamespaceData(element, false);
             processAttributes(element);
 
 
             processingFault = true;
-
-//added
             processingMandatoryFaultElements = true;
             if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(envelopeNamespace.getName())) {
                 builderHelper = new SOAP12BuilderHelper(this);
@@ -313,7 +309,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
             element = builderHelper.handleEvent(parser, parent, elementLevel);
         } else {
 
-// this is neither of above. Just create an element
+            // this is neither of above. Just create an element
             element = soapFactory.createOMElement(elementName, null,
                     parent, this);
             processNamespaceData(element, false);
@@ -391,13 +387,13 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
                     parser.getNamespacePrefix(i));
         }
 
-// set the own namespace
+        // set the owner namespace
         String namespaceURI = parser.getNamespaceURI();
         String prefix = parser.getPrefix();
         OMNamespace namespace = null;
         if (namespaceURI != null && namespaceURI.length() > 0) {
             if (prefix == null) {
-// this means, this elements has a default namespace or it has inherited a default namespace from its parent
+                // this means, this elements has a default namespace or it has inherited a default namespace from its parent
                 namespace = node.findNamespace(namespaceURI, "");
                 if (namespace == null) {
                     namespace = node.declareNamespace(namespaceURI, "");
@@ -408,13 +404,6 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
             node.setNamespace(namespace);
         }
 
-
-
-// TODO we got to have this to make sure OM reject mesagess that are not name space qualified
-// But got to comment this to interop with Axis.1.x
-// if (namespace == null) {
-// throw new OMException("All elements must be namespace qualified!");
-// }
         if (isSOAPElement) {
             if (node.getNamespace() != null &&
                     !node.getNamespace().getName().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI) &&
@@ -428,7 +417,6 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
 
     }
 
-//added
 /*these three methods to set and check detail element processing or mandatory fault element are present
 */
     public OMNamespace getEnvelopeNamespace() {

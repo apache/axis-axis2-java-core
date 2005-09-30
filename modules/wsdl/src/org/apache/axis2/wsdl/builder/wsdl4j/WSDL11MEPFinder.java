@@ -25,26 +25,6 @@ import javax.wsdl.OperationType;
 public class WSDL11MEPFinder {
 
     public static String getMEP(Operation operation) {
-//		boolean inMessageExist = false, outMessageExist = false;
-//		if(null != operation.getInput()){
-//			inMessageExist = true;
-//		}
-//		if(null != operation.getOutput()){
-//			outMessageExist = true;
-//		}
-//		
-//		if(inMessageExist && outMessageExist){
-//			return WSDLConstants.MEP_URI_IN_OUT;
-//		}
-//		
-//		if(inMessageExist && !outMessageExist){
-//			return WSDLConstants.MEP_URI_IN_ONLY;
-//		}
-//		
-//		if(!inMessageExist && outMessageExist){
-//			return WSDLConstants.MEP_URI_OUT_ONLY;
-//		}
-//
         OperationType operationType = operation.getStyle();
         if (null != operationType) {
 

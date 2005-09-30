@@ -83,7 +83,6 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
      * @see #extractHeaderBlocks(String) extractHeaderBlocks(java.lang.String)
      */
     public Iterator examineHeaderBlocks(String paramRole) {
-//    	
         Iterator headerBlocksIter = this.getChildren();
         ArrayList headersWithGivenActor = new ArrayList();
         

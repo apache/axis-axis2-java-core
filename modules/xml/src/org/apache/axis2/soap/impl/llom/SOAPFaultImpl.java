@@ -149,7 +149,6 @@ public abstract class SOAPFaultImpl extends SOAPElement
 
     protected void putExceptionToSOAPFault(Exception e) throws SOAPProcessingException {
         StringWriter sw = new StringWriter();
-//        sw.write(e.getMessage());
         e.printStackTrace(new PrintWriter(sw));
         sw.flush();
         getDetail();

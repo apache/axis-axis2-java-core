@@ -39,11 +39,6 @@ import java.util.Stack;
  */
 public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     /**
-     * Field log
-     */
-//    private Log log = LogFactory.getLog(getClass());
-
-    /**
      * Field navigator
      */
     private OMNavigator navigator;
@@ -962,7 +957,6 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @return
      */
     public String getVersion() {
-//        throw new UnsupportedOperationException();
         return "1.0"; //todo put the constant
     }
 
@@ -991,8 +985,6 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @return
      */
     public String getCharacterEncodingScheme() {
-//        throw new UnsupportedOperationException();
-//        throw new UnsupportedOperationException();
         return "utf-8";
     }
 

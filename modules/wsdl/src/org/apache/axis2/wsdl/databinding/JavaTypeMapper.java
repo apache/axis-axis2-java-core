@@ -20,18 +20,6 @@ package org.apache.axis2.wsdl.databinding;
 public class JavaTypeMapper extends TypeMappingAdapter {
 
     public JavaTypeMapper() {
-        //add the basic types to the table
-//       this.map.put(new QName(XSD_SCHEMA_URL,"string"),String.class.getName());
-//       this.map.put(new QName(XSD_SCHEMA_URL,"boolean"),Boolean.class.getName());
-//       this.map.put(new QName(XSD_SCHEMA_URL,"double"),Double.class.getName());
-//       this.map.put(new QName(XSD_SCHEMA_URL,"long"),Long.class.getName());
-//       this.map.put(new QName(XSD_SCHEMA_URL,"float"),Float.class.getName());
-//       this.map.put(new QName(XSD_SCHEMA_URL,"int"),Integer.class.getName());
-//       this.map.put(new QName(XSD_SCHEMA_URL,"short"),Short.class.getName());
-//       this.map.put(new QName(XSD_SCHEMA_URL,"byte"),Byte.class.getName());
-//       this.map.put(new QName(XSD_SCHEMA_URL,"decimal"),BigDecimal.class.getName());
-//       this.map.put(new QName(XSD_SCHEMA_URL,"date"),Date.class.getName());
-//       this.map.put(new QName(XSD_SCHEMA_URL,"QName"),QName.class.getName());
     }
 
     public String toString() {

@@ -142,9 +142,6 @@ public class XMLComparator {
             if (omNode instanceof OMElement) {
                 OMElement elementOneChild = (OMElement) omNode;
                 OMElement elementTwoChild = null;
-//                if ("Reference4".equals(elementOneChild.getLocalName())) {
-//                    log.info("Reference4");
-//                }
                 //Do the comparison only if the element is not ignorable
                 if (!isIgnorable(elementOneChild)){
                     elementTwoChild = elementTwo.getFirstChildWithName(

@@ -102,7 +102,6 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
             this.databindingType = XSLTConstants.DataBindingTypes.NONE;
         } else {
              this.databindingType = XSLTConstants.DataBindingTypes.NONE;
-//            throw new UnsupportedOperationException();
         }
     }
 

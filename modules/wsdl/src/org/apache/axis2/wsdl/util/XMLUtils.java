@@ -50,9 +50,6 @@ import java.util.Stack;
 
 
 public class XMLUtils {
-//    protected Log log =
-//        LogFactory.getLog(getClass().getName());
-        
     public static final String charEncoding = "ISO-8859-1";
     private static final String saxParserFactoryProperty =
         "javax.xml.parsers.SAXParserFactory";
@@ -189,32 +186,6 @@ public class XMLUtils {
     
     private static boolean tryReset= true;
 
-//    /** Get a SAX parser instance from the JAXP factory.
-//     *
-//     * @return a SAXParser instance.
-//     */
-//    public static synchronized SAXParser getSAXParser() {
-//        if(!saxParsers.empty()) {
-//            return (SAXParser )saxParsers.pop();
-//        }
-//
-//        try {
-//            SAXParser parser = saxFactory.newSAXParser();
-//            parser.getParser().setEntityResolver(new DefaultEntityResolver());
-//            XMLReader reader = parser.getXMLReader(); 
-//            reader.setEntityResolver(new DefaultEntityResolver());
-//            reader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
-//            return parser;
-//        } catch (ParserConfigurationException e) {
-//            log.error(Messages.getMessage("parserConfigurationException00"), e);
-//            return null;
-//        } catch (SAXException se) {
-//            log.error(Messages.getMessage("SAXException00"), se);
-//            return null;
-//        }
-//    }
-
-
     /** Return a SAX parser for reuse.
      * @param parser A SAX parser that is available for reuse
      */
@@ -225,10 +196,6 @@ public class XMLUtils {
         try{
             XMLReader xmlReader= parser.getXMLReader();
             if(null != xmlReader){
-//                xmlReader.setContentHandler(doNothingContentHandler);
-//                xmlReader.setDTDHandler(doNothingContentHandler);
-//                xmlReader.setEntityResolver(doNothingContentHandler);
-//                xmlReader.setErrorHandler(doNothingContentHandler);
                 synchronized (XMLUtils.class ) {
                     saxParsers.push(parser);
                 }
@@ -426,8 +393,6 @@ public class XMLUtils {
     
     public static class ParserErrorHandler implements ErrorHandler
     {
-//        protected static Log log =
-//            LogFactory.getLog(ParserErrorHandler.class.getName());
         /**
          * Returns a string describing parse exception details
          */
@@ -445,8 +410,6 @@ public class XMLUtils {
         // See SAX documentation for more info.
 
         public void warning(SAXParseException spe) throws SAXException {
-//            if (log.isDebugEnabled())
-//                log.debug( Messages.getMessage("warning00", getParseExceptionInfo(spe)));
         }
         
         public void error(SAXParseException spe) throws SAXException {

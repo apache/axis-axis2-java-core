@@ -82,10 +82,6 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
 
                 //create the type mapper
                 JavaTypeMapper mapper = new JavaTypeMapper();
-                int length = 0;
-                for (int j = 0; j < length; j++) {
-//                    mapper.addTypeMapping();
-                }
                 //set the type mapper to the config
                 configuration.setTypeMapper(mapper);
 

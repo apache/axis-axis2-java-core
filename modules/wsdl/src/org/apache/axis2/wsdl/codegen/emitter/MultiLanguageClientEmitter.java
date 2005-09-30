@@ -63,7 +63,6 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
     private static final String CALL_BACK_HANDLER_SUFFIX = "CallbackHandler";
     private static final String STUB_SUFFIX = "Stub";
     private static final String TEST_SUFFIX = "Test";
-//    private static final String LOCAL_TEST_SUFFIX = "LocalTest";
     private static final String SERVICE_CLASS_SUFFIX = "Skeleton";
     private static final String TEST_PACKAGE_NAME_SUFFIX = ".test";
     private static final String DATABINDING_SUPPORTER_NAME_SUFFIX = "DatabindingSupporter";

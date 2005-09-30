@@ -106,17 +106,6 @@ public class SOAP11FaultCodeImpl extends SOAPFaultCodeImpl {
         String text = this.getValue().getText();
         writer.writeCharacters(text);
         writer.writeEndElement();
-
-//        //serilize siblings
-//        if (this.nextSibling != null) {
-//            nextSibling.serialize(omOutput);
-//        } else if (this.parent != null) {
-//            if (!this.parent.isComplete()) {
-//                builder.setCache(cache);
-//                builder.next();
-//            }
-//        }
-
     }
 
 

@@ -67,7 +67,6 @@ public class ProjectResourceBundle extends ResourceBundle {
         if (log.isDebugEnabled()) {
             log.debug(this.toString() + "::handleGetObject(" + key + ")");
         }
-//            return resourceBundle.handleGetObject(key);
         Object obj;
         try {
             obj = resourceBundle.getObject(key);
