@@ -348,7 +348,7 @@ public class CommonsHTTPTransportSender
             String encoding = omOutput.getCharSetEncoding();
             String contentType = omOutput.getContentType();
             if(encoding != null){
-                contentType += ";charset=" + encoding;
+                contentType += "; charset=" + encoding;
             }
 
             // action header is not mandated in SOAP 1.2. So putting it, if available
@@ -483,8 +483,8 @@ public class CommonsHTTPTransportSender
         postMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
         if (httpVersion != null) {
             if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
-                //postMethod.setHttp11(false); todo method to findout the transport version...
-                //allowing keep-alive for 1.0
+
+                httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
                 postMethod.setRequestHeader(
                         HTTPConstants.HEADER_CONNECTION,
                         HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
