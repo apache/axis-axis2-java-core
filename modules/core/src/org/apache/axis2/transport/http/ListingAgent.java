@@ -273,11 +273,6 @@ public class ListingAgent {
             req.getSession().setAttribute(Constants.LOGGED, "Yes");
             res.sendRedirect(ADMIN_JSP_NAME);
         } else {
-//            res.setContentType("text/css");
-//            PrintWriter out_writer = new PrintWriter(out);
-//            out_writer.println("Invalid user name password");
-//            out_writer.flush();
-//            out_writer.close();
             throw new AdminAppException(Messages.getMessage("invaliduser"));
         }
     }
@@ -508,21 +503,7 @@ public class ListingAgent {
         if (req.getParameter("submit") != null) {
             String serviceName = req.getParameter("service");
             String turnoff = req.getParameter("turnoff") ;
-//            String remove = req.getParameter("remove");
             if(serviceName !=null){
-//                if (remove !=null){
-//                    ServiceDescription service =  configContext.getAxisConfiguration().
-//                            getService(new QName(serviceName));
-//                    if(service != null ){
-//                        File servicefile = new File(service.getFileName());
-//                        if(servicefile.exists()){
-//                            configContext.getAxisConfiguration().removeService(
-//                                    new QName(serviceName));
-//                            servicefile.delete();
-//                        }
-//
-//                    }
-//                }
                 if(turnoff !=null){
                     configContext.getAxisConfiguration().removeService(serviceName);
                     res.setContentType("text/css");

@@ -72,7 +72,6 @@ public class ConfigurationContextFactory {
             if(configurationContext == null){
                 configurationContext = new ConfigurationContext(configuration);
             }
-//            configurationContext = new ConfigurationContext(configuration);
             phaseResolver.buildTranspotsChains();
             initModules(configurationContext);
             initTransports(configurationContext);
@@ -118,7 +117,6 @@ public class ConfigurationContextFactory {
                 engineContext = new ConfigurationContext(configuration);
             }
 
-//            engineContext = new ConfigurationContext(configuration);
             phaseResolver.buildTranspotsChains();
             initModules(engineContext);
             initTransports(engineContext);

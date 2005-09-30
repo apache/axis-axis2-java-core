@@ -88,7 +88,6 @@ public class SMTPWorker extends Thread {
                     .getOutputStream()));
         } catch (IOException ex) {
             log.info(ex.getMessage());
-//            ex.printStackTrace();
         }
     }
 

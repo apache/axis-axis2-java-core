@@ -131,7 +131,6 @@ public class DeploymentClassLoader extends URLClassLoader {
                 return cla;
             }
             if (!foundClass) {
-//                throw new ClassNotFoundException("Class Not found : " + name);
                 throw new ClassNotFoundException(Messages.getMessage(
                         DeploymentErrorMsgs.CLASS_NOT_FOUND, name));
             }

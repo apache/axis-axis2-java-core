@@ -36,8 +36,6 @@ import javax.xml.namespace.QName;
  */
 public class Call extends InOutMEPClient {
 
-// Unused? --GD
-//    private HashMap properties;
     protected static OperationDescription operationTemplate;
     private MessageContext lastResponseMessage;
 
@@ -209,7 +207,6 @@ public class Call extends InOutMEPClient {
         QName assumedServiceName = new QName("AnonymousService");
         ServiceDescription axisService = new ServiceDescription(assumedServiceName);
         operationTemplate = new OperationDescription(new QName("TemplateOperation"));
-//        ServiceGroupDescription serviceGroupDescription = new ServiceGroupDescription(sysContext.getAxisConfiguration());
 
         PhasesInfo info =((AxisConfigurationImpl)sysContext.getAxisConfiguration()).getPhasesinfo();
         //to set the operation flows
@@ -218,15 +215,8 @@ public class Call extends InOutMEPClient {
         }
         axisService.addOperation(operationTemplate);
         sysContext.getAxisConfiguration().addService(axisService);
-//        serviceGroupDescription.addService(axisService);
-//        serviceGroupDescription.getServiceGroupContext(sysContext);
-//        serviceGroupDescription.setServiceGroupName(assumedServiceName.getLocalPart());
-//        sysContext.getAxisConfiguration().addServiceGroup(serviceGroupDescription);
 
-//        return sysContext.createServiceContext(assumedServiceName);
-        return     axisService.getParent().getServiceGroupContext(sysContext).getServiceContext(assumedServiceName.getLocalPart());
-//        return serviceGroupDescription.getServiceGroupContext(sysContext).getServiceContext(
-//                assumedServiceName.getLocalPart());
+        return axisService.getParent().getServiceGroupContext(sysContext).getServiceContext(assumedServiceName.getLocalPart());
     }
 
     /**

@@ -92,9 +92,6 @@ public class AxisFileStorage extends AbstractStorage {
     }
 
     private void updateFileState() throws IOException {
-//        ObjectOutput out = new ObjectOutputStream(fos);
-//        out.writeObject(map);
-//        out.close();
     }
 
     public boolean clean() {

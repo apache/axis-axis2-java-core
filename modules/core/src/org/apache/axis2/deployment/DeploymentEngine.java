@@ -95,15 +95,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private String engineConfigName;
 
-    /**
-     * This to keep a referance to serverMetaData object
-     */
-    // private static ServerMetaData axisGlobal = new ServerMetaData();
-
     private ArchiveFileData currentArchiveFile;
-
-    //tobuild chains
-//    private ConfigurationContextFactory factory;
 
     /**
      * To store the module specified in the server.xml at the document parsing time
@@ -190,7 +182,6 @@ public class DeploymentEngine implements DeploymentConstants {
                 throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.CONFIG_NOT_FOUND));
             }
         }
-//        factory = new ConfigurationContextFactory();
         this.engineConfigName = repositoryName + '/' + serverXMLFile;
     }
 
@@ -243,8 +234,6 @@ public class DeploymentEngine implements DeploymentConstants {
             axisConfig = createEngineConfig();
             AxisConfigBuilder builder =new AxisConfigBuilder(in,this,axisConfig);
             builder.populateConfig();
-//            DeploymentParser parser = new DeploymentParser(in, this);
-            // parser.processGlobalConfig(((AxisConfigurationImpl) axisConfig), AXIS2CONFIG);
         } catch (FileNotFoundException e) {
             throw new DeploymentException(e);
         }
@@ -275,7 +264,6 @@ public class DeploymentEngine implements DeploymentConstants {
             checkClientHome(clientHome);
             isRepositoryExist = true;
             try {
-//                engineConfigName = axis2repository + "/axis2.xml";
                 File tempfile = new File(engineConfigName);
                 in = new FileInputStream(tempfile);
             } catch (FileNotFoundException e) {
@@ -289,9 +277,6 @@ public class DeploymentEngine implements DeploymentConstants {
         axisConfig = createEngineConfig();
         AxisConfigBuilder builder =new AxisConfigBuilder(in,this,axisConfig);
         builder.populateConfig();
-//            DeploymentParser parser = new DeploymentParser(in, this);
-//            parser.processGlobalConfig(((AxisConfigurationImpl) axisConfig),
-//                    AXIS2CONFIG);
         if (isRepositoryExist) {
             hotDeployment = false;
             hotUpdate = false;
@@ -345,7 +330,6 @@ public class DeploymentEngine implements DeploymentConstants {
                 throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.CONFIG_NOT_FOUND));
             }
         }
-//        factory = new ConfigurationContextFactory();
         this.engineConfigName = clientHome + '/' + clientXML;
     }
 
@@ -601,16 +585,12 @@ public class DeploymentEngine implements DeploymentConstants {
                                 archiveReader.processServiceGroup(currentArchiveFile.getAbsolutePath(),
                                         this,
                                         sericeGroup,explodedDir);
-//                                archiveReader.readServiceArchive(currentArchiveFile.getAbsolutePath(),
-//                                        this,
-//                                        service);
                                 addnewService(sericeGroup);
                                 log.info(Messages.getMessage(
                                         DeploymentErrorMsgs.DEPLOYING_WS, currentArchiveFile.getName()));
                             } catch (DeploymentException de) {
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
                                         currentArchiveFile.getName(),de.getMessage()));
-//                            log.info("DeploymentException  " + de);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 de.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" +
@@ -618,7 +598,6 @@ public class DeploymentEngine implements DeploymentConstants {
                             } catch (AxisFault axisFault) {
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
                                         currentArchiveFile.getName(),axisFault.getMessage()));
-//                            log.info("AxisFault  " + axisFault);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 axisFault.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" +
@@ -626,7 +605,6 @@ public class DeploymentEngine implements DeploymentConstants {
                             } catch (Exception e) {
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
                                         currentArchiveFile.getName(),e.getMessage()));
-//                            log.info("Exception  " + e);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 e.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" +
@@ -652,23 +630,14 @@ public class DeploymentEngine implements DeploymentConstants {
                                 addNewModule(metaData);
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
                                         metaData.getName().getLocalPart()));
-//                                    "Moduel WS Name  " +
-//                                    currentArchiveFile.getName() +
-//                                    " modulename :" +
-//                                    metaData.getName());
                             } catch (DeploymentException e) {
-//                                e.printStackTrace();
                                 log.info(Messages.getMessage(
                                         DeploymentErrorMsgs.INVALID_MODULE, currentArchiveFile.getName(),
                                         e.getMessage()));
-//                                    "Invalid module" +
-//                                    currentArchiveFile.getName());
-//                            log.info("DeploymentException  " + e);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 e.printStackTrace(error_ptintWriter);
                                 moduleStatus = "Error:\n" + errorWriter.toString();
                             } catch (AxisFault axisFault) {
-//                                axisFault.printStackTrace();
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE, currentArchiveFile.getName(),
                                         axisFault.getMessage()));
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
@@ -686,7 +655,6 @@ public class DeploymentEngine implements DeploymentConstants {
                     }
                 } catch (AxisFault axisFault) {
                     log.info(Messages.getMessage(DeploymentErrorMsgs.SETTING_CL, axisFault.getMessage()));
-//                    continue;
                 }
 
             }
@@ -798,12 +766,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
             ServiceBuilder builder = new ServiceBuilder(serviceInputStream,this,axisService);
             builder.populateService(builder.buildOM());
-
-//            DeploymentParser schme = new DeploymentParser(serviceInputStream,
-//                    this);
-//            schme.parseServiceXML(axisService);
             loadServiceProperties(axisService);
-//            axisConfig.addService(axisService);
         }  catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
         } catch (XMLStreamException e) {

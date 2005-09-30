@@ -92,18 +92,6 @@ public class ServiceGroupContext extends AbstractContext {
         }
     }
 
-
-
-//    public void registerServiceContext(ServiceContext serviceContext) throws AxisFault {
-//        String serviceName = serviceContext.getServiceConfig().
-//                getName().getLocalPart();
-//        ServiceContext serviceContextAlreadyRegistered = (ServiceContext) serviceContextMap.get(serviceName);
-//        if (serviceContextAlreadyRegistered == null) {
-//            serviceContextMap.put(serviceName, serviceContext);
-//            serviceContext.setParent(this);
-//        }
-//    }
-
     public ServiceGroupDescription getDescription() {
         return description;
     }

@@ -242,11 +242,6 @@ public class OperationContext extends AbstractContext {
         }
     }
 
-
-//    public MessageContext createMessageContext(AxisM){
-//    
-//    }
-
     public void setParent(AbstractContext context) {
         super.setParent(context);
         this.operationContextMap = getServiceContext().getEngineContext()

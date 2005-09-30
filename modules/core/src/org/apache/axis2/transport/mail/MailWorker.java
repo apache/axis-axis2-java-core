@@ -153,7 +153,6 @@ public class MailWorker implements AxisWorker {
                 }
             } catch (AxisFault e1) {
                 log.error(e);
-//                e1.printStackTrace();
             }
         }
 

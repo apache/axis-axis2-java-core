@@ -240,10 +240,6 @@ public class ConfigurationContext extends AbstractContext {
 
             serviceContext = serviceGroupContext.getServiceContext(messageContext.getServiceDescription().getName().
                     getLocalPart());
-//            if (serviceContext == null) {
-//                serviceContext = new ServiceContext(messageContext.getServiceDescription(), serviceGroupContext);
-//                serviceGroupContext.registerServiceContext(serviceContext);
-//            }
         } else {
             // either the key is null or no SGC is found from the give key
             if (isNull(serviceGroupContextId)) {
@@ -251,11 +247,8 @@ public class ConfigurationContext extends AbstractContext {
                 messageContext.setServiceGroupContextId(serviceGroupContextId);
             }
             if (messageContext.getServiceDescription() != null) {
-//                String servicName = messageContext.getServiceDescription().getName().getLocalPart();
                 ServiceGroupDescription servicGroupDescription =
                         messageContext.getServiceDescription().getParent();
-//                ServiceGroupDescription servicGroupDescription =
-//                        this.getAxisConfiguration().getServiceGroup(servicName);
                 serviceGroupContext = servicGroupDescription.getServiceGroupContext(this);
                 serviceContext = serviceGroupContext.getServiceContext(
                         messageContext.getServiceDescription().getName().

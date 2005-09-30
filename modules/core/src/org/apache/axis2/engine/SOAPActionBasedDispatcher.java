@@ -35,10 +35,6 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
             new QName("http://axis.ws.apache.org",
                     "SOAPActionBasedDispatcher");
 
-//    public SOAPActionBasedDispatcher() {
-//        init(new HandlerDescription(NAME));
-//    }
-
      public void initDispatcher() {
         init(new HandlerDescription(NAME));
     }

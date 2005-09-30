@@ -38,10 +38,6 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
             new QName("http://axis.ws.apache.org",
                     "AddressingBasedDispatcher");
 
-//    public AddressingBasedDispatcher() {
-//        init(new HandlerDescription(NAME));
-//    }
-
     public void initDispatcher() {
         init(new HandlerDescription(NAME));
     }

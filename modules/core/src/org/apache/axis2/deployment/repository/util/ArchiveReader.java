@@ -79,9 +79,6 @@ public class ArchiveReader implements DeploymentConstants {
 
                     WSDLServiceImpl serviceimpl = (WSDLServiceImpl) womDescription.getServices().get(iterator.next());
                     service = new ServiceDescription(serviceimpl);
-//                    service =
-//                            (ServiceDescription) womDescription.getServices()
-//                            .get(iterator.next());
                 }
                 if (!foundservice) {
                     service = new ServiceDescription();
@@ -92,8 +89,6 @@ public class ArchiveReader implements DeploymentConstants {
                 service = new ServiceDescription();
                 log.info(Messages.getMessage(DeploymentErrorMsgs.WSDL_FILE_NOT_FOUND,
                         file.getName()));
-//                        "WSDL file not found for the service :  " +
-//                        file.getName());
             }
         } catch (Exception e) {
             throw new DeploymentException(e);
@@ -345,36 +340,14 @@ public class ArchiveReader implements DeploymentConstants {
                 File userHomedir = new File(userHome);
                 File repository = new File(userHomedir, ".axis2home");
                 modules = new File(repository, "modules");
-
-//
-//
-//                if (!repository.exists()) {
-//                    repository.mkdirs();
-//                    modules = new File(repository, "modules");
-//                    modules.mkdirs();
-//                } else {
-//                    modules = new File(repository, "modules");
-//                    if (!modules.exists()) {
-//                        modules.mkdirs();
-//                    }
-//                }
             } else {
                 modules = new File(axis2repository, "modules");
-//                if (!modules.exists()) {
-//                    modules = new File(axis2repository, "modules");
-//                    modules.mkdirs();
-//                }
             }
             String modulearchiveName = moduleName + ".mar";
             modulearchiveFile = new File(modules, modulearchiveName);
             if (modulearchiveFile.exists()) {
                 return modulearchiveFile;
             }
-//
-//            else {
-//                modulearchiveFile.createNewFile();
-//            }
-//
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             InputStream in = cl.getResourceAsStream("modules/" + moduleName + ".mar");
             if (in == null) {

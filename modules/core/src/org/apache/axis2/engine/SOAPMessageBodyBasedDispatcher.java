@@ -41,13 +41,6 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
     String serviceName = null;
     QName operationName = null;
 
-    /**
-     * Constructor Dispatcher
-     */
-//    public SOAPMessageBodyBasedDispatcher() {
-//        init(new HandlerDescription(NAME));
-//    }
-
      public void initDispatcher() {
         init(new HandlerDescription(NAME));
     }

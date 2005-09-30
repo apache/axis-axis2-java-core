@@ -72,13 +72,6 @@ public class ServiceDescription
 
     //to keep the time that last update time of the service
     private long lastupdate ;
-    /**
-     * TODO this should be in the WSDLInterface, yet we want it to have in the
-     * the Services, so we put this here for M1 until we foud better way to do
-     * that
-     */
-//    protected final HashMap operationsMap = new HashMap();
-
     private String  serviceDescription ;
     private String fileName = "";
 
@@ -650,13 +643,6 @@ public class ServiceDescription
         try {
             Definition wsdlDefinition = this.getWSDLDefinition();
             if (wsdlDefinition != null) {
-//                Iterator sreviceitr = wsdlDefinition.getServices().keySet()
-//                        .iterator();
-//                while (sreviceitr.hasNext()) {
-//                    wsdlDefinition.removeService((QName) sreviceitr.next());
-//                }
-
-                //  wsdlDefinition.removeService(this.getName());
                 Collection services =  wsdlDefinition.getServices().values();
 
                 for (Iterator iterator = services.iterator(); iterator.hasNext();) {

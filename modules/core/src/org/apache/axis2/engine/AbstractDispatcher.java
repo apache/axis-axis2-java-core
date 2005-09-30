@@ -97,26 +97,6 @@ public abstract class AbstractDispatcher extends AbstractHandler {
                 msgctx.setOperationDescription(operationDescription);
             }
         }
-
-//        if (msgctx.getServiceContext() == null) {
-//            ServiceDescription axisService = findService(msgctx);
-//            if (axisService != null) {
-//                msgctx.setServiceContext(
-//                        axisService.findServiceContext(msgctx));
-//            }
-//        }
-//
-//        if (msgctx.getServiceContext() != null &&
-//                msgctx.getOperationContext() == null) {
-//            OperationDescription axisOperation = findOperation(
-//                    msgctx.getServiceContext().getServiceConfig(), msgctx);
-//            if (axisOperation != null) {
-//                OperationContext operationContext = axisOperation.findOperationContext(
-//                        msgctx, msgctx.getServiceContext());
-//                msgctx.setOperationContext(operationContext);
-//            }
-//        }
-
     }
 
     /**

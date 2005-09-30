@@ -91,8 +91,5 @@ public class MessageSender extends InOnlyMEPClient {
         ServiceGroupContext serviceGroupContext = axisService.getParent().getServiceGroupContext(sysContext);
 
         return serviceGroupContext.getServiceContext(assumedServiceName.getLocalPart());
-        //todo fixme Chinthaka
-//        return sysContext.createServiceContext(
-//                assumedServiceName);
     }
 }

@@ -59,11 +59,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      */
     private final HashMap modules = new HashMap();
 
-    /**
-     * Field services
-     */
-//    private final HashMap services = new HashMap();
-
     private final HashMap serviceGroups = new HashMap();
     private final HashMap transportsIn = new HashMap();
 
@@ -126,33 +121,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
                 new Phase(PhaseMetadata.PHASE_TRANSPORTIN));
         inPhasesUptoAndIncludingPostDispatch.add(
                 new Phase(PhaseMetadata.PHASE_PRE_DISPATCH));
-
-//        Phase dispatch = new Phase(PhaseMetadata.PHASE_DISPATCH);
-//        AddressingBasedDispatcher add_dispatch = new AddressingBasedDispatcher();
-//        add_dispatch.getHandlerDesc().setParent(this);
-//        dispatch.addHandler(add_dispatch, 0);
-//
-//        RequestURIBasedDispatcher uri_diaptch = new RequestURIBasedDispatcher();
-//        uri_diaptch.getHandlerDesc().setParent(this);
-//        dispatch.addHandler(uri_diaptch, 1);
-//
-//        SOAPActionBasedDispatcher soapActionBased_dispatch = new SOAPActionBasedDispatcher();
-//        soapActionBased_dispatch.getHandlerDesc().setParent(this);
-//        dispatch.addHandler(soapActionBased_dispatch, 2);
-//
-//        SOAPMessageBodyBasedDispatcher soapMessageBodybased_dispatch =
-//                new SOAPMessageBodyBasedDispatcher();
-//        soapMessageBodybased_dispatch.getHandlerDesc().setParent(this);
-//        dispatch.addHandler(soapMessageBodybased_dispatch, 3);
-//
-//        inPhasesUptoAndIncludingPostDispatch.add(dispatch);
-//
-//        Phase postDispatch = new Phase(PhaseMetadata.PHASE_POST_DISPATCH);
-//        DispatchingChecker dispatchingChecker = new DispatchingChecker();
-//        dispatchingChecker.getHandlerDesc().setParent(this);
-//
-//        postDispatch.addHandler(dispatchingChecker);
-//        inPhasesUptoAndIncludingPostDispatch.add(postDispatch);
     }
 
 
@@ -479,9 +447,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
                     tobeEnaged = false;
                     //Instead of throwing the error, we can just log this problem
                     log.info("Attempt to engage an already engaged module "+ qName);
-//                    throw new AxisFault(moduleref.getLocalPart() +
-//                            " module has alredy engaged globally" +
-//                            "  operation terminated !!!");
                 }
             }
         } else {
@@ -557,28 +522,4 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     public ModuleConfiguration getModuleConfig(QName moduleName){
         return  (ModuleConfiguration)moduleConfigmap.get(moduleName);
     }
-
-
-//    /**
-//     * To split a given service name into it serviceGroupName and Service Name
-//     * if the service Name is foo:bar then serviceGroupName ="foo" and ServiceName ="bar"
-//     * but if the service name is only the foo we asume ServiceGroupName="foo" ans ServiceName="foo"
-//     * meaning foo := foo:foo
-//     * @param serviceName
-//     * @return String [] <code>String</code>
-//     */
-//    public static String [] splitServiceName(String serviceName){
-//        String namePart [] = new String[2];
-//        int index = serviceName.indexOf(Constants.SERVICE_NAME_SPLIT_CHAR);
-//        if(index > 0){
-//            namePart[0] = serviceName.substring(0,index);
-//            namePart[1] = serviceName.substring(index +1 ,serviceName.length());
-//        } else {
-//            namePart[0] = serviceName;
-//            namePart[1] = serviceName;
-//        }
-//        return namePart;
-//    }
-
-
 }

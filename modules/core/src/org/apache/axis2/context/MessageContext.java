@@ -770,34 +770,6 @@ public class MessageContext extends AbstractContext {
             // search in Configuration Context
             obj = configurationContext.getProperty(key, persistent);
         }
-
-//
-//        if (obj == null
-//            && operationContext == null
-//            && serviceContext != null) {
-//            obj = serviceContext.getProperty(key, persistent);
-//        }
-//        if (obj == null && operationContext == null) {
-//            obj = configurationContext.getProperty(key, persistent);
-//        }
-        //Search the configurations
-//        Parameter param = null;
-//        if (obj == null && operationContext != null) {
-//            OperationDescription opDesc = operationContext.getAxisOperation();
-//            param = opDesc.getParameter(key);
-//        }
-//        if (param == null && serviceContext != null) {
-//            ServiceDescription serviceDesc = serviceContext.getServiceConfig();
-//            param = serviceDesc.getParameter(key);
-//        }
-//        if (param == null && configurationContext != null) {
-//            AxisConfiguration baseConfig =
-//                configurationContext.getAxisConfiguration();
-//            param = baseConfig.getParameter(key);
-//        }
-//        if (param != null) {
-//            obj = param.getValue();
-//        }
         return obj;
     }
 

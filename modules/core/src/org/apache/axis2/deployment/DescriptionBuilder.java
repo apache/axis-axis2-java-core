@@ -165,34 +165,6 @@ public class DescriptionBuilder implements DeploymentConstants{
         return handler;
     }
 
-
-    /**
-     * To get the list og modules that is requird to be engage globally
-     * @param moduleRefs  <code>java.util.Iterator</code>
-     * @throws DeploymentException   <code>DeploymentException</code>
-     */
-//    protected void processModuleRefs(Iterator moduleRefs) throws DeploymentException {
-//        try {
-//            while (moduleRefs.hasNext()) {
-//                OMElement moduleref = (OMElement) moduleRefs.next();
-//                OMAttribute moduleRefAttribute = moduleref.getAttribute(
-//                        new QName(REF));
-//                if(moduleRefAttribute !=null){
-//                    String refName = moduleRefAttribute.getValue();
-//                    if(engine.getModule(new QName(refName)) == null) {
-//                        throw new DeploymentException(Messages.getMessage(
-//                                DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));
-//                    } else {
-//                        engine.getCurrentFileItem().addModule(new QName(refName));
-//                    }
-//                }
-//            }
-//        }catch (AxisFault axisFault) {
-//            throw   new DeploymentException(axisFault);
-//        }
-//    }
-
-
     /**
      * To get the Paramter object out from the OM
      * @param paramters <code>Parameter</code>

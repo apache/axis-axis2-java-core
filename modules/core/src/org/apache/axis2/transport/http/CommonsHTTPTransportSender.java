@@ -610,17 +610,6 @@ public class CommonsHTTPTransportSender
 
         if (getMethod.getStatusCode() == HttpStatus.SC_OK) {
             processResponse(getMethod, msgContext);
-
-//            obatainHTTPHeaderInformation(getMethod, msgContext);
-//
-//            InputStream in = getMethod.getResponseBodyAsStream();
-//            if (in == null) {
-//                throw new AxisFault(
-//                        Messages.getMessage("canNotBeNull", "InputStream"));
-//            }
-//            msgContext.getOperationContext().setProperty(
-//                    MessageContext.TRANSPORT_IN,
-//                    in);
         } else if (getMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
             return;
         }else  if (getMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR){

@@ -67,7 +67,6 @@ public class SMTPServer extends Thread {
             }
         } catch (IOException ex) {
             log.info(ex.getMessage());
-//            ex.printStackTrace();
         }
 
         while (running) {
@@ -85,7 +84,6 @@ public class SMTPServer extends Thread {
             } catch (IOException ex) {
                 if (running) {
                     log.info(ex.getMessage());
-//                    ex.printStackTrace();
                 }
             }
         }
