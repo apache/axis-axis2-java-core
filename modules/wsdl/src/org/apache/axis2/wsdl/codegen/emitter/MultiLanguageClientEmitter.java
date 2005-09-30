@@ -857,12 +857,14 @@ public abstract class MultiLanguageClientEmitter implements Emitter {
         Collection col = boundInterface.getOperations().values();
         String portTypeName = reformatName(boundInterface.getName().getLocalPart(),false);
 
-        List soapHeaderInputParameterList = new ArrayList();
-        List soapHeaderOutputParameterList = new ArrayList();
         Element methodElement ;
         WSDLOperation operation ;
 
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+        	
+            List soapHeaderInputParameterList = new ArrayList();
+            List soapHeaderOutputParameterList = new ArrayList();
+            
             operation = (WSDLOperation) iterator.next();
             methodElement = doc.createElement("method");
             String localPart = reformatName(operation.getName().getLocalPart(),false);
