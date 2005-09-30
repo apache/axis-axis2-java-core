@@ -209,16 +209,16 @@ public class XSRound2InteropTest extends WhiteMesaIneterop {
      * operation echoBase64
      * todo - this test failed, have tocheck the dateTime format that remote server asking
      */
-//    public void testR2BaseEchoDate() throws AxisFault  {
-//        url = "http://localhost:8010/";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoDateClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "XSBaseDateRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//   }
+    public void testR2BaseEchoDate() throws AxisFault  {
+        url = "http://localhost:8010/";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoDateClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "XSBaseDateRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+   }
 
 
     /**
@@ -269,33 +269,5 @@ public class XSRound2InteropTest extends WhiteMesaIneterop {
         assertTrue(results);
     }
 
-//
-//    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-//
-//        boolean ok = false;
-//        try {
-//            if (retEnv != null) {
-//                SOAPBody body = retEnv.getBody();
-//                if (!body.hasFault()) {
-//                    //OMElement firstChild = (OMElement) body.getFirstElement();
-//
-//                    InputStream stream = XSRound2InteropTest.class.getClassLoader().getResourceAsStream(filePath);
-//
-//                    XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-//                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-//                    SOAPEnvelope refEnv = (SOAPEnvelope) builder.getDocumentElement();
-//                    //OMElement refNode = (OMElement) resEnv.getBody().getFirstElement();
-//                    XMLComparator comparator = new XMLComparator();
-//                    ok = comparator.compare(retEnv, refEnv);
-//                } else
-//                    return false;
-//            } else
-//                return false;
-//
-//        } catch (Exception e) {
-//            throw new AxisFault(e);
-//        }
-//        return ok;
-//    }
 }
 

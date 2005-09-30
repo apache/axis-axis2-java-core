@@ -23,8 +23,6 @@ import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.interop.sun.round4.simple.util.SunGroupHClientUtil;
 import org.apache.axis2.om.OMElement;
 
-import java.io.StringWriter;
-
 public class EchoBlockingClient {
     public OMElement sendMsg(SunGroupHClientUtil util,String soapAction){
         OMElement firstchild=null;
@@ -41,12 +39,6 @@ public class EchoBlockingClient {
             //Blocking invocation
 
             firstchild = call.invokeBlocking("",util.getEchoOMElement());
-
-            StringWriter writer = new StringWriter();
-
-
-
-            System.out.println(writer.toString());
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();

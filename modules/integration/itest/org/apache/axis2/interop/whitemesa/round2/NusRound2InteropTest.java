@@ -274,16 +274,16 @@ public class NusRound2InteropTest extends WhiteMesaIneterop {
      * operation echoStructAsSimpleTypes
      */
     //todo Test failed !!!
-//    public void testR2GBEchoStructAsSimpleTypes() throws AxisFault {
-//        url = "http://dietrich.ganx4.com/nusoap/testbed/round2_groupb_server.php";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupbEchoStructAsSimpleTypesUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "NusGroupbStructAsSimpleTypesRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2GBEchoStructAsSimpleTypes() throws AxisFault {
+        url = "http://dietrich.ganx4.com/nusoap/testbed/round2_groupb_server.php";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupbEchoStructAsSimpleTypesUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "NusGroupbStructAsSimpleTypesRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -291,16 +291,16 @@ public class NusRound2InteropTest extends WhiteMesaIneterop {
      * operation echoSimpleTypesAsStruct
      */
     //todo Test failed !!!
-//    public void testR2GBEchoSimpleTypesAsStruct() throws AxisFault {
-//        url = "http://dietrich.ganx4.com/nusoap/testbed/round2_groupb_server.php";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupbEchoSimpleTypesAsStructUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "NusGroupbSimpletypesAsStructRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2GBEchoSimpleTypesAsStruct() throws AxisFault {
+        url = "http://dietrich.ganx4.com/nusoap/testbed/round2_groupb_server.php";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupbEchoSimpleTypesAsStructUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "NusGroupbSimpletypesAsStructRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -308,16 +308,16 @@ public class NusRound2InteropTest extends WhiteMesaIneterop {
      * operation echo2DStringArray
      */
     //todo test failed !!!
-//    public void testR2GBEcho2DStringArray() throws AxisFault {
-//        url = "http://dietrich.ganx4.com/nusoap/testbed/round2_groupb_server.php";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupbEcho2DStringArrayUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "NusGroupb2DStringArrayRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2GBEcho2DStringArray() throws AxisFault {
+        url = "http://dietrich.ganx4.com/nusoap/testbed/round2_groupb_server.php";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupbEcho2DStringArrayUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "NusGroupb2DStringArrayRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -325,16 +325,16 @@ public class NusRound2InteropTest extends WhiteMesaIneterop {
      * operation echoNestedStruct
      */
     //todo test failed !!!
-//    public void testR2GBEchoNestedStruct() throws AxisFault {
-//        url = "http://dietrich.ganx4.com/nusoap/testbed/round2_groupb_server.php";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupbEchoNestedStructUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "NusGroupbNestedStructRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2GBEchoNestedStruct() throws AxisFault {
+        url = "http://dietrich.ganx4.com/nusoap/testbed/round2_groupb_server.php";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupbEchoNestedStructUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "NusGroupbNestedStructRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -342,44 +342,16 @@ public class NusRound2InteropTest extends WhiteMesaIneterop {
      * operation echoNestedArray
      */
     //todo Test failed !!!
-//    public void testR2GBEchoNestedArray() throws AxisFault {
-//        url = "http://dietrich.ganx4.com/nusoap/testbed/round2_groupb_server.php";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupbEchoNestedArrayUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "NusGroupbNestedArrayRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2GBEchoNestedArray() throws AxisFault {
+        url = "http://dietrich.ganx4.com/nusoap/testbed/round2_groupb_server.php";
+        soapAction = "http://soapinterop.org/";
 
-
-//    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-//
-//        boolean ok = false;
-//        try {
-//            if (retEnv != null) {
-//                SOAPBody body = retEnv.getBody();
-//                if (!body.hasFault()) {
-//                    //OMElement firstChild = (OMElement) body.getFirstElement();
-//
-//                    InputStream stream = NusRound2InteropTest.class.getClassLoader().getResourceAsStream(filePath);
-//
-//                    XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-//                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-//                    SOAPEnvelope refEnv = (SOAPEnvelope) builder.getDocumentElement();
-//                    //OMElement refNode = (OMElement) resEnv.getBody().getFirstElement();
-//                    XMLComparator comparator = new XMLComparator();
-//                    ok = comparator.compare(retEnv, refEnv);
-//                } else
-//                    return false;
-//            } else
-//                return false;
-//
-//        } catch (Exception e) {
-//            throw new AxisFault(e);
-//        }
-//        return ok;
-//    }
+        util = new GroupbEchoNestedArrayUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "NusGroupbNestedArrayRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+    
 }
 

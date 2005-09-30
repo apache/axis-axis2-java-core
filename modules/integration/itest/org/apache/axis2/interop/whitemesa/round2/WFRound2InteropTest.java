@@ -305,16 +305,16 @@ public class WFRound2InteropTest extends WhiteMesaIneterop {
      * operation echo2DStringArray
      */
     //todo Test Failed !!!
-//    public void testR2GBEcho2DStringArray() throws AxisFault {
-//        url = "http://www.wingfoot.com/servlet/wserver";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupbEcho2DStringArrayUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "WFGroupb2DStringArrayRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2GBEcho2DStringArray() throws AxisFault {
+        url = "http://www.wingfoot.com/servlet/wserver";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupbEcho2DStringArrayUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "WFGroupb2DStringArrayRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -348,33 +348,5 @@ public class WFRound2InteropTest extends WhiteMesaIneterop {
         assertTrue(results);
     }
 
-
-//    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-//
-//        boolean ok = false;
-//        try {
-//            if (retEnv != null) {
-//                SOAPBody body = retEnv.getBody();
-//                if (!body.hasFault()) {
-//                    //OMElement firstChild = (OMElement) body.getFirstElement();
-//
-//                    InputStream stream = WFRound2InteropTest.class.getClassLoader().getResourceAsStream(filePath);
-//
-//                    XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-//                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-//                    SOAPEnvelope refEnv = (SOAPEnvelope) builder.getDocumentElement();
-//                    //OMElement refNode = (OMElement) resEnv.getBody().getFirstElement();
-//                    XMLComparator comparator = new XMLComparator();
-//                    ok = comparator.compare(retEnv, refEnv);
-//                } else
-//                    return false;
-//            } else
-//                return false;
-//
-//        } catch (Exception e) {
-//            throw new AxisFault(e);
-//        }
-//        return ok;
-//    }
 }
 

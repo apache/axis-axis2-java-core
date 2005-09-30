@@ -262,16 +262,16 @@ public class MStk3Round2InteropTest extends WhiteMesaIneterop {
      * operation echoBoolean
      */
     //todo test failed!!!
-//    public void testR2BaseEchoBoolean() throws AxisFault  {
-//        url = "http://mssoapinterop.org/stkV3/Interop.wsdle";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoBooleanClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "MStk3BaseBooleanRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2BaseEchoBoolean() throws AxisFault  {
+        url = "http://mssoapinterop.org/stkV3/Interop.wsdle";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoBooleanClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "MStk3BaseBooleanRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -472,16 +472,16 @@ public class MStk3Round2InteropTest extends WhiteMesaIneterop {
      * operation echoDecimal
      */
     //todo test failed!!!
-//    public void testR2BaseTypedEchoDecimal() throws AxisFault  {
-//        url = "http://mssoapinterop.org/stkV3/InteropTyped.wsdle";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoDecimalClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "MStk3BaseTypedDecimalRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2BaseTypedEchoDecimal() throws AxisFault  {
+        url = "http://mssoapinterop.org/stkV3/InteropTyped.wsdle";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoDecimalClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "MStk3BaseTypedDecimalRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -489,16 +489,16 @@ public class MStk3Round2InteropTest extends WhiteMesaIneterop {
      * operation echoBoolean
      */
     //todo test failed!!!
-//    public void testR2BaseTypedEchoBoolean() throws AxisFault  {
-//        url = "http://mssoapinterop.org/stkV3/InteropTyped.wsdle";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoBooleanClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "MStk3BaseTypedBooleanRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2BaseTypedEchoBoolean() throws AxisFault  {
+        url = "http://mssoapinterop.org/stkV3/InteropTyped.wsdle";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoBooleanClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "MStk3BaseTypedBooleanRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -676,33 +676,5 @@ public class MStk3Round2InteropTest extends WhiteMesaIneterop {
         assertTrue(results);
     }
 
-//
-//    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-//
-//        boolean ok = false;
-//        try {
-//            if (retEnv != null) {
-//                SOAPBody body = retEnv.getBody();
-//                if (!body.hasFault()) {
-//                    //OMElement firstChild = (OMElement) body.getFirstElement();
-//
-//                    InputStream stream = MStk3Round2InteropTest.class.getClassLoader().getResourceAsStream(filePath);
-//
-//                    XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-//                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-//                    SOAPEnvelope refEnv = (SOAPEnvelope) builder.getDocumentElement();
-//                    //OMElement refNode = (OMElement) resEnv.getBody().getFirstElement();
-//                    XMLComparator comparator = new XMLComparator();
-//                    ok = comparator.compare(retEnv, refEnv);
-//                } else
-//                    return false;
-//            } else
-//                return false;
-//
-//        } catch (Exception e) {
-//            throw new AxisFault(e);
-//        }
-//        return ok;
-//    }
 }
 

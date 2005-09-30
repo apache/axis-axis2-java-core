@@ -18,7 +18,27 @@ package org.apache.axis2.interop.whitemesa.round2;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.interop.whitemesa.WhiteMesaIneterop;
-import org.apache.axis2.interop.whitemesa.round2.util.*;
+import org.apache.axis2.interop.whitemesa.round2.util.GroupbEchoNestedArrayUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.GroupbEchoNestedStructUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.GroupbEchoSimpleTypesAsStructUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.GroupbEchoStructAsSimpleTypesUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.GroupcVoidUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.R2MSaxms2DStringArrayUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoBase64ClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoBooleanClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoDateClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoDecimalClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoFloatArrayClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoFloatClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoHexBinaryClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoIntegerArrayclientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoIntegerClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStringArrayClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStringclientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStructArrayClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStructClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoVoidClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.SunRound2ClientUtil;
 import org.apache.axis2.soap.SOAPEnvelope;
 
 import java.io.File;
@@ -355,44 +375,18 @@ public class MSaxmsRound2InteropTest extends WhiteMesaIneterop {
      * operation echoVoid
      */
      //todo This test failed, doesn't echo header
-//    public void testR2GCEchoVoid() throws AxisFault {
-//        url = "http://www.mssoapinterop.org/asmx/header.asmx";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupcVoidUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "MSaxmsGroupcVoidRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2GCEchoVoid() throws AxisFault {
+        url = "http://www.mssoapinterop.org/asmx/header.asmx";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupcVoidUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "MSaxmsGroupcVoidRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
 
-//    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-//
-//        boolean ok = false;
-//        try {
-//            if (retEnv != null) {
-//                SOAPBody body = retEnv.getBody();
-//                if (!body.hasFault()) {
-//                    //OMElement firstChild = (OMElement) body.getFirstElement();
-//
-//                    InputStream stream = MSaxmsRound2InteropTest.class.getClassLoader().getResourceAsStream(filePath);
-//
-//                    XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-//                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-//                    SOAPEnvelope refEnv = (SOAPEnvelope) builder.getDocumentElement();
-//                    //OMElement refNode = (OMElement) resEnv.getBody().getFirstElement();
-//                    XMLComparator comparator = new XMLComparator();
-//                    ok = comparator.compare(retEnv, refEnv);
-//                } else
-//                    return false;
-//            } else
-//                return false;
-//
-//        } catch (Exception e) {
-//            throw new AxisFault(e);
-//        }
-//        return ok;
-//    }
+
 }
 

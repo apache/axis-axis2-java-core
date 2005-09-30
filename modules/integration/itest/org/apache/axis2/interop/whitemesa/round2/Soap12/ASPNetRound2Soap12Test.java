@@ -359,41 +359,16 @@ public class ASPNetRound2Soap12Test extends WhiteMesaIneterop {
      * operation echoVoid
      */
     //todo THis test failed, only the body returned without header
-//    public void testR2GCEchoVoid() throws AxisFault {
-//        url = "http://www.mssoapinterop.org/asmx/header.asmx";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupcSoap12VoidUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GroupcVoidRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2GCEchoVoid() throws AxisFault {
+        url = "http://www.mssoapinterop.org/asmx/header.asmx";
+        soapAction = "http://soapinterop.org/";
 
-//    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-//
-//        boolean ok = false;
-//        try {
-//            if (retEnv != null) {
-//                SOAPBody body = retEnv.getBody();
-//                if (!body.hasFault()) {
-//                    //OMElement firstChild = (OMElement) body.getFirstElement();
-//                    InputStream stream = GSoapRound2Soap12InteropTest.class.getClassLoader().getResourceAsStream(filePath);
-//                    XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-//                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-//                    SOAPEnvelope refEnv = (SOAPEnvelope) builder.getDocumentElement();
-//                    //OMElement refNode = (OMElement) resEnv.getBody().getFirstElement();
-//                    XMLComparator comparator = new XMLComparator();
-//                    ok = comparator.compare(retEnv, refEnv);
-//                } else
-//                    return false;
-//            } else
-//                return false;
-//
-//        } catch (Exception e) {
-//            throw new AxisFault(e);
-//        }
-//        return ok;
-//    }
+        util = new GroupcSoap12VoidUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GroupcVoidRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
 }
 

@@ -18,7 +18,27 @@ package org.apache.axis2.interop.whitemesa.round2;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.interop.whitemesa.WhiteMesaIneterop;
-import org.apache.axis2.interop.whitemesa.round2.util.*;
+import org.apache.axis2.interop.whitemesa.round2.util.GroupbEcho2DStringArrayUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.GroupbEchoNestedArrayUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.GroupbEchoNestedStructUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.GroupbEchoSimpleTypesAsStructUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.GroupbEchoStructAsSimpleTypesUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.GroupcVoidUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoBase64ClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoBooleanClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoDateClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoDecimalClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoFloatArrayClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoFloatClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoHexBinaryClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoIntegerArrayclientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoIntegerClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStringArrayClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStringclientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStructArrayClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStructClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoVoidClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.SunRound2ClientUtil;
 import org.apache.axis2.soap.SOAPEnvelope;
 
 import java.io.File;
@@ -146,16 +166,16 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
      * operation echoStruct
      */
     //todo this test fails due to axis2 client error
-//    public void testRBaseEchoStruct() throws AxisFault  {
-//        url = "http://www.cs.fsu.edu/~engelen/interop2.cgi";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoStructClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GSBaseStructRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testRBaseEchoStruct() throws AxisFault  {
+        url = "http://www.cs.fsu.edu/~engelen/interop2.cgi";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoStructClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GSBaseStructRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -179,16 +199,16 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
      * operation echoVoid
      */
     //todo this test fails due to axis2 client error
-//    public void testR2BaseEchoVoid() throws AxisFault  {
-//        url = "http://www.cs.fsu.edu/~engelen/interop2.cgi";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoVoidClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GSBaseVoidRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2BaseEchoVoid() throws AxisFault  {
+        url = "http://www.cs.fsu.edu/~engelen/interop2.cgi";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoVoidClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GSBaseVoidRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -277,16 +297,16 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
      * operation echoStructAsSimpleTypes
      */
 //    //todo this test fails due to axis2 client error
-//    public void testR2GBEchoStructAsSimpleTypes() throws AxisFault {
-//        url = "http://www.cs.fsu.edu/~engelen/interop2B.cgi";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupbEchoStructAsSimpleTypesUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GSGroupbStructAsSimpleTypesRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2GBEchoStructAsSimpleTypes() throws AxisFault {
+        url = "http://www.cs.fsu.edu/~engelen/interop2B.cgi";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupbEchoStructAsSimpleTypesUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GSGroupbStructAsSimpleTypesRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -294,16 +314,16 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
      * operation echoSimpleTypesAsStruct
      */
     //todo this test fails due to axis2 client error
-//    public void testR2GBEchoSimpleTypesAsStruct() throws AxisFault {
-//        url = "http://www.cs.fsu.edu/~engelen/interop2B.cgi";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupbEchoSimpleTypesAsStructUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GSGroupbSimpletypesAsStructRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2GBEchoSimpleTypesAsStruct() throws AxisFault {
+        url = "http://www.cs.fsu.edu/~engelen/interop2B.cgi";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupbEchoSimpleTypesAsStructUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GSGroupbSimpletypesAsStructRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -327,16 +347,16 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
      * operation echoNestedStruct
      */
     //todo this test fails due to axis2 client error
-//    public void testR2GBEchoNestedStruct() throws AxisFault {
-//        url = "http://www.cs.fsu.edu/~engelen/interop2B.cgi";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupbEchoNestedStructUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GSGroupbNestedStructRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2GBEchoNestedStruct() throws AxisFault {
+        url = "http://www.cs.fsu.edu/~engelen/interop2B.cgi";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupbEchoNestedStructUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GSGroupbNestedStructRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -344,16 +364,16 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
      * operation echoNestedArray
      */
     //todo this test fails due to axis2 client error
-//    public void testR2GBEchoNestedArray() throws AxisFault {
-//        url = "http://www.cs.fsu.edu/~engelen/interop2B.cgi";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupbEchoNestedArrayUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GSGroupbNestedArrayRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2GBEchoNestedArray() throws AxisFault {
+        url = "http://www.cs.fsu.edu/~engelen/interop2B.cgi";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupbEchoNestedArrayUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GSGroupbNestedArrayRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
 
     /**
@@ -361,45 +381,17 @@ public class GSRound2InteropTest extends WhiteMesaIneterop {
      * Group C
      * operation echoVoid
      */
-//    //todo this test fails due to axis2 client error
-//    public void testR2GCEchoVoid() throws AxisFault {
-//        url = "http://www.cs.fsu.edu/~engelen/interop2C.cgi";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupcVoidUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GSGroupcVoidRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    //todo this test fails due to axis2 client error
+    public void testR2GCEchoVoid() throws AxisFault {
+        url = "http://www.cs.fsu.edu/~engelen/interop2C.cgi";
+        soapAction = "http://soapinterop.org/";
 
+        util = new GroupcVoidUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GSGroupcVoidRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
-//    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-//
-//        boolean ok = false;
-//        try {
-//            if (retEnv != null) {
-//                SOAPBody body = retEnv.getBody();
-//                if (!body.hasFault()) {
-//                    //OMElement firstChild = (OMElement) body.getFirstElement();
-//
-//                    InputStream stream = GSRound2InteropTest.class.getClassLoader().getResourceAsStream(filePath);
-//
-//                    XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-//                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-//                    SOAPEnvelope refEnv = (SOAPEnvelope) builder.getDocumentElement();
-//                    //OMElement refNode = (OMElement) resEnv.getBody().getFirstElement();
-//                    XMLComparator comparator = new XMLComparator();
-//                    ok = comparator.compare(retEnv, refEnv);
-//                } else
-//                    return false;
-//            } else
-//                return false;
-//
-//        } catch (Exception e) {
-//            throw new AxisFault(e);
-//        }
-//        return ok;
-//    }
 }
 

@@ -16,7 +16,22 @@
 
 package org.apache.axis2.interop.whitemesa.round2;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.interop.whitemesa.WhiteMesaIneterop;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoBase64ClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoBooleanClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoDateClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoDecimalClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoFloatArrayClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoFloatClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoHexBinaryClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoIntegerArrayclientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoIntegerClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStringArrayClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStringclientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStructArrayClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoStructClientUtil;
+import org.apache.axis2.interop.whitemesa.round2.util.Round2EchoVoidClientUtil;
 import org.apache.axis2.interop.whitemesa.round2.util.SunRound2ClientUtil;
 import org.apache.axis2.soap.SOAPEnvelope;
 
@@ -40,7 +55,8 @@ public class KSRoun2InteropTest extends WhiteMesaIneterop {
     String resFilePath = "interop/whitemesa/round2/";
     String tempPath = "";
     SunRound2ClientUtil util;
-
+    boolean results;
+    
     public void testChack(){
         //just addding a test case , since all the tase casea are fail
     }
@@ -50,253 +66,227 @@ public class KSRoun2InteropTest extends WhiteMesaIneterop {
      * Group Base
      * operation echoString
      */
-//    public void testR2BaseEchoString() throws AxisFault {
-//        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoStringclientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "sunBaseStringRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group Base
-//     * operation echoStringArray
-//     */
-//    public void testR2BaseEchoStringArray() throws AxisFault {
-//        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoStringArrayClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "SunBaseStringArrayRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group Base
-//     * operation echoInteger
-//     */
-//    public void testR2BaseEchoInteger() throws AxisFault {
-//        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoIntegerClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "sunBaseIntegerRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group Base
-//     * operation echoIntegerArray
-//     */
-//    public void testR2BaseEchoIntegerArray() throws AxisFault  {
-//        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoIntegerArrayclientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "sunBaseIntegerArrayRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group Base
-//     * operation echoFloat
-//     */
-//    public void testR2BaseEchoFloat()  throws AxisFault {
-//        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoFloatClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "sunBaseFloatRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group Base
-//     * operation echoFloatArray
-//     */
-//    public void testR2BaseEchoFloatArray()  throws AxisFault {
-//        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoFloatArrayClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "sunBaseFloatArrayRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group Base
-//     * operation echoStruct
-//     */
-//    public void testRBaseEchoStruct() throws AxisFault  {
-//        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
-//        soapAction = "";
-//
-//        util = new Round2EchoStructClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "sunBaseStructRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group Base
-//     * operation echoStructArray
-//     */
-//    public void testR2BaseEchoStructArray() throws AxisFault  {
-//        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoStructArrayClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "sunBaseStructArrayRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group Base
-//     * operation echoVoid
-//     */
-//    public void testR2BaseEchoVoid() throws AxisFault  {
-//        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoVoidClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "sunBaseVoidRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group Base
-//     * operation echoBase64
-//     */
-//    public void testR2BaseEchoBase64() throws AxisFault  {
-//        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoBase64ClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "sunBaseBase64Res.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group Base
-//     * operation echoBase64
-//     */
-//    public void testR2BaseEchoDate() throws AxisFault  {
-//        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoDateClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "sunBaseDateRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//
-//    /**
-//     * Round2
-//     * Group Base
-//     * operation echoHexBinary
-//     */
-//    public void testR2BaseEchoHexBinary() throws AxisFault  {
-//        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoHexBinaryClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "sunBaseHexBinaryRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group Base
-//     * operation echoDecimal
-//     */
-//    public void testR2BaseEchoDecimal() throws AxisFault  {
-//        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoDecimalClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "sunBaseDecimalRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group Base
-//     * operation echoBoolean
-//     */
-//    public void testR2BaseEchoBoolean() throws AxisFault  {
-//        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoBooleanClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "sunBaseBooleanRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
+    public void testR2BaseEchoString() throws AxisFault {
+        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
+        soapAction = "http://soapinterop.org/";
 
-//    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-//
-//        boolean ok = false;
-//        try {
-//            if (retEnv != null) {
-//                SOAPBody body = retEnv.getBody();
-//                if (!body.hasFault()) {
-//                    //OMElement firstChild = (OMElement) body.getFirstElement();
-//
-//                    InputStream stream = KSRoun2InteropTest.class.getClassLoader().getResourceAsStream(filePath);
-//
-//                    XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-//                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-//                    SOAPEnvelope refEnv = (SOAPEnvelope) builder.getDocumentElement();
-//                    //OMElement refNode = (OMElement) resEnv.getBody().getFirstElement();
-//                    XMLComparator comparator = new XMLComparator();
-//                    ok = comparator.compare(retEnv, refEnv);
-//                } else
-//                    return false;
-//            } else
-//                return false;
-//
-//        } catch (Exception e) {
-//            throw new AxisFault(e);
-//        }
-//        return ok;
-//    }
+        util = new Round2EchoStringclientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "sunBaseStringRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group Base
+     * operation echoStringArray
+     */
+    public void testR2BaseEchoStringArray() throws AxisFault {
+        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoStringArrayClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "SunBaseStringArrayRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group Base
+     * operation echoInteger
+     */
+    public void testR2BaseEchoInteger() throws AxisFault {
+        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoIntegerClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "sunBaseIntegerRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group Base
+     * operation echoIntegerArray
+     */
+    public void testR2BaseEchoIntegerArray() throws AxisFault  {
+        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoIntegerArrayclientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "sunBaseIntegerArrayRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group Base
+     * operation echoFloat
+     */
+    public void testR2BaseEchoFloat()  throws AxisFault {
+        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoFloatClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "sunBaseFloatRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group Base
+     * operation echoFloatArray
+     */
+    public void testR2BaseEchoFloatArray()  throws AxisFault {
+        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoFloatArrayClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "sunBaseFloatArrayRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group Base
+     * operation echoStruct
+     */
+    public void testRBaseEchoStruct() throws AxisFault  {
+        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
+        soapAction = "";
+
+        util = new Round2EchoStructClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "sunBaseStructRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group Base
+     * operation echoStructArray
+     */
+    public void testR2BaseEchoStructArray() throws AxisFault  {
+        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoStructArrayClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "sunBaseStructArrayRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group Base
+     * operation echoVoid
+     */
+    public void testR2BaseEchoVoid() throws AxisFault  {
+        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoVoidClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "sunBaseVoidRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group Base
+     * operation echoBase64
+     */
+    public void testR2BaseEchoBase64() throws AxisFault  {
+        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoBase64ClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "sunBaseBase64Res.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group Base
+     * operation echoBase64
+     */
+    public void testR2BaseEchoDate() throws AxisFault  {
+        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoDateClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "sunBaseDateRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+
+    /**
+     * Round2
+     * Group Base
+     * operation echoHexBinary
+     */
+    public void testR2BaseEchoHexBinary() throws AxisFault  {
+        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoHexBinaryClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "sunBaseHexBinaryRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group Base
+     * operation echoDecimal
+     */
+    public void testR2BaseEchoDecimal() throws AxisFault  {
+        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoDecimalClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "sunBaseDecimalRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group Base
+     * operation echoBoolean
+     */
+    public void testR2BaseEchoBoolean() throws AxisFault  {
+        url = "http://kissen.cs.uni-dortmund.de:8080/ksoapinterop";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoBooleanClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "sunBaseBooleanRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+
+
 }
 

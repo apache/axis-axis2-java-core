@@ -146,16 +146,16 @@ public class MSRemRound2InteropTest extends WhiteMesaIneterop {
      * operation echoStruct
      */
     //todo test failed!!!
-//    public void testRBaseEchoStruct() throws AxisFault  {
-//        url = "http://www.mssoapinterop.org:80/Remoting/ServiceA.soap";
-//        soapAction = "";
-//
-//        util = new Round2EchoStructClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "MSRemBaseStructRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testRBaseEchoStruct() throws AxisFault  {
+        url = "http://www.mssoapinterop.org:80/Remoting/ServiceA.soap";
+        soapAction = "";
+
+        util = new Round2EchoStructClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "MSRemBaseStructRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -228,16 +228,16 @@ public class MSRemRound2InteropTest extends WhiteMesaIneterop {
      * operation echoHexBinary
      */
     //todo test failed!!!
-//    public void testR2BaseEchoHexBinary() throws AxisFault  {
-//        url = "http://www.mssoapinterop.org:80/Remoting/ServiceA.soap";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new Round2EchoHexBinaryClientUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "MSRemBaseHexBinaryRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2BaseEchoHexBinary() throws AxisFault  {
+        url = "http://www.mssoapinterop.org:80/Remoting/ServiceA.soap";
+        soapAction = "http://soapinterop.org/";
+
+        util = new Round2EchoHexBinaryClientUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "MSRemBaseHexBinaryRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -351,33 +351,5 @@ public class MSRemRound2InteropTest extends WhiteMesaIneterop {
         assertTrue(results);
     }
 
-
-//    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-//
-//        boolean ok = false;
-//        try {
-//            if (retEnv != null) {
-//                SOAPBody body = retEnv.getBody();
-//                if (!body.hasFault()) {
-//                    //OMElement firstChild = (OMElement) body.getFirstElement();
-//
-//                    InputStream stream = MSRemRound2InteropTest.class.getClassLoader().getResourceAsStream(filePath);
-//
-//                    XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-//                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-//                    SOAPEnvelope refEnv = (SOAPEnvelope) builder.getDocumentElement();
-//                    //OMElement refNode = (OMElement) resEnv.getBody().getFirstElement();
-//                    XMLComparator comparator = new XMLComparator();
-//                    ok = comparator.compare(retEnv, refEnv);
-//                } else
-//                    return false;
-//            } else
-//                return false;
-//
-//        } catch (Exception e) {
-//            throw new AxisFault(e);
-//        }
-//        return ok;
-//    }
 }
 

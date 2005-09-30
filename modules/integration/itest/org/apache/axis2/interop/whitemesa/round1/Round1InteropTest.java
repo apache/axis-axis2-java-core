@@ -128,34 +128,4 @@ public class Round1InteropTest extends WhiteMesaIneterop {
         result = compare(retEnv, tempPath);
         assertTrue(result);
     }
-
-//    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-//        boolean ok;
-//
-//        try {
-//            if (retEnv != null) {
-//                SOAPBody body = retEnv.getBody();
-//                if (!body.hasFault()) {
-//
-//                    InputStream stream = Round1InteropTest.class.getClassLoader().getResourceAsStream(filePath);
-//
-//                    OMElement firstChild = body.getFirstElement();
-//                    XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-//                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-//                    SOAPEnvelope refEnv = (SOAPEnvelope) builder.getDocumentElement();
-//                    OMElement refNode = refEnv.getBody().getFirstElement();
-//                    XMLComparator comparator = new XMLComparator();
-//                    ok = comparator.compare(firstChild, refNode);
-//                } else
-//                    return false;
-//            } else
-//                return false;
-//        } catch (XMLStreamException e) {
-//            throw new AxisFault(e);
-//        }
-//
-//
-//        return ok;
-//    }
-
 }

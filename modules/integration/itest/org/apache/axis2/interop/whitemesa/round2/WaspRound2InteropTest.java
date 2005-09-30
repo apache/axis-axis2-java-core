@@ -355,128 +355,128 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
      * Group C
      * operation echoString
      */
-//    public void testR2GCEchoString() throws AxisFault {
-//        url = "http://soap.systinet.net:6060/InteropCService/";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupcEchoStringUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GroupcEchoStringRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group C
-//     * operation echoInterger
-//     */
-//    public void testR2GCEchoInterger() throws AxisFault {
-//        url = "http://soap.systinet.net:6060/InteropCService/";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupcIntergerUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GroupcIntergerRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group C
-//     * operation echoStringArray
-//     */
-//    public void testR2GCEchoStringArray() throws AxisFault {
-//        url = "http://soap.systinet.net:6060/InteropCService/";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupcStringArrayUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GroupcStringArrayRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group C
-//     * operation echoIntergerArray
-//     */
-//    public void testR2GCEchoIntergerArray() throws AxisFault {
-//        url = "http://soap.systinet.net:6060/InteropCService/";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupcIntegerArrayUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GroupcIntegerArrayRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group C
-//     * operation echoFloat
-//     */
-//    public void testR2GCEchoFloat() throws AxisFault {
-//        url = "http://soap.systinet.net:6060/InteropCService/";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupcFloatUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GroupcFloatRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group C
-//     * operation echoFloatArray
-//     */
-//    public void testR2GCEchoFloatArray() throws AxisFault {
-//        url = "http://soap.systinet.net:6060/InteropCService/";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupcFloatArrayUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GroupcFloatArrayRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group C
-//     * operation echoStruct
-//     */
-//    public void testR2GCEchoStruct() throws AxisFault {
-//        url = "http://soap.systinet.net:6060/InteropCService/";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupcStructUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GroupcStructRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group C
-//     * operation echoStructArray
-//     */
-//    public void testR2GCEchoStructArray() throws AxisFault {
-//        url = "http://soap.systinet.net:6060/InteropCService/";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupcStructArrayUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GroupcStructArrayRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2GCEchoString() throws AxisFault {
+        url = "http://soap.systinet.net:6060/InteropCService/";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupcEchoStringUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GroupcEchoStringRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group C
+     * operation echoInterger
+     */
+    public void testR2GCEchoInterger() throws AxisFault {
+        url = "http://soap.systinet.net:6060/InteropCService/";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupcIntergerUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GroupcIntergerRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group C
+     * operation echoStringArray
+     */
+    public void testR2GCEchoStringArray() throws AxisFault {
+        url = "http://soap.systinet.net:6060/InteropCService/";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupcStringArrayUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GroupcStringArrayRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group C
+     * operation echoIntergerArray
+     */
+    public void testR2GCEchoIntergerArray() throws AxisFault {
+        url = "http://soap.systinet.net:6060/InteropCService/";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupcIntegerArrayUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GroupcIntegerArrayRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group C
+     * operation echoFloat
+     */
+    public void testR2GCEchoFloat() throws AxisFault {
+        url = "http://soap.systinet.net:6060/InteropCService/";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupcFloatUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GroupcFloatRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group C
+     * operation echoFloatArray
+     */
+    public void testR2GCEchoFloatArray() throws AxisFault {
+        url = "http://soap.systinet.net:6060/InteropCService/";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupcFloatArrayUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GroupcFloatArrayRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group C
+     * operation echoStruct
+     */
+    public void testR2GCEchoStruct() throws AxisFault {
+        url = "http://soap.systinet.net:6060/InteropCService/";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupcStructUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GroupcStructRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group C
+     * operation echoStructArray
+     */
+    public void testR2GCEchoStructArray() throws AxisFault {
+        url = "http://soap.systinet.net:6060/InteropCService/";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupcStructArrayUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GroupcStructArrayRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
 
     /**
      * Round2
@@ -500,75 +500,48 @@ public class WaspRound2InteropTest extends WhiteMesaIneterop {
      * Group C
      * operation echoBase64
      */
-//    public void testR2GCEchoBase64() throws AxisFault {
-//        url = "http://soap.systinet.net:6060/InteropCService/";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupcBase64Util();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GroupcBase64Res.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group C
-//     * operation echoHexBinary
-//     */
-//    public void testR2GCEchoHexBinary() throws AxisFault {
-//        url = "http://soap.systinet.net:6060/InteropCService/";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupcHexBinaryUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GroupcHexBinaryRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
-//
-//    /**
-//     * Round2
-//     * Group C
-//     * operation echoBoolean
-//     */
-//    public void testR2GCEchoBoolean() throws AxisFault {
-//        url = "http://soap.systinet.net:6060/InteropCService/";
-//        soapAction = "http://soapinterop.org/";
-//
-//        util = new GroupcBooleanUtil();
-//        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
-//        tempPath = resFilePath + "GroupcBooleanRes.xml";
-//        results = compare(retEnv, tempPath);
-//        assertTrue(results);
-//    }
+    public void testR2GCEchoBase64() throws AxisFault {
+        url = "http://soap.systinet.net:6060/InteropCService/";
+        soapAction = "http://soapinterop.org/";
 
-//    private static boolean compare(SOAPEnvelope retEnv, String filePath) throws AxisFault {
-//
-//        boolean ok = false;
-//        try {
-//            if (retEnv != null) {
-//                SOAPBody body = retEnv.getBody();
-//                if (!body.hasFault()) {
-//                    //OMElement firstChild = (OMElement) body.getFirstElement();
-//
-//                    InputStream stream = WaspRound2InteropTest.class.getClassLoader().getResourceAsStream(filePath);
-//
-//                    XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-//                    OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-//                    SOAPEnvelope refEnv = (SOAPEnvelope) builder.getDocumentElement();
-//                    //OMElement refNode = (OMElement) resEnv.getBody().getFirstElement();
-//                    XMLComparator comparator = new XMLComparator();
-//                    ok = comparator.compare(retEnv, refEnv);
-//                } else
-//                    return false;
-//            } else
-//                return false;
-//
-//        } catch (Exception e) {
-//            throw new AxisFault(e);
-//        }
-//        return ok;
-//    }
+        util = new GroupcBase64Util();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GroupcBase64Res.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group C
+     * operation echoHexBinary
+     */
+    public void testR2GCEchoHexBinary() throws AxisFault {
+        url = "http://soap.systinet.net:6060/InteropCService/";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupcHexBinaryUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GroupcHexBinaryRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
+    /**
+     * Round2
+     * Group C
+     * operation echoBoolean
+     */
+    public void testR2GCEchoBoolean() throws AxisFault {
+        url = "http://soap.systinet.net:6060/InteropCService/";
+        soapAction = "http://soapinterop.org/";
+
+        util = new GroupcBooleanUtil();
+        retEnv = SunRound2Client.sendMsg(util, url, soapAction);
+        tempPath = resFilePath + "GroupcBooleanRes.xml";
+        results = compare(retEnv, tempPath);
+        assertTrue(results);
+    }
+
 }
 
