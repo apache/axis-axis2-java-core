@@ -5,14 +5,6 @@ import java.rmi.RemoteException;
 import test.stub.databinding.org.soapinterop.*;
 import test.stub.WSDLInteropTestDocLitPortTypeStub;
 
-
-/**
- * Created by IntelliJ IDEA.
- * User: Gayan
- * Date: Sep 16, 2005
- * Time: 9:29:53 AM
- * To change this template use File | Settings | File Templates.
- */
 public class WMRound3DoclitInteropTest extends TestCase{
 
     WSDLInteropTestDocLitPortTypeStub stub = null;

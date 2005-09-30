@@ -70,11 +70,9 @@ public class ListenersOut implements KeyListener,
     }
 
     public void keyReleased(KeyEvent e) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void keyTyped(KeyEvent e) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -103,6 +101,5 @@ public class ListenersOut implements KeyListener,
     }
 
     public void mouseMoved(MouseEvent e) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

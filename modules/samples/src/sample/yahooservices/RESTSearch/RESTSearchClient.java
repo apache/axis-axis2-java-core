@@ -9,14 +9,6 @@ import org.apache.axis2.om.impl.OMOutputImpl;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
-
-/**
- * Created by IntelliJ IDEA.
- * User: saminda
- * Date: Jul 11, 2005
- * Time: 2:25:56 PM
- * To change this template use File | Settings | File Templates.
- */
 public class RESTSearchClient {
     public static void main(String[] args) {
         try{

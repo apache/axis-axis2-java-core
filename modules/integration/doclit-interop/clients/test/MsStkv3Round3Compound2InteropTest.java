@@ -7,15 +7,6 @@ import test.stub.databinding.org.soapinterop.Employee;
 import test.stub.databinding.org.soapinterop.Person;
 import test.stub.databinding.org.soapinterop.ResultEmployeeDocument;
 
-
-
-/**
- * Created by IntelliJ IDEA.
- * User: Gayan
- * Date: Sep 15, 2005
- * Time: 8:01:59 PM
- * To change this template use File | Settings | File Templates.
- */
 public class MsStkv3Round3Compound2InteropTest extends TestCase{
 
     SoapInteropCompound2PortTypeStub stub = null;

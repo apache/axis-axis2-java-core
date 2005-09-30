@@ -9,13 +9,6 @@ import test.stub.databinding.org.soapinterop.ResultEmployeeDocument;
 
 
 
-/**
- * Created by IntelliJ IDEA.
- * User: Gayan
- * Date: Sep 15, 2005
- * Time: 8:01:59 PM
- * To change this template use File | Settings | File Templates.
- */
 public class AspNetRound3Compound2InteropTest extends TestCase{
 
     Compound2SoapStub stub = null;

@@ -34,11 +34,9 @@ public class AxisObserverImpl implements AxisObserver{
     }
 
     public void update(AxisEvent event) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void addParameter(Parameter param) throws AxisFault{
-//        paramterimpl.addParameter(param);
     }
 
     public Parameter getParameter(String name) {

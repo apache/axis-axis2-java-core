@@ -7,13 +7,6 @@
 //import org.soapinterop.xsd.XPersonDocument;
 //import test.stub1.SoapInteropCompound1PortTypeStub;
 //
-///**
-// * Created by IntelliJ IDEA.
-// * User: Gayan
-// * Date: Sep 15, 2005
-// * Time: 11:58:15 AM
-// * To change this template use File | Settings | File Templates.
-// */
 //public class Round3DocLitInteropTest extends TestCase{
 //
 //    public void testTest1() throws Exception{

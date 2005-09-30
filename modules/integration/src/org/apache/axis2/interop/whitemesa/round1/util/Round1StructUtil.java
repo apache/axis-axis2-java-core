@@ -21,13 +21,6 @@ import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Gayan
- * Date: Aug 14, 2005
- * Time: 2:47:11 PM
- * To change this template use File | Settings | File Templates.
- */
 public class Round1StructUtil implements Round1ClientUtil{
 
     public SOAPEnvelope getEchoSoapEnvelope() {

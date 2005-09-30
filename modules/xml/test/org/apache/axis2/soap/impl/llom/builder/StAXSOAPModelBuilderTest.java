@@ -15,13 +15,6 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.StringReader;
 import java.util.Iterator;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Anushka
- * Date: Jun 3, 2005
- * Time: 10:22:26 AM
- * To change this template use File | Settings | File Templates.
- */
 public class StAXSOAPModelBuilderTest extends TestCase {
 
     private Log log = LogFactory.getLog(getClass());

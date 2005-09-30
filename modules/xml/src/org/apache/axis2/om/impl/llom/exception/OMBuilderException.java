@@ -32,6 +32,6 @@ public class OMBuilderException extends OMException {
     }
 
     public OMBuilderException(Throwable cause) {
-        super(cause);    //To change body of overridden methods use File | Settings | File Templates.
+        super(cause);
     }
 }

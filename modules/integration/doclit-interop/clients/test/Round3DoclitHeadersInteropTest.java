@@ -5,13 +5,6 @@ import test.stub.databinding.org.soapinterop.*;
 import org.apache.axis2.AxisFault;
 import junit.framework.TestCase;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Gayan
- * Date: Sep 22, 2005
- * Time: 4:03:00 PM
- * To change this template use File | Settings | File Templates.
- */
 public class Round3DoclitHeadersInteropTest extends TestCase{
 
     RetHeaderPortTypeStub stub = null;

@@ -24,13 +24,6 @@ import org.apache.axis2.om.OMElement;
 
 import java.io.StringWriter;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadana
- * Date: Aug 8, 2005
- * Time: 8:32:49 AM
- * To change this template use File | Settings | File Templates.
- */
 public class EchoBlockingClient {
 
 

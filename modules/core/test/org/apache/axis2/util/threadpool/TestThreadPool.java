@@ -6,13 +6,6 @@ import org.apache.axis2.AxisFault;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Jaliya
- * Date: Jun 23, 2005
- * Time: 3:58:45 PM
- * To change this template use File | Settings | File Templates.
- */
 public class TestThreadPool extends AbstractTestCase {
     /**
      * @param testName

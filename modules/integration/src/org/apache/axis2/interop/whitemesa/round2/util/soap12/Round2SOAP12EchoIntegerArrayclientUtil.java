@@ -23,13 +23,6 @@ import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Gayan
- * Date: Sep 5, 2005
- * Time: 4:43:24 PM
- * To change this template use File | Settings | File Templates.
- */
 public class Round2SOAP12EchoIntegerArrayclientUtil implements SunRound2ClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {

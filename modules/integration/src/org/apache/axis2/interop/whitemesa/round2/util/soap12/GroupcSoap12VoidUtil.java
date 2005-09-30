@@ -26,13 +26,6 @@ import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Gayan
- * Date: Sep 6, 2005
- * Time: 10:55:02 AM
- * To change this template use File | Settings | File Templates.
- */
 public class GroupcSoap12VoidUtil implements SunRound2ClientUtil {
 
     public SOAPEnvelope getEchoSoapEnvelope() {

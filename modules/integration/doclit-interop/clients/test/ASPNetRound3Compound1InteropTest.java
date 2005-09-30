@@ -7,19 +7,6 @@
     import test.stub.Compound1SoapStub;
     import test.stub.databinding.org.soapinterop.*;
 
-    /**
-     * Created by IntelliJ IDEA.
-     * User: Gayan
-     * Date: Sep 15, 2005
-     * Time: 6:34:39 PM
-     * To change this template use File | Settings | File Templates.
-/**
- * Created by IntelliJ IDEA.
- * User: Gayan
- * Date: Sep 22, 2005
- * Time: 9:52:33 PM
- * To change this template use File | Settings | File Templates.
- */
 public class ASPNetRound3Compound1InteropTest extends TestCase{
 
 

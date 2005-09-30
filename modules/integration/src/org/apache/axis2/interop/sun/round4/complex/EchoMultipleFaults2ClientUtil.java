@@ -22,13 +22,6 @@ import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAP11Constants;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadana
- * Date: Aug 8, 2005
- * Time: 11:54:36 AM
- * To change this template use File | Settings | File Templates.
- */
 public class EchoMultipleFaults2ClientUtil implements SunGroupHClientUtil{
 
     public OMElement getEchoOMElement() {

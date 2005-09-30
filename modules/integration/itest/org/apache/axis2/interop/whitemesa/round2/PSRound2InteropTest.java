@@ -569,7 +569,7 @@ public class PSRound2InteropTest extends WhiteMesaIneterop {
 //                return false;
 //
 //        } catch (Exception e) {
-//            throw new AxisFault(e); //To change body of catch statement use File | Settings | File Templates.
+//            throw new AxisFault(e);
 //        }
 //        return ok;
 //    }

@@ -74,7 +74,7 @@ public class FlowIncludeImpl implements FlowInclude {
     }
 
     public Flow getFaultOutFlow() {
-        return this.Out_fault;  //To change body of implemented methods use File | Settings | File Templates.
+        return this.Out_fault;
     }
 
     public void setFaultOutFlow(Flow faultFlow) {

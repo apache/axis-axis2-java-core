@@ -16,13 +16,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadana
- * Date: Aug 6, 2005
- * Time: 2:39:44 PM
- * To change this template use File | Settings | File Templates.
- */
 public class SunGroupHMain extends TestCase{
 
     EchoBlockingClient client=null;

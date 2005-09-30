@@ -52,7 +52,7 @@ public class WhiteMesaIneterop extends TestCase {
                 return false;
 
         } catch (Exception e) {
-            throw new AxisFault(e); //To change body of catch statement use File | Settings | File Templates.
+            throw new AxisFault(e);
         }
         return ok;
     }

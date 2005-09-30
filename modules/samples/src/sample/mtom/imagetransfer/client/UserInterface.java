@@ -156,8 +156,7 @@ public class UserInterface extends JPanel implements ActionListener {
                     " Success", JOptionPane.PLAIN_MESSAGE);
             }
         } catch (Exception e) {
-            e.printStackTrace(); //To change body of catch statement use File |
-            // Settings | File Templates.
+            e.printStackTrace();
         }
 
     }
@@ -179,8 +178,7 @@ public class UserInterface extends JPanel implements ActionListener {
         }
 
         public String getDescription() {
-            return null; //To change body of implemented methods use File |
-            // Settings | File Templates.
+            return null;
         }
 
         private String getExtension(File f) {

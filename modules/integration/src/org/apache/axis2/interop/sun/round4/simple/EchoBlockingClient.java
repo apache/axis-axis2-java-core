@@ -25,13 +25,6 @@ import org.apache.axis2.om.OMElement;
 
 import java.io.StringWriter;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Nadana
- * Date: Aug 5, 2005
- * Time: 10:08:20 AM
- * To change this template use File | Settings | File Templates.
- */
 public class EchoBlockingClient {
     public OMElement sendMsg(SunGroupHClientUtil util,String soapAction){
         OMElement firstchild=null;

@@ -5,13 +5,6 @@ import org.jaxen.SimpleNamespaceContext;
 
 import java.util.List;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Ajith
- * Date: Sep 6, 2005
- * Time: 8:02:51 PM
- * To change this template use File | Settings | File Templates.
- */
 public class XPathEvaluator {
 
     public List evaluateXpath(String xpathExpression, Object element, String nsURI) throws Exception{

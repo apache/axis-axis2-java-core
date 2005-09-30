@@ -22,11 +22,9 @@ import org.apache.axis2.modules.Module;
 public class InavalidModuleImpl implements Module{
     // initialize the module
     public void init(AxisConfiguration axisSystem) throws AxisFault {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     // shutdown the module
     public void shutdown(AxisConfiguration axisSystem) throws AxisFault {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

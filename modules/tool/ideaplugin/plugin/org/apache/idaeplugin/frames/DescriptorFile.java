@@ -81,16 +81,12 @@ public class DescriptorFile extends JPanel implements ObjectKeeper, ActionListen
 
     //to keep a refernce to next panel
     public void setNext(JPanel next) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public JPanel getNext() {
         OutPage out = new OutPage(parent);
         out.setPrivious(this);
         return out;
-//        ResourceChooser rs =   new ResourceChooser(parent);
-//        rs.setPrivious(this);
-//        return rs ;
     }
 
     //to keep a refernce to previous panel
