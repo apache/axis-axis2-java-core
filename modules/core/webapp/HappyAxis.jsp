@@ -42,6 +42,7 @@
 </head>
 <body>
    <jsp:include page="include/header.inc"></jsp:include>
+	<jsp:include page="include/link-footer.jsp"></jsp:include>
 <%port =request.getServerPort();%>
 <%IP=request.getRequestURL().toString();
     int lastindex = IP.lastIndexOf('/');
@@ -486,7 +487,6 @@ not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
     }
 %>
 
-	<jsp:include page="include/link-footer.jsp"></jsp:include>
 	<jsp:include page="include/footer.inc"></jsp:include>
 </body>
 </html>

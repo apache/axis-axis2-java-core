@@ -30,41 +30,52 @@
 %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
-<h1>Select a Service to view Operation specific Chains</h1>
+
   <%
       String action ="";
       String buttonName="" ;
       String status = (String)request.getSession().getAttribute(Constants.SELECT_SERVICE_TYPE);
+      String heading = "";
+      String disc = "";
       if(status != null && status.equals("MODULE")) {
           action = "listOperations";
           buttonName = " View Operations";
+          heading = "Select a Service to view Operation specific Chains";
+          disc = "Select a service from the combo and click on the 'View Operations' button to view Operation specific Chains.";
       } else if(status != null && status.equals("VIEW")){
           buttonName = " View ";
           action = "viewServiceHandlers";
+          heading = "Select a Service to view Service Handlers";
+          disc = "Select a service from the combo and click on the 'View' button to view Service Handlers.";
       } else if (status != null && status.equals("SERVICE_PARAMETER")){
           buttonName = " Edit Parameters ";
           action = Constants.EDIR_SERVICE_PARA;
+          heading = "Select a Service to Edit Parameters";
+          disc = "Select a service from the combo and click on the 'Edit Parameters' button to Edit Parameters.";
       }
   %>
+<h1><%=heading%></h1>
+<p><%=disc%></p>
 <form method="get" name="engaginModule" action="<%=action%>">
-<table border="0" width="100%" cellspacing="1" cellpadding="1">
+<table border="0" width="50%" cellspacing="1" cellpadding="1">
          <tr>
-        <td width="20%">Select a Service :&nbsp;
+        <td width="35%">Select a Service :</td><td width="65%">
             <select name="service">
             <%
                 HashMap services = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
                 Collection serviceCol =  services.values();
                 for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
                     ServiceDescription axisService = (ServiceDescription)iterator.next();
-                    String servicName = axisService.getName().getLocalPart();
-            %> <option  align="left" value="<%=servicName%>"><%=servicName%></option>
+                    String serviceName = axisService.getName().getLocalPart();
+            %> <option  align="left" value="<%=serviceName%>"><%=serviceName%></option>
              <%
                 }
              %>
            </td>
         </tr>
-        <tr>
-             <td>
+	<tr><td colspan="2">&nbsp;</td></tr>
+        <tr><td>&nbsp;</td>
+             <td colspan="2" align="left">
                 <input name="submit" type="submit" value="<%=buttonName%>" >
              </td>
          </tr>

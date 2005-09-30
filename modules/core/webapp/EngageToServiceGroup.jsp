@@ -7,16 +7,22 @@
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <%
     String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);
+    HashMap moduels = (HashMap)request.getSession().getAttribute(Constants.MODULE_MAP);
+    Collection moduleCol =  moduels.values();
+    Iterator servicesGroups = (Iterator)request.getSession().getAttribute(Constants.SERVICE_GROUP_MAP);
 %>
 <h1>Engage Module for a Service Group</h1>
+<p>To engage a module for a set of services grouped a service group, first select the module you want to engage and then select the service group you like the module to be engaged on and click "Engage".</p>
+<%
+	if (!moduleCol.iterator().hasNext()) {%>
+		<p>No modules are present to be engaged.</p>
+	<%} else {
+		if  (!servicesGroups.hasNext()) {%>
+		<p>No service groups are present to be engaged.</p>
+		<%} else {
+%>
 <form method="get" name="engaginModule" action="engageToServiceGroup">
     <table border="0" width="100%" cellspacing="1" cellpadding="1">
-        <tr>
-            <td>
-                &nbsp;
-                &nbsp;
-            </td>
-        </tr>
         <tr>
             <td>Select a Module :</td>
         </tr>
@@ -24,8 +30,6 @@
             <td>
                 <select name="modules">
                     <%
-                HashMap moduels = (HashMap)request.getSession().getAttribute(Constants.MODULE_MAP);
-                Collection moduleCol =  moduels.values();
                 for (Iterator iterator = moduleCol.iterator(); iterator.hasNext();) {
                     ModuleDescription description = (ModuleDescription) iterator.next();
                     String modulename = description.getName().getLocalPart();
@@ -48,11 +52,11 @@
             <td>
                 <select name="service">
                     <%
-                        Iterator servicesGroups = (Iterator)request.getSession().getAttribute(Constants.SERVICE_GROUP_MAP);
+
                         while(servicesGroups.hasNext()){
                             ServiceGroupDescription groupDescription = (ServiceGroupDescription) servicesGroups.next();
-                            String servicName = groupDescription.getServiceGroupName();
-                    %> <option  align="left" value="<%=servicName%>"><%=servicName%></option>
+                            String serviceName = groupDescription.getServiceGroupName();
+                    %> <option  align="left" value="<%=serviceName%>"><%=serviceName%></option>
                     <%
                         }
 
@@ -96,5 +100,9 @@
         </tr>
     </table>
 </form>
+<%
+		}
+	}
+%>
 <jsp:include page="include/adminfooter.jsp"></jsp:include>
 

@@ -5,27 +5,19 @@
                  java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
+<h1>Turn off service</h1>
 <form method="get" name="serviceRemove" action="removeService">
   <table width="100%"  border="0">
 <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
-<tr>
   <td colspan="2" >
-    <h1>Turn off service</h1> <p>The service will be removed the from the running system, but if the system restarts then the service will be available again</p>
+     <p>The service will be removed the from the running system, but if the system restarts then the service will be available again</p>
 <%--    <b>Remove Service :</b> The selected service will be removed from the file system and if the--%>
 <%--    &nbsp; system restart it wont be there next time--%>
   </td>
   </tr>
-   <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;
-    </td>
-  </tr>
   <tr>
-    <td width="40%"> Select Service : </td>
-    <td>
+    <td width="20%"> Select Service : </td>
+    <td width="80%">
        <select name="service" class="selectBoxes" >
 
                            <%
@@ -40,26 +32,9 @@
                   </td>
   </tr>
   <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <td width="40%">Turn Off Service </td>
-    <td width="60%"><input type="checkbox" name="turnoff">
+    <td width="20%">Turn Off Service </td>
+    <td width="80%"><input type="checkbox" name="turnoff">
     </td>
-  </tr>
-<%--  <tr>--%>
-<%--    <td>Remove Service Permanently </td>--%>
-<%--    <td><input type="checkbox" name="remove">--%>
-<%--    </td>--%>
-<%--  </tr>--%>
-  <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
   </tr>
   <tr>
   <td>&nbsp;</td>
@@ -67,11 +42,6 @@
     <input name="submit" type="submit" value=" Save " >
    <input name="reset" type="reset" value=" Clear " >
   </td>
-  </tr>
-
-  <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
   </tr>
 
 </table>

@@ -30,6 +30,7 @@
 <link href="css/axis-style.css" rel="stylesheet" type="text/css">
   <body>
   <jsp:include page="include/header.inc"></jsp:include>
+<jsp:include page="include/link-footer.jsp"></jsp:include>
   <% String isLoged = (String)request.getSession().getAttribute(Constants.LOGGED);
    if("Yes".equals(isLoged)){
 	response.sendRedirect(ListingAgent.ADMIN_JSP_NAME);
@@ -38,7 +39,6 @@
 <table class="FULL_BLANK">
 <tr><td valign="top">
 <jsp:include page="happy_axis.jsp?type=min"></jsp:include>
-
 
 </td>
 <td valign="middle" align="left">
@@ -77,8 +77,7 @@
 </tr>
 </table>
 </td></tr><tr><td>
- <jsp:include page="include/link-footer.jsp"></jsp:include>
- <jsp:include page="include/footer.inc"></jsp:include>
+  <jsp:include page="include/footer.inc"></jsp:include>
 <script language="JavaScript">
 <!--
 document.LoginForm.userName.focus();

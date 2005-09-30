@@ -6,11 +6,7 @@
 <%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head><title>List Services</title>
-    <link href="css/axis-style.css" rel="stylesheet" type="text/css">
-</head>
-<body>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Available services</h1>
 <%String IP=request.getRequestURL().toString();
         int lastindex = IP.lastIndexOf('/');
@@ -36,16 +32,16 @@
         String moduleName = "";
         if(engagdeModules.size() >0){
     %>
-    <i>Engaged Modules for the service</i>
+    <i>Engaged Modules for the service</i><ul>
     <%
         for (Iterator iteratorm = engagdeModules.iterator(); iteratorm.hasNext();) {
             ModuleDescription description = (ModuleDescription) iteratorm.next();
             moduleName = description.getName().getLocalPart();
     %><li><%=moduleName%></li>
-    <br>
     <%
-            }
-        }
+            }%>
+	</ul>
+        <%}
         if (operationsList.size() > 0) {
     %><br><i>Available operations</i><%
 } else {
@@ -77,5 +73,4 @@
     <%
         }
     %>
-</body>
-</html>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>

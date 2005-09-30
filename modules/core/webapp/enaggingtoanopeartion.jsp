@@ -9,6 +9,7 @@
     String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);
 %>
 <h1>Engage Module for an Operation</h1>
+<p>To engage a module for a operation, first select the module you want to engage and then select the operation you like the module to be engaged on and click "Engage".</p>
 <form method="get" name="engaginModule" action="listOperations">
 <table border="0" width="100%" cellspacing="1" cellpadding="1">
     <tr>

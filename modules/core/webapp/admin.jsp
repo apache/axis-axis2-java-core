@@ -1,5 +1,4 @@
 <%@ page import="org.apache.axis2.Constants"%>        <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-        <html>
         <%
            /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -32,6 +31,6 @@
       }
   %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
-<h1>Welcome to the Axis2 administration system!</h1><p>There are several things that you can do from within this system. You can check the status of your axis system from these pages.
-There are also some functionality provided to change some internel setting while the system is online.
+<h1>Welcome to the Axis2 administration system!</h1>
+<p>The Axis2 administration system can be used to check on the health of your Axis2 deployment as well as to change any parameters at run time. Other than changing of parameters the web interface also has the ability upload new services into Axis2[Service hot deployment.].</p>
 <jsp:include page="include/adminfooter.jsp"></jsp:include>

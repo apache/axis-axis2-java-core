@@ -30,6 +30,7 @@
   </head>
   <body>
   <jsp:include page="include/header.inc"></jsp:include>
+    <jsp:include page="include/link-footer.jsp"></jsp:include>
   <h1>Available services</h1>
   <%String IP=request.getRequestURL().toString();
         int lastindex = IP.lastIndexOf('/');
@@ -91,7 +92,6 @@
             %> There seems to be no services listed! Try hitting refresh <%
         }
        %>
-    <jsp:include page="include/link-footer.jsp"></jsp:include>
     <jsp:include page="include/footer.inc"></jsp:include>
   </body>
 </html>

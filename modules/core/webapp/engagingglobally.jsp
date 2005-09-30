@@ -33,19 +33,13 @@
 <%
     String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);
 %>
-<h1>Engage Module Gloabally</h1>
+<h1>Engage Module Globally</h1>
+<p>To engage a module on all services across the system, select a module from the combo box below and click on the "Engage" button. Any module that needs to place handlers into the pre-dispatch phase needs to be engaged globally.</p>
 <form method="get" name="engaginModule" action="engagingglobally">
 <table border="0" width="100%" cellspacing="1" cellpadding="1">
 <tr>
-<td>
-&nbsp;
-&nbsp;
-</td>
-</tr>
-<tr>
-<td>Select a Module :</td>
-</tr><tr>
-<td>
+<td width="15%">Select a Module :</td>
+<td width="75%" align="left">
 <select name="modules">
             <%
                 HashMap moduels = (HashMap)request.getSession().getAttribute(Constants.MODULE_MAP);
@@ -59,42 +53,19 @@
              %>
              </td>
              </tr>
-             <tr>
-             <td>
-             &nbsp;
-             &nbsp;
-             </td>
-             </tr>
-             <tr>
+             <tr><td>&nbsp;</td>
              <td>
              <input name="submit" type="submit" value=" Engage " >
              </td>
              </tr>
-
-               <tr>
-             <td>
-             &nbsp;
-             &nbsp;
-             </td>
-             </tr>
-               <tr>
-             <td>
-             &nbsp;
-             &nbsp;
-             </td>
-             </tr>
-             <td>
-              <textarea cols="50"  <%
-              if(status == null){
-                  %>
-                  style="display:none"
-                  <%
-              } %>
-              ><%=status%></textarea>
-              </td>
-             </tr>
              </table>
              </form>
+              <%
+              if(status != null){
+                  %>
+                  <p><font color="blue"><%=status%></font></p>
+                  <%
+              } %>
 <jsp:include page="include/adminfooter.jsp"></jsp:include>
 
 

@@ -61,6 +61,7 @@
            <%
                  Collection engagdeModules = axisService.getEngagedModules();
                  String moduleName = "";
+		boolean modules_present=false;
                  if(engagdeModules.size() >0){
            %>
            <i>Engaged Modules for the service</i>
@@ -68,10 +69,18 @@
                      for (Iterator iteratorm = engagdeModules.iterator(); iteratorm.hasNext();) {
                          ModuleDescription description = (ModuleDescription) iteratorm.next();
                          moduleName = description.getName().getLocalPart();
+			if (!modules_present) {
+				modules_present=true;
+%>
+				<ul>
+<%			}
                 %><li><%=moduleName%></li>
                          <br>
                          <%
                      }
+			if (modules_present) {%>
+				</ul>
+			<%}
                  }
                  if (operationsList.size() > 0) {
                 %><br><i>Available operations</i><%
@@ -109,7 +118,7 @@
                    if(errornessservice.size() > 0){
                        request.getSession().setAttribute(Constants.IS_FAULTY,Constants.IS_FAULTY);
            %>
-           <hr><h3><font color="blue">Faulty Services</font></h3>
+           <h3><font color="red">Faulty Services</font></h3>
                 <%
                        Enumeration faultyservices = errornessservice.keys();
                        while (faultyservices.hasMoreElements()) {

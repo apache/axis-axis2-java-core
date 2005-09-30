@@ -9,6 +9,7 @@
     String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);
 %>
 <h1>Engage Module for a Service</h1>
+<p>To engage a module for a service, first select the module you want to engage and then select the service you like the module to be engaged on and click "Engage".</p>
 <form method="get" name="engaginModule" action="engageToService">
 <table border="0" width="100%" cellspacing="1" cellpadding="1">
     <tr>
@@ -52,8 +53,8 @@
                 Collection serviceCol =  services.values();
                 for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
                     ServiceDescription axisService = (ServiceDescription)iterator.next();
-                    String servicName = axisService.getName().getLocalPart();
-            %> <option  align="left" value="<%=servicName%>"><%=servicName%></option>
+                    String serviceName = axisService.getName().getLocalPart();
+            %> <option  align="left" value="<%=serviceName%>"><%=serviceName%></option>
              <%
                 }
              %>
