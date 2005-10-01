@@ -200,7 +200,7 @@ public class MessageContext extends AbstractContext {
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-    	if (transportIn != null)
+        if (transportIn != null)
             transportInName = transportIn.getName();
         if (transportOut != null)
             transportOutname = transportOut.getName();
@@ -210,7 +210,7 @@ public class MessageContext extends AbstractContext {
             serviceDescName = serviceDescription.getName();
         if (operationDescription != null)
             operationDescName = operationDescription.getName();
-        
+
         out.defaultWriteObject();
     }
 
@@ -637,16 +637,25 @@ public class MessageContext extends AbstractContext {
         if (getOperationDescription() != null) {
             OperationDescription opDesc = getOperationDescription();
             param = opDesc.getParameter(key);
+            if(param !=null){
+                return param;
+            }
         }
-        if (param == null && getServiceDescription() != null) {
+        if (getServiceDescription() != null) {
             ServiceDescription serviceDesc = getServiceDescription();
             param = serviceDesc.getParameter(key);
+            if(param !=null){
+                return param;
+            }
         }
-        if (param == null && getServiceGroupDescription() != null) {
+        if (getServiceGroupDescription() != null) {
             ServiceGroupDescription serviceDesc = getServiceGroupDescription();
             param = serviceDesc.getParameter(key);
+            if(param !=null){
+                return param;
+            }
         }
-        if (param == null && configurationContext != null) {
+        if (configurationContext != null) {
             AxisConfiguration baseConfig =
                     configurationContext.getAxisConfiguration();
             param = baseConfig.getParameter(key);
@@ -685,54 +694,67 @@ public class MessageContext extends AbstractContext {
             moduleConfig = opDesc.getModuleConfig(new QName(moduleName));
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);
-            }
-            if (param == null) {
-                param = opDesc.getParameter(key);
+                if(param !=null){
+                    return param;
+                } else {
+                    param = opDesc.getParameter(key);
+                    if(param !=null){
+                        return param;
+                    }
+                }
             }
         }
-        if (param == null && getServiceDescription() != null) {
+        if (getServiceDescription() != null) {
             ServiceDescription serviceDesc = getServiceDescription();
             moduleConfig = serviceDesc.getModuleConfig(new QName(moduleName));
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);
-            }
-            if (param == null) {
-                param = serviceDesc.getParameter(key);
+                if(param !=null){
+                    return param;
+                } else {
+                    param = serviceDesc.getParameter(key);
+                    if(param !=null){
+                        return param;
+                    }
+                }
             }
         }
-
-        if (param == null && getServiceGroupDescription() != null) {
+        if (getServiceGroupDescription() != null) {
             ServiceGroupDescription serviceDesc = getServiceGroupDescription();
             moduleConfig = serviceDesc.getModuleConfig(new QName(moduleName));
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);
-            }
-            if (param == null) {
-                param = serviceDesc.getParameter(key);
+                if(param !=null){
+                    return param;
+                } else {
+                    param = serviceDesc.getParameter(key);
+                    if(param !=null){
+                        return param;
+                    }
+                }
             }
         }
-        if (param == null) {
-            AxisConfiguration baseConfig =
-                    configurationContext.getAxisConfiguration();
-
-            moduleConfig = ((AxisConfigurationImpl) baseConfig).getModuleConfig(new QName(moduleName));
-            if (moduleConfig != null) {
-                param = moduleConfig.getParameter(key);
-            }
-            if (param == null) {
+        AxisConfiguration baseConfig = configurationContext.getAxisConfiguration();
+        moduleConfig = ((AxisConfigurationImpl) baseConfig).getModuleConfig(new QName(moduleName));
+        if (moduleConfig != null) {
+            param = moduleConfig.getParameter(key);
+            if(param !=null){
+                return param;
+            } else {
                 param = baseConfig.getParameter(key);
+                if(param !=null){
+                    return param;
+                }
             }
         }
-        if (param == null) {
-            AxisConfiguration baseConfig = configurationContext.getAxisConfiguration();
-            ModuleDescription module = baseConfig.getModule(new QName(moduleName));
-            if (module != null) {
-                param = module.getParameter(key);
+        ModuleDescription module = baseConfig.getModule(new QName(moduleName));
+        if (module != null) {
+            param = module.getParameter(key);
+            if(param !=null){
+                return param;
             }
         }
-        if (param == null) {
-            param = handler.getParameter(key);
-        }
+        param = handler.getParameter(key);
         return param;
     }
 
@@ -752,23 +774,37 @@ public class MessageContext extends AbstractContext {
     public Object getProperty(String key, boolean persistent) {
         // search in MC
         Object obj = super.getProperty(key, persistent);
-
+        if(obj !=null){
+            return obj;
+        }
         //The context hirachy might not have constructed fully, the check should
         //look for the disconnected grandparents
         // Search in Operation Context
-        if (operationContext != null && obj == null) {
+        if (operationContext != null ) {
             obj = operationContext.getProperty(key, persistent);
+            if(obj !=null){
+                return obj;
+            }
         }
         //Search in ServiceContext
-        if (serviceContext != null && obj == null) {
+        if (serviceContext != null ) {
             obj = serviceContext.getProperty(key, persistent);
+            if(obj !=null){
+                return obj;
+            }
         }
-        if (serviceGroupContext != null && obj == null) {
+        if (serviceGroupContext != null ) {
             obj = serviceGroupContext.getProperty(key, persistent);
+            if(obj !=null){
+                return obj;
+            }
         }
-        if (configurationContext != null && obj == null ) {
+        if (configurationContext != null ) {
             // search in Configuration Context
             obj = configurationContext.getProperty(key, persistent);
+            if(obj !=null){
+                return obj;
+            }
         }
         return obj;
     }
@@ -882,10 +918,10 @@ public class MessageContext extends AbstractContext {
     }
 
     public void setServiceGroupDescription(ServiceGroupDescription serviceGroupDescription) {
-        this.serviceGroupDescription = serviceGroupDescription;
-        this.serviceGroupDescId = serviceGroupDescription.getServiceGroupName();
-        if (serviceGroupDescription != null)
+        if (serviceGroupDescription != null) {
             this.serviceGroupDescId = serviceGroupDescription.getServiceGroupName();
+            this.serviceGroupDescription = serviceGroupDescription;
+        }
     }
 
     public String getServiceGroupContextId() {
