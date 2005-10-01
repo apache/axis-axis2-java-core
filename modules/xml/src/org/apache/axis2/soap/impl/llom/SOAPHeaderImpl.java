@@ -207,7 +207,7 @@ public abstract class SOAPHeaderImpl extends SOAPElement implements SOAPHeader {
                     headers.add(header);
                 }
             }
-            node = node.getNextSibling();
+            node = node.getNextOMSibling();
 
         }
         return headers;

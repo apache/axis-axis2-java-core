@@ -118,7 +118,7 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
      *
      * @throws OMException
      */
-    public OMNode getNextSibling() throws OMException {
+    public OMNode getNextOMSibling() throws OMException {
         if ((nextSibling == null) && (parent != null) && !parent.isComplete()) {
             parent.buildNext();
         }
@@ -126,11 +126,11 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * Method setNextSibling
+     * Method setNextOMSibling
      *
      * @param node
      */
-    public void setNextSibling(OMNode node) {
+    public void setNextOMSibling(OMNode node) {
         this.nextSibling = (OMNodeImpl) node;
     }
 
@@ -167,14 +167,14 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
             throw new OMException(
                     "Elements that doesn't have a parent can not be detached");
         }
-        OMNodeImpl nextSibling = (OMNodeImpl) getNextSibling();
+        OMNodeImpl nextSibling = (OMNodeImpl) getNextOMSibling();
         if (previousSibling == null) {
             parent.setFirstChild(nextSibling);
         } else {
-            ((OMNodeEx)getPreviousSibling()).setNextSibling(nextSibling);
+            ((OMNodeEx)getPreviousOMSibling()).setNextOMSibling(nextSibling);
         }
         if (nextSibling != null) {
-            nextSibling.setPreviousSibling(getPreviousSibling());
+            nextSibling.setPreviousOMSibling(getPreviousOMSibling());
         }
         this.parent = null;
         return this;
@@ -196,13 +196,13 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
         if (sibling instanceof OMNodeImpl) {
             OMNodeImpl siblingImpl = (OMNodeImpl) sibling;
             if (nextSibling == null) {
-                getNextSibling();
+                getNextOMSibling();
             }
-            siblingImpl.setPreviousSibling(this);
+            siblingImpl.setPreviousOMSibling(this);
             if (nextSibling != null) {
-                nextSibling.setPreviousSibling(sibling);
+                nextSibling.setPreviousOMSibling(sibling);
             }
-            ((OMNodeEx)sibling).setNextSibling(nextSibling);
+            ((OMNodeEx)sibling).setNextOMSibling(nextSibling);
             nextSibling = siblingImpl;
         }
     }
@@ -222,12 +222,12 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
         ((OMNodeEx)sibling).setParent(parent);
         if (sibling instanceof OMNodeImpl) {
             OMNodeImpl siblingImpl = (OMNodeImpl) sibling;
-            siblingImpl.setPreviousSibling(previousSibling);
-            siblingImpl.setNextSibling(this);
+            siblingImpl.setPreviousOMSibling(previousSibling);
+            siblingImpl.setNextOMSibling(this);
             if (previousSibling == null) {
                 parent.setFirstChild(siblingImpl);
             } else {
-                previousSibling.setNextSibling(siblingImpl);
+                previousSibling.setNextOMSibling(siblingImpl);
             }
             previousSibling = siblingImpl;
         }
@@ -255,20 +255,20 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
-     * Method getPreviousSibling
+     * Method getPreviousOMSibling
      *
      * @return boolean
      */
-    public OMNode getPreviousSibling() {
+    public OMNode getPreviousOMSibling() {
         return previousSibling;
     }
 
     /**
-     * Method setPreviousSibling
+     * Method setPreviousOMSibling
      *
      * @param previousSibling
      */
-    public void setPreviousSibling(OMNode previousSibling) {
+    public void setPreviousOMSibling(OMNode previousSibling) {
         this.previousSibling = (OMNodeImpl) previousSibling;
     }
 

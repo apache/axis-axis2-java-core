@@ -164,12 +164,12 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     private void addChild(OMNodeImpl child) {
         if (firstChild == null) {
             firstChild = child;
-            child.setPreviousSibling(null);
+            child.setPreviousOMSibling(null);
         } else {
-            child.setPreviousSibling(lastChild);
-            ((OMNodeEx)lastChild).setNextSibling(child);
+            child.setPreviousOMSibling(lastChild);
+            ((OMNodeEx)lastChild).setNextOMSibling(child);
         }
-        child.setNextSibling(null);
+        child.setNextOMSibling(null);
         child.setParent(this);
         lastChild = child;
 
@@ -182,7 +182,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
      * @return
      */
     public Iterator getChildren() {
-        return new OMChildrenIterator(getFirstChild());
+        return new OMChildrenIterator(getFirstOMChild());
     }
 
     /**
@@ -195,16 +195,16 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
      * @throws org.apache.axis2.om.OMException
      */
     public Iterator getChildrenWithName(QName elementQName) {
-        return new OMChildrenQNameIterator(getFirstChild(),
+        return new OMChildrenQNameIterator(getFirstOMChild(),
                 elementQName);
     }
 
     /**
-     * Method getFirstChild
+     * Method getFirstOMChild
      *
      * @return
      */
-    public OMNode getFirstChild() {
+    public OMNode getFirstOMChild() {
         while ((firstChild == null) && !done) {
             buildNext();
         }
@@ -220,7 +220,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
      */
     public OMElement getFirstChildWithName(QName elementQName) throws OMException {
         OMChildrenQNameIterator omChildrenQNameIterator =
-                new OMChildrenQNameIterator(getFirstChild(),
+                new OMChildrenQNameIterator(getFirstOMChild(),
                         elementQName);
         OMNode omNode = null;
         if (omChildrenQNameIterator.hasNext()) {

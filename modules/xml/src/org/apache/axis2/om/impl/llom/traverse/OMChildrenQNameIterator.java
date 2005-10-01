@@ -72,7 +72,7 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
                 } else {
 
                     // get the next named node
-                    currentChild = currentChild.getNextSibling();
+                    currentChild = currentChild.getNextOMSibling();
                     isMatchingNodeFound = needToMoveForward = !(currentChild
                             == null);
                 }
@@ -98,7 +98,7 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
         nextCalled = true;
         removeCalled = false;
         lastChild = currentChild;
-        currentChild = currentChild.getNextSibling();
+        currentChild = currentChild.getNextOMSibling();
         return lastChild;
     }
 

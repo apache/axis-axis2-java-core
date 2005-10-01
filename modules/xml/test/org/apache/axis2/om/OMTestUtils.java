@@ -40,7 +40,7 @@ public class OMTestUtils {
     }
 
     public static void walkThrough(OMElement omEle) {
-        Iterator attibIt = omEle.getAttributes();
+        Iterator attibIt = omEle.getAllAttributes();
         if (attibIt != null) {
             while (attibIt.hasNext()) {
                 TestCase.assertNotNull("once the has next is not null, the " +
@@ -77,7 +77,7 @@ public class OMTestUtils {
 
             //go through the attributes
             NamedNodeMap map = ele.getAttributes();
-            Iterator attIterator = omele.getAttributes();
+            Iterator attIterator = omele.getAllAttributes();
             OMAttribute omattribute;
             Attr domAttribute;
             String DOMAttrName;

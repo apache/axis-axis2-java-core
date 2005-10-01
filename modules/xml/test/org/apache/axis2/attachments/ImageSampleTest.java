@@ -121,9 +121,9 @@ public class ImageSampleTest extends AbstractTestCase {
                 .getSOAPPartInputStream())));
         builder = new MTOMStAXSOAPModelBuilder(reader, mimeHelper, null);
         OMElement root = builder.getDocumentElement();
-        OMElement body = (OMElement) root.getFirstChild();
-        OMElement data = (OMElement) body.getFirstChild();
-        OMText blob = (OMText) data.getFirstChild();
+        OMElement body = (OMElement) root.getFirstOMChild();
+        OMElement data = (OMElement) body.getFirstOMChild();
+        OMText blob = (OMText) data.getFirstOMChild();
         /*
          * Following is the procedure the user has to follow to read objects in
          * OBBlob User has to know the object type & whether it is serializable.

@@ -124,9 +124,9 @@ public class SOAPEnvelopeImpl extends SOAPElement
             if (SOAPConstants.BODY_LOCAL_NAME.equals(element.getLocalName())) {
                 return (SOAPBody) element;
             } else {      // if not second element SHOULD be the body
-                OMNode node = element.getNextSibling();
+                OMNode node = element.getNextOMSibling();
                 while (node != null && node.getType() != OMNode.ELEMENT_NODE) {
-                    node = node.getNextSibling();
+                    node = node.getNextOMSibling();
                 }
                 element = (OMElement) node;
 

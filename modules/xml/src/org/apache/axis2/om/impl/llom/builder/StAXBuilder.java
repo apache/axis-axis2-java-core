@@ -179,9 +179,9 @@ public abstract class StAXBuilder implements OMXMLParserWrapper {
 
                 // TODO:
             } while (!parser.getName().equals(element.getQName()));
-            lastNode = element.getPreviousSibling();
+            lastNode = element.getPreviousOMSibling();
             if (lastNode != null) {
-                ((OMNodeEx)lastNode).setNextSibling(null);
+                ((OMNodeEx)lastNode).setNextOMSibling(null);
             } else {
                 OMElement parent = (OMElement) element.getParent();
                 if (parent == null) {

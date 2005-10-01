@@ -53,7 +53,7 @@ public class SOAP12InFlowHandlerDefaultC extends AbstractHandler implements Head
                 } catch (ClassCastException e) {
                     continue;
                 }
-                Iterator attributes = headerBlock.getAttributes();
+                Iterator attributes = headerBlock.getAllAttributes();
 
                 if (attributes.hasNext()) {
                     OMAttribute firstAttribute = (OMAttribute) attributes.next();
@@ -71,7 +71,7 @@ public class SOAP12InFlowHandlerDefaultC extends AbstractHandler implements Head
                             roleValue.equals(SOAP12_ROLE + "/" + NEXT_ROLE)) {
                         headerBlock.setLocalName(RESPONSE_HEADERBLOCK_NAME);
                         if (attributePresent) {
-                            headerBlock.removeAttribute((OMAttribute) headerBlock.getAttributes().next());
+                            headerBlock.removeAttribute((OMAttribute) headerBlock.getAllAttributes().next());
                             attributePresent = false;
                         }
                         headerBlockPresent = new Integer(1);

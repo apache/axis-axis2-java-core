@@ -111,7 +111,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
             public void onComplete(AsyncResult result) {
                 SOAPEnvelope envelope = result.getResponseEnvelope();
 
-                OMElement data = (OMElement) envelope.getBody().getFirstElement().getFirstChild();
+                OMElement data = (OMElement) envelope.getBody().getFirstElement().getFirstOMChild();
                 compareWithCreatedOMText(data.getText());
                 finish = true;
             }
@@ -155,7 +155,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
             OMElement result = call.invokeBlocking(operationName
                     .getLocalPart(), payload);
 
-            OMElement data = (OMElement) result.getFirstChild();
+            OMElement data = (OMElement) result.getFirstOMChild();
             compareWithCreatedOMText(data.getText());
             call.close();
             log.info("" + i);

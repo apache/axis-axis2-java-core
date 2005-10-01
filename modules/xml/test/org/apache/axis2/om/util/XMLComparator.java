@@ -109,7 +109,7 @@ public class XMLComparator {
 
 
     private void compareAttibutes(OMElement elementOne, OMElement elementTwo) throws XMLComparisonException {
-        Iterator attributes = elementOne.getAttributes();
+        Iterator attributes = elementOne.getAllAttributes();
         while (attributes.hasNext()) {
             OMAttribute omAttribute = (OMAttribute) attributes.next();
             OMAttribute attr = elementTwo.getFirstAttribute(

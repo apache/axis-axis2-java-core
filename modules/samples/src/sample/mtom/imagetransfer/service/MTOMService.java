@@ -31,8 +31,8 @@ public class MTOMService {
     public OMElement mtomSample(OMElement element) throws Exception {
     	
         OMElement imageEle = element.getFirstElement();
-        OMElement imageName = (OMElement) imageEle.getNextSibling();
-        OMText binaryNode = (OMText) imageEle.getFirstChild();
+        OMElement imageName = (OMElement) imageEle.getNextOMSibling();
+        OMText binaryNode = (OMText) imageEle.getFirstOMChild();
         String fileName = imageName.getText();
         //Extracting the data and saving
         DataHandler actualDH;

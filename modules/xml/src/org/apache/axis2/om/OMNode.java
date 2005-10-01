@@ -106,7 +106,7 @@ public interface OMNode {
      *
      * @return The next sibling in document order.
      */
-    public OMNode getNextSibling() throws OMException;
+    public OMNode getNextOMSibling() throws OMException;
 
     /**
      * this will indicate whether parser has parsed this information item completely or not.
@@ -171,7 +171,7 @@ public interface OMNode {
      *
      * @return node
      */
-    public OMNode getPreviousSibling();
+    public OMNode getPreviousOMSibling();
 
     /**
      * Serialize the node with caching

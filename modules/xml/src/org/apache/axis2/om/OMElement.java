@@ -127,7 +127,7 @@ public interface OMElement extends OMNode, OMContainer {
      * @see #addAttribute(OMAttribute)
      * @see #addAttribute(String, String, OMNamespace)
      */
-    public Iterator getAttributes();
+    public Iterator getAllAttributes();
 
     /**
      * Return a named attribute if present.

@@ -201,8 +201,8 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
                     constructNode((OMElement) lastNode.getParent(),
                             elementName,
                             false);
-            ((OMNodeEx)lastNode).setNextSibling(node);
-            ((OMNodeEx)node).setPreviousSibling(lastNode);
+            ((OMNodeEx)lastNode).setNextOMSibling(node);
+            ((OMNodeEx)node).setPreviousOMSibling(lastNode);
         } else {
             OMElement e = (OMElement) lastNode;
             node = constructNode((OMElement) lastNode, elementName, false);

@@ -26,14 +26,14 @@ public class interopService {
         if (element.getLocalName().equalsIgnoreCase("Data")
                 && element.getNamespace().getName().equalsIgnoreCase(
                         "http://example.org/mtom/data")) {
-                OMText binaryNode = (OMText)element.getFirstChild();
+                OMText binaryNode = (OMText)element.getFirstOMChild();
                 binaryNode.setOptimize(!binaryNode.isOptimized());
             }
          else if (element.getLocalName().equalsIgnoreCase("EchoTest") && element.getNamespace().getName().equalsIgnoreCase("http://example.org/mtom/data")) {
             Iterator childrenIterator = element.getChildren();
             while (childrenIterator.hasNext()) {
                 OMElement dataElement = (OMElement) childrenIterator.next();
-                OMText binaryNode = (OMText)dataElement.getFirstChild();
+                OMText binaryNode = (OMText)dataElement.getFirstOMChild();
                 binaryNode.setOptimize(!binaryNode.isOptimized());
             }
         }

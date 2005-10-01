@@ -129,7 +129,7 @@ public class DescriptionBuilder implements DeploymentConstants{
         if(order_element == null){
             throw new DeploymentException("Invaid Handler , phase rule does not specify");
         } else {
-            Iterator order_itr = order_element.getAttributes();
+            Iterator order_itr = order_element.getAllAttributes();
             while (order_itr.hasNext()) {
                 OMAttribute orderAttribut = (OMAttribute) order_itr.next();
                 String name  = orderAttribut.getQName().getLocalPart();

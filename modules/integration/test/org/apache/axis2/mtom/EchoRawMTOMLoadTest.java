@@ -120,9 +120,9 @@ public class EchoRawMTOMLoadTest extends TestCase {
             OMElement result = call.invokeBlocking(operationName
                     .getLocalPart(),
                     payload);
-            OMElement ele = (OMElement) result.getFirstChild();
-            OMElement ele1 = (OMElement) ele.getFirstChild();
-            OMText binaryNode = (OMText) ele1.getFirstChild();
+            OMElement ele = (OMElement) result.getFirstOMChild();
+            OMElement ele1 = (OMElement) ele.getFirstOMChild();
+            OMText binaryNode = (OMText) ele1.getFirstOMChild();
             compareWithActualOMText(binaryNode);
             log.info("" + i);
             UtilServer.unDeployClientService();

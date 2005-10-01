@@ -189,7 +189,7 @@ public class OMElementImpl extends OMNodeImpl
      * @throws OMException
      */
     public Iterator getChildrenWithName(QName elementQName) {
-        return new OMChildrenQNameIterator(getFirstChild(),
+        return new OMChildrenQNameIterator(getFirstOMChild(),
                 elementQName);
     }
 
@@ -200,7 +200,7 @@ public class OMElementImpl extends OMNodeImpl
      */
     public OMElement getFirstChildWithName(QName elementQName) throws OMException {
         OMChildrenQNameIterator omChildrenQNameIterator =
-                new OMChildrenQNameIterator(getFirstChild(),
+                new OMChildrenQNameIterator(getFirstOMChild(),
                         elementQName);
         OMNode omNode = null;
         if (omChildrenQNameIterator.hasNext()) {
@@ -225,13 +225,13 @@ public class OMElementImpl extends OMNodeImpl
 
         if (firstChild == null) {
             firstChild = child;
-            child.setPreviousSibling(null);
+            child.setPreviousOMSibling(null);
         } else {
-            child.setPreviousSibling(lastChild);
-            ((OMNodeEx)lastChild).setNextSibling(child);
+            child.setPreviousOMSibling(lastChild);
+            ((OMNodeEx)lastChild).setNextOMSibling(child);
         }
 
-        child.setNextSibling(null);
+        child.setNextOMSibling(null);
         lastChild = child;
 
     }
@@ -241,11 +241,11 @@ public class OMElementImpl extends OMNodeImpl
      * @throws org.apache.axis2.om.OMException
      * @throws OMException
      */
-    public OMNode getNextSibling() throws OMException {
+    public OMNode getNextOMSibling() throws OMException {
         while (!done) {
             builder.next();
         }
-        return super.getNextSibling();
+        return super.getNextOMSibling();
     }
 
     /**
@@ -255,7 +255,7 @@ public class OMElementImpl extends OMNodeImpl
      * @return children
      */
     public Iterator getChildren() {
-        return new OMChildrenIterator(getFirstChild());
+        return new OMChildrenIterator(getFirstOMChild());
     }
 
     /**
@@ -372,7 +372,7 @@ public class OMElementImpl extends OMNodeImpl
      *
      * @return iterator
      */
-    public Iterator getAttributes() {
+    public Iterator getAllAttributes() {
         if (attributes == null) {
             return new EmptyIterator();
         }
@@ -458,11 +458,11 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Method getFirstChild
+     * Method getFirstOMChild
      *
      * @return child
      */
-    public OMNode getFirstChild() {
+    public OMNode getFirstOMChild() {
         while ((firstChild == null) && !done) {
             buildNext();
         }
@@ -553,12 +553,12 @@ public class OMElementImpl extends OMNodeImpl
      */
     public void setText(String text) {
 
-        OMNode child = this.getFirstChild();
+        OMNode child = this.getFirstOMChild();
         while (child != null) {
             if (child.getType() == OMNode.TEXT_NODE) {
                 child.detach();
             }
-            child = child.getNextSibling();
+            child = child.getNextOMSibling();
         }
 
         this.addChild(OMAbstractFactory.getOMFactory().createText(this, text));
@@ -571,7 +571,7 @@ public class OMElementImpl extends OMNodeImpl
      */
     public String getText() {
         String childText = "";
-        OMNode child = this.getFirstChild();
+        OMNode child = this.getFirstOMChild();
         OMText textNode;
 
         while (child != null) {
@@ -582,7 +582,7 @@ public class OMElementImpl extends OMNodeImpl
                     childText += textNode.getText();
                 }
             }
-            child = child.getNextSibling();
+            child = child.getNextOMSibling();
         }
 
         return childText;
@@ -595,7 +595,7 @@ public class OMElementImpl extends OMNodeImpl
      */
     public String getTrimmedText() {
         String childText = "";
-        OMNode child = this.getFirstChild();
+        OMNode child = this.getFirstOMChild();
         OMText textNode;
 
         while (child != null) {
@@ -606,7 +606,7 @@ public class OMElementImpl extends OMNodeImpl
                     childText += textNode.getText().trim();
                 }
             }
-            child = child.getNextSibling();
+            child = child.getNextOMSibling();
         }
 
         return childText;
@@ -690,12 +690,12 @@ public class OMElementImpl extends OMNodeImpl
      * @return element
      */
     public OMElement getFirstElement() {
-        OMNode node = getFirstChild();
+        OMNode node = getFirstOMChild();
         while (node != null) {
             if (node.getType() == OMNode.ELEMENT_NODE) {
                 return (OMElement) node;
             } else {
-                node = node.getNextSibling();
+                node = node.getNextOMSibling();
             }
         }
         return null;

@@ -108,7 +108,7 @@ public class OMChildrenIterator implements Iterator {
         removeCalled = false;
         if (hasNext()) {
             lastChild = currentChild;
-            currentChild = currentChild.getNextSibling();
+            currentChild = currentChild.getNextOMSibling();
             return lastChild;
         }
         return null;

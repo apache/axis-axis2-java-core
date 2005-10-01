@@ -104,13 +104,13 @@ public class OMElementTest extends OMTestCase implements OMConstants {
         secondElement.detach();
         assertTrue("OMElement children detachment has not worked properly", !secondElement.equals(firstElement.getFirstElement()));
         assertNull("First Element should not contain elements after detaching. ", firstElement.getFirstElement());
-        assertNull("First Element should not contain elements after detaching. ", firstElement.getFirstChild());
+        assertNull("First Element should not contain elements after detaching. ", firstElement.getFirstOMChild());
         assertNull(secondElement.findNamespace(testNamespace2.getName(), testNamespace2.getPrefix()));
 
         firstElement.addChild(secondElement);
         firstElement.setText("Some Sample Text");
 
-        assertTrue("First added child must be the first child", secondElement.equals(firstElement.getFirstChild()));
+        assertTrue("First added child must be the first child", secondElement.equals(firstElement.getFirstOMChild()));
         Iterator children = firstElement.getChildren();
         int childCount = 0;
         while (children.hasNext()) {
@@ -120,7 +120,7 @@ public class OMElementTest extends OMTestCase implements OMConstants {
         assertEquals("Children count should be two", childCount, 2);
 
         secondElement.detach();
-        assertTrue("First child should be the text child", firstElement.getFirstChild() instanceof OMText);
+        assertTrue("First child should be the text child", firstElement.getFirstOMChild() instanceof OMText);
 
 
     }

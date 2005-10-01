@@ -105,7 +105,7 @@ public class DeserializationContext {
 
     public void processRest(OMElement rpcElement) throws Exception {
         // The siblings of this should be SOAP 1.1 independent elements
-        OMNode nextElement = rpcElement.getNextSibling();
+        OMNode nextElement = rpcElement.getNextOMSibling();
         while (nextElement != null) {
             if (nextElement instanceof OMElement) {
                 OMAttribute idAttr =
@@ -114,7 +114,7 @@ public class DeserializationContext {
                     idFound(idAttr.getValue(), (OMElement)nextElement);
                 }
             }
-            nextElement = nextElement.getNextSibling();
+            nextElement = nextElement.getNextOMSibling();
         }
     }
 }

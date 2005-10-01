@@ -55,9 +55,9 @@ public class StAXOMBuilderTest extends AbstractTestCase {
         assertTrue(" Name of the root element is wrong",
                 rootElement.getLocalName().equalsIgnoreCase("Root"));
         // get the first OMElement child
-        OMNode omnode = rootElement.getFirstChild();
+        OMNode omnode = rootElement.getFirstOMChild();
         while (omnode instanceof OMText) {
-            omnode = omnode.getNextSibling();
+            omnode = omnode.getNextOMSibling();
         }
         Iterator children = ((OMElement) omnode).getChildren();
         int childrenCount = 0;

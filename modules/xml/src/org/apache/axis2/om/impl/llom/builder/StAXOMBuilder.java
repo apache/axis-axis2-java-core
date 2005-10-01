@@ -104,8 +104,8 @@ public class StAXOMBuilder extends StAXBuilder {
         } else if (lastNode.isComplete()) {
             node = omfactory.createOMElement(elementName, null,
                     lastNode.getParent(), this);
-            ((OMNodeEx)lastNode).setNextSibling(node);
-            ((OMNodeEx)node).setPreviousSibling(lastNode);
+            ((OMNodeEx)lastNode).setNextOMSibling(node);
+            ((OMNodeEx)node).setPreviousOMSibling(lastNode);
         } else {
             OMElement e = (OMElement) lastNode;
             node = omfactory.createOMElement(elementName, null,

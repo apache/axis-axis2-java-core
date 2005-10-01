@@ -87,13 +87,13 @@ public class OMChildrenWithSpecificAttributeIterator
                     isMatchingNodeFound = true;
                     needToMoveForward = false;
                 } else {
-                    currentChild = currentChild.getNextSibling();
+                    currentChild = currentChild.getNextOMSibling();
                     needToMoveForward = !(currentChild == null);
                 }
             } else {
 
                 // get the next named node
-                currentChild = currentChild.getNextSibling();
+                currentChild = currentChild.getNextOMSibling();
                 needToMoveForward = !(currentChild == null);
             }
         }
@@ -109,7 +109,7 @@ public class OMChildrenWithSpecificAttributeIterator
         nextCalled = true;
         removeCalled = false;
         lastChild = currentChild;
-        currentChild = currentChild.getNextSibling();
+        currentChild = currentChild.getNextOMSibling();
         if ((lastChild != null) && detach && lastChild.getParent() != null) {
             lastChild.detach();
         }

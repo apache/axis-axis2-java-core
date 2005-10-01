@@ -27,9 +27,9 @@ import org.apache.axis2.om.OMNode;
  * Please use at your own risk. May corrupt the data integrity
  */
 public interface OMNodeEx extends OMNode {
-    public void setNextSibling(OMNode node);
+    public void setNextOMSibling(OMNode node);
 
-    public void setPreviousSibling(OMNode previousSibling);
+    public void setPreviousOMSibling(OMNode previousSibling);
 
     public void setParent(OMContainer element);
 

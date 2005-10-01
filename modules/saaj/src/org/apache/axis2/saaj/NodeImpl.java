@@ -112,7 +112,7 @@ public class NodeImpl implements Node {
         if (omNode.getType() == OMNode.TEXT_NODE)
             return ((OMText) omNode).getText();
         else if (omNode.getType() == OMNode.ELEMENT_NODE)
-            return new NodeImpl(((OMElement) omNode).getFirstChild()).getValue();
+            return new NodeImpl(((OMElement) omNode).getFirstOMChild()).getValue();
         return null;
     }
 
@@ -175,7 +175,7 @@ public class NodeImpl implements Node {
                     org.apache.axis2.om.OMAbstractFactory.getOMFactory()
                     .createText(parent, value);
         } else if (omNode.getType() == OMNode.ELEMENT_NODE) {
-            OMNode firstChild = ((OMElement) omNode).getFirstChild();
+            OMNode firstChild = ((OMElement) omNode).getFirstOMChild();
             if (firstChild == null) {
                 firstChild =
                         org.apache.axis2.om.OMAbstractFactory.getOMFactory()
@@ -219,7 +219,7 @@ public class NodeImpl implements Node {
      */
     public boolean hasAttributes() {
         if (omNode instanceof OMElement) {
-            Iterator iter = ((OMElement) omNode).getAttributes();
+            Iterator iter = ((OMElement) omNode).getAllAttributes();
             return (iter.hasNext());
         }
         return false;
@@ -361,7 +361,7 @@ public class NodeImpl implements Node {
     }
 
     /**
-     * Method getAttributes
+     * Method getAllAttributes
      *
      * @see org.w3c.dom.Node#getAttributes()
      */
@@ -369,19 +369,19 @@ public class NodeImpl implements Node {
         // Will have to provide an implementation of NamedNodeMap
         // Dropping for now
         // TODO
-        Iterator iter = ((OMElement) omNode).getAttributes();
+        Iterator iter = ((OMElement) omNode).getAllAttributes();
 
         return null;
     }
 
     /**
-     * Method getFirstChild
+     * Method getFirstOMChild
      *
      * @see org.w3c.dom.Node#getFirstChild()
      */
     public org.w3c.dom.Node getFirstChild() {
         //
-        OMNode child = ((OMElement) omNode).getFirstChild();
+        OMNode child = ((OMElement) omNode).getFirstOMChild();
         return new NodeImpl(child);
     }
 
@@ -408,7 +408,7 @@ public class NodeImpl implements Node {
      */
     public org.w3c.dom.Node getNextSibling() {
 
-        OMNode sibling = omNode.getNextSibling();
+        OMNode sibling = omNode.getNextOMSibling();
         return new NodeImpl(sibling);
     }
 
@@ -424,7 +424,7 @@ public class NodeImpl implements Node {
      */
     public org.w3c.dom.Node getPreviousSibling() {
 
-        OMNode prevSibling = omNode.getPreviousSibling();
+        OMNode prevSibling = omNode.getPreviousOMSibling();
         return new NodeImpl(prevSibling);
     }
 

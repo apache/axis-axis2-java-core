@@ -75,7 +75,7 @@ public class SOAP12HeaderImpl extends SOAPHeaderImpl {
 
 
     public Iterator extractHeaderBlocks(String role) {
-        return new OMChildrenWithSpecificAttributeIterator(getFirstChild(),
+        return new OMChildrenWithSpecificAttributeIterator(getFirstOMChild(),
                 new QName(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
                         SOAP12Constants.SOAP_ROLE),
                 role,

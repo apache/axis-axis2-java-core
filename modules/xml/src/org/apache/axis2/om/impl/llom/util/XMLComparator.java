@@ -165,7 +165,7 @@ public class XMLComparator {
     private void compareAttibutes(OMElement elementOne, OMElement elementTwo) throws XMLComparisonException {
         int elementOneAtribCount = 0;
         int elementTwoAtribCount = 0;
-        Iterator attributes = elementOne.getAttributes();
+        Iterator attributes = elementOne.getAllAttributes();
         while (attributes.hasNext()) {
             OMAttribute omAttribute = (OMAttribute) attributes.next();
             OMAttribute attr = elementTwo.getFirstAttribute(
@@ -179,7 +179,7 @@ public class XMLComparator {
             elementOneAtribCount++;
         }
 
-        Iterator elementTwoIter = elementTwo.getAttributes();
+        Iterator elementTwoIter = elementTwo.getAllAttributes();
         while (elementTwoIter.hasNext()) {
             elementTwoIter.next();
             elementTwoAtribCount++;

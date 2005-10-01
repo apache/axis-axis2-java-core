@@ -93,7 +93,7 @@ public interface OMContainer {
      *
      * @return Returns the first child.  May return null if the container has no children.
      */
-    public OMNode getFirstChild();
+    public OMNode getFirstOMChild();
 
     public boolean isComplete();
 

@@ -319,7 +319,7 @@ public class DocumentNavigator extends DefaultNavigator {
     public Iterator getAttributeAxisIterator(Object contextNode) throws UnsupportedAxisException {
         if (isElement(contextNode)) {
             ArrayList attributes = new ArrayList();
-            Iterator i = ((OMElement) contextNode).getAttributes();
+            Iterator i = ((OMElement) contextNode).getAllAttributes();
             while (i != null && i.hasNext()) {
                 attributes.add(
                         new OMAttributeEx((OMAttribute) i.next(),
@@ -356,7 +356,7 @@ public class DocumentNavigator extends DefaultNavigator {
                 declaredNS.add(i.next());
             }
             declaredNS.add(element.getNamespace());
-            for (Iterator iter = element.getAttributes();
+            for (Iterator iter = element.getAllAttributes();
                  iter != null && iter.hasNext();) {
                 OMAttribute attr = (OMAttribute) iter.next();
                 declaredNS.add(attr.getNamespace());
@@ -471,7 +471,7 @@ public class DocumentNavigator extends DefaultNavigator {
         ArrayList list = new ArrayList();
         if (contextNode != null && contextNode instanceof OMNode) {
             while (contextNode != null && contextNode instanceof OMNode) {
-                contextNode = ((OMNode) contextNode).getNextSibling();
+                contextNode = ((OMNode) contextNode).getNextOMSibling();
                 if (contextNode != null)
                     list.add(contextNode);
             }
@@ -492,7 +492,7 @@ public class DocumentNavigator extends DefaultNavigator {
         ArrayList list = new ArrayList();
         if (contextNode != null && contextNode instanceof OMNode) {
             while (contextNode != null && contextNode instanceof OMNode) {
-                contextNode = ((OMNode) contextNode).getPreviousSibling();
+                contextNode = ((OMNode) contextNode).getPreviousOMSibling();
                 if (contextNode != null)
                     list.add(contextNode);
             }

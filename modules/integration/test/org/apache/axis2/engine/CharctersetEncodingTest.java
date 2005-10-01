@@ -100,7 +100,7 @@ public class CharctersetEncodingTest extends TestCase {
 
 
             assertNotNull("Result is null", resultElem);
-            String result = ((OMElement) resultElem.getFirstChild()).getText();
+            String result = ((OMElement) resultElem.getFirstOMChild()).getText();
 
             assertNotNull("Result value is null", result);
 

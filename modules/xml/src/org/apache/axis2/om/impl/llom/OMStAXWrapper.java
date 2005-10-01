@@ -619,7 +619,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         } else {
             if (isStartElement() || (currentEvent == ATTRIBUTE)) {
                 OMElement elt = (OMElement) lastNode;
-                returnCount = getCount(elt.getAttributes());
+                returnCount = getCount(elt.getAllAttributes());
             } else {
                 throw new IllegalStateException(
                         "attribute count accessed in illegal event (" +
@@ -1174,7 +1174,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         OMAttribute returnAttrib = null;
         if (elt != null) {
             returnAttrib =
-                    (OMAttribute) getItemFromIterator(elt.getAttributes(),
+                    (OMAttribute) getItemFromIterator(elt.getAllAttributes(),
                             index);
         }
         return returnAttrib;

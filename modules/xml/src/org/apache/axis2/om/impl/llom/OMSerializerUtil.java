@@ -23,8 +23,8 @@ import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.serialize.StreamingOMSerializer;
 
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import java.util.Iterator;
 
 public class OMSerializerUtil {
@@ -150,8 +150,8 @@ public class OMSerializerUtil {
 
     public static void serializeAttributes(OMElementImpl element,
                                            org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
-        if (element.getAttributes() != null) {
-            Iterator attributesList = element.getAttributes();
+        if (element.getAllAttributes() != null) {
+            Iterator attributesList = element.getAllAttributes();
             while (attributesList.hasNext()) {
                 serializeAttribute((OMAttribute) attributesList.next(),
                         omOutput);

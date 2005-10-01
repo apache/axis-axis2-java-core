@@ -59,8 +59,8 @@ public class SAXOMBuilder extends DefaultHandler {
         } else if (lastNode.isComplete()) {
             e = factory.createOMElement(localName, null, lastNode.getParent(),
                     null);
-            ((OMNodeEx)lastNode).setNextSibling(e);
-            ((OMNodeEx)e).setPreviousSibling(lastNode);
+            ((OMNodeEx)lastNode).setNextOMSibling(e);
+            ((OMNodeEx)e).setPreviousOMSibling(lastNode);
         } else {
             OMElement parent = (OMElement) lastNode;
             e = factory.createOMElement(localName, null, (OMElement) lastNode,
@@ -144,8 +144,8 @@ public class SAXOMBuilder extends DefaultHandler {
                     factory.createText((OMElement) lastNode.getParent(),
                             new String(ch,
                                     start, length));
-            ((OMNodeEx)lastNode).setNextSibling(node);
-            ((OMNodeEx)node).setPreviousSibling(lastNode);
+            ((OMNodeEx)lastNode).setNextOMSibling(node);
+            ((OMNodeEx)node).setPreviousOMSibling(lastNode);
         } else {
             OMElement e = (OMElement) lastNode;
             node = factory.createText(e, new String(ch, start, length));

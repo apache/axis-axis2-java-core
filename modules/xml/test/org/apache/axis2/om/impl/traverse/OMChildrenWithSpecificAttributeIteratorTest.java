@@ -39,7 +39,7 @@ public class OMChildrenWithSpecificAttributeIteratorTest extends TestCase {
         OMElement documentElement = getSampleDocumentElement(testNamespace);
 
         Iterator childrenIter = new OMChildrenWithSpecificAttributeIterator(
-                documentElement.getFirstChild(), new QName(testNamespace.getName(), "myAttr",
+                documentElement.getFirstOMChild(), new QName(testNamespace.getName(), "myAttr",
                 testNamespace.getPrefix()), "Axis2", true);
 
         int childCount = getChidrenCount(childrenIter);
@@ -58,7 +58,7 @@ public class OMChildrenWithSpecificAttributeIteratorTest extends TestCase {
         OMElement documentElement = getSampleDocumentElement(testNamespace);
 
         Iterator childrenIter = new OMChildrenWithSpecificAttributeIterator(
-                documentElement.getFirstChild(), new QName(testNamespace.getName(), "myAttr",
+                documentElement.getFirstOMChild(), new QName(testNamespace.getName(), "myAttr",
                 testNamespace.getPrefix()), "Axis2", false);
 
         int childCount = getChidrenCount(childrenIter);

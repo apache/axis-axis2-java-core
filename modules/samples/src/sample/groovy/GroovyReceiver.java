@@ -80,7 +80,7 @@ public class GroovyReceiver
             }
             String methodName = op.getName().getLocalPart();
             OMElement firstChild =
-                (OMElement) inMessage.getEnvelope().getBody().getFirstChild();
+                (OMElement) inMessage.getEnvelope().getBody().getFirstOMChild();
             inMessage.getEnvelope().build();
             StringWriter writer = new StringWriter();
             firstChild.build();

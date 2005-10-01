@@ -74,7 +74,7 @@ public class ElementSerializerTest extends AbstractTestCase {
 
     public void testElementSerilizationChild() throws Exception {
         OMElement elt = builder.getDocumentElement();
-        OMNode node = elt.getFirstChild().getNextSibling();
+        OMNode node = elt.getFirstOMChild().getNextOMSibling();
         node.serializeWithCache(writer);
 
     }

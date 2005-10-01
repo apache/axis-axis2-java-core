@@ -244,7 +244,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
      * @see javax.xml.soap.SOAPElement#getAllAttributes()
      */
     public Iterator getAllAttributes() {
-        Iterator attrIter = omElement.getAttributes();
+        Iterator attrIter = omElement.getAllAttributes();
         ArrayList arrayList = new ArrayList();
         while (attrIter.hasNext()) {
             Object o = attrIter.next();
@@ -523,7 +523,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
      * @see org.w3c.dom.Element#hasAttribute(java.lang.String)
      */
     public boolean hasAttribute(String localName) {
-        Iterator attrIter = omElement.getAttributes();
+        Iterator attrIter = omElement.getAllAttributes();
         while (attrIter.hasNext()) {
             org.apache.axis2.om.OMAttribute omAttr = (org.apache.axis2.om.OMAttribute) (attrIter.next());
             if (omAttr.getLocalName().equals(localName)) {
@@ -544,7 +544,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
      * @see org.w3c.dom.Element#getAttribute(java.lang.String)
      */
     public String getAttribute(String name) {
-        Iterator attrIter = omElement.getAttributes();
+        Iterator attrIter = omElement.getAllAttributes();
         while (attrIter.hasNext()) {
             org.apache.axis2.om.OMAttribute omAttr = (org.apache.axis2.om.OMAttribute) (attrIter.next());
             if (omAttr.getLocalName().equals(name)) {
@@ -593,7 +593,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
      * @see org.w3c.dom.Element#hasAttributeNS(java.lang.String, java.lang.String)
      */
     public boolean hasAttributeNS(String namespaceURI, String localName) {
-        Iterator attrIter = omElement.getAttributes();
+        Iterator attrIter = omElement.getAllAttributes();
         while (attrIter.hasNext()) {
             org.apache.axis2.om.OMAttribute omAttr = (org.apache.axis2.om.OMAttribute) (attrIter.next());
             if (omAttr.getLocalName().equals(localName) &&
@@ -613,7 +613,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
      * @see org.w3c.dom.Element#getAttributeNode(java.lang.String)
      */
     public Attr getAttributeNode(String localName) {
-        Iterator attrIter = omElement.getAttributes();
+        Iterator attrIter = omElement.getAllAttributes();
         while (attrIter.hasNext()) {
             org.apache.axis2.om.OMAttribute omAttr = (org.apache.axis2.om.OMAttribute) (attrIter.next());
             if (omAttr.getLocalName().equals(localName)) {
@@ -738,7 +738,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
      * @see org.w3c.dom.Element#getAttributeNS(java.lang.String, java.lang.String)
      */
     public String getAttributeNS(String namespaceURI, String localName) {
-        Iterator attrIter = omElement.getAttributes();
+        Iterator attrIter = omElement.getAllAttributes();
         while (attrIter.hasNext()) {
             org.apache.axis2.om.OMAttribute omAttr = (org.apache.axis2.om.OMAttribute) (attrIter.next());
             if (omAttr.getLocalName().equals(localName) &&
@@ -781,7 +781,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
      * @see org.w3c.dom.Element#getAttributeNodeNS(java.lang.String, java.lang.String)
      */
     public Attr getAttributeNodeNS(String namespaceURI, String localName) {
-        Iterator attrIter = omElement.getAttributes();
+        Iterator attrIter = omElement.getAllAttributes();
         while (attrIter.hasNext()) {
             org.apache.axis2.om.OMAttribute omAttr = (org.apache.axis2.om.OMAttribute) (attrIter.next());
             if (omAttr.getLocalName().equals(localName) &&

@@ -23,7 +23,7 @@ public class OutService extends Thread{
         SOAPEnvelope env = omFactory.getDefaultEnvelope();
         OMNode testNode = omFactory.createText("This is auto generated messge by the server at " + new Date());
         env.getBody().addChild(testNode);
-        log.info("Generated Message" + env.getBody().getFirstChild());
+        log.info("Generated Message" + env.getBody().getFirstOMChild());
 
         /*EndpointReference targetEPR = null;
         String action = null;

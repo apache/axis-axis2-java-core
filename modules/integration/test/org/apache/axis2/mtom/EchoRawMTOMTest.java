@@ -121,8 +121,8 @@ public class EchoRawMTOMTest extends TestCase {
             public void onComplete(AsyncResult result) {
                 SOAPEnvelope envelope = result.getResponseEnvelope();
                 
-                OMElement ele = (OMElement) envelope.getBody().getFirstElement().getFirstChild();
-                OMText binaryNode = (OMText) ele.getFirstChild();
+                OMElement ele = (OMElement) envelope.getBody().getFirstElement().getFirstOMChild();
+                OMText binaryNode = (OMText) ele.getFirstOMChild();
                 
                 // to the assert equal
                 compareWithCreatedOMText(binaryNode);
@@ -168,8 +168,8 @@ public class EchoRawMTOMTest extends TestCase {
                 payload);
         // result.serializeWithCache(new
         // OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
-        OMElement ele = (OMElement) result.getFirstChild();
-        OMText binaryNode = (OMText) ele.getFirstChild();
+        OMElement ele = (OMElement) result.getFirstOMChild();
+        OMText binaryNode = (OMText) ele.getFirstOMChild();
         
         // to the assert equal
         compareWithCreatedOMText(binaryNode);

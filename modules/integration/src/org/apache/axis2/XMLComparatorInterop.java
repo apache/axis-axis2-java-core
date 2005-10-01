@@ -190,7 +190,7 @@ public class XMLComparatorInterop {
     private boolean compareAttibutes(OMElement elementOne, OMElement elementTwo) {
         int elementOneAtribCount = 0;
         int elementTwoAtribCount = 0;
-        Iterator attributes = elementOne.getAttributes();
+        Iterator attributes = elementOne.getAllAttributes();
         while (attributes.hasNext()) {
             OMAttribute omAttribute = (OMAttribute) attributes.next();
             OMAttribute attr = elementTwo.getFirstAttribute(omAttribute.getQName());
@@ -200,7 +200,7 @@ public class XMLComparatorInterop {
             elementOneAtribCount++;
         }
 
-        Iterator elementTwoIter = elementTwo.getAttributes();
+        Iterator elementTwoIter = elementTwo.getAllAttributes();
         while (elementTwoIter.hasNext()) {
             elementTwoIter.next();
             elementTwoAtribCount++;

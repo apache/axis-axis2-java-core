@@ -99,10 +99,10 @@ public class OMTest extends AbstractTestCase {
     public void testFirstChildDetach() throws Exception {
         OMElement root = envelope;
         assertFalse("Root should not be complete", root.isComplete());
-        OMNode oldFirstChild = root.getFirstChild();
+        OMNode oldFirstChild = root.getFirstOMChild();
         assertNotNull(oldFirstChild);
         oldFirstChild.detach();
-        OMNode newFirstChild = root.getFirstChild();
+        OMNode newFirstChild = root.getFirstOMChild();
         assertNotNull(newFirstChild);
         assertNotSame(oldFirstChild, newFirstChild);
     }

@@ -42,7 +42,7 @@ public class SOAPFaultTextTest extends SOAPFaultReasonTestCase {
         assertTrue(
                 "SOAP 1.1 Fault Text Test : - After calling setLang method, Lang attribute value mismatch",
                 soap11FaultText.getLang().equals("en"));
-        OMAttribute langAttribute = (OMAttribute) soap11FaultText.getAttributes()
+        OMAttribute langAttribute = (OMAttribute) soap11FaultText.getAllAttributes()
                 .next();
         assertTrue(
                 "SOAP 1.1 Fault Text Test : - After calling setLang method, Lang attribute local name mismaatch",
@@ -94,7 +94,7 @@ public class SOAPFaultTextTest extends SOAPFaultReasonTestCase {
         assertTrue(
                 "SOAP 1.2 Fault Text Test : - After calling setLang method, Lang attribute value mismatch",
                 soap12FaultText.getLang().equals("en"));
-        OMAttribute langAttribute = (OMAttribute) soap12FaultText.getAttributes()
+        OMAttribute langAttribute = (OMAttribute) soap12FaultText.getAllAttributes()
                 .next();
         assertTrue(
                 "SOAP 1.2 Fault Text Test : - After calling setLang method, Lang attribute local name mismaatch",
@@ -151,7 +151,7 @@ public class SOAPFaultTextTest extends SOAPFaultReasonTestCase {
         assertTrue(
                 "SOAP 1.2 Fault Text Test With Parser : - getLang method returns incorrect string",
                 soap12FaultTextWithParser.getLang().equals("en"));
-        OMAttribute langAttribute = (OMAttribute) soap12FaultTextWithParser.getAttributes()
+        OMAttribute langAttribute = (OMAttribute) soap12FaultTextWithParser.getAllAttributes()
                 .next();
         assertTrue(
                 "SOAP 1.2 Fault Text Test With Parser : - Lang attribute local name mismaatch",

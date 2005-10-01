@@ -109,7 +109,7 @@ public class OMChildElementIterator implements Iterator {
         if (hasNext()) {
             lastChild = currentChild;
             do{
-                currentChild = currentChild.getNextSibling();
+                currentChild = currentChild.getNextOMSibling();
             }while(currentChild!=null && currentChild.getType()!=OMNode.ELEMENT_NODE);
 
 

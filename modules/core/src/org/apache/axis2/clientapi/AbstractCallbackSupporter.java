@@ -50,7 +50,7 @@ public abstract class AbstractCallbackSupporter {
     private static void markElementsAsOptimized(QName qName,OMElement rootElt){
         if (rootElt.getQName().equals(qName)){
             //get the text node and mark it
-            OMNode node = rootElt.getFirstChild();
+            OMNode node = rootElt.getFirstOMChild();
             if (node.getType()==OMNode.TEXT_NODE){
                 ((OMText)node).setOptimize(true);
             }

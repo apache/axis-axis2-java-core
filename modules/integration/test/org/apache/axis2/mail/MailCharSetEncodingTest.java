@@ -153,8 +153,8 @@ public class MailCharSetEncodingTest extends TestCase {
            // call.close();
             call = null;
             assertNotNull("Result is null", resultElem);
-            String result = ((OMElement) resultElem.getFirstChild()
-                    .getNextSibling()).getFirstElement().getFirstElement()
+            String result = ((OMElement) resultElem.getFirstOMChild()
+                    .getNextOMSibling()).getFirstElement().getFirstElement()
                     .getText();
 
             assertNotNull("Result value is null", result);

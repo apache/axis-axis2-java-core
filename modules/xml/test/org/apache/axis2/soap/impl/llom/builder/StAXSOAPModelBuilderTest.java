@@ -143,7 +143,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                             "http://example.org/ts-tests"));
             assertEquals("SOAP 1.2 :- Header block text mismatch",headerBlock.getText().trim(),"foo");
 
-            Iterator headerBlockAttributes = headerBlock.getAttributes();
+            Iterator headerBlockAttributes = headerBlock.getAllAttributes();
             OMAttribute roleAttribute = (OMAttribute) headerBlockAttributes.next();
             assertTrue("SOAP 1.2 :- Role attribute name mismatch",
                     roleAttribute.getLocalName().equals(
@@ -324,7 +324,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
             assertTrue("SOAP 1.2 :- Text value in MaxTime element mismatch",
                     element1.getText().trim().equals("P5M"));
 
-            Iterator attributeIterator = element1.getAttributes();
+            Iterator attributeIterator = element1.getAllAttributes();
             OMAttribute attributeInMaxTime = (OMAttribute) attributeIterator.next();
             assertTrue("SOAP 1.2 :- Attribute local name mismatch",
                     attributeInMaxTime.getLocalName().equals("detail"));
@@ -387,7 +387,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
             assertTrue("SOAP 1.1 :- Headaer block text mismatch",
                     headerBlock.getText().trim().equals("foo"));
 
-            headerBlockAttributes = headerBlock.getAttributes();
+            headerBlockAttributes = headerBlock.getAllAttributes();
 
             mustUnderstandAttribute =
                     (OMAttribute) headerBlockAttributes.next();
@@ -487,7 +487,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
             assertTrue("SOAP 1.1 :- Text value in MaxTime element mismatch",
                     element1.getText().trim().equals("P5M"));
 
-            attributeIterator = element1.getAttributes();
+            attributeIterator = element1.getAllAttributes();
             attributeInMaxTime = (OMAttribute) attributeIterator.next();
             assertTrue("SOAP 1.1 :- Attribute local name mismatch",
                     attributeInMaxTime.getLocalName().equals("detail"));

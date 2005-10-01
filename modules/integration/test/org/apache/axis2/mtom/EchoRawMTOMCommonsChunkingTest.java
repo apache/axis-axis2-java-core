@@ -117,7 +117,7 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase {
         OMElement result = call.invokeBlocking(operationName
                 .getLocalPart(), payload);
 
-        OMElement ele = (OMElement) result.getFirstChild();
+        OMElement ele = (OMElement) result.getFirstOMChild();
         this.campareWithCreatedOMElement(data);
 
     }

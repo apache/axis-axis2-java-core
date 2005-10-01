@@ -93,7 +93,7 @@ public class GroovyServiceTest extends TestCase {
         OMElement result = call.invokeBlocking(operationName.getLocalPart(),
                 payload);
         assertNotNull(result);
-        OMElement person = (OMElement)result.getFirstChild();
+        OMElement person = (OMElement)result.getFirstOMChild();
         assertEquals(person.getLocalName(),"person");
 
         StringWriter writer = new StringWriter();

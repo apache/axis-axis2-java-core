@@ -50,7 +50,7 @@ public class MessageOptimizer {
 		
 		while (cipherValueElements.hasNext()) {
 			OMElement element = (OMElement) cipherValueElements.next();
-			OMText text = (OMText)element.getFirstChild();
+			OMText text = (OMText)element.getFirstOMChild();
 			text.setOptimize(true);
 		}
 	}

@@ -63,17 +63,17 @@ public class MTOMStAXSOAPModelBuilderTest extends AbstractTestCase {
         OMElement root = builder.getDocumentElement();
 //        System.out.println(root.getLocalName() + " : "
 //                + root.getNamespace().getName());
-        OMElement body = (OMElement) root.getFirstChild();
+        OMElement body = (OMElement) root.getFirstOMChild();
 //        System.out.println(body.getLocalName() + " : "
 //                + body.getNamespace().getName());
 
-        OMElement data = (OMElement) body.getFirstChild();
+        OMElement data = (OMElement) body.getFirstOMChild();
 //        System.out.println(data.getLocalName() + " : "
 //                + data.getNamespace().getName());
         Iterator childIt = data.getChildren();
         //while (childIt.hasNext()) {
         OMElement child = (OMElement) childIt.next();
-        OMText blob = (OMText) child.getFirstChild();
+        OMText blob = (OMText) child.getFirstOMChild();
         /*
          * Following is the procedure the user has to follow to read objects in
          * OBBlob User has to know the object type & whether it is serializable.
