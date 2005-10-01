@@ -17,6 +17,7 @@
 package org.apache.axis2.om.impl.llom;
 
 import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMComment;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
@@ -364,8 +365,11 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
             returnString = parser.getText();
         } else {
             if (hasText()) {
-                OMText textNode = (OMText) lastNode;
-                returnString = textNode.getText();
+                if (lastNode instanceof OMText) {
+                    returnString = ((OMText) lastNode).getText();
+                } else if (lastNode instanceof OMComment){
+                    returnString = ((OMComment) lastNode).getValue();
+                }
             }
         }
         return returnString;
@@ -619,7 +623,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
             } else {
                 throw new IllegalStateException(
                         "attribute count accessed in illegal event (" +
-                        currentEvent + ")!");
+                                currentEvent + ")!");
             }
         }
         return returnCount;
@@ -641,7 +645,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
         } else {
             if (isStartElement() || (currentEvent == ATTRIBUTE)) {
                 QName qname = new QName(s, s1);
-                OMAttribute attrib = ((OMElement)lastNode).getAttribute(qname);
+                OMAttribute attrib = ((OMElement) lastNode).getAttribute(qname);
                 if (attrib != null) {
                     returnString = attrib.getValue();
                 }
@@ -823,7 +827,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                 try {
                     parser = (XMLStreamReader) builder.getParser();
                 } catch (Exception e) {
-                   throw new XMLStreamException("problem accessing the parser",e);
+                    throw new XMLStreamException("problem accessing the parser", e);
                 }
 
                 if ((currentEvent == START_DOCUMENT) &&
