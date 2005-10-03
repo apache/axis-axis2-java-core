@@ -23,7 +23,6 @@ import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.OMNodeEx;
-import org.apache.axis2.om.impl.llom.OMDocumentImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
@@ -33,7 +32,6 @@ import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPMessage;
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
-import org.apache.axis2.soap.impl.llom.SOAPEnvelopeImpl;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,7 +47,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     /**
      * Field envelope
      */
-    private SOAPEnvelopeImpl envelope;
+    private SOAPEnvelope envelope;
     private OMNamespace envelopeNamespace;
 
 
@@ -230,8 +228,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
                 throw new SOAPProcessingException("First Element must contain the local name, "
                         + SOAPConstants.SOAPENVELOPE_LOCAL_NAME, SOAPConstants.FAULT_CODE_VERSION_MISMATCH);
             }
-            envelope =
-                    (SOAPEnvelopeImpl) soapFactory.createSOAPEnvelope(this);
+            envelope = soapFactory.createSOAPEnvelope(this);
             element = envelope;
             processNamespaceData(element, true);
             // fill in the attributes
@@ -440,7 +437,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     }
 
     public OMDocument getDocument() {
-        return (OMDocumentImpl) this.soapMessage;
+        return (OMDocument) this.soapMessage;
     }
 
 }
