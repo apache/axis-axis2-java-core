@@ -15,6 +15,14 @@
  */
 package org.apache.axis2.tool.codegen;
 
+import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis2.wsdl.codegen.CommandLineOption;
+import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
+import org.apache.wsdl.WSDLDescription;
+
+import javax.wsdl.WSDLException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,14 +31,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.wsdl.WSDLException;
-
-import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
-import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
-import org.apache.axis2.wsdl.codegen.CommandLineOption;
-import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
-import org.apache.wsdl.WSDLDescription;
 
 
 public class WSDL2JavaGenerator {
@@ -149,7 +149,7 @@ public class WSDL2JavaGenerator {
                in = new FileInputStream(new File(wsdlURI)); 
            }
          
-        return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in).getDescription();
+        return WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1).build(in).getDescription();
     } catch (FileNotFoundException e) {
        throw e;
     } catch (WSDLException e) {
