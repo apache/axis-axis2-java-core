@@ -74,7 +74,7 @@ public class CommonsHTTPTransportSender
     public CommonsHTTPTransportSender() {
     } //default
 
-    public void invoke(MessageContext msgContext) throws AxisFault {
+    public synchronized void invoke(MessageContext msgContext) throws AxisFault {
         try {
             String charSetEnc =
                     (String) msgContext.getProperty(
@@ -83,14 +83,14 @@ public class CommonsHTTPTransportSender
                 omOutput.setCharSetEncoding(charSetEnc);
             } else {
                 OperationContext opctx = msgContext.getOperationContext();
-                if(opctx != null) {
-                    charSetEnc = (String)opctx.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                if (opctx != null) {
+                    charSetEnc = (String) opctx.getProperty(MessageContext.CHARACTER_SET_ENCODING);
                 }
             }
             /**
              * If the char set enc is still not found use the default
              */
-            if(charSetEnc == null) {
+            if (charSetEnc == null) {
                 charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
             }
             msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
@@ -133,7 +133,7 @@ public class CommonsHTTPTransportSender
                         omOutput.setSoap11(msgContext.isSOAP11());
                         transportInfo.setCharacterEncoding(omOutput.getCharSetEncoding());
                         transportInfo.setContentType(omOutput.getContentType());
-                    }else{
+                    } else {
                         throw new AxisFault(HTTPConstants.HTTPOutTransportInfo + " does not set");
                     }
                 }
@@ -141,7 +141,7 @@ public class CommonsHTTPTransportSender
                 dataOut.serialize(omOutput);
                 omOutput.flush();
             }
-            if(msgContext.getOperationContext() != null){
+            if (msgContext.getOperationContext() != null) {
                 msgContext.getOperationContext().setProperty(
                         Constants.RESPONSE_WRITTEN,
                         Constants.VALUE_TRUE);
@@ -205,6 +205,7 @@ public class CommonsHTTPTransportSender
         }
 
     }
+
     protected HostConfiguration getHostConfiguration(
             MessageContext context,
             URL targetURL) {
@@ -347,12 +348,12 @@ public class CommonsHTTPTransportSender
         public String getContentType() {
             String encoding = omOutput.getCharSetEncoding();
             String contentType = omOutput.getContentType();
-            if(encoding != null){
+            if (encoding != null) {
                 contentType += "; charset=" + encoding;
             }
 
             // action header is not mandated in SOAP 1.2. So putting it, if available
-            if(!msgCtxt.isSOAP11() && soapActionString != null && !"".equals(soapActionString.trim())) {
+            if (!msgCtxt.isSOAP11() && soapActionString != null && !"".equals(soapActionString.trim())) {
                 contentType = contentType + ";action=" + soapActionString + ";";
             }
             return contentType;
@@ -455,7 +456,7 @@ public class CommonsHTTPTransportSender
         String charEncoding =
                 (String) msgContext.getProperty(
                         MessageContext.CHARACTER_SET_ENCODING);
-        if(charEncoding == null){
+        if (charEncoding == null) {
             charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
 
@@ -505,17 +506,17 @@ public class CommonsHTTPTransportSender
             processResponse(postMethod, msgContext);
         } else if (postMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
             return;
-        } else  if (postMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR){
+        } else if (postMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
 
             Header contenttypeHheader = postMethod.getResponseHeader(
                     HTTPConstants.HEADER_CONTENT_TYPE);
 
             String value = contenttypeHheader.getValue();
-            if(value != null){
-                if(value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE)>=0||
-                        value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >=0){
+            if (value != null) {
+                if (value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0 ||
+                        value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0) {
                     processResponse(postMethod, msgContext);
-                }  else {
+                } else {
                     /**
                      * if the content type is  text/html;charset=utf-8
                      */
@@ -526,7 +527,7 @@ public class CommonsHTTPTransportSender
                                     postMethod.getResponseBodyAsString()));
                 }
             }
-        }else{
+        } else {
             throw new AxisFault(
                     Messages.getMessage(
                             "transportError",
@@ -537,9 +538,10 @@ public class CommonsHTTPTransportSender
     }
 
     /**
-     * This is used to get the dynamically set time out values from the 
+     * This is used to get the dynamically set time out values from the
      * message context. If the values are not available or invalid then
      * teh default values or the values set by teh configuration will be used
+     *
      * @param msgContext
      */
     private void getTimoutValues(MessageContext msgContext) {
@@ -612,20 +614,20 @@ public class CommonsHTTPTransportSender
             processResponse(getMethod, msgContext);
         } else if (getMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
             return;
-        }else  if (getMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR){
+        } else if (getMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
 
             Header contenttypeHheader = getMethod.getResponseHeader(
                     HTTPConstants.HEADER_CONTENT_TYPE);
 
             String value = contenttypeHheader.getValue();
-            if(value != null){
-                if(value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE)>=0||
-                        value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >=0){
+            if (value != null) {
+                if (value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0 ||
+                        value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0) {
                     processResponse(getMethod, msgContext);
                 }
 
             }
-        }else{
+        } else {
             throw new AxisFault(
                     Messages.getMessage(
                             "transportError",
@@ -636,10 +638,11 @@ public class CommonsHTTPTransportSender
 
     /**
      * Collect the HTTP header information and set them in the message context
+     *
      * @param method
      * @param msgContext
      */
-    private void obatainHTTPHeaderInformation(HttpMethodBase method,MessageContext msgContext) {
+    private void obatainHTTPHeaderInformation(HttpMethodBase method, MessageContext msgContext) {
         Header header =
                 method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
         if (header != null) {
