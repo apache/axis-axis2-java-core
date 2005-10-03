@@ -17,6 +17,7 @@
 package org.apache.axis2.tool.ant;
 
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CommandLineOption;
@@ -143,7 +144,7 @@ public class AntCodegenTask extends Task {
         throws WSDLException, IOException {
         InputStream in = new FileInputStream(new File(wsdlLocation));
         WSDLVersionWrapper wsdlvWrap =
-            WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in);
+            WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1).build(in);
         return wsdlvWrap.getDescription();
     }
 

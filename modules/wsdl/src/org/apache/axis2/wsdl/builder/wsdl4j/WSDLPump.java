@@ -228,7 +228,7 @@ public class WSDLPump {
     private void populateInterfaces(WSDLInterface wsdlInterface,
                                     PortType wsdl4jPortType) {
 
-        //Copy the Attrebute information items
+        //Copy the Attribute information items
         //Copied with the Same QName so it will require no Query in Binding
         //Coping.
         wsdlInterface.setName(wsdl4jPortType.getQName());

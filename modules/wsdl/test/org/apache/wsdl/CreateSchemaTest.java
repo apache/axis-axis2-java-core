@@ -16,7 +16,7 @@
 
 package org.apache.wsdl;
 
-import org.apache.axis2.wsdl.WSDLVersionWrapper;
+import org.apache.axis2.wsdl.*;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.Schema;
@@ -42,7 +42,7 @@ public class CreateSchemaTest extends AbstractTestCase {
         if (null == this.womDescription) {
             String path = getTestResourceFile("BookQuote.wsdl").getAbsolutePath();
             wsdlVersionWrapper =
-                    WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11)
+                    WOMBuilderFactory.getBuilder(org.apache.axis2.wsdl.WSDLConstants.WSDL_1_1)
                     .build(path);
             this.womDescription = wsdlVersionWrapper.getDescription();
         }

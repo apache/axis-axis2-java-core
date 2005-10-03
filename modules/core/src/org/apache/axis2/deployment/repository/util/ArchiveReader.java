@@ -31,6 +31,7 @@ import org.apache.axis2.description.ServiceGroupDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.commons.logging.Log;
@@ -66,7 +67,7 @@ public class ArchiveReader implements DeploymentConstants {
         boolean foundservice = false;
         try {
             if (in != null) {
-                WOMBuilder builder = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11);
+                WOMBuilder builder = WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1);
                 WSDLVersionWrapper wsdlVersionWrapper = builder.build(in,
                         new AxisDescWSDLComponentFactory());
                 WSDLDescription womDescription = wsdlVersionWrapper.getDescription();
@@ -100,7 +101,7 @@ public class ArchiveReader implements DeploymentConstants {
 
     private void processWSDLFile(InputStream in , DeploymentEngine depengine) throws DeploymentException {
         try {
-            WOMBuilder builder = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11);
+            WOMBuilder builder = WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1);
             WSDLVersionWrapper wsdlVersionWrapper = builder.build(in,
                     new AxisDescWSDLComponentFactory());
             WSDLDescription womDescription = wsdlVersionWrapper.getDescription();

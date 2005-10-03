@@ -165,7 +165,7 @@ public interface WSDLDescription extends Component, WSDLComponentFactory {
 
     /**
      * Will return all the Namespaces associated with the Definition
-     * Component and will be keyed by the Napespace Prefix.
+     * Component and will be keyed by the Namespace Prefix.
      *
      * @return
      */

@@ -768,6 +768,10 @@ public class ServiceDescription
         return serviceimpl.getMetadataBag();
     }
 
+    public void setMetadataBag(Map map) {
+        this.serviceimpl.setMetadataBag(map);
+    }
+
     /**
      * To add the was action paramater into has map so that was action based dispatch can support
      */

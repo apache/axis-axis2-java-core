@@ -36,7 +36,7 @@ public class BindingOperationTest extends AbstractTestCase {
         WSDLDescription womDescription;
 
         String path = getTestResourceFile("BookQuote.wsdl").getAbsolutePath();
-        womDescription = WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11)
+        womDescription = WOMBuilderFactory.getBuilder(org.apache.axis2.wsdl.WSDLConstants.WSDL_1_1)
                 .build(path).getDescription();
 
         assertNotNull(womDescription);

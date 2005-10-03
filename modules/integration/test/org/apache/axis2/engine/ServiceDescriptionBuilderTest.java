@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.description.AxisDescWSDLComponentFactory;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLDescription;
@@ -42,7 +43,7 @@ public class ServiceDescriptionBuilderTest extends TestCase {
                 throw new Exception("Input Stream is null , fileNot Found");
             }
             WSDLDescription womDescription = WOMBuilderFactory.getBuilder(
-                    WOMBuilderFactory.WSDL11)
+                    WSDLConstants.WSDL_1_1)
                     .build(in, new AxisDescWSDLComponentFactory())
                     .getDescription();
             Iterator iterator = womDescription.getServices().keySet().iterator();

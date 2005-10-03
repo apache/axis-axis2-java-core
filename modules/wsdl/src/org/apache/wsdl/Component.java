@@ -87,4 +87,12 @@ public interface Component {
      * @return the metadata Map.
      */
     public Map getMetadataBag();
+
+    /**
+     * Put anything that you feel like in here. This is probably
+     * a good place to store those 'likely to be missed' WSDL 1.1
+     * properties
+     *
+     */
+    public void setMetadataBag(Map map);
 }

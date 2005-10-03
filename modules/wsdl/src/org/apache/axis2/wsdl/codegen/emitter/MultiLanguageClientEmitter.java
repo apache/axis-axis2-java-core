@@ -52,7 +52,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public abstract class MultiLanguageClientEmitter implements Emitter {
+public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     private Log log = LogFactory.getLog(getClass());
 

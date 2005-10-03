@@ -52,7 +52,7 @@ public class ComponentImpl implements WSDLConstants, Component {
     /**
      * Metadata
      */
-    private HashMap metadata = null;
+    private Map metadata = null;
 
     /**
      * Returns the Documentation Element as a <code>Document</code>.
@@ -174,5 +174,13 @@ public class ComponentImpl implements WSDLConstants, Component {
         if (metadata == null)
             metadata = new HashMap();
         return metadata;
+    }
+
+    /**
+     * 
+     * @param map
+     */
+    public void setMetadataBag(Map map) {
+        this.metadata = map;
     }
 }
