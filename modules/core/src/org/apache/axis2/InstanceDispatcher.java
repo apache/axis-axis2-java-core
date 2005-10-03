@@ -58,6 +58,7 @@ public class InstanceDispatcher extends AbstractHandler {
             ServiceGroupContext serviceGroupContext = (ServiceGroupContext) serviceContext.getParent();
             msgContext.setServiceContext(serviceContext);
             msgContext.setServiceGroupContext(serviceGroupContext);
+            msgContext.setServiceGroupContextId(serviceGroupContext.getId());
             return;
 
         } else { //  2. if null, create new opCtxt

@@ -247,7 +247,6 @@ public class OperationDescription extends WSDLOperationImpl implements
 
         }
 
-        registerOperationContext(msgContext, operationContext);
 
         return operationContext;
 

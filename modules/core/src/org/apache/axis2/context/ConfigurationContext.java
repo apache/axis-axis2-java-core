@@ -232,12 +232,6 @@ public class ConfigurationContext extends AbstractContext {
         if (!isNull(serviceGroupContextId) && serviceGroupContextMap.get(serviceGroupContextId) != null) {
             // SGC is already there
             serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
-
-            // check service context is there or not
-
-            //todo Chinthka : I think we do not need to do this
-            // ckecking here , inside ServiceGropContext I have done that  , please take a look at taht
-
             serviceContext = serviceGroupContext.getServiceContext(messageContext.getServiceDescription().getName().
                     getLocalPart());
         } else {
