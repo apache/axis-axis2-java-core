@@ -16,12 +16,14 @@
 
 package org.apache.axis2.attachments;
 
-import junit.framework.TestCase;
+import org.apache.axis2.util.Base64;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import junit.framework.TestCase;
 
 public class Base64Test extends TestCase {
 
