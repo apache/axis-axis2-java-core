@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.wsdl.codegen;
+package org.apache.axis2.databinding.wsdl.codegen;
 
-import junit.framework.TestCase;
+import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
+import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.wsdl.codegen.CommandLineOption;
+import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
+import org.apache.axis2.wsdl.codegen.CommandLineOptionParser;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
@@ -26,6 +30,8 @@ import org.apache.tools.ant.types.Path;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
+import junit.framework.TestCase;
 
 public class WSDL2JavaTest extends TestCase{
 
