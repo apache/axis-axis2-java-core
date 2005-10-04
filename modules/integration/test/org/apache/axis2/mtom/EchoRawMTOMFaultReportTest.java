@@ -21,6 +21,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.OutInOperationDescription;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
@@ -66,7 +67,7 @@ public class EchoRawMTOMFaultReportTest extends TestCase {
         service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
                 EchoService.class.getName()));
 
-        OperationDescription axisOp = new OperationDescription(operationName);
+        OperationDescription axisOp = new OutInOperationDescription(operationName);
         axisOp.setMessageReceiver(new RawXMLINOutMessageReceiver());
         axisOp.setStyle(WSDLService.STYLE_DOC);
         service.addOperation(axisOp);

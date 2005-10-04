@@ -22,11 +22,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -82,7 +78,7 @@ public class MessageContextInjectionTest extends TestCase {
         service.addParameter(
                 new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
                         MessageContextEnabledEcho.class.getName()));
-        OperationDescription operation = new OperationDescription(
+        OperationDescription operation = new InOnlyOperationDescription(
                 operationName);
         operation.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
         service.addOperation(operation);

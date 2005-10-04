@@ -22,6 +22,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.OutInOperationDescription;
 import sample.google.common.util.PropertyLoader;
 
 import javax.xml.namespace.QName;
@@ -99,7 +100,7 @@ public class AsynchronousClient {
                     Constants.TRANSPORT_HTTP,
                     false);
             QName opName = new QName("urn:GoogleSearch", "doGoogleSearch");
-            OperationDescription opdesc = new OperationDescription(opName);
+            OperationDescription opdesc = new OutInOperationDescription(opName);
             //   OperationDescription opdesc = new OperationDescription(new QName("viewVersion"));
             call.invokeNonBlocking(opdesc,
                     requestContext,

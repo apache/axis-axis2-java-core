@@ -19,10 +19,7 @@ package org.apache.axis2.context;
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.util.UUIDGenerator;
 
@@ -47,7 +44,7 @@ public class OperationContextTest extends AbstractTestCase {
 
         messageContext1.setMessageID(
                 UUIDGenerator.getUUID());
-        OperationDescription axisOperation = new OperationDescription(
+        OperationDescription axisOperation = new InOutOperationDescrition(
                 new QName("test"));
         OperationContext operationContext1 = axisOperation.findOperationContext(
                 messageContext1, sessionContext);

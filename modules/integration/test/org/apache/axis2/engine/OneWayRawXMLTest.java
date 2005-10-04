@@ -26,6 +26,7 @@ import org.apache.axis2.clientapi.MessageSender;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.OutInOperationDescription;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -67,7 +68,7 @@ public class OneWayRawXMLTest extends TestCase {
         UtilServer.start();
 
         ServiceDescription service = new ServiceDescription(serviceName);
-        OperationDescription operation = new OperationDescription(
+        OperationDescription operation = new OutInOperationDescription(
                 operationName);
         operation.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messgeCtx) throws AxisFault {

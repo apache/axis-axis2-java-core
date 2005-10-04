@@ -23,6 +23,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.OutInOperationDescription;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
@@ -72,7 +73,7 @@ public class MessageWithServerTest extends TestCase {
         engineRegistry = new AxisConfigurationImpl();
         service.engageModule(m1,engineRegistry);
 
-        OperationDescription operation = new OperationDescription(
+        OperationDescription operation = new OutInOperationDescription(
                 operationName);
         service.addOperation(operation);
 

@@ -23,6 +23,7 @@ import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.OutInOperationDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.interop.whitemesa.round1.util.Round1ClientUtil;
@@ -59,7 +60,7 @@ public class Round1Client {
 
 
         QName opName = new QName("");
-        OperationDescription opDesc = new OperationDescription(opName);
+        OperationDescription opDesc = new OutInOperationDescription(opName);
         MessageContext retMsgCtx = call.invokeBlocking(opDesc, msgCtx);
         //SOAPEnvelope responseEnvelop = replyContext.getEnvelope();
         retEnv = retMsgCtx.getEnvelope();

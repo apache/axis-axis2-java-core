@@ -21,10 +21,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContextFactory;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
@@ -62,7 +59,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
 
         TransportInDescription transportIn = new TransportInDescription(
                 new QName("null"));
-        axisOp = new OperationDescription(opearationName);
+        axisOp = new InOutOperationDescrition(opearationName);
 
         service = new ServiceDescription(serviceName);
         axisOp.setMessageReceiver(new MessageReceiver() {

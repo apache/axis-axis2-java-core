@@ -35,7 +35,8 @@ public class AxisDescWSDLComponentFactory implements WSDLComponentFactory {
 
 
     public WSDLOperation createOperation() {
-        return new OperationDescription();
+//        return new OperationDescription();         // by Deepal
+        return new WSDLOperationImpl();
     }
 
 

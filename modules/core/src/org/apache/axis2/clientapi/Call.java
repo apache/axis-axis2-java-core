@@ -22,11 +22,14 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.OperationDescriptionFactory;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.OutInOperationDescription;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 
@@ -80,7 +83,7 @@ public class Call extends InOutMEPClient {
 
         OperationDescription opDesc =
                 serviceContext.getServiceConfig().getOperation(new QName(axisop));
-        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop);
+        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_IN_OUT);
         opDesc.setParent(serviceContext.getServiceConfig());
         MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
 
@@ -102,7 +105,7 @@ public class Call extends InOutMEPClient {
 
         OperationDescription opDesc =
                 serviceContext.getServiceConfig().getOperation(new QName(axisop));
-        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop);
+        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop, WSDLConstants.MEP_CONSTANT_IN_OUT);
 
         MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
         msgctx.setEnvelope(envelope);
@@ -128,7 +131,7 @@ public class Call extends InOutMEPClient {
             throws AxisFault {
         OperationDescription opDesc =
                 serviceContext.getServiceConfig().getOperation(new QName(axisop));
-        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop);
+        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_IN_OUT);
         MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
         //call the underline implementation
         super.invokeNonBlocking(opDesc, msgctx, callback);
@@ -150,7 +153,7 @@ public class Call extends InOutMEPClient {
             throws AxisFault {
         OperationDescription opDesc =
                 serviceContext.getServiceConfig().getOperation(new QName(axisop));
-        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop);
+        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_IN_OUT);
 
         MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
         msgctx.setEnvelope(envelope);
@@ -162,15 +165,17 @@ public class Call extends InOutMEPClient {
      * This method create a operation desc if it null and copy the flows from the template operation
      * @param opDesc
      * @param axisOp
-     * @return
      */
     private OperationDescription createOpDescAndFillInFlowInformation(
             OperationDescription opDesc,
-            String axisOp) {
+            String axisOp , int mepURL) throws AxisFault {
         if (opDesc == null) {
             //if the operation is not alrady define we will copy the 
             //crated Phases from the templete operation to the this Operation
-            opDesc = new OperationDescription(new QName(axisOp));
+
+//            opDesc = new OperationDescription(new QName(axisOp));
+            opDesc = OperationDescriptionFactory.getOperetionDescription(mepURL);
+            opDesc.setName(new QName(axisOp));
             opDesc.setRemainingPhasesInFlow(
                     operationTemplate.getRemainingPhasesInFlow());
             opDesc.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
@@ -206,7 +211,8 @@ public class Call extends InOutMEPClient {
         //we will assume a Service and operations
         QName assumedServiceName = new QName("AnonymousService");
         ServiceDescription axisService = new ServiceDescription(assumedServiceName);
-        operationTemplate = new OperationDescription(new QName("TemplateOperation"));
+//        operationTemplate = new OperationDescription(new QName("TemplateOperation"));
+        operationTemplate = new   OutInOperationDescription(new QName("TemplateOperation"));
 
         PhasesInfo info =((AxisConfigurationImpl)sysContext.getAxisConfiguration()).getPhasesinfo();
         //to set the operation flows

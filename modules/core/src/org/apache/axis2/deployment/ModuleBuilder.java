@@ -19,10 +19,13 @@ package org.apache.axis2.deployment;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.InOnlyOperationDescription;
+import org.apache.axis2.description.OperationDescriptionFactory;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -137,8 +140,26 @@ public class ModuleBuilder extends DescriptionBuilder{
             if(op_name_att == null){
                 throw new DeploymentException(Messages.getMessage("Invalide Operations"));
             }
+            OMAttribute op_mep_att = operation.getAttribute(
+                    new QName(MEP));
+            String mepURL =null;
+             OperationDescription op_descrip;
+            if(op_mep_att !=null){
+                mepURL= op_mep_att.getValue();
+            }
+
+            if(mepURL == null){
+                // assuming in-out mep
+                op_descrip = new InOnlyOperationDescription();
+            } else {
+                try {
+                    op_descrip = OperationDescriptionFactory.getOperetionDescription(mepURL);
+                } catch (AxisFault axisFault) {
+                    throw new DeploymentException("Error in processing operation " + axisFault);
+                }
+            }
             String opname = op_name_att.getValue();
-            OperationDescription op_descrip = new OperationDescription();
+//            OperationDescription op_descrip = new OperationDescription();
             op_descrip.setName(new QName(opname));
 
             //Opeartion Paramters
@@ -148,12 +169,7 @@ public class ModuleBuilder extends DescriptionBuilder{
 
 
             //setting the mep of the operation
-            OMAttribute op_mep_att = operation.getAttribute(
-                    new QName(MEP));
-            if(op_mep_att !=null){
-                String mep = op_mep_att.getValue();
-                op_descrip.setMessageExchangePattern(mep);
-            }
+
 
             // loading the message recivers
             OMElement receiverElement = operation.getFirstChildWithName(

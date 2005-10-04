@@ -75,7 +75,7 @@ public class WSDoAllSender extends WSDoAllHandler {
         OperationContext opCtx = msgContext.getOperationContext();
         MessageContext inMsgCtx;
         if(opCtx != null && 
-        		(inMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN)) != null) {
+        		(inMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)) != null) {
         	msgContext.setProperty(WSHandlerConstants.RECV_RESULTS, 
         			inMsgCtx.getProperty(WSHandlerConstants.RECV_RESULTS));
         }

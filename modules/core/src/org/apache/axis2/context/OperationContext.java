@@ -20,15 +20,14 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisError;
-import org.apache.axis2.i18n.Messages;
-import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * An OperationContext represents a running "instance" of an operation, which is
@@ -45,10 +44,14 @@ import java.util.Map;
  * creation in the OperationContexFactory.
  */
 public class OperationContext extends AbstractContext {
-    // the in and out messages that may be present
-    private MessageContext inMessageContext;
 
-    private MessageContext outMessageContext;
+
+    private HashMap messageContexts;
+
+    // the in and out messages that may be present
+//    private MessageContext inMessageContext;
+
+//    private MessageContext outMessageContext;
 
     // the OperationDescription of which this is a running instance. The MEP of this
     // OperationDescription must be one of the 8 predefined ones in WSDL 2.0.
@@ -63,41 +66,40 @@ public class OperationContext extends AbstractContext {
     private Map operationContextMap;
 
     private QName operationDescName = null;
-    
+
     private QName serviceDescName = null;
-    
+
     /**
      * The method is used to do the intialization of the EngineContext
      * @throws AxisFault
      */
 
     public void init(AxisConfiguration axisConfiguration) throws AxisFault {
-    	if (operationDescName!=null && serviceDescName!=null){
+        if (operationDescName!=null && serviceDescName!=null){
             //todo this lead to NPE : Chamikara
-            axisOperation = axisConfiguration.getService(serviceDescName.getLocalPart()).
-							getOperation(operationDescName);
-    	}
-    	
-    	if (inMessageContext!=null)
-    		inMessageContext.init(axisConfiguration);
-    	
-    	if (outMessageContext!=null)
-    		outMessageContext.init(axisConfiguration);
-    }
-    
-    private void writeObject(ObjectOutputStream out) throws IOException {
-    	if (axisOperation!=null)
-    		operationDescName = axisOperation.getName();
-    	if (axisOperation.getParent()!=null)
-    		serviceDescName = axisOperation.getParent().getName();
-    	
-    	out.defaultWriteObject();
+            axisOperation = axisConfiguration.getService(serviceDescName.getLocalPart()).getOperation(operationDescName);
+        }
+
+        Iterator msgContexts =   messageContexts.values().iterator();
+        while (msgContexts.hasNext()) {
+            MessageContext messageContext = (MessageContext) msgContexts.next();
+            messageContext.init(axisConfiguration);
+        }
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {	
-    	in.defaultReadObject();
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        if (axisOperation!=null)
+            operationDescName = axisOperation.getName();
+        if (axisOperation.getParent()!=null)
+            serviceDescName = axisOperation.getParent().getName();
+
+        out.defaultWriteObject();
     }
-    
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+    }
+
     /**
      * Construct a new OperationContext.
      *
@@ -109,26 +111,28 @@ public class OperationContext extends AbstractContext {
     public OperationContext(OperationDescription axisOperation,
                             ServiceContext serviceContext) {
         super(serviceContext);
+        this.messageContexts = new HashMap();
         this.axisOperation = axisOperation;
         this.operationMEP = axisOperation.getAxisSpecifMEPConstant();
         this.operationContextMap = getServiceContext().getEngineContext()
                 .getOperationContextMap();
-        
+
         operationDescName = axisOperation.getName();
         ServiceDescription serviceDescription = axisOperation.getParent();
         if (serviceDescription!=null)
-        	serviceDescName = serviceDescription.getName();
+            serviceDescName = serviceDescription.getName();
     }
 
     public OperationContext(OperationDescription axisOperation) {
         super(null);
+        this.messageContexts = new HashMap();
         this.axisOperation = axisOperation;
         this.operationMEP = axisOperation.getAxisSpecifMEPConstant();
 
         operationDescName = axisOperation.getName();
         ServiceDescription serviceDescription = axisOperation.getParent();
         if (serviceDescription!=null)
-        	serviceDescName = serviceDescription.getName();
+            serviceDescName = serviceDescription.getName();
     }
 
     /**
@@ -165,36 +169,8 @@ public class OperationContext extends AbstractContext {
      * @param msgContext
      */
     public synchronized void addMessageContext(MessageContext msgContext) throws AxisFault {
-        // this needs to store the msgContext in either inMessageContext or
-        // outMessageContext depending on the MEP of the OperationDescription
-        // and on the current state of the operation.
-        if (WSDLConstants.MEP_CONSTANT_IN_OUT == operationMEP
-                || WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT == operationMEP
-                || WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY == operationMEP) {
-            if (inMessageContext == null) {
-                inMessageContext = msgContext;
-            } else {
-                outMessageContext = msgContext;
-                isComplete = true;
-            }
-        } else if (WSDLConstants.MEP_CONSTANT_IN_ONLY == operationMEP) {
-            inMessageContext = msgContext;
-            isComplete = true;
-        } else if (WSDLConstants.MEP_CONSTANT_OUT_ONLY == operationMEP) {
-            outMessageContext = msgContext;
-            isComplete = true;
-        } else if (WSDLConstants.MEP_CONSTANT_OUT_IN == operationMEP
-                || WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN == operationMEP
-                || WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY == operationMEP) {
-            if (outMessageContext == null) {
-                outMessageContext = msgContext;
-            } else {
-                inMessageContext = msgContext;
-                isComplete = true;
-            }
-        } else {
-            // NOT REACHED: the factory created this context incorrectly
-            throw new AxisError("Invalid behavior of OperationContextFactory");
+        if(axisOperation != null){
+            axisOperation.addMessageContext(msgContext,this);
         }
     }
 
@@ -203,24 +179,22 @@ public class OperationContext extends AbstractContext {
      * @return
      * @throws AxisFault
      */
-    public MessageContext getMessageContext(int messageLabel) throws AxisFault {
-        if (messageLabel == WSDLConstants.MESSAGE_LABEL_IN) {
-            return inMessageContext;
-        } else if (messageLabel == WSDLConstants.MESSAGE_LABEL_OUT) {
-            return outMessageContext;
-        } else {
-            throw new AxisFault(Messages.getMessage("unknownMsgLabel"));
-        }
+
+    public MessageContext getMessageContext(String messageLabel) throws AxisFault {
+        return (MessageContext) messageContexts.get(messageLabel);
     }
 
     /**
      * Checks to see if the MEP is complete. i.e. whether all the messages that
      * are associated with the MEP has arrived and MEP is complete.
      *
-     * @return
      */
     public boolean isComplete() {
         return isComplete;
+    }
+
+    public void setComplete(boolean complete) {
+        isComplete = complete;
     }
 
     /**
@@ -234,18 +208,24 @@ public class OperationContext extends AbstractContext {
      * being complete due to the optional nature of the MEP.
      */
     public void cleanup() {
-        if (null != this.inMessageContext && operationContextMap != null) {
-            operationContextMap.remove(inMessageContext.getMessageID());
+        Iterator msgContexts =   messageContexts.values().iterator();
+        while (msgContexts.hasNext()) {
+            MessageContext messageContext = (MessageContext) msgContexts.next();
+            if (null != messageContext && operationContextMap != null) {
+                operationContextMap.remove(messageContext.getMessageID());
+            }
         }
-        if (null != this.outMessageContext && operationContextMap != null) {
-            operationContextMap.remove(outMessageContext.getMessageID());
-        }
+
     }
 
     public void setParent(AbstractContext context) {
         super.setParent(context);
         this.operationContextMap = getServiceContext().getEngineContext()
                 .getOperationContextMap();
+    }
+
+    public HashMap getMessageContexts() {
+        return messageContexts;
     }
 
 }

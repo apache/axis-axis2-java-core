@@ -69,7 +69,7 @@ public class AddressingOutHandler
                     ? Final.WSA_NAMESPACE : Submission.WSA_NAMESPACE;
         }else if (msgContext.getOperationContext() != null) { // check for a IN message context, else default to WSA Submission
             MessageContext inMessageContext = msgContext.getOperationContext()
-                    .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN);
+                    .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             if (inMessageContext == null) {
                 addressingNamespace = Submission.WSA_NAMESPACE; // setting Submission version as the default addressing namespace
             } else {

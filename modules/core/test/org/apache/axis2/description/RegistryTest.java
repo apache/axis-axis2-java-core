@@ -77,7 +77,7 @@ public class RegistryTest extends AbstractTestCase {
     }
 
     public void testOpeartion() throws AxisFault {
-        OperationDescription op = new OperationDescription(new QName("op"));
+        OperationDescription op = new InOutOperationDescrition(new QName("op"));
         op.setParent(service);
         testParameteInClude(op);
     }

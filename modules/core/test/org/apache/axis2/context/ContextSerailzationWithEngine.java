@@ -116,8 +116,8 @@ public class ContextSerailzationWithEngine extends TestCase {
             OperationContext operationContext1 = newConfigContext.getOperationContext(MSG1_ID);
             assertNotNull(operationContext1);
 
-            assertNotNull(operationContext1.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN));
-            assertNotNull(operationContext1.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT));
+            assertNotNull(operationContext1.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
+            assertNotNull(operationContext1.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
 
 
             //Assertions to check weather description hierarchy is set correctly.

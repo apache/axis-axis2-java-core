@@ -92,7 +92,7 @@ public class ServiceDescription
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setServiceInterface(new WSDLInterfaceImpl());
-         moduleConfigmap = new HashMap();
+        moduleConfigmap = new HashMap();
     }
 
     public ServiceDescription() {
@@ -101,7 +101,7 @@ public class ServiceDescription
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setServiceInterface(new WSDLInterfaceImpl());
-         moduleConfigmap = new HashMap();
+        moduleConfigmap = new HashMap();
     }
 
     /**
@@ -219,6 +219,16 @@ public class ServiceDescription
                     operationName.getLocalPart());
         }
         return opeartion;
+    }
+
+    /**
+     * To get the WSDL opeartion element in servic einterface
+     * @param operationName  <code>QName</cde>
+     * @return  WSDLOperation <code>WSDLOperation</code>
+     */
+    public WSDLOperation getWSDLOPOperation(QName operationName){
+        String opStr = operationName.getLocalPart();
+        return this.getServiceInterface().getOperation(opStr) ;
     }
 
     /*

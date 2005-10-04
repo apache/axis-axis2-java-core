@@ -25,14 +25,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.OperationContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.PhaseRule;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.ServiceGroupDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
@@ -100,7 +93,8 @@ public class Utils {
                 new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
                         className));
 
-        OperationDescription axisOp = new OperationDescription(opName);
+        //todo I assumed in-out mep , this has to be imroved : Deepal
+        OperationDescription axisOp = new InOutOperationDescrition(opName);
         axisOp.setMessageReceiver(messageReceiver);
         axisOp.setStyle(WSDLService.STYLE_RPC);
         service.addOperation(axisOp);

@@ -28,6 +28,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.OutInOperationDescription;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -76,7 +77,7 @@ public class MailOneWayRawXMLTest extends TestCase {
         ml.start();
 
         ServiceDescription service = new ServiceDescription(serviceName);
-        OperationDescription operation = new OperationDescription(
+        OperationDescription operation = new OutInOperationDescription(
                 operationName);
         operation.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messgeCtx) throws AxisFault {
@@ -107,7 +108,7 @@ public class MailOneWayRawXMLTest extends TestCase {
 
     public void testOneWay() throws Exception {
         ServiceDescription service = new ServiceDescription(serviceName);
-        OperationDescription operation = new OperationDescription(
+        OperationDescription operation = new OutInOperationDescription(
                 operationName);
         operation.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messgeCtx) throws AxisFault {

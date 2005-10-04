@@ -26,9 +26,9 @@
 
            //creating the operations
            org.apache.axis2.description.OperationDescription __operation;
-           _operations = new org.apache.axis2.description.OperationDescription[<xsl:value-of select="count(method)"/>];
+           _operations = new org.apache.axis2.description.OutInOperationDescription[<xsl:value-of select="count(method)"/>];
       <xsl:for-each select="method">
-           __operation = new org.apache.axis2.description.OperationDescription();
+           __operation = new org.apache.axis2.description.OutInOperationDescription();
            __operation.setName(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>", "<xsl:value-of select="@name"/>"));
            _operations[<xsl:value-of select="position()-1"/>]=__operation;
            _service.addOperation(__operation);

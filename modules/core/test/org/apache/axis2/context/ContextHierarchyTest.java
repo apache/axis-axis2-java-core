@@ -21,6 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.InOutOperationDescrition;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 
@@ -36,7 +37,7 @@ public class ContextHierarchyTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        operationDescription = new OperationDescription(new QName("Temp"));
+        operationDescription = new InOutOperationDescrition(new QName("Temp"));
         serviceDescription = new ServiceDescription(new QName("Temp"));
         axisConfiguration = new AxisConfigurationImpl();
         serviceDescription.addOperation(operationDescription);

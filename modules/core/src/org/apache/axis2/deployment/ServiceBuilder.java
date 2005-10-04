@@ -19,16 +19,14 @@ package org.apache.axis2.deployment;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -142,10 +140,12 @@ public class ServiceBuilder extends DescriptionBuilder{
 
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
+        } catch (AxisFault axisFault) {
+             throw new DeploymentException("Error in preocessing operation +" + axisFault);
         }
     }
 
-    private ArrayList processOpeartions(Iterator opeartinsItr) throws DeploymentException {
+    private ArrayList processOpeartions(Iterator opeartinsItr) throws AxisFault {
         ArrayList operations = new ArrayList();
         while (opeartinsItr.hasNext()) {
             OMElement operation = (OMElement) opeartinsItr.next();
@@ -156,21 +156,35 @@ public class ServiceBuilder extends DescriptionBuilder{
             if(op_name_att == null){
                 throw new DeploymentException(Messages.getMessage("Invalide Operations"));
             }
+
+              //setting the mep of the operation
+            OMAttribute op_mep_att = operation.getAttribute(
+                    new QName(MEP));
+             String mepurl =null;
+            if(op_mep_att !=null){
+                mepurl = op_mep_att.getValue();
+                //todo value has to be validate
+               //todo
+                // op_descrip.setMessageExchangePattern(mep);
+            }
+
             String opname = op_name_att.getValue();
-            OperationDescription op_descrip = service.getOperation(new QName(opname));
-            if(op_descrip == null){
-                op_descrip = new OperationDescription();
+            WSDLOperation wsdlOperation =service.getWSDLOPOperation(new QName(opname)); 
+//            OperationDescription op_descrip = service.getOperation(new QName(opname));
+            OperationDescription op_descrip = null;
+            if(wsdlOperation == null){
+                if(mepurl == null){
+                     // assumed MEP is in-out
+                     op_descrip = new InOutOperationDescrition();
+                } else {
+                    op_descrip =OperationDescriptionFactory.getOperetionDescription(mepurl);
+                }
+//                op_descrip = new OperationDescription();
                 op_descrip.setName(new QName(opname));
                 log.info(Messages.getMessage(DeploymentErrorMsgs.OP_NOT_FOUN_IN_WSDL, opname));
             }
 
-            //setting the mep of the operation
-            OMAttribute op_mep_att = operation.getAttribute(
-                    new QName(MEP));
-            if(op_mep_att !=null){
-                String mep = op_mep_att.getValue();
-                op_descrip.setMessageExchangePattern(mep);
-            }
+
 
             //Opeartion Paramters
             Iterator paramters = operation.getChildrenWithName(

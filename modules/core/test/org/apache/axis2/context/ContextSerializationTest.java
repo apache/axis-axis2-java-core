@@ -22,6 +22,7 @@ import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.description.ServiceGroupDescription;
+import org.apache.axis2.description.InOutOperationDescrition;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.wsdl.WSDLConstants;
@@ -63,7 +64,7 @@ public class ContextSerializationTest extends TestCase {
 		serviceGroupDescription = new ServiceGroupDescription (axisConfiguration);
 		serviceGroupDescription.setServiceGroupName(SERVICE_GROUP_NAME);
 		serviceDescription = new ServiceDescription (serviceDescQName);
-		operationDescription = new OperationDescription (operationDescName);
+		operationDescription = new InOutOperationDescrition (operationDescName);
 		
 		//Creating links
 		axisConfiguration.addServiceGroup(serviceGroupDescription);
@@ -157,8 +158,8 @@ public class ContextSerializationTest extends TestCase {
 		OperationContext operationContext1 = configurationContext.getOperationContext(MSG1_ID);
 		assertNotNull(operationContext1);
 		
-		assertNotNull(operationContext1.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN));
-		assertNotNull(operationContext1.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT));
+		assertNotNull(operationContext1.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
+		assertNotNull(operationContext1.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
 		
 		
 		//Assertions to check weather description hierarchy is set correctly.

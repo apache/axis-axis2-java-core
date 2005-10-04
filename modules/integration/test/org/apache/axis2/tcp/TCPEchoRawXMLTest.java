@@ -29,6 +29,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.OutInOperationDescription;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilsTCPServer;
@@ -207,7 +208,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         ConfigurationContextFactory confac = new ConfigurationContextFactory();
         ConfigurationContext configContext= confac.buildClientConfigurationContext(Constants.TESTING_REPOSITORY);
 
-        OperationDescription opdesc = new OperationDescription(new QName("echoOMElement"));
+        OperationDescription opdesc = new OutInOperationDescription(new QName("echoOMElement"));
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(Constants.TESTING_REPOSITORY);
         call.setTo(targetEPR);
 

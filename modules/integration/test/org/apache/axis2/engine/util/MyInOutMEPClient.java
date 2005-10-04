@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.OutInOperationDescription;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
 
@@ -40,7 +41,7 @@ public class MyInOutMEPClient extends Call {
         OperationDescription axisConfig =
                 serviceContext.getServiceConfig().getOperation(new QName(axisop));
         if (axisConfig == null) {
-            axisConfig = new OperationDescription(new QName(axisop));
+            axisConfig = new OutInOperationDescription(new QName(axisop));
             axisConfig.setRemainingPhasesInFlow(operationTemplate.getRemainingPhasesInFlow());
             axisConfig.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
             axisConfig.setPhasesInFaultFlow(operationTemplate.getPhasesInFaultFlow());
@@ -65,7 +66,7 @@ public class MyInOutMEPClient extends Call {
         OperationDescription axisConfig =
                 serviceContext.getServiceConfig().getOperation(new QName(axisop));
         if (axisConfig == null) {
-            axisConfig = new OperationDescription(new QName(axisop));
+            axisConfig = new OutInOperationDescription(new QName(axisop));
             axisConfig.setRemainingPhasesInFlow(operationTemplate.getRemainingPhasesInFlow());
             axisConfig.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
             axisConfig.setPhasesInFaultFlow(operationTemplate.getPhasesInFaultFlow());

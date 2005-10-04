@@ -23,6 +23,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.OutInOperationDescription;
 import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
@@ -64,7 +65,8 @@ public class MessageSender extends InOnlyMEPClient {
         OperationDescription axisOp = serviceContext.getServiceConfig()
                 .getOperation(opName);
         if (axisOp == null) {
-            axisOp = new OperationDescription(new QName(opName));
+            //todo I just assumed mep is alwas in-out , this has to improve : Deepal
+            axisOp = new OutInOperationDescription(new QName(opName));
             serviceContext.getServiceConfig().addOperation(axisOp);
         }
         super.send(axisOp, prepareTheSOAPEnvelope(toSend));
