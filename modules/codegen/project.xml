@@ -20,8 +20,8 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
-    <id>axis2-databinding</id>
-    <name>Apache Axis 2.0 - Databinding</name>
+    <id>axis2-codegen</id>
+    <name>Apache Axis 2.0 - Code Generation</name>
     <groupId>axis2</groupId>
     <description>Simple data binding implementation</description>
 

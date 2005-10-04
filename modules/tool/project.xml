@@ -48,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>axis2</groupId>
-            <artifactId>axis2-databinding</artifactId>
+            <artifactId>axis2-codegen</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>

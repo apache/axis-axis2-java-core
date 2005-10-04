@@ -489,7 +489,7 @@
                 <ant:pathelement location="modules/addressing/src"/>
                 <ant:pathelement location="modules/saaj/src"/>
                 <ant:pathelement location="modules/security/src"/>
-                <ant:pathelement location="modules/databinding/src"/>
+                <ant:pathelement location="modules/codegen/src"/>
             </ant:sourcepath>
         </ant:javadoc>
     </goal>
