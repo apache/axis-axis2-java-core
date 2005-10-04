@@ -22,6 +22,7 @@
 
     <id>axis2-databinding</id>
     <name>Apache Axis 2.0 - Databinding</name>
+    <groupId>axis2</groupId>
     <description>Simple data binding implementation</description>
 
     <dependencies>
