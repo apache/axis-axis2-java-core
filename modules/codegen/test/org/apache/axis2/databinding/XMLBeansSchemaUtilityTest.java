@@ -2,6 +2,11 @@ package org.apache.axis2.databinding;
 
 import junit.framework.TestCase;
 import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.ServiceGroupDescription;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.deployment.DeploymentException;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -23,8 +28,14 @@ import org.apache.axis2.description.ServiceDescription;
 
 public class XMLBeansSchemaUtilityTest extends TestCase {
 
-    public ServiceDescription getDummyServiceDescription(){
-        // TODO : Deepal Fix me.
+    AxisConfiguration ar;
+    String repo ="./test-resources/XMLBeanSchemaUtilityRepo";
+
+    public ServiceDescription getDummyServiceDescription() throws AxisFault {
+        ConfigurationContextFactory builder = new ConfigurationContextFactory();
+        ar = builder.buildConfigurationContext(repo).getAxisConfiguration();
+        ServiceDescription service = ar.getService("databindingService");
+        assertNotNull(service);
         return null;
     }
 
