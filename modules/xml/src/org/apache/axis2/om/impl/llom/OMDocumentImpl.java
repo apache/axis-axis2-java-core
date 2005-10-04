@@ -279,17 +279,17 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     /**
      * Serialize the docuement with/without the XML declaration
      */
-    public void serialize(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException {
+    public void serializeAndConsume(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException {
         serialize(omOutput, false, includeXMLDeclaration);
     }
 
     /**
      * Serialize the document with the XML declaration
      *
-     * @see org.apache.axis2.om.OMDocument#serialize(org.apache.axis2.om.impl.OMOutputImpl,
+     * @see org.apache.axis2.om.OMDocument#serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl,
      *      boolean)
      */
-    public void serialize(OMOutputImpl omOutput)
+    public void serializeAndConsume(OMOutputImpl omOutput)
             throws XMLStreamException {
         serialize(omOutput, false, !omOutput.isIgnoreXMLDeclaration());
     }
@@ -298,9 +298,9 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     /**
      * Serialize the document with cache
      *
-     * @see org.apache.axis2.om.OMDocument#serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl)
+     * @see org.apache.axis2.om.OMDocument#serialize(org.apache.axis2.om.impl.OMOutputImpl)
      */
-    public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
+    public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         serialize(omOutput, true, !omOutput.isIgnoreXMLDeclaration());
 
     }
@@ -308,9 +308,9 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     /**
      * Serialize the document with cache
      *
-     * @see org.apache.axis2.om.OMDocument#serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl, boolean)
+     * @see org.apache.axis2.om.OMDocument#serialize(org.apache.axis2.om.impl.OMOutputImpl, boolean)
      */
-    public void serializeWithCache(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException {
+    public void serialize(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException {
         serialize(omOutput, true, includeXMLDeclaration);
 
     }
@@ -334,12 +334,12 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
         if (cache) {
             while (children.hasNext()) {
                 OMNode omNode = (OMNode) children.next();
-                omNode.serializeWithCache(omOutput);
+                omNode.serialize(omOutput);
             }
         } else {
             while (children.hasNext()) {
                 OMNode omNode = (OMNode) children.next();
-                omNode.serialize(omOutput);
+                omNode.serializeAndConsume(omOutput);
             }
         }
     }

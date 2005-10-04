@@ -117,7 +117,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
             SOAPEnvelope soap12Envelope = (SOAPEnvelope) soap12Builder.getDocumentElement();
 //            soap12Envelope.build();
 //            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-//            soap12Envelope.serialize(writer);
+//            soap12Envelope.serializeAndConsume(writer);
 //		    writer.flush();
 
             assertTrue("SOAP 1.2 :- envelope local name mismatch",
@@ -360,7 +360,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
             SOAPEnvelope soap11Envelope = (SOAPEnvelope) soap11Builder.getDocumentElement();
 //            soap11Envelope.build();
 //            writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-//            soap11Envelope.serialize(writer);
+//            soap11Envelope.serializeAndConsume(writer);
 //		    writer.flush();
 
             assertTrue("SOAP 1.1 :- envelope local name mismatch",

@@ -68,7 +68,7 @@ public class SpacesTest extends XMLTestCase {
             writer = XMLOutputFactory.newInstance().
                     createXMLStreamWriter(baos);
 
-            ((OMDocument) rootElement.getParent()).serializeWithCache(new OMOutputImpl(writer));
+            ((OMDocument) rootElement.getParent()).serialize(new OMOutputImpl(writer));
 
             writer.flush();
             writer.close();

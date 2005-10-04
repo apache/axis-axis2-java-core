@@ -43,7 +43,7 @@ public class ClientForWebServiceWithModule {
                     payload);
 
             StringWriter writer = new StringWriter();
-            result.serializeWithCache(XMLOutputFactory.newInstance()
+            result.serialize(XMLOutputFactory.newInstance()
                     .createXMLStreamWriter(writer));
             writer.flush();
             System.out.println(writer.toString());

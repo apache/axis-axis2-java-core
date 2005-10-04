@@ -613,11 +613,11 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * Method serializeWithCache
+     * Method serializeAndConsume
      *
      * @throws XMLStreamException
      */
-    public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
+    public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         serialize(omOutput, true);
     }
 
@@ -628,12 +628,12 @@ public class OMElementImpl extends OMNodeImpl
 
         if (cache){
             //in this case we don't care whether the elements are built or not
-            //we just call the serialize methods
+            //we just call the serializeAndConsume methods
             OMSerializerUtil.serializeStartpart(this, omOutput);
             //serilize children
             Iterator children = this.getChildren();
             while (children.hasNext()) {
-                ((OMNode)children.next()).serializeWithCache(omOutput);
+                ((OMNode)children.next()).serialize(omOutput);
             }
             OMSerializerUtil.serializeEndpart(omOutput);
 
@@ -642,11 +642,11 @@ public class OMElementImpl extends OMNodeImpl
             //has nothing to do if the element is already built!
             if (this.done){
                 OMSerializerUtil.serializeStartpart(this, omOutput);
-                //serialize children
+                //serializeAndConsume children
                 Iterator children = this.getChildren();
                 while (children.hasNext()) {
-                    //A call to the  Serialize or the serializeWithCache wont make a difference here
-                    ((OMNode)children.next()).serialize(omOutput);
+                    //A call to the  Serialize or the serializeAndConsume wont make a difference here
+                    ((OMNode)children.next()).serializeAndConsume(omOutput);
                 }
                 OMSerializerUtil.serializeEndpart(omOutput);
             } else{
@@ -664,13 +664,13 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * This was requested during the second Axis2 summit. When one call this method, this will
-     * serialize without building the object structure in the memory. Misuse of this method will
+     * serializeAndConsume without building the object structure in the memory. Misuse of this method will
      * cause loss of data.So its advised to use populateYourSelf() method, before this,
      * if you want to preserve data in the stream.
      *
      * @throws XMLStreamException
      */
-    public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
+    public void serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         this.serialize(omOutput, false);
     }
 

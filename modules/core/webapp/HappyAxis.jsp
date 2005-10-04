@@ -343,7 +343,7 @@
             OMElement result =
                     call.invokeBlocking(operationName.getLocalPart(), payload);
             StringWriter writer = new StringWriter();
-            result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+            result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
             writer.flush();
             value = writer.toString();
             return true;

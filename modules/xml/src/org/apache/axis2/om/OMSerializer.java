@@ -25,7 +25,7 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public interface OMSerializer {
     /**
-     * Method serializeWithCache
+     * Method serializeAndConsume
      *
      * @param reader
      * @param writer

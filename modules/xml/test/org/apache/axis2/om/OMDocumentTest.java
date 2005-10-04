@@ -43,7 +43,7 @@ public class OMDocumentTest extends TestCase {
         String outXML = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         OMOutputImpl output = new OMOutputImpl(outStream, false);
-        omDocument.serialize(output);
+        omDocument.serializeAndConsume(output);
         output.flush();
         outXML = new String(outStream.toByteArray());
 

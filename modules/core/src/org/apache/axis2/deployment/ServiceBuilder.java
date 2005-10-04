@@ -79,7 +79,7 @@ public class ServiceBuilder extends DescriptionBuilder{
                 if(descriptionValue !=null){
                     StringWriter writer = new StringWriter();
                     descriptionValue.build();
-                    descriptionValue.serializeWithCache(new
+                    descriptionValue.serialize(new
                             OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
                     writer.flush();
                     service.setServiceDescription(writer.toString());

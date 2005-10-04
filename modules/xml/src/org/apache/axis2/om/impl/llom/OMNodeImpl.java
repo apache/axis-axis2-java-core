@@ -292,20 +292,6 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
      * @param xmlWriter
      * @throws javax.xml.stream.XMLStreamException
      *
-     * @see #serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl)
-     */
-    public void serializeWithCache(XMLStreamWriter xmlWriter) throws XMLStreamException {
-        OMOutputImpl omOutput = new OMOutputImpl(xmlWriter);
-        serializeWithCache(omOutput);
-        omOutput.flush();
-    }
-
-    /**
-     * Serialize the node without caching
-     *
-     * @param xmlWriter
-     * @throws javax.xml.stream.XMLStreamException
-     *
      * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
      */
     public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException {
@@ -315,13 +301,27 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
     }
 
     /**
+     * Serialize the node without caching
+     *
+     * @param xmlWriter
+     * @throws javax.xml.stream.XMLStreamException
+     *
+     * @see #serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl)
+     */
+    public void serializeAndConsume(XMLStreamWriter xmlWriter) throws XMLStreamException {
+        OMOutputImpl omOutput = new OMOutputImpl(xmlWriter);
+        serializeAndConsume(omOutput);
+        omOutput.flush();
+    }
+
+    /**
      * Serialize the node with caching
      *
      * @param omOutput
      * @throws XMLStreamException
-     * @see #serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl)
+     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
      */
-    public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
+    public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         throw new RuntimeException("Not implemented yet!");
     }
 
@@ -330,9 +330,9 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
      *
      * @param omOutput
      * @throws XMLStreamException
-     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
+     * @see #serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl)
      */
-    public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
+    public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
         throw new RuntimeException("Not implemented yet!");
     }
 

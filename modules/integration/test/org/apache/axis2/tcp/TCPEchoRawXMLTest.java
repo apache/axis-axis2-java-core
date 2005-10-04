@@ -20,27 +20,24 @@ package org.apache.axis2.tcp;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.AsyncResult;
 import org.apache.axis2.clientapi.Callback;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.Echo;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilsTCPServer;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -123,7 +120,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
                 try {
-                    result.getResponseEnvelope().serializeWithCache(XMLOutputFactory.newInstance()
+                    result.getResponseEnvelope().serialize(XMLOutputFactory.newInstance()
                             .createXMLStreamWriter(System.out));
                 } catch (XMLStreamException e) {
                     reportError(e);
@@ -170,7 +167,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         OMElement result =
                 call.invokeBlocking(operationName.getLocalPart(),
                         payload);
-        result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(
+        result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
         call.close();
     }
@@ -200,7 +197,7 @@ public class TCPEchoRawXMLTest extends TestCase {
 
         OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), method);
-        result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(
+        result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
         call.close();
 
@@ -242,7 +239,7 @@ public class TCPEchoRawXMLTest extends TestCase {
 
         SOAPEnvelope env=   call.invokeBlocking("echoOMElement", envelope);
 //        SOAPEnvelope env=  res.getEnvelope();
-        env.getBody().serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(
+        env.getBody().serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
     }
 

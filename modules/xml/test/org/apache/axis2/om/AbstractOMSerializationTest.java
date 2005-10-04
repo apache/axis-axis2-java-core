@@ -83,8 +83,8 @@ public class AbstractOMSerializationTest extends XMLTestCase {
             OMOutputImpl omOutput = new OMOutputImpl(baos, false);
             omOutput.ignoreXMLDeclaration(ignoreXMLDeclaration);
 
-//            rootElement.serializeWithCache(omOutput);
-            ((OMDocument) rootElement.getParent()).serializeWithCache(omOutput);
+//            rootElement.serializeAndConsume(omOutput);
+            ((OMDocument) rootElement.getParent()).serialize(omOutput);
             omOutput.flush();
 
             return new String(baos.toByteArray());
@@ -111,9 +111,9 @@ public class AbstractOMSerializationTest extends XMLTestCase {
 //            omOutput.ignoreXMLDeclaration(ignoreXMLDeclaration);
 
             if (ignoreDocument) {
-                rootElement.serializeWithCache(omOutput);
+                rootElement.serialize(omOutput);
             } else {
-                ((OMDocument) rootElement.getParent()).serializeWithCache(omOutput);
+                ((OMDocument) rootElement.getParent()).serialize(omOutput);
             }
             omOutput.flush();
 

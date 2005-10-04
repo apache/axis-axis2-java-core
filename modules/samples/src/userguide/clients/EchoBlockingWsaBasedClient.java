@@ -15,14 +15,14 @@
  */
 package userguide.clients;
 
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.clientapi.Call;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.impl.OMOutputImpl;
 
 import javax.xml.stream.XMLOutputFactory;
 import java.io.StringWriter;
@@ -55,7 +55,7 @@ public class EchoBlockingWsaBasedClient {
         OMElement result = (OMElement) call.invokeBlocking("echo", getBody());
 
         StringWriter writer = new StringWriter();
-        result.serializeWithCache(new OMOutputImpl(
+        result.serialize(new OMOutputImpl(
                 XMLOutputFactory.newInstance().createXMLStreamWriter(
                         writer)));
         writer.flush();

@@ -170,7 +170,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      * @param omOutput
      * @throws XMLStreamException
      */
-    public void serializeWithCache(
+    public void serialize(
             org.apache.axis2.om.impl.OMOutputImpl omOutput)
             throws XMLStreamException {
         serializeLocal(omOutput);
@@ -297,7 +297,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
         return done;
     }
 
-    public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput)
+    public void serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl omOutput)
             throws XMLStreamException {
         serializeLocal(omOutput);
     }

@@ -24,7 +24,11 @@ import org.apache.axis2.om.impl.llom.serialize.StreamingOMSerializer;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 
-import javax.xml.stream.*;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.File;
 import java.io.FileReader;
 
@@ -77,16 +81,16 @@ public class OMSerializerTest extends AbstractTestCase {
                 reader);
 
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
-        env.serialize(writer);
+        env.serializeAndConsume(writer);
         writer.flush();
 
         //now we should not be able to serilaize anything ! this should throw
         //an error
         try {
-           env.serialize(writer);
+           env.serializeAndConsume(writer);
            fail();
         } catch (XMLStreamException e) {
-
+           assertTrue(true);
         }
     }
 

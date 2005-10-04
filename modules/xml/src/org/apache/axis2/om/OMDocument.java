@@ -84,7 +84,7 @@ public interface OMDocument extends OMContainer {
 	 * @param omOutput
 	 * @throws XMLStreamException
 	 */
-	public void serialize(OMOutputImpl omOutput) throws XMLStreamException;
+	public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException;
 	
 	/**
 	 * Serilize the OMDocument with the option of excluding/including the 
@@ -93,14 +93,14 @@ public interface OMDocument extends OMContainer {
 	 * @param includeXMLDeclaration Whether to include the XML declaration or not 
 	 * @throws XMLStreamException
 	 */
-	public void serialize(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException;
+	public void serializeAndConsume(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException;
 	
 	/**
 	 * Serializa the document with cache on
 	 * @param omOutput
 	 * @throws XMLStreamException
 	 */
-	public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException;
+	public void serialize(OMOutputImpl omOutput) throws XMLStreamException;
 	
 	/**
 	 * Seralize the document with cache on with the option on excluding the XML declaration
@@ -108,5 +108,5 @@ public interface OMDocument extends OMContainer {
 	 * @param includeXMLDeclaration
 	 * @throws XMLStreamException
 	 */
-	public void serializeWithCache(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException;
+	public void serialize(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException;
 }

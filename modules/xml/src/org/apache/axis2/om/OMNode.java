@@ -178,9 +178,9 @@ public interface OMNode {
      *
      * @param xmlWriter
      * @throws XMLStreamException
-     * @see #serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl)
+     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
      */
-    public void serializeWithCache(XMLStreamWriter xmlWriter)
+    public void serialize(XMLStreamWriter xmlWriter)
             throws XMLStreamException;
 
     /**
@@ -188,9 +188,9 @@ public interface OMNode {
      *
      * @param omOutput
      * @throws XMLStreamException
-     * @see #serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl)
+     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
      */
-    public void serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl omOutput)
+    public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput)
             throws XMLStreamException;
 
     /**
@@ -198,18 +198,18 @@ public interface OMNode {
      *
      * @param xmlWriter
      * @throws XMLStreamException
-     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
+     * @see #serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl)
      */
-    public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException;
+    public void serializeAndConsume(XMLStreamWriter xmlWriter) throws XMLStreamException;
 
     /**
      * Serialize the node without caching
      *
      * @param omOutput
      * @throws XMLStreamException
-     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
+     * @see #serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl)
      */
-    public void serialize(OMOutputImpl omOutput) throws XMLStreamException;
+    public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException;
 
     /**
      * Builds itself

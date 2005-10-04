@@ -138,7 +138,7 @@ public class CommonsHTTPTransportSender
                     }
                 }
                 omOutput.setOutputStream(out, msgContext.isDoingMTOM());
-                dataOut.serialize(omOutput);
+                dataOut.serializeAndConsume(omOutput);
                 omOutput.flush();
             }
             if (msgContext.getOperationContext() != null) {
@@ -263,13 +263,13 @@ public class CommonsHTTPTransportSender
                                             charSetEnc);
                     OMOutputImpl output = new OMOutputImpl(outputWriter);
                     output.setCharSetEncoding(charSetEnc);
-                    element.serialize(output);
+                    element.serializeAndConsume(output);
                     output.flush();
                     return bytesOut.toByteArray();
                 } else {
                     omOutput.setCharSetEncoding(charSetEnc);
                     omOutput.setOutputStream(bytesOut, true);  //changed...
-                    element.serialize(omOutput);
+                    element.serializeAndConsume(omOutput);
                     omOutput.flush();
                     return bytesOut.toByteArray();
                 }
@@ -283,7 +283,7 @@ public class CommonsHTTPTransportSender
         private void handleOMOutput(OutputStream out, boolean doingMTOM)
                 throws XMLStreamException {
             omOutput.setOutputStream(out, doingMTOM);
-            element.serialize(omOutput);
+            element.serializeAndConsume(omOutput);
             omOutput.flush();
         }
 

@@ -65,9 +65,9 @@ public class SOAPMessageImpl extends OMDocumentImpl implements SOAPMessage {
 
     protected void serialize(OMOutputImpl omOutput, boolean cache, boolean includeXMLDeclaration) throws XMLStreamException {
         if (cache) {
-            this.rootElement.serializeWithCache(omOutput);
-        } else {
             this.rootElement.serialize(omOutput);
+        } else {
+            this.rootElement.serializeAndConsume(omOutput);
         }
     }
 }

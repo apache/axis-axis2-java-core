@@ -128,7 +128,7 @@ public class RPCInOutMessageReceiver extends AbstractInOutSyncMessageReceiver {
             SOAPBody respBody = factory.createSOAPBody(responseEnv);
 
             // Just need to create this, since it automatically links itself
-            // to the response body and will therefore get serialize()d at
+            // to the response body and will therefore get serializeAndConsume()d at
             // the appropriate time.
             new RPCResponseElement(method, respBody);
 

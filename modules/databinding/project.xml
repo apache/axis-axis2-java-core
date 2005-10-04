@@ -55,6 +55,15 @@
         </dependency>
 
         <dependency>
+			<groupId>xmlbeans</groupId>
+			<artifactId>xbean</artifactId>
+			<version>${xbean.version}</version>
+			<type>jar</type>
+			<properties>
+				<module>true</module>
+			</properties>
+		</dependency>
+        <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>${commons.logging.version}</version>

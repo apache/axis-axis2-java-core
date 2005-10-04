@@ -56,7 +56,7 @@ public class OMBodyTest extends OMTestCase implements OMConstants {
         assertTrue("SOAP body has no SOAP fault", soapBody.getFault() != null);
 
         //SimpleOMSerializer simpleOMSerializer = new SimpleOMSerializer();
-        //simpleOMSerializer.serializeWithCache(soapBody, System.out);
+        //simpleOMSerializer.serializeAndConsume(soapBody, System.out);
     }
 
 }

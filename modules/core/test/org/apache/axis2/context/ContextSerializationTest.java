@@ -75,7 +75,7 @@ public class ContextSerializationTest extends TestCase {
 			file.delete();
 		}
 		
-		//creating a temp file to serialize
+		//creating a temp file to serializeAndConsume
 		File dir = new File ("target");
 		if (!dir.isDirectory())
 			throw new AxisFault ("Target diractory is not found");

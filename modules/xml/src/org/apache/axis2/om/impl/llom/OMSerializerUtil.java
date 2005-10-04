@@ -178,9 +178,9 @@ public class OMSerializerUtil {
         OMNode firstChild = element.firstChild;
         if (firstChild != null) {
             if (cache) {
-                firstChild.serializeWithCache(omOutput);
-            } else {
                 firstChild.serialize(omOutput);
+            } else {
+                firstChild.serializeAndConsume(omOutput);
             }
         }
         serializeEndpart(omOutput);

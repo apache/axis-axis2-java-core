@@ -42,7 +42,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
     private int depth = 0;
 
     /**
-     * Method serializeWithCache
+     * Method serializeAndConsume
      *
      * @param node
      * @param writer
@@ -54,7 +54,7 @@ public class StreamingOMSerializer implements XMLStreamConstants, OMSerializer {
     }
 
     /**
-     * Method serializeWithCache
+     * Method serializeAndConsume
      *
      * @param obj
      * @param omOutput

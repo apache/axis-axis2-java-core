@@ -252,7 +252,7 @@ public class SOAPMessageImpl extends SOAPMessage {
             output.setOutputStream(out, false);
             //the writeTo method forces the elements to be built!!!
             ((SOAPEnvelopeImpl) mSOAPPart.getEnvelope()).getOMEnvelope()
-                    .serializeWithCache(output);
+                    .serialize(output);
             output.flush();
         } catch (Exception e) {
             throw new SOAPException(e);

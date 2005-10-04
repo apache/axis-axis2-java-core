@@ -51,7 +51,7 @@ public class TCPClient {
         try {
             XMLStreamWriter writer = XMLOutputFactory.newInstance()
                     .createXMLStreamWriter(System.out);
-            result.serializeWithCache(writer);
+            result.serialize(writer);
             writer.flush();
         } catch (XMLStreamException e) {
             e.printStackTrace();

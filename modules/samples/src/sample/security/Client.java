@@ -53,8 +53,8 @@ public class Client {
 			OMElement result = call.invokeBlocking("echo", payload);
 
 			StringWriter writer = new StringWriter();
-			result.serializeWithCache(XMLOutputFactory.newInstance()
-					.createXMLStreamWriter(writer));
+			result.serialize(XMLOutputFactory.newInstance()
+                    .createXMLStreamWriter(writer));
 			writer.flush();
 
 			System.out.println("Response: " + writer.toString());

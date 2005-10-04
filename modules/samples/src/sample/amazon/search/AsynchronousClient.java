@@ -158,7 +158,7 @@ public class AsynchronousClient {
                     Constants.TRANSPORT_HTTP,
                     false);
 
-            requestContext.getEnvelope().serialize(
+            requestContext.getEnvelope().serializeAndConsume(
                     XMLOutputFactory.newInstance()
                             .createXMLStreamWriter
                             (System.out));

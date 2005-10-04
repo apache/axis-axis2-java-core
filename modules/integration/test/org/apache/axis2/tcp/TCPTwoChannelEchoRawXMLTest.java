@@ -131,7 +131,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
                     try {
-                        result.getResponseEnvelope().serialize(XMLOutputFactory.newInstance()
+                        result.getResponseEnvelope().serializeAndConsume(XMLOutputFactory.newInstance()
                                 .createXMLStreamWriter(System.out));
                     } catch (XMLStreamException e) {
                         reportError(e);

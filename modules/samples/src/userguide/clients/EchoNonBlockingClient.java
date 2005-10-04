@@ -51,7 +51,7 @@ public class EchoNonBlockingClient {
                 public void onComplete(AsyncResult result) {
                     try {
                         StringWriter writer = new StringWriter();
-                        result.getResponseEnvelope().serializeWithCache(XMLOutputFactory.newInstance()
+                        result.getResponseEnvelope().serialize(XMLOutputFactory.newInstance()
                                 .createXMLStreamWriter(writer));
                         writer.flush();
                         System.out.println(writer.toString());

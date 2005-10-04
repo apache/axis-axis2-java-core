@@ -53,7 +53,7 @@ public class OMStaxStreamingWrapperTest extends AbstractTestCase {
     //        assertNotNull(envelope);
     //        //this serializing will cause the OM to fully build!
     //        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(tempFile));
-    //        envelope.serializeWithCache(writer,true);
+    //        envelope.serializeAndConsume(writer,true);
     //        parser = envelope.getXMLStreamReader(false);
     //        while (parser.hasNext()) {
     //            int event = parser.next();

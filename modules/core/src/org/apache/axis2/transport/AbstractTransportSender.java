@@ -138,7 +138,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
 						.getProperty(MessageContext.CHARACTER_SET_ENCODING);
 				omOutput.setOutputStream(out, msgContext.isDoingMTOM());
                 omOutput.setCharSetEncoding(charSetEnc);
-				outputMessage.serialize(omOutput);
+				outputMessage.serializeAndConsume(omOutput);
                 omOutput.flush();
                 out.flush();
             } catch (Exception e) {

@@ -53,7 +53,7 @@ public class RPCResponseElement extends OMElementImpl {
             try {
                 parameter.serialize(context);
             } catch (Exception e) {
-                throw new XMLStreamException("Couldn't serialize RPCParameter",
+                throw new XMLStreamException("Couldn't serializeAndConsume RPCParameter",
                                              e);
             }
         }

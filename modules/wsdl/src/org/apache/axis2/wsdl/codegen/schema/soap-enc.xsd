@@ -125,7 +125,7 @@ http://www.w3.org/Consortium/Legal/
     <xs:attributeGroup ref="tns:commonAttributes"/>
   </xs:complexType>
 
-  <!-- 'Base64' can be used to serialize binary data using base64
+  <!-- 'Base64' can be used to serializeAndConsume binary data using base64
        encoding as defined in RFC2045 but without the MIME line
        length limitation. -->
 

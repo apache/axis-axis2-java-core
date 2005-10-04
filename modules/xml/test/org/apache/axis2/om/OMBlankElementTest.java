@@ -37,7 +37,7 @@ public class OMBlankElementTest extends TestCase {
 			String value = buildBlankOMElem();
 			assertNull("There's a serialized output for a blank XML element that cannot exist", value);
 		} catch (Exception e) {
-			//An exception is thrown trying to serialize a blank element
+			//An exception is thrown trying to serializeAndConsume a blank element
 			assertTrue(true);
 		}
 	}
@@ -51,8 +51,8 @@ public class OMBlankElementTest extends TestCase {
 
 		StringWriter writer = new StringWriter();
 		elem1.build();
-		elem1.serializeWithCache(new OMOutputImpl(XMLOutputFactory
-				.newInstance().createXMLStreamWriter(writer)));
+		elem1.serialize(new OMOutputImpl(XMLOutputFactory
+                .newInstance().createXMLStreamWriter(writer)));
 		writer.flush();
 		return writer.toString();
 	}

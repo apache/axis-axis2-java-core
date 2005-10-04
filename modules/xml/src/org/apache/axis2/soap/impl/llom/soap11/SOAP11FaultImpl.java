@@ -59,12 +59,12 @@ public class SOAP11FaultImpl extends SOAPFaultImpl {
         return new SOAP11FaultDetailImpl(fault);
     }
 
-    public void serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
-        super.serializeWithCache(omOutput);
-    }
-
     public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         super.serialize(omOutput);
+    }
+
+    public void serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
+        super.serializeAndConsume(omOutput);
     }
 
     public void setCode(SOAPFaultCode soapFaultCode) throws SOAPProcessingException {

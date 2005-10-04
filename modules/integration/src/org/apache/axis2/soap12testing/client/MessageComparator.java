@@ -63,12 +63,12 @@ public class MessageComparator {
 
             System.out.println("######################################################");
             OMOutputImpl omOutput = new OMOutputImpl(System.out,false);
-            requiredMessageEnvelope.serializeWithCache(omOutput);
+            requiredMessageEnvelope.serialize(omOutput);
             omOutput.flush();
             System.out.println("");
             System.out.println("-------------------------------------------------------");
            OMOutputImpl omOutput1 = new OMOutputImpl(System.out,false);
-            replyMessageEnvelope.serializeWithCache(omOutput1);
+            replyMessageEnvelope.serialize(omOutput1);
             omOutput1.flush();
             System.out.println("");
                    System.out.println("`######################################################");

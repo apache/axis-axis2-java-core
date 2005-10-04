@@ -79,7 +79,7 @@ public abstract class SOAPFaultReasonImpl extends SOAPElement implements SOAPFau
             //No caching
             if (this.firstChild != null) {
                 OMSerializerUtil.serializeStartpart(this, omOutput);
-                firstChild.serialize(omOutput);
+                firstChild.serializeAndConsume(omOutput);
                 OMSerializerUtil.serializeEndpart(omOutput);
             } else if (!this.done) {
                 if (builderType == PULL_TYPE_BUILDER) {

@@ -24,7 +24,7 @@ public class RESTSearchClient {
             //if post is through GET of HTTP
             OMElement response = call.invokeBlocking();
             XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-            response.serializeWithCache(new OMOutputImpl(writer));
+            response.serialize(new OMOutputImpl(writer));
             writer.flush();
 
         }catch(Exception e){

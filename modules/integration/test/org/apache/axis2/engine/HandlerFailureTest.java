@@ -167,7 +167,7 @@ public class HandlerFailureTest extends TestCase {
             call.setTo(targetEPR);
             OMElement result = call.invokeBlocking(
                     operationName.getLocalPart(), method);
-            result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
+            result.serializeAndConsume(XMLOutputFactory.newInstance().createXMLStreamWriter(
                             System.out));
             fail("the test must fail due to bad service Name");
         } catch (AxisFault e) {

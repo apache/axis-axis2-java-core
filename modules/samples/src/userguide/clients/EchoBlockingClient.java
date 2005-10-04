@@ -48,7 +48,7 @@ public class EchoBlockingClient {
                     payload);
 
             StringWriter writer = new StringWriter();
-            result.serializeWithCache(XMLOutputFactory.newInstance()
+            result.serialize(XMLOutputFactory.newInstance()
                     .createXMLStreamWriter(writer));
             writer.flush();
 

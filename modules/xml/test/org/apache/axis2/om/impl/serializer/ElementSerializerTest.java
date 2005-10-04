@@ -62,38 +62,38 @@ public class ElementSerializerTest extends AbstractTestCase {
 
     public void testElementSerilization() throws Exception {
         OMElement elt = builder.getDocumentElement();
-        elt.serializeWithCache(writer);
+        elt.serialize(writer);
 
     }
 
     public void testElementSerilizationCacheOff() throws Exception {
         OMElement elt = builder.getDocumentElement();
-        elt.serializeWithCache(writer);
+        elt.serialize(writer);
 
     }
 
     public void testElementSerilizationChild() throws Exception {
         OMElement elt = builder.getDocumentElement();
         OMNode node = elt.getFirstOMChild().getNextOMSibling();
-        node.serializeWithCache(writer);
+        node.serialize(writer);
 
     }
 
     public void testElementSerilizationSOAPBodyCacheOff() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         OMNode node = env.getBody();
-        node.serializeWithCache(writer);
+        node.serialize(writer);
     }
 
     public void testElement() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
         SOAPBody body = env.getBody();
-        body.serializeWithCache(writer);
+        body.serialize(writer);
     }
 
     public void testCompleteElement() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builder.getDocumentElement();
-        env.serializeWithCache(writer);
+        env.serialize(writer);
     }
 
     public void testDualNamespaces1() throws Exception {
@@ -109,7 +109,7 @@ public class ElementSerializerTest extends AbstractTestCase {
         elt12.addChild(elt22);
         root.addChild(elt11);
         root.addChild(elt12);
-        root.serializeWithCache(writer);
+        root.serialize(writer);
     }
 
     public void testDualNamespaces2() throws Exception {
@@ -123,7 +123,7 @@ public class ElementSerializerTest extends AbstractTestCase {
         elt2.addChild(txt1);
         elt1.addChild(elt2);
         root.addChild(elt1);
-        root.serializeWithCache(writer);
+        root.serialize(writer);
     }
 
     protected void tearDown() throws Exception {

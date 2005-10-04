@@ -338,7 +338,7 @@ IP=request.getRequestURL().toString();
             OMElement result =
                     call.invokeBlocking(operationName.getLocalPart(), payload);
             StringWriter writer = new StringWriter();
-            result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+            result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
             writer.flush();
             value = writer.toString();
             return true;
@@ -479,26 +479,8 @@ not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
 %>
 
 
-<%@ page import="org.apache.axis2.AxisFault,
-                 org.apache.axis2.Constants,
-                 org.apache.axis2.addressing.EndpointReference,
-                 org.apache.axis2.clientapi.Call,
-                 org.apache.axis2.om.OMAbstractFactory,
-                 org.apache.axis2.om.OMElement,
-                 org.apache.axis2.om.OMFactory,
-                 org.apache.axis2.om.OMNamespace,
-                 javax.servlet.ServletContext,
-                 javax.servlet.http.HttpServletRequest,
-                 javax.servlet.http.HttpServletResponse,
-                 javax.xml.namespace.QName,
-                 javax.xml.parsers.SAXParser,
-                 javax.xml.parsers.SAXParserFactory,
-                 javax.xml.stream.XMLOutputFactory"
+<%@ page import="null"
    session="false" %>
-<%@ page import="javax.xml.stream.XMLStreamException"%>
-<%@ page import="java.io.IOException"%>
-<%@ page import="java.io.InputStream"%>
-<%@ page import="java.io.StringWriter"%>
 <%
      /*
      * Copyright 2002,2004 The Apache Software Foundation.
@@ -819,7 +801,7 @@ IP=request.getRequestURL().toString();
             OMElement result =
                     call.invokeBlocking(operationName.getLocalPart(), payload);
             StringWriter writer = new StringWriter();
-            result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+            result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
             writer.flush();
             value = writer.toString();
             return true;

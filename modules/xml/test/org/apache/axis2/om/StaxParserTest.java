@@ -18,7 +18,11 @@ package org.apache.axis2.om;
 
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 
-import javax.xml.stream.*;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 
@@ -204,7 +208,7 @@ public class StaxParserTest extends AbstractTestCase {
             XMLStreamWriter writer =
                     XMLOutputFactory.newInstance().
                             createXMLStreamWriter(System.out);
-            documentElement.serialize(writer);
+            documentElement.serializeAndConsume(writer);
             fail("Stream should be consumed by now");
         }catch(XMLStreamException e){
            //wea re cool

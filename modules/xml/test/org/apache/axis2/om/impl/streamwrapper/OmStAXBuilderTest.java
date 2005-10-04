@@ -56,7 +56,7 @@ public class OmStAXBuilderTest extends AbstractTestCase {
         org.apache.axis2.om.impl.OMOutputImpl omOutput = new org.apache.axis2.om.impl.OMOutputImpl(new FileOutputStream(tempFile),
                 false);
         //        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-        envelope.serializeWithCache(omOutput);
+        envelope.serialize(omOutput);
 
 
     }

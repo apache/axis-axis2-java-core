@@ -67,7 +67,7 @@ public class CharacterEncodingTest extends TestCase {
 				.newInstance().createXMLStreamWriter(byteOutStr,UTF_16);
 		OMOutputImpl outputImpl = new OMOutputImpl(writer);
         outputImpl.setCharSetEncoding(UTF_16);
-		envelope.serializeWithCache(outputImpl);
+		envelope.serialize(outputImpl);
 		outputImpl.flush();
 		
 		ByteArrayInputStream byteInStr = new ByteArrayInputStream(byteOutStr.toByteArray());

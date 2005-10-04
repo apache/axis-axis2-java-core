@@ -164,7 +164,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
         OMElement result =
                 call.invokeBlocking(operationName.getLocalPart(),
                         payload);
-        result.serializeWithCache(XMLOutputFactory.newInstance().createXMLStreamWriter(
+        result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                                 System.out));
 
         call.close();

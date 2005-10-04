@@ -57,9 +57,9 @@ public class OMProcessingInstructionImpl extends OMNodeImpl implements OMProcess
      *
      * @param omOutput
      * @throws XMLStreamException
-     * @see #serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl)
+     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
      */
-    public void serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
+    public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         writer.writeProcessingInstruction(this.target+" ", this.value);
     }
@@ -69,10 +69,10 @@ public class OMProcessingInstructionImpl extends OMNodeImpl implements OMProcess
      *
      * @param omOutput
      * @throws XMLStreamException
-     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
+     * @see #serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl)
      */
-    public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
-        serializeWithCache(omOutput);
+    public void serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
+        serialize(omOutput);
     }
 
     /**

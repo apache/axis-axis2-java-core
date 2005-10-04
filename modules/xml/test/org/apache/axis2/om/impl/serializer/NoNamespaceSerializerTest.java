@@ -92,7 +92,7 @@ public class NoNamespaceSerializerTest extends TestCase {
 
 //    public void testSerilizationWithCacheOff() throws Exception {
 //        SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-//        env.serializeWithCache(writer, false);
+//        env.serializeAndConsume(writer, false);
 //        writer.flush();
 //
 //
@@ -100,14 +100,14 @@ public class NoNamespaceSerializerTest extends TestCase {
 //
 //    public void testSerilizationWithCacheOn() throws Exception {
 //        SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-//        env.serializeWithCache(writer, true);
+//        env.serializeAndConsume(writer, true);
 //        writer.flush();
 //    }
 
 
     public void testSerilizationWithDefaultNamespaces() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builderTwo.getDocumentElement();
-        env.serializeWithCache(writer);
+        env.serialize(writer);
         OMElement balanceElement = env.getBody().getFirstElement();
         assertEquals("Deafualt namespace has not been set properly",
                 balanceElement.getNamespace().getName(),
@@ -136,8 +136,8 @@ public class NoNamespaceSerializerTest extends TestCase {
         org.apache.axis2.om.impl.OMOutputImpl omOutput = new org.apache.axis2.om.impl.OMOutputImpl(System.out, false);
         //env.getBody().addChild(builder.getDocumentElement());
         
-        env.serializeWithCache(omOutput);
-        // env.serializeWithCache(xmlStreamWriter, true);
+        env.serialize(omOutput);
+        // env.serializeAndConsume(xmlStreamWriter, true);
 
         omOutput.flush();
 
@@ -145,13 +145,13 @@ public class NoNamespaceSerializerTest extends TestCase {
 
     public void testSerilizationWithCacheOn() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-        env.serializeWithCache(writer);
+        env.serialize(writer);
         writer.flush();
     }
 
     public void testSerilizationWithCacheOff() throws Exception {
         SOAPEnvelope env = (SOAPEnvelope) builderOne.getDocumentElement();
-        env.serializeWithCache(writer);
+        env.serialize(writer);
         writer.flush();
     }
 }

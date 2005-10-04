@@ -75,7 +75,7 @@ public class SOAP11FaultDetailImpl extends SOAPFaultDetailImpl {
 
 
         if (firstChild != null) {
-            firstChild.serialize(omOutput);
+            firstChild.serializeAndConsume(omOutput);
         }
         writer.writeEndElement();
     }

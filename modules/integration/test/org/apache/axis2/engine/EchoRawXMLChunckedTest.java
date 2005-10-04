@@ -89,7 +89,7 @@ public class EchoRawXMLChunckedTest extends TestCase {
 //        Callback callback = new Callback() {
 //            public void onComplete(AsyncResult result) {
 //                try {
-//                    result.getResponseEnvelope().serializeWithCache(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
+//                    result.getResponseEnvelope().serializeAndConsume(new OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
 //                } catch (XMLStreamException e) {
 //                    reportError(e);
 //                } finally {

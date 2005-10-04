@@ -49,11 +49,11 @@ public class SOAP11SerializerTest extends OMTestCase {
 
     public void testSerialize() {
         try {
-            soapEnvelope.serializeWithCache(output);
+            soapEnvelope.serialize(output);
 
 //            System.out.println("");
 //            System.out.println("=======================");
-            soapEnvelope.serialize(output);
+            soapEnvelope.serializeAndConsume(output);
         } catch (XMLStreamException e) {
             log.info(e.getMessage());
         }

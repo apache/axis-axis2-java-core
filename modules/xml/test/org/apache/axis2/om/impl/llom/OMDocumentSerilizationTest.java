@@ -28,7 +28,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayOutputStream;
 
 /**
- * This tests the serialize method 
+ * This tests the serializeAndConsume method
  */
 public class OMDocumentSerilizationTest extends TestCase {
 
@@ -66,7 +66,7 @@ public class OMDocumentSerilizationTest extends TestCase {
 	public void testXMLDecleration() throws XMLStreamException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		OMOutputImpl output = new OMOutputImpl(baos,false);
-		document.serialize(output);
+		document.serializeAndConsume(output);
 		output.flush();
 		
 		String xmlDocument = new String(baos.toByteArray());
@@ -77,7 +77,7 @@ public class OMDocumentSerilizationTest extends TestCase {
 	public void testExcludeXMLDeclaration() throws XMLStreamException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		OMOutputImpl output = new OMOutputImpl(baos,false);
-		document.serialize(output,false);
+		document.serializeAndConsume(output,false);
 		output.flush();
 		
 		String xmlDocument = new String(baos.toByteArray());
@@ -91,7 +91,7 @@ public class OMDocumentSerilizationTest extends TestCase {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		OMOutputImpl output = new OMOutputImpl(baos,false);
         output.ignoreXMLDeclaration(false);
-        document.serialize(output);
+        document.serializeAndConsume(output);
 		output.flush();
 
         String xmlDocument = new String(baos.toByteArray());
@@ -106,7 +106,7 @@ public class OMDocumentSerilizationTest extends TestCase {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		OMOutputImpl output = new OMOutputImpl(baos,false);
 		output.setCharSetEncoding("UTF-16");
-		document.serialize(output);
+		document.serializeAndConsume(output);
 		output.flush();
 		
 		String xmlDocument = new String(baos.toByteArray());
@@ -118,7 +118,7 @@ public class OMDocumentSerilizationTest extends TestCase {
 	public void testXMLVersion() throws XMLStreamException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		OMOutputImpl output = new OMOutputImpl(baos,false);
-		document.serialize(output);
+		document.serializeAndConsume(output);
 		output.flush();
 		
 		String xmlDocument = new String(baos.toByteArray());
@@ -130,7 +130,7 @@ public class OMDocumentSerilizationTest extends TestCase {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		OMOutputImpl output = new OMOutputImpl(baos,false);
 		document.setXMLVersion("1.1");
-		document.serialize(output);
+		document.serializeAndConsume(output);
 		output.flush();
 		
 		String xmlDocument = new String(baos.toByteArray());

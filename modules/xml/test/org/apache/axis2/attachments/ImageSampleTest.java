@@ -102,10 +102,10 @@ public class ImageSampleTest extends AbstractTestCase {
         body.addChild(data);
         data.addChild(binaryNode);
 
-        envelope.serialize(baseOutput);
+        envelope.serializeAndConsume(baseOutput);
         baseOutput.flush();
 
-        envelope.serialize(mtomOutput);
+        envelope.serializeAndConsume(mtomOutput);
         mtomOutput.flush();
     }
 

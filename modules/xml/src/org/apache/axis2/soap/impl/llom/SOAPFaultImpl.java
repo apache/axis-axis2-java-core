@@ -205,23 +205,23 @@ public abstract class SOAPFaultImpl extends SOAPElement
         OMSerializerUtil.serializeStartpart(this, omOutput);
         SOAPFaultCode faultCode = getCode();
         if (faultCode != null) {
-            faultCode.serializeWithCache(omOutput);
+            faultCode.serialize(omOutput);
         }
         SOAPFaultReason faultReason = getReason();
         if (faultReason != null) {
-            faultReason.serializeWithCache(omOutput);
+            faultReason.serialize(omOutput);
         }
 
         serializeFaultNode(omOutput);
 
         SOAPFaultRole faultRole = getRole();
         if (faultRole != null) {
-            faultRole.serializeWithCache(omOutput);
+            faultRole.serialize(omOutput);
         }
 
         SOAPFaultDetail faultDetail = getDetail();
         if (faultDetail != null) {
-            faultDetail.serializeWithCache(omOutput);
+            faultDetail.serialize(omOutput);
         }
 
         OMSerializerUtil.serializeEndpart(omOutput);

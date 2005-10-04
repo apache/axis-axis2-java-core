@@ -70,7 +70,7 @@ public class ClientCallbackHandler extends Callback {
         log.info(
                 "Responce message received to the ClientCallbackHandler ...");
         try {
-            result.getResponseEnvelope().serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
+            result.getResponseEnvelope().serializeAndConsume(XMLOutputFactory.newInstance().createXMLStreamWriter(
                             System.out));
         } catch (XMLStreamException e) {
             log.info("Error occured after responce is received");

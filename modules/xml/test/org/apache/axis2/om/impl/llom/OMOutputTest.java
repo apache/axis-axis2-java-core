@@ -104,10 +104,10 @@ public class OMOutputTest extends AbstractTestCase {
         org.apache.axis2.om.impl.OMOutputImpl baseOutput = new org.apache.axis2.om.impl.OMOutputImpl(new FileOutputStream(outBase64File),
                 false);
 
-        envelope.serialize(baseOutput);
+        envelope.serializeAndConsume(baseOutput);
         baseOutput.flush();
 
-        envelope.serialize(mtomOutput);
+        envelope.serializeAndConsume(mtomOutput);
         mtomOutput.flush();
     }
 }

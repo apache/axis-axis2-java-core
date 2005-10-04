@@ -166,7 +166,7 @@ public class EchoRawMTOMTest extends TestCase {
         OMElement result = call.invokeBlocking(operationName
                 .getLocalPart(),
                 payload);
-        // result.serializeWithCache(new
+        // result.serializeAndConsume(new
         // OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
         OMElement ele = (OMElement) result.getFirstOMChild();
         OMText binaryNode = (OMText) ele.getFirstOMChild();

@@ -29,12 +29,11 @@ import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 /**
  * Utility class for the Axis2-WSS4J Module
@@ -54,11 +53,11 @@ public class Axis2Util {
 
 			env.build();
 			/**
-			 * There are plans to deprecate the OmNode.serialize(XMLStreamWriter)
-			 * method therefore using OMOutoutImpl to serialize the env
+			 * There are plans to deprecate the OmNode.serializeAndConsume(XMLStreamWriter)
+			 * method therefore using OMOutoutImpl to serializeAndConsume the env
 			 */
 			OMOutputImpl output = new OMOutputImpl(baos, false);
-			env.serialize(output);
+			env.serializeAndConsume(output);
 			output.flush();
 			
 			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());

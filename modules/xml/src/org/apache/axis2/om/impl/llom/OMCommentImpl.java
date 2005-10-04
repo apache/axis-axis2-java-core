@@ -56,9 +56,9 @@ public class OMCommentImpl extends OMNodeImpl implements OMComment {
      *
      * @param omOutput
      * @throws XMLStreamException
-     * @see #serializeWithCache(org.apache.axis2.om.impl.OMOutputImpl)
+     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
      */
-    public void serializeWithCache(OMOutputImpl omOutput) throws XMLStreamException {
+    public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         writer.writeComment(this.value);
     }
@@ -68,10 +68,10 @@ public class OMCommentImpl extends OMNodeImpl implements OMComment {
      *
      * @param omOutput
      * @throws XMLStreamException
-     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
+     * @see #serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl)
      */
-    public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
-        serializeWithCache(omOutput);
+    public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
+        serialize(omOutput);
     }
 
     /**

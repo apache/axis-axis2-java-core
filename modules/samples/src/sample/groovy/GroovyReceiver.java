@@ -84,7 +84,7 @@ public class GroovyReceiver
             inMessage.getEnvelope().build();
             StringWriter writer = new StringWriter();
             firstChild.build();
-            firstChild.serializeWithCache(
+            firstChild.serialize(
                 new OMOutputImpl(
                     XMLOutputFactory.newInstance().createXMLStreamWriter(
                         writer)));

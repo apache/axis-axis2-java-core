@@ -133,7 +133,7 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
                 try {
-                    result.getResponseEnvelope().serialize(
+                    result.getResponseEnvelope().serializeAndConsume(
                                     XMLOutputFactory.newInstance()
                             .createXMLStreamWriter(System.out));
                 } catch (XMLStreamException e) {

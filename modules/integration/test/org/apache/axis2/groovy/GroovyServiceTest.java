@@ -98,7 +98,7 @@ public class GroovyServiceTest extends TestCase {
 
         StringWriter writer = new StringWriter();
         result.build();
-        result.serializeWithCache(new OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
+        result.serialize(new OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
         writer.flush();
         call.close();
     }
