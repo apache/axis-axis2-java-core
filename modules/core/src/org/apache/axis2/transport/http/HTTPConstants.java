@@ -440,5 +440,7 @@ public class HTTPConstants {
         return data.getBytes();
     }
 
+    public static final String PROXY = "PROXY";
+
 
 }

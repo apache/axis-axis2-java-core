@@ -148,9 +148,19 @@ public class HTTPWorker implements HttpRequestHandler {
                         request.getRequestLine().getUri(),
                         configurationContext);
             }
-            response.setStatusLine(request.getRequestLine().getHttpVersion(), 200, "OK");
+
+            Object contextWritten = msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
+            if (contextWritten != null &&
+                    Constants.VALUE_TRUE.equals(contextWritten)) {
+                response.setStatusLine(
+                        request.getRequestLine().getHttpVersion(), 200, "OK");
+            } else {
+                response.setStatusLine(
+                        request.getRequestLine().getHttpVersion(), 202, "OK");
+            }
             response.setBody(new ByteArrayInputStream(baos.toByteArray()));
-            setResponseHeaders(conn, request, response,baos.toByteArray().length);
+            setResponseHeaders(conn, request, response,
+                    baos.toByteArray().length);
             conn.writeResponse(response);
         } catch (Throwable e) {
             try {
@@ -198,9 +208,12 @@ public class HTTPWorker implements HttpRequestHandler {
                 }
             }
         }
-        if (!response.containsHeader("Transfer-Encoding")){
-            Header header = new Header("Content-Length",String.valueOf(contentLength));
-            response.addHeader(header);
+        if (!response.containsHeader("Transfer-Encoding")) {
+            if (contentLength != 0) {
+                Header header = new Header("Content-Length",
+                        String.valueOf(contentLength));
+                response.addHeader(header);
+            }
         }
     }
 
