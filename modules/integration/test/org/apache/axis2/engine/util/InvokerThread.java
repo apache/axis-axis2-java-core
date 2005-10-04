@@ -5,6 +5,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.integration.TestingUtils;
+import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMElement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,8 +35,7 @@ public class InvokerThread extends Thread {
     private int threadNumber;
     protected EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
-                    + (5556)
-//                    + (UtilServer.TESTING_PORT)
+                    + (UtilServer.TESTING_PORT)
                     + "/axis/services/EchoXMLService/echoOMElement");
     protected QName operationName = new QName("echoOMElement");
     protected Log log = LogFactory.getLog(getClass());
