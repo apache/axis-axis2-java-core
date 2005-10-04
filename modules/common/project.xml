@@ -48,6 +48,22 @@
             </properties>
         </dependency>
         <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+            <version>${stax.api.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+	<dependency>
+		<groupId>axis</groupId>
+		<artifactId>axis-wsdl4j</artifactId>
+		<version>${axis.wsdl4j.version}</version>
+		<properties>
+			<module>true</module>
+		</properties>
+	</dependency>
+        <dependency>
             <groupId>maven-itest-plugin</groupId>
             <artifactId>maven-itest-plugin</artifactId>
             <version>${maven.itest.plugin.version}</version>

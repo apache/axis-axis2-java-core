@@ -16,23 +16,24 @@
 
 package org.apache.axis2.wsdl.builder.wsdl4j;
 
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
-import org.apache.axis2.wsdl.util.XMLUtils;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.impl.WSDLDescriptionImpl;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class WSDL1ToWOMBuilder implements WOMBuilder {
 

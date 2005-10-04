@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.wsdl.util;
+package org.apache.axis2.util;
 
 import org.xml.sax.InputSource;
 

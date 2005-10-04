@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.attachments;
 
+import org.apache.axis2.util.Base64;
+
 public class DataHandlerUtils {
 
   public static Object getDataHandlerFromText(String value, String mimeType)
