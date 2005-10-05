@@ -21,6 +21,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContextFactory;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.*;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
@@ -77,11 +78,13 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
                         transportIn,
                         transport);
 
-        mc.setOperationContext(
-                OperationContextFactory.createOperationContext(
-                        WSDLConstants.MEP_CONSTANT_IN_OUT,
-                        axisOp
-                        ));
+        OperationContext opCOntext = new OperationContext(axisOp);
+
+//        mc.setOperationContext(OperationContextFactory.createOperationContext(
+//                        WSDLConstants.MEP_CONSTANT_IN_OUT,
+//                        axisOp
+//                        ));
+        mc.setOperationContext(opCOntext);
         mc.setTransportOut(transport);
         mc.setProperty(MessageContext.TRANSPORT_OUT, System.out);
         mc.setServerSide(true);

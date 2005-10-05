@@ -170,9 +170,11 @@ public class InOutMEPClient extends MEPClient {
 
             checkTransport(msgctx);
             //find and set the Operation Context
-            OperationContext operationContext = OperationContextFactory.createOperationContext(WSDLConstants.MEP_CONSTANT_IN_OUT,
-                    axisop,
-                    serviceContext);
+//            OperationContext operationContext = OperationContextFactory.createOperationContext(WSDLConstants.MEP_CONSTANT_IN_OUT,
+//                    axisop,
+//                    serviceContext);
+
+            OperationContext operationContext = new OperationContext(axisop,serviceContext);
             axisop.registerOperationContext(msgctx,operationContext);
 
             //Send the SOAP Message and receive a response                
@@ -400,9 +402,11 @@ public class InOutMEPClient extends MEPClient {
 
         public void doWork() {
             try {
-                msgctx.setOperationContext(OperationContextFactory.createOperationContext(WSDLConstants.MEP_CONSTANT_IN_OUT,
-                        axisop,
-                        serviceContext));
+                OperationContext opcontxt = new OperationContext(axisop,serviceContext);
+//                msgctx.setOperationContext(OperationContextFactory.createOperationContext(WSDLConstants.MEP_CONSTANT_IN_OUT,
+//                        axisop,
+//                        serviceContext));
+                msgctx.setOperationContext(opcontxt);
                 msgctx.setServiceContext(serviceContext);
                 //send the request and wait for reponse
                 MessageContext response =

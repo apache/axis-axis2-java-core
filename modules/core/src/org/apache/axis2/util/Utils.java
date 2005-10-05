@@ -196,8 +196,8 @@ public class Utils {
     public static ServiceContext fillContextInformation(OperationDescription operationDesc, ServiceDescription serviceDesc, ConfigurationContext configurationContext) throws AxisFault {
         MessageContext msgContext;
         //  2. if null, create new opCtxt
-        OperationContext operationContext =
-                OperationContextFactory.createOperationContext(operationDesc.getAxisSpecifMEPConstant(), operationDesc);
+        OperationContext operationContext = new  OperationContext(operationDesc);
+//        OperationContext operationContext = OperationContextFactory.createOperationContext(operationDesc.getAxisSpecifMEPConstant(), operationDesc);
 
         //  fill the service group context and service context info
         return fillServiceContextAndServiceGroupContext(serviceDesc, configurationContext);
