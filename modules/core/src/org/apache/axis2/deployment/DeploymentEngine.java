@@ -793,8 +793,8 @@ public class DeploymentEngine implements DeploymentConstants {
             currentArchiveFile = new ArchiveFileData(modulearchive, MODULE);
             axismodule = new ModuleDescription();
             ArchiveReader archiveReader = new ArchiveReader();
-            archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(), this, axismodule,false);
             currentArchiveFile.setClassLoader(false);
+            archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(), this, axismodule,false);
             Flow inflow = axismodule.getInFlow();
             if (inflow != null) {
                 addFlowHandlers(inflow);
