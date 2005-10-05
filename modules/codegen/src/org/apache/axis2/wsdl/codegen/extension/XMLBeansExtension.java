@@ -54,9 +54,11 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
+
 public class XMLBeansExtension extends AbstractCodeGenerationExtension {
     private static final String DEFAULT_STS_NAME = "axis2";
-
+    private static final String SCHEMA_FOLDER = "schemas";
 
 
     public void init(CodeGenConfiguration configuration) {
@@ -66,7 +68,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
     public void engage() {
 
         //test the databinding type. If not just fall through
-        if (configuration.getDatabindingType()!= XSLTConstants.DataBindingTypes.XML_BEANS){
+        if (configuration.getDatabindingType() != XSLTConstants.DataBindingTypes.XML_BEANS) {
             return;
         }
 
@@ -91,7 +93,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             List typesArray = typesList.getExtensibilityElements();
             WSDLExtensibilityElement extensiblityElt;
             SchemaTypeSystem sts = null;
-            Vector xmlObjectsVector= new Vector();
+            Vector xmlObjectsVector = new Vector();
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
 
@@ -108,14 +110,31 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
 
 
                     Stack importedSchemaStack = schema.getImportedSchemaStack();
+                    File schemaFolder = new File(configuration.getOutputLocation(),SCHEMA_FOLDER);
+                    schemaFolder.mkdir();
                     //compile these schemas
-                    while (!importedSchemaStack.isEmpty()){
+                    while (!importedSchemaStack.isEmpty()) {
                         javax.wsdl.extensions.schema.Schema tempSchema = (javax.wsdl.extensions.schema.Schema) importedSchemaStack.pop();
                         Element element = tempSchema.getElement();
+
+                        // we are not using DOM toString method here, as it seems it depends on the
+                        // JDK version that is being used.
+                        String s = DOM2Writer.nodeToString(element);
+
+                        
+
+                        //write the schema to a file
+                        File tempFile = File.createTempFile("temp", ".xsd", schemaFolder);
+                        FileWriter writer = new FileWriter(tempFile);
+                        writer.write(s);
+                        writer.flush();
+                        writer.close();
+
+
                         xmlObjectsVector.add(
                                 XmlObject.Factory.parse(
                                         element
-                                        ,options));
+                                        , options));
                     }
                 }
             }
@@ -126,7 +145,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             for (int i = 0; i < additionalSchemas.length; i++) {
                 xmlObjectsVector.add(XmlObject.Factory.parse(
                         additionalSchemas[i]
-                        ,null));
+                        , null));
             }
 
             //compile the type system
@@ -139,7 +158,6 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                     config, XmlBeans.getContextTypeLoader(),
                     new Axis2Filer(),
                     null);
-
 
             // prune the generated schema type system and add the list of base64 types
             FindBase64Types(sts);
@@ -165,6 +183,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
      * The algo is to look for simpletypes that have base64 content, and then step out of that
      * onestep and get the element. For now there's an extended check to see whether the simple type
      * is related to the Xmime:contentType!
+     *
      * @param sts
      */
     private void FindBase64Types(SchemaTypeSystem sts) {
@@ -174,17 +193,17 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
         //add the document types and global types
         allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
         allSeenTypes.addAll(Arrays.asList(sts.globalTypes()));
-        for (int i = 0; i < allSeenTypes.size(); i++){
-            SchemaType sType = (SchemaType)allSeenTypes.get(i);
+        for (int i = 0; i < allSeenTypes.size(); i++) {
+            SchemaType sType = (SchemaType) allSeenTypes.get(i);
 
-            if (sType.getContentType()==SchemaType.SIMPLE_CONTENT && sType.getPrimitiveType()!=null) {
-                if (XSLTConstants.BASE_64_CONTENT_QNAME.equals(sType.getPrimitiveType().getName())){
+            if (sType.getContentType() == SchemaType.SIMPLE_CONTENT && sType.getPrimitiveType() != null) {
+                if (XSLTConstants.BASE_64_CONTENT_QNAME.equals(sType.getPrimitiveType().getName())) {
                     outerType = sType.getOuterType();
                     //check the outer type further to see whether it has the contenttype attribute from
                     //XMime namespace
                     SchemaProperty[] properties = sType.getProperties();
                     for (int j = 0; j < properties.length; j++) {
-                        if (XSLTConstants.XMIME_CONTENT_TYPE_QNAME.equals(properties[j].getName())){
+                        if (XSLTConstants.XMIME_CONTENT_TYPE_QNAME.equals(properties[j].getName())) {
                             base64ElementQNamesList.add(outerType.getDocumentElementName());
                             break;
                         }
@@ -195,13 +214,13 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             allSeenTypes.addAll(Arrays.asList(sType.getAnonymousTypes()));
         }
 
-        configuration.put(XSLTConstants.BASE_64_PROPERTY_KEY,base64ElementQNamesList);
+        configuration.put(XSLTConstants.BASE_64_PROPERTY_KEY, base64ElementQNamesList);
     }
 
     /**
      * Loading the external schemas.
-     * @return element array consisting of the the DOM element objects that represent schemas
      *
+     * @return element array consisting of the the DOM element objects that represent schemas
      */
     private Element[] loadAdditionalSchemas() {
         //load additional schemas
@@ -213,7 +232,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             DocumentBuilder documentBuilder = getNamespaceAwareDocumentBuilder();
             for (int i = 0; i < schemaNames.length; i++) {
                 //the location for the third party schema;s is hardcoded
-                InputStream schemaStream = this.getClass().getResourceAsStream("/org/apache/axis2/wsdl/codegen/schema/"+ schemaNames[i]);
+                InputStream schemaStream = this.getClass().getResourceAsStream("/org/apache/axis2/wsdl/codegen/schema/" + schemaNames[i]);
                 Document doc = documentBuilder.parse(schemaStream);
                 additionalSchemaElements.add(doc.getDocumentElement());
             }
@@ -225,7 +244,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
 
             }
         } catch (Exception e) {
-            throw new RuntimeException("Additional schema loading failed!!",e);
+            throw new RuntimeException("Additional schema loading failed!!", e);
         }
 
         return schemaElements;
@@ -242,20 +261,21 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
      * Checking the compatibilty has to do with generating RPC/encoded stubs.
      * If the XMLBeans bindings are used encoded binding cannot be done.
      */
-    private void checkCompatibility(){
+    private void checkCompatibility() {
         Map bindingMap = this.configuration.getWom().getBindings();
         Collection col = bindingMap.values();
 
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-            WSDLBinding b = (WSDLBinding)iterator.next();
+            WSDLBinding b = (WSDLBinding) iterator.next();
             HashMap bindingOps = b.getBindingOperations();
             Collection bindingOpsCollection = bindingOps.values();
             for (Iterator iterator1 = bindingOpsCollection.iterator(); iterator1.hasNext();) {
-                foo((WSDLBindingOperation)iterator1.next());
+                foo((WSDLBindingOperation) iterator1.next());
             }
 
         }
     }
+
     protected void foo(WSDLBindingOperation bindingOp) {
         Iterator extIterator = bindingOp.getInput().getExtensibilityElements()
                 .iterator();
@@ -271,17 +291,19 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             }
         }
     }
-    private XmlObject[] convertToXMLObjectArray(Vector vec){
+
+    private XmlObject[] convertToXMLObjectArray(Vector vec) {
         XmlObject[] xmlObjects = new XmlObject[vec.size()];
         for (int i = 0; i < vec.size(); i++) {
-            xmlObjects[i] = (XmlObject)vec.get(i);
+            xmlObjects[i] = (XmlObject) vec.get(i);
         }
         return xmlObjects;
     }
+
     /**
      * Private class to generate the filer
      */
-    private class Axis2Filer implements Filer{
+    private class Axis2Filer implements Filer {
 
         public OutputStream createBinaryFile(String typename)
                 throws IOException {
@@ -307,7 +329,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
      * Custom binding configuration for the code generator. This controls
      * how the namespaces are suffixed/prefixed
      */
-    private class Axis2BindingConfig extends BindingConfig{
+    private class Axis2BindingConfig extends BindingConfig {
         Pattern pattern = Pattern.compile("//[\\w\\.]*");
         private static final String DATABINDING_PACKAGE_SUFFIX = "databinding";
 
@@ -315,21 +337,21 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             //take the **.**.** part from the uri
             Matcher matcher = pattern.matcher(uri);
             String packageName = "";
-            if (matcher.find()){
-                String tempPackageName = matcher.group().replaceFirst("//","");
+            if (matcher.find()) {
+                String tempPackageName = matcher.group().replaceFirst("//", "");
                 //reverse the names
-                String[] parts =  tempPackageName.split("\\.");
-                for (int i = parts.length-1; i >= 0; i--) {
-                    packageName= packageName + "." + parts[i];
+                String[] parts = tempPackageName.split("\\.");
+                for (int i = parts.length - 1; i >= 0; i--) {
+                    packageName = packageName + "." + parts[i];
 
                 }
 
-            }else{
+            } else {
                 //replace all none word chars with an underscore
-                packageName = uri.replaceAll("\\W","_");
+                packageName = uri.replaceAll("\\W", "_");
             }
 
-            return configuration.getPackageName()==null?"":(configuration.getPackageName()+".") + DATABINDING_PACKAGE_SUFFIX +packageName;
+            return configuration.getPackageName() == null ? "" : (configuration.getPackageName() + ".") + DATABINDING_PACKAGE_SUFFIX + packageName;
         }
 
     }
