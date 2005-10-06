@@ -94,7 +94,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         UtilsTCPServer.stop();
     }
 
-    private OMElement createEnvelope() {
+    private OMElement createPayload() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement method = fac.createOMElement("echoOMElement", omNs);
@@ -107,7 +107,7 @@ public class TCPEchoRawXMLTest extends TestCase {
     }
 
     public void testEchoXMLASync() throws Exception {
-        OMElement payload = createEnvelope();
+        OMElement payload = createPayload();
 
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
                 serviceContext);
@@ -154,7 +154,7 @@ public class TCPEchoRawXMLTest extends TestCase {
     public void testEchoXMLSync() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
-        OMElement payload = createEnvelope();
+        OMElement payload = createPayload();
 
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
                 serviceContext);
@@ -182,10 +182,10 @@ public class TCPEchoRawXMLTest extends TestCase {
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement method = fac.createOMElement("echoOMElement", omNs);
+        OMElement payloadElement = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.setText("Isaac Assimov, the foundation Sega");
-        method.addChild(value);
+        payloadElement.addChild(value);
 
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
                 serviceContext);
@@ -197,7 +197,7 @@ public class TCPEchoRawXMLTest extends TestCase {
                 true);
 
         OMElement result = call.invokeBlocking(
-                operationName.getLocalPart(), method);
+                operationName.getLocalPart(), payloadElement);
         result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
         call.close();
