@@ -55,7 +55,7 @@ public class AddressingOutHandler
     public void invoke(MessageContext msgContext) throws AxisFault {
 
 
-        if (!isAddressingEnabled) {
+        if (!isAddressingEnabled || msgContext.getMessageInformationHeaders() == null) {
             return;
         }
 
@@ -93,6 +93,12 @@ public class AddressingOutHandler
         MessageInformationHeaders messageInformationHeaders =
                 msgContext.getMessageInformationHeaders();
         SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
+
+        // by this time, we definitely have some addressing information to be sent. This is because,
+        // we have tested at the start of this whether messageInformationHeaders are null or not.
+        // So rather than declaring addressing namespace in each and every addressing header, lets
+        // define that in the Header itself.
+        soapHeader.declareNamespace(addressingNamespaceObject);
 
 
         EndpointReference epr = messageInformationHeaders.getTo();
