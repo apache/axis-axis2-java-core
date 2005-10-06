@@ -386,7 +386,8 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
     private void addnewService(ServiceGroupDescription serviceMetaData) throws AxisFault {
-        Iterator services = currentArchiveFile.getService().values().iterator();
+//        Iterator services = currentArchiveFile.getService().values().iterator();
+        Iterator services = currentArchiveFile.getDeploybleServices().iterator();
         while (services.hasNext()) {
             ServiceDescription serviceDescription = (ServiceDescription) services.next();
             loadServiceProperties(serviceDescription);

@@ -36,10 +36,7 @@ import org.apache.wsdl.extensions.SOAPOperation;
 import org.apache.wsdl.impl.WSDLInterfaceImpl;
 import org.apache.wsdl.impl.WSDLServiceImpl;
 
-import javax.wsdl.Definition;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
-import javax.wsdl.WSDLException;
+import javax.wsdl.*;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
@@ -81,6 +78,8 @@ public class ServiceDescription
 
     //to store module ref at deploy time parsing
     private ArrayList mdoulesList = new ArrayList();
+
+    
 
     /**
      * Constructor ServiceDescription

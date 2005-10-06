@@ -46,6 +46,8 @@ public class ArchiveFileData {
     //in this table
     private HashMap service = new HashMap();
 
+    private ArrayList deploybleServices = new ArrayList();
+
     public ArchiveFileData(int type, String name) {
         this.type = type;
         this.name = name;
@@ -196,4 +198,11 @@ public class ArchiveFileData {
         return service;
     }
 
+    public ArrayList getDeploybleServices() {
+        return deploybleServices;
+    }
+
+    public void setDeploybleServices(ArrayList deploybleServices) {
+        this.deploybleServices = deploybleServices;
+    }
 }

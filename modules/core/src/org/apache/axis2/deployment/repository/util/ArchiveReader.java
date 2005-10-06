@@ -269,6 +269,7 @@ public class ArchiveReader implements DeploymentConstants {
             serviceDesc.setClassLoader(engine.getCurrentFileItem().getClassLoader());
             ServiceBuilder serviceBuilder = new ServiceBuilder(engine,serviceDesc);
             serviceBuilder.populateService(services);
+            engine.getCurrentFileItem().getDeploybleServices().add(serviceDesc);
         } else if(SERVICE_GROUP_ELEMENT.equals(rootelementName)){
             ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(services,engine);
             groupBuilder.populateServiceGroup(serviceGroupDesc);
