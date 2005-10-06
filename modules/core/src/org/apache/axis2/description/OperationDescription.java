@@ -61,6 +61,8 @@ public abstract class OperationDescription  implements
     //To store deploytime module refs
     private ArrayList modulerefs;
 
+
+
     public OperationDescription(WSDLOperation wsdlopeartion) {
         this.wsdlopeartion = (WSDLOperationImpl)wsdlopeartion;
         this.setMessageExchangePattern(MEP_URI_IN_OUT);
@@ -570,4 +572,7 @@ public abstract class OperationDescription  implements
         }
     }
 
+    public void setWsdlopeartion(WSDLOperationImpl wsdlopeartion) {
+        this.wsdlopeartion = wsdlopeartion;
+    }
 }

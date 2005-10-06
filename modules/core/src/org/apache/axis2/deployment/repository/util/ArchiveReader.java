@@ -105,6 +105,16 @@ public class ArchiveReader implements DeploymentConstants {
             WSDLVersionWrapper wsdlVersionWrapper = builder.build(in,
                     new AxisDescWSDLComponentFactory());
             WSDLDescription womDescription = wsdlVersionWrapper.getDescription();
+
+            //removing binding
+//            Map bindings = wsdlVersionWrapper.getDefinition().getBindings();
+//            Iterator binfingIterator = bindings.keySet().iterator();
+//            while (binfingIterator.hasNext()) {
+//                Object o = binfingIterator.next();
+//                bindings.remove(o) ;
+//
+//            }
+
             Iterator iterator = womDescription.getServices().keySet()
                     .iterator();
             if (iterator.hasNext()) {

@@ -79,7 +79,7 @@ public class ServiceDescription
     //to store module ref at deploy time parsing
     private ArrayList mdoulesList = new ArrayList();
 
-    
+
 
     /**
      * Constructor ServiceDescription
@@ -92,6 +92,7 @@ public class ServiceDescription
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setServiceInterface(new WSDLInterfaceImpl());
         moduleConfigmap = new HashMap();
+        
     }
 
     public ServiceDescription() {
