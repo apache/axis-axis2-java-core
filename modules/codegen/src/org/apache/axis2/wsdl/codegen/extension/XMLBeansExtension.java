@@ -120,8 +120,6 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                         // JDK version that is being used.
                         String s = DOM2Writer.nodeToString(element);
 
-                        
-
                         //write the schema to a file
                         File tempFile = File.createTempFile("temp", ".xsd", schemaFolder);
                         FileWriter writer = new FileWriter(tempFile);

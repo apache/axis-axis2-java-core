@@ -861,10 +861,10 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         WSDLOperation operation ;
 
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-        	
+
             List soapHeaderInputParameterList = new ArrayList();
             List soapHeaderOutputParameterList = new ArrayList();
-            
+
             operation = (WSDLOperation) iterator.next();
             methodElement = doc.createElement("method");
             String localPart = reformatName(operation.getName().getLocalPart(),false);
