@@ -72,7 +72,7 @@ public class DeploymentClassLoader extends URLClassLoader {
         try {
             ZipInputStream zin = new ZipInputStream(new FileInputStream(file));
             ZipEntry entry;
-            String entryName = "";
+            String entryName;
             while ((entry = zin.getNextEntry()) != null) {
                 entryName = entry.getName();
                 /**
@@ -108,27 +108,31 @@ public class DeploymentClassLoader extends URLClassLoader {
      */
     protected Class findClass(final String name)
             throws ClassNotFoundException {
-        Class cla = null;
+        Class cla ;
         try {
             cla = (Class)loadedclass.get(name);
             if(cla != null){
                 return cla;
             }
-            boolean foundClass = false;
+            boolean foundClass ;
             try {
                 cla = super.findClass(name);
-                foundClass = true;
                 loadedclass.put(name, cla);
                 return cla;
             } catch (ClassNotFoundException e) {
                 foundClass = false;
             }
             if (!foundClass) {
-                byte raw[] = getBytes(name);
-                cla = defineClass(name, raw, 0, raw.length);
-                loadedclass.put(name, cla);
-                foundClass = true;
-                return cla;
+                try {
+                    byte raw[] = getBytes(name);
+                    cla = defineClass(name, raw, 0, raw.length);
+                    loadedclass.put(name, cla);
+                    return cla;
+                } catch (Exception e) {
+                    foundClass = false;
+                } catch (ClassFormatError classFormatError) {
+                    foundClass = false;
+                }
             }
             if (!foundClass) {
                 throw new ClassNotFoundException(Messages.getMessage(
@@ -136,7 +140,8 @@ public class DeploymentClassLoader extends URLClassLoader {
             }
 
         } catch (Exception e) {
-
+             throw new ClassNotFoundException(Messages.getMessage(
+                        DeploymentErrorMsgs.CLASS_NOT_FOUND, name));
         }
         return null;
     }
@@ -158,14 +163,14 @@ public class DeploymentClassLoader extends URLClassLoader {
          * Replacing org.apache. -> org/apache/...
          */
         completeFileName = completeFileName.replace('.', '/').concat(".class");
-        byte raw[] = null;
+        byte raw[] ;
         for (int i = 0; i < lib_jars_list.size(); i++) {
             String libjar_name = (String) lib_jars_list.get(i);
             InputStream in = this.getResourceAsStream(libjar_name);
             try {
                 ZipInputStream zin = new ZipInputStream(in);
                 ZipEntry entry;
-                String entryName = "";
+                String entryName ;
                 while ((entry = zin.getNextEntry()) != null) {
                     entryName = entry.getName();
                     if (entryName != null &&

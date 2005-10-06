@@ -436,7 +436,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         if (module == null) {
             File file = new ArchiveReader().creatModuleArchivefromResource(
                     moduleref.getLocalPart(), getRepository());
-            module = new DeploymentEngine().buildModule(file);
+            module = new DeploymentEngine().buildModule(file,this);
             isNewmodule = true;
         }
         if (module != null) {

@@ -125,12 +125,11 @@ public class UtilServer {
                 org.apache.axis2.Constants.TESTING_REPOSITORY +
                         "/modules/addressing.mar");
         TestCase.assertTrue(file.exists());
-        ModuleDescription moduleDesc = deploymentEngine.buildModule(file);
 
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
         ConfigurationContext sysContext =
                 efac.buildClientConfigurationContext("target/test-resources/intregrationRepo");
-
+         ModuleDescription moduleDesc = deploymentEngine.buildModule(file,sysContext.getAxisConfiguration());
         sysContext.getAxisConfiguration().addModule(moduleDesc);
         //sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
 
@@ -148,11 +147,11 @@ public class UtilServer {
                 org.apache.axis2.Constants.TESTING_REPOSITORY +
                         "/modules/addressing.mar");
         TestCase.assertTrue(file.exists());
-        ModuleDescription moduleDesc = deploymentEngine.buildModule(file);
 
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
         ConfigurationContext sysContext =
                 efac.buildClientConfigurationContext(clientHome);
+        ModuleDescription moduleDesc = deploymentEngine.buildModule(file,sysContext.getAxisConfiguration());
 
         sysContext.getAxisConfiguration().addModule(moduleDesc);
         //sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());

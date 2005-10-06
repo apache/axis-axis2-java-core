@@ -787,9 +787,10 @@ public class DeploymentEngine implements DeploymentConstants {
      * @throws DeploymentException
      */
 
-    public ModuleDescription buildModule(File modulearchive) throws DeploymentException {
+    public ModuleDescription buildModule(File modulearchive, AxisConfiguration config) throws DeploymentException {
         ModuleDescription axismodule;
         try {
+            this.setPhasesinfo(((AxisConfigurationImpl)config).getPhasesinfo());
             currentArchiveFile = new ArchiveFileData(modulearchive, MODULE);
             axismodule = new ModuleDescription();
             ArchiveReader archiveReader = new ArchiveReader();
