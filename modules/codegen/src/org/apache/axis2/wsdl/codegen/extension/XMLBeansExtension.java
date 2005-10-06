@@ -16,6 +16,7 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
@@ -54,11 +55,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.ibm.wsdl.util.xml.DOM2Writer;
-
 public class XMLBeansExtension extends AbstractCodeGenerationExtension {
     private static final String DEFAULT_STS_NAME = "axis2";
-    private static final String SCHEMA_FOLDER = "schemas";
+    public static final String SCHEMA_FOLDER = "schemas";
 
 
     public void init(CodeGenConfiguration configuration) {

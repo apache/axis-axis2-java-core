@@ -56,6 +56,13 @@ public class XMLBeansSchemaUtilityTest extends TestCase {
             XMLBeansSchemaUtility xmlBeansSchemaUtility = new XMLBeansSchemaUtility();
             ServiceDescription dummyServiceDescription = getDummyServiceDescription();
             OMElement schema = xmlBeansSchemaUtility.getSchema(dummyServiceDescription);
+
+            assertNotNull(schema);
+//            OMOutputImpl output = new OMOutputImpl(System.out, false);
+//            schema.serialize(output);
+//            output.flush();
+
+
         } catch (AxisFault axisFault) {
             log.error("Error in testIsRelevant ", axisFault);
             fail("Error");

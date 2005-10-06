@@ -30,8 +30,8 @@ import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.description.ServiceGroupDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.commons.logging.Log;
@@ -168,7 +168,7 @@ public class ArchiveReader implements DeploymentConstants {
                 ByteArrayOutputStream out ;
                 while ((entry = zin.getNextEntry()) != null) {
                     String entryName = entry.getName();
-                    if (entryName.startsWith(META_INF) && (entryName.endsWith(".wsdl")
+                    if ((entryName.startsWith(META_INF) || entryName.startsWith(META_INF.toLowerCase())) && (entryName.endsWith(".wsdl")
                             || entryName.endsWith(".WSDL"))) {
                         out = new ByteArrayOutputStream();
                         while ((read = zin.read(buf)) > 0) {

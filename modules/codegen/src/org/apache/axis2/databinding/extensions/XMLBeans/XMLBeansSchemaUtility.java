@@ -4,18 +4,23 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.extensions.SchemaUtility;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis2.wsdl.codegen.extension.XMLBeansExtension;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.XmlObject;
 
-import java.io.ByteArrayOutputStream;
+import javax.xml.stream.XMLStreamException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -72,124 +77,42 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
             return null;
         }
 
-        ArrayList mainClassListForSchemaGeneration = new ArrayList();
 
         try {
-            ClassLoader classLoader = serviceDescription.getClassLoader();
-            String serviceClassName = (String) serviceDescription.getParameter("ServiceClass").getValue();
+            File file = new File(serviceDescription.getFileName());
+            ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(file));
 
-            Class serviceImplementation = classLoader.loadClass(serviceClassName);
-
-            // get each and every method
-            Method[] methods = serviceImplementation.getMethods();
-            for (int i = 0; i < methods.length; i++) {
-                Method serviceImplClassMethods = methods[i];
-
-                // get the parameters for the serviceImplClassMethods
-                Class[] methodParameterTypes = serviceImplClassMethods.getParameterTypes();
-                for (int j = 0; j < methodParameterTypes.length; j++) {
-                    Class parameter = methodParameterTypes[j];
-                    if (isExtendsFromGivenBaseClass(parameter, XmlObject.class)) {
-                        Class aClass = classLoader.loadClass(parameter.getName() + "$Factory");
-                        Method newInstanceMethod = aClass.getMethod("newInstance", null);
-                        System.out.println(newInstanceMethod.invoke(parameter, null).getClass());
-                        XmlObject xmlObject = (XmlObject) newInstanceMethod.invoke(parameter, null);
-                        if (xmlObject.schemaType().isDocumentType()) {
-                            mainClassListForSchemaGeneration.add(xmlObject);
+            ZipEntry entry;
+            String entryName = "";
+            OMElement schemaElement = null;
+            while ((entry = zipInputStream.getNextEntry()) != null) {
+                entryName = entry.getName();
+                if (entryName.startsWith(XMLBeansExtension.SCHEMA_FOLDER) && entryName.endsWith(".xsd")) {
+                    InputStream schementry = serviceDescription.getClassLoader().getResourceAsStream(entryName);
+                    StAXOMBuilder builder = new StAXOMBuilder(schementry);
+                    if (schemaElement == null) {
+                        schemaElement = builder.getDocumentElement();
+                    } else {
+                        Iterator children = builder.getDocumentElement().getChildren();
+                        while (children.hasNext()) {
+                            schemaElement.addChild((OMNode) children.next());
+                        }
+                        Iterator allDeclaredNamespaces = builder.getDocumentElement().getAllDeclaredNamespaces();
+                        while (allDeclaredNamespaces.hasNext()) {
+                            OMNamespace omNamespace = (OMNamespace) allDeclaredNamespaces.next();
+                            schemaElement.declareNamespace(omNamespace);
                         }
                     }
+
                 }
             }
-
-            // now we have all the document type obejcts in the ArrayList. Now generate the schema
-            // from that
-            Iterator documentTypeElementIter = mainClassListForSchemaGeneration.iterator();
-            while (documentTypeElementIter.hasNext()) {
-                XmlObject xmlObject = (XmlObject) documentTypeElementIter.next();
-//                String sourceName = xmlObject.schemaType().getSourceName();
-//                XmlCursor xCur = xmlObject.newCursor();
-//
-//                if (xCur.toFirstContentToken() == XmlCursor.TokenType.START) {
-//                do {
-//                    Node n = xCur.getDomNode();
-//                    System.out.println("n = " + n);
-//                    if (n.getNodeType() == Node.ELEMENT_NODE) {
-//                        System.out.println(((Element) n));
-//                    }
-//                } while (xCur.toNextSibling());
-
-//            }
-
-                File file = new File("test/test2");
-                if(!file.exists()){
-                    file.delete();
-                    file.createNewFile();
-                }
-
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                xmlObject.save(byteArrayOutputStream);
-                String str = new String(byteArrayOutputStream.toByteArray());
-                System.out.println("str = " + str);
-//                xmlObject.schemaType().getTypeSystem().
-//                SchemaType[] schemaTypes = xmlObject.schemaType().getTypeSystem().documentTypes();
-//                for (int i = 0; i < schemaTypes.length; i++) {
-//                    SchemaType schemaType = schemaTypes[i];
-//                    schemaType.
-//
-//                }
-//                InputStream is = classLoader.getResourceAsStream("schemaorg_apache_xmlbeans/src/" + sourceName);
-//                String str = new String(getBytesFromFile(is));
-//                System.out.println("str = " + str);
-
-            }
-
-        } catch (ClassNotFoundException e) {
-            log.error("Can not load the service " + serviceDescription + " from the given class loader");
-            throw new AxisFault(e);
-        } catch (NoSuchMethodException e) {
-            throw new AxisFault(e);
-        } catch (IllegalAccessException e) {
-            throw new AxisFault(e);
-        } catch (InvocationTargetException e) {
-            throw new AxisFault(e);
+            return schemaElement;
         } catch (IOException e) {
             throw new AxisFault(e);
-
-        }
-        return null;
-    }
-
-    public static byte[] getBytesFromFile(InputStream is) throws IOException {
-
-        // Get the size of the file
-
-        // You cannot create an array using a long type.
-        // It needs to be an int type.
-        // Before converting to an int type, check
-        // to ensure that file is not larger than Integer.MAX_VALUE.
-//        if (length > Integer.MAX_VALUE) {
-//            // File is too large
-//        }
-
-        // Create the byte array to hold the data
-        byte[] bytes = new byte[55555];
-
-        // Read in the bytes
-        int offset = 0;
-        int numRead = 0;
-        while (offset < bytes.length
-                && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-            offset += numRead;
+        } catch (XMLStreamException e) {
+            throw new AxisFault(e);
         }
 
-        // Ensure all the bytes have been read in
-        if (offset < bytes.length) {
-            throw new IOException("Could not completely read the input stream ");
-        }
-
-        // Close the input stream and return bytes
-        is.close();
-        return bytes;
     }
 
     private boolean isExtendsFromGivenBaseClass(Class classNeededToBeChecked, Class baseClass) {
