@@ -76,17 +76,17 @@ public abstract class MEPClient {
      * MEPClient copied to the MessageContext
      */
     protected void prepareInvocation(OperationDescription axisop, MessageContext msgCtx)
-        throws AxisFault {
+            throws AxisFault {
         if (axisop == null) {
             throw new AxisFault(Messages.getMessage("cannotBeNullOperationDescription"));
         }
         //make sure operation is type right MEP
         if (mep.equals(axisop.getMessageExchangePattern())) {
             throw new AxisFault(
-                Messages.getMessage(
-                    "mepClientSupportOnly",
-                    mep,
-                    axisop.getMessageExchangePattern()));
+                    Messages.getMessage(
+                            "mepClientSupportOnly",
+                            mep,
+                            axisop.getMessageExchangePattern()));
         }
         //if operation not alrady added, add it
         if (serviceContext.getServiceConfig().getOperation(axisop.getName()) == null) {
@@ -102,6 +102,7 @@ public abstract class MEPClient {
 
     /**
      * This class prepare the SOAP Envelope using the payload
+     *
      * @param toSend
      * @return
      * @throws AxisFault
@@ -110,15 +111,18 @@ public abstract class MEPClient {
         MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
 
         SOAPEnvelope envelope = createDefaultSOAPEnvelope();
-        envelope.getBody().addChild(toSend);
+        if (toSend != null) {
+            envelope.getBody().addChild(toSend);
+        }
         msgctx.setEnvelope(envelope);
         return msgctx;
     }
 
     /**
-     * try to infer the transport looking at the URL, the URL can be http:// 
-     * tcp:// mail:// local://. The method will look for the trnasport name as the 
+     * try to infer the transport looking at the URL, the URL can be http://
+     * tcp:// mail:// local://. The method will look for the trnasport name as the
      * protocol part of the transport.
+     *
      * @param epr
      * @return
      * @throws AxisFault
@@ -135,15 +139,17 @@ public abstract class MEPClient {
 
         if (transport != null) {
             return serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(
-                new QName(transport));
+                    new QName(transport));
 
         } else {
             throw new AxisFault(Messages.getMessage("cannotInferTransport"));
         }
 
     }
+
     /**
      * create write SOAPEvelope(in terms of version) based on the values set.
+     *
      * @return
      * @throws AxisFault
      */
@@ -160,9 +166,10 @@ public abstract class MEPClient {
     }
 
     /**
-     * Engage a given Module to the current invocation. But to call this method the 
+     * Engage a given Module to the current invocation. But to call this method the
      * Module *MUST* be enable (picked up by the deployment and known to Axis2) else
      * Exception will be thrown. To be detected put the moduels to the AXIS2_REPOSITORY/modules directory
+     *
      * @param name
      * @throws AxisFault
      */
@@ -196,12 +203,11 @@ public abstract class MEPClient {
     }
 
     /**
-     *
      * @param exceptionToBeThrownOnSOAPFault - If there is a SOAP Fault in the body of the incoming
-     * SOAP Message, system can be configured to throw an exception with the details extracted from
-     * the information from the fault message.
-     * This boolean variable will enable that facility. If this is false, the response message will just
-     * be returned to the application, irrespective of whether it has a Fault or not.
+     *                                       SOAP Message, system can be configured to throw an exception with the details extracted from
+     *                                       the information from the fault message.
+     *                                       This boolean variable will enable that facility. If this is false, the response message will just
+     *                                       be returned to the application, irrespective of whether it has a Fault or not.
      */
     public void setExceptionToBeThrownOnSOAPFault(boolean exceptionToBeThrownOnSOAPFault) {
         isExceptionToBeThrownOnSOAPFault = exceptionToBeThrownOnSOAPFault;

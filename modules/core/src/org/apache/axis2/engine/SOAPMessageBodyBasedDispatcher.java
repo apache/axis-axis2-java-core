@@ -50,10 +50,11 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
             throws AxisFault {
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody()
                 .getFirstElement();
-        if(bodyFirstChild !=null)
+        if(bodyFirstChild == null){
+            return null;
+        }else{
               operationName = new QName(bodyFirstChild.getLocalName());
-        else
-           throw  new AxisFault("Empty Body SOAPEnevelop");
+        }
 
         return service.getOperation(operationName);
     }

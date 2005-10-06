@@ -58,65 +58,65 @@
         <developer>
             <name>Davanum Srinivas</name>
             <id>dims</id>
-            <email>dims@apache.org</email>
+            <email>dims AT apache.org</email>
             <organization>WSO2</organization>
         </developer>
         <developer>
             <name>Sanjiva Weerawarana</name>
             <id>sanjiva</id>
-            <email>sanjiva@apache.org</email>
+            <email>sanjiva AT apache.org</email>
             <organization>Lanka Software Foundation</organization>
         </developer>
         <developer>
             <name>Glen Daniels</name>
             <id>gdaniels</id>
-            <email>gdaniels@apache.org</email>
+            <email>gdaniels AT apache.org</email>
             <organization>Sonic Software</organization>
         </developer>
         <developer>
             <name>Aleksander Slominski</name>
             <id>alek</id>
-            <email>aslom@cs.indiana.edu</email>
+            <email>aslom AT cs.indiana.edu</email>
             <organization>Indiana University Extreme! Computing Lab</organization>
         </developer>
         <developer>
             <name>Srinath Perera</name>
             <id>hemapani</id>
-            <email>hemapani@apache.org</email>
+            <email>hemapani AT apache.org</email>
             <organization>Lanka Software Foundation</organization>
             <url>http://www.apache.org/~hemapani</url>
         </developer>
         <developer>
             <name>Eran Chinthaka</name>
             <id>chinthaka</id>
-            <email>chinthaka@apache.org</email>
+            <email>chinthaka AT apache.org</email>
             <organization>Lanka Software Foundation</organization>
             <url>http://www.apache.org/~chinthaka</url>
         </developer>
         <developer>
             <name>Dasarath Weerathunga</name>
             <id>dasarath</id>
-            <email>dasarath@opensource.lk</email>
+            <email>dasarath AT opensource.lk</email>
             <organization>Lanka Software Foundation</organization>
         </developer>
         <developer>
             <name>Jaliya Ekanayake</name>
             <id>jaliya</id>
-            <email>jaliya@opensource.lk</email>
+            <email>jaliya AT opensource.lk</email>
             <organization>Virtusa / Lanka Software Foundation</organization>
             <url>http://www.apache.org/~jaliya</url>
         </developer>
         <developer>
             <name>Chathura Herath</name>
             <id>chathura</id>
-            <email>chathura@opensource.lk</email>
+            <email>chathura AT opensource.lk</email>
             <organization>LSF/MIT</organization>
             <url>www.apache.org/~chathura</url>
         </developer>
         <developer>
             <name>Deepal Jayasinghe</name>
             <id>deepal</id>
-            <email>deepal@apache.org</email>
+            <email>deepal AT apache.org</email>
             <organization>Lanka Software Foundation</organization>
             <url>http://www.apache.org/~deepal</url>
 
@@ -124,7 +124,7 @@
         <developer>
             <name>Ajith Ranabahu</name>
             <id>ajith</id>
-            <email>ajith@apache.org</email>
+            <email>ajith AT apache.org</email>
             <organization>Lanka Software Foundation</organization>
             <url>http://www.apache.org/~ajith</url>
 
@@ -132,37 +132,37 @@
         <developer>
             <name>Venkat Reddy</name>
             <id>venkat</id>
-            <email>vreddyp@gmail.com</email>
+            <email>vreddyp AT gmail.com</email>
             <organization>Computer Associates</organization>
         </developer>
         <developer>
             <name>Ashutosh Shahi</name>
             <id>ashu</id>
-            <email>Ashutosh.Shahi@ca.com</email>
+            <email>Ashutosh.Shahi AT ca.com</email>
             <organization>Computer Associates</organization>
         </developer>
         <developer>
             <name>Jayachandra Sekhara Rao Sunkara</name>
             <id>jaya</id>
-            <email>jayachandra@gmail.com</email>
+            <email>jayachandra AT gmail.com</email>
             <organization>Computer Associates</organization>
         </developer>
         <developer>
             <name>Thilina Gunarathne</name>
             <id>thilina</id>
-            <email>thilina@opensource.lk</email>
+            <email>thilina AT opensource.lk</email>
             <organization>Lanka Software Foundation</organization>
         </developer>
         <developer>
             <name>Ruchith Fernando</name>
             <id>ruchith</id>
-            <email>ruchithf@apache.lk</email>
+            <email>ruchithf AT apache.lk</email>
             <organization>Lanka Software Foundation</organization>
         </developer>
         <developer>
             <name>Saminda Abeyruwan</name>
             <id>saminda</id>
-            <email>saminda@opensource.lk</email>
+            <email>saminda AT opensource.lk</email>
             <organization>Lanka Software Foundation</organization>
         </developer>
 
@@ -171,32 +171,32 @@
     <contributors>
         <contributor>
             <name>Farhaan Mohideen</name>
-            <email>fmohideen@valista.com</email>
+            <email>fmohideen AT valista.com</email>
             <organization>Lanka Software Foundation</organization>
         </contributor>
         <contributor>
             <name>Changshin Lee</name>
-            <email>iasandcb@hotmail.com</email>
+            <email>iasandcb AT hotmail.com</email>
             <organization>Tmax Soft, Korea</organization>
         </contributor>
         <contributor>
             <name>Chamil Thanthrimudalige</name>
-            <email>chamil@opensource.lk</email>
+            <email>chamil AT opensource.lk</email>
             <organization>Lanka Software Foundation</organization>
         </contributor>
         <contributor>
             <name>Nadana Gunarathna</name>
-            <email>nadana@opensource.lk</email>
+            <email>nadana AT opensource.lk</email>
             <organization>Lanka Software Foundation</organization>
         </contributor>
         <contributor>
             <name>Gayan Asanka</name>
-            <email>gayan@opensource.lk</email>
+            <email>gayan AT opensource.lk</email>
             <organization>Lanka Software Foundation</organization>
         </contributor>
         <contributor>
             <name>Anushka Kumara</name>
-            <email>anushkakumar@gmail.com</email>
+            <email>anushkakumar AT gmail.com</email>
             <organization>Lanka Software Foundation</organization>
         </contributor>
         <contributor>

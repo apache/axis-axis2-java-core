@@ -22,10 +22,10 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.OperationDescriptionFactory;
 import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.OperationDescriptionFactory;
 import org.apache.axis2.description.OutInOperationDescription;
+import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -108,6 +108,9 @@ public class Call extends InOutMEPClient {
         opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop, WSDLConstants.MEP_CONSTANT_IN_OUT);
 
         MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
+        if(envelope == null || envelope.getBody() == null){
+            throw new AxisFault("SOAP envelope or SOAP Body can not be null");
+        }
         msgctx.setEnvelope(envelope);
 
         this.lastResponseMessage = super.invokeBlocking(opDesc, msgctx);
@@ -140,7 +143,7 @@ public class Call extends InOutMEPClient {
      * Invoke the nonblocking/Asynchronous call
      *
      * @param axisop
-     * @param envelope   -  This should be a SOAP Envelope 
+     * @param envelope   -  This should be a SOAP Envelope
      *                 invocation behaves accordingly
      * @param callback
      * @throws org.apache.axis2.AxisFault
@@ -156,6 +159,9 @@ public class Call extends InOutMEPClient {
         opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_IN_OUT);
 
         MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
+        if(envelope == null || envelope.getBody() == null){
+            throw new AxisFault("SOAP envelope or SOAP Body can not be null");
+        }
         msgctx.setEnvelope(envelope);
         //call the underline implementation
         super.invokeNonBlocking(opDesc, msgctx, callback);
@@ -170,7 +176,7 @@ public class Call extends InOutMEPClient {
             OperationDescription opDesc,
             String axisOp , int mepURL) throws AxisFault {
         if (opDesc == null) {
-            //if the operation is not alrady define we will copy the 
+            //if the operation is not alrady define we will copy the
             //crated Phases from the templete operation to the this Operation
 
 //            opDesc = new OperationDescription(new QName(axisOp));
@@ -198,7 +204,7 @@ public class Call extends InOutMEPClient {
             throws AxisFault {
         ConfigurationContext sysContext = null;
         //we are trying to keep one configuration Context at the Client side. That make it easier to
-        //manage the TransportListeners. But using the static referance is bit crude!. 
+        //manage the TransportListeners. But using the static referance is bit crude!.
         if (ListenerManager.configurationContext == null) {
             ConfigurationContextFactory efac =
                     new ConfigurationContextFactory();

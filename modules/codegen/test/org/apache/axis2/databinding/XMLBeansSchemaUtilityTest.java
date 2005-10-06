@@ -1,12 +1,14 @@
 package org.apache.axis2.databinding;
 
 import junit.framework.TestCase;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.ServiceGroupDescription;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.databinding.extensions.XMLBeans.XMLBeansSchemaUtility;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.om.OMElement;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -29,14 +31,36 @@ import org.apache.axis2.deployment.DeploymentException;
 public class XMLBeansSchemaUtilityTest extends TestCase {
 
     AxisConfiguration ar;
-    String repo ="./test-resources/XMLBeanSchemaUtilityRepo";
+    String repo = "./test-resources/XMLBeanSchemaUtilityRepo";
+    protected Log log = LogFactory.getLog(getClass());
 
-    public ServiceDescription getDummyServiceDescription() throws AxisFault {
+
+    private ServiceDescription getDummyServiceDescription() throws AxisFault {
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
         ar = builder.buildConfigurationContext(repo).getAxisConfiguration();
-        ServiceDescription service = ar.getService("databindingService");
-        assertNotNull(service);
-        return null;
+        return ar.getService("databindingService");
     }
+
+    public void testIsRelevant(){
+        try {
+            XMLBeansSchemaUtility xmlBeansSchemaUtility = new XMLBeansSchemaUtility();
+            assertTrue(xmlBeansSchemaUtility.isRelevant(getDummyServiceDescription()));
+        } catch (AxisFault axisFault) {
+            log.error("Error in testIsRelevant ", axisFault);
+            fail("Error");
+        }
+    }
+
+    public void testGetSchema(){
+        try {
+            XMLBeansSchemaUtility xmlBeansSchemaUtility = new XMLBeansSchemaUtility();
+            ServiceDescription dummyServiceDescription = getDummyServiceDescription();
+            OMElement schema = xmlBeansSchemaUtility.getSchema(dummyServiceDescription);
+        } catch (AxisFault axisFault) {
+            log.error("Error in testIsRelevant ", axisFault);
+            fail("Error");
+        }
+    }
+
 
 }
