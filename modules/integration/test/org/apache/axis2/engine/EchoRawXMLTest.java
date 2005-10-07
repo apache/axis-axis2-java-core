@@ -54,8 +54,6 @@ public class EchoRawXMLTest extends TestCase {
     protected AxisConfiguration engineRegistry;
     protected MessageContext mc;
     private ConfigurationContext config;
-    //private Thread thisThread;
-    // private SimpleHTTPServer sas;
     protected ServiceContext serviceContext;
     protected ServiceDescription service;
 

@@ -60,4 +60,8 @@ public abstract class TypeMappingAdapter implements TypeMapper {
     public void addTypeMapping(QName qname, Object value) {
         map.put(qname, value);
     }
+
+    public HashMap getAllTypeMappings() {
+        return map;
+    }
 }
