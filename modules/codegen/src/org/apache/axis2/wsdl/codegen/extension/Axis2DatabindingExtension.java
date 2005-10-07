@@ -3,7 +3,7 @@ package org.apache.axis2.wsdl.codegen.extension;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
-import org.apache.axis2.databinding.gen.Parser;
+//import org.apache.axis2.databinding.gen.Parser;
 import org.apache.wsdl.WSDLTypes;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -39,9 +39,9 @@ public class Axis2DatabindingExtension extends AbstractCodeGenerationExtension{
                 return;
             }
 
-            //this should've done the generation!!!!
-            Parser parser = new Parser();
-            parser.run(configuration.getWom());
+//            //this should've done the generation!!!!
+//            Parser parser = new Parser();
+//            parser.run(configuration.getWom());
 
 
 
