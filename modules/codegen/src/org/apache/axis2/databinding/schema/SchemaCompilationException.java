@@ -1,4 +1,4 @@
-package org.apache.axis2.databinding.utils.support;
+package org.apache.axis2.databinding.schema;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -15,22 +15,20 @@ package org.apache.axis2.databinding.utils.support;
  * limitations under the License.
  */
 
-public class IntHolder {
-    /** The <code>int</code> contained by this holder. */
-    public int value;
+public class SchemaCompilationException extends Exception{
 
-    /**
-     * Make a new <code>IntHolder</code> with a <code>null</code> value.
-     */
-    public IntHolder() {}
+    public SchemaCompilationException() {
+    }
 
-    /**
-     * Make a new <code>IntHolder</code> with <code>value</code> as
-     * the value.
-     *
-     * @param value  the <code>int</code> to hold
-     */
-    public IntHolder(int value) {
-        this.value = value;
+    public SchemaCompilationException(String message) {
+        super(message);
+    }
+
+    public SchemaCompilationException(Throwable cause) {
+        super(cause);
+    }
+
+    public SchemaCompilationException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

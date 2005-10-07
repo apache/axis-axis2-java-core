@@ -1,6 +1,6 @@
-package org.apache.axis2.databinding.utils.support;
+package org.apache.axis2.databinding.schema;
 
-import javax.xml.namespace.QName;
+import java.io.File;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,22 +17,20 @@ import javax.xml.namespace.QName;
  * limitations under the License.
  */
 
-public class QNameHolder {
-    /** The <code>QName</code> contained by this holder. */
-    public QName value;
+/**
+ * This is a bean class that captures all the compiler ptions/parameterss
+ */
+public class CompilerOptions {
 
-    /**
-     * Make a new <code>QNameHolder</code> with a <code>null</code> value.
-     */
-    public QNameHolder() {}
+    File outputLocation;
 
-    /**
-     * Make a new <code>QNameHolder</code> with <code>value</code> as
-     * the value.
-     *
-     * @param value the <code>QName</code> to hold
-     */
-    public QNameHolder(QName value) {
-        this.value = value;
+    public File getOutputLocation() {
+        return outputLocation;
     }
+
+    public CompilerOptions setOutputLocation(File outputLocation) {
+        this.outputLocation = outputLocation;
+        return this;
+    }
+
 }
