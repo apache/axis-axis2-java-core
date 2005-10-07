@@ -44,7 +44,8 @@ public class RESTClient {
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
-        call.setDoREST(true);
+        
+        call.set(Constants.Configuration.ENABLE_REST,Constants.VALUE_TRUE);
 
         OMElement result = call.invokeBlocking("echo", getPayload());
 
