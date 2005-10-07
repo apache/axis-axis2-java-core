@@ -187,6 +187,7 @@ public class Constants {
 
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
+        public static final String ENABLE_REST_THROUGH_GET="restThrughGet";
         // globally enable MTOM
         public static final String ENABLE_MTOM = "enableMTOM";
         public static final String ATTACHMENT_TEMP_DIR = "attachmentDIR";
