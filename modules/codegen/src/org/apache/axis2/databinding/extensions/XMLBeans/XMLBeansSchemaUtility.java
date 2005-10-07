@@ -1,23 +1,25 @@
 package org.apache.axis2.databinding.extensions.XMLBeans;
 
-import com.ibm.wsdl.DefinitionImpl;
 import com.ibm.wsdl.InputImpl;
 import com.ibm.wsdl.MessageImpl;
 import com.ibm.wsdl.OperationImpl;
 import com.ibm.wsdl.OutputImpl;
 import com.ibm.wsdl.PartImpl;
 import com.ibm.wsdl.PortTypeImpl;
+import com.ibm.wsdl.TypesImpl;
+import com.ibm.wsdl.extensions.schema.SchemaImpl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.extensions.SchemaUtility;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.wsdl.codegen.extension.XMLBeansExtension;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.XmlObject;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Input;
@@ -26,10 +28,11 @@ import javax.wsdl.Operation;
 import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
-import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLWriter;
+import javax.wsdl.Types;
+import javax.wsdl.extensions.schema.Schema;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -91,9 +94,9 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
         }
     }
 
-    public OMElement getSchema(ServiceDescription serviceDescription) throws AxisFault {
+    public void getSchema(ServiceDescription serviceDescription, Definition definition) throws AxisFault {
         if (!isRelevant(serviceDescription)) {
-            return null;
+            return;
         }
 
 
@@ -103,20 +106,27 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
 
             ZipEntry entry;
             String entryName = "";
-            OMElement typesElement = OMAbstractFactory.getOMFactory().createOMElement("types", null);
+
+            Schema schema;
+            Types types = new TypesImpl();
+            definition.setTypes(types);
+
             while ((entry = zipInputStream.getNextEntry()) != null) {
                 entryName = entry.getName();
                 if (entryName.startsWith(XMLBeansExtension.SCHEMA_FOLDER) && entryName.endsWith(".xsd")) {
                     InputStream schemaEntry = serviceDescription.getClassLoader().getResourceAsStream(entryName);
-                    typesElement.addChild(new StAXOMBuilder(schemaEntry).getDocumentElement());
-
+                    schema = new SchemaImpl();
+                    Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(schemaEntry);
+                    schema.setElement(document.getDocumentElement());
+                    types.addExtensibilityElement(schema);
                 }
             }
-            return typesElement;
         } catch (IOException e) {
             throw new AxisFault(e);
-        } catch (XMLStreamException e) {
+        } catch (ParserConfigurationException e) {
             throw new AxisFault(e);
+        } catch (SAXException e) {
+            throw new UnsupportedOperationException();
         }
 
     }
@@ -140,10 +150,9 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
 
     }
 
-    public void createMessagesAndPortTypes(ServiceDescription serviceDescription) throws AxisFault {
+    public void createMessagesAndPortTypes(ServiceDescription serviceDescription, Definition definition) throws AxisFault {
 
         HashMap mappings = readMappings(serviceDescription);
-        Definition definition = new DefinitionImpl();
 
 
         try {
@@ -152,6 +161,7 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
 
             PortType portType = new PortTypeImpl();
             portType.setQName(serviceDescription.getName());
+            definition.addPortType(portType);
 
             Class serviceImplementation = classLoader.loadClass(serviceClassName);
             Method[] methods = serviceImplementation.getMethods();
@@ -189,30 +199,25 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
                 portType.addOperation(wsdlOperation);
             }
 
-            WSDLWriter wsdlWriter = WSDLFactory.newInstance().newWSDLWriter();
-            wsdlWriter.writeWSDL(definition, System.out);
+            portType.setUndefined(false);
 
 
         } catch (ClassNotFoundException e) {
             log.error("Can not load the service " + serviceDescription + " from the given class loader");
             throw new AxisFault(e);
-        } catch (WSDLException e) {
-            e.printStackTrace();
-            throw new UnsupportedOperationException();
         }
-
 
     }
 
     private Message getMessage(HashMap mappings, Class returnType) {
-        System.out.println("returnType = " + returnType);
         String mappingName = (String) mappings.get(returnType.getName());
-        System.out.println("mappingName = " + mappingName);
         Message message = new MessageImpl();
         message.setQName(new QName(mappingName));
         Part part = new PartImpl();
         part.setName("param");
         part.setElementName(new QName(mappingName));
+        message.addPart(part);
+        message.setUndefined(false);
         return message;
     }
 
@@ -234,7 +239,6 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
                         OMElement mappingElement = (OMElement) mappingElementsIter.next();
                         String messageName = mappingElement.getFirstChildWithName(new QName(XMLBeansExtension.MESSAGE)).getText();
                         String javaclass = mappingElement.getFirstChildWithName(new QName(XMLBeansExtension.JAVA_NAME)).getText();
-                        System.out.println(javaclass + ":" + messageName);
                         mappings.put(javaclass, messageName);
                     }
 

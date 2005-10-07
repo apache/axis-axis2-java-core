@@ -2,7 +2,8 @@ package org.apache.axis2.databinding.extensions;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.om.OMElement;
+
+import javax.wsdl.Definition;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -37,14 +38,18 @@ public interface SchemaUtility {
      * @param serviceDescription
      * @return
      */
+
     public boolean isRelevant(ServiceDescription serviceDescription) throws AxisFault;
 
     /**
      * isRelevant() must be called before calling this method.
      * This will return the complete schema of the given service.
+     *
      * @param serviceDescription
      * @return
      * @throws AxisFault
      */
-    public OMElement getSchema(ServiceDescription serviceDescription) throws AxisFault;
+    public void getSchema(ServiceDescription serviceDescription, Definition definition) throws AxisFault;
+
+    public void createMessagesAndPortTypes(ServiceDescription serviceDescription, Definition definition) throws AxisFault;
 }
