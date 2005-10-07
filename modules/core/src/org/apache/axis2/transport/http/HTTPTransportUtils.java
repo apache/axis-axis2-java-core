@@ -487,11 +487,13 @@ public class HTTPTransportUtils {
                 Constants.VALUE_TRUE.equals(
                     msgContext.getParameter(
                         Constants.Configuration.ENABLE_REST_THROUGH_GET).getValue());
+            restThroughPost = false;
         } else if(msgContext.getProperty(Constants.Configuration.ENABLE_REST_THROUGH_GET) != null) {
             restThroughPost =
                 Constants.VALUE_TRUE.equals(
                     msgContext.getProperty(
                         Constants.Configuration.ENABLE_REST_THROUGH_GET));
+            restThroughPost =false;
         }
         msgContext.setRestThroughPOST(!restThroughPost);
         return restThroughPost;
