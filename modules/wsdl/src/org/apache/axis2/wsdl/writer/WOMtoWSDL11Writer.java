@@ -99,9 +99,9 @@ public class WOMtoWSDL11Writer implements WOMWriter{
             //write the porttype
             writePorttypes(wsdlDescription,writer);
             //write the binding
-
+            writeBinding(wsdlDescription,writer);
             //write the service
-
+            //write
             //close definition
             writeEndDescripton(writer);
             writer.flush();
@@ -401,8 +401,22 @@ public class WOMtoWSDL11Writer implements WOMWriter{
      * @throws IOException
      */
     protected void writeBinding(WSDLDescription desc,Writer outWriter) throws IOException{
-       Map bindingsMap = desc.getBindings();
-         
+        Map bindingsMap = desc.getBindings();
+        if (!bindingsMap.isEmpty()) {
+            Iterator iterator = bindingsMap.values().iterator();
+            WSDLBinding binding;
+            while (iterator.hasNext()) {
+                binding =  (WSDLBinding)iterator.next();
+                WriterUtil.writeStartElement("binding", defaultWSDLPrefix,outWriter);
+                WriterUtil.writeAttribute("name",binding.getName().getLocalPart(),outWriter);
+                WriterUtil.writeAttribute("type",targetNamespacePrefix +":"+ binding.getBoundInterface().getName().getLocalPart(),outWriter);
+                WriterUtil.writeCloseStartElement(outWriter);
+
+                WriterUtil.writeEndElement("binding", defaultWSDLPrefix,outWriter);
+
+
+            }
+        }
 
     }
 
