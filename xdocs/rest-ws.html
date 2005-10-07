@@ -26,9 +26,9 @@ can be access in two ways, using HTTP GET and POST.</p>
 
 <h2>Doing REST web services with HTTP POST</h2>
 
-<p>REST support can be enabled in the Server side by adding the following
+<p>REST's default HTTP interface is POST. It can be enabled in the Server/Client side by adding the following
 line to the axis2.xml file.</p>
-<font color="blue">&lt; parameter name="enableREST" locked="xsd:false" &gt;
+<font color="blue">&lt; parameter name="enableREST" locked="false" &gt;
 true &lt;/parameter&gt; </font>
 
 <p>But it acts both as a REST endpoint as well as a SOAP endpoint. When a
@@ -40,8 +40,8 @@ they are treated as usual SOAP Messages.</p>
 be decided from the client API or by deployment descriptor of the client.</p>
 <ol>
   <li>By adding an entry in the client repositories axis2.xml file.</li>
-  <li>Through client API e.g. <source>
-    <pre>call.setDoREST(true);</pre>
+  <li>Setting as a property in client API e.g. <source>
+    <pre>call.set(Constants.Configuration.ENABLE_REST,Constants.VALUE_TRUE);</pre>
     </source></li>
 </ol>
 
@@ -61,7 +61,7 @@ of the above, using the <source></p>
                 Call  call = new Call();
                 call.setTo(new EndpointReference(toEpr));
                 call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP,false);
-                call.setDoREST(true);
+                call.set(Constants.Configuration.ENABLE_REST,Constants.VALUE_TRUE);
                         
                 OMElement result = call.invokeBlocking("thiscanbeanything", payload);
                 .... use the result
