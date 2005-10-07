@@ -41,8 +41,6 @@ public abstract class MEPClient {
     protected final String mep;
     protected String soapVersionURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
     protected String soapAction = "";
-    protected boolean doREST = false;
-    protected boolean doRestThroughPOST = true;
     protected String wsaAction;
 
     /*
@@ -83,9 +81,7 @@ public abstract class MEPClient {
         //if operation not alrady added, add it
         if (serviceContext.getServiceConfig().getOperation(axisop.getName()) == null) {
             serviceContext.getServiceConfig().addOperation(axisop);
-        }
-        msgCtx.setDoingREST(doREST);
-        msgCtx.setRestThroughPOST(doRestThroughPOST);
+        }        
         if (wsaAction != null) {
             msgCtx.setWSAAction(wsaAction);
         }
