@@ -147,22 +147,31 @@ public class HTTPTransportUtils {
                             > -1) {
                         soap11 = true;
                         //it is SOAP 1.1
-                        Object enable =
-                            msgContext.getProperty(
-                                Constants.Configuration.ENABLE_REST);
-                        if ((soapActionHeader == null
-                            || soapActionHeader.length() == 0)
-                            && Constants.VALUE_TRUE.equals(enable)) {
-                            //If the content Type is text/xml (BTW which is the SOAP 1.1 Content type ) and
-                            //the SOAP Action is absent it is rest !!
-                            msgContext.setDoingREST(true);
 
-                            SOAPFactory soapFactory = new SOAP11Factory();
-                            builder = new StAXOMBuilder(xmlreader);
-                            builder.setOmbuilderFactory(soapFactory);
-                            envelope = soapFactory.getDefaultEnvelope();
-                            envelope.getBody().addChild(
-                                builder.getDocumentElement());
+//                            msgContext.getProperty(
+//                                Constants.Configuration.ENABLE_REST);
+                        /**
+                         * Configuration via Deployment
+                         */
+
+                        Parameter enable  = msgContext.getParameter(Constants.Configuration.ENABLE_REST);
+
+                        if ((soapActionHeader == null
+                                || soapActionHeader.length() == 0)
+                                && enable != null) {
+                            if (Constants.VALUE_TRUE
+                                    .equals(enable.getValue())) {
+                                //If the content Type is text/xml (BTW which is the SOAP 1.1 Content type ) and
+                                //the SOAP Action is absent it is rest !!
+                                msgContext.setDoingREST(true);
+
+                                SOAPFactory soapFactory = new SOAP11Factory();
+                                builder = new StAXOMBuilder(xmlreader);
+                                builder.setOmbuilderFactory(soapFactory);
+                                envelope = soapFactory.getDefaultEnvelope();
+                                envelope.getBody().addChild(
+                                        builder.getDocumentElement());
+                            }
                         } else {
                             builder =
                                 new StAXSOAPModelBuilder(
@@ -448,5 +457,44 @@ public class HTTPTransportUtils {
         boolean doMTOM = enableMTOM && envelopeContainsOptimise;
         msgContext.setDoingMTOM(doMTOM);
         return doMTOM;
+    }
+
+    public static boolean isDoingREST(MessageContext msgContext) {
+        boolean enableREST = false;
+        if (msgContext.getParameter(Constants.Configuration.ENABLE_REST)
+            != null) {
+            enableREST =
+                Constants.VALUE_TRUE.equals(
+                    msgContext.getParameter(
+                        Constants.Configuration.ENABLE_REST).getValue());
+        } else if(msgContext.getProperty(Constants.Configuration.ENABLE_REST) != null) {
+            enableREST =
+                Constants.VALUE_TRUE.equals(
+                    msgContext.getProperty(
+                        Constants.Configuration.ENABLE_REST));
+        }
+        msgContext.setDoingREST(enableREST);
+        return enableREST;
+
+    }
+
+    public static boolean isDoingRESTThoughPost(MessageContext msgContext) {
+        boolean restThroughPost = true;
+
+        if (msgContext.getParameter(Constants.Configuration.ENABLE_REST_THROUGH_GET)
+            != null) {
+            restThroughPost =
+                Constants.VALUE_TRUE.equals(
+                    msgContext.getParameter(
+                        Constants.Configuration.ENABLE_REST_THROUGH_GET).getValue());
+        } else if(msgContext.getProperty(Constants.Configuration.ENABLE_REST_THROUGH_GET) != null) {
+            restThroughPost =
+                Constants.VALUE_TRUE.equals(
+                    msgContext.getProperty(
+                        Constants.Configuration.ENABLE_REST_THROUGH_GET));
+        }
+        msgContext.setRestThroughPOST(!restThroughPost);
+        return restThroughPost;
+
     }
 }

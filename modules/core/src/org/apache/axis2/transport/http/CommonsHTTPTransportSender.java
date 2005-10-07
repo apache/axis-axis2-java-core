@@ -126,6 +126,12 @@ public class CommonsHTTPTransportSender
             }
 
             OMElement dataOut;
+            /**
+             * Figuringout the REST properties/parameters
+             */
+            msgContext.setDoingREST(HTTPTransportUtils.isDoingREST(msgContext));
+            msgContext.setRestThroughPOST(HTTPTransportUtils.isDoingRESTThoughPost(msgContext));
+            
             if (msgContext.isDoingREST()) {
                 dataOut = msgContext.getEnvelope().getBody().getFirstElement();
             } else {
