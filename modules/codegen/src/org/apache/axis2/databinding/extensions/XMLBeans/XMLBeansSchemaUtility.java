@@ -126,7 +126,7 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
         } catch (ParserConfigurationException e) {
             throw new AxisFault(e);
         } catch (SAXException e) {
-            throw new UnsupportedOperationException();
+            throw new AxisFault(e);
         }
 
     }
