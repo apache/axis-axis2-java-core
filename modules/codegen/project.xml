@@ -23,7 +23,7 @@
     <id>axis2-codegen</id>
     <name>Apache Axis 2.0 - Code Generation</name>
     <groupId>axis2</groupId>
-    <description>Simple data binding implementation</description>
+    <description>Axis2 Code Generation module</description>
 
     <dependencies>
         <dependency>
