@@ -89,7 +89,6 @@
 
 		    org.apache.axis2.clientapi.Call _call = new org.apache.axis2.clientapi.Call(_serviceContext);
             _call.setTransportInfo(this.senderTransport,this.listenerTransport,this.useSeparateListener);
-            _call.setDoREST(this.doRest);
 
  		    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
             _call.setTo(this.toEPR);
@@ -265,8 +264,7 @@
          </xsl:for-each>) throws java.rmi.RemoteException{
          org.apache.axis2.clientapi.Call _call = new org.apache.axis2.clientapi.Call(_serviceContext);
             _call.setTransportInfo(this.senderTransport,this.listenerTransport,this.useSeparateListener);
-            _call.setDoREST(this.doRest);
-
+            
  		    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
             _call.setTo(this.toEPR);
             _call.setSoapAction("<xsl:value-of select="$soapAction"/>");
