@@ -93,13 +93,13 @@ public abstract class Stub {
     public Object _get(String key){
         return this.propertyMap.get(key);
     }
-    /**
-     *
-     * @param doRest
-     */
-    public void setDoREST(boolean doRest) {
-        this.doRest = doRest;
-    }
+//    /**
+//     *
+//     * @param doRest
+//     */
+//    public void setDoREST(boolean doRest) {
+//        this.doRest = doRest;
+//    }
 
 
     /**

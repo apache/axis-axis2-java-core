@@ -53,14 +53,14 @@ public abstract class MEPClient {
     */
     protected boolean isExceptionToBeThrownOnSOAPFault = true;
 
-    //TODO try to find a better way to handle the GET
-    public void setRestThroughPOST(boolean b) {
-        doRestThroughPOST = b;
-    }
+//    //TODO try to find a better way to handle the GET
+//    public void setRestThroughPOST(boolean b) {
+//        doRestThroughPOST = b;
+//    }
 
-    public void setDoREST(boolean b) {
-        doREST = b;
-    }
+//    public void setDoREST(boolean b) {
+//        doREST = b;
+//    }
 
     public String getSoapAction() {
         return soapAction;
