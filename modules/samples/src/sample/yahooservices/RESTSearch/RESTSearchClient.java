@@ -18,8 +18,8 @@ public class RESTSearchClient {
             RESTCall call = new RESTCall();
             call.setTo(new EndpointReference(epr));
             call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP, false);
-            call.setDoREST(true);
-            call.setRestThroughPOST(false);
+            call.set(Constants.Configuration.ENABLE_REST,Constants.VALUE_TRUE);
+            call.set(Constants.Configuration.ENABLE_REST_THROUGH_GET,Constants.VALUE_TRUE);
 
             //if post is through GET of HTTP
             OMElement response = call.invokeBlocking();
