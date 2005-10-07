@@ -17,6 +17,8 @@
 package org.apache.axis2.clientapi;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfigurationImpl;
+import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
@@ -92,6 +94,21 @@ public class MessageSender extends InOnlyMEPClient {
         sysContext.getAxisConfiguration().addService(axisService);
         ServiceGroupContext serviceGroupContext = axisService.getParent().getServiceGroupContext(sysContext);
 
+
+
+
+         //we will assume a Service and operations
+//        operationTemplate = new OperationDescription(new QName("TemplateOperation"));
+       OperationDescription operationTemplate = new   OutInOperationDescription(new QName("TemplateOperation"));
+
+        PhasesInfo info =((AxisConfigurationImpl)sysContext.getAxisConfiguration()).getPhasesinfo();
+        //to set the operation flows
+        if(info != null){
+            info.setOperationPhases(operationTemplate);
+        }
+        axisService.addOperation(operationTemplate);
+        sysContext.getAxisConfiguration().addService(axisService);
+        
         return serviceGroupContext.getServiceContext(assumedServiceName.getLocalPart());
     }
 }
