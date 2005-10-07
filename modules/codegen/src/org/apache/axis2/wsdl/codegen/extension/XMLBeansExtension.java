@@ -44,6 +44,7 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -51,6 +52,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.io.BufferedWriter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,6 +60,15 @@ import java.util.regex.Pattern;
 public class XMLBeansExtension extends AbstractCodeGenerationExtension {
     private static final String DEFAULT_STS_NAME = "axis2";
     public static final String SCHEMA_FOLDER = "schemas";
+
+    public static String MAPPINGS = "mappings";
+    public static String MAPPING = "mapping";
+    public static String MESSAGE = "message";
+    public static String JAVA_NAME = "javaclass";
+
+    private File typeMappingFile;
+    public static final String MAPPING_FOLDER = "Mapping";
+    public static final String MAPPER_FILE_NAME = "mapper";
 
 
     public void init(CodeGenConfiguration configuration) {
@@ -109,7 +120,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
 
 
                     Stack importedSchemaStack = schema.getImportedSchemaStack();
-                    File schemaFolder = new File(configuration.getOutputLocation(),SCHEMA_FOLDER);
+                    File schemaFolder = new File(configuration.getOutputLocation(), SCHEMA_FOLDER);
                     schemaFolder.mkdir();
                     //compile these schemas
                     while (!importedSchemaStack.isEmpty()) {
@@ -169,9 +180,38 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             }
             //set the type mapper to the config
             configuration.setTypeMapper(mapper);
+
+            // write the mapper to a file for later retriival
+            writeMappingsToFile(mapper.getAllTypeMappings());
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+    }
+
+    private void writeMappingsToFile(Map typeMappings) throws IOException {
+
+        File typeMappingFolder = new File(configuration.getOutputLocation(), MAPPING_FOLDER);
+        if (!typeMappingFolder.exists()) {
+            typeMappingFolder.mkdir();
+        }
+
+        this.typeMappingFile = File.createTempFile(MAPPER_FILE_NAME, ".xml", typeMappingFolder);
+        BufferedWriter out = new BufferedWriter(new FileWriter(typeMappingFile));
+        out.write("<" + MAPPINGS + ">");
+
+        Iterator iterator = typeMappings.keySet().iterator();
+        while (iterator.hasNext()) {
+            QName qName = (QName) iterator.next();
+            String fullJavaName = (String) typeMappings.get(qName);
+            out.write("<" + MAPPING + ">");
+            out.write("<" + MESSAGE + ">" + qName.getLocalPart() + "</" + MESSAGE + ">");
+            out.write("<" + JAVA_NAME + ">" + fullJavaName + "</" + JAVA_NAME + ">");
+            out.write("</" + MAPPING + ">");
+        }
+        out.write("</" + MAPPINGS + ">");
+        out.close();
 
     }
 
