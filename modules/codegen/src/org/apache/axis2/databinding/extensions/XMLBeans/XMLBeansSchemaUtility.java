@@ -6,6 +6,7 @@ import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.wsdl.codegen.extension.XMLBeansExtension;
 import org.apache.commons.logging.Log;
@@ -84,29 +85,16 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
 
             ZipEntry entry;
             String entryName = "";
-            OMElement schemaElement = null;
+            OMElement typesElement = OMAbstractFactory.getOMFactory().createOMElement("types", null);
             while ((entry = zipInputStream.getNextEntry()) != null) {
                 entryName = entry.getName();
                 if (entryName.startsWith(XMLBeansExtension.SCHEMA_FOLDER) && entryName.endsWith(".xsd")) {
-                    InputStream schementry = serviceDescription.getClassLoader().getResourceAsStream(entryName);
-                    StAXOMBuilder builder = new StAXOMBuilder(schementry);
-                    if (schemaElement == null) {
-                        schemaElement = builder.getDocumentElement();
-                    } else {
-                        Iterator children = builder.getDocumentElement().getChildren();
-                        while (children.hasNext()) {
-                            schemaElement.addChild((OMNode) children.next());
-                        }
-                        Iterator allDeclaredNamespaces = builder.getDocumentElement().getAllDeclaredNamespaces();
-                        while (allDeclaredNamespaces.hasNext()) {
-                            OMNamespace omNamespace = (OMNamespace) allDeclaredNamespaces.next();
-                            schemaElement.declareNamespace(omNamespace);
-                        }
-                    }
+                    InputStream schemaEntry = serviceDescription.getClassLoader().getResourceAsStream(entryName);
+                    typesElement.addChild(new StAXOMBuilder(schemaEntry).getDocumentElement());
 
                 }
             }
-            return schemaElement;
+            return typesElement;
         } catch (IOException e) {
             throw new AxisFault(e);
         } catch (XMLStreamException e) {
