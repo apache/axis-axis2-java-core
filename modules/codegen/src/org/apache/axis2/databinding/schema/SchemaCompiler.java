@@ -4,6 +4,7 @@ import org.apache.ws.commons.schema.*;
 
 import java.util.List;
 import java.util.Iterator;
+import java.util.HashMap;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -22,7 +23,8 @@ import java.util.Iterator;
 
 public class SchemaCompiler {
 
-    CompilerOptions options;
+    private CompilerOptions options;
+    private HashMap processedTypemap;
 
     /**
      *
@@ -35,6 +37,8 @@ public class SchemaCompiler {
         }else{
             this.options = options;
         }
+
+        this.processedTypemap = new HashMap();
 
     }
 
@@ -63,14 +67,22 @@ public class SchemaCompiler {
      */
     public void compile(XmlSchema schema) throws SchemaCompilationException{
         //write the code here to do the schema compilation
+        //select the types
+        XmlSchemaObjectTable types =  schema.getSchemaTypes();
+        Iterator  xmlSchemaTypeIterator = types.getValues();
+        while (xmlSchemaTypeIterator.hasNext()) {
+            processSchema((XmlSchemaType)xmlSchemaTypeIterator.next());
+        }
+
+        //select all the elements next
         XmlSchemaObjectTable elements = schema.getElements();
         XmlSchemaElement xsElt;
         Iterator  xmlSchemaElementIterator = elements.getValues();
         while (xmlSchemaElementIterator.hasNext()) {
-            xsElt =  (XmlSchemaElement)xmlSchemaElementIterator.next();
-            processElement(xsElt);
+            processElement((XmlSchemaElement)xmlSchemaElementIterator.next());
         }
 
+        System.out.println("processedTypemap = " + processedTypemap);
     }
 
     /**
@@ -78,29 +90,44 @@ public class SchemaCompiler {
      * @param xsElt
      */
     private void processElement(XmlSchemaElement xsElt){
-
+        //The processing element logic seems to be quite simple. Look at the relevant schema type
+        //for each and every element and process that accordingly.
+        //this means that any unused type definitions would not be generated!
         XmlSchemaType schemaType = xsElt.getSchemaType();
         if (schemaType!=null){
-            if (schemaType instanceof XmlSchemaComplexType){
-                //write classes for complex types
-                processComplexSchemaType((XmlSchemaComplexType)schemaType);
-            }else if (schemaType instanceof XmlSchemaSimpleType){
-                processSimpleSchemaType((XmlSchemaSimpleType)schemaType);
-            }
+            processSchema(schemaType);
+        }
+
+        //write a class for this element
+
+    }
+
+    private void processSchema(XmlSchemaType schemaType) {
+        if (schemaType instanceof XmlSchemaComplexType){
+            //write classes for complex types
+            processComplexSchemaType((XmlSchemaComplexType)schemaType);
+        }else if (schemaType instanceof XmlSchemaSimpleType){
+            processSimpleSchemaType((XmlSchemaSimpleType)schemaType);
         }
     }
 
     /**
-     *
+     * handle the complex type
      * @param complexType
      */
     private void processComplexSchemaType(XmlSchemaComplexType complexType){
+
+        if (processedTypemap.containsKey(complexType.getQName())){
+            return;
+        }
+
         //to start with we need to write a class to represent this
         //
+
         XmlSchemaParticle particle =  complexType.getParticle();
         if (particle!=null){
             //check the particle
-            if (particle instanceof XmlSchemaSequence){
+            if (particle instanceof XmlSchemaSequence ){
                 XmlSchemaObjectCollection items = ((XmlSchemaSequence)particle).getItems();
                 int count = items.getCount();
                 for (int i = 0; i < count; i++) {
@@ -108,18 +135,28 @@ public class SchemaCompiler {
                     if (item instanceof XmlSchemaElement){
                         //recursively process the element
                         processElement((XmlSchemaElement)item);
+                    }else{
+                        //handle the other types here
                     }
-
-                    //process the items here. Usually the complex type needs to be represented as a  bean class
-
-
-                    //populate a type map
-
                 }
+            }else if (particle instanceof XmlSchemaAll){
+                //handle the all !
+
+            }else if (particle instanceof XmlSchemaChoice){
+                //handle the choice!
             }
 
 
         }
+
+        //write the class. This type mapping would have been populated right now
+        
+        processedTypemap.put(complexType.getQName(),"");
+
+
+
+
+        //populate the type mapping with the elements
 
     }
 

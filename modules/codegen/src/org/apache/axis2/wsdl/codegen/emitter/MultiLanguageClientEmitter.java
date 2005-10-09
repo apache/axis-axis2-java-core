@@ -590,7 +590,6 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
      */
     private Element getInputParamElement(Document doc,
                                          WSDLOperation operation) {
-        //todo this should go in a loop
         Element param = doc.createElement("param");
         MessageReference inputMessage = operation.getInputMessage();
         if (inputMessage!=null){
@@ -598,6 +597,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                     "name",
                     this.mapper.getParameterName(inputMessage.getElement()),
                     param);
+            //todo modify the code here to unwrap if requested
             String typeMapping = this.mapper.getTypeMapping(
                     inputMessage.getElement());
             String typeMappingStr = typeMapping == null ? "org.apache.axis2.om.OMElement" : typeMapping;

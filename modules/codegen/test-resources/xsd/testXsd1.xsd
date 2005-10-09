@@ -1,0 +1,51 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:tns="http://soapinterop.org/types"
+			targetNamespace="http://soapinterop.org/types">
+
+			<import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+
+			<complexType name="SOAPStruct">
+				<sequence>
+					<element name="varString" type="xsd:string"/>
+					<element name="varInt" type="xsd:int"/>
+					<element name="varFloat" type="xsd:float"/>
+				</sequence>
+			</complexType>
+
+			<complexType name="SOAPStructFault">
+				<sequence>
+					<element name="soapStruct" type="tns:SOAPStruct"/>
+				</sequence>
+			</complexType>
+
+			<complexType name="BaseStruct">
+				<sequence>
+					<element name="structMessage" type="tns:SOAPStruct"/>
+					<element name="shortMessage" type="xsd:short"/>
+				</sequence>
+			</complexType>
+
+			<complexType name="ExtendedStruct">
+				<complexContent>
+					<extension base="tns:BaseStruct">
+						<sequence>
+							<element name="stringMessage" type="xsd:string"/>
+							<element name="intMessage" type="xsd:int"/>
+							<element name="anotherIntMessage" type="xsd:int"/>
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+
+			<complexType name="MoreExtendedStruct">
+				<complexContent>
+					<extension base="tns:ExtendedStruct">
+						<sequence>
+							<element name="booleanMessage" type="xsd:boolean"/>
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+
+		</schema>

@@ -19,6 +19,8 @@ package org.apache.axis2.wsdl.codegen.extension;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
+import org.apache.axis2.databinding.schema.SchemaCompiler;
+import org.apache.axis2.databinding.schema.CompilerOptions;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.wsdl.WSDLExtensibilityElement;
@@ -34,9 +36,9 @@ import java.util.Stack;
 import java.util.Vector;
 
 /**
-  * Work in progress to test simple DataBinding with the XmlSchema lib
-  *
-  */
+ * Work in progress to test simple DataBinding with the XmlSchema lib
+ *
+ */
 public class SimpleDBExtension extends AbstractCodeGenerationExtension {
     public void init(CodeGenConfiguration configuration) {
         this.configuration = configuration;
@@ -55,10 +57,10 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
 
             List typesArray = typesList.getExtensibilityElements();
             WSDLExtensibilityElement extensiblityElt = null;
-
+            Vector xmlSchemaTypeVector = new Vector();
             for (int i = 0; i < typesArray.size(); i++) {
                 extensiblityElt = (WSDLExtensibilityElement) typesArray.get(i);
-                Vector xmlObjectsVector = new Vector();
+
                 XmlSchemaCollection schemaColl = new XmlSchemaCollection();
                 Schema schema = null;
 
@@ -68,7 +70,7 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
                     for (Iterator it = inScopeNS.keySet().iterator(); it.hasNext();) {
                         String prefix = (String) it.next();
                         schemaColl.mapNamespace(prefix,
-                                                (String)inScopeNS.get(prefix));
+                                (String)inScopeNS.get(prefix));
                     }
 
                     Stack importedSchemaStack = schema.getImportedSchemaStack();
@@ -76,10 +78,17 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
                     while (!importedSchemaStack.isEmpty()) {
                         Element el = ((javax.wsdl.extensions.schema.Schema)importedSchemaStack.pop()).getElement();
                         XmlSchema thisSchema = schemaColl.read(el);
-                        xmlObjectsVector.add(thisSchema);
+                        xmlSchemaTypeVector.add(thisSchema);
                     }
                 }
 
+                //call the schema compiler
+                CompilerOptions options = new CompilerOptions().setOutputLocation(configuration.getOutputLocation());
+                new SchemaCompiler(options)
+                        .compile(xmlSchemaTypeVector);
+
+                //the schema compiler needs to populate a typemap also
+                
                 //create the type mapper
                 JavaTypeMapper mapper = new JavaTypeMapper();
                 //set the type mapper to the config

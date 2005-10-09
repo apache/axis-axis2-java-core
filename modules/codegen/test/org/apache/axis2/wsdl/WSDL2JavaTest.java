@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.databinding.wsdl.codegen;
+package org.apache.axis2.wsdl;
 
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
