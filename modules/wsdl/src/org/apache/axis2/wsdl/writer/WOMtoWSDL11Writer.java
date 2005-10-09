@@ -3,8 +3,7 @@ package org.apache.axis2.wsdl.writer;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 
 import org.apache.wsdl.*;
-import org.apache.wsdl.extensions.Schema;
-import org.apache.wsdl.extensions.SOAPAddress;
+import org.apache.wsdl.extensions.*;
 
 import javax.wsdl.xml.WSDLWriter;
 import javax.wsdl.factory.WSDLFactory;
@@ -37,6 +36,7 @@ public class WOMtoWSDL11Writer implements WOMWriter{
     private String defaultWSDLPrefix="wsdl11";
     private String targetNamespacePrefix="tns";
     private static final String WSDL1_1_NAMESPACE_URI = "http://schemas.xmlsoap.org/wsdl/";
+    private static final String WSDL1_1_SOAP_NAMESPACE_URI = "http://schemas.xmlsoap.org/wsdl/soap/";
     private static final String DEFINITION_NAME = "definitions";
     private static final String IMPORT_NAME = "import";
     private static final String TYPES_NAME = "types";
@@ -48,6 +48,15 @@ public class WOMtoWSDL11Writer implements WOMWriter{
     //this is our 'symbol table' for the time being. It's a simple
     //Qname <-> message object map
     private Map messageMap = new HashMap();
+    private static final String BINDING_OPERATION = "operation";
+    private static final String OPERATION_NAME = BINDING_OPERATION;
+    private static final String BINDING_INPUT = "input";
+    private static final String INPUT_NAME = BINDING_INPUT;
+    private static final String BINDING_OUTPUT = "output";
+    private static final String OUTPUT_NAME = BINDING_OUTPUT;
+    private static final String BINDING_NAME = "binding";
+
+    private String soapNsPrefix = null;
 
 
     public void setEncoding(String encoding) {
@@ -90,6 +99,8 @@ public class WOMtoWSDL11Writer implements WOMWriter{
             //create a writer from the stream
             Writer writer = new OutputStreamWriter(out,encoding);
             writeStartDescripton(wsdlDescription,writer);
+            //find the SOAPNs
+            findSOAPNsPrefix(wsdlDescription);
             //write the imports
             writeImports(wsdlDescription,writer);
             //write  the types
@@ -101,7 +112,7 @@ public class WOMtoWSDL11Writer implements WOMWriter{
             //write the binding
             writeBinding(wsdlDescription,writer);
             //write the service
-            //write
+            writeService(wsdlDescription,writer);
             //close definition
             writeEndDescripton(writer);
             writer.flush();
@@ -110,6 +121,70 @@ public class WOMtoWSDL11Writer implements WOMWriter{
             throw new WriterException("wrong encoding!",e);
         } catch (IOException e) {
             throw new WriterException("Error writing to the stream!",e);
+        }
+
+    }
+
+    /**
+     *
+     * @param wsdlDescription
+     * @param writer
+     * @throws IOException
+     */
+    private void writeService(WSDLDescription wsdlDescription, Writer writer) throws IOException{
+        Map serviceMap = wsdlDescription.getServices();
+        if (serviceMap!=null && !serviceMap.isEmpty()){
+            Iterator serviceIterator = serviceMap.values().iterator();
+            WSDLService service;
+            while (serviceIterator.hasNext()) {
+                service =  (WSDLService)serviceIterator.next();
+                WriterUtil.writeStartElement("service",defaultWSDLPrefix,writer);
+                WriterUtil.writeAttribute("name",service.getName().getLocalPart(),writer);
+                WriterUtil.writeCloseStartElement(writer);
+                //wrtie the porttypes
+                Map endPointMap = service.getEndpoints();
+                if (endPointMap!=null && !endPointMap.isEmpty()){
+                    Iterator it = endPointMap.values().iterator();
+                    while (it.hasNext()) {
+                        writePorttype((WSDLEndpoint)it.next(),writer);
+                    }
+                }
+                WriterUtil.writeEndElement("service",defaultWSDLPrefix,writer);
+            }
+        }
+    }
+
+    /**
+     *
+     * @param endpoint
+     * @param outWriter
+     */
+    private void writePorttype(WSDLEndpoint endpoint,Writer outWriter) throws IOException{
+        WriterUtil.writeStartElement("port",defaultWSDLPrefix,outWriter);
+        WriterUtil.writeAttribute("name",endpoint.getName().getLocalPart(),outWriter);
+        QName name = endpoint.getBinding().getName();
+        WriterUtil.writeAttribute("binding",name.getPrefix()+":"+name.getLocalPart(),outWriter);
+        WriterUtil.writeCloseStartElement(outWriter);
+
+        handleExtensibiltyElements(endpoint.getExtensibilityElements(),outWriter);
+
+        WriterUtil.writeEndElement("port",outWriter);
+    }
+    /**
+     * Find the SOAPns prefix
+     * @param wsdlDescription
+     */
+    private void findSOAPNsPrefix(WSDLDescription wsdlDescription) {
+        Map map = wsdlDescription.getNamespaces();
+        Iterator nsIterator = map.values().iterator();
+        Iterator keyIterator = map.keySet().iterator();
+        String key;
+        while (nsIterator.hasNext()) {
+            key =  keyIterator.next().toString();
+            if (WSDL1_1_SOAP_NAMESPACE_URI.equals(nsIterator.next())){
+                this.soapNsPrefix = key;
+                break;
+            }
         }
 
     }
@@ -315,7 +390,7 @@ public class WOMtoWSDL11Writer implements WOMWriter{
         if (types!=null){
             WriterUtil.writeStartElement(TYPES_NAME,defaultWSDLPrefix,outWriter);
             WriterUtil.writeCloseStartElement(outWriter);
-            handlerExtensibiltyElements(types.getExtensibilityElements(),outWriter);
+            handleExtensibiltyElements(types.getExtensibilityElements(),outWriter);
             WriterUtil.writeEndElement(TYPES_NAME,defaultWSDLPrefix,outWriter);
         }
     }
@@ -361,7 +436,7 @@ public class WOMtoWSDL11Writer implements WOMWriter{
             WSDLOperation operation;
             while (opIterator.hasNext()) {
                 operation = (WSDLOperation)opIterator.next();
-                WriterUtil.writeStartElement("operation",defaultWSDLPrefix,outWriter);
+                WriterUtil.writeStartElement(OPERATION_NAME,defaultWSDLPrefix,outWriter);
                 WriterUtil.writeAttribute("name",operation.getName()==null?"":operation.getName().getLocalPart(),outWriter);
                 WriterUtil.writeCloseStartElement(outWriter);
 
@@ -370,7 +445,7 @@ public class WOMtoWSDL11Writer implements WOMWriter{
                 MessageReference inputMessage = operation.getInputMessage();
                 if (inputMessage!=null){
                     message  =(WSDL11Message) messageMap.get(inputMessage.getElement());
-                    WriterUtil.writeStartElement("input",defaultWSDLPrefix,outWriter);
+                    WriterUtil.writeStartElement(INPUT_NAME,defaultWSDLPrefix,outWriter);
                     WriterUtil.writeAttribute("message",targetNamespacePrefix+":"+message.getMessageName(),outWriter);
                     WriterUtil.writeCompactEndElement(outWriter);
                 }
@@ -379,14 +454,14 @@ public class WOMtoWSDL11Writer implements WOMWriter{
                 MessageReference outputMessage = operation.getOutputMessage();
                 if (outputMessage!=null) {
                     message  =(WSDL11Message) messageMap.get(outputMessage.getElement());
-                    WriterUtil.writeStartElement("output",defaultWSDLPrefix,outWriter);
+                    WriterUtil.writeStartElement(OUTPUT_NAME,defaultWSDLPrefix,outWriter);
                     WriterUtil.writeAttribute("message",targetNamespacePrefix+":"+message.getMessageName(),outWriter);
                     WriterUtil.writeCompactEndElement(outWriter);
                 }
 
                 //todo handle the faults here
 
-                WriterUtil.writeEndElement("operation",defaultWSDLPrefix,outWriter);
+                WriterUtil.writeEndElement(OPERATION_NAME,defaultWSDLPrefix,outWriter);
 
             }
         }
@@ -407,12 +482,25 @@ public class WOMtoWSDL11Writer implements WOMWriter{
             WSDLBinding binding;
             while (iterator.hasNext()) {
                 binding =  (WSDLBinding)iterator.next();
-                WriterUtil.writeStartElement("binding", defaultWSDLPrefix,outWriter);
+                WriterUtil.writeStartElement(BINDING_NAME, defaultWSDLPrefix,outWriter);
                 WriterUtil.writeAttribute("name",binding.getName().getLocalPart(),outWriter);
                 WriterUtil.writeAttribute("type",targetNamespacePrefix +":"+ binding.getBoundInterface().getName().getLocalPart(),outWriter);
                 WriterUtil.writeCloseStartElement(outWriter);
+                //write the extensibility elements
+                handleExtensibiltyElements(binding.getExtensibilityElements(),outWriter);
+                //write the operations
 
-                WriterUtil.writeEndElement("binding", defaultWSDLPrefix,outWriter);
+                Map bindingOps = binding.getBindingOperations();
+                if (bindingOps!=null && !bindingOps.isEmpty()){
+                    Iterator bindingOpsIterator = bindingOps.values().iterator();
+                    while (bindingOpsIterator.hasNext()) {
+                        writebindingOperation((WSDLBindingOperation)bindingOpsIterator.next(),outWriter);
+                    }
+                }
+
+
+
+                WriterUtil.writeEndElement(BINDING_NAME, defaultWSDLPrefix,outWriter);
 
 
             }
@@ -420,24 +508,96 @@ public class WOMtoWSDL11Writer implements WOMWriter{
 
     }
 
-    protected void handlerExtensibiltyElements(List extElementList,Writer outWriter) throws IOException{
+
+    protected void writebindingOperation(WSDLBindingOperation bindingOp,Writer outWriter) throws IOException{
+        WriterUtil.writeStartElement(BINDING_OPERATION,defaultWSDLPrefix,outWriter);
+        WriterUtil.writeAttribute("name",bindingOp.getName().getLocalPart(),outWriter);
+        WriterUtil.writeCloseStartElement(outWriter);
+        handleExtensibiltyElements(bindingOp.getExtensibilityElements(),outWriter);
+        //write the input
+        WSDLBindingMessageReference input = bindingOp.getInput();
+        if (input!=null){
+            WriterUtil.writeStartElement(BINDING_INPUT,defaultWSDLPrefix,outWriter);
+            WriterUtil.writeCompactEndElement(outWriter);
+            handleExtensibiltyElements(input.getExtensibilityElements(),outWriter);
+            WriterUtil.writeEndElement(BINDING_INPUT,defaultWSDLPrefix,outWriter);
+        }
+
+        WSDLBindingMessageReference output = bindingOp.getInput();
+        if (input!=null){
+            WriterUtil.writeStartElement(BINDING_OUTPUT,defaultWSDLPrefix,outWriter);
+            WriterUtil.writeCompactEndElement(outWriter);
+            handleExtensibiltyElements(output.getExtensibilityElements(),outWriter);
+            WriterUtil.writeEndElement(BINDING_OUTPUT,defaultWSDLPrefix,outWriter);
+        }
+        WriterUtil.writeEndElement(BINDING_OPERATION,defaultWSDLPrefix,outWriter);
+    }
+
+    protected void handleExtensibiltyElements(List extElementList,Writer outWriter) throws IOException{
         int extensibilityElementCount = extElementList.size();
         for (int i = 0; i < extensibilityElementCount; i++) {
             writeExtensibiltyElement((WSDLExtensibilityElement)extElementList.get(i),outWriter);
         }
 
     }
+
+    /**
+     *
+     * @param extElement
+     * @param outWriter
+     * @throws IOException
+     */
     protected void writeExtensibiltyElement(WSDLExtensibilityElement extElement,Writer outWriter) throws IOException{
         if (extElement instanceof Schema){
             outWriter.write(((Schema)extElement).getElement().toString());
         }else if(extElement instanceof SOAPAddress ){
-            //todo fill this
-        } else{
+            writeSOAPAddressExtensibilityElement((SOAPAddress)extElement,outWriter);
+        }else if(extElement instanceof SOAPBinding ){
+            writeSOAPBindingExtensibilityElement((SOAPBinding)extElement,outWriter);
+        }else if(extElement instanceof SOAPHeader ){
+            writeSOAPHeaderExtensibilityElement((SOAPHeader)extElement,outWriter);
+        } else if(extElement instanceof SOAPOperation ){
+            writeSOAPOpextensibilityElement((SOAPOperation)extElement,outWriter);
+        }else if(extElement instanceof SOAPBody ){
+            writeSOAPBodyExtensibilityElement((SOAPBody)extElement,outWriter);
+        }else{
             WriterUtil.writeComment(" Unknown extensibility element" + extElement.toString(),outWriter);
         }
 
+    }
+
+    private void writeSOAPAddressExtensibilityElement(SOAPAddress address,Writer outWriter) throws IOException{
+         WriterUtil.writeStartElement("address",this.soapNsPrefix,outWriter);
+        WriterUtil.writeAttribute("location",address.getLocationURI(),outWriter);
+      //  WriterUtil.writeAttribute("style",soapBinding.getStyle(),outWriter);
+        WriterUtil.writeCompactEndElement(outWriter);
+    }
+
+    protected void writeSOAPBindingExtensibilityElement(SOAPBinding soapBinding,Writer outWriter)throws IOException{
+        WriterUtil.writeStartElement("binding",this.soapNsPrefix,outWriter);
+        WriterUtil.writeAttribute("transport",soapBinding.getTransportURI(),outWriter);
+        WriterUtil.writeAttribute("style",soapBinding.getStyle(),outWriter);
+        WriterUtil.writeCompactEndElement(outWriter);
+    }
+
+    protected void writeSOAPBodyExtensibilityElement(SOAPBody soapBody,Writer outWriter)throws IOException{
+        WriterUtil.writeStartElement("body",this.soapNsPrefix,outWriter);
+        WriterUtil.writeAttribute("use",soapBody.getUse(),outWriter);
+        WriterUtil.writeCompactEndElement(outWriter);
+    }
+
+    protected void writeSOAPHeaderExtensibilityElement(SOAPHeader soapHeader,Writer outWriter)throws IOException{
+        WriterUtil.writeStartElement("header",this.soapNsPrefix,outWriter);
+        WriterUtil.writeAttribute("use",soapHeader.getUse(),outWriter);
+        WriterUtil.writeCompactEndElement(outWriter);
+    }
 
 
+    protected void writeSOAPOpextensibilityElement(SOAPOperation soapop,Writer outWriter)throws IOException{
+        WriterUtil.writeStartElement(BINDING_OPERATION,this.soapNsPrefix,outWriter);
+        WriterUtil.writeAttribute("name",soapop.getType().getLocalPart(),outWriter);
+        WriterUtil.writeAttribute("soapaction",soapop.getSoapAction(),outWriter);
+        WriterUtil.writeCompactEndElement(outWriter);
     }
 
     /**
