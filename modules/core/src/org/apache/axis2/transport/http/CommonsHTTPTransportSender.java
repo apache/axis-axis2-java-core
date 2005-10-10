@@ -688,7 +688,7 @@ public class CommonsHTTPTransportSender
                     msgContext
                             .setProperty(
                                     MessageContext.CHARACTER_SET_ENCODING,
-                                    charsetEnc);
+                                    charsetEnc.getValue());  //change to the value, which is text/xml or application/xml+soap
                 }
             }
         }
