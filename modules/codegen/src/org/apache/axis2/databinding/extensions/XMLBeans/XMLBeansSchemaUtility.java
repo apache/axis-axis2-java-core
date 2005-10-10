@@ -1,5 +1,6 @@
 package org.apache.axis2.databinding.extensions.XMLBeans;
 
+import com.ibm.wsdl.DefinitionImpl;
 import com.ibm.wsdl.InputImpl;
 import com.ibm.wsdl.MessageImpl;
 import com.ibm.wsdl.OperationImpl;
@@ -64,6 +65,7 @@ import java.util.zip.ZipInputStream;
 
 public class XMLBeansSchemaUtility implements SchemaUtility {
     protected Log log = LogFactory.getLog(getClass());
+    private Definition definition;
 
     public boolean isRelevant(ServiceDescription serviceDescription) throws AxisFault {
         try {
@@ -94,7 +96,23 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
         }
     }
 
-    public void getSchema(ServiceDescription serviceDescription, Definition definition) throws AxisFault {
+    public void fillInformationFromServiceDescription(ServiceDescription serviceDescription, Definition definition) throws AxisFault {
+        this.definition = definition;
+
+        // first fill the schema information
+        getSchema(serviceDescription);
+
+        // now fill port type and message elements
+        createMessagesAndPortTypes(serviceDescription);
+    }
+
+    public Definition fillInformationFromServiceDescription(ServiceDescription serviceDescription) throws AxisFault {
+        this.definition = new DefinitionImpl();
+        this.fillInformationFromServiceDescription(serviceDescription, this.definition);
+        return definition;
+    }
+
+    private void getSchema(ServiceDescription serviceDescription) throws AxisFault {
         if (!isRelevant(serviceDescription)) {
             return;
         }
@@ -150,7 +168,7 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
 
     }
 
-    public void createMessagesAndPortTypes(ServiceDescription serviceDescription, Definition definition) throws AxisFault {
+    private void createMessagesAndPortTypes(ServiceDescription serviceDescription) throws AxisFault {
 
         HashMap mappings = readMappings(serviceDescription);
 
@@ -159,34 +177,40 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
             ClassLoader classLoader = serviceDescription.getClassLoader();
             String serviceClassName = (String) serviceDescription.getParameter("ServiceClass").getValue();
 
+            // create PortType with class name
             PortType portType = new PortTypeImpl();
             portType.setQName(serviceDescription.getName());
             definition.addPortType(portType);
+            portType.setUndefined(false);
 
             Class serviceImplementation = classLoader.loadClass(serviceClassName);
             Method[] methods = serviceImplementation.getMethods();
 
-            Iterator operationDescIter = serviceDescription.getOperations().values().iterator();
-
+            // add messages to the definition and operations to the port type
             Operation wsdlOperation;
             Input wsdlOperationInput;
             Output wsdlOperationOutput;
 
-
+            Iterator operationDescIter = serviceDescription.getOperations().values().iterator();
             while (operationDescIter.hasNext()) {
                 OperationDescription operation = (OperationDescription) operationDescIter.next();
                 QName methodName = operation.getName();
                 Method method = getMethod(methods, methodName.getLocalPart());
 
-                Class returnType = method.getReturnType();
-
+                // create operation
                 wsdlOperation = new OperationImpl();
                 wsdlOperation.setName(methodName.getLocalPart());
+                wsdlOperation.setUndefined(false);
 
+                // create Output message and add that to the definition
+                Class returnType = method.getReturnType();
                 Message message = getMessage(mappings, returnType);
                 definition.addMessage(message);
+
+                // add the same message as the output of the operation
                 wsdlOperationOutput = new OutputImpl();
                 wsdlOperationOutput.setMessage(message);
+                wsdlOperation.setOutput(wsdlOperationOutput);
 
                 Class[] parameterTypes = method.getParameterTypes();
                 for (int i = 0; i < parameterTypes.length; i++) {
@@ -195,11 +219,10 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
                     wsdlOperationInput = new InputImpl();
                     wsdlOperationInput.setMessage(message);
                     definition.addMessage(message);
+                    wsdlOperation.setInput(wsdlOperationInput);
                 }
                 portType.addOperation(wsdlOperation);
             }
-
-            portType.setUndefined(false);
 
 
         } catch (ClassNotFoundException e) {
@@ -211,8 +234,12 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
 
     private Message getMessage(HashMap mappings, Class returnType) {
         String mappingName = (String) mappings.get(returnType.getName());
+
+        // First create message
         Message message = new MessageImpl();
         message.setQName(new QName(mappingName));
+
+        // create the part of the message
         Part part = new PartImpl();
         part.setName("param");
         part.setElementName(new QName(mappingName));
@@ -241,8 +268,6 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
                         String javaclass = mappingElement.getFirstChildWithName(new QName(XMLBeansExtension.JAVA_NAME)).getText();
                         mappings.put(javaclass, messageName);
                     }
-
-
                 }
             }
             return mappings;
