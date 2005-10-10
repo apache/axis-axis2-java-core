@@ -17,6 +17,7 @@
 package org.apache.axis2.wsdl.codegen.emitter;
 
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.XSLTUtils;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.XSLTConstants;
@@ -28,7 +29,6 @@ import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPHeader;
 import org.apache.wsdl.extensions.SOAPOperation;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -37,12 +37,6 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -472,22 +466,12 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
      */
     protected void writeClass(Document model, ClassWriter writer) throws IOException,
             Exception {
-        ByteArrayOutputStream memoryStream = new ByteArrayOutputStream();
-        // Use a Transformer for output
-        TransformerFactory tFactory =
-                TransformerFactory.newInstance();
-        Transformer transformer = tFactory.newTransformer();
-
-        DOMSource source = new DOMSource(model);
-        StreamResult result = new StreamResult(memoryStream);
-        transformer.transform(source, result);
-
         writer.loadTemplate();
         writer.createOutFile(
                 model.getDocumentElement().getAttribute("package"),
                 model.getDocumentElement().getAttribute("name"));
-        writer.writeOutFile(
-                new ByteArrayInputStream(memoryStream.toByteArray()));
+        writer.parse(
+                model);
     }
 
 
@@ -1187,9 +1171,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                                 String AttribName,
                                 String attribValue,
                                 Element element) {
-        Attr attribute = document.createAttribute(AttribName);
-        attribute.setValue(attribValue);
-        element.setAttributeNode(attribute);
+       XSLTUtils.addAttribute(document,AttribName,attribValue,element);
     }
 
 

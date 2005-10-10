@@ -17,7 +17,7 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis2.wsdl.util.URLProcessor;
+import org.apache.axis2.util.URLProcessor;
 import org.apache.wsdl.WSDLBinding;
 
 public class PackageFinder extends AbstractCodeGenerationExtension {

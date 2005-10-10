@@ -33,6 +33,9 @@ public abstract class AbstractSchemaCompilerTester extends TestCase {
     //this should be an xsd name in the test-resource directory
     protected String fileName = "";
     protected  XmlSchema currentSchema;
+    protected File outputFolder = null;
+
+    private static String TEMP_OUT_FOLDER="temp_compile";
 
     protected void setUp() throws Exception {
         //load the current Schema through a file
@@ -46,13 +49,48 @@ public abstract class AbstractSchemaCompilerTester extends TestCase {
         //now read it to a schema
         XmlSchemaCollection schemaCol =  new XmlSchemaCollection();
         currentSchema = schemaCol.read(doc,null);
+
+        outputFolder = new File(TEMP_OUT_FOLDER);
+        if (outputFolder.exists()){
+            if (outputFolder.isFile()){
+                outputFolder.delete();
+                outputFolder.mkdirs();
+            }
+        }else{
+            outputFolder.mkdirs();
+        }
     }
+
 
 
     public void testSchema() throws Exception{
-        SchemaCompiler compiler = new SchemaCompiler(null);
+        CompilerOptions compilerOptions = new CompilerOptions();
+        compilerOptions.setOutputLocation(outputFolder);
+        SchemaCompiler compiler = new SchemaCompiler(compilerOptions);
         compiler.compile(currentSchema);
     }
 
+    protected void tearDown() throws Exception {
+         deleteDir(outputFolder);
+    }
 
+    /**
+     * Deletes all files and subdirectories under dir.
+     * Returns true if all deletions were successful.
+     * If a deletion fails, the method stops attempting to delete and returns false.
+     */
+    private boolean deleteDir(File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i=0; i<children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+
+        // The directory is now empty so delete it
+        return dir.delete();
+    }
 }

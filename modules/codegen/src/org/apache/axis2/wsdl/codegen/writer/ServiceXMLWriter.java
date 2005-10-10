@@ -16,7 +16,7 @@
 
 package org.apache.axis2.wsdl.codegen.writer;
 
-import org.apache.axis2.wsdl.util.FileWriter;
+import org.apache.axis2.util.FileWriter;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -18,8 +18,9 @@ package org.apache.axis2.wsdl.codegen.writer;
 
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
-import org.apache.axis2.wsdl.util.FileWriter;
-import org.apache.axis2.wsdl.util.XSLTTemplateProcessor;
+import org.apache.axis2.util.FileWriter;
+import org.apache.axis2.util.XSLTTemplateProcessor;
+import org.w3c.dom.Document;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -148,10 +149,10 @@ public abstract class ClassWriter {
      * @param documentStream
      * @throws Exception
      */
-    public void writeOutFile(InputStream documentStream) throws Exception {
+    public void parse(Document doc) throws Exception {
         if (!fileExists){
             XSLTTemplateProcessor.parse(this.stream,
-                    documentStream,
+                    doc,
                     this.xsltStream);
             this.stream.flush();
             this.stream.close();

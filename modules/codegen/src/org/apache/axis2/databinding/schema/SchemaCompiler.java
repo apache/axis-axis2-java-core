@@ -1,10 +1,14 @@
 package org.apache.axis2.databinding.schema;
 
 import org.apache.ws.commons.schema.*;
+import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 
+import javax.xml.namespace.QName;
 import java.util.List;
 import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Map;
+import java.io.IOException;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -25,21 +29,31 @@ public class SchemaCompiler {
 
     private CompilerOptions options;
     private HashMap processedTypemap;
+    private JavaBeanWriter writer;
+
+    private Map baseSchemaTypeMap = TypeMap.getTypeMap();
+
 
     /**
      *
      * @param options
      */
-    public SchemaCompiler(CompilerOptions options) {
-        if (options==null){
-            //create an empty options object
-            this.options = new CompilerOptions();
-        }else{
-            this.options = options;
+    public SchemaCompiler(CompilerOptions options) throws SchemaCompilationException {
+        try {
+            if (options==null){
+                //create an empty options object
+                this.options = new CompilerOptions();
+            }else{
+                this.options = options;
+            }
+
+            this.processedTypemap = new HashMap();
+
+            this.writer = new JavaBeanWriter(this.options.getOutputLocation());
+
+        } catch (IOException e) {
+            throw new SchemaCompilationException(e);
         }
-
-        this.processedTypemap = new HashMap();
-
     }
 
     /**
@@ -54,6 +68,8 @@ public class SchemaCompiler {
                 schema =  (XmlSchema)schemalist.get(i);
                 compile(schema);
             }
+        }catch(SchemaCompilationException e) {
+            throw e;
         } catch (Exception e) {
             throw new SchemaCompilationException(e);
         }
@@ -66,6 +82,7 @@ public class SchemaCompiler {
      * @throws SchemaCompilationException
      */
     public void compile(XmlSchema schema) throws SchemaCompilationException{
+
         //write the code here to do the schema compilation
         //select the types
         XmlSchemaObjectTable types =  schema.getSchemaTypes();
@@ -76,20 +93,19 @@ public class SchemaCompiler {
 
         //select all the elements next
         XmlSchemaObjectTable elements = schema.getElements();
-        XmlSchemaElement xsElt;
         Iterator  xmlSchemaElementIterator = elements.getValues();
         while (xmlSchemaElementIterator.hasNext()) {
             processElement((XmlSchemaElement)xmlSchemaElementIterator.next());
         }
 
-        System.out.println("processedTypemap = " + processedTypemap);
+        //System.out.println("processedTypemap = " + processedTypemap);
     }
 
     /**
      *
      * @param xsElt
      */
-    private void processElement(XmlSchemaElement xsElt){
+    private void processElement(XmlSchemaElement xsElt) throws SchemaCompilationException{
         //The processing element logic seems to be quite simple. Look at the relevant schema type
         //for each and every element and process that accordingly.
         //this means that any unused type definitions would not be generated!
@@ -102,7 +118,7 @@ public class SchemaCompiler {
 
     }
 
-    private void processSchema(XmlSchemaType schemaType) {
+    private void processSchema(XmlSchemaType schemaType) throws SchemaCompilationException {
         if (schemaType instanceof XmlSchemaComplexType){
             //write classes for complex types
             processComplexSchemaType((XmlSchemaComplexType)schemaType);
@@ -115,7 +131,7 @@ public class SchemaCompiler {
      * handle the complex type
      * @param complexType
      */
-    private void processComplexSchemaType(XmlSchemaComplexType complexType){
+    private void processComplexSchemaType(XmlSchemaComplexType complexType) throws SchemaCompilationException{
 
         if (processedTypemap.containsKey(complexType.getQName())){
             return;
@@ -125,6 +141,8 @@ public class SchemaCompiler {
         //
 
         XmlSchemaParticle particle =  complexType.getParticle();
+        Map elementMap = new HashMap();
+
         if (particle!=null){
             //check the particle
             if (particle instanceof XmlSchemaSequence ){
@@ -134,7 +152,18 @@ public class SchemaCompiler {
                     XmlSchemaObject item = items.getItem(i);
                     if (item instanceof XmlSchemaElement){
                         //recursively process the element
-                        processElement((XmlSchemaElement)item);
+                        XmlSchemaElement xsElt = (XmlSchemaElement) item;
+                        processElement(xsElt);
+                        //add this to the processed element list
+                        QName schemaTypeQName = xsElt.getSchemaType().getQName();
+                        Class clazz = (Class)baseSchemaTypeMap.get(schemaTypeQName);
+                        if (clazz!=null){
+                            elementMap.put(xsElt.getQName(),clazz.getName());
+                        }else{
+                            elementMap.put(xsElt.getQName(),schemaTypeQName.getLocalPart());
+                        }
+
+
                     }else{
                         //handle the other types here
                     }
@@ -150,7 +179,7 @@ public class SchemaCompiler {
         }
 
         //write the class. This type mapping would have been populated right now
-        
+        writer.write(complexType,processedTypemap,elementMap);
         processedTypemap.put(complexType.getQName(),"");
 
 

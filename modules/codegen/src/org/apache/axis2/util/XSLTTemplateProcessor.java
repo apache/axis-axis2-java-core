@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.wsdl.util;
+package org.apache.axis2.util;
 
+
+import org.w3c.dom.Document;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -23,6 +25,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.InputStream;
@@ -54,5 +57,41 @@ public class XSLTTemplateProcessor {
 
     }
 
+    /**
+         * Parses an XML stream with an XSL stream
+         *
+         * @param out        Stream to write the output
+         * @param xmlStream  Source XML stream
+         * @throws TransformerFactoryConfigurationError
+         *
+         * @throws TransformerException
+         */
+        public static void parse(OutputStream out,
+                                 Document doc,
+                                 Transformer transformer)
+                throws TransformerFactoryConfigurationError, TransformerException {
+            Source xmlSource = new DOMSource(doc);
+            Result result = new StreamResult(out);
+            transformer.transform(xmlSource, result);
 
+        }
+
+    /**
+     *
+     * @param out
+     * @param document
+     * @param xsltStream
+     * @throws TransformerFactoryConfigurationError
+     * @throws TransformerException
+     */
+       public static void parse(OutputStream out,
+                             Document document,
+                             InputStream xsltStream)
+            throws TransformerFactoryConfigurationError, TransformerException {
+        Source xsltSource = new StreamSource(xsltStream);
+        Transformer transformer = TransformerFactory.newInstance()
+                .newTransformer(xsltSource);
+        parse(out,document,transformer);
+
+    }
 }
