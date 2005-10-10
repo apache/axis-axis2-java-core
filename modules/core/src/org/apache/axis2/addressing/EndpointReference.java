@@ -63,8 +63,6 @@ public class EndpointReference implements Serializable {
 
     /**
      * Method getValue
-     *
-     * @return
      */
     public String getAddress() {
         return address;
@@ -81,8 +79,6 @@ public class EndpointReference implements Serializable {
 
     /**
      * Method getInterfaceName
-     *
-     * @return
      */
     public QName getInterfaceName() {
         return interfaceName;
@@ -99,8 +95,6 @@ public class EndpointReference implements Serializable {
 
     /**
      * Method getReferenceProperties
-     *
-     * @return
      */
     public AnyContentType getReferenceProperties() {
         return referenceProperties;
@@ -117,8 +111,6 @@ public class EndpointReference implements Serializable {
 
     /**
      * Method getReferenceParameters
-     *
-     * @return
      */
     public AnyContentType getReferenceParameters() {
         return referenceParameters;
@@ -135,8 +127,6 @@ public class EndpointReference implements Serializable {
 
     /**
      * Method getServiceName
-     *
-     * @return
      */
     public ServiceName getServiceName() {
         return serviceName;
@@ -165,6 +155,13 @@ public class EndpointReference implements Serializable {
 
     public void setMetadata(AnyContentType metadata) {
         this.metadata = metadata;
+    }
+
+    public void addReferenceParameter(QName qname, String value) {
+        if (getReferenceParameters() == null) {
+            setReferenceParameters(new AnyContentType());
+        }
+        referenceParameters.addReferenceValue(qname, value);
     }
 
 

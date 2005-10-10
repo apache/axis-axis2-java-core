@@ -386,7 +386,8 @@ public class OMElementImpl extends OMNodeImpl
      * @return an OMAttribute with the given name if found, or null
      */
     public OMAttribute getAttribute(QName qname) {
-        return (OMAttribute) attributes.get(qname);
+
+        return attributes == null ? null : (OMAttribute) attributes.get(qname);
     }
 
     /**
