@@ -40,7 +40,7 @@ import java.util.Iterator;
 public class AddressingInHandler extends AbstractHandler implements AddressingConstants {
     // this parameter has to be set by the module deployer.
     private boolean isAddressingOptional = true;
-    private String addressingNamespace = null;
+    protected String addressingNamespace = null;
 
     private Log logger = LogFactory.getLog(getClass());
 
@@ -173,7 +173,11 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                 //here the addressing epr overidde what ever already there is 
                 epr = new EndpointReference(soapHeaderBlock.getText());
                 messageInformationHeaders.setTo(epr);
+
+                // check for reference parameters
+                extractToEprReferenceParameters(epr, header);
                 soapHeaderBlock.setProcessed();
+
             } else if (AddressingConstants.WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
                 epr = messageInformationHeaders.getFrom();
                 if (epr == null) {
@@ -226,6 +230,17 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         }
 
         return messageInformationHeaders;
+    }
+
+    private void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header) {
+        Iterator headerBlocks = header.getChildElements();
+        while (headerBlocks.hasNext()) {
+            SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) headerBlocks.next();
+            OMAttribute isRefParamAttr = soapHeaderBlock.getAttribute(new QName(addressingNamespace, "IsReferenceParameter"));
+            if (isRefParamAttr != null && "true".equals(isRefParamAttr.getValue())) {
+                toEPR.addReferenceParameter(soapHeaderBlock.getQName(), soapHeaderBlock.getText());
+            }
+        }
     }
 
     private void extractEPRInformation(

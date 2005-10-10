@@ -18,6 +18,7 @@ package org.apache.axis2.handlers.addressing;
 
 import junit.framework.TestCase;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.handlers.util.TestUtil;
@@ -27,11 +28,14 @@ import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
+
 public class AddressingInHandlerTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());
     AddressingInHandler inHandler;
     TestUtil testUtil = new TestUtil();
     private static final String testFileName = "soapmessage.xml";
+    private static final String wsaFinalTestFile = "soapWithWSAFinalInfo.xml";
 
     private String action = "http://ws.apache.org/tests/action";
     private String messageID = "uuid:920C5190-0B8F-11D9-8CED-F22EDEEBF7E5";
@@ -77,7 +81,6 @@ public class AddressingInHandlerTest extends TestCase {
             assertFromEPR(messageInformationHeaders.getFrom());
 
         } catch (Exception e) {
-            e.printStackTrace();
             log.info(e.getMessage());
             fail(" An Exception has occured " + e.getMessage());
         }
@@ -87,6 +90,33 @@ public class AddressingInHandlerTest extends TestCase {
         assertEquals("Address in EPR is not valid",
                 fromEPR.getAddress().trim(),
                 fromAddress.trim());
+    }
+
+    public void testWSAFinalInformation() {
+        try {
+            StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder(
+                    wsaFinalTestFile);
+            inHandler.addressingNamespace = AddressingConstants.Final.WSA_NAMESPACE;
+            SOAPHeader header = ((SOAPEnvelope) omBuilder.getDocumentElement()).getHeader();
+            MessageInformationHeaders messageInformationHeaders =
+                    inHandler.extractCommonAddressingParameters(header,
+                            null,
+                            header.getHeaderBlocksWithNSURI(
+                                    AddressingConstants.Final.WSA_NAMESPACE),
+                            AddressingConstants.Final.WSA_NAMESPACE);
+            assertNotNull(messageInformationHeaders);
+            assertNotNull(messageInformationHeaders.getTo());
+            assertNotNull(messageInformationHeaders.getTo().getReferenceParameters());
+            AnyContentType referenceParameters = messageInformationHeaders.getTo().getReferenceParameters();
+            QName qName = new QName("http://ws.apache.org/namespaces/axis2", "ParamOne", "axis2");
+            assertNotNull(referenceParameters.getReferenceValue(qName));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            log.info(e.getMessage());
+            fail(" An Exception has occured " + e.getMessage());
+        }
     }
 
 
