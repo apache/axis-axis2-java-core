@@ -29,6 +29,7 @@ import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.Schema;
 import org.w3c.dom.Element;
 
+import javax.xml.namespace.QName;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,7 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
                 extensiblityElt = (WSDLExtensibilityElement) typesArray.get(i);
 
                 XmlSchemaCollection schemaColl = new XmlSchemaCollection();
+                //add the namespace map here. it is absolutely needed
                 Schema schema = null;
 
                 if (ExtensionConstants.SCHEMA.equals(extensiblityElt.getType())) {
@@ -84,13 +86,21 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
 
                 //call the schema compiler
                 CompilerOptions options = new CompilerOptions().setOutputLocation(configuration.getOutputLocation());
-                new SchemaCompiler(options)
+                SchemaCompiler schemaCompiler = new SchemaCompiler(options);
+                schemaCompiler
                         .compile(xmlSchemaTypeVector);
 
-                //the schema compiler needs to populate a typemap also
-                
                 //create the type mapper
                 JavaTypeMapper mapper = new JavaTypeMapper();
+                //get the processed element map and transfer it to the type mapper
+                Map processedMap = schemaCompiler.getProcessedElementmap();
+                Iterator keys = processedMap.keySet().iterator();
+                QName key;
+                while (keys.hasNext()) {
+                   key =(QName)keys.next();
+                   mapper.addTypeMapping(key,processedMap.get(key));
+                }
+
                 //set the type mapper to the config
                 configuration.setTypeMapper(mapper);
 

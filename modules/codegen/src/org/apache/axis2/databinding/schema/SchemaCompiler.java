@@ -32,6 +32,10 @@ public class SchemaCompiler {
     private Map baseSchemaTypeMap = TypeMap.getTypeMap();
 
 
+    public HashMap getProcessedElementmap() {
+        return processedElementmap;
+    }
+
     /**
      *
      * @param options
