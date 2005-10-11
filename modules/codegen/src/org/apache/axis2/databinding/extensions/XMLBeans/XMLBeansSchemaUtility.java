@@ -100,7 +100,7 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
         this.definition = definition;
 
         // first fill the schema information
-        getSchema(serviceDescription);
+//        getSchema(serviceDescription);
 
         // now fill port type and message elements
         createMessagesAndPortTypes(serviceDescription);

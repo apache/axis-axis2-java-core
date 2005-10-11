@@ -63,7 +63,7 @@ public class ArchiveReader implements DeploymentConstants {
      */
     public ServiceDescription createService(ArchiveFileData file) throws DeploymentException {
         ServiceDescription service = null;
-        InputStream in = file.getClassLoader().getResourceAsStream(SERVICEWSDL);
+        InputStream in = file.getClassLoader().getResourceAsStream(SERVICE_WSDL_WITH_FOLDER);
         boolean foundservice = false;
         try {
             if (in != null) {
