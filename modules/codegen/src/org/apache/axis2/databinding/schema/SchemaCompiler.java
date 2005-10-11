@@ -2,6 +2,7 @@ package org.apache.axis2.databinding.schema;
 
 import org.apache.ws.commons.schema.*;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.util.URLProcessor;
 
 import javax.xml.namespace.QName;
 import java.util.List;
@@ -142,44 +143,29 @@ public class SchemaCompiler {
 
         XmlSchemaParticle particle =  complexType.getParticle();
         Map elementMap = new HashMap();
-
+        BeanWriterMetaInfoHolder metaInfHolder = new BeanWriterMetaInfoHolder();
         if (particle!=null){
-            //check the particle
-            if (particle instanceof XmlSchemaSequence ){
-                XmlSchemaObjectCollection items = ((XmlSchemaSequence)particle).getItems();
-                int count = items.getCount();
-                for (int i = 0; i < count; i++) {
-                    XmlSchemaObject item = items.getItem(i);
-                    if (item instanceof XmlSchemaElement){
-                        //recursively process the element
-                        XmlSchemaElement xsElt = (XmlSchemaElement) item;
-                        processElement(xsElt);
-                        //add this to the processed element list
-                        QName schemaTypeQName = xsElt.getSchemaType().getQName();
-                        Class clazz = (Class)baseSchemaTypeMap.get(schemaTypeQName);
-                        if (clazz!=null){
-                            elementMap.put(xsElt.getQName(),clazz.getName());
-                        }else{
-                            elementMap.put(xsElt.getQName(),schemaTypeQName.getLocalPart());
-                        }
-
-
-                    }else{
-                        //handle the other types here
-                    }
+            //Process the particle
+            processParticle(particle, elementMap,metaInfHolder);
+        }else{
+            XmlSchemaContentModel contentModel = complexType.getContentModel();
+            if (contentModel!=null){
+                XmlSchemaContent content =  (contentModel).getContent();
+                if (content instanceof XmlSchemaComplexContentExtension){
+                    XmlSchemaComplexContentExtension xmlSchemaComplexContentExtension = (XmlSchemaComplexContentExtension) content;
+                    processParticle(xmlSchemaComplexContentExtension.getParticle(),elementMap,metaInfHolder);
+                    metaInfHolder.setExtension(true);
+                    metaInfHolder.setExtensionClassName(
+                            getJavaClassNameFromComplexTypeQName(
+                                    xmlSchemaComplexContentExtension.getBaseTypeName()));
                 }
-            }else if (particle instanceof XmlSchemaAll){
-                //handle the all !
 
-            }else if (particle instanceof XmlSchemaChoice){
-                //handle the choice!
+
             }
-
-
         }
 
         //write the class. This type mapping would have been populated right now
-        writer.write(complexType,processedTypemap,elementMap);
+        writer.write(complexType,processedTypemap,elementMap,metaInfHolder);
         processedTypemap.put(complexType.getQName(),"");
 
 
@@ -189,11 +175,64 @@ public class SchemaCompiler {
 
     }
 
+    private void processParticle(XmlSchemaParticle particle, //particle being processed
+                                 Map elementMap, //type map for the current element
+                                 BeanWriterMetaInfoHolder metainfHolder // metainf holder
+    ) throws SchemaCompilationException {
+        if (particle instanceof XmlSchemaSequence ){
+            XmlSchemaObjectCollection items = ((XmlSchemaSequence)particle).getItems();
+            int count = items.getCount();
+            for (int i = 0; i < count; i++) {
+                XmlSchemaObject item = items.getItem(i);
+                if (item instanceof XmlSchemaElement){
+                    //recursively process the element
+                    XmlSchemaElement xsElt = (XmlSchemaElement) item;
+                    processElement(xsElt);
+                    //add this to the processed element list
+                    QName schemaTypeQName = xsElt.getSchemaType().getQName();
+                    Class clazz = (Class)baseSchemaTypeMap.get(schemaTypeQName);
+                    if (clazz!=null){
+                        elementMap.put(xsElt.getQName(),clazz.getName());
+                    }else{
+                        elementMap.put(xsElt.getQName(),getJavaClassNameFromComplexTypeQName(schemaTypeQName));
+                    }
+                }else if (item instanceof XmlSchemaComplexContent){
+                    // process the extension
+                    XmlSchemaContent content = ((XmlSchemaComplexContent)item).getContent();
+                    if (content instanceof XmlSchemaComplexContentExtension){
+                        processParticle(((XmlSchemaComplexContentExtension)content).getParticle(),elementMap,metainfHolder);
+                    }else if (content instanceof XmlSchemaComplexContentRestriction){
+                        //handle complex restriction
+                    }
+                    //handle the other types here
+                }
+
+
+            }
+            //set the ordered flag in the metainf holder
+            metainfHolder.setOrdered(true);
+        }else if (particle instanceof XmlSchemaAll){
+            //handle the all !
+
+        }else if (particle instanceof XmlSchemaChoice){
+            //handle the choice!
+        }
+    }
+
     /**
      * Handle the simple content
      * @param simpleType
      */
     private void processSimpleSchemaType(XmlSchemaSimpleType simpleType){
         //nothing to here yet
+    }
+
+
+    /*     Utility methods       */
+    private String getJavaClassNameFromComplexTypeQName(QName name){
+        String className = name.getLocalPart();
+        String packageName = URLProcessor.getNameSpaceFromURL(name.getNamespaceURI());
+        return packageName + "." +className;
+
     }
 }

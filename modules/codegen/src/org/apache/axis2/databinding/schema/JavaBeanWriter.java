@@ -58,7 +58,7 @@ public class JavaBeanWriter {
 
     }
 
-    public void write(XmlSchemaComplexType complexType, Map typeMap,Map currentTypeMap) throws SchemaCompilationException{
+    public void write(XmlSchemaComplexType complexType, Map typeMap,Map currentTypeMap,BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException{
 
         try {
             //determine the package for this type.
@@ -77,6 +77,9 @@ public class JavaBeanWriter {
             Element rootElt = XSLTUtils.addChildElement(model,"bean",model);
             XSLTUtils.addAttribute(model,"name",className,rootElt);
             XSLTUtils.addAttribute(model,"package",packageName,rootElt);
+            if (metainf.isExtension()){
+             XSLTUtils.addAttribute(model,"extension",metainf.getExtensionClassName(),rootElt);   
+            }
             // go in the loop and add the part elements
             if (currentTypeMap != null && !currentTypeMap.isEmpty()){
 
@@ -90,6 +93,8 @@ public class JavaBeanWriter {
 
                 }
             }
+            //add the metainf
+
             //create the file
             OutputStream out = createOutFile(packageName,className);
             //parse with the template and create the files

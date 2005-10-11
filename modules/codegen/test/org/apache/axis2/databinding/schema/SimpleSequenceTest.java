@@ -15,10 +15,10 @@ package org.apache.axis2.databinding.schema;
  * limitations under the License.
  */
 
-public class Xsd1Test extends AbstractSchemaCompilerTester {
+public class SimpleSequenceTest extends AbstractSchemaCompilerTester {
 
     protected void setUp() throws Exception {
-        this.fileName = "test-resources/xsd/testXsd1.xsd";
+        this.fileName = "test-resources/xsd/simple_sequence.xsd";
         super.setUp();
     }
 

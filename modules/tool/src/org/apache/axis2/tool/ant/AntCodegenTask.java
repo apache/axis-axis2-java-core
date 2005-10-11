@@ -23,7 +23,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CommandLineOption;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionParser;
-import org.apache.axis2.wsdl.util.URLProcessor;
+import org.apache.axis2.util.URLProcessor;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;

@@ -3,11 +3,12 @@
     <xsl:template match="/bean">
     package <xsl:value-of select="@package"/>;
 
+
     /**
      *  Auto generated bean class by the Axis code generator
      */
 
-    public class <xsl:value-of select="@name"/> {
+    public class <xsl:value-of select="@name"/> <xsl:if test="@extension"> extends <xsl:value-of select="@extension"/></xsl:if>{
 
 
      <xsl:for-each select="property">
