@@ -1,6 +1,7 @@
 package org.apache.axis2.databinding.schema;
 
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
+import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.axis2.util.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -51,7 +52,14 @@ public class JavaBeanWriter {
 
     }
 
-    public void write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException{
+    /**
+     *
+     * @param complexType
+     * @param typeMap
+     * @param metainf
+     * @throws SchemaCompilationException
+     */
+    public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException{
 
         try {
             //determine the package for this type.
@@ -83,10 +91,71 @@ public class JavaBeanWriter {
                 Element property = XSLTUtils.addChildElement(model,"property",rootElt);
                 name = (QName)qNameIterator.next();
                 XSLTUtils.addAttribute(model,"name",name.getLocalPart(),property);
-                XSLTUtils.addAttribute(model,"type",metainf.getJavaClassNameForElement(name),property);
-                if (typeMap.containsKey(metainf.getSchemaQNameForElement(name))){
-                    XSLTUtils.addAttribute(model,"ours","yes",property); //todo introduce a better name for this
+                String javaClassNameForElement = metainf.getJavaClassNameForElement(name);
+                if (javaClassNameForElement==null){
+                    throw new SchemaCompilationException("Type missing!");
                 }
+                XSLTUtils.addAttribute(model,"type",javaClassNameForElement,property);
+            }
+
+            //create the file
+            OutputStream out = createOutFile(packageName,className);
+            //parse with the template and create the files
+            parse(model,out);
+            //return the fully qualified class name
+            return packageName+"."+className;
+
+        }catch (SchemaCompilationException e) {
+            throw e;
+        }catch (Exception e) {
+            throw new SchemaCompilationException(e);
+        }
+
+
+    }
+
+    /**
+     *
+     * @param element
+     * @param typeMap
+     * @param metainf
+     * @return
+     * @throws SchemaCompilationException
+     */
+    public String write(XmlSchemaElement element, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException{
+
+        try {
+            //determine the package for this type.
+            QName qName = element.getQName();
+            String packageName = URLProcessor.getNameSpaceFromURL(qName.getNamespaceURI());
+            String className = qName.getLocalPart();
+
+            if (!templateLoaded){
+                loadTemplate();
+            }
+
+            //create the model
+            Document model= XSLTUtils.getDocument();
+
+            //make the XML
+            Element rootElt = XSLTUtils.addChildElement(model,"bean",model);
+            XSLTUtils.addAttribute(model,"name",className,rootElt);
+            XSLTUtils.addAttribute(model,"package",packageName,rootElt);
+            XSLTUtils.addAttribute(model,"nsuri",qName.getNamespaceURI(),rootElt);
+            XSLTUtils.addAttribute(model,"nsprefix",qName.getPrefix(),rootElt);
+
+            // go in the loop and add the part elements
+            Iterator qNameIterator = metainf.getElementQNameIterator();
+
+            QName name;
+            while (qNameIterator.hasNext()) {
+                Element property = XSLTUtils.addChildElement(model,"property",rootElt);
+                name = (QName)qNameIterator.next();
+                XSLTUtils.addAttribute(model,"name",name.getLocalPart(),property);
+                XSLTUtils.addAttribute(model,"type",metainf.getJavaClassNameForElement(name),property);
+//                if (typeMap.containsKey(metainf.getSchemaQNameForElement(name))){
+//                    XSLTUtils.addAttribute(model,"ours","yes",property); //todo introduce a better name for this
+//                }
 
             }
 
@@ -94,13 +163,13 @@ public class JavaBeanWriter {
             OutputStream out = createOutFile(packageName,className);
             //parse with the template and create the files
             parse(model,out);
+            return packageName+"."+className;
         } catch (Exception e) {
             throw new SchemaCompilationException(e);
         }
 
 
     }
-
 
 
     /** A bit of code from the code generator. We are better off using the template

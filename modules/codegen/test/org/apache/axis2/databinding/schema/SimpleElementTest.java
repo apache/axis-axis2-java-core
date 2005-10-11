@@ -15,10 +15,9 @@ package org.apache.axis2.databinding.schema;
  * limitations under the License.
  */
 
-public class ComplexExtensionTest extends AbstractSchemaCompilerTester{
-
+public class SimpleElementTest extends AbstractSchemaCompilerTester {
     protected void setUp() throws Exception {
-        this.fileName = "test-resources/xsd/complex_extension.xsd";
+        this.fileName = "test-resources/xsd/simple_element.xsd";
         super.setUp();
     }
 }
