@@ -15,7 +15,7 @@ package org.apache.axis2.tool.codegen.eclipse.ui;
 
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
-import org.apache.axis2.wsdl.util.URLProcessor;
+import org.apache.axis2.util.URLProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -92,7 +92,6 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants
    /**
     * Sets the default values for the Options page
     * 
-    * @param settings2 the settings store to save the values to
     */
    protected void initializeDefaultSettings()
    {

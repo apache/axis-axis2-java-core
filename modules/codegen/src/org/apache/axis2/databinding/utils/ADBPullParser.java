@@ -1,8 +1,12 @@
 package org.apache.axis2.databinding.utils;
 
+import org.apache.axis2.databinding.ADBBean;
+import org.apache.axis2.databinding.ADBNameValuePair;
+
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
@@ -23,10 +27,16 @@ import java.util.ArrayList;
  * limitations under the License.
  */
 
-public class ADBPullParser implements XMLStreamReader{
+public class ADBPullParser implements XMLStreamReader {
 
     private ArrayList propertyList;
     private QName elementQName;
+
+    private ADBPullParser childPullParser;
+    private boolean accessingChildPullParser = false;
+
+    private int currentIndex = 0;
+
 
     private ADBPullParser(ArrayList propertyList, QName elementQName) {
         this.propertyList = propertyList;
@@ -34,15 +44,50 @@ public class ADBPullParser implements XMLStreamReader{
     }
 
     public static XMLStreamReader createPullParser(ArrayList propertyList, QName adbBeansQName) {
-       return new ADBPullParser(propertyList, adbBeansQName);
+        return new ADBPullParser(propertyList, adbBeansQName);
     }
 
+    public boolean isCompleted() {
+        return currentIndex >= propertyList.size() + 2;
+    }
+
+
+    // ----------- XMLStreamReader Methods -------------------------------------------//
     public Object getProperty(String string) throws IllegalArgumentException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public int next() throws XMLStreamException {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        int event = 0;
+        if (currentIndex >= propertyList.size() + 2) {
+            throw new XMLStreamException("End of elements has already been reached. Can not go beyond that");
+        }
+
+        if (accessingChildPullParser && !childPullParser.isCompleted()) {
+            return childPullParser.next();
+        }
+
+        if (currentIndex == 0) {
+            // then this is just the start element
+            currentIndex++;
+            return XMLStreamConstants.START_ELEMENT;
+        } else if (propertyList.size() + 1 == currentIndex) {
+            // this is the end of this element
+            currentIndex++;
+            return XMLStreamConstants.END_ELEMENT;
+        } else {
+            Object o = propertyList.get(currentIndex - 1);
+            if (o instanceof ADBBean) {
+                ADBBean adbBean = (ADBBean) o;
+                childPullParser = (ADBPullParser) adbBean.getPullParser();
+                accessingChildPullParser = true;
+                return this.next();
+            } else if (o instanceof ADBNameValuePair) {
+                ADBNameValuePair adbNameValuePair = (ADBNameValuePair) o;
+            }
+        }
+
+        return event;
     }
 
     public void require(int i, String string, String string1) throws XMLStreamException {
@@ -216,4 +261,7 @@ public class ADBPullParser implements XMLStreamReader{
     public String getPIData() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    // --------------------------------------------------------------------------------------------------//
+
 }

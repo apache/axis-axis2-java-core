@@ -1,16 +1,15 @@
 package org.apache.axis2.tool.core;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
 import org.apache.axis2.wsdl.codegen.writer.ServiceXMLWriter;
 import org.apache.crimson.tree.XmlDocument;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -75,13 +74,13 @@ public class ServiceFileCreator {
      * @throws IOException
      * @throws Exception
      */
-    private void writeClass(XmlDocument model,ClassWriter writer,String fileName) throws IOException,Exception {
+    private void writeClass(XmlDocument model, ClassWriter writer,String fileName) throws IOException,Exception {
         ByteArrayOutputStream memoryStream = new ByteArrayOutputStream();
         model.write(memoryStream);
         writer.loadTemplate();
         writer.createOutFile(null,
                  fileName);
-        writer.writeOutFile(new ByteArrayInputStream(memoryStream.toByteArray()));
+//        writer.writeOutFile(new ByteArrayInputStream(memoryStream.toByteArray()));
     }
     
    
