@@ -33,7 +33,21 @@ public class ADBPullParser implements XMLStreamReader {
     private QName elementQName;
 
     private ADBPullParser childPullParser;
+
     private boolean accessingChildPullParser = false;
+
+    // ===== To be used this ADBBean =============
+    private boolean isEndElementFinished = false;
+
+    // ===== To be used with ADBNameValuePair ====
+    private boolean processingADBNameValuePair = false;
+    private boolean nameValuePairStartElementProcessed = false;
+    private boolean nameValuePairTextProcessed = false;
+    private boolean nameValuePairEndElementProcessed = false;
+    private ParserInformation tempParserInfo;
+    // ==============================================
+
+    private ParserInformation parserInformation;
 
     private int currentIndex = 0;
 
@@ -48,9 +62,40 @@ public class ADBPullParser implements XMLStreamReader {
     }
 
     public boolean isCompleted() {
-        return currentIndex >= propertyList.size() + 2;
+        return isEndElementFinished;
     }
 
+
+    public class ParserInformation {
+        String text;
+        QName name;
+
+        public ParserInformation(QName name, String text) {
+            this.text = text;
+            this.name = name;
+        }
+
+        public ParserInformation(QName name) {
+            this.name = name;
+        }
+
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public QName getName() {
+            return name;
+        }
+
+        public void setName(QName name) {
+            this.name = name;
+        }
+    }
 
     // ----------- XMLStreamReader Methods -------------------------------------------//
     public Object getProperty(String string) throws IllegalArgumentException {
@@ -63,19 +108,35 @@ public class ADBPullParser implements XMLStreamReader {
             throw new XMLStreamException("End of elements has already been reached. Can not go beyond that");
         }
 
-        if (accessingChildPullParser && !childPullParser.isCompleted()) {
-            return childPullParser.next();
+        if (accessingChildPullParser) {
+            if (!childPullParser.isCompleted()) {
+                return childPullParser.next();
+            } else {
+                accessingChildPullParser = false;
+                currentIndex++;
+            }
+        }
+
+        if(processingADBNameValuePair && nameValuePairEndElementProcessed){
+            processingADBNameValuePair = false;
+            currentIndex++;
+            parserInformation = tempParserInfo;
         }
 
         if (currentIndex == 0) {
             // then this is just the start element
             currentIndex++;
+            parserInformation = new ParserInformation(this.elementQName);
             return XMLStreamConstants.START_ELEMENT;
         } else if (propertyList.size() + 1 == currentIndex) {
             // this is the end of this element
             currentIndex++;
+            isEndElementFinished = true;
             return XMLStreamConstants.END_ELEMENT;
         } else {
+            if (processingADBNameValuePair) {
+                return processADBNameValuePair(null);
+            }
             Object o = propertyList.get(currentIndex - 1);
             if (o instanceof ADBBean) {
                 ADBBean adbBean = (ADBBean) o;
@@ -84,182 +145,225 @@ public class ADBPullParser implements XMLStreamReader {
                 return this.next();
             } else if (o instanceof ADBNameValuePair) {
                 ADBNameValuePair adbNameValuePair = (ADBNameValuePair) o;
+                processingADBNameValuePair = true;
+                return processADBNameValuePair(adbNameValuePair);
             }
         }
 
         return event;
     }
 
-    public void require(int i, String string, String string1) throws XMLStreamException {
-        //To change body of implemented methods use File | Settings | File Templates.
+    private int processADBNameValuePair(ADBNameValuePair nameValuePair) {
+        int event = 0;
+        if (nameValuePair != null) {
+            event = XMLStreamConstants.START_ELEMENT;
+            tempParserInfo = parserInformation;
+            parserInformation = new ParserInformation(new QName(nameValuePair.getName()), nameValuePair.getValue());
+            nameValuePairStartElementProcessed = true;
+            nameValuePairEndElementProcessed = false;
+        } else if (nameValuePairStartElementProcessed && !nameValuePairTextProcessed) {
+            event = XMLStreamConstants.CHARACTERS;
+            nameValuePairTextProcessed = true;
+        } else if (nameValuePairTextProcessed) {
+            event = XMLStreamConstants.END_ELEMENT;
+            nameValuePairEndElementProcessed = true;
+            nameValuePairStartElementProcessed = false;
+            nameValuePairTextProcessed = false;
+        }
+
+        return event;
     }
 
-    public String getElementText() throws XMLStreamException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public int nextTag() throws XMLStreamException {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    public ParserInformation getParserInformation() {
+        return parserInformation;
     }
 
     public boolean hasNext() throws XMLStreamException {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return !isEndElementFinished;
     }
 
-    public void close() throws XMLStreamException {
-        //To change body of implemented methods use File | Settings | File Templates.
+    private ADBPullParser.ParserInformation getCorrectParserInformation() {
+        return accessingChildPullParser ? childPullParser.getParserInformation() : this.parserInformation;
     }
 
-    public String getNamespaceURI(String string) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public String getElementText() throws XMLStreamException {
+        ParserInformation parserInfo = getCorrectParserInformation();
+        return parserInfo != null ? parserInfo.getText() : "";
     }
 
-    public boolean isStartElement() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public boolean isEndElement() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public boolean isCharacters() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public boolean isWhiteSpace() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public String getAttributeValue(String string, String string1) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 
     public int getAttributeCount() {
         return 0;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public QName getAttributeName(int i) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public String getAttributeNamespace(int i) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public String getAttributeLocalName(int i) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public String getAttributePrefix(int i) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public String getAttributeType(int i) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public String getAttributeValue(int i) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public boolean isAttributeSpecified(int i) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public int getNamespaceCount() {
         return 0;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public String getNamespacePrefix(int i) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public String getNamespaceURI(int i) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public NamespaceContext getNamespaceContext() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public int getEventType() {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
     public String getText() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public char[] getTextCharacters() {
-        return new char[0];  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public int getTextCharacters(int i, char[] chars, int i1, int i2) throws XMLStreamException {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public int getTextStart() {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public int getTextLength() {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public String getEncoding() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        ParserInformation parserInfo = getCorrectParserInformation();
+        return parserInfo != null ? parserInfo.getText() : "";
     }
 
     public boolean hasText() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public Location getLocation() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        ParserInformation parserInfo = getCorrectParserInformation();
+        return parserInfo != null && parserInfo.getText() != null && !"".equals(parserInformation.getText());
     }
 
     public QName getName() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        ParserInformation parserInfo = getCorrectParserInformation();
+        return parserInfo != null ? parserInfo.getName() : null;
     }
 
     public String getLocalName() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        ParserInformation parserInfo = getCorrectParserInformation();
+        return parserInfo != null ? parserInfo.getName().getLocalPart() : null;
     }
 
     public boolean hasName() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        ParserInformation parserInfo = getCorrectParserInformation();
+        return parserInfo != null && parserInfo.getName() != null;
     }
 
     public String getNamespaceURI() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        ParserInformation parserInfo = getCorrectParserInformation();
+        return parserInfo != null && parserInfo.getName() != null ? parserInfo.getName().getNamespaceURI() : "";
     }
 
     public String getPrefix() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        ParserInformation parserInfo = getCorrectParserInformation();
+        return parserInfo != null ? parserInfo.getName().getPrefix() : null;
+    }
+
+
+    // -------- un-implemented methods ----------
+    public void require(int i, String string, String string1) throws XMLStreamException {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public int nextTag() throws XMLStreamException {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public void close() throws XMLStreamException {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public String getNamespaceURI(String string) {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public boolean isStartElement() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public boolean isEndElement() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public boolean isCharacters() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public boolean isWhiteSpace() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public String getAttributeValue(String string, String string1) {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public QName getAttributeName(int i) {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public String getAttributeNamespace(int i) {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public String getAttributeLocalName(int i) {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public String getAttributePrefix(int i) {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public String getAttributeType(int i) {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public String getAttributeValue(int i) {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public boolean isAttributeSpecified(int i) {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public String getNamespacePrefix(int i) {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public String getNamespaceURI(int i) {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public NamespaceContext getNamespaceContext() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public int getEventType() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public char[] getTextCharacters() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public int getTextCharacters(int i, char[] chars, int i1, int i2) throws XMLStreamException {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public int getTextStart() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+
+    }
+
+    public int getTextLength() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public String getEncoding() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public Location getLocation() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
     }
 
     public String getVersion() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new UnsupportedOperationException("Yet to be implemented !!");
     }
 
     public boolean isStandalone() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new UnsupportedOperationException("Yet to be implemented !!");
     }
 
     public boolean standaloneSet() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new UnsupportedOperationException("Yet to be implemented !!");
     }
 
     public String getCharacterEncodingScheme() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new UnsupportedOperationException("Yet to be implemented !!");
     }
 
     public String getPITarget() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new UnsupportedOperationException("Yet to be implemented !!");
     }
 
     public String getPIData() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new UnsupportedOperationException("Yet to be implemented !!");
     }
 
     // --------------------------------------------------------------------------------------------------//
