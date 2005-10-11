@@ -64,9 +64,7 @@ public abstract class AbstractSchemaCompilerTester extends TestCase {
 
 
     public void testSchema() throws Exception{
-        CompilerOptions compilerOptions = new CompilerOptions();
-        compilerOptions.setOutputLocation(outputFolder);
-        SchemaCompiler compiler = new SchemaCompiler(compilerOptions);
+        SchemaCompiler compiler = new SchemaCompiler( new CompilerOptions().setOutputLocation(outputFolder));
         compiler.compile(currentSchema);
     }
 
