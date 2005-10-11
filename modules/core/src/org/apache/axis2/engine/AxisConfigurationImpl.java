@@ -173,11 +173,16 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      */
     public void setDispatchPhase(Phase dispatch){
         inPhasesUptoAndIncludingPostDispatch.add(dispatch);
+
         Phase postDispatch = new Phase(PhaseMetadata.PHASE_POST_DISPATCH);
         DispatchingChecker dispatchingChecker = new DispatchingChecker();
         dispatchingChecker.getHandlerDesc().setParent(this);
 
+        InstanceDispatcher instanceDispatcher = new InstanceDispatcher();
+        instanceDispatcher.getHandlerDesc().setParent(this);
+
         postDispatch.addHandler(dispatchingChecker);
+        postDispatch.addHandler(instanceDispatcher,1);
         inPhasesUptoAndIncludingPostDispatch.add(postDispatch);
     }
 

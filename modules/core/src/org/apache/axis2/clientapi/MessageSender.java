@@ -105,8 +105,7 @@ public class MessageSender extends InOnlyMEPClient {
         //create new service
         QName assumedServiceName = new QName("AnonymousService");
         ServiceDescription axisService = new ServiceDescription(assumedServiceName);
-        sysContext.getAxisConfiguration().addService(axisService);
-        ServiceGroupContext serviceGroupContext = axisService.getParent().getServiceGroupContext(sysContext);
+
 
 
 
@@ -121,6 +120,8 @@ public class MessageSender extends InOnlyMEPClient {
             info.setOperationPhases(operationTemplate);
         }
         axisService.addOperation(operationTemplate);
+        sysContext.getAxisConfiguration().addService(axisService);
+        ServiceGroupContext serviceGroupContext = axisService.getParent().getServiceGroupContext(sysContext);
         return serviceGroupContext.getServiceContext(assumedServiceName.getLocalPart());
     }
 }
