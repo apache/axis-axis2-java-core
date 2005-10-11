@@ -16,7 +16,7 @@ import javax.xml.namespace.QName;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class Constants{
+public class SchemaConstants {
     public static final String URI_DEFAULT_SCHEMA_XSD = "http://www.w3.org/2001/XMLSchema";
     public static final QName XSD_STRING = new QName(URI_DEFAULT_SCHEMA_XSD, "string");
     public static final QName XSD_BOOLEAN = new QName(URI_DEFAULT_SCHEMA_XSD, "boolean");

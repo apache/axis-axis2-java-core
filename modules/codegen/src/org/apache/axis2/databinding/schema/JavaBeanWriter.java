@@ -1,10 +1,7 @@
 package org.apache.axis2.databinding.schema;
 
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.axis2.util.FileWriter;
-import org.apache.axis2.util.URLProcessor;
-import org.apache.axis2.util.XSLTUtils;
-import org.apache.axis2.util.XSLTTemplateProcessor;
+import org.apache.axis2.util.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -12,14 +9,10 @@ import org.w3c.dom.Element;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Source;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
 import java.io.*;
 
 /*
@@ -58,7 +51,7 @@ public class JavaBeanWriter {
 
     }
 
-    public void write(XmlSchemaComplexType complexType, Map typeMap,Map currentTypeMap,BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException{
+    public void write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException{
 
         try {
             //determine the package for this type.
@@ -77,23 +70,25 @@ public class JavaBeanWriter {
             Element rootElt = XSLTUtils.addChildElement(model,"bean",model);
             XSLTUtils.addAttribute(model,"name",className,rootElt);
             XSLTUtils.addAttribute(model,"package",packageName,rootElt);
+            XSLTUtils.addAttribute(model,"nsuri",qName.getNamespaceURI(),rootElt);
+            XSLTUtils.addAttribute(model,"nsprefix",qName.getPrefix(),rootElt);
             if (metainf.isExtension()){
-             XSLTUtils.addAttribute(model,"extension",metainf.getExtensionClassName(),rootElt);   
+                XSLTUtils.addAttribute(model,"extension",metainf.getExtensionClassName(),rootElt);
             }
             // go in the loop and add the part elements
-            if (currentTypeMap != null && !currentTypeMap.isEmpty()){
+            Iterator qNameIterator = metainf.getElementQNameIterator();
 
-                Iterator it = currentTypeMap.keySet().iterator();
-                QName name;
-                while (it.hasNext()) {
-                    Element property = XSLTUtils.addChildElement(model,"property",rootElt);
-                    name = (QName)it.next();
-                    XSLTUtils.addAttribute(model,"name",name.getLocalPart(),property);
-                    XSLTUtils.addAttribute(model,"type",currentTypeMap.get(name).toString(),property);
-
+            QName name;
+            while (qNameIterator.hasNext()) {
+                Element property = XSLTUtils.addChildElement(model,"property",rootElt);
+                name = (QName)qNameIterator.next();
+                XSLTUtils.addAttribute(model,"name",name.getLocalPart(),property);
+                XSLTUtils.addAttribute(model,"type",metainf.getJavaClassNameForElement(name),property);
+                if (typeMap.containsKey(metainf.getSchemaQNameForElement(name))){
+                    XSLTUtils.addAttribute(model,"ours","yes",property); //todo introduce a better name for this
                 }
+
             }
-            //add the metainf
 
             //create the file
             OutputStream out = createOutFile(packageName,className);
@@ -133,7 +128,7 @@ public class JavaBeanWriter {
     }
 
 
-     /**
+    /**
      * Creates the output file
      *
      * @param packageName
@@ -141,15 +136,15 @@ public class JavaBeanWriter {
      * @throws Exception
      */
     private OutputStream createOutFile(String packageName, String fileName) throws Exception {
-        File outputFile = FileWriter.createClassFile(this.rootDir,
+        File outputFile = org.apache.axis2.util.FileWriter.createClassFile(this.rootDir,
                 packageName,
                 fileName,
                 ".java");
-           return new FileOutputStream(outputFile);
+        return new FileOutputStream(outputFile);
 
     }
 
-     /**
+    /**
      * Writes the output file
      *
      * @param documentStream
@@ -157,11 +152,11 @@ public class JavaBeanWriter {
      */
     private void parse(Document doc,OutputStream outStream) throws Exception {
 
-            XSLTTemplateProcessor.parse(outStream,
-                    doc,
-                    this.templateCache.newTransformer());
-            outStream.flush();
-            outStream.close();
+        XSLTTemplateProcessor.parse(outStream,
+                doc,
+                this.templateCache.newTransformer());
+        outStream.flush();
+        outStream.close();
 
     }
 }

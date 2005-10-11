@@ -29,27 +29,27 @@ public class TypeMap {
 
     static{
 // If SOAP 1.1 over the wire, map wrapper classes to XSD primitives.
-        addTypemapping(Constants.XSD_STRING, java.lang.String.class);
-        addTypemapping(Constants.XSD_BOOLEAN, java.lang.Boolean.class);
-        addTypemapping(Constants.XSD_DOUBLE, java.lang.Double.class);
-        addTypemapping(Constants.XSD_FLOAT, java.lang.Float.class);
-        addTypemapping(Constants.XSD_INT, java.lang.Integer.class);
-        addTypemapping(Constants.XSD_INTEGER, java.math.BigInteger.class
+        addTypemapping(SchemaConstants.XSD_STRING, java.lang.String.class);
+        addTypemapping(SchemaConstants.XSD_BOOLEAN, java.lang.Boolean.class);
+        addTypemapping(SchemaConstants.XSD_DOUBLE, java.lang.Double.class);
+        addTypemapping(SchemaConstants.XSD_FLOAT, java.lang.Float.class);
+        addTypemapping(SchemaConstants.XSD_INT, java.lang.Integer.class);
+        addTypemapping(SchemaConstants.XSD_INTEGER, java.math.BigInteger.class
         );
-        addTypemapping(Constants.XSD_DECIMAL, java.math.BigDecimal.class
+        addTypemapping(SchemaConstants.XSD_DECIMAL, java.math.BigDecimal.class
         );
-        addTypemapping(Constants.XSD_LONG, java.lang.Long.class);
-        addTypemapping(Constants.XSD_SHORT, java.lang.Short.class);
-        addTypemapping(Constants.XSD_BYTE, java.lang.Byte.class);
+        addTypemapping(SchemaConstants.XSD_LONG, java.lang.Long.class);
+        addTypemapping(SchemaConstants.XSD_SHORT, java.lang.Short.class);
+        addTypemapping(SchemaConstants.XSD_BYTE, java.lang.Byte.class);
 
         // The XSD Primitives are mapped to java primitives.
-        addTypemapping(Constants.XSD_BOOLEAN, boolean.class);
-        addTypemapping(Constants.XSD_DOUBLE, double.class);
-        addTypemapping(Constants.XSD_FLOAT, float.class);
-        addTypemapping(Constants.XSD_INT, int.class);
-        addTypemapping(Constants.XSD_LONG, long.class);
-        addTypemapping(Constants.XSD_SHORT, short.class);
-        addTypemapping(Constants.XSD_BYTE, byte.class);
+        addTypemapping(SchemaConstants.XSD_BOOLEAN, boolean.class);
+        addTypemapping(SchemaConstants.XSD_DOUBLE, double.class);
+        addTypemapping(SchemaConstants.XSD_FLOAT, float.class);
+        addTypemapping(SchemaConstants.XSD_INT, int.class);
+        addTypemapping(SchemaConstants.XSD_LONG, long.class);
+        addTypemapping(SchemaConstants.XSD_SHORT, short.class);
+        addTypemapping(SchemaConstants.XSD_BYTE, byte.class);
 
     }
     private static void addTypemapping(QName name,Class clazz) {

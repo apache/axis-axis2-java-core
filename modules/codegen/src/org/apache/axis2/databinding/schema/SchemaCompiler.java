@@ -1,7 +1,6 @@
 package org.apache.axis2.databinding.schema;
 
 import org.apache.ws.commons.schema.*;
-import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.util.URLProcessor;
 
 import javax.xml.namespace.QName;
@@ -99,7 +98,6 @@ public class SchemaCompiler {
             processElement((XmlSchemaElement)xmlSchemaElementIterator.next());
         }
 
-        //System.out.println("processedTypemap = " + processedTypemap);
     }
 
     /**
@@ -142,18 +140,17 @@ public class SchemaCompiler {
         //
 
         XmlSchemaParticle particle =  complexType.getParticle();
-        Map elementMap = new HashMap();
         BeanWriterMetaInfoHolder metaInfHolder = new BeanWriterMetaInfoHolder();
         if (particle!=null){
             //Process the particle
-            processParticle(particle, elementMap,metaInfHolder);
+            processParticle(particle, metaInfHolder);
         }else{
             XmlSchemaContentModel contentModel = complexType.getContentModel();
             if (contentModel!=null){
                 XmlSchemaContent content =  (contentModel).getContent();
                 if (content instanceof XmlSchemaComplexContentExtension){
                     XmlSchemaComplexContentExtension xmlSchemaComplexContentExtension = (XmlSchemaComplexContentExtension) content;
-                    processParticle(xmlSchemaComplexContentExtension.getParticle(),elementMap,metaInfHolder);
+                    processParticle(xmlSchemaComplexContentExtension.getParticle(),metaInfHolder);
                     metaInfHolder.setExtension(true);
                     metaInfHolder.setExtensionClassName(
                             getJavaClassNameFromComplexTypeQName(
@@ -165,19 +162,15 @@ public class SchemaCompiler {
         }
 
         //write the class. This type mapping would have been populated right now
-        writer.write(complexType,processedTypemap,elementMap,metaInfHolder);
+        writer.write(complexType,processedTypemap,metaInfHolder);
         processedTypemap.put(complexType.getQName(),"");
-
-
-
 
         //populate the type mapping with the elements
 
     }
 
     private void processParticle(XmlSchemaParticle particle, //particle being processed
-                                 Map elementMap, //type map for the current element
-                                 BeanWriterMetaInfoHolder metainfHolder // metainf holder
+                                BeanWriterMetaInfoHolder metainfHolder // metainf holder
     ) throws SchemaCompilationException {
         if (particle instanceof XmlSchemaSequence ){
             XmlSchemaObjectCollection items = ((XmlSchemaSequence)particle).getItems();
@@ -192,15 +185,19 @@ public class SchemaCompiler {
                     QName schemaTypeQName = xsElt.getSchemaType().getQName();
                     Class clazz = (Class)baseSchemaTypeMap.get(schemaTypeQName);
                     if (clazz!=null){
-                        elementMap.put(xsElt.getQName(),clazz.getName());
+                        metainfHolder.addElementInfo(xsElt.getQName(),
+                                                     xsElt.getSchemaTypeName()
+                                                     ,clazz.getName());
                     }else{
-                        elementMap.put(xsElt.getQName(),getJavaClassNameFromComplexTypeQName(schemaTypeQName));
+                         metainfHolder.addElementInfo(xsElt.getQName(),
+                                                     xsElt.getSchemaTypeName()
+                                                     ,getJavaClassNameFromComplexTypeQName(schemaTypeQName));
                     }
                 }else if (item instanceof XmlSchemaComplexContent){
                     // process the extension
                     XmlSchemaContent content = ((XmlSchemaComplexContent)item).getContent();
                     if (content instanceof XmlSchemaComplexContentExtension){
-                        processParticle(((XmlSchemaComplexContentExtension)content).getParticle(),elementMap,metainfHolder);
+                        processParticle(((XmlSchemaComplexContentExtension)content).getParticle(),metainfHolder);
                     }else if (content instanceof XmlSchemaComplexContentRestriction){
                         //handle complex restriction
                     }

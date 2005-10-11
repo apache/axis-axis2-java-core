@@ -1,4 +1,11 @@
 package org.apache.axis2.databinding.schema;
+
+import sun.text.CompactShortArray;
+
+import javax.xml.namespace.QName;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -24,6 +31,8 @@ public class BeanWriterMetaInfoHolder {
     private boolean ordered = false;
     private boolean extension = false;
     private String extensionClassName = "";
+    private Map elementToSchemaQNameMap = new HashMap();
+    private Map elementToJavaClassMap = new HashMap();
 
     public String getExtensionClassName() {
         return extensionClassName;
@@ -49,5 +58,28 @@ public class BeanWriterMetaInfoHolder {
         this.ordered = ordered;
     }
 
+    public void addElementInfo(QName eltQName,QName eltSchemaName,String javaClassName){
+        this.elementToJavaClassMap.put(eltQName,javaClassName);
+        this.elementToSchemaQNameMap.put(eltQName,eltSchemaName);
+
+    }
+
+    public QName getSchemaQNameForElement(QName eltQName){
+        return (QName)this.elementToSchemaQNameMap.get(eltQName);
+    }
+
+     public String getJavaClassNameForElement(QName eltQName){
+        return (String)this.elementToJavaClassMap.get(eltQName);
+    }
+
+    public void clearTables(){
+        this.elementToJavaClassMap.clear();
+        this.elementToSchemaQNameMap.clear();
+
+    }
+
+    public Iterator getElementQNameIterator(){
+        return elementToJavaClassMap.keySet().iterator();
+    }
 
 }
