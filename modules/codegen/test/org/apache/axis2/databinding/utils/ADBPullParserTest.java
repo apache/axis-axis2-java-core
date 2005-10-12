@@ -41,23 +41,39 @@ public class ADBPullParserTest extends TestCase {
     public void testSimpleArrayList() {
         try {
 
-            String exptectedXML = "<Project><Name>Axis2</Name><Releases><FirstRelease>0.90</FirstRelease>" +
-                    "<SecondRelease>0.91</SecondRelease><ThirdRelease>0.92</ThirdRelease></Releases>" +
-                    "<Releases><FirstRelease>0.90</FirstRelease><SecondRelease>0.91</SecondRelease>" +
-                    "<ThirdRelease>0.92</ThirdRelease></Releases><Organization>Apache</Organization>" +
-                    "</Project>";
+            /*
+            This is what I expect :
+            <Person>
+                <Name>FooOne</Name>
+                <DependentOne>
+                    <Name>FooTwo</Name>
+                    <Age>25</Age>
+                    <Sex>Male</Sex>
+                </DependentOne>
+                <DependentTwo>
+                    <Name>FooTwo</Name>
+                    <Age>25</Age>
+                    <Sex>Male</Sex>
+                </DependentTwo>
+                <Organization>Apache</Organization>
+            </Person>
+            */
+            String exptectedXML = "<Person><Name>FooOne</Name><DependentOne><Name>FooTwo</Name>" +
+                    "<Age>25</Age><Sex>Male</Sex></DependentOne><DependentTwo><Name>FooTwo</Name>" +
+                    "<Age>25</Age><Sex>Male</Sex></DependentTwo><Organization>Apache</Organization>" +
+                    "</Person>";
 
             ArrayList propertyList = new ArrayList();
             propertyList.add("Name");
-            propertyList.add("Axis2");
-            propertyList.add(new QName("Releases"));
+            propertyList.add("FooOne");
+            propertyList.add(new QName("DependentOne"));
             propertyList.add(new DummyADBBean());
-            propertyList.add(new QName("Releases"));
+            propertyList.add(new QName("DependentTwo"));
             propertyList.add(new DummyADBBean());
             propertyList.add("Organization");
             propertyList.add("Apache");
 
-            QName projectQName = new QName("Project");
+            QName projectQName = new QName("Person");
             XMLStreamReader pullParser = ADBPullParser.createPullParser(propertyList.toArray(), projectQName);
 //            while (pullParser.hasNext()) {
 //                int eventCode = pullParser.next();
@@ -88,76 +104,108 @@ public class ADBPullParserTest extends TestCase {
             }
 
 
-            String s = buff.toString();
-            System.out.println("s = " + s);
-            assertEquals(exptectedXML, s);
+            assertEquals(exptectedXML, buff.toString());
         } catch (XMLStreamException e) {
             log.error("Parser Error " + e);
         }
 
     }
 
-//    public void testComplexArrayList() {
-//        try {
-//
-//            String exptectedXML = "<Project><Name>Axis2</Name><Releases><FirstRelease>0.90</FirstRelease>" +
-//                    "<SecondRelease>0.91</SecondRelease><ThirdRelease>0.92</ThirdRelease></Releases>" +
-//                    "<Releases><FirstRelease>0.90</FirstRelease><SecondRelease>0.91</SecondRelease>" +
-//                    "<ThirdRelease>0.92</ThirdRelease></Releases><Organization>Apache</Organization>" +
-//                    "</Project>";
-//
-//            ArrayList propertyList = new ArrayList();
-//            propertyList.add("Name");
-//            propertyList.add("Axis2");
-//            propertyList.add(null);
-//            DummyADBBean dummyBean = new DummyADBBean();
-//            dummyBean.addAnotherBean();
-//            propertyList.add(dummyBean);
-//            propertyList.add("Organization");
-//            propertyList.add("Apache");
-//
-//            QName projectQName = new QName("Project");
-//            XMLStreamReader pullParser = ADBPullParser.createPullParser(propertyList.toArray(), projectQName);
-////            while (pullParser.hasNext()) {
-////                int eventCode = pullParser.next();
-////                System.out.println(eventCode + ":" + getEventString(eventCode));
-////            }
-//
-//            StringBuffer buff = new StringBuffer();
-//            while (pullParser.hasNext()) {
-//                int eventCode = pullParser.next();
-//
-//                switch (eventCode) {
-//                    case XMLStreamConstants.START_ELEMENT :
-//                        System.out.println("<" + pullParser.getLocalName() + ">");
-//                        buff.append("<");
-//                        buff.append(pullParser.getLocalName());
-//                        buff.append(">");
-//                        break;
-//                    case XMLStreamConstants.CHARACTERS :
-//                        System.out.println(pullParser.getText());
-//                        buff.append(pullParser.getText());
-//                        break;
-//                    case XMLStreamConstants.END_ELEMENT :
-//                        System.out.println("</" + pullParser.getLocalName() + ">");
-//                        buff.append("</");
-//                        buff.append(pullParser.getLocalName());
-//                        buff.append(">");
-//                        break;
-//                    default:
-//                        System.out.println("No Other event can be trown here");
-//                }
-//            }
-//
-//
-//            String s = buff.toString();
-//            System.out.println("s = " + s);
-////            assertEquals(exptectedXML, s);
-//        } catch (XMLStreamException e) {
-//            log.error("Parser Error " + e);
-//        }
-//
-//    }
+    public void testComplexArrayList() {
+        try {
+
+            /*
+            This is what I expect :
+
+            <Person>
+                <Name>FooOne</Name>
+                <Organization>Apache</Organization>
+                <Dependent>
+                    <Name>FooTwo</Name>
+                    <Age>25</Age>
+                    <Sex>Male</Sex>
+                    <Depemdent>
+                        <Name>FooTwo</Name>
+                        <Age>25</Age>
+                        <Sex>Male</Sex>
+                            <Depemdent>
+                            <Name>FooTwo</Name>
+                            <Age>25</Age>
+                            <Sex>Male</Sex>
+                    </Depemdent>
+                </Depemdent>
+            </Dependent>
+            <Dependent>
+                <Name>FooTwo</Name>
+                <Age>25</Age>
+                <Sex>Male</Sex>
+                <Depemdent>
+                    <Name>FooTwo</Name>
+                    <Age>25</Age>
+                    <Sex>Male</Sex>
+                </Depemdent>
+            </Dependent>
+        </Person>
+            */
+            String exptectedXML = "<Person><Name>FooOne</Name><Organization>Apache</Organization>" +
+                    "<Dependent><Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex><Depemdent>" +
+                    "<Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex><Depemdent><Name>FooTwo</Name>" +
+                    "<Age>25</Age><Sex>Male</Sex></Depemdent></Depemdent></Dependent><Dependent>" +
+                    "<Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex><Depemdent><Name>FooTwo</Name>" +
+                    "<Age>25</Age><Sex>Male</Sex></Depemdent></Dependent></Person>";
+
+
+            ArrayList propertyList = new ArrayList();
+            propertyList.add("Name");
+            propertyList.add("FooOne");
+
+            propertyList.add("Organization");
+            propertyList.add("Apache");
+
+            propertyList.add(new QName("Dependent"));
+            DummyADBBean dummyBean = new DummyADBBean();
+            ADBPullParserTest.DummyADBBean nextdummyBean = dummyBean.addAnotherBean();
+            nextdummyBean.addAnotherBean();
+            propertyList.add(dummyBean);
+
+            propertyList.add(new QName("Dependent"));
+            dummyBean = new DummyADBBean();
+            dummyBean.addAnotherBean();
+            propertyList.add(dummyBean);
+
+            QName projectQName = new QName("Person");
+            XMLStreamReader pullParser = ADBPullParser.createPullParser(propertyList.toArray(), projectQName);
+
+            StringBuffer buff = new StringBuffer();
+            while (pullParser.hasNext()) {
+                int eventCode = pullParser.next();
+
+                switch (eventCode) {
+                    case XMLStreamConstants.START_ELEMENT :
+                        buff.append("<");
+                        buff.append(pullParser.getLocalName());
+                        buff.append(">");
+                        break;
+                    case XMLStreamConstants.CHARACTERS :
+                        buff.append(pullParser.getText());
+                        break;
+                    case XMLStreamConstants.END_ELEMENT :
+                        buff.append("</");
+                        buff.append(pullParser.getLocalName());
+                        buff.append(">");
+                        break;
+                    default:
+                        System.out.println("No Other event can be trown here");
+                }
+            }
+
+
+            assertEquals(exptectedXML, buff.toString());
+        } catch (XMLStreamException e) {
+            log.error("Parser Error " + e);
+        }
+
+    }
 
     private String getEventString(int eventCode) {
         String event = "";
@@ -216,16 +264,16 @@ public class ADBPullParserTest extends TestCase {
         ArrayList propertyList = new ArrayList();
 
         public DummyADBBean() {
-            propertyList.add("FirstRelease");
-            propertyList.add("0.90");
-            propertyList.add("SecondRelease");
-            propertyList.add("0.91");
-            propertyList.add("ThirdRelease");
-            propertyList.add("0.92");
+            propertyList.add("Name");
+            propertyList.add("FooTwo");
+            propertyList.add("Age");
+            propertyList.add("25");
+            propertyList.add("Sex");
+            propertyList.add("Male");
         }
 
         public DummyADBBean addAnotherBean() {
-            propertyList.add(null);
+            propertyList.add(new QName("Depemdent"));
             DummyADBBean dummyBean = new DummyADBBean();
             propertyList.add(dummyBean);
             return dummyBean;

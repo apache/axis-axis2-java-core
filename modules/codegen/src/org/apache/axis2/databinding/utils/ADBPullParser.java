@@ -63,38 +63,6 @@ public class ADBPullParser implements XMLStreamReader {
         return isEndElementFinished;
     }
 
-
-    public class ParserInformation {
-        String text;
-        QName name;
-
-        public ParserInformation(QName name, String text) {
-            this.text = text;
-            this.name = name;
-        }
-
-        public ParserInformation(QName name) {
-            this.name = name;
-        }
-
-
-        public String getText() {
-            return text;
-        }
-
-        public void setText(String text) {
-            this.text = text;
-        }
-
-        public QName getName() {
-            return name;
-        }
-
-        public void setName(QName name) {
-            this.name = name;
-        }
-    }
-
     // ----------- XMLStreamReader Methods -------------------------------------------//
     public Object getProperty(String string) throws IllegalArgumentException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
@@ -115,7 +83,7 @@ public class ADBPullParser implements XMLStreamReader {
             }
         }
 
-        if(processingADBNameValuePair && nameValuePairEndElementProcessed){
+        if (processingADBNameValuePair && nameValuePairEndElementProcessed) {
             processingADBNameValuePair = false;
             currentIndex = currentIndex + 2;
             parserInformation = tempParserInfo;
@@ -137,51 +105,31 @@ public class ADBPullParser implements XMLStreamReader {
             }
             Object o = properties[currentIndex - 1];
             if (o instanceof QName) {
-                ADBBean adbBean = (ADBBean) properties[currentIndex];
-                childPullParser = (ADBPullParser) adbBean.getPullParser((QName) o);
+
+                Object object = properties[currentIndex];
+                if (object instanceof ADBBean) {
+                    ADBBean adbBean = (ADBBean) object;
+                    childPullParser = (ADBPullParser) adbBean.getPullParser((QName) o);
+                } else {
+                    
+                }
                 accessingChildPullParser = true;
                 return this.next();
-            } else {
+            } else if (o instanceof String) {
                 String simplePropertyName = (String) o;
                 String simplePropertyValue = (String) properties[currentIndex];
                 processingADBNameValuePair = true;
                 return processADBNameValuePair(simplePropertyName, simplePropertyValue);
+            } else {
+                throw new XMLStreamException("Sorry !! We only support QNames and Strings as the keys of the properties list");
             }
         }
 
     }
 
-    private int processADBNameValuePair(String simplePropertyName, String simplePropertyValue) {
-        int event = 0;
-        if (!nameValuePairStartElementProcessed) {
-            event = XMLStreamConstants.START_ELEMENT;
-            tempParserInfo = parserInformation;
-            parserInformation = new ParserInformation(new QName(simplePropertyName), simplePropertyValue);
-            nameValuePairStartElementProcessed = true;
-            nameValuePairEndElementProcessed = false;
-        } else if (nameValuePairStartElementProcessed && !nameValuePairTextProcessed) {
-            event = XMLStreamConstants.CHARACTERS;
-            nameValuePairTextProcessed = true;
-        } else if (nameValuePairTextProcessed) {
-            event = XMLStreamConstants.END_ELEMENT;
-            nameValuePairEndElementProcessed = true;
-            nameValuePairStartElementProcessed = false;
-            nameValuePairTextProcessed = false;
-        }
-
-        return event;
-    }
-
-    public ParserInformation getParserInformation() {
-        return parserInformation;
-    }
 
     public boolean hasNext() throws XMLStreamException {
         return !isEndElementFinished;
-    }
-
-    private ADBPullParser.ParserInformation getCorrectParserInformation() {
-        return accessingChildPullParser ? childPullParser.getParserInformation() : this.parserInformation;
     }
 
     public String getElementText() throws XMLStreamException {
@@ -364,6 +312,77 @@ public class ADBPullParser implements XMLStreamReader {
         throw new UnsupportedOperationException("Yet to be implemented !!");
     }
 
+    // =============================================================================
+    // Utill methods inside this class
+    // =============================================================================
+    private int processADBNameValuePair(String simplePropertyName, String simplePropertyValue) {
+        int event = 0;
+        if (!nameValuePairStartElementProcessed) {
+            event = XMLStreamConstants.START_ELEMENT;
+            tempParserInfo = parserInformation;
+            parserInformation = new ParserInformation(new QName(simplePropertyName), simplePropertyValue);
+            nameValuePairStartElementProcessed = true;
+            nameValuePairEndElementProcessed = false;
+        } else if (nameValuePairStartElementProcessed && !nameValuePairTextProcessed) {
+            event = XMLStreamConstants.CHARACTERS;
+            nameValuePairTextProcessed = true;
+        } else if (nameValuePairTextProcessed) {
+            event = XMLStreamConstants.END_ELEMENT;
+            nameValuePairEndElementProcessed = true;
+            nameValuePairStartElementProcessed = false;
+            nameValuePairTextProcessed = false;
+        }
+        return event;
+    }
+
+    /**
+     * This will returns the parser information
+     */
+    public ParserInformation getParserInformation() {
+        return accessingChildPullParser ? childPullParser.getParserInformation() : this.parserInformation;
+    }
+
+    private ADBPullParser.ParserInformation getCorrectParserInformation() {
+        return accessingChildPullParser ? childPullParser.getParserInformation() : this.parserInformation;
+    }
+
     // --------------------------------------------------------------------------------------------------//
 
+    /**
+     * Inner class which holds stuff for the parser to pick data
+     * This hold the information the parser will hold when user request for data. Every ADBPullParser
+     * hold this kind of object inside it and within the methods of ADBPullParser, they refer to the
+     * fields inside this class. So if user needs to change what parser returns, he just need to
+     * change parser information object.
+     */
+    public class ParserInformation {
+        String text;
+        QName name;
+
+        public ParserInformation(QName name, String text) {
+            this.text = text;
+            this.name = name;
+        }
+
+        public ParserInformation(QName name) {
+            this.name = name;
+        }
+
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public QName getName() {
+            return name;
+        }
+
+        public void setName(QName name) {
+            this.name = name;
+        }
+    }
 }
