@@ -50,4 +50,28 @@ public class ConverterUtil {
         return o;
     }
     //add the others here
+
+    public static Object convertToObject(String i){
+        return i;
+    }
+
+     public static Object convertToObject(boolean i){
+        return Boolean.valueOf(i);
+    }
+
+    public static Object convertToObject(double i){
+        return new Double(i);
+    }
+
+    public static Object convertToObject(byte i){
+        return new Byte(i);
+    }
+
+     public static Object convertToObject(char i){
+        return new Character(i);
+    }
+
+      public static Object convertToObject(short i){
+        return new Short(i);
+    }
 }

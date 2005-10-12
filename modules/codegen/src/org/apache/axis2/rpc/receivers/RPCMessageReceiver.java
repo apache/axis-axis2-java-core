@@ -15,8 +15,6 @@ import org.apache.axis2.description.OperationDescription;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 /*
@@ -46,6 +44,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
 
     private Method method;
+    private String RETURN_WRAPPER = "return";
 
     /**
      * reflect and get the Java method
@@ -129,24 +128,25 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                 }
                 paracount ++;
             }
-            Object reS = method.invoke(obj, objarray);
+            Object resObject = method.invoke(obj, objarray);
 
             // Handling the response
+            //todo NameSpace has to be taken from the serviceDescription
             OMNamespace ns = getSOAPFactory().createOMNamespace(
                     "http://soapenc/", "res");
             SOAPEnvelope envelope = getSOAPFactory().getDefaultEnvelope();
             OMElement bodyContent = getSOAPFactory().createOMElement(
                     method.getName() + "Response", ns);
-            if (reS == null) {
-                // No return type , has to send a emepty body message , no need to add element to the
-                // body element
-            } else {
-                if (SimpleTypeMapper.isSimpleType(reS)) {
-                    OMElement child = getSOAPFactory().createOMElement("arg0", null);
-                    child.addChild(fac.createText(child, reS.toString()));
+            if (resObject != null) {
+                //simple type
+                if (SimpleTypeMapper.isSimpleType(resObject)) {
+                    OMElement child = getSOAPFactory().createOMElement(RETURN_WRAPPER, null);
+                    child.addChild(fac.createText(child, resObject.toString()));
                     bodyContent.addChild(child);
                 } else {
-                    XMLStreamReader xr = BeanSerializerUtil.getPullParser(reS, new QName("return"));
+                    // Java Beans
+                    XMLStreamReader xr = BeanSerializerUtil.getPullParser(resObject,
+                            new QName(RETURN_WRAPPER));
                     StAXOMBuilder stAXOMBuilder =
                             OMXMLBuilderFactory.createStAXOMBuilder(
                                     OMAbstractFactory.getSOAP11Factory(), xr);
@@ -155,9 +155,6 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                     if (documentElement != null) {
                         bodyContent.addChild(documentElement);
                     }
-                    /**
-                     * Else first has to check whethere a serilizer is there to serilize the object
-                     */
                 }
             }
             if (bodyContent != null) {

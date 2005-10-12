@@ -26,6 +26,14 @@ import org.apache.axis2.om.OMElement;
 public class SimpleTypeMapper {
 
     private static final String STRING = "java.lang.String";
+    private static final String W_INT = "java.lang.Integer";
+    private static final String W_DOUBLE = "java.lang.Double";
+    private static final String W_LONG = "java.lang.Long";
+    private static final String W_BYTE = "java.lang.Byte";
+    private static final String W_SHORT = "java.lang.Short";
+    private static final String W_BOOLEAN = "java.lang.Boolean";
+    private static final String W_CHAR = "java.lang.Character";
+    private static final String W_FLOAT = "java.lang.Float";
     private static final String INT = "int";
     private static final String BOOLEAN = "boolean";
     private static final String BYTE = "byte";
@@ -79,6 +87,22 @@ public class SimpleTypeMapper {
             return true;
         }  else if (objClassName.equals(CHAR)){
             return true;
+        }   else if (objClassName.equals(W_INT)){
+            return true;
+        }    else if (objClassName.equals(W_BOOLEAN)){
+            return true;
+        }   else if (objClassName.equals(W_BYTE)){
+            return true;
+        }   else if (objClassName.equals(W_DOUBLE)){
+            return true;
+        }   else if (objClassName.equals(W_SHORT)){
+            return true;
+        } else if (objClassName.equals(W_LONG)){
+            return true;
+        }  else if (objClassName.equals(W_FLOAT)){
+            return true;
+        }  else if (objClassName.equals(W_CHAR)){
+            return true;
         }   else {
             return false;
         }
@@ -103,6 +127,22 @@ public class SimpleTypeMapper {
         }  else if (objClassName.equals(FLOAT)){
             return true;
         }  else if (objClassName.equals(CHAR)){
+            return true;
+        }   else if (objClassName.equals(W_INT)){
+            return true;
+        }    else if (objClassName.equals(W_BOOLEAN)){
+            return true;
+        }   else if (objClassName.equals(W_BYTE)){
+            return true;
+        }   else if (objClassName.equals(W_DOUBLE)){
+            return true;
+        }   else if (objClassName.equals(W_SHORT)){
+            return true;
+        } else if (objClassName.equals(W_LONG)){
+            return true;
+        }  else if (objClassName.equals(W_FLOAT)){
+            return true;
+        }  else if (objClassName.equals(W_CHAR)){
             return true;
         }   else {
             return false;

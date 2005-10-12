@@ -89,14 +89,6 @@ public class BeanSerializer {
             Field field = fields[i];
             this.fields.put(field.getName(),field);
         }
-
-
-//
-//        Method[] methods = beanClass.getMethods();
-//        for (int i = 0; i < methods.length; i++) {
-//            Method method = methods[i];
-//            fields.put(method.getName(),method);
-//        }
     }
 
 }
