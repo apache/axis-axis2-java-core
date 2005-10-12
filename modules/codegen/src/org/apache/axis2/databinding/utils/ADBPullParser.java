@@ -1,7 +1,6 @@
 package org.apache.axis2.databinding.utils;
 
 import org.apache.axis2.databinding.ADBBean;
-import org.apache.axis2.databinding.ADBNameValuePair;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -9,7 +8,6 @@ import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.util.ArrayList;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -29,7 +27,7 @@ import java.util.ArrayList;
 
 public class ADBPullParser implements XMLStreamReader {
 
-    private ArrayList propertyList;
+    private Object[] properties;
     private QName elementQName;
 
     private ADBPullParser childPullParser;
@@ -39,7 +37,7 @@ public class ADBPullParser implements XMLStreamReader {
     // ===== To be used this ADBBean =============
     private boolean isEndElementFinished = false;
 
-    // ===== To be used with ADBNameValuePair ====
+    // ===== To be used with Simple Name Value pair ====
     private boolean processingADBNameValuePair = false;
     private boolean nameValuePairStartElementProcessed = false;
     private boolean nameValuePairTextProcessed = false;
@@ -52,13 +50,13 @@ public class ADBPullParser implements XMLStreamReader {
     private int currentIndex = 0;
 
 
-    private ADBPullParser(ArrayList propertyList, QName elementQName) {
-        this.propertyList = propertyList;
+    private ADBPullParser(Object[] properties, QName elementQName) {
+        this.properties = properties;
         this.elementQName = elementQName;
     }
 
-    public static XMLStreamReader createPullParser(ArrayList propertyList, QName adbBeansQName) {
-        return new ADBPullParser(propertyList, adbBeansQName);
+    public static XMLStreamReader createPullParser(Object[] properties, QName adbBeansQName) {
+        return new ADBPullParser(properties, adbBeansQName);
     }
 
     public boolean isCompleted() {
@@ -104,7 +102,7 @@ public class ADBPullParser implements XMLStreamReader {
 
     public int next() throws XMLStreamException {
         int event = 0;
-        if (currentIndex >= propertyList.size() + 2) {
+        if (currentIndex >= properties.length + 2) {
             throw new XMLStreamException("End of elements has already been reached. Can not go beyond that");
         }
 
@@ -113,13 +111,13 @@ public class ADBPullParser implements XMLStreamReader {
                 return childPullParser.next();
             } else {
                 accessingChildPullParser = false;
-                currentIndex++;
+                currentIndex += 2;
             }
         }
 
         if(processingADBNameValuePair && nameValuePairEndElementProcessed){
             processingADBNameValuePair = false;
-            currentIndex++;
+            currentIndex = currentIndex + 2;
             parserInformation = tempParserInfo;
         }
 
@@ -128,37 +126,37 @@ public class ADBPullParser implements XMLStreamReader {
             currentIndex++;
             parserInformation = new ParserInformation(this.elementQName);
             return XMLStreamConstants.START_ELEMENT;
-        } else if (propertyList.size() + 1 == currentIndex) {
+        } else if (properties.length + 1 == currentIndex) {
             // this is the end of this element
             currentIndex++;
             isEndElementFinished = true;
             return XMLStreamConstants.END_ELEMENT;
         } else {
             if (processingADBNameValuePair) {
-                return processADBNameValuePair(null);
+                return processADBNameValuePair(null, null);
             }
-            Object o = propertyList.get(currentIndex - 1);
-            if (o instanceof ADBBean) {
-                ADBBean adbBean = (ADBBean) o;
+            Object o = properties[currentIndex - 1];
+            if (o == null) {
+                ADBBean adbBean = (ADBBean) properties[currentIndex];
                 childPullParser = (ADBPullParser) adbBean.getPullParser();
                 accessingChildPullParser = true;
                 return this.next();
-            } else if (o instanceof ADBNameValuePair) {
-                ADBNameValuePair adbNameValuePair = (ADBNameValuePair) o;
+            } else {
+                String simplePropertyName = (String) o;
+                String simplePropertyValue = (String) properties[currentIndex];
                 processingADBNameValuePair = true;
-                return processADBNameValuePair(adbNameValuePair);
+                return processADBNameValuePair(simplePropertyName, simplePropertyValue);
             }
         }
 
-        return event;
     }
 
-    private int processADBNameValuePair(ADBNameValuePair nameValuePair) {
+    private int processADBNameValuePair(String simplePropertyName, String simplePropertyValue) {
         int event = 0;
-        if (nameValuePair != null) {
+        if (!nameValuePairStartElementProcessed) {
             event = XMLStreamConstants.START_ELEMENT;
             tempParserInfo = parserInformation;
-            parserInformation = new ParserInformation(new QName(nameValuePair.getName()), nameValuePair.getValue());
+            parserInformation = new ParserInformation(new QName(simplePropertyName), simplePropertyValue);
             nameValuePairStartElementProcessed = true;
             nameValuePairEndElementProcessed = false;
         } else if (nameValuePairStartElementProcessed && !nameValuePairTextProcessed) {

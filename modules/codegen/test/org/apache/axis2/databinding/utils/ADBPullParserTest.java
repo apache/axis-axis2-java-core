@@ -2,7 +2,6 @@ package org.apache.axis2.databinding.utils;
 
 import junit.framework.TestCase;
 import org.apache.axis2.databinding.ADBBean;
-import org.apache.axis2.databinding.ADBNameValuePair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -48,15 +47,18 @@ public class ADBPullParserTest extends TestCase {
                     "<ThirdRelease>0.92</ThirdRelease></Releases><Organization>Apache</Organization>" +
                     "</Project>";
 
-            ADBNameValuePair adbNameValuePair;
             ArrayList propertyList = new ArrayList();
-            propertyList.add(new ADBNameValuePair("Name", "Axis2"));
+            propertyList.add("Name");
+            propertyList.add("Axis2");
+            propertyList.add(null);
             propertyList.add(new DummyADBBean());
+            propertyList.add(null);
             propertyList.add(new DummyADBBean());
-            propertyList.add(new ADBNameValuePair("Organization", "Apache"));
+            propertyList.add("Organization");
+            propertyList.add("Apache");
 
             QName projectQName = new QName("Project");
-            XMLStreamReader pullParser = ADBPullParser.createPullParser(propertyList, projectQName);
+            XMLStreamReader pullParser = ADBPullParser.createPullParser(propertyList.toArray(), projectQName);
 //            while (pullParser.hasNext()) {
 //                int eventCode = pullParser.next();
 //                System.out.println(eventCode + ":" + getEventString(eventCode));
@@ -85,7 +87,10 @@ public class ADBPullParserTest extends TestCase {
                 }
             }
 
-            assertEquals(exptectedXML, buff.toString());
+
+            String s = buff.toString();
+            System.out.println("s = " + s);
+            assertEquals(exptectedXML, s);
         } catch (XMLStreamException e) {
             log.error("Parser Error " + e);
         }
@@ -148,14 +153,16 @@ public class ADBPullParserTest extends TestCase {
     public class DummyADBBean implements ADBBean {
 
         public XMLStreamReader getPullParser() {
-            ADBNameValuePair adbNameValuePair;
             ArrayList propertyList = new ArrayList();
-            propertyList.add(new ADBNameValuePair("FirstRelease", "0.90"));
-            propertyList.add(new ADBNameValuePair("SecondRelease", "0.91"));
-            propertyList.add(new ADBNameValuePair("ThirdRelease", "0.92"));
+            propertyList.add("FirstRelease");
+            propertyList.add("0.90");
+            propertyList.add("SecondRelease");
+            propertyList.add("0.91");
+            propertyList.add("ThirdRelease");
+            propertyList.add("0.92");
 
             QName releasesQName = new QName("Releases");
-            return ADBPullParser.createPullParser(propertyList, releasesQName);
+            return ADBPullParser.createPullParser(propertyList.toArray(), releasesQName);
         }
     }
 }
