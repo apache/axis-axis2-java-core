@@ -25,7 +25,7 @@ import javax.xml.stream.XMLStreamReader;
 
 public interface ADBBean {
     /**
-     * This method is used to serialize this ADBBean: get the pull parser and
+     * This method is used to serialize an ADBBean: get the pull parser and
      * pull the XML pull events to represent the bean.
      * 
      * @return a pull parser for this ADBBean.
