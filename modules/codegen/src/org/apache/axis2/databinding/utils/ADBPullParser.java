@@ -23,6 +23,7 @@ import javax.xml.stream.XMLStreamReader;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 public class ADBPullParser implements XMLStreamReader {
@@ -30,11 +31,13 @@ public class ADBPullParser implements XMLStreamReader {
     private Object[] properties;
     private QName elementQName;
 
+    // Every parser can contain a reference to a pull parser of one of its children
     private ADBPullParser childPullParser;
 
+    // a flag for this class to know, we are currently accessing one of the children's parsers
     private boolean accessingChildPullParser = false;
 
-    // ===== To be used this ADBBean =============
+    // ===== To be used this with ADBBean =============
     private boolean isEndElementFinished = false;
 
     // ===== To be used with Simple Name Value pair ====
@@ -47,6 +50,7 @@ public class ADBPullParser implements XMLStreamReader {
 
     private ParserInformation parserInformation;
 
+    // a pointer to the children list of current location
     private int currentIndex = 0;
 
 
@@ -55,6 +59,42 @@ public class ADBPullParser implements XMLStreamReader {
         this.elementQName = elementQName;
     }
 
+    /**
+     * @param properties    - this should contain all the stuff that stax events should be generated.
+     *                      Lets take an example of a bean.
+*                      <pre> <Person>
+     *                          <Name>FooOne</Name>
+     *                          <DependentOne>
+     *                              <Name>FooTwo</Name>
+     *                              <Age>25</Age>
+     *                              <Sex>Male</Sex>
+     *                          </DependentOne>
+     *                      </Person>
+     *
+     *                      so the mapping bean for this is
+     *                      class Person {
+     *                          String Name;
+     *                          Dependent dependentOne;
+     *                      }
+     *
+     *                      class Dependent {
+     *                          String name;
+     *                          int age;
+     *                          String sex;
+     *                      }
+     *
+     *                      So if one needs to generate pull events out of a Person bean, the array he needs
+     *                      to pass is like this.
+     *                      ---------------------------------------------------------------
+     *                      | "Name" | "FooOne" | QName("DependentOne") | Dependent object|
+     *                      ---------------------------------------------------------------
+     *                      This DependentObject can either be an ADBBean or a POJO. If its an ADBBean
+     *                      We directly get the pull parser from that. If not we create a reflection based
+     *                      pull parser for that java bean.
+     *  </pre>
+     * @param adbBeansQName
+     * @return XMLStreamReader
+     */
     public static XMLStreamReader createPullParser(Object[] properties, QName adbBeansQName) {
         return new ADBPullParser(properties, adbBeansQName);
     }
@@ -70,6 +110,13 @@ public class ADBPullParser implements XMLStreamReader {
 
     public int next() throws XMLStreamException {
         int event = 0;
+
+        // First check whether the parser has already has completed. currentIndex starts with 0. But
+        // but the first emulated event is the start element of the given element. The same index pointer
+        // is used to point to the elements in the Array. Since we allocate index 0 to the current element,
+        // currentIndex is always ahead one step from the location of the array which is currently being processed.
+        // so when you check for completeness you have to check for currentIndex >= array length + 2
+
         if (currentIndex >= properties.length + 2) {
             throw new XMLStreamException("End of elements has already been reached. Can not go beyond that");
         }
@@ -111,7 +158,7 @@ public class ADBPullParser implements XMLStreamReader {
                     ADBBean adbBean = (ADBBean) object;
                     childPullParser = (ADBPullParser) adbBean.getPullParser((QName) o);
                 } else {
-                    
+
                 }
                 accessingChildPullParser = true;
                 return this.next();
