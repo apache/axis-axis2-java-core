@@ -1,5 +1,6 @@
 package org.apache.axis2.databinding;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
 /*
@@ -27,10 +28,10 @@ public interface ADBBean {
     /**
      * This method is used to serialize an ADBBean: get the pull parser and
      * pull the XML pull events to represent the bean.
-     * 
+     *
      * @return a pull parser for this ADBBean.
      */
-    public XMLStreamReader getPullParser();
+    public XMLStreamReader getPullParser(QName adbBeanQName);
 
     /**
      * There will be a self factory in every generated data bound class XXX:

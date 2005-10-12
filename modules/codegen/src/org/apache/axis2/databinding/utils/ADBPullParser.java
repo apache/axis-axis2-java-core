@@ -136,9 +136,9 @@ public class ADBPullParser implements XMLStreamReader {
                 return processADBNameValuePair(null, null);
             }
             Object o = properties[currentIndex - 1];
-            if (o == null) {
+            if (o instanceof QName) {
                 ADBBean adbBean = (ADBBean) properties[currentIndex];
-                childPullParser = (ADBPullParser) adbBean.getPullParser();
+                childPullParser = (ADBPullParser) adbBean.getPullParser((QName) o);
                 accessingChildPullParser = true;
                 return this.next();
             } else {

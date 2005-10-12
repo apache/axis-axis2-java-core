@@ -50,9 +50,9 @@ public class ADBPullParserTest extends TestCase {
             ArrayList propertyList = new ArrayList();
             propertyList.add("Name");
             propertyList.add("Axis2");
-            propertyList.add(null);
+            propertyList.add(new QName("Releases"));
             propertyList.add(new DummyADBBean());
-            propertyList.add(null);
+            propertyList.add(new QName("Releases"));
             propertyList.add(new DummyADBBean());
             propertyList.add("Organization");
             propertyList.add("Apache");
@@ -96,6 +96,68 @@ public class ADBPullParserTest extends TestCase {
         }
 
     }
+
+//    public void testComplexArrayList() {
+//        try {
+//
+//            String exptectedXML = "<Project><Name>Axis2</Name><Releases><FirstRelease>0.90</FirstRelease>" +
+//                    "<SecondRelease>0.91</SecondRelease><ThirdRelease>0.92</ThirdRelease></Releases>" +
+//                    "<Releases><FirstRelease>0.90</FirstRelease><SecondRelease>0.91</SecondRelease>" +
+//                    "<ThirdRelease>0.92</ThirdRelease></Releases><Organization>Apache</Organization>" +
+//                    "</Project>";
+//
+//            ArrayList propertyList = new ArrayList();
+//            propertyList.add("Name");
+//            propertyList.add("Axis2");
+//            propertyList.add(null);
+//            DummyADBBean dummyBean = new DummyADBBean();
+//            dummyBean.addAnotherBean();
+//            propertyList.add(dummyBean);
+//            propertyList.add("Organization");
+//            propertyList.add("Apache");
+//
+//            QName projectQName = new QName("Project");
+//            XMLStreamReader pullParser = ADBPullParser.createPullParser(propertyList.toArray(), projectQName);
+////            while (pullParser.hasNext()) {
+////                int eventCode = pullParser.next();
+////                System.out.println(eventCode + ":" + getEventString(eventCode));
+////            }
+//
+//            StringBuffer buff = new StringBuffer();
+//            while (pullParser.hasNext()) {
+//                int eventCode = pullParser.next();
+//
+//                switch (eventCode) {
+//                    case XMLStreamConstants.START_ELEMENT :
+//                        System.out.println("<" + pullParser.getLocalName() + ">");
+//                        buff.append("<");
+//                        buff.append(pullParser.getLocalName());
+//                        buff.append(">");
+//                        break;
+//                    case XMLStreamConstants.CHARACTERS :
+//                        System.out.println(pullParser.getText());
+//                        buff.append(pullParser.getText());
+//                        break;
+//                    case XMLStreamConstants.END_ELEMENT :
+//                        System.out.println("</" + pullParser.getLocalName() + ">");
+//                        buff.append("</");
+//                        buff.append(pullParser.getLocalName());
+//                        buff.append(">");
+//                        break;
+//                    default:
+//                        System.out.println("No Other event can be trown here");
+//                }
+//            }
+//
+//
+//            String s = buff.toString();
+//            System.out.println("s = " + s);
+////            assertEquals(exptectedXML, s);
+//        } catch (XMLStreamException e) {
+//            log.error("Parser Error " + e);
+//        }
+//
+//    }
 
     private String getEventString(int eventCode) {
         String event = "";
@@ -151,18 +213,26 @@ public class ADBPullParserTest extends TestCase {
     }
 
     public class DummyADBBean implements ADBBean {
+        ArrayList propertyList = new ArrayList();
 
-        public XMLStreamReader getPullParser() {
-            ArrayList propertyList = new ArrayList();
+        public DummyADBBean() {
             propertyList.add("FirstRelease");
             propertyList.add("0.90");
             propertyList.add("SecondRelease");
             propertyList.add("0.91");
             propertyList.add("ThirdRelease");
             propertyList.add("0.92");
+        }
 
-            QName releasesQName = new QName("Releases");
-            return ADBPullParser.createPullParser(propertyList.toArray(), releasesQName);
+        public DummyADBBean addAnotherBean() {
+            propertyList.add(null);
+            DummyADBBean dummyBean = new DummyADBBean();
+            propertyList.add(dummyBean);
+            return dummyBean;
+        }
+
+        public XMLStreamReader getPullParser(QName adbBeanQName) {
+            return ADBPullParser.createPullParser(propertyList.toArray(), adbBeanQName);
         }
     }
 }
