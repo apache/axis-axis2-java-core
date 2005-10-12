@@ -238,10 +238,8 @@ public class SchemaCompiler {
      * @param simpleType
      */
     private void processSimpleSchemaType(XmlSchemaSimpleType simpleType){
-        //nothing to here yet. just populate the processed type map with this
-        //the class Name would be from the base type map!
-        QName qName = simpleType.getQName();
-        processedTypemap.put(qName,baseSchemaTypeMap.get(qName));
+        //nothing to here yet.
+        
     }
 
 

@@ -64,49 +64,7 @@ public class JavaBeanWriter {
         try {
             //determine the package for this type.
             QName qName = complexType.getQName();
-            String packageName = URLProcessor.getNameSpaceFromURL(qName.getNamespaceURI());
-            String className = qName.getLocalPart();
-
-            if (!templateLoaded){
-                loadTemplate();
-            }
-
-            //create the model
-            Document model= XSLTUtils.getDocument();
-
-            //make the XML
-            Element rootElt = XSLTUtils.addChildElement(model,"bean",model);
-            XSLTUtils.addAttribute(model,"name",className,rootElt);
-            XSLTUtils.addAttribute(model,"package",packageName,rootElt);
-            XSLTUtils.addAttribute(model,"nsuri",qName.getNamespaceURI(),rootElt);
-            XSLTUtils.addAttribute(model,"nsprefix",qName.getPrefix(),rootElt);
-            if (metainf.isExtension()){
-                XSLTUtils.addAttribute(model,"extension",metainf.getExtensionClassName(),rootElt);
-            }
-            // go in the loop and add the part elements
-            Iterator qNameIterator = metainf.getElementQNameIterator();
-
-            QName name;
-            while (qNameIterator.hasNext()) {
-                Element property = XSLTUtils.addChildElement(model,"property",rootElt);
-                name = (QName)qNameIterator.next();
-                XSLTUtils.addAttribute(model,"name",name.getLocalPart(),property);
-                String javaClassNameForElement = metainf.getJavaClassNameForElement(name);
-                if (javaClassNameForElement==null){
-                    throw new SchemaCompilationException("Type missing!");
-                }
-                XSLTUtils.addAttribute(model,"type",javaClassNameForElement,property);
-                if (typeMap.containsKey(metainf.getSchemaQNameForElement(name))){
-                    XSLTUtils.addAttribute(model,"ours","yes",property); //todo introduce a better name for this
-                }
-            }
-
-            //create the file
-            OutputStream out = createOutFile(packageName,className);
-            //parse with the template and create the files
-            parse(model,out);
-            //return the fully qualified class name
-            return packageName+"."+className;
+            return process(qName, metainf, typeMap);
 
         }catch (SchemaCompilationException e) {
             throw e;
@@ -115,6 +73,55 @@ public class JavaBeanWriter {
         }
 
 
+    }
+
+    private String process(QName qName, BeanWriterMetaInfoHolder metainf, Map typeMap) throws Exception {
+        String packageName = URLProcessor.getNameSpaceFromURL(qName.getNamespaceURI());
+        String className = qName.getLocalPart();
+
+        if (!templateLoaded){
+            loadTemplate();
+        }
+
+        //create the model
+        Document model= XSLTUtils.getDocument();
+
+        //make the XML
+        Element rootElt = XSLTUtils.addChildElement(model,"bean",model);
+        XSLTUtils.addAttribute(model,"name",className,rootElt);
+        XSLTUtils.addAttribute(model,"package",packageName,rootElt);
+        XSLTUtils.addAttribute(model,"nsuri",qName.getNamespaceURI(),rootElt);
+        XSLTUtils.addAttribute(model,"nsprefix",qName.getPrefix(),rootElt);
+        if (metainf.isExtension()){
+            XSLTUtils.addAttribute(model,"extension",metainf.getExtensionClassName(),rootElt);
+        }
+        // go in the loop and add the part elements
+        Iterator qNameIterator = metainf.getElementQNameIterator();
+
+        QName name;
+        while (qNameIterator.hasNext()) {
+            Element property = XSLTUtils.addChildElement(model,"property",rootElt);
+            name = (QName)qNameIterator.next();
+            XSLTUtils.addAttribute(model,"name",name.getLocalPart(),property);
+            String javaClassNameForElement = metainf.getJavaClassNameForElement(name);
+            String shortTypeName = metainf.getSchemaQNameForElement(name).getLocalPart();
+            if (javaClassNameForElement==null){
+                throw new SchemaCompilationException("Type missing!");
+            }
+            XSLTUtils.addAttribute(model,"type",javaClassNameForElement,property);
+            if (typeMap.containsKey(metainf.getSchemaQNameForElement(name))){
+                XSLTUtils.addAttribute(model,"ours","yes",property); //todo introduce a better name for this
+            }
+             XSLTUtils.addAttribute(model,"shorttypename",shortTypeName,property);
+        }
+
+        System.out.println("rootElt = " + rootElt);
+        //create the file
+        OutputStream out = createOutFile(packageName,className);
+        //parse with the template and create the files
+        parse(model,out);
+        //return the fully qualified class name
+        return packageName+"."+className;
     }
 
     /**
@@ -130,47 +137,7 @@ public class JavaBeanWriter {
         try {
             //determine the package for this type.
             QName qName = element.getQName();
-            String packageName = URLProcessor.getNameSpaceFromURL(qName.getNamespaceURI());
-            String className = qName.getLocalPart();
-
-            if (!templateLoaded){
-                loadTemplate();
-            }
-
-            //create the model
-            Document model= XSLTUtils.getDocument();
-
-            //make the XML
-            Element rootElt = XSLTUtils.addChildElement(model,"bean",model);
-            XSLTUtils.addAttribute(model,"name",className,rootElt);
-            XSLTUtils.addAttribute(model,"package",packageName,rootElt);
-            XSLTUtils.addAttribute(model,"nsuri",qName.getNamespaceURI(),rootElt);
-            XSLTUtils.addAttribute(model,"nsprefix",qName.getPrefix(),rootElt);
-
-            // go in the loop and add the part elements
-            Iterator qNameIterator = metainf.getElementQNameIterator();
-
-            QName name;
-            while (qNameIterator.hasNext()) {
-                Element property = XSLTUtils.addChildElement(model,"property",rootElt);
-                name = (QName)qNameIterator.next();
-                XSLTUtils.addAttribute(model,"name",name.getLocalPart(),property);
-                String javaClassNameForElement = metainf.getJavaClassNameForElement(name);
-                if (javaClassNameForElement==null){
-                    throw new SchemaCompilationException("Type missing!");
-                }
-                XSLTUtils.addAttribute(model,"type",javaClassNameForElement,property);
-                if (typeMap.containsKey(metainf.getSchemaQNameForElement(name))){
-                    XSLTUtils.addAttribute(model,"ours","yes",property); //todo introduce a better name for this
-                }
-
-            }
-
-            //create the file
-            OutputStream out = createOutFile(packageName,className);
-            //parse with the template and create the files
-            parse(model,out);
-            return packageName+"."+className;
+             return process(qName, metainf, typeMap);
         } catch (Exception e) {
             throw new SchemaCompilationException(e);
         }

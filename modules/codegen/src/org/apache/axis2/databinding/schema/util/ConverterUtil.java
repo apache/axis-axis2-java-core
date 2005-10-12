@@ -21,7 +21,7 @@ public class ConverterUtil {
         return new Integer(i);
     }
 
-     public static Object convertToObject(float i){
+    public static Object convertToObject(float i){
         return new Float(i);
     }
 
@@ -29,6 +29,22 @@ public class ConverterUtil {
         return new Long(i);
     }
 
+    // fill the other methods
+
+
+    public static int convertToint(String s){
+        return Integer.parseInt(s);
+    }
+
+    public static float convertTofloat(String s){
+        return Float.parseFloat(s);
+    }
+
+      public static String convertTostring(String s){
+        return s;
+    }
+
+   
     //the pass through method
     public static Object convertToObject(Object o){
         return o;
