@@ -1,6 +1,7 @@
 package org.apache.axis2.databinding.utils;
 
 import org.apache.axis2.databinding.ADBBean;
+import org.apache.axis2.util.BeanSerializerUtil;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -158,7 +159,7 @@ public class ADBPullParser implements XMLStreamReader {
                     ADBBean adbBean = (ADBBean) object;
                     childPullParser = (ADBPullParser) adbBean.getPullParser((QName) o);
                 } else {
-
+                   childPullParser = (ADBPullParser) BeanSerializerUtil.getPullParser(object, (QName) o );
                 }
                 accessingChildPullParser = true;
                 return this.next();
