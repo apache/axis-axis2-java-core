@@ -10,4 +10,5 @@
 					<element name="varFloat" type="xsd:float"/>
 				</sequence>
 			</complexType>
-		</schema>
+            <element name="myElement" type="tns:SOAPStruct"/>
+        </schema>

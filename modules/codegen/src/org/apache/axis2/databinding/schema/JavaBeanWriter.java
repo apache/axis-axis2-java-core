@@ -102,7 +102,15 @@ public class JavaBeanWriter {
         while (qNameIterator.hasNext()) {
             Element property = XSLTUtils.addChildElement(model,"property",rootElt);
             name = (QName)qNameIterator.next();
-            XSLTUtils.addAttribute(model,"name",name.getLocalPart(),property);
+            String xmlName = name.getLocalPart();
+            String javaName = "";
+            if (JavaUtils.isJavaKeyword(xmlName)){
+                javaName = JavaUtils.makeNonJavaKeyword(xmlName);
+            }else{
+                javaName = JavaUtils.xmlNameToJava(xmlName,false);
+            }
+            XSLTUtils.addAttribute(model,"name",xmlName,property);
+            XSLTUtils.addAttribute(model,"javaname",javaName,property);
             String javaClassNameForElement = metainf.getJavaClassNameForElement(name);
             String shortTypeName = metainf.getSchemaQNameForElement(name).getLocalPart();
             if (javaClassNameForElement==null){

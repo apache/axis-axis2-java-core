@@ -19,25 +19,26 @@
      <xsl:for-each select="property">
          <xsl:variable name="propertyType"><xsl:value-of select="@type"></xsl:value-of></xsl:variable>
          <xsl:variable name="propertyName"><xsl:value-of select="@name"></xsl:value-of></xsl:variable>
+         <xsl:variable name="javaName"><xsl:value-of select="@javaname"></xsl:value-of></xsl:variable>
         /**
-         * field for <xsl:value-of select="$propertyName"/>
+         * field for <xsl:value-of select="$javaName"/>
          */
-         private <xsl:value-of select="$propertyType"/> local<xsl:value-of select="$propertyName"/>;
+         private <xsl:value-of select="$propertyType"/> local<xsl:value-of select="$javaName"/>;
 
         /**
          * Auto generated getter method
          * @return <xsl:value-of select="$propertyType"/>
          */
-        public  <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text>get<xsl:value-of select="$propertyName"/>(){
-             return local<xsl:value-of select="$propertyName"/>;
+        public  <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text>get<xsl:value-of select="$javaName"/>(){
+             return local<xsl:value-of select="$javaName"/>;
         }
 
         /**
          * Auto generated setter method
-         * @param param<xsl:value-of select="$propertyName"/>
+         * @param param<xsl:value-of select="$javaName"/>
          */
-        public void set<xsl:value-of select="$propertyName"/>(<xsl:value-of select="$propertyType"/> param<xsl:value-of select="$propertyName"/>){
-             this.local<xsl:value-of select="$propertyName"/>=param<xsl:value-of select="$propertyName"/>;
+        public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param<xsl:value-of select="$javaName"/>){
+             this.local<xsl:value-of select="$javaName"/>=param<xsl:value-of select="$javaName"/>;
         }
      </xsl:for-each>
 
@@ -50,7 +51,16 @@
           Object[] objectList = new Object[]{
           <xsl:for-each select="property">
            <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
-           <xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="$propertyName"/>",org.apache.axis2.databinding.schema.util.ConverterUtil.convertToObject(local<xsl:value-of select="$propertyName"></xsl:value-of>)
+           <xsl:if test="position()>1">,</xsl:if>
+              <xsl:choose>
+                  <xsl:when test="@ours">
+                      new javax.xml.namespace.QName("<xsl:value-of select="$propertyName"/>"),local<xsl:value-of select="@javaname"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                       "<xsl:value-of select="$propertyName"/>",org.apache.axis2.databinding.schema.util.ConverterUtil.convertToString(local<xsl:value-of select="@javaname"/>)
+                  </xsl:otherwise>
+              </xsl:choose>
+
           </xsl:for-each>};
 
          return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(objectList,qName);
@@ -79,27 +89,24 @@
            <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
            <xsl:variable name="propertyType"><xsl:value-of select="@type"/></xsl:variable>
            <xsl:variable name="shortTypeName"><xsl:value-of select="@shorttypename"/></xsl:variable>
+          <xsl:variable name="javaName"><xsl:value-of select="@javaname"></xsl:value-of></xsl:variable>
 
                if ("<xsl:value-of select="$propertyName"/>".equals(reader.getLocalName())){
               <xsl:choose>
                    <xsl:when test="@ours">
-                     object.set<xsl:value-of select="$propertyName"/>(
+                     object.set<xsl:value-of select="$javaName"/>(
                           <xsl:value-of select="$propertyType"/>.parse(reader));
-                       }
                   </xsl:when>
                   <xsl:otherwise>
-                         String content = reader.getElementText();
-                        object.set<xsl:value-of select="$propertyName"/>(
-                        org.apache.axis2.databinding.schema.util.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
-                        count++;
+                      String content = reader.getElementText();
+                      object.set<xsl:value-of select="$javaName"/>(
+                      org.apache.axis2.databinding.schema.util.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
                   </xsl:otherwise>
                  </xsl:choose>
+                     count++;
                }
           </xsl:for-each>
-                    event = reader.getEventType();
-                    while(javax.xml.stream.XMLStreamConstants.END_ELEMENT!=event){
-                        event = reader.next();
-                    }
+                event = reader.next();
                 }
 
                 if (argumentCount==count){
@@ -110,7 +117,7 @@
             }
 
         } catch (javax.xml.stream.XMLStreamException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
 
         return object;

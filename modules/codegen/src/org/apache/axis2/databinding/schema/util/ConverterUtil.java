@@ -17,16 +17,16 @@ package org.apache.axis2.databinding.schema.util;
 
 public class ConverterUtil {
 
-    public static Object convertToObject(int i){
-        return new Integer(i);
+    public static String convertToString(int i){
+        return i+"";
     }
 
-    public static Object convertToObject(float i){
-        return new Float(i);
+    public static String convertToString(float i){
+        return i+"";
     }
 
-    public static Object convertToObject(long i){
-        return new Long(i);
+    public static String convertToString(long i){
+        return i+"";
     }
 
     // fill the other methods
@@ -44,10 +44,15 @@ public class ConverterUtil {
         return s;
     }
 
-   
+
     //the pass through method
-    public static Object convertToObject(Object o){
+    public static String convertToString(String o){
         return o;
+    }
+
+     //the pass through method
+    public static String convertToString(Object o){
+        return o.toString();
     }
     //add the others here
 
