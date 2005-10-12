@@ -62,6 +62,9 @@
          * Note -  This is not complete
          */
         public static <xsl:value-of select="$name"/> parse(javax.xml.stream.XMLStreamReader reader){
+             
+
+
              return new <xsl:value-of select="$name"/>();
         }
 

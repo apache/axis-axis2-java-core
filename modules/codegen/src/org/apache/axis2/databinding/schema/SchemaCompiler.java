@@ -86,15 +86,8 @@ public class SchemaCompiler {
      */
     public void compile(XmlSchema schema) throws SchemaCompilationException{
 
-        //write the code here to do the schema compilation
-        //select the types
-        XmlSchemaObjectTable types =  schema.getSchemaTypes();
-        Iterator  xmlSchemaTypeIterator = types.getValues();
-        while (xmlSchemaTypeIterator.hasNext()) {
-            processSchema((XmlSchemaType)xmlSchemaTypeIterator.next());
-        }
-
-        //select all the elements next
+        //select all the elements. We generate the code for types
+        //only if the elements refer them!!!
         XmlSchemaObjectTable elements = schema.getElements();
         Iterator  xmlSchemaElementIterator = elements.getValues();
         while (xmlSchemaElementIterator.hasNext()) {
@@ -117,15 +110,19 @@ public class SchemaCompiler {
         if (processedElementmap.containsKey(xsElt.getQName())){
             return;
         }
-        if (schemaType==null){
-            throw new SchemaCompilationException("Schema type not found!");
-        }
-        processSchema(schemaType);
-        QName qName = schemaType.getQName();
+        QName qName = null;
 
-        //write a class for this element
-        BeanWriterMetaInfoHolder metainf = new BeanWriterMetaInfoHolder();
-        //there can be only one schema type
+        if (schemaType!=null){
+            processSchema(schemaType);
+            qName = schemaType.getQName();
+        }else{
+            //perhaps this has an anoynimous complex type!
+        }
+
+
+        //if the schema type is a basic one then we are done by just
+        //there can be only one schema type (????)
+
         String className = "";
         if (processedTypemap.containsKey(qName)){
             className =  processedTypemap.get(qName).toString();
@@ -134,10 +131,8 @@ public class SchemaCompiler {
         }else{
             //throw an exception here
         }
-        metainf.addElementInfo(xsElt.getQName(),qName,className);
 
-        String fullyQualifiedClassName = writer.write(xsElt,processedTypemap,metainf);
-        processedElementmap.put(xsElt.getQName(),fullyQualifiedClassName);
+        processedElementmap.put(xsElt.getQName(),className);
 
 
     }

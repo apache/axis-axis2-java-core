@@ -96,6 +96,9 @@ public class JavaBeanWriter {
                     throw new SchemaCompilationException("Type missing!");
                 }
                 XSLTUtils.addAttribute(model,"type",javaClassNameForElement,property);
+                if (typeMap.containsKey(metainf.getSchemaQNameForElement(name))){
+                    XSLTUtils.addAttribute(model,"ours","yes",property); //todo introduce a better name for this
+                }
             }
 
             //create the file
@@ -152,10 +155,14 @@ public class JavaBeanWriter {
                 Element property = XSLTUtils.addChildElement(model,"property",rootElt);
                 name = (QName)qNameIterator.next();
                 XSLTUtils.addAttribute(model,"name",name.getLocalPart(),property);
-                XSLTUtils.addAttribute(model,"type",metainf.getJavaClassNameForElement(name),property);
-//                if (typeMap.containsKey(metainf.getSchemaQNameForElement(name))){
-//                    XSLTUtils.addAttribute(model,"ours","yes",property); //todo introduce a better name for this
-//                }
+                String javaClassNameForElement = metainf.getJavaClassNameForElement(name);
+                if (javaClassNameForElement==null){
+                    throw new SchemaCompilationException("Type missing!");
+                }
+                XSLTUtils.addAttribute(model,"type",javaClassNameForElement,property);
+                if (typeMap.containsKey(metainf.getSchemaQNameForElement(name))){
+                    XSLTUtils.addAttribute(model,"ours","yes",property); //todo introduce a better name for this
+                }
 
             }
 
