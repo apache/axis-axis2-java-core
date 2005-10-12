@@ -25,12 +25,15 @@ import javax.xml.stream.XMLStreamReader;
 
 public interface ADBBean {
     /**
-     *  get the OM implementation
+     * This method is used to serialize this ADBBean: get the pull parser and
+     * pull the XML pull events to represent the bean.
+     * 
+     * @return a pull parser for this ADBBean.
      */
     public XMLStreamReader getPullParser();
 
-    /* There will be a self factory in every generated data bound class.
-    * static XXX read (XMLStreamReader);
-    */
-
+    /**
+     * There will be a self factory in every generated data bound class XXX:
+     * public static XXX read (XMLStreamReader);
+     */
 }
