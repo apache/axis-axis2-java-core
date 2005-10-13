@@ -18,11 +18,13 @@ package org.apache.axis2.util;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.MessageInformationHeaders;
+import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.OperationContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.*;
@@ -30,9 +32,9 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.phaseresolver.PhaseException;
-import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
@@ -51,37 +53,43 @@ public class Utils {
         flow.addHandler(handlerDesc);
     }
 
-    //    public static void addPhasesToServiceFromFlow(
-    //        ServiceContext serviceContext,
-    //        String phaseName,
-    //        Flow flow,
-    //        int flowtype)
-    //        throws AxisFault {
-    //                ArrayList faultchain = new ArrayList();
-    //                Phase p = new Phase(Constants.PHASE_SERVICE);
-    //                faultchain.add(p);
-    //                addHandlers(flow, p);
-    //                serviceContext.setPhases(faultchain, flowtype);
-    //    }
+    public static MessageContext createOutMessageContext(MessageContext inMessageContext) throws AxisFault {
+        MessageContext newmsgCtx =
+                new MessageContext(inMessageContext.getSystemContext(),
+                        inMessageContext.getSessionContext(),
+                        inMessageContext.getTransportIn(),
+                        inMessageContext.getTransportOut());
+        MessageInformationHeaders oldMessageInfoHeaders =
+                inMessageContext.getMessageInformationHeaders();
+        MessageInformationHeaders messageInformationHeaders =
+                new MessageInformationHeaders();
+        messageInformationHeaders.setMessageId(UUIDGenerator.getUUID());
+        messageInformationHeaders.setTo(oldMessageInfoHeaders.getReplyTo());
+        messageInformationHeaders.setFaultTo(
+                oldMessageInfoHeaders.getFaultTo());
+        messageInformationHeaders.setFrom(oldMessageInfoHeaders.getTo());
+        messageInformationHeaders.setRelatesTo(
+                new RelatesTo(oldMessageInfoHeaders.getMessageId(),
+                        AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
+        messageInformationHeaders.setAction(oldMessageInfoHeaders.getAction());
+        newmsgCtx.setMessageInformationHeaders(messageInformationHeaders);
+        newmsgCtx.setOperationContext(inMessageContext.getOperationContext());
+        newmsgCtx.setServiceContext(inMessageContext.getServiceContext());
+        newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT,
+                inMessageContext.getProperty(MessageContext.TRANSPORT_OUT));
+        newmsgCtx.setProperty(HTTPConstants.HTTPOutTransportInfo,
+                inMessageContext.getProperty(HTTPConstants.HTTPOutTransportInfo));
 
-    //    public static void createExecutionChains(ServiceContext serviceContext) throws AxisFault {
-    //        ServiceDescription service = serviceContext.getServiceConfig();
-    //        addPhasesToServiceFromFlow(
-    //            serviceContext,
-    //            Constants.PHASE_SERVICE,
-    //            service.getInFlow(),
-    //            AxisConfiguration.INFLOW);
-    //        addPhasesToServiceFromFlow(
-    //            serviceContext,
-    //            Constants.PHASE_SERVICE,
-    //            service.getOutFlow(),
-    //            AxisConfiguration.OUTFLOW);
-    //        addPhasesToServiceFromFlow(
-    //            serviceContext,
-    //            Constants.PHASE_SERVICE,
-    //            service.getFaultInFlow(),
-    //            AxisConfiguration.FAULT_IN_FLOW);
-    //    }
+        //Setting the charater set encoding
+        newmsgCtx.setProperty(MessageContext.CHARACTER_SET_ENCODING, inMessageContext
+                .getProperty(MessageContext.CHARACTER_SET_ENCODING));
+
+        newmsgCtx.setDoingREST(inMessageContext.isDoingREST());
+        newmsgCtx.setDoingMTOM(inMessageContext.isDoingMTOM());
+        newmsgCtx.setServerSide(inMessageContext.isServerSide());
+
+        return newmsgCtx;
+    }
 
     public static ServiceDescription createSimpleService(QName serviceName,
                                                          MessageReceiver messageReceiver,
@@ -199,7 +207,7 @@ public class Utils {
     public static ServiceContext fillContextInformation(OperationDescription operationDesc, ServiceDescription serviceDesc, ConfigurationContext configurationContext) throws AxisFault {
         MessageContext msgContext;
         //  2. if null, create new opCtxt
-        OperationContext operationContext = new  OperationContext(operationDesc);
+        OperationContext operationContext = new OperationContext(operationDesc);
 //        OperationContext operationContext = OperationContextFactory.createOperationContext(operationDesc.getAxisSpecifMEPConstant(), operationDesc);
 
         //  fill the service group context and service context info
@@ -209,7 +217,7 @@ public class Utils {
 
     private static ServiceContext fillServiceContextAndServiceGroupContext(ServiceDescription serviceDesc, ConfigurationContext configurationContext) throws AxisFault {
         String serviceGroupContextId = UUIDGenerator.getUUID();
-        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configurationContext,serviceDesc.getParent());
+        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configurationContext, serviceDesc.getParent());
         serviceGroupContext.setId(serviceGroupContextId);
         configurationContext.registerServiceGroupContext(serviceGroupContext);
         return new ServiceContext(serviceDesc, serviceGroupContext);

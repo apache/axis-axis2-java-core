@@ -17,13 +17,9 @@
 package org.apache.axis2.receivers;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.MessageInformationHeaders;
-import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.util.UUIDGenerator;
+import org.apache.axis2.util.Utils;
 
 /**
  * This is the Absract IN-OUT MEP MessageReceiver. The
@@ -35,41 +31,7 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
             throws AxisFault;
 
     public final void receive(MessageContext msgContext) throws AxisFault {
-        MessageContext outMsgContext =
-                new MessageContext(msgContext.getSystemContext(),
-                        msgContext.getSessionContext(),
-                        msgContext.getTransportIn(),
-                        msgContext.getTransportOut());
-
-        MessageInformationHeaders oldMessageInfoHeaders =
-                msgContext.getMessageInformationHeaders();
-        MessageInformationHeaders messageInformationHeaders =
-                new MessageInformationHeaders();
-        messageInformationHeaders.setMessageId(UUIDGenerator.getUUID());
-        messageInformationHeaders.setTo(oldMessageInfoHeaders.getReplyTo());
-        messageInformationHeaders.setFaultTo(
-                oldMessageInfoHeaders.getFaultTo());
-        messageInformationHeaders.setFrom(oldMessageInfoHeaders.getTo());
-        messageInformationHeaders.setRelatesTo(
-                new RelatesTo(oldMessageInfoHeaders.getMessageId(),
-                        AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
-        messageInformationHeaders.setAction(oldMessageInfoHeaders.getAction());
-        outMsgContext.setMessageInformationHeaders(messageInformationHeaders);
-        outMsgContext.setOperationContext(msgContext.getOperationContext());
-        outMsgContext.setServiceContext(msgContext.getServiceContext());
-        outMsgContext.setServiceGroupContextId(msgContext.getServiceGroupContextId());
-        outMsgContext.setProperty(MessageContext.TRANSPORT_OUT,
-                msgContext.getProperty(MessageContext.TRANSPORT_OUT));
-        outMsgContext.setProperty(HTTPConstants.HTTPOutTransportInfo,
-                msgContext.getProperty(HTTPConstants.HTTPOutTransportInfo));
-        
-        //Setting the charater set encoding
-        outMsgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, msgContext
-				.getProperty(MessageContext.CHARACTER_SET_ENCODING));
-        
-        outMsgContext.setDoingREST(msgContext.isDoingREST());
-        outMsgContext.setDoingMTOM(msgContext.isDoingMTOM());
-        outMsgContext.setServerSide(msgContext.isServerSide());
+        MessageContext outMsgContext = Utils.createOutMessageContext(msgContext);
 
         invokeBusinessLogic(msgContext, outMsgContext);
 
