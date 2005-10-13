@@ -86,35 +86,13 @@ public class AxisServlet extends HttpServlet {
         MessageContext msgContext = null;
         OutputStream out = null;
         try {
-            Object sessionContext =
-                    httpServletRequest.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
-            if (sessionContext == null) {
-                sessionContext = new SessionContext(null);
-                httpServletRequest.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
-                        sessionContext);
-            }
+            Object sessionContext = getSessionContext(httpServletRequest);
+            HashMap map = getHTTPParameters(httpServletRequest);
+            msgContext = createAndSetInitialParamsToMsgCtxt(sessionContext, msgContext, httpServletResponse, httpServletRequest);
 
-            Enumeration enu = httpServletRequest.getParameterNames();
-            HashMap map = new HashMap();
-            while (enu.hasMoreElements()) {
-                String name = (String) enu.nextElement();
-                String value = httpServletRequest.getParameter(name);
-                map.put(name, value);
-            }
-
-            msgContext =
-                    new MessageContext(configContext,
-                            (SessionContext) sessionContext,
-                            configContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
-                            configContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
             msgContext.setDoingREST(true);
             msgContext.setServerSide(true);
-            msgContext.setProperty(HTTPConstants.HTTPOutTransportInfo,
-                    new ServletBasedOutTransportInfo(httpServletResponse));
-            msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getTransportHeaders(httpServletRequest));
-
             out = httpServletResponse.getOutputStream();
-            msgContext.setProperty(SESSION_ID, httpServletRequest.getSession().getId());
             boolean processed =
                     HTTPTransportUtils.processHTTPGetRequest(msgContext,
                             httpServletRequest.getInputStream(),
@@ -129,11 +107,7 @@ public class AxisServlet extends HttpServlet {
             }
         } catch (AxisFault e) {
             if (msgContext != null) {
-                msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
-                AxisEngine engine = new AxisEngine(configContext);
-                MessageContext faultContext =
-                        engine.createFaultMessageContext(msgContext, e);
-                engine.sendFault(faultContext);
+                handleFault(msgContext, out, e);
             } else {
                 throw new ServletException(e);
             }
@@ -141,6 +115,42 @@ public class AxisServlet extends HttpServlet {
             throw new ServletException(e);
         }
 
+    }
+
+    private MessageContext createAndSetInitialParamsToMsgCtxt(Object sessionContext, MessageContext msgContext, HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest) throws AxisFault {
+        msgContext =
+                new MessageContext(configContext,
+                        (SessionContext) sessionContext,
+                        configContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
+                        configContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
+        msgContext.setProperty(HTTPConstants.HTTPOutTransportInfo,
+                new ServletBasedOutTransportInfo(httpServletResponse));
+        msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getTransportHeaders(httpServletRequest));
+        msgContext.setProperty(SESSION_ID, httpServletRequest.getSession().getId());
+        return msgContext;
+    }
+
+    private HashMap getHTTPParameters(HttpServletRequest httpServletRequest) {
+        HashMap map = new HashMap();
+        Enumeration enu = httpServletRequest.getParameterNames();
+        while (enu.hasMoreElements()) {
+            String name = (String) enu.nextElement();
+            String value = httpServletRequest.getParameter(name);
+            map.put(name, value);
+        }
+
+        return map;
+    }
+
+    private Object getSessionContext(HttpServletRequest httpServletRequest) {
+        Object sessionContext =
+                httpServletRequest.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
+        if (sessionContext == null) {
+            sessionContext = new SessionContext(null);
+            httpServletRequest.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
+                    sessionContext);
+        }
+        return sessionContext;
     }
 
     /*
@@ -161,24 +171,10 @@ public class AxisServlet extends HttpServlet {
         MessageContext msgContext = null;
         OutputStream out = null;
         try {
-            Object sessionContext =
-                    req.getSession().getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
-            if (sessionContext == null) {
-                sessionContext = new SessionContext(null);
-                req.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
-                        sessionContext);
-            }
-            msgContext =
-                    new MessageContext(configContext,
-                            (SessionContext) sessionContext,
-                            configContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
-                            configContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
-            msgContext.setProperty(HTTPConstants.HTTPOutTransportInfo,
-                    new ServletBasedOutTransportInfo(res));
-            msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getTransportHeaders(req));
-            msgContext.setProperty(SESSION_ID, req.getSession().getId());
+            Object sessionContext = getSessionContext(req);
+            msgContext = createAndSetInitialParamsToMsgCtxt(sessionContext, msgContext, res, req);
 
-            out =  res.getOutputStream();
+            out = res.getOutputStream();
             HTTPTransportUtils.processHTTPPostRequest(msgContext,
                     req.getInputStream(),
                     out,
@@ -191,7 +187,7 @@ public class AxisServlet extends HttpServlet {
                     msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
 
             //Getting the 
-            res.setContentType("text/xml; charset="+
+            res.setContentType("text/xml; charset=" +
                     msgContext
                             .getProperty(MessageContext.CHARACTER_SET_ENCODING));
 
@@ -202,16 +198,19 @@ public class AxisServlet extends HttpServlet {
         } catch (AxisFault e) {
             if (msgContext != null) {
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                msgContext.setProperty(MessageContext.TRANSPORT_OUT,
-                        out);
-                AxisEngine engine = new AxisEngine(configContext);
-                MessageContext faultContext =
-                        engine.createFaultMessageContext(msgContext, e);
-                engine.sendFault(faultContext);
+                handleFault(msgContext, out, e);
             } else {
                 throw new ServletException(e);
             }
         }
+    }
+
+    private void handleFault(MessageContext msgContext, OutputStream out, AxisFault e) throws AxisFault {
+        msgContext.setProperty(MessageContext.TRANSPORT_OUT,out);
+        AxisEngine engine = new AxisEngine(configContext);
+        MessageContext faultContext =
+                engine.createFaultMessageContext(msgContext, e);
+        engine.sendFault(faultContext);
     }
 
     private Map getTransportHeaders(HttpServletRequest req) {
