@@ -28,19 +28,8 @@ public class TypeMap {
     private static Map typeMap =  new HashMap();
 
     static{
-// If SOAP 1.1 over the wire, map wrapper classes to XSD primitives.
+        // If SOAP 1.1 over the wire, map wrapper classes to XSD primitives.
         addTypemapping(SchemaConstants.XSD_STRING, java.lang.String.class.getName());
-        addTypemapping(SchemaConstants.XSD_BOOLEAN, java.lang.Boolean.class.getName());
-        addTypemapping(SchemaConstants.XSD_DOUBLE, java.lang.Double.class.getName());
-        addTypemapping(SchemaConstants.XSD_FLOAT, java.lang.Float.class.getName());
-        addTypemapping(SchemaConstants.XSD_INT, java.lang.Integer.class.getName());
-        addTypemapping(SchemaConstants.XSD_INTEGER, java.math.BigInteger.class.getName()
-        );
-        addTypemapping(SchemaConstants.XSD_DECIMAL, java.math.BigDecimal.class.getName()
-        );
-        addTypemapping(SchemaConstants.XSD_LONG, java.lang.Long.class.getName());
-        addTypemapping(SchemaConstants.XSD_SHORT, java.lang.Short.class.getName());
-        addTypemapping(SchemaConstants.XSD_BYTE, java.lang.Byte.class.getName());
 
         // The XSD Primitives are mapped to java primitives.
         addTypemapping(SchemaConstants.XSD_BOOLEAN, boolean.class.getName());
@@ -50,6 +39,8 @@ public class TypeMap {
         addTypemapping(SchemaConstants.XSD_LONG, long.class.getName());
         addTypemapping(SchemaConstants.XSD_SHORT, short.class.getName());
         addTypemapping(SchemaConstants.XSD_BYTE, byte.class.getName());
+        addTypemapping(SchemaConstants.XSD_ANY, Object.class.getName());
+        addTypemapping(SchemaConstants.XSD_ANYTYPE, Object.class.getName());
 
     }
     private static void addTypemapping(QName name,String str) {

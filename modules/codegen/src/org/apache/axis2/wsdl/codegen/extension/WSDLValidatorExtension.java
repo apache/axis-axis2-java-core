@@ -62,8 +62,9 @@ public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
 
                 NamedNodeMap attributes = schemaElement.getAttributes();
                 for (int i = 0; i < attributes.getLength(); i++) {
+                    
                     if (TARGETNAMESPACE_STRING.equalsIgnoreCase(
-                            attributes.item(i).getLocalName())){
+                            attributes.item(i).getNodeName())){
                         targetnamespaceFound = true;
                         break;
                     }

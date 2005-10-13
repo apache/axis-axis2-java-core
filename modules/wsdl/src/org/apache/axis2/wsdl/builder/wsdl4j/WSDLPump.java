@@ -52,15 +52,26 @@ import java.util.Vector;
 
 public class WSDLPump {
 
-    private static final String XSD_TYPE = "type";
-    private static final String XSD_SEQUENCE = "sequence";
+    private static final String XMLSCHEMA_NAMESPACE_URI = "http://www.w3.org/2001/XMLSchema";
+    private static final String XMLSCHEMA_NAMESPACE_PREFIX = "xs";
+    private static final String XSD_SCHEMA_QUALIFIED_NAME =XMLSCHEMA_NAMESPACE_PREFIX + ":schema";
+    private static final String XSD_SEQUENCE_QUALIFIED_NAME =XMLSCHEMA_NAMESPACE_PREFIX + ":sequence";
+    private static final String XSD_COMPLEXTYPE_QUALIFIED_NAME = XMLSCHEMA_NAMESPACE_PREFIX + ":complexType";
+    private static final String XSD_ELEMENT_QUALIFIED_NAME = XMLSCHEMA_NAMESPACE_PREFIX + ":element";
+
     private static final String XSD_NAME = "name";
-    private static final String XSD_COMPLEXTYPE = "complexType";
     private static final String XSD_TARGETNAMESPACE = "targetNamespace";
     private static final String XMLNS_AXIS2WRAPPED = "xmlns:axis2wrapped";
-    private static final String NAMESPACE_XMLSCHEMA = "http://www.w3.org/2001/XMLSchema";
-    private static final String XSD_ELEMENT = "element";
+    private static final String XSD_TYPE = "type";
     private static final String BOUND_INTERFACE_NAME = "BoundInterface";
+
+    //////////////////////////////////////////
+    //this needs to be set by the code generator
+    //however make it false by default to avoid nasty surprises
+    private boolean wrap = false;
+    //////////////////////////////////////////
+
+    private static int nsCount=0;
 
     private WSDLDescription womDefinition;
 
@@ -103,6 +114,9 @@ public class WSDLPump {
         wsdlDefinition.setNamespaces(wsdl4JDefinition.getNamespaces());
         this.copyExtensibleElements(
                 wsdl4JDefinition.getExtensibilityElements(), wsdlDefinition, null);
+
+        //we need to populate some flags here. Firstly soap stlye
+
 
         /////////////////////////////////////////////////////////////////////
         // Order of the following items shouldn't be changed unless you //
@@ -157,6 +171,9 @@ public class WSDLPump {
 
             }
         }
+
+
+
         ///////////////////(2)Copy the Interfaces///////////////////////////
         //copy the Interfaces: Get the PortTypes from WSDL4J parse OM and
         // copy it to the
@@ -416,16 +433,23 @@ public class WSDLPump {
 
     }
 
+    /**
+     * Generates a referenceQName
+     * @param wsdl4jMessage
+     * @return
+     */
     private QName generateReferenceQname(Message wsdl4jMessage) {
         QName referenceQName = null;
-        if (wsdl4jMessage.getParts().size() > 1) {
+        //do the wrapping if required
+        if (wrap) {
             Map parts = wsdl4jMessage.getParts();
-            Iterator i = parts.keySet().iterator();
-            Part thisPart = (Part)(parts.get(i.next()));
-            if (thisPart.getElementName() != null) {
-                throw new RuntimeException(
-                        "We don't support multiple element parts in a WSDL message");
-            }
+
+            //            Iterator partsItertator = parts.keySet().iterator();
+            //            Part thisPart = (Part)(parts.get(partsItertator.next()));
+            //            if (thisPart.getElementName() != null) {
+            //                throw new RuntimeException(
+            //                        "We don't support multiple element parts in a WSDL message");
+            //            }
 
             // Multipart Message
 
@@ -434,6 +458,7 @@ public class WSDLPump {
             // type.  This is fine for RPC style stuff, but should not be
             // happening for document style.
             // TODO : sanity check
+
 
             // Check whether this message parts have been made to a type
             Iterator multipartListIterator = this.resolvedMultipartMessageList.iterator();
@@ -458,100 +483,117 @@ public class WSDLPump {
 
                 //If types is null create a new one to be used for multipart 
                 //resolution if any.
-                if (null == types) {
-                    DocumentBuilder documentBuilder = null;
-                    try {
-                        documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                    } catch (ParserConfigurationException e) {
-                        throw new RuntimeException(e);
-                    }
-                    Document newDoc = documentBuilder.newDocument();
 
-                    Element newSchemaElement = newDoc.createElementNS("http://www.w3.org/2001/XMLSchema", "schema");
+                if (null == types) {
+                    //create a new types section
                     types = wsdlComponentFactory.createTypes();
-                    ExtensionFactory extensionFactory = wsdlComponentFactory.createExtensionFactory();
-                    org.apache.wsdl.extensions.Schema typesElement = (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
-                            ExtensionConstants.SCHEMA);
-                    typesElement.setElement(newSchemaElement);
-                    types.addExtensibilityElement(typesElement);
                     this.womDefinition.setTypes(types);
                 }
 
+                //create a new Schema extensions element
+                ExtensionFactory extensionFactory = wsdlComponentFactory.createExtensionFactory();
+                org.apache.wsdl.extensions.Schema schemaExtensibilityElement = (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
+                        ExtensionConstants.SCHEMA);
+                types.addExtensibilityElement(schemaExtensibilityElement);
 
-                //
-                Iterator schemaEIIterator = types.getExtensibilityElements()
-                        .iterator();
-                while (schemaEIIterator.hasNext()) {
-                    WSDLExtensibilityElement temp = (WSDLExtensibilityElement) schemaEIIterator.next();
-                    if (ExtensionConstants.SCHEMA.equals(temp.getType())) {
-                        schemaElement =
-                                ((org.apache.wsdl.extensions.Schema) temp).getElement();
-                        break;
-                    }
+
+                //add a schema DOM element
+                DocumentBuilder documentBuilder = null;
+                try {
+                    documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                } catch (ParserConfigurationException e) {
+                    throw new RuntimeException(e);
+                }
+                Document newDoc = documentBuilder.newDocument();
+                schemaElement = newDoc.createElementNS(XMLSCHEMA_NAMESPACE_URI, XSD_SCHEMA_QUALIFIED_NAME);
+                schemaExtensibilityElement.setElement(schemaElement);
+
+                //add the namespace declarations
+                String targetNamespaceUri = wsdl4jMessage.getQName().getNamespaceURI();
+                if (targetNamespaceUri.trim().equals("")){
+                   targetNamespaceUri = getTemporaryNamespaceUri();
                 }
 
-                schemaElement.setAttribute(WSDLPump.XMLNS_AXIS2WRAPPED, schemaElement.getAttribute(WSDLPump.XSD_TARGETNAMESPACE));
+                schemaElement.setAttribute(XMLNS_AXIS2WRAPPED,
+                        targetNamespaceUri);
+                schemaElement.setAttribute(XSD_TARGETNAMESPACE,targetNamespaceUri);
+                schemaElement.setAttribute("xmlns:"+XMLSCHEMA_NAMESPACE_PREFIX,XMLSCHEMA_NAMESPACE_URI);
+
+                //add the complex type
                 Document doc = schemaElement.getOwnerDocument();
                 String name = wsdl4jMessage.getQName().getLocalPart();
-                Element newType = doc.createElementNS(WSDLPump.NAMESPACE_XMLSCHEMA, WSDLPump.XSD_COMPLEXTYPE);
-                newType.setAttribute(WSDLPump.XSD_NAME, name);
+                Element newComplexType = doc.createElementNS(WSDLPump.XMLSCHEMA_NAMESPACE_URI, WSDLPump.XSD_COMPLEXTYPE_QUALIFIED_NAME);
+                newComplexType.setAttribute(WSDLPump.XSD_NAME, name);
 
-
-                Element cmplxContent = doc.createElementNS(WSDLPump.NAMESPACE_XMLSCHEMA, WSDLPump.XSD_SEQUENCE);
+                // add the sequence
+                // Note -  we model the complex type as a sequence!
+                Element cmplxContentSequence = doc.createElementNS(WSDLPump.XMLSCHEMA_NAMESPACE_URI, WSDLPump.XSD_SEQUENCE_QUALIFIED_NAME);
                 Element child;
                 Element relaventElementInSchemaReferedByPart = null;
                 Iterator iterator = parts.keySet().iterator();
                 while (iterator.hasNext()) {
                     Part part = (Part) parts.get(iterator.next());
-                    QName elementName = part.getElementName();
-                    if (null == elementName) {
-                        elementName = part.getTypeName();
-                    }
+                    //the part name
+                    String elementName = part.getName();
+                    //the type name
+                    QName schemaTypeName = part.getTypeName();
 
+                    //see whether this type is already present in one of the schemas
                     NodeList allSchemaElements = schemaElement.getChildNodes();
                     for(int idx = 0; idx < allSchemaElements.getLength(); idx++){
                         if(allSchemaElements.item(idx).getNodeType() == Node.ELEMENT_NODE &&
-                                allSchemaElements.item(idx).getLocalName().equals(WSDLPump.XSD_ELEMENT)
-                                && elementName.getLocalPart().equals(((Element)allSchemaElements.item(idx)).getAttribute(WSDLPump.XSD_NAME))){
+                                allSchemaElements.item(idx).getLocalName().equals(WSDLPump.XSD_ELEMENT_QUALIFIED_NAME)
+                                && elementName.equals(((Element)allSchemaElements.item(idx)).getAttribute(WSDLPump.XSD_NAME))){
                             relaventElementInSchemaReferedByPart = (Element)allSchemaElements.item(idx);
                             break;
                         }
                     }
-                    child = doc.createElementNS(WSDLPump.NAMESPACE_XMLSCHEMA, WSDLPump.XSD_ELEMENT);
-                    child.setAttribute(WSDLPump.XSD_NAME, elementName.getLocalPart());
+                    child = doc.createElementNS(WSDLPump.XMLSCHEMA_NAMESPACE_URI, WSDLPump.XSD_ELEMENT_QUALIFIED_NAME);
+                    child.setAttribute(WSDLPump.XSD_NAME, elementName);
+
                     if(null != relaventElementInSchemaReferedByPart){
-
-
                         child.setAttribute(WSDLPump.XSD_TYPE,
                                 relaventElementInSchemaReferedByPart.getAttribute(WSDLPump.XSD_TYPE));
                     }else{
-                        child.setAttribute(WSDLPump.XSD_TYPE, elementName.getLocalPart());
+                        String prefix = null;
+                        if (XMLSCHEMA_NAMESPACE_URI.equals(schemaTypeName.getNamespaceURI())){
+                            prefix = XMLSCHEMA_NAMESPACE_PREFIX;
+                        }else{
+                            prefix = schemaTypeName.getPrefix();
+                        }
+                        child.setAttribute(WSDLPump.XSD_TYPE, prefix +":"+schemaTypeName.getLocalPart());
                     }
-                    cmplxContent.appendChild(child);
-
+                    cmplxContentSequence.appendChild(child);
                 }
 
 
-                newType.appendChild(cmplxContent);
+                newComplexType.appendChild(cmplxContentSequence);
+                schemaElement.appendChild(newComplexType);
 
-                schemaElement.appendChild(newType);
 
-
-                Element newElement = doc.createElementNS(WSDLPump.NAMESPACE_XMLSCHEMA, WSDLPump.XSD_ELEMENT);
+                Element newElement = doc.createElementNS(WSDLPump.XMLSCHEMA_NAMESPACE_URI, WSDLPump.XSD_ELEMENT_QUALIFIED_NAME);
                 newElement.setAttribute(WSDLPump.XSD_NAME,
                         wsdl4jMessage.getQName().getLocalPart());
                 newElement.setAttribute(WSDLPump.XSD_TYPE,
                         "axis2wrapped:"+wsdl4jMessage.getQName().getLocalPart());
                 schemaElement.appendChild(newElement);
+
+                //////////////////////////////////////////////////////
+                //  System.out.println("schema = " + schemaElement);
+                //////////////////////////////////////////////////////
+
                 //Now since  a new type is created augmenting the parts add the QName
-                //of the newly created type as the messageReference's name.
+                //of the newly created Element as the messageReference's name.
+                //coincidentally it'll be the messages QName!
+
                 referenceQName = wsdl4jMessage.getQName();
+
                 //Add this message as a resolved message, so that incase some other
                 //operation refer to the same message the if above will take a hit
                 //and the cashed QName can be used instead of creating another type
                 //for the same message.
 
-                this.resolvedMultipartMessageList.add(wsdl4jMessage.getQName());
+                this.resolvedMultipartMessageList.add(referenceQName);
 
             }
         } else {
@@ -733,7 +775,7 @@ public class WSDLPump {
                     //right now there's no known header binding!. Ignore the copying of values for now
                     component.addExtensibilityElement(soapHeaderExtensibilityElement);
                 }else if (ExtensionConstants.SOAP_12_BINDING.equals(unknown.getElementType())){
-                     org.apache.wsdl.extensions.SOAPBinding soapBindingExtensibiltyElement = (org.apache.wsdl.extensions.SOAPBinding) extensionFactory
+                    org.apache.wsdl.extensions.SOAPBinding soapBindingExtensibiltyElement = (org.apache.wsdl.extensions.SOAPBinding) extensionFactory
                             .getExtensionElement(wsdl4jElement.getElementType());
                     Element element = unknown.getElement();
                     soapBindingExtensibiltyElement.setTransportURI(element.getAttribute("transport"));
@@ -741,7 +783,7 @@ public class WSDLPump {
 
                     component.addExtensibilityElement(soapBindingExtensibiltyElement);
                 } else if (ExtensionConstants.SOAP_12_ADDRESS.equals(unknown.getElementType())){
-                     org.apache.wsdl.extensions.SOAPAddress soapAddressExtensibiltyElement = (org.apache.wsdl.extensions.SOAPAddress) extensionFactory
+                    org.apache.wsdl.extensions.SOAPAddress soapAddressExtensibiltyElement = (org.apache.wsdl.extensions.SOAPAddress) extensionFactory
                             .getExtensionElement(wsdl4jElement.getElementType());
                     Element element = unknown.getElement();
                     soapAddressExtensibiltyElement.setLocationURI(element.getAttribute("location"));
@@ -880,5 +922,9 @@ public class WSDLPump {
             attribute.setValue(value);
             component.addExtensibleAttributes(attribute);
         }
+    }
+
+    private String getTemporaryNamespaceUri(){
+        return "urn:tempNs"+nsCount++ ;
     }
 }

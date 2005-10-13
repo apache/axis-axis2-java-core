@@ -146,7 +146,7 @@ public class WOMtoWSDL11Writer implements WOMWriter{
                 if (endPointMap!=null && !endPointMap.isEmpty()){
                     Iterator it = endPointMap.values().iterator();
                     while (it.hasNext()) {
-                        writePorttype((WSDLEndpoint)it.next(),writer);
+                        writePort((WSDLEndpoint)it.next(),writer);
                     }
                 }
                 WriterUtil.writeEndElement("service",defaultWSDLPrefix,writer);
@@ -159,7 +159,7 @@ public class WOMtoWSDL11Writer implements WOMWriter{
      * @param endpoint
      * @param outWriter
      */
-    private void writePorttype(WSDLEndpoint endpoint,Writer outWriter) throws IOException{
+    private void writePort(WSDLEndpoint endpoint,Writer outWriter) throws IOException{
         WriterUtil.writeStartElement("port",defaultWSDLPrefix,outWriter);
         WriterUtil.writeAttribute("name",endpoint.getName().getLocalPart(),outWriter);
         QName name = endpoint.getBinding().getName();
@@ -168,7 +168,7 @@ public class WOMtoWSDL11Writer implements WOMWriter{
 
         handleExtensibiltyElements(endpoint.getExtensibilityElements(),outWriter);
 
-        WriterUtil.writeEndElement("port",outWriter);
+        WriterUtil.writeEndElement("port",defaultWSDLPrefix,outWriter);
     }
     /**
      * Find the SOAPns prefix
@@ -518,15 +518,15 @@ public class WOMtoWSDL11Writer implements WOMWriter{
         WSDLBindingMessageReference input = bindingOp.getInput();
         if (input!=null){
             WriterUtil.writeStartElement(BINDING_INPUT,defaultWSDLPrefix,outWriter);
-            WriterUtil.writeCompactEndElement(outWriter);
+            WriterUtil.writeCloseStartElement(outWriter);
             handleExtensibiltyElements(input.getExtensibilityElements(),outWriter);
             WriterUtil.writeEndElement(BINDING_INPUT,defaultWSDLPrefix,outWriter);
         }
 
         WSDLBindingMessageReference output = bindingOp.getInput();
-        if (input!=null){
+        if (output!=null){
             WriterUtil.writeStartElement(BINDING_OUTPUT,defaultWSDLPrefix,outWriter);
-            WriterUtil.writeCompactEndElement(outWriter);
+            WriterUtil.writeCloseStartElement(outWriter);
             handleExtensibiltyElements(output.getExtensibilityElements(),outWriter);
             WriterUtil.writeEndElement(BINDING_OUTPUT,defaultWSDLPrefix,outWriter);
         }

@@ -18,6 +18,9 @@ package org.apache.axis2.wsdl.builder.wsdl4j;
 
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
+import org.apache.axis2.wsdl.writer.WOMWriterFactory;
+import org.apache.axis2.wsdl.writer.WOMWriter;
+import org.apache.axis2.wsdl.writer.WriterException;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
 import org.apache.wsdl.WSDLDescription;
@@ -37,84 +40,87 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class WSDL1ToWOMBuilder implements WOMBuilder {
 
-	/**
-	 * Buils a WOM and a WSDL4J object model from given the URI of the WSDL file and
-	 * will be returned as a wrapper object WSDLVersionWrapper.
-	 * @param in InputStream from which the WSDL document can be read in.
-	 * @return WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1 
-	 * object models.
-	 * @throws WSDLException
-	 */
-    public WSDLVersionWrapper build(InputStream in) throws WSDLException {
-    	return build(in, null);
-    }
-    
     /**
-	 * Buils a WOM and a WSDL4J object model from given the URI of the WSDL file and
-	 * will be returned as a wrapper object WSDLVersionWrapper. A WSDL Component Factory
-	 * can be passed into the builder using which the WOM component can be built out of.
-	 * For example: The Enigne uses the WOM's components in the context hierarchy but 
-	 * those are extended components. 
-	 * (<code>ServiceDescription</code> extends <code>WSDLService</code>.)
-	 * So when deployment build the WOM it would prefer to get a <code>ServiceDescription</code>
-	 * built in place of a <code>WSDLService</code>. This can be achieved by passing the 
-	 * correct Component Factory that will instanciate the correct object for the WOM builder.
-	 * @param in InputStream from which the WSDL document can be read in.
-	 * @param wsdlComponentFactory The ComponentFactory that will be used to create the
-	 * WOm components out of.
-	 * @return WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1 
-	 * object models.
-	 * @throws WSDLException
-	 */
-    public WSDLVersionWrapper build(InputStream in, 
-    								WSDLComponentFactory wsdlComponentFactory) throws WSDLException {
-    	if(null == wsdlComponentFactory){
-    		wsdlComponentFactory = new WSDLDescriptionImpl();
-    	}
-    	WSDLDescription wsdlDescription = wsdlComponentFactory.createDescription();
+     * Buils a WOM and a WSDL4J object model from given the URI of the WSDL file and
+     * will be returned as a wrapper object WSDLVersionWrapper.
+     * @param in InputStream from which the WSDL document can be read in.
+     * @return WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1
+     * object models.
+     * @throws WSDLException
+     */
+    public WSDLVersionWrapper build(InputStream in) throws WSDLException {
+        return build(in, null);
+    }
+
+    /**
+     * Buils a WOM and a WSDL4J object model from given the URI of the WSDL file and
+     * will be returned as a wrapper object WSDLVersionWrapper. A WSDL Component Factory
+     * can be passed into the builder using which the WOM component can be built out of.
+     * For example: The Enigne uses the WOM's components in the context hierarchy but
+     * those are extended components.
+     * (<code>ServiceDescription</code> extends <code>WSDLService</code>.)
+     * So when deployment build the WOM it would prefer to get a <code>ServiceDescription</code>
+     * built in place of a <code>WSDLService</code>. This can be achieved by passing the
+     * correct Component Factory that will instanciate the correct object for the WOM builder.
+     * @param in InputStream from which the WSDL document can be read in.
+     * @param wsdlComponentFactory The ComponentFactory that will be used to create the
+     * WOm components out of.
+     * @return WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1
+     * object models.
+     * @throws WSDLException
+     */
+    public WSDLVersionWrapper build(InputStream in,
+                                    WSDLComponentFactory wsdlComponentFactory) throws WSDLException {
+        if(null == wsdlComponentFactory){
+            wsdlComponentFactory = new WSDLDescriptionImpl();
+        }
+        WSDLDescription wsdlDescription = wsdlComponentFactory.createDescription();
 
         Definition wsdl1Definition = this.readInTheWSDLFile(in);
         WSDLPump pump = new WSDLPump(wsdlDescription, wsdl1Definition);
         pump.pump();
 
+
+
+
         return new WSDLVersionWrapper(wsdlDescription, wsdl1Definition);
     }
-    
+
 
     /**
-	 * Buils a WOM and a WSDL4J object model from given the URI of the WSDL file and
-	 * will be returned as a wrapper object WSDLVersionWrapper.
-	 * @param uri URI pointing to the WSDL document.
-	 * @return WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1 
-	 * object models.
-	 * @throws WSDLException
-	 */
-     public WSDLVersionWrapper build(String uri) throws WSDLException {
+     * Buils a WOM and a WSDL4J object model from given the URI of the WSDL file and
+     * will be returned as a wrapper object WSDLVersionWrapper.
+     * @param uri URI pointing to the WSDL document.
+     * @return WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1
+     * object models.
+     * @throws WSDLException
+     */
+    public WSDLVersionWrapper build(String uri) throws WSDLException {
         return build(uri, null);
     }
 
-     /**
- 	 * Buils a WOM and a WSDL4J object model from given the URI of the WSDL file and
- 	 * will be returned as a wrapper object WSDLVersionWrapper. A WSDL Component Factory
- 	 * can be passed into the builder using which the WOM component can be built out of.
- 	 * For example: The Enigne uses the WOM's components in the context hierarchy but 
- 	 * those are extended components. 
- 	 * (<code>ServiceDescription</code> extends <code>WSDLService</code>.)
- 	 * So when deployment build the WOM it would prefer to get a <code>ServiceDescription</code>
- 	 * built in place of a <code>WSDLService</code>. This can be achieved by passing the 
- 	 * correct Component Factory that will instanciate the correct object for the WOM builder.
- 	 * @param uri URI pointing to the WSDL document.
- 	 * @param wsdlComponentFactory The ComponentFactory that will be used to create the
- 	 * WOm components out of.
- 	 * @return WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1 
- 	 * object models.
- 	 * @throws WSDLException
- 	 */
+    /**
+     * Buils a WOM and a WSDL4J object model from given the URI of the WSDL file and
+     * will be returned as a wrapper object WSDLVersionWrapper. A WSDL Component Factory
+     * can be passed into the builder using which the WOM component can be built out of.
+     * For example: The Enigne uses the WOM's components in the context hierarchy but
+     * those are extended components.
+     * (<code>ServiceDescription</code> extends <code>WSDLService</code>.)
+     * So when deployment build the WOM it would prefer to get a <code>ServiceDescription</code>
+     * built in place of a <code>WSDLService</code>. This can be achieved by passing the
+     * correct Component Factory that will instanciate the correct object for the WOM builder.
+     * @param uri URI pointing to the WSDL document.
+     * @param wsdlComponentFactory The ComponentFactory that will be used to create the
+     * WOm components out of.
+     * @return WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1
+     * object models.
+     * @throws WSDLException
+     */
     public WSDLVersionWrapper build(String uri,
                                     WSDLComponentFactory wsdlComponentFactory) throws WSDLException {
-    	if(null == wsdlComponentFactory){
-    		wsdlComponentFactory = new WSDLDescriptionImpl();
-    	}
+        if(null == wsdlComponentFactory){
+            wsdlComponentFactory = new WSDLDescriptionImpl();
+        }
         WSDLDescription wsdlDescription = wsdlComponentFactory.createDescription();
 
         Definition wsdl1Definition = this.readInTheWSDLFile(uri);
@@ -122,6 +128,7 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
                 wsdl1Definition,
                 wsdlComponentFactory);
         pump.pump();
+
 
         return new WSDLVersionWrapper(wsdlDescription, wsdl1Definition);
 
@@ -152,9 +159,9 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
 
         return reader.readWSDL(baseURI, doc);
     }
-    
+
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
-    	
+
         WSDLReader reader =
                 WSDLFactory.newInstance().newWSDLReader();
 

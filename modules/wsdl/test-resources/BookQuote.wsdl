@@ -22,10 +22,11 @@
             <output message="mh:BookQuote_getBookPriceResponse"/>
         </operation>
     </portType>
+    <!-- this binding seems not to be completed -->
     <binding name="BookQuoteBinding" type="mh:BookQuote">
         <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
         <operation name="getBookPrice">
-            <soap:operation/>
+            <soap:operation />
             <input>
                 <soap:body use="literal" namespace="http://www.Monson-Haefel.com/jwsbook/BookQuote/BookQuote"/>
             </input>

@@ -905,19 +905,21 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     private void addSOAPAction(Document doc,
                                Element rootElement,
                                WSDLBindingOperation binding) {
-        Iterator extIterator = binding.getExtensibilityElements().iterator();
+        List extensibilityElements = binding.getExtensibilityElements();
         boolean actionAdded = false;
-        while (extIterator.hasNext()) {
-            WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
-            if (ExtensionConstants.SOAP_11_OPERATION.equals(element.getType())) {
-                addAttribute(doc,
-                        "soapaction",
-                        ((SOAPOperation) element).getSoapAction(),
-                        rootElement);
-                actionAdded = true;
+        if (extensibilityElements!=null && !extensibilityElements.isEmpty()){
+            Iterator extIterator = extensibilityElements.iterator();
+            while (extIterator.hasNext()) {
+                WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
+                if (ExtensionConstants.SOAP_11_OPERATION.equals(element.getType())) {
+                    addAttribute(doc,
+                            "soapaction",
+                            ((SOAPOperation) element).getSoapAction(),
+                            rootElement);
+                    actionAdded = true;
+                }
             }
         }
-
         if (!actionAdded) {
             addAttribute(doc, "soapaction", "", rootElement);
         }
@@ -1171,7 +1173,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                                 String AttribName,
                                 String attribValue,
                                 Element element) {
-       XSLTUtils.addAttribute(document,AttribName,attribValue,element);
+        XSLTUtils.addAttribute(document,AttribName,attribValue,element);
     }
 
 

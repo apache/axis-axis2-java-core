@@ -64,7 +64,14 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
 
                 XmlSchemaCollection schemaColl = new XmlSchemaCollection();
                 //add the namespace map here. it is absolutely needed
-                Schema schema = null;
+                Map nsMap = configuration.getWom().getNamespaces();
+                Iterator keys = nsMap.keySet().iterator();
+                String key;
+                while (keys.hasNext()) {
+                    key = (String) keys.next();
+                    schemaColl.mapNamespace(key,(String)nsMap.get(key));
+                }
+                Schema schema;
 
                 if (ExtensionConstants.SCHEMA.equals(extensiblityElt.getType())) {
                     schema = (Schema) extensiblityElt;
@@ -94,11 +101,11 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
                 JavaTypeMapper mapper = new JavaTypeMapper();
                 //get the processed element map and transfer it to the type mapper
                 Map processedMap = schemaCompiler.getProcessedElementmap();
-                Iterator keys = processedMap.keySet().iterator();
-                QName key;
-                while (keys.hasNext()) {
-                   key =(QName)keys.next();
-                   mapper.addTypeMapping(key,processedMap.get(key));
+                Iterator processedkeys = processedMap.keySet().iterator();
+                QName qNameKey;
+                while (processedkeys.hasNext()) {
+                   qNameKey =(QName)processedkeys.next();
+                   mapper.addTypeMapping(qNameKey,processedMap.get(qNameKey));
                 }
 
                 //set the type mapper to the config
