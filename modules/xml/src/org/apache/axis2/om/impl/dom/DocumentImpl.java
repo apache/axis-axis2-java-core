@@ -241,7 +241,7 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 		throw new UnsupportedOperationException("TODO");
 	}
 
-	public void setDocumentOMElement(OMElement rootElement) {
+	public void setOMDocumentElement(OMElement rootElement) {
 		//TODO
 		throw new UnsupportedOperationException("TODO");
 	}
@@ -256,7 +256,7 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 		throw new UnsupportedOperationException("TODO");
 	}
 
-	public OMElement getDocumentOMElement() {
+	public OMElement getOMDocumentElement() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -54,7 +54,7 @@ public class OMDocumentSerilizationTest extends TestCase {
 		documentElement.addChild(child1);
 		
 		document = factory.createOMDocument();
-		document.setDocumentOMElement(documentElement);
+		document.setOMDocumentElement(documentElement);
 		
 	}
 	

@@ -37,13 +37,13 @@ public interface OMDocument extends OMContainer {
 	 * Returns the document element
 	 * @return
 	 */
-	public OMElement getDocumentOMElement();
+	public OMElement getOMDocumentElement();
 	
 	/**
 	 * Sets the document element of the XML document
 	 * @param rootElement
 	 */
-	public void setDocumentOMElement(OMElement rootElement);
+	public void setOMDocumentElement(OMElement rootElement);
 	
 	/**
 	 * Returns the XML version

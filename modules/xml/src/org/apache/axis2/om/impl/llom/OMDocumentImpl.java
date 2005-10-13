@@ -102,7 +102,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
      *
      * @return
      */
-    public OMElement getDocumentOMElement() {
+    public OMElement getOMDocumentElement() {
         while (rootElement == null) {
             parserWrapper.next();
         }
@@ -114,7 +114,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
      *
      * @param rootElement
      */
-    public void setDocumentOMElement(OMElement rootElement) {
+    public void setOMDocumentElement(OMElement rootElement) {
         this.rootElement = rootElement;
     }
 

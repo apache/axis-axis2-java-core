@@ -42,7 +42,7 @@ public class SOAPMessageImpl extends OMDocumentImpl implements SOAPMessage {
 
 
     public SOAPEnvelope getSOAPEnvelope() throws SOAPProcessingException {
-        return (SOAPEnvelope) getDocumentOMElement();
+        return (SOAPEnvelope) getOMDocumentElement();
     }
 
     public void setSOAPEnvelope(SOAPEnvelope envelope) throws SOAPProcessingException {
@@ -50,7 +50,7 @@ public class SOAPMessageImpl extends OMDocumentImpl implements SOAPMessage {
         this.rootElement = envelope;
     }
 
-    public void setDocumentOMElement(OMElement rootElement) {
+    public void setOMDocumentElement(OMElement rootElement) {
         throw new UnsupportedOperationException("This is not allowed. Use set SOAPEnvelope instead");
     }
 
