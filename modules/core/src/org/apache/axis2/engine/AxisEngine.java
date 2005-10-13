@@ -83,7 +83,7 @@ public class AxisEngine {
         //find and invoke the Phases        
         OperationContext operationContext = msgContext.getOperationContext();
         ArrayList phases =
-            operationContext.getAxisOperation().getPhasesOutFlow();
+            operationContext.getOperationDescription().getPhasesOutFlow();
         if (msgContext.isPaused()) {
             // the message has paused, so rerun them from the position they stoped. The Handler
             //who paused the Message will be the first one to run
@@ -132,7 +132,7 @@ public class AxisEngine {
             //resume operation specific phases
             OperationContext operationContext =
                 msgContext.getOperationContext();
-            operationDescription = operationContext.getAxisOperation();
+            operationDescription = operationContext.getOperationDescription();
             operationSpecificPhases =
                 operationDescription.getRemainingPhasesInFlow();
             resumeInvocationPhases(operationSpecificPhases, msgContext);
@@ -141,7 +141,7 @@ public class AxisEngine {
             verifyContextBuilt(msgContext);
             OperationContext operationContext =
                 msgContext.getOperationContext();
-            operationDescription = operationContext.getAxisOperation();
+            operationDescription = operationContext.getOperationDescription();
             operationSpecificPhases =
                 operationDescription.getRemainingPhasesInFlow();
             invokePhases(operationSpecificPhases, msgContext);
@@ -165,7 +165,7 @@ public class AxisEngine {
         OperationContext opContext = msgContext.getOperationContext();
         //find and execute the Fault Out Flow Handlers
         if (opContext != null) {
-            OperationDescription axisOperation = opContext.getAxisOperation();
+            OperationDescription axisOperation = opContext.getOperationDescription();
             ArrayList phases = axisOperation.getPhasesOutFaultFlow();
             if (msgContext.isPaused()) {
                 resumeInvocationPhases(phases, msgContext);
@@ -211,7 +211,7 @@ public class AxisEngine {
         opContext = msgContext.getOperationContext();
         //find and execute the Fault In Flow Handlers
         if (opContext != null) {
-            OperationDescription axisOperation = opContext.getAxisOperation();
+            OperationDescription axisOperation = opContext.getOperationDescription();
             ArrayList phases = axisOperation.getPhasesInFaultFlow();
             if (msgContext.isPaused()) {
                 resumeInvocationPhases(phases, msgContext);

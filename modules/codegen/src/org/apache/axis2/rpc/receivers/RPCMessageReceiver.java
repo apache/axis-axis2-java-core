@@ -1,17 +1,17 @@
 package org.apache.axis2.rpc.receivers;
 
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.util.BeanSerializerUtil;
-import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
-import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.engine.DependencyManager;
+import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis2.engine.DependencyManager;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.util.BeanSerializerUtil;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -77,8 +77,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             Class ImplClass = obj.getClass();
             DependencyManager.configureBusinessLogicProvider(obj, inMessage, null);
 
-            OperationDescription op = inMessage.getOperationContext()
-                    .getAxisOperation();
+            OperationDescription op = inMessage.getOperationContext().getOperationDescription();
             if (op == null) {
                 throw new AxisFault(
                         "Operation is not located, if this is doclit style the SOAP-ACTION should " +

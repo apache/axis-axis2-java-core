@@ -19,10 +19,10 @@ package org.apache.axis2.context;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
+import org.apache.axis2.description.InOutOperationDescrition;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.description.ServiceGroupDescription;
-import org.apache.axis2.description.InOutOperationDescrition;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.wsdl.WSDLConstants;
@@ -166,7 +166,7 @@ public class ContextSerializationTest extends TestCase {
 		AxisConfiguration axisConfiguration1 = configurationContext.getAxisConfiguration();
 		assertNotNull(axisConfiguration1);
 		
-		assertNotNull(operationContext1.getAxisOperation());
+		assertNotNull(operationContext1.getOperationDescription());
 		assertNotNull(serviceGroupcontext1.getDescription());
 		assertNotNull(serviceContext1.getServiceConfig());
 			

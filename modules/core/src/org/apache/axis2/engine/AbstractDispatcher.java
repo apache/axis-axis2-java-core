@@ -70,7 +70,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
             if (relatesTo != null || "".equals(relatesTo)) {
                 OperationContext operationContext = msgctx.getSystemContext().getOperationContext(relatesTo);
                 if (operationContext != null) {
-                    msgctx.setOperationDescription(operationContext.getAxisOperation());
+                    msgctx.setOperationDescription(operationContext.getOperationDescription());
                     msgctx.setOperationContext(operationContext);
                     msgctx.setServiceContext((ServiceContext) operationContext.getParent());
                     msgctx.setServiceDescription(((ServiceContext) operationContext.getParent()).getServiceConfig());

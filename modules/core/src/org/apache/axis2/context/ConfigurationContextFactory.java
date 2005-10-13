@@ -49,11 +49,11 @@ public class ConfigurationContextFactory {
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
 
             Parameter parameter = configuration.getParameter("seralizeLocation");
-            String serailzeLocaion = ".";
+            String serializeLocation = ".";
             if (parameter !=null) {
-                serailzeLocaion = ((String)parameter.getValue()).trim();
+                serializeLocation = ((String)parameter.getValue()).trim();
             }
-            File objFile = new File(serailzeLocaion,"Axis2.obj");
+            File objFile = new File(serializeLocation,"Axis2.obj");
             if(objFile.exists()){
                 try {
                     FileInputStream filein = new FileInputStream(objFile);

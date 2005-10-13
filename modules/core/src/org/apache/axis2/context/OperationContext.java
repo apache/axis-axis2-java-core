@@ -25,9 +25,9 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * An OperationContext represents a running "instance" of an operation, which is
@@ -138,7 +138,7 @@ public class OperationContext extends AbstractContext {
     /**
      * @return Returns the axisOperation.
      */
-    public OperationDescription getAxisOperation() {
+    public OperationDescription getOperationDescription() {
         return axisOperation;
     }
 

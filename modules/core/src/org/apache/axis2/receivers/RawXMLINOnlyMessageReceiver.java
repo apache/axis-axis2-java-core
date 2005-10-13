@@ -76,7 +76,7 @@ public class RawXMLINOnlyMessageReceiver
             DependencyManager.configureBusinessLogicProvider(obj, msgContext, null);
 
             OperationDescription op = msgContext.getOperationContext()
-                    .getAxisOperation();
+                    .getOperationDescription();
             if (op == null) {
                 throw new AxisFault(
                         "Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
@@ -101,7 +101,7 @@ public class RawXMLINOnlyMessageReceiver
                 SOAPEnvelope envelope = null;
 
                 String style = msgContext.getOperationContext()
-                        .getAxisOperation()
+                        .getOperationDescription()
                         .getStyle();
 
                 if (WSDLService.STYLE_DOC.equals(style)) {

@@ -534,9 +534,6 @@ public class MessageContext extends AbstractContext {
             this.transportOutname = out.getName();
     }
 
-    /**
-     * @return
-     */
     public OperationContext getOperationContext() {
         return operationContext;
     }
@@ -551,7 +548,7 @@ public class MessageContext extends AbstractContext {
         }
         this.setParent(operationContext);
         if (operationContext != null) {
-            this.setOperationDescription(operationContext.getAxisOperation());
+            this.setOperationDescription(operationContext.getOperationDescription());
         }
     }
 

@@ -75,11 +75,11 @@ public class RawXMLINOutMessageReceiver
             DependencyManager.configureBusinessLogicProvider(obj, msgContext, newmsgContext);
 
             OperationDescription opDesc = msgContext.getOperationContext()
-                    .getAxisOperation();
+                    .getOperationDescription();
             Method method = findOperation(opDesc, ImplClass);
             if (method != null) {
                 String style = msgContext.getOperationContext()
-                        .getAxisOperation()
+                        .getOperationDescription()
                         .getStyle();
 
                 Class[] parameters = method.getParameterTypes();

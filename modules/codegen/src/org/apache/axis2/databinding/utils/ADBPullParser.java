@@ -89,6 +89,8 @@ public class ADBPullParser implements XMLStreamReader {
      *                      ---------------------------------------------------------------
      *                      | "Name" | "FooOne" | QName("DependentOne") | Dependent object|
      *                      ---------------------------------------------------------------
+     *                      Remember "Name" and "FooOne" MUST be strings and DependentOne SHOULD be 
+     *                      QName.
      *                      This DependentObject can either be an ADBBean or a POJO. If its an ADBBean
      *                      We directly get the pull parser from that. If not we create a reflection based
      *                      pull parser for that java bean.

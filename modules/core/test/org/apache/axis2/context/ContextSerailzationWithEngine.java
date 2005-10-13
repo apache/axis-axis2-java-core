@@ -124,7 +124,7 @@ public class ContextSerailzationWithEngine extends TestCase {
             AxisConfiguration axisConfiguration1 = newConfigContext.getAxisConfiguration();
             assertNotNull(axisConfiguration1);
 
-            assertNotNull(operationContext1.getAxisOperation());
+            assertNotNull(operationContext1.getOperationDescription());
             assertNotNull(serviceGroupcontext1.getDescription());
             assertNotNull(serviceContext1.getServiceConfig());
 

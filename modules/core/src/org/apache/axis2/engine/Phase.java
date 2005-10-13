@@ -91,7 +91,7 @@ public class Phase {
      * this is want if the phaseFirst and phaseLst same hanlder
      * that is for this phase there is only one phase
      */
-    private boolean isonehanlder;
+    private boolean isOneHanlder;
 
     /**
      * Constructor Phase
@@ -275,7 +275,7 @@ public class Phase {
      * @throws PhaseException
      */
     public void addHandler(HandlerDescription handler) throws PhaseException {
-        if (isonehanlder) {
+        if (isOneHanlder) {
             throw new PhaseException(
                     this.getPhaseName()
                     + "can only have one handler, since there is a "
@@ -291,7 +291,7 @@ public class Phase {
                             + " is invalid or incorrect phase rules");
                 } else {
                     handlers.add(handler.getHandler());
-                    isonehanlder = true;
+                    isOneHanlder = true;
                     return;
                 }
             } else if (handler.getRules().isPhaseFirst()) {

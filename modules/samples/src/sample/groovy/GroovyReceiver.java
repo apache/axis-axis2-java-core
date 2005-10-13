@@ -73,7 +73,7 @@ public class GroovyReceiver
 
             //look at the method name. if available this should be a groovy method
             OperationDescription op =
-                inMessage.getOperationContext().getAxisOperation();
+                inMessage.getOperationContext().getOperationDescription();
             if (op == null) {
                 throw new AxisFault(
                     Messages.getMessage("notFound", "Operation"));

@@ -27,7 +27,7 @@
         //Out Envelop
         org.apache.axis2.soap.SOAPEnvelope envelope = null;
         //Find the operation that has been set by the Dispatch phase.
-        org.apache.axis2.description.OperationDescription op = msgContext.getOperationContext().getAxisOperation();
+        org.apache.axis2.description.OperationDescription op = msgContext.getOperationContext().getOperationDescription();
         if (op == null) {
         throw new org.apache.axis2.AxisFault("Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
         }

@@ -54,7 +54,7 @@ public class DispatchingChecker extends AbstractHandler implements Handler {
      */
     public final void invoke(MessageContext msgctx) throws AxisFault {
         if(msgctx.getOperationDescription() == null && msgctx.getOperationContext() != null ){
-            msgctx.setOperationDescription(msgctx.getOperationContext().getAxisOperation());
+            msgctx.setOperationDescription(msgctx.getOperationContext().getOperationDescription());
         }
 
         if(msgctx.getServiceDescription() == null && msgctx.getServiceContext() != null){
