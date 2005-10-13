@@ -29,6 +29,11 @@ public class NamespaceImpl implements OMNamespace {
 		this.nsUri = uri;
 	}
 	
+	public NamespaceImpl(String uri, String prefix) {
+		this.nsUri = uri;
+		this.nsPrefix = prefix;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.om.OMNamespace#equals(java.lang.String, java.lang.String)
 	 */

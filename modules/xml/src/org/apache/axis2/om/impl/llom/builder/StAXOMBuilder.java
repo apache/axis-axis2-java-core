@@ -99,7 +99,7 @@ public class StAXOMBuilder extends StAXBuilder {
         String elementName = parser.getLocalName();
         if (lastNode == null) {
             node = omfactory.createOMElement(elementName, null, null, this);
-            document.setDocumentElement(node);
+            document.setDocumentOMElement(node);
             document.addChild(node);
         } else if (lastNode.isComplete()) {
             node = omfactory.createOMElement(elementName, null,
@@ -286,7 +286,7 @@ public class StAXOMBuilder extends StAXBuilder {
      * @return root element
      */
     public OMElement getDocumentElement() {
-        return document.getDocumentElement();
+        return document.getDocumentOMElement();
     }
 
     /**

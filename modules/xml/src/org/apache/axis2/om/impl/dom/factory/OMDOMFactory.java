@@ -27,79 +27,174 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMProcessingInstruction;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.dom.AttrImpl;
+import org.apache.axis2.om.impl.dom.DocumentFragmentimpl;
+import org.apache.axis2.om.impl.dom.DocumentImpl;
+import org.apache.axis2.om.impl.dom.ElementImpl;
+import org.apache.axis2.om.impl.dom.NamespaceImpl;
+import org.apache.axis2.om.impl.dom.OMDOMException;
+import org.apache.axis2.om.impl.dom.ParentNode;
+import org.apache.axis2.om.impl.dom.TextImpl;
+import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 
 public class OMDOMFactory implements OMFactory {
-
+	
 	public OMDocument createOMDocument() {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+		return new DocumentImpl();
 	}
 
 	public OMElement createOMElement(String localName, OMNamespace ns) {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+		return new ElementImpl(new DocumentImpl(), localName, (NamespaceImpl)ns);
 	}
 
-	public OMElement createOMElement(String localName, OMNamespace ns, OMContainer parent) {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+	public OMElement createOMElement(String localName, OMNamespace ns, OMContainer parent) throws OMDOMException{
+		switch(((ParentNode)parent).getNodeType()) {
+			case Node.ELEMENT_NODE : // We are adding a new child to an elem
+				ElementImpl parentElem = (ElementImpl)parent;
+				ElementImpl elem = new ElementImpl((DocumentImpl)parentElem.getOwnerDocument(),localName,(NamespaceImpl)ns);
+				parentElem.appendChild(elem);
+				return elem;
+			case Node.DOCUMENT_NODE :
+				DocumentImpl docImpl = (DocumentImpl) parent;
+				ElementImpl elem2 = new ElementImpl(docImpl,localName,(NamespaceImpl)ns);
+				return elem2;
+				
+			case Node.DOCUMENT_FRAGMENT_NODE :
+				DocumentFragmentimpl docFragImpl = (DocumentFragmentimpl)parent;
+				ElementImpl elem3 = new ElementImpl((DocumentImpl)docFragImpl.getOwnerDocument(),localName, (NamespaceImpl)ns);
+				return elem3;
+			default:
+				throw new OMDOMException("The parent container can only be an ELEMENT, DOCUMENT or a DOCUMENT FRAGMENT");
+		}
 	}
 
+	/**
+	 * Creating an OMElement with the builder
+	 */
 	public OMElement createOMElement(String localName, OMNamespace ns, OMContainer parent, OMXMLParserWrapper builder) {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+		switch(((ParentNode)parent).getNodeType()) {
+			case Node.ELEMENT_NODE: // We are adding a new child to an elem
+				ElementImpl parentElem = (ElementImpl) parent;
+				ElementImpl elem = new ElementImpl((DocumentImpl) parentElem
+						.getOwnerDocument(), localName, (NamespaceImpl) ns, builder);
+				parentElem.appendChild(elem);
+				return elem;
+			case Node.DOCUMENT_NODE:
+				DocumentImpl docImpl = (DocumentImpl) parent;
+				ElementImpl elem2 = new ElementImpl(docImpl, localName,
+						(NamespaceImpl) ns, builder);
+				return elem2;
+	
+			case Node.DOCUMENT_FRAGMENT_NODE:
+				DocumentFragmentimpl docFragImpl = (DocumentFragmentimpl) parent;
+				ElementImpl elem3 = new ElementImpl((DocumentImpl) docFragImpl
+						.getOwnerDocument(), localName, (NamespaceImpl) ns, builder);
+				return elem3;
+			default:
+				throw new OMDOMException(
+						"The parent container can only be an ELEMENT, DOCUMENT or a DOCUMENT FRAGMENT");
+		}
 	}
 
+	/**
+	 * Create an OMElement
+	 * @see org.apache.axis2.om.OMFactory#createOMElement(java.lang.String, java.lang.String, java.lang.String)
+	 */
 	public OMElement createOMElement(String localName, String namespaceURI, String namespacePrefix) {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+		NamespaceImpl ns = new NamespaceImpl(namespaceURI,namespacePrefix);
+		return this.createOMElement(localName, ns);
 	}
 
+	/**
+	 * Create a new OMDOM Element node and add it to the given parent
+	 * @see #createOMElement(String, OMNamespace, OMContainer)
+	 * @see org.apache.axis2.om.OMFactory#createOMElement(javax.xml.namespace.QName, org.apache.axis2.om.OMContainer)
+	 */
 	public OMElement createOMElement(QName qname, OMContainer parent) throws OMException {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+		NamespaceImpl ns;
+		if(qname.getPrefix() != null) {
+			ns = new NamespaceImpl(qname.getNamespaceURI(), qname.getPrefix());
+		} else {
+			ns = new NamespaceImpl(qname.getNamespaceURI());
+		}
+		return createOMElement(qname.getLocalPart(),ns,parent);
 	}
 
+	/**
+	 * Create a new OMNamespace
+	 * @see org.apache.axis2.om.OMFactory#createOMNamespace(java.lang.String, java.lang.String)
+	 */
 	public OMNamespace createOMNamespace(String uri, String prefix) {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+		return new NamespaceImpl(uri,prefix);
 	}
 
+	/**
+	 * Create a new OMDOM Text node with the given value and append it to the 
+	 * given parent element
+	 * @see org.apache.axis2.om.OMFactory#createText(org.apache.axis2.om.OMElement, java.lang.String)
+	 */
 	public OMText createText(OMElement parent, String text) {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+			ElementImpl parentElem = (ElementImpl) parent;
+			TextImpl txt = new TextImpl((DocumentImpl) parentElem.getOwnerDocument(), text);
+			parentElem.addChild(txt);
+			return txt;
 	}
 
+	/**
+	 * Create a OMDOM Text node carrying the given value
+	 * 
+	 * @see org.apache.axis2.om.OMFactory#createText(java.lang.String)
+	 */
 	public OMText createText(String s) {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+		return new TextImpl(s);
 	}
 
-	public OMText createText(String s, int type) {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+	/**
+	 * Create a Character node of the given type
+	 * @see org.apache.axis2.om.OMFactory#createText(java.lang.String, int)
+	 */
+	public OMText createText(String text, int type) {
+		switch (type) {
+			case Node.TEXT_NODE:
+				return new TextImpl(text);
+			default:
+				throw new OMDOMException("Only Text nodes are supported right now");
+		}
 	}
 
-	public OMText createText(String s, String mimeType, boolean optimize) {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+	/**
+	 * Create a new OMDOM Text node with that has the value of the given text
+	 * value along with the MTOM optimization parameters and return it
+	 * @see org.apache.axis2.om.OMFactory#createText(java.lang.String, java.lang.String, boolean)
+	 */
+	public OMText createText(String text, String mimeType, boolean optimize) {
+		return new TextImpl(text, mimeType, optimize);
 	}
 
+	/**
+	 * Create a new OMDOM Text node with the given datahandler and the give 
+	 * MTOM optimization configuration and return it
+	 * @see org.apache.axis2.om.OMFactory#createText(java.lang.Object, boolean)
+	 */
 	public OMText createText(Object dataHandler, boolean optimize) {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+		return new TextImpl(dataHandler, optimize);
 	}
 
+	/**
+	 * Create an OMDOM Text node, add it to the give parent element and return it 
+	 * @see org.apache.axis2.om.OMFactory#createText(org.apache.axis2.om.OMElement, java.lang.String, java.lang.String, boolean)
+	 */
 	public OMText createText(OMElement parent, String s, String mimeType, boolean optimize) {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+		TextImpl text = new TextImpl((DocumentImpl)((ElementImpl)parent).getOwnerDocument(),s, mimeType, optimize);
+		parent.addChild(text);
+		return text;
 	}
 
+	
 	public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value) {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+		return new AttrImpl(localName,ns, value);
 	}
 
 	public OMDocType createOMDocType(OMContainer parent, String content) {

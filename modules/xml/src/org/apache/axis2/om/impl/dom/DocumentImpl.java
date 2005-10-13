@@ -16,6 +16,8 @@
 package org.apache.axis2.om.impl.dom;
 
 import org.apache.axis2.om.OMContainer;
+import org.apache.axis2.om.OMDocument;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.OMOutputImpl;
@@ -42,7 +44,7 @@ import javax.xml.stream.XMLStreamWriter;
 /**
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
-public class DocumentImpl extends ParentNode implements Document {
+public class DocumentImpl extends ParentNode implements Document, OMDocument {
 
 	
     protected Hashtable identifiers;
@@ -54,7 +56,7 @@ public class DocumentImpl extends ParentNode implements Document {
 		super(ownerDocument);
 	}
 
-	protected DocumentImpl() {
+	public DocumentImpl() {
 		
 	}
 	
@@ -205,5 +207,60 @@ public class DocumentImpl extends ParentNode implements Document {
 		//TODO
 		throw new UnsupportedOperationException("TODO");
 	}
+	
+	///
+	///OMDocument Methods
+	///
+	public String getCharsetEncoding() {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public String getXMLVersion() {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public String isStandalone() {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void serialize(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void serializeAndConsume(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void setCharsetEncoding(String charsetEncoding) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void setDocumentOMElement(OMElement rootElement) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void setStandalone(String isStandalone) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void setXMLVersion(String version) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public OMElement getDocumentOMElement() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
 
 }

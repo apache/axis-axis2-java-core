@@ -20,7 +20,7 @@ import org.w3c.dom.CharacterData;
 import org.w3c.dom.DOMException;
 
 /**
- * This implements the OMCharater operations which are to be
+ * This implements the OMText operations which are to be
  * inherited by TextImpl, CommentImpl, CDATASectionImpl
  * 
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
@@ -29,6 +29,9 @@ public abstract class CharacterImpl extends ChildNode implements
 		OMText, CharacterData {
 
 	protected StringBuffer textValue;
+	
+	protected CharacterImpl() {
+	}
 	
 	/**
 	 * @param ownerNode

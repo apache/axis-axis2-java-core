@@ -443,5 +443,9 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
 		if(!done)
 			this.builder.next();
 	}
-
+	
+	protected void SetOwnerDocument(DocumentImpl document) {
+		this.ownerNode = document;
+	}
+	
 }

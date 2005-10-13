@@ -30,6 +30,54 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public class TextImpl extends CharacterImpl implements Text {
 
+	
+	private String mimeType;
+	
+	private boolean optimize;
+	
+	private boolean isBinary;
+	
+    /**
+     * Field dataHandler contains the DataHandler
+     * Declaring as Object to remove the depedency on 
+     * Javax.activation.DataHandler
+     */
+    private Object dataHandlerObject = null;
+	
+	/**
+	 * Create a text node with the given text
+	 * required by the OMDOMFactory
+	 * The owner document should be set properly when
+	 * appending this to a DOM tree
+	 * @param text
+	 */
+	public TextImpl(String text) {
+		this.textValue = new StringBuffer(text);
+	}
+	
+	public TextImpl(String text, String mimeType, boolean optimize) {
+		this(text,mimeType,optimize,true);
+	}
+	
+	public TextImpl(String text, String mimeType, boolean optimize, boolean isBinary) {
+		this(text);
+		this.mimeType = mimeType;
+		this.optimize = optimize;
+		this.isBinary = isBinary;
+	}
+	
+
+    /**
+     * @param dataHandler
+     * @param optimize    To send binary content. Created progrmatically.
+     */
+    public TextImpl(Object dataHandler, boolean optimize) {
+        this.dataHandlerObject = dataHandler;
+        this.isBinary = true;
+        this.optimize = optimize;
+        done = true;
+    }
+	
 	/**
 	 * @param ownerNode
 	 */
@@ -45,6 +93,19 @@ public class TextImpl extends CharacterImpl implements Text {
 		super(ownerNode, value);
 	}
 
+	/**
+	 * @param ownerNode
+	 * @param value
+	 */
+	public TextImpl(DocumentImpl ownerNode, String value, String mimeType, boolean optimize) {
+		this(ownerNode,value);
+		this.mimeType = mimeType;
+		this.optimize = optimize;
+        this.isBinary = true;
+        done = true;
+	}
+
+	
 	/**
 	 * Breaks this node into two nodes at the specified offset, keeping both 
 	 * in the tree as siblings. After being split, this node will contain all 

@@ -38,10 +38,18 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	private String attrName;
 	private TextImpl attrValue;
 	
+	private NamespaceImpl namespace;
+	
 	private boolean specified;
 	
 	protected AttrImpl(DocumentImpl ownerDocument) {
 		super(ownerDocument);
+	}
+	
+	public AttrImpl(String localName, OMNamespace ns, String value) {
+		this.attrName = localName;
+		this.attrValue = new TextImpl(value);
+		this.namespace = (NamespaceImpl)ns;
 	}
 
 	///

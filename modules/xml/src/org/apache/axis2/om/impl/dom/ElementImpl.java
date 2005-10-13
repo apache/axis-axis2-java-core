@@ -15,7 +15,11 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
@@ -23,13 +27,17 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
-public class ElementImpl extends ParentNode implements Element {
+public class ElementImpl extends ParentNode implements Element,OMElement {
 	
 	private NamespaceImpl namespace;
 	private String tagName;
@@ -43,7 +51,7 @@ public class ElementImpl extends ParentNode implements Element {
 	}
 	
 	/**
-	 * Create a  new element with the 
+	 * Create a  new element with the namespace
 	 * @param ownerDocument
 	 * @param tagName
 	 * @param ns
@@ -54,6 +62,12 @@ public class ElementImpl extends ParentNode implements Element {
 		this.namespace = ns;
 	}
 	
+	public ElementImpl(DocumentImpl ownerDocument, String tagName, NamespaceImpl ns, OMXMLParserWrapper builder) {
+		super(ownerDocument);
+		this.tagName = tagName;
+		this.namespace = ns;
+		this.builder = builder;
+	}
 	
 	///
 	///org.w3c.dom.Node methods
@@ -247,12 +261,193 @@ public class ElementImpl extends ParentNode implements Element {
 
 	public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
 		//TODO
-		throw new UnsupportedOperationException("TODO");// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("TODO");
 	}
 
 	public void serializeAndConsume(XMLStreamWriter xmlWriter) throws XMLStreamException {
 		//TODO
 		throw new UnsupportedOperationException("TODO");
 	}
+
+	
+	///
+	///OmElement methods
+	///
+
+	/**
+	 * @see org.apache.axis2.om.OMElement#addAttribute(org.apache.axis2.om.OMAttribute)
+	 */
+	public OMAttribute addAttribute(OMAttribute attr) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/**
+	 * @see org.apache.axis2.om.OMElement#addAttribute(java.lang.String, java.lang.String, org.apache.axis2.om.OMNamespace)
+	 */
+	public OMAttribute addAttribute(String attributeName, String value, OMNamespace ns) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/**
+	 * @see org.apache.axis2.om.OMElement#declareNamespace(org.apache.axis2.om.OMNamespace)
+	 */
+	public OMNamespace declareNamespace(OMNamespace namespace) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/**
+	 * @see org.apache.axis2.om.OMElement#declareNamespace(java.lang.String, java.lang.String)
+	 */
+	public OMNamespace declareNamespace(String uri, String prefix) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/**
+	 * @see org.apache.axis2.om.OMElement#findNamespace(java.lang.String, java.lang.String)
+	 */
+	public OMNamespace findNamespace(String uri, String prefix) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/**
+	 * @see org.apache.axis2.om.OMElement#getAllAttributes()
+	 */
+	public Iterator getAllAttributes() {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/**
+	 * @see org.apache.axis2.om.OMElement#getAllDeclaredNamespaces()
+	 */
+	public Iterator getAllDeclaredNamespaces() throws OMException {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#getAttribute(javax.xml.namespace.QName)
+	 */
+	public OMAttribute getAttribute(QName qname) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#getBuilder()
+	 */
+	public OMXMLParserWrapper getBuilder() {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#getChildElements()
+	 */
+	public Iterator getChildElements() {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#getFirstAttribute(javax.xml.namespace.QName)
+	 */
+	public OMAttribute getFirstAttribute(QName qname) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#getFirstElement()
+	 */
+	public OMElement getFirstElement() {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#getNamespace()
+	 */
+	public OMNamespace getNamespace() throws OMException {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#getQName()
+	 */
+	public QName getQName() {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#getText()
+	 */
+	public String getText() {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#getXMLStreamReader()
+	 */
+	public XMLStreamReader getXMLStreamReader() {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#getXMLStreamReaderWithoutCaching()
+	 */
+	public XMLStreamReader getXMLStreamReaderWithoutCaching() {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#removeAttribute(org.apache.axis2.om.OMAttribute)
+	 */
+	public void removeAttribute(OMAttribute attr) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#setBuilder(org.apache.axis2.om.OMXMLParserWrapper)
+	 */
+	public void setBuilder(OMXMLParserWrapper wrapper) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#setLocalName(java.lang.String)
+	 */
+	public void setLocalName(String localName) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#setNamespace(org.apache.axis2.om.OMNamespace)
+	 */
+	public void setNamespace(OMNamespace namespace) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#setText(java.lang.String)
+	 */
+	public void setText(String text) {
+		//TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+	
 }

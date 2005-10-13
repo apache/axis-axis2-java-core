@@ -410,6 +410,13 @@
 	<jar jarfile="target/test-resources/complete_service_repo/services/PingPort.aar" 
 	    basedir="../security/target/interop/classes" />
 
+
+	<!-- Repository for RPCInOutTest -->
+        <mkdir dir="target/test-resources/rpc_repo"/>
+        <copy file="../addressing/target/addressing.mar"
+            tofile="target/test-resources/rpc_repo/modules/addressing.mar"/>	
+
+
     <!-- Standard repository -->
     <mkdir dir="target/Repository"/>
         <mkdir dir="target/Repository/services"/>
