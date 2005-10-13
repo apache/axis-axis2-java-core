@@ -1,5 +1,6 @@
 <%@ page import="org.apache.axis2.Constants"%>
-<%@ page import="org.apache.axis2.transport.http.ListingAgent"%> <%--
+<%@ page import="org.apache.axis2.transport.http.ListingAgent"%>
+<%--
  /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -38,7 +39,7 @@
 %>
 <table class="FULL_BLANK">
 <tr><td valign="top">
-<jsp:include page="happy_axis.jsp?type=min"></jsp:include>
+<%--<jsp:include page="happy_axis.jsp?type=min"></jsp:include>--%>
 
 </td>
 <td valign="middle" align="left">
@@ -76,7 +77,6 @@
 </td>
 </tr>
 </table>
-</td></tr><tr><td>
   <jsp:include page="include/footer.inc"></jsp:include>
 <script language="JavaScript">
 <!--

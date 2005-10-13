@@ -130,8 +130,11 @@ public class Utils {
     public static void resolvePhases(AxisConfiguration axisconfig,
                                      ServiceDescription serviceDesc)
             throws AxisFault, PhaseException {
-        PhaseResolver pr = new PhaseResolver(axisconfig, serviceDesc);
-        pr.buildchains();
+        //todo we do not need this
+//        PhaseResolver pr = new PhaseResolver(axisconfig, serviceDesc);
+//        pr.buildchains();
+        // fixing the BUG AXIS2-278
+        // we do not need to  do this , since when adding a service this automatically done
     }
 
     public static String getParameterValue(Parameter param) {
