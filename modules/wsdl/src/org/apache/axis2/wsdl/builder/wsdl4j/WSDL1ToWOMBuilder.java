@@ -129,6 +129,7 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
                 wsdlComponentFactory);
         pump.pump();
 
+        //put the debugging serializer code here!
 
         return new WSDLVersionWrapper(wsdlDescription, wsdl1Definition);
 

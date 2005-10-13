@@ -6,7 +6,6 @@
     </message>
     <message name="BookQuote_getBookPriceResponse">
         <part name="result" type="xsd:anyType"/>
-
     </message>
     <message name="InvalidIsbnFault">
         <part name="message" type="xsd:anyType"/>
@@ -22,15 +21,30 @@
             <output message="mh:BookQuote_getBookPriceResponse"/>
         </operation>
     </portType>
+
     <binding name="BookQuoteBinding" type="mh:BookQuote">
         <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
         <operation name="getBookPrice">
-            <soap:operation/>
+            <soap:operation soapAction="myAction"/>
             <input>
                 <soap:body use="literal" namespace="http://www.Monson-Haefel.com/jwsbook/BookQuote/BookQuote"/>
             </input>
+            <output>
+                <soap:body use="literal" namespace="http://www.Monson-Haefel.com/jwsbook/BookQuote/BookQuote"/>
+            </output>
+        </operation>
+
+        <operation name="getBookPriceNonRobust">
+            <soap:operation soapAction="myAction2"/>
+            <input>
+                <soap:body use="literal" namespace="http://www.Monson-Haefel.com/jwsbook/BookQuote/BookQuote"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://www.Monson-Haefel.com/jwsbook/BookQuote/BookQuote"/>
+            </output>
         </operation>
     </binding>
+
     <service name="BookQuoteService">
         <port name="BookQuotePort" binding="mh:BookQuoteBinding">
             <soap:address location="http://www.Monson-Haefel.com/jwsbook/BookQuoteService"/>

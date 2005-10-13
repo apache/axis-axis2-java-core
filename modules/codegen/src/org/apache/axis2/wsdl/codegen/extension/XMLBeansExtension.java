@@ -124,8 +124,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                     schemaFolder.mkdir();
                     //compile these schemas
                     while (!importedSchemaStack.isEmpty()) {
-                        javax.wsdl.extensions.schema.Schema tempSchema = (javax.wsdl.extensions.schema.Schema) importedSchemaStack.pop();
-                        Element element = tempSchema.getElement();
+                        Element element = (Element)importedSchemaStack.pop();
 
                         // we are not using DOM toString method here, as it seems it depends on the
                         // JDK version that is being used.

@@ -69,23 +69,19 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
                 String key;
                 while (keys.hasNext()) {
                     key = (String) keys.next();
-                    schemaColl.mapNamespace(key,(String)nsMap.get(key));
+                    //schemaColl.mapNamespace(key,(String)nsMap.get(key));
                 }
                 Schema schema;
 
                 if (ExtensionConstants.SCHEMA.equals(extensiblityElt.getType())) {
                     schema = (Schema) extensiblityElt;
-                    Map inScopeNS = configuration.getWom().getNamespaces();
-                    for (Iterator it = inScopeNS.keySet().iterator(); it.hasNext();) {
-                        String prefix = (String) it.next();
-                        schemaColl.mapNamespace(prefix,
-                                (String)inScopeNS.get(prefix));
-                    }
-
                     Stack importedSchemaStack = schema.getImportedSchemaStack();
                     //compile these schemas
                     while (!importedSchemaStack.isEmpty()) {
-                        Element el = ((javax.wsdl.extensions.schema.Schema)importedSchemaStack.pop()).getElement();
+                        Element el = (Element)importedSchemaStack.pop();
+                        ////////////////////////////////////////////
+                        System.out.println("el = " + el);
+                        ///////////////////////////////////////////
                         XmlSchema thisSchema = schemaColl.read(el);
                         xmlSchemaTypeVector.add(thisSchema);
                     }

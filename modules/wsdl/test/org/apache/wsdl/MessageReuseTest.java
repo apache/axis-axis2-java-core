@@ -45,7 +45,7 @@ public class MessageReuseTest extends AbstractTestCase {
             String path = getTestResourceFile("BookQuote.wsdl").getAbsolutePath();
             wsdlVersionWrapper =
                     WOMBuilderFactory.getBuilder(org.apache.axis2.wsdl.WSDLConstants.WSDL_1_1)
-                    .build(path);
+                            .build(path);
             this.womDescription = wsdlVersionWrapper.getDescription();
         }
         if (null == wsdl4jDefinition) {
@@ -70,26 +70,30 @@ public class MessageReuseTest extends AbstractTestCase {
         Iterator iterator = womDescription.getTypes().getExtensibilityElements()
                 .iterator();
         Schema types = null;
+
+
+        int numberOfBookQuote_getBookPrice = 0;
         while (iterator.hasNext()) {
             WSDLExtensibilityElement temp = (WSDLExtensibilityElement) iterator.next();
             if (ExtensionConstants.SCHEMA.equals(temp.getType())) {
                 types = (Schema) temp;
-            }
-        }
-        int numberOfBookQuote_getBookPrice = 0;
-        NodeList childNodes = types.getElement().getChildNodes();
-        for (int i = 0; i < childNodes.getLength(); i++) {
-            Node item = childNodes.item(i);
-            if (item instanceof Element) {
-                Element temp = (Element) item;
-                if ("complexType".equals(temp.getNodeName()) &&
-                        "BookQuote_getBookPrice".equals(
-                                temp.getAttribute("name"))) {
-                    numberOfBookQuote_getBookPrice++;
-                }
+                NodeList childNodes = types.getElement().getChildNodes();
+                for (int i = 0; i < childNodes.getLength(); i++) {
+                    Node item = childNodes.item(i);
+                    if (item instanceof Element) {
+                        Element tempElt = (Element) item;
+                        if ("complexType".equals(tempElt.getLocalName()) &&
+                                "BookQuote_getBookPrice".equals(
+                                        tempElt.getAttribute("name"))) {
+                            numberOfBookQuote_getBookPrice++;
+                        }
 
+                    }
+                }
             }
         }
+
+
         assertEquals(numberOfBookQuote_getBookPrice, 1);
 
 

@@ -115,7 +115,6 @@ public class WSDLPump {
         this.copyExtensibleElements(
                 wsdl4JDefinition.getExtensibilityElements(), wsdlDefinition, null);
 
-        //we need to populate some flags here. Firstly soap stlye
 
 
         /////////////////////////////////////////////////////////////////////
@@ -186,7 +185,9 @@ public class WSDLPump {
         while (portTypeIterator.hasNext()) {
             wsdlInterface = this.wsdlComponentFactory.createInterface();
             portType = (PortType) portTypeIterator.next();
-            this.populateInterfaces(wsdlInterface, portType);
+            //////////////////////////
+            this.populateInterfaces(wsdlInterface, portType,wsdl4JDefinition);
+            /////////////////////////
             this.copyExtensibilityAttribute(portType.getExtensionAttributes(),
                     wsdlInterface);
             wsdlDefinition.addInterface(wsdlInterface);
@@ -240,10 +241,10 @@ public class WSDLPump {
      * @param wsdlInterface
      * @param wsdl4jPortType
      */
-    //FIXME Evaluate a way of injecting features and priperties with a general
+    // FIXME Evaluate a way of injecting features and priperties with a general
     // formatted input
     private void populateInterfaces(WSDLInterface wsdlInterface,
-                                    PortType wsdl4jPortType) {
+                                    PortType wsdl4jPortType,Definition wsdl4jDefinition) {
 
         //Copy the Attribute information items
         //Copied with the Same QName so it will require no Query in Binding
@@ -253,16 +254,55 @@ public class WSDLPump {
                 wsdl4jPortType.getOperations().iterator();
         WSDLOperation wsdloperation;
         Operation wsdl4jOperation;
+
         while (wsdl4JOperationsIterator.hasNext()) {
             wsdloperation = this.wsdlComponentFactory.createOperation();
             wsdl4jOperation = (Operation) wsdl4JOperationsIterator.next();
+            //find whether is's wrappable or not!
+            boolean wrappable = findWrapppable(wsdl4jDefinition,wsdl4jPortType);
+
             this.populateOperations(wsdloperation,
                     wsdl4jOperation,
-                    wsdl4jPortType.getQName().getNamespaceURI());
+                    wsdl4jPortType.getQName().getNamespaceURI(),
+                    wrappable);
+
             this.copyExtensibleElements(
                     wsdl4jOperation.getExtensibilityElements(), wsdloperation, null);
+
             wsdlInterface.setOperation(wsdloperation);
         }
+    }
+
+    /**
+     *
+     * @param wsdl4jDefinition
+     * @param wsdl4jPortType
+     * @return
+     */
+    private boolean findWrapppable(Definition wsdl4jDefinition,PortType wsdl4jPortType) {
+        //find the binding for this porttype
+        Map bindings = wsdl4jDefinition.getBindings();
+        Iterator bindingIterator= bindings.values().iterator();
+        Binding b ;
+        boolean rpcStatus = false;
+        while (bindingIterator.hasNext()) {
+            b = (Binding) bindingIterator.next();
+            if (b.getPortType().equals(wsdl4jPortType)){
+                //We found a binding that belongs to a particular porttype.
+                //However it is possible to have multiple bindings per PT!
+                //the ideal thing to do here is to go through each and every one and find
+                //if at least one is having rpc style
+                List extElements = b.getExtensibilityElements();
+                for (int i = 0; i < extElements.size(); i++) {
+                    Object o =  extElements.get(i);
+                    if(o instanceof SOAPBinding){
+                        rpcStatus = rpcStatus || ((SOAPBinding)o).getStyle().equals("rpc");
+                    }
+                }
+            }
+
+        }
+        return rpcStatus;
     }
 
     /**
@@ -329,7 +369,7 @@ public class WSDLPump {
         if (originalSchema==null){
             return;
         }
-        stack.push(originalSchema);
+        stack.push(originalSchema.getElement());
         Map map = originalSchema.getImports();
         Collection values;
         if (map!=null && map.size()>0){
@@ -349,7 +389,8 @@ public class WSDLPump {
     //////////////////////////// Internal Component Copying ///////////////////
     public void populateOperations(WSDLOperation wsdlOperation,
                                    Operation wsdl4jOperation,
-                                   String nameSpaceOfTheOperation) {
+                                   String nameSpaceOfTheOperation,
+                                   boolean wrappable) {
         //Copy Name Attrebute
         wsdlOperation.setName(new QName(nameSpaceOfTheOperation,
                 wsdl4jOperation.getName()));
@@ -370,7 +411,7 @@ public class WSDLPump {
             Message message = wsdl4jInputMessage.getMessage();
             if (null != message) {
                 wsdlInputMessage.setElement(
-                        this.generateReferenceQname(message));
+                        this.generateReferenceQname(message,wrappable));
                 this.copyExtensibleElements(
                         (message).getExtensibilityElements(),
                         wsdlInputMessage, null);
@@ -394,7 +435,7 @@ public class WSDLPump {
             Message outputMessage = wsdl4jOutputMessage.getMessage();
             if (null != outputMessage) {
                 wsdlOutputMessage.setElement(
-                        this.generateReferenceQname(outputMessage));
+                        this.generateReferenceQname(outputMessage,wrappable));
                 this.copyExtensibleElements(
                         (outputMessage).getExtensibilityElements(),
                         wsdlOutputMessage, null);
@@ -418,7 +459,7 @@ public class WSDLPump {
             Message faultMessage = fault.getMessage();
             if (null != faultMessage) {
                 faultReference.setRef(
-                        this.generateReferenceQname(faultMessage));
+                        this.generateReferenceQname(faultMessage,wrappable));
             }
             wsdlOperation.addOutFault(faultReference);
             this.copyExtensibilityAttribute(fault.getExtensionAttributes(),
@@ -438,10 +479,10 @@ public class WSDLPump {
      * @param wsdl4jMessage
      * @return
      */
-    private QName generateReferenceQname(Message wsdl4jMessage) {
+    private QName generateReferenceQname(Message wsdl4jMessage,boolean isWrappable) {
         QName referenceQName = null;
         //do the wrapping if required
-        if (wrap) {
+        if (isWrappable) {
             Map parts = wsdl4jMessage.getParts();
 
             //            Iterator partsItertator = parts.keySet().iterator();
@@ -508,10 +549,15 @@ public class WSDLPump {
                 schemaElement = newDoc.createElementNS(XMLSCHEMA_NAMESPACE_URI, XSD_SCHEMA_QUALIFIED_NAME);
                 schemaExtensibilityElement.setElement(schemaElement);
 
+                //add this to the imported stack as well
+                Stack stack = new Stack();
+                stack.push(schemaElement);
+                schemaExtensibilityElement.setImportedSchemaStack(stack);
+
                 //add the namespace declarations
                 String targetNamespaceUri = wsdl4jMessage.getQName().getNamespaceURI();
                 if (targetNamespaceUri.trim().equals("")){
-                   targetNamespaceUri = getTemporaryNamespaceUri();
+                    targetNamespaceUri = getTemporaryNamespaceUri();
                 }
 
                 schemaElement.setAttribute(XMLNS_AXIS2WRAPPED,
@@ -613,6 +659,13 @@ public class WSDLPump {
         return referenceQName;
     }
 
+    /**
+     *
+     * @param wsdlBindingOperation
+     * @param wsdl4jBindingOperation
+     * @param nameSpaceOfTheBindingOperation
+     * @param wsdl4jDefinition
+     */
     private void populateBindingOperation(
             WSDLBindingOperation wsdlBindingOperation,
             BindingOperation wsdl4jBindingOperation,

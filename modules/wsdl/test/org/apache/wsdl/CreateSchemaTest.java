@@ -67,8 +67,9 @@ public class CreateSchemaTest extends AbstractTestCase {
         Element insertedElementForMessageReference = null;
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
+
             if (item instanceof Element
-                    && "complexType".equals(((Element) item).getTagName())
+                    && "complexType".equals(item.getLocalName())
                     && "BookQuote_getBookPrice".equals(((Element) item)
                     .getAttribute("name"))) {
                 insertedElementForMessageReference = (Element) item;
