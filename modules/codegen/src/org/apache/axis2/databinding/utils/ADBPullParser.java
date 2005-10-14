@@ -62,6 +62,7 @@ public class ADBPullParser implements XMLStreamReader {
     }
 
     /**
+     * @param adbBeansQName
      * @param properties    - this should contain all the stuff that stax events should be generated.
      *                      Lets take an example of a bean.
      *                      <pre> <Person>
@@ -96,10 +97,9 @@ public class ADBPullParser implements XMLStreamReader {
      *                                           We directly get the pull parser from that. If not we create a reflection based
      *                                           pull parser for that java bean.
      *                       </pre>
-     * @param adbBeansQName
      * @return XMLStreamReader
      */
-    public static XMLStreamReader createPullParser(Object[] properties, QName adbBeansQName) {
+    public static XMLStreamReader createPullParser(QName adbBeansQName, Object[] properties) {
         return new ADBPullParser(properties, adbBeansQName);
     }
 

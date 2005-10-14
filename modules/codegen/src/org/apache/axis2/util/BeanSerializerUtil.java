@@ -1,13 +1,10 @@
 package org.apache.axis2.util;
 
-import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.ADBPullParser;
-import org.apache.axis2.AxisFault;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
 
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 /*
@@ -61,7 +58,7 @@ public class BeanSerializerUtil {
                     filed.setAccessible(false);
                 }
             }
-            return ADBPullParser.createPullParser(objetc.toArray(), beanName);
+            return ADBPullParser.createPullParser(beanName, objetc.toArray());
         } catch (IllegalAccessException e) {
            //todo has to throw this exeception
            return null;

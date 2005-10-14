@@ -25,14 +25,12 @@ public interface OMFactory {
 
 	/**
 	 * Create a new OMDocument
-	 * @return
 	 */
 	public OMDocument createOMDocument();
 	
     /**
      * @param localName
      * @param ns
-     * @return
      */
     public OMElement createOMElement(String localName, OMNamespace ns);
     public OMElement createOMElement(String localName, OMNamespace ns, OMContainer parent) throws OMException;
@@ -42,7 +40,6 @@ public interface OMFactory {
      * @param ns
      * @param parent
      * @param builder
-     * @return
      */
     public OMElement createOMElement(String localName, OMNamespace ns,
                                      OMContainer parent,

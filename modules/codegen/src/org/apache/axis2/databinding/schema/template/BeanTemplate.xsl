@@ -63,7 +63,7 @@
 
           </xsl:for-each>};
 
-         return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(objectList,qName);
+         return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(qName, objectList);
 
         }
 

@@ -74,7 +74,7 @@ public class ADBPullParserTest extends TestCase {
             propertyList.add("Apache");
 
             QName projectQName = new QName("Person");
-            XMLStreamReader pullParser = ADBPullParser.createPullParser(propertyList.toArray(), projectQName);
+            XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray());
 //            while (pullParser.hasNext()) {
 //                int eventCode = pullParser.next();
 //                System.out.println(eventCode + ":" + getEventString(eventCode));
@@ -174,7 +174,7 @@ public class ADBPullParserTest extends TestCase {
             propertyList.add(dummyBean);
 
             QName projectQName = new QName("Person");
-            XMLStreamReader pullParser = ADBPullParser.createPullParser(propertyList.toArray(), projectQName);
+            XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray());
 
             StringBuffer buff = new StringBuffer();
             while (pullParser.hasNext()) {
@@ -280,7 +280,7 @@ public class ADBPullParserTest extends TestCase {
         }
 
         public XMLStreamReader getPullParser(QName adbBeanQName) {
-            return ADBPullParser.createPullParser(propertyList.toArray(), adbBeanQName);
+            return ADBPullParser.createPullParser(adbBeanQName, propertyList.toArray());
         }
     }
 }
