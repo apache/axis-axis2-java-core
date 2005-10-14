@@ -106,7 +106,9 @@ public class SchemaCompiler {
         //The processing element logic seems to be quite simple. Look at the relevant schema type
         //for each and every element and process that accordingly.
         //this means that any unused type definitions would not be generated!
+
         XmlSchemaType schemaType = xsElt.getSchemaType();
+
         if (processedElementmap.containsKey(xsElt.getQName())){
             return;
         }
@@ -116,7 +118,7 @@ public class SchemaCompiler {
             processSchema(schemaType);
             qName = schemaType.getQName();
         }else{
-            //perhaps this has an anoynimous complex type!
+            //perhaps this has an anoynimous complex type! Handle it here
         }
 
 
@@ -129,7 +131,9 @@ public class SchemaCompiler {
         }else if (baseSchemaTypeMap.containsKey(qName)){
             className =  baseSchemaTypeMap.get(qName).toString();
         }else{
-            //throw an exception here
+           //this is a schema type we do not know. Or perhaps there's no schema type at all
+           //the right class to represent this is the java.lang.Object
+            className = Object.class.getName();
         }
 
         processedElementmap.put(xsElt.getQName(),className);
@@ -157,9 +161,6 @@ public class SchemaCompiler {
             return;
         }
 
-        //to start with we need to write a class to represent this
-        //
-
         XmlSchemaParticle particle =  complexType.getParticle();
         BeanWriterMetaInfoHolder metaInfHolder = new BeanWriterMetaInfoHolder();
         if (particle!=null){
@@ -171,9 +172,10 @@ public class SchemaCompiler {
 
         //write the class. This type mapping would have been populated right now
         String fullyQualifiedClassName = writer.write(complexType,processedTypemap,metaInfHolder);
+        //populate the type mapping with the elements
         processedTypemap.put(complexType.getQName(),fullyQualifiedClassName);
 
-        //populate the type mapping with the elements
+
 
     }
 

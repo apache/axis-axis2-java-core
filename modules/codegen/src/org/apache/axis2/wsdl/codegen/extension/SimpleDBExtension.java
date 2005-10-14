@@ -69,7 +69,7 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
                 String key;
                 while (keys.hasNext()) {
                     key = (String) keys.next();
-                    //schemaColl.mapNamespace(key,(String)nsMap.get(key));
+                    schemaColl.mapNamespace(key,(String)nsMap.get(key));
                 }
                 Schema schema;
 
@@ -79,35 +79,32 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
                     //compile these schemas
                     while (!importedSchemaStack.isEmpty()) {
                         Element el = (Element)importedSchemaStack.pop();
-                        ////////////////////////////////////////////
-                        System.out.println("el = " + el);
-                        ///////////////////////////////////////////
                         XmlSchema thisSchema = schemaColl.read(el);
                         xmlSchemaTypeVector.add(thisSchema);
                     }
                 }
-
-                //call the schema compiler
-                CompilerOptions options = new CompilerOptions().setOutputLocation(configuration.getOutputLocation());
-                SchemaCompiler schemaCompiler = new SchemaCompiler(options);
-                schemaCompiler
-                        .compile(xmlSchemaTypeVector);
-
-                //create the type mapper
-                JavaTypeMapper mapper = new JavaTypeMapper();
-                //get the processed element map and transfer it to the type mapper
-                Map processedMap = schemaCompiler.getProcessedElementmap();
-                Iterator processedkeys = processedMap.keySet().iterator();
-                QName qNameKey;
-                while (processedkeys.hasNext()) {
-                   qNameKey =(QName)processedkeys.next();
-                   mapper.addTypeMapping(qNameKey,processedMap.get(qNameKey));
-                }
-
-                //set the type mapper to the config
-                configuration.setTypeMapper(mapper);
-
             }
+            //call the schema compiler
+            CompilerOptions options = new CompilerOptions().setOutputLocation(configuration.getOutputLocation());
+            SchemaCompiler schemaCompiler = new SchemaCompiler(options);
+            schemaCompiler
+                    .compile(xmlSchemaTypeVector);
+
+            //create the type mapper
+            JavaTypeMapper mapper = new JavaTypeMapper();
+            //get the processed element map and transfer it to the type mapper
+            Map processedMap = schemaCompiler.getProcessedElementmap();
+            Iterator processedkeys = processedMap.keySet().iterator();
+            QName qNameKey;
+            while (processedkeys.hasNext()) {
+                qNameKey =(QName)processedkeys.next();
+                mapper.addTypeMapping(qNameKey,processedMap.get(qNameKey));
+            }
+
+            //set the type mapper to the config
+            configuration.setTypeMapper(mapper);
+
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
