@@ -87,6 +87,7 @@ public class Utils {
         newmsgCtx.setDoingREST(inMessageContext.isDoingREST());
         newmsgCtx.setDoingMTOM(inMessageContext.isDoingMTOM());
         newmsgCtx.setServerSide(inMessageContext.isServerSide());
+        newmsgCtx.setServiceGroupContextId(inMessageContext.getServiceGroupContextId());
 
         return newmsgCtx;
     }

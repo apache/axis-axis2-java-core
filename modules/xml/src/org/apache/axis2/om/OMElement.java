@@ -17,6 +17,7 @@
 package org.apache.axis2.om;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.util.Iterator;
 
@@ -265,6 +266,19 @@ public interface OMElement extends OMNode, OMContainer {
      * @return The {@link QName} for the element.
      */
     public QName getQName();
+
+    /**
+     *  This is a convenience method only. This will basically serialize the given OMElement
+     *  to a String but will build the OMTree in the memory
+     */
+    public String toString();
+
+    /**
+     *  This is a convenience method only. This will basically serialize the given OMElement
+     *  to a String but will NOT build the OMTree in the memory. So you are at your own risk of
+     *  losing information.
+     */
+    public String toStringWithConsume() throws XMLStreamException;
 
 
 }

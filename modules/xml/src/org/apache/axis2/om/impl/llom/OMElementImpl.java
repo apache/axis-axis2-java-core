@@ -25,10 +25,13 @@ import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
 import org.apache.axis2.om.impl.llom.util.EmptyIterator;
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -37,6 +40,8 @@ import java.util.Iterator;
  */
 public class OMElementImpl extends OMNodeImpl
         implements OMElement, OMConstants, OMContainerEx {
+
+    private Log logger = LogFactory.getLog(getClass());
     /**
      * Field ns
      */
@@ -228,7 +233,7 @@ public class OMElementImpl extends OMNodeImpl
             child.setPreviousOMSibling(null);
         } else {
             child.setPreviousOMSibling(lastChild);
-            ((OMNodeEx)lastChild).setNextOMSibling(child);
+            ((OMNodeEx) lastChild).setNextOMSibling(child);
         }
 
         child.setNextOMSibling(null);
@@ -238,7 +243,9 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * This will give the next sibling. This can be an OMAttribute for OMAttribute or OMText or OMELement for others.
+     *
      * @throws org.apache.axis2.om.OMException
+     *
      * @throws OMException
      */
     public OMNode getNextOMSibling() throws OMException {
@@ -260,6 +267,7 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * Returns a filtered list of children - just the elements.
+     *
      * @return an iterator over the child elements
      */
     public Iterator getChildElements() {
@@ -322,7 +330,7 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * This will ckeck for the namespace <B>only</B> in the current Element.
-     *
+     * <p/>
      * This can also be used to retrieve the prefix of a known namespace URI
      */
     private OMNamespace findDeclaredNamespace(String uri, String prefix) {
@@ -475,7 +483,7 @@ public class OMElementImpl extends OMNodeImpl
      */
     public void setFirstChild(OMNode firstChild) {
         if (firstChild != null) {
-            ((OMNodeEx)firstChild).setParent(this);
+            ((OMNodeEx) firstChild).setParent(this);
         }
         this.firstChild = firstChild;
     }
@@ -540,8 +548,8 @@ public class OMElementImpl extends OMNodeImpl
             throw new UnsupportedOperationException(
                     "This element was not created in a manner to be switched");
         }
-        if (builder.isCompleted() && !cache){
-               throw new UnsupportedOperationException(
+        if (builder.isCompleted() && !cache) {
+            throw new UnsupportedOperationException(
                     "The parser is already consumed!");
         }
         return new OMStAXWrapper(builder, this, cache);
@@ -627,33 +635,33 @@ public class OMElementImpl extends OMNodeImpl
 
     protected void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
 
-        if (cache){
+        if (cache) {
             //in this case we don't care whether the elements are built or not
             //we just call the serializeAndConsume methods
             OMSerializerUtil.serializeStartpart(this, omOutput);
             //serilize children
             Iterator children = this.getChildren();
             while (children.hasNext()) {
-                ((OMNode)children.next()).serialize(omOutput);
+                ((OMNode) children.next()).serialize(omOutput);
             }
             OMSerializerUtil.serializeEndpart(omOutput);
 
-        }else{
+        } else {
             //Now the caching is supposed to be off. However caching been switched off
             //has nothing to do if the element is already built!
-            if (this.done){
+            if (this.done) {
                 OMSerializerUtil.serializeStartpart(this, omOutput);
                 //serializeAndConsume children
                 Iterator children = this.getChildren();
                 while (children.hasNext()) {
                     //A call to the  Serialize or the serializeAndConsume wont make a difference here
-                    ((OMNode)children.next()).serializeAndConsume(omOutput);
+                    ((OMNode) children.next()).serializeAndConsume(omOutput);
                 }
                 OMSerializerUtil.serializeEndpart(omOutput);
-            } else{
+            } else {
                 //take the XMLStream reader and feed it to the stream serilizer.
                 //todo is this right ?????
-                OMSerializerUtil.serializeByPullStream(this, omOutput,cache);
+                OMSerializerUtil.serializeByPullStream(this, omOutput, cache);
             }
 
 
@@ -756,6 +764,30 @@ public class OMElementImpl extends OMNodeImpl
             qName = new QName(localName);
         }
         return qName;
+    }
+
+    public String toStringWithConsume() throws XMLStreamException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        OMOutputImpl out = new OMOutputImpl(baos, false);
+        this.serializeAndConsume(out);
+        out.flush();
+        return new String(baos.toByteArray());
+    }
+
+    public String toString() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        OMOutputImpl out = null;
+        try {
+            out = new OMOutputImpl(baos, false);
+            this.serialize(out);
+            out.flush();
+        } catch (XMLStreamException e) {
+            // can not throw out an exception here. Can't do anything other than logging
+            // and swallowing this :(
+            logger.error("Can not serialize OM Element "+ this.getLocalName(), e);
+        }
+
+        return new String(baos.toByteArray());
     }
 
     /**

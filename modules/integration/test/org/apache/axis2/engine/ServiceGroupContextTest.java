@@ -93,6 +93,7 @@ public class ServiceGroupContextTest extends TestCase {
         SOAPHeaderBlock soapHeaderBlock = defaultEnvelope.getHeader().addHeaderBlock(Constants.SERVICE_GROUP_ID,
                                                                                      axis2Namespace);
 
+        System.out.println("soapHeaderBlock = " + soapHeaderBlock);
         String serviceGroupId = result.getHeader().getFirstChildWithName(new QName("ReplyTo"))
                 .getFirstChildWithName(new QName("ReferenceParameters")).
                 getFirstChildWithName(new QName("ServiceGroupId")).getText();

@@ -129,7 +129,7 @@ public class AddressingOutHandler
             // setting anonymous URI. Defaulting to Final.
             String anonymousURI = Final.WSA_ANONYMOUS_URL;
             if (Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
-                anonymousURI = Submission.WSA_ANONYMOUS_URL;
+                anonymousURI = Submission.WSA_ANONYMOUS_URL;                    
             }
             epr = new EndpointReference(anonymousURI);
         }

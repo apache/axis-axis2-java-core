@@ -27,12 +27,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.util.Iterator;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import java.util.Iterator;
 
 /**
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
@@ -386,13 +385,18 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 		throw new UnsupportedOperationException("TODO");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.om.OMElement#getText()
-	 */
-	public String getText() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
+    public String toStringWithConsume() throws XMLStreamException {
+        // TODO : Ruchith please implement this ;).
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /* (non-Javadoc)
+      * @see org.apache.axis2.om.OMElement#getText()
+      */
+    public String getText() {
+        //TODO
+        throw new UnsupportedOperationException("TODO");
+    }
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.om.OMElement#getXMLStreamReader()
