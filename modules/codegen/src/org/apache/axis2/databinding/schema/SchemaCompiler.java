@@ -2,6 +2,7 @@ package org.apache.axis2.databinding.schema;
 
 import org.apache.ws.commons.schema.*;
 import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.util.*;
@@ -26,7 +27,12 @@ public class SchemaCompiler {
 
     private CompilerOptions options;
     private HashMap processedTypemap;
+    //The processedElementmap and the processedElementList have a subtle difference
+    //The writing to the processedElementList happens when an outer element is processed.
+    //
     private HashMap processedElementmap;
+    private ArrayList processedElementList;
+
     private JavaBeanWriter writer;
 
     private Map baseSchemaTypeMap = TypeMap.getTypeMap();
@@ -51,6 +57,7 @@ public class SchemaCompiler {
 
             this.processedTypemap = new HashMap();
             this.processedElementmap = new HashMap();
+            this.processedElementList = new ArrayList();
 
             this.writer = new JavaBeanWriter(this.options.getOutputLocation());
 
@@ -88,64 +95,113 @@ public class SchemaCompiler {
 
         //select all the elements. We generate the code for types
         //only if the elements refer them!!!
+
         XmlSchemaObjectTable elements = schema.getElements();
-        Iterator  xmlSchemaElementIterator = elements.getValues();
-        while (xmlSchemaElementIterator.hasNext()) {
-            processElement((XmlSchemaElement)xmlSchemaElementIterator.next());
+        Iterator  xmlSchemaElement1Iterator = elements.getValues();
+        while (xmlSchemaElement1Iterator.hasNext()) {
+            //this is the set of outer elements so we need to generate classes
+            processElement((XmlSchemaElement)xmlSchemaElement1Iterator.next(),true);
+        }
+
+        //Now re iterate through the elements and write them
+        Iterator xmlSchemaElement2Iterator = elements.getValues();
+        while (xmlSchemaElement2Iterator.hasNext()) {
+            //this is the set of outer elements so we need to generate classes
+            writeElement((XmlSchemaElement)xmlSchemaElement2Iterator.next());
+        }
+
+    }
+
+    private void writeElement(XmlSchemaElement schemaElement) throws SchemaCompilationException{
+        if (this.processedElementmap.containsKey(schemaElement.getQName())){
+            return;
+        }
+
+        XmlSchemaType schemaType = schemaElement.getSchemaType();
+
+        if (schemaType!=null){
+            //at this time it is not wise to directly write the class for the element
+            //so we push the complete element to an arraylist and let the process
+            //pass through
+            BeanWriterMetaInfoHolder metainf = new BeanWriterMetaInfoHolder();
+            QName qName = schemaType.getQName();
+            //find the class name
+            String className = findClassName(schemaType);
+            metainf.addElementInfo(schemaElement.getQName(),
+                    qName,
+                    className);
+            String writtenClassName = writer.write(schemaElement,processedTypemap,metainf);
+            processedElementmap.put(schemaElement.getQName(),writtenClassName);
         }
 
 
-
     }
+
+
 
     /**
      *
      * @param xsElt
      */
-    private void processElement(XmlSchemaElement xsElt) throws SchemaCompilationException{
+    private void processElement(XmlSchemaElement xsElt,boolean isOuter) throws SchemaCompilationException{
         //The processing element logic seems to be quite simple. Look at the relevant schema type
         //for each and every element and process that accordingly.
         //this means that any unused type definitions would not be generated!
+        if (processedElementList.contains(xsElt.getQName())){
+            return;
+        }
+        System.out.println("xsElt = " + xsElt);
+        System.out.println("xsElt.getQName() = " + xsElt.getQName());
 
         XmlSchemaType schemaType = xsElt.getSchemaType();
 
-        if (processedElementmap.containsKey(xsElt.getQName())){
-            return;
-        }
-        QName qName = null;
-
         if (schemaType!=null){
             processSchema(schemaType);
-            qName = schemaType.getQName();
+
+            //at this time it is not wise to directly write the class for the element
+            //so we push the complete element to an arraylist and let the process
+            //pass through
+
+            if (!isOuter){
+                String className = findClassName(schemaType);
+                this.processedElementmap.put(xsElt.getQName(),className);
+            }
+            this.processedElementList.add(xsElt.getQName());
+
         }else{
-            //perhaps this has an anoynimous complex type! Handle it here
+            //perhaps this has an anonymous complex type! Handle it here
+            //BTW how do we handle an anonymous complex type
         }
-
-
-        //if the schema type is a basic one then we are done by just
-        //there can be only one schema type (????)
-
-        String className = "";
-        if (processedTypemap.containsKey(qName)){
-            className =  processedTypemap.get(qName).toString();
-        }else if (baseSchemaTypeMap.containsKey(qName)){
-            className =  baseSchemaTypeMap.get(qName).toString();
-        }else{
-           //this is a schema type we do not know. Or perhaps there's no schema type at all
-           //the right class to represent this is the java.lang.Object
-            className = Object.class.getName();
-        }
-
-        processedElementmap.put(xsElt.getQName(),className);
-
 
     }
 
+    private String findClassName(XmlSchemaType schemaType) {
+        //find the class name
+        QName qName = schemaType.getQName();
+        String className;
+        if (processedTypemap.containsKey(qName)) {
+            className = (String)processedTypemap.get(qName);
+        }else if(baseSchemaTypeMap.containsKey(qName)){
+            className =(String)baseSchemaTypeMap.get(qName);
+        }else{
+            // We seem to have failed in finding a class name for the
+            //contained schema type. We better set the default then
+            className = OMElement.class.getName();
+        }
+        return className;
+    }
+
+    /**
+     * Process a schema element
+     * @param schemaType
+     * @throws SchemaCompilationException
+     */
     private void processSchema(XmlSchemaType schemaType) throws SchemaCompilationException {
         if (schemaType instanceof XmlSchemaComplexType){
             //write classes for complex types
             processComplexSchemaType((XmlSchemaComplexType)schemaType);
         }else if (schemaType instanceof XmlSchemaSimpleType){
+            //process simple type
             processSimpleSchemaType((XmlSchemaSimpleType)schemaType);
         }
     }
@@ -179,6 +235,12 @@ public class SchemaCompiler {
 
     }
 
+    /**
+     *
+     * @param particle
+     * @param metainfHolder
+     * @throws SchemaCompilationException
+     */
     private void processParticle(XmlSchemaParticle particle, //particle being processed
                                  BeanWriterMetaInfoHolder metainfHolder // metainf holder
     ) throws SchemaCompilationException {
@@ -188,12 +250,18 @@ public class SchemaCompiler {
         }else if (particle instanceof XmlSchemaAll){
             XmlSchemaObjectCollection items = ((XmlSchemaAll)particle).getItems();
             process(items, metainfHolder,false);
-
         }else if (particle instanceof XmlSchemaChoice){
             //handle the choice!
         }
     }
 
+    /**
+     *
+     * @param items
+     * @param metainfHolder
+     * @param order
+     * @throws SchemaCompilationException
+     */
     private void process(XmlSchemaObjectCollection items,
                          BeanWriterMetaInfoHolder metainfHolder,
                          boolean order) throws SchemaCompilationException {
@@ -205,7 +273,7 @@ public class SchemaCompiler {
             if (item instanceof XmlSchemaElement){
                 //recursively process the element
                 XmlSchemaElement xsElt = (XmlSchemaElement) item;
-                processElement(xsElt);
+                processElement(xsElt,false); //we know for sure this is not an outer type
                 processedElements.add(xsElt);
             }else if (item instanceof XmlSchemaComplexContent){
                 // process the extension
@@ -241,11 +309,11 @@ public class SchemaCompiler {
      */
     private void processSimpleSchemaType(XmlSchemaSimpleType simpleType){
         //nothing to here yet.
-        
+
     }
 
 
-    /*     Utility methods       */
+/*     Utility methods       */
     private String getJavaClassNameFromComplexTypeQName(QName name){
         String className = name.getLocalPart();
         String packageName = URLProcessor.getNameSpaceFromURL(name.getNamespaceURI());

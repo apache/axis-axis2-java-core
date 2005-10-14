@@ -1,5 +1,7 @@
 package org.apache.axis2.databinding.schema;
 
+import org.apache.axis2.om.OMElement;
+
 import javax.xml.namespace.QName;
 import java.util.Map;
 import java.util.HashMap;
@@ -39,8 +41,8 @@ public class TypeMap {
         addTypemapping(SchemaConstants.XSD_LONG, long.class.getName());
         addTypemapping(SchemaConstants.XSD_SHORT, short.class.getName());
         addTypemapping(SchemaConstants.XSD_BYTE, byte.class.getName());
-        addTypemapping(SchemaConstants.XSD_ANY, Object.class.getName());
-        addTypemapping(SchemaConstants.XSD_ANYTYPE, Object.class.getName());
+        addTypemapping(SchemaConstants.XSD_ANY, OMElement.class.getName());
+        addTypemapping(SchemaConstants.XSD_ANYTYPE, OMElement.class.getName());
 
     }
     private static void addTypemapping(QName name,String str) {

@@ -17,6 +17,7 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.databinding.schema.SchemaCompiler;
@@ -46,7 +47,12 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
     }
 
     public void engage() {
+            //test the databinding type. If not just fall through
+        if (configuration.getDatabindingType() != XSLTConstants.DataBindingTypes.ADB) {
+            return;
+        }
         try {
+
             WSDLTypes typesList = configuration.getWom().getTypes();
             if (typesList == null) {
                 //there are no types to be code generated

@@ -10,11 +10,22 @@
 
     public class <xsl:value-of select="$name"/> <xsl:if test="@extension"> extends <xsl:value-of select="@extension"/></xsl:if>
         implements org.apache.axis2.databinding.ADBBean{
+        <xsl:choose>
+            <xsl:when test="@type">/* This type was generated from the piece of schema that had
+                    name = <xsl:value-of select="$name"/>
+                    Namespace URI = <xsl:value-of select="@nsuri"/>
+                    Namespace Prefix = <xsl:value-of select="@nsprefix"/>
+                */
+            </xsl:when>
+            <xsl:otherwise>
+                public static final javax.xml.namespace.QName MY_QNAME = new javax.xml.namespace.QName(
+                                                     "<xsl:value-of select="@nsuri"/>",
+                                                     "<xsl:value-of select="$name"/>",
+                                                     "<xsl:value-of select="@nsprefix"/>");
 
-      private static final javax.xml.namespace.QName qName = new javax.xml.namespace.QName(
-                                      "<xsl:value-of select="@nsuri"/>",
-                                      "<xsl:value-of select="$name"/>",
-                                      "<xsl:value-of select="@nsprefix"/>");
+            </xsl:otherwise>
+        </xsl:choose>
+      <xsl:if test="@type"></xsl:if>
 
      <xsl:for-each select="property">
          <xsl:variable name="propertyType"><xsl:value-of select="@type"></xsl:value-of></xsl:variable>

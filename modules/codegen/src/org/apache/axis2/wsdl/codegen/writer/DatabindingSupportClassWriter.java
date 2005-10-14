@@ -50,7 +50,7 @@ public class DatabindingSupportClassWriter extends ClassWriter {
         String templateName = null;
         Iterator keys = languageSpecificPropertyMap.keySet().iterator();
         String databindString;
-        
+
         //set the correct databinding type string
         switch(this.databindingFramework)  {
             case XSLTConstants.DataBindingTypes.XML_BEANS:
@@ -59,6 +59,9 @@ public class DatabindingSupportClassWriter extends ClassWriter {
             case XSLTConstants.DataBindingTypes.JAXB:
                 databindString = "jaxb";
                 break;
+            case XSLTConstants.DataBindingTypes.ADB:
+                databindString = "adb";
+                break;       
             default:
                 databindString = "default";
         }

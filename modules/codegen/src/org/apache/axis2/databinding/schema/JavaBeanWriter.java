@@ -64,7 +64,7 @@ public class JavaBeanWriter {
         try {
             //determine the package for this type.
             QName qName = complexType.getQName();
-            return process(qName, metainf, typeMap);
+            return process(qName, metainf, typeMap, false);
 
         }catch (SchemaCompilationException e) {
             throw e;
@@ -75,7 +75,7 @@ public class JavaBeanWriter {
 
     }
 
-    private String process(QName qName, BeanWriterMetaInfoHolder metainf, Map typeMap) throws Exception {
+    private String process(QName qName, BeanWriterMetaInfoHolder metainf, Map typeMap, boolean isElement) throws Exception {
         String packageName = URLProcessor.getNameSpaceFromURL(qName.getNamespaceURI());
         String className = qName.getLocalPart();
 
@@ -92,6 +92,10 @@ public class JavaBeanWriter {
         XSLTUtils.addAttribute(model,"package",packageName,rootElt);
         XSLTUtils.addAttribute(model,"nsuri",qName.getNamespaceURI(),rootElt);
         XSLTUtils.addAttribute(model,"nsprefix",qName.getPrefix(),rootElt);
+        if (!isElement){
+            XSLTUtils.addAttribute(model,"type","yes",rootElt);
+        }
+
         if (metainf.isExtension()){
             XSLTUtils.addAttribute(model,"extension",metainf.getExtensionClassName(),rootElt);
         }
@@ -144,7 +148,7 @@ public class JavaBeanWriter {
         try {
             //determine the package for this type.
             QName qName = element.getQName();
-             return process(qName, metainf, typeMap);
+             return process(qName, metainf, typeMap, true);
         } catch (Exception e) {
             throw new SchemaCompilationException(e);
         }
@@ -153,9 +157,12 @@ public class JavaBeanWriter {
     }
 
 
-    /** A bit of code from the code generator. We are better off using the template
+
+
+    /**
+     *  A bit of code from the old code generator. We are better off using the template
      * engines and such stuff that's already there. But the class writers are hard to be
-     * reused so some code needs to be repeated
+     * reused so some code needs to be repeated (atleast a bit)
      *
      */
     private  void loadTemplate() throws SchemaCompilationException {

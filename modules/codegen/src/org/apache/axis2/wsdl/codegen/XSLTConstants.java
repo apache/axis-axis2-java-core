@@ -39,6 +39,7 @@ public interface XSLTConstants {
         public static final int NONE = 0;
         public static final int XML_BEANS = 1;
         public static final int JAXB = 2;
+        public static final int ADB = 3;
 
     }
 
