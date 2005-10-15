@@ -28,7 +28,7 @@
         <operation name="getBookPrice">
             <soap:operation />
             <input>
-                <soap:body use="literal" namespace="http://www.Monson-Haefel.com/jwsbook/BookQuote/BookQuote"/>
+                <soap:body use="literal" namespace="http://www.Monson-Haefel.com/jwsbook/BookQuote"/>
             </input>
         </operation>
     </binding>
