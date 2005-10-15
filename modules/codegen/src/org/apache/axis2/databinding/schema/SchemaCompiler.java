@@ -120,9 +120,6 @@ public class SchemaCompiler {
         XmlSchemaType schemaType = schemaElement.getSchemaType();
 
         if (schemaType!=null){
-            //at this time it is not wise to directly write the class for the element
-            //so we push the complete element to an arraylist and let the process
-            //pass through
             BeanWriterMetaInfoHolder metainf = new BeanWriterMetaInfoHolder();
             QName qName = schemaType.getQName();
             //find the class name
@@ -150,8 +147,6 @@ public class SchemaCompiler {
         if (processedElementList.contains(xsElt.getQName())){
             return;
         }
-        System.out.println("xsElt = " + xsElt);
-        System.out.println("xsElt.getQName() = " + xsElt.getQName());
 
         XmlSchemaType schemaType = xsElt.getSchemaType();
 

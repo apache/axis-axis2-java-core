@@ -14,6 +14,8 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.stream.StreamSource;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 import java.io.*;
 
 /*
@@ -38,6 +40,10 @@ public class JavaBeanWriter {
     private boolean templateLoaded = false;
     private Templates templateCache;
 
+    private List namesList;
+    private static int count = 0;
+
+
 
     private File rootDir;
 
@@ -50,6 +56,7 @@ public class JavaBeanWriter {
             this.rootDir = rootDir;
         }
 
+        namesList = new ArrayList();
     }
 
     /**
@@ -77,7 +84,9 @@ public class JavaBeanWriter {
 
     private String process(QName qName, BeanWriterMetaInfoHolder metainf, Map typeMap, boolean isElement) throws Exception {
         String packageName = URLProcessor.getNameSpaceFromURL(qName.getNamespaceURI());
-        String className = qName.getLocalPart();
+        String className = getNonConflictingName(this.namesList,qName.getLocalPart());
+
+        ArrayList propertyNames = new ArrayList();
 
         if (!templateLoaded){
             loadTemplate();
@@ -113,6 +122,7 @@ public class JavaBeanWriter {
             }else{
                 javaName = JavaUtils.xmlNameToJava(xmlName,false);
             }
+            javaName = getNonConflictingName(propertyNames,javaName);
             XSLTUtils.addAttribute(model,"name",xmlName,property);
             XSLTUtils.addAttribute(model,"javaname",javaName,property);
             String javaClassNameForElement = metainf.getJavaClassNameForElement(name);
@@ -124,7 +134,7 @@ public class JavaBeanWriter {
             if (typeMap.containsKey(metainf.getSchemaQNameForElement(name))){
                 XSLTUtils.addAttribute(model,"ours","yes",property); //todo introduce a better name for this
             }
-             XSLTUtils.addAttribute(model,"shorttypename",shortTypeName,property);
+            XSLTUtils.addAttribute(model,"shorttypename",shortTypeName,property);
         }
 
         //create the file
@@ -133,6 +143,22 @@ public class JavaBeanWriter {
         parse(model,out);
         //return the fully qualified class name
         return packageName+"."+className;
+    }
+
+    /**
+     *
+     * @param listOfNames
+     * @param nameBase
+     * @return
+     */
+    private String getNonConflictingName(List listOfNames,String nameBase){
+        String nameToReturn = nameBase;
+        while (listOfNames.contains(nameToReturn)){
+            nameToReturn = nameToReturn + count++;
+        }
+
+        listOfNames.add(nameToReturn);
+        return nameToReturn;
     }
 
     /**
@@ -148,7 +174,7 @@ public class JavaBeanWriter {
         try {
             //determine the package for this type.
             QName qName = element.getQName();
-             return process(qName, metainf, typeMap, true);
+            return process(qName, metainf, typeMap, true);
         } catch (Exception e) {
             throw new SchemaCompilationException(e);
         }
