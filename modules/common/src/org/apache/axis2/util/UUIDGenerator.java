@@ -21,20 +21,36 @@ import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+import java.util.Date;
 
 public class UUIDGenerator {
     /**
      * This class will give UUIDs for axis2.
      */
 
+    private static String baseUUID = null;
+    private static long incrementingValue = 0;
+
+
     private static Random myRand = null;
 
     /**
      * MD5 a random string with localhost/date etc will return 128 bits
      * construct a string of 18 characters from those bits.
+     *
      * @return string
      */
     public static String getUUID() {
+        if (baseUUID == null) {
+            baseUUID = getInitialUUID();
+        }
+        if(++incrementingValue >= Long.MAX_VALUE){
+            incrementingValue = 0;
+        }
+        return baseUUID + incrementingValue;
+    }
+
+    protected static String getInitialUUID() {
         if (myRand == null) {
             myRand = new Random();
         }
@@ -45,11 +61,8 @@ public class UUIDGenerator {
         } catch (UnknownHostException e) {
             sid = Thread.currentThread().getName();
         }
-        long time = System.currentTimeMillis();
         StringBuffer sb = new StringBuffer();
         sb.append(sid);
-        sb.append(":");
-        sb.append(Long.toString(time));
         sb.append(":");
         sb.append(Long.toString(rand));
         MessageDigest md5 = null;
@@ -67,8 +80,24 @@ public class UUIDGenerator {
             sb2.append(Integer.toHexString(b));
         }
         int begin = myRand.nextInt();
-        if(begin < 0) begin = begin * -1;
+        if (begin < 0) begin = begin * -1;
         begin = begin % 8;
-        return new String(sb2.toString().substring(begin, begin + 18)).toUpperCase();
+        return sb2.toString().substring(begin, begin + 18).toUpperCase();
+    }
+
+    public static void main(String[] args) {
+        long startTime = new Date().getTime();
+        for (int i = 0; i < 100000; i++) {
+            UUIDGenerator.getInitialUUID();
+        }
+        long endTime = new Date().getTime();
+        System.out.println("getInitialUUID Difference = " + (endTime - startTime));
+
+        startTime = new Date().getTime();
+        for (int i = 0; i < 100000; i++) {
+            UUIDGenerator.getUUID();
+        }
+        endTime = new Date().getTime();
+        System.out.println("getUUID Difference = " + (endTime - startTime));
     }
 }
