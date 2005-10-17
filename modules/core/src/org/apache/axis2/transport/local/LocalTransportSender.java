@@ -30,6 +30,7 @@ import java.io.OutputStream;
 
 public class LocalTransportSender extends AbstractTransportSender {
     private ByteArrayOutputStream out;
+    private ByteArrayOutputStream response;
 
     public LocalTransportSender() {
 
@@ -45,10 +46,14 @@ public class LocalTransportSender extends AbstractTransportSender {
             throws AxisFault {
         try {
             InputStream in = new ByteArrayInputStream(this.out.toByteArray());
-            LocalTransportReceiver localTransportReceiver = new LocalTransportReceiver();
+            response = new ByteArrayOutputStream();
+            LocalTransportReceiver localTransportReceiver = new LocalTransportReceiver(this);
             localTransportReceiver.processMessage(in, msgContext.getTo());
             in.close();
             out.close();
+
+            in = new ByteArrayInputStream(response.toByteArray());
+            msgContext.setProperty(MessageContext.TRANSPORT_IN, in);
         } catch (IOException e) {
             throw new AxisFault(e);
         }
@@ -85,4 +90,7 @@ public class LocalTransportSender extends AbstractTransportSender {
     public void cleanUp(MessageContext msgContext) throws AxisFault {
     }
 
+    OutputStream getResponse() {
+        return response;
+    }
 }

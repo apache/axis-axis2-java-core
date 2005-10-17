@@ -17,6 +17,7 @@
 package org.apache.axis2.rpc;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.databinding.DeserializationContext;
@@ -53,59 +54,29 @@ public class RPCInOutMessageReceiver extends AbstractInOutSyncMessageReceiver {
          * Locate method descriptor using QName or action
          */
         OperationContext oc = inMessage.getOperationContext();
-        RPCMethod method = (RPCMethod)oc.getProperty(RPCMETHOD_PROPERTY);
+        OperationDescription description = oc.getOperationDescription();
+        RPCMethod method = (RPCMethod)description.getMetadataBag().get(RPCMETHOD_PROPERTY);
         if (method == null) {
-            throw new AxisFault("Couldn't find RPCMethod in OperationContext");
+            throw new AxisFault("Couldn't find RPCMethod in OperationDescription");
         }
 
         Method javaMethod = method.getJavaMethod();
         Object [] arguments = null;
         Object targetObject = this.getTheImplementationObject(inMessage);
+
         DeserializationContext dserContext = new DeserializationContext();
-
-        // Run each argument (sub-element) through the appropriate deser
-        Iterator args = rpcElement.getChildElements();
-        Map elementCounts = new HashMap();
-        while (args.hasNext()) {
-            OMElement arg = (OMElement) args.next();
-            QName qname = arg.getQName();
-            RPCParameter param = method.getParameter(qname);
-            if (param == null) {
-                // unknown parameter.  Fault or continue depending on
-                // strictness configuration.
-                continue;
-            }
-            Integer count = (Integer)elementCounts.get(qname);
-            if (count == null) count = new Integer(0);
-            elementCounts.put(qname, new Integer(count.intValue() + 1));
-            Deserializer dser = param.getDeserializer(count.intValue());
-            // Got a recognized param, so feed this through the deserializer
-            try {
-                dserContext.deserialize(arg.getXMLStreamReader(), dser);
-            } catch (Exception e) {
-                throw AxisFault.makeFault(e);
-            }
-        }
-
-        // OK, now we're done with the children.  If this is SOAP 1.2, we're
-        // finished.  If it's SOAP 1.1, there may be multirefs which still
-        // need to be deserialized after the RPC element.
-        if (dserContext.isIncomplete()) {
-            try {
-                dserContext.processRest(rpcElement);
-            } catch (Exception e) {
-                throw AxisFault.makeFault(e);
-            }
-
-            if (dserContext.isIncomplete()) {
-                throw new AxisFault("Unresolved multirefs!");
-            }
+        RPCValues values = null;
+        try {
+            values = dserContext.deserializeRPCElement(method, rpcElement);
+        } catch (Exception e) {
+            throw AxisFault.makeFault(e);
         }
 
         arguments = new Object [method.getNumInParams()];
         Iterator params = method.getInParams();
         for (int i = 0; i < arguments.length; i++) {
-            arguments[i] = ((RPCParameter)params.next()).getValue();
+            RPCParameter param = (RPCParameter)params.next();
+            arguments[i] = param.getValue(values);
         }
 
         Object returnValue = null;
@@ -115,10 +86,12 @@ public class RPCInOutMessageReceiver extends AbstractInOutSyncMessageReceiver {
             throw AxisFault.makeFault(e);
         }
 
+        RPCValues responseValues = new RPCValues();
+
         // The response parameter, if any, is where the return value should go
         RPCParameter responseParam = method.getResponseParameter();
         if (responseParam != null) {
-            responseParam.setValue(returnValue);
+            responseValues.setValue(responseParam.getQName(), returnValue);
         }
 
         // Now make the response message.
@@ -130,7 +103,7 @@ public class RPCInOutMessageReceiver extends AbstractInOutSyncMessageReceiver {
             // Just need to create this, since it automatically links itself
             // to the response body and will therefore get serializeAndConsume()d at
             // the appropriate time.
-            new RPCResponseElement(method, respBody);
+            new RPCResponseElement(method, responseValues, respBody);
 
             outMessage.setEnvelope(responseEnv);
         } catch (Exception e) {

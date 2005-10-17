@@ -86,20 +86,14 @@ public class ArrayTest extends TestCase {
         XMLStreamReader omReader = el.getXMLStreamReaderWithoutCaching();
         omReader.next();
         DeserializationContext context = new DeserializationContext();
+        Object value = context.deserializeToClass(omReader, TestBean.class);
 
-        TypeDesc typeDesc = BeanManager.getTypeDesc(TestBean.class);
-        BeanDeserializer dser = new BeanDeserializer(typeDesc);
-
-        dser.setTarget(new DeserializationTarget() {
-            public void setValue(Object value) {
-                assertTrue(value instanceof TestBean);
-                TestBean bean = (TestBean)value;
-                assertEquals("Wrong # of items", 3, bean.coll.size());
-                assertEquals("one", bean.getCollection(0));
-                assertEquals("two", bean.getCollection(1));
-                assertEquals("three", bean.getCollection(2));
-            }
-        });
-        dser.deserialize(omReader, context);
+        assertNotNull(value);
+        assertTrue(value instanceof TestBean);
+        TestBean bean = (TestBean)value;
+        assertEquals("Wrong # of items", 3, bean.coll.size());
+        assertEquals("one", bean.getCollection(0));
+        assertEquals("two", bean.getCollection(1));
+        assertEquals("three", bean.getCollection(2));
     }
 }

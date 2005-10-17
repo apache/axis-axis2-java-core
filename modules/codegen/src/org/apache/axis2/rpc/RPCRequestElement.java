@@ -30,10 +30,14 @@ import java.util.Iterator;
  */
 public class RPCRequestElement extends OMElementImpl {
     RPCMethod method;
+    RPCValues values;
 
-    public RPCRequestElement(RPCMethod method, OMElement parent) {
+    public RPCRequestElement(RPCMethod method,
+                             RPCValues values,
+                             OMElement parent) {
         super(method.getQName(), parent);
         this.method = method;
+        this.values = values;
     }
 
     protected void serialize(OMOutputImpl omOutput, boolean cache)
@@ -50,10 +54,11 @@ public class RPCRequestElement extends OMElementImpl {
         Iterator inParams = method.getInParams();
         while (inParams.hasNext()) {
             RPCParameter parameter = (RPCParameter) inParams.next();
+            Object value = values.getValue(parameter.getQName());
             try {
-                parameter.serialize(context);
+                parameter.serialize(context, value);
             } catch (Exception e) {
-                throw new XMLStreamException("Couldn't serializeAndConsume RPCParameter",
+                throw new XMLStreamException("Couldn't serialize RPCParameter",
                                              e);
             }
         }

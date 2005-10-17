@@ -41,16 +41,19 @@ public class LocalTransportReceiver {
     public static ConfigurationContext CONFIG_CONTEXT;
 
     private ConfigurationContext confContext;
+    private LocalTransportSender sender;
 
     public LocalTransportReceiver(ConfigurationContext configContext) {
         confContext = configContext;
     }
 
-    public LocalTransportReceiver() {
+    public LocalTransportReceiver(LocalTransportSender sender) {
         this(CONFIG_CONTEXT);
+        this.sender = sender;
     }
 
-    public void processMessage(InputStream in, EndpointReference to) throws AxisFault {
+    public void processMessage(InputStream in,
+                               EndpointReference to) throws AxisFault {
         try {
             TransportInDescription tIn =
                 confContext.getAxisConfiguration().getTransportIn(
@@ -58,9 +61,13 @@ public class LocalTransportReceiver {
             TransportOutDescription tOut =
                 confContext.getAxisConfiguration().getTransportOut(
                     new QName(Constants.TRANSPORT_LOCAL));
+            tOut.setSender(new LocalResponder(sender));
+
             MessageContext msgCtx = new MessageContext(confContext, tIn, tOut);
             msgCtx.setTo(to);
             msgCtx.setServerSide(true);
+
+            msgCtx.setProperty(MessageContext.TRANSPORT_OUT, sender.getResponse());
 
             XMLStreamReader reader =
                 XMLInputFactory.newInstance().createXMLStreamReader(

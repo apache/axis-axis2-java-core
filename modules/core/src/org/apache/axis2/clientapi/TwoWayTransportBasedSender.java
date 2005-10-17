@@ -41,7 +41,7 @@ public class TwoWayTransportBasedSender {
                         msgctx.getTransportIn(),
                         msgctx.getTransportOut());
         response.setProperty(MessageContext.TRANSPORT_IN,
-                msgctx.getProperty(MessageContext.TRANSPORT_IN));
+                             msgctx.getProperty(MessageContext.TRANSPORT_IN));
         msgctx.getOperationDescription().registerOperationContext(response,msgctx.getOperationContext());
         response.setServerSide(false);
         response.setServiceContext(msgctx.getServiceContext());

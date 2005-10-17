@@ -22,35 +22,38 @@ import org.apache.axis2.databinding.SerializationContext;
 import org.apache.axis2.databinding.metadata.ElementDesc;
 import org.apache.axis2.databinding.utils.Converter;
 
-import java.util.ArrayList;
+import javax.xml.namespace.QName;
 
 /**
  * RPCParameter
  */
 public class RPCParameter extends ElementDesc {
     class ParamTarget implements DeserializationTarget {
-        RPCParameter param;
+        QName paramName;
+        RPCValues values;
 
-        public ParamTarget(RPCParameter param) {
-            this.param = param;
+        public ParamTarget(QName paramName, RPCValues values) {
+            this.paramName = paramName;
+            this.values = values;
         }
 
         public void setValue(Object value) throws Exception {
-            param.setValue(value);
+            values.setValue(paramName, value);
         }
     }
 
-    class IndexedParamTarget implements DeserializationTarget {
-        RPCParameter param;
+    class IndexedParamTarget extends ParamTarget {
         int index;
 
-        public IndexedParamTarget(RPCParameter param, int index) {
-            this.param = param;
+        public IndexedParamTarget(QName paramName,
+                                  RPCValues values,
+                                  int index) {
+            super(paramName, values);
             this.index = index;
         }
 
         public void setValue(Object value) throws Exception {
-            param.setIndexedValue(index, value);
+            values.setIndexedValue(paramName, index, value);
         }
     }
 
@@ -58,19 +61,16 @@ public class RPCParameter extends ElementDesc {
     public static final int MODE_OUT   = 1;
     public static final int MODE_INOUT = 2;
 
-    Object value;
     int mode;
     Class destClass;
 
-    public Object getValue() {
+    public Object getValue(RPCValues values) {
+        Object value = values.getValue(qname);
+
         if (destClass != null)
             return Converter.convert(value, destClass);
 
         return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
     }
 
     public int getMode() {
@@ -89,7 +89,8 @@ public class RPCParameter extends ElementDesc {
         this.destClass = destClass;
     }
 
-    public void serialize(SerializationContext context) throws Exception {
+    public void serialize(SerializationContext context, Object value)
+            throws Exception {
         if (ser == null) {
             // no serializer!
             throw new Exception("No serializer in RPCParameter");
@@ -97,7 +98,7 @@ public class RPCParameter extends ElementDesc {
         context.serializeElement(qname, value, ser);
     }
 
-    public Deserializer getDeserializer(int i) {
+    public Deserializer getDeserializer(int i, RPCValues values) {
         if (i > maxOccurs && maxOccurs > -1) {
             // fail
             throw new RuntimeException("Too many elements");
@@ -105,27 +106,13 @@ public class RPCParameter extends ElementDesc {
 
         DeserializationTarget target;
         if (maxOccurs == -1 || maxOccurs > 1) {
-            if (value == null) value = new ArrayList();
-            target = new IndexedParamTarget(this, i);
+            target = new IndexedParamTarget(qname, values, i);
         } else {
-            target = new ParamTarget(this);
+            target = new ParamTarget(qname, values);
         }
 
         Deserializer dser = deserializerFactory.getDeserializer();
         dser.setTarget(target);
         return dser;
-    }
-
-    public void setIndexedValue(int index, Object value) {
-        ArrayList coll = (ArrayList)this.value;
-        if (coll.size() == index) {
-            coll.add(value);
-            return;
-        }
-
-        while (index + 1 > coll.size()) {
-            coll.add(null);
-        }
-        coll.set(index, value);
     }
 }

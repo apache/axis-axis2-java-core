@@ -78,6 +78,14 @@
             </properties>
         </dependency>
         <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>${commons.httpclient.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
             <groupId>stax</groupId>
             <artifactId>stax</artifactId>
             <version>${stax.version}</version>
