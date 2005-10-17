@@ -408,6 +408,11 @@ public class OMElementImpl extends OMNodeImpl
         if (attributes == null) {
             this.attributes = new HashMap(5);
         }
+        OMNamespace namespace = attr.getNamespace();
+        if ( namespace != null && this.findNamespace(namespace.getName(), namespace.getPrefix()) == null) {
+            this.declareNamespace(namespace.getName(), namespace.getPrefix());
+        }
+
         attributes.put(attr.getQName(), attr);
         return attr;
     }
@@ -784,7 +789,7 @@ public class OMElementImpl extends OMNodeImpl
         } catch (XMLStreamException e) {
             // can not throw out an exception here. Can't do anything other than logging
             // and swallowing this :(
-            logger.error("Can not serialize OM Element "+ this.getLocalName(), e);
+            logger.error("Can not serialize OM Element " + this.getLocalName(), e);
         }
 
         return new String(baos.toByteArray());
