@@ -321,5 +321,5 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 		//TODO isAncestor
 		return true;
 	}
-	
+
 }

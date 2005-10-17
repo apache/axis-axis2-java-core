@@ -156,7 +156,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @param builder
      * @param startNode
      */
-    OMStAXWrapper(OMXMLParserWrapper builder, OMElement startNode) {
+    public OMStAXWrapper(OMXMLParserWrapper builder, OMElement startNode) {
         this(builder, startNode, false);
     }
 
@@ -167,7 +167,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @param startNode
      * @param cache
      */
-    OMStAXWrapper(OMXMLParserWrapper builder, OMElement startNode,
+    public OMStAXWrapper(OMXMLParserWrapper builder, OMElement startNode,
                   boolean cache) {
 
         // create a navigator

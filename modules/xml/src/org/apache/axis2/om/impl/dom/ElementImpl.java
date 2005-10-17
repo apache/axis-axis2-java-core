@@ -19,28 +19,40 @@ import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
+import org.apache.axis2.om.impl.llom.OMStAXWrapper;
+import org.apache.axis2.om.impl.llom.traverse.OMChildElementIterator;
+import org.apache.axis2.om.impl.llom.util.EmptyIterator;
+import org.apache.axis2.soap.impl.llom.SOAPConstants;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-import java.util.Iterator;
 
 /**
+ * Implementation of the org.w3c.dom.Element and org.apache.axis2.om.Element
+ * interfaces.
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class ElementImpl extends ParentNode implements Element,OMElement {
 	
-	private NamespaceImpl namespace;
+	private OMNamespace namespace;
 	private String tagName;
-	
+	private AttributeMap attributes;
+	private HashMap namespaces;
 	/**
 	 * @param ownerDocument
 	 */
@@ -112,15 +124,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 		//This is an Eement Node...
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.om.OMNode#serialize(org.apache.axis2.om.OMOutput)
-	 */
-	public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
 
-	
 	///
 	/// org.w3c.dom.Element methods
 	///
@@ -132,82 +136,258 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 		return this.tagName;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Removes an attribute by name.
+	 * @param name The name of the attribute to remove
 	 * @see org.w3c.dom.Element#removeAttribute(java.lang.String)
 	 */
-	public void removeAttribute(String arg0) throws DOMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public void removeAttribute(String name) throws DOMException {
+		if(this.isReadonly()) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NO_MODIFICATION_ALLOWED_ERR", null);
+            throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
+		}
+		
+		if(this.attributes != null) {
+			this.attributes.removeNamedItem(name);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.w3c.dom.Element#hasAttribute(java.lang.String)
 	 */
-	public boolean hasAttribute(String arg0) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public boolean hasAttribute(String name) {
+		return this.getAttributeNode(name) != null;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Look in the local list of attributes and return if found
+	 * if the local list is null return null
 	 * @see org.w3c.dom.Element#getAttribute(java.lang.String)
 	 */
 	public String getAttribute(String arg0) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		if(attributes == null) {
+			return "";
+		} else {
+			return ((Attr)attributes.getNamedItem(arg0)).getValue();
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.w3c.dom.Element#removeAttributeNS(java.lang.String, java.lang.String)
 	 */
-	public void removeAttributeNS(String arg0, String arg1) throws DOMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public void removeAttributeNS(String namespaceURI, String localName) throws DOMException {
+		if(this.isReadonly()) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NO_MODIFICATION_ALLOWED_ERR", null);
+            throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
+		}
+		
+		if(this.attributes != null) {
+			this.attributes.removeNamedItemNS(namespaceURI, localName);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.w3c.dom.Element#setAttribute(java.lang.String, java.lang.String)
 	 */
-	public void setAttribute(String arg0, String arg1) throws DOMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public void setAttribute(String name, String value) throws DOMException {
+		//Check for invalid charaters
+		if(!DOMUtil.isValidChras(name)) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "INVALID_CHARACTER_ERR", null);
+            throw new DOMException(DOMException.INVALID_CHARACTER_ERR, msg);
+		}
+		
+		if(this.isReadonly()) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NO_MODIFICATION_ALLOWED_ERR", null);
+            throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
+		}
+		if(this.attributes == null) {
+			this.attributes = new AttributeMap((ParentNode)this.ownerNode);
+		}
+		this.attributes.setNamedItem(new AttrImpl(name, value));
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Returns whether the  given attr is available or not
 	 * @see org.w3c.dom.Element#hasAttributeNS(java.lang.String, java.lang.String)
 	 */
-	public boolean hasAttributeNS(String arg0, String arg1) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public boolean hasAttributeNS(String namespaceURI, String localName) {
+		return this.getAttributeNodeNS(namespaceURI, localName) != null;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Retrieves an attribute node by name. 
 	 * @see org.w3c.dom.Element#getAttributeNode(java.lang.String)
 	 */
-	public Attr getAttributeNode(String arg0) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public Attr getAttributeNode(String name) {
+		if(this.attributes == null) {
+			return null;
+		}
+		
+		return (AttrImpl)this.attributes.getNamedItem(name);
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Removes the specified attribute node
 	 * @see org.w3c.dom.Element#removeAttributeNode(org.w3c.dom.Attr)
 	 */
-	public Attr removeAttributeNode(Attr arg0) throws DOMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public Attr removeAttributeNode(Attr oldAttr) throws DOMException {
+		if(isReadonly()) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NO_MODIFICATION_ALLOWED_ERR", null);
+            throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
+		} 
+		if(this.attributes == null || this.attributes.getNamedItem(oldAttr.getName()) == null) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NOT_FOUND_ERR", null);
+            throw new DOMException(DOMException.NOT_FOUND_ERR, msg);
+		}
+		AttrImpl tempAttr = (AttrImpl)this.attributes.removeNamedItem(oldAttr.getName());
+		return tempAttr;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Adds a new attribute node.
 	 * @see org.w3c.dom.Element#setAttributeNode(org.w3c.dom.Attr)
 	 */
-	public Attr setAttributeNode(Attr arg0) throws DOMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public Attr setAttributeNode(Attr attr) throws DOMException {
+		AttrImpl attrImpl = (AttrImpl)attr;
+
+		if(attrImpl.isOwned()) {//check for ownership
+			if(!this.getOwnerDocument().equals(attr.getOwnerDocument())) {
+				String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "WRONG_DOCUMENT_ERR", null);
+	            throw new DOMException(DOMException.WRONG_DOCUMENT_ERR, msg);
+			}
+		}
+		
+		if(this.isReadonly()) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NO_MODIFICATION_ALLOWED_ERR", null);
+            throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
+		}
+		
+		//check whether the attr is in use
+		if(attrImpl.isUsed()) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "INUSE_ATTRIBUTE_ERR", null);
+            throw new DOMException(DOMException.INUSE_ATTRIBUTE_ERR, msg);
+		}
+		
+		if(this.attributes == null) {
+			this.attributes = new AttributeMap((ParentNode)this.ownerNode);
+		}
+
+		return (Attr)this.attributes.setNamedItem(attr);
+
 	}
 
 	/* (non-Javadoc)
 	 * @see org.w3c.dom.Element#setAttributeNodeNS(org.w3c.dom.Attr)
 	 */
-	public Attr setAttributeNodeNS(Attr arg0) throws DOMException {
+	public Attr setAttributeNodeNS(Attr attr) throws DOMException {
+		
+		AttrImpl attrImpl = (AttrImpl)attr;
+
+		if(attrImpl.isOwned()) {//check for ownership
+			if(!this.getOwnerDocument().equals(attr.getOwnerDocument())) {
+				String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "WRONG_DOCUMENT_ERR", null);
+	            throw new DOMException(DOMException.WRONG_DOCUMENT_ERR, msg);
+			}
+		}
+		
+		if(this.isReadonly()) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NO_MODIFICATION_ALLOWED_ERR", null);
+            throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
+		}
+		
+		//check whether the attr is in use
+		if(attrImpl.isUsed()) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "INUSE_ATTRIBUTE_ERR", null);
+            throw new DOMException(DOMException.INUSE_ATTRIBUTE_ERR, msg);
+		}
+		
+		if(this.attributes == null) {
+			this.attributes = new AttributeMap((ParentNode)this.ownerNode);
+		}
+
+		//handle the namespaces
+        if (attr.getNamespaceURI() != null && findNamespace(attr.getNamespaceURI(), attr.getPrefix()) == null) {
+        	//TODO checkwhether the same ns is declared with a different prefix and remove it
+        	this.declareNamespace(new NamespaceImpl(attr.getNamespaceURI(),attr.getPrefix()));
+        }
+		
+		return (Attr)this.attributes.setNamedItemNS(attr);
+		
+	}
+
+
+	/**
+	 * Retrieves an attribute value by local name and namespace URI. 
+	 * @see org.w3c.dom.Element#getAttributeNS(java.lang.String, java.lang.String)
+	 */
+	public String getAttributeNS(String namespaceURI, String localName) {
+		if(this.attributes == null) {
+			return "";
+		}
+		
+		return this.attributes.getNamedItemNS(namespaceURI, localName).getNodeValue();
+	}
+
+	/**
+	 * Adds a new attribute
+	 * @see org.w3c.dom.Element#setAttributeNS(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public void setAttributeNS(String namespaceURI, String qualifiedName, String value) throws DOMException {
+		
+        if (namespaceURI != null && findNamespace(namespaceURI, DOMUtil.getPrefix(qualifiedName)) == null) {
+        	//TODO checkwhether the same ns is declared with a different prefix and remove it
+        	this.declareNamespace(new NamespaceImpl(namespaceURI,DOMUtil.getPrefix(qualifiedName)));
+        }
+        
+		this.addAttribute(namespaceURI,qualifiedName,value);
+	}
+	
+	private OMAttribute addAttribute(String namespaceURI, String qualifiedName, String value) throws DOMException {
+		if(!DOMUtil.isValidChras(qualifiedName)) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "INVALID_CHARACTER_ERR", null);
+            throw new DOMException(DOMException.INVALID_CHARACTER_ERR, msg);
+		}
+		
+		if(this.isReadonly()) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NO_MODIFICATION_ALLOWED_ERR", null);
+            throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
+		}
+		
+		if(!DOMUtil.isValidNamespace(namespaceURI, qualifiedName)) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NAMESPACE_ERR", null);
+            throw new DOMException(DOMException.NAMESPACE_ERR, msg);			
+		}
+		
+		if(this.attributes == null) {
+			this.attributes = new AttributeMap((ParentNode)this.ownerNode);
+		}
+		
+		//Check whether there's an existing Attr with same local name and namespace URI
+		Attr attributeNode = this.getAttributeNodeNS(namespaceURI, DOMUtil.getLocalName(qualifiedName));
+		if(attributeNode != null) {
+			AttrImpl tempAttr = ((AttrImpl)attributeNode);
+			tempAttr.setOMNamespace(new NamespaceImpl(namespaceURI,DOMUtil.getPrefix(qualifiedName)));
+			tempAttr.setValue(value);
+			return tempAttr;
+		} else {
+			NamespaceImpl ns = new NamespaceImpl(namespaceURI, DOMUtil.getPrefix(qualifiedName));
+			AttrImpl attr = new AttrImpl(DOMUtil.getLocalName(qualifiedName),ns,value);
+			return attr;
+		}
+	}
+
+	/**
+	 * Retrieves an Attr node by local name and namespace URI. 
+	 * @see org.w3c.dom.Element#getAttributeNodeNS(java.lang.String, java.lang.String)
+	 */
+	public Attr getAttributeNodeNS(String namespaceURI, String localName) {
+		return (this.attributes == null)?null:(Attr)this.attributes.getNamedItemNS(namespaceURI,localName);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.w3c.dom.Element#getElementsByTagNameNS(java.lang.String, java.lang.String)
+	 */
+	public NodeList getElementsByTagNameNS(String arg0, String arg1) {
 		//TODO
 		throw new UnsupportedOperationException("TODO");
 	}
@@ -219,55 +399,6 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 		//TODO
 		throw new UnsupportedOperationException("TODO");
 	}
-
-	/* (non-Javadoc)
-	 * @see org.w3c.dom.Element#getAttributeNS(java.lang.String, java.lang.String)
-	 */
-	public String getAttributeNS(String arg0, String arg1) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.w3c.dom.Element#setAttributeNS(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	public void setAttributeNS(String arg0, String arg1, String arg2) throws DOMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.w3c.dom.Element#getAttributeNodeNS(java.lang.String, java.lang.String)
-	 */
-	public Attr getAttributeNodeNS(String arg0, String arg1) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.w3c.dom.Element#getElementsByTagNameNS(java.lang.String, java.lang.String)
-	 */
-	public NodeList getElementsByTagNameNS(String arg0, String arg1) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
-	
-
-	public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
-
-	public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
-
-	public void serializeAndConsume(XMLStreamWriter xmlWriter) throws XMLStreamException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
-
 	
 	///
 	///OmElement methods
@@ -277,181 +408,344 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 	 * @see org.apache.axis2.om.OMElement#addAttribute(org.apache.axis2.om.OMAttribute)
 	 */
 	public OMAttribute addAttribute(OMAttribute attr) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		
+        OMNamespace namespace = attr.getNamespace();
+        if ( namespace != null && this.findNamespace(namespace.getName(), namespace.getPrefix()) == null) {
+            this.declareNamespace(namespace.getName(), namespace.getPrefix());
+        }
+        
+		if(attr.getNamespace() != null) { //If the attr has a namespace
+			return (AttrImpl)this.setAttributeNode((Attr)attr);
+		} else {
+			return (AttrImpl)this.setAttributeNodeNS((Attr)attr);
+		}
 	}
 
 	/**
+	 * The behaviour of this is the same as org.w3c.dom.Element#setAttributeNS
 	 * @see org.apache.axis2.om.OMElement#addAttribute(java.lang.String, java.lang.String, org.apache.axis2.om.OMNamespace)
 	 */
 	public OMAttribute addAttribute(String attributeName, String value, OMNamespace ns) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		
+        if (ns != null && findNamespace(ns.getName(), ns.getPrefix()) != null){
+            declareNamespace(ns);
+        }
+        
+		return this.addAttribute(ns.getName(),attributeName,value);
 	}
 
 	/**
 	 * @see org.apache.axis2.om.OMElement#declareNamespace(org.apache.axis2.om.OMNamespace)
 	 */
 	public OMNamespace declareNamespace(OMNamespace namespace) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+        if (namespaces == null) {
+            this.namespaces = new HashMap(5);
+        }
+        namespaces.put(namespace.getPrefix(), namespace);
+        return namespace;
 	}
 
 	/**
 	 * @see org.apache.axis2.om.OMElement#declareNamespace(java.lang.String, java.lang.String)
 	 */
 	public OMNamespace declareNamespace(String uri, String prefix) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+        OMNamespaceImpl ns = new OMNamespaceImpl(uri, prefix);
+        return declareNamespace(ns);
 	}
 
 	/**
 	 * @see org.apache.axis2.om.OMElement#findNamespace(java.lang.String, java.lang.String)
 	 */
 	public OMNamespace findNamespace(String uri, String prefix) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
 
+        // check in the current element
+        OMNamespace namespace = findDeclaredNamespace(uri, prefix);
+        if (namespace != null) {
+            return namespace;
+        }
+
+        // go up to check with ancestors
+        if (this.parentNode != null) {
+            //For the OMDocumentImpl there won't be any explicit namespace
+            //declarations, so going up the parent chain till the document
+            //element should be enough.
+            if (parentNode instanceof OMElement) {
+                namespace = ((ElementImpl) parentNode).findNamespace(uri, prefix);
+            }
+        }
+
+        if (namespace == null && uri != null && prefix != null
+                && prefix.equals(SOAPConstants.XMLNS_PREFIX)
+                && uri.equals(SOAPConstants.XMLNS_URI)) {
+            declareNamespace(SOAPConstants.XMLNS_URI, SOAPConstants.XMLNS_PREFIX);
+            namespace = findNamespace(uri, prefix);
+        }
+        return namespace;
+	}
+    /**
+     * This will ckeck for the namespace <B>only</B> in the current Element.
+     * <p/>
+     * This can also be used to retrieve the prefix of a known namespace URI
+     */
+    private OMNamespace findDeclaredNamespace(String uri, String prefix) {
+        if (namespaces == null) {
+            return null;
+        }
+        if (prefix == null || "".equals(prefix)) {
+            Iterator namespaceListIterator = namespaces.values().iterator();
+            while (namespaceListIterator.hasNext()) {
+                OMNamespace omNamespace =
+                        (OMNamespace) namespaceListIterator.next();
+                if (omNamespace.getName() != null &&
+                        omNamespace.getName().equals(uri)) {
+                    return omNamespace;
+                }
+            }
+            return null;
+        } else {
+            return (OMNamespace) namespaces.get(prefix);
+        }
+    }
+    
 	/**
-	 * @see org.apache.axis2.om.OMElement#getAllAttributes()
-	 */
-	public Iterator getAllAttributes() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
-
-	/**
-	 * @see org.apache.axis2.om.OMElement#getAllDeclaredNamespaces()
-	 */
-	public Iterator getAllDeclaredNamespaces() throws OMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
-
-	/* (non-Javadoc)
+	 * Returns a named attribute if present.
 	 * @see org.apache.axis2.om.OMElement#getAttribute(javax.xml.namespace.QName)
 	 */
 	public OMAttribute getAttribute(QName qname) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		if(this.attributes == null) {
+			return null;
+		}
+		
+		if(qname.getNamespaceURI() == null || qname.getNamespaceURI().equals("")){
+			return (AttrImpl)this.getAttributeNode(qname.getLocalPart());
+		} else {
+			return (AttrImpl)this.getAttributeNodeNS(qname.getNamespaceURI(), qname.getLocalPart());
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.om.OMElement#getBuilder()
 	 */
 	public OMXMLParserWrapper getBuilder() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		return this.builder;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.om.OMElement#getChildElements()
-	 */
-	public Iterator getChildElements() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
 
-	/* (non-Javadoc)
+	/**
+	 * Returns the first attribute of the set of attributes if there
+	 * are any attributes. Otherwise returns null
 	 * @see org.apache.axis2.om.OMElement#getFirstAttribute(javax.xml.namespace.QName)
 	 */
 	public OMAttribute getFirstAttribute(QName qname) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		if(this.attributes == null) {
+			return null;
+		} else {
+			return (AttrImpl)this.attributes.getItem(0);
+		}
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Returns the first Element node
 	 * @see org.apache.axis2.om.OMElement#getFirstElement()
 	 */
 	public OMElement getFirstElement() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+        OMNode node = getFirstOMChild();
+        while (node != null) {
+            if (node.getType() == Node.ELEMENT_NODE) {
+                return (OMElement) node;
+            } else {
+                node = node.getNextOMSibling();
+            }
+        }
+        return null;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Returns the namespace of this element
 	 * @see org.apache.axis2.om.OMElement#getNamespace()
 	 */
 	public OMNamespace getNamespace() throws OMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		return this.namespace;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Returns the QName of this element
 	 * @see org.apache.axis2.om.OMElement#getQName()
 	 */
 	public QName getQName() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+        QName qName;
+        if (namespace != null) {
+            if (namespace.getPrefix() != null) {
+                qName = new QName(namespace.getName(), tagName, namespace.getPrefix());
+            } else {
+                qName = new QName(namespace.getName(), tagName);
+            }
+        } else {
+            qName = new QName(tagName);
+        }
+        return qName;
 	}
 
-    public String toStringWithConsume() throws XMLStreamException {
-        // TODO : Ruchith please implement this ;).
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 
-    /* (non-Javadoc)
-      * @see org.apache.axis2.om.OMElement#getText()
-      */
-    public String getText() {
-        //TODO
-        throw new UnsupportedOperationException("TODO");
-    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.om.OMElement#getXMLStreamReader()
+    /**
+	 * select all the text children and concat them to a single string
+	 * @see org.apache.axis2.om.OMElement#getText()
 	 */
-	public XMLStreamReader getXMLStreamReader() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public String getText() {
+		String childText = "";
+		OMNode child = this.getFirstOMChild();
+		OMText textNode;
+
+		while (child != null) {
+			if (child.getType() == OMNode.TEXT_NODE) {
+				textNode = (OMText) child;
+				if (textNode.getText() != null
+						&& !"".equals(textNode.getText())) {
+					childText += textNode.getText();
+				}
+			}
+			child = child.getNextOMSibling();
+		}
+
+		return childText;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.om.OMElement#getXMLStreamReaderWithoutCaching()
-	 */
-	public XMLStreamReader getXMLStreamReaderWithoutCaching() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
-
-	/* (non-Javadoc)
+	/**
+	 * Removes an attribute fron the element
+	 * 
 	 * @see org.apache.axis2.om.OMElement#removeAttribute(org.apache.axis2.om.OMAttribute)
 	 */
 	public void removeAttribute(OMAttribute attr) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		this.removeAttributeNode((AttrImpl)attr);
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Sets the OM builder
 	 * @see org.apache.axis2.om.OMElement#setBuilder(org.apache.axis2.om.OMXMLParserWrapper)
 	 */
 	public void setBuilder(OMXMLParserWrapper wrapper) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		this.builder = wrapper;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Set the local name
 	 * @see org.apache.axis2.om.OMElement#setLocalName(java.lang.String)
 	 */
 	public void setLocalName(String localName) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		this.tagName = localName;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Set the namespace
 	 * @see org.apache.axis2.om.OMElement#setNamespace(org.apache.axis2.om.OMNamespace)
 	 */
 	public void setNamespace(OMNamespace namespace) {
+		this.namespace = namespace;
+	}
+
+	/**
+	 * Creates a text node with the given value and adds it to the 
+	 * element
+	 * @see org.apache.axis2.om.OMElement#setText(java.lang.String)
+	 */
+	public void setText(String text) {
+		if(this.isReadonly()) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NO_MODIFICATION_ALLOWED_ERR", null);
+            throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
+		}
+		
+		TextImpl textNode = (TextImpl)((DocumentImpl)this.ownerNode).createTextNode(text);
+		this.addChild(textNode);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMNode#serialize(org.apache.axis2.om.OMOutput)
+	 */
+	public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
 		//TODO
 		throw new UnsupportedOperationException("TODO");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.om.OMElement#setText(java.lang.String)
-	 */
-	public void setText(String text) {
+	public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
 		//TODO
 		throw new UnsupportedOperationException("TODO");
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#getXMLStreamReaderWithoutCaching()
+	 */
+	public XMLStreamReader getXMLStreamReaderWithoutCaching() {
+		return getXMLStreamReader(false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#getXMLStreamReader()
+	 */
+	public XMLStreamReader getXMLStreamReader() {
+		return getXMLStreamReader(true);
+	}
+	
+
+    /**
+     * getXMLStreamReader
+     *
+     * @return reader
+     */
+    private XMLStreamReader getXMLStreamReader(boolean cache) {
+        if ((builder == null) && !cache) {
+            throw new UnsupportedOperationException(
+                    "This element was not created in a manner to be switched");
+        }
+        if (builder.isCompleted() && !cache) {
+            throw new UnsupportedOperationException(
+                    "The parser is already consumed!");
+        }
+        return new OMStAXWrapper(builder, this, cache);
+    }
+    
+	
+    public String toStringWithConsume() throws XMLStreamException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        OMOutputImpl out = new OMOutputImpl(baos, false);
+        this.serializeAndConsume(out);
+        out.flush();
+        return new String(baos.toByteArray());
+    }
+    
+    /**
+     * Overridden toString() for ease of debuging
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+    	return (this.namespace != null)?namespace.getName():"" + this.tagName;
+    }
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMElement#getChildElements()
+	 */
+	public Iterator getChildElements() {
+		return new OMChildElementIterator(getFirstElement());
+	}
+	
+	/**
+	 * @see org.apache.axis2.om.OMElement#getAllDeclaredNamespaces()
+	 */
+	public Iterator getAllDeclaredNamespaces() throws OMException {
+        if (namespaces == null) {
+            return null;
+        }
+        return namespaces.values().iterator();
+	}
+	
+	/**
+	 * @see org.apache.axis2.om.OMElement#getAllAttributes()
+	 */
+	public Iterator getAllAttributes() {
+        if (attributes == null) {
+            return new EmptyIterator();
+        }
+//        return 
+        //TODO Create a new AttrIterator and return it
+        throw new UnsupportedOperationException("TODO");
+	}
 }

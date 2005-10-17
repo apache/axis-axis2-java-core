@@ -28,6 +28,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
@@ -71,6 +72,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
     protected NodeImpl(DocumentImpl ownerDocument) {
     
         this.ownerNode = ownerDocument;
+        this.isOwned(true);
     }
 
     protected NodeImpl() {
@@ -436,7 +438,8 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
 						"HIERARCHY_REQUEST_ERR", null));		
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Build next element
 	 * @see org.apache.axis.om.OMNode#build()
 	 */
 	public void build() {
@@ -444,8 +447,26 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
 			this.builder.next();
 	}
 	
+	/**
+	 * sets the owner document
+	 * @param document
+	 */
 	protected void SetOwnerDocument(DocumentImpl document) {
 		this.ownerNode = document;
+		this.isOwned(true);
 	}
+	
+    public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException {
+        OMOutputImpl omOutput = new OMOutputImpl(xmlWriter);
+        serialize(omOutput);
+        omOutput.flush();
+    }
+    
+    public void serializeAndConsume(XMLStreamWriter xmlWriter) throws XMLStreamException {
+        OMOutputImpl omOutput = new OMOutputImpl(xmlWriter);
+        serializeAndConsume(omOutput);
+        omOutput.flush();
+    }
+
 	
 }

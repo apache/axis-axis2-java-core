@@ -39,6 +39,10 @@ import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 
+/**
+ * 
+ * @author Ruchith Fernando (ruchith.fernando@gmail.com)
+ */
 public class OMDOMFactory implements OMFactory {
 	
 	public OMDocument createOMDocument() {

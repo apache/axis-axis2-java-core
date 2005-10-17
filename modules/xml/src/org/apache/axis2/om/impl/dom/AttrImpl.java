@@ -40,7 +40,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	
 	private NamespaceImpl namespace;
 	
-	private boolean specified;
+	private boolean used;
 	
 	protected AttrImpl(DocumentImpl ownerDocument) {
 		super(ownerDocument);
@@ -50,6 +50,11 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 		this.attrName = localName;
 		this.attrValue = new TextImpl(value);
 		this.namespace = (NamespaceImpl)ns;
+	}
+	
+	public AttrImpl(String name, String value) {
+		this.attrName = name;
+		this.attrValue = new TextImpl(value);
 	}
 
 	///
@@ -93,8 +98,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	}
 
 	public int getType() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		return Node.ATTRIBUTE_NODE;
 	}
 
 	public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
@@ -118,8 +122,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	}
 
 	public OMNamespace getNamespace() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		return this.namespace;
 	}
 
 	public QName getQName() {
@@ -155,6 +158,20 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	public void setType(int nodeType) throws OMException {
 		//TODO
 		throw new UnsupportedOperationException("TODO");
+	}
+
+	/**
+	 * @return Returns the used.
+	 */
+	protected boolean isUsed() {
+		return used;
+	}
+
+	/**
+	 * @param used The used to set.
+	 */
+	protected void setUsed(boolean used) {
+		this.used = used;
 	}
 
 	
