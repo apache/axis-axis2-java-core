@@ -40,7 +40,7 @@ import javax.xml.namespace.QName;
 public class Call extends InOutMEPClient {
 
     protected static OperationDescription operationTemplate;
-    private MessageContext lastResponseMessage;
+    protected MessageContext lastResponseMessage;
 
     /**
      * @throws AxisFault
@@ -172,7 +172,7 @@ public class Call extends InOutMEPClient {
      * @param opDesc
      * @param axisOp
      */
-    private OperationDescription createOpDescAndFillInFlowInformation(
+    protected OperationDescription createOpDescAndFillInFlowInformation(
             OperationDescription opDesc,
             String axisOp , int mepURL) throws AxisFault {
         if (opDesc == null) {
