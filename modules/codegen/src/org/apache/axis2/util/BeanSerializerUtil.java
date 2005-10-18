@@ -6,7 +6,11 @@ import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.beans.PropertyDescriptor;
+import java.beans.Introspector;
+import java.beans.IntrospectionException;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -62,4 +66,6 @@ public class BeanSerializerUtil {
            return null;
         }
     }
+
+
 }

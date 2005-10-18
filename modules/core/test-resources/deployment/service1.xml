@@ -8,7 +8,9 @@
 
 
     <!--  Service TypeMapping -->
-    <typeMapping>Type mappping should come here</typeMapping>
+    <typeMapping>
+        <typeMapper xsiType="int" javaType="java.lang.Integer" class="org.apache.axis2.rpc.TypeMapperImpl"/>
+    </typeMapping>
     <beanMapping>bean mappping should come here</beanMapping>
 
     <!--

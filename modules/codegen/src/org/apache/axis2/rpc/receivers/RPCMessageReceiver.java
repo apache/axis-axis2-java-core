@@ -78,14 +78,13 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             DependencyManager.configureBusinessLogicProvider(obj, inMessage, null);
 
             OperationDescription op = inMessage.getOperationContext().getOperationDescription();
-            if (op == null) {
-                throw new AxisFault(
-                        "Operation is not located, if this is doclit style the SOAP-ACTION should " +
-                                "specified via the SOAP Action to use the RawXMLProvider");
-            }
+
+            OMElement methodElement = inMessage.getEnvelope().getBody()
+                    .getFirstElement();
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
             //todo method validation has to be done
+            //Todo if we find the method it should be store , in OperationDescription
             for (int i = 0; i < methods.length; i++) {
                 if (methods[i].getName().equals(methodName)) {
                     this.method = methods[i];
@@ -94,39 +93,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             }
 
 
-            Class[] parameters = method.getParameterTypes();
-            int paracount = 0;
-            int numberofparas = parameters.length;
-
-            Object [] objarray = new Object[numberofparas];
-            OMElement methodElement = inMessage.getEnvelope().getBody()
-                    .getFirstElement();
-            Iterator parts = methodElement.getChildren();
-            /**
-             * Take the number of paramters in the method and , only take that much of child elements
-             * from the OMElement , other are ignore , as an example
-             * if the method is , foo(String a , int b)
-             * and if the OMElemet
-             * <foo>
-             *  <arg0>Val1</arg0>
-             *  <arg1>Val2</arg1>
-             *  <arg2>Val3</arg2>
-             *
-             * only the val1 and Val2 take into account
-             */
-            while (parts.hasNext() && paracount < numberofparas) {
-                OMElement omElement = (OMElement) parts.next();
-                Class parameter = parameters[paracount];
-                Object simpleObj = SimpleTypeMapper.getSimpleTypeObject(parameter, omElement);
-                if (simpleObj != null) {
-                    objarray[paracount] = simpleObj;
-                } else {
-                    //Handle only the JavaBean
-                    simpleObj = new BeanSerializer(parameter, omElement).deserilze();
-                    objarray[paracount] = simpleObj;
-                }
-                paracount ++;
-            }
+            Object[] objarray = processRequest(methodElement);
             Object resObject = method.invoke(obj, objarray);
 
             // Handling the response
@@ -134,36 +101,86 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             OMNamespace ns = getSOAPFactory().createOMNamespace(
                     "http://soapenc/", "res");
             SOAPEnvelope envelope = getSOAPFactory().getDefaultEnvelope();
-            OMElement bodyContent = getSOAPFactory().createOMElement(
-                    method.getName() + "Response", ns);
-            if (resObject != null) {
-                //simple type
-                if (SimpleTypeMapper.isSimpleType(resObject)) {
-                    OMElement child = getSOAPFactory().createOMElement(RETURN_WRAPPER, null);
-                    child.addChild(fac.createText(child, resObject.toString()));
-                    bodyContent.addChild(child);
-                } else {
-                    // Java Beans
-                    XMLStreamReader xr = BeanSerializerUtil.getPullParser(resObject,
-                            new QName(RETURN_WRAPPER));
-                    StAXOMBuilder stAXOMBuilder =
-                            OMXMLBuilderFactory.createStAXOMBuilder(
-                                    OMAbstractFactory.getSOAP11Factory(), xr);
-                    OMElement documentElement = stAXOMBuilder.getDocumentElement();
+            OMElement bodyContent = null;
 
-                    if (documentElement != null) {
-                        bodyContent.addChild(documentElement);
-                    }
-                }
-            }
-            if (bodyContent != null) {
-                envelope.getBody().addChild(bodyContent);
-            }
+            processResponse(resObject, bodyContent, ns, envelope);
             outMessage.setEnvelope(envelope);
 
         } catch (Exception e) {
             e.printStackTrace();
             throw AxisFault.makeFault(e);
+        }
+    }
+
+    private Object[] processRequest(OMElement methodElement) throws AxisFault {
+        Class[] parameters = method.getParameterTypes();
+        int paracount = 0;
+        int numberofparas = parameters.length;
+
+        Object [] objarray = new Object[numberofparas];
+        Iterator parts = methodElement.getChildren();
+        /**
+         * Take the number of paramters in the method and , only take that much of child elements
+         * from the OMElement , other are ignore , as an example
+         * if the method is , foo(String a , int b)
+         * and if the OMElemet
+         * <foo>
+         *  <arg0>Val1</arg0>
+         *  <arg1>Val2</arg1>
+         *  <arg2>Val3</arg2>
+         *
+         * only the val1 and Val2 take into account
+         */
+        while (parts.hasNext() && paracount < numberofparas) {
+            OMElement omElement = (OMElement) parts.next();
+            Class parameter = parameters[paracount];
+            //todo do we need to support REF and MultiRef
+            //todo firts xsi:type has to be checked , and if that is there take the
+            //todo handle arrays
+            // corret one from sereviceDescription
+            if(OMElement.class.isAssignableFrom(parameter)){
+                objarray[paracount] =omElement;
+            }  else if(SimpleTypeMapper.isSimpleType(parameter)){
+                objarray[paracount]  = SimpleTypeMapper.getSimpleTypeObject(parameter, omElement);
+            } else {
+                objarray[paracount] = new BeanSerializer(parameter, omElement).deserilze();
+            }
+            paracount ++;
+        }
+        return objarray;
+    }
+
+
+
+    private void processResponse(Object resObject, OMElement bodyContent, OMNamespace ns, SOAPEnvelope envelope) {
+        if (resObject != null) {
+            //todo first check to see where the desrilizer for the return object
+            //simple type
+            if(resObject instanceof OMElement){
+                bodyContent = (OMElement)resObject;
+            } else if (SimpleTypeMapper.isSimpleType(resObject)) {
+                bodyContent = getSOAPFactory().createOMElement(
+                        method.getName() + "Response", ns);
+                OMElement child = getSOAPFactory().createOMElement(RETURN_WRAPPER, null);
+                child.addChild(fac.createText(child, SimpleTypeMapper.getStringValue(resObject)));
+                bodyContent.addChild(child);
+            } else {
+                // Java Beans
+                QName wrapperQname = new QName("http://soapenc/", method.getName() + "Response", "res");
+                XMLStreamReader xr = BeanSerializerUtil.getPullParser(resObject,
+                        wrapperQname);
+                StAXOMBuilder stAXOMBuilder =
+                        OMXMLBuilderFactory.createStAXOMBuilder(
+                                OMAbstractFactory.getSOAP11Factory(), xr);
+                OMElement documentElement = stAXOMBuilder.getDocumentElement();
+
+                if (documentElement != null) {
+                    bodyContent = documentElement;
+                }
+            }
+        }
+        if (bodyContent != null) {
+            envelope.getBody().addChild(bodyContent);
         }
     }
 
