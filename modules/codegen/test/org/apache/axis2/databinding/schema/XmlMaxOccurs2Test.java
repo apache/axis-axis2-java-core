@@ -15,7 +15,7 @@ package org.apache.axis2.databinding.schema;
  * limitations under the License.
  */
 
-public class XmlMaxOccurs2 extends AbstractSchemaCompilerTester{
+public class XmlMaxOccurs2Test extends AbstractSchemaCompilerTester{
     protected void setUp() throws Exception {
         this.fileName = "test-resources/xsd/simple_maxOccurs2.xsd";
         super.setUp();

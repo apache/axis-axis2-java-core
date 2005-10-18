@@ -31,7 +31,6 @@ public class BeanWriterMetaInfoHolder {
 
     private boolean ordered = false;
     private boolean extension = false;
-//    private boolean hasAny = false;
     private String extensionClassName = "";
     private Map elementToSchemaQNameMap = new HashMap();
     private Map elementToJavaClassMap = new HashMap();

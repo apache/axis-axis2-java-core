@@ -62,8 +62,8 @@
          */
         public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName){
 
-          Object[] objectList = new Object[]{
-          <xsl:for-each select="property">
+          Object[] elementList = new Object[]{
+          <xsl:for-each select="property[not(@attribute)]">
            <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
            <xsl:if test="position()>1">,</xsl:if>
               <xsl:choose>
@@ -77,10 +77,16 @@
                        "<xsl:value-of select="$propertyName"/>",org.apache.axis2.databinding.schema.util.ConverterUtil.convertToString(local<xsl:value-of select="@javaname"/>)
                   </xsl:otherwise>
               </xsl:choose>
-
           </xsl:for-each>};
 
-         return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(qName, objectList, null);
+         Object[] attribList = new Object[]{
+        <xsl:for-each select="property[@attribute]">
+           <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
+           <xsl:if test="position()>1">,</xsl:if>
+           "<xsl:value-of select="$propertyName"/>",org.apache.axis2.databinding.schema.util.ConverterUtil.convertToString(local<xsl:value-of select="@javaname"/>)
+          </xsl:for-each>};
+
+         return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(qName, elementList, attribList);
 
         }
 
