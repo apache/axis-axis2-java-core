@@ -38,6 +38,7 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.util.threadpool.AxisWorker;
+import org.apache.axis2.util.UUIDGenerator;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -124,7 +125,7 @@ public class InOutMEPClient extends MEPClient {
         prepareInvocation(axisop, msgctx);
 
         // The message ID is sent all the time
-        String messageID = String.valueOf(System.currentTimeMillis());
+        String messageID = String.valueOf("UUID:"+ UUIDGenerator.getUUID());
         msgctx.setMessageID(messageID);
         //
         if (useSeparateListener) {
@@ -223,7 +224,7 @@ public class InOutMEPClient extends MEPClient {
             AxisEngine engine = new AxisEngine(syscontext);
             checkTransport(msgctx);
             //Use message id all the time!
-            String messageID = String.valueOf(System.currentTimeMillis());
+            String messageID = String.valueOf("UUID:"+ UUIDGenerator.getUUID());
             msgctx.setMessageID(messageID);
             ////
             if (useSeparateListener) {
