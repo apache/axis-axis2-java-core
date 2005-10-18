@@ -82,43 +82,40 @@ public class ADBPullParser implements XMLStreamReader {
         namespaceMap = new HashMap();
     }
 
-    /**
-     * @param adbBeansQName
-     * @param properties    - this should contain all the stuff that stax events should be generated.
+     /**
+     * @param properties - this should contain all the stuff that stax events should be generated.
      *                      Lets take an example of a bean.
-     *                      <pre> <Person>
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                              <Name>FooOne</Name>
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                              <DependentOne>
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <Name>FooTwo</Name>
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <Age>25</Age>
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <Sex>Male</Sex>
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                              </DependentOne>
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          </Person>
-     *                      <p/>
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          so the mapping bean for this is
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          class Person {
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                              String Name;
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                              Dependent dependentOne;
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          }
-     *                      <p/>
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          class Dependent {
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                              String name;
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                              int age;
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                              String sex;
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          }
-     *                      <p/>
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          So if one needs to generate pull events out of a Person bean, the array he needs
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          to pass is like this.
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          ---------------------------------------------------------------
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          | "Name" | "FooOne" | QName("DependentOne") | Dependent object|
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          ---------------------------------------------------------------
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          Remember "Name" and "FooOne" MUST be strings and DependentOne SHOULD be
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          QName.
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          This DependentObject can either be an ADBBean or a POJO. If its an ADBBean
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          We directly get the pull parser from that. If not we create a reflection based
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                          pull parser for that java bean.
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                      </pre>
-     * @param attributes    - this will contain an array of OMAttributes
+*                      <pre> <Person>
+     *                          <Name>FooOne</Name>
+     *                          <DependentOne>
+     *                              <Name>FooTwo</Name>
+     *                              <Age>25</Age>
+     *                              <Sex>Male</Sex>
+     *                          </DependentOne>
+     *                      </Person>
+     *
+     *                      so the mapping bean for this is
+     *                      class Person {
+     *                          String Name;
+     *                          Dependent dependentOne;
+     *                      }
+     *
+     *                      class Dependent {
+     *                          String name;
+     *                          int age;
+     *                          String sex;
+     *                      }
+     *
+     *                      So if one needs to generate pull events out of a Person bean, the array he needs
+     *                      to pass is like this.
+     *                      ---------------------------------------------------------------------------------------------------
+     *                      | "Name" | "FooOne" | QName("DependentOne") | Dependent object| null | Array of Dependent objects |
+     *                      ---------------------------------------------------------------------------------------------------
+     *                      This DependentObject can either be an ADBBean, OMElement or a POJO. If its an ADBBean
+     *                      We directly get the pull parser from that. If not we create a reflection based
+     *                      pull parser for that java bean.
+     *  </pre>
+     * @param adbBeansQName
      * @return XMLStreamReader
      */
     public static XMLStreamReader createPullParser(QName adbBeansQName, Object[] properties, OMAttribute[] attributes) {
@@ -221,7 +218,7 @@ public class ADBPullParser implements XMLStreamReader {
                 OMAttribute attribute = attributes[i];
                 if (namespaceMap.get(attribute.getQName().getNamespaceURI()) == null) {
                     namespaceMap.put(attribute.getQName().getNamespaceURI(), attribute.getQName().getPrefix());
-                    
+
                 }
             }
         }
