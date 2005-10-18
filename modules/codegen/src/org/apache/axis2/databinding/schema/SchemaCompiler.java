@@ -1,7 +1,6 @@
 package org.apache.axis2.databinding.schema;
 
 import org.apache.ws.commons.schema.*;
-import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
@@ -103,6 +102,8 @@ public class SchemaCompiler {
         Iterator  xmlSchemaElement1Iterator = elements.getValues();
         while (xmlSchemaElement1Iterator.hasNext()) {
             //this is the set of outer elements so we need to generate classes
+            //The outermost elements do not contain occurence counts (!) so we do not need
+            //to check for arraytypes
             processElement((XmlSchemaElement)xmlSchemaElement1Iterator.next(),true);
         }
 
@@ -126,24 +127,34 @@ public class SchemaCompiler {
             BeanWriterMetaInfoHolder metainf = new BeanWriterMetaInfoHolder();
             QName qName = schemaType.getQName();
             //find the class name
-            String className = findClassName(schemaType);
+            String className = findClassName(schemaType,isArray(schemaElement));
             metainf.registerMapping(schemaElement.getQName(),
                     qName,
                     className);
             String writtenClassName = writer.write(schemaElement,processedTypemap,metainf);
             processedElementmap.put(schemaElement.getQName(),writtenClassName);
         }
-
-
     }
-
 
 
     /**
      *
      * @param xsElt
+     * @param isOuter
+     * @throws SchemaCompilationException
      */
     private void processElement(XmlSchemaElement xsElt,boolean isOuter) throws SchemaCompilationException{
+        processElement(xsElt,isOuter,false);
+    }
+
+    /**
+     *
+     * @param xsElt
+     * @param isOuter
+     * @param isArray
+     * @throws SchemaCompilationException
+     */
+    private void processElement(XmlSchemaElement xsElt,boolean isOuter,boolean isArray) throws SchemaCompilationException{
         //The processing element logic seems to be quite simple. Look at the relevant schema type
         //for each and every element and process that accordingly.
         //this means that any unused type definitions would not be generated!
@@ -162,7 +173,7 @@ public class SchemaCompiler {
             //later
 
             if (!isOuter){
-                String className = findClassName(schemaType);
+                String className = findClassName(schemaType,isArray);
                 this.processedElementmap.put(xsElt.getQName(),className);
             }
             this.processedElementList.add(xsElt.getQName());
@@ -179,7 +190,7 @@ public class SchemaCompiler {
      * @param schemaType
      * @return
      */
-    private String findClassName(XmlSchemaType schemaType) {
+    private String findClassName(XmlSchemaType schemaType,boolean isArray) {
         //find the class name
         QName qName = schemaType.getQName();
         String className;
@@ -191,6 +202,11 @@ public class SchemaCompiler {
             // We seem to have failed in finding a class name for the
             //contained schema type. We better set the default then
             className = OMElement.class.getName();
+        }
+        if (isArray){
+            //append the square braces that say this is an array
+            //hope this works for all cases!!!!!!!
+            className = className + "[]";
         }
         return className;
     }
@@ -261,9 +277,9 @@ public class SchemaCompiler {
     private void processAnyAttribute(BeanWriterMetaInfoHolder metainf) {
         //The best thing we can do here is to add a set of OMAttributes
         metainf.registerMapping(new QName("extraAttributes"),
-                                null,
-                                OMElement[].class.getName(),
-                                SchemaConstants.ANY_ATTRIBUTE_TYPE);
+                null,
+                OMElement[].class.getName(),
+                SchemaConstants.ANY_ATTRIBUTE_TYPE);
 
     }
 
@@ -311,15 +327,16 @@ public class SchemaCompiler {
                          BeanWriterMetaInfoHolder metainfHolder,
                          boolean order) throws SchemaCompilationException {
         int count = items.getCount();
-        List processedElements = new ArrayList();
+        Map processedElements = new HashMap();
 
         for (int i = 0; i < count; i++) {
             XmlSchemaObject item = items.getItem(i);
             if (item instanceof XmlSchemaElement){
                 //recursively process the element
                 XmlSchemaElement xsElt = (XmlSchemaElement) item;
-                processElement(xsElt,false); //we know for sure this is not an outer type
-                processedElements.add(xsElt);
+                boolean isArray = isArray(xsElt);
+                processElement(xsElt,false,isArray); //we know for sure this is not an outer type
+                processedElements.put(xsElt, (isArray) ? Boolean.TRUE : Boolean.FALSE);
             }else if (item instanceof XmlSchemaComplexContent){
                 // process the extension
                 XmlSchemaContent content = ((XmlSchemaComplexContent)item).getContent();
@@ -338,13 +355,16 @@ public class SchemaCompiler {
         }
 
         // loop through the processed items and add them to the matainf object
-        int processedCount = processedElements.size();
-        for (int i = 0; i < processedCount; i++) {
-            XmlSchemaElement elt = (XmlSchemaElement)processedElements.get(i);
+        Iterator processedElementsIterator= processedElements.keySet().iterator();
+        while(processedElementsIterator.hasNext()){
+            XmlSchemaElement elt = (XmlSchemaElement)processedElementsIterator.next();
             String clazzName = (String)processedElementmap.get(elt.getQName());
             metainfHolder.registerMapping(elt.getQName(),
                     elt.getSchemaTypeName()
-                    ,clazzName);
+                    ,clazzName,
+                    ((Boolean)processedElements.get(elt)).booleanValue()?
+                            SchemaConstants.ANY_ARRAY_TYPE:
+                            SchemaConstants.ELEMENT_TYPE);
 
         }
         //set the ordered flag in the metainf holder
@@ -356,12 +376,12 @@ public class SchemaCompiler {
      */
     private void processAny(XmlSchemaAny any,BeanWriterMetaInfoHolder metainf) {
         //handle the minoccurs/maxoccurs here.
-        // However since the any element does not have a name
+        //However since the any element does not have a name
         //we need to put a name here
-          metainf.registerMapping(new QName(ANY_ELEMENT_FIELD_NAME),
-                                null,
-                                OMElement.class.getName(),
-                                SchemaConstants.ANY_TYPE);
+        metainf.registerMapping(new QName(ANY_ELEMENT_FIELD_NAME),
+                null,
+                OMElement.class.getName(),
+                SchemaConstants.ANY_TYPE);
 
     }
 
@@ -375,11 +395,15 @@ public class SchemaCompiler {
     }
 
 
-/*     Utility methods       */
-    private String getJavaClassNameFromComplexTypeQName(QName name){
-        String className = name.getLocalPart();
-        String packageName = URLProcessor.getNameSpaceFromURL(name.getNamespaceURI());
-        return packageName + "." +className;
+    private boolean isArray(XmlSchemaParticle particle) throws SchemaCompilationException{
+        long minOccurs = particle.getMinOccurs();
+        long maxOccurs = particle.getMaxOccurs();
+        if (maxOccurs < minOccurs){
+            throw new SchemaCompilationException();
+        }else{
+            return (maxOccurs>1);
+        }
 
     }
+
 }

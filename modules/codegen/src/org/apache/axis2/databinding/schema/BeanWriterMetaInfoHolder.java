@@ -62,7 +62,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     public void registerMapping(QName qName,QName schemaName,String javaClassName){
-           registerMapping(qName,schemaName,javaClassName,SchemaConstants.ELEMENT_TYPE);
+        registerMapping(qName,schemaName,javaClassName,SchemaConstants.ELEMENT_TYPE);
     }
 
     public void registerMapping(QName qName,QName schemaName,String javaClassName,Integer type){
@@ -76,7 +76,7 @@ public class BeanWriterMetaInfoHolder {
         return (QName)this.elementToSchemaQNameMap.get(eltQName);
     }
 
-     public String getJavaClassNameForQName(QName eltQName){
+    public String getJavaClassNameForQName(QName eltQName){
         return (String)this.elementToJavaClassMap.get(eltQName);
     }
 
@@ -84,11 +84,17 @@ public class BeanWriterMetaInfoHolder {
         Integer attribState = (Integer) specialTypeFlagMap.get(qName);
         return attribState != null && attribState.equals(SchemaConstants.ATTRIBUTE_TYPE);
     }
-                                                                                              
+
     public boolean getAnyStatusForQName(QName qName){
         Integer anyState = (Integer) specialTypeFlagMap.get(qName);
         return anyState != null && anyState.equals(SchemaConstants.ANY_TYPE);
     }
+
+    public boolean getArrayStatusForQName(QName qName){
+        Integer anyState = (Integer) specialTypeFlagMap.get(qName);
+        return anyState != null && anyState.equals(SchemaConstants.ANY_ARRAY_TYPE);
+    }
+
     public void clearTables(){
         this.elementToJavaClassMap.clear();
         this.elementToSchemaQNameMap.clear();

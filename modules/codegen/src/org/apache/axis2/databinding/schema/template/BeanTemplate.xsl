@@ -34,6 +34,8 @@
         /**
          * field for <xsl:value-of select="$javaName"/>
          <xsl:if test="@attribute">* This was an Attribute!</xsl:if>
+         <xsl:if test="@array">* This was an Array!</xsl:if>
+
          */
          private <xsl:value-of select="$propertyType"/> local<xsl:value-of select="$javaName"/>;
 

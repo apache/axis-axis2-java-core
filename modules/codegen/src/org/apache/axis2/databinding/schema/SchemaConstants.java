@@ -43,7 +43,8 @@ public class SchemaConstants {
     public static final Integer ATTRIBUTE_TYPE = new Integer(0);
     public static final Integer ANY_TYPE = new Integer(1);
     public static final Integer ELEMENT_TYPE = new Integer(2);
-    public static final Integer ANY_ATTRIBUTE_TYPE = new Integer(3); 
+    public static final Integer ANY_ATTRIBUTE_TYPE = new Integer(3);
+    public static final Integer ANY_ARRAY_TYPE = new Integer(4); 
 
 }
 

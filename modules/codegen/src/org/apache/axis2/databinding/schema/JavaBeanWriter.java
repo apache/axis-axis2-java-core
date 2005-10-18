@@ -144,12 +144,17 @@ public class JavaBeanWriter {
             }
 
             XSLTUtils.addAttribute(model,"shorttypename",shortTypeName,property);
+
             if (metainf.getAnyStatusForQName(name)){
                 XSLTUtils.addAttribute(model,"any","yes",property);
             }
+
+            if (metainf.getArrayStatusForQName(name)){
+                  XSLTUtils.addAttribute(model,"array","yes",property);
+            }
         }
 
-       
+
         //create the file
         OutputStream out = createOutFile(packageName,className);
         //parse with the template and create the files
