@@ -9,9 +9,8 @@
             <element name="varFloat" type="xsd:float"/>
             <element name="varInt" type="xsd:int"/>
             <element name="varString" type="xsd:string"/>
-            <any/>
         </sequence>
-
+     <anyAttribute />
     </complexType>
     <element name="myobject" type="xsd1:SOAPStruct"/>
 </schema>

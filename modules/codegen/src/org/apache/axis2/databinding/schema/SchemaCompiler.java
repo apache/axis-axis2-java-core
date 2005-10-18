@@ -240,12 +240,13 @@ public class SchemaCompiler {
         }
 
         //process any attribute
+        //somehow the xml schema parser does not seem to pickup the any attribute!!
         XmlSchemaAnyAttribute anyAtt = complexType.getAnyAttribute();
         if (anyAtt!=null){
-            processAnyAttribute();
+            processAnyAttribute(metaInfHolder);
         }
-        // Process the other types - Say the complex content, extensions and so on
 
+        // Process the other types - Say the complex content, extensions and so on
 
         //write the class. This type mapping would have been populated right now
         //Note - We always write classes for complex types
@@ -259,7 +260,10 @@ public class SchemaCompiler {
 
     private void processAnyAttribute(BeanWriterMetaInfoHolder metainf) {
         //The best thing we can do here is to add a set of OMAttributes
-        metainf.registerMapping(new QName(""))
+        metainf.registerMapping(new QName("extraAttributes"),
+                                null,
+                                OMElement[].class.getName(),
+                                SchemaConstants.ANY_ATTRIBUTE_TYPE);
 
     }
 
