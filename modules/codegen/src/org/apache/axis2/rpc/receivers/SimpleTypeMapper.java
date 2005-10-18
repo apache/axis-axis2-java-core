@@ -34,7 +34,7 @@ import java.util.GregorianCalendar;
  */
 public class SimpleTypeMapper {
 
-     private static SimpleDateFormat zulu =
+    private static SimpleDateFormat zulu =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     //  0123456789 0 123456789
 
@@ -89,9 +89,12 @@ public class SimpleTypeMapper {
 
     public static boolean isSimpleType(Object obj) {
         String objClassName = obj.getClass().getName();
-        return isSimpleType(objClassName);
+        if (obj instanceof  Calendar) {
+            return true;
+        } else {
+            return isSimpleType(objClassName);
+        }
     }
-
 
     public static boolean isSimpleType(Class obj) {
         String objClassName = obj.getName();
@@ -131,6 +134,8 @@ public class SimpleTypeMapper {
             return true;
         } else if (objClassName.equals(W_FLOAT)) {
             return true;
+        } else if(objClassName.equals(W_CALANDER)) {
+            return true;
         } else return objClassName.equals(W_CHAR);
     }
 
@@ -149,14 +154,16 @@ public class SimpleTypeMapper {
                 return "INF";
             } else if (data == Double.NEGATIVE_INFINITY) {
                 return "-INF";
-            } else {
+            }  else {
                 return obj.toString();
             }
+        } else if(obj instanceof Calendar){
+            return zulu.format(((Calendar)obj).getTime());
         }
         return obj.toString();
     }
 
-     public static Object makeCalendar(String source, boolean returnDate) {
+    public static Object makeCalendar(String source, boolean returnDate) {
         Calendar calendar = Calendar.getInstance();
         Date date;
         boolean bc = false;
@@ -164,7 +171,7 @@ public class SimpleTypeMapper {
         // validate fixed portion of format
         if (source == null || source.length() == 0) {
             throw new NumberFormatException(
-                    Messages.getMessage("badDateTime00"));
+                    "badDateTime00");
         }
         if (source.charAt(0) == '+') {
             source = source.substring(1);
@@ -175,14 +182,14 @@ public class SimpleTypeMapper {
         }
         if (source.length() < 19) {
             throw new NumberFormatException(
-                    Messages.getMessage("badDateTime00"));
+                    "badDateTime00");
         }
         if (source.charAt(4) != '-' || source.charAt(7) != '-' ||
                 source.charAt(10) != 'T') {
-            throw new NumberFormatException(Messages.getMessage("badDate00"));
+            throw new NumberFormatException("badDate00");
         }
         if (source.charAt(13) != ':' || source.charAt(16) != ':') {
-            throw new NumberFormatException(Messages.getMessage("badTime00"));
+            throw new NumberFormatException("badTime00");
         }
         // convert what we have validated so far
         try {
@@ -228,7 +235,7 @@ public class SimpleTypeMapper {
                     !Character.isDigit(source.charAt(pos + 4)) ||
                     !Character.isDigit(source.charAt(pos + 5))) {
                 throw new NumberFormatException(
-                        Messages.getMessage("badTimezone00"));
+                        "badTimezone00");
             }
             int hours = (source.charAt(pos + 1) - '0') * 10
                     + source.charAt(pos + 2) - '0';
@@ -248,7 +255,7 @@ public class SimpleTypeMapper {
             calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
         }
         if (pos < source.length()) {
-            throw new NumberFormatException(Messages.getMessage("badChars00"));
+            throw new NumberFormatException("badChars00");
         }
         calendar.setTime(date);
 

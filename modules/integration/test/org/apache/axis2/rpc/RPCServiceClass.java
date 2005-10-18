@@ -6,6 +6,7 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
 
 import javax.xml.namespace.QName;
+import java.util.Calendar;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -70,5 +71,9 @@ public class RPCServiceClass {
 
     public double divide(double a , double b){
        return (a/b);
+    }
+
+    public Calendar echoCalander(Calendar in){
+        return in;
     }
 }

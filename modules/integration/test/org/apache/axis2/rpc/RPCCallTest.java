@@ -13,8 +13,6 @@ import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.axis2.rpc.receivers.BeanSerializer;
 import org.apache.axis2.rpc.client.RPCCall;
-import org.apache.axis2.rpc.client.RPCRequest;
-import org.apache.axis2.rpc.client.RPCRequestParameter;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.Constants;
 import org.apache.axis2.AxisFault;
@@ -27,6 +25,10 @@ import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.TimeZone;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -52,10 +54,15 @@ import java.util.ArrayList;
  */
 public class RPCCallTest extends TestCase {
 
+    private SimpleDateFormat zulu =new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+       //  0123456789 0 123456789
+
+
+
     protected EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
-                    + (5000)
-//                    + (UtilServer.TESTING_PORT)
+//                    + (5000)
+                    + (UtilServer.TESTING_PORT)
                     + "/axis/services/EchoXMLService/concat");
     protected Log log = LogFactory.getLog(getClass());
     protected QName serviceName = new QName("EchoXMLService");
@@ -299,6 +306,25 @@ public class RPCCallTest extends TestCase {
         args.add("1");
         OMElement response = call.invokeBlocking(operationName,args.toArray());
         assertEquals(Byte.parseByte(response.getFirstElement().getText()),1);
+        call.close();
+    }
+
+    public void testCalander() throws AxisFault {
+        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
+        configureSystem("echoCalander");
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
+
+        ArrayList args = new ArrayList();
+        Date    date = Calendar.getInstance().getTime();
+        args.add(zulu.format(date));
+        OMElement response = call.invokeBlocking(operationName,args.toArray());
+        assertEquals(response.getFirstElement().getText(),zulu.format(date));
         call.close();
     }
 
