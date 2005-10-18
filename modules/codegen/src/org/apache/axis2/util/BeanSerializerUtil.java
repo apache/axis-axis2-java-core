@@ -25,11 +25,6 @@ import java.util.ArrayList;
 *
 */
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Oct 12, 2005
- * Time: 12:52:36 PM
- */
 public class BeanSerializerUtil {
 
 
@@ -58,7 +53,10 @@ public class BeanSerializerUtil {
                     filed.setAccessible(false);
                 }
             }
-            return ADBPullParser.createPullParser(beanName, objetc.toArray());
+            return ADBPullParser.createPullParser(beanName, objetc.toArray(), null);
+           // TODO : Deepal fix this. I added another parameter to the above method in the ADBPullPrser
+           // to get the attributes array. For the time being I passed null. Pass attributes array here.
+
         } catch (IllegalAccessException e) {
            //todo has to throw this exeception
            return null;

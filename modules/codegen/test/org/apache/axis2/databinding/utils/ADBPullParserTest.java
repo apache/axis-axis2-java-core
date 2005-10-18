@@ -2,6 +2,8 @@ package org.apache.axis2.databinding.utils;
 
 import junit.framework.TestCase;
 import org.apache.axis2.databinding.ADBBean;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -74,7 +76,7 @@ public class ADBPullParserTest extends TestCase {
             propertyList.add("Apache");
 
             QName projectQName = new QName("Person");
-            XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray());
+            XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray(), null);
 //            while (pullParser.hasNext()) {
 //                int eventCode = pullParser.next();
 //                System.out.println(eventCode + ":" + getEventString(eventCode));
@@ -174,7 +176,7 @@ public class ADBPullParserTest extends TestCase {
             propertyList.add(dummyBean);
 
             QName projectQName = new QName("Person");
-            XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray());
+            XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray(), null);
 
             StringBuffer buff = new StringBuffer();
             while (pullParser.hasNext()) {
@@ -280,7 +282,27 @@ public class ADBPullParserTest extends TestCase {
         }
 
         public XMLStreamReader getPullParser(QName adbBeanQName) {
-            return ADBPullParser.createPullParser(adbBeanQName, propertyList.toArray());
+            return ADBPullParser.createPullParser(adbBeanQName, propertyList.toArray(), null);
         }
+    }
+
+//    public void testAttributes() throws XMLStreamException {
+//        OMFactory factory = OMAbstractFactory.getOMFactory();
+//        QName elementQName = new QName("http://ec.org/software", "Employee", "emp");
+//        OMNamespace attrNS = factory.createOMNamespace("mailto:whoever@whatever.com", "attr");
+//        OMAttribute[] attribute = new OMAttribute[5];
+//
+//        for (int i = 0; i < 5; i++) {
+//            attribute[i] = factory.createOMAttribute("Attr" + i + 1, attrNS, "Value " + i + 1);
+//        }
+//
+//        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, attribute));
+//        System.out.println(stringXML);
+//
+//    }
+
+    private String getStringXML(XMLStreamReader reader) throws XMLStreamException {
+        OMElement omelement = new StAXOMBuilder(reader).getDocumentElement();
+        return omelement.toStringWithConsume();
     }
 }

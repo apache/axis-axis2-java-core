@@ -20,8 +20,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Random;
 import java.util.Date;
+import java.util.Random;
 
 public class UUIDGenerator {
     /**
@@ -47,7 +47,7 @@ public class UUIDGenerator {
         if(++incrementingValue >= Long.MAX_VALUE){
             incrementingValue = 0;
         }
-        return baseUUID + incrementingValue;
+        return baseUUID + new Date().getTime() + incrementingValue;
     }
 
     protected static String getInitialUUID() {
