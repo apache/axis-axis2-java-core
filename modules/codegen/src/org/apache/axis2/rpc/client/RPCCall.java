@@ -137,7 +137,7 @@ public class RPCCall extends Call {
             int argCount =0;
             for (int i = 0; i < args.length; i++) {
                 Object arg = args[i];
-                if(arg instanceof RPCParameter){
+                if(arg instanceof RPCRequestParameter){
                     RPCRequestParameter para = (RPCRequestParameter)arg;
                     objects.add(para.getName());
                     objects.add(para.getValue());
