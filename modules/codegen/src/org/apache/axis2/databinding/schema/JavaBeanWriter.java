@@ -125,15 +125,20 @@ public class JavaBeanWriter {
             javaName = getNonConflictingName(propertyNames,javaName);
             XSLTUtils.addAttribute(model,"name",xmlName,property);
             XSLTUtils.addAttribute(model,"javaname",javaName,property);
-            String javaClassNameForElement = metainf.getJavaClassNameForElement(name);
-            String shortTypeName = metainf.getSchemaQNameForElement(name).getLocalPart();
+            String javaClassNameForElement = metainf.getJavaClassNameForQName(name);
+            String shortTypeName = metainf.getSchemaQNameForQName(name).getLocalPart();
             if (javaClassNameForElement==null){
                 throw new SchemaCompilationException("Type missing!");
             }
             XSLTUtils.addAttribute(model,"type",javaClassNameForElement,property);
-            if (typeMap.containsKey(metainf.getSchemaQNameForElement(name))){
+            if (typeMap.containsKey(metainf.getSchemaQNameForQName(name))){
                 XSLTUtils.addAttribute(model,"ours","yes",property); //todo introduce a better name for this
             }
+
+            if (metainf.getAttributeStatusForQName(name)){
+                XSLTUtils.addAttribute(model,"attribute","yes",property);
+            }
+
             XSLTUtils.addAttribute(model,"shorttypename",shortTypeName,property);
         }
 

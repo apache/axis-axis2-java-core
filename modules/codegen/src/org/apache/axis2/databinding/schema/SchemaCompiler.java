@@ -67,7 +67,9 @@ public class SchemaCompiler {
     }
 
     /**
-     *
+     * Compile a list of schemas
+     * This actually calls the compile (XmlSchema s) method repeatedly
+     * @see #compile(org.apache.ws.commons.schema.XmlSchema)
      * @param schemalist
      * @throws SchemaCompilationException
      */
@@ -87,7 +89,7 @@ public class SchemaCompiler {
 
     /**
      *
-     *
+     * Compile (rather codegen) a single schema element
      * @param schema
      * @throws SchemaCompilationException
      */
@@ -124,7 +126,7 @@ public class SchemaCompiler {
             QName qName = schemaType.getQName();
             //find the class name
             String className = findClassName(schemaType);
-            metainf.addElementInfo(schemaElement.getQName(),
+            metainf.registerMapping(schemaElement.getQName(),
                     qName,
                     className);
             String writtenClassName = writer.write(schemaElement,processedTypemap,metainf);
@@ -155,7 +157,8 @@ public class SchemaCompiler {
 
             //at this time it is not wise to directly write the class for the element
             //so we push the complete element to an arraylist and let the process
-            //pass through
+            //pass through. We'll be iterating through the elements writing them
+            //later
 
             if (!isOuter){
                 String className = findClassName(schemaType);
@@ -217,17 +220,42 @@ public class SchemaCompiler {
         if (particle!=null){
             //Process the particle
             processParticle(particle, metaInfHolder);
-        }else{
-            // Process the other types - Say the complex content, extensions and so on
         }
 
+        //process attributes - first look for the explicit attributes
+        XmlSchemaObjectCollection attribs = complexType.getAttributes();
+        Iterator attribIterator = attribs.getIterator();
+        while (attribIterator.hasNext()) {
+            Object o =  attribIterator.next();
+            if (o instanceof XmlSchemaAttribute){
+                processAttribute((XmlSchemaAttribute)o,metaInfHolder);
+
+            }
+        }
+        // Process the other types - Say the complex content, extensions and so on
+
+
         //write the class. This type mapping would have been populated right now
+        //Note - We always write classes for complex types
         String fullyQualifiedClassName = writer.write(complexType,processedTypemap,metaInfHolder);
         //populate the type mapping with the elements
         processedTypemap.put(complexType.getQName(),fullyQualifiedClassName);
 
 
 
+    }
+
+    public void processAttribute(XmlSchemaAttribute att,BeanWriterMetaInfoHolder metainf){
+         //for now we assume (!!!) that attributes refer to standard types only
+        QName schemaTypeName = att.getSchemaTypeName();
+        if (baseSchemaTypeMap.containsKey(schemaTypeName)){
+            metainf.registerMapping(att.getQName(),
+                     schemaTypeName,
+                     baseSchemaTypeMap.get(schemaTypeName).toString(),true);
+        } else {
+            //this attribute refers to a custom type, probably one of the extended simple types.
+            //handle it here
+        }
     }
 
     /**
@@ -289,7 +317,7 @@ public class SchemaCompiler {
         for (int i = 0; i < processedCount; i++) {
             XmlSchemaElement elt = (XmlSchemaElement)processedElements.get(i);
             String clazzName = (String)processedElementmap.get(elt.getQName());
-            metainfHolder.addElementInfo(elt.getQName(),
+            metainfHolder.registerMapping(elt.getQName(),
                     elt.getSchemaTypeName()
                     ,clazzName);
 

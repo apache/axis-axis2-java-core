@@ -1,7 +1,5 @@
 package org.apache.axis2.databinding.schema;
 
-import sun.text.CompactShortArray;
-
 import javax.xml.namespace.QName;
 import java.util.Map;
 import java.util.HashMap;
@@ -33,6 +31,7 @@ public class BeanWriterMetaInfoHolder {
     private String extensionClassName = "";
     private Map elementToSchemaQNameMap = new HashMap();
     private Map elementToJavaClassMap = new HashMap();
+    private Map attributeFlagMap = new HashMap();
 
     public String getExtensionClassName() {
         return extensionClassName;
@@ -58,20 +57,29 @@ public class BeanWriterMetaInfoHolder {
         this.ordered = ordered;
     }
 
-    public void addElementInfo(QName eltQName,QName eltSchemaName,String javaClassName){
-        this.elementToJavaClassMap.put(eltQName,javaClassName);
-        this.elementToSchemaQNameMap.put(eltQName,eltSchemaName);
+    public void registerMapping(QName qName,QName schemaName,String javaClassName){
+           registerMapping(qName,schemaName,javaClassName,false);
+    }
+
+    public void registerMapping(QName qName,QName schemaName,String javaClassName,boolean isAttribute){
+        this.elementToJavaClassMap.put(qName,javaClassName);
+        this.elementToSchemaQNameMap.put(qName,schemaName);
+        this.attributeFlagMap.put(qName,new Boolean(isAttribute));
 
     }
 
-    public QName getSchemaQNameForElement(QName eltQName){
+    public QName getSchemaQNameForQName(QName eltQName){
         return (QName)this.elementToSchemaQNameMap.get(eltQName);
     }
 
-     public String getJavaClassNameForElement(QName eltQName){
+     public String getJavaClassNameForQName(QName eltQName){
         return (String)this.elementToJavaClassMap.get(eltQName);
     }
 
+    public boolean getAttributeStatusForQName(QName qName){
+        Boolean aBoolean = (Boolean) attributeFlagMap.get(qName);
+        return aBoolean != null && aBoolean.booleanValue();
+    }
     public void clearTables(){
         this.elementToJavaClassMap.clear();
         this.elementToSchemaQNameMap.clear();
