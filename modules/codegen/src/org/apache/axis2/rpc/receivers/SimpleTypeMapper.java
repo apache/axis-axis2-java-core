@@ -1,6 +1,13 @@
 package org.apache.axis2.rpc.receivers;
 
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.i18n.Messages;
+
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -27,6 +34,14 @@ import org.apache.axis2.om.OMElement;
  */
 public class SimpleTypeMapper {
 
+     private static SimpleDateFormat zulu =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    //  0123456789 0 123456789
+
+    static {
+        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
+
     private static final String STRING = "java.lang.String";
     private static final String W_INT = "java.lang.Integer";
     private static final String W_DOUBLE = "java.lang.Double";
@@ -36,6 +51,7 @@ public class SimpleTypeMapper {
     private static final String W_BOOLEAN = "java.lang.Boolean";
     private static final String W_CHAR = "java.lang.Character";
     private static final String W_FLOAT = "java.lang.Float";
+    private static final String W_CALANDER = "java.util.Calendar";
     private static final String INT = "int";
     private static final String BOOLEAN = "boolean";
     private static final String BYTE = "byte";
@@ -64,7 +80,9 @@ public class SimpleTypeMapper {
             return new Float(value.getText());
         } else if (paramter.getName().equals(CHAR)) {
             return new Character(value.getText().toCharArray()[0]);
-        } else {
+        } else if (paramter.getName().equals(W_CALANDER)) {
+            return makeCalendar(value.getText(),false);
+        }else {
             return null;
         }
     }
@@ -136,5 +154,113 @@ public class SimpleTypeMapper {
             }
         }
         return obj.toString();
+    }
+
+     public static Object makeCalendar(String source, boolean returnDate) {
+        Calendar calendar = Calendar.getInstance();
+        Date date;
+        boolean bc = false;
+
+        // validate fixed portion of format
+        if (source == null || source.length() == 0) {
+            throw new NumberFormatException(
+                    Messages.getMessage("badDateTime00"));
+        }
+        if (source.charAt(0) == '+') {
+            source = source.substring(1);
+        }
+        if (source.charAt(0) == '-') {
+            source = source.substring(1);
+            bc = true;
+        }
+        if (source.length() < 19) {
+            throw new NumberFormatException(
+                    Messages.getMessage("badDateTime00"));
+        }
+        if (source.charAt(4) != '-' || source.charAt(7) != '-' ||
+                source.charAt(10) != 'T') {
+            throw new NumberFormatException(Messages.getMessage("badDate00"));
+        }
+        if (source.charAt(13) != ':' || source.charAt(16) != ':') {
+            throw new NumberFormatException(Messages.getMessage("badTime00"));
+        }
+        // convert what we have validated so far
+        try {
+            synchronized (zulu) {
+                date = zulu.parse(source.substring(0, 19) + ".000Z");
+            }
+        } catch (Exception e) {
+            throw new NumberFormatException(e.toString());
+        }
+        int pos = 19;
+
+        // parse optional milliseconds
+        if (pos < source.length() && source.charAt(pos) == '.') {
+            int milliseconds = 0;
+            int start = ++pos;
+            while (pos < source.length() &&
+                    Character.isDigit(source.charAt(pos))) {
+                pos++;
+            }
+            String decimal = source.substring(start, pos);
+            if (decimal.length() == 3) {
+                milliseconds = Integer.parseInt(decimal);
+            } else if (decimal.length() < 3) {
+                milliseconds = Integer.parseInt((decimal + "000")
+                        .substring(0, 3));
+            } else {
+                milliseconds = Integer.parseInt(decimal.substring(0, 3));
+                if (decimal.charAt(3) >= '5') {
+                    ++milliseconds;
+                }
+            }
+
+            // add milliseconds to the current date
+            date.setTime(date.getTime() + milliseconds);
+        }
+
+        // parse optional timezone
+        if (pos + 5 < source.length() &&
+                (source.charAt(pos) == '+' || (source.charAt(pos) == '-'))) {
+            if (!Character.isDigit(source.charAt(pos + 1)) ||
+                    !Character.isDigit(source.charAt(pos + 2)) ||
+                    source.charAt(pos + 3) != ':' ||
+                    !Character.isDigit(source.charAt(pos + 4)) ||
+                    !Character.isDigit(source.charAt(pos + 5))) {
+                throw new NumberFormatException(
+                        Messages.getMessage("badTimezone00"));
+            }
+            int hours = (source.charAt(pos + 1) - '0') * 10
+                    + source.charAt(pos + 2) - '0';
+            int mins = (source.charAt(pos + 4) - '0') * 10
+                    + source.charAt(pos + 5) - '0';
+            int milliseconds = (hours * 60 + mins) * 60 * 1000;
+
+            // subtract milliseconds from current date to obtain GMT
+            if (source.charAt(pos) == '+') {
+                milliseconds = -milliseconds;
+            }
+            date.setTime(date.getTime() + milliseconds);
+            pos += 6;
+        }
+        if (pos < source.length() && source.charAt(pos) == 'Z') {
+            pos++;
+            calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+        }
+        if (pos < source.length()) {
+            throw new NumberFormatException(Messages.getMessage("badChars00"));
+        }
+        calendar.setTime(date);
+
+        // support dates before the Christian era
+        if (bc) {
+            calendar.set(Calendar.ERA, GregorianCalendar.BC);
+        }
+
+        if (returnDate) {
+            return date;
+        } else {
+            return calendar;
+        }
     }
 }
