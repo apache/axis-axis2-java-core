@@ -37,5 +37,12 @@ public class SchemaConstants {
     public static final QName XSD_DATETIME = new QName(URI_DEFAULT_SCHEMA_XSD, "dateTime");
     public static final QName XSD_DATE = new QName(URI_DEFAULT_SCHEMA_XSD, "date");
     public static final QName XSD_TIME = new QName(URI_DEFAULT_SCHEMA_XSD, "time");
+
+
+
+    public static final Integer ATTRIBUTE_TYPE = new Integer(0);
+    public static final Integer ANY_TYPE = new Integer(1);
+    public static final Integer ELEMENT_TYPE = new Integer(2); 
+
 }
 

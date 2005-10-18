@@ -36,6 +36,7 @@ public class SchemaCompiler {
     private JavaBeanWriter writer;
 
     private Map baseSchemaTypeMap = TypeMap.getTypeMap();
+    private static final String ANY_ELEMENT_FIELD_NAME = "extraElements";
 
 
     public HashMap getProcessedElementmap() {
@@ -173,6 +174,11 @@ public class SchemaCompiler {
 
     }
 
+    /**
+     *
+     * @param schemaType
+     * @return
+     */
     private String findClassName(XmlSchemaType schemaType) {
         //find the class name
         QName qName = schemaType.getQName();
@@ -232,6 +238,12 @@ public class SchemaCompiler {
 
             }
         }
+
+        //process any attribute
+        XmlSchemaAnyAttribute anyAtt = complexType.getAnyAttribute();
+        if (anyAtt!=null){
+            processAnyAttribute();
+        }
         // Process the other types - Say the complex content, extensions and so on
 
 
@@ -245,13 +257,19 @@ public class SchemaCompiler {
 
     }
 
+    private void processAnyAttribute(BeanWriterMetaInfoHolder metainf) {
+        //The best thing we can do here is to add a set of OMAttributes
+        metainf.registerMapping(new QName(""))
+
+    }
+
     public void processAttribute(XmlSchemaAttribute att,BeanWriterMetaInfoHolder metainf){
-         //for now we assume (!!!) that attributes refer to standard types only
+        //for now we assume (!!!) that attributes refer to standard types only
         QName schemaTypeName = att.getSchemaTypeName();
         if (baseSchemaTypeMap.containsKey(schemaTypeName)){
             metainf.registerMapping(att.getQName(),
-                     schemaTypeName,
-                     baseSchemaTypeMap.get(schemaTypeName).toString(),true);
+                    schemaTypeName,
+                    baseSchemaTypeMap.get(schemaTypeName).toString(),SchemaConstants.ATTRIBUTE_TYPE);
         } else {
             //this attribute refers to a custom type, probably one of the extended simple types.
             //handle it here
@@ -306,7 +324,10 @@ public class SchemaCompiler {
                 }else if (content instanceof XmlSchemaComplexContentRestriction){
                     //handle complex restriction
                 }
-                //handle the other types here
+
+                //handle xsd:any ! We place an OMElement in the generated class
+            }else if (item instanceof XmlSchemaAny){
+                processAny((XmlSchemaAny)item,metainfHolder);
             }
 
 
@@ -324,6 +345,20 @@ public class SchemaCompiler {
         }
         //set the ordered flag in the metainf holder
         metainfHolder.setOrdered(order);
+    }
+
+    /**
+     *
+     */
+    private void processAny(XmlSchemaAny any,BeanWriterMetaInfoHolder metainf) {
+        //handle the minoccurs/maxoccurs here.
+        // However since the any element does not have a name
+        //we need to put a name here
+          metainf.registerMapping(new QName(ANY_ELEMENT_FIELD_NAME),
+                                null,
+                                OMElement.class.getName(),
+                                SchemaConstants.ANY_TYPE);
+
     }
 
     /**

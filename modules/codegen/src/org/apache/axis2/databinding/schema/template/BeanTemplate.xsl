@@ -68,6 +68,9 @@
                   <xsl:when test="@ours">
                       new javax.xml.namespace.QName("<xsl:value-of select="$propertyName"/>"),local<xsl:value-of select="@javaname"/>
                   </xsl:when>
+                  <xsl:when test="@any">
+                      null,local<xsl:value-of select="@javaname"/>
+                  </xsl:when>
                   <xsl:otherwise>
                        "<xsl:value-of select="$propertyName"/>",org.apache.axis2.databinding.schema.util.ConverterUtil.convertToString(local<xsl:value-of select="@javaname"/>)
                   </xsl:otherwise>
@@ -108,6 +111,9 @@
                    <xsl:when test="@ours">
                      object.set<xsl:value-of select="$javaName"/>(
                           <xsl:value-of select="$propertyType"/>.parse(reader));
+                  </xsl:when>
+                  <xsl:when test="@any">
+                      //do nothing yet!!!!
                   </xsl:when>
                   <xsl:otherwise>
                       String content = reader.getElementText();

@@ -126,7 +126,11 @@ public class JavaBeanWriter {
             XSLTUtils.addAttribute(model,"name",xmlName,property);
             XSLTUtils.addAttribute(model,"javaname",javaName,property);
             String javaClassNameForElement = metainf.getJavaClassNameForQName(name);
-            String shortTypeName = metainf.getSchemaQNameForQName(name).getLocalPart();
+            String shortTypeName = "";
+            if (metainf.getSchemaQNameForQName(name)!=null){
+                shortTypeName = metainf.getSchemaQNameForQName(name).getLocalPart();
+            }
+
             if (javaClassNameForElement==null){
                 throw new SchemaCompilationException("Type missing!");
             }
@@ -140,8 +144,12 @@ public class JavaBeanWriter {
             }
 
             XSLTUtils.addAttribute(model,"shorttypename",shortTypeName,property);
+            if (metainf.getAnyStatusForQName(name)){
+                XSLTUtils.addAttribute(model,"any","yes",property);
+            }
         }
 
+       
         //create the file
         OutputStream out = createOutFile(packageName,className);
         //parse with the template and create the files

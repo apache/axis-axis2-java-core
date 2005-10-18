@@ -23,15 +23,19 @@ import java.util.Iterator;
 /**
  * This is a class used as a holder to pass on the meta information to the bean writer
  * This meta information will be used by the writer to write the databinding conversion code
+ * Note - Metainfholders are not meant to be reused!!!. They are per-class basis
  */
 public class BeanWriterMetaInfoHolder {
 
+
+
     private boolean ordered = false;
     private boolean extension = false;
+//    private boolean hasAny = false;
     private String extensionClassName = "";
     private Map elementToSchemaQNameMap = new HashMap();
     private Map elementToJavaClassMap = new HashMap();
-    private Map attributeFlagMap = new HashMap();
+    private Map specialTypeFlagMap = new HashMap();
 
     public String getExtensionClassName() {
         return extensionClassName;
@@ -58,13 +62,13 @@ public class BeanWriterMetaInfoHolder {
     }
 
     public void registerMapping(QName qName,QName schemaName,String javaClassName){
-           registerMapping(qName,schemaName,javaClassName,false);
+           registerMapping(qName,schemaName,javaClassName,SchemaConstants.ELEMENT_TYPE);
     }
 
-    public void registerMapping(QName qName,QName schemaName,String javaClassName,boolean isAttribute){
+    public void registerMapping(QName qName,QName schemaName,String javaClassName,Integer type){
         this.elementToJavaClassMap.put(qName,javaClassName);
         this.elementToSchemaQNameMap.put(qName,schemaName);
-        this.attributeFlagMap.put(qName,new Boolean(isAttribute));
+        this.specialTypeFlagMap.put(qName,type);
 
     }
 
@@ -77,8 +81,13 @@ public class BeanWriterMetaInfoHolder {
     }
 
     public boolean getAttributeStatusForQName(QName qName){
-        Boolean aBoolean = (Boolean) attributeFlagMap.get(qName);
-        return aBoolean != null && aBoolean.booleanValue();
+        Integer attribState = (Integer) specialTypeFlagMap.get(qName);
+        return attribState != null && attribState.equals(SchemaConstants.ATTRIBUTE_TYPE);
+    }
+                                                                                              
+    public boolean getAnyStatusForQName(QName qName){
+        Integer anyState = (Integer) specialTypeFlagMap.get(qName);
+        return anyState != null && anyState.equals(SchemaConstants.ANY_TYPE);
     }
     public void clearTables(){
         this.elementToJavaClassMap.clear();
@@ -89,5 +98,6 @@ public class BeanWriterMetaInfoHolder {
     public Iterator getElementQNameIterator(){
         return elementToJavaClassMap.keySet().iterator();
     }
+
 
 }
