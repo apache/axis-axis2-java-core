@@ -2,7 +2,10 @@ package org.apache.axis2.databinding.utils;
 
 import junit.framework.TestCase;
 import org.apache.axis2.databinding.ADBBean;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -286,23 +289,31 @@ public class ADBPullParserTest extends TestCase {
         }
     }
 
-//    public void testAttributes() throws XMLStreamException {
-//        OMFactory factory = OMAbstractFactory.getOMFactory();
-//        QName elementQName = new QName("http://ec.org/software", "Employee", "emp");
-//        OMNamespace attrNS = factory.createOMNamespace("mailto:whoever@whatever.com", "attr");
-//        OMAttribute[] attribute = new OMAttribute[5];
-//
-//        for (int i = 0; i < 5; i++) {
-//            attribute[i] = factory.createOMAttribute("Attr" + i + 1, attrNS, "Value " + i + 1);
-//        }
-//
-//        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, attribute));
-//        System.out.println(stringXML);
-//
-//    }
+    public void testAttributes() throws XMLStreamException {
 
-    private String getStringXML(XMLStreamReader reader) throws XMLStreamException {
+        String expectedXML = "<emp:Employee xmlns:emp=\"http://ec.org/software\" Attr2=\"Value 2\" " +
+                "Attr3=\"Value 3\" Attr1=\"Value 1\" Attr5=\"Value 5\" Attr4=\"Value 4\"></emp:Employee>";
+
+        OMFactory factory = OMAbstractFactory.getOMFactory();
+        QName elementQName = new QName("http://ec.org/software", "Employee", "emp");
+//        OMNamespace attrNS = factory.createOMNamespace("mailto:whoever@whatever.com", "attr");
+        OMAttribute[] attribute = new OMAttribute[5];
+
+        for (int i = 0; i < 5; i++) {
+            attribute[i] = factory.createOMAttribute("Attr" + (i + 1), null, "Value " + (i + 1));
+        }
+
+        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, attribute, true));
+        assertEquals(stringXML, expectedXML);
+
+    }
+
+    private String getStringXML(XMLStreamReader reader) {
         OMElement omelement = new StAXOMBuilder(reader).getDocumentElement();
-        return omelement.toStringWithConsume();
+        return omelement.toString();
+    }
+
+    public void testArrays(){
+
     }
 }
