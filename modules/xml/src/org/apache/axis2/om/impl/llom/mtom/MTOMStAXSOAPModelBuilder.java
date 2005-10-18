@@ -23,14 +23,14 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.MTOMConstants;
 import org.apache.axis2.om.impl.OMNodeEx;
-import org.apache.axis2.om.impl.llom.OMTextImpl;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
-import javax.activation.DataHandler;
-import javax.xml.stream.XMLStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+
+import javax.activation.DataHandler;
+import javax.xml.stream.XMLStreamReader;
 
 public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder implements MTOMConstants {
 
@@ -110,7 +110,8 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder implements MT
             // cause it is same as having some text
             try {
                 OMElement e = (OMElement) lastNode;
-                node = new OMTextImpl(contentID, (OMElement) lastNode, this);
+                //node = new OMTextImpl(contentID, (OMElement) lastNode, this);
+                node = this.omfactory.createText(contentID, (OMElement) lastNode, this);
                 e.setFirstChild(node);
             } catch (ClassCastException e) {
                 throw new OMException(

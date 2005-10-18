@@ -21,6 +21,7 @@ import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
 import org.apache.axis2.util.Base64;
@@ -90,6 +91,22 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
 		this.textValue = new StringBuffer(text);
 	}
 	
+    /**
+     * @param contentID
+     * @param parent
+     * @param builder   Used when the builder is encountered with a XOP:Include tag
+     *                  Stores a reference to the builder and the content-id. Supports
+     *                  deffered parsing of MIME messages
+     */
+    public TextImpl(String contentID, OMElement parent,
+                      OMXMLParserWrapper builder) {
+        super((DocumentImpl)((ParentNode)parent).getOwnerDocument());
+        this.contentID = contentID;
+        this.optimize = true;
+        this.isBinary = true;
+        this.builder = builder;
+    }
+    
 	public TextImpl(String text, String mimeType, boolean optimize) {
 		this(text,mimeType,optimize,true);
 	}

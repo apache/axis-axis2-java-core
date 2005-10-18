@@ -109,6 +109,9 @@ public interface OMFactory {
     public OMText createText(OMElement parent, String s, String mimeType,
                              boolean optimize);
 
+    public OMText createText(String contentID, OMElement parent,
+            OMXMLParserWrapper builder);
+    
     public OMAttribute createOMAttribute(String localName,
                                          OMNamespace ns,
                                          String value);

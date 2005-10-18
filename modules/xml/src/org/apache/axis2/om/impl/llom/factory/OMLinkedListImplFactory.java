@@ -152,6 +152,11 @@ public class OMLinkedListImplFactory implements OMFactory {
     public OMText createText(Object dataHandler, boolean optimize) {
         return new OMTextImpl(dataHandler, optimize);
     }
+    
+    public OMText createText(String contentID, OMElement parent,
+            OMXMLParserWrapper builder) {
+    	return new OMTextImpl(contentID, parent,builder);
+    }
 
     /**
      * create text
