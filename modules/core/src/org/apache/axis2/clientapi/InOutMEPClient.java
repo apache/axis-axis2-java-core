@@ -125,7 +125,7 @@ public class InOutMEPClient extends MEPClient {
         prepareInvocation(axisop, msgctx);
 
         // The message ID is sent all the time
-        String messageID = String.valueOf("UUID:"+ UUIDGenerator.getUUID());
+        String messageID = String.valueOf("uuid:"+ UUIDGenerator.getUUID());
         msgctx.setMessageID(messageID);
         //
         if (useSeparateListener) {
@@ -224,7 +224,7 @@ public class InOutMEPClient extends MEPClient {
             AxisEngine engine = new AxisEngine(syscontext);
             checkTransport(msgctx);
             //Use message id all the time!
-            String messageID = String.valueOf("UUID:"+ UUIDGenerator.getUUID());
+            String messageID = String.valueOf("uuid:"+ UUIDGenerator.getUUID());
             msgctx.setMessageID(messageID);
             ////
             if (useSeparateListener) {
