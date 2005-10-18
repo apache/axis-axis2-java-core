@@ -173,13 +173,13 @@ public class ADBPullParserTest extends TestCase {
             nextdummyBean.addAnotherBean();
             propertyList.add(dummyBean);
 
-            propertyList.add(new QName("Dependent"));
+            propertyList.add(new QName("http://whatever.com", "Dependent", "test"));
             dummyBean = new DummyADBBean();
             dummyBean.addAnotherBean();
             propertyList.add(dummyBean);
 
             QName projectQName = new QName("Person");
-            XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray(), null);
+            XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray(), null, true);
 
             StringBuffer buff = new StringBuffer();
             while (pullParser.hasNext()) {
