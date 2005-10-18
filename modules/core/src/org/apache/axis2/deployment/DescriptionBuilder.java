@@ -111,7 +111,7 @@ public class DescriptionBuilder implements DeploymentConstants{
         if(name_attribute == null){
             throw new DeploymentException("Invalid Handler");
         } else {
-            handler.setName(new QName(name_attribute.getValue()));
+            handler.setName(new QName(name_attribute.getAttributeValue()));
         }
 
         //Setting Handler Class name
@@ -120,7 +120,7 @@ public class DescriptionBuilder implements DeploymentConstants{
         if(class_attribute == null){
             throw new DeploymentException("Invalid Handler");
         } else {
-            handler.setClassName(class_attribute.getValue());
+            handler.setClassName(class_attribute.getAttributeValue());
         }
 
         //processing phase Rules (order)
@@ -133,7 +133,7 @@ public class DescriptionBuilder implements DeploymentConstants{
             while (order_itr.hasNext()) {
                 OMAttribute orderAttribut = (OMAttribute) order_itr.next();
                 String name  = orderAttribut.getQName().getLocalPart();
-                String value = orderAttribut.getValue();
+                String value = orderAttribut.getAttributeValue();
                 if (AFTER.equals(name)) {
                     handler.getRules().setAfter(value);
                 } else if (BEFORE.equals(name)) {
@@ -189,7 +189,7 @@ public class DescriptionBuilder implements DeploymentConstants{
                 throw new DeploymentException(
                         Messages.getMessage(DeploymentErrorMsgs.BAD_PARA_ARGU));
             }
-            paramter.setName(paraName.getValue());
+            paramter.setName(paraName.getAttributeValue());
 
             //setting paramter Value (the chiled elemnt of the paramter)
             OMElement paraValue = paramterElement.getFirstElement();
@@ -210,7 +210,7 @@ public class DescriptionBuilder implements DeploymentConstants{
                 parentpara = parent.getParameter(paramter.getName());
             }
             if (paraLocked !=null) {
-                String lockedValue = paraLocked.getValue();
+                String lockedValue = paraLocked.getAttributeValue();
                 if("true".equals(lockedValue)){
                     //if the parameter is locked at some levle paramer value replace by that
                     if(parent!=null && parent.isParamterLocked(paramter.getName())){
@@ -247,7 +247,7 @@ public class DescriptionBuilder implements DeploymentConstants{
                 OMAttribute moduleRefAttribute = moduleref.getAttribute(
                         new QName(REF));
                 if (moduleRefAttribute !=null) {
-                    String refName = moduleRefAttribute.getValue();
+                    String refName = moduleRefAttribute.getAttributeValue();
                     if(engine.getModule(new QName(refName)) == null) {
                         throw new DeploymentException(Messages.getMessage(
                                 DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));
@@ -265,7 +265,7 @@ public class DescriptionBuilder implements DeploymentConstants{
             throws DeploymentException {
         OMAttribute recieverName = reciverElement.getAttribute(
                 new QName(CLASSNAME));
-        String className = recieverName.getValue();
+        String className = recieverName.getAttributeValue();
         MessageReceiver receiver = null;
         try{
             Class messageReceiver ;

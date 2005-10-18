@@ -58,7 +58,7 @@ public class ModuleBuilder extends DescriptionBuilder{
             OMAttribute moduleNameAtt = moduleElement.getAttribute(
                     new QName(ATTNAME));
             if(moduleNameAtt != null){
-                String moduleName = moduleNameAtt.getValue();
+                String moduleName = moduleNameAtt.getAttributeValue();
                 if (moduleName != null && !"".equals(moduleName)) {
                     module.setName(new QName(moduleName));
                 } else {
@@ -74,7 +74,7 @@ public class ModuleBuilder extends DescriptionBuilder{
             OMAttribute moduleClassAtt = moduleElement.getAttribute(
                     new QName(CLASSNAME));
             if(moduleClassAtt !=null){
-                String moduleClass = moduleClassAtt.getValue();
+                String moduleClass = moduleClassAtt.getAttributeValue();
                 if(moduleClass !=null && !"".equals(moduleClass)){
                     if (engine !=null) {
                         engine.getCurrentFileItem().setModuleClass(moduleClass);
@@ -145,7 +145,7 @@ public class ModuleBuilder extends DescriptionBuilder{
             String mepURL =null;
              OperationDescription op_descrip;
             if(op_mep_att !=null){
-                mepURL= op_mep_att.getValue();
+                mepURL= op_mep_att.getAttributeValue();
             }
 
             if(mepURL == null){
@@ -158,7 +158,7 @@ public class ModuleBuilder extends DescriptionBuilder{
                     throw new DeploymentException("Error in processing operation " + axisFault);
                 }
             }
-            String opname = op_name_att.getValue();
+            String opname = op_name_att.getAttributeValue();
 //            OperationDescription op_descrip = new OperationDescription();
             op_descrip.setName(new QName(opname));
 

@@ -648,7 +648,7 @@ public class OMElementImpl extends OMNodeImpl
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
 
-    protected void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
+    protected void serialize(OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
 
         if (cache) {
             //in this case we don't care whether the elements are built or not

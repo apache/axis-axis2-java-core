@@ -105,7 +105,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
     }
 
     /**
-     * WSA 1.0 specification mandates all the reference parameters to have a attribute as wsa:Type=�parameter�. So
+     * WSA 1.0 specification mandates all the reference parameters to have a attribute as wsa:Type=???parameter???. So
      * here this will check for header blocks with the above attribute and will put them in message information header collection
      *
      * @param header
@@ -125,7 +125,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                                             new QName(
                                                     Final.WSA_NAMESPACE,
                                                     Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE))
-                                    .getValue())) {
+                                    .getAttributeValue())) {
                 messageInformationHeaders.addReferenceParameter(soapHeaderBlock);
             }
         }
@@ -222,7 +222,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                                 address,
                                 relationshipType == null
                                         ? relationshipTypeDefaultValue
-                                        : relationshipType.getValue());
+                                        : relationshipType.getAttributeValue());
                 messageInformationHeaders.setRelatesTo(relatesTo);
                 soapHeaderBlock.setProcessed();
 
@@ -237,7 +237,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         while (headerBlocks.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) headerBlocks.next();
             OMAttribute isRefParamAttr = soapHeaderBlock.getAttribute(new QName(addressingNamespace, "IsReferenceParameter"));
-            if (isRefParamAttr != null && "true".equals(isRefParamAttr.getValue())) {
+            if (isRefParamAttr != null && "true".equals(isRefParamAttr.getAttributeValue())) {
                 toEPR.addReferenceParameter(soapHeaderBlock.getQName(), soapHeaderBlock.getText());
             }
         }

@@ -158,7 +158,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
             throws SOAPException {
         //TODO:
         //The fragment rooted in element is either added as a whole or not at all, if there was an error.
-        //The fragment rooted in element cannot contain elements named “Envelope”, “Header” or “Body”
+        //The fragment rooted in element cannot contain elements named ?Envelope?, ?Header? or ?Body?
         //and in the SOAP namespace. Any namespace prefixes present in the fragment should be fully
         //resolved using appropriate namespace declarations within the fragment itself.
 
@@ -234,7 +234,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
                 new QName(name.getURI(),
                         name.getLocalName(),
                         name.getPrefix()))
-                .getValue();
+                .getAttributeValue();
     }
 
     /**
@@ -548,7 +548,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
         while (attrIter.hasNext()) {
             org.apache.axis2.om.OMAttribute omAttr = (org.apache.axis2.om.OMAttribute) (attrIter.next());
             if (omAttr.getLocalName().equals(name)) {
-                return omAttr.getValue();
+                return omAttr.getAttributeValue();
             }
         }
         return null;
@@ -743,7 +743,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
             org.apache.axis2.om.OMAttribute omAttr = (org.apache.axis2.om.OMAttribute) (attrIter.next());
             if (omAttr.getLocalName().equals(localName) &&
                     omAttr.getNamespace().getName().equals(namespaceURI)) {
-                return omAttr.getValue();
+                return omAttr.getAttributeValue();
             }
         }
         return null;

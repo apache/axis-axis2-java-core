@@ -35,12 +35,12 @@ public interface OMAttribute {
     /**
      * @return
      */
-    public String getValue();
+    public String getAttributeValue();
 
     /**
      * @param value
      */
-    public void setValue(String value);
+    public void setAttributeValue(String value);
 
     /**
      * @param omNamespace

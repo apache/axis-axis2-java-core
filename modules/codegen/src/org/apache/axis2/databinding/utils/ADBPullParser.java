@@ -308,7 +308,7 @@ public class ADBPullParser implements XMLStreamReader {
             if (testLocalName && localName.equals(attrQName.getLocalPart())) {
                 isLocalNameMatch = true;
             }
-            if (isLocalNameMatch && isNSUriMatch) return attributes[i].getValue();
+            if (isLocalNameMatch && isNSUriMatch) return attributes[i].getAttributeValue();
         }
         return null;
     }
@@ -359,7 +359,7 @@ public class ADBPullParser implements XMLStreamReader {
         if (accessingChildPullParser) {
             return childPullParser.getAttributeValue(i);
         } else if (attributes != null && attributes.length >= i) {
-            return attributes[i].getValue();
+            return attributes[i].getAttributeValue();
         }
         return null;
     }

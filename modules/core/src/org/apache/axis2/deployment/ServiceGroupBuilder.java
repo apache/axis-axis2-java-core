@@ -57,7 +57,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder{
 
                 OMAttribute serviceNameatt = service.getAttribute(
                         new QName(ATTNAME));
-                String serviceName = serviceNameatt.getValue();
+                String serviceName = serviceNameatt.getAttributeValue();
                 if(serviceName == null){
                     throw new DeploymentException("Service Name required");
                 } else {
@@ -93,7 +93,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder{
             if(moduleName_att == null){
                 throw new DeploymentException("Invalid module configuration");
             } else {
-                String module = moduleName_att.getValue();
+                String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module),parent);
                 Iterator paramters=  moduleConfig.getChildrenWithName(new QName(PARAMETERST));
@@ -116,7 +116,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder{
                 OMAttribute moduleRefAttribute = moduleref.getAttribute(
                         new QName(REF));
                 if(moduleRefAttribute !=null){
-                    String refName = moduleRefAttribute.getValue();
+                    String refName = moduleRefAttribute.getAttributeValue();
                     if(engine.getModule(new QName(refName)) == null) {
                         throw new DeploymentException(Messages.getMessage(
                                 DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));

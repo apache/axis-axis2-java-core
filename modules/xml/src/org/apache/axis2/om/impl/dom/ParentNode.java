@@ -125,7 +125,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 							"HIERARCHY_REQUEST_ERR", null));
 		}
 		
-		if(!this.ownerNode.equals(newDomChild.ownerNode)) {
+		if(!(this.ownerNode == newDomChild.getOwnerDocument())) {
 			throw new DOMException(DOMException.WRONG_DOCUMENT_ERR,
 					DOMMessageFormatter.formatMessage(
 							DOMMessageFormatter.DOM_DOMAIN,
@@ -140,10 +140,16 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 		}
 		
 		if(refChild == null) { //Append the child to the end of the list
-			this.lastChild.nextSibling = newDomChild;
-			newDomChild.previousSubling = this.lastChild;
+			//if there are no children 
+			if(this.lastChild == null && firstChild == null ) {
+				this.lastChild = newDomChild;
+				this.firstChild = newDomChild;
+			} else {
+				this.lastChild.nextSibling = newDomChild;
+				newDomChild.previousSubling = this.lastChild;
 			
-			this.lastChild = newDomChild;
+				this.lastChild = newDomChild;
+			}
 			return newChild;
 		} else {
 			Iterator children = this.getChildren(); 

@@ -64,6 +64,6 @@ public abstract class SOAPFaultTextImpl extends SOAPElement implements SOAPFault
                                     SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_NS_PREFIX));
         }
 
-        return langAttr == null ? null : langAttr.getValue();
+        return langAttr == null ? null : langAttr.getAttributeValue();
     }
 }

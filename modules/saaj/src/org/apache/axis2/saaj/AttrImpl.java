@@ -97,7 +97,7 @@ public class AttrImpl extends NodeImpl implements Attr {
      * @return String
      */
     public String getValue() {
-        return omAttr.getValue();
+        return omAttr.getAttributeValue();
     }
 
     /**
@@ -109,7 +109,7 @@ public class AttrImpl extends NodeImpl implements Attr {
      * @return
      */
     public void setValue(String value) {
-        omAttr.setValue(value);
+        omAttr.setAttributeValue(value);
         setSpecified(true);
     }
 

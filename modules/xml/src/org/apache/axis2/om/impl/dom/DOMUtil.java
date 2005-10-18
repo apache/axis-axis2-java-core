@@ -24,7 +24,8 @@ class DOMUtil {
 
 	public static boolean isValidChras(String value) {
 		// TODO check for valid characters
-		throw new UnsupportedOperationException("TODO");
+		//throw new UnsupportedOperationException("TODO");
+		return true;
 	}
 	
 	public static boolean isValidNamespace(String namespaceURI, String qualifiedname) {

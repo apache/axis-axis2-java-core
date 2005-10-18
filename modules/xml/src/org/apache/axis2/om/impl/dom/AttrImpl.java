@@ -28,7 +28,6 @@ import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 /**
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
@@ -42,8 +41,23 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	
 	private boolean used;
 	
+	private ParentNode parent;
+	
 	protected AttrImpl(DocumentImpl ownerDocument) {
 		super(ownerDocument);
+	}
+	
+	public AttrImpl(DocumentImpl ownerDocument, String localName, OMNamespace ns, String value) {
+		super(ownerDocument);
+		this.attrName = localName;
+		this.attrValue = new TextImpl(value);
+		this.namespace = (NamespaceImpl)ns;
+	}
+	
+	public AttrImpl(DocumentImpl ownerDocument, String name, String value) {
+		super(ownerDocument);
+		this.attrName = name;
+		this.attrValue = new TextImpl(value);
 	}
 	
 	public AttrImpl(String localName, OMNamespace ns, String value) {
@@ -55,6 +69,11 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	public AttrImpl(String name, String value) {
 		this.attrName = name;
 		this.attrValue = new TextImpl(value);
+	}
+	
+	public AttrImpl(DocumentImpl ownerDocument, String name) {
+		super(ownerDocument);
+		this.attrName = name;
 	}
 
 	///
@@ -71,6 +90,10 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 		return (this.attrName==null)?"":this.attrValue.getData();
 	}
 	
+	public String getValue() {
+		return (this.attrValue == null)? null:this.attrValue.getText();
+	}
+
 	///
 	///org.w3c.dom.Attr methods
 	///
@@ -88,13 +111,11 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	}
 
 	public OMNode detach() throws OMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException("Not supported");
 	}
 
 	public void discard() throws OMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException("Not supported");
 	}
 
 	public int getType() {
@@ -102,23 +123,11 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	}
 
 	public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
-
-	public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException("Not supported");
 	}
 
 	public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
-
-	public void serializeAndConsume(XMLStreamWriter xmlWriter) throws XMLStreamException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException("Not supported");
 	}
 
 	public OMNamespace getNamespace() {
@@ -126,38 +135,38 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	}
 
 	public QName getQName() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		return (this.namespace == null) ? new QName(this.attrName) : 
+			new QName(this.namespace.getName(), this.attrName, this.namespace
+						.getPrefix());
+		
 	}
 
-	public String getValue() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public String getAttributeValue() {
+		return this.attrValue.getText();
 	}
 
 	public void setLocalName(String localName) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		this.attrName = localName;
 	}
 
 	public void setOMNamespace(OMNamespace omNamespace) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		this.namespace = (NamespaceImpl)omNamespace;
 	}
 
-	public void setValue(String value) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public void setAttributeValue(String value) {
+		if(isReadonly()) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NO_MODIFICATION_ALLOWED_ERR", null);
+            throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
+		}
+		this.attrValue = (TextImpl)this.getOwnerDocument().createTextNode(value);
 	}
 
 	public void setParent(OMContainer element) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		this.parent = (ParentNode)element;
 	}
 
 	public void setType(int nodeType) throws OMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		//not necessary ???
 	}
 
 	/**
@@ -174,7 +183,26 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 		this.used = used;
 	}
 
+	public void setValue(String value) throws DOMException {
+		this.attrValue = (TextImpl) this.getOwnerDocument().createTextNode(
+				value);
+	}
+
+	public OMContainer getParent() {
+		return this.parent;
+	}
 	
-	
+    public String getLocalName()
+    {
+        return this.attrName;
+    }
+
+    public String getNamespaceURI() {
+		if(this.namespace != null) {
+			return namespace.getName();
+		}
+		
+		return null;
+	}
 
 }

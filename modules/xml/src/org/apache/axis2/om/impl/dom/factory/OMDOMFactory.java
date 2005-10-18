@@ -45,12 +45,17 @@ import javax.xml.namespace.QName;
  */
 public class OMDOMFactory implements OMFactory {
 	
+	private DocumentImpl document;
+	
 	public OMDocument createOMDocument() {
-		return new DocumentImpl();
+		if(this.document == null)
+			this.document = new DocumentImpl();
+		
+		return this.document;
 	}
 
 	public OMElement createOMElement(String localName, OMNamespace ns) {
-		return new ElementImpl(new DocumentImpl(), localName, (NamespaceImpl)ns);
+		return new ElementImpl((DocumentImpl)this.createOMDocument(), localName, (NamespaceImpl)ns);
 	}
 
 	public OMElement createOMElement(String localName, OMNamespace ns, OMContainer parent) throws OMDOMException{
@@ -60,6 +65,7 @@ public class OMDOMFactory implements OMFactory {
 				ElementImpl elem = new ElementImpl((DocumentImpl)parentElem.getOwnerDocument(),localName,(NamespaceImpl)ns);
 				parentElem.appendChild(elem);
 				return elem;
+				
 			case Node.DOCUMENT_NODE :
 				DocumentImpl docImpl = (DocumentImpl) parent;
 				ElementImpl elem2 = new ElementImpl(docImpl,localName,(NamespaceImpl)ns);

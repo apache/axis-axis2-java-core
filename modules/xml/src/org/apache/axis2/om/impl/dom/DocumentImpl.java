@@ -117,12 +117,15 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	///org.w3c.dom.Document methods
 	///
 	
-	public Attr createAttribute(String arg0) throws DOMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public Attr createAttribute(String name) throws DOMException {
+		if(!DOMUtil.isValidChras(name)) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "INVALID_CHARACTER_ERR", null);
+            throw new DOMException(DOMException.INVALID_CHARACTER_ERR, msg);
+		}
+		return new AttrImpl(this,name);
 	}
 	
-	public Attr createAttributeNS(String arg0, String arg1) throws DOMException {
+	public Attr createAttributeNS(String namespaceURI, String qualifiedName) throws DOMException {
 		//TODO
 		throw new UnsupportedOperationException("TODO");
 	}

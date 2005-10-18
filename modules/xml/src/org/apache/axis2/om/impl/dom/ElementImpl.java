@@ -23,7 +23,7 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
+import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.om.impl.llom.OMStAXWrapper;
 import org.apache.axis2.om.impl.llom.traverse.OMChildElementIterator;
 import org.apache.axis2.om.impl.llom.util.EmptyIterator;
@@ -367,7 +367,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 		if(attributeNode != null) {
 			AttrImpl tempAttr = ((AttrImpl)attributeNode);
 			tempAttr.setOMNamespace(new NamespaceImpl(namespaceURI,DOMUtil.getPrefix(qualifiedName)));
-			tempAttr.setValue(value);
+			tempAttr.setAttributeValue(value);
 			return tempAttr;
 		} else {
 			NamespaceImpl ns = new NamespaceImpl(namespaceURI, DOMUtil.getPrefix(qualifiedName));
@@ -449,7 +449,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 	 * @see org.apache.axis2.om.OMElement#declareNamespace(java.lang.String, java.lang.String)
 	 */
 	public OMNamespace declareNamespace(String uri, String prefix) {
-        OMNamespaceImpl ns = new OMNamespaceImpl(uri, prefix);
+        NamespaceImpl ns = new NamespaceImpl(uri, prefix);
         return declareNamespace(ns);
 	}
 
@@ -598,7 +598,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 		OMText textNode;
 
 		while (child != null) {
-			if (child.getType() == OMNode.TEXT_NODE) {
+			if (child.getType() == Node.TEXT_NODE) {
 				textNode = (OMText) child;
 				if (textNode.getText() != null
 						&& !"".equals(textNode.getText())) {
@@ -663,14 +663,49 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 	 * @see org.apache.axis2.om.OMNode#serialize(org.apache.axis2.om.OMOutput)
 	 */
 	public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		serialize(omOutput, true);
 	}
 
 	public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		this.serialize(omOutput, false);
 	}
+	
+	
+    protected void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
+
+        if (cache) {
+            //in this case we don't care whether the elements are built or not
+            //we just call the serializeAndConsume methods
+            OMSerializerUtil.serializeStartpart(this, omOutput);
+            //serilize children
+            Iterator children = this.getChildren();
+            while (children.hasNext()) {
+                ((OMNode) children.next()).serialize(omOutput);
+            }
+            OMSerializerUtil.serializeEndpart(omOutput);
+
+        } else {
+            //Now the caching is supposed to be off. However caching been switched off
+            //has nothing to do if the element is already built!
+            if (this.done) {
+                OMSerializerUtil.serializeStartpart(this, omOutput);
+                //serializeAndConsume children
+                Iterator children = this.getChildren();
+                while (children.hasNext()) {
+                    //A call to the  Serialize or the serializeAndConsume wont make a difference here
+                    ((OMNode) children.next()).serializeAndConsume(omOutput);
+                }
+                OMSerializerUtil.serializeEndpart(omOutput);
+            } else {
+                //take the XMLStream reader and feed it to the stream serilizer.
+                //todo is this right ?????
+                OMSerializerUtil.serializeByPullStream(this, omOutput, cache);
+            }
+
+
+        }
+    }
+	
 	
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.om.OMElement#getXMLStreamReaderWithoutCaching()
@@ -748,4 +783,10 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
         //TODO Create a new AttrIterator and return it
         throw new UnsupportedOperationException("TODO");
 	}
+	
+    public String getLocalName()
+    {
+        return this.tagName; 
+    }
+
 }

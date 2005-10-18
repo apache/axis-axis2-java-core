@@ -163,13 +163,13 @@ public class ServiceBuilder extends DescriptionBuilder{
                     new QName(MEP));
             String mepurl =null;
             if(op_mep_att !=null){
-                mepurl = op_mep_att.getValue();
+                mepurl = op_mep_att.getAttributeValue();
                 //todo value has to be validate
                 //todo
                 // op_descrip.setMessageExchangePattern(mep);
             }
 
-            String opname = op_name_att.getValue();
+            String opname = op_name_att.getAttributeValue();
             WSDLOperation wsdlOperation =service.getWSDLOPOperation(new QName(opname));
 //            OperationDescription op_descrip = service.getOperation(new QName(opname));
             OperationDescription op_descrip = null;
@@ -245,7 +245,7 @@ public class ServiceBuilder extends DescriptionBuilder{
             if(moduleName_att == null){
                 throw new DeploymentException("Invalid module configuration");
             } else {
-                String module = moduleName_att.getValue();
+                String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module),parent);
                 Iterator paramters=  moduleConfig.getChildrenWithName(new QName(PARAMETERST));
@@ -265,7 +265,7 @@ public class ServiceBuilder extends DescriptionBuilder{
             if(moduleName_att == null){
                 throw new DeploymentException("Invalid module configuration");
             } else {
-                String module = moduleName_att.getValue();
+                String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module),parent);
                 Iterator paramters=  moduleConfig.getChildrenWithName(new QName(PARAMETERST));
@@ -287,7 +287,7 @@ public class ServiceBuilder extends DescriptionBuilder{
                 OMAttribute moduleRefAttribute = moduleref.getAttribute(
                         new QName(REF));
                 if(moduleRefAttribute !=null){
-                    String refName = moduleRefAttribute.getValue();
+                    String refName = moduleRefAttribute.getAttributeValue();
                     if(engine.getModule(new QName(refName)) == null) {
                         throw new DeploymentException(Messages.getMessage(
                                 DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));

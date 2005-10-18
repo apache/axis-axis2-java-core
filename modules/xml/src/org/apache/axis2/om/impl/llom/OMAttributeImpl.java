@@ -49,7 +49,7 @@ public class OMAttributeImpl implements OMAttribute {
      */
     public OMAttributeImpl(String localName, OMNamespace ns, String value) {
         setLocalName(localName);
-        setValue(value);
+        setAttributeValue(value);
         setOMNamespace(ns);
     }
 
@@ -90,7 +90,7 @@ public class OMAttributeImpl implements OMAttribute {
      *
      * @return value
      */
-    public String getValue() {
+    public String getAttributeValue() {
         return value;
     }
 
@@ -99,7 +99,7 @@ public class OMAttributeImpl implements OMAttribute {
      *
      * @param value
      */
-    public void setValue(String value) {
+    public void setAttributeValue(String value) {
         this.value = value;
     }
 

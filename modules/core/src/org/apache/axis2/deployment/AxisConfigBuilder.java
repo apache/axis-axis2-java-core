@@ -70,7 +70,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                         Thread.currentThread().getContextClassLoader(),msgRev);
                 OMAttribute mepAtt = msgRev.getAttribute(new QName(MEP));
                 ((AxisConfigurationImpl)axisConfiguration).addMessageReceiver(
-                        mepAtt.getValue(),msgrecivere);
+                        mepAtt.getAttributeValue(),msgrecivere);
             }
 
             //processing Dispatching Order
@@ -128,7 +128,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
         while (dispatchers.hasNext()) {
             foundDiaptcher = true;
             OMElement dispchter = (OMElement) dispatchers.next();
-            String clssName = dispchter.getAttribute(new QName(CLASSNAME)).getValue();
+            String clssName = dispchter.getAttribute(new QName(CLASSNAME)).getAttributeValue();
             AbstractDispatcher disptachClas;
             Class classInstance;
             try {
@@ -163,7 +163,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
             if(className== null){
                 throw new DeploymentException("Invalid Storage Class defintion , class name missing");
             }  else {
-                String classNameStr =className.getValue();
+                String classNameStr =className.getAttributeValue();
                 Class stoarge ;
                 if (classNameStr != null &&!"".equals(classNameStr)) {
                     try {
@@ -223,7 +223,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
         PhasesInfo info = engine.getPhasesinfo();
         while (phaserders.hasNext()) {
             OMElement phaseOrders = (OMElement) phaserders.next();
-            String flowType = phaseOrders.getAttribute(new QName(TYPE)).getValue();
+            String flowType = phaseOrders.getAttribute(new QName(TYPE)).getAttributeValue();
             if(INFLOWST.equals(flowType)){
                 info.setINPhases(getPhaseList(phaseOrders));
             }   else if (IN_FAILTFLOW.equals(flowType)){
@@ -243,7 +243,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
         Iterator phases =  phaseOrders.getChildrenWithName(new QName(PHASE));
         while (phases.hasNext()) {
             OMElement phase = (OMElement) phases.next();
-            phaselist.add(phase.getAttribute(new QName(ATTNAME)).getValue());
+            phaselist.add(phase.getAttribute(new QName(ATTNAME)).getAttributeValue());
         }
         return phaselist;
     }
@@ -258,7 +258,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
             OMAttribute trsName = transport.getAttribute(
                     new QName(ATTNAME));
             if(trsName !=null){
-                String name = trsName.getValue();
+                String name = trsName.getAttributeValue();
                 transportout = new TransportOutDescription(new QName(name));
 
                 //tranport impl class
@@ -268,7 +268,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                     throw new DeploymentException("TransportSEnder Implementation class is required " +
                             "for the transport" + name);
                 }
-                String clasName = trsClas.getValue();
+                String clasName = trsClas.getAttributeValue();
                 Class sender;
                 try {
                     sender =Class.forName(clasName,true,
@@ -341,14 +341,14 @@ public class AxisConfigBuilder extends DescriptionBuilder{
             OMAttribute trsName = transport.getAttribute(
                     new QName(ATTNAME));
             if(trsName !=null){
-                String name = trsName.getValue();
+                String name = trsName.getAttributeValue();
                 transportIN = new TransportInDescription(new QName(name));
 
                 //tranport impl class
                 OMAttribute trsClas = transport.getAttribute(new QName(CLASSNAME));
                 if(trsClas !=null) {
                     try {
-                        String clasName = trsClas.getValue();
+                        String clasName = trsClas.getAttributeValue();
                         Class receiverClass =Class.forName(clasName,true,
                                 Thread.currentThread()
                                         .getContextClassLoader());
@@ -422,7 +422,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                     new QName(CLASSNAME));
             String clasName;
             if (trsClas !=null) {
-                clasName = trsClas.getValue();
+                clasName = trsClas.getAttributeValue();
             } else {
                 throw new DeploymentException("Observer Implementation Class is requird");
             }
@@ -460,7 +460,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
             OMElement moduleref = (OMElement) moduleRefs.next();
             OMAttribute moduleRefAttribute = moduleref.getAttribute(
                     new QName(REF));
-            String refName = moduleRefAttribute.getValue();
+            String refName = moduleRefAttribute.getAttributeValue();
             engine.addModule(new QName(refName));
         }
     }
@@ -475,7 +475,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
             if(moduleName_att == null){
                 throw new DeploymentException("Invalid module configuration");
             } else {
-                String module = moduleName_att.getValue();
+                String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module),parent);
                 Iterator paramters=  moduleConfig.getChildrenWithName(new QName(PARAMETERST));

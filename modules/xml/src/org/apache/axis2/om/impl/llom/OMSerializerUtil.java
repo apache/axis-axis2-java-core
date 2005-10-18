@@ -17,15 +17,17 @@
 package org.apache.axis2.om.impl.llom;
 
 import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.serialize.StreamingOMSerializer;
 
+import java.util.Iterator;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import java.util.Iterator;
 
 public class OMSerializerUtil {
 
@@ -63,13 +65,13 @@ public class OMSerializerUtil {
             namespaceName = ns.getName();
             if (prefix != null) {
                 writer.writeAttribute(prefix, namespaceName,
-                        attr.getLocalName(), attr.getValue());
+                        attr.getLocalName(), attr.getAttributeValue());
             } else {
                 writer.writeAttribute(namespaceName, attr.getLocalName(),
-                        attr.getValue());
+                        attr.getAttributeValue());
             }
         } else {
-            writer.writeAttribute(attr.getLocalName(), attr.getValue());
+            writer.writeAttribute(attr.getLocalName(), attr.getAttributeValue());
         }
     }
 
@@ -101,16 +103,16 @@ public class OMSerializerUtil {
      * @param omOutput
      * @throws XMLStreamException
      */
-    public static void serializeStartpart(OMElementImpl element, OMOutputImpl omOutput)
+    public static void serializeStartpart(OMElement element, OMOutputImpl omOutput)
             throws XMLStreamException {
         String nameSpaceName = null;
         String writer_prefix = null;
         String prefix = null;
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
-        if (element.ns != null) {
-            nameSpaceName = element.ns.getName();
+        if (element.getNamespace() != null) {
+            nameSpaceName = element.getNamespace().getName();
             writer_prefix = writer.getPrefix(nameSpaceName);
-            prefix = element.ns.getPrefix();
+            prefix = element.getNamespace().getPrefix();
             if (nameSpaceName != null) {
                 if (writer_prefix != null) {
                     writer.writeStartElement(nameSpaceName,
@@ -138,7 +140,7 @@ public class OMSerializerUtil {
         serializeAttributes(element, omOutput);
     }
 
-    public static void serializeNamespaces(OMElementImpl element,
+    public static void serializeNamespaces(OMElement element,
                                            org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         Iterator namespaces = element.getAllDeclaredNamespaces();
         if (namespaces != null) {
@@ -148,7 +150,7 @@ public class OMSerializerUtil {
         }
     }
 
-    public static void serializeAttributes(OMElementImpl element,
+    public static void serializeAttributes(OMElement element,
                                            org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         if (element.getAllAttributes() != null) {
             Iterator attributesList = element.getAllAttributes();
@@ -167,7 +169,7 @@ public class OMSerializerUtil {
      * @param cache
      * @throws XMLStreamException
      */
-    public static void serializeNormal(OMElementImpl element, OMOutputImpl omOutput, boolean cache)
+    public static void serializeNormal(OMElement element, OMOutputImpl omOutput, boolean cache)
             throws XMLStreamException {
 
         if (cache) {
@@ -175,7 +177,7 @@ public class OMSerializerUtil {
         }
 
         serializeStartpart(element, omOutput);
-        OMNode firstChild = element.firstChild;
+        OMNode firstChild = element.getFirstOMChild();
         if (firstChild != null) {
             if (cache) {
                 firstChild.serialize(omOutput);
@@ -186,11 +188,11 @@ public class OMSerializerUtil {
         serializeEndpart(omOutput);
     }
 
-    public static void serializeByPullStream(OMElementImpl element, org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
+    public static void serializeByPullStream(OMElement element, org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         serializeByPullStream(element,omOutput,false);
     }
 
-     public static void serializeByPullStream(OMElementImpl element, org.apache.axis2.om.impl.OMOutputImpl omOutput,boolean cache) throws XMLStreamException {
+     public static void serializeByPullStream(OMElement element, org.apache.axis2.om.impl.OMOutputImpl omOutput,boolean cache) throws XMLStreamException {
         StreamingOMSerializer streamingOMSerializer = new StreamingOMSerializer();
         if (cache){
                streamingOMSerializer.serialize(element.getXMLStreamReader(),

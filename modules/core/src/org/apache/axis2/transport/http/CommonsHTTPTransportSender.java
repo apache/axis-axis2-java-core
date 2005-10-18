@@ -780,10 +780,10 @@ public class CommonsHTTPTransportSender
             while (ite.hasNext()) {
                 OMAttribute att = (OMAttribute)ite.next();
                 if (att.getLocalName().equalsIgnoreCase(PROXY_HOST_NAME)){
-                    proxyHostName = att.getValue();
+                    proxyHostName = att.getAttributeValue();
                 }
                 if (att.getLocalName().equalsIgnoreCase(PROXY_PORT)) {
-                    proxyPort = new Integer(att.getValue()).intValue();
+                    proxyPort = new Integer(att.getAttributeValue()).intValue();
                 }
             }
 

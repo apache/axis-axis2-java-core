@@ -482,7 +482,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
             if (isStartElement() || (currentEvent == ATTRIBUTE)) {
                 OMAttribute attrib = getAttribute((OMElement) lastNode, i);
                 if (attrib != null) {
-                    returnString = attrib.getValue();
+                    returnString = attrib.getAttributeValue();
                 }
             } else {
                 throw new IllegalStateException(
@@ -647,7 +647,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
                 QName qname = new QName(s, s1);
                 OMAttribute attrib = ((OMElement) lastNode).getAttribute(qname);
                 if (attrib != null) {
-                    returnString = attrib.getValue();
+                    returnString = attrib.getAttributeValue();
                 }
             } else {
                 throw new IllegalStateException(

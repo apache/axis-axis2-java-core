@@ -89,7 +89,7 @@ public class OMTestUtils {
                 if (node.getNodeType() == Node.ATTRIBUTE_NODE) {
                     Attr attr = (Attr) node;
                     TestCase.assertEquals(attr.getValue(),
-                            omattribute.getValue());
+                            omattribute.getAttributeValue());
                 } else {
                     throw new OMException("return type is not a Attribute");
                 }

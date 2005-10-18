@@ -118,7 +118,7 @@ public class DeserializationContext {
                 OMAttribute idAttr =
                         ((OMElement)nextElement).getAttribute(new QName("id"));
                 if (idAttr != null) {
-                    idFound(idAttr.getValue(), (OMElement)nextElement);
+                    idFound(idAttr.getAttributeValue(), (OMElement)nextElement);
                 }
             }
             nextElement = nextElement.getNextOMSibling();

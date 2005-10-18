@@ -54,7 +54,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
 	
 	
 	
-	protected NodeImpl ownerNode;
+	protected DocumentImpl ownerNode;
 	
     // data
 
@@ -73,6 +73,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
     
         this.ownerNode = ownerDocument;
         this.isOwned(true);
+        
     }
 
     protected NodeImpl() {
@@ -135,13 +136,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
      * whose context the Node was created). The Node may or may not
      */
     public Document getOwnerDocument() {
-        // if we have an owner simply forward the request
-        // otherwise ownerNode is our ownerDocument
-        if (isOwned()) {
-            return ownerNode.getOwnerDocument();
-        } else {
-            return (Document) this.ownerNode;
-        }
+    	return (Document) this.ownerNode;
     }
 
     /**
@@ -451,7 +446,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
 	 * sets the owner document
 	 * @param document
 	 */
-	protected void SetOwnerDocument(DocumentImpl document) {
+	protected void setOwnerDocument(DocumentImpl document) {
 		this.ownerNode = document;
 		this.isOwned(true);
 	}

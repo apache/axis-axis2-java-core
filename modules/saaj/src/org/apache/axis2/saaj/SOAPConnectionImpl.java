@@ -157,7 +157,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
     private String validateHref(OMAttribute attr) {
     	String contentId;
     	if(attr!=null) {
-    		contentId = attr.getValue();
+    		contentId = attr.getAttributeValue();
     	} else {
     		return null;
     	}

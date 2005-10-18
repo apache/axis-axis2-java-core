@@ -83,7 +83,7 @@ public class OMChildrenWithSpecificAttributeIterator
                         ((OMElement) currentChild).getFirstAttribute(
                                 attributeName);
                 if ((attr != null)
-                        && attr.getValue().equalsIgnoreCase(attributeValue)) {
+                        && attr.getAttributeValue().equalsIgnoreCase(attributeValue)) {
                     isMatchingNodeFound = true;
                     needToMoveForward = false;
                 } else {

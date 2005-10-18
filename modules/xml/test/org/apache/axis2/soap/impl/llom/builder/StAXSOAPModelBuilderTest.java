@@ -151,7 +151,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
             
 
             assertTrue("SOAP 1.2 :- Role value mismatch",
-                    roleAttribute.getValue().trim().equals(
+                    roleAttribute.getAttributeValue().trim().equals(
                             SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI + "/" +
                     SOAP12Constants.SOAP_ROLE +
                     "/" +
@@ -165,7 +165,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     mustUnderstandAttribute.getLocalName().equals(
                             SOAPConstants.ATTR_MUSTUNDERSTAND));
             assertTrue("SOAP 1.2 :- Mustunderstand value mismatch",
-                    mustUnderstandAttribute.getValue().equals(
+                    mustUnderstandAttribute.getAttributeValue().equals(
                             SOAPConstants.ATTR_MUSTUNDERSTAND_TRUE));
             assertTrue(
                     "SOAP 1.2 :- Mustunderstand attribute namespace uri mismatch",
@@ -332,7 +332,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     attributeInMaxTime.getNamespace().getName().equals(
                             "http:www.sample.org"));
             assertTrue("SOAP 1.2 :- Attribute value mismatch",
-                    attributeInMaxTime.getValue().trim().equals("This is only a test"));
+                    attributeInMaxTime.getAttributeValue().trim().equals("This is only a test"));
 
             iteratorInDetail.next();
             OMElement element2 = (OMElement) iteratorInDetail.next();
@@ -395,7 +395,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     mustUnderstandAttribute.getLocalName().equals(
                             SOAPConstants.ATTR_MUSTUNDERSTAND));
             assertTrue("SOAP 1.1 :- Mustunderstand value mismatch",
-                    mustUnderstandAttribute.getValue().equals(
+                    mustUnderstandAttribute.getAttributeValue().equals(
                             SOAPConstants.ATTR_MUSTUNDERSTAND_1));
             assertTrue(
                     "SOAP 1.1 :- Mustunderstand attribute namespace uri mismatch",
@@ -407,7 +407,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     actorAttribute.getLocalName().equals(
                             SOAP11Constants.ATTR_ACTOR));
             assertTrue("SOAP 1.1 :- Actor value mismatch",
-                    actorAttribute.getValue().trim().equals(
+                    actorAttribute.getAttributeValue().trim().equals(
                             "http://schemas.xmlsoap.org/soap/" +
                     SOAP11Constants.ATTR_ACTOR +
                     "/" +
@@ -495,7 +495,7 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                     attributeInMaxTime.getNamespace().getName().equals(
                             "http:www.sample.org"));
             assertTrue("SOAP 1.1 :- Attribute value mismatch",
-                    attributeInMaxTime.getValue().equals("This is only a test"));
+                    attributeInMaxTime.getAttributeValue().equals("This is only a test"));
 
             iteratorInDetail.next();
             element2 = (OMElement) iteratorInDetail.next();

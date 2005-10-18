@@ -385,13 +385,13 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
             namespaceName = ns.getName();
             if (prefix != null) {
                 writer.writeAttribute(prefix, namespaceName, attr
-                        .getLocalName(), attr.getValue());
+                        .getLocalName(), attr.getAttributeValue());
             } else {
                 writer.writeAttribute(namespaceName, attr.getLocalName(), attr
-                        .getValue());
+                        .getAttributeValue());
             }
         } else {
-            writer.writeAttribute(attr.getLocalName(), attr.getValue());
+            writer.writeAttribute(attr.getLocalName(), attr.getAttributeValue());
         }
     }
 

@@ -122,13 +122,13 @@ public class DOMMessageFormatter {
      */
     public static void init(){
         if (locale != null) {
-            domResourceBundle = PropertyResourceBundle.getBundle("org.apache.axis2.dom.msg.DOMMessages", locale);
-            serResourceBundle = PropertyResourceBundle.getBundle("org.apache.axis2.dom.msg.XMLSerializerMessages", locale);
-            xmlResourceBundle = PropertyResourceBundle.getBundle("org.apache.axis2.dom.msg.XMLMessages", locale);
+            domResourceBundle = PropertyResourceBundle.getBundle("org.apache.axis2.om.impl.dom.msg.DOMMessages", locale);
+            serResourceBundle = PropertyResourceBundle.getBundle("org.apache.axis2.om.impl.dom.msg.XMLSerializerMessages", locale);
+            xmlResourceBundle = PropertyResourceBundle.getBundle("org.apache.axis2.om.impl.dom.msg.XMLMessages", locale);
         }else{
-            domResourceBundle = PropertyResourceBundle.getBundle("org.apache.axis2.dom.msg.DOMMessages");
-            serResourceBundle = PropertyResourceBundle.getBundle("org.apache.axis2.dom.msg.XMLSerializerMessages");
-            xmlResourceBundle = PropertyResourceBundle.getBundle("org.apache.axis2.dom.msg.XMLMessages");
+            domResourceBundle = PropertyResourceBundle.getBundle("org.apache.axis2.om.impl.dom.msg.DOMMessages");
+            serResourceBundle = PropertyResourceBundle.getBundle("org.apache.axis2.om.impl.dom.msg.XMLSerializerMessages");
+            xmlResourceBundle = PropertyResourceBundle.getBundle("org.apache.axis2.om.impl.dom.msg.XMLMessages");
         }
     }
     

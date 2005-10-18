@@ -249,7 +249,7 @@ public class DocumentNavigator extends DefaultNavigator {
      * @return the string-value of the node
      */
     public String getAttributeStringValue(Object object) {
-        return ((OMAttribute) object).getValue();
+        return ((OMAttribute) object).getAttributeValue();
     }
 
     /**
@@ -711,12 +711,12 @@ public class DocumentNavigator extends DefaultNavigator {
             attribute.setLocalName(localName);
         }
 
-        public String getValue() {
-            return attribute.getValue();
+        public String getAttributeValue() {
+            return attribute.getAttributeValue();
         }
 
-        public void setValue(String value) {
-            attribute.setValue(value);
+        public void setAttributeValue(String value) {
+            attribute.setAttributeValue(value);
         }
 
         public void setOMNamespace(OMNamespace omNamespace) {
