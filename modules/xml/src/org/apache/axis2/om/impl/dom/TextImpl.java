@@ -15,12 +15,22 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
+import org.apache.axis2.util.Base64;
+import org.apache.axis2.util.UUIDGenerator;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -28,7 +38,7 @@ import javax.xml.stream.XMLStreamWriter;
 /**
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
-public class TextImpl extends CharacterImpl implements Text {
+public class TextImpl extends CharacterImpl implements Text, OMText {
 
 	
 	private String mimeType;
@@ -36,14 +46,39 @@ public class TextImpl extends CharacterImpl implements Text {
 	private boolean optimize;
 	
 	private boolean isBinary;
-	
+
+    /**
+     * Field dataHandler contains the DataHandler
+     * Declaring as Object to remove the depedency on 
+     * Javax.activation.DataHandler
+     */
+    private String contentID = null;
+
     /**
      * Field dataHandler contains the DataHandler
      * Declaring as Object to remove the depedency on 
      * Javax.activation.DataHandler
      */
     private Object dataHandlerObject = null;
-	
+
+    
+    /**
+     * Field nameSpace used when serialising Binary stuff as MTOM optimised
+     */
+    protected OMNamespace ns = new NamespaceImpl(
+            "http://www.w3.org/2004/08/xop/include", "xop");
+
+    /**
+     * Field localName used when serialising Binary stuff as MTOM optimised
+     */
+    protected String localName = "Include";
+
+    /**
+     * Field attributes used when serialising Binary stuff as MTOM optimised
+     */
+    protected OMAttribute attribute;
+    
+    
 	/**
 	 * Create a text node with the given text
 	 * required by the OMDOMFactory
@@ -174,36 +209,235 @@ public class TextImpl extends CharacterImpl implements Text {
 	 * @see org.apache.axis2.om.OMNode#serialize(org.apache.axis2.om.OMOutput)
 	 */
 	public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+        serializeLocal(omOutput);
 	}
 	
-
-	public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
-	}
-
 	public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+        serializeLocal(omOutput);
 	}
 
-	public void serializeAndConsume(XMLStreamWriter xmlWriter) throws XMLStreamException {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
-	}
-	
-	public void doOptimize(boolean value) {
-		throw new UnsupportedOperationException("TODO");
-	}
 	public boolean isOptimized() {
-		throw new UnsupportedOperationException("TODO");
+		return this.optimize;
 	}
 
 	public void setOptimize(boolean value) {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+		this.optimize = value;
 	}
+	
+    public void discard() throws OMException {
+        if (done) {
+            this.detach();
+        } else {
+            builder.discard((OMElement) this.parentNode);
+        }
+    }
+    
+    /**
+     * Writes the relevant output
+     *
+     * @param omOutput
+     * @throws XMLStreamException
+     */
+    private void writeOutput(OMOutputImpl omOutput) throws XMLStreamException {
+        XMLStreamWriter writer = omOutput.getXmlStreamWriter();
+        int type = getType();
+        if (type == Node.TEXT_NODE || type == SPACE_NODE) {
+            writer.writeCharacters(this.getText());
+        } else if (type == Node.CDATA_SECTION_NODE) {
+            writer.writeCData(this.getText());
+        } else if (type == Node.ENTITY_REFERENCE_NODE) {
+            writer.writeEntityRef(this.getText());
+        }
+    }
+
+	
+	public String getText() {
+        if (this.textValue!= null) {
+            return this.textValue.toString();
+        } else {
+            try {
+                InputStream inStream;
+                inStream = this.getInputStream();
+                //int x = inStream.available();
+                byte[] data;
+                StringBuffer text = new StringBuffer();
+                do {
+                	data = new byte[1024];
+                	int len;
+                	while((len = inStream.read(data)) > 0) {
+                		byte[] temp = new byte[len];
+                		System.arraycopy(data,0,temp,0,len);
+                		text.append(Base64.encode(temp));
+                	}
+
+                } while (inStream.available() > 0);
+                return text.toString();
+            } catch (Exception e) {
+                throw new OMException(e);
+            }
+        }
+	}
+	
+	public String getContentID() {
+        if (contentID == null) {
+            contentID = UUIDGenerator.getUUID()
+                    + "@apache.org";
+        }
+        return this.contentID;
+	}
+	public Object getDataHandler() {
+        /*
+         * this should return a DataHandler containing the binary data
+         * reperesented by the Base64 strings stored in OMText
+         */
+        if (textValue != null & isBinary) {
+            return org.apache.axis2.attachments.DataHandlerUtils.getDataHandlerFromText(textValue.toString() ,mimeType);
+        } else {
+
+            if (dataHandlerObject == null) {
+                if (contentID == null) {
+                    throw new RuntimeException("ContentID is null");
+                }
+                dataHandlerObject = ((MTOMStAXSOAPModelBuilder) builder)
+                        .getDataHandler(contentID);
+            }
+            return dataHandlerObject;
+        }	
+	}
+	
+
+    public java.io.InputStream getInputStream() throws OMException {
+        if (isBinary) {
+            if (dataHandlerObject == null) {
+                getDataHandler();
+            }
+            InputStream inStream;
+            javax.activation.DataHandler dataHandler = (javax.activation.DataHandler)dataHandlerObject;
+            try {
+                inStream = dataHandler.getDataSource().getInputStream();
+            } catch (IOException e) {
+                throw new OMException(
+                        "Cannot get InputStream from DataHandler." + e);
+            }
+            return inStream;
+        } else {
+            throw new OMException("Unsupported Operation");
+        }
+    }
+    
+    
+    private void serializeLocal(OMOutputImpl omOutput) throws XMLStreamException {
+        if (!this.isBinary) {
+            writeOutput(omOutput);
+        } else {
+            if (omOutput.isOptimized()) {
+                if (contentID == null) {
+                    contentID = omOutput.getNextContentId();
+                }
+                // send binary as MTOM optimised
+                this.attribute = new AttrImpl("href",
+                        new NamespaceImpl("", ""), "cid:" + getContentID());
+                this.serializeStartpart(omOutput);
+                omOutput.writeOptimized(this);
+                omOutput.getXmlStreamWriter().writeEndElement();
+            } else {
+                omOutput.getXmlStreamWriter().writeCharacters(this.getText());
+            } 
+        }
+    }
+    
+
+    /*
+     * Methods to copy from OMSerialize utils
+     */
+    private void serializeStartpart(OMOutputImpl omOutput)
+            throws XMLStreamException {
+        String nameSpaceName;
+        String writer_prefix;
+        String prefix;
+        XMLStreamWriter writer = omOutput.getXmlStreamWriter();
+        if (this.ns != null) {
+            nameSpaceName = this.ns.getName();
+            writer_prefix = writer.getPrefix(nameSpaceName);
+            prefix = this.ns.getPrefix();
+            if (nameSpaceName != null) {
+                if (writer_prefix != null) {
+                    writer
+                            .writeStartElement(nameSpaceName, this
+                                    .getLocalName());
+                } else {
+                    if (prefix != null) {
+                        writer.writeStartElement(prefix, this.getLocalName(),
+                                nameSpaceName);
+                        //TODO FIX ME
+                        //writer.writeNamespace(prefix, nameSpaceName);
+                        writer.setPrefix(prefix, nameSpaceName);
+                    } else {
+                        writer.writeStartElement(nameSpaceName, this
+                                .getLocalName());
+                        writer.writeDefaultNamespace(nameSpaceName);
+                        writer.setDefaultNamespace(nameSpaceName);
+                    }
+                }
+            } else {
+                writer.writeStartElement(this.getLocalName());
+            }
+        } else {
+            writer.writeStartElement(this.getLocalName());
+        }
+        // add the elements attribute "href"
+        serializeAttribute(this.attribute, omOutput);
+        // add the namespace
+        serializeNamespace(this.ns, omOutput);
+    }
+
+    /**
+     * Method serializeAttribute
+     *
+     * @param attr
+     * @param omOutput
+     * @throws XMLStreamException
+     */
+    static void serializeAttribute(OMAttribute attr, OMOutputImpl omOutput)
+            throws XMLStreamException {
+        XMLStreamWriter writer = omOutput.getXmlStreamWriter();
+        // first check whether the attribute is associated with a namespace
+        OMNamespace ns = attr.getNamespace();
+        String prefix;
+        String namespaceName;
+        if (ns != null) {
+            // add the prefix if it's availble
+            prefix = ns.getPrefix();
+            namespaceName = ns.getName();
+            if (prefix != null) {
+                writer.writeAttribute(prefix, namespaceName, attr
+                        .getLocalName(), attr.getValue());
+            } else {
+                writer.writeAttribute(namespaceName, attr.getLocalName(), attr
+                        .getValue());
+            }
+        } else {
+            writer.writeAttribute(attr.getLocalName(), attr.getValue());
+        }
+    }
+
+    /**
+     * Method serializeNamespace
+     *
+     * @param namespace
+     * @param omOutput
+     * @throws XMLStreamException
+     */
+    static void serializeNamespace(OMNamespace namespace, OMOutputImpl omOutput)
+            throws XMLStreamException {
+        XMLStreamWriter writer = omOutput.getXmlStreamWriter();
+        if (namespace != null) {
+            String uri = namespace.getName();
+            String ns_prefix = namespace.getPrefix();
+            writer.writeNamespace(ns_prefix, namespace.getName());
+            writer.setPrefix(ns_prefix, uri);
+        }
+    }
+
 	
 }

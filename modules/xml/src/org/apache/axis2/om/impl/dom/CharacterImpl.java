@@ -15,7 +15,6 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.axis2.om.OMText;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.DOMException;
 
@@ -25,8 +24,7 @@ import org.w3c.dom.DOMException;
  * 
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
-public abstract class CharacterImpl extends ChildNode implements
-		OMText, CharacterData {
+public abstract class CharacterImpl extends ChildNode implements CharacterData {
 
 	protected StringBuffer textValue;
 	
@@ -169,28 +167,5 @@ public abstract class CharacterImpl extends ChildNode implements
 	public int getLength() {
 		return this.textValue.length();
 	}
-	
-	
-	///OMCharacter methods 
-	
-	public String getText() {
-		return this.textValue.toString();
-	}
-	
-	
-	///
-	/// Unsupported binary manipulation related method
-	///
-	
-
-	
-	public String getContentID() {
-		throw new UnsupportedOperationException("This is required to hanlde binary content in OM");
-	}
-	public Object getDataHandler() {
-		throw new UnsupportedOperationException("This is required to hanlde binary content in OM");	
-	}
-	
-
 		
 }

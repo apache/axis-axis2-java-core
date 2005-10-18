@@ -171,9 +171,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      * @param omOutput
      * @throws XMLStreamException
      */
-    public void serialize(
-            org.apache.axis2.om.impl.OMOutputImpl omOutput)
-            throws XMLStreamException {
+    public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         serializeLocal(omOutput);
 
     }
@@ -404,8 +402,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
      * @param omOutput
      * @throws XMLStreamException
      */
-    static void serializeNamespace(OMNamespace namespace,
-                                   org.apache.axis2.om.impl.OMOutputImpl omOutput)
+    static void serializeNamespace(OMNamespace namespace, OMOutputImpl omOutput)
             throws XMLStreamException {
         XMLStreamWriter writer = omOutput.getXmlStreamWriter();
         if (namespace != null) {
