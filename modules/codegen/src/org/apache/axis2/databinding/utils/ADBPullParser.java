@@ -11,9 +11,7 @@ import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.util.Stack;
 import java.util.HashMap;
-import java.util.ArrayList;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -60,7 +58,7 @@ public class ADBPullParser implements XMLStreamReader {
     // a pointer to the children list of current location
     private int currentIndex = 0;
 
-    private ArrayList declaredNamespaces;
+    private HashMap declaredNamespaces;
 
     /**
      * This namespace map will contain uri as the key and the prefix as the value, so that I can check
@@ -82,39 +80,39 @@ public class ADBPullParser implements XMLStreamReader {
         namespaceMap = new HashMap();
     }
 
-     /**
-     * @param properties - this should contain all the stuff that stax events should be generated.
+    /**
+     * @param properties    - this should contain all the stuff that stax events should be generated.
      *                      Lets take an example of a bean.
-*                      <pre> <Person>
-     *                          <Name>FooOne</Name>
-     *                          <DependentOne>
-     *                              <Name>FooTwo</Name>
-     *                              <Age>25</Age>
-     *                              <Sex>Male</Sex>
-     *                          </DependentOne>
-     *                      </Person>
-     *
-     *                      so the mapping bean for this is
-     *                      class Person {
-     *                          String Name;
-     *                          Dependent dependentOne;
-     *                      }
-     *
-     *                      class Dependent {
-     *                          String name;
-     *                          int age;
-     *                          String sex;
-     *                      }
-     *
-     *                      So if one needs to generate pull events out of a Person bean, the array he needs
-     *                      to pass is like this.
-     *                      ---------------------------------------------------------------------------------------------------
-     *                      | "Name" | "FooOne" | QName("DependentOne") | Dependent object| null | Array of Dependent objects |
-     *                      ---------------------------------------------------------------------------------------------------
-     *                      This DependentObject can either be an ADBBean, OMElement or a POJO. If its an ADBBean
-     *                      We directly get the pull parser from that. If not we create a reflection based
-     *                      pull parser for that java bean.
-     *  </pre>
+     *                      <pre> <Person>
+     *                                                                                         <Name>FooOne</Name>
+     *                                                                                         <DependentOne>
+     *                                                                                             <Name>FooTwo</Name>
+     *                                                                                             <Age>25</Age>
+     *                                                                                             <Sex>Male</Sex>
+     *                                                                                         </DependentOne>
+     *                                                                                     </Person>
+     *                      <p/>
+     *                                                                                     so the mapping bean for this is
+     *                                                                                     class Person {
+     *                                                                                         String Name;
+     *                                                                                         Dependent dependentOne;
+     *                                                                                     }
+     *                      <p/>
+     *                                                                                     class Dependent {
+     *                                                                                         String name;
+     *                                                                                         int age;
+     *                                                                                         String sex;
+     *                                                                                     }
+     *                      <p/>
+     *                                                                                     So if one needs to generate pull events out of a Person bean, the array he needs
+     *                                                                                     to pass is like this.
+     *                                                                                     ---------------------------------------------------------------------------------------------------
+     *                                                                                     | "Name" | "FooOne" | QName("DependentOne") | Dependent object| null | Array of Dependent objects |
+     *                                                                                     ---------------------------------------------------------------------------------------------------
+     *                                                                                     This DependentObject can either be an ADBBean, OMElement or a POJO. If its an ADBBean
+     *                                                                                     We directly get the pull parser from that. If not we create a reflection based
+     *                                                                                     pull parser for that java bean.
+     *                                                                 </pre>
      * @param adbBeansQName
      * @return XMLStreamReader
      */
@@ -170,8 +168,7 @@ public class ADBPullParser implements XMLStreamReader {
             // then this is just the start element
             currentIndex++;
             parserInformation = new ParserInformation(this.elementQName);
-            namespaceMap.put(elementQName.getNamespaceURI(), elementQName.getPrefix());
-            handleAttributes();
+            handleNamespaces();
             return XMLStreamConstants.START_ELEMENT;
         } else if (properties == null || properties.length + 1 == currentIndex) {
             // this is the end of this element
@@ -210,15 +207,25 @@ public class ADBPullParser implements XMLStreamReader {
 
     }
 
-    private void handleAttributes() {
+    private void handleNamespaces() {
         // by this time all the attributes related methods can be called.
         // now need to extract namespace from them and attach them to the element itself.
+        String elementNSUri = this.elementQName.getNamespaceURI();
+        if (namespaceMap.get(elementNSUri) == null) {
+            String prefix = this.elementQName.getPrefix();
+            namespaceMap.put(elementNSUri, prefix);
+            if (declaredNamespaces == null) declaredNamespaces = new HashMap();
+            declaredNamespaces.put(elementNSUri, prefix);
+        }
         if (attributes != null) {
             for (int i = 0; i < attributes.length; i++) {
                 OMAttribute attribute = attributes[i];
                 if (namespaceMap.get(attribute.getQName().getNamespaceURI()) == null) {
-                    namespaceMap.put(attribute.getQName().getNamespaceURI(), attribute.getQName().getPrefix());
-
+                    String namespaceURI = attribute.getQName().getNamespaceURI();
+                    String prefix = attribute.getQName().getPrefix();
+                    namespaceMap.put(namespaceURI, prefix);
+                    if (declaredNamespaces == null) declaredNamespaces = new HashMap();
+                    declaredNamespaces.put(namespaceURI, prefix);
                 }
             }
         }
@@ -242,7 +249,9 @@ public class ADBPullParser implements XMLStreamReader {
     }
 
     public int getNamespaceCount() {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+//        if (accessingChildPullParser) return childPullParser.getNamespaceCount();
+//        return declaredNamespaces == null ? 0 : declaredNamespaces.size();
+        return 0;
     }
 
     public String getText() {
@@ -376,8 +385,12 @@ public class ADBPullParser implements XMLStreamReader {
         throw new UnsupportedOperationException("Yet to be implemented !!");
     }
 
-    public String getNamespaceURI(String string) {
-        throw new UnsupportedOperationException("Yet to be implemented !!");
+    public String getNamespaceURI(String namespaceURI) {
+
+//        if(accessingChildPullParser) return childPullParser.getNamespaceURI(namespaceURI);
+//        if(declaredNamespaces != null) return declaredNamespaces.get(namespaceURI);
+//        return this.elementQName.getNamespaceURI();
+        return namespaceURI;
     }
 
     public boolean isStartElement() {
