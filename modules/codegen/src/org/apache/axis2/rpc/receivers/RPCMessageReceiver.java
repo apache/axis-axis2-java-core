@@ -93,8 +93,8 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             }
 
 
-            Object[] objarray = processRequest(methodElement);
-            Object resObject = method.invoke(obj, objarray);
+            Object[] objectArray = processRequest(methodElement);
+            Object resObject = method.invoke(obj, objectArray);
 
             // Handling the response
             //todo NameSpace has to be taken from the serviceDescription
@@ -107,17 +107,16 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             outMessage.setEnvelope(envelope);
 
         } catch (Exception e) {
-            e.printStackTrace();
             throw AxisFault.makeFault(e);
         }
     }
 
     private Object[] processRequest(OMElement methodElement) throws AxisFault {
         Class[] parameters = method.getParameterTypes();
-        int paracount = 0;
-        int numberofparas = parameters.length;
+        int paramCount = 0;
+        int numberOfParams = parameters.length;
 
-        Object [] objarray = new Object[numberofparas];
+        Object [] objectArray = new Object[numberOfParams];
         Iterator parts = methodElement.getChildren();
         /**
          * Take the number of paramters in the method and , only take that much of child elements
@@ -131,23 +130,23 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
          *
          * only the val1 and Val2 take into account
          */
-        while (parts.hasNext() && paracount < numberofparas) {
+        while (parts.hasNext() && paramCount < numberOfParams) {
             OMElement omElement = (OMElement) parts.next();
-            Class parameter = parameters[paracount];
+            Class parameter = parameters[paramCount];
             //todo do we need to support REF and MultiRef
             //todo firts xsi:type has to be checked , and if that is there take the
             //todo handle arrays
             // corret one from sereviceDescription
             if(OMElement.class.isAssignableFrom(parameter)){
-                objarray[paracount] =omElement;
+                objectArray[paramCount] =omElement;
             }  else if(SimpleTypeMapper.isSimpleType(parameter)){
-                objarray[paracount]  = SimpleTypeMapper.getSimpleTypeObject(parameter, omElement);
+                objectArray[paramCount]  = SimpleTypeMapper.getSimpleTypeObject(parameter, omElement);
             } else {
-                objarray[paracount] = new BeanSerializer(parameter, omElement).deserilze();
+                objectArray[paramCount] = new BeanSerializer(parameter, omElement).deserialize();
             }
-            paracount ++;
+            paramCount ++;
         }
-        return objarray;
+        return objectArray;
     }
 
 
@@ -171,7 +170,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                         wrapperQname);
                 StAXOMBuilder stAXOMBuilder =
                         OMXMLBuilderFactory.createStAXOMBuilder(
-                                OMAbstractFactory.getSOAP11Factory(), xr);
+                                OMAbstractFactory.getOMFactory(), xr);
                 OMElement documentElement = stAXOMBuilder.getDocumentElement();
 
                 if (documentElement != null) {

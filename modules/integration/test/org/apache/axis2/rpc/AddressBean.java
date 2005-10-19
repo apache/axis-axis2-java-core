@@ -23,15 +23,15 @@ package org.apache.axis2.rpc;
  * Time: 12:03:55 PM
  */
 public class AddressBean {
-    private String Town;
+    private String town;
     private int number ;
 
     public String getTown() {
-        return Town;
+        return town;
     }
 
     public void setTown(String town) {
-        Town = town;
+        this.town = town;
     }
 
     public int getNumber() {
@@ -43,6 +43,6 @@ public class AddressBean {
     }
 
     public String toString(){
-        return ("Town: " + Town + " number :" + number);
+        return ("town: " + town + " number :" + number);
     }
 }

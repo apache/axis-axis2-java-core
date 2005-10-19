@@ -2,16 +2,14 @@ package org.apache.axis2.rpc.receivers;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.om.OMElement;
-import org.omg.PortableInterceptor.Interceptor;
 
-import java.lang.reflect.Field;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.beans.Introspector;
-import java.beans.IntrospectionException;
-import java.beans.BeanInfo;
-import java.beans.PropertyDescriptor;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -48,7 +46,7 @@ public class BeanSerializer {
         fillMethods();
     }
 
-    public Object deserilze() throws AxisFault {
+    public Object deserialize() throws AxisFault {
         Object beanObj =null;
         try {
             beanObj = beanClass.newInstance();
@@ -70,7 +68,7 @@ public class BeanSerializer {
                     Object partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
                     if (partObj == null) {
                         // Assuming paramter itself as a bean
-                        partObj = new BeanSerializer(parameters, parts).deserilze();
+                        partObj = new BeanSerializer(parameters, parts).deserialize();
                     }
                     Object [] parms = new Object[]{partObj};
 //                    field.setAccessible(true);
@@ -82,11 +80,11 @@ public class BeanSerializer {
 
             }
         } catch (InstantiationException e) {
-            throw new AxisFault("InstantiationException : " + e);
+            throw new AxisFault("InstantiationException : " + e, e);
         } catch (IllegalAccessException e) {
-            throw new AxisFault("IllegalAccessException : " + e);
+            throw new AxisFault("IllegalAccessException : " + e, e);
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            throw new AxisFault(e);
         }
         return beanObj;
     }
@@ -107,12 +105,6 @@ public class BeanSerializer {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-//
-//        Field [] fields = beanClass.getDeclaredFields();
-//        for (int i = 0; i < fields.length; i++) {
-//            Field field = fields[i];
-//            this.fields.put(field.getName(), field);
-//        }
     }
 
 }

@@ -23,17 +23,17 @@ package org.apache.axis2.rpc;
  * Time: 11:24:03 AM
  */
 public class MyBean {
-    private String Name;
+    private String name;
     private int age;
     private boolean value;
     private AddressBean address;
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public int getAge() {
@@ -61,6 +61,6 @@ public class MyBean {
     }
 
     public String toString(){
-        return ("Name:" + Name + " Age : " + age + " Value : " + value + " Address : " );
+        return ("name:" + name + " Age : " + age + " Value : " + value + " Address : " );
     }
 }

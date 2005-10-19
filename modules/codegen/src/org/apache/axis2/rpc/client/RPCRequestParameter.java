@@ -81,7 +81,7 @@ public class RPCRequestParameter {
         this.value = value;
     }
 
-    public boolean isSimpletype() {
+    public boolean isSimpleType() {
         return SimpleTypeMapper.isSimpleType(value);
     }
 

@@ -1,34 +1,32 @@
 package org.apache.axis2.rpc;
 
+import junit.framework.TestCase;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.InOutOperationDescrition;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
-import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
-import org.apache.axis2.rpc.receivers.BeanSerializer;
-import org.apache.axis2.rpc.client.RPCCall;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.Constants;
-import org.apache.axis2.AxisFault;
+import org.apache.axis2.receivers.AbstractMessageReceiver;
+import org.apache.axis2.rpc.client.RPCCall;
+import org.apache.axis2.rpc.receivers.BeanSerializer;
+import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
-
-import junit.framework.TestCase;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.TimeZone;
 import java.util.Date;
-import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -61,7 +59,6 @@ public class RPCCallTest extends TestCase {
 
     protected EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
-//                    + (5000)
                     + (UtilServer.TESTING_PORT)
                     + "/axis/services/EchoXMLService/concat");
     protected Log log = LogFactory.getLog(getClass());
@@ -87,16 +84,6 @@ public class RPCCallTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-//        String className = "org.apache.axis2.rpc.RPCServiceClass";
-//        ServiceDescription service = new ServiceDescription(serviceName);
-//        service.setClassLoader(Thread.currentThread().getContextClassLoader());
-//        service.addParameter( new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
-//                className));
-//        OperationDescription axisOp = new InOutOperationDescrition(operationName);
-//        axisOp.setMessageReceiver(new RPCMessageReceiver());
-//        axisOp.setStyle(WSDLService.STYLE_RPC);
-//        service.addOperation(axisOp);
-//        UtilServer.deployService(service);
     }
 
     protected void tearDown() throws Exception {
@@ -105,7 +92,7 @@ public class RPCCallTest extends TestCase {
         UtilServer.unDeployClientService();
     }
 
-    public void testeditBean() throws AxisFault {
+    public void testEditBean() throws AxisFault {
         configureSystem("editBean");
         RPCCall call =
                 new RPCCall("target/test-resources/intregrationRepo");
@@ -129,7 +116,7 @@ public class RPCCallTest extends TestCase {
         args.add("159");
 
         OMElement response = call.invokeBlocking(operationName,args.toArray());
-        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
+        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserialize();
         assertNotNull(resBean);
         assertEquals(resBean.getAge(),159);
         call.close();
@@ -138,7 +125,6 @@ public class RPCCallTest extends TestCase {
     private void configureSystem(String opName) throws AxisFault {
         targetEPR =
                 new EndpointReference("http://127.0.0.1:"
-//                        + (5000)
                     + (UtilServer.TESTING_PORT)
                         + "/axis/services/EchoXMLService/"+ opName);
         String className = "org.apache.axis2.rpc.RPCServiceClass";
@@ -154,7 +140,7 @@ public class RPCCallTest extends TestCase {
         UtilServer.deployService(service);
     }
 
-    public void testechoBean() throws AxisFault {
+    public void testEchoBean() throws AxisFault {
         configureSystem("echoBean");
         RPCCall call =
                 new RPCCall("target/test-resources/intregrationRepo");
@@ -178,14 +164,14 @@ public class RPCCallTest extends TestCase {
 
 
         OMElement response = call.invokeBlocking(operationName,args.toArray());
-        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
+        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserialize();
         assertNotNull(resBean);
         assertEquals(resBean.getAge(),100);
         call.close();
     }
 
 
-    public void testechoString() throws AxisFault {
+    public void testEchoString() throws AxisFault {
         configureSystem("echoString");
         RPCCall call =
                 new RPCCall("target/test-resources/intregrationRepo");
@@ -202,7 +188,7 @@ public class RPCCallTest extends TestCase {
         call.close();
     }
 
-    public void testechoInt() throws AxisFault {
+    public void testEchoInt() throws AxisFault {
         configureSystem("echoInt");
         RPCCall call =
                 new RPCCall("target/test-resources/intregrationRepo");
@@ -220,7 +206,7 @@ public class RPCCallTest extends TestCase {
         call.close();
     }
 
-    public void testadd() throws AxisFault {
+    public void testAdd() throws AxisFault {
         configureSystem("add");
         RPCCall call =
                 new RPCCall("target/test-resources/intregrationRepo");
@@ -238,7 +224,7 @@ public class RPCCallTest extends TestCase {
         call.close();
     }
 
-    public void testdivide() throws AxisFault {
+    public void testDivide() throws AxisFault {
         configureSystem("divide");
         RPCCall call =
                 new RPCCall("target/test-resources/intregrationRepo");
@@ -256,7 +242,7 @@ public class RPCCallTest extends TestCase {
         call.close();
     }
 
-    public void testechoBool() throws AxisFault {
+    public void testEchoBool() throws AxisFault {
         configureSystem("echoBool");
         RPCCall call =
                 new RPCCall("target/test-resources/intregrationRepo");
@@ -275,7 +261,7 @@ public class RPCCallTest extends TestCase {
         call.close();
     }
 
-    public void testechoByte() throws AxisFault {
+    public void testEchoByte() throws AxisFault {
         configureSystem("echoByte");
         RPCCall call =
                 new RPCCall("target/test-resources/intregrationRepo");
@@ -292,7 +278,7 @@ public class RPCCallTest extends TestCase {
         call.close();
     }
 
-    public void testechoOM() throws AxisFault {
+    public void testEchoOM() throws AxisFault {
         configureSystem("echoOM");
         RPCCall call =
                 new RPCCall("target/test-resources/intregrationRepo");
@@ -309,7 +295,7 @@ public class RPCCallTest extends TestCase {
         call.close();
     }
 
-    public void testCalander() throws AxisFault {
+    public void testCalender() throws AxisFault {
         zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
         configureSystem("echoCalander");
         RPCCall call =

@@ -140,7 +140,7 @@ public class RPCCall extends Call {
                     RPCRequestParameter para = (RPCRequestParameter)arg;
                     objects.add(para.getName());
                     objects.add(para.getValue());
-                    if (para.isSimpletype()) {
+                    if (para.isSimpleType()) {
                         objects.add(para.getName());
                         objects.add(para.getValue().toString());
                     } else {
@@ -161,10 +161,10 @@ public class RPCCall extends Call {
             XMLStreamReader xr = ADBPullParser.createPullParser(opName,objects.toArray(),null);
             StAXOMBuilder stAXOMBuilder =
                     OMXMLBuilderFactory.createStAXOMBuilder(
-                            OMAbstractFactory.getSOAP11Factory(), xr);
+                            OMAbstractFactory.getOMFactory(), xr);
             return stAXOMBuilder.getDocumentElement();
         } catch (ClassCastException e) {
-            throw new AxisFault("Object is not a RPCRequestParameter" + e);
+            throw new AxisFault("Object is not a RPCRequestParameter" + e, e);
         }
 
     }

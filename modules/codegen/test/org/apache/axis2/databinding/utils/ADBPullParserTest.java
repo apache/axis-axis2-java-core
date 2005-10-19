@@ -1,5 +1,6 @@
 package org.apache.axis2.databinding.utils;
 
+import org.apache.axis2.Constants;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMAttribute;
@@ -165,7 +166,7 @@ public class ADBPullParserTest extends XMLTestCase {
             propertyList.add(dummyBean);
 
             QName projectQName = new QName("Person");
-            XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray(), null, true);
+            XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray(), null);
 
             Document actualDom = newDocument(getStringXML(pullParser));
             Document expectedDocument = newDocument(exptectedXML);
@@ -264,14 +265,13 @@ public class ADBPullParserTest extends XMLTestCase {
 
         OMFactory factory = OMAbstractFactory.getOMFactory();
         QName elementQName = new QName("http://ec.org/software", "Employee", "emp");
-//        OMNamespace attrNS = factory.createOMNamespace("mailto:whoever@whatever.com", "attr");
         OMAttribute[] attribute = new OMAttribute[5];
 
         for (int i = 0; i < 5; i++) {
             attribute[i] = factory.createOMAttribute("Attr" + (i + 1), null, "Value " + (i + 1));
         }
 
-        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, attribute, true));
+        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, attribute));
         try {
             Document actualDom = newDocument(stringXML);
             Document expectedDocument = newDocument(expectedXML);
@@ -304,7 +304,7 @@ public class ADBPullParserTest extends XMLTestCase {
             attribute[i] = factory.createOMAttribute("Attr" + (i + 1), attrNS, "Value " + (i + 1));
         }
 
-        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, attribute, true));
+        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, attribute));
         System.out.println("stringXML = " + stringXML);
         try {
             Document actualDom = newDocument(stringXML);
@@ -317,7 +317,36 @@ public class ADBPullParserTest extends XMLTestCase {
         } catch (IOException e) {
             fail("Exception in parsing documents " + e);
         }
+    }
 
+    public void testWithOMElements() {
+        OMFactory factory = OMAbstractFactory.getOMFactory();
+        OMNamespace axis2Namespace = factory.createOMNamespace(Constants.AXIS2_NAMESPACE_URI, Constants.AXIS2_NAMESPACE_PREFIX);
+        OMElement firstElement = factory.createOMElement("FirstOMElement", axis2Namespace);
+        OMElement secondElement = factory.createOMElement("SecondOMElement", axis2Namespace, firstElement);
+
+        ArrayList propertyList = new ArrayList();
+
+        // add an OMElement
+        propertyList.add(firstElement.getQName());
+        propertyList.add(firstElement);
+
+        // add some more stuff
+        propertyList.add("Foo");
+        propertyList.add("Some Text");
+        propertyList.add(new QName("Dependent"));
+        DummyADBBean dummyBean = new DummyADBBean();
+        propertyList.add(dummyBean);
+
+//         lets add one more element
+        propertyList.add(secondElement.getQName());
+        propertyList.add(secondElement);
+
+
+        XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("OMElementTest"), propertyList.toArray(), null);
+        String stringXML = getStringXML(pullParser);
+
+        // Seems like we have a problem in OM. Needs to fix that and then come back to this.
 
     }
 
