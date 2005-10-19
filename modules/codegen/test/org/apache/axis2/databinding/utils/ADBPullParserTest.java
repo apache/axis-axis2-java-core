@@ -5,6 +5,7 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -87,30 +88,6 @@ public class ADBPullParserTest extends XMLTestCase {
             QName projectQName = new QName("Person");
             XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray(), null);
 
-//            StringBuffer buff = new StringBuffer();
-//            while (pullParser.hasNext()) {
-//                int eventCode = pullParser.next();
-//
-//                switch (eventCode) {
-//                    case XMLStreamConstants.START_ELEMENT :
-//                        buff.append("<");
-//                        buff.append(pullParser.getLocalName());
-//                        buff.append(">");
-//                        break;
-//                    case XMLStreamConstants.CHARACTERS :
-//                        buff.append(pullParser.getText());
-//                        break;
-//                    case XMLStreamConstants.END_ELEMENT :
-//                        buff.append("</");
-//                        buff.append(pullParser.getLocalName());
-//                        buff.append(">");
-//                        break;
-//                    default:
-//                        System.out.println("No Other event can be trown here");
-//                }
-//            }
-
-
             Document actualDom = newDocument(getStringXML(pullParser));
             Document expectedDocument = newDocument(exptectedXML);
             assertXMLEqual(actualDom, expectedDocument);
@@ -189,29 +166,6 @@ public class ADBPullParserTest extends XMLTestCase {
 
             QName projectQName = new QName("Person");
             XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray(), null, true);
-
-//            StringBuffer buff = new StringBuffer();
-//            while (pullParser.hasNext()) {
-//                int eventCode = pullParser.next();
-//
-//                switch (eventCode) {
-//                    case XMLStreamConstants.START_ELEMENT :
-//                        buff.append("<");
-//                        buff.append(pullParser.getLocalName());
-//                        buff.append(">");
-//                        break;
-//                    case XMLStreamConstants.CHARACTERS :
-//                        buff.append(pullParser.getText());
-//                        break;
-//                    case XMLStreamConstants.END_ELEMENT :
-//                        buff.append("</");
-//                        buff.append(pullParser.getLocalName());
-//                        buff.append(">");
-//                        break;
-//                    default:
-//                        System.out.println("No Other event can be trown here");
-//                }
-//            }
 
             Document actualDom = newDocument(getStringXML(pullParser));
             Document expectedDocument = newDocument(exptectedXML);
@@ -318,6 +272,40 @@ public class ADBPullParserTest extends XMLTestCase {
         }
 
         String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, attribute, true));
+        try {
+            Document actualDom = newDocument(stringXML);
+            Document expectedDocument = newDocument(expectedXML);
+            assertXMLEqual(actualDom, expectedDocument);
+        } catch (ParserConfigurationException e) {
+            fail("Exception in parsing documents " + e);
+        } catch (SAXException e) {
+            fail("Exception in parsing documents " + e);
+        } catch (IOException e) {
+            fail("Exception in parsing documents " + e);
+        }
+
+
+    }
+
+    public void testAttributesWithNamespaces() throws XMLStreamException {
+
+        String expectedXML = "<emp:Employee xmlns:emp=\"http://ec.org/software\" " +
+                "xmlns:attrNS=\"mailto:whoever@whatever.com\" attrNS:Attr2=\"Value 2\" " +
+                "attrNS:Attr3=\"Value 3\" attrNS:Attr1=\"Value 1\"\n" +
+                "              attrNS:Attr5=\"Value 5\" attrNS:Attr4=\"Value 4\"></emp:Employee>";
+
+        OMFactory factory = OMAbstractFactory.getOMFactory();
+        QName elementQName = new QName("http://ec.org/software", "Employee", "emp");
+        OMNamespace attrNS = factory.createOMNamespace("mailto:whoever@whatever.com", "attrNS");
+
+        // add some attributes with namespaces
+        OMAttribute[] attribute = new OMAttribute[5];
+        for (int i = 0; i < 5; i++) {
+            attribute[i] = factory.createOMAttribute("Attr" + (i + 1), attrNS, "Value " + (i + 1));
+        }
+
+        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, attribute, true));
+        System.out.println("stringXML = " + stringXML);
         try {
             Document actualDom = newDocument(stringXML);
             Document expectedDocument = newDocument(expectedXML);

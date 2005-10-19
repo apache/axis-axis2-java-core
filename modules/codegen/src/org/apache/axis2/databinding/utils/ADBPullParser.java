@@ -11,7 +11,9 @@ import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -58,7 +60,13 @@ public class ADBPullParser implements XMLStreamReader {
     // a pointer to the children list of current location
     private int currentIndex = 0;
 
+    // namespace handling
     private HashMap declaredNamespaces;
+
+    // the following two are to improve the efficiency in code and should not be used by anyone as
+    // the values these holds may be out of date.
+    private ArrayList tempDeclaredNamespacesArray;
+    private ArrayList tempDeclaredNamespacePrefixesArray;
 
     /**
      * This namespace map will contain uri as the key and the prefix as the value, so that I can check
@@ -84,35 +92,35 @@ public class ADBPullParser implements XMLStreamReader {
      * @param properties    - this should contain all the stuff that stax events should be generated.
      *                      Lets take an example of a bean.
      *                      <pre> <Person>
-     *                                                                                         <Name>FooOne</Name>
-     *                                                                                         <DependentOne>
-     *                                                                                             <Name>FooTwo</Name>
-     *                                                                                             <Age>25</Age>
-     *                                                                                             <Sex>Male</Sex>
-     *                                                                                         </DependentOne>
-     *                                                                                     </Person>
+     *                                                                                                                                                                                                                                            <Name>FooOne</Name>
+     *                                                                                                                                                                                                                                            <DependentOne>
+     *                                                                                                                                                                                                                                                <Name>FooTwo</Name>
+     *                                                                                                                                                                                                                                                <Age>25</Age>
+     *                                                                                                                                                                                                                                                <Sex>Male</Sex>
+     *                                                                                                                                                                                                                                            </DependentOne>
+     *                                                                                                                                                                                                                                        </Person>
      *                      <p/>
-     *                                                                                     so the mapping bean for this is
-     *                                                                                     class Person {
-     *                                                                                         String Name;
-     *                                                                                         Dependent dependentOne;
-     *                                                                                     }
+     *                                                                                                                                                                                                                                        so the mapping bean for this is
+     *                                                                                                                                                                                                                                        class Person {
+     *                                                                                                                                                                                                                                            String Name;
+     *                                                                                                                                                                                                                                            Dependent dependentOne;
+     *                                                                                                                                                                                                                                        }
      *                      <p/>
-     *                                                                                     class Dependent {
-     *                                                                                         String name;
-     *                                                                                         int age;
-     *                                                                                         String sex;
-     *                                                                                     }
+     *                                                                                                                                                                                                                                        class Dependent {
+     *                                                                                                                                                                                                                                            String name;
+     *                                                                                                                                                                                                                                            int age;
+     *                                                                                                                                                                                                                                            String sex;
+     *                                                                                                                                                                                                                                        }
      *                      <p/>
-     *                                                                                     So if one needs to generate pull events out of a Person bean, the array he needs
-     *                                                                                     to pass is like this.
-     *                                                                                     ---------------------------------------------------------------------------------------------------
-     *                                                                                     | "Name" | "FooOne" | QName("DependentOne") | Dependent object| null | Array of Dependent objects |
-     *                                                                                     ---------------------------------------------------------------------------------------------------
-     *                                                                                     This DependentObject can either be an ADBBean, OMElement or a POJO. If its an ADBBean
-     *                                                                                     We directly get the pull parser from that. If not we create a reflection based
-     *                                                                                     pull parser for that java bean.
-     *                                                                 </pre>
+     *                                                                                                                                                                                                                                        So if one needs to generate pull events out of a Person bean, the array he needs
+     *                                                                                                                                                                                                                                        to pass is like this.
+     *                                                                                                                                                                                                                                        ---------------------------------------------------------------------------------------------------
+     *                                                                                                                                                                                                                                        | "Name" | "FooOne" | QName("DependentOne") | Dependent object| null | Array of Dependent objects |
+     *                                                                                                                                                                                                                                        ---------------------------------------------------------------------------------------------------
+     *                                                                                                                                                                                                                                        This DependentObject can either be an ADBBean, OMElement or a POJO. If its an ADBBean
+     *                                                                                                                                                                                                                                        We directly get the pull parser from that. If not we create a reflection based
+     *                                                                                                                                                                                                                                        pull parser for that java bean.
+     *                                                                                                                                                                                                                    </pre>
      * @param adbBeansQName
      * @return XMLStreamReader
      */
@@ -249,9 +257,8 @@ public class ADBPullParser implements XMLStreamReader {
     }
 
     public int getNamespaceCount() {
-//        if (accessingChildPullParser) return childPullParser.getNamespaceCount();
-//        return declaredNamespaces == null ? 0 : declaredNamespaces.size();
-        return 0;
+        if (accessingChildPullParser) return childPullParser.getNamespaceCount();
+        return declaredNamespaces == null ? 0 : declaredNamespaces.size();
     }
 
     public String getText() {
@@ -385,12 +392,20 @@ public class ADBPullParser implements XMLStreamReader {
         throw new UnsupportedOperationException("Yet to be implemented !!");
     }
 
-    public String getNamespaceURI(String namespaceURI) {
+    public String getNamespaceURI(String prefixParam) {
+        if (accessingChildPullParser) return childPullParser.getNamespaceURI(prefixParam);
+        if ("".equals(prefixParam) || prefixParam == null) return null;
 
-//        if(accessingChildPullParser) return childPullParser.getNamespaceURI(namespaceURI);
-//        if(declaredNamespaces != null) return declaredNamespaces.get(namespaceURI);
-//        return this.elementQName.getNamespaceURI();
-        return namespaceURI;
+        if (declaredNamespaces != null) {
+            Iterator nsIter = declaredNamespaces.keySet().iterator();
+            while (nsIter.hasNext()) {
+                String nsURI = (String) nsIter.next();
+                if (prefixParam.equals(declaredNamespaces.get(nsURI))) {
+                    return nsURI;
+                }
+            }
+        }
+        return null;
     }
 
     public boolean isStartElement() {
@@ -410,12 +425,50 @@ public class ADBPullParser implements XMLStreamReader {
     }
 
 
-    public String getNamespacePrefix(int i) {
-        throw new UnsupportedOperationException("Yet to be implemented !!");
+    public String getNamespacePrefix(int index) {
+        /* We are holding namespaces in a HashMap and there is no direct way to retrieve a prefix
+         by its index. So I need to call toArray and then get the index. Since this method will be
+         called recursively and if we call toArray again and again, this is a performance killer.
+         So I create a temp array, at the first time this method being called and use that to serve
+         future requests. But at the same time I check whether the temp array contains up-to-date
+         information or not.
+        */
+        if (accessingChildPullParser) return childPullParser.getNamespacePrefix(index);
+        if (declaredNamespaces != null && declaredNamespaces.size() >= index) {
+            if (tempDeclaredNamespacePrefixesArray == null || tempDeclaredNamespacePrefixesArray.size() != declaredNamespaces.size()) {
+                tempDeclaredNamespacePrefixesArray = new ArrayList();
+                Iterator iterator = declaredNamespaces.values().iterator();
+                while (iterator.hasNext()) {
+                    String s = (String) iterator.next();
+                    tempDeclaredNamespacePrefixesArray.add(s);
+                }
+            }
+            return (String) tempDeclaredNamespacePrefixesArray.get(index);
+        }
+        return null;
     }
 
-    public String getNamespaceURI(int i) {
-        throw new UnsupportedOperationException("Yet to be implemented !!");
+    public String getNamespaceURI(int index) {
+        /* We are holding namespaces in a HashMap and there is no direct way to retrieve a namespace
+         by its index. So I need to call toArray and then get the index. Since this method will be
+         called recursively and if we call toArray again and again, this is a performance killer.
+         So I create a temp array, at the first time this method being called and use that to serve
+         future requests. But at the same time I check whether the temp array contains up-to-date
+         information or not.
+        */
+        if (accessingChildPullParser) return childPullParser.getNamespaceURI(index);
+        if (declaredNamespaces != null && declaredNamespaces.size() >= index) {
+            if (tempDeclaredNamespacesArray == null || tempDeclaredNamespacesArray.size() != declaredNamespaces.size()) {
+                tempDeclaredNamespacesArray = new ArrayList();
+                Iterator iterator = declaredNamespaces.keySet().iterator();
+                while (iterator.hasNext()) {
+                    String s = (String) iterator.next();
+                    tempDeclaredNamespacesArray.add(s);
+                }
+            }
+            return (String) tempDeclaredNamespacesArray.get(index);
+        }
+        return null;
     }
 
     public NamespaceContext getNamespaceContext() {
