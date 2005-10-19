@@ -1,6 +1,5 @@
 package org.apache.axis2.databinding.utils;
 
-import junit.framework.TestCase;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMAttribute;
@@ -9,11 +8,18 @@ import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /*
@@ -34,7 +40,7 @@ import java.util.ArrayList;
  * @author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-public class ADBPullParserTest extends TestCase {
+public class ADBPullParserTest extends XMLTestCase {
 
     protected Log log = LogFactory.getLog(getClass());
 
@@ -80,38 +86,40 @@ public class ADBPullParserTest extends TestCase {
 
             QName projectQName = new QName("Person");
             XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray(), null);
+
+//            StringBuffer buff = new StringBuffer();
 //            while (pullParser.hasNext()) {
 //                int eventCode = pullParser.next();
-//                System.out.println(eventCode + ":" + getEventString(eventCode));
+//
+//                switch (eventCode) {
+//                    case XMLStreamConstants.START_ELEMENT :
+//                        buff.append("<");
+//                        buff.append(pullParser.getLocalName());
+//                        buff.append(">");
+//                        break;
+//                    case XMLStreamConstants.CHARACTERS :
+//                        buff.append(pullParser.getText());
+//                        break;
+//                    case XMLStreamConstants.END_ELEMENT :
+//                        buff.append("</");
+//                        buff.append(pullParser.getLocalName());
+//                        buff.append(">");
+//                        break;
+//                    default:
+//                        System.out.println("No Other event can be trown here");
+//                }
 //            }
 
-            StringBuffer buff = new StringBuffer();
-            while (pullParser.hasNext()) {
-                int eventCode = pullParser.next();
 
-                switch (eventCode) {
-                    case XMLStreamConstants.START_ELEMENT :
-                        buff.append("<");
-                        buff.append(pullParser.getLocalName());
-                        buff.append(">");
-                        break;
-                    case XMLStreamConstants.CHARACTERS :
-                        buff.append(pullParser.getText());
-                        break;
-                    case XMLStreamConstants.END_ELEMENT :
-                        buff.append("</");
-                        buff.append(pullParser.getLocalName());
-                        buff.append(">");
-                        break;
-                    default:
-                        System.out.println("No Other event can be trown here");
-                }
-            }
-
-
-            assertEquals(exptectedXML, buff.toString());
-        } catch (XMLStreamException e) {
-            log.error("Parser Error " + e);
+            Document actualDom = newDocument(getStringXML(pullParser));
+            Document expectedDocument = newDocument(exptectedXML);
+            assertXMLEqual(actualDom, expectedDocument);
+        } catch (ParserConfigurationException e) {
+            fail("Exception in parsing documents " + e);
+        } catch (SAXException e) {
+            fail("Exception in parsing documents " + e);
+        } catch (IOException e) {
+            fail("Exception in parsing documents " + e);
         }
 
     }
@@ -155,9 +163,10 @@ public class ADBPullParserTest extends TestCase {
             String exptectedXML = "<Person><Name>FooOne</Name><Organization>Apache</Organization>" +
                     "<Dependent><Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex><Depemdent>" +
                     "<Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex><Depemdent><Name>FooTwo</Name>" +
-                    "<Age>25</Age><Sex>Male</Sex></Depemdent></Depemdent></Dependent><Dependent>" +
-                    "<Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex><Depemdent><Name>FooTwo</Name>" +
-                    "<Age>25</Age><Sex>Male</Sex></Depemdent></Dependent></Person>";
+                    "<Age>25</Age><Sex>Male</Sex></Depemdent></Depemdent></Dependent>" +
+                    "<test:Dependent xmlns:test=\"http://whatever.com\"><Name>FooTwo</Name><Age>25</Age>" +
+                    "<Sex>Male</Sex><Depemdent><Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex>" +
+                    "</Depemdent></test:Dependent></Person>";
 
 
             ArrayList propertyList = new ArrayList();
@@ -181,33 +190,38 @@ public class ADBPullParserTest extends TestCase {
             QName projectQName = new QName("Person");
             XMLStreamReader pullParser = ADBPullParser.createPullParser(projectQName, propertyList.toArray(), null, true);
 
-            StringBuffer buff = new StringBuffer();
-            while (pullParser.hasNext()) {
-                int eventCode = pullParser.next();
+//            StringBuffer buff = new StringBuffer();
+//            while (pullParser.hasNext()) {
+//                int eventCode = pullParser.next();
+//
+//                switch (eventCode) {
+//                    case XMLStreamConstants.START_ELEMENT :
+//                        buff.append("<");
+//                        buff.append(pullParser.getLocalName());
+//                        buff.append(">");
+//                        break;
+//                    case XMLStreamConstants.CHARACTERS :
+//                        buff.append(pullParser.getText());
+//                        break;
+//                    case XMLStreamConstants.END_ELEMENT :
+//                        buff.append("</");
+//                        buff.append(pullParser.getLocalName());
+//                        buff.append(">");
+//                        break;
+//                    default:
+//                        System.out.println("No Other event can be trown here");
+//                }
+//            }
 
-                switch (eventCode) {
-                    case XMLStreamConstants.START_ELEMENT :
-                        buff.append("<");
-                        buff.append(pullParser.getLocalName());
-                        buff.append(">");
-                        break;
-                    case XMLStreamConstants.CHARACTERS :
-                        buff.append(pullParser.getText());
-                        break;
-                    case XMLStreamConstants.END_ELEMENT :
-                        buff.append("</");
-                        buff.append(pullParser.getLocalName());
-                        buff.append(">");
-                        break;
-                    default:
-                        System.out.println("No Other event can be trown here");
-                }
-            }
-
-
-            assertEquals(exptectedXML, buff.toString());
-        } catch (XMLStreamException e) {
-            log.error("Parser Error " + e);
+            Document actualDom = newDocument(getStringXML(pullParser));
+            Document expectedDocument = newDocument(exptectedXML);
+            assertXMLEqual(actualDom, expectedDocument);
+        } catch (ParserConfigurationException e) {
+            fail("Exception in parsing documents " + e);
+        } catch (SAXException e) {
+            fail("Exception in parsing documents " + e);
+        } catch (IOException e) {
+            fail("Exception in parsing documents " + e);
         }
 
     }
@@ -304,12 +318,31 @@ public class ADBPullParserTest extends TestCase {
         }
 
         String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, attribute, true));
-        assertEquals(stringXML, expectedXML);
+        try {
+            Document actualDom = newDocument(stringXML);
+            Document expectedDocument = newDocument(expectedXML);
+            assertXMLEqual(actualDom, expectedDocument);
+        } catch (ParserConfigurationException e) {
+            fail("Exception in parsing documents " + e);
+        } catch (SAXException e) {
+            fail("Exception in parsing documents " + e);
+        } catch (IOException e) {
+            fail("Exception in parsing documents " + e);
+        }
+
 
     }
 
     private String getStringXML(XMLStreamReader reader) {
         OMElement omelement = new StAXOMBuilder(reader).getDocumentElement();
         return omelement.toString();
+    }
+
+    public Document newDocument(String xml)
+            throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        return db.parse(new ByteArrayInputStream(xml.getBytes()));
     }
 }
