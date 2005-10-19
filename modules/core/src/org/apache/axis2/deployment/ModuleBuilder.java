@@ -138,7 +138,9 @@ public class ModuleBuilder extends DescriptionBuilder{
             OMAttribute op_name_att = operation.getAttribute(
                     new QName(ATTNAME));
             if(op_name_att == null){
-                throw new DeploymentException(Messages.getMessage("Invalide Operations"));
+                throw new DeploymentException(Messages.getMessage(Messages.getMessage(
+                        DeploymentErrorMsgs.INVALID_OP
+                        ,"operation name missing")));
             }
             OMAttribute op_mep_att = operation.getAttribute(
                     new QName(MEP));
@@ -155,7 +157,8 @@ public class ModuleBuilder extends DescriptionBuilder{
                 try {
                     op_descrip = OperationDescriptionFactory.getOperetionDescription(mepURL);
                 } catch (AxisFault axisFault) {
-                    throw new DeploymentException("Error in processing operation " + axisFault);
+                    throw new DeploymentException(Messages.getMessage(Messages.getMessage(
+                        DeploymentErrorMsgs.OPERATION_PROCESS_ERROR,axisFault.getMessage())));
                 }
             }
             String opname = op_name_att.getAttributeValue();

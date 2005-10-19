@@ -44,6 +44,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -107,13 +108,13 @@ public class ArchiveReader implements DeploymentConstants {
             WSDLDescription womDescription = wsdlVersionWrapper.getDescription();
 
             //removing binding
-//            Map bindings = wsdlVersionWrapper.getDefinition().getBindings();
-//            Iterator binfingIterator = bindings.keySet().iterator();
-//            while (binfingIterator.hasNext()) {
-//                Object o = binfingIterator.next();
-//                bindings.remove(o) ;
-//
-//            }
+            Map bindings = wsdlVersionWrapper.getDefinition().getBindings();
+            Iterator binfingIterator = bindings.keySet().iterator();
+            while (binfingIterator.hasNext()) {
+                Object o = binfingIterator.next();
+                bindings.remove(o) ;
+
+            }
 
             Iterator iterator = womDescription.getServices().keySet()
                     .iterator();
@@ -160,7 +161,8 @@ public class ArchiveReader implements DeploymentConstants {
                         }
                     }
                 } else {
-                    throw new DeploymentException("In valid service META-INF file not found");
+                    throw new DeploymentException(Messages.getMessage(
+                            DeploymentErrorMsgs.INVALID_SERVICE));
                 }
             } catch (FileNotFoundException e) {
                 throw new DeploymentException(e);
@@ -178,7 +180,9 @@ public class ArchiveReader implements DeploymentConstants {
                 ByteArrayOutputStream out ;
                 while ((entry = zin.getNextEntry()) != null) {
                     String entryName = entry.getName();
-                    if ((entryName.startsWith(META_INF) || entryName.startsWith(META_INF.toLowerCase())) && (entryName.endsWith(".wsdl")
+                    if ((entryName.startsWith(META_INF) ||
+                            entryName.startsWith(META_INF.toLowerCase()))
+                            && (entryName.endsWith(".wsdl")
                             || entryName.endsWith(".WSDL"))) {
                         out = new ByteArrayOutputStream();
                         while ((read = zin.read(buf)) > 0) {
@@ -246,9 +250,11 @@ public class ArchiveReader implements DeploymentConstants {
                     buildServiceGroup(in,engine,serviceGroupDesc);
                     serviceGroupDesc.setServiceGroupName(engine.getCurrentFileItem().getName());
                 } catch (FileNotFoundException e) {
-                    throw new DeploymentException("FileNotFound : " + e);
+                    throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.FNF_WITH_E
+                            ,e.getMessage()));
                 } catch (XMLStreamException e) {
-                    throw new DeploymentException("XMLStreamException : " + e);
+                    throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.XTZX_EXCEPTION
+                            ,e.getMessage()));
                 }
             } else {
                 throw new DeploymentException(
@@ -288,7 +294,8 @@ public class ArchiveReader implements DeploymentConstants {
 
     public void readModuleArchive(String filename,
                                   DeploymentEngine engine,
-                                  ModuleDescription module , boolean explodedDir) throws DeploymentException {
+                                  ModuleDescription module , boolean explodedDir)
+            throws DeploymentException {
         // get attribute values
         boolean foundmoduleXML = false;
         if (!explodedDir) {
@@ -321,7 +328,8 @@ public class ArchiveReader implements DeploymentConstants {
                     ModuleBuilder builder = new ModuleBuilder(in, engine, module);
                     builder.populateModule();
                 } catch (FileNotFoundException e) {
-                    throw new DeploymentException("FileNotFound : " + e);
+                    throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.FNF_WITH_E
+                            ,e.getMessage()));
                 }
             } else {
                 throw new DeploymentException(Messages.getMessage(
@@ -366,7 +374,8 @@ public class ArchiveReader implements DeploymentConstants {
                 in = cl.getResourceAsStream("modules/" + moduleName + ".jar");
             }
             if (in == null) {
-                throw new DeploymentException(moduleName + " module is not found");
+                throw new DeploymentException(Messages.getMessage(
+                            DeploymentErrorMsgs.MODULEXML_NOT_FOUND_FOR_THE_MODULE, moduleName));
             } else {
                 if(!modules.exists()) {
                     modules.mkdirs();

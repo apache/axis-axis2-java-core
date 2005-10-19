@@ -17,7 +17,9 @@
 package org.apache.axis2.deployment.repository.util;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.deployment.DeploymentClassLoader;
+import org.apache.axis2.deployment.DeploymentErrorMsgs;
 import org.apache.axis2.description.ServiceDescription;
 
 import java.io.File;
@@ -113,7 +115,7 @@ public class ArchiveFileData {
                 URL[] urlsToLoadFrom;
                 try {
                     if (!file.exists()) {
-                        throw new RuntimeException("file not found !!!!!!!!!!!!!!!");
+                        throw new AxisFault(Messages.getMessage(DeploymentErrorMsgs.FNF));
                     }
                     urlsToLoadFrom = new URL[]{file.toURL()};
                     classLoader =

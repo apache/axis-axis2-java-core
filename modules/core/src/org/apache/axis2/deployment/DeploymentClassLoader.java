@@ -192,7 +192,8 @@ public class DeploymentClassLoader extends URLClassLoader {
             }
 
         }
-        throw new ClassNotFoundException(Messages.getMessage(DeploymentErrorMsgs.CLASS_NOT_FOUND, filename));
+        throw new ClassNotFoundException(Messages.getMessage(
+                DeploymentErrorMsgs.CLASS_NOT_FOUND, filename));
     }
 }
 

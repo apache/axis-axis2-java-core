@@ -29,11 +29,6 @@ public class PhasesInfo {
     private ArrayList IN_FaultPhases;
     private ArrayList OUT_FaultPhases;
 
-    private ArrayList oprationINPhases;
-    private ArrayList oprationOUTPhases;
-    private ArrayList oprationIN_FaultPhases;
-    private ArrayList oprationOUT_FaultPhases;
-
     public void setINPhases(ArrayList INPhases) {
         this.INPhases = INPhases;
     }
@@ -67,7 +62,7 @@ public class PhasesInfo {
     }
 
     public ArrayList getOperationInPhases() {
-        oprationINPhases = new ArrayList();
+        ArrayList oprationINPhases = new ArrayList();
         oprationINPhases.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
         for (int i = 0; i < INPhases.size(); i++) {
             String phaseName = (String) INPhases.get(i);
@@ -83,7 +78,7 @@ public class PhasesInfo {
     }
 
     public ArrayList getOperationOutPhases() {
-        oprationOUTPhases = new ArrayList();
+        ArrayList oprationOUTPhases = new ArrayList();
         for (int i = 0; i < OUTPhases.size(); i++) {
             String phaseName = (String) OUTPhases.get(i);
             if (PhaseMetadata.PHASE_TRANSPORT_OUT.equals(phaseName)) {
@@ -97,7 +92,7 @@ public class PhasesInfo {
     }
 
     public ArrayList getOperationInFaultPhases() {
-        oprationIN_FaultPhases = new ArrayList();
+        ArrayList oprationIN_FaultPhases = new ArrayList();
         for (int i = 0; i < IN_FaultPhases.size(); i++) {
             String phaseName = (String) IN_FaultPhases.get(i);
             oprationIN_FaultPhases.add(new Phase(phaseName));
@@ -106,7 +101,7 @@ public class PhasesInfo {
     }
 
     public ArrayList getOperationOutFaultPhases() {
-        oprationOUT_FaultPhases = new ArrayList();
+        ArrayList oprationOUT_FaultPhases = new ArrayList();
         for (int i = 0; i < OUT_FaultPhases.size(); i++) {
             String phaseName = (String) OUT_FaultPhases.get(i);
             oprationOUT_FaultPhases.add(new Phase(phaseName));

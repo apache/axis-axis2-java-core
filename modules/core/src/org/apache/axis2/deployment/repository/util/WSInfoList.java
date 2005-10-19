@@ -130,7 +130,6 @@ public class WSInfoList implements DeploymentConstants {
      * it will return related wsinfo object to the file else return null;
      *
      * @param filename
-     * @return
      */
     public WSInfo getFileItem(String filename) {
         int sise = jarlist.size();
@@ -149,7 +148,6 @@ public class WSInfoList implements DeploymentConstants {
      *
      * @param file
      * @param wsInfo
-     * @return
      */
     public boolean isModified(File file, WSInfo wsInfo) {
         return (wsInfo.getLastmodifieddate() != file.lastModified());
@@ -159,7 +157,6 @@ public class WSInfoList implements DeploymentConstants {
      * to check whether the file is alredy in the list
      *
      * @param filename
-     * @return
      */
     public boolean isFileExist(String filename) {
         return !(getFileItem(filename) == null);
@@ -177,8 +174,8 @@ public class WSInfoList implements DeploymentConstants {
         int size = currentjars.size();
         List tempvector = new ArrayList();
         tempvector.clear();
-        String filename = "";
-        boolean exist = false;
+        String filename;
+        boolean exist ;
         while (iter.hasNext()) {
             WSInfo fileitem = (WSInfo) iter.next();
             exist = false;

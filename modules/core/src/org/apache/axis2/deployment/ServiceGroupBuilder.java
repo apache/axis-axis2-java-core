@@ -59,7 +59,8 @@ public class ServiceGroupBuilder extends DescriptionBuilder{
                         new QName(ATTNAME));
                 String serviceName = serviceNameatt.getAttributeValue();
                 if(serviceName == null){
-                    throw new DeploymentException("Service Name required");
+                    throw new DeploymentException(Messages.getMessage(
+                            DeploymentErrorMsgs.SEERVICE_NAME_ERROR));
                 } else {
                     ServiceDescription serviceDecs = engine.getCurrentFileItem().getService(
                             serviceName);
@@ -91,7 +92,8 @@ public class ServiceGroupBuilder extends DescriptionBuilder{
             OMAttribute moduleName_att = moduleConfig.getAttribute(
                     new QName(ATTNAME));
             if(moduleName_att == null){
-                throw new DeploymentException("Invalid module configuration");
+                 throw new DeploymentException(Messages.getMessage(
+                        DeploymentErrorMsgs.INVALID_MODULE_CONFIG));
             } else {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =

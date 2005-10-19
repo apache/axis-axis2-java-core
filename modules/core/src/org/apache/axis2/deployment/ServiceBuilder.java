@@ -26,7 +26,6 @@ import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.impl.WSDLOperationImpl;
 
 import javax.xml.namespace.QName;
@@ -142,7 +141,8 @@ public class ServiceBuilder extends DescriptionBuilder{
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         } catch (AxisFault axisFault) {
-            throw new DeploymentException("Error in preocessing operation +" + axisFault);
+            throw new DeploymentException(Messages.getMessage(
+                    DeploymentErrorMsgs.OPERATION_PROCESS_ERROR,axisFault.getMessage()));
         }
     }
 
@@ -155,7 +155,9 @@ public class ServiceBuilder extends DescriptionBuilder{
             OMAttribute op_name_att = operation.getAttribute(
                     new QName(ATTNAME));
             if(op_name_att == null){
-                throw new DeploymentException(Messages.getMessage("Invalide Operations"));
+                throw new DeploymentException(Messages.getMessage(Messages.getMessage(
+                        DeploymentErrorMsgs.INVALID_OP
+                        ,"operation name missing")));
             }
 
             //setting the mep of the operation
@@ -201,7 +203,7 @@ public class ServiceBuilder extends DescriptionBuilder{
                     new QName(PARAMETERST));
             processParameters(paramters,op_descrip,service);
 
-            // loading the message recivers
+            // loading the message receivers
             OMElement receiverElement = operation.getFirstChildWithName(
                     new QName(MESSAGERECEIVER));
             if(receiverElement !=null){
@@ -243,7 +245,8 @@ public class ServiceBuilder extends DescriptionBuilder{
             OMAttribute moduleName_att = moduleConfig.getAttribute(
                     new QName(ATTNAME));
             if(moduleName_att == null){
-                throw new DeploymentException("Invalid module configuration");
+                 throw new DeploymentException(Messages.getMessage(
+                        DeploymentErrorMsgs.INVALID_MODULE_CONFIG));
             } else {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
@@ -263,7 +266,8 @@ public class ServiceBuilder extends DescriptionBuilder{
             OMAttribute moduleName_att = moduleConfig.getAttribute(
                     new QName(ATTNAME));
             if(moduleName_att == null){
-                throw new DeploymentException("Invalid module configuration");
+                throw new DeploymentException(Messages.getMessage(
+                        DeploymentErrorMsgs.INVALID_MODULE_CONFIG));
             } else {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =

@@ -61,14 +61,12 @@ import java.util.List;
 public class DeploymentEngine implements DeploymentConstants {
 
     private Log log = LogFactory.getLog(getClass());
-    private  Scheduler scheduler;
 
     public String axis2repository = null;
 
 
     private boolean hotDeployment = true;   //to do hot deployment or not
     private boolean hotUpdate = true;  // to do hot update or not
-    private boolean explodedDir = false;// need to exatract service archive file
 
 
     /**
@@ -206,7 +204,6 @@ public class DeploymentEngine implements DeploymentConstants {
         String value;
         Parameter parahotdeployment = axisConfig.getParameter(HOTDEPLOYMENT);
         Parameter parahotupdate = axisConfig.getParameter(HOTUPDATE);
-        Parameter paraextractServiceArchive = axisConfig.getParameter(EXTRACTSERVICEARCHIVE);
         if (parahotdeployment != null) {
             value = (String) parahotdeployment.getValue();
             if ("false".equalsIgnoreCase(value))
@@ -216,11 +213,6 @@ public class DeploymentEngine implements DeploymentConstants {
             value = (String) parahotupdate.getValue();
             if ("false".equalsIgnoreCase(value))
                 hotUpdate = false;
-        }
-        if(paraextractServiceArchive != null){
-            value = (String) paraextractServiceArchive.getValue();
-            if ("true".equalsIgnoreCase(value))
-                explodedDir = true;
         }
     }
 
@@ -375,7 +367,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * inorder to perform Hot deployment and so on..
      */
     private void startSearch(DeploymentEngine engine) {
-        scheduler = new Scheduler();
+        Scheduler scheduler = new Scheduler();
         scheduler.schedule(new SchedulerTask(engine, folderName),
                 new DeploymentIterator());
     }
@@ -568,7 +560,7 @@ public class DeploymentEngine implements DeploymentConstants {
         if (wsToDeploy.size() > 0) {
             for (int i = 0; i < wsToDeploy.size(); i++) {
                 currentArchiveFile = (ArchiveFileData) wsToDeploy.get(i);
-                explodedDir = currentArchiveFile.getFile().isDirectory();
+                boolean explodedDir = currentArchiveFile.getFile().isDirectory();
                 int type = currentArchiveFile.getType();
                 try {
                     ArchiveReader archiveReader;

@@ -61,5 +61,25 @@ public class DeploymentErrorMsgs {
     public static final String INVALID_MODULE_REF = "invalidmodulerefbyconfig";
     public static final String PHASE_DOES_NOT_SPECIFED = "phasedosenotspecified";
     public static final String SERVICE_MODULE_CAN_NOT_REFER_GLOBAL_PHASE = "servicemodulecannothaveglobal";
+    public static final String FNF = "fnf";
+    public static final String FNF_WITH_E = "fnf_e";
+    public static final String XTZX_EXCEPTION = "StreamException";
+    public static final String MODEUL_NOT_FOUND = "mnf";
+    public static final String NO_DISPATCHER_FOUND = "no_dispatcher_found";
+    public static final String INVALID_STORGE_CLASS = "invalid_storage";
+    public static final String INSTANTITAIONEXP = "InstantiationException";
+    public static final String ILEGAL_ACESS = "IllegalAccessException";
+    public static final String TRANSPORT_SENDER_ERROR = "transportSenderError";
+    public static final String OBSERVER_ERROR = "obsererror";
+    public static final String INVALID_MODULE_CONFIG = "invalidmoduleconfig";
+    public static final String INVALID_HANDLER = "invalidhandler";
+    public static final String PARAMTER_LOCKED = "parameterlockederror";
+    public static final String OPERATION_PROCESS_ERROR = "op_error";
+    public static final String INVALID_OP = "invalid_op";
+    public static final String SEERVICE_NAME_ERROR = "servicenameeror";
+
+
+
+    public static final String INVALID_SERVICE = "ivs";
 
 }

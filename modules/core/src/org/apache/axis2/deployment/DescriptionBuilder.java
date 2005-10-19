@@ -109,7 +109,8 @@ public class DescriptionBuilder implements DeploymentConstants{
         OMAttribute name_attribute = handler_element.getAttribute(
                 new QName(ATTNAME));
         if(name_attribute == null){
-            throw new DeploymentException("Invalid Handler");
+            throw new DeploymentException(Messages.getMessage(
+                    DeploymentErrorMsgs.INVALID_HANDLER,"Name missing"));
         } else {
             handler.setName(new QName(name_attribute.getAttributeValue()));
         }
@@ -118,7 +119,8 @@ public class DescriptionBuilder implements DeploymentConstants{
         OMAttribute class_attribute = handler_element.getAttribute(
                 new QName(CLASSNAME));
         if(class_attribute == null){
-            throw new DeploymentException("Invalid Handler");
+            throw new DeploymentException((Messages.getMessage(
+                    DeploymentErrorMsgs.INVALID_HANDLER,"class name missing")));
         } else {
             handler.setClassName(class_attribute.getAttributeValue());
         }
@@ -127,7 +129,8 @@ public class DescriptionBuilder implements DeploymentConstants{
         OMElement order_element = handler_element.getFirstChildWithName(
                 new QName(ORDER));
         if(order_element == null){
-            throw new DeploymentException("Invaid Handler , phase rule does not specify");
+            throw new DeploymentException((Messages.getMessage(
+                    DeploymentErrorMsgs.INVALID_HANDLER,"phase rule does not specify")));
         } else {
             Iterator order_itr = order_element.getAllAttributes();
             while (order_itr.hasNext()) {
@@ -214,8 +217,8 @@ public class DescriptionBuilder implements DeploymentConstants{
                 if("true".equals(lockedValue)){
                     //if the parameter is locked at some levle paramer value replace by that
                     if(parent!=null && parent.isParamterLocked(paramter.getName())){
-                        throw new DeploymentException("The paramter " + paramter.getName() + " has" +
-                                " locked at top levle can not overide");
+                        throw new DeploymentException(Messages.getMessage(
+                                DeploymentErrorMsgs.CONFIG_NOT_FOUND,paramter.getName()));
                     } else{
                         paramter.setLocked(true);
                     }
@@ -257,7 +260,8 @@ public class DescriptionBuilder implements DeploymentConstants{
                 }
             }
         }catch (AxisFault axisFault) {
-            throw   new DeploymentException("Porcessing Operations Modules" + axisFault);
+            throw new DeploymentException(Messages.getMessage(
+                                DeploymentErrorMsgs.MODEULE_NOT_FOUND, axisFault.getMessage()));
         }
     }
 

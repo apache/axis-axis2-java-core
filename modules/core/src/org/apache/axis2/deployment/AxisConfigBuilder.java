@@ -80,7 +80,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                 processDispatchingOrder(dispatch_order);
                 log.info("found the custom disptaching order and continue with that order");
             } else {
-               ((AxisConfigurationImpl)axisConfiguration).setDefaultDispatchers();
+                ((AxisConfigurationImpl)axisConfiguration).setDefaultDispatchers();
                 log.info("no custom diaptching order found continue with default dispatcing order");
             }
 
@@ -149,7 +149,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
         }
 
         if(!foundDiaptcher){
-            throw new DeploymentException("No dispatcher found , can  not continue ....");
+            throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.NO_DISPATCHER_FOUND));
         }  else {
             ((AxisConfigurationImpl)axisConfiguration).setDispatchPhase(dispatchPhae);
         }
@@ -161,7 +161,8 @@ public class AxisConfigBuilder extends DescriptionBuilder{
         if(storageElement !=null){
             OMAttribute className =  storageElement.getAttribute(new QName(CLASSNAME));
             if(className== null){
-                throw new DeploymentException("Invalid Storage Class defintion , class name missing");
+                throw new DeploymentException(Messages.getMessage(
+                        DeploymentErrorMsgs.INVALID_STORGE_CLASS));
             }  else {
                 String classNameStr =className.getAttributeValue();
                 Class stoarge ;
@@ -180,16 +181,20 @@ public class AxisConfigBuilder extends DescriptionBuilder{
 
                     } catch (ClassNotFoundException e) {
                         throw new DeploymentException
-                                ("ClassNotFoundException in Axis Storage processing " + e);
+                                (Messages.getMessage(DeploymentErrorMsgs.CLASS_NOT_FOUND,
+                                        e.getMessage()));
                     } catch (InstantiationException e) {
                         throw new DeploymentException
-                                ("InstantiationException in Axis Storage processing " + e);
+                                (Messages.getMessage(DeploymentErrorMsgs.INSTANTITAIONEXP,
+                                        e.getMessage()));
                     } catch (IllegalAccessException e) {
                         throw new DeploymentException
-                                ("IllegalAccessException in Axis Storage processing " + e);
+                                (Messages.getMessage(DeploymentErrorMsgs.ILEGAL_ACESS,
+                                        e.getMessage()));
                     }
                 } else {
-                    throw new DeploymentException("Invalid Storage Class defintion , class name missing");
+                    throw new DeploymentException(Messages.getMessage(
+                            DeploymentErrorMsgs.INVALID_STORGE_CLASS));
                 }
 
             }
@@ -203,13 +208,16 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                 axisConfiguration.setAxisStorage(axisStorage);
             }catch (ClassNotFoundException e) {
                 throw new DeploymentException
-                        ("ClassNotFoundException in Axis Storage processing " + e);
+                        (Messages.getMessage(DeploymentErrorMsgs.CLASS_NOT_FOUND,
+                                e.getMessage()));
             } catch (InstantiationException e) {
                 throw new DeploymentException
-                        ("InstantiationException in Axis Storage processing " + e);
+                        (Messages.getMessage(DeploymentErrorMsgs.INSTANTITAIONEXP,
+                                e.getMessage()));
             } catch (IllegalAccessException e) {
                 throw new DeploymentException
-                        ("IllegalAccessException in Axis Storage processing " + e);
+                        (Messages.getMessage(DeploymentErrorMsgs.ILEGAL_ACESS,
+                                e.getMessage()));
             }
         }
 
@@ -265,8 +273,8 @@ public class AxisConfigBuilder extends DescriptionBuilder{
                 OMAttribute trsClas = transport.getAttribute(
                         new QName(CLASSNAME));
                 if(trsClas == null){
-                    throw new DeploymentException("TransportSEnder Implementation class is required " +
-                            "for the transport" + name);
+                    throw new DeploymentException(Messages.getMessage(
+                            DeploymentErrorMsgs.TRANSPORT_SENDER_ERROR,name));
                 }
                 String clasName = trsClas.getAttributeValue();
                 Class sender;
@@ -424,7 +432,8 @@ public class AxisConfigBuilder extends DescriptionBuilder{
             if (trsClas !=null) {
                 clasName = trsClas.getAttributeValue();
             } else {
-                throw new DeploymentException("Observer Implementation Class is requird");
+                throw new DeploymentException(Messages.getMessage(
+                        DeploymentErrorMsgs.OBSERVER_ERROR));
             }
             try {
                 Class observerclass = Class.forName(clasName, true, Thread.currentThread().
@@ -473,7 +482,7 @@ public class AxisConfigBuilder extends DescriptionBuilder{
             OMAttribute moduleName_att = moduleConfig.getAttribute(
                     new QName(ATTNAME));
             if(moduleName_att == null){
-                throw new DeploymentException("Invalid module configuration");
+                throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE_CONFIG));
             } else {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
