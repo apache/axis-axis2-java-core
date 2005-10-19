@@ -22,9 +22,6 @@ import junit.framework.TestCase;
 
 public class DocumentImplTest extends TestCase {
 
-	
-
-	
 	public DocumentImplTest() {
 		super();
 	}
@@ -50,6 +47,8 @@ public class DocumentImplTest extends TestCase {
 	public void testCreateAttribute() {
 		String attrName = "attrIdentifier";
 		String attrValue = "attrValue";
+		String attrNs = "http://ws.apache.org/axis2/ns";
+		String attrNsPrefix = "axis2";
 		
 		DocumentImpl doc = new DocumentImpl();
 		Attr attr = doc.createAttribute(attrName);
@@ -57,7 +56,18 @@ public class DocumentImplTest extends TestCase {
 		assertEquals("Attr name mismatch",attrName,attr.getLocalName());
 		assertNull("Namespace value should be null", attr.getNamespaceURI());
 		
+		
+		attr = doc.createAttributeNS(attrNs,attrNsPrefix + ":" + attrName);
+		assertEquals("Attr name mismatch",attrName,attr.getLocalName());
+		assertNotNull("Namespace value should not be null", attr.getNamespaceURI());
+		assertEquals("NamsspaceURI mismatch", attrNs, attr.getNamespaceURI());
+		assertEquals("namespace prefix mismatch", attrNsPrefix, attr.getPrefix());
+		
 		attr.setValue(attrValue);
+		
+	}
+	
+	public void testCreateText() {
 		
 	}
 

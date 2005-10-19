@@ -125,9 +125,11 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 		return new AttrImpl(this,name);
 	}
 	
-	public Attr createAttributeNS(String namespaceURI, String qualifiedName) throws DOMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public Attr createAttributeNS(String namespaceURI, String qualifiedName)
+			throws DOMException {
+		return new AttrImpl(this, DOMUtil.getLocalName(qualifiedName),
+				new NamespaceImpl(namespaceURI, DOMUtil
+						.getPrefix(qualifiedName)));
 	}
 	
 	public CDATASection createCDATASection(String arg0) throws DOMException {
@@ -171,10 +173,7 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 		//TODO
 		throw new UnsupportedOperationException("TODO");
 	}
-	public Element getDocumentElement() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
-	}
+	
 	public Element getElementById(String arg0) {
 		//TODO
 		throw new UnsupportedOperationException("TODO");
@@ -258,10 +257,25 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 		//TODO
 		throw new UnsupportedOperationException("TODO");
 	}
-
+	
+	/**
+	 * Returns the document element
+	 * @see org.apache.axis2.om.OMDocument#getOMDocumentElement()
+	 */
 	public OMElement getOMDocumentElement() {
-		// TODO Auto-generated method stub
-		return null;
+		/*
+		 * We'r sure that only an element can be the first child 
+		 * of a Document
+		 */
+		return (OMElement)this.firstChild;
+	}
+	
+	/**
+	 * Returns the document element
+	 * @see org.w3c.dom.Document#getDocumentElement()
+	 */
+	public Element getDocumentElement() {
+		return (Element)this.firstChild;
 	}
 	
 	

@@ -78,7 +78,7 @@ public class AttributeMap extends NamedNodeMapImpl {
         }
         
         
-        attr.ownerNode = (DocumentImpl)this.ownerNode.getOwnerDocument(); //Set the owner node
+        attr.parent = (DocumentImpl)this.ownerNode; //Set the owner node
         attr.isOwned(true); //To indicate that this attr belong to an element
         attr.setUsed(true); //Setting used to true 
         
@@ -88,7 +88,7 @@ public class AttributeMap extends NamedNodeMapImpl {
         if (i >= 0) { //There's an attribute already with this attr's name
             previous = (AttrImpl) nodes.elementAt(i);
             nodes.setElementAt(attr,i);
-            previous.ownerNode = (DocumentImpl)this.ownerNode.getOwnerDocument();
+            previous.parent = (DocumentImpl)this.ownerNode;
             previous.isOwned(false);
             
             // make sure it won't be mistaken with defaults in case it's reused

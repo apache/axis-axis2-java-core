@@ -30,18 +30,36 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 /**
+ * Implementation of <code>org.w3c.dom.Attr</code> and 
+ * <code>org.apache.axis2.om.OMAttribute</code>
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 
+	/**
+	 * Name of the attribute
+	 */
 	private String attrName;
+	
+	/**
+	 * Attribute value
+	 */
 	private TextImpl attrValue;
 	
+	/**
+	 * Attribute namespace
+	 */
 	private NamespaceImpl namespace;
 	
+	/**
+	 * Flag to indicate whether this attr is used or not
+	 */
 	private boolean used;
 	
-	private ParentNode parent;
+	/**
+	 * Owner of this attribute
+	 */
+	protected ParentNode parent;
 	
 	protected AttrImpl(DocumentImpl ownerDocument) {
 		super(ownerDocument);
@@ -60,6 +78,17 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 		this.attrValue = new TextImpl(value);
 	}
 	
+	public AttrImpl(DocumentImpl ownerDocument, String name) {
+		super(ownerDocument);
+		this.attrName = name;
+	}
+
+	public AttrImpl(DocumentImpl ownerDocument, String localName, OMNamespace namespace) {
+		super(ownerDocument);
+		this.attrName = localName;
+		this.namespace = (NamespaceImpl)namespace;
+	}
+	
 	public AttrImpl(String localName, OMNamespace ns, String value) {
 		this.attrName = localName;
 		this.attrValue = new TextImpl(value);
@@ -71,25 +100,38 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 		this.attrValue = new TextImpl(value);
 	}
 	
-	public AttrImpl(DocumentImpl ownerDocument, String name) {
-		super(ownerDocument);
-		this.attrName = name;
-	}
 
+	
 	///
 	///org.w3c.dom.Node methods
 	///
+	/**
+	 * Returns the name of this attribute 
+	 */
 	public String getNodeName() {
-		return this.attrName.toString();
+		return this.attrName;
 	}
+	
+	/**
+	 * Returns the node type
+	 * @see org.w3c.dom.Node#getNodeType()
+	 */
 	public short getNodeType() {
 		return Node.ATTRIBUTE_NODE;
 	}
 	
+	/**
+	 * returns the value of this attribute
+	 * @see org.w3c.dom.Node#getNodeValue()
+	 */
 	public String getNodeValue() throws DOMException {
 		return (this.attrName==null)?"":this.attrValue.getData();
 	}
 	
+	/**
+	 * returns the value of this attribute
+	 * @see org.w3c.dom.Attr#getValue()
+	 */
 	public String getValue() {
 		return (this.attrValue == null)? null:this.attrValue.getText();
 	}
@@ -100,6 +142,11 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	public String getName() {
 		return this.attrName;
 	}
+	
+	/**
+	 * Returns the owner element
+	 * @see org.w3c.dom.Attr#getOwnerElement()
+	 */
 	public Element getOwnerElement() {
 		//Owned is set to an element instance when the attribute is added to an element
 		return (Element) (isOwned() ? ownerNode : null);
@@ -110,30 +157,62 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 		throw new UnsupportedOperationException("TODO");
 	}
 
+	/**
+	 * Not supported: Cannot detach attributes
+	 * Use the operations available in the owner node
+	 * @see org.apache.axis2.om.OMNode#detach()
+	 */
 	public OMNode detach() throws OMException {
 		throw new UnsupportedOperationException("Not supported");
 	}
 
+	/**
+	 * Not supported: Cannot discard attributes
+	 * Use the operations available in the owner node
+	 * @see org.apache.axis2.om.OMNode#discard()
+	 */
 	public void discard() throws OMException {
 		throw new UnsupportedOperationException("Not supported");
 	}
 
+	/**
+	 * Returns the type of this Attr node
+	 * @see org.apache.axis2.om.OMNode#getType()
+	 */
 	public int getType() {
 		return Node.ATTRIBUTE_NODE;
 	}
 
+	/**
+	 * This is not supported since attributes serialization is handled by
+	 * the serialization of the owner nodes
+	 * @see org.apache.axis2.om.OMNode#serialize(org.apache.axis2.om.impl.OMOutputImpl)
+	 */
 	public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
 		throw new UnsupportedOperationException("Not supported");
 	}
 
+	/**
+	 * This is not supported since attributes serialization is handled by
+	 * the serialization of the owner nodes
+	 * @see org.apache.axis2.om.OMNode#serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl)
+	 */
 	public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
 		throw new UnsupportedOperationException("Not supported");
 	}
 
+	/**
+	 * Returns the namespace of the attribute as an <code>OMNamespace</code>
+	 * @see org.apache.axis2.om.OMAttribute#getNamespace()
+	 */
 	public OMNamespace getNamespace() {
 		return this.namespace;
 	}
 
+	/**
+	 * Returns a qname representing the attribute 
+	 * @see org.apache.axis2.om.OMAttribute#getQName()
+	 */
 	public QName getQName() {
 		return (this.namespace == null) ? new QName(this.attrName) : 
 			new QName(this.namespace.getName(), this.attrName, this.namespace
@@ -141,18 +220,34 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 		
 	}
 
+	/**
+	 * Returns the attribute value 
+	 * @see org.apache.axis2.om.OMAttribute#getAttributeValue()
+	 */
 	public String getAttributeValue() {
 		return this.attrValue.getText();
 	}
 
+	/**
+	 * Sets the attribute name
+	 * @see org.apache.axis2.om.OMAttribute#setLocalName(java.lang.String)
+	 */
 	public void setLocalName(String localName) {
 		this.attrName = localName;
 	}
 
+	/**
+	 * Sets the namespace of this attribute node
+	 * @see org.apache.axis2.om.OMAttribute#setOMNamespace(org.apache.axis2.om.OMNamespace)
+	 */
 	public void setOMNamespace(OMNamespace omNamespace) {
 		this.namespace = (NamespaceImpl)omNamespace;
 	}
 
+	/**
+	 * Sets the attribute value
+	 * @see org.apache.axis2.om.OMAttribute#setAttributeValue(java.lang.String)
+	 */
 	public void setAttributeValue(String value) {
 		if(isReadonly()) {
 			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NO_MODIFICATION_ALLOWED_ERR", null);
@@ -161,10 +256,19 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 		this.attrValue = (TextImpl)this.getOwnerDocument().createTextNode(value);
 	}
 
+	/**
+	 * Sets the parent element to the given OMContainer
+	 * @see org.apache.axis2.om.impl.OMNodeEx#setParent(org.apache.axis2.om.OMContainer)
+	 */
 	public void setParent(OMContainer element) {
 		this.parent = (ParentNode)element;
 	}
 
+	/**
+	 * Sets the type
+	 * NOT IMPLEMENTED: Unnecessary
+	 * @see org.apache.axis2.om.impl.OMNodeEx#setType(int)
+	 */
 	public void setType(int nodeType) throws OMException {
 		//not necessary ???
 	}
@@ -183,20 +287,35 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 		this.used = used;
 	}
 
+	/**
+	 * Sets the value of the attribute
+	 * @see org.w3c.dom.Attr#setValue(java.lang.String)
+	 */
 	public void setValue(String value) throws DOMException {
 		this.attrValue = (TextImpl) this.getOwnerDocument().createTextNode(
 				value);
 	}
 
+	/**
+	 * Returns the parent node of this attribute
+	 * @see org.apache.axis2.om.OMNode#getParent()
+	 */
 	public OMContainer getParent() {
 		return this.parent;
 	}
 	
-    public String getLocalName()
-    {
+	/**
+	 * Returns the attribute name
+	 * @see org.w3c.dom.Node#getLocalName()
+	 */
+    public String getLocalName() {
         return this.attrName;
     }
 
+    /**
+     * Retuns the namespace URI of this attr node
+     * @see org.w3c.dom.Node#getNamespaceURI()
+     */
     public String getNamespaceURI() {
 		if(this.namespace != null) {
 			return namespace.getName();
@@ -204,5 +323,15 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 		
 		return null;
 	}
+    
+    /**
+     * Returns the namespace prefix of this attr node
+     * @see org.w3c.dom.Node#getPrefix()
+     */
+    public String getPrefix()
+    {
+    	//TODO Error checking
+        return (this.namespace == null)?null:this.namespace.getPrefix();
+    }
 
 }

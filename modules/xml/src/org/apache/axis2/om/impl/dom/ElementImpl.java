@@ -58,6 +58,8 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 	 */
 	public ElementImpl(DocumentImpl ownerDocument, String tagName) {
 		super(ownerDocument);
+		if(ownerDocument.firstChild == null)
+			ownerDocument.firstChild = this;
 		this.tagName = tagName;
 	}
 	
@@ -732,7 +734,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
             throw new UnsupportedOperationException(
                     "This element was not created in a manner to be switched");
         }
-        if (builder.isCompleted() && !cache) {
+        if (builder != null && builder.isCompleted() && !cache) {
             throw new UnsupportedOperationException(
                     "The parser is already consumed!");
         }
@@ -784,9 +786,35 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
         throw new UnsupportedOperationException("TODO");
 	}
 	
+	/**
+	 * Returns the local name of this element node
+	 * @see org.w3c.dom.Node#getLocalName()
+	 */
     public String getLocalName()
     {
         return this.tagName; 
     }
+    
+    /**
+     * returns the namespace prefix of this element node
+     * @see org.w3c.dom.Node#getPrefix()
+     */
+    public String getPrefix()
+    {
+    	//TODO Error checking
+        return (this.namespace == null)?null:this.namespace.getPrefix();
+    }
+
+	/**
+	 * @see org.apache.axis2.om.impl.dom.NodeImpl#setOwnerDocument(org.apache.axis2.om.impl.dom.DocumentImpl)
+	 */
+	protected void setOwnerDocument(DocumentImpl document) {
+		this.ownerNode = document;
+		this.isOwned(true);
+		if(document.firstChild == null)
+			document.firstChild = this;
+	}
+    
+    
 
 }
