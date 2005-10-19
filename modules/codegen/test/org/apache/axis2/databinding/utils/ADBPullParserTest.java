@@ -312,8 +312,4 @@ public class ADBPullParserTest extends TestCase {
         OMElement omelement = new StAXOMBuilder(reader).getDocumentElement();
         return omelement.toString();
     }
-
-    public void testArrays(){
-
-    }
 }
