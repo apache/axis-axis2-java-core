@@ -99,7 +99,7 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
             //get the processed element map and transfer it to the type mapper
-            Map processedMap = schemaCompiler.getProcessedElementmap();
+            Map processedMap = schemaCompiler.getProcessedElementMap();
             Iterator processedkeys = processedMap.keySet().iterator();
             QName qNameKey;
             while (processedkeys.hasNext()) {

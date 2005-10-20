@@ -150,11 +150,23 @@ public class JavaBeanWriter {
             }
 
             if (metainf.getArrayStatusForQName(name)){
-                  XSLTUtils.addAttribute(model,"array","yes",property);
+                XSLTUtils.addAttribute(model,"array","yes",property);
+                long minOccurs = metainf.getMinOccurs(name);
+
+                if (minOccurs >0){
+                  XSLTUtils.addAttribute(model,"minOccurs",minOccurs +"",property);
+                }
+
+                long maxOccurs = metainf.getMaxOccurs(name);
+                if (maxOccurs==Long.MAX_VALUE){
+                     XSLTUtils.addAttribute(model,"unbound","yes",property);
+                }else{
+                    XSLTUtils.addAttribute(model,"maxOccurs",maxOccurs +"",property);
+                }
             }
         }
 
-
+        System.out.println("rootElt = " + rootElt);
         //create the file
         OutputStream out = createOutFile(packageName,className);
         //parse with the template and create the files

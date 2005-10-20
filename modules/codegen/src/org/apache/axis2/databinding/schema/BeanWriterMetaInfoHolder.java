@@ -35,6 +35,8 @@ public class BeanWriterMetaInfoHolder {
     private Map elementToSchemaQNameMap = new HashMap();
     private Map elementToJavaClassMap = new HashMap();
     private Map specialTypeFlagMap = new HashMap();
+    private Map qNameMaxOccursCountMap = new HashMap();
+    private Map qNameMinOccursCountMap = new HashMap();
 
     public String getExtensionClassName() {
         return extensionClassName;
@@ -94,12 +96,57 @@ public class BeanWriterMetaInfoHolder {
         return anyState != null && anyState.equals(SchemaConstants.ANY_ARRAY_TYPE);
     }
 
+    /**
+     *
+     */
     public void clearTables(){
         this.elementToJavaClassMap.clear();
         this.elementToSchemaQNameMap.clear();
 
     }
 
+    /**
+     *
+     * @param qName
+     * @param minOccurs
+     */
+    public void addMinOccurs(QName qName, long minOccurs){
+        this.qNameMinOccursCountMap.put(qName,new Long(minOccurs));
+    }
+
+    /**
+     *
+     * @param qName
+     * @return
+     */
+    public long getMinOccurs(QName qName){
+        Long l =(Long) this.qNameMinOccursCountMap.get(qName);
+        return l!=null?l.longValue():1; //default for min is 1
+    }
+
+    /**
+     * 
+     * @param qName
+     * @return
+     */
+    public long getMaxOccurs(QName qName){
+        Long l =(Long) this.qNameMaxOccursCountMap.get(qName);
+        return l!=null?l.longValue():1; //default for max is 1
+    }
+
+    /**
+     *
+     * @param qName
+     * @param maxOccurs
+     */
+    public void addMaxOccurs(QName qName, long maxOccurs){
+        this.qNameMaxOccursCountMap.put(qName,new Long(maxOccurs));
+    }
+
+    /**
+     *
+     * @return
+     */
     public Iterator getElementQNameIterator(){
         return elementToJavaClassMap.keySet().iterator();
     }
