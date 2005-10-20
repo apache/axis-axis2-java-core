@@ -17,6 +17,7 @@
     <parameter name="OutPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
     <parameter name="OutSignatureKeyIdentifier" locked="false">DirectReference</parameter>
     <parameter name="encryptionKeyIdentifier" locked="false">EmbeddedKeyName</parameter>
+    <parameter name="encryptionSymAlgorithm" locked="false">http://www.w3.org/2001/04/xmlenc#tripledes-cbc</parameter>
     <parameter name="OutSignaturePropFile" locked="false">interop.properties</parameter>
     <parameter name="EmbeddedKeyCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
     <parameter name="EmbeddedKeyName" locked="false">SessionKey</parameter>
