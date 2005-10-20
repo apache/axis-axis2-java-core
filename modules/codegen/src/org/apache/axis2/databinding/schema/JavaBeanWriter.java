@@ -166,7 +166,6 @@ public class JavaBeanWriter {
             }
         }
 
-        System.out.println("rootElt = " + rootElt);
         //create the file
         OutputStream out = createOutFile(packageName,className);
         //parse with the template and create the files
