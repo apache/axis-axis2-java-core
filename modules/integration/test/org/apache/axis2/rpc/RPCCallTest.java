@@ -15,8 +15,8 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.rpc.client.RPCCall;
-import org.apache.axis2.rpc.receivers.BeanSerializer;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
+import org.apache.axis2.util.BeanSerializerUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLService;
@@ -52,9 +52,8 @@ import java.util.TimeZone;
  */
 public class RPCCallTest extends TestCase {
 
-    private SimpleDateFormat zulu =new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-       //  0123456789 0 123456789
-
+    private SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    //  0123456789 0 123456789
 
 
     protected EndpointReference targetEPR =
@@ -63,7 +62,7 @@ public class RPCCallTest extends TestCase {
                     + "/axis/services/EchoXMLService/concat");
     protected Log log = LogFactory.getLog(getClass());
     protected QName serviceName = new QName("EchoXMLService");
-    protected QName operationName = new QName("http://localhost/my","concat");
+    protected QName operationName = new QName("http://localhost/my", "concat");
     protected QName transportName = new QName("http://localhost/my",
             "NullTransport");
 
@@ -115,23 +114,24 @@ public class RPCCallTest extends TestCase {
         args.add(bean);
         args.add("159");
 
-        OMElement response = call.invokeBlocking(operationName,args.toArray());
-        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserialize();
+        OMElement response = call.invokeBlocking(operationName, args.toArray());
+//        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
+        MyBean resBean = (MyBean) BeanSerializerUtil.deserialize(MyBean.class, response.getFirstElement());
         assertNotNull(resBean);
-        assertEquals(resBean.getAge(),159);
+        assertEquals(resBean.getAge(), 159);
         call.close();
     }
 
     private void configureSystem(String opName) throws AxisFault {
         targetEPR =
                 new EndpointReference("http://127.0.0.1:"
-                    + (UtilServer.TESTING_PORT)
-                        + "/axis/services/EchoXMLService/"+ opName);
+                        + (UtilServer.TESTING_PORT)
+                        + "/axis/services/EchoXMLService/" + opName);
         String className = "org.apache.axis2.rpc.RPCServiceClass";
-        operationName = new QName("http://localhost/my",opName,"req");
+        operationName = new QName("http://localhost/my", opName, "req");
         ServiceDescription service = new ServiceDescription(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter( new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
+        service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
                 className));
         OperationDescription axisOp = new InOutOperationDescrition(operationName);
         axisOp.setMessageReceiver(new RPCMessageReceiver());
@@ -163,10 +163,11 @@ public class RPCCallTest extends TestCase {
         args.add(bean);
 
 
-        OMElement response = call.invokeBlocking(operationName,args.toArray());
-        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserialize();
+        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        MyBean resBean = (MyBean) BeanSerializerUtil.deserialize(MyBean.class, response.getFirstElement());
+//        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
         assertNotNull(resBean);
-        assertEquals(resBean.getAge(),100);
+        assertEquals(resBean.getAge(), 100);
         call.close();
     }
 
@@ -183,8 +184,8 @@ public class RPCCallTest extends TestCase {
 
         ArrayList args = new ArrayList();
         args.add("foo");
-        OMElement response = call.invokeBlocking(operationName,args.toArray());
-        assertEquals(response.getFirstElement().getText(),"foo");
+        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        assertEquals(response.getFirstElement().getText(), "foo");
         call.close();
     }
 
@@ -201,8 +202,8 @@ public class RPCCallTest extends TestCase {
         ArrayList args = new ArrayList();
         args.add("100");
 
-        OMElement response = call.invokeBlocking(operationName,args.toArray());
-        assertEquals(Integer.parseInt(response.getFirstElement().getText()),100);
+        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        assertEquals(Integer.parseInt(response.getFirstElement().getText()), 100);
         call.close();
     }
 
@@ -219,8 +220,8 @@ public class RPCCallTest extends TestCase {
         args.add("100");
         args.add("200");
 
-        OMElement response = call.invokeBlocking(operationName,args.toArray());
-        assertEquals(Integer.parseInt(response.getFirstElement().getText()),300);
+        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        assertEquals(Integer.parseInt(response.getFirstElement().getText()), 300);
         call.close();
     }
 
@@ -237,8 +238,8 @@ public class RPCCallTest extends TestCase {
         ArrayList args = new ArrayList();
         args.add("10");
         args.add("0");
-        OMElement response = call.invokeBlocking(operationName,args.toArray());
-        assertEquals(response.getFirstElement().getText(),"INF");
+        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        assertEquals(response.getFirstElement().getText(), "INF");
         call.close();
     }
 
@@ -256,8 +257,8 @@ public class RPCCallTest extends TestCase {
         ArrayList args = new ArrayList();
         args.add("true");
 
-        OMElement response = call.invokeBlocking(operationName,args.toArray());
-        assertEquals(Boolean.valueOf(response.getFirstElement().getText()).booleanValue(),true);
+        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        assertEquals(Boolean.valueOf(response.getFirstElement().getText()).booleanValue(), true);
         call.close();
     }
 
@@ -273,8 +274,8 @@ public class RPCCallTest extends TestCase {
 
         ArrayList args = new ArrayList();
         args.add("1");
-        OMElement response = call.invokeBlocking(operationName,args.toArray());
-        assertEquals(Byte.parseByte(response.getFirstElement().getText()),1);
+        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        assertEquals(Byte.parseByte(response.getFirstElement().getText()), 1);
         call.close();
     }
 
@@ -290,8 +291,8 @@ public class RPCCallTest extends TestCase {
 
         ArrayList args = new ArrayList();
         args.add("1");
-        OMElement response = call.invokeBlocking(operationName,args.toArray());
-        assertEquals(Byte.parseByte(response.getFirstElement().getText()),1);
+        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        assertEquals(Byte.parseByte(response.getFirstElement().getText()), 1);
         call.close();
     }
 
@@ -307,10 +308,89 @@ public class RPCCallTest extends TestCase {
                 false);
 
         ArrayList args = new ArrayList();
-        Date    date = Calendar.getInstance().getTime();
+        Date date = Calendar.getInstance().getTime();
         args.add(zulu.format(date));
-        OMElement response = call.invokeBlocking(operationName,args.toArray());
-        assertEquals(response.getFirstElement().getText(),zulu.format(date));
+        OMElement response = call.invokeBlocking(operationName, args.toArray());
+        assertEquals(response.getFirstElement().getText(), zulu.format(date));
+        call.close();
+    }
+
+
+    ////////////////////////////////////////////////// Invoking by Passing Return types //////////
+    public void testechoBean2() throws AxisFault {
+        configureSystem("echoBean");
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
+
+        MyBean bean = new MyBean();
+        bean.setAge(100);
+        bean.setName("Deepal");
+        bean.setValue(false);
+        AddressBean ab = new AddressBean();
+        ab.setNumber(1010);
+        ab.setTown("Colombo3");
+        bean.setAddress(ab);
+
+        ArrayList args = new ArrayList();
+        args.add(bean);
+
+        ArrayList ret = new ArrayList();
+        ret.add(MyBean.class);
+
+        Object [] response = call.invokeBlocking(operationName, args.toArray(), ret.toArray());
+        MyBean resBean = (MyBean) response[0];
+        assertNotNull(resBean);
+        assertEquals(resBean.getAge(), 100);
+        call.close();
+    }
+
+    public void testechoInt2() throws AxisFault {
+        configureSystem("echoInt");
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
+
+        ArrayList args = new ArrayList();
+        args.add("100");
+
+        ArrayList ret = new ArrayList();
+        ret.add(Integer.class);
+
+        Object [] response = call.invokeBlocking(operationName, args.toArray(), ret.toArray());
+        assertEquals(((Integer) response[0]).intValue(), 100);
+        call.close();
+    }
+
+    public void testmultireturn() throws AxisFault {
+        configureSystem("multireturn");
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
+
+        ArrayList args = new ArrayList();
+        args.add("1");
+
+        ArrayList ret = new ArrayList();
+        ret.add(Integer.class);
+        ret.add(String.class);
+
+        Object [] response = call.invokeBlocking(operationName, args.toArray(), ret.toArray());
+        assertEquals(((Integer) response[0]).intValue(), 10);
+        assertEquals(response[1], "foo");
+//        assertEquals(Byte.parseByte(response.getFirstElement().getText()),1);
         call.close();
     }
 

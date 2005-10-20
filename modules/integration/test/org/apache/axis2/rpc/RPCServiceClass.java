@@ -3,10 +3,16 @@ package org.apache.axis2.rpc;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.soap.SOAPFactory;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import java.util.Calendar;
+import java.io.ByteArrayInputStream;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -64,16 +70,35 @@ public class RPCServiceClass {
         SOAPFactory fac =   OMAbstractFactory.getSOAP12Factory();
         OMNamespace ns = fac.createOMNamespace(
                 "http://soapenc/", "res");
-        OMElement bodyContent = fac.createOMElement(new QName("echoOM") + "Response", ns);
-        bodyContent.addChild(b);
+        OMElement bodyContent = fac.createOMElement(
+                "echoOMResponse", ns);
+        OMElement child = fac.createOMElement("return", null);
+        child.addChild(fac.createText(child, b.getText()));
+        bodyContent.addChild(child);
+//        bodyContent.addChild(b);
         return bodyContent;
     }
 
     public double divide(double a , double b){
-       return (a/b);
+        return (a/b);
     }
 
     public Calendar echoCalander(Calendar in){
         return in;
+    }
+
+    public OMElement multireturn(OMElement ele) throws XMLStreamException {
+        SOAPFactory fac =   OMAbstractFactory.getSOAP12Factory();
+        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "res");
+        OMElement method = fac.createOMElement("multiretuenResponse", omNs);
+        OMElement value1 = fac.createOMElement("return0", null);
+        value1.addChild(
+                fac.createText(value1, "10"));
+        method.addChild(value1);
+        OMElement value2 = fac.createOMElement("return1", null);
+        value2.addChild(
+                fac.createText(value2, "foo"));
+        method.addChild(value2);
+        return   method;
     }
 }

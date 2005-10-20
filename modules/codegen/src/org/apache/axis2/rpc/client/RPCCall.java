@@ -1,18 +1,19 @@
 package org.apache.axis2.rpc.client;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.BeanSerializerUtil;
+import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
+import org.apache.axis2.databinding.utils.ADBPullParser;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.clientapi.Callback;
 import org.apache.axis2.clientapi.InOutMEPClient;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.databinding.utils.ADBPullParser;
 import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.wsdl.WSDLConstants;
 
@@ -98,6 +99,35 @@ public class RPCCall extends Call {
     }
 
     /**
+     *
+     * @param opName  Operation QName (to get the body wrapper element)
+     * @param args Arraylist of objects
+     * @param returnTypes , this array contains the JavaTypes for the return object , it could be one
+     * or more depending on the return type , most of the type array will contain just one element
+     * It should be noted that the array should only contains JavaTypes NOT real object , what this
+     * methods does is , get the body first element , and if it contains more than one childern take
+     * ith element and convert that to ith javatype and fill the return arrya
+     * the array will look like as follows
+     * [Integer, String, MyBean , etc]
+     * @return  Object array , whic will contains real object , but the object can either be simple type
+     * object or the JavaBeans, thats what this method can handle right now
+     * the return array will contains [10, "Axis2Echo", {"foo","baa","11"}]
+     * @throws AxisFault
+     */
+
+    public Object[]  invokeBlocking(QName opName , Object [] args , Object [] returnTypes) throws AxisFault {
+        OperationDescription opDesc =
+                serviceContext.getServiceConfig().getOperation(opName);
+        opDesc = createOpDescAndFillInFlowInformation(opDesc, opName.getLocalPart(),
+                WSDLConstants.MEP_CONSTANT_IN_OUT);
+        opDesc.setParent(serviceContext.getServiceConfig());
+        MessageContext msgctx = prepareTheSOAPEnvelope(getOMElement(opName,args));
+        this.lastResponseMessage = super.invokeBlocking(opDesc, msgctx);
+        SOAPEnvelope resEnvelope = lastResponseMessage.getEnvelope();
+        return BeanSerializerUtil.deserialize(resEnvelope.getBody().getFirstElement(),returnTypes);
+    }
+
+    /**
      * Invoke the nonblocking/Asynchronous call
      *
      * @param opName
@@ -126,47 +156,30 @@ public class RPCCall extends Call {
      * TypeObject , other types of object can not handle yet)
      * @param opName
      * @param args
-     * @return
-     * @throws AxisFault
      */
-    private OMElement getOMElement(QName opName ,Object [] args) throws AxisFault {
+    private OMElement getOMElement(QName opName ,Object [] args) {
         ArrayList objects ;
-        try {
-            objects = new ArrayList();
-            int argCount =0;
-            for (int i = 0; i < args.length; i++) {
-                Object arg = args[i];
-                if(arg instanceof RPCRequestParameter){
-                    RPCRequestParameter para = (RPCRequestParameter)arg;
-                    objects.add(para.getName());
-                    objects.add(para.getValue());
-                    if (para.isSimpleType()) {
-                        objects.add(para.getName());
-                        objects.add(para.getValue().toString());
-                    } else {
-                        objects.add(para.getName());
-                        objects.add(para.getValue().toString());
-                    }
-                } else {
-                    if(SimpleTypeMapper.isSimpleType(arg)){
-                        objects.add("arg" + argCount);
-                        objects.add(arg.toString());
-                    }  else {
-                        objects.add(new QName("arg" + argCount));
-                        objects.add(arg);
-                    }
-                    argCount ++;
-                }
+        objects = new ArrayList();
+        int argCount =0;
+        for (int i = 0; i < args.length; i++) {
+            Object arg = args[i];
+            //todo if the request paramter has name other than argi (0<i<n) , there should be a
+            //was to do that , to solve that problem we need to have RPCRequestParameter
+            //note that The value of request paramter can either be simple type or JavaBean
+            if(SimpleTypeMapper.isSimpleType(arg)){
+                objects.add("arg" + argCount);
+                objects.add(arg.toString());
+            }  else {
+                objects.add(new QName("arg" + argCount));
+                objects.add(arg);
             }
-            XMLStreamReader xr = ADBPullParser.createPullParser(opName,objects.toArray(),null);
-            StAXOMBuilder stAXOMBuilder =
-                    OMXMLBuilderFactory.createStAXOMBuilder(
-                            OMAbstractFactory.getOMFactory(), xr);
-            return stAXOMBuilder.getDocumentElement();
-        } catch (ClassCastException e) {
-            throw new AxisFault("Object is not a RPCRequestParameter" + e, e);
+            argCount ++;
         }
-
+        XMLStreamReader xr = ADBPullParser.createPullParser(opName,objects.toArray(),null);
+        StAXOMBuilder stAXOMBuilder =
+                OMXMLBuilderFactory.createStAXOMBuilder(
+                        OMAbstractFactory.getSOAP11Factory(), xr);
+        return stAXOMBuilder.getDocumentElement();
     }
 
 }

@@ -16,7 +16,6 @@ import org.apache.axis2.util.BeanSerializerUtil;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import java.lang.reflect.Method;
-import java.util.Iterator;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -113,40 +112,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
     private Object[] processRequest(OMElement methodElement) throws AxisFault {
         Class[] parameters = method.getParameterTypes();
-        int paramCount = 0;
-        int numberOfParams = parameters.length;
-
-        Object [] objectArray = new Object[numberOfParams];
-        Iterator parts = methodElement.getChildren();
-        /**
-         * Take the number of paramters in the method and , only take that much of child elements
-         * from the OMElement , other are ignore , as an example
-         * if the method is , foo(String a , int b)
-         * and if the OMElemet
-         * <foo>
-         *  <arg0>Val1</arg0>
-         *  <arg1>Val2</arg1>
-         *  <arg2>Val3</arg2>
-         *
-         * only the val1 and Val2 take into account
-         */
-        while (parts.hasNext() && paramCount < numberOfParams) {
-            OMElement omElement = (OMElement) parts.next();
-            Class parameter = parameters[paramCount];
-            //todo do we need to support REF and MultiRef
-            //todo firts xsi:type has to be checked , and if that is there take the
-            //todo handle arrays
-            // corret one from sereviceDescription
-            if(OMElement.class.isAssignableFrom(parameter)){
-                objectArray[paramCount] =omElement;
-            }  else if(SimpleTypeMapper.isSimpleType(parameter)){
-                objectArray[paramCount]  = SimpleTypeMapper.getSimpleTypeObject(parameter, omElement);
-            } else {
-                objectArray[paramCount] = new BeanSerializer(parameter, omElement).deserialize();
-            }
-            paramCount ++;
-        }
-        return objectArray;
+        return   BeanSerializerUtil.deserialize(methodElement,parameters);
     }
 
 
@@ -156,7 +122,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             //todo first check to see where the desrilizer for the return object
             //simple type
             if(resObject instanceof OMElement){
-                bodyContent = (OMElement)resObject;
+                bodyContent=(OMElement)resObject;
             } else if (SimpleTypeMapper.isSimpleType(resObject)) {
                 bodyContent = getSOAPFactory().createOMElement(
                         method.getName() + "Response", ns);
@@ -164,17 +130,17 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                 child.addChild(fac.createText(child, SimpleTypeMapper.getStringValue(resObject)));
                 bodyContent.addChild(child);
             } else {
+                bodyContent = getSOAPFactory().createOMElement(
+                        method.getName() + "Response", ns);
                 // Java Beans
-                QName wrapperQname = new QName("http://soapenc/", method.getName() + "Response", "res");
                 XMLStreamReader xr = BeanSerializerUtil.getPullParser(resObject,
-                        wrapperQname);
+                        new QName(RETURN_WRAPPER));
                 StAXOMBuilder stAXOMBuilder =
                         OMXMLBuilderFactory.createStAXOMBuilder(
                                 OMAbstractFactory.getOMFactory(), xr);
                 OMElement documentElement = stAXOMBuilder.getDocumentElement();
-
                 if (documentElement != null) {
-                    bodyContent = documentElement;
+                    bodyContent.addChild(documentElement);
                 }
             }
         }

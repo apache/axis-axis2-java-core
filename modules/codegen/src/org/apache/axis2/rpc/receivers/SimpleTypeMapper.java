@@ -80,6 +80,22 @@ public class SimpleTypeMapper {
             return new Float(value.getText());
         } else if (paramter.getName().equals(CHAR)) {
             return new Character(value.getText().toCharArray()[0]);
+        }  else if (paramter.getName().equals(W_INT)) {
+            return new Integer(value.getText());
+        } else if (paramter.getName().equals(W_BOOLEAN)) {
+            return Boolean.valueOf(value.getText());
+        } else if (paramter.getName().equals(W_BYTE)) {
+            return new Byte(value.getText());
+        } else if (paramter.getName().equals(W_DOUBLE)) {
+            return new Double(value.getText());
+        } else if (paramter.getName().equals(W_SHORT)) {
+            return new Short(value.getText());
+        } else if (paramter.getName().equals(W_LONG)) {
+            return new Long(value.getText());
+        } else if (paramter.getName().equals(W_FLOAT)) {
+            return new Float(value.getText());
+        } else if (paramter.getName().equals(W_CHAR)) {
+            return new Character(value.getText().toCharArray()[0]);
         } else if (paramter.getName().equals(W_CALANDER)) {
             return makeCalendar(value.getText(),false);
         }else {
