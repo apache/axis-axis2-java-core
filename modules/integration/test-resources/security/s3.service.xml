@@ -18,6 +18,7 @@
     <parameter name="OutSignaturePropFile" locked="false">interop.properties</parameter>
     <parameter name="OutSignatureKeyIdentifier" locked="false">DirectReference</parameter>
     <parameter name="encryptionKeyIdentifier" locked="false">SKIKeyIdentifier</parameter>
+    <parameter name="encryptionSymAlgorithm" locked="false">http://www.w3.org/2001/04/xmlenc#tripledes-cbc</parameter>
     <parameter name="encryptionUser" locked="false">alice</parameter>
 
 </service>
