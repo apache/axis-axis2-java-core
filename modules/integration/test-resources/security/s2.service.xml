@@ -3,13 +3,12 @@
 	<!--Mounting the method Ping-->
 	<operation name="Ping">
 		<messageReceiver class="org.apache.axis2.oasis.ping.PingPortMessageReceiver"/>
-	</operation>    
+	</operation>
 
-    <parameter name="InflowSecurity">on</parameter>
-    <parameter name="OutflowSecurity">off</parameter>
-
-    <parameter name="InAction" locked="false">UsernameToken Encrypt</parameter>
-    <parameter name="InPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
-    <parameter name="decryptionPropFile" locked="false">interop.properties</parameter>
+    <parameter name="InflowSecurity">
+        <action>UsernameToken Encrypt</action>
+        <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
+        <decryptionPropFile>interop.properties</decryptionPropFile>
+    </parameter>
 
 </service>

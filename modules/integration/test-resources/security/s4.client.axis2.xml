@@ -9,22 +9,23 @@
 
     <!-- Scenario 4: Client's Configuration:START-->
 
-    <parameter name="InflowSecurity">on</parameter>
-    <parameter name="OutflowSecurity">on</parameter>
+    <parameter name="OutflowSecurity">
+        <action>Signature Encrypt Timestamp</action>
+        <user>alice</user>
+        <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
+        <signatureKeyIdentifier>DirectReference</signatureKeyIdentifier>
+        <encryptionKeyIdentifier>EmbeddedKeyName</encryptionKeyIdentifier>
+        <encryptionSymAlgorithm>http://www.w3.org/2001/04/xmlenc#tripledes-cbc</encryptionSymAlgorithm>
+        <signaturePropFile>interop.properties</signaturePropFile>
+        <EmbeddedKeyCallbackClass>org.apache.axis2.security.PWCallback</EmbeddedKeyCallbackClass>
+        <EmbeddedKeyName>SessionKey</EmbeddedKeyName>
+    </parameter>
 
-    <parameter name="OutAction" locked="false">Signature Encrypt Timestamp</parameter>
-    <parameter name="user" locked="false">alice</parameter>
-    <parameter name="OutPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
-    <parameter name="OutSignatureKeyIdentifier" locked="false">DirectReference</parameter>
-    <parameter name="encryptionKeyIdentifier" locked="false">EmbeddedKeyName</parameter>
-    <parameter name="encryptionSymAlgorithm" locked="false">http://www.w3.org/2001/04/xmlenc#tripledes-cbc</parameter>
-    <parameter name="OutSignaturePropFile" locked="false">interop.properties</parameter>
-    <parameter name="EmbeddedKeyCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
-    <parameter name="EmbeddedKeyName" locked="false">SessionKey</parameter>
-
-    <parameter name="InAction" locked="false">Signature Encrypt Timestamp</parameter>
-    <parameter name="InSignaturePropFile" locked="false">interop.properties</parameter>
-    <parameter name="InPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
+    <parameter name="InflowSecurity">
+        <action>Signature Encrypt Timestamp</action>
+        <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
+        <signaturePropFile>interop.properties</signaturePropFile>
+    </parameter>
 
     <!-- Scenario 4: Client's Configuration:END-->
 

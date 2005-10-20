@@ -19,10 +19,12 @@ package org.apache.axis2.security;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.security.handler.WSDoAllHandler;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.util.Axis2Util;
+import org.apache.axis2.security.util.HandlerParameterDecoder;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
@@ -59,6 +61,12 @@ public class WSDoAllReceiver extends WSDoAllHandler {
 	public void invoke(MessageContext msgContext) throws AxisFault {
     	boolean doDebug = log.isDebugEnabled();
 
+    	//populate the properties
+    	try {
+    		HandlerParameterDecoder.processParameters(msgContext,true);
+    	} catch (Exception e) {
+    		throw new AxisFault("Configureation error", e);
+    	}
     	/**
     	 * Cannot do the following right now since we cannot access the req 
     	 * mc when this handler runs in the client side.
@@ -81,13 +89,13 @@ public class WSDoAllReceiver extends WSDoAllHandler {
         	reqData.setMsgContext(msgContext);
         	
         	//Figureout if the handler should run
-        	String inFlowSecurity = null;
-        	if((inFlowSecurity = (String) getOption(WSSHandlerConstants.INFLOW_SECURITY)) == null) {
-        		inFlowSecurity = (String) getProperty(msgContext, WSSHandlerConstants.INFLOW_SECURITY);
+        	OMElement inFlowSecurity = null;
+        	if((inFlowSecurity = (OMElement) getOption(WSSHandlerConstants.INFLOW_SECURITY)) == null) {
+        		inFlowSecurity = (OMElement) getProperty(msgContext, WSSHandlerConstants.INFLOW_SECURITY);
         	}
-        	//If the option is not specified or if it is set to false do not do
-        	//any security processing
-        	if(inFlowSecurity == null || inFlowSecurity.equals(WSSHandlerConstants.OFF_OPTION)) {
+
+        	
+        	if(inFlowSecurity == null) {
         		return;
         	}
         	

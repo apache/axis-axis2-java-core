@@ -9,13 +9,10 @@
 
     <!-- Scenario ST1: Client's Configuration:START-->
 
-
-    <parameter name="OutflowSecurity">on</parameter>
-    <parameter name="InflowSecurity">off</parameter>
-
-    <parameter name="OutAction" locked="false">Timestamp SAMLTokenUnsigned</parameter>
-    <parameter name="samlPropFile" locked="false">axis2.saml.properties</parameter>
-
+    <parameter name="OutflowSecurity">
+        <action>Timestamp SAMLTokenUnsigned</action>
+        <samlPropFile>axis2.saml.properties</samlPropFile>
+    </parameter>
 
     <!-- Scenario ST1: Client's Configuration:END-->
 

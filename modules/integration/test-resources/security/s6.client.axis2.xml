@@ -9,21 +9,22 @@
 
     <!-- Scenario 6: Client's Configuration:START-->
 
-    <parameter name="InflowSecurity">on</parameter>
-    <parameter name="OutflowSecurity">on</parameter>
+    <parameter name="OutflowSecurity">
+        <action>Encrypt Signature Timestamp</action>
+        <user>alice</user>
+        <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
+        <encryptionKeyIdentifier>SKIKeyIdentifier</encryptionKeyIdentifier>
+        <encryptionSymAlgorithm>http://www.w3.org/2001/04/xmlenc#tripledes-cbc</encryptionSymAlgorithm>
+        <encryptionUser>bob</encryptionUser>
+        <signatureKeyIdentifier>DirectReference</signatureKeyIdentifier>
+        <signaturePropFile>interop.properties</signaturePropFile>
+    </parameter>
 
-    <parameter name="OutAction" locked="false">Encrypt Signature Timestamp</parameter>
-    <parameter name="user" locked="false">alice</parameter>
-    <parameter name="OutPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
-    <parameter name="encryptionKeyIdentifier" locked="false">SKIKeyIdentifier</parameter>
-    <parameter name="encryptionSymAlgorithm" locked="false">http://www.w3.org/2001/04/xmlenc#tripledes-cbc</parameter>
-    <parameter name="encryptionUser" locked="false">bob</parameter>
-    <parameter name="OutSignatureKeyIdentifier" locked="false">DirectReference</parameter>
-    <parameter name="OutSignaturePropFile" locked="false">interop.properties</parameter>
-
-    <parameter name="InAction" locked="false">Encrypt Signature Timestamp</parameter>
-    <parameter name="InSignaturePropFile" locked="false">interop.properties</parameter>
-    <parameter name="InPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
+    <parameter name="InflowSecurity">
+        <action>Encrypt Signature Timestamp</action>
+        <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
+        <signaturePropFile>interop.properties</signaturePropFile>
+    </parameter>
 
     <!-- Scenario 6: Client's Configuration:END-->
 

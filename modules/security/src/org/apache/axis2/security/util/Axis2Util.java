@@ -19,6 +19,7 @@ package org.apache.axis2.security.util;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.ws.security.SOAPConstants;
@@ -129,7 +130,13 @@ public class Axis2Util {
 		
 	}
 	
-	
+	/**
+	 * Converts the given DOM Element to an OMElement
+	 * @param elem
+	 * @param constants
+	 * @return
+	 * @throws WSSecurityException
+	 */
 	private static OMElement convertToOMelement(Element elem, SOAPConstants constants) throws WSSecurityException {
 
 		try {
@@ -161,4 +168,25 @@ public class Axis2Util {
 
 	}
 
+	/**
+	 * This is used to provide the appropriate key to pickup 
+	 * config params from the message context.
+	 * This is acutally used when the outflow handler (WSDoAllSender)
+	 * is repeated n number of times
+	 * @param originalKey The default key
+	 * @param inHandler Whether the handler is the inflow handler or not
+	 * @param repetition The current repetition number
+	 * @return The key to be used internally in the security module to pick
+	 * up the config params
+	 */
+	public static String getKey(String originalKey, boolean inHandler, int repetition) {
+		
+		if(repetition > 0 && !inHandler && 
+				!originalKey.equals(WSSHandlerConstants.OUTFLOW_SECURITY)&&	
+				!originalKey.equals(WSSHandlerConstants.SENDER_REPEAT_COUNT)) {
+			
+				return originalKey + repetition;
+		}
+		return originalKey;
+	}
 }

@@ -19,9 +19,11 @@ package org.apache.axis2.security;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.security.handler.WSDoAllHandler;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.util.Axis2Util;
+import org.apache.axis2.security.util.HandlerParameterDecoder;
 import org.apache.axis2.security.util.MessageOptimizer;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.commons.logging.Log;
@@ -63,6 +65,11 @@ public class WSDoAllSender extends WSDoAllHandler {
 		
         boolean doDebug = log.isDebugEnabled();
         
+        try {
+        	HandlerParameterDecoder.processParameters(msgContext,false);
+        } catch (Exception e) {
+    		throw new AxisFault("Configureation error", e);
+    	}
         
         if (doDebug) {
             log.debug("WSDoAllSender: enter invoke()");
@@ -86,13 +93,12 @@ public class WSDoAllSender extends WSDoAllHandler {
         reqData.setMsgContext(msgContext);
         
     	//Figureout if the handler should run
-    	String outFlowSecurity;
-    	if((outFlowSecurity = (String) getOption(WSSHandlerConstants.OUTFLOW_SECURITY)) == null) {
-    		outFlowSecurity = (String) getProperty(msgContext, WSSHandlerConstants.OUTFLOW_SECURITY);
+    	OMElement outFlowSecurity;
+    	if((outFlowSecurity = (OMElement) getOption(WSSHandlerConstants.OUTFLOW_SECURITY)) == null) {
+    		outFlowSecurity = (OMElement) getProperty(msgContext, WSSHandlerConstants.OUTFLOW_SECURITY);
     	}
-    	//If the option is not specified or if it is set to false do not do
-    	//any security processing
-    	if(outFlowSecurity == null || outFlowSecurity.equals(WSSHandlerConstants.OFF_OPTION)) {
+
+    	if(outFlowSecurity == null) {
     		return;
     	}
     	
@@ -100,8 +106,7 @@ public class WSDoAllSender extends WSDoAllHandler {
 	        Vector actions = new Vector();
 	        String action = null;
 	        if ((action = (String) getOption(WSHandlerConstants.ACTION)) == null) {
-	            action = (String) ((MessageContext)reqData.getMsgContext())
-	                    .getProperty(WSHandlerConstants.ACTION);
+	        	action = (String) getProperty(reqData.getMsgContext(),WSHandlerConstants.ACTION);
 	        }
 	        if (action == null) {
 	            throw new AxisFault("WSDoAllSender: No action defined");
@@ -210,9 +215,9 @@ public class WSDoAllSender extends WSDoAllHandler {
              */
 			String optimizeParts;
 			
-			if((optimizeParts = (String) getOption(WSSHandlerConstants.Out.OPTIMIZE_PARTS)) == null) {
+			if((optimizeParts = (String) getOption(WSSHandlerConstants.OPTIMIZE_PARTS)) == null) {
 				optimizeParts = (String)
-                	getProperty(reqData.getMsgContext(), WSSHandlerConstants.Out.OPTIMIZE_PARTS);
+                	getProperty(reqData.getMsgContext(), WSSHandlerConstants.OPTIMIZE_PARTS);
 			}
             if(optimizeParts != null) {
 	            // Optimize the Envelope
@@ -220,39 +225,36 @@ public class WSDoAllSender extends WSDoAllHandler {
             }
             
             //Enable handler repetition
-            String repeat;
+            Integer repeat;
             int repeatCount;
-	        if ((repeat = (String) getOption(WSSHandlerConstants.Out.SENDER_REPEAT_COUNT)) == null) {
-	            repeat = (String)
-	                    getProperty(reqData.getMsgContext(), WSSHandlerConstants.Out.SENDER_REPEAT_COUNT);
+	        if ((repeat = (Integer)getOption(WSSHandlerConstants.SENDER_REPEAT_COUNT)) == null) {
+	            repeat = (Integer)
+	                    getProperty(reqData.getMsgContext(), WSSHandlerConstants.SENDER_REPEAT_COUNT);
 	        }
 	        
-	        if(repeat != null) {
-		        try {
-		        	repeatCount = Integer.parseInt(repeat);
-		        } catch (NumberFormatException nfex) {
-		        	throw new AxisFault("Repetition count of WSDoAllSender should be an integer");
-		        }
-	            
-		        //Get the current repetition from message context
-		        int repetition = this.getRepetition(msgContext);
+        	repeatCount = repeat.intValue();
+            
+	        //Get the current repetition from message context
+	        int repetition = this.getCurrentRepetition(msgContext);
+	        
+	        if(repeatCount > 0 && repetition < repeatCount) {
 		        
-		        if(repeatCount > 0 && repetition < repeatCount) {
-		        	reqData.clear();
-		        	reqData = null;
-		        	
-		        	//Increment the repetition to indicate the next repetition 
-		        	//of the same handler
-		        	repetition++;
-		        	msgContext.setProperty(WSSHandlerConstants.Out.REPETITON,new Integer(repetition));
-		        	msgContext.setProperty(WSSHandlerConstants.OUTFLOW_SECURITY,outFlowSecurity);
-		        	/**
-		        	 * Preserving the OM stuff doesn't work for the repeting case
-		        	 */
-		        	this.preserveOriginalEnvelope = false;
-		        	
-		        	this.invoke(msgContext);
-		        }
+		        reqData.clear();
+				reqData = null;
+
+				// Increment the repetition to indicate the next repetition
+				// of the same handler
+				repetition++;
+				msgContext.setProperty(WSSHandlerConstants.CURRENT_REPETITON,
+						new Integer(repetition));
+				msgContext.setProperty(WSSHandlerConstants.OUTFLOW_SECURITY,
+						outFlowSecurity);
+				/**
+				 * Preserving the OM stuff doesn't work for the repeting case
+				 */
+				this.preserveOriginalEnvelope = false;
+
+				this.invoke(msgContext);
 	        }
 	        
 	        if (doDebug) {

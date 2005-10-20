@@ -16,66 +16,39 @@
 
 package org.apache.axis2.security.handler;
 
+/**
+ * Constants specific to the Axis2 security module
+ *  
+ * @author Ruchith Fernando (ruchith.fernando@gmail.com)
+ */
 public interface WSSHandlerConstants {
 
-    public static final String ENFORCE_ACTION_ORDER = "EnforceActionOrder";
-
     /**
-     * A service that requires the security module to be activated in the 
-     * inflow, can use this option by specifying (in services.xml):
-     * <parameter name="InflowSecurity">on</parameter>
-     * And if a certain service does NOT require security module to be
-     * activated in the inflow  the it should include (in services.xml):
-     * <parameter name="InflowSecurity">off</parameter>
+     * Inflow security parameter
      */
     public static final String INFLOW_SECURITY = "InflowSecurity";
 
     /**
-     * A service that requires the security module to be activated in the 
-     * outflow, can use this option by specifying (in services.xml):
-     * <parameter name="OutflowSecurity">on</parameter>
-     * And if a certain service does NOT require security module to be
-     * activated in the outflow  the it should include (in services.xml):
-     * <parameter name="OutflowSecurity">off</parameter>
+     * Outflow security parameter 
      */
     public static final String OUTFLOW_SECURITY = "OutflowSecurity";
     
-    public static final String ON_OPTION = "on";
-    public static final String OFF_OPTION = "off";
-    
-    /**
-     * The following two seot the constants are used to introduce new 
-     * parameter names for the two handlers since wss4j expects
-     * the same param name irrespective of the param name.
-     * 
-     * It should be noted that we should only introduce names that are in
-     * conflict. For example both handlers expects 'action' param and in 
-     * the axis2.xml this should be given as InAction and OutAction to 
-     * specify the 'action' to values for the two handlers. Whereas 
-     * parameters such as 'encryptionKeyIdentifier' need not be mapped into 
-     * new param names since they are specific to a handler
-     */
-    
-    interface In {
-		public static final String ACTION = "InAction";
-		public static final String PW_CALLBACK_CLASS = "InPasswordCallbackClass";
-		public static final String SIG_PROP_FILE = "InSignaturePropFile";
-		public static final String SIG_KEY_ID = "InSignatureKeyIdentifier";
-    }
-	
-	interface Out {
-		public static final String ACTION = "OutAction";
-		public static final String PW_CALLBACK_CLASS = "OutPasswordCallbackClass";
-		public static final String SIG_PROP_FILE = "OutSignaturePropFile";
-		public static final String SIG_KEY_ID = "OutSignatureKeyIdentifier";
-        public static final String SIGNATURE_PARTS = "OutSignatureParts";
 
-        //Repetition count
-		public static final String SENDER_REPEAT_COUNT = "senderRepeteCount";
-		public static final String REPETITON = "repetition";
-		
-		public static final String OPTIMIZE_PARTS = "optimizeParts";
-	}
+    /**
+     *  Repetition count
+     */
+	public static final String SENDER_REPEAT_COUNT = "senderRepeatCount";
+
+	/**
+	 * The current repetition
+	 */
+	public static final String CURRENT_REPETITON = "currentRepetition";
+
+	/**
+	 * This is used to indicate the XPath expression used to indicate the
+	 * Elements whose first child (must be a text node) is to be optimized  
+	 */
+	public static final String OPTIMIZE_PARTS = "optimizeParts";
 	
 	
 }

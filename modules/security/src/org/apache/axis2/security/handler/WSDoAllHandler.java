@@ -21,7 +21,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
-import org.apache.axis2.security.util.WSHandlerConstantsMapper;
+import org.apache.axis2.security.util.Axis2Util;
 import org.apache.ws.security.handler.RequestData;
 import org.apache.ws.security.handler.WSHandler;
 
@@ -135,9 +135,9 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 
     public Object getProperty(Object msgContext, String axisKey) {
     	
-    	int repetition = getRepetition(msgContext);
+    	int repetition = getCurrentRepetition(msgContext);
     	
-    	String key = WSHandlerConstantsMapper.getMapping(axisKey,inHandler, repetition);
+    	String key = Axis2Util.getKey(axisKey,inHandler, repetition);
     	log.debug("wss4j key: " + axisKey + " Key : " + key);
         return ((MessageContext)msgContext).getProperty(key);
     }
@@ -147,11 +147,11 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
      * @param msgContext
      * @return
      */
-	protected int getRepetition(Object msgContext) {
+	protected int getCurrentRepetition(Object msgContext) {
 		//get the repetition from the message context
     	int repetition = 0;
     	if(!inHandler) {//We only need to repete the out handler
-    		Integer count = (Integer)((MessageContext)msgContext).getProperty(WSSHandlerConstants.Out.REPETITON);
+    		Integer count = (Integer)((MessageContext)msgContext).getProperty(WSSHandlerConstants.CURRENT_REPETITON);
     		if(count != null) { //When we are repeting the handler
     			repetition = count.intValue();
     		}
@@ -185,9 +185,9 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     	
     	MessageContext msgContext = (MessageContext)this.reqData.getMsgContext();
     	
-    	int repetition  = this.getRepetition(msgContext);
+    	int repetition  = this.getCurrentRepetition(msgContext);
     	
-    	String key  = WSHandlerConstantsMapper.getMapping(axisKey,inHandler, repetition);
+    	String key  = Axis2Util.getKey(axisKey,inHandler, repetition);
 
     	Object value = null;
     	
@@ -210,4 +210,5 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 	public void setProperty(Object msgContext, String key, Object value) {
 		((MessageContext)msgContext).setProperty(key, value);
 	}
+
 }

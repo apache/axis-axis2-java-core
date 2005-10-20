@@ -15,59 +15,9 @@
  */
 package org.apache.axis2.security.util;
 
-import org.apache.axis2.security.handler.WSSHandlerConstants;
-import org.apache.ws.security.handler.WSHandlerConstants;
 
-import java.util.Hashtable;
 
 public class WSHandlerConstantsMapper {
-
-	private static Hashtable inHandlerConstants = new Hashtable();
 	
-	private static Hashtable outHandlerConstants = new Hashtable();
-
-	
-	
-	/**
-	 * The parameter names that are shared across the two handlers are mapped in this situation
-	 */
-	static {
-		//Mapping the in handler constants
-		inHandlerConstants.put(WSHandlerConstants.ACTION, WSSHandlerConstants.In.ACTION);
-		inHandlerConstants.put(WSHandlerConstants.PW_CALLBACK_CLASS, WSSHandlerConstants.In.PW_CALLBACK_CLASS);
-		inHandlerConstants.put(WSHandlerConstants.SIG_PROP_FILE, WSSHandlerConstants.In.SIG_PROP_FILE);
-		inHandlerConstants.put(WSHandlerConstants.SIG_KEY_ID, WSSHandlerConstants.In.SIG_KEY_ID);
-		
-		//Mapping the out handler constants
-		outHandlerConstants.put(WSHandlerConstants.ACTION, WSSHandlerConstants.Out.ACTION);
-		outHandlerConstants.put(WSHandlerConstants.PW_CALLBACK_CLASS, WSSHandlerConstants.Out.PW_CALLBACK_CLASS);
-		outHandlerConstants.put(WSHandlerConstants.SIG_PROP_FILE, WSSHandlerConstants.Out.SIG_PROP_FILE);
-		outHandlerConstants.put(WSHandlerConstants.SIG_KEY_ID, WSSHandlerConstants.Out.SIG_KEY_ID);
-        outHandlerConstants.put(WSHandlerConstants.SIGNATURE_PARTS, WSSHandlerConstants.Out.SIGNATURE_PARTS);
-
-	}
-	
-	/**
-	 * If the mapping is there then the mapped value will be returned
-	 * Otherwise the original value will be returned since no mapping was required
-	 * @param axiskey
-	 * @return
-	 */
-	public static String getMapping(String axiskey, boolean inHandler, int repetition) {
-		String newKey = null;
-		if(inHandler) {
-			newKey = (String)inHandlerConstants.get(axiskey);
-		} else {
-			newKey = (String)outHandlerConstants.get(axiskey);	
-		}
-		if(repetition > 0 && axiskey != WSSHandlerConstants.Out.SENDER_REPEAT_COUNT && axiskey != WSSHandlerConstants.OUTFLOW_SECURITY && !inHandler) {
-			if(newKey == null) {
-				return axiskey + repetition;
-			} else {
-				return newKey + repetition;
-			}
-		}
-		return (newKey == null)?axiskey:newKey;
-	}
 	
 }

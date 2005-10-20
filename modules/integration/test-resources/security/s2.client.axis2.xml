@@ -9,19 +9,18 @@
 
     <!-- Scenario 2: Client's Configuration:START-->
 
-    <parameter name="OutflowSecurity">on</parameter>
-    <parameter name="InflowSecurity">off</parameter>
-
-    <parameter name="OutAction" locked="false">UsernameToken Encrypt</parameter>
-    <parameter name="user" locked="false">Chris</parameter>
-    <parameter name="addUTElements" locked="false">Nonce Created</parameter>
-    <parameter name="encryptionParts" locked="false">{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd}UsernameToken</parameter>
-    <parameter name="encryptionUser" locked="false">bob</parameter>
-    <parameter name="encryptionPropFile" locked="false">interop.properties</parameter>
-    <parameter name="encryptionSymAlgorithm" locked="false">http://www.w3.org/2001/04/xmlenc#tripledes-cbc</parameter>
-    <parameter name="OutPasswordCallbackClass" locked="false">org.apache.axis2.security.PWCallback</parameter>
-    <parameter name="passwordType" locked="false">PasswordText</parameter>
-    <parameter name="encryptionKeyIdentifier" locked="false">SKIKeyIdentifier</parameter>
+    <parameter name="OutflowSecurity">
+        <action>UsernameToken Encrypt</action>
+        <user>Chris</user>
+        <addUTElements>Nonce Created</addUTElements>
+        <encryptionParts>{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd}UsernameToken</encryptionParts>
+        <encryptionUser>bob</encryptionUser>
+        <encryptionPropFile>interop.properties</encryptionPropFile>
+        <encryptionSymAlgorithm>http://www.w3.org/2001/04/xmlenc#tripledes-cbc</encryptionSymAlgorithm>
+        <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
+        <passwordType>PasswordText</passwordType>
+        <encryptionKeyIdentifier>SKIKeyIdentifier</encryptionKeyIdentifier>
+    </parameter>
 
     <!-- Scenario 2: Client's Configuration:END-->
 
