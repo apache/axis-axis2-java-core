@@ -35,8 +35,13 @@ import java.util.Iterator;
 public class ADBPullParser implements XMLStreamReader {
 
     private Object[] properties;
-    private OMAttribute[] attributes;
+    private Object[] attributes;
     private QName elementQName;
+
+    // attributes array can contain attributes in different ways. This will serve as constant way
+    // of handling atributes within the code. I know this is another object, BUT .....
+    private ArrayList attributesList;
+
 
     // Every parser can contain a reference to a pull parser of one of its children
     private XMLStreamReader childPullParser;
@@ -81,7 +86,7 @@ public class ADBPullParser implements XMLStreamReader {
     private HashMap namespaceMap;
 
 
-    private ADBPullParser(QName adbBeansQName, Object[] properties, OMAttribute[] attributes) {
+    private ADBPullParser(QName adbBeansQName, Object[] properties, Object[] attributes) {
         this.properties = properties;
         this.elementQName = adbBeansQName;
         this.attributes = attributes;
@@ -89,42 +94,58 @@ public class ADBPullParser implements XMLStreamReader {
     }
 
     /**
-     * @param properties    - this should contain all the stuff that stax events should be generated.
-     *                      Lets take an example of a bean.
-     *                      <pre> <Person>
-     *                                                                                                                                                                                                                                                                                                  <Name>FooOne</Name>
-     *                                                                                                                                                                                                                                                                                                                                                     <DependentOne>
-     *                                                                                                                                                                                                                                                                                                                                                         <Name>FooTwo</Name>
-     *                                                                                                                                                                                                                                                                                                                                                         <Age>25</Age>
-     *                                                                                                                                                                                                                                                                                                                                                         <Sex>Male</Sex>
-     *                                                                                                                                                                                                                                                                                                                                                     </DependentOne>
-     *                                                                                                                                                                                                                                                                                                                                                 </Person>
-     *                      <p/>
-     *                                                                                                                                                                                                                                                                                                                                                 so the mapping bean for this is
-     *                                                                                                                                                                                                                                                                                                                                                 class Person {
-     *                                                                                                                                                                                                                                                                                                                                                     String Name;
-     *                                                                                                                                                                                                                                                                                                                                                     Dependent dependentOne;
-     *                                                                                                                                                                                                                                                                                                                                                 }
-     *                      <p/>
-     *                                                                                                                                                                                                                                                                                                                                                 class Dependent {
-     *                                                                                                                                                                                                                                                                                                                                                     String name;
-     *                                                                                                                                                                                                                                                                                                                                                     int age;
-     *                                                                                                                                                                                                                                                                                                                                                     String sex;
-     *                                                                                                                                                                                                                                                                                                                                                 }
-     *                      <p/>
-     *                                                                                                                                                                                                                                                                                                                                                 So if one needs to generate pull events out of a Person bean, the array he needs
-     *                                                                                                                                                                                                                                                                                                                                                 to pass is like this.
-     *                                                                                                                                                                                                                                                                                                                                                 ---------------------------------------------------------------------------------------------------
-     *                                                                                                                                                                                                                                                                                                                                                 | "Name" | "FooOne" | QName("DependentOne") | Dependent object| null | Array of Dependent objects |
-     *                                                                                                                                                                                                                                                                                                                                                 ---------------------------------------------------------------------------------------------------
-     *                                                                                                                                                                                                                                                                                                                                                 This DependentObject can either be an ADBBean, OMElement or a POJO. If its an ADBBean
-     *                                                                                                                                                                                                                                                                                                                                                 We directly get the pull parser from that. If not we create a reflection based
-     *                                                                                                                                                                                                                                                                                                                                                 pull parser for that java bean.
-     *                                                                                                                                                                                                                                                                                                                             </pre>
-     * @param adbBeansQName
+     * @param properties - this should contain all the stuff that stax events should be generated.
+     *                   Lets take an example of a bean.
+     *                   <pre>
+     *                       <Person>
+     *                              <DependentOne>
+     *                                  <Name>FooTwo</Name>
+     *                                  <Age>25</Age>
+     *                                  <Sex>Male</Sex>
+     *                              </DependentOne>
+     *                      </Person>
+     *                   <p/>
+     *                   <p/>
+     *                   so the mapping bean for this is
+     *                   class Person {
+     *                      String Name;
+     *                      Dependent dependentOne;
+     *                   }
+     *                   <p/>
+     *                   <p/>
+     *                   class Dependent {
+     *                      String name;
+     *                      int age;
+     *                      String sex;
+     *                   }
+     *                   <p/>
+     *                   <p/>
+     *                   So if one needs to generate pull events out of a Person bean, the array he needs
+     *                   to pass is like this.
+     *                   ---------------------------------------------------------------------------------------------------
+     *                   | "Name" | "FooOne" | QName("DependentOne") | Dependent object| null | Array of Dependent objects |
+     *                   ---------------------------------------------------------------------------------------------------
+     *                   This DependentObject can either be an ADBBean, OMElement or a POJO. If its an ADBBean
+     *                   We directly get the pull parser from that. If not we create a reflection based
+     *                   pull parser for that java bean.
+     *                   <p/>
+     *                   <p/>
+     *                                     This is the how the parsed array should look like
+     *                                                       Key             Value
+     *                                                       String              String
+     *                                                       QName               ADBBean, OMElement, Bean
+     *                                                       String              String[]
+     *                                                       QName               Object[] - this contains only one type of objects
+     *                   <p/>
+     *                   <p/>
+     *                                       This is how the passed attribute array should look like
+     *                                                       Key             Value
+     *                                                       null            OMAttribute[]
+     *                                                       QName           String
+     *                                     </pre>
      * @return XMLStreamReader
      */
-    public static XMLStreamReader createPullParser(QName adbBeansQName, Object[] properties, OMAttribute[] attributes) {
+    public static XMLStreamReader createPullParser(QName adbBeansQName, Object[] properties, Object[] attributes) {
         return new ADBPullParser(adbBeansQName, properties, attributes);
     }
 
@@ -172,7 +193,7 @@ public class ADBPullParser implements XMLStreamReader {
             // then this is just the start element
             currentIndex++;
             parserInformation = new ParserInformation(this.elementQName);
-            handleNamespaces();
+            handleNamespacesAndAttributes();
             return XMLStreamConstants.START_ELEMENT;
         } else if (properties == null || properties.length + 1 == currentIndex) {
             // this is the end of this element
@@ -210,7 +231,7 @@ public class ADBPullParser implements XMLStreamReader {
 
     }
 
-    private void handleNamespaces() {
+    private void handleNamespacesAndAttributes() {
         // by this time all the attributes related methods can be called.
         // now need to extract namespace from them and attach them to the element itself.
         String elementNSUri = this.elementQName.getNamespaceURI();
@@ -220,17 +241,37 @@ public class ADBPullParser implements XMLStreamReader {
             if (declaredNamespaces == null) declaredNamespaces = new HashMap();
             declaredNamespaces.put(elementNSUri, prefix);
         }
+
+        attributesList = new ArrayList();
         if (attributes != null) {
-            for (int i = 0; i < attributes.length; i++) {
-                OMAttribute attribute = attributes[i];
-                if (namespaceMap.get(attribute.getQName().getNamespaceURI()) == null) {
-                    String namespaceURI = attribute.getQName().getNamespaceURI();
-                    String prefix = attribute.getQName().getPrefix();
-                    namespaceMap.put(namespaceURI, prefix);
-                    if (declaredNamespaces == null) declaredNamespaces = new HashMap();
-                    declaredNamespaces.put(namespaceURI, prefix);
+            for (int i = 0; i < attributes.length; i += 2) {
+                Object key = attributes[i];
+
+                if ((key == null) && (attributes[i + 1] instanceof OMAttribute[])) {
+                    OMAttribute[] omAttributesArray = ((OMAttribute[]) attributes[i + 1]);
+                    for (int j = 0; j < omAttributesArray.length; j++) {
+                        OMAttribute omAttribute = omAttributesArray[j];
+                        checkNamespaceList(omAttribute.getQName().getNamespaceURI(),
+                                omAttribute.getQName().getPrefix());
+                        attributesList.add(omAttribute.getQName());
+                        attributesList.add(omAttribute.getAttributeValue());
+                    }
+
+                } else if (key instanceof QName) {
+                    QName qName = (QName) key;
+                    checkNamespaceList(qName.getNamespaceURI(), qName.getPrefix());
+                    attributesList.add(qName);
+                    attributesList.add(attributes[i + 1]);
                 }
             }
+        }
+    }
+
+    private void checkNamespaceList(String namespaceURI, String namespacePrefix) {
+        if (namespaceMap.get(namespaceURI) == null) {
+            namespaceMap.put(namespaceURI, namespacePrefix);
+            if (declaredNamespaces == null) declaredNamespaces = new HashMap();
+            declaredNamespaces.put(namespaceURI, namespacePrefix);
         }
     }
 
@@ -247,7 +288,7 @@ public class ADBPullParser implements XMLStreamReader {
 
     public int getAttributeCount() {
         if (accessingChildPullParser) return childPullParser.getAttributeCount();
-        if (attributes != null) return attributes.length;
+        if (attributes != null) return attributesList.size() / 2;
         return 0;
     }
 
@@ -300,8 +341,8 @@ public class ADBPullParser implements XMLStreamReader {
         if (namespaceURI == null || "".equals(namespaceURI)) testNSUri = true;
         if (localName == null || "".equals(localName)) testLocalName = true;
 
-        for (int i = 0; i < attributes.length; i++) {
-            QName attrQName = attributes[i].getQName();
+        for (int i = 0; i < attributes.length; i += 2) {
+            QName attrQName = (QName) attributesList.get(i);
             boolean isNSUriMatch = !testNSUri;
             boolean isLocalNameMatch = !testLocalName;
             if (testNSUri && namespaceURI.equals(attrQName.getNamespaceURI())) {
@@ -310,7 +351,7 @@ public class ADBPullParser implements XMLStreamReader {
             if (testLocalName && localName.equals(attrQName.getLocalPart())) {
                 isLocalNameMatch = true;
             }
-            if (isLocalNameMatch && isNSUriMatch) return attributes[i].getAttributeValue();
+            if (isLocalNameMatch && isNSUriMatch) return (String) attributesList.get(i + 1);
         }
         return null;
     }
@@ -318,8 +359,8 @@ public class ADBPullParser implements XMLStreamReader {
     public QName getAttributeName(int i) {
         if (accessingChildPullParser) {
             return childPullParser.getAttributeName(i);
-        } else if (attributes != null && attributes.length >= i) {
-            return attributes[i].getQName();
+        } else if (attributesList != null && attributesList.size() / 2 >= i) {
+            return (QName) attributesList.get(i * 2);
         }
         return null;
     }
@@ -327,8 +368,8 @@ public class ADBPullParser implements XMLStreamReader {
     public String getAttributeNamespace(int i) {
         if (accessingChildPullParser) {
             return childPullParser.getAttributeNamespace(i);
-        } else if (attributes != null && attributes.length >= i && attributes[i].getNamespace() != null) {
-            return attributes[i].getNamespace().getName();
+        } else if (attributesList != null && (attributesList.size() / 2) >= i) {
+            return ((QName) attributesList.get(i * 2)).getNamespaceURI();
         }
         return null;
     }
@@ -336,8 +377,8 @@ public class ADBPullParser implements XMLStreamReader {
     public String getAttributeLocalName(int i) {
         if (accessingChildPullParser) {
             return childPullParser.getAttributeLocalName(i);
-        } else if (attributes != null && attributes.length >= i) {
-            return attributes[i].getLocalName();
+        } else if (attributesList != null && attributesList.size() / 2 >= i) {
+            return ((QName) attributesList.get(i * 2)).getLocalPart();
         }
         return null;
     }
@@ -345,8 +386,8 @@ public class ADBPullParser implements XMLStreamReader {
     public String getAttributePrefix(int i) {
         if (accessingChildPullParser) {
             return childPullParser.getAttributePrefix(i);
-        } else if (attributes != null && attributes.length >= i) {
-            return attributes[i].getQName().getPrefix();
+        } else if (attributes != null && attributesList.size() / 2 >= i) {
+            return ((QName) attributesList.get(i * 2)).getPrefix();
         }
         return null;
     }
@@ -360,8 +401,8 @@ public class ADBPullParser implements XMLStreamReader {
     public String getAttributeValue(int i) {
         if (accessingChildPullParser) {
             return childPullParser.getAttributeValue(i);
-        } else if (attributes != null && attributes.length >= i) {
-            return attributes[i].getAttributeValue();
+        } else if (attributes != null && attributesList.size() / 2 >= i) {
+            return (String) attributesList.get(i * 2 + 1);
         }
         return null;
     }
@@ -370,7 +411,7 @@ public class ADBPullParser implements XMLStreamReader {
         if (accessingChildPullParser) {
             return childPullParser.isAttributeSpecified(i);
         }
-        return (attributes != null && attributes.length >= i);
+        return (attributes != null && attributesList.size() >= i * 2);
     }
 
 // -------- un-implemented methods ----------

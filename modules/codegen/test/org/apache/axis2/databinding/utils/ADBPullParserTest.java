@@ -271,7 +271,7 @@ public class ADBPullParserTest extends XMLTestCase {
             attribute[i] = factory.createOMAttribute("Attr" + (i + 1), null, "Value " + (i + 1));
         }
 
-        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, attribute));
+        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, new Object[] {null, attribute}));
         try {
             Document actualDom = newDocument(stringXML);
             Document expectedDocument = newDocument(expectedXML);
@@ -304,8 +304,7 @@ public class ADBPullParserTest extends XMLTestCase {
             attribute[i] = factory.createOMAttribute("Attr" + (i + 1), attrNS, "Value " + (i + 1));
         }
 
-        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, attribute));
-        System.out.println("stringXML = " + stringXML);
+        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, new Object[] {null, attribute}));
         try {
             Document actualDom = newDocument(stringXML);
             Document expectedDocument = newDocument(expectedXML);
