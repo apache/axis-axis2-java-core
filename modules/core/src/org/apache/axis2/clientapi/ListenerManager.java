@@ -77,6 +77,8 @@ public class ListenerManager {
             tsState.waitingCalls--;
             if (tsState.waitingCalls == 0) {
                 tsState.listener.stop();
+                //todo I have to properly handle this.
+                listeners.remove(transport);
             }
         }
     }

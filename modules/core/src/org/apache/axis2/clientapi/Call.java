@@ -209,26 +209,28 @@ public class Call extends InOutMEPClient {
             ConfigurationContextFactory efac =
                     new ConfigurationContextFactory();
             sysContext = efac.buildClientConfigurationContext(clientHome);
-           // ListenerManager.configurationContext = sysContext;
+            // ListenerManager.configurationContext = sysContext;
         } else {
             sysContext = ListenerManager.configurationContext;
         }
-
-        //we will assume a Service and operations
         QName assumedServiceName = new QName("AnonymousService");
-        ServiceDescription axisService = new ServiceDescription(assumedServiceName);
+        ServiceDescription axisService =sysContext.getAxisConfiguration().getService("AnonymousService");
+        if(axisService == null) {
+            //we will assume a Service and operations
+            axisService = new ServiceDescription(assumedServiceName);
 //        operationTemplate = new OperationDescription(new QName("TemplateOperation"));
-        operationTemplate = new   OutInOperationDescription(new QName("TemplateOperation"));
+            operationTemplate = new   OutInOperationDescription(new QName("TemplateOperation"));
 
-        PhasesInfo info =((AxisConfigurationImpl)sysContext.getAxisConfiguration()).getPhasesinfo();
-        //to set the operation flows
-        if(info != null){
-            info.setOperationPhases(operationTemplate);
+            PhasesInfo info =((AxisConfigurationImpl)sysContext.getAxisConfiguration()).getPhasesinfo();
+            //to set the operation flows
+            if(info != null){
+                info.setOperationPhases(operationTemplate);
+            }
+            axisService.addOperation(operationTemplate);
+            sysContext.getAxisConfiguration().addService(axisService);
         }
-        axisService.addOperation(operationTemplate);
-        sysContext.getAxisConfiguration().addService(axisService);
-
-        return axisService.getParent().getServiceGroupContext(sysContext).getServiceContext(assumedServiceName.getLocalPart());
+        return axisService.getParent().getServiceGroupContext(sysContext).getServiceContext(
+                assumedServiceName.getLocalPart());
     }
 
     /**
