@@ -129,12 +129,12 @@ public class InteropTestBase extends TestCase {
 	 * Do test
 	 */
     public void testInterop() {
-//    	try {
-//    		InteropScenarioClient.main(new String[]{Constants.TESTING_PATH + clientRepo,targetEpr});
-//    	} catch (Exception e) {
-//    		e.printStackTrace();
-//    		fail("Error in introperating with " + targetEpr + ", client configuration: " + clientRepo);
-//    	}
+    	try {
+    		InteropScenarioClient.main(new String[]{Constants.TESTING_PATH + clientRepo,targetEpr});
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		fail("Error in introperating with " + targetEpr + ", client configuration: " + clientRepo);
+    	}
     }
     
     

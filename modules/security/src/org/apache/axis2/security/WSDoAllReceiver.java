@@ -68,7 +68,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
     	//context - if it exists
     	if(!msgContext.isServerSide()) {//To make sure this is a response message 
     		OperationContext opCtx = msgContext.getOperationContext();
-    		MessageContext outMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+    		MessageContext outMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
     		msgContext.setProperty(WSHandlerConstants.SEND_SIGV,outMsgCtx.getProperty(WSHandlerConstants.SEND_SIGV));
     	}
     	
