@@ -97,52 +97,52 @@ public class ADBPullParser implements XMLStreamReader {
      * @param properties - this should contain all the stuff that stax events should be generated.
      *                   Lets take an example of a bean.
      *                   <pre>
-     *                       <Person>
-     *                              <DependentOne>
-     *                                  <Name>FooTwo</Name>
-     *                                  <Age>25</Age>
-     *                                  <Sex>Male</Sex>
-     *                              </DependentOne>
-     *                      </Person>
+     *                                                                                               <Person>
+     *                                                                                                      <DependentOne>
+     *                                                                                                          <Name>FooTwo</Name>
+     *                                                                                                          <Age>25</Age>
+     *                                                                                                          <Sex>Male</Sex>
+     *                                                                                                      </DependentOne>
+     *                                                                                              </Person>
      *                   <p/>
      *                   <p/>
-     *                   so the mapping bean for this is
-     *                   class Person {
-     *                      String Name;
-     *                      Dependent dependentOne;
-     *                   }
+     *                                                                                           so the mapping bean for this is
+     *                                                                                           class Person {
+     *                                                                                              String Name;
+     *                                                                                              Dependent dependentOne;
+     *                                                                                           }
      *                   <p/>
      *                   <p/>
-     *                   class Dependent {
-     *                      String name;
-     *                      int age;
-     *                      String sex;
-     *                   }
+     *                                                                                           class Dependent {
+     *                                                                                              String name;
+     *                                                                                              int age;
+     *                                                                                              String sex;
+     *                                                                                           }
      *                   <p/>
      *                   <p/>
-     *                   So if one needs to generate pull events out of a Person bean, the array he needs
-     *                   to pass is like this.
-     *                   ---------------------------------------------------------------------------------------------------
-     *                   | "Name" | "FooOne" | QName("DependentOne") | Dependent object| null | Array of Dependent objects |
-     *                   ---------------------------------------------------------------------------------------------------
-     *                   This DependentObject can either be an ADBBean, OMElement or a POJO. If its an ADBBean
-     *                   We directly get the pull parser from that. If not we create a reflection based
-     *                   pull parser for that java bean.
+     *                                                                                           So if one needs to generate pull events out of a Person bean, the array he needs
+     *                                                                                           to pass is like this.
+     *                                                                                           ---------------------------------------------------------------------------------------------------
+     *                                                                                           | "Name" | "FooOne" | QName("DependentOne") | Dependent object| null | Array of Dependent objects |
+     *                                                                                           ---------------------------------------------------------------------------------------------------
+     *                                                                                           This DependentObject can either be an ADBBean, OMElement or a POJO. If its an ADBBean
+     *                                                                                           We directly get the pull parser from that. If not we create a reflection based
+     *                                                                                           pull parser for that java bean.
      *                   <p/>
      *                   <p/>
-     *                                     This is the how the parsed array should look like
-     *                                                       Key             Value
-     *                                                       String              String
-     *                                                       QName               ADBBean, OMElement, Bean
-     *                                                       String              String[]
-     *                                                       QName               Object[] - this contains only one type of objects
+     *                                                                                                             This is the how the parsed array should look like
+     *                                                                                                                               Key             Value
+     *                                                                                                                               String              String
+     *                                                                                                                               QName               ADBBean, OMElement, Bean
+     *                                                                                                                               String              String[]
+     *                                                                                                                               QName               Object[] - this contains only one type of objects
      *                   <p/>
      *                   <p/>
-     *                                       This is how the passed attribute array should look like
-     *                                                       Key             Value
-     *                                                       null            OMAttribute[]
-     *                                                       QName           String
-     *                                     </pre>
+     *                                                                                                               This is how the passed attribute array should look like
+     *                                                                                                                               Key             Value
+     *                                                                                                                               null            OMAttribute[]
+     *                                                                                                                               QName           String
+     *                                                                                                             </pre>
      * @return XMLStreamReader
      */
     public static XMLStreamReader createPullParser(QName adbBeansQName, Object[] properties, Object[] attributes) {
@@ -183,6 +183,7 @@ public class ADBPullParser implements XMLStreamReader {
             }
         }
 
+
         if (processingADBNameValuePair && nameValuePairEndElementProcessed) {
             processingADBNameValuePair = false;
             currentIndex = currentIndex + 2;
@@ -201,6 +202,10 @@ public class ADBPullParser implements XMLStreamReader {
             isEndElementFinished = true;
             return XMLStreamConstants.END_ELEMENT;
         } else {
+
+            // first remove all the attributes from the current element
+            attributesList = null;
+
             if (processingADBNameValuePair) {
                 return processADBNameValuePair(null, null);
             }
@@ -220,10 +225,25 @@ public class ADBPullParser implements XMLStreamReader {
                 accessingChildPullParser = true;
                 return this.next();
             } else if (o instanceof String) {
+                Object property = properties[currentIndex];
                 String simplePropertyName = (String) o;
-                String simplePropertyValue = (String) properties[currentIndex];
-                processingADBNameValuePair = true;
-                return processADBNameValuePair(simplePropertyName, simplePropertyValue);
+
+                if (property instanceof String[]) {
+                    String[] stringArray = (String[]) property;
+
+                    // lets create an array out of this and create a pull parser out of this
+                    String[] propertyArray = new String[stringArray.length * 2];
+                    for (int i = 0; i < stringArray.length; i++) {
+                        propertyArray[i] = simplePropertyName;
+                        propertyArray[i + 1] = stringArray[i];
+                    }
+
+                } else if (property instanceof String) {
+                    String simplePropertyValue = (String) properties[currentIndex];
+                    processingADBNameValuePair = true;
+                    return processADBNameValuePair(simplePropertyName, simplePropertyValue);
+                }
+                throw new XMLStreamException("Only String and String[] are accepted as the values when the key is a String");
             } else {
                 throw new XMLStreamException("Sorry !! We only support QNames and Strings as the keys of the properties list");
             }
@@ -235,7 +255,7 @@ public class ADBPullParser implements XMLStreamReader {
         // by this time all the attributes related methods can be called.
         // now need to extract namespace from them and attach them to the element itself.
         String elementNSUri = this.elementQName.getNamespaceURI();
-        if (namespaceMap.get(elementNSUri) == null) {
+        if (!"".equals(elementNSUri) && elementNSUri != null && namespaceMap.get(elementNSUri) == null) {
             String prefix = this.elementQName.getPrefix();
             namespaceMap.put(elementNSUri, prefix);
             if (declaredNamespaces == null) declaredNamespaces = new HashMap();
@@ -288,7 +308,7 @@ public class ADBPullParser implements XMLStreamReader {
 
     public int getAttributeCount() {
         if (accessingChildPullParser) return childPullParser.getAttributeCount();
-        if (attributes != null) return attributesList.size() / 2;
+        if (attributesList != null) return attributesList.size() / 2;
         return 0;
     }
 

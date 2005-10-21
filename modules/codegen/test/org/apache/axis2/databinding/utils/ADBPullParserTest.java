@@ -349,6 +349,54 @@ public class ADBPullParserTest extends XMLTestCase {
 
     }
 
+    public void testAttributeArray(){
+
+        String expectedXML = "<ns1:TestAttributeArray xmlns:ns1=\"http://testAttributeArray.org\" " +
+                "xmlns:attrNS=\"mailto:whoever@whatever.com\" xmlns:myAttr=\"http://www.axis2.net\" " +
+                "myAttr:Axis2Attr=\"SomeValue\" attrNS:Attr3=\"Value 3\" attrNS:Attr1=\"Value 1\" " +
+                "attrNS:Attr4=\"Value 4\" attrNS:Attr5=\"Value 5\" attrNS:Attr2=\"Value 2\">" +
+                "<Foo>Some Text</Foo><Dependent><Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex>" +
+                "</Dependent></ns1:TestAttributeArray>";
+
+
+        // lets first have some properties
+        ArrayList propertyList = new ArrayList();
+        propertyList.add("Foo");
+        propertyList.add("Some Text");
+        propertyList.add(new QName("Dependent"));
+        DummyADBBean dummyBean = new DummyADBBean();
+        propertyList.add(dummyBean);
+
+        ArrayList attributes = new ArrayList();
+        OMFactory factory = OMAbstractFactory.getOMFactory();
+        QName elementQName = new QName("http://ec.org/software", "Employee", "emp");
+        OMNamespace attrNS = factory.createOMNamespace("mailto:whoever@whatever.com", "attrNS");
+
+        // add some attributes with namespaces
+        OMAttribute[] attribute = new OMAttribute[5];
+        for (int i = 0; i < 5; i++) {
+            attribute[i] = factory.createOMAttribute("Attr" + (i + 1), attrNS, "Value " + (i + 1));
+        }
+        attributes.add(null);
+        attributes.add(attribute);
+        attributes.add(new QName("http://www.axis2.net", "Axis2Attr", "myAttr"));
+        attributes.add("SomeValue");
+
+        XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("http://testAttributeArray.org", "TestAttributeArray", "ns1"), propertyList.toArray(), attributes.toArray());
+        String actualXML = getStringXML(pullParser);
+
+        try {
+            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
+        } catch (ParserConfigurationException e) {
+            fail("Error has occurred "+ e);
+        } catch (SAXException e) {
+            fail("Error has occurred "+ e);
+        } catch (IOException e) {
+            fail("Error has occurred "+ e);
+        }
+
+    }
+
     private String getStringXML(XMLStreamReader reader) {
         OMElement omelement = new StAXOMBuilder(reader).getDocumentElement();
         return omelement.toString();
