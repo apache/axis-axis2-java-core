@@ -39,7 +39,7 @@ public class InvokerThread extends Thread {
                     + "/axis/services/EchoXMLService/echoOMElement");
     protected QName operationName = new QName("echoOMElement");
     protected Log log = LogFactory.getLog(getClass());
-    private boolean isExceptionThrown = false;
+    private Exception thrownException = null;
 
     public InvokerThread(int threadNumber) {
         this.threadNumber = threadNumber;
@@ -63,14 +63,13 @@ public class InvokerThread extends Thread {
             TestingUtils.campareWithCreatedOMElement(result);
             call.close();
             log.info("Finishing Thread number "+ threadNumber + " .....");
-            isExceptionThrown = false;
         } catch (AxisFault axisFault) {
-            isExceptionThrown = true;
+            thrownException = axisFault;
             log.error("Error has occured invoking the service ", axisFault);
         }
     }
 
-    public boolean isExceptionThrown() {
-        return isExceptionThrown;
+    public Exception getThrownException() {
+        return thrownException;
     }
 }

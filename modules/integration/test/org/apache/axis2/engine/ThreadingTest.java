@@ -68,8 +68,6 @@ public class ThreadingTest extends TestCase {
     }
 
     public void testEchoXMLSync() throws Exception {
-
-
         int numberOfThreads = 5;
         InvokerThread[] invokerThreads = new InvokerThread[numberOfThreads];
 
@@ -90,8 +88,9 @@ public class ThreadingTest extends TestCase {
                     threadsAreRunning = true;
                     break;
                 }
-                if (invokerThreads[i].isExceptionThrown()) {
-                    fail("Exception thrown in thread "+ i + " ....");
+                Exception exception = invokerThreads[i].getThrownException();
+                if (exception != null) {
+                    throw new Exception("Exception thrown in thread "+ i + " ....", exception);
                 }
             }
 
@@ -101,6 +100,7 @@ public class ThreadingTest extends TestCase {
                 fail("Timing out");
             }
 
+            Thread.sleep(100);
         } while (threadsAreRunning);
 
         assertTrue(true);
