@@ -445,6 +445,69 @@ public class ADBPullParserTest extends XMLTestCase {
 
     }
 
+    public void testComplexObjectArrayScenario() {
+
+        String expectedXML = "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
+                "<Foo>Some Text</Foo>" +
+                "<Dependent>" +
+                "<Name>FooTwo</Name>" +
+                "<Age>25</Age>" +
+                "<Sex>Male</Sex>" +
+                "</Dependent>" +
+                "<AdditionalDependent>" +
+                "<Name>FooTwo</Name>" +
+                "<Age>25</Age>" +
+                "<Sex>Male</Sex>" +
+                "</AdditionalDependent>" +
+                "<AdditionalDependent>" +
+                "<Name>FooTwo</Name>" +
+                "<Age>25</Age>" +
+                "<Sex>Male</Sex>" +
+                "</AdditionalDependent>" +
+                "<AdditionalDependent>" +
+                "<Name>FooTwo</Name>" +
+                "<Age>25</Age>" +
+                "<Sex>Male</Sex>" +
+                "</AdditionalDependent>" +
+                "<AdditionalDependent>" +
+                "<Name>FooTwo</Name>" +
+                "<Age>25</Age>" +
+                "<Sex>Male</Sex>" +
+                "</AdditionalDependent>" +
+                "<Bar>Some More Text</Bar><" +
+                "/ns1:TestComplexStringArrayScenario>";
+
+        ArrayList propertyList = new ArrayList();
+        propertyList.add("Foo");
+        propertyList.add("Some Text");
+        propertyList.add(new QName("Dependent"));
+        DummyADBBean dummyBean = new DummyADBBean();
+        propertyList.add(dummyBean);
+
+        ADBBean[] adbBeans = new ADBBean[4];
+        for (int i = 0; i < 4; i++) {
+            adbBeans[i] = new DummyADBBean();
+        }
+        propertyList.add(new QName("AdditionalDependent"));
+        propertyList.add(adbBeans);
+
+        propertyList.add("Bar");
+        propertyList.add("Some More Text");
+
+        XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("http://testComplexStringArrayScenario.org", "TestComplexStringArrayScenario", "ns1"), propertyList.toArray(), null);
+        String actualXML = getStringXML(pullParser);
+
+        try {
+            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
+        } catch (ParserConfigurationException e) {
+            fail("Error has occurred " + e);
+        } catch (SAXException e) {
+            fail("Error has occurred " + e);
+        } catch (IOException e) {
+            fail("Error has occurred " + e);
+        }
+    }
+
     private String getStringXML(XMLStreamReader reader) {
         OMElement omelement = new StAXOMBuilder(reader).getDocumentElement();
         return omelement.toString();
