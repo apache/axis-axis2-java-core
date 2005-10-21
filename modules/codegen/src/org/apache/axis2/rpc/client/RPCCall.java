@@ -91,7 +91,7 @@ public class RPCCall extends Call {
         opDesc = createOpDescAndFillInFlowInformation(opDesc, opName.getLocalPart(),
                 WSDLConstants.MEP_CONSTANT_IN_OUT);
         opDesc.setParent(serviceContext.getServiceConfig());
-        MessageContext msgctx = prepareTheSOAPEnvelope(getOMElement(opName,args));
+        MessageContext msgctx = prepareTheSOAPEnvelope(BeanSerializerUtil.getOMElement(opName,args));
 
         this.lastResponseMessage = super.invokeBlocking(opDesc, msgctx);
         SOAPEnvelope resEnvelope = lastResponseMessage.getEnvelope();
@@ -121,7 +121,7 @@ public class RPCCall extends Call {
         opDesc = createOpDescAndFillInFlowInformation(opDesc, opName.getLocalPart(),
                 WSDLConstants.MEP_CONSTANT_IN_OUT);
         opDesc.setParent(serviceContext.getServiceConfig());
-        MessageContext msgctx = prepareTheSOAPEnvelope(getOMElement(opName,args));
+        MessageContext msgctx = prepareTheSOAPEnvelope(BeanSerializerUtil.getOMElement(opName,args));
         this.lastResponseMessage = super.invokeBlocking(opDesc, msgctx);
         SOAPEnvelope resEnvelope = lastResponseMessage.getEnvelope();
         return BeanSerializerUtil.deserialize(resEnvelope.getBody().getFirstElement(),returnTypes);
@@ -145,7 +145,7 @@ public class RPCCall extends Call {
         OperationDescription opDesc =
                 serviceContext.getServiceConfig().getOperation(opName);
         opDesc = createOpDescAndFillInFlowInformation(opDesc, opName.getLocalPart(), WSDLConstants.MEP_CONSTANT_IN_OUT);
-        MessageContext msgctx = prepareTheSOAPEnvelope(getOMElement(opName,args));
+        MessageContext msgctx = prepareTheSOAPEnvelope(BeanSerializerUtil.getOMElement(opName,args));
         //call the underline implementation
         super.invokeNonBlocking(opDesc, msgctx, callback);
     }
@@ -157,29 +157,6 @@ public class RPCCall extends Call {
      * @param opName
      * @param args
      */
-    private OMElement getOMElement(QName opName ,Object [] args) {
-        ArrayList objects ;
-        objects = new ArrayList();
-        int argCount =0;
-        for (int i = 0; i < args.length; i++) {
-            Object arg = args[i];
-            //todo if the request paramter has name other than argi (0<i<n) , there should be a
-            //was to do that , to solve that problem we need to have RPCRequestParameter
-            //note that The value of request paramter can either be simple type or JavaBean
-            if(SimpleTypeMapper.isSimpleType(arg)){
-                objects.add("arg" + argCount);
-                objects.add(arg.toString());
-            }  else {
-                objects.add(new QName("arg" + argCount));
-                objects.add(arg);
-            }
-            argCount ++;
-        }
-        XMLStreamReader xr = ADBPullParser.createPullParser(opName,objects.toArray(),null);
-        StAXOMBuilder stAXOMBuilder =
-                OMXMLBuilderFactory.createStAXOMBuilder(
-                        OMAbstractFactory.getSOAP11Factory(), xr);
-        return stAXOMBuilder.getDocumentElement();
-    }
+
 
 }

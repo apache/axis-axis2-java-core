@@ -177,6 +177,39 @@ public class MultirefTest extends TestCase {
         assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "20");
     }
 
+     public void testaddSameRef() throws AxisFault {
+        configureSystem("add");
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+
+        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMElement method = fac.createOMElement("add", omNs);
+        OMElement value = fac.createOMElement("arg0", null);
+        value.addAttribute(fac.createOMAttribute("href",null,"#1"));
+        method.addChild(value);
+
+        OMElement value2 = fac.createOMElement("arg1", null);
+        value2.addAttribute(fac.createOMAttribute("href",null,"#1"));
+        method.addChild(value2);
+
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope envelope = factory.getDefaultEnvelope();
+        envelope.getBody().addChild(method);
+
+        OMElement ref = fac.createOMElement("reference", null);
+        ref.addAttribute(fac.createOMAttribute("id",null,"1"));
+        ref.setText("10");
+        envelope.getBody().addChild(ref);
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
+        SOAPEnvelope env = call.invokeBlocking("add",envelope);
+        assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "20");
+    }
+
     public void testaddError() {
         try {
             configureSystem("add");

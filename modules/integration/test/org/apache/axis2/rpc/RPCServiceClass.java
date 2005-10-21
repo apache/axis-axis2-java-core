@@ -12,6 +12,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import java.util.Calendar;
+import java.util.ArrayList;
 import java.io.ByteArrayInputStream;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -100,5 +101,27 @@ public class RPCServiceClass {
                 fac.createText(value2, "foo"));
         method.addChild(value2);
         return   method;
+    }
+
+
+    /**
+     * This methods return mutiple object , so it creat an Object array and retuen that
+     * so , if a method want to return mutiple value , this way can be used
+     * @param obj
+     * @return Object []
+     */
+    public Object[] mulReturn(OMElement obj){
+        ArrayList objs= new ArrayList();
+        objs.add(new Integer(100));
+        MyBean bean = new MyBean();
+        bean.setAge(100);
+        bean.setName("Deepal");
+        bean.setValue(false);
+        AddressBean ab = new AddressBean();
+        ab.setNumber(1010);
+        ab.setTown("Colombo3");
+        bean.setAddress(ab);
+        objs.add(bean);
+        return objs.toArray();
     }
 }

@@ -102,7 +102,14 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             SOAPEnvelope envelope = getSOAPFactory().getDefaultEnvelope();
             OMElement bodyContent = null;
 
-            processResponse(resObject, bodyContent, ns, envelope);
+            if(resObject instanceof Object[]){
+                QName resName = new QName("http://soapenc/",  method.getName() + "Response", "res");
+                OMElement bodyChild = getResponseElement(resName,(Object[])resObject);
+                envelope.getBody().addChild(bodyChild);
+            }   else {
+                processResponse(resObject, bodyContent, ns, envelope);
+            }
+
             outMessage.setEnvelope(envelope);
 
         } catch (Exception e) {
@@ -116,7 +123,9 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
         return   BeanSerializerUtil.deserialize(methodElement,parameters);
     }
 
-
+    private OMElement getResponseElement(QName resname, Object [] objs){
+        return BeanSerializerUtil.getOMElement(resname,objs);
+    }
 
     private void processResponse(Object resObject, OMElement bodyContent, OMNamespace ns, SOAPEnvelope envelope) {
         if (resObject != null) {

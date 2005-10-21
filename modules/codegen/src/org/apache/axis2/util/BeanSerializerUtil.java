@@ -5,6 +5,9 @@ import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.ADBPullParser;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
@@ -150,7 +153,7 @@ public class BeanSerializerUtil {
                         String refId = MultirefHelper.getAttvalue(attr);
                         partObj =  helper.getObject(refId);
                         if(partObj == null){
-                           partObj = helper.processRef(parameters,refId);
+                            partObj = helper.processRef(parameters,refId);
                         }
                     } else {
                         partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
@@ -261,6 +264,29 @@ public class BeanSerializerUtil {
         return  retObjs;
     }
 
-
+    public static OMElement getOMElement(QName opName ,Object [] args) {
+        ArrayList objects ;
+        objects = new ArrayList();
+        int argCount =0;
+        for (int i = 0; i < args.length; i++) {
+            Object arg = args[i];
+            //todo if the request paramter has name other than argi (0<i<n) , there should be a
+            //was to do that , to solve that problem we need to have RPCRequestParameter
+            //note that The value of request paramter can either be simple type or JavaBean
+            if(SimpleTypeMapper.isSimpleType(arg)){
+                objects.add("arg" + argCount);
+                objects.add(arg.toString());
+            }  else {
+                objects.add(new QName("arg" + argCount));
+                objects.add(arg);
+            }
+            argCount ++;
+        }
+        XMLStreamReader xr = ADBPullParser.createPullParser(opName,objects.toArray(),null);
+        StAXOMBuilder stAXOMBuilder =
+                OMXMLBuilderFactory.createStAXOMBuilder(
+                        OMAbstractFactory.getSOAP11Factory(), xr);
+        return stAXOMBuilder.getDocumentElement();
+    }
 
 }

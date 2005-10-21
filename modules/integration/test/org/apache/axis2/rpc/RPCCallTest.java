@@ -395,4 +395,24 @@ public class RPCCallTest extends TestCase {
         call.close();
     }
 
+     public void testmulReturn() throws AxisFault {
+        configureSystem("mulReturn");
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
+
+        ArrayList args = new ArrayList();
+        args.add("foo");
+
+
+
+        OMElement response = call.invokeBlocking(operationName, args.toArray());
+//        assertEquals(response.getFirstElement().getText(), "foo");
+        call.close();
+    }
+
 }
