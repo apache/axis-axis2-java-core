@@ -2,6 +2,8 @@ package org.apache.axis2.util;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
 
@@ -42,6 +44,7 @@ public class MultirefHelper {
 
     private HashMap objectmap = new HashMap();
     private HashMap elementMap = new HashMap();
+    private  HashMap omElementMap = new HashMap();
 
     public MultirefHelper(OMElement parent) {
         this.parent = parent;
@@ -49,6 +52,53 @@ public class MultirefHelper {
 
     public Object getObject(String id){
         return objectmap.get(id);
+    }
+
+    public OMElement getOMElement(String id){
+        return (OMElement)omElementMap.get(id);
+    }
+
+    public OMElement processOMElementRef(String id) throws AxisFault {
+        if(!filledTable){
+            readallChildElements();
+        }
+        OMElement val = (OMElement)elementMap.get(id);
+        if(val == null){
+            throw new AxisFault("Invalid reference :" + id);
+        } else {
+            OMElement ele = processElementforRefs(val);
+            OMElement cloneele = elementClone(ele);
+            omElementMap.put(id,cloneele);
+            return cloneele;
+        }
+    }
+
+    public OMElement processElementforRefs(OMElement elemnts) throws AxisFault {
+        Iterator itr = elemnts.getChildElements();
+        while (itr.hasNext()) {
+            OMElement omElement = (OMElement) itr.next();
+            OMAttribute attri = processRefAtt(omElement);
+            if(attri != null){
+                String ref = getAttvalue(attri);
+                OMElement tempele = getOMElement(ref);
+                if(tempele == null){
+                    tempele = processOMElementRef(ref);
+                }
+                OMElement ele2 = elementClone(tempele);
+                Iterator itrChild = ele2.getChildren();
+                while (itrChild.hasNext()) {
+                    Object obj = itrChild.next();
+                    if(obj instanceof OMNode){
+                      omElement.addChild((OMNode)obj);
+                    }
+                }
+            }
+        }
+        return elemnts;
+    }
+
+    private OMElement elementClone(OMElement ele){
+        return  new StAXOMBuilder(ele.getXMLStreamReader()).getDocumentElement();
     }
 
     public Object processRef(Class javatype, String id) throws AxisFault {

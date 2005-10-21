@@ -33,6 +33,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.FactoryConfigurationError;
 import java.text.SimpleDateFormat;
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 
 import junit.framework.TestCase;
 /*
@@ -177,7 +178,7 @@ public class MultirefTest extends TestCase {
         assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "20");
     }
 
-     public void testaddSameRef() throws AxisFault {
+    public void testaddSameRef() throws AxisFault {
         configureSystem("add");
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
@@ -303,6 +304,108 @@ public class MultirefTest extends TestCase {
         MyBean resBean = (MyBean) BeanSerializerUtil.deserialize(MyBean.class, response.getFirstElement());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
+        call.close();
+    }
+
+
+    public void testbeanOM() throws AxisFault {
+        configureSystem("beanOM");
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+
+        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMElement method = fac.createOMElement("beanOM", omNs);
+        OMElement value = fac.createOMElement("arg0", null);
+        value.addAttribute(fac.createOMAttribute("href",null,"#1"));
+        method.addChild(value);
+        OMElement value2 = fac.createOMElement("arg1", null);
+        value2.setText("159");
+        method.addChild(value2);
+
+
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope envelope = factory.getDefaultEnvelope();
+        envelope.getBody().addChild(method);
+
+
+        String ref1 ="<reference id=\"1\"><name>Deepal</name><value href=\"#2\"/><address href=\"#3\"/></reference>";
+        OMElement om1 = getOMelemnt(ref1,fac);
+        envelope.getBody().addChild(om1);
+        String ref2 = "<reference id=\"2\">false</reference>";
+        OMElement om2 = getOMelemnt(ref2,fac);
+        envelope.getBody().addChild(om2);
+        String ref3 = "<reference id=\"3\"><town href=\"#4\"/><number>1010</number></reference>";
+        OMElement om3 = getOMelemnt(ref3,fac);
+        envelope.getBody().addChild(om3);
+        String ref4 = "<reference id=\"4\">Colombo3</reference>";
+        OMElement om4 = getOMelemnt(ref4,fac);
+        envelope.getBody().addChild(om4);
+
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
+        SOAPEnvelope env = call.invokeBlocking("beanOM",envelope);
+        OMElement response = env.getBody().getFirstElement();
+        MyBean resBean = (MyBean) BeanSerializerUtil.deserialize(MyBean.class, response.getFirstElement());
+        assertNotNull(resBean);
+        assertEquals(resBean.getAge(), 159);
+        call.close();
+    }
+
+
+    public void testomrefs() throws AxisFault {
+        configureSystem("omrefs");
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+
+        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMElement method = fac.createOMElement("omrefs", omNs);
+
+        OMElement value = fac.createOMElement("arg0", null);
+        value.addAttribute(fac.createOMAttribute("href",null,"#1"));
+        method.addChild(value);
+
+        OMElement value2 = fac.createOMElement("arg1", null);
+        value2.addAttribute(fac.createOMAttribute("href",null,"#1"));
+        method.addChild(value2);
+
+
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope envelope = factory.getDefaultEnvelope();
+        envelope.getBody().addChild(method);
+
+
+        String ref1 ="<reference id=\"1\"><name>Deepal</name><value href=\"#2\"/><address href=\"#3\"/></reference>";
+        OMElement om1 = getOMelemnt(ref1,fac);
+        envelope.getBody().addChild(om1);
+        String ref2 = "<reference id=\"2\">false</reference>";
+        OMElement om2 = getOMelemnt(ref2,fac);
+        envelope.getBody().addChild(om2);
+        String ref3 = "<reference id=\"3\"><town href=\"#4\"/><number>1010</number></reference>";
+        OMElement om3 = getOMelemnt(ref3,fac);
+        envelope.getBody().addChild(om3);
+        String ref4 = "<reference id=\"4\">Colombo3</reference>";
+        OMElement om4 = getOMelemnt(ref4,fac);
+        envelope.getBody().addChild(om4);
+
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
+        SOAPEnvelope env = call.invokeBlocking("omrefs",envelope);
+        OMElement response = env.getBody().getFirstElement();
+
+        ArrayList args = new ArrayList();
+        args.add(boolean.class);
+
+        Object [] resBean = BeanSerializerUtil.deserialize(response,args.toArray());
+        assertNotNull(resBean);
+        assertEquals(((Boolean)resBean[0]).booleanValue(),true);
         call.close();
     }
 

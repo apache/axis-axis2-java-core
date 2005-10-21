@@ -238,8 +238,14 @@ public class BeanSerializerUtil {
 
             if(OMElement.class.isAssignableFrom(classType)){
                 if(hasRef){
-                    throw new AxisFault("The method take OMElenent as argument , and the body contains" +
-                            "refs , encounter processing error ");
+                    OMElement elemnt = helper.getOMElement(ref);
+                    if(elemnt == null){
+                       retObjs[count] = helper.processOMElementRef(ref);
+                    } else {
+                        retObjs[count] =omElement;
+                    }
+//                    throw new AxisFault("The method take OMElenent as argument , and the body contains" +
+//                            "refs , encounter processing error ");
                 } else
                     retObjs[count] =omElement;
             } else {

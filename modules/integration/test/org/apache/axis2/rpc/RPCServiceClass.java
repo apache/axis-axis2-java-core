@@ -6,6 +6,8 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.util.BeanSerializerUtil;
+import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -123,5 +125,21 @@ public class RPCServiceClass {
         bean.setAddress(ab);
         objs.add(bean);
         return objs.toArray();
+    }
+
+    public MyBean beanOM(OMElement element, int val) throws AxisFault {
+        MyBean bean =(MyBean)BeanSerializerUtil.deserialize(MyBean.class,element);
+        bean.setAge(val);
+        return bean;
+    }
+
+    public boolean omrefs(OMElement element, OMElement element2) throws AxisFault {
+        MyBean bean =(MyBean)BeanSerializerUtil.deserialize(MyBean.class,element);
+        MyBean bean2 =(MyBean)BeanSerializerUtil.deserialize(MyBean.class,element2);
+        if(bean2 !=null && bean !=null){
+            return true;
+        } else{
+            return false;
+        }
     }
 }
