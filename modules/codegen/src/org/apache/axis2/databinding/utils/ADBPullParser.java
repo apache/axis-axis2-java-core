@@ -60,6 +60,16 @@ public class ADBPullParser implements XMLStreamReader {
     private ParserInformation tempParserInfo;
     // ==============================================
 
+    // ===== To be used with Simple Name Value pair ====
+    // this is used when we have an array of Strings
+    private boolean processingComplexADBNameValuePair = false;
+    private int secondArrayIndex = 0;
+    private String[] complexStringArray;
+    private String complexStringArrayName;
+    // ==============================================
+
+
+
     private ParserInformation parserInformation;
 
     // a pointer to the children list of current location
@@ -183,7 +193,21 @@ public class ADBPullParser implements XMLStreamReader {
             }
         }
 
+        // now check whether we are processing a complex string array or not
+        if(processingComplexADBNameValuePair && nameValuePairEndElementProcessed){
+            // this means we are done with processing one complex string array entry
+            // check we have more
+            if(complexStringArray.length > ++secondArrayIndex){
+                // we have some more to process
+                processingADBNameValuePair = true;
+                return processADBNameValuePair(complexStringArrayName, complexStringArray[secondArrayIndex]);
+            }else{
+                // completed looking at all the entries. Now go forward with normal entries, if any.
+                processingComplexADBNameValuePair = false;
+            }
+        }
 
+        // check whether we are done with processing a name value pair from an earlier cycle
         if (processingADBNameValuePair && nameValuePairEndElementProcessed) {
             processingADBNameValuePair = false;
             currentIndex = currentIndex + 2;
@@ -225,18 +249,21 @@ public class ADBPullParser implements XMLStreamReader {
                 accessingChildPullParser = true;
                 return this.next();
             } else if (o instanceof String) {
+
+                // TODO : Chinthaka this is not finished.
                 Object property = properties[currentIndex];
                 String simplePropertyName = (String) o;
 
                 if (property instanceof String[]) {
-                    String[] stringArray = (String[]) property;
 
-                    // lets create an array out of this and create a pull parser out of this
-                    String[] propertyArray = new String[stringArray.length * 2];
-                    for (int i = 0; i < stringArray.length; i++) {
-                        propertyArray[i] = simplePropertyName;
-                        propertyArray[i + 1] = stringArray[i];
-                    }
+                    complexStringArrayName = simplePropertyName;
+                    complexStringArray = (String[]) property;
+                    secondArrayIndex = 0;
+                    processingComplexADBNameValuePair = true;
+
+                    // use the simple name value pair processing recursively
+                    processingADBNameValuePair = true;
+                    return processADBNameValuePair(simplePropertyName, complexStringArray[secondArrayIndex]);
 
                 } else if (property instanceof String) {
                     String simplePropertyValue = (String) properties[currentIndex];

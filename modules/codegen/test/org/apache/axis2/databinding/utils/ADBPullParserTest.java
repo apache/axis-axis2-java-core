@@ -271,7 +271,7 @@ public class ADBPullParserTest extends XMLTestCase {
             attribute[i] = factory.createOMAttribute("Attr" + (i + 1), null, "Value " + (i + 1));
         }
 
-        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, new Object[] {null, attribute}));
+        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, new Object[]{null, attribute}));
         try {
             Document actualDom = newDocument(stringXML);
             Document expectedDocument = newDocument(expectedXML);
@@ -304,7 +304,7 @@ public class ADBPullParserTest extends XMLTestCase {
             attribute[i] = factory.createOMAttribute("Attr" + (i + 1), attrNS, "Value " + (i + 1));
         }
 
-        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, new Object[] {null, attribute}));
+        String stringXML = getStringXML(ADBPullParser.createPullParser(elementQName, null, new Object[]{null, attribute}));
         try {
             Document actualDom = newDocument(stringXML);
             Document expectedDocument = newDocument(expectedXML);
@@ -349,7 +349,7 @@ public class ADBPullParserTest extends XMLTestCase {
 
     }
 
-    public void testAttributeArray(){
+    public void testAttributeArray() {
 
         String expectedXML = "<ns1:TestAttributeArray xmlns:ns1=\"http://testAttributeArray.org\" " +
                 "xmlns:attrNS=\"mailto:whoever@whatever.com\" xmlns:myAttr=\"http://www.axis2.net\" " +
@@ -357,7 +357,6 @@ public class ADBPullParserTest extends XMLTestCase {
                 "attrNS:Attr4=\"Value 4\" attrNS:Attr5=\"Value 5\" attrNS:Attr2=\"Value 2\">" +
                 "<Foo>Some Text</Foo><Dependent><Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex>" +
                 "</Dependent></ns1:TestAttributeArray>";
-
 
         // lets first have some properties
         ArrayList propertyList = new ArrayList();
@@ -388,12 +387,61 @@ public class ADBPullParserTest extends XMLTestCase {
         try {
             assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
         } catch (ParserConfigurationException e) {
-            fail("Error has occurred "+ e);
+            fail("Error has occurred " + e);
         } catch (SAXException e) {
-            fail("Error has occurred "+ e);
+            fail("Error has occurred " + e);
         } catch (IOException e) {
-            fail("Error has occurred "+ e);
+            fail("Error has occurred " + e);
         }
+
+    }
+
+    public void testComplexStringArrayScenario() {
+
+        String expectedXML = "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
+                "<Foo>Some Text</Foo>" +
+                "<Dependent>" +
+                "<Name>FooTwo</Name>" +
+                "<Age>25</Age>" +
+                "<Sex>Male</Sex>" +
+                "</Dependent>" +
+                "<StringInfo>Some Text 0</StringInfo>" +
+                "<StringInfo>Some Text 1</StringInfo>" +
+                "<StringInfo>Some Text 2</StringInfo>" +
+                "<StringInfo>Some Text 3</StringInfo>" +
+                "<Bar>Some More Text</Bar>" +
+                "</ns1:TestComplexStringArrayScenario>";
+
+        ArrayList propertyList = new ArrayList();
+        propertyList.add("Foo");
+        propertyList.add("Some Text");
+        propertyList.add(new QName("Dependent"));
+        DummyADBBean dummyBean = new DummyADBBean();
+        propertyList.add(dummyBean);
+
+        String[] stringArray = new String[4];
+        for (int i = 0; i < 4; i++) {
+            stringArray[i] = "Some Text " + i;
+        }
+        propertyList.add("StringInfo");
+        propertyList.add(stringArray);
+
+        propertyList.add("Bar");
+        propertyList.add("Some More Text");
+
+        XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("http://testComplexStringArrayScenario.org", "TestComplexStringArrayScenario", "ns1"), propertyList.toArray(), null);
+        String actualXML = getStringXML(pullParser);
+
+        try {
+            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
+        } catch (ParserConfigurationException e) {
+            fail("Error has occurred " + e);
+        } catch (SAXException e) {
+            fail("Error has occurred " + e);
+        } catch (IOException e) {
+            fail("Error has occurred " + e);
+        }
+
 
     }
 
