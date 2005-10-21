@@ -4,6 +4,7 @@ package org.apache.axis2.util;
 import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.ADBPullParser;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
@@ -36,7 +37,6 @@ import java.beans.BeanInfo;
 */
 
 public class BeanSerializerUtil {
-
 
     /**
      * To Serilize Bean object this method is used, this will create an object array using given
@@ -123,6 +123,57 @@ public class BeanSerializerUtil {
         return beanObj;
     }
 
+    public static Object deserialize(Class beanClass, OMElement beanElement, MultirefHelper helper) throws AxisFault{
+        Object beanObj ;
+        try {
+            HashMap properties = new HashMap() ;
+            BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
+            PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();
+            for (int i = 0; i < propDescs.length; i++) {
+                PropertyDescriptor proprty = propDescs[i];
+                properties.put(proprty.getName(), proprty);
+            }
+
+            beanObj = beanClass.newInstance();
+            Iterator elements = beanElement.getChildren();
+            while (elements.hasNext()) {
+                OMElement parts = (OMElement) elements.next();
+                String partsLocalName = parts.getLocalName();
+                PropertyDescriptor prty =(PropertyDescriptor)properties.get(partsLocalName.toLowerCase());
+                if(prty !=null){
+                    Class parameters = prty.getPropertyType();
+                    if (prty.equals("class"))
+                        continue;
+                    Object partObj;
+                    OMAttribute attr = MultirefHelper.processRefAtt(parts);
+                    if(attr != null){
+                        String refId = MultirefHelper.getAttvalue(attr);
+                        partObj =  helper.getObject(refId);
+                        if(partObj == null){
+                           partObj = helper.processRef(parameters,refId);
+                        }
+                    } else {
+                        partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
+                        if (partObj == null) {
+                            partObj = deserialize(parameters, parts);
+                        }
+                    }
+                    Object [] parms = new Object[]{partObj};
+                    prty.getWriteMethod().invoke(beanObj,parms);
+                }
+            }
+        } catch (InstantiationException e) {
+            throw new AxisFault("InstantiationException : " + e);
+        } catch (IllegalAccessException e) {
+            throw new AxisFault("IllegalAccessException : " + e);
+        } catch (InvocationTargetException e) {
+            throw new AxisFault("InvocationTargetException : " + e);
+        } catch (IntrospectionException e) {
+            throw new AxisFault("IntrospectionException : " + e);
+        }
+        return beanObj;
+    }
+
 
     /**
      * To get JavaObjects from XML elemnt , the element most of the time contains only one element
@@ -135,7 +186,7 @@ public class BeanSerializerUtil {
      * @throws AxisFault
      */
     public static Object [] deserialize(OMElement response , Object [] returnTypes ) throws AxisFault {
-         /**
+        /**
          * Take the number of paramters in the method and , only take that much of child elements
          * from the OMElement , other are ignore , as an example
          * if the method is , foo(String a , int b)
@@ -150,20 +201,66 @@ public class BeanSerializerUtil {
         int length = returnTypes.length;
         int count =0;
         Object [] retObjs = new Object[length];
+
+        /**
+         * If the body first child contains , then there can not be any other element withot
+         * refs , so I can assume if the first child of the body first element has ref then
+         * the messge has to handle as mutiref message.
+         * as an exmple if the body is like below
+         * <foo>
+         *  <arg0 href="#0"/>
+         * </foo>
+         *
+         * then there can not be any element without refs , meaning following we are not handling
+         * <foo>
+         *  <arg0 href="#0"/>
+         *  <arg1>absbsbs</arg1>
+         * </foo>
+         */
         Iterator parts = response.getChildren();
+        //to handle multirefs
+        //have to check the instnceof
+        MultirefHelper helper = new MultirefHelper((OMElement)response.getParent());
+        boolean hasRef = false;
         while (parts.hasNext() && count < length) {
             OMElement omElement = (OMElement) parts.next();
             Class classType = (Class)returnTypes[count];
-            if(OMElement.class.isAssignableFrom(classType)){
-                retObjs[count] =omElement;
-            }  else if(SimpleTypeMapper.isSimpleType(classType)){
-                retObjs[count]  = SimpleTypeMapper.getSimpleTypeObject(classType, omElement);
-            } else {
-                retObjs[count] = BeanSerializerUtil.deserialize(classType, omElement);
+            //handling refs
+            OMAttribute omatribute = MultirefHelper.processRefAtt(omElement);
+            String ref=null;
+            if(omatribute !=null) {
+                hasRef = true;
+                ref = MultirefHelper.getAttvalue(omatribute);
             }
+
+            if(OMElement.class.isAssignableFrom(classType)){
+                if(hasRef){
+                    throw new AxisFault("The method take OMElenent as argument , and the body contains" +
+                            "refs , encounter processing error ");
+                } else
+                    retObjs[count] =omElement;
+            } else {
+                if(hasRef){
+                    if(helper.getObject(ref) !=null) {
+                        retObjs[count] =  helper.getObject(ref);
+                    } else {
+                        retObjs[count]  = helper.processRef(classType,ref) ;
+                    }
+                } else{
+                    if(SimpleTypeMapper.isSimpleType(classType)){
+                        retObjs[count]  = SimpleTypeMapper.getSimpleTypeObject(classType, omElement);
+                    } else {
+                        retObjs[count] = BeanSerializerUtil.deserialize(classType, omElement);
+                    }
+                }
+            }
+            hasRef = false;
             count ++;
         }
+        helper.clean();
         return  retObjs;
     }
+
+
 
 }
