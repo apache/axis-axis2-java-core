@@ -211,4 +211,16 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 		((MessageContext)msgContext).setProperty(key, value);
 	}
 
+    /**
+     * override the class loader used to load the PW callback class
+     * @return class loader
+     */
+    public java.lang.ClassLoader getClassLoader() {
+        try {
+            MessageContext msgContext = (MessageContext) this.reqData.getMsgContext();
+            return msgContext.getServiceDescription().getClassLoader();
+        } catch (Throwable t) {
+            return super.getClassLoader();
+        }
+    }
 }

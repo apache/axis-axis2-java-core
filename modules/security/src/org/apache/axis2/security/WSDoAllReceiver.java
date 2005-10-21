@@ -117,15 +117,6 @@ public class WSDoAllReceiver extends WSDoAllHandler {
 
             Document doc = null;
 
-            ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-            
-           //Setting the class loader
-            if(msgContext.isServerSide()) {
-            	Thread.currentThread().setContextClassLoader(msgContext.getServiceDescription().getClassLoader());
-            } else {
-            	//Thread.currentThread().setContextClassLoader(msgContext.getClass().getClassLoader());
-            }
-            
             try {
             	doc = Axis2Util.getDocumentFromSOAPEnvelope(msgContext.getEnvelope());
             } catch (WSSecurityException wssEx) {
@@ -180,12 +171,8 @@ public class WSDoAllReceiver extends WSDoAllHandler {
                 checkSignatureConfirmation(reqData, wsResult);
             }
             
-            //Setting the original class loader
-            Thread.currentThread().setContextClassLoader(originalClassLoader);
-            
             //TODO: Copy the processed headers
-            
-            
+
             /**
              * Set the new SOAPEnvelope
              */

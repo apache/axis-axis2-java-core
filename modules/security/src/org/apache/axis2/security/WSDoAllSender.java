@@ -168,16 +168,8 @@ public class WSDoAllSender extends WSDoAllHandler {
             }
 	     
 
-            //Setting the class loader
-            ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-            
-        	Thread.currentThread().setContextClassLoader(msgContext.getServiceDescription().getClassLoader());
-        	
         	doSenderAction(doAction, doc, reqData, actions, !msgContext.isServerSide());
 
-        	//Setting the original class loader
-        	Thread.currentThread().setContextClassLoader(originalClassLoader);
-        	
             /*
                 * If required convert the resulting document into a message first.
                 * The outputDOM() method performs the necessary c14n call. After
