@@ -83,7 +83,7 @@ public class Call extends InOutMEPClient {
 
         OperationDescription opDesc =
                 serviceContext.getServiceConfig().getOperation(new QName(axisop));
-        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_IN_OUT);
+        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_OUT_IN);
         opDesc.setParent(serviceContext.getServiceConfig());
         MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
 
