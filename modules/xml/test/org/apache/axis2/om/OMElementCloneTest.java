@@ -1,20 +1,18 @@
 package org.apache.axis2.om;
 
-import junit.framework.TestCase;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.XMLTestCase;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.ByteArrayInputStream;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -34,7 +32,7 @@ import java.io.ByteArrayInputStream;
  * @author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-public class TestClone extends XMLTestCase {
+public class OMElementCloneTest extends XMLTestCase {
 
     File dir = new File("test-resources", "soap");
 
