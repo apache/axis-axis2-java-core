@@ -1,32 +1,3 @@
-package org.apache.axis2.rpc;
-
-import junit.framework.TestCase;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.InOutOperationDescrition;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
-import org.apache.axis2.rpc.client.RPCCall;
-import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
-import org.apache.axis2.util.BeanSerializerUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.wsdl.WSDLService;
-
-import javax.xml.namespace.QName;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -42,14 +13,46 @@ import java.util.TimeZone;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-*
+* @author : Deepal Jayasinghe (deepal@apache.org)
 */
+package org.apache.axis2.rpc;
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Oct 13, 2005
- * Time: 1:51:02 PM
- */
+import junit.framework.TestCase;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.description.InOutOperationDescrition;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis2.receivers.AbstractMessageReceiver;
+import org.apache.axis2.rpc.client.RPCCall;
+import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
+import org.apache.axis2.util.BeanSerializerUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.wsdl.WSDLService;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.FactoryConfigurationError;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+import java.io.ByteArrayInputStream;
+
 public class RPCCallTest extends TestCase {
 
     private SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -395,7 +398,7 @@ public class RPCCallTest extends TestCase {
         call.close();
     }
 
-     public void testmulReturn() throws AxisFault {
+    public void testmulReturn() throws AxisFault {
         configureSystem("mulReturn");
         RPCCall call =
                 new RPCCall("target/test-resources/intregrationRepo");
@@ -414,5 +417,48 @@ public class RPCCallTest extends TestCase {
 //        assertEquals(response.getFirstElement().getText(), "foo");
         call.close();
     }
+
+
+    public void testhandleArrayList() throws AxisFault {
+        configureSystem("handleArrayList");
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
+
+        OMElement elem =  call.invokeBlocking("handleArrayList", getpayLoad());
+        assertEquals(elem.getFirstElement().getText(), "abcdefghiklm10");
+        call.close();
+    }
+
+    private OMElement getpayLoad() throws AxisFault {
+        String str= "<handleArrayList>\n" +
+                "  <arg0>\n" +
+                "    <item0>abc</item0>\n" +
+                "    <item0>def</item0>\n" +
+                "    <item0>ghi</item0>\n" +
+                "    <item0>klm</item0>\n" +
+                "  </arg0><arg1>10</arg1>" +
+                "</handleArrayList>";
+        StAXOMBuilder staxOMBuilder ;
+        try {
+            XMLStreamReader xmlReader=  XMLInputFactory.newInstance().createXMLStreamReader(new
+                    ByteArrayInputStream(str.getBytes()));
+            OMFactory fac = OMAbstractFactory.getOMFactory();
+
+            staxOMBuilder = new
+                    StAXOMBuilder(fac,xmlReader);
+        } catch (XMLStreamException e) {
+            throw  new AxisFault(e);
+        } catch (FactoryConfigurationError factoryConfigurationError) {
+            throw  new AxisFault(factoryConfigurationError);
+        }
+        return   staxOMBuilder.getDocumentElement();
+    }
+
+
 
 }

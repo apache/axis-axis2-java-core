@@ -1,3 +1,21 @@
+/*
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+* @author : Deepal Jayasinghe (deepal@apache.org)
+*/
+
 package org.apache.axis2.rpc;
 
 import org.apache.axis2.addressing.EndpointReference;
@@ -36,29 +54,7 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
 import junit.framework.TestCase;
-/*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-*
-*/
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Oct 20, 2005
- * Time: 9:54:32 PM
- */
 public class MultirefTest extends TestCase {
 
     private SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -422,6 +418,58 @@ public class MultirefTest extends TestCase {
             throw new AxisFault(factoryConfigurationError);
         }
         return staxOMBuilder.getDocumentElement();
+    }
+
+
+    public void testMulitrefArray() throws AxisFault {
+        configureSystem("handleArrayList");
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+
+        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMElement method = fac.createOMElement("handleArrayList", omNs);
+
+        OMElement value = fac.createOMElement("arg0", null);
+        value.addAttribute(fac.createOMAttribute("href",null,"#1"));
+        method.addChild(value);
+
+        OMElement value2 = fac.createOMElement("arg1", null);
+        value2.setText("10");
+        method.addChild(value2);
+
+
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope envelope = factory.getDefaultEnvelope();
+        envelope.getBody().addChild(method);
+
+
+
+        String str= "<reference id=\"1\">\n" +
+                "    <item0>abc</item0>\n" +
+                "    <item0>def</item0>\n" +
+                "    <item0>ghi</item0>\n" +
+                "    <item0>klm</item0>\n" +
+                "</reference>";
+        StAXOMBuilder staxOMBuilder ;
+        try {
+            XMLStreamReader xmlReader=  XMLInputFactory.newInstance().createXMLStreamReader(new
+                    ByteArrayInputStream(str.getBytes()));
+            staxOMBuilder = new
+                    StAXOMBuilder(fac,xmlReader);
+        } catch (XMLStreamException e) {
+            throw  new AxisFault(e);
+        } catch (FactoryConfigurationError factoryConfigurationError) {
+            throw  new AxisFault(factoryConfigurationError);
+        }
+        envelope.getBody().addChild(staxOMBuilder.getDocumentElement());
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
+        SOAPEnvelope env = call.invokeBlocking("handleArrayList",envelope);
+        assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "abcdefghiklm10");
     }
 
 }

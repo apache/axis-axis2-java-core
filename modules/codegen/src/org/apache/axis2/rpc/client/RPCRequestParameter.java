@@ -1,8 +1,3 @@
-package org.apache.axis2.rpc.client;
-
-import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
-
-import javax.xml.namespace.QName;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -18,14 +13,14 @@ import javax.xml.namespace.QName;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-*
 */
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Oct 13, 2005
- * Time: 10:43:45 AM
- */
+package org.apache.axis2.rpc.client;
+
+import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
+
+import javax.xml.namespace.QName;
+
 public class RPCRequestParameter {
 
     private QName name;

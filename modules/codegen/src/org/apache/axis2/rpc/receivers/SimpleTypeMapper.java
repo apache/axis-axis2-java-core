@@ -1,14 +1,3 @@
-package org.apache.axis2.rpc.receivers;
-
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.i18n.Messages;
-
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -24,14 +13,15 @@ import java.util.GregorianCalendar;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-*
 */
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Oct 12, 2005
- * Time: 10:50:22 AM
- */
+package org.apache.axis2.rpc.receivers;
+
+import org.apache.axis2.om.OMElement;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 public class SimpleTypeMapper {
 
     private static SimpleDateFormat zulu =
@@ -52,6 +42,7 @@ public class SimpleTypeMapper {
     private static final String W_CHAR = "java.lang.Character";
     private static final String W_FLOAT = "java.lang.Float";
     private static final String W_CALANDER = "java.util.Calendar";
+    private static final String ARRAY_LIST = "java.util.ArrayList";
     private static final String INT = "int";
     private static final String BOOLEAN = "boolean";
     private static final String BYTE = "byte";
@@ -103,6 +94,16 @@ public class SimpleTypeMapper {
         }
     }
 
+     public static ArrayList getArrayList(OMElement element){
+        Iterator childitr = element.getChildren();
+        ArrayList list = new ArrayList();
+        while (childitr.hasNext()) {
+            Object o = childitr.next();
+            list.add(o);
+        }
+        return list;
+    }
+
     public static boolean isSimpleType(Object obj) {
         String objClassName = obj.getClass().getName();
         if (obj instanceof  Calendar) {
@@ -115,6 +116,11 @@ public class SimpleTypeMapper {
     public static boolean isSimpleType(Class obj) {
         String objClassName = obj.getName();
         return isSimpleType(objClassName);
+    }
+
+    public static boolean isArrayList(Class obj){
+        String objClassName = obj.getName();
+        return ARRAY_LIST.equals(objClassName);
     }
 
     private static boolean isSimpleType(String objClassName) {
@@ -219,7 +225,7 @@ public class SimpleTypeMapper {
 
         // parse optional milliseconds
         if (pos < source.length() && source.charAt(pos) == '.') {
-            int milliseconds = 0;
+            int milliseconds ;
             int start = ++pos;
             while (pos < source.length() &&
                     Character.isDigit(source.charAt(pos))) {

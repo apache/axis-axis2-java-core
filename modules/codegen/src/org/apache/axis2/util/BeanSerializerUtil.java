@@ -1,3 +1,20 @@
+/*
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+* @author : Deepal Jayasinghe (deepal@apache.org)
+*/
 package org.apache.axis2.util;
 
 
@@ -21,23 +38,7 @@ import java.beans.PropertyDescriptor;
 import java.beans.Introspector;
 import java.beans.IntrospectionException;
 import java.beans.BeanInfo;
-/*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-*
-*/
+
 
 public class BeanSerializerUtil {
 
@@ -180,15 +181,15 @@ public class BeanSerializerUtil {
 
     /**
      * To get JavaObjects from XML elemnt , the element most of the time contains only one element
-     * in that case that element will be converted to the JavaType specified by the returnTypes array
+     * in that case that element will be converted to the JavaType specified by the javaTypes array
      * The algo is as follows, get the childerns of the response element , and if it conatian more than
      * one element then check the retuen type of that element and conver that to corresponding JavaType
      * @param response    OMElement
-     * @param returnTypes Array of JavaTypes
+     * @param javaTypes Array of JavaTypes
      * @return  Array of objects
      * @throws AxisFault
      */
-    public static Object [] deserialize(OMElement response , Object [] returnTypes ) throws AxisFault {
+    public static Object [] deserialize(OMElement response , Object [] javaTypes ) throws AxisFault {
         /**
          * Take the number of paramters in the method and , only take that much of child elements
          * from the OMElement , other are ignore , as an example
@@ -201,7 +202,7 @@ public class BeanSerializerUtil {
          *
          * only the val1 and Val2 take into account
          */
-        int length = returnTypes.length;
+        int length = javaTypes.length;
         int count =0;
         Object [] retObjs = new Object[length];
 
@@ -226,8 +227,15 @@ public class BeanSerializerUtil {
         MultirefHelper helper = new MultirefHelper((OMElement)response.getParent());
         boolean hasRef = false;
         while (parts.hasNext() && count < length) {
-            OMElement omElement = (OMElement) parts.next();
-            Class classType = (Class)returnTypes[count];
+            Object objValue = parts.next();
+            OMElement omElement;
+            if(objValue instanceof OMElement){
+                omElement = (OMElement) objValue;
+            }   else {
+                continue;
+            }
+
+            Class classType = (Class)javaTypes[count];
             //handling refs
             OMAttribute omatribute = MultirefHelper.processRefAtt(omElement);
             String ref=null;
@@ -240,7 +248,7 @@ public class BeanSerializerUtil {
                 if(hasRef){
                     OMElement elemnt = helper.getOMElement(ref);
                     if(elemnt == null){
-                       retObjs[count] = helper.processOMElementRef(ref);
+                        retObjs[count] = helper.processOMElementRef(ref);
                     } else {
                         retObjs[count] =omElement;
                     }
@@ -258,7 +266,10 @@ public class BeanSerializerUtil {
                 } else{
                     if(SimpleTypeMapper.isSimpleType(classType)){
                         retObjs[count]  = SimpleTypeMapper.getSimpleTypeObject(classType, omElement);
-                    } else {
+                    } else if(SimpleTypeMapper.isArrayList(classType)){
+                        retObjs[count]  = SimpleTypeMapper.getArrayList(omElement);
+                    }
+                    else {
                         retObjs[count] = BeanSerializerUtil.deserialize(classType, omElement);
                     }
                 }

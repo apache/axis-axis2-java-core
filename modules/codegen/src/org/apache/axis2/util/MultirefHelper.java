@@ -1,15 +1,3 @@
-package org.apache.axis2.util;
-
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMAttribute;
-import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
-
-import javax.xml.namespace.QName;
-import java.util.HashMap;
-import java.util.Iterator;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -25,14 +13,22 @@ import java.util.Iterator;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-*
+* @author : Deepal Jayasinghe (deepal@apache.org)
 */
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Oct 20, 2005
- * Time: 12:45:21 PM
- */
+package org.apache.axis2.util;
+
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
+
+import javax.xml.namespace.QName;
+import java.util.HashMap;
+import java.util.Iterator;
+
 public class MultirefHelper {
 
     public static final String SOAP12_REF_ATTR = "ref";
@@ -89,7 +85,7 @@ public class MultirefHelper {
                 while (itrChild.hasNext()) {
                     Object obj = itrChild.next();
                     if(obj instanceof OMNode){
-                      omElement.addChild((OMNode)obj);
+                        omElement.addChild((OMNode)obj);
                     }
                 }
             }
@@ -122,7 +118,12 @@ public class MultirefHelper {
                 Object valObj =  SimpleTypeMapper.getSimpleTypeObject(javatype,val);
                 objectmap.put(id,valObj);
                 return  valObj;
-            } else {
+            } else if (SimpleTypeMapper.isArrayList(javatype)){
+                Object valobj = SimpleTypeMapper.getArrayList(val);
+                objectmap.put(id,valobj);
+                return  valobj;
+            }
+            else {
                 Object obj = BeanSerializerUtil.deserialize(javatype,val,this);
                 objectmap.put(id,obj);
                 return obj;
