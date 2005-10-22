@@ -149,8 +149,18 @@ public class JavaBeanWriter {
                 XSLTUtils.addAttribute(model,"any","yes",property);
             }
 
+            if (metainf.getAnyAttributeStatusForQName(name)){
+                 XSLTUtils.addAttribute(model,"anyAtt","yes",property); 
+            }
             if (metainf.getArrayStatusForQName(name)){
                 XSLTUtils.addAttribute(model,"array","yes",property);
+                XSLTUtils.addAttribute(
+                        model,
+                        "arrayBaseType",
+                        javaClassNameForElement.substring(0,javaClassNameForElement.indexOf("[")),
+                        property);
+
+                
                 long minOccurs = metainf.getMinOccurs(name);
 
                 if (minOccurs >0){

@@ -38,6 +38,7 @@ public class SchemaCompiler {
 
     private Map baseSchemaTypeMap = TypeMap.getTypeMap();
     private static final String ANY_ELEMENT_FIELD_NAME = "extraElements";
+    private static final String EXTRA_ATTRIBUTE_FIELD_NAME = "extraAttributes";
 
 
     public HashMap getProcessedElementMap() {
@@ -336,7 +337,7 @@ public class SchemaCompiler {
 
     private void processAnyAttribute(BeanWriterMetaInfoHolder metainf) {
         //The best thing we can do here is to add a set of OMAttributes
-        metainf.registerMapping(new QName("extraAttributes"),
+        metainf.registerMapping(new QName(EXTRA_ATTRIBUTE_FIELD_NAME),
                 null,
                 OMElement[].class.getName(),
                 SchemaConstants.ANY_ATTRIBUTE_TYPE);

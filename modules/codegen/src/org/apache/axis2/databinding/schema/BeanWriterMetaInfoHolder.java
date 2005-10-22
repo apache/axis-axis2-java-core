@@ -96,6 +96,10 @@ public class BeanWriterMetaInfoHolder {
         return anyState != null && anyState.equals(SchemaConstants.ANY_ARRAY_TYPE);
     }
 
+     public boolean getAnyAttributeStatusForQName(QName qName){
+        Integer anyState = (Integer) specialTypeFlagMap.get(qName);
+        return anyState != null && anyState.equals(SchemaConstants.ANY_ATTRIBUTE_TYPE);
+    }
     /**
      *
      */
@@ -125,7 +129,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * 
+     *
      * @param qName
      * @return
      */
