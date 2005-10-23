@@ -33,6 +33,10 @@ public interface WSSHandlerConstants {
      */
     public static final String OUTFLOW_SECURITY = "OutflowSecurity";
     
+    public static final String ACTION = "action";
+    
+    public static final String ACTION_ITEMS = "items";
+    
 
     /**
      *  Repetition count

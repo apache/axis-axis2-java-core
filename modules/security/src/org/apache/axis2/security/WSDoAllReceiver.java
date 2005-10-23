@@ -101,11 +101,11 @@ public class WSDoAllReceiver extends WSDoAllHandler {
         	
             Vector actions = new Vector();
             String action = null;
-            if ((action = (String) getOption(WSHandlerConstants.ACTION)) == null) {
-                action = (String) getProperty(msgContext, WSHandlerConstants.ACTION);
+            if ((action = (String) getOption(WSSHandlerConstants.ACTION_ITEMS)) == null) {
+                action = (String) getProperty(msgContext, WSSHandlerConstants.ACTION_ITEMS);
             }
             if (action == null) {
-                throw new AxisFault("WSDoAllReceiver: No action defined");
+                throw new AxisFault("WSDoAllReceiver: No action items defined");
             }
             int doAction = WSSecurityUtil.decodeAction(action, actions);
 

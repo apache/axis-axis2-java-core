@@ -6,7 +6,9 @@
 	</operation>    
 
     <parameter name="InflowSecurity">
-        <action>Timestamp SAMLTokenUnsigned</action>
+      <action>
+        <items>Timestamp SAMLTokenUnsigned</items>
+      </action>
     </parameter>
 
 </service>

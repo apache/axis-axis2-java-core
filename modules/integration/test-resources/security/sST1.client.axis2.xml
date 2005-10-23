@@ -10,8 +10,10 @@
     <!-- Scenario ST1: Client's Configuration:START-->
 
     <parameter name="OutflowSecurity">
-        <action>Timestamp SAMLTokenUnsigned</action>
+      <action>
+        <items>Timestamp SAMLTokenUnsigned</items>
         <samlPropFile>axis2.saml.properties</samlPropFile>
+      </action>
     </parameter>
 
     <!-- Scenario ST1: Client's Configuration:END-->

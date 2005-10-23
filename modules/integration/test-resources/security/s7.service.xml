@@ -6,14 +6,17 @@
 	</operation> 
 
     <parameter name="InflowSecurity">
-        <action>Signature Encrypt Timestamp</action>
+      <action>
+        <items>Signature Encrypt Timestamp</items>
         <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
         <signaturePropFile>interop.properties</signaturePropFile>
         <decryptionPropFile>interop.properties</decryptionPropFile>
+      </action>
     </parameter>
 
     <parameter name="OutflowSecurity">
-        <action>Signature Encrypt Timestamp</action>
+      <action>
+        <items>Signature Encrypt Timestamp</items>
         <user>bob</user>
         <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
         <encryptionKeyIdentifier>DirectReference</encryptionKeyIdentifier>
@@ -22,6 +25,7 @@
         <signatureKeyIdentifier>SKIKeyIdentifier</signatureKeyIdentifier>
         <signaturePropFile>interop.properties</signaturePropFile>
         <encryptionPropFile>interop.properties</encryptionPropFile>
+      </action>
     </parameter>
 
 </service>

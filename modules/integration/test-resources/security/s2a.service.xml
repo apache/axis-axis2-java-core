@@ -6,9 +6,11 @@
 	</operation>    
 
     <parameter name="InflowSecurity">
-        <action>UsernameTokenSignature UsernameToken Encrypt Timestamp</action>
+      <action>
+        <items>UsernameTokenSignature UsernameToken Encrypt Timestamp</items>
         <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
         <decryptionPropFile>interop.properties</decryptionPropFile>
+      </action>
     </parameter>
 
 </service>

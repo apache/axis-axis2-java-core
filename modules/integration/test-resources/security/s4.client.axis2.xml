@@ -10,7 +10,8 @@
     <!-- Scenario 4: Client's Configuration:START-->
 
     <parameter name="OutflowSecurity">
-        <action>Signature Encrypt Timestamp</action>
+      <action>
+        <items>Signature Encrypt Timestamp</items>
         <user>alice</user>
         <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
         <signatureKeyIdentifier>DirectReference</signatureKeyIdentifier>
@@ -19,12 +20,15 @@
         <signaturePropFile>interop.properties</signaturePropFile>
         <EmbeddedKeyCallbackClass>org.apache.axis2.security.PWCallback</EmbeddedKeyCallbackClass>
         <EmbeddedKeyName>SessionKey</EmbeddedKeyName>
+      </action>
     </parameter>
 
     <parameter name="InflowSecurity">
-        <action>Signature Encrypt Timestamp</action>
+      <action>
+        <items>Signature Encrypt Timestamp</items>
         <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
         <signaturePropFile>interop.properties</signaturePropFile>
+      </action>
     </parameter>
 
     <!-- Scenario 4: Client's Configuration:END-->

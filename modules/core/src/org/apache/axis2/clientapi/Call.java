@@ -105,7 +105,7 @@ public class Call extends InOutMEPClient {
 
         OperationDescription opDesc =
                 serviceContext.getServiceConfig().getOperation(new QName(axisop));
-        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop, WSDLConstants.MEP_CONSTANT_IN_OUT);
+        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop, WSDLConstants.MEP_CONSTANT_OUT_IN);
 
         MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
         if(envelope == null || envelope.getBody() == null){
@@ -134,7 +134,7 @@ public class Call extends InOutMEPClient {
             throws AxisFault {
         OperationDescription opDesc =
                 serviceContext.getServiceConfig().getOperation(new QName(axisop));
-        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_IN_OUT);
+        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_OUT_IN);
         MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
         //call the underline implementation
         super.invokeNonBlocking(opDesc, msgctx, callback);
@@ -156,7 +156,7 @@ public class Call extends InOutMEPClient {
             throws AxisFault {
         OperationDescription opDesc =
                 serviceContext.getServiceConfig().getOperation(new QName(axisop));
-        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_IN_OUT);
+        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_OUT_IN);
 
         MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
         if(envelope == null || envelope.getBody() == null){

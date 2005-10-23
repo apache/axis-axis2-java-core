@@ -6,9 +6,11 @@
 	</operation>    
 
     <parameter name="InflowSecurity">
-        <action>Signature Signature Timestamp</action>
+      <action>
+        <items>Signature Signature Timestamp</items>
         <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
         <signaturePropFile>interop.properties</signaturePropFile>
+      </action>
     </parameter>
 
 </service>

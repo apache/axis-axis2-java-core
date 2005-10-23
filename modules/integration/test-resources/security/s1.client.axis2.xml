@@ -9,10 +9,12 @@
 
     <!-- Scenario 1: Client's Configuration:START-->
     <parameter name="OutflowSecurity">
-        <action>UsernameToken</action>
+      <action>
+        <items>UsernameToken</items>
         <user>Chris</user>
         <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
         <passwordType>PasswordText</passwordType>
+      </action>
     </parameter>
     <!-- Scenario 1: Client's Configuration:END-->
 

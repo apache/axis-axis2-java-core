@@ -6,8 +6,10 @@
 	</operation>    
 
     <parameter name="InflowSecurity">
-        <action>UsernameToken</action>
+      <action>
+        <items>UsernameToken</items>
         <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
+      </action>
     </parameter>
 
 </service>

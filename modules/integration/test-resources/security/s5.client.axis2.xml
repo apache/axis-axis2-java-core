@@ -10,19 +10,22 @@
     <!-- Scenario 5: Client's Configuration:START-->
 
     <parameter name="OutflowSecurity">
-        <action>Signature NoSerialization</action>
+
+      <action>
+        <items>Signature NoSerialization</items>
         <user>alice</user>
         <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
         <signatureKeyIdentifier>DirectReference</signatureKeyIdentifier>
         <signatureParts>{}{http://xmlsoap.org/Ping}ticket</signatureParts>
         <signaturePropFile>interop.properties</signaturePropFile>
+      </action>
 
-        <repetition count="1">
-            <user>alice</user>
-            <action>Signature Timestamp</action>
-            <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
-            <signaturePropFile>interop.properties</signaturePropFile>
-	</repetition>
+      <action>
+        <items>Signature Timestamp</items>
+        <user>alice</user>
+        <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
+        <signaturePropFile>interop.properties</signaturePropFile>
+      </action>
 
     </parameter>
 

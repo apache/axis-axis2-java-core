@@ -23,12 +23,12 @@ import org.apache.ws.security.WSSecurityException;
 
 import java.util.Iterator;
 
+import javax.xml.namespace.QName;
+
 /**
- * This is used to process the security parameters from the
- * configuration files
+ * This is used to process the security parameters from the configuration files
  * 
- * Example:
- <code>
+ * Example: <code>
  <br>
 
  </code>
@@ -44,51 +44,73 @@ public class HandlerParameterDecoder {
 	 * @param inflow
 	 * @throws WSSecurityException
 	 */
-	public static void processParameters(MessageContext msgCtx, boolean inflow) throws Exception {
-		
-		Parameter inFlowSecParam = msgCtx.getParameter(WSSHandlerConstants.INFLOW_SECURITY);
-		
-		Parameter outFlowSecParam = msgCtx.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY);
-		
-		int repetitionCount = 0;
+	public static void processParameters(MessageContext msgCtx, boolean inflow)
+			throws Exception {
+
+		Parameter inFlowSecParam = msgCtx
+				.getParameter(WSSHandlerConstants.INFLOW_SECURITY);
+
+		Parameter outFlowSecParam = msgCtx
+				.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY);
+
+		int repetitionCount = -1;
 
 		/*
 		 * Populate the inflow parameters
 		 */
-		if(inFlowSecParam != null && inflow) {
+		if (inFlowSecParam != null && inflow) {
 			OMElement inFlowParamElem = inFlowSecParam.getParameterElement();
-			Iterator childElements = inFlowParamElem.getChildElements();
+
+			OMElement actionElem = inFlowParamElem
+					.getFirstChildWithName(new QName(WSSHandlerConstants.ACTION));
+			if (actionElem == null) {
+				throw new Exception(
+						"Inflow configurtion must contain an 'action' "
+								+ "elementas the child of 'InflowSecurity' element");
+			}
+
+			Iterator childElements = actionElem.getChildElements();
 			while (childElements.hasNext()) {
 				OMElement element = (OMElement) childElements.next();
-				msgCtx.setProperty(element.getLocalName(),element.getText());
+				msgCtx.setProperty(element.getLocalName(), element.getText());
 			}
+
 		}
-		
+
 		/*
 		 * Populate the ourflow parameters
 		 */
-		if(outFlowSecParam != null && !inflow) {
+		if (outFlowSecParam != null && !inflow) {
 			OMElement outFlowParamElem = outFlowSecParam.getParameterElement();
+			
 			Iterator childElements = outFlowParamElem.getChildElements();
 			while (childElements.hasNext()) {
 				OMElement element = (OMElement) childElements.next();
-				if(!element.getLocalName().equals("repetition")) {
-					msgCtx.setProperty(element.getLocalName(),element.getText());
-				} else {
-					//Handle the repetition configuration
-					repetitionCount++;
-					Iterator repetitionParamElems = element.getChildElements();
-					while (repetitionParamElems.hasNext()) {
-						OMElement elem = (OMElement) repetitionParamElems.next();
-						msgCtx.setProperty(elem.getLocalName()+1,elem.getText());
-					}
-					
+				
+				if(!element.getLocalName().equals(WSSHandlerConstants.ACTION)) {
+					throw new Exception(
+							"Alian element '"
+									+ element.getLocalName()
+									+ "' in the 'OutFlowSecurity' element, " 
+									+ "only 'action' elements can be present");
 				}
+				
+				
+				repetitionCount++;
+				Iterator paramElements = element.getChildElements();
+				while (paramElements.hasNext()) {
+					OMElement elem = (OMElement) paramElements.next();
+					msgCtx.setProperty(Axis2Util.getKey(elem.getLocalName(),
+							inflow,repetitionCount), elem.getText());	
+				}
+				
 			}
+
+			msgCtx.setProperty(WSSHandlerConstants.SENDER_REPEAT_COUNT,
+					new Integer(repetitionCount));
 		}
-		
-		msgCtx.setProperty(WSSHandlerConstants.SENDER_REPEAT_COUNT,new Integer(repetitionCount));
-		
+
+
 	}
-	
+
 }

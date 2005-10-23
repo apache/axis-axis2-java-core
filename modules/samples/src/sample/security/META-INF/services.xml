@@ -5,13 +5,16 @@
 	</operation>    
 
     <parameter name="InflowSecurity">
-        <action>Timestamp Signature Encrypt</action>
+      <action>
+        <items>Timestamp Signature Encrypt</items>
         <passwordCallbackClass>sample.security.PWCallback</passwordCallbackClass>
         <signaturePropFile>sec.properties</signaturePropFile>
+      </action>
     </parameter>
 
     <parameter name="OutflowSecurity">
-        <action>Timestamp Signature Encrypt</action>
+      <action>
+        <items>Timestamp Signature Encrypt</items>
         <user>bob</user>
         <passwordCallbackClass>sample.security.PWCallback</passwordCallbackClass>
         <signaturePropFile>sec.properties</signaturePropFile>
@@ -20,6 +23,7 @@
         <encryptionUser>alice</encryptionUser>
 
         <optimizeParts>//xenc:EncryptedData/xenc:CipherData/xenc:CipherValue</optimizeParts>
+      </action>
     </parameter>
 
 </service>

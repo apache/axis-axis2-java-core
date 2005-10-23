@@ -12,7 +12,8 @@
     <!-- Test with addressing and MTOM: Client's Configuration:START-->
 
     <parameter name="OutflowSecurity">
-        <action>Timestamp Signature Encrypt</action>
+      <action>
+        <items>Timestamp Signature Encrypt</items>
         <user>alice</user>
         <passwordCallbackClass>sample.security.PWCallback</passwordCallbackClass>
         <signaturePropFile>sec.properties</signaturePropFile>
@@ -22,12 +23,15 @@
         <signatureParts>{Element}{http://schemas.xmlsoap.org/ws/2004/08/addressing}To;{Element}{http://schemas.xmlsoap.org/ws/2004/08/addressing}ReplyTo;{Element}{http://schemas.xmlsoap.org/ws/2004/08/addressing}MessageID;{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp</signatureParts>
 
         <optimizeParts>//xenc:EncryptedData/xenc:CipherData/xenc:CipherValue</optimizeParts>
+      </action>
     </parameter>
 
     <parameter name="InflowSecurity">
-        <action>Timestamp Signature Encrypt</action>
+      <action>
+        <items>Timestamp Signature Encrypt</items>
         <passwordCallbackClass>sample.security.PWCallback</passwordCallbackClass>
         <signaturePropFile>sec.properties</signaturePropFile>
+      </action>
     </parameter>
 
     <!-- Test with addressing and MTOM: Client's Configuration:END-->

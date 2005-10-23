@@ -10,7 +10,8 @@
     <!-- Scenario 2: Client's Configuration:START-->
 
     <parameter name="OutflowSecurity">
-        <action>UsernameToken Encrypt</action>
+      <action>
+        <items>UsernameToken Encrypt</items>
         <user>Chris</user>
         <addUTElements>Nonce Created</addUTElements>
         <encryptionParts>{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd}UsernameToken</encryptionParts>
@@ -20,6 +21,7 @@
         <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
         <passwordType>PasswordText</passwordType>
         <encryptionKeyIdentifier>SKIKeyIdentifier</encryptionKeyIdentifier>
+      </action>
     </parameter>
 
     <!-- Scenario 2: Client's Configuration:END-->
