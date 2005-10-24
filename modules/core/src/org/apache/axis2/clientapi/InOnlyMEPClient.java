@@ -28,6 +28,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.UUIDGenerator;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -54,6 +55,8 @@ public class InOnlyMEPClient extends MEPClient {
     public void send(OperationDescription axisop, final MessageContext msgctx) throws AxisFault {
         prepareInvocation(axisop, msgctx);
         msgctx.setMessageInformationHeaders(messageInformationHeaders);
+        String messageID = String.valueOf("uuid:"+ UUIDGenerator.getUUID());
+        msgctx.setMessageID(messageID);
         msgctx.setServiceContext(serviceContext);
         ConfigurationContext syscontext = serviceContext.getEngineContext();
         
