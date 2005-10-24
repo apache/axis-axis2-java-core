@@ -193,15 +193,13 @@ public class WSDoAllSender extends WSDoAllHandler {
 
             	if(preserveOriginalEnvelope) {
             		processedEnv = Axis2Util.getSOAPEnvelopeFromDocument(doc,reqData.getSoapConstants(), msgContext.getEnvelope());
+                   // msgContext.getEnvelope().build();
             	} else {
             		processedEnv = Axis2Util.getSOAPEnvelopeFromDocument(doc, reqData.getSoapConstants().getEnvelopeURI());
             	}
             	msgContext.setEnvelope(processedEnv);
             	((MessageContext)reqData.getMsgContext()).setProperty(WSHandlerConstants.SND_SECURITY, null);
             }
-            
-            msgContext.getEnvelope().build();
-            
     		
             /**
              * If the optimizeParts parts are set then optimize them

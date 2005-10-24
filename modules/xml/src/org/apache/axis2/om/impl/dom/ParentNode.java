@@ -20,6 +20,7 @@ import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.OMContainerEx;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
+import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -69,9 +70,8 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 	}
 	
 	public Iterator getChildrenWithName(QName elementQName) throws OMException {
-		// TODO Cannot use OMChildrenQNameIterator since it uses llom.ElementImpl
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+		return new OMChildrenQNameIterator(getFirstOMChild(),
+                elementQName);
 	}
 	
 	public OMElement getFirstChildWithName(QName elementQName)

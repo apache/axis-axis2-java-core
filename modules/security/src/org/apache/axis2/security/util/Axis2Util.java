@@ -52,13 +52,12 @@ public class Axis2Util {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-			env.build();
 			/**
 			 * There are plans to deprecate the OmNode.serializeAndConsume(XMLStreamWriter)
 			 * method therefore using OMOutoutImpl to serializeAndConsume the env
 			 */
 			OMOutputImpl output = new OMOutputImpl(baos, false);
-			env.serializeAndConsume(output);
+			env.serialize(output);
 			output.flush();
 			
 			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());

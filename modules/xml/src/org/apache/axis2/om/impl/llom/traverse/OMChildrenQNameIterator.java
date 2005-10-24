@@ -16,8 +16,8 @@
 
 package org.apache.axis2.om.impl.llom.traverse;
 
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.impl.llom.OMElementImpl;
 
 import javax.xml.namespace.QName;
 
@@ -63,9 +63,9 @@ public class OMChildrenQNameIterator extends OMChildrenIterator {
             if (currentChild != null) {
 
                 // check the current node for the criteria
-                if ((currentChild instanceof OMElementImpl)
+                if ((currentChild instanceof OMElement)
                         && (isQNamesMatch(
-                                ((OMElementImpl) currentChild).getQName(),
+                                ((OMElement) currentChild).getQName(),
                                 this.givenQName))) {
                     isMatchingNodeFound = true;
                     needToMoveForward = false;

@@ -22,6 +22,9 @@ import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
@@ -59,7 +62,6 @@ public class ElementImplTest extends TestCase {
 		String textToAppend = " followed by another";
 		
 		OMElement elem = factory.createOMElement(localName,namespace,prefix);
-		elem.getLocalName();
 		OMText textNode = factory.createText(elem,tempText);
 		
 		((Text)textNode).appendData(textToAppend);
@@ -76,5 +78,27 @@ public class ElementImplTest extends TestCase {
 		}
 	}
 	
-
+	public void testAddChild() {
+		OMDOMFactory factory = new OMDOMFactory();
+		String localName = "TestLocalName";
+		String childLocalName = "TestChildLocalName";
+		String namespace = "http://ws.apache.org/axis2/ns";
+		String prefix = "axis2";
+		
+		OMElement elem = factory.createOMElement(localName,namespace,prefix);
+		OMElement childElem = factory.createOMElement(childLocalName,namespace, prefix);
+		
+		elem.addChild(childElem);
+		
+		Iterator it = elem.getChildrenWithName(new QName(namespace, childLocalName));
+		
+		int count = 0;
+		while (it.hasNext()) {
+			OMElement child = (OMElement) it.next();
+			assertEquals("Child local name mismatch", childLocalName, child.getLocalName());
+			assertEquals("Child namespace mismatch", namespace, child.getNamespace().getName());
+			count ++;
+		}
+		assertEquals("In correct number of children", 1, count );
+	}
 }
