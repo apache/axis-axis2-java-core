@@ -537,6 +537,7 @@ public class DeploymentEngine implements DeploymentConstants {
             addFlowHandlers(faultOutFlow);
         }
         loadModuleClass(modulemetadata);
+        modulemetadata.setModuleClassLoader(currentArchiveFile.getClassLoader());
         axisConfig.addModule(modulemetadata);
         log.info(Messages.getMessage(DeploymentErrorMsgs.ADDING_NEW_MODULE));
     }
@@ -809,6 +810,8 @@ public class DeploymentEngine implements DeploymentConstants {
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
         }
+        axismodule.setModuleClassLoader(currentArchiveFile.getClassLoader());
+        currentArchiveFile = null;
         return axismodule;
     }
 

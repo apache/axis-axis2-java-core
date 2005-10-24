@@ -43,6 +43,8 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
 
     private AxisConfiguration parent;
 
+    private ClassLoader moduleClassLoader;
+
     /**
      * Field flowInclude
      */
@@ -210,6 +212,14 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
                 return false;
             }
         }
+    }
+
+    public ClassLoader getModuleClassLoader() {
+        return moduleClassLoader;
+    }
+
+    public void setModuleClassLoader(ClassLoader moduleClassLoader) {
+        this.moduleClassLoader = moduleClassLoader;
     }
 
 }
