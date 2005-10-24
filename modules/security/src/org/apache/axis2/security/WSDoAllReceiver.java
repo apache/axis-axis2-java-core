@@ -51,7 +51,7 @@ import javax.security.auth.callback.CallbackHandler;
 public class WSDoAllReceiver extends WSDoAllHandler {
 
     protected static Log log = LogFactory.getLog(WSDoAllReceiver.class.getName());
-    
+
     
     public WSDoAllReceiver() {
     	super();

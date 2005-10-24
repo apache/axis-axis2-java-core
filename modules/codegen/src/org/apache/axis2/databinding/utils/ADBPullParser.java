@@ -116,7 +116,7 @@ public class ADBPullParser implements XMLStreamReader {
      * @param properties - this should contain all the stuff that stax events should be generated.
      *                   Lets take an example of a bean.
      *                   <pre>
-     *                                                                                                                                                                                                           <Person>
+     *                       <Person>
      *                                                                                                                                                                                                                  <DependentOne>
      *                                                                                                                                                                                                                      <Name>FooTwo</Name>
      *                                                                                                                                                                                                                      <Age>25</Age>
@@ -248,6 +248,7 @@ public class ADBPullParser implements XMLStreamReader {
             // this is the end of this element
             currentIndex++;
             isEndElementFinished = true;
+            removeDeclaredNamespaces();
             return XMLStreamConstants.END_ELEMENT;
         } else {
 
@@ -299,6 +300,16 @@ public class ADBPullParser implements XMLStreamReader {
             }
         }
 
+    }
+
+    private void removeDeclaredNamespaces() {
+        if(declaredNamespaces != null){
+        Iterator declaredNamespacesURIIter = declaredNamespaces.keySet().iterator();
+        while (declaredNamespacesURIIter.hasNext()) {
+            String s = (String) declaredNamespacesURIIter.next();
+            namespaceMap.remove(s);
+        }
+        }
     }
 
     private XMLStreamReader getPullParser(Object object, QName qname) {
@@ -498,20 +509,6 @@ public class ADBPullParser implements XMLStreamReader {
         return (attributes != null && attributesList.size() >= i * 2);
     }
 
-// -------- un-implemented methods ----------
-
-    public void require(int i, String string, String string1) throws XMLStreamException {
-        throw new UnsupportedOperationException("Yet to be implemented !!");
-    }
-
-    public int nextTag() throws XMLStreamException {
-        throw new UnsupportedOperationException("Yet to be implemented !!");
-    }
-
-    public void close() throws XMLStreamException {
-        throw new UnsupportedOperationException("Yet to be implemented !!");
-    }
-
     public String getNamespaceURI(String prefixParam) {
         if (accessingChildPullParser) return childPullParser.getNamespaceURI(prefixParam);
         if ("".equals(prefixParam) || prefixParam == null) return null;
@@ -528,23 +525,6 @@ public class ADBPullParser implements XMLStreamReader {
         return null;
     }
 
-    public boolean isStartElement() {
-        throw new UnsupportedOperationException("Yet to be implemented !!");
-    }
-
-    public boolean isEndElement() {
-        throw new UnsupportedOperationException("Yet to be implemented !!");
-    }
-
-    public boolean isCharacters() {
-        throw new UnsupportedOperationException("Yet to be implemented !!");
-    }
-
-    public boolean isWhiteSpace() {
-        throw new UnsupportedOperationException("Yet to be implemented !!");
-    }
-
-
     public String getNamespacePrefix(int index) {
         /* We are holding namespaces in a HashMap and there is no direct way to retrieve a prefix
          by its index. So I need to call toArray and then get the index. Since this method will be
@@ -555,7 +535,7 @@ public class ADBPullParser implements XMLStreamReader {
         */
         if (accessingChildPullParser) return childPullParser.getNamespacePrefix(index);
         if (declaredNamespaces != null && declaredNamespaces.size() >= index) {
-            if (tempDeclaredNamespacePrefixesArray == null || tempDeclaredNamespacePrefixesArray.size() != declaredNamespaces.size()) {
+            if (tempDeclaredNamespacePrefixesArray == null || (tempDeclaredNamespacePrefixesArray.size() != declaredNamespaces.size())) {
                 tempDeclaredNamespacePrefixesArray = new ArrayList();
                 Iterator iterator = declaredNamespaces.values().iterator();
                 while (iterator.hasNext()) {
@@ -578,7 +558,7 @@ public class ADBPullParser implements XMLStreamReader {
         */
         if (accessingChildPullParser) return childPullParser.getNamespaceURI(index);
         if (declaredNamespaces != null && declaredNamespaces.size() >= index) {
-            if (tempDeclaredNamespacesArray == null || tempDeclaredNamespacesArray.size() != declaredNamespaces.size()) {
+            if (tempDeclaredNamespacesArray == null || (tempDeclaredNamespacesArray.size() != declaredNamespaces.size())) {
                 tempDeclaredNamespacesArray = new ArrayList();
                 Iterator iterator = declaredNamespaces.keySet().iterator();
                 while (iterator.hasNext()) {
@@ -589,6 +569,36 @@ public class ADBPullParser implements XMLStreamReader {
             return (String) tempDeclaredNamespacesArray.get(index);
         }
         return null;
+    }
+
+// -------- un-implemented methods ----------
+
+    public void require(int i, String string, String string1) throws XMLStreamException {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public int nextTag() throws XMLStreamException {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public void close() throws XMLStreamException {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public boolean isStartElement() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public boolean isEndElement() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public boolean isCharacters() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
+    }
+
+    public boolean isWhiteSpace() {
+        throw new UnsupportedOperationException("Yet to be implemented !!");
     }
 
     public NamespaceContext getNamespaceContext() {

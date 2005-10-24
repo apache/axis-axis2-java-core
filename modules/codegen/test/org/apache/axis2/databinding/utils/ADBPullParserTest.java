@@ -508,6 +508,110 @@ public class ADBPullParserTest extends XMLTestCase {
         }
     }
 
+    public void testComplexScenarioOne() {
+        /*
+           <apache:Project xmlns:axis2="http://ws.apache.org/namespaces/axis2" xmlns:apache="http://www.apache.org/" xmlns:myAttr="mailto:myAttributes@axis2.org" myAttr:name="Apache Axis2">
+    <CurrentRelease>0.92</CurrentRelease>
+    <axis2:Module axis2:name="xml">
+        <Description>This is the XML object model for Axis2</Description>
+        <Dependencies myAttr:number="2">
+            <JarName>stax-api.jar</JarName>
+            <JarName>stax-impl.jar</JarName>
+        </Dependencies>
+    </axis2:Module>
+    <axis2:Module axis2:name="core">
+        <Description myAttr:number="3">This will handle the main logics of the system</Description>
+        <Dependencies>
+            <JarName>axis2-xml.jar</JarName>
+            <JarName>axis2-wsdl.jar</JarName>
+            <JarName>commons-logging.jar</JarName>
+        </Dependencies>
+    </axis2:Module>
+</apache:Project>
+
+        */
+        final OMFactory fac = OMAbstractFactory.getOMFactory();
+        final OMNamespace axis2NS = fac.createOMNamespace("http://ws.apache.org/namespaces/axis2", "axis2");
+
+
+        class Dependencies implements ADBBean {
+
+            String[] dependencies;
+
+            public Dependencies(String[] dependencies) {
+                this.dependencies = dependencies;
+            }
+
+            public XMLStreamReader getPullParser(QName adbBeanQName) {
+                if (adbBeanQName == null) {
+                    adbBeanQName = new QName("http://ws.apache.org/namespaces/axis2", "Dependencies", "axis2");
+                }
+
+                ArrayList properties = new ArrayList();
+                properties.add("JarName");
+                properties.add(dependencies);
+
+                Object[] attrubutes = new Object[2];
+                attrubutes[0] = new QName("mailto:myAttributes@axis2.org", "number", "myAttr");
+                attrubutes[1] = new String(dependencies.length + "");
+
+                return ADBPullParser.createPullParser(adbBeanQName, properties.toArray(), attrubutes);
+            }
+        }
+
+        class Module implements ADBBean {
+
+            String projectName;
+            String description;
+            Dependencies dependencyBean;
+
+            public Module(String projectName, String description, Dependencies dependencyBean) {
+                this.projectName = projectName;
+                this.description = description;
+                this.dependencyBean = dependencyBean;
+            }
+
+            public XMLStreamReader getPullParser(QName adbBeanQName) {
+                if (adbBeanQName == null) {
+                    adbBeanQName = new QName("http://ws.apache.org/namespaces/axis2", "Module", "axis2");
+                }
+
+                ArrayList properties = new ArrayList();
+                properties.add("Description");
+                properties.add(description);
+                properties.add(new QName("Dependencies"));
+                properties.add(dependencyBean);
+
+                Object[] attrubutes = new Object[2];
+                attrubutes[0] = new QName("http://ws.apache.org/namespaces/axis2", "name", "axis2");
+                attrubutes[1] = projectName;
+
+                return ADBPullParser.createPullParser(adbBeanQName, properties.toArray(), attrubutes);
+            }
+        }
+
+
+        ArrayList propertyList = new ArrayList();
+        propertyList.add("CurrentRelease");
+        propertyList.add("0.92");
+
+        Dependencies xmlModuleDeps = new Dependencies(new String[] {"stax-api.jar", "stax-impl.jar"});
+        Module xmlModule = new Module("xml", "This is the XML object model for Axis2", xmlModuleDeps );
+        propertyList.add(new QName("http://ws.apache.org/namespaces/axis2", "Module", "axis2"));
+        propertyList.add(xmlModule);
+
+        Dependencies coreModuleDeps = new Dependencies(new String[] {"axis2-xml.jar", "axis2-wsdl.jar", "commons-logging.jar"});
+        Module coreModule = new Module("core", "This will handle the main logics of the system", coreModuleDeps );
+        propertyList.add(new QName("http://ws.apache.org/namespaces/axis2", "Module", "axis2"));
+        propertyList.add(coreModule);
+
+        Object[]  attributes = new Object[]{ new QName("mailto:myAttributes@axis2.org", "name", "myAttr"), "Apache Axis2"};
+
+        XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("http://www.apache.org/", "Project", "apache"), propertyList.toArray(), attributes);
+        System.out.println(getStringXML(pullParser));
+
+    }
+
     private String getStringXML(XMLStreamReader reader) {
         OMElement omelement = new StAXOMBuilder(reader).getDocumentElement();
         return omelement.toString();
