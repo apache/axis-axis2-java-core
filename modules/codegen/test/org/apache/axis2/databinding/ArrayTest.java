@@ -96,4 +96,26 @@ public class ArrayTest extends TestCase {
         assertEquals("two", bean.getCollection(1));
         assertEquals("three", bean.getCollection(2));
     }
+
+/*
+    public void testMultiDimArray() throws Exception {
+        InputStream is = new FileInputStream("test-resources/xmls/MultiDimArray.xml");
+        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(is);
+
+        StAXOMBuilder builder = OMXMLBuilderFactory.createStAXOMBuilder(OMAbstractFactory.getOMFactory(), reader);
+        OMElement el = builder.getDocumentElement();
+        XMLStreamReader omReader = el.getXMLStreamReaderWithoutCaching();
+        omReader.next();
+        DeserializationContext context = new DeserializationContext();
+        Object value = context.deserializeToClass(omReader, TestBean.class);
+
+        assertNotNull(value);
+        assertTrue(value instanceof TestBean);
+        TestBean bean = (TestBean)value;
+        assertEquals("Wrong # of items", 3, bean.coll.size());
+        assertEquals("one", bean.getCollection(0));
+        assertEquals("two", bean.getCollection(1));
+        assertEquals("three", bean.getCollection(2));
+    }
+*/
 }

@@ -70,10 +70,16 @@ public class TypeMappingRegistry {
         return false;
     }
 
+    public boolean isCollection() {
+        return false;
+    }
+
     public DeserializerFactory getDeserializerFactory(Class cls) {
         if (isPrimitive(cls)) {
             return new SimpleDeserializerFactory(cls, new QName("xsd", cls.getName()));
         }
+
+        
 
         return new BeanDeserializerFactory(BeanManager.getTypeDesc(cls));
     }

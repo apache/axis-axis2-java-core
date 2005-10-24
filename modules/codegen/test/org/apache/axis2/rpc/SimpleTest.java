@@ -16,34 +16,29 @@
 package org.apache.axis2.rpc;
 
 import junit.framework.TestCase;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.clientapi.Call;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.databinding.DeserializationContext;
 import org.apache.axis2.databinding.deserializers.SimpleDeserializerFactory;
 import org.apache.axis2.databinding.serializers.CollectionSerializer;
 import org.apache.axis2.databinding.serializers.SimpleSerializer;
-import org.apache.axis2.databinding.DeserializationContext;
+import org.apache.axis2.description.InOutOperationDescrition;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.engine.AxisConfigurationImpl;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.InOutOperationDescrition;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.description.ServiceGroupDescription;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
-import org.apache.axis2.clientapi.Call;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.Constants;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
 import java.lang.reflect.Method;
 
 /**
@@ -169,12 +164,8 @@ public class SimpleTest extends TestCase {
     }
 
     public void testRPC() throws Exception {
-/* ??? This test doesn't work when running in maven, although it works fine
-       from my IDE!  To see the problem, just uncomment the first line here: */
+        Call call = new Call("test-resources/xmls");
 
-//        Call call = new Call();
-
-/*
         // Make the SOAP envelope
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope env = factory.createSOAPEnvelope();
@@ -205,6 +196,5 @@ public class SimpleTest extends TestCase {
         for (int i = 0; i < 2; i++) {
             assertEquals("Value #" + i + " not correct!", array[i], retArray[i]);
         }
-*/
     }
 }

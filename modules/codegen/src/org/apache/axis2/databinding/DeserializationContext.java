@@ -22,6 +22,7 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.databinding.metadata.TypeDesc;
 import org.apache.axis2.databinding.metadata.BeanManager;
 import org.apache.axis2.databinding.deserializers.BeanDeserializer;
+import org.apache.axis2.databinding.typemapping.TypeMappingRegistry;
 import org.apache.axis2.rpc.RPCMethod;
 import org.apache.axis2.rpc.RPCValues;
 import org.apache.axis2.rpc.RPCParameter;
@@ -43,6 +44,7 @@ public class DeserializationContext {
     public static final String SOAP11_REF_ATTR = "href";
 
     private Map idToElementMap = new HashMap();
+    private TypeMappingRegistry tmr = new TypeMappingRegistry();
 
     Map waitingDescs = new HashMap();
     String refAttr = SOAP12_REF_ATTR;
@@ -127,6 +129,7 @@ public class DeserializationContext {
 
     public Object deserializeToClass(XMLStreamReader reader,
                                      Class javaClass) throws Exception {
+
         TypeDesc typeDesc = BeanManager.getTypeDesc(javaClass);
         Deserializer dser = new BeanDeserializer(typeDesc);
 
