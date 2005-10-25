@@ -29,7 +29,6 @@ import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,28 +49,30 @@ public class BeanSerializerUtil {
      */
     public static XMLStreamReader getPullParser(Object beanObject, QName beanName ) {
         try {
-            Field [] fields = beanObject.getClass().getDeclaredFields();
+            BeanInfo beanInfo = Introspector.getBeanInfo(beanObject.getClass());
+            PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();
             ArrayList objetc = new ArrayList();
-            for (int i = 0; i < fields.length; i++) {
-                Field filed = fields[i];
-                Class parameters = filed.getType();
-                if(SimpleTypeMapper.isSimpleType(parameters)){
-                    objetc.add(filed.getName());
-                    filed.setAccessible(true);
-                    objetc.add(filed.get(beanObject).toString());
-                    filed.setAccessible(false);
+            for (int i = 0; i < propDescs.length; i++) {
+                PropertyDescriptor propDesc = propDescs[i];
+                Class ptype = propDesc.getPropertyType();
+                if(propDesc.getName().equals("class")){
+                    continue;
+                }
+                if(SimpleTypeMapper.isSimpleType(ptype)){
+                    Object value =  propDesc.getReadMethod().invoke(beanObject,null);
+                    objetc.add(propDesc.getName());
+                    objetc.add(value.toString());
                 } else {
-                    objetc.add(new QName(filed.getName()));
-                    filed.setAccessible(true);
-                    objetc.add(filed.get(beanObject));
-                    filed.setAccessible(false);
+                    objetc.add(new QName(propDesc.getName()));
+                    Object value =  propDesc.getReadMethod().invoke(beanObject,null);
+                    objetc.add(value);
                 }
             }
             return ADBPullParser.createPullParser(beanName, objetc.toArray(), null);
             // TODO : Deepal fix this. I added another parameter to the above method in the ADBPullPrser
             // to get the attributes array. For the time being I passed null. Pass attributes array here.
 
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             //todo has to throw this exeception
             return null;
         }
@@ -96,11 +97,11 @@ public class BeanSerializerUtil {
                 String partsLocalName = parts.getLocalName();
                 PropertyDescriptor prty =(PropertyDescriptor)properties.get(partsLocalName.toLowerCase());
 //                if (prty == null) {
-                /**
-                 * I think this can be happen , that is because there is a method whcih take Man
-                 * object and request can contain a Employee object (which extend Man) , there for
-                 * Employee may have more field than Man , so no need to thow an exception
-                 */
+/**
+ * I think this can be happen , that is because there is a method whcih take Man
+ * object and request can contain a Employee object (which extend Man) , there for
+ * Employee may have more field than Man , so no need to thow an exception
+ */
 //                    throw new AxisFault("User Error , In vaild bean ! prty does not exist " + "set" +
 //                            partsLocalName);
                 if(prty !=null){
@@ -141,7 +142,13 @@ public class BeanSerializerUtil {
             beanObj = beanClass.newInstance();
             Iterator elements = beanElement.getChildren();
             while (elements.hasNext()) {
-                OMElement parts = (OMElement) elements.next();
+                Object child = elements.next();
+                OMElement parts ;
+                if(child instanceof OMElement){
+                    parts= (OMElement) child;
+                } else {
+                    continue;
+                }
                 String partsLocalName = parts.getLocalName();
                 PropertyDescriptor prty =(PropertyDescriptor)properties.get(partsLocalName.toLowerCase());
                 if(prty !=null){
@@ -206,24 +213,24 @@ public class BeanSerializerUtil {
         int count =0;
         Object [] retObjs = new Object[length];
 
-        /**
-         * If the body first child contains , then there can not be any other element withot
-         * refs , so I can assume if the first child of the body first element has ref then
-         * the messge has to handle as mutiref message.
-         * as an exmple if the body is like below
-         * <foo>
-         *  <arg0 href="#0"/>
-         * </foo>
-         *
-         * then there can not be any element without refs , meaning following we are not handling
-         * <foo>
-         *  <arg0 href="#0"/>
-         *  <arg1>absbsbs</arg1>
-         * </foo>
-         */
+/**
+ * If the body first child contains , then there can not be any other element withot
+ * refs , so I can assume if the first child of the body first element has ref then
+ * the messge has to handle as mutiref message.
+ * as an exmple if the body is like below
+ * <foo>
+ *  <arg0 href="#0"/>
+ * </foo>
+ *
+ * then there can not be any element without refs , meaning following we are not handling
+ * <foo>
+ *  <arg0 href="#0"/>
+ *  <arg1>absbsbs</arg1>
+ * </foo>
+ */
         Iterator parts = response.getChildren();
-        //to handle multirefs
-        //have to check the instnceof
+//to handle multirefs
+//have to check the instnceof
         MultirefHelper helper = new MultirefHelper((OMElement)response.getParent());
         boolean hasRef = false;
         while (parts.hasNext() && count < length) {
@@ -236,7 +243,7 @@ public class BeanSerializerUtil {
             }
 
             Class classType = (Class)javaTypes[count];
-            //handling refs
+//handling refs
             OMAttribute omatribute = MultirefHelper.processRefAtt(omElement);
             String ref=null;
             if(omatribute !=null) {
@@ -287,9 +294,9 @@ public class BeanSerializerUtil {
         int argCount =0;
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
-            //todo if the request paramter has name other than argi (0<i<n) , there should be a
-            //was to do that , to solve that problem we need to have RPCRequestParameter
-            //note that The value of request paramter can either be simple type or JavaBean
+//todo if the request paramter has name other than argi (0<i<n) , there should be a
+//was to do that , to solve that problem we need to have RPCRequestParameter
+//note that The value of request paramter can either be simple type or JavaBean
             if(SimpleTypeMapper.isSimpleType(arg)){
                 objects.add("arg" + argCount);
                 objects.add(arg.toString());

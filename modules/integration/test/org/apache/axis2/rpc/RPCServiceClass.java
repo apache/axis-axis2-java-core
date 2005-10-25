@@ -142,4 +142,9 @@ public class RPCServiceClass {
         }
         return str + b;
     }
+
+    public Employee echoEmployee(Employee em){
+        System.out.println("vale: " + em.toString());
+       return em;
+    }
 }

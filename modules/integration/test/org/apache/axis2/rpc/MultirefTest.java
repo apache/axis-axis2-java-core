@@ -421,6 +421,47 @@ public class MultirefTest extends TestCase {
     }
 
 
+    public void testechoEmployee() throws AxisFault {
+        configureSystem("echoEmployee");
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+
+        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMElement method = fac.createOMElement("echoEmployee", omNs);
+
+        OMElement value = fac.createOMElement("arg0", null);
+        value.addAttribute(fac.createOMAttribute("href",null,"#1"));
+        method.addChild(value);
+
+
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope envelope = factory.getDefaultEnvelope();
+        envelope.getBody().addChild(method);
+
+
+        String str= "<reference id=\"1\">\n" +
+                " <name>John</name>\n" +
+                " <age>50</age>\n" +
+                " <emplyer href=\"#1\"/>\n" +
+                " <address href=\"#2\"/>\n" +
+                "</reference>";
+        envelope.getBody().addChild(getOMelemnt(str,fac));
+        str ="<reference id=\"2\">\n" +
+                "<town>Colombo3</town><number>1010</number>\n" +
+                "</reference>";
+        envelope.getBody().addChild(getOMelemnt(str,fac));
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
+        SOAPEnvelope env = call.invokeBlocking("echoEmployee",envelope);
+        Employee emp = (Employee) BeanSerializerUtil.deserialize(Employee.class, env.getBody().getFirstElement().getFirstElement());
+        assertNotNull(emp);
+    }
+
+
     public void testMulitrefArray() throws AxisFault {
         configureSystem("handleArrayList");
         OMFactory fac = OMAbstractFactory.getOMFactory();
