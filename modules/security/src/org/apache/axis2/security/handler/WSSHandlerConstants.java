@@ -54,5 +54,22 @@ public interface WSSHandlerConstants {
 	 */
 	public static final String OPTIMIZE_PARTS = "optimizeParts";
 	
+	/*
+	 * These are useful in configuring using the OutflowConfiguration 
+	 * and InflowConfiguration 
+	 * The set of possible key identifiers
+	 */
+	
+	public static final String BST_DIRECT_REFERENCE = "DirectReference";
+	
+	public static final String ISSUER_SERIAL = "IssuerSerial";
+	
+	public static final String X509_KEY_IDENTIFIER = "X509KeyIdentifier";
+	
+	public static final String SKI_KEY_IDENTIFIER = "SKIKeyIdentifier";
+	
+	public static final String EMBEDDED_KEYNAME = "EmbeddedKeyName";
+	
+	public static final String THUMBPRINT_IDENTIFIER = "Thumbprint";
 	
 }

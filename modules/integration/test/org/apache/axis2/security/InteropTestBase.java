@@ -16,11 +16,14 @@
 
 package org.apache.axis2.security;
 
-import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.security.handler.config.InflowConfiguration;
+import org.apache.axis2.security.handler.config.OutflowConfiguration;
 
-public class InteropTestBase extends TestCase {
+import junit.framework.TestCase;
+
+public abstract class InteropTestBase extends TestCase {
 
     protected static final String SCENARIO1_SERVICE_REPOSITORY = "scenario1_service_repo";
     
@@ -74,14 +77,7 @@ public class InteropTestBase extends TestCase {
     
     protected static final String COMPLETE_CLIENT_REPOSITORY = "complete_client_repo";
     
-    /*
-     * We have to create different a client repository and a service repository
-     * for each scenarion since we dont have the support to get the parameter 
-     * values off the services.xml yet
-     */
-    private String serviceRepo;
-    
-    private String clientRepo;
+    protected static final String DEFAULT_CLIENT_REPOSITORY = "default_security_client_repo";
 
     private String targetEpr = "http://127.0.0.1:" +
     		//5556 +
@@ -103,7 +99,7 @@ public class InteropTestBase extends TestCase {
 	 * set up the service
 	 */
 	protected void setUp() throws Exception {
-		UtilServer.start(Constants.TESTING_PATH + serviceRepo);
+		UtilServer.start(Constants.TESTING_PATH + getServiceRepo());
 	}
 
 	/**
@@ -113,29 +109,27 @@ public class InteropTestBase extends TestCase {
         UtilServer.stop();
     }
 
-	protected void setClientRepo(String clientRepo) {
-		this.clientRepo = clientRepo;
-	}
-
-	public String getClientRepo() {
-		return clientRepo;
-	}
-
-	protected void setServiceRepo(String serviceRepo) {
-		this.serviceRepo = serviceRepo;
-	}
 	
 	/**
 	 * Do test
 	 */
     public void testInterop() {
     	try {
-    		InteropScenarioClient.main(new String[]{Constants.TESTING_PATH + clientRepo,targetEpr});
+    		InteropScenarioClient client = new InteropScenarioClient();
+    		client.invokeWithStaticConfig(Constants.TESTING_PATH + getClientRepo(),targetEpr);
+    		
+    		client.invokeWithGivenConfig(Constants.TESTING_PATH + DEFAULT_CLIENT_REPOSITORY,targetEpr,getOutflowConfiguration(), getInflowConfiguration());
     	} catch (Exception e) {
     		e.printStackTrace();
-    		fail("Error in introperating with " + targetEpr + ", client configuration: " + clientRepo);
+    		fail("Error in introperating with " + targetEpr + ", client configuration: " + getClientRepo());
     	}
     }
     
+    protected abstract OutflowConfiguration getOutflowConfiguration();
     
+    protected abstract InflowConfiguration getInflowConfiguration();
+    
+    protected abstract String getClientRepo();
+    
+    protected abstract String getServiceRepo();
 }

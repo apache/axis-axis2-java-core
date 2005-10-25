@@ -19,7 +19,6 @@ package org.apache.axis2.security;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.security.handler.WSDoAllHandler;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
@@ -89,9 +88,9 @@ public class WSDoAllReceiver extends WSDoAllHandler {
         	reqData.setMsgContext(msgContext);
         	
         	//Figureout if the handler should run
-        	OMElement inFlowSecurity = null;
-        	if((inFlowSecurity = (OMElement) getOption(WSSHandlerConstants.INFLOW_SECURITY)) == null) {
-        		inFlowSecurity = (OMElement) getProperty(msgContext, WSSHandlerConstants.INFLOW_SECURITY);
+        	Object inFlowSecurity = null;
+        	if((inFlowSecurity = getOption(WSSHandlerConstants.INFLOW_SECURITY)) == null) {
+        		inFlowSecurity = getProperty(msgContext, WSSHandlerConstants.INFLOW_SECURITY);
         	}
 
         	

@@ -19,7 +19,6 @@ package org.apache.axis2.security;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.security.handler.WSDoAllHandler;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.util.Axis2Util;
@@ -93,9 +92,9 @@ public class WSDoAllSender extends WSDoAllHandler {
         reqData.setMsgContext(msgContext);
         
     	//Figureout if the handler should run
-    	OMElement outFlowSecurity;
-    	if((outFlowSecurity = (OMElement) getOption(WSSHandlerConstants.OUTFLOW_SECURITY)) == null) {
-    		outFlowSecurity = (OMElement) getProperty(msgContext, WSSHandlerConstants.OUTFLOW_SECURITY);
+    	Object outFlowSecurity;
+    	if((outFlowSecurity = getOption(WSSHandlerConstants.OUTFLOW_SECURITY)) == null) {
+    		outFlowSecurity = getProperty(msgContext, WSSHandlerConstants.OUTFLOW_SECURITY);
     	}
 
     	if(outFlowSecurity == null) {
@@ -238,8 +237,6 @@ public class WSDoAllSender extends WSDoAllHandler {
 				repetition++;
 				msgContext.setProperty(WSSHandlerConstants.CURRENT_REPETITON,
 						new Integer(repetition));
-				msgContext.setProperty(WSSHandlerConstants.OUTFLOW_SECURITY,
-						outFlowSecurity);
 				/**
 				 * Preserving the OM stuff doesn't work for the repeting case
 				 */

@@ -16,14 +16,44 @@
 
 package org.apache.axis2.security;
 
+import org.apache.axis2.security.handler.WSSHandlerConstants;
+import org.apache.axis2.security.handler.config.InflowConfiguration;
+import org.apache.axis2.security.handler.config.OutflowConfiguration;
+
 /**
  * WS-Security interop scenario 5
  */
 public class Scenario5Test extends InteropTestBase {
 
-	protected void setUp() throws Exception {
-		this.setClientRepo(SCENARIO5_CLIENT_REPOSITORY);
-		this.setServiceRepo(SCENARIO5_SERVICE_REPOSITORY);
-		super.setUp();
+	protected OutflowConfiguration getOutflowConfiguration() {
+		OutflowConfiguration ofc = new OutflowConfiguration(2);
+		
+		ofc.setActionItems("Signature NoSerialization");
+		ofc.setUser("alice");
+		ofc.setSignaturePropFile("interop.properties");
+		ofc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
+		ofc.setSignatureKeyIdentifier(WSSHandlerConstants.BST_DIRECT_REFERENCE);
+		ofc.setSignatureParts("{}{http://xmlsoap.org/Ping}ticket");
+		
+		ofc.nextAction();
+		
+		ofc.setActionItems("Signature Timestamp");
+		ofc.setUser("alice");
+		ofc.setSignaturePropFile("interop.properties");
+		ofc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
+		
+		return ofc;
+	}
+
+	protected InflowConfiguration getInflowConfiguration() {
+		return null;
+	}
+
+	protected String getClientRepo() {
+		return SCENARIO5_CLIENT_REPOSITORY;
+	}
+
+	protected String getServiceRepo() {
+		return SCENARIO5_SERVICE_REPOSITORY;
 	}
 }

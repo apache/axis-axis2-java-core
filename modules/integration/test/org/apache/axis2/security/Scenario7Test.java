@@ -16,14 +16,50 @@
 
 package org.apache.axis2.security;
 
+import org.apache.axis2.security.handler.WSSHandlerConstants;
+import org.apache.axis2.security.handler.config.InflowConfiguration;
+import org.apache.axis2.security.handler.config.OutflowConfiguration;
+import org.apache.ws.security.WSConstants;
+
 /**
  * WS-Security interop scenario 7
  */
 public class Scenario7Test extends InteropTestBase {
 
-	protected void setUp() throws Exception {
-		this.setClientRepo(SCENARIO7_CLIENT_REPOSITORY);
-		this.setServiceRepo(SCENARIO7_SERVICE_REPOSITORY);
-		super.setUp();
+	protected OutflowConfiguration getOutflowConfiguration() {
+		OutflowConfiguration ofc = new OutflowConfiguration();
+		
+		ofc.setActionItems("Signature Encrypt Timestamp");
+		ofc.setUser("alice");
+		ofc.setEncryptionUser("bob");
+		ofc.setSignaturePropFile("interop.properties");
+		ofc.setEncryptionPropFile("interop.properties");
+		ofc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
+		ofc.setEncryptionSymAlgorithm(WSConstants.TRIPLE_DES);
+		ofc.setSignatureKeyIdentifier(WSSHandlerConstants.BST_DIRECT_REFERENCE);
+		ofc.setEncryptionKeyIdentifier(WSSHandlerConstants.SKI_KEY_IDENTIFIER);
+		ofc.setEmbeddedKeyCallbackClass("rg.apache.axis2.security.PWCallback");
+		ofc.setSignatureParts("{}{http://schemas.xmlsoap.org/soap/envelope/}Body;STRTransform");
+		
+		return ofc;
+	}
+
+	protected InflowConfiguration getInflowConfiguration() {
+		InflowConfiguration ifc = new InflowConfiguration();
+		
+		ifc.setActionItems("Signature Encrypt Timestamp");
+		ifc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
+		ifc.setSignaturePropFile("interop.properties");
+		ifc.setDecryptionPropFile("interop.properties");
+		
+		return ifc;
+	}
+
+	protected String getClientRepo() {
+		return SCENARIO7_CLIENT_REPOSITORY;
+	}
+
+	protected String getServiceRepo() {
+		return SCENARIO7_SERVICE_REPOSITORY;
 	}
 }

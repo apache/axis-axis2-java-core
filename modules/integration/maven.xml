@@ -77,6 +77,14 @@
 
 	<!--Axis2 repositories for WS-Security interop tests -->
 
+	<!-- A default repository with security and addressing modules -->
+        <mkdir dir="target/test-resources/default_security_client_repo"/>
+        <mkdir dir="target/test-resources/default_security_client_repo/modules"/>
+        <copy file="../security/target/security.mar"
+            tofile="target/test-resources/default_security_client_repo/modules/security.mar"/>
+        <copy file="../addressing/target/addressing.mar"
+            tofile="target/test-resources/default_security_client_repo/modules/addressing.mar"/>
+
 	<!-- Scenario 1 -->
         <mkdir dir="target/test-resources/scenario1_client_repo"/>
         <mkdir dir="target/test-resources/scenario1_client_repo/modules"/>

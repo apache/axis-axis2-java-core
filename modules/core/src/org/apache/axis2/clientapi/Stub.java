@@ -36,7 +36,10 @@ import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.wsdl.WSDLService;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -61,6 +64,7 @@ public abstract class Stub {
     //Default SOAP version is 11
     protected int soapVesrion = SOAP_11;
     protected HashMap propertyMap = new HashMap();
+    protected ArrayList modules = new ArrayList();
 
     /**
      *
@@ -93,6 +97,11 @@ public abstract class Stub {
     public Object _get(String key){
         return this.propertyMap.get(key);
     }
+    
+    public void engageModule(String moduleName) {
+    	this.modules.add(moduleName);
+    }
+    
 //    /**
 //     *
 //     * @param doRest
@@ -266,6 +275,12 @@ public abstract class Stub {
             key = keys.next().toString();
             call.set(key,propertyMap.get(key));
         }
+    }
+
+    protected void populateModules(Call call) throws AxisFault {
+    	for(int i = 0; i < modules.size(); i++) {
+    		call.engageModule(new QName((String)this.modules.get(i)));
+    	}
     }
 }
 

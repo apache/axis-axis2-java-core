@@ -47,11 +47,17 @@ public class HandlerParameterDecoder {
 	public static void processParameters(MessageContext msgCtx, boolean inflow)
 			throws Exception {
 
-		Parameter inFlowSecParam = msgCtx
-				.getParameter(WSSHandlerConstants.INFLOW_SECURITY);
-
-		Parameter outFlowSecParam = msgCtx
-				.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY);
+		Parameter inFlowSecParam = (Parameter)msgCtx.getProperty(WSSHandlerConstants.INFLOW_SECURITY);
+		
+		Parameter outFlowSecParam = (Parameter)msgCtx.getProperty(WSSHandlerConstants.OUTFLOW_SECURITY);
+		
+		//If the configs are not availabale in the file
+		if(inFlowSecParam == null) {
+			inFlowSecParam = msgCtx.getParameter(WSSHandlerConstants.INFLOW_SECURITY);
+		}
+		if(outFlowSecParam == null) {
+			outFlowSecParam = msgCtx.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY);
+		}
 
 		int repetitionCount = -1;
 

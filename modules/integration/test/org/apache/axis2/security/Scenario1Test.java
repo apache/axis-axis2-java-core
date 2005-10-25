@@ -16,15 +16,33 @@
 
 package org.apache.axis2.security;
 
+import org.apache.axis2.security.handler.config.InflowConfiguration;
+import org.apache.axis2.security.handler.config.OutflowConfiguration;
+
 /**
  * WS-Security interop scenario 1
  */
 public class Scenario1Test extends InteropTestBase {
 
-	protected void setUp() throws Exception {
-		this.setClientRepo(SCENARIO1_CLIENT_REPOSITORY);
-		this.setServiceRepo(SCENARIO1_SERVICE_REPOSITORY);
-		super.setUp();
+	protected OutflowConfiguration getOutflowConfiguration() {
+		OutflowConfiguration ofc = new OutflowConfiguration();
+		ofc.setActionItems("UsernameToken");
+		ofc.setUser("Chris");
+		ofc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
+		ofc.setPasswordType("PasswordText");
+		return ofc;
+	}
+
+	protected InflowConfiguration getInflowConfiguration() {
+		return null;
+	}
+
+	protected String getClientRepo() {
+		return SCENARIO1_CLIENT_REPOSITORY;
+	}
+
+	protected String getServiceRepo() {
+		return SCENARIO1_SERVICE_REPOSITORY;
 	}
 
 }

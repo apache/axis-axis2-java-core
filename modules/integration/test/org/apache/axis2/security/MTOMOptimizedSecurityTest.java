@@ -16,16 +16,47 @@
 
 package org.apache.axis2.security;
 
+import org.apache.axis2.security.handler.WSSHandlerConstants;
+import org.apache.axis2.security.handler.config.InflowConfiguration;
+import org.apache.axis2.security.handler.config.OutflowConfiguration;
+
 /**
  * Testing optimizing the base 64 elements with 
  * <code><parameter name="optimizeParts" locked="false">//xenc:EncryptedData/xenc:CipherData/xenc:CipherValue</parameter></code>
  */
 public class MTOMOptimizedSecurityTest extends InteropTestBase {
 
-	protected void setUp() throws Exception {
-		this.setClientRepo(MTOM_SEC_CLIENT_REPOSITORY);
-		this.setServiceRepo(MTOM_SEC_SERVICE_REPOSITORY);
-		super.setUp();
+	protected OutflowConfiguration getOutflowConfiguration() {
+		OutflowConfiguration ofc = new OutflowConfiguration();
+		
+		ofc.setActionItems("Signature Encrypt Timestamp");
+		ofc.setUser("alice");
+		ofc.setEncryptionUser("bob");
+		ofc.setSignaturePropFile("interop.properties");
+		ofc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
+		ofc.setSignatureKeyIdentifier(WSSHandlerConstants.BST_DIRECT_REFERENCE);
+		ofc.setEncryptionKeyIdentifier(WSSHandlerConstants.SKI_KEY_IDENTIFIER);
+		ofc.setOptimizeParts("//xenc:EncryptedData/xenc:CipherData/xenc:CipherValue");
+		
+		return ofc;
+	}
+
+	protected InflowConfiguration getInflowConfiguration() {
+		InflowConfiguration ifc = new InflowConfiguration();
+		
+		ifc.setActionItems("Signature Encrypt Timestamp");
+		ifc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
+		ifc.setSignaturePropFile("interop.properties");
+		
+		return ifc;
+	}
+
+	protected String getClientRepo() {
+		return MTOM_SEC_CLIENT_REPOSITORY;
+	}
+
+	protected String getServiceRepo() {
+		return MTOM_SEC_SERVICE_REPOSITORY;
 	}
 	
 }

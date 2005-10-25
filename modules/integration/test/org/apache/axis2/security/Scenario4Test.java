@@ -15,15 +15,49 @@
  */
 
 package org.apache.axis2.security;
+
+import org.apache.axis2.security.handler.WSSHandlerConstants;
+import org.apache.axis2.security.handler.config.InflowConfiguration;
+import org.apache.axis2.security.handler.config.OutflowConfiguration;
+import org.apache.ws.security.WSConstants;
+
 /**
  * WS-Security interop scenario 4
  */
 public class Scenario4Test extends InteropTestBase {
-	
-	protected void setUp() throws Exception {
-		this.setClientRepo(SCENARIO4_CLIENT_REPOSITORY);
-		this.setServiceRepo(SCENARIO4_SERVICE_REPOSITORY);
-		super.setUp();
+
+	protected OutflowConfiguration getOutflowConfiguration() {
+		OutflowConfiguration ofc = new OutflowConfiguration();
+		
+		ofc.setActionItems("Signature Encrypt Timestamp");
+		ofc.setUser("alice");
+		ofc.setSignaturePropFile("interop.properties");
+		ofc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
+		ofc.setEncryptionSymAlgorithm(WSConstants.TRIPLE_DES);
+		ofc.setEncryptionKeyIdentifier(WSSHandlerConstants.EMBEDDED_KEYNAME);
+		ofc.setEmbeddedKeyName("SessionKey");
+		ofc.setSignatureKeyIdentifier(WSSHandlerConstants.BST_DIRECT_REFERENCE);
+		ofc.setEmbeddedKeyCallbackClass("org.apache.axis2.security.PWCallback");
+		
+		return ofc;
+	}
+
+	protected InflowConfiguration getInflowConfiguration() {
+		InflowConfiguration ifc = new InflowConfiguration();
+		
+		ifc.setActionItems("Signature Encrypt Timestamp");
+		ifc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
+		ifc.setSignaturePropFile("interop.properties");
+		
+		return ifc;
+	}
+
+	protected String getClientRepo() {
+		return SCENARIO4_CLIENT_REPOSITORY;
+	}
+
+	protected String getServiceRepo() {
+		return SCENARIO4_SERVICE_REPOSITORY;
 	}
 
 }

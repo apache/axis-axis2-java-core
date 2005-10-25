@@ -16,14 +16,40 @@
 
 package org.apache.axis2.security;
 
+import org.apache.axis2.security.handler.WSSHandlerConstants;
+import org.apache.axis2.security.handler.config.InflowConfiguration;
+import org.apache.axis2.security.handler.config.OutflowConfiguration;
+import org.apache.ws.security.WSConstants;
+
 /**
  * WS-Security interop scenario 2a
  */
 public class Scenario2aTest extends InteropTestBase {
 
-	protected void setUp() throws Exception {
-		this.setClientRepo(SCENARIO2a_CLIENT_REPOSITORY);
-		this.setServiceRepo(SCENARIO2a_SERVICE_REPOSITORY);
-		super.setUp();
+	protected OutflowConfiguration getOutflowConfiguration() {
+		OutflowConfiguration ofc = new OutflowConfiguration();
+		
+		ofc.setActionItems("UsernameTokenSignature Encrypt Timestamp");
+		ofc.setUser("Chris");
+		ofc.setEncryptionParts("{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd}UsernameToken");
+		ofc.setEncryptionUser("bob");
+		ofc.setEncryptionPropFile("interop.properties");
+		ofc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
+		ofc.setEncryptionSymAlgorithm(WSConstants.TRIPLE_DES);
+		ofc.setEncryptionKeyIdentifier(WSSHandlerConstants.SKI_KEY_IDENTIFIER);
+		
+		return ofc;
+	}
+
+	protected InflowConfiguration getInflowConfiguration() {
+		return null;
+	}
+
+	protected String getClientRepo() {
+		return SCENARIO2a_CLIENT_REPOSITORY;
+	}
+
+	protected String getServiceRepo() {
+		return SCENARIO2a_SERVICE_REPOSITORY;
 	}
 }

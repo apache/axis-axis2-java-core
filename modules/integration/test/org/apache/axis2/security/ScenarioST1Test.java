@@ -16,15 +16,30 @@
 
 package org.apache.axis2.security;
 
+import org.apache.axis2.security.handler.config.InflowConfiguration;
+import org.apache.axis2.security.handler.config.OutflowConfiguration;
+
 /**
  * SAML Scenario 1
  */
 public class ScenarioST1Test extends InteropTestBase {
-	
-	protected void setUp() throws Exception {
-		this.setClientRepo(SCENARIO_ST1_CLIENT_REPOSITORY);
-		this.setServiceRepo(SCENARIO_ST1_SERVICE_REPOSITORY);
-		super.setUp();
+
+	protected OutflowConfiguration getOutflowConfiguration() {
+		// TODO 
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	protected InflowConfiguration getInflowConfiguration() {
+		// TODO 
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	protected String getClientRepo() {
+		return SCENARIO_ST1_CLIENT_REPOSITORY;
+	}
+
+	protected String getServiceRepo() {
+		return SCENARIO_ST1_SERVICE_REPOSITORY;
 	}
 
 }

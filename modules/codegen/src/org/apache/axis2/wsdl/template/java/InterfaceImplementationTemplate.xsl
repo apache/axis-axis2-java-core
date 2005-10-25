@@ -97,6 +97,8 @@
 
              //set the properties
             populateProperties(_call);
+            populateModules(_call);
+
             org.apache.axis2.soap.SOAPEnvelope env = null;
             env = createEnvelope();
             <xsl:variable name="count"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
