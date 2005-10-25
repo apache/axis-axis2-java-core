@@ -121,7 +121,7 @@ public class StaxParserTest extends AbstractTestCase {
     public void testParserBehaviornonCaching() throws Exception{
 
         OMXMLParserWrapper builder2 = OMXMLBuilderFactory.createStAXOMBuilder(
-                OMAbstractFactory.getSOAP11Factory(),
+                OMAbstractFactory.getOMFactory(),
                 XMLInputFactory.newInstance().createXMLStreamReader(
                         new ByteArrayInputStream(xmlDocument.getBytes())));
 

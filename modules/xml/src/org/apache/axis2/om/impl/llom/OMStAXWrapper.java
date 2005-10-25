@@ -18,6 +18,7 @@ package org.apache.axis2.om.impl.llom;
 
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMComment;
+import org.apache.axis2.om.OMDocument;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
@@ -128,6 +129,8 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      */
     private OMNode lastNode = null;
 
+    private boolean needToThrowEndDocument = false;
+
     /**
      * Method setAllowSwitching
      *
@@ -168,12 +171,15 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @param cache
      */
     public OMStAXWrapper(OMXMLParserWrapper builder, OMElement startNode,
-                  boolean cache) {
+                         boolean cache) {
 
         // create a navigator
         this.navigator = new OMNavigator(startNode);
         this.builder = builder;
         this.rootNode = startNode;
+        if (rootNode != null && rootNode.getParent() != null && rootNode.getParent() instanceof OMDocument) {
+            needToThrowEndDocument = true;
+        }
 
         // initaite the next and current nodes
         // Note -  navigator is written in such a way that it first
@@ -367,7 +373,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
             if (hasText()) {
                 if (lastNode instanceof OMText) {
                     returnString = ((OMText) lastNode).getText();
-                } else if (lastNode instanceof OMComment){
+                } else if (lastNode instanceof OMComment) {
                     returnString = ((OMComment) lastNode).getValue();
                 }
             }
@@ -768,7 +774,11 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @throws XMLStreamException
      */
     public boolean hasNext() throws XMLStreamException {
-        return !(state == DOCUMENT_COMPLETE);
+        if(needToThrowEndDocument){
+            return !(state == DOCUMENT_COMPLETE);
+        } else {
+            return (state != COMPLETED && currentEvent != END_DOCUMENT);
+        }
     }
 
     /**

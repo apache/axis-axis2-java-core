@@ -1,13 +1,11 @@
 package org.apache.axis2.wsdl.writer;
 
 import junit.framework.TestCase;
-import org.apache.wsdl.WSDLDescription;
-import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
-import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.builder.WOMBuilder;
+import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+import org.apache.wsdl.WSDLDescription;
 
-import java.io.FileInputStream;
-import java.io.File;
 import java.io.PrintStream;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -47,5 +45,7 @@ public class WriterTest extends TestCase {
             e.printStackTrace();
         }
     }
+
+
 
 }

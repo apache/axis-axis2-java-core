@@ -99,7 +99,16 @@
 				<module>true</module>
 			</properties>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>${xmlunit.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+            <url>http://www.ibiblio.org/maven/xmlunit/jars/</url>
+        </dependency>
+    </dependencies>
 	<!-- add the build properties-->
 	<build>
 	<resources>

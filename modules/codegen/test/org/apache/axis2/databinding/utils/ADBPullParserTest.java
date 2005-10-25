@@ -318,7 +318,14 @@ public class ADBPullParserTest extends XMLTestCase {
         }
     }
 
-    public void testWithOMElements() {
+    public void testWithOMElements() throws XMLStreamException {
+
+        String expectedXML = "<OMElementTest><axis2:FirstOMElement xmlns:axis2=\"http://ws.apache.org/namespaces/axis2\">" +
+                "<axis2:SecondOMElement></axis2:SecondOMElement></axis2:FirstOMElement><Foo>Some Text</Foo>" +
+                "<Dependent><Name>FooTwo</Name><Age>25</Age><Sex>Male</Sex></Dependent>" +
+                "<axis2:SecondOMElement xmlns:axis2=\"http://ws.apache.org/namespaces/axis2\">" +
+                "</axis2:SecondOMElement></OMElementTest>";
+
         OMFactory factory = OMAbstractFactory.getOMFactory();
         OMNamespace axis2Namespace = factory.createOMNamespace(Constants.AXIS2_NAMESPACE_URI, Constants.AXIS2_NAMESPACE_PREFIX);
         OMElement firstElement = factory.createOMElement("FirstOMElement", axis2Namespace);
@@ -344,8 +351,17 @@ public class ADBPullParserTest extends XMLTestCase {
 
         XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("OMElementTest"), propertyList.toArray(), null);
         String stringXML = getStringXML(pullParser);
-
-        // Seems like we have a problem in OM. Needs to fix that and then come back to this.
+        try {
+           Document actualDom = newDocument(stringXML);
+           Document expectedDocument = newDocument(expectedXML);
+           assertXMLEqual(actualDom, expectedDocument);
+       } catch (ParserConfigurationException e) {
+           fail("Exception in parsing documents " + e);
+       } catch (SAXException e) {
+           fail("Exception in parsing documents " + e);
+       } catch (IOException e) {
+           fail("Exception in parsing documents " + e);
+       }
 
     }
 
@@ -608,7 +624,9 @@ public class ADBPullParserTest extends XMLTestCase {
         Object[]  attributes = new Object[]{ new QName("mailto:myAttributes@axis2.org", "name", "myAttr"), "Apache Axis2"};
 
         XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("http://www.apache.org/", "Project", "apache"), propertyList.toArray(), attributes);
-        System.out.println(getStringXML(pullParser));
+//        System.out.println(getStringXML(pullParser));
+
+        // this still has some namespace problem. Need to fix this.
 
     }
 
