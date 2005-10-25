@@ -1,4 +1,6 @@
-package org.apache.axis2.databinding.schema;
+package org.apache.axis2.databinding.schema.compile;
+
+import org.apache.axis2.databinding.schema.compile.AbstractSchemaCompilerTester;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -15,10 +17,9 @@ package org.apache.axis2.databinding.schema;
  * limitations under the License.
  */
 
-public class XmlMaxOccurs2Test extends AbstractSchemaCompilerTester{
-    protected void setUp() throws Exception {
-        this.fileName = "test-resources/xsd/simple_maxOccurs2.xsd";
+public class SimpleAnyAttribTest extends AbstractSchemaCompilerTester {
+      protected void setUp() throws Exception {
+         this.fileName = "test-resources/xsd/simple_any_attribute.xsd";
         super.setUp();
     }
-
 }

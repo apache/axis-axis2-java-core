@@ -1,4 +1,6 @@
-package org.apache.axis2.databinding.schema;
+package org.apache.axis2.databinding.schema.compile;
+
+import org.apache.axis2.databinding.schema.compile.AbstractSchemaCompilerTester;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -15,10 +17,11 @@ package org.apache.axis2.databinding.schema;
  * limitations under the License.
  */
 
-public class SimpleSequence2Test extends AbstractSchemaCompilerTester{
+public class ComplexAllTest extends AbstractSchemaCompilerTester {
      protected void setUp() throws Exception {
-        this.fileName = "test-resources/xsd/simple_sequence_2.xsd";
+         this.fileName = "test-resources/xsd/complex_all.xsd";
         super.setUp();
     }
+
 
 }
