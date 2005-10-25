@@ -313,6 +313,7 @@
             <fileset dir="modules/saaj/target/classes"/>
             <fileset dir="modules/common/target/classes"/>
             <fileset dir="modules/addressing/target/classes"/>
+            <fileset dir="modules/codegen/target/classes"/> 
             <fileset dir="modules/addressing/target/">
                 <include name="modules/addressing.mar"/>
             </fileset>
