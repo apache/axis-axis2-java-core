@@ -77,19 +77,15 @@ public class TCPServer extends TransportListener implements Runnable {
         while (started) {
             Socket socket = null;
             try {
-                try {
-                    socket = serversocket.accept();
-                } catch (java.io.InterruptedIOException iie) {
-                } catch (Exception e) {
-                    log.debug(e);
-                    break;
-                }
-                if (socket != null) {
-                    configContext.getThreadPool().addWorker(
-                            new TCPWorker(configContext, socket));
-                }
-            } catch (AxisFault e) {
-                log.error(e);
+                socket = serversocket.accept();
+            } catch (java.io.InterruptedIOException iie) {
+            } catch (Exception e) {
+                log.debug(e);
+                break;
+            }
+            if (socket != null) {
+                configContext.getThreadPool().newThread(
+                        new TCPWorker(configContext, socket));
             }
         }
 

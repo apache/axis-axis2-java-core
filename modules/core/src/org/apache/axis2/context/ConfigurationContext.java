@@ -22,6 +22,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.storage.AxisStorage;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.util.threadpool.ThreadPool;
+import org.apache.axis2.util.threadpool.ThreadFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -45,7 +46,7 @@ public class ConfigurationContext extends AbstractContext {
     private Map sessionContextMap;
     private Map moduleContextMap;
 
-    private transient ThreadPool threadPool;
+    private transient ThreadFactory threadPool;
 
     private File rootDir;
 
@@ -180,13 +181,22 @@ public class ConfigurationContext extends AbstractContext {
 
 
     /**
-     * @return the Gloal ThradPool
+     * Returns the thread factory
+     * @return configuration specific thread pool
      */
-    public ThreadPool getThreadPool() {
+    public ThreadFactory getThreadPool() {
         if (threadPool == null) {
             threadPool = new ThreadPool();
         }
         return threadPool;
+    }
+
+    /**
+     * Sets the thread factory
+     * @param pool
+     */
+    public void setThreadPool(ThreadFactory pool) {
+        threadPool = pool; 
     }
 
     /**

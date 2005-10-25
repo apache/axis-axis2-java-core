@@ -31,7 +31,6 @@ import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.transport.mail.server.MailSrvConstants;
-import org.apache.axis2.util.threadpool.AxisWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -45,7 +44,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.util.Properties;
 
-public class MailWorker implements AxisWorker {
+public class MailWorker implements Runnable {
     protected static Log log = LogFactory.getLog(MailWorker.class.getName());
 
     private String contentType = "text/xml";
@@ -72,7 +71,7 @@ public class MailWorker implements AxisWorker {
     /**
      * The main workhorse method.
      */
-    public void doWork() {
+    public void run() {
         AxisEngine engine = new AxisEngine(reg);
         MessageContext msgContext = null;
         // create and initialize a message context

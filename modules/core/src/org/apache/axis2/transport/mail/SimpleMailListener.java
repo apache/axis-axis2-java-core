@@ -155,7 +155,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
                         if (msg != null) {
                             MailWorker worker =
                                 new MailWorker(msg, configurationContext);
-                            worker.doWork();
+                            worker.run();
                         }
                         msg.setFlag(Flags.Flag.DELETED, true);
                     }

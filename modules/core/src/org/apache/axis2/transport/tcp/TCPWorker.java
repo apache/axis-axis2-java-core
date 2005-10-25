@@ -28,7 +28,6 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.axis2.util.threadpool.AxisWorker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,7 +42,7 @@ import java.net.Socket;
 /**
  * This Class is the work hoarse of the TCP request, this process the incomming SOAP Message.  
  */
-public class TCPWorker implements AxisWorker {
+public class TCPWorker implements Runnable {
     protected Log log = LogFactory.getLog(getClass().getName());
     private ConfigurationContext configurationContext;
     private Socket socket;
@@ -53,7 +52,7 @@ public class TCPWorker implements AxisWorker {
         this.socket = socket;
     }
 
-    public void doWork() {
+    public void run() {
         MessageContext msgContext = null;
         try {
             AxisEngine engine = new AxisEngine(configurationContext);

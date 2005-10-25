@@ -18,26 +18,22 @@ package org.apache.axis2.clientapi;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.OperationContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.util.threadpool.AxisWorker;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.wsdl.WSDLConstants;
 
@@ -251,7 +247,7 @@ public class InOutMEPClient extends MEPClient {
             } else {
                 //here a bloking invocation happens in a new thrad, so the progamming model is
                 //non blocking
-                serviceContext.getEngineContext().getThreadPool().addWorker(new NonBlockingInvocationWorker(callback, axisop, msgctx));
+                serviceContext.getEngineContext().getThreadPool().newThread(new NonBlockingInvocationWorker(callback, axisop, msgctx));
             }
 
         } catch (OMException e) {
@@ -387,7 +383,7 @@ public class InOutMEPClient extends MEPClient {
      * This Class is the workhorse for a Non Blocking invocation that uses a
      * two way transport
      */
-    private class NonBlockingInvocationWorker implements AxisWorker {
+    private class NonBlockingInvocationWorker implements Runnable {
 
         private Callback callback;
         private OperationDescription axisop;
@@ -401,12 +397,9 @@ public class InOutMEPClient extends MEPClient {
             this.msgctx = msgctx;
         }
 
-        public void doWork() {
+        public void run() {
             try {
                 OperationContext opcontxt = new OperationContext(axisop,serviceContext);
-//                msgctx.setOperationContext(OperationContextFactory.createOperationContext(WSDLConstants.MEP_CONSTANT_IN_OUT,
-//                        axisop,
-//                        serviceContext));
                 msgctx.setOperationContext(opcontxt);
                 msgctx.setServiceContext(serviceContext);
                 //send the request and wait for reponse

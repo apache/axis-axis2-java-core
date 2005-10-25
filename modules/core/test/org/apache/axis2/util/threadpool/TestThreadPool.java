@@ -14,10 +14,10 @@ public class TestThreadPool extends AbstractTestCase {
         super(testName);
     }
 
-    class TestWorker implements AxisWorker {
+    class TestWorker implements Runnable {
         private boolean workDone;
 
-        public void doWork() {
+        public void run() {
             workDone = true;
         }
 
@@ -34,7 +34,7 @@ public class TestThreadPool extends AbstractTestCase {
         for (int i = 0; i < 5; i++) {
             TestWorker worker = new TestWorker();
             workerList.add(worker);
-            tPool.addWorker(worker);
+            tPool.newThread(worker);
         }
 
         tPool.safeShutDown();
