@@ -19,6 +19,9 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
+import org.apache.axis2.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
@@ -101,4 +104,36 @@ public class ElementImplTest extends TestCase {
 		}
 		assertEquals("In correct number of children", 1, count );
 	}
+	
+	public void testAppendChild() {
+		try {
+			String elementName = "TestElem";
+			String childElemName = "TestChildElem";
+			String childTextValue = "text value of the child text node";
+			
+			//Apending am Element node
+			Document doc = DocumentBuilderFactoryImpl.newInstance().newDocumentBuilder().newDocument();
+			Element elem = doc.createElement(elementName);
+			Element childElem = doc.createElement(childElemName);
+			
+			elem.appendChild(childElem);
+			
+			Element addedChild = (Element)elem.getFirstChild();
+			assertNotNull("Child Element node missing",addedChild);
+			assertEquals("Incorre node object", childElem, addedChild);
+			
+			elem = doc.createElement(elementName);
+			Text text = doc.createTextNode(childTextValue);
+			elem.appendChild(text);
+			
+			Text addedTextnode = (Text)elem.getFirstChild();
+			assertNotNull("Child Text node missing", addedTextnode);
+			assertEquals("Incorrect node object", text, addedTextnode);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
+	
 }

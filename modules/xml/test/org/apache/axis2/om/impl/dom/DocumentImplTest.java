@@ -17,6 +17,7 @@ package org.apache.axis2.om.impl.dom;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 import junit.framework.TestCase;
 
@@ -68,7 +69,12 @@ public class DocumentImplTest extends TestCase {
 	}
 	
 	public void testCreateText() {
+		String textValue = "temp text value";
 		
+		DocumentImpl doc = new DocumentImpl();
+		Text txt = doc.createTextNode(textValue);
+		
+		assertEquals("Text value mismatch", textValue, txt.getData());
 	}
 
 }

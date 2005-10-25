@@ -69,15 +69,32 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 		return new OMChildrenIterator(this.firstChild);
 	}
 	
+	/**
+	 * Returns an iterator of child nodes having a given qname
+	 * @see org.apache.axis2.om.OMContainer#getChildrenWithName(javax.xml.namespace.QName)
+	 */
 	public Iterator getChildrenWithName(QName elementQName) throws OMException {
 		return new OMChildrenQNameIterator(getFirstOMChild(),
                 elementQName);
 	}
 	
+	/**
+	 * Return the first OMElement child node
+	 * @see org.apache.axis2.om.OMContainer#getFirstChildWithName(javax.xml.namespace.QName)
+	 */
 	public OMElement getFirstChildWithName(QName elementQName)
 			throws OMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		Iterator children = new OMChildrenQNameIterator(getFirstOMChild(),
+                elementQName);
+		while (children.hasNext()) {
+			OMNode node = (OMNode) children.next();
+			
+			//Return the first OMElement node that is found
+			if(node instanceof OMElement) {
+				return (OMElement)node;
+			}
+		}
+		return null;
 	}
 	
 	public OMNode getFirstOMChild() {

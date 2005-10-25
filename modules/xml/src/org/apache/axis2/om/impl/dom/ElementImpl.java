@@ -53,6 +53,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 	private String tagName;
 	private AttributeMap attributes;
 	private HashMap namespaces;
+	
 	/**
 	 * @param ownerDocument
 	 */
@@ -389,17 +390,15 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 	/* (non-Javadoc)
 	 * @see org.w3c.dom.Element#getElementsByTagNameNS(java.lang.String, java.lang.String)
 	 */
-	public NodeList getElementsByTagNameNS(String arg0, String arg1) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public NodeList getElementsByTagNameNS(String namespaceURI, String localName) {
+		return new NodeListImpl(this, namespaceURI, localName);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.w3c.dom.Element#getElementsByTagName(java.lang.String)
 	 */
-	public NodeList getElementsByTagName(String arg0) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public NodeList getElementsByTagName(String name) {
+		return new NodeListImpl(this, name);
 	}
 	
 	///

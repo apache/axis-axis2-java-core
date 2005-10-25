@@ -111,7 +111,10 @@ public abstract class ChildNode extends NodeImpl {
 	 * Insert the given sibling next to this item
 	 */
 	public void insertSiblingAfter(OMNode sibling) throws OMException {
-		((OMNodeEx)sibling).setParent(this.parentNode);
+		
+		if(this.parentNode != null) {
+			((OMNodeEx)sibling).setParent(this.parentNode);
+		}
 		
 		if(sibling instanceof ChildNode) {
 			ChildNode domSibling = (ChildNode)sibling;

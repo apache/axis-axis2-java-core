@@ -217,6 +217,21 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
                 	}
 
                 } while (inStream.available() > 0);
+                
+                //Breakup the base64 encoded text
+                StringBuffer newText = new StringBuffer();
+                
+//                while(72 <= text.length()) {
+//                	newText.append(text.substring(0,Base64.BASE64DEFAULTLENGTH));
+//                	newText.append("\n");
+//                	text = text.delete(0,Base64.BASE64DEFAULTLENGTH);
+//                }
+//                
+//                if(text.length() > 0) {
+//                	newText.append(text.toString());
+//                }
+                
+//                return newText.toString();
                 return text.toString();
             } catch (Exception e) {
                 throw new OMException(e);
@@ -247,7 +262,7 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
          * reperesented by the Base64 strings stored in OMText
          */
         if (value != null & isBinary) {
-            return org.apache.axis2.attachments.DataHandlerUtils.getDataHandlerFromText(value,mimeType);
+        	return org.apache.axis2.attachments.DataHandlerUtils.getDataHandlerFromText(value,mimeType);
         } else {
 
             if (dataHandlerObject == null) {

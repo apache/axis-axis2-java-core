@@ -113,7 +113,10 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
 		return null;
 	}
 
-
+	
+	/*
+	 * Overidden in ElementImpl and AttrImpl
+	 */
     public String getPrefix()
     {
         return null;
@@ -122,7 +125,6 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
 	public void setNodeValue(String arg0) throws DOMException {
 		//Don't do anything, to be overridden in SOME Child classes
 	}
-
 
 
     public void setPrefix(String prefix) throws DOMException {
@@ -356,8 +358,6 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
         //Document, DocumentFragment, and Attribute will never have parents.
 	}
 
-
-
 	/* (non-Javadoc)
 	 * @see org.apache.axis.om.OMNode#isComplete()
 	 */
@@ -365,8 +365,6 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
 		return this.done;
 	}
 
-	/**
-	 */
 	public void setComplete(boolean state) {
 		this.done = state;
 		

@@ -184,12 +184,15 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
 		this.deleteData(offset, this.textValue.length());
 		
 		TextImpl newText = (TextImpl)this.getOwnerDocument().createTextNode(newValue);
-		newText.setParent(this.parentNode);
+		
+		if(this.parentNode != null) {
+			newText.setParent(this.parentNode);
+		}
 		
 		this.insertSiblingAfter(newText);
 		
 
-		return null;
+		return newText;
 	}
 	
 	///
@@ -202,10 +205,13 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
 		return OMNode.TEXT_NODE;
 	}
 	
+	
 	///
 	///OMNode methods
 	///
 		
+
+
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.om.OMNode#getType()
 	 */
@@ -295,6 +301,10 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
         }
 	}
 	
+	public String getNodeValue() throws DOMException {
+		return this.getText();
+	}
+	
 	public String getContentID() {
         if (contentID == null) {
             contentID = UUIDGenerator.getUUID()
@@ -308,7 +318,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
          * reperesented by the Base64 strings stored in OMText
          */
         if (textValue != null & isBinary) {
-            return org.apache.axis2.attachments.DataHandlerUtils.getDataHandlerFromText(textValue.toString() ,mimeType);
+        	return org.apache.axis2.attachments.DataHandlerUtils.getDataHandlerFromText(textValue.toString() ,mimeType);
         } else {
 
             if (dataHandlerObject == null) {
@@ -456,5 +466,6 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
         }
     }
 
+    
 	
 }
