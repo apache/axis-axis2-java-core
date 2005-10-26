@@ -352,16 +352,16 @@ public class ADBPullParserTest extends XMLTestCase {
         XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("OMElementTest"), propertyList.toArray(), null);
         String stringXML = getStringXML(pullParser);
         try {
-           Document actualDom = newDocument(stringXML);
-           Document expectedDocument = newDocument(expectedXML);
-           assertXMLEqual(actualDom, expectedDocument);
-       } catch (ParserConfigurationException e) {
-           fail("Exception in parsing documents " + e);
-       } catch (SAXException e) {
-           fail("Exception in parsing documents " + e);
-       } catch (IOException e) {
-           fail("Exception in parsing documents " + e);
-       }
+            Document actualDom = newDocument(stringXML);
+            Document expectedDocument = newDocument(expectedXML);
+            assertXMLEqual(actualDom, expectedDocument);
+        } catch (ParserConfigurationException e) {
+            fail("Exception in parsing documents " + e);
+        } catch (SAXException e) {
+            fail("Exception in parsing documents " + e);
+        } catch (IOException e) {
+            fail("Exception in parsing documents " + e);
+        }
 
     }
 
@@ -524,6 +524,29 @@ public class ADBPullParserTest extends XMLTestCase {
         }
     }
 
+    public void testElementText() {
+
+        String expectedXML = "<ns1:testElementText xmlns:ns1=\"http://testElementText.org\">" +
+                "This is some Text for the element</ns1:testElementText>";
+        try {
+            ArrayList properties = new ArrayList();
+            properties.add(ADBPullParser.ELEMENT_TEXT);
+            properties.add("This is some Text for the element");
+
+            XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("http://testElementText.org", "testElementText", "ns1"), properties.toArray(), null);
+
+            String actualXML = getStringXML(pullParser);
+
+            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
+        } catch (ParserConfigurationException e) {
+            fail("Error has occurred " + e);
+        } catch (SAXException e) {
+            fail("Error has occurred " + e);
+        } catch (IOException e) {
+            fail("Error has occurred " + e);
+        }
+    }
+
     public void testComplexScenarioOne() {
         /*
            <apache:Project xmlns:axis2="http://ws.apache.org/namespaces/axis2" xmlns:apache="http://www.apache.org/" xmlns:myAttr="mailto:myAttributes@axis2.org" myAttr:name="Apache Axis2">
@@ -611,17 +634,17 @@ public class ADBPullParserTest extends XMLTestCase {
         propertyList.add("CurrentRelease");
         propertyList.add("0.92");
 
-        Dependencies xmlModuleDeps = new Dependencies(new String[] {"stax-api.jar", "stax-impl.jar"});
-        Module xmlModule = new Module("xml", "This is the XML object model for Axis2", xmlModuleDeps );
+        Dependencies xmlModuleDeps = new Dependencies(new String[]{"stax-api.jar", "stax-impl.jar"});
+        Module xmlModule = new Module("xml", "This is the XML object model for Axis2", xmlModuleDeps);
         propertyList.add(new QName("http://ws.apache.org/namespaces/axis2", "Module", "axis2"));
         propertyList.add(xmlModule);
 
-        Dependencies coreModuleDeps = new Dependencies(new String[] {"axis2-xml.jar", "axis2-wsdl.jar", "commons-logging.jar"});
-        Module coreModule = new Module("core", "This will handle the main logics of the system", coreModuleDeps );
+        Dependencies coreModuleDeps = new Dependencies(new String[]{"axis2-xml.jar", "axis2-wsdl.jar", "commons-logging.jar"});
+        Module coreModule = new Module("core", "This will handle the main logics of the system", coreModuleDeps);
         propertyList.add(new QName("http://ws.apache.org/namespaces/axis2", "Module", "axis2"));
         propertyList.add(coreModule);
 
-        Object[]  attributes = new Object[]{ new QName("mailto:myAttributes@axis2.org", "name", "myAttr"), "Apache Axis2"};
+        Object[]  attributes = new Object[]{new QName("mailto:myAttributes@axis2.org", "name", "myAttr"), "Apache Axis2"};
 
         XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("http://www.apache.org/", "Project", "apache"), propertyList.toArray(), attributes);
 //        System.out.println(getStringXML(pullParser));

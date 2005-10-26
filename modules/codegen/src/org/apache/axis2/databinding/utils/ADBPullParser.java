@@ -34,6 +34,11 @@ import java.util.Iterator;
 
 public class ADBPullParser implements XMLStreamReader {
 
+    // this will help to handle Text within the current element.
+    // user should pass the element text to the property list as this ELEMENT_TEXT as the key
+    public static final String ELEMENT_TEXT = "Element Text";
+    private boolean processingElementText = false;
+
     private Object[] properties;
     private Object[] attributes;
     private QName elementQName;
@@ -56,7 +61,7 @@ public class ADBPullParser implements XMLStreamReader {
     private boolean processingADBNameValuePair = false;
     private boolean nameValuePairStartElementProcessed = false;
     private boolean nameValuePairTextProcessed = false;
-    private boolean nameValuePairEndElementProcessed = false;
+    private boolean finishedProcessingNameValuePair = false;
     private ParserInformation tempParserInfo;
     // ==============================================
 
@@ -218,7 +223,7 @@ public class ADBPullParser implements XMLStreamReader {
         }
 
         // now check whether we are processing a complex string array or not
-        if (processingComplexADBNameValuePair && nameValuePairEndElementProcessed) {
+        if (processingComplexADBNameValuePair && finishedProcessingNameValuePair) {
             // this means we are done with processing one complex string array entry
             // check we have more
             if (complexStringArray.length > ++secondArrayIndex) {
@@ -232,7 +237,7 @@ public class ADBPullParser implements XMLStreamReader {
         }
 
         // check whether we are done with processing a name value pair from an earlier cycle
-        if (processingADBNameValuePair && nameValuePairEndElementProcessed) {
+        if (processingADBNameValuePair && finishedProcessingNameValuePair) {
             processingADBNameValuePair = false;
             currentIndex = currentIndex + 2;
             parserInformation = tempParserInfo;
@@ -291,6 +296,10 @@ public class ADBPullParser implements XMLStreamReader {
 
                 } else if (property instanceof String) {
                     String simplePropertyValue = (String) properties[currentIndex];
+                    if(ELEMENT_TEXT.equals(simplePropertyName)){
+                        // this is element text.
+                        processingElementText = true;
+                    }
                     processingADBNameValuePair = true;
                     return processADBNameValuePair(simplePropertyName, simplePropertyValue);
                 }
@@ -668,18 +677,22 @@ public class ADBPullParser implements XMLStreamReader {
 
     private int processADBNameValuePair(String simplePropertyName, String simplePropertyValue) {
         int event = 0;
-        if (!nameValuePairStartElementProcessed) {
+        if(processingElementText){
+            this.parserInformation.setText(simplePropertyValue);
+            finishedProcessingNameValuePair = true;
+            event = XMLStreamConstants.CHARACTERS;
+        } else if (!nameValuePairStartElementProcessed) {
             event = XMLStreamConstants.START_ELEMENT;
             tempParserInfo = parserInformation;
             parserInformation = new ParserInformation(new QName(simplePropertyName), simplePropertyValue);
             nameValuePairStartElementProcessed = true;
-            nameValuePairEndElementProcessed = false;
+            finishedProcessingNameValuePair = false;
         } else if (nameValuePairStartElementProcessed && !nameValuePairTextProcessed) {
             event = XMLStreamConstants.CHARACTERS;
             nameValuePairTextProcessed = true;
         } else if (nameValuePairTextProcessed) {
             event = XMLStreamConstants.END_ELEMENT;
-            nameValuePairEndElementProcessed = true;
+            finishedProcessingNameValuePair = true;
             nameValuePairStartElementProcessed = false;
             nameValuePairTextProcessed = false;
         }
