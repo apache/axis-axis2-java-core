@@ -20,8 +20,8 @@ import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.llom.SOAPBodyImpl;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 
 public class SOAP12BodyImpl extends SOAPBodyImpl {
     /**

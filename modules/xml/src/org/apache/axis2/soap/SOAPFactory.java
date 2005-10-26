@@ -19,7 +19,6 @@ package org.apache.axis2.soap;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 
 
 public interface SOAPFactory extends OMFactory {

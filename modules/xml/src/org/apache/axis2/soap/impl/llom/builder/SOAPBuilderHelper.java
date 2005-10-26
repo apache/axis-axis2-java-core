@@ -21,7 +21,7 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.impl.llom.exception.OMBuilderException;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
+import org.apache.axis2.soap.SOAPProcessingException;
 
 import javax.xml.stream.XMLStreamReader;
 

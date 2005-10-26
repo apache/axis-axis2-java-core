@@ -22,6 +22,7 @@ import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.soap.SOAPProcessingException;
 
 import javax.xml.stream.XMLStreamException;
 

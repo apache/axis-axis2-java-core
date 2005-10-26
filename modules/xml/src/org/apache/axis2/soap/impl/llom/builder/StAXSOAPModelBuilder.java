@@ -31,8 +31,8 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPMessage;
+import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

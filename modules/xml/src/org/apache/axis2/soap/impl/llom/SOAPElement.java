@@ -20,6 +20,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.OMElementImpl;
+import org.apache.axis2.soap.SOAPProcessingException;
 
 public abstract class SOAPElement extends OMElementImpl {
 

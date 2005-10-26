@@ -49,8 +49,8 @@ import javax.xml.stream.XMLStreamReader;
  */
 public class ElementImpl extends ParentNode implements Element,OMElement {
 	
-	private OMNamespace namespace;
-	private String tagName;
+	protected OMNamespace namespace;
+	protected String localName;
 	private AttributeMap attributes;
 	private HashMap namespaces;
 	
@@ -61,7 +61,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 		super(ownerDocument);
 		if(ownerDocument.firstChild == null)
 			ownerDocument.firstChild = this;
-		this.tagName = tagName;
+		this.localName = tagName;
 	}
 	
 	/**
@@ -72,15 +72,25 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 	 */
 	public ElementImpl(DocumentImpl ownerDocument, String tagName, NamespaceImpl ns) {
 		super(ownerDocument);
-		this.tagName = tagName;
+		this.localName = tagName;
 		this.namespace = ns;
 	}
 	
 	public ElementImpl(DocumentImpl ownerDocument, String tagName, NamespaceImpl ns, OMXMLParserWrapper builder) {
 		super(ownerDocument);
-		this.tagName = tagName;
+		this.localName = tagName;
 		this.namespace = ns;
 		this.builder = builder;
+	}
+	
+	public ElementImpl(ParentNode parentNode, String tagName, NamespaceImpl ns) {
+		this((DocumentImpl)parentNode.getOwnerDocument(), tagName, ns);
+		this.parentNode.addChild(this);
+	}
+	
+	public ElementImpl(ParentNode parentNode, String tagName, NamespaceImpl ns, OMXMLParserWrapper builder) {
+		this((DocumentImpl)parentNode.getOwnerDocument(), tagName, ns,builder);
+		this.parentNode.addChild(this);
 	}
 	
 	///
@@ -98,7 +108,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 	 * @see org.w3c.dom.Node#getNodeName()
 	 */
 	public String getNodeName() {
-		return this.tagName;
+		return this.localName;
 	}
 
 	/**
@@ -136,7 +146,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 	 * @see org.w3c.dom.Element#getTagName()
 	 */
 	public String getTagName() {
-		return this.tagName;
+		return this.localName;
 	}
 
 	/**
@@ -577,12 +587,12 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
         QName qName;
         if (namespace != null) {
             if (namespace.getPrefix() != null) {
-                qName = new QName(namespace.getName(), tagName, namespace.getPrefix());
+                qName = new QName(namespace.getName(), this.localName, namespace.getPrefix());
             } else {
-                qName = new QName(namespace.getName(), tagName);
+                qName = new QName(namespace.getName(), this.localName);
             }
         } else {
-            qName = new QName(tagName);
+            qName = new QName(this.localName);
         }
         return qName;
 	}
@@ -634,7 +644,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 	 * @see org.apache.axis2.om.OMElement#setLocalName(java.lang.String)
 	 */
 	public void setLocalName(String localName) {
-		this.tagName = localName;
+		this.localName = localName;
 	}
 
 	/**
@@ -754,7 +764,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
      * @see java.lang.Object#toString()
      */
     public String toString() {
-    	return (this.namespace != null)?namespace.getName():"" + this.tagName;
+    	return (this.namespace != null)?namespace.getName():"" + this.localName;
     }
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.om.OMElement#getChildElements()
@@ -791,7 +801,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
 	 */
     public String getLocalName()
     {
-        return this.tagName; 
+        return this.localName; 
     }
     
     /**

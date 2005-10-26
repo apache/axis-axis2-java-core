@@ -21,9 +21,9 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPHeader;
+import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.llom.SOAPConstants;
 import org.apache.axis2.soap.impl.llom.SOAPHeaderBlockImpl;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 
 public class SOAP12HeaderBlockImpl extends SOAPHeaderBlockImpl {
     /**

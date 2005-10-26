@@ -29,6 +29,7 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
+import org.apache.axis2.soap.SOAPProcessingException;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

@@ -25,6 +25,7 @@ import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPFaultCode;
 import org.apache.axis2.soap.SOAPFaultSubCode;
 import org.apache.axis2.soap.SOAPFaultValue;
+import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.llom.util.UtilProvider;
 
 import javax.xml.stream.XMLStreamException;

@@ -17,7 +17,6 @@
 package org.apache.axis2.soap;
 
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 
 public interface SOAPFaultReason extends OMElement {
     /**

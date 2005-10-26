@@ -33,7 +33,7 @@ import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPFaultCode;
 import org.apache.axis2.soap.SOAPFaultDetail;
 import org.apache.axis2.soap.SOAPFaultReason;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
+import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;

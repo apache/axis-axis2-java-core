@@ -25,6 +25,7 @@ import org.apache.axis2.om.impl.llom.OMElementImpl;
 import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
+import org.apache.axis2.soap.SOAPProcessingException;
 
 import javax.xml.namespace.QName;
 

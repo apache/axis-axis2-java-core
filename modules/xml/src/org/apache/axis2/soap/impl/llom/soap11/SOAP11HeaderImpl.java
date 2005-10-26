@@ -24,11 +24,12 @@ import org.apache.axis2.om.impl.llom.traverse.OMChildrenWithSpecificAttributeIte
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeaderBlock;
+import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.llom.SOAPHeaderImpl;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
+
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
-import java.util.Iterator;
 
 public class SOAP11HeaderImpl extends SOAPHeaderImpl {
     /**

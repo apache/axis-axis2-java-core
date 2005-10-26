@@ -19,8 +19,8 @@ package org.apache.axis2.soap.impl.llom.soap11;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.SOAPFaultReason;
+import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.llom.SOAPFaultTextImpl;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 
 public class SOAP11FaultTextImpl extends SOAPFaultTextImpl {
     public SOAP11FaultTextImpl(SOAPFaultReason parent) throws SOAPProcessingException {

@@ -33,7 +33,7 @@ import org.apache.axis2.soap.SOAPFaultValue;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
 import org.apache.axis2.soap.SOAPMessage;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
+import org.apache.axis2.soap.SOAPProcessingException;
 
 public class DOMSOAPFactory extends OMDOMFactory implements SOAPFactory {
 

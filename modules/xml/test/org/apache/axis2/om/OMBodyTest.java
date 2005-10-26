@@ -17,7 +17,7 @@
 package org.apache.axis2.om;
 
 import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
+import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

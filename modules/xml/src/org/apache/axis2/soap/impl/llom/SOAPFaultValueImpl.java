@@ -20,6 +20,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPFaultValue;
+import org.apache.axis2.soap.SOAPProcessingException;
 
 public abstract class SOAPFaultValueImpl extends SOAPElement implements SOAPFaultValue {
 

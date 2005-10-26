@@ -23,9 +23,11 @@ import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConve
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPFaultDetail;
+import org.apache.axis2.soap.SOAPProcessingException;
+
+import java.util.Iterator;
 
 import javax.xml.stream.XMLStreamException;
-import java.util.Iterator;
 
 public abstract class SOAPFaultDetailImpl extends SOAPElement implements SOAPFaultDetail {
 

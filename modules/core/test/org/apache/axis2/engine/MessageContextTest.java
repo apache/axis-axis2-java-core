@@ -23,7 +23,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
+import org.apache.axis2.soap.SOAPProcessingException;
 
 import javax.xml.namespace.QName;
 

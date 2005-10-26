@@ -16,7 +16,6 @@
 
 package org.apache.axis2.soap;
 
-import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
 
 public class SOAPFaultSubCodeTest extends SOAPFaultSubCodeTestCase {
 

@@ -26,6 +26,7 @@ import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFault;
+import org.apache.axis2.soap.SOAPProcessingException;
 
 /**
  * Class SOAPBodyImpl

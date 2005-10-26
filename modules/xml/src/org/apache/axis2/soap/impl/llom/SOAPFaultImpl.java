@@ -32,14 +32,16 @@ import org.apache.axis2.soap.SOAPFaultDetail;
 import org.apache.axis2.soap.SOAPFaultNode;
 import org.apache.axis2.soap.SOAPFaultReason;
 import org.apache.axis2.soap.SOAPFaultRole;
+import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 
 /**
  * Class SOAPFaultImpl
