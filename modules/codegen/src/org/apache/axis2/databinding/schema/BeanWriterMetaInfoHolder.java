@@ -1,9 +1,8 @@
 package org.apache.axis2.databinding.schema;
 
 import javax.xml.namespace.QName;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
+import java.lang.reflect.Array;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -37,6 +36,7 @@ public class BeanWriterMetaInfoHolder {
     private Map specialTypeFlagMap = new HashMap();
     private Map qNameMaxOccursCountMap = new HashMap();
     private Map qNameMinOccursCountMap = new HashMap();
+    private Map qNameOrderMap = new HashMap();
 
     public String getExtensionClassName() {
         return extensionClassName;
@@ -119,6 +119,15 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
+        *
+        * @param qName
+        * @param index
+        */
+       public void registerQNameIndex(QName qName, int index){
+           this.qNameOrderMap.put(new Integer(index),qName);
+       }
+
+    /**
      *
      * @param qName
      * @return
@@ -155,5 +164,30 @@ public class BeanWriterMetaInfoHolder {
         return elementToJavaClassMap.keySet().iterator();
     }
 
+    /**
+        *
+        * @return
+        */
+       public QName[] getQNameArray(){
+           Set keySet =elementToJavaClassMap.keySet();
+           return (QName[])keySet.toArray(new QName[keySet.size()]);
+       }
+
+
+    public QName[] getOrderedQNameArray(){
+       //get the keys of the order map
+        Set set = qNameOrderMap.keySet();
+        int count = set.size();
+        Integer[] keys =(Integer[]) set.toArray(new Integer[count]);
+        Arrays.sort(keys);
+
+        //Now refill the Ordered QName Array
+        QName[] returnQNames = new QName[count];
+        for (int i = 0; i < keys.length; i++) {
+            returnQNames[i] = (QName)qNameOrderMap.get(keys[i]);
+
+        }
+       return returnQNames;
+    }
 
 }

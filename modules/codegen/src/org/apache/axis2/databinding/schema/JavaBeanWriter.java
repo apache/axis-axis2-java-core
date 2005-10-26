@@ -84,7 +84,8 @@ public class JavaBeanWriter {
 
     private String process(QName qName, BeanWriterMetaInfoHolder metainf, Map typeMap, boolean isElement) throws Exception {
         String packageName = URLProcessor.getNameSpaceFromURL(qName.getNamespaceURI());
-        String className = getNonConflictingName(this.namesList,qName.getLocalPart());
+        String originalName = qName.getLocalPart();
+        String className = getNonConflictingName(this.namesList,originalName);
 
         ArrayList propertyNames = new ArrayList();
 
@@ -98,6 +99,7 @@ public class JavaBeanWriter {
         //make the XML
         Element rootElt = XSLTUtils.addChildElement(model,"bean",model);
         XSLTUtils.addAttribute(model,"name",className,rootElt);
+        XSLTUtils.addAttribute(model,"originalName",originalName,rootElt);
         XSLTUtils.addAttribute(model,"package",packageName,rootElt);
         XSLTUtils.addAttribute(model,"nsuri",qName.getNamespaceURI(),rootElt);
         XSLTUtils.addAttribute(model,"nsprefix",qName.getPrefix(),rootElt);
@@ -109,19 +111,28 @@ public class JavaBeanWriter {
             XSLTUtils.addAttribute(model,"extension",metainf.getExtensionClassName(),rootElt);
         }
         // go in the loop and add the part elements
-        Iterator qNameIterator = metainf.getElementQNameIterator();
+        QName[] qNames = null;
+        if (metainf.isOrdered()){
+            qNames = metainf.getOrderedQNameArray();
+        }else{
+            qNames = metainf.getQNameArray();
+        }
 
         QName name;
-        while (qNameIterator.hasNext()) {
+        for (int i = 0; i < qNames.length; i++) {
             Element property = XSLTUtils.addChildElement(model,"property",rootElt);
-            name = (QName)qNameIterator.next();
+            name = qNames[i];
             String xmlName = name.getLocalPart();
+            System.out.println(xmlName);
+            XSLTUtils.addAttribute(model,"name",xmlName,property);
+
             String javaName = "";
             if (JavaUtils.isJavaKeyword(xmlName)){
                 javaName = JavaUtils.makeNonJavaKeyword(xmlName);
             }else{
                 javaName = JavaUtils.xmlNameToJava(xmlName,false);
             }
+
             javaName = getNonConflictingName(propertyNames,javaName);
             XSLTUtils.addAttribute(model,"name",xmlName,property);
             XSLTUtils.addAttribute(model,"javaname",javaName,property);
@@ -160,7 +171,7 @@ public class JavaBeanWriter {
                         javaClassNameForElement.substring(0,javaClassNameForElement.indexOf("[")),
                         property);
 
-                
+
                 long minOccurs = metainf.getMinOccurs(name);
 
                 if (minOccurs >0){

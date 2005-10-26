@@ -35,13 +35,19 @@
 
         public static java.lang.Object fromOM(org.apache.axis2.om.OMElement param,
                 java.lang.Class type){
+
         try{
             <xsl:for-each select="param">
                 <xsl:if test="@type!=''">
                     if (<xsl:value-of select="@type"/>.class.equals(type)){
-                       if (org.apache.axis2.databinding.ADBBean.class.isAssignableFrom(type)){
-
+                       java.lang.reflect.Method parseMethod = <xsl:value-of select="@type"/>.class.getMethod("parse",new Class[]{javax.xml.stream.XMLStreamReader.class});
+                       java.lang.Object obj=null;
+                       if (parseMethod!=null){
+                         obj = parseMethod.invoke(null,new java.lang.Object[]{param.getXMLStreamReader()});
+                       }else{
+                         //oops! we don't know how to deal with this. Perhaps the reflective one is a good choice here
                        }
+                       return obj;
                     }
                 </xsl:if>
             </xsl:for-each>
@@ -53,12 +59,12 @@
 
         //Generates an empty object for testing
         // Caution - need some manual editing to work properly
-        public static org.apache.xmlbeans.XmlObject getTestObject(java.lang.Class type){
+        public static java.lang.Object getTestObject(java.lang.Class type){
         try{
         <xsl:for-each select="param">
             <xsl:if test="@type!=''">
                 if (<xsl:value-of select="@type"/>.class.equals(type)){
-                    <xsl:value-of select="@type"/> emptyObject= new <xsl:value-of select="@type"/>;
+                    <xsl:value-of select="@type"/> emptyObject= new <xsl:value-of select="@type"/>();
                     ////////////////////////////////////////////////
                     // TODO
                     // Fill in the empty object with necessaey values. Empty XMLBeans objects do not generate proper events

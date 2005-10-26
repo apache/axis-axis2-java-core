@@ -12,7 +12,7 @@
         implements org.apache.axis2.databinding.ADBBean{
         <xsl:choose>
             <xsl:when test="@type">/* This type was generated from the piece of schema that had
-                name = <xsl:value-of select="$name"/>
+                name = <xsl:value-of select="@originalName"/>
                 Namespace URI = <xsl:value-of select="@nsuri"/>
                 Namespace Prefix = <xsl:value-of select="@nsprefix"/>
                 */
@@ -20,12 +20,12 @@
             <xsl:otherwise>
                 public static final javax.xml.namespace.QName MY_QNAME = new javax.xml.namespace.QName(
                 "<xsl:value-of select="@nsuri"/>",
-                "<xsl:value-of select="$name"/>",
+                "<xsl:value-of select="@originalName"/>",
                 "<xsl:value-of select="@nsprefix"/>");
 
             </xsl:otherwise>
         </xsl:choose>
-        <xsl:if test="@type"></xsl:if>
+
 
         <xsl:for-each select="property">
             <xsl:variable name="propertyType"><xsl:value-of select="@type"></xsl:value-of></xsl:variable>
@@ -75,8 +75,9 @@
         * Note - this is not complete
         */
         public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName){
-
-        Object[] elementList = new Object[]{
+        <xsl:choose>
+            <xsl:when test="@type">
+                  Object[] elementList = new Object[]{
         <xsl:for-each select="property[not(@attribute)]">
             <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
             <xsl:variable name="varName">local<xsl:value-of select="@javaname"/></xsl:variable>
@@ -110,8 +111,31 @@
                </xsl:choose>
              </xsl:for-each>
          };
-
          return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(qName, elementList, attribList);
+            </xsl:when>
+            <xsl:otherwise>
+            //We can safely assume an element has only one type associated with it
+             <!-- This better be only one!!-->
+            <xsl:for-each select="property[@ours]">
+                <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
+                <xsl:variable name="varName">local<xsl:value-of select="@javaname"/></xsl:variable>
+           return <xsl:value-of select="$varName"/>.getPullParser(MY_QNAME);
+            </xsl:for-each>
+            <!-- What do we do for the other case ???? -->
+             <xsl:for-each select="property[not(@ours)]">
+                <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
+                <xsl:variable name="varName">local<xsl:value-of select="@javaname"/></xsl:variable>
+            return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(MY_QNAME,
+                  new Object[]{
+                   "<xsl:value-of select="$propertyName"/>",org.apache.axis2.databinding.schema.util.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
+                 },
+                  new Object[]{});
+
+
+            </xsl:for-each>
+            </xsl:otherwise>
+        </xsl:choose>
+
         }
 
         /**

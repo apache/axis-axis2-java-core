@@ -389,15 +389,23 @@ public class SchemaCompiler {
                          boolean order) throws SchemaCompilationException {
         int count = items.getCount();
         Map processedElements = new HashMap();
+        Map elementOrderMap = new HashMap();
 
         for (int i = 0; i < count; i++) {
             XmlSchemaObject item = items.getItem(i);
+
             if (item instanceof XmlSchemaElement){
                 //recursively process the element
                 XmlSchemaElement xsElt = (XmlSchemaElement) item;
+
                 boolean isArray = isArray(xsElt);
                 processElement(xsElt,false,isArray); //we know for sure this is not an outer type
                 processedElements.put(xsElt, (isArray) ? Boolean.TRUE : Boolean.FALSE);
+                if (order){
+                    //we need to keep the order of the elements. So push the elements to another
+                    //hashmap with the order number
+                    elementOrderMap.put(xsElt,new Integer(i));
+                }
             }else if (item instanceof XmlSchemaComplexContent){
                 // process the extension
                 XmlSchemaContent content = ((XmlSchemaComplexContent)item).getContent();
@@ -419,18 +427,28 @@ public class SchemaCompiler {
         Iterator processedElementsIterator= processedElements.keySet().iterator();
         while(processedElementsIterator.hasNext()){
             XmlSchemaElement elt = (XmlSchemaElement)processedElementsIterator.next();
-            String clazzName = (String)processedElementMap.get(elt.getQName());
-            metainfHolder.registerMapping(elt.getQName(),
+            QName qName = elt.getQName();
+            String clazzName = (String)processedElementMap.get(qName);
+            metainfHolder.registerMapping(qName,
                     elt.getSchemaTypeName()
                     ,clazzName,
                     ((Boolean)processedElements.get(elt)).booleanValue()?
                             SchemaConstants.ANY_ARRAY_TYPE:
                             SchemaConstants.ELEMENT_TYPE);
+
             //register the occurence counts
-            metainfHolder.addMaxOccurs(elt.getQName(),elt.getMaxOccurs());
-            metainfHolder.addMinOccurs(elt.getQName(),elt.getMinOccurs());
+            metainfHolder.addMaxOccurs(qName,elt.getMaxOccurs());
+            metainfHolder.addMinOccurs(qName,elt.getMinOccurs());
+            //we need the order to be preserved. So record the order also
+            if (order){
+              //record the order in the metainf holder
+                Integer integer = (Integer) elementOrderMap.get(elt);
+                metainfHolder.registerQNameIndex(qName,
+                        integer.intValue());
+            }
 
         }
+
         //set the ordered flag in the metainf holder
         metainfHolder.setOrdered(order);
     }
