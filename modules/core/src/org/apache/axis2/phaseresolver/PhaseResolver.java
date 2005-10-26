@@ -97,6 +97,12 @@ public class PhaseResolver {
                 buildExcutionChains(i, axisOperation);
             }
         }
+        ArrayList modulqnames = (ArrayList) ((AxisConfigurationImpl) axisConfig).getEngadgedModules();
+        for (int i = 0; i < modulqnames.size(); i++) {
+            QName modulename = (QName) modulqnames.get(i);
+            ModuleDescription module = axisConfig.getModule(modulename);
+            axisService.addModuleOperations(module,axisConfig);
+        }
     }
 
     /**

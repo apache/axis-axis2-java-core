@@ -169,10 +169,10 @@ public class AxisServiceGroup implements ParameterInclude{
 
     public synchronized void addService(AxisService service) throws AxisFault {
         services.put(service.getName(), service);
+        service.setParent(this);
         PhaseResolver handlerResolver = new PhaseResolver(this.parent, service);
         handlerResolver.buildchains();
         service.setLastupdate();
-        service.setParent(this);
     }
 
     public AxisConfiguration getAxisDescription() {
