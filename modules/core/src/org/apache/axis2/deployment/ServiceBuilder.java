@@ -128,14 +128,10 @@ public class ServiceBuilder extends DescriptionBuilder{
             ArrayList ops = processOpeartions(opeartinsItr);
             for (int i = 0; i < ops.size(); i++) {
                 AxisOperation opeartionDesc = (AxisOperation) ops.get(i);
-                ArrayList paramters = opeartionDesc.getParameters();
-
-                // Adding wsa-maping into service
-                for (int j = 0; j < paramters.size(); j++) {
-                    Parameter parameter = (Parameter) paramters.get(j);
-                    if(parameter.getName().equals(Constants.WSA_ACTION)){
-                        service.addMapping((String)parameter.getValue(),opeartionDesc);
-                    }
+                ArrayList wsamappings = opeartionDesc.getWsamappingList();
+                for (int j = 0; j < wsamappings.size(); j++) {
+                    Parameter paramter = (Parameter) wsamappings.get(j);
+                    service.addMapping((String)paramter.getValue(),opeartionDesc);
                 }
                 service.addOperation(opeartionDesc);
             }
@@ -207,8 +203,8 @@ public class ServiceBuilder extends DescriptionBuilder{
             //Opeartion Paramters
             Iterator paramters = operation.getChildrenWithName(
                     new QName(PARAMETERST));
-            processParameters(paramters,op_descrip,service);
-
+            ArrayList wsamappings = processParameters(paramters,op_descrip,service);
+            op_descrip.setWsamappingList(wsamappings);
             // loading the message receivers
             OMElement receiverElement = operation.getFirstChildWithName(
                     new QName(MESSAGERECEIVER));
@@ -251,7 +247,7 @@ public class ServiceBuilder extends DescriptionBuilder{
             OMAttribute moduleName_att = moduleConfig.getAttribute(
                     new QName(ATTNAME));
             if(moduleName_att == null){
-                 throw new DeploymentException(Messages.getMessage(
+                throw new DeploymentException(Messages.getMessage(
                         DeploymentErrorMsgs.INVALID_MODULE_CONFIG));
             } else {
                 String module = moduleName_att.getAttributeValue();

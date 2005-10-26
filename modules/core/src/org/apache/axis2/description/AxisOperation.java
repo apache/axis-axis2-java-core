@@ -64,6 +64,7 @@ public abstract class AxisOperation  implements
     private WSDLOperationImpl wsdlopeartion;
 
     private AxisService parent;
+    private ArrayList wsamappingList;
 
     //To store deploytime module refs
     private ArrayList modulerefs;
@@ -581,5 +582,13 @@ public abstract class AxisOperation  implements
 
     public void setWsdlopeartion(WSDLOperationImpl wsdlopeartion) {
         this.wsdlopeartion = wsdlopeartion;
+    }
+
+    public ArrayList getWsamappingList() {
+        return wsamappingList;
+    }
+
+    public void setWsamappingList(ArrayList wsamappingList) {
+        this.wsamappingList = wsamappingList;
     }
 }

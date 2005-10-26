@@ -95,7 +95,7 @@ public class AxisService
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setServiceInterface(new WSDLInterfaceImpl());
         moduleConfigmap = new HashMap();
-        
+
     }
 
     public AxisService() {
@@ -165,13 +165,10 @@ public class AxisService
 
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             AxisOperation axisOperation = (AxisOperation) iterator.next();
-            ArrayList paramters = axisOperation.getParameters();
-            // Adding wsa-maping into service
-            for (int j = 0; j < paramters.size(); j++) {
-                Parameter parameter = (Parameter) paramters.get(j);
-                if(parameter.getName().equals(Constants.WSA_ACTION)){
-                    this.addMapping((String)parameter.getValue(),axisOperation);
-                }
+            ArrayList wsamappings = axisOperation.getWsamappingList();
+            for (int j = 0; j < wsamappings.size(); j++) {
+                Parameter paramter = (Parameter) wsamappings.get(j);
+                this.addMapping((String)paramter.getValue(),axisOperation);
             }
             pr.buildModuleOperation(axisOperation);
             this.addOperation(axisOperation);
@@ -565,7 +562,7 @@ public class AxisService
      *         otherwise will return null.
      */
     public AxisOperation getOperationBySOAPAction(String soapAction,
-                                                         QName endpoint) {
+                                                  QName endpoint) {
         HashMap bindingOperations = this.getEndpoint(endpoint).getBinding()
                 .getBindingOperations();
         Iterator operationKeySetIterator = bindingOperations.keySet().iterator();

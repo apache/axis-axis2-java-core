@@ -145,7 +145,7 @@ public class ModuleBuilder extends DescriptionBuilder{
             OMAttribute op_mep_att = operation.getAttribute(
                     new QName(MEP));
             String mepURL =null;
-             AxisOperation op_descrip;
+            AxisOperation op_descrip;
             if(op_mep_att !=null){
                 mepURL= op_mep_att.getAttributeValue();
             }
@@ -158,7 +158,7 @@ public class ModuleBuilder extends DescriptionBuilder{
                     op_descrip = AxisOperationFactory.getOperetionDescription(mepURL);
                 } catch (AxisFault axisFault) {
                     throw new DeploymentException(Messages.getMessage(Messages.getMessage(
-                        DeploymentErrorMsgs.OPERATION_PROCESS_ERROR,axisFault.getMessage())));
+                            DeploymentErrorMsgs.OPERATION_PROCESS_ERROR,axisFault.getMessage())));
                 }
             }
             String opname = op_name_att.getAttributeValue();
@@ -168,7 +168,8 @@ public class ModuleBuilder extends DescriptionBuilder{
             //Opeartion Paramters
             Iterator paramters = operation.getChildrenWithName(
                     new QName(PARAMETERST));
-            processParameters(paramters,op_descrip,module);
+            ArrayList wsamapping =   processParameters(paramters,op_descrip,module);
+            op_descrip.setWsamappingList(wsamapping);
 
 
             //setting the mep of the operation

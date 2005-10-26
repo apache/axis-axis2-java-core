@@ -17,6 +17,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.FlowImpl;
@@ -40,6 +41,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.ArrayList;
+
 /**
  * To do the common tasks for all *Builder class
  */
@@ -173,10 +176,13 @@ public class DescriptionBuilder implements DeploymentConstants{
      * @param paramters <code>Parameter</code>
      * @param parameterInclude <code>ParameterInclude</code>
      * @param parent <code>ParameterInclude</code>
+     * return : will retuen paramters , wchih name is WSA-Mapping , since we need to treat them
+     * seperately
      */
-    protected void processParameters(Iterator paramters, ParameterInclude parameterInclude,
-                                     ParameterInclude parent )
+    protected ArrayList processParameters(Iterator paramters, ParameterInclude parameterInclude,
+                                          ParameterInclude parent )
             throws DeploymentException {
+        ArrayList wsamapping = new ArrayList();
         while (paramters.hasNext()) {
             //this is to check whether some one has locked the parmter at the top level
             OMElement paramterElement = (OMElement) paramters.next();
@@ -227,6 +233,11 @@ public class DescriptionBuilder implements DeploymentConstants{
                     paramter.setLocked(false);
                 }
             }
+            if(Constants.WSA_ACTION.equals(paraName.getAttributeValue())){
+                wsamapping.add(paramter);
+                // no need to add this paramter , since this is just for mapping
+                continue;
+            }
             try {
                 if(parent !=null){
                     if(parentpara == null | !parent.isParamterLocked(paramter.getName())){
@@ -239,6 +250,7 @@ public class DescriptionBuilder implements DeploymentConstants{
                 throw new DeploymentException(axisFault);
             }
         }
+        return wsamapping;
     }
 
 
@@ -261,7 +273,7 @@ public class DescriptionBuilder implements DeploymentConstants{
             }
         }catch (AxisFault axisFault) {
             throw new DeploymentException(Messages.getMessage(
-                                DeploymentErrorMsgs.MODEULE_NOT_FOUND, axisFault.getMessage()));
+                    DeploymentErrorMsgs.MODEULE_NOT_FOUND, axisFault.getMessage()));
         }
     }
 
