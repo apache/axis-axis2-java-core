@@ -3,7 +3,7 @@
     <xsl:template match="/interface">
     package <xsl:value-of select="@package"/>;
     /**
-     *  Auto generated java skeleton for the service by the Axis code generator
+     *  Auto generated java skeleton for the axisService by the Axis code generator
      */
     public class <xsl:value-of select="@name"></xsl:value-of> {
      <xsl:for-each select="method">

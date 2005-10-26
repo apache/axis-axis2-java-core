@@ -19,10 +19,10 @@ package org.apache.axis2.swa;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.OutInOperationDescription;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
@@ -50,7 +50,7 @@ public class EchoRawSwATest extends TestCase {
 
     private ServiceContext serviceContext;
 
-    private ServiceDescription service;
+    private AxisService service;
 
     private boolean finish = false;
 
@@ -66,12 +66,12 @@ public class EchoRawSwATest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
-        service = new ServiceDescription(serviceName);
+        service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new ParameterImpl(
                         AbstractMessageReceiver.SERVICE_CLASS, EchoSwA.class
                                 .getName()));
-        OperationDescription axisOp = new OutInOperationDescription(operationName);
+        AxisOperation axisOp = new OutInAxisOperation(operationName);
         axisOp.setMessageReceiver(new RawXMLINOutMessageReceiver());
         axisOp.setStyle(WSDLService.STYLE_DOC);
         service.addOperation(axisOp);

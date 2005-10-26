@@ -37,8 +37,8 @@
          Collection moduleCol = (Collection)request.getSession().getAttribute(Constants.MODULE_MAP);
          if(moduleCol != null && moduleCol.size() > 0) {
              for (Iterator iterator = moduleCol.iterator(); iterator.hasNext();) {
-                 QName description = (QName) iterator.next();
-                 modulename = description.getLocalPart();
+                 QName axisOperation = (QName) iterator.next();
+                 modulename = axisOperation.getLocalPart();
 		if (!wroteUL){
 			wroteUL = true;
 %>

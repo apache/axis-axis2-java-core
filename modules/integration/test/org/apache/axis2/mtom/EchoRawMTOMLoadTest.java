@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -51,7 +51,7 @@ public class EchoRawMTOMLoadTest extends TestCase {
 
     private ServiceContext serviceContext;
 
-    private ServiceDescription service;
+    private AxisService service;
 
     private OMText textData;
 

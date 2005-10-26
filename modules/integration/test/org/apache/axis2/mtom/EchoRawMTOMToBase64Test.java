@@ -23,7 +23,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.ByteArrayDataSource;
 import org.apache.axis2.clientapi.AsyncResult;
 import org.apache.axis2.clientapi.Callback;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -53,7 +53,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
 
     private QName operationName = new QName("echoMTOMtoBase64");
 
-    private ServiceDescription service;
+    private AxisService service;
 
     OMText expectedTextData;
 

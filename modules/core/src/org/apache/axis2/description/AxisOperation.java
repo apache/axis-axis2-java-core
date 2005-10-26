@@ -1,22 +1,34 @@
 package org.apache.axis2.description;
 
-import org.apache.wsdl.*;
-import org.apache.wsdl.impl.WSDLOperationImpl;
-import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.engine.Phase;
-import org.apache.axis2.engine.SOAPProcessingModelChecker;
-import org.apache.axis2.engine.AxisError;
-import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.engine.AxisError;
+import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.Phase;
+import org.apache.axis2.engine.SOAPProcessingModelChecker;
+import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.phaseresolver.PhaseMetadata;
+import org.apache.wsdl.MessageReference;
+import org.apache.wsdl.WSDLConstants;
+import org.apache.wsdl.WSDLExtensibilityAttribute;
+import org.apache.wsdl.WSDLExtensibilityElement;
+import org.apache.wsdl.WSDLFaultReference;
+import org.apache.wsdl.WSDLFeature;
+import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.WSDLProperty;
+import org.apache.wsdl.impl.WSDLOperationImpl;
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -35,12 +47,7 @@ import java.util.*;
 *
 */
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Sep 30, 2005
- * Time: 5:35:07 PM
- */
-public abstract class OperationDescription  implements
+public abstract class AxisOperation  implements
         ParameterInclude, WSDLOperation, DescriptionConstants,
         WSDLConstants {
 
@@ -56,14 +63,14 @@ public abstract class OperationDescription  implements
 
     private WSDLOperationImpl wsdlopeartion;
 
-    private ServiceDescription parent;
+    private AxisService parent;
 
     //To store deploytime module refs
     private ArrayList modulerefs;
 
 
 
-    public OperationDescription(WSDLOperation wsdlopeartion) {
+    public AxisOperation(WSDLOperation wsdlopeartion) {
         this.wsdlopeartion = (WSDLOperationImpl)wsdlopeartion;
         this.setMessageExchangePattern(MEP_URI_IN_OUT);
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
@@ -86,11 +93,11 @@ public abstract class OperationDescription  implements
         moduleConfigmap = new HashMap();
     }
 
-    public OperationDescription() {
+    public AxisOperation() {
         this(new WSDLOperationImpl());
     }
 
-    public OperationDescription(QName name) {
+    public AxisOperation(QName name) {
         this();
         this.setName(name);
     }
@@ -141,7 +148,7 @@ public abstract class OperationDescription  implements
     /*
     * (non-Javadoc)
     *
-    * @see org.apache.axis2.description.ServiceDescription#getEngadgedModules()
+    * @see org.apache.axis2.description.AxisService#getEngadgedModules()
     */
 
     /**
@@ -290,11 +297,11 @@ public abstract class OperationDescription  implements
         return modulerefs;
     }
 
-    public ServiceDescription getParent() {
+    public AxisService getParent() {
         return parent;
     }
 
-    public void setParent(ServiceDescription parent) {
+    public void setParent(AxisService parent) {
         this.parent = parent;
     }
 

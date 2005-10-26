@@ -212,36 +212,36 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @param service
      * @throws AxisFault
      */
-    public synchronized void addService(ServiceDescription service) throws AxisFault {
-        ServiceGroupDescription serviceGroup = new ServiceGroupDescription();
-        serviceGroup.setServiceGroupName(service.getName().getLocalPart());
-        serviceGroup.setParent(this);
-        serviceGroup.addService(service);
-        addServiceGroup(serviceGroup);
+    public synchronized void addService(AxisService service) throws AxisFault {
+        AxisServiceGroup axisServiceGroup = new AxisServiceGroup();
+        axisServiceGroup.setServiceGroupName(service.getName().getLocalPart());
+        axisServiceGroup.setParent(this);
+        axisServiceGroup.addService(service);
+        addServiceGroup(axisServiceGroup);
     }
 
-    public void addServiceGroup(ServiceGroupDescription serviceGroup) throws AxisFault {
-        Iterator services = serviceGroup.getServices();
-        ServiceDescription description ;
+    public void addServiceGroup(AxisServiceGroup axisServiceGroup) throws AxisFault {
+        Iterator services = axisServiceGroup.getServices();
+        AxisService description ;
         while (services.hasNext()) {
-            description = (ServiceDescription) services.next();
+            description = (AxisService) services.next();
             if(allservices.get(description.getName().getLocalPart()) !=null){
                 throw new AxisFault("Two service can not have same name, a service with " +
                         description.getName().getLocalPart() + " alredy exist in the system");
             }
         }
-        services = serviceGroup.getServices();
+        services = axisServiceGroup.getServices();
         while (services.hasNext()) {
-            description = (ServiceDescription) services.next();
+            description = (AxisService) services.next();
             allservices.put(description.getName().getLocalPart(),description);
             notifyObservers(AxisEvent.SERVICE_DEPLOY ,description);
         }
         Iterator enModule = engagedModules.iterator();
         while (enModule.hasNext()) {
             QName moduleDescription = (QName) enModule.next();
-            serviceGroup.addModule(moduleDescription);
+            axisServiceGroup.addModule(moduleDescription);
         }
-        serviceGroups.put(serviceGroup.getServiceGroupName(),serviceGroup);
+        serviceGroups.put(axisServiceGroup.getServiceGroupName(),axisServiceGroup);
     }
 
     /**
@@ -267,8 +267,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @return
      * @throws AxisFault
      */
-    public ServiceDescription getService(String name) throws AxisFault {
-        return  (ServiceDescription)allservices.get(name);
+    public AxisService getService(String name) throws AxisFault {
+        return  (AxisService)allservices.get(name);
     }
 
     /**
@@ -278,7 +278,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @throws AxisFault
      */
     public synchronized void removeService(String name) throws AxisFault {
-        ServiceDescription service =(ServiceDescription)allservices.remove(name);
+        AxisService service =(AxisService)allservices.remove(name);
         if(service != null){
             log.info("Removed service " + name);
         }
@@ -337,8 +337,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         return parameter != null && parameter.isLocked();
     }
 
-    public ServiceGroupDescription getServiceGroup(String serviceNameAndGroupString) {
-        return (ServiceGroupDescription)serviceGroups.get(serviceNameAndGroupString);
+    public AxisServiceGroup getServiceGroup(String serviceNameAndGroupString) {
+        return (AxisServiceGroup)serviceGroups.get(serviceNameAndGroupString);
     }
 
     public Iterator getServiceGroups() {
@@ -473,11 +473,11 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     public HashMap getServices() {
         Iterator sgs = getServiceGroups();
         while (sgs.hasNext()) {
-            ServiceGroupDescription groupDescription = (ServiceGroupDescription) sgs.next();
-            Iterator servics =  groupDescription.getServices();
+            AxisServiceGroup axisServiceGroup = (AxisServiceGroup) sgs.next();
+            Iterator servics =  axisServiceGroup.getServices();
             while (servics.hasNext()) {
-                ServiceDescription serviceDescription = (ServiceDescription) servics.next();
-                allservices.put(serviceDescription.getName().getLocalPart(),serviceDescription);
+                AxisService axisService = (AxisService) servics.next();
+                allservices.put(axisService.getName().getLocalPart(),axisService);
             }
         }
         return allservices;
@@ -503,7 +503,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         this.axis2Repository = axis2Repository;
     }
 
-    public void notifyObservers(int event_type , ServiceDescription service){
+    public void notifyObservers(int event_type , AxisService service){
         AxisEvent event = new AxisEvent(service,event_type);
         for (int i = 0; i < observersList.size(); i++) {
             AxisObserver axisObserver = (AxisObserver) observersList.get(i);

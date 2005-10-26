@@ -1,8 +1,8 @@
 package org.apache.axis2.description;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.AxisFault;
 import org.apache.wsdl.WSDLOperation;
 
 import javax.xml.namespace.QName;
@@ -30,17 +30,17 @@ import java.util.HashMap;
  * Date: Oct 3, 2005
  * Time: 2:07:15 PM
  */
-public class InOutOperationDescrition extends OperationDescription {
+public class InOutAxisOperation extends AxisOperation {
 
-    public InOutOperationDescrition(WSDLOperation wsdlopeartion) {
+    public InOutAxisOperation(WSDLOperation wsdlopeartion) {
         super(wsdlopeartion);
     }
 
-    public InOutOperationDescrition() {
+    public InOutAxisOperation() {
         super();
     }
 
-    public InOutOperationDescrition(QName name) {
+    public InOutAxisOperation(QName name) {
         super(name);    
     }
 

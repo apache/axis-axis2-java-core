@@ -39,8 +39,8 @@ public interface WOMBuilder {
 	 * can be passed into the builder using which the WOM component can be built out of.
 	 * For example: The Enigne uses the WOM's components in the context hierarchy but 
 	 * those are extended components. 
-	 * (<code>ServiceDescription</code> extends <code>WSDLService</code>.)
-	 * So when deployment build the WOM it would prefer to get a <code>ServiceDescription</code>
+	 * (<code>AxisService</code> extends <code>WSDLService</code>.)
+	 * So when deployment build the WOM it would prefer to get a <code>AxisService</code>
 	 * built in place of a <code>WSDLService</code>. This can be achieved by passing the 
 	 * correct Component Factory that will instanciate the correct object for the WOM builder.
 	 * @param uri URI pointing to the WSDL document.
@@ -69,8 +69,8 @@ public interface WOMBuilder {
 	 * can be passed into the builder using which the WOM component can be built out of.
 	 * For example: The Enigne uses the WOM's components in the context hierarchy but 
 	 * those are extended components. 
-	 * (<code>ServiceDescription</code> extends <code>WSDLService</code>.)
-	 * So when deployment build the WOM it would prefer to get a <code>ServiceDescription</code>
+	 * (<code>AxisService</code> extends <code>WSDLService</code>.)
+	 * So when deployment build the WOM it would prefer to get a <code>AxisService</code>
 	 * built in place of a <code>WSDLService</code>. This can be achieved by passing the 
 	 * correct Component Factory that will instanciate the correct object for the WOM builder.
 	 * @param in InputStream from which the WSDL document can be read in.

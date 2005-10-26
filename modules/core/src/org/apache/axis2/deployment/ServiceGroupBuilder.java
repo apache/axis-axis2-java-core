@@ -17,10 +17,10 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.ModuleConfiguration;
 import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.ServiceGroupDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
@@ -36,20 +36,20 @@ public class ServiceGroupBuilder extends DescriptionBuilder{
     }
 
 
-    public void populateServiceGroup(ServiceGroupDescription serviceGroup) throws DeploymentException {
+    public void populateServiceGroup(AxisServiceGroup axisServiceGroup) throws DeploymentException {
         try {
             //Processing service level paramters
             Iterator itr = servcice.getChildrenWithName(
                     new QName(PARAMETERST));
-            processParameters(itr,serviceGroup,serviceGroup.getParent());
+            processParameters(itr,axisServiceGroup,axisServiceGroup.getParent());
 
             Iterator moduleConfigs = servcice.getChildrenWithName(new QName(MODULECONFIG));
-            processServiceModuleConfig(moduleConfigs,serviceGroup.getParent(),serviceGroup);
+            processServiceModuleConfig(moduleConfigs,axisServiceGroup.getParent(),axisServiceGroup);
 
             //processing servicewide modules which required to engage gloabbly
             Iterator moduleRefs = servcice.getChildrenWithName(
                     new QName(MODULEST));
-            processModuleRefs(moduleRefs,serviceGroup);
+            processModuleRefs(moduleRefs,axisServiceGroup);
 
             Iterator serviceitr = servcice.getChildrenWithName(new QName(SERVICE_ELEMENT));
             while (serviceitr.hasNext()) {
@@ -62,18 +62,18 @@ public class ServiceGroupBuilder extends DescriptionBuilder{
                     throw new DeploymentException(Messages.getMessage(
                             DeploymentErrorMsgs.SEERVICE_NAME_ERROR));
                 } else {
-                    ServiceDescription serviceDecs = engine.getCurrentFileItem().getService(
+                    AxisService axisService = engine.getCurrentFileItem().getService(
                             serviceName);
-                    if(serviceDecs == null){
-                        serviceDecs = new ServiceDescription(new QName(serviceName));
-                        engine.getCurrentFileItem().addService(serviceDecs);
-                        serviceDecs.setName(new QName(serviceName));
+                    if(axisService == null){
+                        axisService = new AxisService(new QName(serviceName));
+                        engine.getCurrentFileItem().addService(axisService);
+                        axisService.setName(new QName(serviceName));
                     }
                     // the service that has to be deploy
-                    engine.getCurrentFileItem().getDeploybleServices().add(serviceDecs);
-                    serviceDecs.setParent(serviceGroup);
-                    serviceDecs.setClassLoader(engine.getCurrentFileItem().getClassLoader());
-                    ServiceBuilder serviceBuilder = new ServiceBuilder(engine,serviceDecs);
+                    engine.getCurrentFileItem().getDeploybleServices().add(axisService);
+                    axisService.setParent(axisServiceGroup);
+                    axisService.setClassLoader(engine.getCurrentFileItem().getClassLoader());
+                    ServiceBuilder serviceBuilder = new ServiceBuilder(engine,axisService);
                     serviceBuilder.populateService(service);
                 }
             }
@@ -85,7 +85,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder{
     }
 
     protected void processServiceModuleConfig(Iterator moduleConfigs ,
-                                              ParameterInclude parent, ServiceGroupDescription service)
+                                              ParameterInclude parent, AxisServiceGroup axisService)
             throws DeploymentException {
         while (moduleConfigs.hasNext()) {
             OMElement moduleConfig = (OMElement) moduleConfigs.next();
@@ -100,7 +100,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder{
                         new ModuleConfiguration(new QName(module),parent);
                 Iterator paramters=  moduleConfig.getChildrenWithName(new QName(PARAMETERST));
                 processParameters(paramters,moduleConfiguration,parent);
-                service.addModuleConfig(moduleConfiguration);
+                axisService.addModuleConfig(moduleConfiguration);
             }
         }
     }
@@ -110,7 +110,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder{
      * @param moduleRefs  <code>java.util.Iterator</code>
      * @throws DeploymentException   <code>DeploymentException</code>
      */
-    protected void processModuleRefs(Iterator moduleRefs ,ServiceGroupDescription serviceGroup)
+    protected void processModuleRefs(Iterator moduleRefs ,AxisServiceGroup axisServiceGroup)
             throws DeploymentException {
         try {
             while (moduleRefs.hasNext()) {
@@ -123,7 +123,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder{
                         throw new DeploymentException(Messages.getMessage(
                                 DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));
                     } else {
-                        serviceGroup.addModuleref(new QName(refName));
+                        axisServiceGroup.addModuleref(new QName(refName));
                     }
                 }
             }

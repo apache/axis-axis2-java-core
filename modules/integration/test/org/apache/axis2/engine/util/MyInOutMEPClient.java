@@ -19,8 +19,8 @@ package org.apache.axis2.engine.util;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.OutInOperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
 
@@ -38,20 +38,20 @@ public class MyInOutMEPClient extends Call {
 
     public SOAPEnvelope invokeBlockingWithEnvelopeOut(String axisop,
                                                       OMElement toSend) throws AxisFault {
-        OperationDescription axisConfig =
-                serviceContext.getServiceConfig().getOperation(new QName(axisop));
+        AxisOperation axisConfig =
+                serviceContext.getAxisService().getOperation(new QName(axisop));
         if (axisConfig == null) {
-            axisConfig = new OutInOperationDescription(new QName(axisop));
-            axisConfig.setRemainingPhasesInFlow(operationTemplate.getRemainingPhasesInFlow());
-            axisConfig.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
-            axisConfig.setPhasesInFaultFlow(operationTemplate.getPhasesInFaultFlow());
-            axisConfig.setPhasesOutFaultFlow(operationTemplate.getPhasesOutFaultFlow());
-            serviceContext.getServiceConfig().addOperation(axisConfig);
+            axisConfig = new OutInAxisOperation(new QName(axisop));
+            axisConfig.setRemainingPhasesInFlow(axisOperationTemplate.getRemainingPhasesInFlow());
+            axisConfig.setPhasesOutFlow(axisOperationTemplate.getPhasesOutFlow());
+            axisConfig.setPhasesInFaultFlow(axisOperationTemplate.getPhasesInFaultFlow());
+            axisConfig.setPhasesOutFaultFlow(axisOperationTemplate.getPhasesOutFaultFlow());
+            serviceContext.getAxisService().addOperation(axisConfig);
         }
 
 //        if (axisConfig == null) {
-//            axisConfig = new OperationDescription(new QName(axisop));
-//            serviceContext.getServiceConfig().addOperation(axisConfig);
+//            axisConfig = new AxisOperation(new QName(axisop));
+//            serviceContext.getAxisServiceName().addOperation(axisConfig);
 //        }
         MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
 
@@ -63,20 +63,20 @@ public class MyInOutMEPClient extends Call {
 
     public SOAPEnvelope invokeBlockingWithEnvelopeOut(String axisop,
                                                       SOAPEnvelope reqEnvelope) throws AxisFault {
-        OperationDescription axisConfig =
-                serviceContext.getServiceConfig().getOperation(new QName(axisop));
+        AxisOperation axisConfig =
+                serviceContext.getAxisService().getOperation(new QName(axisop));
         if (axisConfig == null) {
-            axisConfig = new OutInOperationDescription(new QName(axisop));
-            axisConfig.setRemainingPhasesInFlow(operationTemplate.getRemainingPhasesInFlow());
-            axisConfig.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
-            axisConfig.setPhasesInFaultFlow(operationTemplate.getPhasesInFaultFlow());
-            axisConfig.setPhasesOutFaultFlow(operationTemplate.getPhasesOutFaultFlow());
-            serviceContext.getServiceConfig().addOperation(axisConfig);
+            axisConfig = new OutInAxisOperation(new QName(axisop));
+            axisConfig.setRemainingPhasesInFlow(axisOperationTemplate.getRemainingPhasesInFlow());
+            axisConfig.setPhasesOutFlow(axisOperationTemplate.getPhasesOutFlow());
+            axisConfig.setPhasesInFaultFlow(axisOperationTemplate.getPhasesInFaultFlow());
+            axisConfig.setPhasesOutFaultFlow(axisOperationTemplate.getPhasesOutFaultFlow());
+            serviceContext.getAxisService().addOperation(axisConfig);
         }
 
 //        if (axisConfig == null) {
-//            axisConfig = new OperationDescription(new QName(axisop));
-//            serviceContext.getServiceConfig().addOperation(axisConfig);
+//            axisConfig = new AxisOperation(new QName(axisop));
+//            serviceContext.getAxisServiceName().addOperation(axisConfig);
 //        }
         MessageContext msgctx = getMessageContext(reqEnvelope);
 
@@ -86,7 +86,7 @@ public class MyInOutMEPClient extends Call {
     }
 
     protected MessageContext getMessageContext(SOAPEnvelope envelope) throws AxisFault {
-        MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
+        MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
         msgctx.setEnvelope(envelope);
         return msgctx;
     }

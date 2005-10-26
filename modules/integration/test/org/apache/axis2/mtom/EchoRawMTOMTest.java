@@ -25,7 +25,7 @@ import org.apache.axis2.attachments.utils.ImageIO;
 import org.apache.axis2.clientapi.AsyncResult;
 import org.apache.axis2.clientapi.Callback;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -59,7 +59,7 @@ public class EchoRawMTOMTest extends TestCase {
 
     private ServiceContext serviceContext;
 
-    private ServiceDescription service;
+    private AxisService service;
 
     private OMTextImpl expectedTextData;
     

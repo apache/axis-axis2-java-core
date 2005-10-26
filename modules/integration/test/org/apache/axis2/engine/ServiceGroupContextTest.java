@@ -3,7 +3,7 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.RequestCounter;
 import org.apache.axis2.engine.util.RequestCounterMessageReceiver;
 import org.apache.axis2.integration.UtilServer;
@@ -58,7 +58,7 @@ public class ServiceGroupContextTest extends TestCase {
     protected QName serviceName = new QName("RequestCounter");
     protected QName operationName = new QName("getRequestCount");
     protected QName transportName = new QName("http://localhost/my", "NullTransport");
-    protected ServiceDescription service;
+    protected AxisService service;
 
     protected void setUp() throws Exception {
         UtilServer.start();

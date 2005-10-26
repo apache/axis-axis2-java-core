@@ -21,8 +21,8 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -59,11 +59,11 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
                 throw new AxisFault(Messages.getMessage("invalidSOAPversion"));
             }
 
-            ServiceDescription service =
+            AxisService service =
                 msgContext
                     .getOperationContext()
                     .getServiceContext()
-                    .getServiceConfig();
+                    .getAxisService();
             ClassLoader classLoader = service.getClassLoader();
             Parameter implInfoParam = service.getParameter(SERVICE_CLASS);
             if (implInfoParam != null) {
@@ -94,11 +94,11 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      */
     protected Object getTheImplementationObject(MessageContext msgContext)
         throws AxisFault {
-        ServiceDescription service =
+        AxisService service =
             msgContext
                 .getOperationContext()
                 .getServiceContext()
-                .getServiceConfig();
+                .getAxisService();
 
         Parameter scopeParam = service.getParameter(SCOPE);
         QName serviceName = service.getName();

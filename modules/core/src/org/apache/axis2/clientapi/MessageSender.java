@@ -17,16 +17,16 @@
 package org.apache.axis2.clientapi;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.AxisConfigurationImpl;
-import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.OutInOperationDescription;
-import org.apache.axis2.description.OperationDescriptionFactory;
+import org.apache.axis2.deployment.util.PhasesInfo;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisOperationFactory;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.om.OMElement;
 import org.apache.wsdl.WSDLConstants;
 
@@ -38,7 +38,7 @@ import javax.xml.namespace.QName;
  */
 public class MessageSender extends InOnlyMEPClient {
 
-    protected static OperationDescription operationTemplate;
+    protected static AxisOperation axisOperationTemplate;
     /**
      * Service context of the Service this MessageSender handles, compare this with the Call, simpler method.
      * @param service
@@ -67,23 +67,23 @@ public class MessageSender extends InOnlyMEPClient {
      * @throws AxisFault
      */
     public void send(String opName, OMElement toSend) throws AxisFault {
-        OperationDescription axisOp = serviceContext.getServiceConfig()
+        AxisOperation axisOp = serviceContext.getAxisService()
                 .getOperation(opName);
         if (axisOp == null) {
             //todo I just assumed mep is alwas in-out , this has to improve : Deepal
-            axisOp = new OutInOperationDescription(new QName(opName));
-            serviceContext.getServiceConfig().addOperation(axisOp);
+            axisOp = new OutInAxisOperation(new QName(opName));
+            serviceContext.getAxisService().addOperation(axisOp);
 
-            axisOp = OperationDescriptionFactory.getOperetionDescription(WSDLConstants.MEP_CONSTANT_IN_ONLY);
+            axisOp = AxisOperationFactory.getOperetionDescription(WSDLConstants.MEP_CONSTANT_IN_ONLY);
             axisOp.setName(new QName(opName));
             axisOp.setRemainingPhasesInFlow(
-                    operationTemplate.getRemainingPhasesInFlow());
-            axisOp.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
+                    axisOperationTemplate.getRemainingPhasesInFlow());
+            axisOp.setPhasesOutFlow(axisOperationTemplate.getPhasesOutFlow());
             axisOp.setPhasesInFaultFlow(
-                    operationTemplate.getPhasesInFaultFlow());
+                    axisOperationTemplate.getPhasesInFaultFlow());
             axisOp.setPhasesOutFaultFlow(
-                    operationTemplate.getPhasesOutFaultFlow());
-            serviceContext.getServiceConfig().addOperation(axisOp);
+                    axisOperationTemplate.getPhasesOutFaultFlow());
+            serviceContext.getAxisService().addOperation(axisOp);
         }
         super.send(axisOp, prepareTheSOAPEnvelope(toSend));
     }
@@ -104,22 +104,22 @@ public class MessageSender extends InOnlyMEPClient {
 
         //create new service
         QName assumedServiceName = new QName("AnonymousService");
-        ServiceDescription axisService = new ServiceDescription(assumedServiceName);
+        AxisService axisService = new AxisService(assumedServiceName);
 
 
 
 
 
         //we will assume a Service and operations
-//        operationTemplate = new OperationDescription(new QName("TemplateOperation"));
-        operationTemplate = new   OutInOperationDescription(new QName("TemplateOperation"));
+//        axisOperationTemplate = new AxisOperation(new QName("TemplateOperation"));
+        axisOperationTemplate = new   OutInAxisOperation(new QName("TemplateOperation"));
 
         PhasesInfo info =((AxisConfigurationImpl)sysContext.getAxisConfiguration()).getPhasesinfo();
         //to set the operation flows
         if(info != null){
-            info.setOperationPhases(operationTemplate);
+            info.setOperationPhases(axisOperationTemplate);
         }
-        axisService.addOperation(operationTemplate);
+        axisService.addOperation(axisOperationTemplate);
         sysContext.getAxisConfiguration().addService(axisService);
         ServiceGroupContext serviceGroupContext = axisService.getParent().getServiceGroupContext(sysContext);
         return serviceGroupContext.getServiceContext(assumedServiceName.getLocalPart());
@@ -130,7 +130,7 @@ public class MessageSender extends InOnlyMEPClient {
     }
 
     public void set(String key, Object value) {
-        serviceContext.getEngineContext().setProperty(key, value);
+        serviceContext.getConfigurationContext().setProperty(key, value);
     }
     
 }

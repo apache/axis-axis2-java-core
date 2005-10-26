@@ -27,9 +27,9 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.OutInOperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilsTCPServer;
@@ -60,8 +60,8 @@ public class TCPEchoRawXMLTest extends TestCase {
 
     private MessageContext mc;
     private SimpleHTTPServer sas;
-    private ServiceDescription service;
-    private ServiceDescription clientService;
+    private AxisService service;
+    private AxisService clientService;
     private ServiceContext serviceContext;
 
     private boolean finish = false;
@@ -174,7 +174,7 @@ public class TCPEchoRawXMLTest extends TestCase {
     }
 
     public void testEchoXMLCompleteSync() throws Exception {
-        ServiceDescription service =
+        AxisService service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
                         operationName);
@@ -208,7 +208,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         ConfigurationContextFactory confac = new ConfigurationContextFactory();
         ConfigurationContext configContext= confac.buildClientConfigurationContext(Constants.TESTING_REPOSITORY);
 
-        OperationDescription opdesc = new OutInOperationDescription(new QName("echoOMElement"));
+        AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(Constants.TESTING_REPOSITORY);
         call.setTo(targetEPR);
 
@@ -227,11 +227,11 @@ public class TCPEchoRawXMLTest extends TestCase {
         envelope.getBody().addChild(method);
 
         MessageContext requestContext = new MessageContext(configContext);
-        ServiceDescription srevice = new ServiceDescription(serviceName);
+        AxisService srevice = new AxisService(serviceName);
         srevice.addOperation(opdesc);
         configContext.getAxisConfiguration().addService(srevice);
-        requestContext.setServiceDescription(service);
-        requestContext.setOperationDescription(opdesc);
+        requestContext.setAxisService(service);
+        requestContext.setAxisOperation(opdesc);
 
         //  requestContext.setTo(targetEPR);
 

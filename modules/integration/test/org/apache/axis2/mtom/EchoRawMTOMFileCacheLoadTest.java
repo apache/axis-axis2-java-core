@@ -18,7 +18,7 @@ package org.apache.axis2.mtom;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
@@ -33,7 +33,7 @@ public class EchoRawMTOMFileCacheLoadTest extends EchoRawMTOMLoadTest {
 
     private ServiceContext serviceContext;
 
-    private ServiceDescription service;
+    private AxisService service;
 
     public EchoRawMTOMFileCacheLoadTest() {
         super(EchoRawMTOMFileCacheLoadTest.class.getName());

@@ -1,46 +1,48 @@
 <%@ page import="org.apache.axis2.Constants" %>
-<%@ page import="org.apache.axis2.description.ServiceDescription" %>
-<%@ page import="org.apache.axis2.description.ServiceGroupDescription" %>
+<%@ page import="org.apache.axis2.description.AxisService" %>
+<%@ page import="org.apache.axis2.description.AxisServiceGroup" %>
 <%@ page import="javax.xml.namespace.QName" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.Iterator"%>
+<%@ page import="java.util.Iterator" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp"></jsp:include>
+<jsp:include page="include/adminheader.jsp">
+</jsp:include>
 <h1>Available Service Groups</h1>
 <%
-    Iterator serviceGroup = (Iterator)request.getSession().getAttribute(
+    Iterator axisServiceGroupIter = (Iterator) request.getSession().getAttribute(
             Constants.SERVICE_GROUP_MAP);
-    while(serviceGroup.hasNext()){
-        ServiceGroupDescription groupDescription = (ServiceGroupDescription) serviceGroup.next();
-        String groupName = groupDescription.getServiceGroupName();
-        ArrayList modules = groupDescription.getServiceGroupModules();
-        Iterator service = groupDescription.getServices();
+    while (axisServiceGroupIter.hasNext()) {
+        AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisServiceGroupIter.next();
+        String groupName = axisServiceGroup.getServiceGroupName();
+        ArrayList modules = axisServiceGroup.getServiceGroupModules();
+        Iterator axisServiceIter = axisServiceGroup.getServices();
 %>
 <h2><%=groupName%></h2><ul>
     <%
-        while(service.hasNext()){
-            ServiceDescription serviceDescription = (ServiceDescription) service.next();
-            String serviceName = serviceDescription.getName().getLocalPart();
+        while (axisServiceIter.hasNext()){
+            AxisService axisService = (AxisService) axisServiceIter.next();
+            String serviceName = axisService.getAxisServiceName();
     %>
     <li><font color="blue"><a href="listGroupService.jsp?serviceName=<%=serviceName%>">
-   <%=serviceName%> </a></font></li>
+        <%=serviceName%></a></font></li>
     <%
         }
     %>
 </ul>
 <%
-    if(modules.size() >0){
+    if (modules.size() > 0) {
 %>
 <I>Engaged modules</I><ul>
-<%
-     for (int i = 0; i < modules.size(); i++) {
-        QName modulDesc = (QName)modules.get(i);
+    <%
+        for (int i = 0; i < modules.size(); i++) {
+            QName modulDesc = (QName) modules.get(i);
+    %>
+    <li><%=modulDesc.getLocalPart()%></li>
+    <%
+        }
+    %></ul><%
+        }
+    }
 %>
- <li><%=modulDesc.getLocalPart()%></li>
-<%
-    }
-        %></ul><%
-    }
-    }
-%>
-<jsp:include page="include/adminfooter.jsp"></jsp:include>
+<jsp:include page="include/adminfooter.jsp">
+</jsp:include>

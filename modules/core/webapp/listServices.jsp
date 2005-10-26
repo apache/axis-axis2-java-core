@@ -1,7 +1,7 @@
 <%@ page import="org.apache.axis2.Constants,
-                 org.apache.axis2.description.OperationDescription,
-                 org.apache.axis2.description.ServiceDescription,
-                 java.util.Collection"%>
+                 org.apache.axis2.description.AxisOperation"%>
+<%@ page import="org.apache.axis2.description.AxisService"%>
+<%@ page import="java.util.Collection"%>
 <%@ page import="java.util.Enumeration"%>
 <%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Hashtable"%>
@@ -47,13 +47,13 @@
         Collection servicecol = serviceMap.values();
         Collection operationsList;
        for (Iterator iterator = servicecol.iterator(); iterator.hasNext();) {
-            ServiceDescription axisService = (ServiceDescription) iterator.next();
+            AxisService axisService = (AxisService) iterator.next();
             operations = axisService.getOperations();
             operationsList = operations.values();
             serviceName = axisService.getName().getLocalPart();
             %><h2><font color="blue"><a href="<%=prifix + axisService.getName().getLocalPart()%>?wsdl"><%=serviceName%></a></font></h2>
            <font color="blue">Service EPR : <font color="black"><%=prifix + axisService.getName().getLocalPart()%></font>
-           <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
+           <h4>Service Description : <font color="black"><%=axisService.getAxisServiceName()%></h4>
            <%
             if (operationsList.size() > 0) {
                 %><i>Available operations</i><%
@@ -62,7 +62,7 @@
             }
            %><ul><%
             for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
-                OperationDescription axisOperation = (OperationDescription) iterator1.next();
+                AxisOperation axisOperation = (AxisOperation) iterator1.next();
                 %><li><%=axisOperation.getName().getLocalPart()%></li>
 <%--                <br>Opeartion EPR : <%=prifix + axisService.getName().getLocalPart() + "/"+ axisOperation.getName().getLocalPart()%>--%>
                 <%

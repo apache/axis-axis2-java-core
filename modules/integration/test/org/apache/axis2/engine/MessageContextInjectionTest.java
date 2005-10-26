@@ -22,7 +22,12 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOnlyAxisOperation;
+import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -74,14 +79,14 @@ public class MessageContextInjectionTest extends TestCase {
         LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(
                 config);
 
-        ServiceDescription service = new ServiceDescription(serviceName);
+        AxisService service = new AxisService(serviceName);
         service.addParameter(
                 new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
                         MessageContextEnabledEcho.class.getName()));
-        OperationDescription operation = new InOnlyOperationDescription(
+        AxisOperation axisOperation = new InOnlyAxisOperation(
                 operationName);
-        operation.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
-        service.addOperation(operation);
+        axisOperation.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
+        service.addOperation(axisOperation);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         LocalTransportReceiver.CONFIG_CONTEXT.getAxisConfiguration()
                 .addService(service);

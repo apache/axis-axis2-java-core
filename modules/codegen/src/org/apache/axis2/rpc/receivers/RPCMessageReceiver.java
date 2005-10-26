@@ -24,7 +24,7 @@ package org.apache.axis2.rpc.receivers;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -76,14 +76,14 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             Class ImplClass = obj.getClass();
             DependencyManager.configureBusinessLogicProvider(obj, inMessage, null);
 
-            OperationDescription op = inMessage.getOperationContext().getOperationDescription();
+            AxisOperation op = inMessage.getOperationContext().getAxisOperation();
 
             OMElement methodElement = inMessage.getEnvelope().getBody()
                     .getFirstElement();
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
             //todo method validation has to be done
-            //Todo if we find the method it should be store , in OperationDescription
+            //Todo if we find the method it should be store , in AxisOperation
             for (int i = 0; i < methods.length; i++) {
                 if (methods[i].getName().equals(methodName)) {
                     this.method = methods[i];
@@ -96,7 +96,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             Object resObject = method.invoke(obj, objectArray);
 
             // Handling the response
-            //todo NameSpace has to be taken from the serviceDescription
+            //todo NameSpace has to be taken from the AxisService
             OMNamespace ns = getSOAPFactory().createOMNamespace(
                     "http://soapenc/", "res");
             SOAPEnvelope envelope = getSOAPFactory().getDefaultEnvelope();

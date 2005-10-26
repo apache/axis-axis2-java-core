@@ -36,7 +36,10 @@ import org.apache.wsdl.extensions.SOAPOperation;
 import org.apache.wsdl.impl.WSDLInterfaceImpl;
 import org.apache.wsdl.impl.WSDLServiceImpl;
 
-import javax.wsdl.*;
+import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
@@ -51,9 +54,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class ServiceDescription
+ * Class AxisService
  */
-public class ServiceDescription
+public class AxisService
         //    extends WSDLServiceImpl
         implements WSDLService ,
         ParameterInclude,
@@ -64,12 +67,12 @@ public class ServiceDescription
 
     private HashMap moduleConfigmap;
 
-    private  ServiceGroupDescription parent;
+    private  AxisServiceGroup parent;
     //to store the wsdl definition , which is build at the deployment time
 
     //to keep the time that last update time of the service
     private long lastupdate ;
-    private String  serviceDescription ;
+    private String  axisServiceName ;
     private String fileName = "";
 
     private WSDLServiceImpl serviceimpl = null;
@@ -82,10 +85,10 @@ public class ServiceDescription
 
 
     /**
-     * Constructor ServiceDescription
+     * Constructor AxisService
      */
 
-    public ServiceDescription(WSDLServiceImpl serviceimpl){
+    public AxisService(WSDLServiceImpl serviceimpl){
         this.serviceimpl = serviceimpl;
         this.wasaction_opeartionmap = new HashMap();
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
@@ -95,7 +98,7 @@ public class ServiceDescription
         
     }
 
-    public ServiceDescription() {
+    public AxisService() {
         this.serviceimpl = new WSDLServiceImpl();
         this.wasaction_opeartionmap = new HashMap();
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
@@ -105,11 +108,11 @@ public class ServiceDescription
     }
 
     /**
-     * Constructor ServiceDescription
+     * Constructor AxisService
      *
      * @param qName
      */
-    public ServiceDescription(QName qName) {
+    public AxisService(QName qName) {
         this();
         this.setName(qName);
     }
@@ -117,7 +120,7 @@ public class ServiceDescription
     /*
     * (non-Javadoc)
     *
-    * @see org.apache.axis2.description.ServiceDescription#addModule(javax.xml.namespace.QName)
+    * @see org.apache.axis2.description.AxisService#addModule(javax.xml.namespace.QName)
     */
 
     /**
@@ -161,17 +164,17 @@ public class ServiceDescription
         PhaseResolver pr = new PhaseResolver(axisConfig, this);
 
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-            OperationDescription operation = (OperationDescription) iterator.next();
-            ArrayList paramters = operation.getParameters();
+            AxisOperation axisOperation = (AxisOperation) iterator.next();
+            ArrayList paramters = axisOperation.getParameters();
             // Adding wsa-maping into service
             for (int j = 0; j < paramters.size(); j++) {
                 Parameter parameter = (Parameter) paramters.get(j);
                 if(parameter.getName().equals(Constants.WSA_ACTION)){
-                    this.addMapping((String)parameter.getValue(),operation);
+                    this.addMapping((String)parameter.getValue(),axisOperation);
                 }
             }
-            pr.buildModuleOperation(operation);
-            this.addOperation(operation);
+            pr.buildModuleOperation(axisOperation);
+            this.addOperation(axisOperation);
         }
     }
 
@@ -191,7 +194,7 @@ public class ServiceDescription
     /*
     * (non-Javadoc)
     *
-    * @see org.apache.axis2.description.ServiceDescription#getEngadgedModules()
+    * @see org.apache.axis2.description.AxisService#getEngadgedModules()
     */
 
     /**
@@ -207,15 +210,15 @@ public class ServiceDescription
      * Method getOperation
      *
      * @param operationName
-     * @return   OperationDescription
+     * @return   AxisOperation
      */
-    public OperationDescription getOperation(QName operationName) {
+    public AxisOperation getOperation(QName operationName) {
         String opStr = operationName.getLocalPart();
 
         HashMap allOperations = this.getServiceInterface().getAllOperations();
-        OperationDescription opeartion = (OperationDescription) allOperations.get(opStr);
+        AxisOperation opeartion = (AxisOperation) allOperations.get(opStr);
         if(opeartion == null ){
-            opeartion = (OperationDescription)wasaction_opeartionmap.get(
+            opeartion = (AxisOperation)wasaction_opeartionmap.get(
                     operationName.getLocalPart());
         }
         return opeartion;
@@ -234,23 +237,23 @@ public class ServiceDescription
     /*
     * (non-Javadoc)
     *
-    * @see org.apache.axis2.description.ServiceDescription#addOperation(org.apache.axis2.description.OperationDescription)
+    * @see org.apache.axis2.description.AxisService#addOperation(org.apache.axis2.description.AxisOperation)
     */
 
     /**
      * Method addOperation
      *
-     * @param operation
+     * @param axisOperation
      */
-    public void addOperation(OperationDescription operation) {
-        operation.setParent(this);
-        this.getServiceInterface().setOperation(operation);
+    public void addOperation(AxisOperation axisOperation) {
+        axisOperation.setParent(this);
+        this.getServiceInterface().setOperation(axisOperation);
     }
 
     /*
     * (non-Javadoc)
     *
-    * @see org.apache.axis2.description.ServiceDescription#setClassLoader(java.lang.ClassLoader)
+    * @see org.apache.axis2.description.AxisService#setClassLoader(java.lang.ClassLoader)
     */
 
     /**
@@ -267,7 +270,7 @@ public class ServiceDescription
     /*
     * (non-Javadoc)
     *
-    * @see org.apache.axis2.description.ServiceDescription#getClassLoader()
+    * @see org.apache.axis2.description.AxisService#getClassLoader()
     */
 
     /**
@@ -282,7 +285,7 @@ public class ServiceDescription
     /*
     * (non-Javadoc)
     *
-    * @see org.apache.axis2.description.ServiceDescription#setContextPath(java.lang.String)
+    * @see org.apache.axis2.description.AxisService#setContextPath(java.lang.String)
     */
 
     /**
@@ -299,7 +302,7 @@ public class ServiceDescription
     /*
     * (non-Javadoc)
     *
-    * @see org.apache.axis2.description.ServiceDescription#getContextPath()
+    * @see org.apache.axis2.description.AxisService#getContextPath()
     */
 
     /**
@@ -314,7 +317,7 @@ public class ServiceDescription
     /*
     * (non-Javadoc)
     *
-    * @see org.apache.axis2.description.ServiceDescription#setStyle(javax.swing.text.Style)
+    * @see org.apache.axis2.description.AxisService#setStyle(javax.swing.text.Style)
     */
 
     /**
@@ -331,7 +334,7 @@ public class ServiceDescription
     /*
     * (non-Javadoc)
     *
-    * @see org.apache.axis2.description.ServiceDescription#getStyle()
+    * @see org.apache.axis2.description.AxisService#getStyle()
     */
 
     /**
@@ -514,8 +517,8 @@ public class ServiceDescription
         return this.getServiceInterface().getOperations();
     }
 
-    public OperationDescription getOperation(String ncName) {
-        return (OperationDescription) this.getServiceInterface().getOperations()
+    public AxisOperation getOperation(String ncName) {
+        return (AxisOperation) this.getServiceInterface().getOperations()
                 .get(ncName);
     }
 
@@ -528,10 +531,10 @@ public class ServiceDescription
      * the given SOAP Action; null will be returned.
      *
      * @param soapAction SOAP Action defined for the particular Operation
-     * @return A OperationDescription if a unque Operation can be found with the given SOAP Action
+     * @return A AxisOperation if a unque Operation can be found with the given SOAP Action
      *         otherwise will return null.
      */
-    public OperationDescription getOperationBySOAPAction(String soapAction) {
+    public AxisOperation getOperationBySOAPAction(String soapAction) {
         if(soapAction == null || soapAction.equals("")){
             return null;
         }
@@ -558,15 +561,15 @@ public class ServiceDescription
      * @param endpoint   Particular Enpoint in which the bining is defined with the particular SOAP
      *                   Action.
      * @param soapAction SOAP Action defined for the particular Operation
-     * @return A OperationDescription if a unque Operation can be found with the given SOAP Action
+     * @return A AxisOperation if a unque Operation can be found with the given SOAP Action
      *         otherwise will return null.
      */
-    public OperationDescription getOperationBySOAPAction(String soapAction,
+    public AxisOperation getOperationBySOAPAction(String soapAction,
                                                          QName endpoint) {
         HashMap bindingOperations = this.getEndpoint(endpoint).getBinding()
                 .getBindingOperations();
         Iterator operationKeySetIterator = bindingOperations.keySet().iterator();
-        OperationDescription operation = null;
+        AxisOperation axisOperation = null;
         int count = 0;
         while (operationKeySetIterator.hasNext()) {
             WSDLBindingOperation bindingOperation = (WSDLBindingOperation) bindingOperations.get(
@@ -580,8 +583,8 @@ public class ServiceDescription
                     if (((SOAPOperation) element).getSoapAction().equals(
                             soapAction)) {
                         WSDLOperation op = bindingOperation.getOperation();
-                        if (op instanceof OperationDescription) {
-                            operation = (OperationDescription) op;
+                        if (op instanceof AxisOperation) {
+                            axisOperation = (AxisOperation) op;
                             count++;
                         }
                     }
@@ -589,7 +592,7 @@ public class ServiceDescription
             }
         }
         if (1 == count) {
-            return operation;
+            return axisOperation;
         }
         return null;
     }
@@ -628,17 +631,17 @@ public class ServiceDescription
      *                                                                   ty67tyuio
      * @return String
      */
-    public String getServiceDescription() {
-        return serviceDescription;
+    public String getAxisServiceName() {
+        return axisServiceName;
     }
 
     /**
      * Set the description about the service
      *
-     * @param serviceDescription
+     * @param axisServiceName
      */
-    public void setServiceDescription(String serviceDescription) {
-        this.serviceDescription = serviceDescription;
+    public void setAxisServiceName(String axisServiceName) {
+        this.axisServiceName = axisServiceName;
     }
 
     public Definition getWSDLDefinition() {
@@ -785,19 +788,19 @@ public class ServiceDescription
     /**
      * To add the was action paramater into has map so that was action based dispatch can support
      */
-    public void addMapping(String mappingKey , OperationDescription operation){
-        wasaction_opeartionmap.put(mappingKey,operation);
+    public void addMapping(String mappingKey , AxisOperation axisOperation){
+        wasaction_opeartionmap.put(mappingKey,axisOperation);
     }
 
     /**
      * To get the parent (which is AxisConfiguration in this case)
      * @return <code>AxisConfiguration</code>
      */
-    public ServiceGroupDescription getParent() {
+    public AxisServiceGroup getParent() {
         return parent;
     }
 
-    public void setParent(ServiceGroupDescription parent) {
+    public void setParent(AxisServiceGroup parent) {
         this.parent = parent;
     }
 

@@ -20,13 +20,15 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContextFactory;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
-import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
@@ -38,9 +40,9 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     private AxisConfiguration engineRegistry;
     private QName serviceName = new QName("axis/services/NullService");
     private QName opearationName = new QName("NullOperation");
-    private ServiceDescription service;
+    private AxisService service;
     private ConfigurationContext engineContext;
-    private OperationDescription axisOp;
+    private AxisOperation axisOp;
 
     public EngineWithoutPhaseResolvingTest() {
     }
@@ -60,9 +62,9 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
 
         TransportInDescription transportIn = new TransportInDescription(
                 new QName("null"));
-        axisOp = new InOutOperationDescrition(opearationName);
+        axisOp = new InOutAxisOperation(opearationName);
 
-        service = new ServiceDescription(serviceName);
+        service = new AxisService(serviceName);
         axisOp.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messgeCtx) throws AxisFault {
                 // TODO Auto-generated method stub

@@ -16,7 +16,7 @@
 
 package org.apache.axis2.deployment.util;
 
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 
@@ -109,12 +109,12 @@ public class PhasesInfo {
         return oprationOUT_FaultPhases;
     }
 
-    public void setOperationPhases(OperationDescription operation) {
-        if (operation != null) {
-            operation.setRemainingPhasesInFlow(getOperationInPhases());
-            operation.setPhasesOutFlow(getOperationOutPhases());
-            operation.setPhasesInFaultFlow(getOperationInFaultPhases());
-            operation.setPhasesOutFaultFlow(getOperationOutFaultPhases());
+    public void setOperationPhases(AxisOperation axisOperation) {
+        if (axisOperation != null) {
+            axisOperation.setRemainingPhasesInFlow(getOperationInPhases());
+            axisOperation.setPhasesOutFlow(getOperationOutPhases());
+            axisOperation.setPhasesInFaultFlow(getOperationInFaultPhases());
+            axisOperation.setPhasesOutFaultFlow(getOperationOutFaultPhases());
         }
     }
 

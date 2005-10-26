@@ -18,9 +18,9 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
 
 import javax.xml.namespace.QName;
 
@@ -38,13 +38,13 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
      public void initDispatcher() {
         init(new HandlerDescription(NAME));
     }
-    public OperationDescription findOperation(ServiceDescription service,
+    public AxisOperation findOperation(AxisService service,
                                               MessageContext messageContext)
             throws AxisFault {
 
         String action = messageContext.getSoapAction();
         if (action != null) {
-            OperationDescription op = service.getOperationBySOAPAction(action);
+            AxisOperation op = service.getOperationBySOAPAction(action);
             if (op == null) {
                 op = service.getOperation(new QName(action));
             }
@@ -60,7 +60,7 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
     /* (non-Javadoc)
      * @see org.apache.axis2.engine.AbstractDispatcher#findService(org.apache.axis2.context.MessageContext)
      */
-    public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
+    public AxisService findService(MessageContext messageContext) throws AxisFault {
         return null;
     }
 

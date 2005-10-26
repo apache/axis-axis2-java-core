@@ -20,7 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
@@ -65,10 +65,10 @@ public abstract class MEPClient {
      * prepare the message context for invocation, here the properties kept in the
      * MEPClient copied to the MessageContext
      */
-    protected void prepareInvocation(OperationDescription axisop, MessageContext msgCtx)
+    protected void prepareInvocation(AxisOperation axisop, MessageContext msgCtx)
             throws AxisFault {
         if (axisop == null) {
-            throw new AxisFault(Messages.getMessage("cannotBeNullOperationDescription"));
+            throw new AxisFault(Messages.getMessage("cannotBeNullAxisOperation"));
         }
         //make sure operation is type right MEP
         if (mep.equals(axisop.getMessageExchangePattern())) {
@@ -79,8 +79,8 @@ public abstract class MEPClient {
                             axisop.getMessageExchangePattern()));
         }
         //if operation not alrady added, add it
-        if (serviceContext.getServiceConfig().getOperation(axisop.getName()) == null) {
-            serviceContext.getServiceConfig().addOperation(axisop);
+        if (serviceContext.getAxisService().getOperation(axisop.getName()) == null) {
+            serviceContext.getAxisService().addOperation(axisop);
         }        
         if (wsaAction != null) {
             msgCtx.setWSAAction(wsaAction);
@@ -96,7 +96,7 @@ public abstract class MEPClient {
      * @throws AxisFault
      */
     protected MessageContext prepareTheSOAPEnvelope(OMElement toSend) throws AxisFault {
-        MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
+        MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
 
         SOAPEnvelope envelope = createDefaultSOAPEnvelope();
         if (toSend != null) {
@@ -126,7 +126,7 @@ public abstract class MEPClient {
         }
 
         if (transport != null) {
-            return serviceContext.getEngineContext().getAxisConfiguration().getTransportOut(
+            return serviceContext.getConfigurationContext().getAxisConfiguration().getTransportOut(
                     new QName(transport));
 
         } else {
@@ -162,7 +162,7 @@ public abstract class MEPClient {
      * @throws AxisFault
      */
     public void engageModule(QName name) throws AxisFault {
-        AxisConfiguration axisConf = serviceContext.getEngineContext().getAxisConfiguration();
+        AxisConfiguration axisConf = serviceContext.getConfigurationContext().getAxisConfiguration();
         //if it is already engeged do not engege it agaien
         if (!axisConf.isEngaged(name)) {
             axisConf.engageModule(name);

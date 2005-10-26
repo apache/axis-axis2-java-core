@@ -17,10 +17,10 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.ServiceGroupDescription;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.storage.AxisStorage;
@@ -62,7 +62,7 @@ public interface AxisConfiguration extends ParameterInclude {
      * @return
      * @throws AxisFault
      */
-    public ServiceDescription getService(String name) throws AxisFault;
+    public AxisService getService(String name) throws AxisFault;
 
     /**
      * Method addService
@@ -70,10 +70,10 @@ public interface AxisConfiguration extends ParameterInclude {
      * @param service
      * @throws AxisFault
      */
-    public void addService(ServiceDescription service) throws AxisFault;
+    public void addService(AxisService service) throws AxisFault;
 
     //to Add service Groups
-     public void addServiceGroup(ServiceGroupDescription serviceGroup) throws AxisFault;
+     public void addServiceGroup(AxisServiceGroup axisServiceGroup) throws AxisFault;
 
     /**
      * Method removeService
@@ -144,9 +144,9 @@ public interface AxisConfiguration extends ParameterInclude {
     //to check whether a given paramter is locked
     public boolean isParamterLocked(String paramterName);
 
-    public ServiceGroupDescription getServiceGroup(String serviceNameAndGroupString);
+    public AxisServiceGroup getServiceGroup(String serviceNameAndGroupString);
 
     Iterator getServiceGroups();
 
-    public void notifyObservers(int event_type , ServiceDescription service);
+    public void notifyObservers(int event_type , AxisService service);
 }

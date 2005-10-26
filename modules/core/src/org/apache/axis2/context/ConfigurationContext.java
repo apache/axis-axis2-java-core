@@ -17,12 +17,12 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.ServiceGroupDescription;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.storage.AxisStorage;
 import org.apache.axis2.util.UUIDGenerator;
-import org.apache.axis2.util.threadpool.ThreadPool;
 import org.apache.axis2.util.threadpool.ThreadFactory;
+import org.apache.axis2.util.threadpool.ThreadPool;
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -196,7 +196,7 @@ public class ConfigurationContext extends AbstractContext {
      * @param pool
      */
     public void setThreadPool(ThreadFactory pool) {
-        threadPool = pool; 
+        threadPool = pool;
     }
 
     /**
@@ -242,7 +242,7 @@ public class ConfigurationContext extends AbstractContext {
         if (!isNull(serviceGroupContextId) && serviceGroupContextMap.get(serviceGroupContextId) != null) {
             // SGC is already there
             serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
-            serviceContext = serviceGroupContext.getServiceContext(messageContext.getServiceDescription().getName().
+            serviceContext = serviceGroupContext.getServiceContext(messageContext.getAxisService().getName().
                     getLocalPart());
         } else {
             // either the key is null or no SGC is found from the give key
@@ -250,18 +250,18 @@ public class ConfigurationContext extends AbstractContext {
                 serviceGroupContextId = UUIDGenerator.getUUID();
                 messageContext.setServiceGroupContextId(serviceGroupContextId);
             }
-            if (messageContext.getServiceDescription() != null) {
-                ServiceGroupDescription servicGroupDescription =
-                        messageContext.getServiceDescription().getParent();
-                serviceGroupContext = servicGroupDescription.getServiceGroupContext(this);
+            if (messageContext.getAxisService() != null) {
+                AxisServiceGroup axisServiceGroup =
+                        messageContext.getAxisService().getParent();
+                serviceGroupContext = axisServiceGroup.getServiceGroupContext(this);
                 serviceContext = serviceGroupContext.getServiceContext(
-                        messageContext.getServiceDescription().getName().
+                        messageContext.getAxisService().getName().
                                 getLocalPart());
                 //set the serviceGroupContextID
                 serviceGroupContext.setId(serviceGroupContextId);
                 this.registerServiceGroupContext(serviceGroupContext);
             } else {
-                throw new AxisFault("ServiceDescription Not found yet");
+                throw new AxisFault("AxisService Not found yet");
             }
         }
 

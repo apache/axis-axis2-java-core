@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class ServiceGroupDescription implements ParameterInclude{
+public class AxisServiceGroup implements ParameterInclude{
 
     //to add and get paramters
     protected ParameterInclude paramInclude;
@@ -54,14 +54,14 @@ public class ServiceGroupDescription implements ParameterInclude{
     private ArrayList mdoulesList = new ArrayList();
 
 
-    public ServiceGroupDescription() {
+    public AxisServiceGroup() {
         paramInclude = new ParameterIncludeImpl();
         services = new HashMap();
         moduleConfigmap = new HashMap();
         modules = new ArrayList();
     }
 
-    public ServiceGroupDescription(AxisConfiguration axisDescription) {
+    public AxisServiceGroup(AxisConfiguration axisDescription) {
         this();
         this.parent = axisDescription;
     }
@@ -151,8 +151,8 @@ public class ServiceGroupDescription implements ParameterInclude{
         if (module !=null) {
             while (srevice.hasNext()) {
                 // engagin per each service
-                ServiceDescription serviceDescription = (ServiceDescription) srevice.next();
-                phaseResolver.engageModuleToService(serviceDescription, module);
+                AxisService axisService = (AxisService) srevice.next();
+                phaseResolver.engageModuleToService(axisService, module);
             }
         }
         addModule(moduleName);
@@ -167,7 +167,7 @@ public class ServiceGroupDescription implements ParameterInclude{
         return services.values().iterator();
     }
 
-    public synchronized void addService(ServiceDescription service) throws AxisFault {
+    public synchronized void addService(AxisService service) throws AxisFault {
         services.put(service.getName(), service);
         PhaseResolver handlerResolver = new PhaseResolver(this.parent, service);
         handlerResolver.buildchains();
@@ -183,8 +183,8 @@ public class ServiceGroupDescription implements ParameterInclude{
         this.parent = axisDescription;
     }
 
-    public ServiceDescription getService(QName name) throws AxisFault {
-        return (ServiceDescription) services.get(name);
+    public AxisService getService(QName name) throws AxisFault {
+        return (AxisService) services.get(name);
     }
 
     public void addModuleref(QName moduleref){
@@ -197,7 +197,7 @@ public class ServiceGroupDescription implements ParameterInclude{
 
 
     public synchronized void removeService(QName name) throws AxisFault {
-        ServiceDescription service = getService(name);
+        AxisService service = getService(name);
         if (service != null) {
             this.parent.notifyObservers(AxisEvent.SERVICE_DEPLOY , service);
         }

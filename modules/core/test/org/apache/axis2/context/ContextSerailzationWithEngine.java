@@ -4,9 +4,9 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.ServiceGroupDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.wsdl.WSDLConstants;
@@ -48,9 +48,9 @@ public class ContextSerailzationWithEngine extends TestCase {
 
     AxisConfiguration axisConfiguration;
     AxisConfiguration newaxisConfiguration;
-    ServiceGroupDescription serviceGroupDescription;
-    ServiceDescription serviceDescription;
-    OperationDescription operationDescription;
+    AxisServiceGroup axisServiceGroup;
+    AxisService axisService;
+    AxisOperation axisOperation;
 
     QName serviceDescQName = new QName (SERVICE_NAME);
     QName operationDescName = new QName (OPERATION_NAME);
@@ -61,14 +61,14 @@ public class ContextSerailzationWithEngine extends TestCase {
             ConfigurationContext configurationContext = builder.buildConfigurationContext(repo);
             axisConfiguration =configurationContext.getAxisConfiguration();
 
-            serviceGroupDescription = axisConfiguration.getServiceGroup(SERVICE_GROUP_NAME);
-            serviceDescription = axisConfiguration.getService(SERVICE_NAME);
-            ServiceGroupContext serviceGroupContext = serviceDescription.getParent().getServiceGroupContext(configurationContext);
+            axisServiceGroup = axisConfiguration.getServiceGroup(SERVICE_GROUP_NAME);
+            axisService = axisConfiguration.getService(SERVICE_NAME);
+            ServiceGroupContext serviceGroupContext = axisService.getParent().getServiceGroupContext(configurationContext);
             serviceGroupContext.setId(SERVICE_GROUP_CONTEXT_ID);
             configurationContext.registerServiceGroupContext(serviceGroupContext);
-            ServiceContext serviceContext = serviceGroupContext.getServiceContext(serviceDescription.getName().getLocalPart());
+            ServiceContext serviceContext = serviceGroupContext.getServiceContext(axisService.getName().getLocalPart());
 
-            operationDescription = serviceDescription.getOperation(operationDescName);
+            axisOperation = axisService.getOperation(operationDescName);
             //setting message contexts
             MessageContext inMessage = new MessageContext(configurationContext);
             MessageContext outMessage = new MessageContext(configurationContext);
@@ -81,10 +81,10 @@ public class ContextSerailzationWithEngine extends TestCase {
             outMessage.setServiceGroupContext(serviceGroupContext);
             inMessage.setServiceContext(serviceContext);
             outMessage.setServiceContext(serviceContext);
-            inMessage.setOperationDescription(operationDescription);
-            outMessage.setOperationDescription(operationDescription);
+            inMessage.setAxisOperation(axisOperation);
+            outMessage.setAxisOperation(axisOperation);
 
-            OperationContext operationContext = operationDescription.findOperationContext(inMessage,serviceContext);
+            OperationContext operationContext = axisOperation.findOperationContext(inMessage,serviceContext);
             operationContext.addMessageContext(outMessage);
             outMessage.setOperationContext(operationContext);
 
@@ -124,9 +124,9 @@ public class ContextSerailzationWithEngine extends TestCase {
             AxisConfiguration axisConfiguration1 = newConfigContext.getAxisConfiguration();
             assertNotNull(axisConfiguration1);
 
-            assertNotNull(operationContext1.getOperationDescription());
+            assertNotNull(operationContext1.getAxisOperation());
             assertNotNull(serviceGroupcontext1.getDescription());
-            assertNotNull(serviceContext1.getServiceConfig());
+            assertNotNull(serviceContext1.getAxisService());
 
 
 

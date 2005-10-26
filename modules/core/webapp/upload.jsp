@@ -1,11 +1,7 @@
-<%@ page import="org.apache.commons.fileupload.DiskFileUpload,
-                 org.apache.commons.fileupload.FileItem,
-                 org.apache.commons.fileupload.FileUpload,
-                 javax.servlet.ServletContext, javax.servlet.ServletContext,
+<%@ page import="javax.servlet.ServletContext,
                  java.io.File,
                  java.io.IOException,
-                 java.util.Iterator,
-                 java.util.List"%>
+                 java.util.Iterator, java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"
  %>
 <%
@@ -53,7 +49,7 @@
     }
 %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
-         <h2>Upload a service jar file</h2>
+         <h2>Upload a axisService jar file</h2>
         <%
             boolean isMultipart = FileUpload.isMultipartContent(request);
             if (isMultipart){
@@ -98,8 +94,8 @@
             }
         %>
 
-        <p>You can upload a packaged Axis 2 service using this page with two small steps.</p>
-	<ul><li>Browse to the location and select the service archive file you wish to upload</li>
+        <p>You can upload a packaged Axis 2 axisService using this page with two small steps.</p>
+	<ul><li>Browse to the location and select the axisService archive file you wish to upload</li>
 	<li>Click Upload</li></ul>
 	<p>Simple as that!</p>
 <form method="post"  name="Axis2upload" action="upload.jsp" enctype="multipart/form-data">

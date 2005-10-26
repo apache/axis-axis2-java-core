@@ -45,8 +45,8 @@
                 HashMap moduels = (HashMap)request.getSession().getAttribute(Constants.MODULE_MAP);
                 Collection moduleCol =  moduels.values();
                 for (Iterator iterator = moduleCol.iterator(); iterator.hasNext();) {
-                    ModuleDescription description = (ModuleDescription) iterator.next();
-                    String modulename = description.getName().getLocalPart();
+                    ModuleDescription axisOperation = (ModuleDescription) iterator.next();
+                    String modulename = axisOperation.getName().getLocalPart();
             %> <option  align="left" value="<%=modulename%>"><%=modulename%></option>
              <%
                 }

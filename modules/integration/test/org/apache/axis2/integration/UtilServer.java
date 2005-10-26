@@ -23,8 +23,8 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.deployment.DeploymentEngine;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 
@@ -37,7 +37,7 @@ public class UtilServer {
     public static final int TESTING_PORT = 5555;
     public static final String FAILURE_MESSAGE = "Intentional Failure";
 
-    public static synchronized void deployService(ServiceDescription service) throws AxisFault {
+    public static synchronized void deployService(AxisService service) throws AxisFault {
         receiver.getSystemContext().getAxisConfiguration().addService(service);
         Utils.resolvePhases(receiver.getSystemContext().getAxisConfiguration(),
                 service);
@@ -118,7 +118,7 @@ public class UtilServer {
     }
 
     public static ServiceContext createAdressedEnabledClientSide(
-            ServiceDescription service)
+            AxisService service)
             throws AxisFault {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
         File file = new File(
@@ -140,7 +140,7 @@ public class UtilServer {
     }
 
     public static ServiceContext createAdressedEnabledClientSide(
-            ServiceDescription service, String clientHome)
+            AxisService service, String clientHome)
             throws AxisFault {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
         File file = new File(

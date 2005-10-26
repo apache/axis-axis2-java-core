@@ -22,10 +22,10 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.OperationDescriptionFactory;
-import org.apache.axis2.description.OutInOperationDescription;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisOperationFactory;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -39,7 +39,7 @@ import javax.xml.namespace.QName;
  */
 public class Call extends InOutMEPClient {
 
-    protected static OperationDescription operationTemplate;
+    protected static AxisOperation axisOperationTemplate;
     protected MessageContext lastResponseMessage;
 
     /**
@@ -81,10 +81,10 @@ public class Call extends InOutMEPClient {
     public OMElement invokeBlocking(String axisop, OMElement toSend)
             throws AxisFault {
 
-        OperationDescription opDesc =
-                serviceContext.getServiceConfig().getOperation(new QName(axisop));
+        AxisOperation opDesc =
+                serviceContext.getAxisService().getOperation(new QName(axisop));
         opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_OUT_IN);
-        opDesc.setParent(serviceContext.getServiceConfig());
+        opDesc.setParent(serviceContext.getAxisService());
         MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
 
         this.lastResponseMessage = super.invokeBlocking(opDesc, msgctx);
@@ -103,11 +103,11 @@ public class Call extends InOutMEPClient {
     public SOAPEnvelope invokeBlocking(String axisop, SOAPEnvelope envelope)
             throws AxisFault {
 
-        OperationDescription opDesc =
-                serviceContext.getServiceConfig().getOperation(new QName(axisop));
+        AxisOperation opDesc =
+                serviceContext.getAxisService().getOperation(new QName(axisop));
         opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop, WSDLConstants.MEP_CONSTANT_OUT_IN);
 
-        MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
+        MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
         if(envelope == null || envelope.getBody() == null){
             throw new AxisFault("SOAP envelope or SOAP Body can not be null");
         }
@@ -132,8 +132,8 @@ public class Call extends InOutMEPClient {
             OMElement toSend,
             Callback callback)
             throws AxisFault {
-        OperationDescription opDesc =
-                serviceContext.getServiceConfig().getOperation(new QName(axisop));
+        AxisOperation opDesc =
+                serviceContext.getAxisService().getOperation(new QName(axisop));
         opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_OUT_IN);
         MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
         //call the underline implementation
@@ -154,11 +154,11 @@ public class Call extends InOutMEPClient {
             SOAPEnvelope envelope,
             Callback callback)
             throws AxisFault {
-        OperationDescription opDesc =
-                serviceContext.getServiceConfig().getOperation(new QName(axisop));
+        AxisOperation opDesc =
+                serviceContext.getAxisService().getOperation(new QName(axisop));
         opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_OUT_IN);
 
-        MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
+        MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
         if(envelope == null || envelope.getBody() == null){
             throw new AxisFault("SOAP envelope or SOAP Body can not be null");
         }
@@ -172,24 +172,24 @@ public class Call extends InOutMEPClient {
      * @param opDesc
      * @param axisOp
      */
-    protected OperationDescription createOpDescAndFillInFlowInformation(
-            OperationDescription opDesc,
+    protected AxisOperation createOpDescAndFillInFlowInformation(
+            AxisOperation opDesc,
             String axisOp , int mepURL) throws AxisFault {
         if (opDesc == null) {
             //if the operation is not alrady define we will copy the
             //crated Phases from the templete operation to the this Operation
 
-//            opDesc = new OperationDescription(new QName(axisOp));
-            opDesc = OperationDescriptionFactory.getOperetionDescription(mepURL);
+//            opDesc = new AxisOperation(new QName(axisOp));
+            opDesc = AxisOperationFactory.getOperetionDescription(mepURL);
             opDesc.setName(new QName(axisOp));
             opDesc.setRemainingPhasesInFlow(
-                    operationTemplate.getRemainingPhasesInFlow());
-            opDesc.setPhasesOutFlow(operationTemplate.getPhasesOutFlow());
+                    axisOperationTemplate.getRemainingPhasesInFlow());
+            opDesc.setPhasesOutFlow(axisOperationTemplate.getPhasesOutFlow());
             opDesc.setPhasesInFaultFlow(
-                    operationTemplate.getPhasesInFaultFlow());
+                    axisOperationTemplate.getPhasesInFaultFlow());
             opDesc.setPhasesOutFaultFlow(
-                    operationTemplate.getPhasesOutFaultFlow());
-            serviceContext.getServiceConfig().addOperation(opDesc);
+                    axisOperationTemplate.getPhasesOutFaultFlow());
+            serviceContext.getAxisService().addOperation(opDesc);
         }
         return opDesc;
     }
@@ -214,19 +214,19 @@ public class Call extends InOutMEPClient {
             sysContext = ListenerManager.configurationContext;
         }
         QName assumedServiceName = new QName("AnonymousService");
-        ServiceDescription axisService =sysContext.getAxisConfiguration().getService("AnonymousService");
+        AxisService axisService =sysContext.getAxisConfiguration().getService("AnonymousService");
         if(axisService == null) {
             //we will assume a Service and operations
-            axisService = new ServiceDescription(assumedServiceName);
-//        operationTemplate = new OperationDescription(new QName("TemplateOperation"));
-            operationTemplate = new   OutInOperationDescription(new QName("TemplateOperation"));
+            axisService = new AxisService(assumedServiceName);
+//        axisOperationTemplate = new AxisOperation(new QName("TemplateOperation"));
+            axisOperationTemplate = new   OutInAxisOperation(new QName("TemplateOperation"));
 
             PhasesInfo info =((AxisConfigurationImpl)sysContext.getAxisConfiguration()).getPhasesinfo();
             //to set the operation flows
             if(info != null){
-                info.setOperationPhases(operationTemplate);
+                info.setOperationPhases(axisOperationTemplate);
             }
-            axisService.addOperation(operationTemplate);
+            axisService.addOperation(axisOperationTemplate);
             sysContext.getAxisConfiguration().addService(axisService);
         }
         return axisService.getParent().getServiceGroupContext(sysContext).getServiceContext(
@@ -246,7 +246,7 @@ public class Call extends InOutMEPClient {
      * @param value
      */
     public void set(String key, Object value) {
-        serviceContext.getEngineContext().setProperty(key, value);
+        serviceContext.getConfigurationContext().setProperty(key, value);
     }
 
     /**

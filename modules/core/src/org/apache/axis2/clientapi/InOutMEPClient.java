@@ -23,7 +23,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -87,7 +87,7 @@ public class InOutMEPClient extends MEPClient {
      * <p/>
      * //create new service
      * QName assumedServiceName = new QName("Your Service");
-     * ServiceDescription axisService = new ServiceDescription(assumedServiceName);
+     * AxisService axisService = new AxisService(assumedServiceName);
      * sysContext.getEngineConfig().addService(axisService);
      * ServiceContext service = sysContext.createServiceContext(assumedServiceName);
      * return service;
@@ -115,7 +115,7 @@ public class InOutMEPClient extends MEPClient {
      * </ol>
      */
 
-    public MessageContext invokeBlocking(OperationDescription axisop,
+    public MessageContext invokeBlocking(AxisOperation axisop,
                                          final MessageContext msgctx)
             throws AxisFault {
         prepareInvocation(axisop, msgctx);
@@ -148,7 +148,7 @@ public class InOutMEPClient extends MEPClient {
             //process the resule of the invocation
             if (callback.envelope != null) {
                 MessageContext resMsgctx =
-                        new MessageContext(serviceContext.getEngineContext());
+                        new MessageContext(serviceContext.getConfigurationContext());
                 resMsgctx.setEnvelope(callback.envelope);
                 return resMsgctx;
             } else {
@@ -162,7 +162,7 @@ public class InOutMEPClient extends MEPClient {
             //This is the Usual Request-Response Sync implemetation
             msgctx.setTo(to);
             msgctx.setServiceContext(serviceContext);
-            ConfigurationContext syscontext = serviceContext.getEngineContext();
+            ConfigurationContext syscontext = serviceContext.getConfigurationContext();
             msgctx.setConfigurationContext(syscontext);
 
             checkTransport(msgctx);
@@ -207,7 +207,7 @@ public class InOutMEPClient extends MEPClient {
      * This invocation done via this method blocks till the result arrives, using this method does not indicate
      * anyhting about the transport used or the nature of the transport.
      */
-    public void invokeNonBlocking(final OperationDescription axisop,
+    public void invokeNonBlocking(final AxisOperation axisop,
                                   final MessageContext msgctx,
                                   final Callback callback)
             throws AxisFault {
@@ -215,7 +215,7 @@ public class InOutMEPClient extends MEPClient {
         msgctx.setTo(to);
         try {
             final ConfigurationContext syscontext =
-                    serviceContext.getEngineContext();
+                    serviceContext.getConfigurationContext();
 
             AxisEngine engine = new AxisEngine(syscontext);
             checkTransport(msgctx);
@@ -231,7 +231,7 @@ public class InOutMEPClient extends MEPClient {
                 callbackReceiver.addCallback(messageID, callback);
                 //set the replyto such that the response will arrive at the transport listener started
                 msgctx.setReplyTo(ListenerManager.replyToEPR(serviceContext
-                        .getServiceConfig()
+                        .getAxisService()
                         .getName()
                         .getLocalPart()
                         + "/"
@@ -247,7 +247,7 @@ public class InOutMEPClient extends MEPClient {
             } else {
                 //here a bloking invocation happens in a new thrad, so the progamming model is
                 //non blocking
-                serviceContext.getEngineContext().getThreadPool().newThread(new NonBlockingInvocationWorker(callback, axisop, msgctx));
+                serviceContext.getConfigurationContext().getThreadPool().newThread(new NonBlockingInvocationWorker(callback, axisop, msgctx));
             }
 
         } catch (OMException e) {
@@ -303,7 +303,7 @@ public class InOutMEPClient extends MEPClient {
 
         //find and set the transport details
         AxisConfiguration axisConfig =
-                serviceContext.getEngineContext().getAxisConfiguration();
+                serviceContext.getConfigurationContext().getAxisConfiguration();
         this.listenerTransport =
                 axisConfig.getTransportIn(new QName(listenerTransport));
         this.senderTransport =
@@ -318,13 +318,13 @@ public class InOutMEPClient extends MEPClient {
         //if seperate transport is used, start the required listeners
         if (useSeparateListener) {
             if (!serviceContext
-                    .getEngineContext()
+                    .getConfigurationContext()
                     .getAxisConfiguration()
                     .isEngaged(new QName(Constants.MODULE_ADDRESSING))) {
                 throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));
             }
             ListenerManager.makeSureStarted(listenerTransport,
-                    serviceContext.getEngineContext());
+                    serviceContext.getConfigurationContext());
         }
     }
 
@@ -341,7 +341,7 @@ public class InOutMEPClient extends MEPClient {
         if (listenerTransport == null) {
             listenerTransport =
                     serviceContext
-                            .getEngineContext()
+                            .getConfigurationContext()
                             .getAxisConfiguration()
                             .getTransportIn(senderTransport.getName());
         }
@@ -386,11 +386,11 @@ public class InOutMEPClient extends MEPClient {
     private class NonBlockingInvocationWorker implements Runnable {
 
         private Callback callback;
-        private OperationDescription axisop;
+        private AxisOperation axisop;
         private MessageContext msgctx;
 
         public NonBlockingInvocationWorker(Callback callback,
-                                           OperationDescription axisop,
+                                           AxisOperation axisop,
                                            MessageContext msgctx) {
             this.callback = callback;
             this.axisop = axisop;

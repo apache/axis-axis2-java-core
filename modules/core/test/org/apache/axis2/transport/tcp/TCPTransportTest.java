@@ -62,8 +62,8 @@ public class TCPTransportTest extends TestCase {
     
 //    public void testTransportReceiver(){
 //        ConfigurationContext configContext = new ConfigurationContext(new AxisConfigurationImpl());
-//        ServiceDescription serviceDesc = new ServiceDescription(new QName("TempService"));
-//        OperationDescription opDesc = new OperationDescription();
+//        AxisService serviceDesc = new AxisService(new QName("TempService"));
+//        AxisOperation opDesc = new AxisOperation();
 //        TCPServer tcpServer = new TCPServer();
 //    }
     

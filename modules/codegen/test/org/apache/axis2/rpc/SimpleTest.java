@@ -24,10 +24,10 @@ import org.apache.axis2.databinding.DeserializationContext;
 import org.apache.axis2.databinding.deserializers.SimpleDeserializerFactory;
 import org.apache.axis2.databinding.serializers.CollectionSerializer;
 import org.apache.axis2.databinding.serializers.SimpleSerializer;
-import org.apache.axis2.description.InOutOperationDescrition;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfigurationImpl;
@@ -45,7 +45,7 @@ import java.lang.reflect.Method;
  * SimpleTest
  */
 public class SimpleTest extends TestCase {
-    private ServiceDescription service;
+    private AxisService service;
 
     /**
      * Here's our test service which we'll be calling with the local transport
@@ -150,14 +150,14 @@ public class SimpleTest extends TestCase {
 
         LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(config);
 
-        service = new ServiceDescription(new QName("testService"));
+        service = new AxisService(new QName("testService"));
         service.addParameter(
                 new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
                         Test.class.getName()));
-        OperationDescription operation = new InOutOperationDescrition(new QName(methodName));
-        operation.setMessageReceiver(new RPCInOutMessageReceiver());
-        operation.getMetadataBag().put(RPCInOutMessageReceiver.RPCMETHOD_PROPERTY, method);
-        service.addOperation(operation);
+        AxisOperation axisOperation = new InOutAxisOperation(new QName(methodName));
+        axisOperation.setMessageReceiver(new RPCInOutMessageReceiver());
+        axisOperation.getMetadataBag().put(RPCInOutMessageReceiver.RPCMETHOD_PROPERTY, method);
+        service.addOperation(axisOperation);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         LocalTransportReceiver.CONFIG_CONTEXT.getAxisConfiguration()
                 .addService(service);

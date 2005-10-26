@@ -21,8 +21,8 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.OutInOperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.OutInAxisOperation;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
@@ -164,7 +164,7 @@ public class AsynchronousClient {
                             .createXMLStreamWriter
                             (System.out));
             QName opName = new QName("urn:GoogleSearch", "doGoogleSearch");
-            OperationDescription opdesc = new OutInOperationDescription(opName);
+            AxisOperation opdesc = new OutInAxisOperation(opName);
             call.invokeNonBlocking(opdesc,
                     requestContext,
                     new ClientCallbackHandler());

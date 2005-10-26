@@ -19,7 +19,11 @@ package org.apache.axis2.context;
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.util.UUIDGenerator;
 
@@ -35,7 +39,7 @@ public class OperationContextTest extends AbstractTestCase {
 
     public void testMEPfindingOnRelatesTO() throws Exception {
 
-        ServiceDescription serviceConfig = new ServiceDescription(new QName("TempSC"));
+        AxisService serviceConfig = new AxisService(new QName("TempSC"));
         engineCtx.getAxisConfiguration().addService(serviceConfig);
        ServiceGroupContext sgc =  serviceConfig.getParent().getServiceGroupContext(engineCtx);
 
@@ -44,7 +48,7 @@ public class OperationContextTest extends AbstractTestCase {
 
         messageContext1.setMessageID(
                 UUIDGenerator.getUUID());
-        OperationDescription axisOperation = new InOutOperationDescrition(
+        AxisOperation axisOperation = new InOutAxisOperation(
                 new QName("test"));
         OperationContext operationContext1 = axisOperation.findOperationContext(
                 messageContext1, sessionContext);

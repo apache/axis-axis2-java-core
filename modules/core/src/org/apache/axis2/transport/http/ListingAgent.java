@@ -20,10 +20,10 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.server.AdminAppException;
@@ -335,7 +335,7 @@ public class ListingAgent {
         String operationName = req.getParameter("operation");
         if (serviceName != null && moduleName != null && operationName != null) {
             try {
-                OperationDescription od =
+                AxisOperation od =
                         configContext.getAxisConfiguration().getService(
                                 serviceName)
                                 .getOperation(new QName(operationName));
@@ -454,7 +454,7 @@ public class ListingAgent {
             throws IOException {
         if(req.getParameter("changePara")!=null){
             String serviceName = req.getParameter("service");
-            ServiceDescription service =  configContext.getAxisConfiguration().
+            AxisService service =  configContext.getAxisConfiguration().
                     getService(serviceName);
             if(service !=null){
                 ArrayList service_para = service.getParameters();
@@ -466,14 +466,14 @@ public class ListingAgent {
                 HashMap operation = service.getOperations();
                 Collection op_col = operation.values();
                 for (Iterator iterator = op_col.iterator(); iterator.hasNext();) {
-                    OperationDescription operationDescription =
-                            (OperationDescription) iterator.next();
-                    String op_name = operationDescription.getName().getLocalPart();
-                    ArrayList operation_para = operationDescription.getParameters();
+                    AxisOperation axisOperation =
+                            (AxisOperation) iterator.next();
+                    String op_name = axisOperation.getName().getLocalPart();
+                    ArrayList operation_para = axisOperation.getParameters();
                     for (int i = 0; i < operation_para.size(); i++) {
                         Parameter parameter = (Parameter) operation_para.get(i);
                         String para =  req.getParameter(op_name + "_" + parameter.getName());
-                        operationDescription.addParameter(
+                        axisOperation.addParameter(
                                 new ParameterImpl(parameter.getName(),para));
                     }
                 }
@@ -580,7 +580,7 @@ public class ListingAgent {
                 if (wsdl != null) {
                     res.setContentType("text/xml");
                     PrintWriter out_writer = new PrintWriter(out);
-                    ((ServiceDescription) serviceObj).printWSDL(out_writer,
+                    ((AxisService) serviceObj).printWSDL(out_writer,
                             filePart);
                     out.flush();
                     out.close();

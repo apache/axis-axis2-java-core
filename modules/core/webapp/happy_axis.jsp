@@ -113,7 +113,7 @@ IP=request.getRequestURL().toString();
                    String category,
                    String classname,
                    String jarFile,
-                   String description,
+                   String axisOperation,
                    String errorText,
                    String homePage) throws IOException {
         try {
@@ -132,10 +132,10 @@ IP=request.getRequestURL().toString();
             } else {
                 String location = getLocation(out, clazz);
                 if(location == null) {
-                    out.write("Found "+ description + " (" + classname + ")<br>");
+                    out.write("Found "+ axisOperation + " (" + classname + ")<br>");
                 }
                 else {
-                    out.write("Found "+ description + " (" + classname + ") at <br/><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + location + "</i><br/>");
+                    out.write("Found "+ axisOperation + " (" + classname + ") at <br/><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + location + "</i><br/>");
                 }
                 return 0;
             }
@@ -199,14 +199,14 @@ IP=request.getRequestURL().toString();
     int needClass(JspWriter out,
                   String classname,
                   String jarFile,
-                  String description,
+                  String axisOperation,
                   String errorText,
                   String homePage) throws IOException {
         return probeClass(out,
                 "<b>Error</b>",
                 classname,
                 jarFile,
-                description,
+                axisOperation,
                 errorText,
                 homePage);
     }
@@ -224,14 +224,14 @@ IP=request.getRequestURL().toString();
     int wantClass(JspWriter out,
                   String classname,
                   String jarFile,
-                  String description,
+                  String axisOperation,
                   String errorText,
                   String homePage) throws IOException {
         return probeClass(out,
                 "<b>Warning</b>",
                 classname,
                 jarFile,
-                description,
+                axisOperation,
                 errorText,
                 homePage);
     }
@@ -419,21 +419,21 @@ IP=request.getRequestURL().toString();
 %>
 <p>
 <B><I>Note:</I></B> Even if everything this page probes for is present, there is no guarantee<br/>your
-web service will work, because there are many configuration options that <br/>we do
+web axisService will work, because there are many configuration options that <br/>we do
 not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
 <%if (!display_type.equals("min")) {%>
 
-<h2>Examining echo service</h2>
+<h2>Examining echo axisService</h2>
     <%
         boolean serviceStatus = inVokeTheService();
         if(serviceStatus){
     %>
     <p>
     <font color="blue" >
-    Found the Axis2 default Version service and Axis2 is working properly.Now you can drop any web service in
-    to axis2/WEB-INF/service and check if it is working.
+    Found the Axis2 default Version axisService and Axis2 is working properly.Now you can drop any web axisService in
+    to axis2/WEB-INF/axisService and check if it is working.
 
-    Following output was produced while invoking the version service
+    Following output was produced while invoking the version axisService
     <br>
        <%= value%> </font>
        </p>
@@ -442,7 +442,7 @@ not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
    %>
    <p>
    <font color="brown" >
-   You can test the deployement functionality by uploading the echo service jar, which can be found in the
+   You can test the deployement functionality by uploading the echo axisService jar, which can be found in the
    samples directory of the axis distribution.
    <br>
      </font>
@@ -576,7 +576,7 @@ IP=request.getRequestURL().toString();
                    String category,
                    String classname,
                    String jarFile,
-                   String description,
+                   String axisOperation,
                    String errorText,
                    String homePage) throws IOException {
         try {
@@ -595,10 +595,10 @@ IP=request.getRequestURL().toString();
             } else {
                 String location = getLocation(out, clazz);
                 if(location == null) {
-                    out.write("Found "+ description + " (" + classname + ")<br>");
+                    out.write("Found "+ axisOperation + " (" + classname + ")<br>");
                 }
                 else {
-                    out.write("Found "+ description + " (" + classname + ") at <br/><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + location + "</i><br/>");
+                    out.write("Found "+ axisOperation + " (" + classname + ") at <br/><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + location + "</i><br/>");
                 }
                 return 0;
             }
@@ -662,14 +662,14 @@ IP=request.getRequestURL().toString();
     int needClass(JspWriter out,
                   String classname,
                   String jarFile,
-                  String description,
+                  String axisOperation,
                   String errorText,
                   String homePage) throws IOException {
         return probeClass(out,
                 "<b>Error</b>",
                 classname,
                 jarFile,
-                description,
+                axisOperation,
                 errorText,
                 homePage);
     }
@@ -687,14 +687,14 @@ IP=request.getRequestURL().toString();
     int wantClass(JspWriter out,
                   String classname,
                   String jarFile,
-                  String description,
+                  String axisOperation,
                   String errorText,
                   String homePage) throws IOException {
         return probeClass(out,
                 "<b>Warning</b>",
                 classname,
                 jarFile,
-                description,
+                axisOperation,
                 errorText,
                 homePage);
     }
@@ -882,21 +882,21 @@ IP=request.getRequestURL().toString();
 %>
 <p>
 <B><I>Note:</I></B> Even if everything this page probes for is present, there is no guarantee<br/>your
-web service will work, because there are many configuration options that <br/>we do
+web axisService will work, because there are many configuration options that <br/>we do
 not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
 <%if (!display_type.equals("min")) {%>
 
-<h2>Examining echo service</h2>
+<h2>Examining echo axisService</h2>
     <%
         boolean serviceStatus = inVokeTheService();
         if(serviceStatus){
     %>
     <p>
     <font color="blue" >
-    Found the Axis2 default Version service and Axis2 is working properly.Now you can drop any web service in
-    to axis2/WEB-INF/service and check if it is working.
+    Found the Axis2 default Version axisService and Axis2 is working properly.Now you can drop any web axisService in
+    to axis2/WEB-INF/axisService and check if it is working.
 
-    Following output was produced while invoking the version service
+    Following output was produced while invoking the version axisService
     <br>
        <%= value%> </font>
        </p>
@@ -905,7 +905,7 @@ not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
    %>
    <p>
    <font color="brown" >
-   You can test the deployement functionality by uploading the echo service jar, which can be found in the
+   You can test the deployement functionality by uploading the echo axisService jar, which can be found in the
    samples directory of the axis distribution.
    <br>
      </font>

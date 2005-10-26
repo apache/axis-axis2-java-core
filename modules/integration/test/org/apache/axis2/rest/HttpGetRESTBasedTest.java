@@ -19,7 +19,7 @@ package org.apache.axis2.rest;
 //todo
 
 import junit.framework.TestCase;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
@@ -46,7 +46,7 @@ public class HttpGetRESTBasedTest extends TestCase {
     protected void setUp() throws Exception {
         UtilServer.start();
 
-        ServiceDescription service =
+        AxisService service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
                         operationName);

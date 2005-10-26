@@ -17,8 +17,8 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
@@ -32,11 +32,11 @@ import java.io.ObjectOutputStream;
  */
 public class ServiceContext extends AbstractContext {
 	
-    private transient ServiceDescription serviceConfig;
+    private transient AxisService axisService;
 
     private String serviceInstanceID;
 
-    private QName serviceDescName = null;
+    private QName axisServiceName = null;
 
 
     /**
@@ -44,12 +44,12 @@ public class ServiceContext extends AbstractContext {
      * @throws AxisFault
      */
     public void init(AxisConfiguration axisConfiguration) throws AxisFault {
-    	serviceConfig = axisConfiguration.getService(serviceDescName.getLocalPart());
+    	axisService = axisConfiguration.getService(axisServiceName.getLocalPart());
     }
     
     private void writeObject(ObjectOutputStream out) throws IOException {	
-    	if (serviceConfig!=null)
-    		this.serviceDescName = serviceConfig.getName();
+    	if (axisService !=null)
+    		this.axisServiceName = axisService.getName();
     	
     	out.defaultWriteObject();
     }
@@ -59,13 +59,13 @@ public class ServiceContext extends AbstractContext {
     }
     
     public ServiceContext(
-        ServiceDescription serviceConfig,
+        AxisService serviceConfig,
         ServiceGroupContext serviceGroupContext) {
         super(serviceGroupContext);
-        this.serviceConfig = serviceConfig;
+        this.axisService = serviceConfig;
         
         if (serviceConfig!=null){
-        	this.serviceDescName = serviceConfig.getName();
+        	this.axisServiceName = serviceConfig.getName();
             serviceInstanceID = serviceConfig.getName().getLocalPart(); 
         }
 
@@ -86,19 +86,16 @@ public class ServiceContext extends AbstractContext {
         this.serviceInstanceID = serviceInstanceID;
     }
 
-    /**
-     * @return
-     */
-    public ServiceDescription getServiceConfig() {
-        return serviceConfig;
+    public AxisService getAxisService() {
+        return axisService;
     }
 
-    public ConfigurationContext getEngineContext() {
+    public ConfigurationContext getConfigurationContext() {
         return (ConfigurationContext) parent.getParent();
     }
 
     public OperationContext createOperationContext(QName name) {
-        OperationDescription axisOp = serviceConfig.getOperation(name);
+        AxisOperation axisOp = axisService.getOperation(name);
         return new OperationContext(axisOp, this);
     }
 }

@@ -12,7 +12,7 @@
             if(Constants.IS_FAULTY.equals(isFault)){
                 Hashtable errornessservices =(Hashtable)request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);
                 %>
-                    <h3>This Web service has deployment faults</h3><%
+                    <h3>This Web axisService has deployment faults</h3><%
                      %><font color="red" ><%=(String)errornessservices.get(servicName) %></font>
                 <%
 

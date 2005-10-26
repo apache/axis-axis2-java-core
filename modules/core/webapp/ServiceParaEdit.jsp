@@ -1,7 +1,5 @@
 <%@ page import="org.apache.axis2.Constants,
-                 org.apache.axis2.description.OperationDescription,
-                 org.apache.axis2.description.Parameter,
-                 org.apache.axis2.description.ServiceDescription,
+                 org.apache.axis2.description.AxisOperation,
                  java.util.ArrayList,
                  java.util.Collection,
                  java.util.HashMap,
@@ -11,23 +9,23 @@
 <h1>Edit Service Parameters</h1>
   <form method="get" name="editServicepara" action="editServicepara">
    <%
-            ServiceDescription service = (ServiceDescription)request.getSession().
+            AxisService axisService = (AxisService)request.getSession().
                     getAttribute(Constants.SERVICE);
-             if(service != null ){
+             if(axisService != null ){
    %>     <table width="100%">
 
             <tr>
                  <td colspan="2" ><b>
            <%
-                 String servicName =  service.getName().getLocalPart();
+                 String servicName =  axisService.getName().getLocalPart();
                  %>Service Parameters :: <%=servicName%>
                  </b></td>
              </tr>
              <tr>
-             <td colspan="2" ><input style="display:none"  name="service" value="<%=servicName%>"></td>
+             <td colspan="2" ><input style="display:none"  name="axisService" value="<%=servicName%>"></td>
             </tr>
              <%
-                 ArrayList service_para = service.getParameters();
+                 ArrayList service_para = axisService.getParameters();
                  for (int i = 0; i < service_para.size(); i++) {
                      Parameter parameter = (Parameter) service_para.get(i);
                      %>
@@ -39,7 +37,7 @@
                      </tr>
                      <%
                  }
-                HashMap operations =  service.getOperations();
+                HashMap operations =  axisService.getOperations();
                 Collection ops = operations.values();
                 if(ops.size() >0){
                     %>
@@ -56,8 +54,8 @@
 
                  ArrayList op_paras ;
                  for (Iterator iterator = ops.iterator(); iterator.hasNext();) {
-                     OperationDescription description = (OperationDescription) iterator.next();
-                     String opeartionName = description.getName().getLocalPart();
+                     AxisOperation axisOperationon = (AxisOperation) iterator.next();
+                     String opeartionName = axisOperationon.getName().getLocalPart();
                      %>
                      <tr>
                        <td colspan="2" > &nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -66,7 +64,7 @@
                        <td colspan="2" ><b>Operation : <%=opeartionName%></b></td>
                      </tr>
                     <%
-                     op_paras = description.getParameters();
+                     op_paras = axisOperationon.getParameters();
                      for (int i = 0; i < op_paras.size(); i++) {
                      Parameter parameter = (Parameter) op_paras.get(i);
                      %>

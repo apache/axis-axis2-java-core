@@ -26,8 +26,8 @@
         <xsl:value-of select="$skeletonname"/> skel = (<xsl:value-of select="$skeletonname"/>)obj;
         //Out Envelop
         org.apache.axis2.soap.SOAPEnvelope envelope = null;
-        //Find the operation that has been set by the Dispatch phase.
-        org.apache.axis2.description.OperationDescription op = msgContext.getOperationContext().getOperationDescription();
+        //Find the axisOperation that has been set by the Dispatch phase.
+        org.apache.axis2.description.AxisOperation op = msgContext.getOperationContext().getAxisOperation();
         if (op == null) {
         throw new org.apache.axis2.AxisFault("Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
         }
@@ -65,7 +65,7 @@
 
                             org.apache.axis2.om.OMElement firstChild = (org.apache.axis2.om.OMElement)msgContext.getEnvelope().getBody().getFirstChild();
                             if(null == firstChild)
-                            throw new org.apache.axis2.AxisFault("Wrapper Element Not Found for the operation of RPC style");
+                            throw new org.apache.axis2.AxisFault("Wrapper Element Not Found for the axisOperation of RPC style");
                             java.util.Iterator children = firstChild.getChildren();
                             org.apache.xmlbeans.XmlObject[] params = new org.apache.xmlbeans.XmlObject[<xsl:value-of select="$inputparamcount"/>];
                             int count = 0;

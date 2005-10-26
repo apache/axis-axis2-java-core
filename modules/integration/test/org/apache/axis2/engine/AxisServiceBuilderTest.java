@@ -18,9 +18,9 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.description.AxisDescWSDLComponentFactory;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLDescription;
@@ -30,8 +30,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Iterator;
 
-public class ServiceDescriptionBuilderTest extends TestCase {
-    private ServiceDescription service = null;
+public class AxisServiceBuilderTest extends TestCase {
+    private AxisService service = null;
     private Log log = LogFactory.getLog(getClass());
 
     private void initialize() throws Exception {
@@ -48,7 +48,7 @@ public class ServiceDescriptionBuilderTest extends TestCase {
                     .getDescription();
             Iterator iterator = womDescription.getServices().keySet().iterator();
             if (iterator.hasNext()) {
-                this.service = (ServiceDescription) iterator.next();
+                this.service = (AxisService) iterator.next();
             }
             //todo fix me ajith , deepal
             // assertNotNull(this.service);

@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=iso-8859-1" language="java" import="org.apache.axis2.Constants,
+                                                                             org.apache.axis2.description.AxisService,
                                                                              org.apache.axis2.description.ModuleDescription,
-                                                                             org.apache.axis2.description.ServiceDescription,
                                                                              java.util.Collection,
                                                                              java.util.HashMap,
                                                                              java.util.Iterator" errorPage="" %>
@@ -9,7 +9,7 @@
     String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);
 %>
 <h1>Engage Module for a Service</h1>
-<p>To engage a module for a service, first select the module you want to engage and then select the service you like the module to be engaged on and click "Engage".</p>
+<p>To engage a module for a axisService, first select the module you want to engage and then select the axisService you like the module to be engaged on and click "Engage".</p>
 <form method="get" name="engaginModule" action="engageToService">
 <table border="0" width="100%" cellspacing="1" cellpadding="1">
     <tr>
@@ -28,8 +28,8 @@
                 HashMap moduels = (HashMap)request.getSession().getAttribute(Constants.MODULE_MAP);
                 Collection moduleCol =  moduels.values();
                 for (Iterator iterator = moduleCol.iterator(); iterator.hasNext();) {
-                    ModuleDescription description = (ModuleDescription) iterator.next();
-                    String modulename = description.getName().getLocalPart();
+                    ModuleDescription axisOperation = (ModuleDescription) iterator.next();
+                    String modulename = axisOperation.getName().getLocalPart();
             %> <option  align="left" value="<%=modulename%>"><%=modulename%></option>
              <%
                 }
@@ -47,12 +47,12 @@
     </tr>
     <tr>
         <td>
-            <select name="service">
+            <select name="axisService">
             <%
                 HashMap services = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
                 Collection serviceCol =  services.values();
                 for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
-                    ServiceDescription axisService = (ServiceDescription)iterator.next();
+                    AxisService axisService = (AxisService)iterator.next();
                     String serviceName = axisService.getName().getLocalPart();
             %> <option  align="left" value="<%=serviceName%>"><%=serviceName%></option>
              <%

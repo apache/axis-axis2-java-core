@@ -28,7 +28,7 @@ import org.apache.axis2.clientapi.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -55,7 +55,7 @@ public class EchoRawXMLTest extends TestCase {
     protected MessageContext mc;
     private ConfigurationContext config;
     protected ServiceContext serviceContext;
-    protected ServiceDescription service;
+    protected AxisService service;
 
     protected boolean finish = false;
 

@@ -23,7 +23,7 @@ import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
@@ -52,13 +52,13 @@ public class InOnlyMEPClient extends MEPClient {
      * @param msgctx
      * @throws AxisFault
      */
-    public void send(OperationDescription axisop, final MessageContext msgctx) throws AxisFault {
+    public void send(AxisOperation axisop, final MessageContext msgctx) throws AxisFault {
         prepareInvocation(axisop, msgctx);
         msgctx.setMessageInformationHeaders(messageInformationHeaders);
         String messageID = String.valueOf("uuid:"+ UUIDGenerator.getUUID());
         msgctx.setMessageID(messageID);
         msgctx.setServiceContext(serviceContext);
-        ConfigurationContext syscontext = serviceContext.getEngineContext();
+        ConfigurationContext syscontext = serviceContext.getConfigurationContext();
         
         //if the transport to use for sending is not specified, try to find it from the URL
         if (senderTransport == null) {
@@ -68,7 +68,7 @@ public class InOnlyMEPClient extends MEPClient {
         msgctx.setTransportOut(senderTransport);
 
         //initialize and set the Operation Context
-        ConfigurationContext sysContext = serviceContext.getEngineContext();
+        ConfigurationContext sysContext = serviceContext.getConfigurationContext();
         AxisConfiguration registry = sysContext.getAxisConfiguration();
         msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext));
         
@@ -132,7 +132,7 @@ public class InOnlyMEPClient extends MEPClient {
      */
     public void setSenderTransport(String senderTransport) throws AxisFault {
         AxisConfiguration axisConfiguration = 
-            serviceContext.getEngineContext().getAxisConfiguration();
+            serviceContext.getConfigurationContext().getAxisConfiguration();
         this.senderTransport =
             axisConfiguration.getTransportOut(new QName(senderTransport));
         if(senderTransport == null){

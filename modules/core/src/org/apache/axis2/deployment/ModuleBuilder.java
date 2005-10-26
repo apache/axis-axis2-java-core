@@ -16,16 +16,16 @@
 
 package org.apache.axis2.deployment;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisOperationFactory;
+import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.InOnlyOperationDescription;
-import org.apache.axis2.description.OperationDescriptionFactory;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -117,7 +117,7 @@ public class ModuleBuilder extends DescriptionBuilder{
             Iterator op_itr = moduleElement.getChildrenWithName(new QName(OPRATIONST));
             ArrayList opeartions = processOpeartions(op_itr);
             for (int i = 0; i < opeartions.size(); i++) {
-                OperationDescription opeartion = (OperationDescription) opeartions.get(i);
+                AxisOperation opeartion = (AxisOperation) opeartions.get(i);
                 module.addOperation(opeartion);
             }
 
@@ -145,24 +145,24 @@ public class ModuleBuilder extends DescriptionBuilder{
             OMAttribute op_mep_att = operation.getAttribute(
                     new QName(MEP));
             String mepURL =null;
-             OperationDescription op_descrip;
+             AxisOperation op_descrip;
             if(op_mep_att !=null){
                 mepURL= op_mep_att.getAttributeValue();
             }
 
             if(mepURL == null){
                 // assuming in-out mep
-                op_descrip = new InOnlyOperationDescription();
+                op_descrip = new InOnlyAxisOperation();
             } else {
                 try {
-                    op_descrip = OperationDescriptionFactory.getOperetionDescription(mepURL);
+                    op_descrip = AxisOperationFactory.getOperetionDescription(mepURL);
                 } catch (AxisFault axisFault) {
                     throw new DeploymentException(Messages.getMessage(Messages.getMessage(
                         DeploymentErrorMsgs.OPERATION_PROCESS_ERROR,axisFault.getMessage())));
                 }
             }
             String opname = op_name_att.getAttributeValue();
-//            OperationDescription op_descrip = new OperationDescription();
+//            AxisOperation op_descrip = new AxisOperation();
             op_descrip.setName(new QName(opname));
 
             //Opeartion Paramters

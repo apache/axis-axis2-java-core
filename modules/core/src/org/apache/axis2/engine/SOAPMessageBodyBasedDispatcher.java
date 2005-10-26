@@ -18,9 +18,9 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.util.Utils;
@@ -45,7 +45,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
         init(new HandlerDescription(NAME));
     }
 
-    public OperationDescription findOperation(ServiceDescription service,
+    public AxisOperation findOperation(AxisService service,
                                               MessageContext messageContext)
             throws AxisFault {
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody()
@@ -62,7 +62,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
     /* (non-Javadoc)
      * @see org.apache.axis2.engine.AbstractDispatcher#findService(org.apache.axis2.context.MessageContext)
      */
-    public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
+    public AxisService findService(MessageContext messageContext) throws AxisFault {
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
                 
         if(bodyFirstChild != null){

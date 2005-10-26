@@ -21,7 +21,12 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
@@ -56,11 +61,11 @@ public class EnginePausingTest extends TestCase {
 
     protected void setUp() throws Exception {
 
-        ServiceDescription service = new ServiceDescription(serviceName);
+        AxisService service = new AxisService(serviceName);
         service.setStyle(WSDLService.STYLE_DOC);
         engineContext.getAxisConfiguration().addService(service);
 
-        OperationDescription axisOp = new InOutOperationDescrition(operationName);
+        AxisOperation axisOp = new InOutAxisOperation(operationName);
         axisOp.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messgeCtx) throws AxisFault {
 

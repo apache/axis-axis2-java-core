@@ -92,18 +92,18 @@ public class Utils {
         return newmsgCtx;
     }
 
-    public static ServiceDescription createSimpleService(QName serviceName,
+    public static AxisService createSimpleService(QName serviceName,
                                                          MessageReceiver messageReceiver,
                                                          String className,
                                                          QName opName) throws AxisFault {
-        ServiceDescription service = new ServiceDescription(serviceName);
+        AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(
                 new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
                         className));
 
         //todo I assumed in-out mep , this has to be imroved : Deepal
-        OperationDescription axisOp = new InOutOperationDescrition(opName);
+        AxisOperation axisOp = new InOutAxisOperation(opName);
         axisOp.setMessageReceiver(messageReceiver);
         axisOp.setStyle(WSDLService.STYLE_RPC);
         service.addOperation(axisOp);
@@ -111,7 +111,7 @@ public class Utils {
     }
 
     //    public static ServiceContext createServiceContext(
-    //        ServiceDescription service,
+    //        AxisService service,
     //        ConfigurationContext engineContext)
     //        throws AxisFault {
     //        ServiceContext serviceContext = new ServiceContext(service, engineContext);
@@ -119,7 +119,7 @@ public class Utils {
     //        return serviceContext;
     //    }
 
-    public static ServiceDescription createSimpleService(QName serviceName,
+    public static AxisService createSimpleService(QName serviceName,
                                                          String className,
                                                          QName opName) throws AxisFault {
         return createSimpleService(serviceName,
@@ -137,10 +137,10 @@ public class Utils {
     //        }
     //    }
     public static void resolvePhases(AxisConfiguration axisconfig,
-                                     ServiceDescription serviceDesc)
+                                     AxisService axisService)
             throws AxisFault, PhaseException {
         //todo we do not need this
-//        PhaseResolver pr = new PhaseResolver(axisconfig, serviceDesc);
+//        PhaseResolver pr = new PhaseResolver(axisconfig, axisService);
 //        pr.buildchains();
         // fixing the BUG AXIS2-278
         // we do not need to  do this , since when adding a service this automatically done
@@ -189,39 +189,39 @@ public class Utils {
             AxisConfiguration registry =
                     messageContext.getSystemContext().getAxisConfiguration();
             if (serviceNameAndGroupStrings[0] != null) {
-                ServiceGroupDescription serviceGroup = registry.getServiceGroup(serviceNameAndGroupStrings[0]);
+                AxisServiceGroup axisServiceGroup = registry.getServiceGroup(serviceNameAndGroupStrings[0]);
                 String serviceNameStr = "";
                 if (serviceNameAndGroupStrings.length == 1) {
                     // This means user has not given a service name.
                     // the notations is ...../axis2/services/<ServiceGroupName>
                     serviceNameStr = serviceNameAndGroupStrings[0];
                 }
-                ServiceDescription serviceDescription = registry.getService(serviceNameStr);
-                if (serviceGroup != null && serviceDescription != null) {
-                    messageContext.setServiceGroupDescription(serviceGroup);
-                    messageContext.setServiceDescription(serviceDescription);
+                AxisService axisService = registry.getService(serviceNameStr);
+                if (axisServiceGroup != null && axisService != null) {
+                    messageContext.setAxisServiceGroup(axisServiceGroup);
+                    messageContext.setAxisService(axisService);
                 }
             }
         }
     }
 
-    public static ServiceContext fillContextInformation(OperationDescription operationDesc, ServiceDescription serviceDesc, ConfigurationContext configurationContext) throws AxisFault {
+    public static ServiceContext fillContextInformation(AxisOperation axisOperation, AxisService axisService, ConfigurationContext configurationContext) throws AxisFault {
         MessageContext msgContext;
         //  2. if null, create new opCtxt
-        OperationContext operationContext = new OperationContext(operationDesc);
-//        OperationContext operationContext = OperationContextFactory.createOperationContext(operationDesc.getAxisSpecifMEPConstant(), operationDesc);
+        OperationContext operationContext = new OperationContext(axisOperation);
+//        OperationContext operationContext = OperationContextFactory.createOperationContext(axisOperation.getAxisSpecifMEPConstant(), axisOperation);
 
         //  fill the service group context and service context info
-        return fillServiceContextAndServiceGroupContext(serviceDesc, configurationContext);
+        return fillServiceContextAndServiceGroupContext(axisService, configurationContext);
 
     }
 
-    private static ServiceContext fillServiceContextAndServiceGroupContext(ServiceDescription serviceDesc, ConfigurationContext configurationContext) throws AxisFault {
+    private static ServiceContext fillServiceContextAndServiceGroupContext(AxisService axisService, ConfigurationContext configurationContext) throws AxisFault {
         String serviceGroupContextId = UUIDGenerator.getUUID();
-        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configurationContext, serviceDesc.getParent());
+        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configurationContext, axisService.getParent());
         serviceGroupContext.setId(serviceGroupContextId);
         configurationContext.registerServiceGroupContext(serviceGroupContext);
-        return new ServiceContext(serviceDesc, serviceGroupContext);
+        return new ServiceContext(axisService, serviceGroupContext);
     }
 
     public static ConfigurationContext getNewConfigurationContext(String repositry) throws Exception {

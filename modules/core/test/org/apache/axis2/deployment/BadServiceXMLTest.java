@@ -17,7 +17,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AbstractTestCase;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
@@ -38,7 +38,7 @@ public class BadServiceXMLTest extends AbstractTestCase {
                     getTestResourceFile("deployment/BadService.xml"));
 
 //            DeploymentParser parser = new DeploymentParser(in, null);
-            ServiceDescription axisService = new ServiceDescription();
+            AxisService axisService = new AxisService();
             ServiceBuilder builder = new ServiceBuilder(in,null,axisService);
             builder.populateService(builder.buildOM());
             fail(

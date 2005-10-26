@@ -218,7 +218,7 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     public java.lang.ClassLoader getClassLoader() {
         try {
             MessageContext msgContext = (MessageContext) this.reqData.getMsgContext();
-            return msgContext.getServiceDescription().getClassLoader();
+            return msgContext.getAxisService().getClassLoader();
         } catch (Throwable t) {
             return super.getClassLoader();
         }

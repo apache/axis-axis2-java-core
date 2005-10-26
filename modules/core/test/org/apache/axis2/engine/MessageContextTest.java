@@ -20,7 +20,7 @@ import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.SOAPProcessingException;
@@ -35,7 +35,7 @@ public class MessageContextTest extends AbstractTestCase {
     public void testMesssageContext() throws AxisFault,
             SOAPProcessingException {
         AxisConfiguration er = new AxisConfigurationImpl();
-        ServiceDescription servicesDesc = new ServiceDescription();
+        AxisService servicesDesc = new AxisService();
         servicesDesc.setName(new QName("testService"));
         er.addService(servicesDesc);
 

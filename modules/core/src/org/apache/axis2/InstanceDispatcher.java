@@ -18,17 +18,16 @@ package org.apache.axis2;
 
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.OperationContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.handlers.AbstractHandler;
 
 public class InstanceDispatcher extends AbstractHandler {
     /**
      * By the time the control comes to this handler the dispatching must have happened
-     * so that the message context contains the ServiceGroupDescription, ServiceDescription and
-     * OperationDescription.
+     * so that the message context contains the AxisServiceGroup, AxisService and
+     * AxisOperation.
      * This will then try to find the Contexts of ServiceGroup, Service and the Operation.
      */
 
@@ -46,14 +45,14 @@ public class InstanceDispatcher extends AbstractHandler {
             return;
         }
 
-        OperationDescription operationDesc = msgContext.getOperationDescription();
+        AxisOperation axisOperation = msgContext.getAxisOperation();
 
         //  1. look up opCtxt using mc.addressingHeaders.relatesTo[0]
-        OperationContext operationContext = operationDesc.findForExistingOperationContext(msgContext);
+        OperationContext operationContext = axisOperation.findForExistingOperationContext(msgContext);
 
         if (operationContext != null) {
             // register operation context and message context
-            operationDesc.registerOperationContext(msgContext, operationContext);
+            axisOperation.registerOperationContext(msgContext, operationContext);
             ServiceContext serviceContext = (ServiceContext) operationContext.getParent();
             ServiceGroupContext serviceGroupContext = (ServiceGroupContext) serviceContext.getParent();
             msgContext.setServiceContext(serviceContext);
@@ -62,9 +61,9 @@ public class InstanceDispatcher extends AbstractHandler {
             return;
 
         } else { //  2. if null, create new opCtxt
-            operationContext =new OperationContext(operationDesc);
-//            operationContext = OperationContextFactory.createOperationContext(operationDesc.getAxisSpecifMEPConstant(), operationDesc);
-            operationDesc.registerOperationContext(msgContext, operationContext);
+            operationContext =new OperationContext(axisOperation);
+//            operationContext = OperationContextFactory.createOperationContext(axisOperation.getAxisSpecifMEPConstant(), axisOperation);
+            axisOperation.registerOperationContext(msgContext, operationContext);
 
             //  fill the service group context and service context info
             msgContext.getSystemContext().

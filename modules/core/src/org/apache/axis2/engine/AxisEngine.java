@@ -21,7 +21,7 @@ import org.apache.axis2.SOAPFaultException;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
@@ -83,7 +83,7 @@ public class AxisEngine {
         //find and invoke the Phases        
         OperationContext operationContext = msgContext.getOperationContext();
         ArrayList phases =
-            operationContext.getOperationDescription().getPhasesOutFlow();
+            operationContext.getAxisOperation().getPhasesOutFlow();
         if (msgContext.isPaused()) {
             // the message has paused, so rerun them from the position they stoped. The Handler
             //who paused the Message will be the first one to run
@@ -114,7 +114,7 @@ public class AxisEngine {
     public void receive(MessageContext msgContext) throws AxisFault {
 
         ConfigurationContext sysCtx = msgContext.getSystemContext();
-        OperationDescription operationDescription = null;
+        AxisOperation axisOperation = null;
         ArrayList preCalculatedPhases =
             sysCtx
                 .getAxisConfiguration()
@@ -130,25 +130,25 @@ public class AxisEngine {
             //resume operation specific phases
             OperationContext operationContext =
                 msgContext.getOperationContext();
-            operationDescription = operationContext.getOperationDescription();
+            axisOperation = operationContext.getAxisOperation();
             operationSpecificPhases =
-                operationDescription.getRemainingPhasesInFlow();
+                axisOperation.getRemainingPhasesInFlow();
             resumeInvocationPhases(operationSpecificPhases, msgContext);
         } else {
             invokePhases(preCalculatedPhases, msgContext);
             verifyContextBuilt(msgContext);
             OperationContext operationContext =
                 msgContext.getOperationContext();
-            operationDescription = operationContext.getOperationDescription();
+            axisOperation = operationContext.getAxisOperation();
             operationSpecificPhases =
-                operationDescription.getRemainingPhasesInFlow();
+                axisOperation.getRemainingPhasesInFlow();
             invokePhases(operationSpecificPhases, msgContext);
         }
 
         if (msgContext.isServerSide() && !msgContext.isPaused()) {
             // invoke the Message Receivers
             MessageReceiver receiver =
-                operationDescription.getMessageReceiver();
+                axisOperation.getMessageReceiver();
             receiver.receive(msgContext);
         }
     }
@@ -163,7 +163,7 @@ public class AxisEngine {
         OperationContext opContext = msgContext.getOperationContext();
         //find and execute the Fault Out Flow Handlers
         if (opContext != null) {
-            OperationDescription axisOperation = opContext.getOperationDescription();
+            AxisOperation axisOperation = opContext.getAxisOperation();
             ArrayList phases = axisOperation.getPhasesOutFaultFlow();
             if (msgContext.isPaused()) {
                 resumeInvocationPhases(phases, msgContext);
@@ -209,7 +209,7 @@ public class AxisEngine {
         opContext = msgContext.getOperationContext();
         //find and execute the Fault In Flow Handlers
         if (opContext != null) {
-            OperationDescription axisOperation = opContext.getOperationDescription();
+            AxisOperation axisOperation = opContext.getAxisOperation();
             ArrayList phases = axisOperation.getPhasesInFaultFlow();
             if (msgContext.isPaused()) {
                 resumeInvocationPhases(phases, msgContext);

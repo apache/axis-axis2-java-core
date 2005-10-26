@@ -22,9 +22,9 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
@@ -57,7 +57,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase {
     //private Thread thisThread;
     // private SimpleHTTPServer sas;
     private ServiceContext serviceContext;
-    private ServiceDescription service;
+    private AxisService service;
 
     private boolean finish = false;
 

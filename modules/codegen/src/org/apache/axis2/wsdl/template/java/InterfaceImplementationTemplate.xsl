@@ -17,18 +17,18 @@
     public class <xsl:value-of select="@name"/> extends org.apache.axis2.clientapi.Stub implements <xsl:value-of select="$interfaceName"/>{
         //default axis home being null forces the system to pick up the mars from the axis2 library
         public static final String AXIS2_HOME = null;
-        protected static org.apache.axis2.description.OperationDescription[] _operations;
+        protected static org.apache.axis2.description.AxisOperation[] _operations;
 
         static{
 
            //creating the Service
-           _service = new org.apache.axis2.description.ServiceDescription(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>","<xsl:value-of select="@servicename"/>"));
+           _service = new org.apache.axis2.description.AxisService(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>","<xsl:value-of select="@servicename"/>"));
 
            //creating the operations
-           org.apache.axis2.description.OperationDescription __operation;
-           _operations = new org.apache.axis2.description.OutInOperationDescription[<xsl:value-of select="count(method)"/>];
+           org.apache.axis2.description.AxisOperation __operation;
+           _operations = new org.apache.axis2.description.OutInAxisOperation[<xsl:value-of select="count(method)"/>];
       <xsl:for-each select="method">
-           __operation = new org.apache.axis2.description.OutInOperationDescription();
+           __operation = new org.apache.axis2.description.OutInAxisOperation();
            __operation.setName(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>", "<xsl:value-of select="@name"/>"));
            _operations[<xsl:value-of select="position()-1"/>]=__operation;
            _service.addOperation(__operation);

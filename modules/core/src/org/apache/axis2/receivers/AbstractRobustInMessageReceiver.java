@@ -36,7 +36,7 @@ public abstract class AbstractRobustInMessageReceiver extends AbstractMessageRec
         } catch (AxisFault e) {
             AxisEngine engine =
                 new AxisEngine(
-                    messgeCtx.getOperationContext().getServiceContext().getEngineContext());
+                    messgeCtx.getOperationContext().getServiceContext().getConfigurationContext());
             MessageContext faultContext = engine.createFaultMessageContext(messgeCtx, e);
             engine.sendFault(faultContext);
         }

@@ -179,8 +179,8 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
         this.module = module;
     }
 
-    public void addOperation(OperationDescription operation) {
-        opeartions.put(operation.getName(), operation);
+    public void addOperation(AxisOperation axisOperation) {
+        opeartions.put(axisOperation.getName(), axisOperation);
     }
 
     public HashMap getOperations() {

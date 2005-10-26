@@ -15,7 +15,7 @@ public class AxisDescWSDLComponentFactory implements WSDLComponentFactory {
 
 
     public WSDLService createService() {
-        return new ServiceDescription();
+        return new AxisService();
     }
 
 
@@ -35,7 +35,7 @@ public class AxisDescWSDLComponentFactory implements WSDLComponentFactory {
 
 
     public WSDLOperation createOperation() {
-//        return new OperationDescription();         // by Deepal
+//        return new AxisOperation();         // by Deepal
         return new WSDLOperationImpl();
     }
 

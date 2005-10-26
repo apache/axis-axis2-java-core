@@ -19,10 +19,10 @@ package org.apache.axis2.context;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.miheaders.RelatesTo;
-import org.apache.axis2.description.InOutOperationDescrition;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.ServiceGroupDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.wsdl.WSDLConstants;
@@ -50,9 +50,9 @@ public class ContextSerializationTest extends TestCase {
 	File file = new File ("target/tempfile.tmp");
 	
 	AxisConfiguration axisConfiguration;
-	ServiceGroupDescription serviceGroupDescription;
-	ServiceDescription serviceDescription;
-	OperationDescription operationDescription;
+	AxisServiceGroup axisServiceGroup;
+	AxisService axisService;
+	AxisOperation axisOperation;
 	
 	QName serviceDescQName = new QName (SERVICE_NAME);
 	QName operationDescName = new QName (OPERATION_NAME);
@@ -61,16 +61,16 @@ public class ContextSerializationTest extends TestCase {
 	protected void setUp() throws Exception {
 		//Initializing descriptions
 		axisConfiguration = new AxisConfigurationImpl ();
-		serviceGroupDescription = new ServiceGroupDescription (axisConfiguration);
-		serviceGroupDescription.setServiceGroupName(SERVICE_GROUP_NAME);
-		serviceDescription = new ServiceDescription (serviceDescQName);
-		operationDescription = new InOutOperationDescrition (operationDescName);
+		axisServiceGroup = new AxisServiceGroup (axisConfiguration);
+		axisServiceGroup.setServiceGroupName(SERVICE_GROUP_NAME);
+		axisService = new AxisService (serviceDescQName);
+		axisOperation = new InOutAxisOperation (operationDescName);
 		
 		//Creating links
-		axisConfiguration.addServiceGroup(serviceGroupDescription);
-		axisConfiguration.addService(serviceDescription);
-		serviceGroupDescription.addService(serviceDescription);
-		serviceDescription.addOperation(operationDescription);
+		axisConfiguration.addServiceGroup(axisServiceGroup);
+		axisConfiguration.addService(axisService);
+		axisServiceGroup.addService(axisService);
+		axisService.addOperation(axisOperation);
 		
 		if (file.exists()) {
 			file.delete();
@@ -88,10 +88,10 @@ public class ContextSerializationTest extends TestCase {
 		
 		//Setting contexts.
 		ConfigurationContext configurationContext = new ConfigurationContext(axisConfiguration);
-        ServiceGroupContext serviceGroupContext = serviceDescription.getParent().getServiceGroupContext(configurationContext);
+        ServiceGroupContext serviceGroupContext = axisService.getParent().getServiceGroupContext(configurationContext);
         serviceGroupContext.setId(SERVICE_GROUP_CONTEXT_ID);
         configurationContext.registerServiceGroupContext(serviceGroupContext);
-        ServiceContext serviceContext = serviceGroupContext.getServiceContext(serviceDescription.getName().getLocalPart());
+        ServiceContext serviceContext = serviceGroupContext.getServiceContext(axisService.getName().getLocalPart());
         
         //setting message contexts
         MessageContext inMessage = new MessageContext(configurationContext);
@@ -105,10 +105,10 @@ public class ContextSerializationTest extends TestCase {
         outMessage.setServiceGroupContext(serviceGroupContext);
         inMessage.setServiceContext(serviceContext);
         outMessage.setServiceContext(serviceContext);
-        inMessage.setOperationDescription(operationDescription);
-        outMessage.setOperationDescription(operationDescription);
+        inMessage.setAxisOperation(axisOperation);
+        outMessage.setAxisOperation(axisOperation);
        
-        OperationContext operationContext = operationDescription.findOperationContext(inMessage,serviceContext);
+        OperationContext operationContext = axisOperation.findOperationContext(inMessage,serviceContext);
         operationContext.addMessageContext(outMessage);
         outMessage.setOperationContext(operationContext);
     
@@ -166,9 +166,9 @@ public class ContextSerializationTest extends TestCase {
 		AxisConfiguration axisConfiguration1 = configurationContext.getAxisConfiguration();
 		assertNotNull(axisConfiguration1);
 		
-		assertNotNull(operationContext1.getOperationDescription());
+		assertNotNull(operationContext1.getAxisOperation());
 		assertNotNull(serviceGroupcontext1.getDescription());
-		assertNotNull(serviceContext1.getServiceConfig());
+		assertNotNull(serviceContext1.getAxisService());
 			
 	}
 	

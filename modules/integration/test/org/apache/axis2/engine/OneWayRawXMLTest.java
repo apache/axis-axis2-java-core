@@ -24,9 +24,9 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.OutInOperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -67,17 +67,17 @@ public class OneWayRawXMLTest extends TestCase {
     protected void setUp() throws Exception {
         UtilServer.start();
 
-        ServiceDescription service = new ServiceDescription(serviceName);
-        OperationDescription operation = new OutInOperationDescription(
+        AxisService service = new AxisService(serviceName);
+        AxisOperation axisOperation = new OutInAxisOperation(
                 operationName);
-        operation.setMessageReceiver(new MessageReceiver() {
+        axisOperation.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messgeCtx) throws AxisFault {
                 envelope = messgeCtx.getEnvelope();
                 TestingUtils.campareWithCreatedOMElement(
                         envelope.getBody().getFirstElement());
             }
         });
-        service.addOperation(operation);
+        service.addOperation(axisOperation);
         UtilServer.deployService(service);
     }
 

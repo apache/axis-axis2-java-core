@@ -1,5 +1,8 @@
 package org.apache.axis2.wsdl.writer;
 
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
@@ -14,12 +17,14 @@ import javax.wsdl.WSDLException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Iterator;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -49,7 +54,7 @@ public class WOMInputOutputTest extends XMLTestCase {
 
     }
 
-    public void testInputOutput() {
+    public void testInputOutput() throws XMLStreamException {
         try {
             // create the WOM from the given WSDL.
             WOMBuilder builder = WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1);
@@ -68,6 +73,10 @@ public class WOMInputOutputTest extends XMLTestCase {
             // a String and feed
 
             Document expectedWSDLDocument = newDocument(getFileContentsAsString(testWSDL));
+
+            System.out.println(getChildrenCount(actualWSDL));
+//            System.out.println(getChildrenCount(testWSDL));
+
 //            assertXMLEqual(actualWSDLDocument, expectedWSDLDocument);
 
         } catch (WSDLException e) {
@@ -114,6 +123,27 @@ public class WOMInputOutputTest extends XMLTestCase {
         }
         in.close();
         return returnString;
+    }
+
+    public int getChildrenCount(String xml) throws XMLStreamException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(xml.getBytes());
+        OMElement documentElement = new StAXOMBuilder(bais).getDocumentElement();
+        int omElementCount = 0;
+        int omTextCount = 0;
+        Iterator childrenIter = documentElement.getChildren();
+        while (childrenIter.hasNext()) {
+            Object o = childrenIter.next();
+            if (o instanceof OMElement) {
+                omElementCount++;
+            } else if (o instanceof OMText) {
+                omTextCount++;
+            }
+        }
+
+        System.out.println("omElementCount = " + omElementCount);
+        System.out.println("omTextCount = " + omTextCount);
+
+        return omElementCount + omTextCount;
     }
 
 }

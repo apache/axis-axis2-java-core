@@ -22,8 +22,8 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.OutInOperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.interop.whitemesa.round3.util.SunRound3ClientUtil;
@@ -51,7 +51,7 @@ public class SunRound3Client {
             ConfigurationContext configCtx = new ConfigurationContext(axisConfig);
             MessageContext msgCtx = new MessageContext(configCtx);
 
-            OperationDescription opDesc = new OutInOperationDescription(new QName(""));
+            AxisOperation opDesc = new OutInAxisOperation(new QName(""));
             SOAPEnvelope requestEnvilope = util.getEchoSoapEnvelope();
             msgCtx.setEnvelope(requestEnvilope);
             MessageContext resMsgCtx = call.invokeBlocking(opDesc, msgCtx);

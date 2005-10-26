@@ -19,8 +19,8 @@ package org.apache.axis2.deployment;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.ServiceGroupDescription;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 public class ServiceGroupTest extends TestCase {
     AxisConfiguration ar;
@@ -34,11 +34,11 @@ public class ServiceGroupTest extends TestCase {
     }
 
     public void testServiceGroup() throws AxisFault {
-        ServiceGroupDescription sgd = ar.getServiceGroup("serviceGroup");
+        AxisServiceGroup sgd = ar.getServiceGroup("serviceGroup");
         assertNotNull(sgd);
-        ServiceDescription service1 = ar.getService("service1");
+        AxisService service1 = ar.getService("service1");
         assertNotNull(service1);
-        ServiceDescription service2 = ar.getService("service2");
+        AxisService service2 = ar.getService("service2");
         assertNotNull(service2);
     }
 

@@ -39,7 +39,7 @@
 <p>The request soap message is built at the ClientUtil class. According to the Amazon Web API wsdl file, required namespaces are selected and attached to the envelope. We don't have to include anything in the header. The name of the first child element of the body should be operation name and it should be namespace qualified. We also have to include the binding namespace to this element. Here it is attached as an attribute to that element, </p>
 <p><code>OMElement opration = omFactory.createOMElement(&quot;doAmazonSearch&quot;, &quot;urn:AmazonSearch&quot;, &quot;ns1&quot;); </code></p>
 <p><code>opration.addAttribute(&quot;SOAP-ENV:encordingStyle&quot;, &quot;http://schemas.xmlsoap.org/soap/encoding/&quot;, null); </code></p>
-<p>All the child elements of the operation element are carrying required parameters such as license key, query terms, results per page, etc. (for more information, click <a href="http://www.amazon.com/gp/aws/sdk/102-7878352-1385727?s=AlexaWebInfoService&v=1%2d0%20" target="_blank">here</a>), </p>
+<p>All the child elements of the axisOperation element are carrying required parameters such as license key, query terms, results per page, etc. (for more information, click <a href="http://www.amazon.com/gp/aws/sdk/102-7878352-1385727?s=AlexaWebInfoService&v=1%2d0%20" target="_blank">here</a>), </p>
 <p><samp>&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:tns=&quot;http://webservices.amazon.com/AWSAlexa/2005-02-01&quot; xmlns:SOAP-ENC=&quot;http://schemas.xmlsoap.org/soap/encoding/&quot; xmlns:xsi=&quot;http://www.w3.org/1999/XMLSchema-instance/&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/wsdl/soap/&quot; xmlns:wsdl=&quot;http://schemas.xmlsoap.org/wsdl/&quot;&gt;<br>
 &lt;soapenv:Header&gt;&lt;/soapenv:Header&gt;<br>
 &lt;soapenv:Body&gt;<br>
@@ -56,7 +56,7 @@
 &lt;/soapenv:Body&gt;<br>
 &lt;/soapenv:Envelope&gt;</samp></p>
 <p>ClientCallbackHandler processing response soap and extract elements which have the local name as &quot;NavigableURL&quot;. It has to work with Object Model(OM). You can notice that it uses several Iteraters to go through the children of an OMElement. You are returned and Object from the Iterater that can be casted to a OMNode. Since you can't call for the children of an OMNode we have to cast it to a OMElement. Before that we have to check it whether it is an OMElement, as follows. </p>
-<p><code>Iterator iterator0 = operation.getChildren(); </code></p>
+<p><code>Iterator iterator0 = axisOperation.getChildren(); </code></p>
 <p><code>while (iterator0.hasNext()) { </code></p>
 <p><code>OMNode node = (OMNode) iterator0.next(); </code></p>
 <p><code>if (node.getType() == OMNode.ELEMENT_NODE) { </code></p>
@@ -132,7 +132,7 @@ Online African Radio Station - Live365 Internet Radio - Arabix&lt;/Title&gt;<br>
     <li><a href="http://www.amazon.com/gp/aws/sdk/main.html?s=AlexaWebInfoService&v=1-0&p=ApiReference/WebMapOperation">WebMap </a></li>
   </ul>
 </ul>
-<p> You can extend this program to work these operations too. Because the soap requests and responses are different, it will need separate ClientUtil classes and ClientCallbackHandler classes to fulfill this task. Anyway you can define those classes with any name and the only condition is when you invoke the operation you have to send an object of relevant CallbackHandler class and it should extend the CallbackHandler too. </p>
+<p> You can extend this program to work these operations too. Because the soap requests and responses are different, it will need separate ClientUtil classes and ClientCallbackHandler classes to fulfill this task. Anyway you can define those classes with any name and the only condition is when you invoke the axisOperation you have to send an object of relevant CallbackHandler class and it should extend the CallbackHandler too. </p>
 <p>&nbsp; </p>
 <p>&nbsp; </p>
 <p>&nbsp; </p>

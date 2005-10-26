@@ -1,9 +1,8 @@
 <%@ page contentType="text/html; charset=iso-8859-1" language="java" import="org.apache.axis2.Constants,
-                                                                             org.apache.axis2.description.ModuleDescription,
-                                                                             org.apache.axis2.description.ServiceGroupDescription,
+                                                                             org.apache.axis2.description.AxisServiceGroup,
                                                                              java.util.Collection,
-                                                                             java.util.HashMap,
-                                                                             java.util.Iterator" errorPage="" %>
+                                                                             java.util.HashMap" errorPage="" %>
+<%@ page import="java.util.Iterator"%>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <%
     String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);
@@ -12,13 +11,13 @@
     Iterator servicesGroups = (Iterator)request.getSession().getAttribute(Constants.SERVICE_GROUP_MAP);
 %>
 <h1>Engage Module for a Service Group</h1>
-<p>To engage a module for a set of services grouped a service group, first select the module you want to engage and then select the service group you like the module to be engaged on and click "Engage".</p>
+<p>To engage a module for a set of services grouped a axisService group, first select the module you want to engage and then select the axisService group you like the module to be engaged on and click "Engage".</p>
 <%
 	if (!moduleCol.iterator().hasNext()) {%>
 		<p>No modules are present to be engaged.</p>
 	<%} else {
 		if  (!servicesGroups.hasNext()) {%>
-		<p>No service groups are present to be engaged.</p>
+		<p>No axisService groups are present to be engaged.</p>
 		<%} else {
 %>
 <form method="get" name="engaginModule" action="engageToServiceGroup">
@@ -31,8 +30,8 @@
                 <select name="modules">
                     <%
                 for (Iterator iterator = moduleCol.iterator(); iterator.hasNext();) {
-                    ModuleDescription description = (ModuleDescription) iterator.next();
-                    String modulename = description.getName().getLocalPart();
+                    ModuleDescription axisOperation = (ModuleDescription) iterator.next();
+                    String modulename = axisOperation.getName().getLocalPart();
             %> <option  align="left" value="<%=modulename%>"><%=modulename%></option>
                     <%
                 }
@@ -50,12 +49,12 @@
         </tr>
         <tr>
             <td>
-                <select name="service">
+                <select name="axisService">
                     <%
 
                         while(servicesGroups.hasNext()){
-                            ServiceGroupDescription groupDescription = (ServiceGroupDescription) servicesGroups.next();
-                            String serviceName = groupDescription.getServiceGroupName();
+                            AxisServiceGroup axisServiceGroup = (AxisServiceGroup) servicesGroups.next();
+                            String serviceName = axisServiceGroup.getServiceGroupName();
                     %> <option  align="left" value="<%=serviceName%>"><%=serviceName%></option>
                     <%
                         }

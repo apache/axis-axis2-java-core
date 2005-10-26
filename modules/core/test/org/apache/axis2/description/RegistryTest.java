@@ -28,7 +28,7 @@ import javax.xml.namespace.QName;
 
 public class RegistryTest extends AbstractTestCase {
     private AxisConfiguration reg = new AxisConfigurationImpl();
-    ServiceDescription service = new ServiceDescription(
+    AxisService service = new AxisService(
                 new QName("Service1"));
 
     public RegistryTest(String testName) {
@@ -47,7 +47,7 @@ public class RegistryTest extends AbstractTestCase {
           reg.addMdoule(modlue);
 
           QName serviceName = new QName("service");
-          ServiceDescription service = new ServiceDescription(serviceName);
+          AxisService service = new AxisService(serviceName);
           reg.addService(service);
 
           assertSame(modlue, reg.getModule(moduleName));
@@ -77,7 +77,7 @@ public class RegistryTest extends AbstractTestCase {
     }
 
     public void testOpeartion() throws AxisFault {
-        OperationDescription op = new InOutOperationDescrition(new QName("op"));
+        AxisOperation op = new InOutAxisOperation(new QName("op"));
         op.setParent(service);
         testParameteInClude(op);
     }

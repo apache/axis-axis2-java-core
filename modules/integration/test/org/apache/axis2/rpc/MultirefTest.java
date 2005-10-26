@@ -18,42 +18,41 @@
 
 package org.apache.axis2.rpc;
 
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.InOutOperationDescrition;
+import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.util.BeanSerializerUtil;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
-import org.apache.axis2.rpc.client.RPCCall;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
+import org.apache.axis2.rpc.client.RPCCall;
+import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.util.BeanSerializerUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.FactoryConfigurationError;
-import java.text.SimpleDateFormat;
+import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
-import junit.framework.TestCase;
 
 public class MultirefTest extends TestCase {
 
@@ -74,7 +73,7 @@ public class MultirefTest extends TestCase {
     protected AxisConfiguration engineRegistry;
     protected MessageContext mc;
     protected ServiceContext serviceContext;
-    protected ServiceDescription service;
+    protected AxisService service;
 
     protected boolean finish = false;
 
@@ -95,11 +94,11 @@ public class MultirefTest extends TestCase {
                         + "/axis/services/EchoXMLService/" + opName);
         String className = "org.apache.axis2.rpc.RPCServiceClass";
         operationName = new QName("http://localhost/my", opName, "req");
-        ServiceDescription service = new ServiceDescription(serviceName);
+        AxisService service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
                 className));
-        OperationDescription axisOp = new InOutOperationDescrition(operationName);
+        AxisOperation axisOp = new InOutAxisOperation(operationName);
         axisOp.setMessageReceiver(new RPCMessageReceiver());
         axisOp.setStyle(WSDLService.STYLE_RPC);
         service.addOperation(axisOp);

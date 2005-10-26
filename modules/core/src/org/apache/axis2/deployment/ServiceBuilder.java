@@ -19,7 +19,13 @@ package org.apache.axis2.deployment;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisOperationFactory;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.description.ModuleConfiguration;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
@@ -45,15 +51,15 @@ import java.util.Iterator;
 
 public class ServiceBuilder extends DescriptionBuilder{
 
-    private ServiceDescription service;
+    private AxisService service;
 
     public ServiceBuilder(InputStream serviceInputSteram,
-                          DeploymentEngine engine,ServiceDescription service) {
+                          DeploymentEngine engine,AxisService service) {
         super(serviceInputSteram, engine);
         this.service = service;
     }
 
-    public ServiceBuilder(DeploymentEngine engine,ServiceDescription service) {
+    public ServiceBuilder(DeploymentEngine engine,AxisService service) {
         this.service = service;
         super.engine = engine;
     }
@@ -80,9 +86,9 @@ public class ServiceBuilder extends DescriptionBuilder{
                     descriptionValue.serialize(new
                             OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
                     writer.flush();
-                    service.setServiceDescription(writer.toString());
+                    service.setAxisServiceName(writer.toString());
                 } else {
-                    service.setServiceDescription(descriptionElement.getText());
+                    service.setAxisServiceName(descriptionElement.getText());
                 }
             }
 
@@ -121,7 +127,7 @@ public class ServiceBuilder extends DescriptionBuilder{
                     new QName(OPRATIONST));
             ArrayList ops = processOpeartions(opeartinsItr);
             for (int i = 0; i < ops.size(); i++) {
-                OperationDescription opeartionDesc = (OperationDescription) ops.get(i);
+                AxisOperation opeartionDesc = (AxisOperation) ops.get(i);
                 ArrayList paramters = opeartionDesc.getParameters();
 
                 // Adding wsa-maping into service
@@ -173,25 +179,25 @@ public class ServiceBuilder extends DescriptionBuilder{
 
             String opname = op_name_att.getAttributeValue();
             WSDLOperation wsdlOperation =service.getWSDLOPOperation(new QName(opname));
-//            OperationDescription op_descrip = service.getOperation(new QName(opname));
-            OperationDescription op_descrip = null;
+//            AxisOperation op_descrip = service.getOperation(new QName(opname));
+            AxisOperation op_descrip = null;
             if(wsdlOperation == null){
                 if(mepurl == null){
                     // assumed MEP is in-out
-                    op_descrip = new InOutOperationDescrition();
+                    op_descrip = new InOutAxisOperation();
                 } else {
-                    op_descrip =OperationDescriptionFactory.getOperetionDescription(mepurl);
+                    op_descrip =AxisOperationFactory.getOperetionDescription(mepurl);
                 }
-//                op_descrip = new OperationDescription();
+//                op_descrip = new AxisOperation();
                 op_descrip.setName(new QName(opname));
                 log.info(Messages.getMessage(DeploymentErrorMsgs.OP_NOT_FOUN_IN_WSDL, opname));
             } else {
                 //craeting opeartion from existing opeartion
                 String mep = wsdlOperation.getMessageExchangePattern();
                 if(mep == null)   {
-                    op_descrip = new InOutOperationDescrition(wsdlOperation);
+                    op_descrip = new InOutAxisOperation(wsdlOperation);
                 } else {
-                    op_descrip =OperationDescriptionFactory.getOperetionDescription(mep);
+                    op_descrip =AxisOperationFactory.getOperetionDescription(mep);
                     op_descrip.setWsdlopeartion((WSDLOperationImpl)wsdlOperation);
                 }
             }
@@ -238,7 +244,7 @@ public class ServiceBuilder extends DescriptionBuilder{
 
 
     protected void processServiceModuleConfig(Iterator moduleConfigs ,
-                                              ParameterInclude parent, ServiceDescription service)
+                                              ParameterInclude parent, AxisService service)
             throws DeploymentException {
         while (moduleConfigs.hasNext()) {
             OMElement moduleConfig = (OMElement) moduleConfigs.next();
@@ -259,7 +265,7 @@ public class ServiceBuilder extends DescriptionBuilder{
     }
 
     protected void processOperationModuleConfig(Iterator moduleConfigs ,
-                                                ParameterInclude parent, OperationDescription opeartion)
+                                                ParameterInclude parent, AxisOperation opeartion)
             throws DeploymentException {
         while (moduleConfigs.hasNext()) {
             OMElement moduleConfig = (OMElement) moduleConfigs.next();

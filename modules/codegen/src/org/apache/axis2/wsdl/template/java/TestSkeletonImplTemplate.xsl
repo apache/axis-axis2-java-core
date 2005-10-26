@@ -13,7 +13,7 @@
 		
 
     /**
-     *  Auto generated java skeleton for the service by the Axis code generator
+     *  Auto generated java skeleton for the axisService by the Axis code generator
      */
 
     public class <xsl:value-of select="@name"></xsl:value-of> extends <xsl:value-of select="@implpackage"/>.<xsl:value-of select="@servicename"></xsl:value-of>{

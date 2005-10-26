@@ -26,7 +26,7 @@ import org.apache.axis2.clientapi.InOutMEPClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.TestingUtils;
@@ -57,7 +57,7 @@ public class SoapProcessingModelTest extends TestCase {
     private AxisConfiguration engineRegistry;
     private MessageContext mc;
     private ServiceContext serviceContext;
-    private ServiceDescription service;
+    private AxisService service;
 
 
     private boolean finish = false;
@@ -93,7 +93,7 @@ public class SoapProcessingModelTest extends TestCase {
                     service.getParent().getServiceGroupContext(configContext).getServiceContext(service.getName().getLocalPart());
             inOutMC = new InOutMEPClient(serviceContext);
 
-            MessageContext msgctx = new MessageContext(serviceContext.getEngineContext());
+            MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
 
             msgctx.setEnvelope(envelope);
 
@@ -102,7 +102,7 @@ public class SoapProcessingModelTest extends TestCase {
 
             MessageContext result =
                     inOutMC.invokeBlocking(
-                            serviceContext.getServiceConfig().getOperation(operationName),
+                            serviceContext.getAxisService().getOperation(operationName),
                             msgctx);
         } catch (Exception e) {
             e.printStackTrace();

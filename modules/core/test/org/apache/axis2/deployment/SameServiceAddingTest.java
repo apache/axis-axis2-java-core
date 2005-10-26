@@ -3,7 +3,7 @@ package org.apache.axis2.deployment;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -36,7 +36,7 @@ public class SameServiceAddingTest extends TestCase {
     public void testServiceGroup() throws AxisFault {
         ConfigurationContextFactory builder = new ConfigurationContextFactory();
         ar = builder.buildConfigurationContext(repo).getAxisConfiguration();
-        ServiceDescription servie = ar.getService("serevice1");
+        AxisService servie = ar.getService("serevice1");
         assertNotNull(servie);
         servie = ar.getService("serevice4");
         assertNotNull(servie);

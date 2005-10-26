@@ -17,10 +17,10 @@
 package org.apache.axis2.deployment.repository.util;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.i18n.Messages;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -188,12 +188,12 @@ public class ArchiveFileData {
     }
 
 
-    public void addService(ServiceDescription servicedesc){
+    public void addService(AxisService servicedesc){
         service.put(servicedesc.getName().getLocalPart(),servicedesc);
     }
 
-    public ServiceDescription getService(String serviceName){
-        return (ServiceDescription)service.get(serviceName);
+    public AxisService getService(String serviceName){
+        return (AxisService)service.get(serviceName);
     }
 
     public HashMap getService() {

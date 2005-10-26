@@ -18,7 +18,12 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterImpl;
 
 import javax.xml.namespace.QName;
 /**
@@ -36,7 +41,7 @@ public class ParamterAddTest extends TestCase {
             para.setLocked(true);
             reg.addParameter(para);
 
-            ServiceDescription service = new ServiceDescription(new QName("Service1"));
+            AxisService service = new AxisService(new QName("Service1"));
             reg.addService(service);
             service.addParameter(para);
             fail("This should fails with Parmter is locked can not overide");
@@ -69,10 +74,10 @@ public class ParamterAddTest extends TestCase {
             para.setLocked(true);
             reg.addParameter(para);
 
-            ServiceDescription service = new ServiceDescription(new QName("Service1"));
+            AxisService service = new AxisService(new QName("Service1"));
             reg.addService(service);
 
-            OperationDescription opertion = new InOutOperationDescrition();
+            AxisOperation opertion = new InOutAxisOperation();
             opertion.setParent(service);
             opertion.addParameter(para);
             fail("This should fails with Parmter is locked can not overide");
@@ -90,11 +95,11 @@ public class ParamterAddTest extends TestCase {
             para.setName("PARA_NAME");
             para.setLocked(true);
 
-            ServiceDescription service = new ServiceDescription(new QName("Service1"));
+            AxisService service = new AxisService(new QName("Service1"));
             reg.addService(service);
             service.addParameter(para);
 
-            OperationDescription opertion = new InOutOperationDescrition();
+            AxisOperation opertion = new InOutAxisOperation();
             opertion.setParent(service);
             opertion.addParameter(para);
             fail("This should fails with Parmter is locked can not overide");

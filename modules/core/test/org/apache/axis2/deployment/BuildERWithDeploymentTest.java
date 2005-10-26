@@ -18,9 +18,9 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
@@ -40,7 +40,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
                 .getAxisConfiguration();
 
         assertNotNull(er);
-        ServiceDescription service = er.getService("service2");
+        AxisService service = er.getService("service2");
         assertNotNull(service);
         //commentd since there is no service based messgeReceivers
         /*MessageReceiver provider = service.getMessageReceiver();
@@ -61,7 +61,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
         assertTrue(flow.getHandlerCount() > 0);
         assertNotNull(service.getParameter("para2"));
 
-        OperationDescription op = service.getOperation(new QName("opname"));
+        AxisOperation op = service.getOperation(new QName("opname"));
         assertNotNull(op);
 
     }

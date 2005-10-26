@@ -20,10 +20,10 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.OutInOperationDescription;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
@@ -57,7 +57,7 @@ public class MessageWithServerTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        ServiceDescription service = Utils.createSimpleService(serviceName,
+        AxisService service = Utils.createSimpleService(serviceName,
                 Echo.class.getName(),
                 operationName);
 
@@ -73,9 +73,9 @@ public class MessageWithServerTest extends TestCase {
         engineRegistry = new AxisConfigurationImpl();
         service.engageModule(m1,engineRegistry);
 
-        OperationDescription operation = new OutInOperationDescription(
+        AxisOperation axisOperation = new OutInAxisOperation(
                 operationName);
-        service.addOperation(operation);
+        service.addOperation(axisOperation);
 
         UtilServer.deployService(service);
         UtilServer.start();

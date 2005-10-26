@@ -21,10 +21,10 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.ServiceBuilder;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ServiceDescription;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -65,7 +65,7 @@ public class ModuleConfigTest extends TestCase {
             ar = builder.buildConfigurationContext(repo).getAxisConfiguration();
 
 
-            ServiceDescription service = new ServiceDescription();
+            AxisService service = new AxisService();
             service.setName(new QName("testService"));
             ar.addService(service);
             InputStream in = new FileInputStream(repo + "/service1.xml");
@@ -77,7 +77,7 @@ public class ModuleConfigTest extends TestCase {
             Parameter para = moduleConfiguration.getParameter("Servie_module_para");
             assertNotNull(para);
 
-            OperationDescription op = service.getOperation("echoString");
+            AxisOperation op = service.getOperation("echoString");
             assertNotNull(op);
 
             moduleConfiguration = op.getModuleConfig(new QName("Op_Module"));

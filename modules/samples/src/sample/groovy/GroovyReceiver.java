@@ -20,9 +20,9 @@ import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -52,11 +52,11 @@ public class GroovyReceiver
         MessageContext outMessage)
         throws AxisFault {
         try {
-            ServiceDescription service =
+            AxisService service =
                 inMessage
                     .getOperationContext()
                     .getServiceContext()
-                    .getServiceConfig();
+                    .getAxisService();
             Parameter implInfoParam = service.getParameter("ServiceClass");
             if (implInfoParam == null) {
                 throw new AxisFault(
@@ -72,8 +72,8 @@ public class GroovyReceiver
             }
 
             //look at the method name. if available this should be a groovy method
-            OperationDescription op =
-                inMessage.getOperationContext().getOperationDescription();
+            AxisOperation op =
+                inMessage.getOperationContext().getAxisOperation();
             if (op == null) {
                 throw new AxisFault(
                     Messages.getMessage("notFound", "Operation"));

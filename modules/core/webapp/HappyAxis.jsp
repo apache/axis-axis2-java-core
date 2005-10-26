@@ -118,7 +118,7 @@
                    String category,
                    String classname,
                    String jarFile,
-                   String description,
+                   String axisOperation,
                    String errorText,
                    String homePage) throws IOException {
         try {
@@ -137,10 +137,10 @@
             } else {
                 String location = getLocation(out, clazz);
                 if(location == null) {
-                    out.write("Found "+ description + " (" + classname + ")<br>");
+                    out.write("Found "+ axisOperation + " (" + classname + ")<br>");
                 }
                 else {
-                    out.write("Found "+ description + " (" + classname + ") at " + location + "<br>");
+                    out.write("Found "+ axisOperation + " (" + classname + ") at " + location + "<br>");
                 }
                 return 0;
             }
@@ -204,14 +204,14 @@
     int needClass(JspWriter out,
                   String classname,
                   String jarFile,
-                  String description,
+                  String axisOperation,
                   String errorText,
                   String homePage) throws IOException {
         return probeClass(out,
                 "<b>Error</b>",
                 classname,
                 jarFile,
-                description,
+                axisOperation,
                 errorText,
                 homePage);
     }
@@ -229,14 +229,14 @@
     int wantClass(JspWriter out,
                   String classname,
                   String jarFile,
-                  String description,
+                  String axisOperation,
                   String errorText,
                   String homePage) throws IOException {
         return probeClass(out,
                 "<b>Warning</b>",
                 classname,
                 jarFile,
-                description,
+                axisOperation,
                 errorText,
                 homePage);
     }
@@ -427,20 +427,20 @@
 %>
 <p>
 <B><I>Note:</I></B> Even if everything this page probes for is present, there is no guarantee your
-web service will work, because there are many configuration options that we do
+web axisService will work, because there are many configuration options that we do
 not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
 
-<h2>Examining echo service</h2>
+<h2>Examining echo axisService</h2>
     <%
         boolean serviceStatus = inVokeTheService();
         if(serviceStatus){
     %>
     <p>
     <font color="blue" >
-    Found the Axis2 default Version service and Axis2 is working properly.Now you can drop a web service in
+    Found the Axis2 default Version axisService and Axis2 is working properly.Now you can drop a web axisService in
     axis2/WEB-INF/services and refresh this page.
 
-    Following output was produced while invoking the version service:
+    Following output was produced while invoking the version axisService:
     <br>
        <%= value%> </font>
        </p>
@@ -450,7 +450,7 @@ not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
    %>
    <p>
    <font color="brown" >
-   You can test the deployement functionality by uploading the echo service jar, which can be found in the
+   You can test the deployement functionality by uploading the echo axisService jar, which can be found in the
    samples directory of the axis distribution.
    <br>
      </font>

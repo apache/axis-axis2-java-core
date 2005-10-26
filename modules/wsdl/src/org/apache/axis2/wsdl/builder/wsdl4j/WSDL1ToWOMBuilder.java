@@ -18,9 +18,6 @@ package org.apache.axis2.wsdl.builder.wsdl4j;
 
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
-import org.apache.axis2.wsdl.writer.WOMWriterFactory;
-import org.apache.axis2.wsdl.writer.WOMWriter;
-import org.apache.axis2.wsdl.writer.WriterException;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
 import org.apache.wsdl.WSDLDescription;
@@ -28,15 +25,14 @@ import org.apache.wsdl.impl.WSDLDescriptionImpl;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class WSDL1ToWOMBuilder implements WOMBuilder {
 
@@ -58,8 +54,8 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
      * can be passed into the builder using which the WOM component can be built out of.
      * For example: The Enigne uses the WOM's components in the context hierarchy but
      * those are extended components.
-     * (<code>ServiceDescription</code> extends <code>WSDLService</code>.)
-     * So when deployment build the WOM it would prefer to get a <code>ServiceDescription</code>
+     * (<code>AxisService</code> extends <code>WSDLService</code>.)
+     * So when deployment build the WOM it would prefer to get a <code>AxisService</code>
      * built in place of a <code>WSDLService</code>. This can be achieved by passing the
      * correct Component Factory that will instanciate the correct object for the WOM builder.
      * @param in InputStream from which the WSDL document can be read in.
@@ -105,8 +101,8 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
      * can be passed into the builder using which the WOM component can be built out of.
      * For example: The Enigne uses the WOM's components in the context hierarchy but
      * those are extended components.
-     * (<code>ServiceDescription</code> extends <code>WSDLService</code>.)
-     * So when deployment build the WOM it would prefer to get a <code>ServiceDescription</code>
+     * (<code>AxisService</code> extends <code>WSDLService</code>.)
+     * So when deployment build the WOM it would prefer to get a <code>AxisService</code>
      * built in place of a <code>WSDLService</code>. This can be achieved by passing the
      * correct Component Factory that will instanciate the correct object for the WOM builder.
      * @param uri URI pointing to the WSDL document.

@@ -19,7 +19,7 @@ package org.apache.axis2.receivers;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -74,12 +74,12 @@ public class RawXMLINOutMessageReceiver
             //Inject the Message Context if it is asked for
             DependencyManager.configureBusinessLogicProvider(obj, msgContext, newmsgContext);
 
-            OperationDescription opDesc = msgContext.getOperationContext()
-                    .getOperationDescription();
+            AxisOperation opDesc = msgContext.getOperationContext()
+                    .getAxisOperation();
             Method method = findOperation(opDesc, ImplClass);
             if (method != null) {
                 String style = msgContext.getOperationContext()
-                        .getOperationDescription()
+                        .getAxisOperation()
                         .getStyle();
 
                 Class[] parameters = method.getParameterTypes();
@@ -144,7 +144,7 @@ public class RawXMLINOutMessageReceiver
 
     }
 
-    public Method findOperation(OperationDescription op, Class ImplClass) {
+    public Method findOperation(AxisOperation op, Class ImplClass) {
         Method method = null;
         String methodName = op.getName().getLocalPart();
         Method[] methods = ImplClass.getMethods();

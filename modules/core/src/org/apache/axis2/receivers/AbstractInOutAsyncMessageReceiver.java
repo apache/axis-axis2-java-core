@@ -38,13 +38,13 @@ public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageR
             public void handleResult(MessageContext result) throws AxisFault {
                 AxisEngine engine =
                     new AxisEngine(
-                        messageCtx.getOperationContext().getServiceContext().getEngineContext());
+                        messageCtx.getOperationContext().getServiceContext().getConfigurationContext());
                 engine.send(messageCtx);
             }
             public void handleFault(AxisFault fault) throws AxisFault {
                 AxisEngine engine =
                     new AxisEngine(
-                        messageCtx.getOperationContext().getServiceContext().getEngineContext());
+                        messageCtx.getOperationContext().getServiceContext().getConfigurationContext());
                 MessageContext faultContext = engine.createFaultMessageContext(messageCtx, fault);
                 engine.sendFault(faultContext);
             }

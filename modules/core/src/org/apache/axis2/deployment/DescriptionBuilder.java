@@ -17,10 +17,10 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.FlowImpl;
 import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.ParameterInclude;
@@ -243,7 +243,7 @@ public class DescriptionBuilder implements DeploymentConstants{
 
 
     protected void processOpeasrtionModuleRefs(Iterator moduleRefs
-            , OperationDescription opeartion) throws DeploymentException {
+            , AxisOperation opeartion) throws DeploymentException {
         try {
             while (moduleRefs.hasNext()) {
                 OMElement moduleref = (OMElement) moduleRefs.next();

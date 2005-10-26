@@ -20,9 +20,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
@@ -43,7 +43,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
     }
 
     //TODO this logic needed to be improved, as the Dispatching is almost garentnee to fail
-    public OperationDescription findOperation(ServiceDescription service,
+    public AxisOperation findOperation(AxisService service,
                                               MessageContext messageContext)
             throws AxisFault {
         String action = messageContext.getWSAAction();
@@ -57,9 +57,9 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
     }
 
     //  TODO this logic needed to be improved, as the Dispatching is almost garentnee to fail
-    public ServiceDescription findService(MessageContext messageContext) throws AxisFault {
+    public AxisService findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
-        ServiceDescription service = null;
+        AxisService service = null;
         if (toEPR != null) {
             String address = toEPR.getAddress();
             if (Final.WSA_ANONYMOUS_URL.equals(address) || Submission.WSA_ANONYMOUS_URL.equals(address)) {

@@ -18,10 +18,10 @@ package org.apache.axis2.mtom;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.OutInOperationDescription;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
@@ -50,7 +50,7 @@ public class EchoRawMTOMFaultReportTest extends TestCase {
 
     private QName operationName = new QName("mtomSample");
 
-    private ServiceDescription service;
+    private AxisService service;
 
     public EchoRawMTOMFaultReportTest() {
         super(EchoRawSwATest.class.getName());
@@ -62,12 +62,12 @@ public class EchoRawMTOMFaultReportTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
-        service = new ServiceDescription(serviceName);
+        service = new AxisService(serviceName);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
                 EchoService.class.getName()));
 
-        OperationDescription axisOp = new OutInOperationDescription(operationName);
+        AxisOperation axisOp = new OutInAxisOperation(operationName);
         axisOp.setMessageReceiver(new RawXMLINOutMessageReceiver());
         axisOp.setStyle(WSDLService.STYLE_DOC);
         service.addOperation(axisOp);

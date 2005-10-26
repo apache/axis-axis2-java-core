@@ -1,5 +1,5 @@
 <%@ page import="org.apache.axis2.Constants,
-                 org.apache.axis2.description.ServiceDescription,
+                 org.apache.axis2.description.AxisService,
                  java.util.Collection,
                  java.util.HashMap,
                  java.util.Iterator"%>
@@ -41,17 +41,17 @@
           action = "listOperations";
           buttonName = " View Operations";
           heading = "Select a Service to view Operation specific Chains";
-          disc = "Select a service from the combo and click on the 'View Operations' button to view Operation specific Chains.";
+          disc = "Select a axisService from the combo and click on the 'View Operations' button to view Operation specific Chains.";
       } else if(status != null && status.equals("VIEW")){
           buttonName = " View ";
           action = "viewServiceHandlers";
           heading = "Select a Service to view Service Handlers";
-          disc = "Select a service from the combo and click on the 'View' button to view Service Handlers.";
+          disc = "Select a axisService from the combo and click on the 'View' button to view Service Handlers.";
       } else if (status != null && status.equals("SERVICE_PARAMETER")){
           buttonName = " Edit Parameters ";
           action = Constants.EDIR_SERVICE_PARA;
           heading = "Select a Service to Edit Parameters";
-          disc = "Select a service from the combo and click on the 'Edit Parameters' button to Edit Parameters.";
+          disc = "Select a axisService from the combo and click on the 'Edit Parameters' button to Edit Parameters.";
       }
   %>
 <h1><%=heading%></h1>
@@ -60,12 +60,12 @@
 <table border="0" width="50%" cellspacing="1" cellpadding="1">
          <tr>
         <td width="35%">Select a Service :</td><td width="65%">
-            <select name="service">
+            <select name="axisService">
             <%
                 HashMap services = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
                 Collection serviceCol =  services.values();
                 for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
-                    ServiceDescription axisService = (ServiceDescription)iterator.next();
+                    AxisService axisService = (AxisService)iterator.next();
                     String serviceName = axisService.getName().getLocalPart();
             %> <option  align="left" value="<%=serviceName%>"><%=serviceName%></option>
              <%

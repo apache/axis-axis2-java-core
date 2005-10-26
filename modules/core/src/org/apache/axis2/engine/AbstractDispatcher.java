@@ -22,9 +22,9 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 
 import javax.xml.namespace.QName;
@@ -70,11 +70,11 @@ public abstract class AbstractDispatcher extends AbstractHandler {
             if (relatesTo != null || "".equals(relatesTo)) {
                 OperationContext operationContext = msgctx.getSystemContext().getOperationContext(relatesTo);
                 if (operationContext != null) {
-                    msgctx.setOperationDescription(operationContext.getOperationDescription());
+                    msgctx.setAxisOperation(operationContext.getAxisOperation());
                     msgctx.setOperationContext(operationContext);
                     msgctx.setServiceContext((ServiceContext) operationContext.getParent());
-                    msgctx.setServiceDescription(((ServiceContext) operationContext.getParent()).getServiceConfig());
-                    msgctx.getOperationDescription().registerOperationContext(msgctx, operationContext);
+                    msgctx.setAxisService(((ServiceContext) operationContext.getParent()).getAxisService());
+                    msgctx.getAxisOperation().registerOperationContext(msgctx, operationContext);
                     msgctx.setServiceGroupContextId(((ServiceGroupContext) msgctx.getServiceContext().getParent()).getId());
                 }
             }
@@ -82,19 +82,19 @@ public abstract class AbstractDispatcher extends AbstractHandler {
         }
 
 
-        ServiceDescription serviceDescription = msgctx.getServiceDescription();
-        if (serviceDescription == null) {
-            serviceDescription = findService(msgctx);
-            if (serviceDescription != null) {
-                msgctx.setServiceDescription(serviceDescription);
+        AxisService axisService = msgctx.getAxisService();
+        if (axisService == null) {
+            axisService = findService(msgctx);
+            if (axisService != null) {
+                msgctx.setAxisService(axisService);
                 // TODO Chinthaka : set the Service Group Context to the message Context
             }
         }
 
-        if (msgctx.getServiceDescription() != null && msgctx.getOperationDescription() == null) {
-            OperationDescription operationDescription = findOperation(serviceDescription, msgctx);
-            if (operationDescription != null) {
-                msgctx.setOperationDescription(operationDescription);
+        if (msgctx.getAxisService() != null && msgctx.getAxisOperation() == null) {
+            AxisOperation axisOperation = findOperation(axisService, msgctx);
+            if (axisOperation != null) {
+                msgctx.setAxisOperation(axisOperation);
             }
         }
     }
@@ -106,7 +106,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
      * @return
      * @throws AxisFault
      */
-    public abstract ServiceDescription findService(
+    public abstract AxisService findService(
             MessageContext messageContext) throws AxisFault;
 
     /**
@@ -117,7 +117,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
      * @return
      * @throws AxisFault
      */
-    public abstract OperationDescription findOperation(
-            ServiceDescription service, MessageContext messageContext) throws AxisFault;
+    public abstract AxisOperation findOperation(
+            AxisService service, MessageContext messageContext) throws AxisFault;
 
 }

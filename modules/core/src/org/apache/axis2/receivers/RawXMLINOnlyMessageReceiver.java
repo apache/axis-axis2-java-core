@@ -19,7 +19,7 @@ package org.apache.axis2.receivers;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -75,8 +75,8 @@ public class RawXMLINOnlyMessageReceiver
             Class ImplClass = obj.getClass();
             DependencyManager.configureBusinessLogicProvider(obj, msgContext, null);
 
-            OperationDescription op = msgContext.getOperationContext()
-                    .getOperationDescription();
+            AxisOperation op = msgContext.getOperationContext()
+                    .getAxisOperation();
             if (op == null) {
                 throw new AxisFault(
                         "Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
@@ -101,7 +101,7 @@ public class RawXMLINOnlyMessageReceiver
                 SOAPEnvelope envelope = null;
 
                 String style = msgContext.getOperationContext()
-                        .getOperationDescription()
+                        .getAxisOperation()
                         .getStyle();
 
                 if (WSDLService.STYLE_DOC.equals(style)) {

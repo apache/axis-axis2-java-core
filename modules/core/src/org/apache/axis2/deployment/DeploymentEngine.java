@@ -25,13 +25,13 @@ import org.apache.axis2.deployment.scheduler.DeploymentIterator;
 import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.PhasesInfo;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.OperationDescription;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.ServiceGroupDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.Handler;
@@ -377,44 +377,44 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private void addnewService(ServiceGroupDescription serviceMetaData) throws AxisFault {
+    private void addnewService(AxisServiceGroup axisServiceMetaData) throws AxisFault {
 //        Iterator services = currentArchiveFile.getService().values().iterator();
         Iterator services = currentArchiveFile.getDeploybleServices().iterator();
         while (services.hasNext()) {
-            ServiceDescription serviceDescription = (ServiceDescription) services.next();
-            loadServiceProperties(serviceDescription);
-            serviceDescription.setFileName(currentArchiveFile.getFile().getAbsolutePath());
+            AxisService axisService = (AxisService) services.next();
+            loadServiceProperties(axisService);
+            axisService.setFileName(currentArchiveFile.getFile().getAbsolutePath());
 
             //module form serviceGroup
-            ArrayList groupModules = serviceMetaData.getModules();
+            ArrayList groupModules = axisServiceMetaData.getModules();
             for (int i = 0; i < groupModules.size(); i++) {
                 ModuleDescription module = axisConfig.getModule((QName) groupModules.get(i));
                 if (module != null) {
-                    serviceDescription.engageModule(module, axisConfig);
+                    axisService.engageModule(module, axisConfig);
                 } else {
                     throw new DeploymentException(Messages.getMessage(
-                            DeploymentErrorMsgs.IN_VALID_MODUELE_REF, serviceDescription.getName().
+                            DeploymentErrorMsgs.IN_VALID_MODUELE_REF, axisService.getName().
                             getLocalPart(), ((QName) groupModules.get(i)).getLocalPart()));
                 }
             }
 
             //modules from <service>
-            ArrayList list = serviceDescription.getModules();
+            ArrayList list = axisService.getModules();
             for (int i = 0; i < list.size(); i++) {
                 ModuleDescription module = axisConfig.getModule((QName) list.get(i));
                 if (module != null) {
-                    serviceDescription.engageModule(module, axisConfig);
+                    axisService.engageModule(module, axisConfig);
                 } else {
                     throw new DeploymentException(Messages.getMessage(
-                            DeploymentErrorMsgs.IN_VALID_MODUELE_REF, serviceDescription.getName().
+                            DeploymentErrorMsgs.IN_VALID_MODUELE_REF, axisService.getName().
                             getLocalPart(), ((QName) list.get(i)).getLocalPart()));
                 }
             }
 
-            HashMap opeartions = serviceDescription.getOperations();
+            HashMap opeartions = axisService.getOperations();
             Collection opCol = opeartions.values();
             for (Iterator iterator = opCol.iterator(); iterator.hasNext();) {
-                OperationDescription opDesc = (OperationDescription) iterator.next();
+                AxisOperation opDesc = (AxisOperation) iterator.next();
                 ArrayList modules = opDesc.getModuleRefs();
                 for (int i = 0; i < modules.size(); i++) {
                     QName moduleName = (QName) modules.get(i);
@@ -429,9 +429,9 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
 
             }
-            serviceMetaData.addService(serviceDescription);
+            axisServiceMetaData.addService(axisService);
         }
-        axisConfig.addServiceGroup(serviceMetaData);
+        axisConfig.addServiceGroup(axisServiceMetaData);
     }
 
     /**
@@ -441,7 +441,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @param axisService
      * @throws org.apache.axis2.AxisFault
      */
-    private void loadServiceProperties(ServiceDescription axisService) throws AxisFault {
+    private void loadServiceProperties(AxisService axisService) throws AxisFault {
         Flow inflow = axisService.getInFlow();
         if (inflow != null) {
             addFlowHandlers(inflow);
@@ -573,9 +573,9 @@ public class DeploymentEngine implements DeploymentConstants {
                             String serviceStatus = "";
                             try {
                                 archiveReader.processWSDLs(currentArchiveFile,this);
-                                // ServiceDescription service = archiveReader.createService(currentArchiveFile.getAbsolutePath());
-                                ServiceGroupDescription sericeGroup =
-                                        new ServiceGroupDescription(axisConfig);
+                                // AxisService service = archiveReader.createService(currentArchiveFile.getAbsolutePath());
+                                AxisServiceGroup sericeGroup =
+                                        new AxisServiceGroup(axisConfig);
                                 archiveReader.processServiceGroup(currentArchiveFile.getAbsolutePath(),
                                         this,
                                         sericeGroup,explodedDir);
@@ -723,12 +723,12 @@ public class DeploymentEngine implements DeploymentConstants {
         this.phasesinfo = phasesinfo;
     }
 
-    /* public ServiceDescription deployService(ClassLoader classLoder, InputStream serviceStream, String servieName) throws DeploymentException {
-    ServiceDescription service = null;
+    /* public AxisService deployService(ClassLoader classLoder, InputStream serviceStream, String servieName) throws DeploymentException {
+    AxisService service = null;
     try {
     currentArchiveFileile = new ArchiveFileData(SERVICE, servieName);
     currentArchiveFileile.setClassLoader(classLoder);
-    service = new ServiceDescription();
+    service = new AxisService();
     DeploymentParser schme = new DeploymentParser(serviceStream, this);
     schme.parseServiceXML(service);
     service = loadServiceProperties(service);
@@ -755,7 +755,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @return
      * @throws DeploymentException
      */
-    public ServiceDescription buildService(ServiceDescription axisService,
+    public AxisService buildService(AxisService axisService,
                                            InputStream serviceInputStream,
                                            ClassLoader classLoader) throws DeploymentException {
         try {

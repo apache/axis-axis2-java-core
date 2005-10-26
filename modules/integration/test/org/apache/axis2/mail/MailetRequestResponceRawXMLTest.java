@@ -26,9 +26,9 @@ import org.apache.axis2.clientapi.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.OutInOperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.MessageReceiver;
@@ -79,7 +79,7 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
         
 //        configContext.getAxisConfiguration().engageModule(
 //                new QName(Constants.MODULE_ADDRESSING));
-        ServiceDescription service =
+        AxisService service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
                         operationName);
@@ -107,21 +107,21 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
 
         ConfigurationContext configContext = UtilsMailServer.createClientConfigurationContext();
         
-        ServiceDescription service = new ServiceDescription(serviceName);
-        OperationDescription operation = new OutInOperationDescription(
+        AxisService service = new AxisService(serviceName);
+        AxisOperation axisOperation = new OutInAxisOperation(
                 operationName);
-        operation.setMessageReceiver(new MessageReceiver() {
+        axisOperation.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messgeCtx) throws AxisFault {
                 envelope = messgeCtx.getEnvelope();
             }
         });
-        service.addOperation(operation);
+        service.addOperation(axisOperation);
         configContext.getAxisConfiguration().addService(service);
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
 
 
 
-        ServiceContext serviceContext = Utils.fillContextInformation(operation,  service, configContext);
+        ServiceContext serviceContext = Utils.fillContextInformation(axisOperation,  service, configContext);
 
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
                 serviceContext);

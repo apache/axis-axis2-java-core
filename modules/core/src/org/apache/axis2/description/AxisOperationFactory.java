@@ -21,46 +21,41 @@ import org.apache.wsdl.WSDLConstants;
 *
 */
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Oct 1, 2005
- * Time: 6:41:39 PM
- */
-public class OperationDescriptionFactory implements WSDLConstants {
+public class AxisOperationFactory implements WSDLConstants {
 
-    public static OperationDescription getOperetionDescription(int mepURI) throws AxisFault {
-        OperationDescription abOpdesc ;
+    public static AxisOperation getOperetionDescription(int mepURI) throws AxisFault {
+        AxisOperation abOpdesc ;
         switch(mepURI){
             case MEP_CONSTANT_IN_ONLY : {
-                abOpdesc = new InOnlyOperationDescription();
+                abOpdesc = new InOnlyAxisOperation();
                 break;
             }
             case MEP_CONSTANT_OUT_ONLY : {
-                abOpdesc = new OutOnlyOperationDescription();
+                abOpdesc = new OutOnlyAxisOperation();
                 break;
             }
             case MEP_CONSTANT_IN_OUT : {
-                abOpdesc = new InOutOperationDescrition();
+                abOpdesc = new InOutAxisOperation();
                 break;
             }
             case MEP_CONSTANT_IN_OPTIONAL_OUT : {
-                abOpdesc = new InOutOperationDescrition();
+                abOpdesc = new InOutAxisOperation();
                 break;
             }
             case MEP_CONSTANT_ROBUST_IN_ONLY : {
-                abOpdesc = new InOutOperationDescrition();
+                abOpdesc = new InOutAxisOperation();
                 break;
             }
             case MEP_CONSTANT_OUT_IN : {
-                abOpdesc = new OutInOperationDescription();
+                abOpdesc = new OutInAxisOperation();
                 break;
             }
             case MEP_CONSTANT_OUT_OPTIONAL_IN : {
-                abOpdesc = new OutInOperationDescription();
+                abOpdesc = new OutInAxisOperation();
                 break;
             }
             case MEP_CONSTANT_ROBUST_OUT_ONLY : {
-                abOpdesc = new OutInOperationDescription();
+                abOpdesc = new OutInAxisOperation();
                 break;
             }
             default : {
@@ -72,24 +67,24 @@ public class OperationDescriptionFactory implements WSDLConstants {
 
 
 
-    public static OperationDescription getOperetionDescription(String mepURI) throws AxisFault {
-        OperationDescription abOpdesc ;
+    public static AxisOperation getOperetionDescription(String mepURI) throws AxisFault {
+        AxisOperation abOpdesc ;
         if(MEP_URI_IN_ONLY.equals(mepURI)){
-            abOpdesc = new InOnlyOperationDescription();
+            abOpdesc = new InOnlyAxisOperation();
         } else if (MEP_URI_OUT_ONLY.equals(mepURI)) {
-            abOpdesc = new OutOnlyOperationDescription();
+            abOpdesc = new OutOnlyAxisOperation();
         } else if (MEP_URI_IN_OUT.equals(mepURI)) {
-            abOpdesc = new InOutOperationDescrition();
+            abOpdesc = new InOutAxisOperation();
         }else if(MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)){
-            abOpdesc = new InOutOperationDescrition();
+            abOpdesc = new InOutAxisOperation();
         } else if(MEP_URI_IN_ONLY.equals(mepURI)) {
-            abOpdesc = new InOutOperationDescrition();
+            abOpdesc = new InOutAxisOperation();
         } else if(MEP_URI_OUT_IN.equals(mepURI)) {
-            abOpdesc = new OutInOperationDescription();
+            abOpdesc = new OutInAxisOperation();
         } else if (MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)) {
-            abOpdesc = new OutInOperationDescription();
+            abOpdesc = new OutInAxisOperation();
         } else if (MEP_URI_ROBUST_OUT_ONLY.equals(mepURI) ) {
-            abOpdesc = new OutInOperationDescription();
+            abOpdesc = new OutInAxisOperation();
         }  else  {
             throw new AxisFault(Messages.getMessage("unSupportedMEP","ID is "+ mepURI));
         }

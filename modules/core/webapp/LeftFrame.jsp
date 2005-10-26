@@ -154,7 +154,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="removeService">Undeploy service</a>
+         <a href="removeService">Undeploy axisService</a>
        </td>
     </tr>
     <tr>

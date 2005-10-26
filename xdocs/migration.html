@@ -44,8 +44,8 @@ public class TestClient {
         public static void main(String [] args) {
                 try {
                         String endpoint = ...
-                        Service service = new Service();
-                        Call call = (Call) service.createCall();
+                        Service axisService = new Service();
+                        Call call = (Call) axisService.createCall();
                         call.setTargetEndpointAddress( new java.net.URL(endpoint) );
                         call.setOperationName(new QName("http://soapinterop.org/", echoString"));
                         String ret = (String) call.invoke( new Object[] { "Hello!" } );

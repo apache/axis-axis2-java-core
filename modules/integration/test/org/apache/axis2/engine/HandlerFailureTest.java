@@ -23,9 +23,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.FlowImpl;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -90,7 +90,7 @@ public class HandlerFailureTest extends TestCase {
                 new SpeakingHandler(),
                 PhaseMetadata.PHASE_POLICY_DETERMINATION);
 
-        ServiceDescription service = Utils.createSimpleService(serviceName,
+        AxisService service = Utils.createSimpleService(serviceName,
                 Echo.class.getName(),
                 operationName);
         service.setInFlow(flow);
@@ -106,7 +106,7 @@ public class HandlerFailureTest extends TestCase {
     }
 
 //    public void testFailureAtServerResponseFlow() throws Exception {
-//        ServiceDescription service = Utils.createSimpleService(serviceName,org.apache.axis2.engine.Echo.class.getName(),operationName);
+//        AxisService service = Utils.createSimpleService(serviceName,org.apache.axis2.engine.Echo.class.getName(),operationName);
 // 
 //
 //        Flow flow = new FlowImpl();
@@ -127,7 +127,7 @@ public class HandlerFailureTest extends TestCase {
 //        Utils.addHandler(flow, new SpeakingHandler(),PhaseMetadata.PHASE_POLICY_DETERMINATION);
 //        service.setInFlow(flow);
 //
-//        OperationDescription operation = new OperationDescription(operationName);
+//        AxisOperation operation = new AxisOperation(operationName);
 //        service.addOperation(operation);
 //
 //        UtilServer.start();

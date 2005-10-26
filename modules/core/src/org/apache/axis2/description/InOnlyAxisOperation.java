@@ -1,8 +1,8 @@
 package org.apache.axis2.description;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.AxisFault;
 import org.apache.wsdl.WSDLOperation;
 
 import javax.xml.namespace.QName;
@@ -27,26 +27,26 @@ import javax.xml.namespace.QName;
 /**
  * Author: Deepal Jayasinghe
  * Date: Oct 3, 2005
- * Time: 6:04:11 PM
+ * Time: 2:06:31 PM
  */
-public class OutOnlyOperationDescription extends OperationDescription {
+public class InOnlyAxisOperation extends AxisOperation {
 
-    public OutOnlyOperationDescription(WSDLOperation wsdlopeartion) {
+    public InOnlyAxisOperation(WSDLOperation wsdlopeartion) {
         super(wsdlopeartion);
     }
 
-    public OutOnlyOperationDescription() {
+    public InOnlyAxisOperation() {
         super();
     }
 
-    public OutOnlyOperationDescription(QName name) {
-        super(name);  
+    public InOnlyAxisOperation(QName name) {
+        super(name);
     }
 
     public void addMessageContext(MessageContext msgContext, OperationContext opContext)
             throws AxisFault {
         if(!opContext.isComplete()){
-            opContext.getMessageContexts().put(MESSAGE_LABEL_OUT_VALUE,msgContext);
+            opContext.getMessageContexts().put(MESSAGE_LABEL_IN_VALUE,msgContext);
             opContext.setComplete(true);
         } else {
             throw new AxisFault("Invalid messge addition , operation context completed") ;

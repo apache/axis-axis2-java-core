@@ -18,18 +18,18 @@ package org.apache.axis2.context;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.InOutOperationDescrition;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 
 import javax.xml.namespace.QName;
 
 public class ContextHierarchyTest extends TestCase {
-    private OperationDescription operationDescription;
-    private ServiceDescription serviceDescription;
+    private AxisOperation axisOperation;
+    private AxisService axisService;
     private AxisConfiguration axisConfiguration;
 
     public ContextHierarchyTest(String arg0) {
@@ -37,23 +37,23 @@ public class ContextHierarchyTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        operationDescription = new InOutOperationDescrition(new QName("Temp"));
-        serviceDescription = new ServiceDescription(new QName("Temp"));
+        axisOperation = new InOutAxisOperation(new QName("Temp"));
+        axisService = new AxisService(new QName("Temp"));
         axisConfiguration = new AxisConfigurationImpl();
-        serviceDescription.addOperation(operationDescription);
-        axisConfiguration.addService(serviceDescription);
+        axisService.addOperation(axisOperation);
+        axisConfiguration.addService(axisService);
     }
 
     public void testCompleteHiracy() throws AxisFault {
         ConfigurationContext configurationContext =
                 new ConfigurationContext(axisConfiguration);
-        ServiceGroupContext serviceGroupContext = serviceDescription.getParent().getServiceGroupContext(configurationContext);
+        ServiceGroupContext serviceGroupContext = axisService.getParent().getServiceGroupContext(configurationContext);
         ServiceContext serviceCOntext =
-                serviceGroupContext.getServiceContext(serviceDescription.getName().getLocalPart());
+                serviceGroupContext.getServiceContext(axisService.getName().getLocalPart());
         MessageContext msgctx =
                 new MessageContext(configurationContext);
         OperationContext opContext =
-                operationDescription.findOperationContext(msgctx,
+                axisOperation.findOperationContext(msgctx,
                         serviceCOntext);
         msgctx.setServiceContext(serviceCOntext);
 

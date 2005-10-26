@@ -26,9 +26,9 @@ import org.apache.axis2.clientapi.MessageSender;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.OutInOperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -76,18 +76,18 @@ public class MailOneWayRawXMLTest extends TestCase {
                         new QName(Constants.TRANSPORT_MAIL)));
         ml.start();
 
-        ServiceDescription service = new ServiceDescription(serviceName);
-        OperationDescription operation = new OutInOperationDescription(
+        AxisService service = new AxisService(serviceName);
+        AxisOperation axisOperation = new OutInAxisOperation(
                 operationName);
-        operation.setMessageReceiver(new MessageReceiver() {
+        axisOperation.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messgeCtx) throws AxisFault {
                 envelope = messgeCtx.getEnvelope();
             }
         });
-        service.addOperation(operation);
+        service.addOperation(axisOperation);
         configContext.getAxisConfiguration().addService(service);
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
-        ServiceContext serviceContext = Utils.fillContextInformation(operation,  service, configContext);
+        ServiceContext serviceContext = Utils.fillContextInformation(axisOperation,  service, configContext);
     }
 
     protected void tearDown() throws Exception {
@@ -107,18 +107,18 @@ public class MailOneWayRawXMLTest extends TestCase {
     }
 
     public void testOneWay() throws Exception {
-        ServiceDescription service = new ServiceDescription(serviceName);
-        OperationDescription operation = new OutInOperationDescription(
+        AxisService service = new AxisService(serviceName);
+        AxisOperation axisOperation = new OutInAxisOperation(
                 operationName);
-        operation.setMessageReceiver(new MessageReceiver() {
+        axisOperation.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messgeCtx) throws AxisFault {
                 envelope = messgeCtx.getEnvelope();
             }
         });
-        service.addOperation(operation);
+        service.addOperation(axisOperation);
         configContext.getAxisConfiguration().addService(service);
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
-        ServiceContext serviceContext = Utils.fillContextInformation(operation,  service, configContext);
+        ServiceContext serviceContext = Utils.fillContextInformation(axisOperation,  service, configContext);
 
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 

@@ -17,8 +17,8 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
@@ -31,7 +31,7 @@ import java.util.Map;
 
 /**
  * An OperationContext represents a running "instance" of an operation, which is
- * represented by an OperationDescription object. This concept is needed to allow
+ * represented by an AxisOperation object. This concept is needed to allow
  * messages to be grouped into operations as in WSDL 2.0-speak operations are
  * essentially arbitrary message exchange patterns. So as messages are being
  * exchanged the OperationContext remembers the state of where in the message
@@ -53,9 +53,9 @@ public class OperationContext extends AbstractContext {
 
 //    private MessageContext outMessageContext;
 
-    // the OperationDescription of which this is a running instance. The MEP of this
-    // OperationDescription must be one of the 8 predefined ones in WSDL 2.0.
-    private transient OperationDescription axisOperation;
+    // the AxisOperation of which this is a running instance. The MEP of this
+    // AxisOperation must be one of the 8 predefined ones in WSDL 2.0.
+    private transient AxisOperation axisOperation;
 
     private int operationMEP;
 
@@ -103,42 +103,42 @@ public class OperationContext extends AbstractContext {
     /**
      * Construct a new OperationContext.
      *
-     * @param axisOperation  the OperationDescription whose running instances' state this
+     * @param axisOperation  the AxisOperation whose running instances' state this
      *                       OperationContext represents.
      * @param serviceContext the parent ServiceContext representing any state related to
      *                       the set of all operations of the service.
      */
-    public OperationContext(OperationDescription axisOperation,
+    public OperationContext(AxisOperation axisOperation,
                             ServiceContext serviceContext) {
         super(serviceContext);
         this.messageContexts = new HashMap();
         this.axisOperation = axisOperation;
         this.operationMEP = axisOperation.getAxisSpecifMEPConstant();
-        this.operationContextMap = getServiceContext().getEngineContext()
+        this.operationContextMap = getServiceContext().getConfigurationContext()
                 .getOperationContextMap();
 
         operationDescName = axisOperation.getName();
-        ServiceDescription serviceDescription = axisOperation.getParent();
-        if (serviceDescription!=null)
-            serviceDescName = serviceDescription.getName();
+        AxisService axisService = axisOperation.getParent();
+        if (axisService !=null)
+            serviceDescName = axisService.getName();
     }
 
-    public OperationContext(OperationDescription axisOperation) {
+    public OperationContext(AxisOperation axisOperation) {
         super(null);
         this.messageContexts = new HashMap();
         this.axisOperation = axisOperation;
         this.operationMEP = axisOperation.getAxisSpecifMEPConstant();
 
         operationDescName = axisOperation.getName();
-        ServiceDescription serviceDescription = axisOperation.getParent();
-        if (serviceDescription!=null)
-            serviceDescName = serviceDescription.getName();
+        AxisService axisService = axisOperation.getParent();
+        if (axisService !=null)
+            serviceDescName = axisService.getName();
     }
 
     /**
      * @return Returns the axisOperation.
      */
-    public OperationDescription getOperationDescription() {
+    public AxisOperation getAxisOperation() {
         return axisOperation;
     }
 
@@ -164,7 +164,7 @@ public class OperationContext extends AbstractContext {
      * When a new message is added to the <code>MEPContext</code> the logic
      * should be included remove the MEPContext from the table in the
      * <code>EngineContext</code>. Example: IN_IN_OUT At the second IN
-     * message the MEPContext should be removed from the OperationDescription
+     * message the MEPContext should be removed from the AxisOperation
      *
      * @param msgContext
      */
@@ -220,7 +220,7 @@ public class OperationContext extends AbstractContext {
 
     public void setParent(AbstractContext context) {
         super.setParent(context);
-        this.operationContextMap = getServiceContext().getEngineContext()
+        this.operationContextMap = getServiceContext().getConfigurationContext()
                 .getOperationContextMap();
     }
 

@@ -11,8 +11,8 @@ import com.ibm.wsdl.TypesImpl;
 import com.ibm.wsdl.extensions.schema.SchemaImpl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.extensions.SchemaUtility;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.wsdl.codegen.extension.XMLBeansExtension;
@@ -67,10 +67,10 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
     protected Log log = LogFactory.getLog(getClass());
     private Definition definition;
 
-    public boolean isRelevant(ServiceDescription serviceDescription) throws AxisFault {
+    public boolean isRelevant(AxisService axisService) throws AxisFault {
         try {
-            ClassLoader classLoader = serviceDescription.getClassLoader();
-            String serviceClassName = (String) serviceDescription.getParameter("ServiceClass").getValue();
+            ClassLoader classLoader = axisService.getClassLoader();
+            String serviceClassName = (String) axisService.getParameter("ServiceClass").getValue();
 
             Class serviceImplementation = classLoader.loadClass(serviceClassName);
 
@@ -91,35 +91,35 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
             }
             return false;
         } catch (ClassNotFoundException e) {
-            log.error("Can not load the service " + serviceDescription + " from the given class loader");
+            log.error("Can not load the service " + axisService + " from the given class loader");
             throw new AxisFault(e);
         }
     }
 
-    public void fillInformationFromServiceDescription(ServiceDescription serviceDescription, Definition definition) throws AxisFault {
+    public void fillInformationFromAxisService(AxisService axisService, Definition definition) throws AxisFault {
         this.definition = definition;
 
         // first fill the schema information
-//        getSchema(serviceDescription);
+//        getSchema(axisService);
 
         // now fill port type and message elements
-        createMessagesAndPortTypes(serviceDescription);
+        createMessagesAndPortTypes(axisService);
     }
 
-    public Definition fillInformationFromServiceDescription(ServiceDescription serviceDescription) throws AxisFault {
+    public Definition fillInformationFromAxisService(AxisService axisService) throws AxisFault {
         this.definition = new DefinitionImpl();
-        this.fillInformationFromServiceDescription(serviceDescription, this.definition);
+        this.fillInformationFromAxisService(axisService, this.definition);
         return definition;
     }
 
-    private void getSchema(ServiceDescription serviceDescription) throws AxisFault {
-        if (!isRelevant(serviceDescription)) {
+    private void getSchema(AxisService axisService) throws AxisFault {
+        if (!isRelevant(axisService)) {
             return;
         }
 
 
         try {
-            File file = new File(serviceDescription.getFileName());
+            File file = new File(axisService.getFileName());
             ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(file));
 
             ZipEntry entry;
@@ -132,7 +132,7 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
             while ((entry = zipInputStream.getNextEntry()) != null) {
                 entryName = entry.getName();
                 if (entryName.startsWith(XMLBeansExtension.SCHEMA_FOLDER) && entryName.endsWith(".xsd")) {
-                    InputStream schemaEntry = serviceDescription.getClassLoader().getResourceAsStream(entryName);
+                    InputStream schemaEntry = axisService.getClassLoader().getResourceAsStream(entryName);
                     schema = new SchemaImpl();
                     Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(schemaEntry);
                     schema.setElement(document.getDocumentElement());
@@ -168,18 +168,18 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
 
     }
 
-    private void createMessagesAndPortTypes(ServiceDescription serviceDescription) throws AxisFault {
+    private void createMessagesAndPortTypes(AxisService axisService) throws AxisFault {
 
-        HashMap mappings = readMappings(serviceDescription);
+        HashMap mappings = readMappings(axisService);
 
 
         try {
-            ClassLoader classLoader = serviceDescription.getClassLoader();
-            String serviceClassName = (String) serviceDescription.getParameter("ServiceClass").getValue();
+            ClassLoader classLoader = axisService.getClassLoader();
+            String serviceClassName = (String) axisService.getParameter("ServiceClass").getValue();
 
             // create PortType with class name
             PortType portType = new PortTypeImpl();
-            portType.setQName(serviceDescription.getName());
+            portType.setQName(axisService.getName());
             definition.addPortType(portType);
             portType.setUndefined(false);
 
@@ -191,13 +191,13 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
             Input wsdlOperationInput;
             Output wsdlOperationOutput;
 
-            Iterator operationDescIter = serviceDescription.getOperations().values().iterator();
+            Iterator operationDescIter = axisService.getOperations().values().iterator();
             while (operationDescIter.hasNext()) {
-                OperationDescription operation = (OperationDescription) operationDescIter.next();
-                QName methodName = operation.getName();
+                AxisOperation axisOperation = (AxisOperation) operationDescIter.next();
+                QName methodName = axisOperation.getName();
                 Method method = getMethod(methods, methodName.getLocalPart());
 
-                // create operation
+                // create axisOperation
                 wsdlOperation = new OperationImpl();
                 wsdlOperation.setName(methodName.getLocalPart());
                 wsdlOperation.setUndefined(false);
@@ -207,7 +207,7 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
                 Message message = getMessage(mappings, returnType);
                 definition.addMessage(message);
 
-                // add the same message as the output of the operation
+                // add the same message as the output of the axisOperation
                 wsdlOperationOutput = new OutputImpl();
                 wsdlOperationOutput.setMessage(message);
                 wsdlOperation.setOutput(wsdlOperationOutput);
@@ -226,7 +226,7 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
 
 
         } catch (ClassNotFoundException e) {
-            log.error("Can not load the service " + serviceDescription + " from the given class loader");
+            log.error("Can not load the service " + axisService + " from the given class loader");
             throw new AxisFault(e);
         }
 
@@ -248,10 +248,10 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
         return message;
     }
 
-    private HashMap readMappings(ServiceDescription serviceDescription) throws AxisFault {
+    private HashMap readMappings(AxisService axisService) throws AxisFault {
         HashMap mappings = new HashMap();
         try {
-            File file = new File(serviceDescription.getFileName());
+            File file = new File(axisService.getFileName());
             ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(file));
 
             ZipEntry entry;
@@ -259,7 +259,7 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
             while ((entry = zipInputStream.getNextEntry()) != null) {
                 entryName = entry.getName();
                 if (entryName.startsWith(XMLBeansExtension.MAPPING_FOLDER) && entryName.endsWith(".xml")) {
-                    InputStream schemaEntry = serviceDescription.getClassLoader().getResourceAsStream(entryName);
+                    InputStream schemaEntry = axisService.getClassLoader().getResourceAsStream(entryName);
                     OMElement mappingsElement = new StAXOMBuilder(schemaEntry).getDocumentElement();
                     Iterator mappingElementsIter = mappingsElement.getChildElements();
                     while (mappingElementsIter.hasNext()) {

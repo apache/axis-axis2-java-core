@@ -16,7 +16,7 @@
 
 package org.apache.axis2.engine;
 
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 
 public class AxisEvent {
 
@@ -29,16 +29,16 @@ public class AxisEvent {
     public static final int SERVICE_DEPLOY = 1;
     public static final int SERVICE_REMOVE = 0;
 
-    private ServiceDescription service ;
+    private AxisService service ;
 
     private int EVENT_TYPE;
 
-    public AxisEvent(ServiceDescription service, int EVENT_TYPE) {
+    public AxisEvent(AxisService service, int EVENT_TYPE) {
         this.service = service;
         this.EVENT_TYPE = EVENT_TYPE;
     }
 
-    public ServiceDescription getService() {
+    public AxisService getService() {
         return service;
     }
 

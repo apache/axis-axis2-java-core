@@ -26,7 +26,7 @@ import org.apache.axis2.clientapi.AsyncResult;
 import org.apache.axis2.clientapi.Callback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -53,7 +53,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
     //private Thread thisThread;
     // private SimpleHTTPServer sas;
     private ServiceContext serviceContext;
-    private ServiceDescription service;
+    private AxisService service;
 
     private boolean finish = false;
 

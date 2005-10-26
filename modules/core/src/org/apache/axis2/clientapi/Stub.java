@@ -22,7 +22,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -38,7 +38,6 @@ import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,7 +50,7 @@ public abstract class Stub {
 
 
     protected ConfigurationContext _configurationContext;
-    protected static ServiceDescription _service;
+    protected static AxisService _service;
     protected ServiceContext _serviceContext;
     protected EndpointReference toEPR;
 

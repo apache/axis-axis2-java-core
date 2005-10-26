@@ -19,7 +19,7 @@ package org.apache.axis2.groovy;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.EchoRawXMLTest;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -70,7 +70,7 @@ public class GroovyServiceTest extends TestCase {
 
 
     public void testServiceExists() throws Exception {
-        ServiceDescription desc = UtilServer.getConfigurationContext().
+        AxisService desc = UtilServer.getConfigurationContext().
                 getAxisConfiguration().getService(serviceName.getLocalPart());
         assertNotNull(desc);
     }

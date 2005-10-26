@@ -98,9 +98,9 @@ public class MessageContext extends AbstractContext {
     private ServiceContext serviceContext;
     private ServiceGroupContext serviceGroupContext;
 
-    private transient OperationDescription operationDescription;
-    private transient ServiceDescription serviceDescription;
-    private transient ServiceGroupDescription serviceGroupDescription;
+    private transient AxisOperation axisOperation;
+    private transient AxisService axisService;
+    private transient AxisServiceGroup axisServiceGroup;
     private ConfigurationContext configurationContext;
 
     private transient TransportInDescription transportIn;
@@ -175,11 +175,11 @@ public class MessageContext extends AbstractContext {
 
     QName transportOutname = null;
 
-    String serviceGroupDescId = null;
+    String serviceGroupId = null;
 
     QName serviceDescName = null;
 
-    QName operationDescName = null;
+    QName axisOperationName = null;
 
     /**
      * The method is used to do the intialization of the EngineContext
@@ -191,12 +191,12 @@ public class MessageContext extends AbstractContext {
             transportIn = axisConfiguration.getTransportIn(transportInName);
         if (transportOutname != null)
             transportOut = axisConfiguration.getTransportOut(transportOutname);
-        if (serviceGroupDescId != null)
-            serviceGroupDescription = axisConfiguration.getServiceGroup(serviceGroupDescId);
+        if (serviceGroupId != null)
+            axisServiceGroup = axisConfiguration.getServiceGroup(serviceGroupId);
         if (serviceDescName != null)
-            serviceDescription = axisConfiguration.getService(serviceDescName.getLocalPart());
-        if (operationDescName != null)
-            operationDescription = serviceDescription.getOperation(operationDescName);
+            axisService = axisConfiguration.getService(serviceDescName.getLocalPart());
+        if (axisOperationName != null)
+            axisOperation = axisService.getOperation(axisOperationName);
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
@@ -204,12 +204,12 @@ public class MessageContext extends AbstractContext {
             transportInName = transportIn.getName();
         if (transportOut != null)
             transportOutname = transportOut.getName();
-        if (serviceGroupDescription != null)
-            serviceGroupDescId = serviceGroupDescription.getServiceGroupName();
-        if (serviceDescription != null)
-            serviceDescName = serviceDescription.getName();
-        if (operationDescription != null)
-            operationDescName = operationDescription.getName();
+        if (axisServiceGroup != null)
+            serviceGroupId = axisServiceGroup.getServiceGroupName();
+        if (axisService != null)
+            serviceDescName = axisService.getName();
+        if (axisOperation != null)
+            axisOperationName = axisOperation.getName();
 
         out.defaultWriteObject();
     }
@@ -548,7 +548,7 @@ public class MessageContext extends AbstractContext {
         }
         this.setParent(operationContext);
         if (operationContext != null) {
-            this.setOperationDescription(operationContext.getOperationDescription());
+            this.setAxisOperation(operationContext.getAxisOperation());
         }
     }
 
@@ -606,7 +606,7 @@ public class MessageContext extends AbstractContext {
         if (operationContext != null && operationContext.getParent() != null) {
             operationContext.setParent(context);
         }
-        this.setServiceDescription(context.getServiceConfig());
+        this.setAxisService(context.getAxisService());
     }
 
     /**
@@ -622,8 +622,8 @@ public class MessageContext extends AbstractContext {
      * any levle via this method , and the preferance is as follows,
      * 1. Search in operation description if its there
      * 2. if the paramter not found or operationContext is null will search in
-     * ServiceDescription
-     * 3. If the serviceDescription is null or , the paramter does not found will serach in
+     * AxisService
+     * 3. If the axisService is null or , the paramter does not found will serach in
      * AxisConfiguration
      *
      * @param key
@@ -631,23 +631,23 @@ public class MessageContext extends AbstractContext {
      */
     public Parameter getParameter(String key) {
         Parameter param = null;
-        if (getOperationDescription() != null) {
-            OperationDescription opDesc = getOperationDescription();
+        if (getAxisOperation() != null) {
+            AxisOperation opDesc = getAxisOperation();
             param = opDesc.getParameter(key);
             if(param !=null){
                 return param;
             }
         }
-        if (getServiceDescription() != null) {
-            ServiceDescription serviceDesc = getServiceDescription();
-            param = serviceDesc.getParameter(key);
+        if (getAxisService() != null) {
+            AxisService axisService = getAxisService();
+            param = axisService.getParameter(key);
             if(param !=null){
                 return param;
             }
         }
-        if (getServiceGroupDescription() != null) {
-            ServiceGroupDescription serviceDesc = getServiceGroupDescription();
-            param = serviceDesc.getParameter(key);
+        if (getAxisServiceGroup() != null) {
+            AxisServiceGroup axisServiceDesc = getAxisServiceGroup();
+            param = axisServiceDesc.getParameter(key);
             if(param !=null){
                 return param;
             }
@@ -686,8 +686,8 @@ public class MessageContext extends AbstractContext {
     public Parameter getModuleParameter(String key, String moduleName, HandlerDescription handler) {
         Parameter param = null;
         ModuleConfiguration moduleConfig = null;
-        if (getOperationDescription() != null) {
-            OperationDescription opDesc = getOperationDescription();
+        if (getAxisOperation() != null) {
+            AxisOperation opDesc = getAxisOperation();
             moduleConfig = opDesc.getModuleConfig(new QName(moduleName));
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);
@@ -701,30 +701,30 @@ public class MessageContext extends AbstractContext {
                 }
             }
         }
-        if (getServiceDescription() != null) {
-            ServiceDescription serviceDesc = getServiceDescription();
-            moduleConfig = serviceDesc.getModuleConfig(new QName(moduleName));
+        if (getAxisService() != null) {
+            AxisService axisService = getAxisService();
+            moduleConfig = axisService.getModuleConfig(new QName(moduleName));
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);
                 if(param !=null){
                     return param;
                 } else {
-                    param = serviceDesc.getParameter(key);
+                    param = axisService.getParameter(key);
                     if(param !=null){
                         return param;
                     }
                 }
             }
         }
-        if (getServiceGroupDescription() != null) {
-            ServiceGroupDescription serviceDesc = getServiceGroupDescription();
-            moduleConfig = serviceDesc.getModuleConfig(new QName(moduleName));
+        if (getAxisServiceGroup() != null) {
+            AxisServiceGroup axisServiceDesc = getAxisServiceGroup();
+            moduleConfig = axisServiceDesc.getModuleConfig(new QName(moduleName));
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);
                 if(param !=null){
                     return param;
                 } else {
-                    param = serviceDesc.getParameter(key);
+                    param = axisServiceDesc.getParameter(key);
                     if(param !=null){
                         return param;
                     }
@@ -889,35 +889,35 @@ public class MessageContext extends AbstractContext {
         this.serviceGroupContext = serviceGroupContext;
     }
 
-    public OperationDescription getOperationDescription() {
-        return operationDescription;
+    public AxisOperation getAxisOperation() {
+        return axisOperation;
     }
 
-    public void setOperationDescription(OperationDescription operationDescription) {
-        this.operationDescription = operationDescription;
-        this.operationDescName = operationDescription.getName();
-        if (operationDescription != null)
-            this.operationDescName = operationDescription.getName();
+    public void setAxisOperation(AxisOperation axisOperation) {
+        this.axisOperation = axisOperation;
+        this.axisOperationName = axisOperation.getName();
+        if (axisOperation != null)
+            this.axisOperationName = axisOperation.getName();
     }
 
-    public ServiceDescription getServiceDescription() {
-        return serviceDescription;
+    public AxisService getAxisService() {
+        return axisService;
     }
 
-    public void setServiceDescription(ServiceDescription serviceDescription) {
-        this.serviceDescription = serviceDescription;
-        if (serviceDescription != null)
-            this.serviceDescName = serviceDescription.getName();
+    public void setAxisService(AxisService axisService) {
+        this.axisService = axisService;
+        if (axisService != null)
+            this.serviceDescName = axisService.getName();
     }
 
-    public ServiceGroupDescription getServiceGroupDescription() {
-        return serviceGroupDescription;
+    public AxisServiceGroup getAxisServiceGroup() {
+        return axisServiceGroup;
     }
 
-    public void setServiceGroupDescription(ServiceGroupDescription serviceGroupDescription) {
-        if (serviceGroupDescription != null) {
-            this.serviceGroupDescId = serviceGroupDescription.getServiceGroupName();
-            this.serviceGroupDescription = serviceGroupDescription;
+    public void setAxisServiceGroup(AxisServiceGroup axisServiceGroup) {
+        if (axisServiceGroup != null) {
+            this.serviceGroupId = axisServiceGroup.getServiceGroupName();
+            this.axisServiceGroup = axisServiceGroup;
         }
     }
 

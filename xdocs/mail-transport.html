@@ -75,10 +75,10 @@ mail server side. <br>
         ml.start();
 
         // Setup a service that will echo what we send to the server.
-        ServiceDescription service = Utils.createSimpleService(serviceName,
+        AxisService axisService = Utils.createSimpleService(serviceName,
                 Echo.class.getName(), new QName("echoOMElement"));
-        configContext.getAxisConfiguration().addService(service);
-        Utils.resolvePhases(configContext.getAxisConfiguration(), service);
+        configContext.getAxisConfiguration().addService(axisService);
+        Utils.resolvePhases(configContext.getAxisConfiguration(), axisService);
         ServiceContext serviceContext = configContext
                 .createServiceContext(new QName("EchoXMLService"));
 </pre></source>
@@ -87,21 +87,21 @@ server working through mail, with a single service. If you need to
 have a look under the hood have a look at the MailServer and
 UtilsMailServer classes.</p>
 <p>Moving onto the client side
-have a look at the code listing below. It will call the service that
+have a look at the code listing below. It will call the axisService that
 was setup on the previous code listing.</p>
 <source><pre>
         ConfigurationContext configContext = UtilsMailServer
                 .createClientConfigurationContext();
-        ServiceDescription service = new ServiceDescription(serviceName);
-        OperationDescription operation = new OperationDescription(operationName);
-        operation.setMessageReceiver(new MessageReceiver() {
+        AxisService axisService = new AxisService(serviceName);
+        AxisOperation axisOperation = new AxisOperation(operationName);
+        axisOperation.setMessageReceiver(new MessageReceiver() {
                 public void receive(MessageContext messgeCtx) throws AxisFault {
                         envelope = messgeCtx.getEnvelope();
                 }
         });
-        service.addOperation(operation);
-        configContext.getAxisConfiguration().addService(service);
-        Utils.resolvePhases(configContext.getAxisConfiguration(), service);
+        axisService.addOperation(axisOperation);
+        configContext.getAxisConfiguration().addService(axisService);
+        Utils.resolvePhases(configContext.getAxisConfiguration(), axisService);
         ServiceContext serviceContext = configContext
                 .createServiceContext(serviceName);
         org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
@@ -109,7 +109,7 @@ was setup on the previous code listing.</p>
         call.setTo(targetEPR);
         call.setTransportInfo(Constants.TRANSPORT_MAIL,
                 Constants.TRANSPORT_MAIL, true);
-        // Create a callback to set to the service invocation.
+        // Create a callback to set to the axisService invocation.
         Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
                         try {
@@ -176,10 +176,10 @@ modification to the server-side code.</p>
         ml.start();
 
         // Setup a simple service.
-        ServiceDescription service = Utils.createSimpleService(serviceName,
+        AxisService axisService = Utils.createSimpleService(serviceName,
                 Echo.class.getName(), operationName);
-        configContext.getAxisConfiguration().addService(service);
-        Utils.resolvePhases(configContext.getAxisConfiguration(), service);
+        configContext.getAxisConfiguration().addService(axisService);
+        Utils.resolvePhases(configContext.getAxisConfiguration(), axisService);
         ServiceContext serviceContext = configContext.createServiceContext(serviceName);
 </pre></source>
 <p>We have to create a separate ConfigurationContext and then use that. We are done; wasn't that simple?</p>

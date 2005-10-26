@@ -22,8 +22,8 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.ModuleBuilder;
 import org.apache.axis2.deployment.ServiceBuilder;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.ServiceDescription;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
@@ -44,7 +44,7 @@ public class ParamterLocked extends TestCase {
     public void testOveride_Non_locked_Para_Service(){
         try {
             assertNotNull(ar);
-            ServiceDescription service = new ServiceDescription();
+            AxisService service = new AxisService();
             ar.addService(service);
             InputStream in = new FileInputStream(repo + "/service_overide_non_locked_para.xml");
             ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
@@ -65,7 +65,7 @@ public class ParamterLocked extends TestCase {
      public void testOveride_locked_Para_Service(){
         try {
             assertNotNull(ar);
-            ServiceDescription service = new ServiceDescription();
+            AxisService service = new AxisService();
             ar.addService(service);
             InputStream in = new FileInputStream(repo + "/service_overide_locked_para.xml");
             ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
@@ -86,7 +86,7 @@ public class ParamterLocked extends TestCase {
     public void testOveride_locked_Para_Operation(){
         try {
             assertNotNull(ar);
-            ServiceDescription service = new ServiceDescription();
+            AxisService service = new AxisService();
             ar.addService(service);
             InputStream in = new FileInputStream(repo + "/op_overide_global_para.xml");
             ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
@@ -107,7 +107,7 @@ public class ParamterLocked extends TestCase {
     public void testOveride_Service_locked_Para_Operation(){
         try {
             assertNotNull(ar);
-            ServiceDescription service = new ServiceDescription();
+            AxisService service = new AxisService();
             ar.addService(service);
             InputStream in = new FileInputStream(repo + "/Op_overide_Service_para.xml");
             ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);

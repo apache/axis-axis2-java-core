@@ -1,7 +1,7 @@
 <%@ page import="org.apache.axis2.Constants"%>
+<%@ page import="org.apache.axis2.description.AxisOperation"%>
+<%@ page import="org.apache.axis2.description.AxisService"%>
 <%@ page import="org.apache.axis2.description.ModuleDescription"%>
-<%@ page import="org.apache.axis2.description.OperationDescription"%>
-<%@ page import="org.apache.axis2.description.ServiceDescription"%>
 <%@ page import="java.util.Collection"%>
 <%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Iterator"%>
@@ -16,7 +16,7 @@
 <%
          HashMap serviceMap = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
           String servicName = request.getParameter("serviceName");
-          ServiceDescription axisService = (ServiceDescription)serviceMap.get(servicName);
+          AxisService axisService = (AxisService)serviceMap.get(servicName);
          if (axisService!=null){
              HashMap operations;
              String serviceName = "";
@@ -26,17 +26,17 @@
                  serviceName = axisService.getName().getLocalPart();
      %><hr><h2><font color="blue"><a href="<%=prifix + axisService.getName().getLocalPart()%>?wsdl"><%=serviceName%></a></font></h2>
 <font color="blue">Service EPR : <font color="black"><%=prifix + axisService.getName().getLocalPart()%></font>
-    <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
+    <h4>Service Description : <font color="black"><%=axisService.getAxisServiceName()%></h4>
     <%
         Collection engagdeModules = axisService.getEngagedModules();
         String moduleName = "";
         if(engagdeModules.size() >0){
     %>
-    <i>Engaged Modules for the service</i><ul>
+    <i>Engaged Modules for the axisService</i><ul>
     <%
         for (Iterator iteratorm = engagdeModules.iterator(); iteratorm.hasNext();) {
-            ModuleDescription description = (ModuleDescription) iteratorm.next();
-            moduleName = description.getName().getLocalPart();
+            ModuleDescription axisOperation = (ModuleDescription) iteratorm.next();
+            moduleName = axisOperation.getName().getLocalPart();
     %><li><%=moduleName%></li>
     <%
             }%>
@@ -49,7 +49,7 @@
     }
 %><ul><%
     for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
-        OperationDescription axisOperation = (OperationDescription) iterator1.next();
+        AxisOperation axisOperation = (AxisOperation) iterator1.next();
 %><li><%=axisOperation.getName().getLocalPart()%></li>
     <%--                 <br>Opeartion EPR : <%=prifix + axisService.getName().getLocalPart() + "/"+ axisOperation.getName().getLocalPart()%>--%>
     <%
@@ -61,8 +61,8 @@
     <br><i>Engaged Modules for the opeartion</i><ul>
     <%
         for (Iterator iterator2 = engagdeModules.iterator(); iterator2.hasNext();) {
-            ModuleDescription description = (ModuleDescription) iterator2.next();
-            moduleName = description.getName().getLocalPart();
+            ModuleDescription moduleDecription = (ModuleDescription) iterator2.next();
+            moduleName = moduleDecription.getName().getLocalPart();
     %><li><%=moduleName%></li><br><%
     }
 %></ul><%

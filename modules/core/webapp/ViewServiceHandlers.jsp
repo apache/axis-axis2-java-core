@@ -1,6 +1,5 @@
 <%@ page import="org.apache.axis2.Constants,
-                 org.apache.axis2.description.OperationDescription,
-                 org.apache.axis2.description.ServiceDescription,
+                 org.apache.axis2.description.AxisOperation,
                  org.apache.axis2.engine.Handler,
                  org.apache.axis2.engine.Phase,
                  java.util.ArrayList,
@@ -37,16 +36,16 @@
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>View Operation specific Chains</h1>
    <%
-            ServiceDescription service = (ServiceDescription)request.getSession().
+            AxisService axisService = (AxisService)request.getSession().
                     getAttribute(Constants.SERVICE_HANDLERS);
-             if(service != null ){
+             if(axisService != null ){
                  ArrayList handlers ;
-                HashMap operations =  service.getOperations();
+                HashMap operations =  axisService.getOperations();
                 Collection ops = operations.values();
                  for (Iterator iterator = ops.iterator(); iterator.hasNext();) {
-                     OperationDescription description = (OperationDescription) iterator.next();
-                     %><h2>Operation Name : <%=description.getName().getLocalPart()%></h2><%
-                     ArrayList phases = description.getRemainingPhasesInFlow();
+                     AxisOperation axisOperationon = (AxisOperation) iterator.next();
+                     %><h2>Operation Name : <%=axisOperationon.getName().getLocalPart()%></h2><%
+                     ArrayList phases = axisOperationon.getRemainingPhasesInFlow();
                  %>
                  <h3> In Flow </h3>
                  <ul>
@@ -71,7 +70,7 @@
                  %>
                  </ul>
                  <%
-                 phases = description.getPhasesInFaultFlow();
+                 phases = axisOperationon.getPhasesInFaultFlow();
                  %>
                  <h3> In Fault Flow </h3>
                  <ul>
@@ -97,7 +96,7 @@
                  </ul>
                  <%
 
-                 phases = description.getPhasesOutFlow();
+                 phases = axisOperationon.getPhasesOutFlow();
                  %>
                  <h3> Out Flow </h3>
                  <ul>
@@ -122,7 +121,7 @@
                  %>
                  </ul>
                  <%
-                 phases = description.getPhasesOutFaultFlow();
+                 phases = axisOperationon.getPhasesOutFaultFlow();
                  %>
                  <h3> Out Fault Flow </h3>
                  <ul>

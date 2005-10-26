@@ -25,7 +25,7 @@ import org.apache.axis2.clientapi.AsyncResult;
 import org.apache.axis2.clientapi.Callback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilsTCPServer;
@@ -54,7 +54,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
 
     private MessageContext mc;
     private SimpleHTTPServer sas;
-    private ServiceDescription service;
+    private AxisService service;
     private ServiceContext serviceContext;
 
     private Log log = LogFactory.getLog(getClass());
@@ -80,7 +80,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
                         operationName);
         UtilsTCPServer.deployService(service);
 
-        ServiceDescription service =
+        AxisService service =
                 Utils.createSimpleService(serviceName,
                         org.apache.axis2.engine.Echo.class.getName(),
                         operationName);
@@ -104,7 +104,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
     }
 
     public void testEchoXMLCompleteASync() throws Exception {
-        ServiceDescription service =
+        AxisService service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
                         operationName);

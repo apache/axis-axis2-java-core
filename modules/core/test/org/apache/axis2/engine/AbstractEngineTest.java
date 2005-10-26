@@ -26,7 +26,7 @@ public class AbstractEngineTest extends TestCase {
 //    protected AxisConfiguration engineRegistry;
 //    protected QName serviceName = new QName("axis/services/NullService");
 //    protected QName opearationName = new QName("NullOperation");
-//    protected ServiceDescription service;
+//    protected AxisService service;
 
     public AbstractEngineTest() {
     }

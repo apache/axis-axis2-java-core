@@ -24,7 +24,7 @@ import org.apache.axis2.clientapi.Callback;
 import org.apache.axis2.clientapi.InOutMEPClient;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.util.BeanSerializerUtil;
@@ -35,7 +35,7 @@ import javax.xml.namespace.QName;
 public class RPCCall extends Call {
 
 
-    protected static OperationDescription operationTemplate;
+    protected static AxisOperation axisOperationTemplate;
 
     /**
      * @throws org.apache.axis2.AxisFault
@@ -76,11 +76,11 @@ public class RPCCall extends Call {
      * @return Response OMElement
      */
     public OMElement invokeBlocking(QName opName, Object [] args) throws AxisFault {
-        OperationDescription opDesc =
-                serviceContext.getServiceConfig().getOperation(opName);
+        AxisOperation opDesc =
+                serviceContext.getAxisService().getOperation(opName);
         opDesc = createOpDescAndFillInFlowInformation(opDesc, opName.getLocalPart(),
                 WSDLConstants.MEP_CONSTANT_IN_OUT);
-        opDesc.setParent(serviceContext.getServiceConfig());
+        opDesc.setParent(serviceContext.getAxisService());
         MessageContext msgctx = prepareTheSOAPEnvelope(BeanSerializerUtil.getOMElement(opName, args));
 
         this.lastResponseMessage = super.invokeBlocking(opDesc, msgctx);
@@ -105,11 +105,11 @@ public class RPCCall extends Call {
      */
 
     public Object[]  invokeBlocking(QName opName, Object [] args, Object [] returnTypes) throws AxisFault {
-        OperationDescription opDesc =
-                serviceContext.getServiceConfig().getOperation(opName);
+        AxisOperation opDesc =
+                serviceContext.getAxisService().getOperation(opName);
         opDesc = createOpDescAndFillInFlowInformation(opDesc, opName.getLocalPart(),
                 WSDLConstants.MEP_CONSTANT_IN_OUT);
-        opDesc.setParent(serviceContext.getServiceConfig());
+        opDesc.setParent(serviceContext.getAxisService());
         MessageContext msgctx = prepareTheSOAPEnvelope(BeanSerializerUtil.getOMElement(opName, args));
         this.lastResponseMessage = super.invokeBlocking(opDesc, msgctx);
         SOAPEnvelope resEnvelope = lastResponseMessage.getEnvelope();
@@ -131,8 +131,8 @@ public class RPCCall extends Call {
             Object [] args,
             Callback callback)
             throws AxisFault {
-        OperationDescription opDesc =
-                serviceContext.getServiceConfig().getOperation(opName);
+        AxisOperation opDesc =
+                serviceContext.getAxisService().getOperation(opName);
         opDesc = createOpDescAndFillInFlowInformation(opDesc, opName.getLocalPart(), WSDLConstants.MEP_CONSTANT_IN_OUT);
         MessageContext msgctx = prepareTheSOAPEnvelope(BeanSerializerUtil.getOMElement(opName, args));
         //call the underline implementation

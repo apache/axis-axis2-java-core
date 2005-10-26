@@ -20,7 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.transport.tcp.TCPServer;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -37,7 +37,7 @@ public class UtilsTCPServer {
     public static final String FAILURE_MESSAGE = "Intentional Failure";
     private static Log log = LogFactory.getLog(UtilsTCPServer.class);
 
-    public static synchronized void deployService(ServiceDescription service)
+    public static synchronized void deployService(AxisService service)
             throws AxisFault {
 
         receiver.getSystemContext().getAxisConfiguration().addService(service);
