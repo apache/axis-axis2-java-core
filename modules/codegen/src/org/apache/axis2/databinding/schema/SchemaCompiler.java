@@ -149,6 +149,7 @@ public class SchemaCompiler {
                 //intent of the user when he declares the complexType anonymously is to use it privately
                 //First copy the schema types content into the metainf holder
                 metainf = (BeanWriterMetaInfoHolder)this.processedAnonymousComplexTypesMap.get(xsElt);
+                metainf.setAnonymous(true);
             }
             String writtenClassName = writer.write(xsElt,processedTypemap,metainf);
             processedElementMap.put(xsElt.getQName(),writtenClassName);

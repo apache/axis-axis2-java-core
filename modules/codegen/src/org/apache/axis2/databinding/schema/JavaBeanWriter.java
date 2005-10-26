@@ -107,6 +107,10 @@ public class JavaBeanWriter {
             XSLTUtils.addAttribute(model,"type","yes",rootElt);
         }
 
+        if (metainf.isAnonymous()){
+             XSLTUtils.addAttribute(model,"anon","yes",rootElt);
+        }
+
         if (metainf.isExtension()){
             XSLTUtils.addAttribute(model,"extension",metainf.getExtensionClassName(),rootElt);
         }
@@ -123,7 +127,6 @@ public class JavaBeanWriter {
             Element property = XSLTUtils.addChildElement(model,"property",rootElt);
             name = qNames[i];
             String xmlName = name.getLocalPart();
-            System.out.println(xmlName);
             XSLTUtils.addAttribute(model,"name",xmlName,property);
 
             String javaName = "";

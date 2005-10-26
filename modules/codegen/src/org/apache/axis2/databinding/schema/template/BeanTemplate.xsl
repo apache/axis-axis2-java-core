@@ -76,7 +76,7 @@
         */
         public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName){
         <xsl:choose>
-            <xsl:when test="@type">
+            <xsl:when test="@type|@anon">
                   Object[] elementList = new Object[]{
         <xsl:for-each select="property[not(@attribute)]">
             <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
@@ -114,6 +114,7 @@
          return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(qName, elementList, attribList);
             </xsl:when>
             <xsl:otherwise>
+
             //We can safely assume an element has only one type associated with it
              <!-- This better be only one!!-->
             <xsl:for-each select="property[@ours]">
@@ -121,6 +122,7 @@
                 <xsl:variable name="varName">local<xsl:value-of select="@javaname"/></xsl:variable>
            return <xsl:value-of select="$varName"/>.getPullParser(MY_QNAME);
             </xsl:for-each>
+
             <!-- What do we do for the other case ???? -->
              <xsl:for-each select="property[not(@ours)]">
                 <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>

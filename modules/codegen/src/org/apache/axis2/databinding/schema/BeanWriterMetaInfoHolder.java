@@ -29,6 +29,7 @@ public class BeanWriterMetaInfoHolder {
 
 
     private boolean ordered = false;
+    private boolean anonymous = false;
     private boolean extension = false;
     private String extensionClassName = "";
     private Map elementToSchemaQNameMap = new HashMap();
@@ -37,6 +38,14 @@ public class BeanWriterMetaInfoHolder {
     private Map qNameMaxOccursCountMap = new HashMap();
     private Map qNameMinOccursCountMap = new HashMap();
     private Map qNameOrderMap = new HashMap();
+
+    public boolean isAnonymous() {
+        return anonymous;
+    }
+
+    public void setAnonymous(boolean anonymous) {
+        this.anonymous = anonymous;
+    }
 
     public String getExtensionClassName() {
         return extensionClassName;
