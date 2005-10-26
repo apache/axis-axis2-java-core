@@ -65,6 +65,10 @@ public class DocumentBuilderImpl extends DocumentBuilder {
 		return new DOMImplementationImpl();
 	}
 
+	/**
+	 * Returns a new document impl 
+	 * @see javax.xml.parsers.DocumentBuilder#newDocument()
+	 */
 	public Document newDocument() {
 		return new DocumentImpl();
 	}

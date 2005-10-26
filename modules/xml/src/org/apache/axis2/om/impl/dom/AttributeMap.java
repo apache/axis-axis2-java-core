@@ -37,8 +37,6 @@ public class AttributeMap extends NamedNodeMapImpl {
 	
 
 	public Node removeNamedItem(String name) throws DOMException {
-		// TODO 
-		
 		//TODO Set used to false
 		return super.removeNamedItem(name);
 	}

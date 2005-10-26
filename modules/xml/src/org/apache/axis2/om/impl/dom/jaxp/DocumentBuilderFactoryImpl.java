@@ -24,4 +24,7 @@ public class DocumentBuilderFactoryImpl extends DocumentBuilderFactory{
 		throw new UnsupportedOperationException("TODO");
 	}
 
+	public static DocumentBuilderFactory newInstance() {
+		return new DocumentBuilderFactoryImpl();
+	}
 }

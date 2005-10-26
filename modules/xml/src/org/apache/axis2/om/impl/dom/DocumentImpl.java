@@ -21,6 +21,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.dom.util.XMLChar;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
@@ -127,9 +128,14 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	
 	public Attr createAttributeNS(String namespaceURI, String qualifiedName)
 			throws DOMException {
-		return new AttrImpl(this, DOMUtil.getLocalName(qualifiedName),
-				new NamespaceImpl(namespaceURI, DOMUtil
-						.getPrefix(qualifiedName)));
+		
+		String localName = DOMUtil.getLocalName(qualifiedName);
+		String prefix = DOMUtil.getPrefix(qualifiedName);
+		
+		this.checkQName(prefix,localName);
+		
+		return new AttrImpl(this,localName,
+				new NamespaceImpl(namespaceURI, prefix));
 	}
 	
 	public CDATASection createCDATASection(String arg0) throws DOMException {
@@ -151,10 +157,16 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 		return new ElementImpl(this, tagName);
 	}
 	
-	public Element createElementNS(String tagName, String ns)
+	public Element createElementNS(String ns, String qualifiedName) 
 			throws DOMException {
-		NamespaceImpl namespace = new NamespaceImpl(ns);
-		return new ElementImpl(this, tagName, namespace);
+		
+		String localName = DOMUtil.getLocalName(qualifiedName);
+		String prefix = DOMUtil.getPrefix(qualifiedName);
+		
+		this.checkQName(prefix,localName);
+		
+		NamespaceImpl namespace = new NamespaceImpl(ns, prefix);
+		return new ElementImpl(this, localName, namespace);
 	}
 	
 	public EntityReference createEntityReference(String arg0)
@@ -164,7 +176,8 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	}
 	public ProcessingInstruction createProcessingInstruction(String arg0,
 			String arg1) throws DOMException {
-		throw new UnsupportedOperationException("PIs are not supported by OM yet :-?");
+		//TODO
+		throw new UnsupportedOperationException("TODO");
 	}
 	public Text createTextNode(String value) {
 		return new TextImpl(this, value);
@@ -175,8 +188,8 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	}
 	
 	public Element getElementById(String arg0) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		//TODO getElementById
+		throw new UnsupportedOperationException("TODO: getElementById");
 	}
 	public NodeList getElementsByTagName(String arg0) {
 		//TODO
@@ -278,6 +291,31 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 		return (Element)this.firstChild;
 	}
 	
-	
+    /**
+     * Borrowed from the Xerces impl
+     * 
+     * Checks if the given qualified name is legal with respect
+     * to the version of XML to which this document must conform.
+     *
+     * @param prefix prefix of qualified name
+     * @param local local part of qualified name
+     */
+    protected final void checkQName(String prefix, String local) {
+
+		// check that both prefix and local part match NCName
+        boolean validNCName = (prefix == null || XMLChar.isValidNCName(prefix))
+                && XMLChar.isValidNCName(local);
+
+
+        if (!validNCName) {
+            // REVISIT: add qname parameter to the message
+            String msg =
+            DOMMessageFormatter.formatMessage(
+            DOMMessageFormatter.DOM_DOMAIN,
+            "INVALID_CHARACTER_ERR",
+            null);
+            throw new DOMException(DOMException.INVALID_CHARACTER_ERR, msg);
+        }
+    }
 
 }

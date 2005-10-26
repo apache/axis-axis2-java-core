@@ -46,7 +46,11 @@ class DOMUtil {
 	 * @return
 	 */
 	public static String getLocalName(String qualifiedName) {
-		return qualifiedName.split(":")[1];
+		if(qualifiedName.indexOf(":") > -1) {
+			return qualifiedName.split(":")[1];
+		} else  {
+			return qualifiedName;
+		}
 	}
 	
 	/**
@@ -55,6 +59,10 @@ class DOMUtil {
 	 * @return
 	 */
 	public static String getPrefix(String qualifiedName) {
-		return qualifiedName.split(":")[0];
+		if(qualifiedName.indexOf(":") > -1) {
+			return qualifiedName.split(":")[0];
+		} else  {
+			return null;
+		}
 	}
 }

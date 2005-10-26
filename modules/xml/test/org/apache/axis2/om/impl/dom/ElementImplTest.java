@@ -22,6 +22,7 @@ import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.axis2.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
@@ -136,4 +137,62 @@ public class ElementImplTest extends TestCase {
 		}
 	}
 	
+	/**
+	 * Testing the NodeList returned with the elements's children
+	 */
+	public void testGetElementsbyTagName() {
+		try {
+			String childElementLN = "Child";
+			
+			Document doc = DocumentBuilderFactoryImpl.newInstance().newDocumentBuilder().newDocument();
+			Element docElem = doc.getDocumentElement();
+			assertNull("The document element shoudl be null", docElem);
+			
+			docElem = doc.createElement("Test");
+			docElem.appendChild(doc.createElement(childElementLN));
+			docElem.appendChild(doc.createElement(childElementLN));
+			docElem.appendChild(doc.createElement(childElementLN));
+			docElem.appendChild(doc.createElement(childElementLN));
+			docElem.appendChild(doc.createElement(childElementLN));
+			docElem.appendChild(doc.createElement(childElementLN));
+			docElem.appendChild(doc.createElement(childElementLN));
+			
+			NodeList list = docElem.getElementsByTagName(childElementLN);
+			
+			assertEquals("Incorrect number of child elements", 7 ,list.getLength());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
+	
+	public void testGetElementsbyTagNameNS() {
+		try {
+			String childElementLN = "test:Child";
+			String childElementNS = "http://ws.apache.org/ns/axis2/dom";
+			
+			Document doc = DocumentBuilderFactoryImpl.newInstance().newDocumentBuilder().newDocument();
+			Element docElem = doc.getDocumentElement();
+			assertNull("The document element shoudl be null", docElem);
+			
+			docElem = doc.createElementNS("http://test.org", "Test");
+			
+			docElem.appendChild(doc.createElementNS(childElementNS, childElementLN));
+			docElem.appendChild(doc.createElementNS(childElementNS, childElementLN));
+			docElem.appendChild(doc.createElementNS(childElementNS, childElementLN));
+			docElem.appendChild(doc.createElementNS(childElementNS, childElementLN));
+			docElem.appendChild(doc.createElementNS(childElementNS, childElementLN));
+			docElem.appendChild(doc.createElementNS(childElementNS, childElementLN));
+			docElem.appendChild(doc.createElementNS(childElementNS, childElementLN));
+			
+			NodeList list = docElem.getElementsByTagNameNS(childElementNS, childElementLN);
+			
+			assertEquals("Incorrect number of child elements", 7 ,list.getLength());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}	
 }
