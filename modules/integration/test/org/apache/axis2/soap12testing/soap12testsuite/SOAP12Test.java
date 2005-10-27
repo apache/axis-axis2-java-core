@@ -17,9 +17,9 @@
 package org.apache.axis2.soap12testing.soap12testsuite;
 
 import junit.framework.TestCase;
-import org.apache.axis2.soap12testing.client.MessageComparator;
-import org.apache.axis2.soap12testing.client.SOAP12TestClient;
-import org.apache.axis2.soap12testing.server.SimpleServer;
+import test.soap12testing.client.MessageComparator;
+import test.soap12testing.client.SOAP12TestClient;
+import test.soap12testing.server.SimpleServer;
 
 public class SOAP12Test extends TestCase {
     private SimpleServer server;
