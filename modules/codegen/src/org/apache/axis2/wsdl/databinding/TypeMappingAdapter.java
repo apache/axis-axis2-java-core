@@ -27,17 +27,19 @@ public abstract class TypeMappingAdapter implements TypeMapper {
     protected int counter = 0;
     //Upper limit for the paramete count
     protected static final int UPPER_PARAM_LIMIT = 1000;
+    private static final String PARAMETER_NAME_SUFFIX = "param";
 
     /**
      * @see TypeMapper#getTypeMapping(javax.xml.namespace.QName)
      */
     public String getTypeMapping(QName qname) {
+       
         if ((qname != null)) {
             Object o = map.get(qname);
             if (o != null) {
                 return (String) o;
             } else {
-                return "org.apache.axis2.om.OMElement";
+                return DEFAULT_CLASS_NAME;
             }
         }
 
@@ -51,7 +53,7 @@ public abstract class TypeMappingAdapter implements TypeMapper {
         if (counter == UPPER_PARAM_LIMIT) {
             counter = 0;
         }
-        return "param" + counter++;
+        return PARAMETER_NAME_SUFFIX + counter++;
     }
 
     /**

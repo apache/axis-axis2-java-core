@@ -808,9 +808,9 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
             }
         } else {
             if (currentNode.getType() == OMNode.ELEMENT_NODE) {
-
-                // todo complete this
-                return null;
+                returnText = ((OMElement)currentNode).getText();
+            }else if (currentNode.getType() == OMNode.TEXT_NODE){
+                 returnText = ((OMText)currentNode).getText();
             }
         }
         return returnText;

@@ -391,12 +391,15 @@ public class WSDLPump {
         wsdlOperation.setName(new QName(nameSpaceOfTheOperation,
                 wsdl4jOperation.getName()));
 
-        //This code make no attempt to make use of the special xs:Token
-        //defined in the WSDL 2.0. eg like #any, #none
+        // This code make no attempt to make use of the special xs:Token
+        // defined in the WSDL 2.0. eg like #any, #none
         // Create the Input Message and add
         Input wsdl4jInputMessage = wsdl4jOperation.getInput();
-        String wrappedInputName = wsdlOperation.getName().getLocalPart();
-        String wrappedOutputName = wrappedInputName + "Response";
+        QName wrappedInputName = wsdlOperation.getName();
+        QName wrappedOutputName = new QName(
+                               wrappedInputName.getNamespaceURI(),
+                               wrappedInputName.getLocalPart()+ "Response",
+                               wrappedInputName.getPrefix());
 
         if (null != wsdl4jInputMessage) {
             MessageReference wsdlInputMessage = this.wsdlComponentFactory
@@ -461,7 +464,7 @@ public class WSDLPump {
             if (null != faultMessage) {
                 faultReference.setRef(
                         this.generateReferenceQname(
-                                faultMessage.getQName().getLocalPart(),
+                                faultMessage.getQName(),
                                 faultMessage,findWrapppable(faultMessage)));
             }
             wsdlOperation.addOutFault(faultReference);
@@ -482,7 +485,7 @@ public class WSDLPump {
      * @param wsdl4jMessage
      * @return
      */
-    private QName generateReferenceQname(String outerName,Message wsdl4jMessage,boolean isWrappable) {
+    private QName generateReferenceQname(QName outerName,Message wsdl4jMessage,boolean isWrappable) {
         QName referenceQName = null;
         //find the xsd prefix
         String xsdPrefix = findSchemaPrefix();
@@ -538,12 +541,7 @@ public class WSDLPump {
 
 
                 //add a schema DOM element
-                DocumentBuilder documentBuilder;
-                try {
-                    documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                } catch (ParserConfigurationException e) {
-                    throw new RuntimeException(e);
-                }
+                DocumentBuilder documentBuilder = getDOMDocumentBuilder();
                 Document newDoc = documentBuilder.newDocument();
                 schemaElement = newDoc.createElementNS(XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"+XML_SCHEMA_LOCAL_NAME);
                 schemaExtensibilityElement.setElement(schemaElement);
@@ -558,13 +556,12 @@ public class WSDLPump {
                 if (targetNamespaceUri.trim().equals("")){
                     targetNamespaceUri = getTemporaryNamespaceUri();
                 }
+                //the DOMlevel2 documentation states that namespaces need to
+                //declared like this
+                schemaElement.setAttributeNS("http://www.w3.org/2000/xmlns/",
+                                              XMLNS_AXIS2WRAPPED,
+                                              targetNamespaceUri);
 
-                // Note - The DOM level2 API does not support getting a local name from Attrib Node!!
-                // And XmlSchema fails miserably with this "xmlns:" attribs so to avoid the problem
-                //i have no choice but to remove the NS declarations!
-
-                 schemaElement.setAttribute(XMLNS_AXIS2WRAPPED,
-                 targetNamespaceUri);
                 schemaElement.setAttribute(XSD_TARGETNAMESPACE,targetNamespaceUri);
                 //schemaElement.setAttribute("xmlns:"+XMLSCHEMA_NAMESPACE_PREFIX,XMLSCHEMA_NAMESPACE_URI);
 
@@ -622,7 +619,7 @@ public class WSDLPump {
 
                 Element newElement = doc.createElementNS(XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"+ XML_SCHEMA_ELEMENT_LOCAL_NAME);
                 newElement.setAttribute(WSDLPump.XSD_NAME,
-                        outerName);
+                        outerName.getLocalPart());
                 newElement.setAttribute(WSDLPump.XSD_TYPE,
                         AXIS2WRAPPED +":"+//whats the prefix to put here!!!
                         wsdl4jMessage.getQName().getLocalPart());
@@ -632,7 +629,7 @@ public class WSDLPump {
                 //of the newly created Element as the messageReference's name.
                 //coincidentally it'll be the messages QName!
 
-                referenceQName = wsdl4jMessage.getQName();
+                referenceQName = outerName;
 
                 //Add this message as a resolved message, so that incase some other
                 //operation refer to the same message the if above will take a hit
@@ -658,6 +655,18 @@ public class WSDLPump {
         }
 
         return referenceQName;
+    }
+
+    private DocumentBuilder getDOMDocumentBuilder() {
+        DocumentBuilder documentBuilder;
+        try {
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setNamespaceAware(true);
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        return documentBuilder;
     }
 
     /**

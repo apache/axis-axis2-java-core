@@ -154,7 +154,7 @@ public class ADBPullParser implements XMLStreamReader {
      *                                                                                                                                                                                                       pull parser for that java bean.
      *                   <p/>
      *                   <p/>
-     *                                                                                                                                                                                                                         This is the how the parsed array should look like
+     *                                                                                                                                                                                                                         This is the how the passed array should look like
      *                                                                                                                                                                                                                                           Key             Value
      *                                                                                                                                                                                                                                           String              String
      *                                                                                                                                                                                                                                           QName               ADBBean, OMElement, Bean

@@ -138,7 +138,7 @@ public class SchemaCompiler {
                 //this is a named type
                 QName qName = schemaType.getQName();
                 //find the class name
-                String className = findClassName(schemaType,isArray(xsElt));
+                String className = findClassName(qName,isArray(xsElt));
                 metainf.registerMapping(xsElt.getQName(),
                         qName,
                         className);
@@ -183,25 +183,21 @@ public class SchemaCompiler {
         }
 
         XmlSchemaType schemaType = xsElt.getSchemaType();
-
         if (schemaType!=null){
             processSchema(xsElt,schemaType);
-
             //at this time it is not wise to directly write the class for the element
             //so we push the complete element to an arraylist and let the process
             //pass through. We'll be iterating through the elements writing them
             //later
-
-            if (!isOuter){
-                String className = findClassName(schemaType,isArray);
-                this.processedElementMap.put(xsElt.getQName(),className);
-            }
-            this.processedElementList.add(xsElt.getQName());
-
-        }else{
-            //what do we do when the schematype is missing ??
-
         }
+        
+        //There can be instances where the SchemaType is null but the schemaTypeName is not
+        //this specifically happens with xsd:anyType.
+        if (!isOuter){
+            String className = findClassName(xsElt.getSchemaTypeName(),isArray);
+            this.processedElementMap.put(xsElt.getQName(),className);
+        }
+        this.processedElementList.add(xsElt.getQName());
 
     }
 
@@ -210,9 +206,8 @@ public class SchemaCompiler {
      * @param schemaType
      * @return
      */
-    private String findClassName(XmlSchemaType schemaType,boolean isArray) {
+    private String findClassName(QName qName,boolean isArray) {
         //find the class name
-        QName qName = schemaType.getQName();
         String className;
         if (processedTypemap.containsKey(qName)) {
             className = (String)processedTypemap.get(qName);
@@ -442,7 +437,7 @@ public class SchemaCompiler {
             metainfHolder.addMinOccurs(qName,elt.getMinOccurs());
             //we need the order to be preserved. So record the order also
             if (order){
-              //record the order in the metainf holder
+                //record the order in the metainf holder
                 Integer integer = (Integer) elementOrderMap.get(elt);
                 metainfHolder.registerQNameIndex(qName,
                         integer.intValue());

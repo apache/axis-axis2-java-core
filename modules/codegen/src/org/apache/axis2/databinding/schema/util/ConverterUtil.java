@@ -84,6 +84,9 @@ public class ConverterUtil {
         return Boolean.getBoolean(s);
     }
 
+    public static boolean convertToanyType(String s){
+        return Boolean.getBoolean(s);
+    }
 
     /* primitive types to Object conversion methods */
     public static Object convertToObject(String i){

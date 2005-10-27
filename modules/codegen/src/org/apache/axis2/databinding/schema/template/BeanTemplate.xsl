@@ -90,6 +90,9 @@
                 <xsl:when test="@any">
                             new javax.xml.namespace.QName("<xsl:value-of select="$propertyName"/>"),<xsl:value-of select="$varName"/>
                 </xsl:when>
+                <xsl:when test="@array">
+                            "<xsl:value-of select="$propertyName"/>",<xsl:value-of select="$varName"/>
+                </xsl:when>
                 <xsl:otherwise>
                             "<xsl:value-of select="$propertyName"/>",org.apache.axis2.databinding.schema.util.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
                 </xsl:otherwise>
@@ -129,7 +132,8 @@
                 <xsl:variable name="varName">local<xsl:value-of select="@javaname"/></xsl:variable>
             return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(MY_QNAME,
                   new Object[]{
-                   "<xsl:value-of select="$propertyName"/>",org.apache.axis2.databinding.schema.util.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
+                   org.apache.axis2.databinding.utils.ADBPullParser.ELEMENT_TEXT,
+                   org.apache.axis2.databinding.schema.util.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
                  },
                   new Object[]{});
 

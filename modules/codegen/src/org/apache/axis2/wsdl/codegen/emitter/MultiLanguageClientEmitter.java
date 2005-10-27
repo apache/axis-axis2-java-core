@@ -79,6 +79,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
      */
     public void setMapper(TypeMapper mapper) {
         this.mapper = mapper;
+       
     }
 
     /**
@@ -581,11 +582,17 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                     "name",
                     this.mapper.getParameterName(inputMessage.getElement()),
                     param);
+
             //todo modify the code here to unwrap if requested
             String typeMapping = this.mapper.getTypeMapping(
                     inputMessage.getElement());
-            String typeMappingStr = typeMapping == null ? "org.apache.axis2.om.OMElement" : typeMapping;
-            addAttribute(doc, "type", typeMappingStr, param);
+            addAttribute(doc, "type", typeMapping == null ? "" : typeMapping, param);
+
+            //add an extra attribute to say whether the type mapping is the default
+            if (TypeMapper.DEFAULT_CLASS_NAME.equals(typeMapping)){
+                addAttribute(doc,"default","yes",param);
+            }
+
             //add this as a body parameter
             addAttribute(doc,"location","body",param);
             Iterator iter = inputMessage.getExtensibilityAttributes().iterator();
@@ -644,6 +651,10 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         }
         addAttribute(doc,"name",parameterName,param);
         addAttribute(doc,"type", typeMappingStr, param);
+        //add an extra attribute to say whether the type mapping is the default
+        if (TypeMapper.DEFAULT_CLASS_NAME.equals(typeMappingStr)){
+            addAttribute(doc,"default","yes",param);
+        }
         //add this as a body parameter
         addAttribute(doc,"location","body",param);
 
@@ -986,6 +997,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         //this step is needed to remove repetitions
         Map parameterMap = new HashMap();
         Element inputParamElement = getInputParamElement(doc, operation);
+
         if (inputParamElement!=null){
             parameterMap.put(inputParamElement.getAttribute("type"),inputParamElement);
         }
@@ -1027,9 +1039,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         }
 
         doc.appendChild(rootElement);
-        ///////////////////////////////////////////////////
-        //System.out.println("rootElement = " + rootElement);
-        ///////////////////////////////////////////////////
+
         return doc;
     }
 

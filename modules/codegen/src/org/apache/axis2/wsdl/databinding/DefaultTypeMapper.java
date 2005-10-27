@@ -17,15 +17,10 @@
 
 package org.apache.axis2.wsdl.databinding;
 
-import javax.xml.namespace.QName;
 
 public class DefaultTypeMapper extends TypeMappingAdapter {
 
     public DefaultTypeMapper() {
-    }
-
-    public String getParameterName(QName qname) {
-        return "omElement";
     }
 
 }

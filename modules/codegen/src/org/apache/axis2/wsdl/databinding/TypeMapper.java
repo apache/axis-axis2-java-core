@@ -16,9 +16,15 @@
 
 package org.apache.axis2.wsdl.databinding;
 
+import org.apache.axis2.om.OMElement;
+
 import javax.xml.namespace.QName;
 
 public interface TypeMapper {
+
+    // Default class name is the
+    public static final String DEFAULT_CLASS_NAME = OMElement.class.getName();
+
     /**
      * Get the type mapping class
      *

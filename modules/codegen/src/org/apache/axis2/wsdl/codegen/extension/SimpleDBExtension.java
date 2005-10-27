@@ -47,7 +47,7 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
     }
 
     public void engage() {
-            //test the databinding type. If not just fall through
+        //test the databinding type. If not just fall through
         if (configuration.getDatabindingType() != XSLTConstants.DataBindingTypes.ADB) {
             return;
         }
@@ -65,10 +65,11 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
             List typesArray = typesList.getExtensibilityElements();
             WSDLExtensibilityElement extensiblityElt = null;
             Vector xmlSchemaTypeVector = new Vector();
+            XmlSchemaCollection schemaColl = new XmlSchemaCollection();
             for (int i = 0; i < typesArray.size(); i++) {
                 extensiblityElt = (WSDLExtensibilityElement) typesArray.get(i);
 
-                XmlSchemaCollection schemaColl = new XmlSchemaCollection();
+
                 //add the namespace map here. it is absolutely needed
                 Map nsMap = configuration.getWom().getNamespaces();
                 Iterator keys = nsMap.keySet().iterator();
@@ -85,8 +86,10 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
                     //compile these schemas
                     while (!importedSchemaStack.isEmpty()) {
                         Element el = (Element)importedSchemaStack.pop();
-                        XmlSchema thisSchema = schemaColl.read(el);
-                        xmlSchemaTypeVector.add(thisSchema);
+                        if (el!=null){
+                            XmlSchema thisSchema = schemaColl.read(el);
+                            xmlSchemaTypeVector.add(thisSchema);
+                        }
                     }
                 }
             }
