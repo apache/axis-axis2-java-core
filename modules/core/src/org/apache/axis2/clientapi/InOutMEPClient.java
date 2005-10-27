@@ -245,9 +245,8 @@ public class InOutMEPClient extends MEPClient {
                 //send the message
                 engine.send(msgctx);
             } else {
-                //here a bloking invocation happens in a new thrad, so the progamming model is
-                //non blocking
-                serviceContext.getConfigurationContext().getThreadPool().newThread(new NonBlockingInvocationWorker(callback, axisop, msgctx));
+                //here a bloking invocation happens in a new thread, so the progamming model is non blocking
+                 serviceContext.getConfigurationContext().getThreadPool().execute(new NonBlockingInvocationWorker(callback, axisop, msgctx));
             }
 
         } catch (OMException e) {

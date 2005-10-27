@@ -59,7 +59,7 @@ public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageR
                 }
             }
         };
-        (new Thread(theadedTask)).start();
+        messageCtx.getSystemContext().getThreadPool().execute(theadedTask);
     }
 
 

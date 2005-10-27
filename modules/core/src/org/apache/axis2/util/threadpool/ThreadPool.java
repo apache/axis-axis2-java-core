@@ -55,7 +55,7 @@ public class ThreadPool implements ThreadFactory {
 
     }
 
-    public void newThread(Runnable worker) {
+    public void execute(Runnable worker){
         if (shutDown)
             throw new RuntimeException(Messages.getMessage("threadpoolshutdown"));
         tasks.add(worker);

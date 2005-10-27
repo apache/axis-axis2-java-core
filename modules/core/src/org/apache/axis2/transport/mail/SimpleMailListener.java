@@ -206,9 +206,7 @@ public class SimpleMailListener extends TransportListener implements Runnable {
         }
 
         if (doThreads) {
-            Thread thread = new Thread(this);
-            thread.setDaemon(daemon);
-            thread.start();
+        	this.configurationContext.getThreadPool().execute(this);
         } else {
             run();
         }

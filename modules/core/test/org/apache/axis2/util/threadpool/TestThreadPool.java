@@ -34,7 +34,7 @@ public class TestThreadPool extends AbstractTestCase {
         for (int i = 0; i < 5; i++) {
             TestWorker worker = new TestWorker();
             workerList.add(worker);
-            tPool.newThread(worker);
+            tPool.execute(worker);
         }
 
         tPool.safeShutDown();

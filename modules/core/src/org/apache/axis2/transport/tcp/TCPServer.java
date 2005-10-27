@@ -84,7 +84,7 @@ public class TCPServer extends TransportListener implements Runnable {
                 break;
             }
             if (socket != null) {
-                configContext.getThreadPool().newThread(
+                configContext.getThreadPool().execute(
                         new TCPWorker(configContext, socket));
             }
         }
@@ -96,8 +96,7 @@ public class TCPServer extends TransportListener implements Runnable {
             serversocket = ListenerManager.openSocket(port);
         }
         started = true;
-        Thread thread = new Thread(this);
-        thread.start();
+        this.configContext.getThreadPool().execute(this);
     }
 
     /* (non-Javadoc)
