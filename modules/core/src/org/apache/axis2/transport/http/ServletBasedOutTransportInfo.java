@@ -29,7 +29,4 @@ public class ServletBasedOutTransportInfo implements HTTPOutTransportInfo {
         response.setContentType(contentType);
     }
 
-    public void setCharacterEncoding(String encoding) {
-        response.setCharacterEncoding(encoding);
-    }
 }

@@ -151,8 +151,9 @@ public class CommonsHTTPTransportSender
                                     HTTPConstants.HTTPOutTransportInfo);
                     if (transportInfo != null) {
                         omOutput.setSoap11(msgContext.isSOAP11());
-                        transportInfo.setCharacterEncoding(omOutput.getCharSetEncoding());
-                        transportInfo.setContentType(omOutput.getContentType());
+                        //this is the servlet2.3 way of setting encodings
+                        String encoding= omOutput.getContentType() +"; charset="+ omOutput.getCharSetEncoding();
+                        transportInfo.setContentType(encoding);
                     } else {
                         throw new AxisFault(HTTPConstants.HTTPOutTransportInfo + " does not set");
                     }

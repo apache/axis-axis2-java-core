@@ -77,14 +77,14 @@
                 <module>true</module>
             </properties>
         </dependency>
-        <dependency>
-            <groupId>geronimo-spec</groupId>
-            <artifactId>geronimo-spec-servlet</artifactId>
-            <version>${geronimo.spec.servlet.version}</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
+      <dependency>
+        <groupId>servletapi</groupId>
+        <artifactId>servletapi</artifactId>
+        <version>${servletapi.version}</version>
+        <properties>
+          <module>true</module>
+        </properties>
+      </dependency>
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
