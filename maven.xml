@@ -538,6 +538,7 @@
       <ant:junitreport todir="${basedir}/target/test-reports">
         <ant:fileset dir="${basedir}/">
           <ant:include name="**/test-reports/TEST-*.xml"/>
+          <ant:include name="**/itest-reports/TEST-*.xml"/>
         </ant:fileset>
         <ant:report format="frames" todir="${basedir}/target/test-reports" styledir="${basedir}/etc"/>
       </ant:junitreport>
