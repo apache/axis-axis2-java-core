@@ -14,36 +14,36 @@
     -->
 
     <inflow>
-        <handler name="h1" class="Handler2">
+        <handler name="h1" class="org.apache.axis2.handlers.Handler2">
             <order phase="userphase1" phaseFirst="true"/>
         </handler>
     </inflow>
 
     <outflow>
-        <handler name="h3" class="Handler2">
+        <handler name="h3" class="org.apache.axis2.handlers.Handler2">
             <order phase="userphase1"/>
         </handler>
     </outflow>
 
     <INfaultflow>
-        <handler name="h5" class="Handler2">
+        <handler name="h5" class="org.apache.axis2.handlers.Handler2">
             <order phase="userphase1"/>
         </handler>
 
-        <handler name="h6" class="Handler2">
+        <handler name="h6" class="org.apache.axis2.handlers.Handler2">
             <order phase="userphase1" phaseLast="false"/>
         </handler>
     </INfaultflow>
     <Outfaultflow>
-        <handler name="h4" class="Handler2">
+        <handler name="h4" class="org.apache.axis2.handlers.Handler2">
             <order phase="userphase1"/>
         </handler>
 
-        <handler name="h5" class="Handler2">
+        <handler name="h5" class="org.apache.axis2.handlers.Handler2">
             <order phase="userphase1"/>
         </handler>
 
-        <handler name="h6" class="Handler2">
+        <handler name="h6" class="org.apache.axis2.handlers.Handler2">
             <order phase="userphase1" phaseLast="false"/>
         </handler>
     </Outfaultflow>

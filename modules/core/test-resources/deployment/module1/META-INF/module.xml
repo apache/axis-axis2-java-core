@@ -1,4 +1,4 @@
-<module name="module1" class="org.apache.module.Module1Impl">
+<module name="module1">
     <inflow>
         <handler name="h1" class="org.apache.axis2.registry.Handler3">
             <order phase="userphase1"/>
