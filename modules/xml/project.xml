@@ -160,7 +160,4 @@
         </dependency>
     </dependencies>
 
-    <reports>
-        <report>maven-junit-report-plugin</report>
-    </reports>
 </project>

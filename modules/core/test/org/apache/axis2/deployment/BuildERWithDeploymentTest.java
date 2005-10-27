@@ -48,7 +48,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
         assertTrue(provider instanceof RawXMLINOutMessageReceiver);*/
         ClassLoader cl = service.getClassLoader();
         assertNotNull(cl);
-        Class.forName("Echo2", true, cl);
+        Class.forName("org.apache.axis2.Echo2", true, cl);
         assertNotNull(service.getName());
         //no style for the service
         //   assertEquals(service.getStyle(),"rpc");
