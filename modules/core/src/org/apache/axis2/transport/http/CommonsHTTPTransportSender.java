@@ -525,34 +525,23 @@ public class CommonsHTTPTransportSender
         } else if (postMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
             return;
         } else if (postMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-
             Header contenttypeHheader = postMethod.getResponseHeader(
                     HTTPConstants.HEADER_CONTENT_TYPE);
 
-            String value = contenttypeHheader.getValue();
-            if (value != null) {
+            if (contenttypeHheader != null) {
+                String value = contenttypeHheader.getValue();
                 if (value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0 ||
                         value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0) {
                     processResponse(postMethod, msgContext);
-                } else {
-                    /**
-                     * if the content type is  text/html;charset=utf-8
-                     */
-                    throw new AxisFault(
-                            Messages.getMessage(
-                                    "transportError",
-                                    String.valueOf(postMethod.getStatusCode()),
-                                    postMethod.getResponseBodyAsString()));
+                    return;
                 }
             }
-        } else {
-            throw new AxisFault(
-                    Messages.getMessage(
-                            "transportError",
-                            String.valueOf(postMethod.getStatusCode()),
-                            postMethod.getResponseBodyAsString()));
         }
-
+        throw new AxisFault(
+                Messages.getMessage(
+                        "transportError",
+                        String.valueOf(postMethod.getStatusCode()),
+                        postMethod.getResponseBodyAsString()));
     }
 
     /**
