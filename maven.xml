@@ -303,6 +303,12 @@
         <modules:reactor goals="jar:install,test,itest"/>
     </goal>
 
+    <goal name="clover">
+        <modules:reactor goals="clover:on,jar:install,test"/>
+        <attainGoal name="clover:merge"/>
+        <attainGoal name="clover:report"/>
+    </goal>
+
     <goal name="create-jar" prereqs="init">
         <jar destfile="target/lib/axis2-${pom.currentVersion}.jar">
             <fileset dir="modules/core/target/classes"/>
