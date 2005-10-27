@@ -155,6 +155,8 @@ public class Constants {
 
     public static final String ENGAGE_STATUS = "engagestatus";
 
+    public static final String SERVLET_CONTEXT = "servletContext";
+
     /**
      * Errorness servcie
      */
