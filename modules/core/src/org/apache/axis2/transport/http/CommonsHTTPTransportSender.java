@@ -522,6 +522,7 @@ public class CommonsHTTPTransportSender
 
         if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
             processResponse(postMethod, msgContext);
+            return;
         } else if (postMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
             return;
         } else if (postMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
