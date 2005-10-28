@@ -81,7 +81,7 @@ public interface Parameter {
      */
     public int getParameterType();
 
-    public void setParamterType(int type);
+    public void setParameterType(int type);
 
     /**
      *  Paramter can be any thing it can be XML element with number of child elements , so if some

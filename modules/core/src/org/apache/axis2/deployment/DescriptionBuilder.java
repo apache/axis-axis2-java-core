@@ -52,8 +52,8 @@ public class DescriptionBuilder implements DeploymentConstants{
     protected InputStream des_inputStream;
     protected DeploymentEngine engine;
 
-    public DescriptionBuilder(InputStream serviceInputSteram, DeploymentEngine engine) {
-        this.des_inputStream = serviceInputSteram;
+    public DescriptionBuilder(InputStream serviceInputStream, DeploymentEngine engine) {
+        this.des_inputStream = serviceInputStream;
         this.engine = engine;
     }
 
@@ -137,9 +137,9 @@ public class DescriptionBuilder implements DeploymentConstants{
         } else {
             Iterator order_itr = order_element.getAllAttributes();
             while (order_itr.hasNext()) {
-                OMAttribute orderAttribut = (OMAttribute) order_itr.next();
-                String name  = orderAttribut.getQName().getLocalPart();
-                String value = orderAttribut.getAttributeValue();
+                OMAttribute orderAttribute = (OMAttribute) order_itr.next();
+                String name  = orderAttribute.getQName().getLocalPart();
+                String value = orderAttribute.getAttributeValue();
                 if (AFTER.equals(name)) {
                     handler.getRules().setAfter(value);
                 } else if (BEFORE.equals(name)) {
@@ -163,9 +163,9 @@ public class DescriptionBuilder implements DeploymentConstants{
                 }
 
             }
-            Iterator paramters = handler_element.getChildrenWithName(
+            Iterator parameters = handler_element.getChildrenWithName(
                     new QName(PARAMETERST));
-            processParameters(paramters,handler,parent);
+            processParameters(parameters,handler,parent);
         }
         handler.setParent(parent);
         return handler;
@@ -173,78 +173,78 @@ public class DescriptionBuilder implements DeploymentConstants{
 
     /**
      * To get the Paramter object out from the OM
-     * @param paramters <code>Parameter</code>
+     * @param parameters <code>Parameter</code>
      * @param parameterInclude <code>ParameterInclude</code>
      * @param parent <code>ParameterInclude</code>
      * return : will retuen paramters , wchih name is WSA-Mapping , since we need to treat them
      * seperately
      */
-    protected ArrayList processParameters(Iterator paramters, ParameterInclude parameterInclude,
+    protected ArrayList processParameters(Iterator parameters, ParameterInclude parameterInclude,
                                           ParameterInclude parent )
             throws DeploymentException {
         ArrayList wsamapping = new ArrayList();
-        while (paramters.hasNext()) {
+        while (parameters.hasNext()) {
             //this is to check whether some one has locked the parmter at the top level
-            OMElement paramterElement = (OMElement) paramters.next();
+            OMElement parameterElement = (OMElement) parameters.next();
 
-            Parameter paramter = new ParameterImpl();
-            //setting paramterElement
-            paramter.setParameterElement(paramterElement);
+            Parameter parameter = new ParameterImpl();
+            //setting parameterElement
+            parameter.setParameterElement(parameterElement);
 
-            //setting paramter Name
-            OMAttribute paraName = paramterElement.getAttribute(
+            //setting parameter Name
+            OMAttribute paraName = parameterElement.getAttribute(
                     new QName(ATTNAME));
             if(paraName == null ){
                 throw new DeploymentException(
                         Messages.getMessage(DeploymentErrorMsgs.BAD_PARA_ARGU));
             }
-            paramter.setName(paraName.getAttributeValue());
+            parameter.setName(paraName.getAttributeValue());
 
             //setting paramter Value (the chiled elemnt of the paramter)
-            OMElement paraValue = paramterElement.getFirstElement();
+            OMElement paraValue = parameterElement.getFirstElement();
             if(paraValue !=null){
-                paramter.setValue(paramterElement);
-                paramter.setParamterType(Parameter.DOM_PARAMETER);
+                parameter.setValue(parameterElement);
+                parameter.setParameterType(Parameter.DOM_PARAMETER);
             } else {
-                String paratestValue = paramterElement.getText();
-                paramter.setValue(paratestValue);
-                paramter.setParamterType(Parameter.TEXT_PARAMETER);
+                String paratextValue = parameterElement.getText();
+                parameter.setValue(paratextValue);
+                parameter.setParameterType(Parameter.TEXT_PARAMETER);
             }
 
             //setting locking attribute
-            OMAttribute paraLocked = paramterElement.getAttribute(
+            OMAttribute paraLocked = parameterElement.getAttribute(
                     new QName(ATTLOCKED));
             Parameter parentpara = null;
             if (parent !=null) {
-                parentpara = parent.getParameter(paramter.getName());
+                parentpara = parent.getParameter(parameter.getName());
             }
             if (paraLocked !=null) {
                 String lockedValue = paraLocked.getAttributeValue();
                 if("true".equals(lockedValue)){
                     //if the parameter is locked at some levle paramer value replace by that
-                    if(parent!=null && parent.isParamterLocked(paramter.getName())){
+                    if(parent!=null && parent.isParamterLocked(parameter.getName())){
                         throw new DeploymentException(Messages.getMessage(
-                                DeploymentErrorMsgs.CONFIG_NOT_FOUND,paramter.getName()));
+                                DeploymentErrorMsgs.CONFIG_NOT_FOUND,parameter.getName()));
                     } else{
-                        paramter.setLocked(true);
+                        parameter.setLocked(true);
                     }
 
                 } else {
-                    paramter.setLocked(false);
+                    parameter.setLocked(false);
                 }
             }
             if(Constants.WSA_ACTION.equals(paraName.getAttributeValue())){
-                wsamapping.add(paramter);
+                wsamapping.add(parameter);
                 // no need to add this paramter , since this is just for mapping
                 continue;
             }
             try {
                 if(parent !=null){
-                    if(parentpara == null | !parent.isParamterLocked(paramter.getName())){
-                        parameterInclude.addParameter(paramter);
+                    if(parentpara == null | !parent.isParamterLocked(parameter.getName())){
+                        parameterInclude.addParameter(parameter);
                     }
                 } else {
-                    parameterInclude.addParameter(paramter);
+                    parameterInclude.addParameter(parameter);
                 }
             } catch (AxisFault axisFault) {
                 throw new DeploymentException(axisFault);

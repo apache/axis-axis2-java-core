@@ -130,7 +130,7 @@ public class ParameterImpl implements Parameter {
         return type;
     }
 
-    public void setParamterType(int type) {
+    public void setParameterType(int type) {
         this.type =type;
     }
 
