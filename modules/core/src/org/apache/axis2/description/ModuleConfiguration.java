@@ -49,7 +49,7 @@ public class ModuleConfiguration implements ParameterInclude{
     }
 
     public void addParameter(Parameter param) throws AxisFault {
-        if(isParamterLocked(param.getName())){
+        if(isParameterLocked(param.getName())){
             throw new AxisFault("Parmter is locked can not overide: " + param.getName());
         } else{
             paramterinclude.addParameter(param);
@@ -64,11 +64,11 @@ public class ModuleConfiguration implements ParameterInclude{
         return paramterinclude.getParameters();
     }
 
-    public boolean isParamterLocked(String paramterName) {
+    public boolean isParameterLocked(String paramterName) {
         // checking the locked value of parent
         boolean loscked =  false;
         if (parent !=null) {
-            loscked = parent.isParamterLocked(paramterName);
+            loscked = parent.isParameterLocked(paramterName);
         }
         if(loscked){
             return true;

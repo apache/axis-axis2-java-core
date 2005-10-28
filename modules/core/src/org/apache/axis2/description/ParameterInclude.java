@@ -48,7 +48,10 @@ public interface ParameterInclude {
      */
     ArrayList getParameters();
 
-    //to check whether the paramter is locked at any levle
-    boolean isParamterLocked(String paramterName);
+    /**
+     * to check whether the parameter is locked at any level 
+     */
+
+    boolean isParameterLocked(String paramterName);
 
 }

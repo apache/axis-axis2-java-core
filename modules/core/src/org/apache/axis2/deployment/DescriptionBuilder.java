@@ -222,7 +222,7 @@ public class DescriptionBuilder implements DeploymentConstants{
                 String lockedValue = paraLocked.getAttributeValue();
                 if("true".equals(lockedValue)){
                     //if the parameter is locked at some levle paramer value replace by that
-                    if(parent!=null && parent.isParamterLocked(parameter.getName())){
+                    if(parent!=null && parent.isParameterLocked(parameter.getName())){
                         throw new DeploymentException(Messages.getMessage(
                                 DeploymentErrorMsgs.CONFIG_NOT_FOUND,parameter.getName()));
                     } else{
@@ -240,7 +240,7 @@ public class DescriptionBuilder implements DeploymentConstants{
             }
             try {
                 if(parent !=null){
-                    if(parentpara == null | !parent.isParamterLocked(parameter.getName())){
+                    if(parentpara == null | !parent.isParameterLocked(parameter.getName())){
                         parameterInclude.addParameter(parameter);
                     }
                 } else {

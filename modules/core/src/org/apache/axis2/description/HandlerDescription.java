@@ -107,7 +107,7 @@ public class HandlerDescription implements ParameterInclude {
      * @param param
      */
     public void addParameter(Parameter param) throws AxisFault{
-        if(isParamterLocked(param.getName())){
+        if(isParameterLocked(param.getName())){
             throw new AxisFault("Parmter is locked can not overide: " + param.getName());
         } else{
             parameterInclude.addParameter(param);
@@ -127,13 +127,13 @@ public class HandlerDescription implements ParameterInclude {
     }
 
     //to check whether the paramter is locked at any levle
-    public boolean isParamterLocked(String paramterName) {
+    public boolean isParameterLocked(String paramterName) {
         if(parent != null){
-            if(parent.isParamterLocked(paramterName)){
+            if(parent.isParameterLocked(paramterName)){
                 return true;
             }
         }
-        return parameterInclude.isParamterLocked(paramterName);
+        return parameterInclude.isParameterLocked(paramterName);
     }
 
     /**

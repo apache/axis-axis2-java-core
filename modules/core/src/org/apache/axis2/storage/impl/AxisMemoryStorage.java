@@ -75,8 +75,8 @@ public class AxisMemoryStorage extends AbstractStorage {
     }
 
     //to check whether the paramter is locked at any levle
-    public boolean isParamterLocked(String paramterName) {
-        return paramter.isParamterLocked(paramterName);
+    public boolean isParameterLocked(String paramterName) {
+        return paramter.isParameterLocked(paramterName);
     }
 
 }

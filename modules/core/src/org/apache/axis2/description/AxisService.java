@@ -19,7 +19,6 @@ package org.apache.axis2.description;
 import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -366,7 +365,7 @@ public class AxisService
             return;
         }
 
-        if(isParamterLocked(param.getName())){
+        if(isParameterLocked(param.getName())){
             throw new AxisFault("Parmter is locked can not overide: " + param.getName());
         } else{
             ParameterIncludeImpl paramInclude =
@@ -802,12 +801,12 @@ public class AxisService
     }
 
     //to check whether a given paramter is locked
-    public boolean isParamterLocked(String paramterName) {
+    public boolean isParameterLocked(String paramterName) {
         // checking the locked value of parent
         boolean loscked = false;
 
         if (getParent() !=null) {
-            loscked =  getParent().getAxisDescription().isParamterLocked(paramterName);
+            loscked =  getParent().getAxisDescription().isParameterLocked(paramterName);
         }
         if(loscked){
             return true;

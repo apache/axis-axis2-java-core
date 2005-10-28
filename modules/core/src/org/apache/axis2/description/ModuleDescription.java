@@ -132,7 +132,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
      * @param param
      */
     public void addParameter(Parameter param)throws AxisFault{
-        if(isParamterLocked(param.getName())){
+        if(isParameterLocked(param.getName())){
             throw new AxisFault("Parmter is locked can not overide: " + param.getName());
         } else{
             parameters.addParameter(param);
@@ -196,11 +196,11 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     }
 
     //to check whether a given paramter is locked
-    public boolean isParamterLocked(String paramterName) {
+    public boolean isParameterLocked(String paramterName) {
         // checking the locked value of parent
           boolean loscked =  false;
         if (getParent() !=null) {
-            loscked=    getParent().isParamterLocked(paramterName);
+            loscked=    getParent().isParameterLocked(paramterName);
         }
         if(loscked){
             return true;

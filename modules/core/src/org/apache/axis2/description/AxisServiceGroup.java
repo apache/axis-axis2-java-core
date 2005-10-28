@@ -78,12 +78,12 @@ public class AxisServiceGroup implements ParameterInclude{
         return paramInclude.getParameters();
     }
 
-    public boolean isParamterLocked(String paramterName) {
+    public boolean isParameterLocked(String paramterName) {
         // checking the locked value of parent
         boolean loscked = false;
 
         if (getParent() !=null) {
-            loscked =  getParent().isParamterLocked(paramterName);
+            loscked =  getParent().isParameterLocked(paramterName);
         }
         if(loscked){
             return true;

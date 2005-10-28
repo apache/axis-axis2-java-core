@@ -48,7 +48,7 @@ public class AxisObserverImpl implements AxisObserver{
     }
 
     //to check whether the paramter is locked at any levle
-    public boolean isParamterLocked(String paramterName) {
+    public boolean isParameterLocked(String paramterName) {
         return false;
     }
 }

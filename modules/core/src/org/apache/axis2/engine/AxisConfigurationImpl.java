@@ -332,7 +332,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     }
 
     //to check whether a given paramter is locked
-    public boolean isParamterLocked(String paramterName) {
+    public boolean isParameterLocked(String paramterName) {
         Parameter parameter = getParameter(paramterName);
         return parameter != null && parameter.isLocked();
     }
@@ -418,7 +418,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @param param
      */
     public void addParameter(Parameter param) throws AxisFault{
-        if(isParamterLocked(param.getName())){
+        if(isParameterLocked(param.getName())){
             throw new AxisFault("Parmter is locked can not overide: " + param.getName());
         } else{
             paramInclude.addParameter(param);
