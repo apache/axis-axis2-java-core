@@ -233,11 +233,14 @@
         </j:forEach>
     </goal>
 
-    <goal name="jar">
-        <attainGoal name="multiproject:install"/>
+    <goal name="jar:jar">
         <attainGoal name="create-jar"/>
         <ant:copy file="target/lib/axis2-${pom.currentVersion}.jar"
             toDir="target/"/>
+    </goal>
+
+    <goal name="jar">
+        <attainGoal name="multiproject:install"/>
         <attainGoal name="jar:install"/>
     </goal>
 
