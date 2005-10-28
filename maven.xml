@@ -238,6 +238,7 @@
         <attainGoal name="create-jar"/>
         <ant:copy file="target/lib/axis2-${pom.currentVersion}.jar"
             toDir="target/"/>
+        <attainGoal name="jar:install"/>
     </goal>
 
 
