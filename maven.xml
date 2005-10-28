@@ -310,6 +310,9 @@
     </goal>
 
     <goal name="create-jar" prereqs="init">
+        <!-- Hack for now, don't fail building jar if saaj is absent -->
+        <ant:mkdir dir="modules/saaj/target/classes"/>
+        
         <jar destfile="target/lib/axis2-${pom.currentVersion}.jar">
             <fileset dir="modules/core/target/classes"/>
             <!-- adding the tool classes. This is needed to get the ant task -->
