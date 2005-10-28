@@ -226,8 +226,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         while (services.hasNext()) {
             description = (AxisService) services.next();
             if(allservices.get(description.getName().getLocalPart()) !=null){
-                throw new AxisFault("Two service can not have same name, a service with " +
-                        description.getName().getLocalPart() + " alredy exist in the system");
+                throw new AxisFault("Two services can not have the same name, a service with " +
+                        description.getName().getLocalPart() + " alredy exists in the system");
             }
         }
         services = axisServiceGroup.getServices();
