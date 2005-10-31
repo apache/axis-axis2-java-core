@@ -10,6 +10,9 @@
     <xsl:variable name="soapVersion"><xsl:value-of select="@soap-version"/></xsl:variable>
     package <xsl:value-of select="$package"/>;
 
+        <!-- Put the MTOM enable flag -->
+
+
     /*
      *  Auto generated java implementation by the Axis code generator
     */

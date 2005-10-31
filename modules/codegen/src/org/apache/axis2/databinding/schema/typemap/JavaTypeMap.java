@@ -1,6 +1,7 @@
-package org.apache.axis2.databinding.schema;
+package org.apache.axis2.databinding.schema.typemap;
 
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.databinding.schema.SchemaConstants;
 
 import javax.xml.namespace.QName;
 import java.util.Map;
@@ -21,9 +22,9 @@ import java.util.HashMap;
  * limitations under the License.
  */
 
-public class TypeMap {
+public class JavaTypeMap implements TypeMap {
     
-    public static Map getTypeMap() {
+    public Map getTypeMap() {
         return typeMap;
     }
 

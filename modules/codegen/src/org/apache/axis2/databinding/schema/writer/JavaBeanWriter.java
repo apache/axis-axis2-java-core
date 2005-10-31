@@ -1,8 +1,12 @@
-package org.apache.axis2.databinding.schema;
+package org.apache.axis2.databinding.schema.writer;
 
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.axis2.util.*;
+import org.apache.axis2.databinding.schema.BeanWriterMetaInfoHolder;
+import org.apache.axis2.databinding.schema.SchemaCompilationException;
+import org.apache.axis2.databinding.schema.util.SchemaPropertyLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -12,7 +16,6 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.stream.StreamSource;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
@@ -34,9 +37,9 @@ import java.io.*;
  * limitations under the License.
  */
 
-public class JavaBeanWriter {
+public class JavaBeanWriter implements BeanWriter{
 
-    private static final String JAVA_BEAN_TEMPLATE = "/org/apache/axis2/databinding/schema/template/BeanTemplate.xsl";
+    private String javaBeanTemplateName = null;
     private boolean templateLoaded = false;
     private Templates templateCache;
 
@@ -47,8 +50,14 @@ public class JavaBeanWriter {
 
     private File rootDir;
 
-    public JavaBeanWriter(File rootDir) throws IOException {
-        if (rootDir ==null){
+    /**
+     * Default constructor
+     */
+    public JavaBeanWriter(){
+    }
+
+    public void init(File rootDir) throws IOException{
+         if (rootDir ==null){
             this.rootDir = new File(".");
         }else if (!rootDir.isDirectory()){
             throw new IOException("Root location needs to be a directory!");
@@ -57,16 +66,16 @@ public class JavaBeanWriter {
         }
 
         namesList = new ArrayList();
+        javaBeanTemplateName = SchemaPropertyLoader.getBeanTemplate();
     }
-
     /**
      *
      * @param complexType
      * @param typeMap
      * @param metainf
-     * @throws SchemaCompilationException
+     * @throws org.apache.axis2.databinding.schema.SchemaCompilationException
      */
-    public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException{
+    public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
 
         try {
             //determine the package for this type.
@@ -198,6 +207,10 @@ public class JavaBeanWriter {
         return packageName+"."+className;
     }
 
+    public String write(XmlSchemaSimpleType simpleType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
+        throw new SchemaCompilationException("Not implemented yet");
+    }
+
     /**
      *
      * @param listOfNames
@@ -249,7 +262,7 @@ public class JavaBeanWriter {
         //first get the language specific property map
         Class clazz = this.getClass();
         InputStream xslStream;
-        String templateName = JAVA_BEAN_TEMPLATE;
+        String templateName = javaBeanTemplateName;
         if (templateName!=null){
             try {
                 xslStream = clazz.getResourceAsStream(templateName);

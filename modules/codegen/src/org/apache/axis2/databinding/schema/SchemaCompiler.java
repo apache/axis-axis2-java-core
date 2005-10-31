@@ -2,6 +2,10 @@ package org.apache.axis2.databinding.schema;
 
 import org.apache.ws.commons.schema.*;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.databinding.schema.typemap.JavaTypeMap;
+import org.apache.axis2.databinding.schema.writer.JavaBeanWriter;
+import org.apache.axis2.databinding.schema.writer.BeanWriter;
+import org.apache.axis2.databinding.schema.util.SchemaPropertyLoader;
 
 import javax.xml.namespace.QName;
 import java.util.*;
@@ -34,9 +38,10 @@ public class SchemaCompiler {
     private ArrayList processedElementList;
 
 
-    private JavaBeanWriter writer;
+    private BeanWriter writer=null;
 
-    private Map baseSchemaTypeMap = TypeMap.getTypeMap();
+    private Map baseSchemaTypeMap =null;
+
     private static final String ANY_ELEMENT_FIELD_NAME = "extraElements";
     private static final String EXTRA_ATTRIBUTE_FIELD_NAME = "extraAttributes";
 
@@ -63,7 +68,12 @@ public class SchemaCompiler {
             this.processedElementList = new ArrayList();
             this.processedAnonymousComplexTypesMap = new HashMap();
 
-            this.writer = new JavaBeanWriter(this.options.getOutputLocation());
+            //load the writer
+            this.writer = SchemaPropertyLoader.getBeanWriterInstance();
+            this.writer.init(this.options.getOutputLocation());
+
+            //laod the base types
+            baseSchemaTypeMap =SchemaPropertyLoader.getTypeMapperInstance().getTypeMap();
 
         } catch (IOException e) {
             throw new SchemaCompilationException(e);
@@ -190,7 +200,7 @@ public class SchemaCompiler {
             //pass through. We'll be iterating through the elements writing them
             //later
         }
-        
+
         //There can be instances where the SchemaType is null but the schemaTypeName is not
         //this specifically happens with xsd:anyType.
         if (!isOuter){
