@@ -16,6 +16,7 @@
 package org.apache.axis2.om.impl.dom;
 
 import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMConstants;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
@@ -27,7 +28,6 @@ import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.om.impl.llom.OMStAXWrapper;
 import org.apache.axis2.om.impl.llom.traverse.OMChildElementIterator;
 import org.apache.axis2.om.impl.llom.util.EmptyIterator;
-import org.apache.axis2.soap.impl.llom.SOAPConstants;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
@@ -486,9 +486,9 @@ public class ElementImpl extends ParentNode implements Element,OMElement {
         }
 
         if (namespace == null && uri != null && prefix != null
-                && prefix.equals(SOAPConstants.XMLNS_PREFIX)
-                && uri.equals(SOAPConstants.XMLNS_URI)) {
-            declareNamespace(SOAPConstants.XMLNS_URI, SOAPConstants.XMLNS_PREFIX);
+                && prefix.equals(OMConstants.XMLNS_PREFIX)
+                && uri.equals(OMConstants.XMLNS_URI)) {
+            declareNamespace(OMConstants.XMLNS_URI, OMConstants.XMLNS_PREFIX);
             namespace = findNamespace(uri, prefix);
         }
         return namespace;

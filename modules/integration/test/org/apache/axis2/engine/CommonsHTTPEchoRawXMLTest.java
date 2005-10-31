@@ -115,7 +115,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase {
             index++;
             if (index > 10) {
                 throw new AxisFault(
-                        "Server is shutdown as the Async response take too longs time");
+                        "Server was shutdown as the async response take too long to complete");
             }
         }
         call.close();

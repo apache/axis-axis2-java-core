@@ -16,7 +16,6 @@
 
 package org.apache.axis2.soap;
 
-import org.apache.axis2.soap.impl.llom.SOAPConstants;
 
 public interface SOAP12Constants extends SOAPConstants {
     /**

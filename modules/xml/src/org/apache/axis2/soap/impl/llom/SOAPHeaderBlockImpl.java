@@ -23,6 +23,7 @@ import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.OMAttributeImpl;
 import org.apache.axis2.om.impl.llom.OMElementImpl;
 import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
+import org.apache.axis2.soap.SOAPConstants;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
 import org.apache.axis2.soap.SOAPProcessingException;

@@ -16,7 +16,16 @@
 
 package org.apache.axis2.om.impl.llom;
 
-import org.apache.axis2.om.*;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMConstants;
+import org.apache.axis2.om.OMContainer;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMContainerEx;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.OMOutputImpl;
@@ -24,16 +33,16 @@ import org.apache.axis2.om.impl.llom.traverse.OMChildElementIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
 import org.apache.axis2.om.impl.llom.util.EmptyIterator;
-import org.apache.axis2.soap.impl.llom.SOAPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Class OMElementImpl
@@ -320,9 +329,9 @@ public class OMElementImpl extends OMNodeImpl
         }
 
         if (namespace == null && uri != null && prefix != null
-                && prefix.equals(SOAPConstants.XMLNS_PREFIX)
-                && uri.equals(SOAPConstants.XMLNS_URI)) {
-            declareNamespace(SOAPConstants.XMLNS_URI, SOAPConstants.XMLNS_PREFIX);
+                && prefix.equals(OMConstants.XMLNS_PREFIX)
+                && uri.equals(OMConstants.XMLNS_URI)) {
+            declareNamespace(OMConstants.XMLNS_URI, OMConstants.XMLNS_PREFIX);
             namespace = findNamespace(uri, prefix);
         }
         return namespace;

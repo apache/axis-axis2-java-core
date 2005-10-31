@@ -110,7 +110,7 @@ public class EchoRawXMLLoadTest extends TestCase {
 //            Thread.sleep(1000);
 //            index++;
 //            if(index > 10 ){
-//                throw new AxisFault("Server is shutdown as the Async response take too longs time");
+//                throw new AxisFault("Server was shutdown as the async response take too long to complete");
 //            }
 //        }
 //

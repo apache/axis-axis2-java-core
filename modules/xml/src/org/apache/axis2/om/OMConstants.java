@@ -62,4 +62,11 @@ public interface OMConstants {
      */
     public static final String DEFAULT_CHAR_SET_ENCODING = "utf-8";
     public static final String DEFAULT_XML_VERSION = "1.0";
+    
+    
+    public static final String XMLNS_URI =
+        "http://www.w3.org/XML/1998/namespace";
+
+    public static final String XMLNS_PREFIX =
+        "xml";
 }

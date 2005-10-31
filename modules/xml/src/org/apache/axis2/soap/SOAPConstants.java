@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.soap.impl.llom;
+package org.apache.axis2.soap;
 
 public interface SOAPConstants {
     /**
@@ -82,10 +82,4 @@ public interface SOAPConstants {
     public static final String FAULT_CODE_SENDER = "";
     public static final String FAULT_CODE_RECEIVER = "";
 
-
-    public static final String XMLNS_URI =
-        "http://www.w3.org/XML/1998/namespace";
-
-    public static final String XMLNS_PREFIX =
-        "xml";
 }

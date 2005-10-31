@@ -17,7 +17,6 @@
 package org.apache.axis2.soap;
 
 import org.apache.axis2.om.OMException;
-import org.apache.axis2.soap.impl.llom.SOAPConstants;
 
 public class SOAPBodyTest extends SOAPBodyTestCase {
 
