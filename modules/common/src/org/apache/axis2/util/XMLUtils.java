@@ -512,7 +512,7 @@ public class XMLUtils {
         return new InputSource(uconn.getInputStream());
     }
 
-    public static final String base64encode(byte[] bytes) {
+    public static String base64encode(byte[] bytes) {
         return new String(Base64.encode(bytes));
     }
 
