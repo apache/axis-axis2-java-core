@@ -63,7 +63,7 @@ public class WOMInputOutputTest extends XMLTestCase {
             // serialize wom and get the xml.
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             WOMWriter womWriter = WOMWriterFactory.createWriter(WSDLConstants.WSDL_1_1);
-            womWriter.writeWOM(wsdlVersionWrapper, byteArrayOutputStream);
+            womWriter.writeWOM(wsdlVersionWrapper.getDescription(), byteArrayOutputStream);
             String actualWSDL = new String(byteArrayOutputStream.toByteArray());
 
             // compare that with the original xml file.
@@ -74,7 +74,7 @@ public class WOMInputOutputTest extends XMLTestCase {
 
             Document expectedWSDLDocument = newDocument(getFileContentsAsString(testWSDL));
 
-            System.out.println(getChildrenCount(actualWSDL));
+//            System.out.println(getChildrenCount(actualWSDL));
 //            System.out.println(getChildrenCount(testWSDL));
 
 //            assertXMLEqual(actualWSDLDocument, expectedWSDLDocument);

@@ -35,7 +35,7 @@ import javax.xml.namespace.QName;
 /**
  * Testing charater encoding support
  */
-public class CharctersetEncodingTest extends TestCase {
+public class CharactersetEncodingTest extends TestCase {
 
     private EndpointReference targetEPR = new EndpointReference(
             "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
@@ -54,7 +54,7 @@ public class CharctersetEncodingTest extends TestCase {
 
     private boolean finish = false;
 
-    public CharctersetEncodingTest(String arg0) {
+    public CharactersetEncodingTest(String arg0) {
         super(arg0);
     }
 

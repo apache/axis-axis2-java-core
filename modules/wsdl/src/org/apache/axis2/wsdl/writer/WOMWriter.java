@@ -3,6 +3,7 @@ package org.apache.axis2.wsdl.writer;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.wsdl.WSDLDescription;
 
+import javax.xml.stream.XMLStreamException;
 import java.io.OutputStream;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -39,7 +40,7 @@ public interface WOMWriter {
      * @param out
      * @throws WriterException
      */
-    public void writeWOM(WSDLDescription wsdlDescription,OutputStream out) throws WriterException;
+    public void writeWOM(WSDLDescription wsdlDescription,OutputStream out) throws WriterException, XMLStreamException;
 
     public void setEncoding(String encoding);
 
