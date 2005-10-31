@@ -25,7 +25,7 @@ import org.apache.axis2.deployment.scheduler.DeploymentIterator;
 import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.deployment.util.Util;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
@@ -822,20 +822,20 @@ public class DeploymentEngine implements DeploymentConstants {
      * @throws DeploymentException
      */
     private void setClassLoaders(File axis2repo) throws DeploymentException {
-        ClassLoader sysClassLoader = Util.getClassLoader(
+        ClassLoader sysClassLoader = Utils.getClassLoader(
                 Thread.currentThread().getContextClassLoader(), axis2repo);
         axisConfig.setSystemClassLoader(sysClassLoader);
 
         File services = new File(axis2repo, "services");
         if (services.exists()) {
-            axisConfig.setServiceClassLoader(Util.getClassLoader(
+            axisConfig.setServiceClassLoader(Utils.getClassLoader(
                     axisConfig.getSystemClassLoader(), services));
         } else {
             axisConfig.setServiceClassLoader(axisConfig.getSystemClassLoader());
         }
         File modules = new File(axis2repo, "modules");
         if (modules.exists()) {
-            axisConfig.setServiceClassLoader(Util.getClassLoader(
+            axisConfig.setServiceClassLoader(Utils.getClassLoader(
                     axisConfig.getSystemClassLoader(), modules));
         } else {
             axisConfig.setModuleClassLoader(axisConfig.getSystemClassLoader());

@@ -19,7 +19,7 @@ package org.apache.axis2.deployment.repository.util;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
-import org.apache.axis2.deployment.util.Util;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.i18n.Messages;
 
@@ -125,7 +125,7 @@ public class ArchiveFileData {
             }
         } else {
             if (file != null) {
-                classLoader = Util.getClassLoader(parent,file);
+                classLoader = Utils.getClassLoader(parent,file);
             }
         }
 
