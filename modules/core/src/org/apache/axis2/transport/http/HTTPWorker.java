@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -149,7 +150,12 @@ public class HTTPWorker implements HttpRequestHandler {
                         configurationContext);
             }
 
-            Object contextWritten = msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
+            OperationContext operationContext = msgContext.getOperationContext();
+            
+            Object contextWritten = null;
+            if (operationContext!=null)
+            	contextWritten = operationContext.getProperty(Constants.RESPONSE_WRITTEN);
+            
             if (contextWritten != null &&
                     Constants.VALUE_TRUE.equals(contextWritten)) {
                 response.setStatusLine(
