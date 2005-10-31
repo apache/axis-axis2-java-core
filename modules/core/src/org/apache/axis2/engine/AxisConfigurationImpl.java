@@ -98,6 +98,13 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     private HashMap allservices = new HashMap();
 
 
+    private ClassLoader systemClassLoader;
+    private ClassLoader serviceClassLoader;
+    private ClassLoader moduleClassLoader;
+
+
+
+
     protected HashMap messagReceivers;
     /////////////////////// From AxisGlobal /////////////////////////////////////
     /**
@@ -121,6 +128,9 @@ public class AxisConfigurationImpl implements AxisConfiguration {
                 new Phase(PhaseMetadata.PHASE_TRANSPORTIN));
         inPhasesUptoAndIncludingPostDispatch.add(
                 new Phase(PhaseMetadata.PHASE_PRE_DISPATCH));
+        systemClassLoader = Thread.currentThread().getContextClassLoader();
+        serviceClassLoader = Thread.currentThread().getContextClassLoader();
+        moduleClassLoader = Thread.currentThread().getContextClassLoader();
     }
 
 
@@ -226,8 +236,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         while (services.hasNext()) {
             description = (AxisService) services.next();
             if(allservices.get(description.getName().getLocalPart()) !=null){
-                throw new AxisFault("Two services can not have the same name, a service with " +
-                        description.getName().getLocalPart() + " alredy exists in the system");
+                throw new AxisFault("Two services can not have same name, a service with " +
+                        description.getName().getLocalPart() + " alredy exist in the system");
             }
         }
         services = axisServiceGroup.getServices();
@@ -509,6 +519,33 @@ public class AxisConfigurationImpl implements AxisConfiguration {
             AxisObserver axisObserver = (AxisObserver) observersList.get(i);
             axisObserver.update(event);
         }
+    }
+
+    //the class loder which become the top most parent of all the modules and services
+    public ClassLoader getSystemClassLoader() {
+        return this.systemClassLoader;
+    }
+
+    public void setSystemClassLoader(ClassLoader classLoader) {
+        this.systemClassLoader = classLoader;
+    }
+
+    // the class loder that become the paranet of all the services
+    public ClassLoader getServiceClassLoader() {
+        return this.serviceClassLoader;
+    }
+
+    public void setServiceClassLoader(ClassLoader classLoader) {
+        this.serviceClassLoader = classLoader;
+    }
+
+    // the class loder that become the paranet of all the moduels
+    public ClassLoader getModuleClassLoader() {
+        return this.moduleClassLoader;
+    }
+
+    public void setModuleClassLoader(ClassLoader classLoader) {
+        this.moduleClassLoader = classLoader;
     }
 
     public void addObservers(AxisObserver axisObserver){

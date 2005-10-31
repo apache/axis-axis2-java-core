@@ -19,13 +19,12 @@ package org.apache.axis2.deployment.repository.util;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
+import org.apache.axis2.deployment.util.Util;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.i18n.Messages;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -107,8 +106,8 @@ public class ArchiveFileData {
         this.moduleClass = moduleClass;
     }
 
-    public void setClassLoader(boolean extarctArichive) throws AxisFault {
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
+    public void setClassLoader(boolean extarctArichive, ClassLoader parent) throws AxisFault {
+//        ClassLoader parent = Thread.currentThread().getContextClassLoader();
         if (! extarctArichive) {
             // has to be craeted taking that file to the account
             if (file != null) {
@@ -120,54 +119,13 @@ public class ArchiveFileData {
                     urlsToLoadFrom = new URL[]{file.toURL()};
                     classLoader =
                             new DeploymentClassLoader(urlsToLoadFrom, parent);
-                    //                classLoader = new URLClassLoader(urlsToLoadFrom, parent);
                 } catch (Exception e) {
                     throw new AxisFault(e);
                 }
             }
         } else {
             if (file != null) {
-                try {
-                    ArrayList urls = new ArrayList();
-                    urls.add(file.toURL());
-
-                    //if lib is simple
-                    File libfiles = new File(file, "lib");
-                    if(libfiles.exists()){
-                        urls.add(libfiles.toURL());
-                        File jarfiles [] = libfiles.listFiles();
-                        for (int i = 0; i < jarfiles.length; i++) {
-                            File jarfile = jarfiles[i];
-                            if(jarfile.getName().endsWith(".jar")){
-                                urls.add(jarfile.toURL());
-                            }
-                        }
-                    }
-
-                    //if lib is capital
-                    libfiles = new File(file, "Lib");
-                    if(libfiles.exists()){
-                        urls.add(libfiles.toURL());
-                        File jarfiles [] = libfiles.listFiles();
-                        for (int i = 0; i < jarfiles.length; i++) {
-                            File jarfile = jarfiles[i];
-                            if(jarfile.getName().endsWith(".jar")){
-                                urls.add(jarfile.toURL());
-                            }
-                        }
-                    }
-
-                    URL urllist [] = new URL[urls.size()];
-                    for (int i = 0; i < urls.size(); i++) {
-                        urllist[i] = (URL) urls.get(i);
-                    }
-                    classLoader = new URLClassLoader(urllist,parent);
-
-
-                } catch (MalformedURLException e) {
-                    throw new AxisFault(e);
-                }
-
+                classLoader = Util.getClassLoader(parent,file);
             }
         }
 

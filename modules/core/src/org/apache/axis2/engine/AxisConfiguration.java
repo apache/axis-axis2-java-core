@@ -149,4 +149,17 @@ public interface AxisConfiguration extends ParameterInclude {
     Iterator getServiceGroups();
 
     public void notifyObservers(int event_type , AxisService service);
+
+
+    //the class loder which become the top most parent of all the modules and services
+    public ClassLoader getSystemClassLoader();
+    public void setSystemClassLoader(ClassLoader classLoader);
+
+    // the class loder that become the paranet of all the services
+    public ClassLoader getServiceClassLoader();
+    public void setServiceClassLoader(ClassLoader classLoader);
+
+    // the class loder that become the paranet of all the moduels
+    public ClassLoader getModuleClassLoader();
+    public void setModuleClassLoader(ClassLoader classLoader);
 }
