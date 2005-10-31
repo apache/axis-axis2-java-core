@@ -228,4 +228,8 @@ public class OMDOMFactory implements OMFactory {
 		throw new UnsupportedOperationException("TODO");
 	}
 	
+	public DocumentImpl getDocument() {
+		return this.document;
+	}
+	
 }

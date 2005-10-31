@@ -20,6 +20,7 @@ import org.apache.axis2.om.OMDocument;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.dom.util.XMLChar;
 import org.w3c.dom.Attr;
@@ -55,6 +56,11 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	 */
 	public DocumentImpl(DocumentImpl ownerDocument) {
 		super(ownerDocument);
+	}
+	
+	public DocumentImpl(OMXMLParserWrapper parserWrapper) {
+		ElementImpl docElem = (ElementImpl)parserWrapper.getDocumentElement();
+		this.appendChild(docElem);
 	}
 
 	public DocumentImpl() {

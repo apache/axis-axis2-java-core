@@ -47,7 +47,7 @@ import javax.xml.stream.XMLStreamReader;
  * interfaces.
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
-public class ElementImpl extends ParentNode implements Element,OMElement {
+public class ElementImpl extends ParentNode implements Element,OMElement, OMConstants {
 	
 	protected OMNamespace namespace;
 	protected String localName;
