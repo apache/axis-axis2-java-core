@@ -334,4 +334,24 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
         return (this.namespace == null)?null:this.namespace.getPrefix();
     }
 
+	public Node cloneNode(boolean deep) {
+
+        AttrImpl clone = (AttrImpl) super.cloneNode(deep);
+
+        // take care of case where there are kids
+    	if (!this.hasChildNodes()) {
+
+            clone.attrValue = null;
+
+            for (Node child = (Node) attrValue; child != null; child = child.getNextSibling()) {
+                 clone.appendChild(child.cloneNode(true));
+            }
+        }
+        clone.isSpecified(true);
+        return clone;
+	}
+    
+    
+    
+
 }

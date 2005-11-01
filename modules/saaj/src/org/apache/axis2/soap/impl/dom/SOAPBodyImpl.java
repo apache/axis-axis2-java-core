@@ -28,8 +28,6 @@ import org.apache.axis2.soap.SOAPConstants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPProcessingException;
-import org.apache.axis2.soap.impl.llom.SOAPElement;
-import org.apache.axis2.soap.impl.llom.SOAPEnvelopeImpl;
 
 public abstract class SOAPBodyImpl extends SOAPElement implements SOAPBody,
 		OMConstants {

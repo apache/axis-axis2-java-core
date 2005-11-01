@@ -195,9 +195,20 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
     }
  
     public Node cloneNode(boolean deep) {
-    	throw new UnsupportedOperationException("TODO");
-    	//TODO
-    } // cloneNode(boolean):Node
+    	NodeImpl newnode;
+    	try {
+            newnode = (NodeImpl)clone();
+    	}
+    	catch (CloneNotSupportedException e) {
+            throw new RuntimeException("**Internal Error**" + e);
+    	}
+    	newnode.ownerNode      = this.ownerNode;
+        newnode.isOwned(false);
+        
+        newnode.isReadonly(false);
+        
+        return newnode;
+    } 
 
 
 	/*

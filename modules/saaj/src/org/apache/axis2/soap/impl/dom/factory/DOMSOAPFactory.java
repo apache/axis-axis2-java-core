@@ -34,182 +34,162 @@ import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
 import org.apache.axis2.soap.SOAPMessage;
 import org.apache.axis2.soap.SOAPProcessingException;
+import org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl;
+import org.apache.axis2.soap.impl.dom.SOAPMessageImpl;
 
 public class DOMSOAPFactory extends OMDOMFactory implements SOAPFactory {
 
 	public SOAPMessage createSOAPMessage(OMXMLParserWrapper builder) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		return new SOAPMessageImpl(builder);
 	}
 
 	public SOAPMessage createSOAPMessage(SOAPEnvelope envelope, OMXMLParserWrapper parserWrapper) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		return new SOAPMessageImpl(envelope, parserWrapper);
 	}
 
 	public SOAPEnvelope createSOAPEnvelope(OMXMLParserWrapper builder) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		return new SOAPEnvelopeImpl(builder, this);
 	}
 
 	public SOAPEnvelope createSOAPEnvelope() throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPHeader createSOAPHeader(SOAPEnvelope envelope) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPHeader createSOAPHeader(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPHeaderBlock createSOAPHeaderBlock(String localName, OMNamespace ns, SOAPHeader parent) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPHeaderBlock createSOAPHeaderBlock(String localName, OMNamespace ns, SOAPHeader parent, OMXMLParserWrapper builder) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFault createSOAPFault(SOAPBody parent, Exception e) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFault createSOAPFault(SOAPBody parent) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFault createSOAPFault(SOAPBody parent, OMXMLParserWrapper builder) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPBody createSOAPBody(SOAPEnvelope envelope) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPBody createSOAPBody(SOAPEnvelope envelope, OMXMLParserWrapper builder) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultCode createSOAPFaultCode(SOAPFault parent) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultCode createSOAPFaultCode(SOAPFault parent, OMXMLParserWrapper builder) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultValue createSOAPFaultValue(SOAPFaultCode parent) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultValue createSOAPFaultValue(SOAPFaultCode parent, OMXMLParserWrapper builder) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultValue createSOAPFaultValue(SOAPFaultSubCode parent) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultValue createSOAPFaultValue(SOAPFaultSubCode parent, OMXMLParserWrapper builder) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultCode parent) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultCode parent, OMXMLParserWrapper builder) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultSubCode parent) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultSubCode createSOAPFaultSubCode(SOAPFaultSubCode parent, OMXMLParserWrapper builder) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultReason createSOAPFaultReason(SOAPFault parent) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultReason createSOAPFaultReason(SOAPFault parent, OMXMLParserWrapper builder) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultText createSOAPFaultText(SOAPFaultReason parent) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultText createSOAPFaultText(SOAPFaultReason parent, OMXMLParserWrapper builder) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultNode createSOAPFaultNode(SOAPFault parent) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultNode createSOAPFaultNode(SOAPFault parent, OMXMLParserWrapper builder) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultRole createSOAPFaultRole(SOAPFault parent) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultRole createSOAPFaultRole(SOAPFault parent, OMXMLParserWrapper builder) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultDetail createSOAPFaultDetail(SOAPFault parent) throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPFaultDetail createSOAPFaultDetail(SOAPFault parent, OMXMLParserWrapper builder) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPEnvelope getDefaultEnvelope() throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException();
 	}
 
 	public SOAPEnvelope getDefaultFaultEnvelope() throws SOAPProcessingException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+        SOAPEnvelope defaultEnvelope = getDefaultEnvelope();
+        SOAPFault fault = createSOAPFault(defaultEnvelope.getBody());
+
+        SOAPFaultCode faultCode = createSOAPFaultCode(fault);
+        SOAPFaultValue value = createSOAPFaultValue(faultCode);
+
+        SOAPFaultReason reason = createSOAPFaultReason(fault);
+        SOAPFaultText faultText = createSOAPFaultText(reason);
+
+        SOAPFaultNode faultNode = createSOAPFaultNode(fault);
+        SOAPFaultRole faultRole = createSOAPFaultRole(fault);
+        SOAPFaultDetail faultDetail = createSOAPFaultDetail(fault);
+
+        return defaultEnvelope;
 	}
 
 }

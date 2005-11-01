@@ -24,7 +24,6 @@ import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPFaultDetail;
 import org.apache.axis2.soap.SOAPProcessingException;
-import org.apache.axis2.soap.impl.llom.SOAPElement;
 
 import java.util.Iterator;
 
