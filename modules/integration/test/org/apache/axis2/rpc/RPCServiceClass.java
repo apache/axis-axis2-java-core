@@ -145,6 +145,19 @@ public class RPCServiceClass {
 
     public Employee echoEmployee(Employee em){
         System.out.println("vale: " + em.toString());
-       return em;
+        return em;
+    }
+
+
+    public Company echoCompany(Company com) throws AxisFault {
+        ArrayList pss = com.getPersons();
+        ArrayList tems= new ArrayList();
+        for (int i = 0; i < pss.size(); i++) {
+            OMElement omElement = (OMElement) pss.get(i);
+            Person  p =(Person)BeanSerializerUtil.deserialize(Person.class,omElement);
+            tems.add(p);
+        }
+        com.setPersons(tems);
+        return com;
     }
 }

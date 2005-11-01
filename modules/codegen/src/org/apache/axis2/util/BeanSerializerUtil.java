@@ -62,6 +62,10 @@ public class BeanSerializerUtil {
                     Object value =  propDesc.getReadMethod().invoke(beanObject,null);
                     objetc.add(propDesc.getName());
                     objetc.add(value.toString());
+                } else if(SimpleTypeMapper.isArrayList(ptype)){
+                    objetc.add(new QName(propDesc.getName()));
+                    Object value =  propDesc.getReadMethod().invoke(beanObject,null);
+                    objetc.add(((ArrayList) value).toArray());
                 } else {
                     objetc.add(new QName(propDesc.getName()));
                     Object value =  propDesc.getReadMethod().invoke(beanObject,null);
@@ -108,10 +112,19 @@ public class BeanSerializerUtil {
                     Class parameters = prty.getPropertyType();
                     if (prty.equals("class"))
                         continue;
-                    Object partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
-                    if (partObj == null) {
+
+                    Object partObj;
+                    if(SimpleTypeMapper.isSimpleType(parameters)){
+                        partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
+                    } else if(SimpleTypeMapper.isArrayList(parameters)){
+                        partObj = SimpleTypeMapper.getArrayList((OMElement)parts.getParent(),prty.getName());
+                    } else {
                         partObj = deserialize(parameters, parts);
                     }
+//                    Object partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
+//                    if (partObj == null) {
+//                        partObj = deserialize(parameters, parts);
+//                    }
                     Object [] parms = new Object[]{partObj};
                     prty.getWriteMethod().invoke(beanObj,parms);
                 }
@@ -233,6 +246,9 @@ public class BeanSerializerUtil {
 //have to check the instnceof
         MultirefHelper helper = new MultirefHelper((OMElement)response.getParent());
         boolean hasRef = false;
+        //to support array . if the paramter type is array , then all the omelemnts with that paramtre name
+        // has to  get and add to the list
+        Class classType = null;
         while (parts.hasNext() && count < length) {
             Object objValue = parts.next();
             OMElement omElement;
@@ -241,8 +257,7 @@ public class BeanSerializerUtil {
             }   else {
                 continue;
             }
-
-            Class classType = (Class)javaTypes[count];
+            classType = (Class)javaTypes[count];
 //handling refs
             OMAttribute omatribute = MultirefHelper.processRefAtt(omElement);
             String ref=null;

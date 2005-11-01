@@ -20,6 +20,7 @@ package org.apache.axis2.rpc;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.databinding.utils.ADBPullParser;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -48,10 +49,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
 
 public class RPCCallTest extends TestCase {
 
@@ -280,6 +278,55 @@ public class RPCCallTest extends TestCase {
         args.add("1");
         OMElement response = call.invokeBlocking(operationName, args.toArray());
         assertEquals(Byte.parseByte(response.getFirstElement().getText()), 1);
+        call.close();
+    }
+
+    public void testCompany() throws AxisFault {
+        configureSystem("echoCompany");
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+
+        call.setTo(targetEPR);
+        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+                Constants.TRANSPORT_HTTP,
+                false);
+
+        Company com = new Company();
+        com.setName("MyCompany");
+
+        ArrayList ps = new ArrayList();
+
+        Person p1 = new Person();
+        p1.setAge(10);
+        p1.setName("P1");
+        ps.add(p1);
+
+        Person p2 = new Person();
+        p2.setAge(15);
+        p2.setName("P2");
+        ps.add(p2);
+
+        Person p3 = new Person();
+        p3.setAge(20);
+        p3.setName("P3");
+        ps.add(p3);
+
+        com.setPersons(ps);
+
+//        List list = new ArrayList();
+//        list.add(new QName(com.getName()));
+//        list.add(com);
+//        list.add(new QName("Persons"));
+//        list.add(ps.toArray());
+//
+//        XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("UdaEka"), list.toArray(), null);
+//        OMElement documentElement = new StAXOMBuilder(pullParser).getDocumentElement();
+//        System.out.println("documentElement = " + documentElement);
+
+
+        ArrayList args = new ArrayList();
+        args.add(com);
+        OMElement response = call.invokeBlocking(operationName, args.toArray());
         call.close();
     }
 

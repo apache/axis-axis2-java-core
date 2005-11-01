@@ -19,6 +19,7 @@ package org.apache.axis2.rpc.receivers;
 
 import org.apache.axis2.om.OMElement;
 
+import javax.xml.namespace.QName;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -94,7 +95,17 @@ public class SimpleTypeMapper {
         }
     }
 
-     public static ArrayList getArrayList(OMElement element){
+    public static ArrayList getArrayList(OMElement element, String localName){
+        Iterator childitr = element.getChildrenWithName(new QName(localName));
+        ArrayList list = new ArrayList();
+        while (childitr.hasNext()) {
+            Object o = childitr.next();
+            list.add(o);
+        }
+        return list;
+    }
+
+    public static ArrayList getArrayList(OMElement element){
         Iterator childitr = element.getChildren();
         ArrayList list = new ArrayList();
         while (childitr.hasNext()) {
