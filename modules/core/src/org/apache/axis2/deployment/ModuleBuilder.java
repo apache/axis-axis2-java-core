@@ -115,7 +115,7 @@ public class ModuleBuilder extends DescriptionBuilder{
 
             //processing Operations
             Iterator op_itr = moduleElement.getChildrenWithName(new QName(OPRATIONST));
-            ArrayList opeartions = processOpeartions(op_itr);
+            ArrayList opeartions = processOperations(op_itr);
             for (int i = 0; i < opeartions.size(); i++) {
                 AxisOperation opeartion = (AxisOperation) opeartions.get(i);
                 module.addOperation(opeartion);
@@ -129,7 +129,7 @@ public class ModuleBuilder extends DescriptionBuilder{
     }
 
 
-    private ArrayList processOpeartions(Iterator opeartinsItr) throws DeploymentException {
+    private ArrayList processOperations(Iterator opeartinsItr) throws DeploymentException {
         ArrayList operations = new ArrayList();
         while (opeartinsItr.hasNext()) {
             OMElement operation = (OMElement) opeartinsItr.next();
@@ -184,13 +184,13 @@ public class ModuleBuilder extends DescriptionBuilder{
                 op_descrip.setMessageReceiver(messageReceiver);
             }  else {
                 //setting default message reciver
-                MessageReceiver msgReceiver = loadDefaultMessageReciver();
+                MessageReceiver msgReceiver = loadDefaultMessageReceiver();
                 op_descrip.setMessageReceiver(msgReceiver);
             }
             //Process Module Refs
             Iterator modules = operation.getChildrenWithName(
                     new QName(MODULEST));
-            processOpeasrtionModuleRefs(modules, op_descrip);
+            processOperationModuleRefs(modules, op_descrip);
 
             //setting Operation phase
             PhasesInfo info = engine.getPhasesinfo();

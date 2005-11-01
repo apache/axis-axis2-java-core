@@ -38,7 +38,7 @@ public class DeploymentClassLoader extends URLClassLoader {
     //To keep jar files inside /lib directory in the main jar
     private ArrayList lib_jars_list;
 
-    private HashMap loadedclass;
+    private HashMap loadedClass;
 
 
     /**
@@ -53,7 +53,7 @@ public class DeploymentClassLoader extends URLClassLoader {
         super(urls, parent);
         this.urls = urls;
         lib_jars_list = new ArrayList();
-        loadedclass = new HashMap();
+        loadedClass = new HashMap();
         findLibJars();
     }
 
@@ -110,14 +110,14 @@ public class DeploymentClassLoader extends URLClassLoader {
             throws ClassNotFoundException {
         Class cla ;
         try {
-            cla = (Class)loadedclass.get(name);
+            cla = (Class)loadedClass.get(name);
             if(cla != null){
                 return cla;
             }
             boolean foundClass ;
             try {
                 cla = super.findClass(name);
-                loadedclass.put(name, cla);
+                loadedClass.put(name, cla);
                 return cla;
             } catch (ClassNotFoundException e) {
                 foundClass = false;
@@ -126,7 +126,7 @@ public class DeploymentClassLoader extends URLClassLoader {
                 try {
                     byte raw[] = getBytes(name);
                     cla = defineClass(name, raw, 0, raw.length);
-                    loadedclass.put(name, cla);
+                    loadedClass.put(name, cla);
                     return cla;
                 } catch (Exception e) {
                     foundClass = false;

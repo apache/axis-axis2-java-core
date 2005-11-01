@@ -32,7 +32,7 @@ public class RepositoryListenerImpl implements RepositoryListener,
     /**
      * Referance to a WSInfoList
      */
-    private WSInfoList wsinfoList;
+    private WSInfoList wsInfoList;
 
 
     /**
@@ -53,7 +53,7 @@ public class RepositoryListenerImpl implements RepositoryListener,
     public RepositoryListenerImpl(String folderName,
                                   DeploymentEngine deploy_engine) {
         this.folderName = folderName;
-        wsinfoList = new WSInfoList(deploy_engine);
+        wsInfoList = new WSInfoList(deploy_engine);
         init();
     }
 
@@ -70,13 +70,13 @@ public class RepositoryListenerImpl implements RepositoryListener,
                 File file = files[i];
                 if (!file.isDirectory()) {
                     if (ArchiveFileData.isServiceArchiveFile(file.getName())) {
-                        wsinfoList.addWSInfoItem(file, MODULE);
+                        wsInfoList.addWSInfoItem(file, MODULE);
                     }
                 } else {
                     if ("lib".equals(file.getName()) || "Lib".equals(file.getName())) {
                         // this is a lib file no need to take this as a sevice
                     } else {
-                        wsinfoList.addWSInfoItem(file, MODULE);
+                        wsInfoList.addWSInfoItem(file, MODULE);
                     }
                 }
             }
@@ -102,7 +102,7 @@ public class RepositoryListenerImpl implements RepositoryListener,
     public void update() {
         //todo completet this
         // this call the update method of WSInfoList
-        wsinfoList.update();
+        wsInfoList.update();
     }
 
     /**
@@ -112,7 +112,7 @@ public class RepositoryListenerImpl implements RepositoryListener,
      * engine regsitry
      */
     public void init() {
-        wsinfoList.init();
+        wsInfoList.init();
         checkModules();
         checkServices();
         update();
@@ -139,13 +139,13 @@ public class RepositoryListenerImpl implements RepositoryListener,
                 File file = files[i];
                 if (!file.isDirectory()) {
                     if (ArchiveFileData.isServiceArchiveFile(file.getName())) {
-                        wsinfoList.addWSInfoItem(file, SERVICE);
+                        wsInfoList.addWSInfoItem(file, SERVICE);
                     }
                 } else {
                     if ("lib".equals(file.getName()) || "Lib".equals(file.getName())) {
                         // this is a lib file no need to take this as a sevice
                     } else {
-                        wsinfoList.addWSInfoItem(file, SERVICE);
+                        wsInfoList.addWSInfoItem(file, SERVICE);
                     }
                 }
             }
@@ -159,7 +159,7 @@ public class RepositoryListenerImpl implements RepositoryListener,
 //            for (int i = 0; i < fileList.length; i++) {
 //                File file = fileList[i];
 //                if(file.isDirectory()){
-//                    wsinfoList.addWSInfoItem(file, SERVICE);
+//                    wsInfoList.addWSInfoItem(file, SERVICE);
 //                }
 //            }
 //        }

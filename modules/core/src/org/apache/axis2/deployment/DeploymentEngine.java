@@ -25,8 +25,13 @@ import org.apache.axis2.deployment.scheduler.DeploymentIterator;
 import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Flow;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.ModuleDescription;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.Handler;
@@ -38,8 +43,19 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class DeploymentEngine implements DeploymentConstants {
@@ -74,7 +90,6 @@ public class DeploymentEngine implements DeploymentConstants {
      */
 
     private String folderName;
-    private File repository;
 
     private String engineConfigName;
 
@@ -118,7 +133,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         this.folderName = repositoryName;
         axis2repository = repositoryName;
-        repository = new File(repositoryName);
+        File repository = new File(repositoryName);
         if (!repository.exists()) {
             repository.mkdirs();
             File services = new File(repository, "services");
@@ -146,7 +161,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 } catch (IOException e) {
                     throw new DeploymentException(e);
                 } finally {
-                    if (out != null) {
+                    if( out!=null) {
                         try {
                             out.close();
                         } catch (IOException e) {
@@ -209,10 +224,8 @@ public class DeploymentEngine implements DeploymentConstants {
         try {
             InputStream in = new FileInputStream(tempfile);
             axisConfig = createEngineConfig();
-            AxisConfigBuilder builder = new AxisConfigBuilder(in, this, axisConfig);
+            AxisConfigBuilder builder =new AxisConfigBuilder(in,this,axisConfig);
             builder.populateConfig();
-            //setting the CLs
-            setClassLoaders(repository);
         } catch (FileNotFoundException e) {
             throw new DeploymentException(e);
         }
@@ -254,13 +267,11 @@ public class DeploymentEngine implements DeploymentConstants {
                     cl.getResourceAsStream(AXIS2_CONFIGURATION_RESOURCE);
         }
         axisConfig = createEngineConfig();
-        AxisConfigBuilder builder = new AxisConfigBuilder(in, this, axisConfig);
+        AxisConfigBuilder builder =new AxisConfigBuilder(in,this,axisConfig);
         builder.populateConfig();
         if (isRepositoryExist) {
             hotDeployment = false;
             hotUpdate = false;
-            //setting CLs
-            setClassLoaders(repository);
             new RepositoryListenerImpl(folderName, this);
         }
         try {
@@ -278,7 +289,7 @@ public class DeploymentEngine implements DeploymentConstants {
     private void checkClientHome(String clientHome) throws DeploymentException {
         String clientXML = SERVER_XML_FILE;
         this.folderName = clientHome;
-        repository = new File(clientHome);
+        File repository = new File(clientHome);
         if (!repository.exists()) {
             repository.mkdirs();
             File services = new File(repository, "services");
@@ -366,9 +377,9 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private void addnewService(AxisServiceGroup axisServiceMetaData) throws AxisFault {
+    private void addNewService(AxisServiceGroup axisServiceMetaData) throws AxisFault {
 //        Iterator services = currentArchiveFile.getService().values().iterator();
-        Iterator services = currentArchiveFile.getDeploybleServices().iterator();
+        Iterator services = currentArchiveFile.getDeployableServices().iterator();
         while (services.hasNext()) {
             AxisService axisService = (AxisService) services.next();
             loadServiceProperties(axisService);
@@ -455,7 +466,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
     private void loadModuleClass(ModuleDescription module) throws AxisFault {
-        Class moduleClass;
+        Class moduleClass ;
         try {
             String readInClass = currentArchiveFile.getModuleClass();
             if (readInClass != null && !"".equals(readInClass)) {
@@ -477,7 +488,7 @@ public class DeploymentEngine implements DeploymentConstants {
         ClassLoader loader1 = currentArchiveFile.getClassLoader();
         for (int j = 0; j < count; j++) {
             HandlerDescription handlermd = flow.getHandler(j);
-            Class handlerClass;
+            Class handlerClass ;
             Handler handler;
             handlerClass = getHandlerClass(handlermd.getClassName(), loader1);
             try {
@@ -496,7 +507,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
 
     public Class getHandlerClass(String className, ClassLoader loader1) throws AxisFault {
-        Class handlerClass;
+        Class handlerClass ;
         try {
             handlerClass = Class.forName(className, true, loader1);
         } catch (ClassNotFoundException e) {
@@ -557,38 +568,41 @@ public class DeploymentEngine implements DeploymentConstants {
                     StringWriter errorWriter = new StringWriter();
                     switch (type) {
                         case SERVICE:
-                            currentArchiveFile.setClassLoader(explodedDir,axisConfig.getServiceClassLoader());
+                            currentArchiveFile.setClassLoader(explodedDir);
                             archiveReader = new ArchiveReader();
                             String serviceStatus = "";
                             try {
-                                archiveReader.processWSDLs(currentArchiveFile, this);
+                                archiveReader.processWSDLs(currentArchiveFile,this);
                                 // AxisService service = archiveReader.createService(currentArchiveFile.getAbsolutePath());
                                 AxisServiceGroup sericeGroup =
                                         new AxisServiceGroup(axisConfig);
                                 archiveReader.processServiceGroup(currentArchiveFile.getAbsolutePath(),
                                         this,
-                                        sericeGroup, explodedDir);
-                                addnewService(sericeGroup);
+                                        sericeGroup,explodedDir);
+                                addNewService(sericeGroup);
                                 log.info(Messages.getMessage(
                                         DeploymentErrorMsgs.DEPLOYING_WS, currentArchiveFile.getName()));
                             } catch (DeploymentException de) {
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
-                                        currentArchiveFile.getName(), de.getMessage()));
+                                        currentArchiveFile.getName(),de.getMessage()));
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 de.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" +
                                         errorWriter.toString();
+                                de.printStackTrace();
+
                             } catch (AxisFault axisFault) {
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
-                                        currentArchiveFile.getName(), axisFault.getMessage()));
+                                        currentArchiveFile.getName(),axisFault.getMessage()));
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 axisFault.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" +
                                         errorWriter.toString();
 
+                                axisFault.printStackTrace();
                             } catch (Exception e) {
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
-                                        currentArchiveFile.getName(), e.getMessage()));
+                                        currentArchiveFile.getName(),e.getMessage()));
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 e.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" +
@@ -602,7 +616,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             }
                             break;
                         case MODULE:
-                            currentArchiveFile.setClassLoader(explodedDir,axisConfig.getModuleClassLoader());
+                            currentArchiveFile.setClassLoader(explodedDir);
                             archiveReader = new ArchiveReader();
                             String moduleStatus = "";
                             try {
@@ -610,7 +624,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 metaData.setParent(axisConfig);
                                 archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(),
                                         this,
-                                        metaData, explodedDir);
+                                        metaData,explodedDir);
                                 addNewModule(metaData);
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
                                         metaData.getName().getLocalPart()));
@@ -653,11 +667,11 @@ public class DeploymentEngine implements DeploymentConstants {
                 for (int i = 0; i < wsToUnDeploy.size(); i++) {
                     WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
                     if (wsInfo.getType() == SERVICE) {
-                        serviceName = getAxisServiceName(wsInfo.getFilename());
+                        serviceName = getAxisServiceName(wsInfo.getFileName());
                         //todo fix me deepal
                         //   axisConfig.removeService(new QName(serviceName));
                         log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
-                                wsInfo.getFilename()));
+                                wsInfo.getFileName()));
                     }
                     axisConfig.getFaultyServices().remove(serviceName);
                 }
@@ -682,7 +696,7 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     private String getAxisServiceName(String fileName) {
         char seperator = '.';
-        String value;
+        String value ;
         int index = fileName.indexOf(seperator);
         if (index > 0) {
             value = fileName.substring(0, index);
@@ -742,16 +756,16 @@ public class DeploymentEngine implements DeploymentConstants {
      * @throws DeploymentException
      */
     public AxisService buildService(AxisService axisService,
-                                    InputStream serviceInputStream,
-                                    ClassLoader classLoader) throws DeploymentException {
+                                           InputStream serviceInputStream,
+                                           ClassLoader classLoader) throws DeploymentException {
         try {
             currentArchiveFile = new ArchiveFileData(SERVICE, "");
             currentArchiveFile.setClassLoader(classLoader);
 
-            ServiceBuilder builder = new ServiceBuilder(serviceInputStream, this, axisService);
+            ServiceBuilder builder = new ServiceBuilder(serviceInputStream,this,axisService);
             builder.populateService(builder.buildOM());
             loadServiceProperties(axisService);
-        } catch (AxisFault axisFault) {
+        }  catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
@@ -770,12 +784,12 @@ public class DeploymentEngine implements DeploymentConstants {
     public ModuleDescription buildModule(File modulearchive, AxisConfiguration config) throws DeploymentException {
         ModuleDescription axismodule;
         try {
-            this.setPhasesinfo(((AxisConfigurationImpl) config).getPhasesinfo());
+            this.setPhasesinfo(((AxisConfigurationImpl)config).getPhasesinfo());
             currentArchiveFile = new ArchiveFileData(modulearchive, MODULE);
             axismodule = new ModuleDescription();
             ArchiveReader archiveReader = new ArchiveReader();
-            currentArchiveFile.setClassLoader(false,config.getModuleClassLoader());
-            archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(), this, axismodule, false);
+            currentArchiveFile.setClassLoader(false);
+            archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(), this, axismodule,false);
             Flow inflow = axismodule.getInFlow();
             if (inflow != null) {
                 addFlowHandlers(inflow);
@@ -801,44 +815,4 @@ public class DeploymentEngine implements DeploymentConstants {
         return axismodule;
     }
 
-    /**
-     * To set the all the classLoader hierarchy this method can be used , the top most parenet is
-     * CCL then SCL(system Class Loader)
-     * CCL
-     * :
-     * SCL
-     * :  :
-     * MCCL  SCCL
-     * :      :
-     * MCL    SCL
-     * <p/>
-     * <p/>
-     * MCCL :  module common class loader
-     * SCCL : Service commin class loader
-     * MCL : module class loader
-     * SCL  : Service class loader
-     *
-     * @param axis2repo : The repository folder of Axis2
-     * @throws DeploymentException
-     */
-    private void setClassLoaders(File axis2repo) throws DeploymentException {
-        ClassLoader sysClassLoader = Utils.getClassLoader(
-                Thread.currentThread().getContextClassLoader(), axis2repo);
-        axisConfig.setSystemClassLoader(sysClassLoader);
-
-        File services = new File(axis2repo, "services");
-        if (services.exists()) {
-            axisConfig.setServiceClassLoader(Utils.getClassLoader(
-                    axisConfig.getSystemClassLoader(), services));
-        } else {
-            axisConfig.setServiceClassLoader(axisConfig.getSystemClassLoader());
-        }
-        File modules = new File(axis2repo, "modules");
-        if (modules.exists()) {
-            axisConfig.setServiceClassLoader(Utils.getClassLoader(
-                    axisConfig.getSystemClassLoader(), modules));
-        } else {
-            axisConfig.setModuleClassLoader(axisConfig.getSystemClassLoader());
-        }
-    }
 }

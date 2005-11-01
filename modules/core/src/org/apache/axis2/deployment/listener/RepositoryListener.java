@@ -17,7 +17,7 @@
 package org.apache.axis2.deployment.listener;
 
 /**
- * RepositaryListener is no listent to a specific folder whether the folder is
+ * RepositoryListener is listening to a specific folder whether the folder is
  * update eg: remove , added or modified files
  */
 public interface RepositoryListener {

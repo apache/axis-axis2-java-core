@@ -70,7 +70,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder{
                         axisService.setName(new QName(serviceName));
                     }
                     // the service that has to be deploy
-                    engine.getCurrentFileItem().getDeploybleServices().add(axisService);
+                    engine.getCurrentFileItem().getDeployableServices().add(axisService);
                     axisService.setParent(axisServiceGroup);
                     axisService.setClassLoader(engine.getCurrentFileItem().getClassLoader());
                     ServiceBuilder serviceBuilder = new ServiceBuilder(engine,axisService);

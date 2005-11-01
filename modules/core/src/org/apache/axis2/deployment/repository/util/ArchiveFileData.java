@@ -19,12 +19,13 @@ package org.apache.axis2.deployment.repository.util;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
-import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.i18n.Messages;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -37,7 +38,7 @@ public class ArchiveFileData {
     private ClassLoader classLoader;
     private File file = null;
     private int type;
-    private String messgeReceiver;
+    private String messageReceiver;
     private String moduleClass;
     private String name;
 
@@ -47,19 +48,19 @@ public class ArchiveFileData {
     //in this table
     private HashMap service = new HashMap();
 
-    private ArrayList deploybleServices = new ArrayList();
+    private ArrayList deployableServices = new ArrayList();
 
     public ArchiveFileData(int type, String name) {
         this.type = type;
         this.name = name;
     }
 
-    public String getMessgeReceiver() {
-        return messgeReceiver;
+    public String getMessageReceiver() {
+        return messageReceiver;
     }
 
-    public void setMessgeReceiver(String messgeReceiver) {
-        this.messgeReceiver = messgeReceiver;
+    public void setMessageReceiver(String messageReceiver) {
+        this.messageReceiver = messageReceiver;
     }
 
     public ArchiveFileData(File file, int type) {
@@ -106,8 +107,8 @@ public class ArchiveFileData {
         this.moduleClass = moduleClass;
     }
 
-    public void setClassLoader(boolean extarctArichive, ClassLoader parent) throws AxisFault {
-//        ClassLoader parent = Thread.currentThread().getContextClassLoader();
+    public void setClassLoader(boolean extarctArichive) throws AxisFault {
+        ClassLoader parent = Thread.currentThread().getContextClassLoader();
         if (! extarctArichive) {
             // has to be craeted taking that file to the account
             if (file != null) {
@@ -119,13 +120,54 @@ public class ArchiveFileData {
                     urlsToLoadFrom = new URL[]{file.toURL()};
                     classLoader =
                             new DeploymentClassLoader(urlsToLoadFrom, parent);
+                    //                classLoader = new URLClassLoader(urlsToLoadFrom, parent);
                 } catch (Exception e) {
                     throw new AxisFault(e);
                 }
             }
         } else {
             if (file != null) {
-                classLoader = Utils.getClassLoader(parent,file);
+                try {
+                    ArrayList urls = new ArrayList();
+                    urls.add(file.toURL());
+
+                    //if lib is simple
+                    File libfiles = new File(file, "lib");
+                    if(libfiles.exists()){
+                        urls.add(libfiles.toURL());
+                        File jarfiles [] = libfiles.listFiles();
+                        for (int i = 0; i < jarfiles.length; i++) {
+                            File jarfile = jarfiles[i];
+                            if(jarfile.getName().endsWith(".jar")){
+                                urls.add(jarfile.toURL());
+                            }
+                        }
+                    }
+
+                    //if lib is capital
+                    libfiles = new File(file, "Lib");
+                    if(libfiles.exists()){
+                        urls.add(libfiles.toURL());
+                        File jarfiles [] = libfiles.listFiles();
+                        for (int i = 0; i < jarfiles.length; i++) {
+                            File jarfile = jarfiles[i];
+                            if(jarfile.getName().endsWith(".jar")){
+                                urls.add(jarfile.toURL());
+                            }
+                        }
+                    }
+
+                    URL urllist [] = new URL[urls.size()];
+                    for (int i = 0; i < urls.size(); i++) {
+                        urllist[i] = (URL) urls.get(i);
+                    }
+                    classLoader = new URLClassLoader(urllist,parent);
+
+
+                } catch (MalformedURLException e) {
+                    throw new AxisFault(e);
+                }
+
             }
         }
 
@@ -158,11 +200,11 @@ public class ArchiveFileData {
         return service;
     }
 
-    public ArrayList getDeploybleServices() {
-        return deploybleServices;
+    public ArrayList getDeployableServices() {
+        return deployableServices;
     }
 
-    public void setDeploybleServices(ArrayList deploybleServices) {
-        this.deploybleServices = deploybleServices;
+    public void setDeployableServices(ArrayList deployableServices) {
+        this.deployableServices = deployableServices;
     }
 }

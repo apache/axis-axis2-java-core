@@ -40,8 +40,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * To do the common tasks for all *Builder class
@@ -254,7 +254,7 @@ public class DescriptionBuilder implements DeploymentConstants{
     }
 
 
-    protected void processOpeasrtionModuleRefs(Iterator moduleRefs
+    protected void processOperationModuleRefs(Iterator moduleRefs
             , AxisOperation opeartion) throws DeploymentException {
         try {
             while (moduleRefs.hasNext()) {
@@ -302,7 +302,7 @@ public class DescriptionBuilder implements DeploymentConstants{
         return receiver;
     }
 
-    protected MessageReceiver loadDefaultMessageReciver() throws DeploymentException {
+    protected MessageReceiver loadDefaultMessageReceiver() throws DeploymentException {
         MessageReceiver receiver;
         String defaultMessageReciver ="org.apache.axis2.receivers.RawXMLINOutMessageReceiver";
         try {

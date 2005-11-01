@@ -19,6 +19,7 @@ package org.apache.axis2.clientapi;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
@@ -26,21 +27,25 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 
 /**
- *    Message Sender is the class simmiler to the Call, one that provides much simpler API
- *    to users to work with. 
+ * Message Sender is the class simmiler to the Call, one that provides much simpler API
+ * to users to work with.
  */
 public class MessageSender extends InOnlyMEPClient {
 
     protected static AxisOperation axisOperationTemplate;
+
     /**
      * Service context of the Service this MessageSender handles, compare this with the Call, simpler method.
+     *
      * @param service
      */
     public MessageSender(ServiceContext service) {
@@ -53,6 +58,7 @@ public class MessageSender extends InOnlyMEPClient {
 
     /**
      * This constrctor is to take repository as aragumnet and build the Configurationcontext using that
+     *
      * @param repo repository location
      * @throws AxisFault
      */
@@ -60,21 +66,36 @@ public class MessageSender extends InOnlyMEPClient {
     public MessageSender(String repo) throws AxisFault {
         super(assumeServiceContext(repo));
     }
+
     /**
      * Send the SOAP Message, the actual worker
+     *
      * @param opName
      * @param toSend
      * @throws AxisFault
      */
     public void send(String opName, OMElement toSend) throws AxisFault {
+        SOAPEnvelope envelope = createDefaultSOAPEnvelope();
+        if (toSend != null) {
+            envelope.getBody().addChild(toSend);
+        }
+
+        this.send(opName, envelope);
+    }
+
+    public void send(String opName, SOAPEnvelope soapEnvelope) throws AxisFault {
+        if(soapEnvelope == null){
+            throw new AxisFault("Can not send null SOAP envelope");
+        }
+
         AxisOperation axisOp = serviceContext.getAxisService()
                 .getOperation(opName);
         if (axisOp == null) {
             //todo I just assumed mep is alwas in-out , this has to improve : Deepal
-            axisOp = new OutInAxisOperation(new QName(opName));
+            axisOp = new OutOnlyAxisOperation(new QName(opName));
             serviceContext.getAxisService().addOperation(axisOp);
 
-            axisOp = AxisOperationFactory.getOperetionDescription(WSDLConstants.MEP_CONSTANT_IN_ONLY);
+            axisOp = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_ONLY);
             axisOp.setName(new QName(opName));
             axisOp.setRemainingPhasesInFlow(
                     axisOperationTemplate.getRemainingPhasesInFlow());
@@ -85,11 +106,16 @@ public class MessageSender extends InOnlyMEPClient {
                     axisOperationTemplate.getPhasesOutFaultFlow());
             serviceContext.getAxisService().addOperation(axisOp);
         }
-        super.send(axisOp, prepareTheSOAPEnvelope(toSend));
+
+        MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
+
+        msgctx.setEnvelope(soapEnvelope);
+        super.send(axisOp, msgctx);
     }
 
     /**
      * create a default service Context if the users are not intersted in the lower levels of control
+     *
      * @return
      * @throws AxisFault
      */
@@ -106,17 +132,13 @@ public class MessageSender extends InOnlyMEPClient {
         QName assumedServiceName = new QName("AnonymousService");
         AxisService axisService = new AxisService(assumedServiceName);
 
-
-
-
-
         //we will assume a Service and operations
 //        axisOperationTemplate = new AxisOperation(new QName("TemplateOperation"));
-        axisOperationTemplate = new   OutInAxisOperation(new QName("TemplateOperation"));
+        axisOperationTemplate = new OutInAxisOperation(new QName("TemplateOperation"));
 
-        PhasesInfo info =((AxisConfigurationImpl)sysContext.getAxisConfiguration()).getPhasesinfo();
+        PhasesInfo info = ((AxisConfigurationImpl) sysContext.getAxisConfiguration()).getPhasesinfo();
         //to set the operation flows
-        if(info != null){
+        if (info != null) {
             info.setOperationPhases(axisOperationTemplate);
         }
         axisService.addOperation(axisOperationTemplate);
@@ -124,7 +146,7 @@ public class MessageSender extends InOnlyMEPClient {
         ServiceGroupContext serviceGroupContext = axisService.getParent().getServiceGroupContext(sysContext);
         return serviceGroupContext.getServiceContext(assumedServiceName.getLocalPart());
     }
-    
+
     public Object get(String key) {
         return serviceContext.getProperty(key);
     }
@@ -132,5 +154,5 @@ public class MessageSender extends InOnlyMEPClient {
     public void set(String key, Object value) {
         serviceContext.getConfigurationContext().setProperty(key, value);
     }
-    
+
 }

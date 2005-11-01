@@ -180,7 +180,7 @@ public class Call extends InOutMEPClient {
             //crated Phases from the templete operation to the this Operation
 
 //            opDesc = new AxisOperation(new QName(axisOp));
-            opDesc = AxisOperationFactory.getOperetionDescription(mepURL);
+            opDesc = AxisOperationFactory.getAxisOperation(mepURL);
             opDesc.setName(new QName(axisOp));
             opDesc.setRemainingPhasesInFlow(
                     axisOperationTemplate.getRemainingPhasesInFlow());

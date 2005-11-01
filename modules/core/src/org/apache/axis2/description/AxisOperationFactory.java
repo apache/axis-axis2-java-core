@@ -23,7 +23,7 @@ import org.apache.wsdl.WSDLConstants;
 
 public class AxisOperationFactory implements WSDLConstants {
 
-    public static AxisOperation getOperetionDescription(int mepURI) throws AxisFault {
+    public static AxisOperation getAxisOperation(int mepURI) throws AxisFault {
         AxisOperation abOpdesc ;
         switch(mepURI){
             case MEP_CONSTANT_IN_ONLY : {

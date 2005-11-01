@@ -59,7 +59,7 @@ public class InOnlyMEPClient extends MEPClient {
         msgctx.setMessageID(messageID);
         msgctx.setServiceContext(serviceContext);
         ConfigurationContext syscontext = serviceContext.getConfigurationContext();
-        
+
         //if the transport to use for sending is not specified, try to find it from the URL
         if (senderTransport == null) {
             senderTransport =
@@ -71,7 +71,7 @@ public class InOnlyMEPClient extends MEPClient {
         ConfigurationContext sysContext = serviceContext.getConfigurationContext();
         AxisConfiguration registry = sysContext.getAxisConfiguration();
         msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext));
-        
+
         AxisEngine engine = new AxisEngine(sysContext);
         engine.send(msgctx);
     }
@@ -131,7 +131,7 @@ public class InOnlyMEPClient extends MEPClient {
      * @throws org.apache.axis2.AxisFault if the transport not found
      */
     public void setSenderTransport(String senderTransport) throws AxisFault {
-        AxisConfiguration axisConfiguration = 
+        AxisConfiguration axisConfiguration =
             serviceContext.getConfigurationContext().getAxisConfiguration();
         this.senderTransport =
             axisConfiguration.getTransportOut(new QName(senderTransport));

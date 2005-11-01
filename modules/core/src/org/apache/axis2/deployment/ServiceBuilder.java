@@ -17,7 +17,6 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
@@ -125,7 +124,7 @@ public class ServiceBuilder extends DescriptionBuilder{
             //processing operations
             Iterator opeartinsItr = service_element.getChildrenWithName(
                     new QName(OPRATIONST));
-            ArrayList ops = processOpeartions(opeartinsItr);
+            ArrayList ops = processOperations(opeartinsItr);
             for (int i = 0; i < ops.size(); i++) {
                 AxisOperation opeartionDesc = (AxisOperation) ops.get(i);
                 ArrayList wsamappings = opeartionDesc.getWsamappingList();
@@ -148,7 +147,7 @@ public class ServiceBuilder extends DescriptionBuilder{
         }
     }
 
-    private ArrayList processOpeartions(Iterator opeartinsItr) throws AxisFault {
+    private ArrayList processOperations(Iterator opeartinsItr) throws AxisFault {
         ArrayList operations = new ArrayList();
         while (opeartinsItr.hasNext()) {
             OMElement operation = (OMElement) opeartinsItr.next();
@@ -214,14 +213,14 @@ public class ServiceBuilder extends DescriptionBuilder{
                 op_descrip.setMessageReceiver(messageReceiver);
             }  else {
                 //setting default message reciver
-                MessageReceiver msgReceiver = loadDefaultMessageReciver();
+                MessageReceiver msgReceiver = loadDefaultMessageReceiver();
                 op_descrip.setMessageReceiver(msgReceiver);
             }
 
             //Process Module Refs
             Iterator modules = operation.getChildrenWithName(
                     new QName(MODULEST));
-            processOpeasrtionModuleRefs(modules, op_descrip);
+            processOperationModuleRefs(modules, op_descrip);
 
             //setting Operation phase
             if (engine !=null) {
