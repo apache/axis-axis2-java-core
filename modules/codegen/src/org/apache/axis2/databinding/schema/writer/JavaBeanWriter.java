@@ -247,6 +247,9 @@ public class JavaBeanWriter implements BeanWriter{
      */
     private String getNonConflictingName(List listOfNames,String nameBase){
         String nameToReturn = nameBase;
+        if (JavaUtils.isJavaKeyword(nameToReturn)){
+            nameToReturn = JavaUtils.makeNonJavaKeyword(nameToReturn);
+        }
         while (listOfNames.contains(nameToReturn)){
             nameToReturn = nameToReturn + count++;
         }
