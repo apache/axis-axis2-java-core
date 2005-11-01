@@ -74,6 +74,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		super(ownerDocument);
 		this.localName = tagName;
 		this.namespace = ns;
+		this.declareNamespace(ns);
 	}
 	
 	public ElementImpl(DocumentImpl ownerDocument, String tagName, NamespaceImpl ns, OMXMLParserWrapper builder) {
@@ -81,6 +82,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		this.localName = tagName;
 		this.namespace = ns;
 		this.builder = builder;
+		this.declareNamespace(ns);
 	}
 	
 	public ElementImpl(ParentNode parentNode, String tagName, NamespaceImpl ns) {
@@ -89,9 +91,24 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 	
 	public ElementImpl(ParentNode parentNode, String tagName, NamespaceImpl ns, OMXMLParserWrapper builder) {
-		this((DocumentImpl)parentNode.getOwnerDocument(), tagName, ns,builder);
-		this.parentNode.addChild(this);
+		this(tagName,ns,builder);
+		if(this.parentNode != null) {
+			this.ownerNode = (DocumentImpl)parentNode.getOwnerDocument();
+			this.isOwned(true);
+			this.parentNode.addChild(this);
+		}
+		
 	}
+	
+	public ElementImpl(String tagName, NamespaceImpl ns, OMXMLParserWrapper builder) {
+		this.localName = tagName;
+		this.namespace = ns;
+		this.builder = builder;
+		if(ns != null) {
+			this.declareNamespace(ns);
+		}
+	}
+	
 	
 	///
 	///org.w3c.dom.Node methods

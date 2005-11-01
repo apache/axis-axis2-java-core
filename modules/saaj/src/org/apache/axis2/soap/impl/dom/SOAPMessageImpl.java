@@ -38,7 +38,8 @@ public class SOAPMessageImpl extends DocumentImpl implements SOAPMessage {
     }
 
     public SOAPMessageImpl(OMXMLParserWrapper parserWrapper) {
-        super(parserWrapper);
+        super();
+        this.builder = parserWrapper;
     }
 
 

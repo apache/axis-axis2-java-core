@@ -51,6 +51,10 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	
     protected Hashtable identifiers;
     
+    private String xmlVersion;
+    
+    private String charEncoding;
+    
 	/**
 	 * @param ownerDocument
 	 */
@@ -233,13 +237,11 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	///OMDocument Methods
 	///
 	public String getCharsetEncoding() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		return this.charEncoding;
 	}
 
 	public String getXMLVersion() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		return this.xmlVersion;
 	}
 
 	public String isStandalone() {
@@ -258,13 +260,11 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	}
 
 	public void setCharsetEncoding(String charsetEncoding) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		this.charEncoding = charsetEncoding;
 	}
 
 	public void setOMDocumentElement(OMElement rootElement) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		this.firstChild = (ElementImpl)rootElement;
 	}
 
 	public void setStandalone(String isStandalone) {
@@ -273,8 +273,7 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	}
 
 	public void setXMLVersion(String version) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		this.xmlVersion = version;
 	}
 	
 	/**
