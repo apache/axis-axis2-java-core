@@ -22,6 +22,9 @@ import java.util.HashMap;
  * limitations under the License.
  */
 
+/**
+ * The java type map. uses a static map for caching
+ */
 public class JavaTypeMap implements TypeMap {
     
     public Map getTypeMap() {

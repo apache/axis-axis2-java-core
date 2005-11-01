@@ -18,6 +18,13 @@ import java.lang.reflect.Array;
  * limitations under the License.
  */
 
+/**
+ * Converter methods to go from
+ * 1. simple type -> String
+ * 2. simple type -> Object
+ * 3. String -> simpletype
+ * 4. Object list -> array
+ */
 public class ConverterUtil {
 
     /* String conversion methods */

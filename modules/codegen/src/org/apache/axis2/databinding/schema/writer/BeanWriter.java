@@ -25,11 +25,15 @@ import java.util.Map;
  * limitations under the License.
  */
 
+/**
+ * The bean writer interface. The schema compiler expects one of these to be
+ * presented to it and calls the appropriate methods
+ */
 public interface BeanWriter {
 
     /**
      * Initialize this writer
-     * @param rootDir
+     * @param rootDir  - The directory to be written into
      * @throws IOException
      */
     public void init(File rootDir) throws IOException ;

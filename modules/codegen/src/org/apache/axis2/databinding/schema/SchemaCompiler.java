@@ -2,8 +2,6 @@ package org.apache.axis2.databinding.schema;
 
 import org.apache.ws.commons.schema.*;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.databinding.schema.typemap.JavaTypeMap;
-import org.apache.axis2.databinding.schema.writer.JavaBeanWriter;
 import org.apache.axis2.databinding.schema.writer.BeanWriter;
 import org.apache.axis2.databinding.schema.util.SchemaPropertyLoader;
 
@@ -26,13 +24,16 @@ import java.io.IOException;
  * limitations under the License.
  */
 
+/**
+ * Schema compiler for ADB. Based on WS-Commons schema object model.
+ */
 public class SchemaCompiler {
 
     private CompilerOptions options;
     private HashMap processedTypemap;
+
     //The processedElementMap and the processedElementList have a subtle difference
     //The writing to the processedElementList happens when an outer element is processed.
-    //
     private HashMap processedElementMap;
     private HashMap processedAnonymousComplexTypesMap;
     private ArrayList processedElementList;
@@ -51,7 +52,7 @@ public class SchemaCompiler {
     }
 
     /**
-     *
+     * Constructor - Accepts a options bean
      * @param options
      */
     public SchemaCompiler(CompilerOptions options) throws SchemaCompilationException {
@@ -131,7 +132,7 @@ public class SchemaCompiler {
     }
 
     /**
-     * Writes the element
+     *  Writes the element
      * @param xsElt
      * @throws SchemaCompilationException
      */
@@ -168,9 +169,10 @@ public class SchemaCompiler {
 
 
     /**
-     *
+     * Process the element
      * @param xsElt
-     * @param isOuter
+     * @param isOuter  - We need to know this since the treatment of outer elements is different that
+     * inner elements
      * @throws SchemaCompilationException
      */
     private void processElement(XmlSchemaElement xsElt,boolean isOuter) throws SchemaCompilationException{
@@ -178,10 +180,11 @@ public class SchemaCompiler {
     }
 
     /**
-     *
+     * Process and Element
      * @param xsElt
-     * @param isOuter
-     * @param isArray
+     * @param isOuter-We need to know this since the treatment of outer elements is different that
+     * inner elements
+     * @param isArray-flag saying whether the elements represents an array
      * @throws SchemaCompilationException
      */
     private void processElement(XmlSchemaElement xsElt,boolean isOuter,boolean isArray) throws SchemaCompilationException{
@@ -212,7 +215,7 @@ public class SchemaCompiler {
     }
 
     /**
-     *
+     * Finds a class name from the given Qname
      * @param schemaType
      * @return
      */
@@ -341,6 +344,10 @@ public class SchemaCompiler {
 
     }
 
+    /**
+     * Handle any attribute
+     * @param metainf
+     */
     private void processAnyAttribute(BeanWriterMetaInfoHolder metainf) {
         //The best thing we can do here is to add a set of OMAttributes
         metainf.registerMapping(new QName(EXTRA_ATTRIBUTE_FIELD_NAME),
@@ -350,6 +357,11 @@ public class SchemaCompiler {
 
     }
 
+    /**
+     * Process the attribute
+     * @param att
+     * @param metainf
+     */
     public void processAttribute(XmlSchemaAttribute att,BeanWriterMetaInfoHolder metainf){
         //for now we assume (!!!) that attributes refer to standard types only
         QName schemaTypeName = att.getSchemaTypeName();
@@ -364,7 +376,7 @@ public class SchemaCompiler {
     }
 
     /**
-     *
+     *  Process a particle- A particle may be a sequence,all or a choice
      * @param particle
      * @param metainfHolder
      * @throws SchemaCompilationException
@@ -379,7 +391,7 @@ public class SchemaCompiler {
             XmlSchemaObjectCollection items = ((XmlSchemaAll)particle).getItems();
             process(items, metainfHolder,false);
         }else if (particle instanceof XmlSchemaChoice){
-            //handle the choice!
+            //put the code here to handle the choice!
         }
     }
 
@@ -460,7 +472,9 @@ public class SchemaCompiler {
     }
 
     /**
-     *
+     * process the 'any'
+     * @param any
+     * @param metainf
      */
     private void processAny(XmlSchemaAny any,BeanWriterMetaInfoHolder metainf) {
         //handle the minoccurs/maxoccurs here.
@@ -483,6 +497,16 @@ public class SchemaCompiler {
     }
 
 
+    /**
+     * Find whether a given particle is an array. The logic for deciding
+     * whether a given particle is an array is depending on their minOccurs
+     * and maxOccurs counts. If Maxoccurs is greater than one (1) then the
+     * content is an array.
+     * Also no higher level element will have the maxOccurs greater than one
+     * @param particle
+     * @return
+     * @throws SchemaCompilationException
+     */
     private boolean isArray(XmlSchemaParticle particle) throws SchemaCompilationException{
         long minOccurs = particle.getMinOccurs();
         long maxOccurs = particle.getMaxOccurs();

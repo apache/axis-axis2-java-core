@@ -15,6 +15,10 @@ package org.apache.axis2.databinding.schema;
  * limitations under the License.
  */
 
+/**
+ * A simeple extension from the java.lang.exception to serve as the schema compilers
+ * Exception
+ */
 public class SchemaCompilationException extends Exception{
 
     public SchemaCompilationException() {

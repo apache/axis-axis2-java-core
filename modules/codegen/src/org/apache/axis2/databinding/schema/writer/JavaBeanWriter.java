@@ -37,6 +37,9 @@ import java.io.*;
  * limitations under the License.
  */
 
+/**
+ * Java Bean writer for the schema compiler.
+ */
 public class JavaBeanWriter implements BeanWriter{
 
     private String javaBeanTemplateName = null;
@@ -56,8 +59,13 @@ public class JavaBeanWriter implements BeanWriter{
     public JavaBeanWriter(){
     }
 
+    /**
+     * @see BeanWriter#init(java.io.File)
+     * @param rootDir
+     * @throws IOException
+     */
     public void init(File rootDir) throws IOException{
-         if (rootDir ==null){
+        if (rootDir ==null){
             this.rootDir = new File(".");
         }else if (!rootDir.isDirectory()){
             throw new IOException("Root location needs to be a directory!");
@@ -69,7 +77,7 @@ public class JavaBeanWriter implements BeanWriter{
         javaBeanTemplateName = SchemaPropertyLoader.getBeanTemplate();
     }
     /**
-     *
+     * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaComplexType, java.util.Map, org.apache.axis2.databinding.schema.BeanWriterMetaInfoHolder)
      * @param complexType
      * @param typeMap
      * @param metainf
@@ -91,6 +99,17 @@ public class JavaBeanWriter implements BeanWriter{
 
     }
 
+    /**
+     * A util method that holds common code
+     * for the complete schema that the generated XML complies to
+     * look under other/beanGenerationSchema.xsd
+     * @param qName
+     * @param metainf
+     * @param typeMap
+     * @param isElement
+     * @return
+     * @throws Exception
+     */
     private String process(QName qName, BeanWriterMetaInfoHolder metainf, Map typeMap, boolean isElement) throws Exception {
         String packageName = URLProcessor.getNameSpaceFromURL(qName.getNamespaceURI());
         String originalName = qName.getLocalPart();
@@ -117,7 +136,7 @@ public class JavaBeanWriter implements BeanWriter{
         }
 
         if (metainf.isAnonymous()){
-             XSLTUtils.addAttribute(model,"anon","yes",rootElt);
+            XSLTUtils.addAttribute(model,"anon","yes",rootElt);
         }
 
         if (metainf.isExtension()){
@@ -148,7 +167,7 @@ public class JavaBeanWriter implements BeanWriter{
             javaName = getNonConflictingName(propertyNames,javaName);
             XSLTUtils.addAttribute(model,"name",xmlName,property);
             XSLTUtils.addAttribute(model,"javaname",javaName,property);
-            String javaClassNameForElement = metainf.getJavaClassNameForQName(name);
+            String javaClassNameForElement = metainf.getClassNameForQName(name);
             String shortTypeName = "";
             if (metainf.getSchemaQNameForQName(name)!=null){
                 shortTypeName = metainf.getSchemaQNameForQName(name).getLocalPart();
@@ -173,7 +192,7 @@ public class JavaBeanWriter implements BeanWriter{
             }
 
             if (metainf.getAnyAttributeStatusForQName(name)){
-                 XSLTUtils.addAttribute(model,"anyAtt","yes",property); 
+                XSLTUtils.addAttribute(model,"anyAtt","yes",property);
             }
             if (metainf.getArrayStatusForQName(name)){
                 XSLTUtils.addAttribute(model,"array","yes",property);
@@ -187,12 +206,12 @@ public class JavaBeanWriter implements BeanWriter{
                 long minOccurs = metainf.getMinOccurs(name);
 
                 if (minOccurs >0){
-                  XSLTUtils.addAttribute(model,"minOccurs",minOccurs +"",property);
+                    XSLTUtils.addAttribute(model,"minOccurs",minOccurs +"",property);
                 }
 
                 long maxOccurs = metainf.getMaxOccurs(name);
                 if (maxOccurs==Long.MAX_VALUE){
-                     XSLTUtils.addAttribute(model,"unbound","yes",property);
+                    XSLTUtils.addAttribute(model,"unbound","yes",property);
                 }else{
                     XSLTUtils.addAttribute(model,"maxOccurs",maxOccurs +"",property);
                 }
@@ -205,14 +224,23 @@ public class JavaBeanWriter implements BeanWriter{
         parse(model,out);
         //return the fully qualified class name
         return packageName+"."+className;
+
     }
 
+    /**
+     * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaSimpleType, java.util.Map, org.apache.axis2.databinding.schema.BeanWriterMetaInfoHolder)
+     * @param simpleType
+     * @param typeMap
+     * @param metainf
+     * @return
+     * @throws SchemaCompilationException
+     */
     public String write(XmlSchemaSimpleType simpleType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
         throw new SchemaCompilationException("Not implemented yet");
     }
 
     /**
-     *
+     * gets a non conflicting java name
      * @param listOfNames
      * @param nameBase
      * @return

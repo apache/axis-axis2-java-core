@@ -20,6 +20,9 @@ import java.util.Properties;
  * limitations under the License.
  */
 
+/**
+ * Loads the properties  for the schema compiler
+ */
 public class SchemaPropertyLoader {
     private  static  String beanTemplate = null;
     private  static  BeanWriter beanWriterInstance = null;

@@ -18,10 +18,16 @@ import java.io.File;
  */
 
 /**
- * This is a bean class that captures all the compiler ptions/parameterss
+ * This is a bean class that captures all the compiler options.
+ * Right now the compiler options consist of the following
+ * 1. output file location - A folder with necessary rights for the
+ * schema compiler to write the files
  */
 public class CompilerOptions {
 
+    /**
+     * Generated output file
+     */
     File outputLocation;
 
     public File getOutputLocation() {

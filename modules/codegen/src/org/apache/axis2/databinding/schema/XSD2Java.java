@@ -27,11 +27,21 @@ import java.io.IOException;
  */
 
 public class XSD2Java {
-    //for now the arguments this main method accepts is the source schema and the output
-    //location
+
+    /**
+     * for now the arguments this main method accepts is the source schema and the output
+     * location
+     * @param args
+     */
     public static void main(String[] args) {
-        //todo do some validation here
-        compile(args[0],args[1]);
+        if (args.length!=2){
+            // printout the options
+            System.out.println("Argument1 - Source schema file name");
+            System.out.println("Argument2 - Output folder name");
+        } else{
+            compile(args[0],args[1]);
+        }
+
     }
 
     /**
@@ -56,7 +66,7 @@ public class XSD2Java {
             File outputFolder = new File(outputLocation);
             if (outputFolder.exists()){
                 if (outputFolder.isFile())  {
-                    throw new IOException("specified location is a folder!");
+                    throw new IOException("specified location is not a folder!");
                 }
             }else{
                 outputFolder.mkdirs();
@@ -66,14 +76,8 @@ public class XSD2Java {
                     outputFolder));
             compiler.compile(currentSchema);
 
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SchemaCompilationException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+           throw new RuntimeException("Compiler caused an exception",e);
         }
     }
 }
