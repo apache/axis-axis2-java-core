@@ -1,7 +1,9 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="">
-  <title></title>
+  <meta content="">
+  <meta content="">
+  <title>ADB  - Howto</title>
 </head>
 
 <body>
@@ -22,7 +24,7 @@ to generate code for other languages.</p>
 
 <p>ADB is built on a modular architecture that allows it to utilize a pre
 configured writer depending on the configuration.The 'big block diagram' for
-the code generators architecture is depicted below</p>
+the code generator architecture is depicted below</p>
 
 <p>&lt;&lt;picture&gt;&gt;</p>
 
@@ -43,8 +45,9 @@ WS-Commons XmlSchema library. The XSLT transformations are dependent on the
 JVM's DOMimplementation (either crimson or xerces) which means that the
 underlying JVM should be 1.4 or higher. Apart from that ADB has no special
 dependencies on any other special jar files. The code for the schema compiler
-is completely in the org.apache.axis2.databinding.schema.* package. This
-package resides in the codegen module of the Axis2 source tree.</p>
+is completely in the <strong>org.apache.axis2.databinding.schema.*</strong>
+package. This package resides in the codegen module of the Axis2 source
+tree.</p>
 
 <p>Following are the important classes and files</p>
 <ol>
@@ -111,6 +114,13 @@ important classes and methods of the Schema compiler are as follows.</p>
   </li>
 </ul>
 
+<p>For a comprehensive code sample in invoking the schema compiler throught
+the API, the following classes would be helpful</p>
+<ul>
+  <li><strong>org.apache.axis2.databinding.schema.XSD2Java</strong></li>
+  <li><strong>org.apache.axis2.wsdl.codegen.extension.SimpleDBExtension</strong></li>
+</ul>
+
 <h2>Deep into the Generated Code</h2>
 
 <p>When the schema compiler is invoked (oneway or another) it generates code
@@ -140,6 +150,65 @@ xmlns:tns="http://soapinterop.org/types" targetNamespace="http://soapinterop.org
 &lt;element name="myElement" type="tns:SOAPStruct"/&gt;
 &lt;/schema&gt;</pre>
 
-<p>This particular schema generates the following two classes </p>
+<p>This particular schema generates the following two classes in the
+designated package. This package is derived from the target Namespace of the
+schema.</p>
+<ol>
+  <li>myElement.java</li>
+  <li>SOAPStruct.java</li>
+</ol>
+
+<p>As explained earlier, SOAPStruct refers to the complexType. MyElement is
+the class that refers to the element.Just as expected, the SOAPStruct bean
+has getters and Setters for varString,varInt and varFloat which are a
+String,an int and a float respectively.myElement on the other hand has a
+single field representing the SOAPStruct object that it encapsulates.</p>
+
+<p>The most important aspect of the generated code is that it encapsulates
+two methods for creation and serializing the beans.Note that to make this
+work, the generated beans implement the
+<strong>org.apache.axis2.databinding.ADBBean</strong> interface</p>
+
+<p>The creator and reader methods look like the following</p>
+<ul>
+  <li><pre>public javax.xml.stream.XMLStreamReader
+    getPullParser(javax.xml.namespace.QName qName)</pre>
+    <p>This method returns a pull parser that throws the right events for
+    this particular object. However there is a subtle difference between
+    element based classes and complexType based classes</p>
+    <ol>
+      <li>An element based bean class (like myElement.java in the example)
+        will ignore the passed in QName. instead of using the passed in QName
+        it'll utilize it's own QName which is embedded in the class under the
+        constant MY_QNAME,during the code generation.</li>
+      <li>A ComplexType based bean class(like SOAPStruct.java in the example)
+        will use the passed on QName to return an instance of the
+        ADBpullparser. This will effectively wrap the elements inside with an
+        element having the passed QName</li>
+    </ol>
+  </li>
+  <li><pre> public static [Object] 
+             parse(javax.xml.stream.XMLStreamReader reader) 
+             throws java.lang.Exception </pre>
+    <p>This method returns a populated instance of the class in
+    question.(Note that</p>
+    <pre>[Object]</pre>
+    will be replaced by the actual class that contains this method. Say for
+    SOAPStruct the method looks like
+    <pre>public static SOAPStruct 
+                parse(javax.xml.stream.XMLStreamReader reader) 
+                throws java.lang.Exception </pre>
+  </li>
+</ul>
+
+<h3>An Example!</h3>
+
+<p>Consider the follwing XML fragment
+<pre>&lt;myElement&gt;
+  &lt;varInt&gt;5&lt;/varInt&gt;
+  &lt;varString&gt;Hello&lt;/varString&gt;
+  &lt;varFloat&gt;3.3&lt;/varFloat&gt;
+&lt;/myElement&gt;</pre></p>
+<p>Enthusiastic readers might already have figured out that this  </p>
 </body>
 </html>
