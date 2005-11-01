@@ -3,6 +3,9 @@
   <meta http-equiv="content-type" content="">
   <meta content="">
   <meta content="">
+  <meta content="">
+  <meta content="">
+  <meta content="">
   <title>ADB  - Howto</title>
 </head>
 
@@ -140,13 +143,13 @@ following. Consider the follwing piece of schema</p>
 <pre>&lt;schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 xmlns:tns="http://soapinterop.org/types" targetNamespace="http://soapinterop.org/types"&gt;
 &lt;import namespace="http://schemas.xmlsoap.org/soap/encoding/"/&gt;
-&lt;complexType name="SOAPStruct"&gt;
-&lt;sequence&gt;
-&lt;element name="varString" type="xsd:string"/&gt;
-&lt;element name="varInt" type="xsd:int"/&gt;
-&lt;element name="varFloat" type="xsd:float"/&gt;
-&lt;/sequence&gt;
-&lt;/complexType&gt;
+ &lt;complexType name="SOAPStruct"&gt;
+  &lt;sequence&gt;
+   &lt;element name="varString" type="xsd:string"/&gt;
+   &lt;element name="varInt" type="xsd:int"/&gt;
+   &lt;element name="varFloat" type="xsd:float"/&gt;
+  &lt;/sequence&gt;
+ &lt;/complexType&gt;
 &lt;element name="myElement" type="tns:SOAPStruct"/&gt;
 &lt;/schema&gt;</pre>
 
@@ -203,12 +206,45 @@ work, the generated beans implement the
 
 <h3>An Example!</h3>
 
-<p>Consider the follwing XML fragment
+<p>Consider the follwing XML fragment</p>
 <pre>&lt;myElement&gt;
   &lt;varInt&gt;5&lt;/varInt&gt;
   &lt;varString&gt;Hello&lt;/varString&gt;
   &lt;varFloat&gt;3.3&lt;/varFloat&gt;
-&lt;/myElement&gt;</pre></p>
-<p>Enthusiastic readers might already have figured out that this  </p>
+&lt;/myElement&gt;</pre>
+
+<p>Enthusiastic readers might already have figured out that this piece of XML
+complies to the Schema mentioned above. The following piece of code shows how
+to build a populated instance of myElement with this fragment of XML</p>
+
+<p></p>
+<pre>XMLStreamReader reader = XMLInputFactory.newInstance().
+                                createXMLStreamReader(
+                                        new ByteArrayInputStream(xmlString.getBytes()));
+myElement elt = myElement.parse(reader);</pre>
+
+<p>Although this example takes on the tedious effort of creating a reader out
+of the String, inside the Axis2 environment an XMLStreamReader can be
+direclty asked from the OMElement! Hence the parse method becomes a hugh
+advantage for hassle free object creation.</p>
+
+<p>Similarly the reader obtained from the object can also be utilized as
+needed. The following code fragment shows how to utilize the getPullParser
+method to create an OMElement</p>
+
+<p></p>
+<pre>XMLStreamReader reader = elt.getPullParser(null);
+OMElement omElt =  new StAXOMBuilder(reader).getDocumentElement();</pre>
+
+<p>That's all to it! If you are interested in learning more on ADB the
+following documents may also be helpful</p>
+
+<p></p>
+<ul>
+  <li><a href="adb-tweaking.html">Tweaking the ADB code generator</a></li>
+  <li><a href="adb-codegen-integration.html">ADB and Axis2
+  Integration</a></li>
+</ul>
+<hr>
 </body>
 </html>
