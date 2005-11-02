@@ -30,8 +30,11 @@ import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.SOAPHeader;
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the Super Class for all the MEPClients, All the MEPClient will extend this.
@@ -42,6 +45,8 @@ public abstract class MEPClient {
     protected String soapVersionURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
     protected String soapAction = "";
     protected String wsaAction;
+
+    protected List soapHeaderList;
 
     /*
       If there is a SOAP Fault in the body of the incoming SOAP Message, system can be configured to
@@ -81,11 +86,35 @@ public abstract class MEPClient {
         //if operation not alrady added, add it
         if (serviceContext.getAxisService().getOperation(axisop.getName()) == null) {
             serviceContext.getAxisService().addOperation(axisop);
-        }        
+        }
         if (wsaAction != null) {
             msgCtx.setWSAAction(wsaAction);
         }
         msgCtx.setSoapAction(soapAction);
+
+        // check user has put any SOAPHeader using the call MEPClient methods and add them, if any, to the
+        // the SOAP message
+        addUserAddedSOAPHeaders(msgCtx);
+    }
+
+    private void addUserAddedSOAPHeaders(MessageContext msgCtx) {
+        if (soapHeaderList != null && soapHeaderList.size() > 0 && msgCtx.getEnvelope() != null) {
+            SOAPFactory soapFactory;
+            SOAPHeader header = msgCtx.getEnvelope().getHeader();
+            if (header == null) {
+                soapFactory = getCorrectSOAPFactory(msgCtx);
+                header = soapFactory.createSOAPHeader(msgCtx.getEnvelope());
+            }
+            if (!header.isComplete()) {
+                header.build();
+            }
+
+            for (int i = 0; i < soapHeaderList.size(); i++) {
+                OMElement headerBlock = (OMElement) soapHeaderList.get(i);
+                header.addChild(headerBlock);
+            }
+
+        }
     }
 
     /**
@@ -199,6 +228,24 @@ public abstract class MEPClient {
      */
     public void setExceptionToBeThrownOnSOAPFault(boolean exceptionToBeThrownOnSOAPFault) {
         isExceptionToBeThrownOnSOAPFault = exceptionToBeThrownOnSOAPFault;
+    }
+
+    public void addSOAPHeader(QName soapHeaderQName, String soapHeaderText) {
+        OMElement omElement = OMAbstractFactory.getOMFactory().createOMElement(soapHeaderQName, null);
+        omElement.setText(soapHeaderText);
+        if (soapHeaderList == null) {
+            soapHeaderList = new ArrayList();
+        }
+        soapHeaderList.add(omElement);
+    }
+
+    private SOAPFactory getCorrectSOAPFactory(MessageContext msgCtx) {
+        String soapNSURI = msgCtx.getEnvelope().getNamespace().getName();
+        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNSURI)) {
+            return OMAbstractFactory.getSOAP11Factory();
+        } else {
+            return OMAbstractFactory.getSOAP12Factory();
+        }
     }
 
 }

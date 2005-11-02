@@ -21,6 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.AsyncResult;
+import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.clientapi.Callback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -100,8 +101,8 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase {
         value.setText("Isaac Assimov, the foundation Sega");
         method.addChild(value);
 
-        org.apache.axis2.clientapi.Call call =
-                new org.apache.axis2.clientapi.Call(
+        Call call =
+                new Call(
                 serviceContext);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
 
