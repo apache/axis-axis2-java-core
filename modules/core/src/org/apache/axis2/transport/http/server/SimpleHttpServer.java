@@ -31,6 +31,8 @@ package org.apache.axis2.transport.http.server;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.util.threadpool.ThreadFactory;
+import org.apache.axis2.util.threadpool.ThreadPool;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -48,6 +50,7 @@ public class SimpleHttpServer implements Runnable {
     private ServerSocket listener = null;
     private Thread t;
     private ThreadGroup tg;
+    private ThreadFactory threadPool = null;
     private boolean stopped = false;
 
     private SimpleConnSet connections = new SimpleConnSet();
@@ -60,7 +63,7 @@ public class SimpleHttpServer implements Runnable {
      * @throws IOException  if anything goes wrong during initialization
      */
     public SimpleHttpServer() throws IOException {
-        this(null, 0);
+    	this(null, 0, null);
     }
 
     /**
@@ -72,29 +75,67 @@ public class SimpleHttpServer implements Runnable {
      */
     public SimpleHttpServer(SimpleSocketFactory socketfactory, int port) 
         throws IOException {
-        if (socketfactory == null) {
-        	socketfactory = new SimplePlainSocketFactory();
-        }
-        listener = socketfactory.createServerSocket(port);
-        if(LOG.isDebugEnabled()) {
-            LOG.debug("Starting test HTTP server on port " + getLocalPort());
-        }
-        tg = new ThreadGroup("SimpleHttpServer thread group");
-        t = new Thread(tg, this, "SimpleHttpServer listener");
-        t.setDaemon(true);
-        t.start();
+    	this(socketfactory, port, null);
+    }
+
+    
+      /**
+		 * Creates a new HTTP server instance, using the specified socket
+		 * factory and the TCP port that uses the given ThreadPool. If a
+		 * ThreadPool is not given then a new default axis2 ThreadPool will be
+		 * used.
+		 * 
+		 * @param port
+		 *            Desired TCP port
+		 * @param threadPool
+		 *            ThreadPool to be used inside the SimpleHttpServer. The
+		 *            threadPool object that is provided needs to implement
+		 *            tp.execute(Runnable r)
+		 * @throws IOException
+		 *             if anything goes wrong during initialization
+		 */
+	public SimpleHttpServer(SimpleSocketFactory socketfactory, int port,
+			ThreadFactory threadPool) throws IOException {
+		if (socketfactory == null) {
+			socketfactory = new SimplePlainSocketFactory();
+		}
+		if (threadPool == null) {
+			threadPool = new ThreadPool();
+		}
+		this.threadPool = threadPool;
+		listener = socketfactory.createServerSocket(port);
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Starting test HTTP server on port " + getLocalPort());
+		}
+		this.threadPool.execute(this);
+	}
+
+    /**
+	 * Creates a new HTTP server instance, using the specified TCP port
+	 * 
+	 * @param port
+	 *            Desired TCP port
+	 * @throws IOException
+	 *             if anything goes wrong during initialization
+	 */
+    public SimpleHttpServer(int port) throws IOException {
+    	this(null, port, null);
     }
 
     /**
-     * Creates a new HTTP server instance, using the specified TCP port
-     * 
-     * @param   port    Desired TCP port
-     * @throws IOException  if anything goes wrong during initialization
-     */
-    public SimpleHttpServer(int port) throws IOException {
-        this(null, port);
+	 * Creates a new HTTP server instance, using the specified TCP port
+	 * 
+	 * @param port
+	 *            Desired TCP port
+	 * @param threadPool
+	 *            ThreadPool to be used.
+	 * @throws IOException
+	 *             if anything goes wrong during initialization
+	 */
+    public SimpleHttpServer(int port,
+			ThreadFactory threadPool) throws IOException {
+    	this(null, port, threadPool);
     }
-
     public String getTestname() {
         return this.testname;
     }
@@ -154,7 +195,8 @@ public class SimpleHttpServer implements Runnable {
         if(LOG.isDebugEnabled()) {
             LOG.debug("Stopping test HTTP server on port " + getLocalPort());
         }
-        tg.interrupt();
+        //tg.interrupt();
+        //threadPool.doStop();
         
         if (listener != null) {
             try {
@@ -200,14 +242,19 @@ public class SimpleHttpServer implements Runnable {
                     SimpleHttpServerConnection conn = new SimpleHttpServerConnection(socket); 
                     this.connections.addConnection(conn);
 
-                    Thread t = new SimpleConnectionThread(
+                    this.threadPool.execute(new SimpleConnectionThread(
+                            this.testname + " thread " + this.count,
+                            conn, 
+                            this.connections,
+                            this.requestHandler));
+/*                    Thread t = new SimpleConnectionThread(
                             tg,
                             this.testname + " thread " + this.count,
                             conn, 
                             this.connections,
                             this.requestHandler);
                     t.setDaemon(true);
-                    t.start();
+                    t.start();*/
                 } catch (IOException e) {
                     LOG.error("I/O error: " + e.getMessage());
                 }

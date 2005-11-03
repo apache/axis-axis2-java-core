@@ -38,7 +38,7 @@ import java.io.InterruptedIOException;
 /**
  * Simple HTTP connection thread.
  */
-public class SimpleConnectionThread extends Thread {
+public class SimpleConnectionThread implements Runnable {
 
     private static final Log LOG = LogFactory.getLog(SimpleConnectionThread.class);
     
@@ -48,15 +48,15 @@ public class SimpleConnectionThread extends Thread {
     private SimpleConnSet connpool = null;    
     private HttpRequestHandler handler = null;
     transient boolean stopped; 
+    private String name = null;
 
     public SimpleConnectionThread(
-            final ThreadGroup tg,
             final String name,
             final SimpleHttpServerConnection conn,
             final SimpleConnSet connpool,
             final HttpRequestHandler handler) 
     throws IOException {
-        super(tg, name);
+        //super(tg, name);
         if (conn == null) {
             throw new IllegalArgumentException("Connection may not be null");
         }
@@ -70,6 +70,7 @@ public class SimpleConnectionThread extends Thread {
         this.connpool = connpool;
         this.handler = handler;
         this.stopped = false; 
+        this.name = name;
     }
 
     public synchronized void destroy() {
@@ -81,7 +82,7 @@ public class SimpleConnectionThread extends Thread {
             conn.close();
             conn = null;
         }
-        interrupt();
+        //interrupt();
     }
 
     public void run() {
@@ -95,8 +96,8 @@ public class SimpleConnectionThread extends Thread {
             } while (this.conn.isKeepAlive());
         } catch (InterruptedIOException e) {
         } catch (IOException e) {
-            if (!this.stopped && !isInterrupted() && LOG.isWarnEnabled()) {
-                LOG.warn("[" + getName() + "] I/O error: " + e.getMessage());
+            if (!this.stopped && !Thread.interrupted() && LOG.isWarnEnabled()) {
+                LOG.warn("[" + this.name + "] I/O error: " + e.getMessage());
             }
         } finally {
             destroy();

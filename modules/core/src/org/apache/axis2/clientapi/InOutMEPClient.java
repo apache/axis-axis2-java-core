@@ -46,6 +46,8 @@ import javax.xml.namespace.QName;
  */
 public class InOutMEPClient extends MEPClient {
     protected long timeOutInMilliSeconds = 2000;
+    
+    AxisEngine engine = null;
 
     protected TransportListener listener;
     /**
@@ -217,7 +219,7 @@ public class InOutMEPClient extends MEPClient {
             final ConfigurationContext syscontext =
                     serviceContext.getConfigurationContext();
 
-            AxisEngine engine = new AxisEngine(syscontext);
+            engine = new AxisEngine(syscontext);
             checkTransport(msgctx);
             //Use message id all the time!
             String messageID = String.valueOf("uuid:"+ UUIDGenerator.getUUID());
@@ -244,8 +246,20 @@ public class InOutMEPClient extends MEPClient {
 
                 //send the message
                 engine.send(msgctx);
+/*				 serviceContext.getConfigurationContext().getThreadPool()
+						.execute(new Runnable() {
+							public void run() {
+								try {
+									engine.send(msgctx);
+								} catch (AxisFault e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						});*/
             } else {
-                //here a bloking invocation happens in a new thread, so the progamming model is non blocking
+                // here a bloking invocation happens in a new thread, so the
+				// progamming model is non blocking
                  serviceContext.getConfigurationContext().getThreadPool().execute(new NonBlockingInvocationWorker(callback, axisop, msgctx));
             }
 
@@ -258,8 +272,8 @@ public class InOutMEPClient extends MEPClient {
     }
 
     /**
-     * @param to
-     */
+	 * @param to
+	 */
     public void setTo(EndpointReference to) {
         this.to = to;
     }

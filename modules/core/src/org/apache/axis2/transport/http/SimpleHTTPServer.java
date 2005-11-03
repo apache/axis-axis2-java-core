@@ -26,6 +26,8 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.SimpleHttpServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.util.threadpool.ThreadPool;
+import org.apache.axis2.util.threadpool.ThreadFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +60,8 @@ public class SimpleHTTPServer extends TransportListener {
     SimpleHttpServer embedded = null;
 
     int port = -1;
+    
+    private ThreadFactory threadPool = null;
 
     /**
      * Constructor SimpleHTTPServer
@@ -72,21 +76,61 @@ public class SimpleHTTPServer extends TransportListener {
      */
     public SimpleHTTPServer(ConfigurationContext systemContext,
                             int port) throws IOException {
-        this.configurationContext = systemContext;
-        this.port = port;
+    	this(systemContext, port, null);
     }
 
+	/**
+	 * Constructor SimpleHTTPServer
+	 * 
+	 * @param systemContext
+	 * @param pool
+	 */
+    public SimpleHTTPServer(ConfigurationContext systemContext, int port,
+			ThreadFactory pool) throws IOException {
+		// If a threadPool is not passed-in the threadpool
+		// from the ConfigurationContext
+		// is used. This is a bit tricky, and might cause a
+		// thread lock. So use with
+		// caution
+		if (pool == null) {
+			pool = systemContext.getThreadPool();
+		}
+		this.configurationContext = systemContext;
+		this.port = port;
+		this.threadPool = pool;
+	}
+
+
     /**
-     * Constructor SimpleHTTPServer
-     *
-     * @param dir
-     * @throws AxisFault
-     */
+	 * Constructor SimpleHTTPServer
+	 * 
+	 * @param dir
+	 * @throws AxisFault
+	 */
     public SimpleHTTPServer(String dir, int port) throws AxisFault {
+    	this(dir, port, null);
+    }
+    /**
+	 * Constructor SimpleHTTPServer
+	 * 
+	 * @param dir
+	 * @param pool
+	 * @throws AxisFault
+	 */
+    public SimpleHTTPServer(String dir, int port,
+			ThreadFactory pool) throws AxisFault {
         try {
             this.port = port;
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
             this.configurationContext = erfac.buildConfigurationContext(dir);
+            // If a thread pool is not passed the thread pool from the config context
+            // is used. If one is passed it is set on the config context.
+        	if (pool==null){
+        		pool = this.configurationContext.getThreadPool();
+        	} else {
+        		this.configurationContext.setThreadPool(pool);
+        	}
+            this.threadPool = pool;
             Thread.sleep(2000);
         } catch (Exception e1) {
             throw new AxisFault(e1);
@@ -120,7 +164,7 @@ public class SimpleHTTPServer extends TransportListener {
      */
     public void start() throws AxisFault {
         try {
-            embedded = new SimpleHttpServer(port);
+            embedded = new SimpleHttpServer(port, this.threadPool);
             embedded.setRequestHandler(new HTTPWorker(configurationContext));
         } catch (IOException e) {
             log.error(e);

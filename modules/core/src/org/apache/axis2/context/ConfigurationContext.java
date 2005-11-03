@@ -195,8 +195,13 @@ public class ConfigurationContext extends AbstractContext {
      * Sets the thread factory
      * @param pool
      */
-    public void setThreadPool(ThreadFactory pool) {
-        threadPool = pool;
+    public void setThreadPool(ThreadFactory pool) throws AxisFault{
+    	  if (threadPool == null) {
+			threadPool = pool;
+		} else {
+			throw new AxisFault("Thread pool already set.");
+		}
+
     }
 
     /**

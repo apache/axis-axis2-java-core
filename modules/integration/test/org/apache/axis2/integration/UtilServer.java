@@ -27,6 +27,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.util.threadpool.ThreadPool;
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -36,6 +37,8 @@ public class UtilServer {
     private static SimpleHTTPServer receiver;
     public static final int TESTING_PORT = 5555;
     public static final String FAILURE_MESSAGE = "Intentional Failure";
+    
+    private static ThreadPool tp = null;
 
     public static synchronized void deployService(AxisService service) throws AxisFault {
         receiver.getSystemContext().getAxisConfiguration().addService(service);
@@ -62,6 +65,7 @@ public class UtilServer {
 
     public static synchronized void start(String repositry) throws Exception {
         if (count == 0) {
+        	tp = new ThreadPool();
             ConfigurationContext er = getNewConfigurationContext(repositry);
 
             receiver = new SimpleHTTPServer(er, Constants.TESTING_PORT);
@@ -107,6 +111,7 @@ public class UtilServer {
                 }
             }
             count = 0;
+            //tp.doStop();
             System.out.print("Server stopped .....");
         } else {
             count--;
