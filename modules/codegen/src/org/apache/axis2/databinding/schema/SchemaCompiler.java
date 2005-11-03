@@ -234,6 +234,8 @@ public class SchemaCompiler {
         if (isArray){
             //append the square braces that say this is an array
             //hope this works for all cases!!!!!!!
+            //todo this however is a thing that needs to be
+            //todo fixed to get complete language support
             className = className + "[]";
         }
         return className;

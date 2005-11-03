@@ -135,6 +135,8 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
 
         WSDLReader reader =
                 WSDLFactory.newInstance().newWSDLReader();
+        reader.setFeature("javax.wsdl.importDocuments", true);
+
         File file = new File(uri);
         String baseURI = file.getParentFile()!=null?file.getParentFile().toURI().toString():null;
 
@@ -161,7 +163,7 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
 
         WSDLReader reader =
                 WSDLFactory.newInstance().newWSDLReader();
-
+        reader.setFeature("javax.wsdl.importDocuments", true);
         Document doc;
         try {
             doc = XMLUtils.newDocument(in);

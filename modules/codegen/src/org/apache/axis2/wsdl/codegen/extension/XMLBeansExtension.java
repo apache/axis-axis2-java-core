@@ -101,6 +101,9 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             }
 
             List typesArray = typesList.getExtensibilityElements();
+            //this a list that keeps the already processed schemas
+            List processedSchemas = new ArrayList();
+
             WSDLExtensibilityElement extensiblityElt;
             SchemaTypeSystem sts = null;
             Vector xmlObjectsVector = new Vector();
@@ -125,23 +128,28 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
                     //compile these schemas
                     while (!importedSchemaStack.isEmpty()) {
                         Element element = (Element)importedSchemaStack.pop();
+                        String tagetNamespace = element.getAttribute("targetNamespace");
+                        if (!processedSchemas.contains(tagetNamespace)){
 
-                        // we are not using DOM toString method here, as it seems it depends on the
-                        // JDK version that is being used.
-                        String s = DOM2Writer.nodeToString(element);
+                            // we are not using DOM toString method here, as it seems it depends on the
+                            // JDK version that is being used.
+                            String s = DOM2Writer.nodeToString(element);
 
-                        //write the schema to a file
-                        File tempFile = File.createTempFile("temp", ".xsd", schemaFolder);
-                        FileWriter writer = new FileWriter(tempFile);
-                        writer.write(s);
-                        writer.flush();
-                        writer.close();
+                            //write the schema to a file
+                            File tempFile = File.createTempFile("temp", ".xsd", schemaFolder);
+                            FileWriter writer = new FileWriter(tempFile);
+                            writer.write(s);
+                            writer.flush();
+                            writer.close();
 
 
-                        xmlObjectsVector.add(
-                                XmlObject.Factory.parse(
-                                        element
-                                        , options));
+                            xmlObjectsVector.add(
+                                    XmlObject.Factory.parse(
+                                            element
+                                            , options));
+
+                            processedSchemas.add(tagetNamespace);
+                        }
                     }
                 }
             }
@@ -268,9 +276,11 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             DocumentBuilder documentBuilder = getNamespaceAwareDocumentBuilder();
             for (int i = 0; i < schemaNames.length; i++) {
                 //the location for the third party schema;s is hardcoded
-                InputStream schemaStream = this.getClass().getResourceAsStream("/org/apache/axis2/wsdl/codegen/schema/" + schemaNames[i]);
-                Document doc = documentBuilder.parse(schemaStream);
-                additionalSchemaElements.add(doc.getDocumentElement());
+                if (!"".equals(schemaNames[i].trim())){
+                    InputStream schemaStream = this.getClass().getResourceAsStream("/org/apache/axis2/wsdl/codegen/schema/" + schemaNames[i]);
+                    Document doc = documentBuilder.parse(schemaStream);
+                    additionalSchemaElements.add(doc.getDocumentElement());
+                }
             }
 
             //Create the Schema element array
@@ -329,11 +339,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
     }
 
     private XmlObject[] convertToXMLObjectArray(Vector vec) {
-        XmlObject[] xmlObjects = new XmlObject[vec.size()];
-        for (int i = 0; i < vec.size(); i++) {
-            xmlObjects[i] = (XmlObject) vec.get(i);
-        }
-        return xmlObjects;
+        return (XmlObject[])vec.toArray(new XmlObject[vec.size()]);
     }
 
     /**

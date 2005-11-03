@@ -79,7 +79,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
      */
     public void setMapper(TypeMapper mapper) {
         this.mapper = mapper;
-       
+
     }
 
     /**
@@ -266,6 +266,8 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 //writeTestSkeletonImpl(axisBinding);
                 //write a testservice.xml that will load the dummy skeleton impl for testing
                 //writeTestServiceXML(axisBinding);
+                //write an ant build file
+                writeAntBuild(axisBinding.getBoundInterface(),axisBinding);
             }
         }
     }
@@ -405,9 +407,25 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     }
 
+    /**
+     * Writes the Ant build
+     *
+     * @param axisInterface
+     * @param axisBinding
+     * @throws Exception
+     */
+    protected void writeAntBuild(WSDLInterface axisInterface, WSDLBinding axisBinding) throws Exception {
+        //Write the service xml in a folder with the
+        Document skeletonModel = createDOMDocumentForInterface(
+                axisInterface, axisBinding);
+        ClassWriter antBuildWriter = new AntBuildWriter(
+                this.configuration.getOutputLocation(),
+                this.configuration.getOutputLanguage());
+        writeClass(skeletonModel, antBuildWriter);
+    }
 
     /**
-     * Writes the skeleton
+     * Writes the Service XML
      *
      * @param axisInterface
      * @param axisBinding
@@ -882,9 +900,12 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
             if (null != binding) {
                 WSDLBindingOperation bindingOperation =
                         binding.getBindingOperation(operation.getName());
-                addSOAPAction(doc, methodElement, bindingOperation);
-                addHeaderOperations(soapHeaderInputParameterList,bindingOperation,true);
-                addHeaderOperations(soapHeaderOutputParameterList,bindingOperation,false);
+                // todo This can be a prob !!!!!
+                if (bindingOperation!=null){
+                    addSOAPAction(doc, methodElement, bindingOperation);
+                    addHeaderOperations(soapHeaderInputParameterList,bindingOperation,true);
+                    addHeaderOperations(soapHeaderOutputParameterList,bindingOperation,false);
+                }
             }
 
             methodElement.appendChild(getInputElement(doc, operation, soapHeaderInputParameterList));

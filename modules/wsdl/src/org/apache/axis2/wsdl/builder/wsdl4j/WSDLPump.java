@@ -131,6 +131,11 @@ public class WSDLPump {
         //																   	//
         //////////////////////////////////////////////////////////////////////
 
+        //////////////////(0) process the imports ///////////////////////////
+        // There can be types that are imported. Check the imports and
+        // These schemas are needed for code generation
+        processImports(wsdl4JDefinition);
+
         //////////////////(1)First Copy the Types/////////////////////////////
         //Types may get changed inside the Operation pumping.
 
@@ -142,37 +147,6 @@ public class WSDLPump {
                     wsdlTypes, null);
             this.womDefinition.setTypes(wsdlTypes);
         }
-
-
-        // There can be types that are imported. Check the imports and
-        // These schemas are needed for code generation
-
-        Map wsdlImports = wsdl4JDefinition.getImports();
-
-        if (null != wsdlImports && !wsdlImports.isEmpty()){
-            Collection importsCollection = wsdlImports.values();
-            for (Iterator iterator = importsCollection.iterator(); iterator.hasNext();) {
-                Vector values = (Vector)iterator.next();
-                for (int i = 0; i < values.size(); i++) {
-                    Import wsdlImport = (Import)values.elementAt(i);
-
-                    if (wsdlImport.getDefinition()!=null){
-                        Definition importedDef = wsdlImport.getDefinition();
-
-                        if (wsdlTypes==null){
-                            wsdlTypes = this.wsdlComponentFactory.createTypes();
-                        }
-                        //add the imported types
-                        this.copyExtensibleElements(importedDef.getTypes().
-                                getExtensibilityElements(),
-                                wsdlTypes, null);
-                        this.womDefinition.setTypes(wsdlTypes);
-                    }
-                }
-
-            }
-        }
-
 
 
         ///////////////////(2)Copy the Interfaces///////////////////////////
@@ -272,6 +246,49 @@ public class WSDLPump {
         }
     }
 
+
+    private void processImports(Definition wsdl4JDefinition){
+        Map wsdlImports = wsdl4JDefinition.getImports();
+
+        if (null != wsdlImports && !wsdlImports.isEmpty()){
+            Collection importsCollection = wsdlImports.values();
+            for (Iterator iterator = importsCollection.iterator(); iterator.hasNext();) {
+                Vector values = (Vector)iterator.next();
+                for (int i = 0; i < values.size(); i++) {
+                    Import wsdlImport = (Import)values.elementAt(i);
+
+                    if (wsdlImport.getDefinition()!=null){
+                        Definition importedDef = wsdlImport.getDefinition();
+                        if (importedDef!=null){
+                            processImports(importedDef);
+
+                            //copy types
+                            Types t = importedDef.getTypes();
+                            List typesList = t.getExtensibilityElements();
+                            for (int j = 0; j < typesList.size(); j++) {
+                                wsdl4JDefinition.getTypes().addExtensibilityElement(
+                                        (ExtensibilityElement)typesList.get(j));
+
+                            }
+
+                            //add messages
+                            Map messagesMap = importedDef.getMessages();
+                            wsdl4JDefinition.getMessages().putAll(messagesMap);
+
+                            //add portypes
+                            Map porttypeMap = importedDef.getPortTypes();
+                            wsdl4JDefinition.getPortTypes().putAll(porttypeMap);
+
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+
+
     /**
      *
 
@@ -306,6 +323,7 @@ public class WSDLPump {
      */
     private void populateBindings(WSDLBinding wsdlBinding,
                                   Binding wsdl4JBinding, Definition wsdl4jDefinition) {
+       
         //Copy attributes
         wsdlBinding.setName(wsdl4JBinding.getQName());
         QName interfaceName = wsdl4JBinding.getPortType().getQName();
@@ -397,9 +415,9 @@ public class WSDLPump {
         Input wsdl4jInputMessage = wsdl4jOperation.getInput();
         QName wrappedInputName = wsdlOperation.getName();
         QName wrappedOutputName = new QName(
-                               wrappedInputName.getNamespaceURI(),
-                               wrappedInputName.getLocalPart()+ "Response",
-                               wrappedInputName.getPrefix());
+                wrappedInputName.getNamespaceURI(),
+                wrappedInputName.getLocalPart()+ "Response",
+                wrappedInputName.getPrefix());
 
         if (null != wsdl4jInputMessage) {
             MessageReference wsdlInputMessage = this.wsdlComponentFactory
@@ -559,8 +577,8 @@ public class WSDLPump {
                 //the DOMlevel2 documentation states that namespaces need to
                 //declared like this
                 schemaElement.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                                              XMLNS_AXIS2WRAPPED,
-                                              targetNamespaceUri);
+                        XMLNS_AXIS2WRAPPED,
+                        targetNamespaceUri);
 
                 schemaElement.setAttribute(XSD_TARGETNAMESPACE,targetNamespaceUri);
                 //schemaElement.setAttribute("xmlns:"+XMLSCHEMA_NAMESPACE_PREFIX,XMLSCHEMA_NAMESPACE_URI);
@@ -622,7 +640,7 @@ public class WSDLPump {
                         outerName.getLocalPart());
                 newElement.setAttribute(WSDLPump.XSD_TYPE,
                         AXIS2WRAPPED +":"+//whats the prefix to put here!!!
-                        wsdl4jMessage.getQName().getLocalPart());
+                                wsdl4jMessage.getQName().getLocalPart());
                 schemaElement.appendChild(newElement);
 
                 //Now since  a new type is created augmenting the parts add the QName
