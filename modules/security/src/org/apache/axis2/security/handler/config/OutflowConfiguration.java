@@ -472,4 +472,22 @@ public class OutflowConfiguration {
 		return (String) this.actionList[this.currentAction]
 				.get(WSHandlerConstants.ENC_KEY_NAME);
 	}
+	
+	/**
+	 * Sets whether signature confirmation should be enabled or not
+	 * @param embeddedKeyName
+	 */
+	public void setEnableSignatureConfirmation(boolean value) {
+		this.actionList[this.currentAction].put(
+				WSHandlerConstants.ENABLE_SIGNATURE_CONFIRMATION, value?"true":"false");
+	}
+	
+	/**
+	 * Returns whether signature confirmation should be enabled or not
+	 * @return
+	 */
+	public String getEnableSignatureConfirmation() {
+		return (String) this.actionList[this.currentAction]
+				.get(WSHandlerConstants.ENABLE_SIGNATURE_CONFIRMATION);
+	}
 }

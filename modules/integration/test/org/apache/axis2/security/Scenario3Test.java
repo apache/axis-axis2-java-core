@@ -37,6 +37,7 @@ public class Scenario3Test extends InteropTestBase {
 		ofc.setEncryptionSymAlgorithm(WSConstants.TRIPLE_DES);
 		ofc.setEncryptionKeyIdentifier(WSSHandlerConstants.SKI_KEY_IDENTIFIER);
 		ofc.setSignatureKeyIdentifier(WSSHandlerConstants.BST_DIRECT_REFERENCE);
+		ofc.setEnableSignatureConfirmation(false);
 		
 		return ofc;
 	}
@@ -46,6 +47,7 @@ public class Scenario3Test extends InteropTestBase {
 		ifc.setActionItems("Signature Encrypt Timestamp");
 		ifc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
 		ifc.setSignaturePropFile("interop.properties");
+		ifc.setEnableSignatureConfirmation(false);
 		return ifc;
 	}
 

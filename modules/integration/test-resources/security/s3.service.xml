@@ -10,6 +10,7 @@
         <items>Signature Encrypt Timestamp</items>
         <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
         <signaturePropFile>interop.properties</signaturePropFile>
+        <enableSignatureConfirmation>false</enableSignatureConfirmation>
       </action>
     </parameter>
 
@@ -23,6 +24,7 @@
         <encryptionKeyIdentifier>SKIKeyIdentifier</encryptionKeyIdentifier>
         <encryptionSymAlgorithm>http://www.w3.org/2001/04/xmlenc#tripledes-cbc</encryptionSymAlgorithm>
         <encryptionUser>alice</encryptionUser>
+        <enableSignatureConfirmation>false</enableSignatureConfirmation>
       </action>
     </parameter>
 

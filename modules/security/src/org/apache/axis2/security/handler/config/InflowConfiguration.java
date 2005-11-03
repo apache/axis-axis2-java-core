@@ -136,5 +136,22 @@ public class InflowConfiguration {
 		this.action.put(WSHandlerConstants.SIG_PROP_FILE, signaturePropFile);
 	}
 	
+	/**
+	 * Sets whether signature confirmation should be enabled or not
+	 * @param embeddedKeyName
+	 */
+	public void setEnableSignatureConfirmation(boolean value) {
+		this.action.put(
+				WSHandlerConstants.ENABLE_SIGNATURE_CONFIRMATION, value?"true":"false");
+	}
+	
+	/**
+	 * Returns whether signature confirmation should be enabled or not
+	 * @return
+	 */
+	public String getEnableSignatureConfirmation() {
+		return (String) this.action
+				.get(WSHandlerConstants.ENABLE_SIGNATURE_CONFIRMATION);
+	}
 	
 }
