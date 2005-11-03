@@ -283,18 +283,9 @@ public interface OMElement extends OMNode, OMContainer {
 
     /**
      * Turn a prefix:local qname string into a proper QName, evaluating it in the OMElement context
-     *
-     * @param qname                    qname to resolve
-     * @param defaultToParentNameSpace flag that controls behaviour when there is no namespace.
-     * @return null for any failure to extract a qname.
-     */
-    QName resolveQName(String qname, boolean defaultToParentNameSpace);
-
-    /**
-     * Turn a prefix:local qname string into a proper QName, evaluating it in the OMElement context
      * unprefixed qnames resolve to the local namespace
      * @param qname prefixed qname string to resolve
      * @return null for any failure to extract a qname.
      */
-    QName resolveQName(String qname);
+//    QName resolveQName(String qname);
 }
