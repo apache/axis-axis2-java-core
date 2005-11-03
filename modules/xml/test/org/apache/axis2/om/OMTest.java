@@ -41,7 +41,7 @@ public class OMTest extends AbstractTestCase {
     }
 
     protected void setUp() throws Exception {
-        File file = getTestResourceFile("soap/sample1.xml");
+        File file = getTestResourceFile(TestConstants.SAMPLE1);
         XMLStreamReader parser = XMLInputFactory.newInstance()
                 .createXMLStreamReader(new FileReader(file));
         fac = OMAbstractFactory.getSOAP11Factory();

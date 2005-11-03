@@ -30,7 +30,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public abstract class OMTestCase extends AbstractTestCase {
-    protected static final String IN_FILE_NAME = "soap/soapmessage.xml";
     protected StAXSOAPModelBuilder builder;
     protected OMFactory ombuilderFactory;
     protected SOAPFactory soapFactory;
@@ -50,7 +49,7 @@ public abstract class OMTestCase extends AbstractTestCase {
 
     protected StAXSOAPModelBuilder getOMBuilder(String fileName) throws Exception {
         if ("".equals(fileName) || fileName == null) {
-            fileName = IN_FILE_NAME;
+            fileName = TestConstants.SOAP_SOAPMESSAGE;
         }
         XMLStreamReader parser = XMLInputFactory.newInstance()
                 .createXMLStreamReader(

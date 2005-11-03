@@ -18,10 +18,7 @@ package org.apache.axis2.om;
 
 import org.apache.axis2.soap.SOAPEnvelope;
 
-import java.io.File;
-
 public class BadInputTest extends OMTestCase {
-    File dir = new File(testResourceDir, "badsoap");
 
     public BadInputTest(String testName) {
         super(testName);
@@ -33,7 +30,7 @@ public class BadInputTest extends OMTestCase {
         try {
             SOAPEnvelope soapEnvelope =
                     (SOAPEnvelope) OMTestUtils.getOMBuilder(
-                            new File(dir, "envelopeMissing.xml"))
+                            getTestResourceFile(TestConstants.BAD_ENVELOPE_MISSING))
                     .getDocumentElement();
             OMTestUtils.walkThrough(soapEnvelope);
             fail("this must failed gracefully with OMException or AxisFault");
@@ -48,7 +45,7 @@ public class BadInputTest extends OMTestCase {
         try {
             SOAPEnvelope soapEnvelope =
                     (SOAPEnvelope) OMTestUtils.getOMBuilder(
-                            new File(dir, "haederBodyWrongOrder.xml"))
+                            getTestResourceFile(TestConstants.BAD_HEADER_BODY_WRONG_ORDER))
                     .getDocumentElement();
             OMTestUtils.walkThrough(soapEnvelope);
             fail("this must failed gracefully with OMException or AxisFault");
@@ -93,7 +90,7 @@ public class BadInputTest extends OMTestCase {
         try {
             SOAPEnvelope soapEnvelope =
                     (SOAPEnvelope) OMTestUtils.getOMBuilder(
-                            new File(dir, "twoBodymessage.xml"))
+                            getTestResourceFile(TestConstants.BAD_TWO_BODY))
                     .getDocumentElement();
             OMTestUtils.walkThrough(soapEnvelope);
             fail("this must failed gracefully with OMException or AxisFault");
@@ -108,7 +105,7 @@ public class BadInputTest extends OMTestCase {
         try {
             SOAPEnvelope soapEnvelope =
                     (SOAPEnvelope) OMTestUtils.getOMBuilder(
-                            new File(dir, "twoheaders.xml"))
+                            getTestResourceFile(TestConstants.BAD_TWO_HEADERS))
                     .getDocumentElement();
             OMTestUtils.walkThrough(soapEnvelope);
             fail("this must failed gracefully with OMException or AxisFault");
@@ -123,7 +120,7 @@ public class BadInputTest extends OMTestCase {
         try {
             SOAPEnvelope soapEnvelope =
                     (SOAPEnvelope) OMTestUtils.getOMBuilder(
-                            new File(dir, "wrongSoapNs.xml"))
+                            getTestResourceFile(TestConstants.BAD_WRONG_SOAP_NS))
                     .getDocumentElement();
             OMTestUtils.walkThrough(soapEnvelope);
             fail("this must failed gracefully with OMException or AxisFault");
@@ -133,7 +130,7 @@ public class BadInputTest extends OMTestCase {
 
     }
 
-    
+
 
 
 }

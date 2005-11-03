@@ -34,12 +34,12 @@ import java.io.IOException;
 
 public class OMElementCloneTest extends XMLTestCase {
 
-    File dir = new File("test-resources", "soap");
+    File dir = new File(TestConstants.TEST_RESOURCES, TestConstants.SOAP_DIR);
 
     public void testElementCloning() throws Exception {
         SOAPEnvelope soapEnvelope =
                 (SOAPEnvelope) OMTestUtils.getOMBuilder(
-                        new File(dir, "soapmessage.xml"))
+                        new File(dir, TestConstants.SOAPMESSAGE))
                         .getDocumentElement();
         SOAPBody body = soapEnvelope.getBody();
 
