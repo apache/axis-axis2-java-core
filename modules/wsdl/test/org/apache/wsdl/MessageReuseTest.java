@@ -16,17 +16,10 @@
 
 package org.apache.wsdl;
 
-import org.apache.axis2.wsdl.*;
+import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
-import org.apache.wsdl.extensions.ExtensionConstants;
-import org.apache.wsdl.extensions.Schema;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import javax.wsdl.Definition;
-import javax.xml.namespace.QName;
-import java.util.Iterator;
 
 public class MessageReuseTest extends AbstractTestCase {
 
@@ -68,10 +61,10 @@ public class MessageReuseTest extends AbstractTestCase {
 //                        "BookQuote"));
 //        WSDLOperation operation1 = (WSDLOperation) interface1.getAllOperations()
 //                .get("getBookPrice");
-//        QName element1 = operation1.getInputMessage().getElement();
+//        QName element1 = operation1.getInputMessage().getElementQName();
 //        WSDLOperation operation2 = (WSDLOperation) interface1.getAllOperations()
 //                .get("getBookPriceNonRobust");
-//        QName element2 = operation2.getInputMessage().getElement();
+//        QName element2 = operation2.getInputMessage().getElementQName();
 //        assertEquals(element1, element2);
 //
 //        Iterator iterator = womDescription.getTypes().getExtensibilityElements()
@@ -84,7 +77,7 @@ public class MessageReuseTest extends AbstractTestCase {
 //            WSDLExtensibilityElement temp = (WSDLExtensibilityElement) iterator.next();
 //            if (ExtensionConstants.SCHEMA.equals(temp.getType())) {
 //                types = (Schema) temp;
-//                NodeList childNodes = types.getElement().getChildNodes();
+//                NodeList childNodes = types.getElementQName().getChildNodes();
 //                for (int i = 0; i < childNodes.getLength(); i++) {
 //                    Node item = childNodes.item(i);
 //                    if (item instanceof Element) {

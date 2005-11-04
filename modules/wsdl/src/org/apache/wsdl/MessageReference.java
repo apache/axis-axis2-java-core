@@ -16,6 +16,8 @@
 
 package org.apache.wsdl;
 
+import org.w3c.dom.Element;
+
 import javax.xml.namespace.QName;
 
 public interface MessageReference extends ExtensibleComponent {
@@ -37,16 +39,15 @@ public interface MessageReference extends ExtensibleComponent {
      * This Element refers to the actual message that will get transported. This Element
      * Abstracts all the Message Parts that was defined in the WSDL 1.1.
      *
-     * @return
      */
-    public QName getElement();
+    public QName getElementQName();
 
     /**
-     * Method setElement
+     * Method setElementQName
      *
      * @param element
      */
-    public void setElement(QName element);
+    public void setElementQName(QName element);
 
     /**
      * Method getMessageLabel
@@ -61,4 +62,7 @@ public interface MessageReference extends ExtensibleComponent {
      * @param messageLabel
      */
     public void setMessageLabel(String messageLabel);
+
+    public Element getElementSchema();
+    public void setElementSchema(Element element);
 }

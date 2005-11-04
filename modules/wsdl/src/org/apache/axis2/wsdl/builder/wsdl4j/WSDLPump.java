@@ -436,7 +436,7 @@ public class WSDLPump {
             if (null != message) {
                 //wrapping has to be done on per message basis
 
-                wsdlInputMessage.setElement(
+                wsdlInputMessage.setElementQName(
                         this.generateReferenceQname(wrappedInputName
                                 ,message,findWrapppable(message)));
                 this.copyExtensibleElements(
@@ -461,7 +461,7 @@ public class WSDLPump {
 
             Message outputMessage = wsdl4jOutputMessage.getMessage();
             if (null != outputMessage) {
-                wsdlOutputMessage.setElement(
+                wsdlOutputMessage.setElementQName(
                         this.generateReferenceQname(wrappedOutputName,outputMessage,findWrapppable(outputMessage)));
                 this.copyExtensibleElements(
                         (outputMessage).getExtensibilityElements(),

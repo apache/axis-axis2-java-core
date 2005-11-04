@@ -278,12 +278,12 @@ public class WOMtoWSDL11Writer implements WOMWriter {
                         while (opIterator.hasNext()) {
                             operation = (WSDLOperation) opIterator.next();
                             //populate the symbol table of Messages
-                            QName inputReference = operation.getInputMessage() == null ? null : operation.getInputMessage().getElement();
+                            QName inputReference = operation.getInputMessage() == null ? null : operation.getInputMessage().getElementQName();
                             if (inputReference != null) {
                                 populateMessageSymbol(inputReference);
                             }
 
-                            QName outputReference = operation.getOutputMessage() == null ? null : operation.getOutputMessage().getElement();
+                            QName outputReference = operation.getOutputMessage() == null ? null : operation.getOutputMessage().getElementQName();
                             if (outputReference != null) {
                                 populateMessageSymbol(outputReference);
                             }
@@ -450,7 +450,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
                 WSDL11Message message;
                 MessageReference inputMessage = operation.getInputMessage();
                 if (inputMessage != null) {
-                    message = (WSDL11Message) messageMap.get(inputMessage.getElement());
+                    message = (WSDL11Message) messageMap.get(inputMessage.getElementQName());
                     writer.writeStartElement(defaultWSDLPrefix,INPUT_NAME, WSDL1_1_NAMESPACE_URI);
                     writer.writeAttribute("message", targetNamespacePrefix + ":" + message.getMessageName());
                     writer.writeEndElement();
@@ -459,7 +459,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
                 //write the outputs
                 MessageReference outputMessage = operation.getOutputMessage();
                 if (outputMessage != null) {
-                    message = (WSDL11Message) messageMap.get(outputMessage.getElement());
+                    message = (WSDL11Message) messageMap.get(outputMessage.getElementQName());
                     writer.writeStartElement(defaultWSDLPrefix, OUTPUT_NAME, WSDL1_1_NAMESPACE_URI);
                     writer.writeAttribute("message", targetNamespacePrefix + ":" + message.getMessageName());
                     writer.writeEndElement();

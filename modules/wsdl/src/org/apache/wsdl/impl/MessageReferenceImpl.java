@@ -17,6 +17,7 @@
 package org.apache.wsdl.impl;
 
 import org.apache.wsdl.MessageReference;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 
@@ -30,7 +31,7 @@ public class MessageReferenceImpl extends ExtensibleComponentImpl
      */
     private String messageLabel;
 
-    // Can be "in" or "out" depending on the element name being "input" or "output" respectively;
+    // Can be "in" or "out" depending on the elementQName name being "input" or "output" respectively;
 
     /**
      * Field Direction
@@ -40,9 +41,10 @@ public class MessageReferenceImpl extends ExtensibleComponentImpl
     // TODO Do we need it "Message content model"
 
     /**
-     * Field element
+     * Field elementQName
      */
-    private QName element;
+    private QName elementQName;
+    private Element elementSchema;
 
     /**
      * Method getDirection
@@ -68,8 +70,8 @@ public class MessageReferenceImpl extends ExtensibleComponentImpl
      *
      * @return
      */
-    public QName getElement() {
-        return element;
+    public QName getElementQName() {
+        return elementQName;
     }
 
     /**
@@ -78,8 +80,8 @@ public class MessageReferenceImpl extends ExtensibleComponentImpl
      *
      * @param element
      */
-    public void setElement(QName element) {
-        this.element = element;
+    public void setElementQName(QName element) {
+        this.elementQName = element;
     }
 
     /**
@@ -98,5 +100,13 @@ public class MessageReferenceImpl extends ExtensibleComponentImpl
      */
     public void setMessageLabel(String messageLabel) {
         this.messageLabel = messageLabel;
+    }
+
+    public Element getElementSchema() {
+        return elementSchema;
+    }
+
+    public void setElementSchema(Element element) {
+        this.elementSchema = element;
     }
 }

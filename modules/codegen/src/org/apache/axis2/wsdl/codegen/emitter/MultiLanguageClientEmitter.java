@@ -598,12 +598,12 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         if (inputMessage!=null){
             addAttribute(doc,
                     "name",
-                    this.mapper.getParameterName(inputMessage.getElement()),
+                    this.mapper.getParameterName(inputMessage.getElementQName()),
                     param);
 
             //todo modify the code here to unwrap if requested
             String typeMapping = this.mapper.getTypeMapping(
-                    inputMessage.getElement());
+                    inputMessage.getElementQName());
             addAttribute(doc, "type", typeMapping == null ? "" : typeMapping, param);
 
             //add an extra attribute to say whether the type mapping is the default
@@ -658,9 +658,9 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
         if (outputMessage!=null){
             parameterName =  this.mapper.getParameterName(
-                    outputMessage.getElement()) ;
+                    outputMessage.getElementQName()) ;
             String typeMapping = this.mapper.getTypeMapping(
-                    operation.getOutputMessage().getElement());
+                    operation.getOutputMessage().getElementQName());
             typeMappingStr = typeMapping == null ? "" : typeMapping;
 
         }else{
