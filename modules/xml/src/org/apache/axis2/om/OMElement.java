@@ -287,5 +287,5 @@ public interface OMElement extends OMNode, OMContainer {
      * @param qname prefixed qname string to resolve
      * @return null for any failure to extract a qname.
      */
-//    QName resolveQName(String qname);
+    QName resolveQName(String qname);
 }

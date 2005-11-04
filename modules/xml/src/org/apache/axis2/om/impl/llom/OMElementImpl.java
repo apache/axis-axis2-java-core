@@ -17,6 +17,7 @@
 package org.apache.axis2.om.impl.llom;
 
 import org.apache.axis2.om.*;
+import org.apache.axis2.om.util.ElementHelper;
 import org.apache.axis2.om.impl.OMContainerEx;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.OMOutputImpl;
@@ -810,44 +811,12 @@ public class OMElementImpl extends OMNodeImpl
 
     /**
      * Turn a prefix:local qname string into a proper QName, evaluating it in the OMElement context
-     *
-     * @param qname                    qname to resolve
-     * @param defaultToParentNameSpace flag that controls behaviour when there is no namespace.
-     * @return null for any failure to extract a qname.
-     */
-    public QName resolveQName(String qname, boolean defaultToParentNameSpace) {
-        int colon = qname.indexOf(':');
-        if (colon < 0) {
-            if (defaultToParentNameSpace) {
-                //get the parent ns and use it for the child
-                OMNamespace namespace = this.getNamespace();
-                return new QName(namespace.getName(), qname, namespace.getPrefix());
-            } else {
-                //else things without no prefix are local.
-                return new QName(qname);
-            }
-        }
-        String prefix = qname.substring(0, colon);
-        String local = qname.substring(colon + 1);
-        if (local.length() == 0) {
-            //empy local, exit accordingly
-            return null;
-        }
-
-        OMNamespace namespace = findNamespace(null, prefix);
-        if (namespace == null) {
-            return null;
-        }
-        return new QName(namespace.getName(), local, prefix);
-    }
-
-    /**
-     * Turn a prefix:local qname string into a proper QName, evaluating it in the OMElement context
      * unprefixed qnames resolve to the local namespace
      * @param qname prefixed qname string to resolve
      * @return null for any failure to extract a qname.
      */
     public QName resolveQName(String qname) {
-        return resolveQName(qname,true);
+        ElementHelper helper=new ElementHelper(this);
+        return helper.resolveQName(qname);
     }
 }
