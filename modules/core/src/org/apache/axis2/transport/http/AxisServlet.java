@@ -46,7 +46,7 @@ public class AxisServlet extends HttpServlet {
     private static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     private ConfigurationContext configContext;
     public static final String SESSION_ID = "SessionId";
-    private ServletContext servletContext;
+//    private ServletContext servletContext;
 
     /**
      * Method init
@@ -67,7 +67,7 @@ public class AxisServlet extends HttpServlet {
             configContext.setRootDir(new File(context.getRealPath("/WEB-INF")));
             lister = new ListingAgent(configContext);
             context.setAttribute(CONFIGURATION_CONTEXT, configContext);
-            servletContext = getServletContext();
+//            servletContext = getServletContext();
         } catch (Exception e) {
             throw new ServletException(e);
         }

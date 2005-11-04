@@ -20,7 +20,6 @@ package org.apache.axis2.rpc;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.databinding.utils.ADBPullParser;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -49,7 +48,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class RPCCallTest extends TestCase {
 
@@ -312,18 +314,6 @@ public class RPCCallTest extends TestCase {
         ps.add(p3);
 
         com.setPersons(ps);
-
-//        List list = new ArrayList();
-//        list.add(new QName(com.getName()));
-//        list.add(com);
-//        list.add(new QName("Persons"));
-//        list.add(ps.toArray());
-//
-//        XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("UdaEka"), list.toArray(), null);
-//        OMElement documentElement = new StAXOMBuilder(pullParser).getDocumentElement();
-//        System.out.println("documentElement = " + documentElement);
-
-
         ArrayList args = new ArrayList();
         args.add(com);
         OMElement response = call.invokeBlocking(operationName, args.toArray());
@@ -459,7 +449,6 @@ public class RPCCallTest extends TestCase {
         args.add("foo");
 
 
-
         OMElement response = call.invokeBlocking(operationName, args.toArray());
 //        assertEquals(response.getFirstElement().getText(), "foo");
         call.close();
@@ -476,13 +465,13 @@ public class RPCCallTest extends TestCase {
                 Constants.TRANSPORT_HTTP,
                 false);
 
-        OMElement elem =  call.invokeBlocking("handleArrayList", getpayLoad());
+        OMElement elem = call.invokeBlocking("handleArrayList", getpayLoad());
         assertEquals(elem.getFirstElement().getText(), "abcdefghiklm10");
         call.close();
     }
 
     private OMElement getpayLoad() throws AxisFault {
-        String str= "<handleArrayList>\n" +
+        String str = "<handleArrayList>\n" +
                 "  <arg0>\n" +
                 "    <item0>abc</item0>\n" +
                 "    <item0>def</item0>\n" +
@@ -490,22 +479,21 @@ public class RPCCallTest extends TestCase {
                 "    <item0>klm</item0>\n" +
                 "  </arg0><arg1>10</arg1>" +
                 "</handleArrayList>";
-        StAXOMBuilder staxOMBuilder ;
+        StAXOMBuilder staxOMBuilder;
         try {
-            XMLStreamReader xmlReader=  XMLInputFactory.newInstance().createXMLStreamReader(new
+            XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new
                     ByteArrayInputStream(str.getBytes()));
             OMFactory fac = OMAbstractFactory.getOMFactory();
 
             staxOMBuilder = new
-                    StAXOMBuilder(fac,xmlReader);
+                    StAXOMBuilder(fac, xmlReader);
         } catch (XMLStreamException e) {
-            throw  new AxisFault(e);
+            throw new AxisFault(e);
         } catch (FactoryConfigurationError factoryConfigurationError) {
-            throw  new AxisFault(factoryConfigurationError);
+            throw new AxisFault(factoryConfigurationError);
         }
-        return   staxOMBuilder.getDocumentElement();
+        return staxOMBuilder.getDocumentElement();
     }
-
 
 
 }

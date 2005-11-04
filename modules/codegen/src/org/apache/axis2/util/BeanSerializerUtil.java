@@ -18,25 +18,25 @@
 package org.apache.axis2.util;
 
 
-import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.utils.ADBPullParser;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis2.AxisFault;
+import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.beans.PropertyDescriptor;
-import java.beans.Introspector;
-import java.beans.IntrospectionException;
-import java.beans.BeanInfo;
 
 
 public class BeanSerializerUtil {
@@ -44,10 +44,11 @@ public class BeanSerializerUtil {
     /**
      * To Serilize Bean object this method is used, this will create an object array using given
      * bean object
+     *
      * @param beanObject
      * @param beanName
      */
-    public static XMLStreamReader getPullParser(Object beanObject, QName beanName ) {
+    public static XMLStreamReader getPullParser(Object beanObject, QName beanName) {
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(beanObject.getClass());
             PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();
@@ -55,20 +56,35 @@ public class BeanSerializerUtil {
             for (int i = 0; i < propDescs.length; i++) {
                 PropertyDescriptor propDesc = propDescs[i];
                 Class ptype = propDesc.getPropertyType();
-                if(propDesc.getName().equals("class")){
+                if (propDesc.getName().equals("class")) {
                     continue;
                 }
-                if(SimpleTypeMapper.isSimpleType(ptype)){
-                    Object value =  propDesc.getReadMethod().invoke(beanObject,null);
+                if (SimpleTypeMapper.isSimpleType(ptype)) {
+                    Object value = propDesc.getReadMethod().invoke(beanObject, null);
                     objetc.add(propDesc.getName());
                     objetc.add(value.toString());
-                } else if(SimpleTypeMapper.isArrayList(ptype)){
-                    objetc.add(new QName(propDesc.getName()));
-                    Object value =  propDesc.getReadMethod().invoke(beanObject,null);
-                    objetc.add(((ArrayList) value).toArray());
+                } else if (SimpleTypeMapper.isArrayList(ptype)) {
+                    Object value = propDesc.getReadMethod().invoke(beanObject, null);
+                    ArrayList objList = (ArrayList) value;
+                    if(objList!=null && objList.size()>0 ){
+                        //this was given error , when the array.size = 0
+                        // and if the array contain simple type , then the ADBPullParser asked
+                        // PullParser from That simpel type
+                        for (int j = 0; j < objList.size(); j++) {
+                            Object o = objList.get(j);
+                            if(SimpleTypeMapper.isSimpleType(o)){
+                                objetc.add(propDesc.getName());
+                                objetc.add(o);
+                            } else {
+                                objetc.add(new QName(propDesc.getName()));
+                                objetc.add(o);
+                            }
+                        }
+
+                    }
                 } else {
                     objetc.add(new QName(propDesc.getName()));
-                    Object value =  propDesc.getReadMethod().invoke(beanObject,null);
+                    Object value = propDesc.getReadMethod().invoke(beanObject, null);
                     objetc.add(value);
                 }
             }
@@ -82,10 +98,13 @@ public class BeanSerializerUtil {
         }
     }
 
-    public static Object deserialize(Class beanClass, OMElement beanElement) throws AxisFault{
-        Object beanObj ;
+    public static Object deserialize(Class beanClass, OMElement beanElement) throws AxisFault {
+        Object beanObj;
         try {
-            HashMap properties = new HashMap() ;
+            if(SimpleTypeMapper.isSimpleType(beanClass)){
+                return  SimpleTypeMapper.getSimpleTypeObject(beanClass,beanElement);
+            }
+            HashMap properties = new HashMap();
             BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
             PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();
             for (int i = 0; i < propDescs.length; i++) {
@@ -99,7 +118,7 @@ public class BeanSerializerUtil {
                 OMElement parts = (OMElement) elements.next();
 //                if parts/@href != null then need to find element with id and deserialize. before that first check wheher already have in hashtable
                 String partsLocalName = parts.getLocalName();
-                PropertyDescriptor prty =(PropertyDescriptor)properties.get(partsLocalName.toLowerCase());
+                PropertyDescriptor prty = (PropertyDescriptor) properties.get(partsLocalName.toLowerCase());
 //                if (prty == null) {
 /**
  * I think this can be happen , that is because there is a method whcih take Man
@@ -108,16 +127,18 @@ public class BeanSerializerUtil {
  */
 //                    throw new AxisFault("User Error , In vaild bean ! prty does not exist " + "set" +
 //                            partsLocalName);
-                if(prty !=null){
+                if (prty != null) {
                     Class parameters = prty.getPropertyType();
                     if (prty.equals("class"))
                         continue;
 
                     Object partObj;
-                    if(SimpleTypeMapper.isSimpleType(parameters)){
+                    if (SimpleTypeMapper.isSimpleType(parameters)) {
                         partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
-                    } else if(SimpleTypeMapper.isArrayList(parameters)){
-                        partObj = SimpleTypeMapper.getArrayList((OMElement)parts.getParent(),prty.getName());
+                    } else if (SimpleTypeMapper.isArrayList(parameters)) {
+                        //todo : Deepal , the array handling is compltely wrong , this has to be
+                        // imroved
+                        partObj = SimpleTypeMapper.getArrayList((OMElement) parts.getParent(), prty.getName());
                     } else {
                         partObj = deserialize(parameters, parts);
                     }
@@ -126,7 +147,7 @@ public class BeanSerializerUtil {
 //                        partObj = deserialize(parameters, parts);
 //                    }
                     Object [] parms = new Object[]{partObj};
-                    prty.getWriteMethod().invoke(beanObj,parms);
+                    prty.getWriteMethod().invoke(beanObj, parms);
                 }
             }
         } catch (InstantiationException e) {
@@ -141,10 +162,10 @@ public class BeanSerializerUtil {
         return beanObj;
     }
 
-    public static Object deserialize(Class beanClass, OMElement beanElement, MultirefHelper helper) throws AxisFault{
-        Object beanObj ;
+    public static Object deserialize(Class beanClass, OMElement beanElement, MultirefHelper helper) throws AxisFault {
+        Object beanObj;
         try {
-            HashMap properties = new HashMap() ;
+            HashMap properties = new HashMap();
             BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
             PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();
             for (int i = 0; i < propDescs.length; i++) {
@@ -156,25 +177,25 @@ public class BeanSerializerUtil {
             Iterator elements = beanElement.getChildren();
             while (elements.hasNext()) {
                 Object child = elements.next();
-                OMElement parts ;
-                if(child instanceof OMElement){
-                    parts= (OMElement) child;
+                OMElement parts;
+                if (child instanceof OMElement) {
+                    parts = (OMElement) child;
                 } else {
                     continue;
                 }
                 String partsLocalName = parts.getLocalName();
-                PropertyDescriptor prty =(PropertyDescriptor)properties.get(partsLocalName.toLowerCase());
-                if(prty !=null){
+                PropertyDescriptor prty = (PropertyDescriptor) properties.get(partsLocalName.toLowerCase());
+                if (prty != null) {
                     Class parameters = prty.getPropertyType();
                     if (prty.equals("class"))
                         continue;
                     Object partObj;
                     OMAttribute attr = MultirefHelper.processRefAtt(parts);
-                    if(attr != null){
+                    if (attr != null) {
                         String refId = MultirefHelper.getAttvalue(attr);
-                        partObj =  helper.getObject(refId);
-                        if(partObj == null){
-                            partObj = helper.processRef(parameters,refId);
+                        partObj = helper.getObject(refId);
+                        if (partObj == null) {
+                            partObj = helper.processRef(parameters, refId);
                         }
                     } else {
                         partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
@@ -183,7 +204,7 @@ public class BeanSerializerUtil {
                         }
                     }
                     Object [] parms = new Object[]{partObj};
-                    prty.getWriteMethod().invoke(beanObj,parms);
+                    prty.getWriteMethod().invoke(beanObj, parms);
                 }
             }
         } catch (InstantiationException e) {
@@ -204,12 +225,13 @@ public class BeanSerializerUtil {
      * in that case that element will be converted to the JavaType specified by the javaTypes array
      * The algo is as follows, get the childerns of the response element , and if it conatian more than
      * one element then check the retuen type of that element and conver that to corresponding JavaType
-     * @param response    OMElement
+     *
+     * @param response  OMElement
      * @param javaTypes Array of JavaTypes
-     * @return  Array of objects
+     * @return Array of objects
      * @throws AxisFault
      */
-    public static Object [] deserialize(OMElement response , Object [] javaTypes ) throws AxisFault {
+    public static Object [] deserialize(OMElement response, Object [] javaTypes) throws AxisFault {
         /**
          * Take the number of paramters in the method and , only take that much of child elements
          * from the OMElement , other are ignore , as an example
@@ -223,7 +245,7 @@ public class BeanSerializerUtil {
          * only the val1 and Val2 take into account
          */
         int length = javaTypes.length;
-        int count =0;
+        int count = 0;
         Object [] retObjs = new Object[length];
 
 /**
@@ -244,54 +266,53 @@ public class BeanSerializerUtil {
         Iterator parts = response.getChildren();
 //to handle multirefs
 //have to check the instnceof
-        MultirefHelper helper = new MultirefHelper((OMElement)response.getParent());
+        MultirefHelper helper = new MultirefHelper((OMElement) response.getParent());
         boolean hasRef = false;
         //to support array . if the paramter type is array , then all the omelemnts with that paramtre name
         // has to  get and add to the list
-        Class classType = null;
+        Class classType;
         while (parts.hasNext() && count < length) {
             Object objValue = parts.next();
             OMElement omElement;
-            if(objValue instanceof OMElement){
+            if (objValue instanceof OMElement) {
                 omElement = (OMElement) objValue;
-            }   else {
+            } else {
                 continue;
             }
-            classType = (Class)javaTypes[count];
+            classType = (Class) javaTypes[count];
 //handling refs
             OMAttribute omatribute = MultirefHelper.processRefAtt(omElement);
-            String ref=null;
-            if(omatribute !=null) {
+            String ref = null;
+            if (omatribute != null) {
                 hasRef = true;
                 ref = MultirefHelper.getAttvalue(omatribute);
             }
 
-            if(OMElement.class.isAssignableFrom(classType)){
-                if(hasRef){
+            if (OMElement.class.isAssignableFrom(classType)) {
+                if (hasRef) {
                     OMElement elemnt = helper.getOMElement(ref);
-                    if(elemnt == null){
+                    if (elemnt == null) {
                         retObjs[count] = helper.processOMElementRef(ref);
                     } else {
-                        retObjs[count] =omElement;
+                        retObjs[count] = omElement;
                     }
 //                    throw new AxisFault("The method take OMElenent as argument , and the body contains" +
 //                            "refs , encounter processing error ");
                 } else
-                    retObjs[count] =omElement;
+                    retObjs[count] = omElement;
             } else {
-                if(hasRef){
-                    if(helper.getObject(ref) !=null) {
-                        retObjs[count] =  helper.getObject(ref);
+                if (hasRef) {
+                    if (helper.getObject(ref) != null) {
+                        retObjs[count] = helper.getObject(ref);
                     } else {
-                        retObjs[count]  = helper.processRef(classType,ref) ;
+                        retObjs[count] = helper.processRef(classType, ref);
                     }
-                } else{
-                    if(SimpleTypeMapper.isSimpleType(classType)){
-                        retObjs[count]  = SimpleTypeMapper.getSimpleTypeObject(classType, omElement);
-                    } else if(SimpleTypeMapper.isArrayList(classType)){
-                        retObjs[count]  = SimpleTypeMapper.getArrayList(omElement);
-                    }
-                    else {
+                } else {
+                    if (SimpleTypeMapper.isSimpleType(classType)) {
+                        retObjs[count] = SimpleTypeMapper.getSimpleTypeObject(classType, omElement);
+                    } else if (SimpleTypeMapper.isArrayList(classType)) {
+                        retObjs[count] = SimpleTypeMapper.getArrayList(omElement);
+                    } else {
                         retObjs[count] = BeanSerializerUtil.deserialize(classType, omElement);
                     }
                 }
@@ -300,28 +321,28 @@ public class BeanSerializerUtil {
             count ++;
         }
         helper.clean();
-        return  retObjs;
+        return retObjs;
     }
 
-    public static OMElement getOMElement(QName opName ,Object [] args) {
-        ArrayList objects ;
+    public static OMElement getOMElement(QName opName, Object [] args) {
+        ArrayList objects;
         objects = new ArrayList();
-        int argCount =0;
+        int argCount = 0;
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
 //todo if the request paramter has name other than argi (0<i<n) , there should be a
 //was to do that , to solve that problem we need to have RPCRequestParameter
 //note that The value of request paramter can either be simple type or JavaBean
-            if(SimpleTypeMapper.isSimpleType(arg)){
+            if (SimpleTypeMapper.isSimpleType(arg)) {
                 objects.add("arg" + argCount);
                 objects.add(arg.toString());
-            }  else {
+            } else {
                 objects.add(new QName("arg" + argCount));
                 objects.add(arg);
             }
             argCount ++;
         }
-        XMLStreamReader xr = ADBPullParser.createPullParser(opName,objects.toArray(),null);
+        XMLStreamReader xr = ADBPullParser.createPullParser(opName, objects.toArray(), null);
         StAXOMBuilder stAXOMBuilder =
                 OMXMLBuilderFactory.createStAXOMBuilder(
                         OMAbstractFactory.getSOAP11Factory(), xr);

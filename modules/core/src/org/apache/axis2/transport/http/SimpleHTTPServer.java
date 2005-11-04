@@ -154,10 +154,10 @@ public class SimpleHTTPServer extends TransportListener {
      *
      * @throws Throwable
      */
-    protected void finalize() throws Throwable {
-        stop();
-        super.finalize();
-    }
+//    protected void finalize() throws Throwable {
+//        stop();
+//        super.finalize();
+//    }
 
     /**
      * Start this server as a NON-daemon.

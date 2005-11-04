@@ -17,13 +17,14 @@
 package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.i18n.Messages;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class HTTPTransportReceiver
@@ -279,6 +280,67 @@ public class HTTPTransportReceiver {
     public static String getServicesHTML(
             ConfigurationContext configurationContext) {
         String temp = "";
+        Map services =
+                configurationContext.getAxisConfiguration().getServices();
+        Hashtable erroneousServices =
+                configurationContext.getAxisConfiguration().getFaultyServices();
+        boolean status = false;
+
+        if (services != null && !services.isEmpty()) {
+            status = true;
+            Collection serviceCollection = services.values();
+            temp += "<h2>" + "Deployed services" + "</h2>";
+            for (Iterator it = serviceCollection.iterator(); it.hasNext();) {
+                Map operations;
+                Collection operationsList;
+                AxisService axisService = (AxisService) it.next();
+                operations = axisService.getOperations();
+                operationsList = operations.values();
+
+                temp += "<h3>" + axisService.getName().getLocalPart() +
+                        "</h3>";
+                if (operationsList.size() > 0) {
+                    temp += "Available operations <ul>";
+                    for (Iterator iterator1 = operationsList.iterator();
+                         iterator1.hasNext();
+                            ) {
+                        AxisOperation axisOperation =
+                                (AxisOperation) iterator1.next();
+                        temp += "<li>"
+                                + axisOperation.getName().getLocalPart()
+                                + "</li>";
+                    }
+                    temp += "</ul>";
+                } else {
+                    temp += "No operations speficied for this service";
+                }
+            }
+        }
+
+        if (erroneousServices != null && !erroneousServices.isEmpty()) {
+
+            temp += "<hr><h2><font color=\"blue\">Faulty Services</font></h2>";
+            status = true;
+            Enumeration faultyservices = erroneousServices.keys();
+            while (faultyservices.hasMoreElements()) {
+                String faultyserviceName =
+                        (String) faultyservices.nextElement();
+                temp += "<h3><font color=\"blue\">"
+                        + faultyserviceName
+                        + "</font></h3>";
+            }
+        }
+
+        if (!status) {
+            temp = "<h2>There are no services deployed</h2>";
+        }
+
+        temp =
+                "<html><head><title>Axis2: Services</title></head>"
+                        + "<body>"
+                        + temp
+                        + "</body></html>";
+
         return temp;
     }
 
