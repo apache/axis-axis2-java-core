@@ -23,6 +23,7 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.util.ElementHelper;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.om.impl.llom.OMStAXWrapper;
@@ -840,7 +841,16 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		if(document.firstChild == null)
 			document.firstChild = this;
 	}
-    
-    
 
+    /**
+     * Turn a prefix:local qname string into a proper QName, evaluating it in the OMElement context
+     * unprefixed qnames resolve to the local namespace
+     *
+     * @param qname prefixed qname string to resolve
+     * @return null for any failure to extract a qname.
+     */
+    public QName resolveQName(String qname) {
+        ElementHelper helper = new ElementHelper(this);
+        return helper.resolveQName(qname);
+    }
 }
