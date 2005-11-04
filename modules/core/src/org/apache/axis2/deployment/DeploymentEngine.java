@@ -47,12 +47,8 @@ public class DeploymentEngine implements DeploymentConstants {
     private Log log = LogFactory.getLog(getClass());
 
     public String axis2repository = null;
-
-
     private boolean hotDeployment = true;   //to do hot deployment or not
     private boolean hotUpdate = true;  // to do hot update or not
-
-
     /**
      * This will store all the web Services to deploy
      */

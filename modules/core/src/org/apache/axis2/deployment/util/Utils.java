@@ -3,10 +3,10 @@ package org.apache.axis2.deployment.util;
 import org.apache.axis2.deployment.DeploymentException;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.MalformedURLException;
+import java.util.ArrayList;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

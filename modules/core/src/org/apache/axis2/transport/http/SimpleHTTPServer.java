@@ -60,7 +60,7 @@ public class SimpleHTTPServer extends TransportListener {
     SimpleHttpServer embedded = null;
 
     int port = -1;
-    
+
     private ThreadFactory threadPool = null;
 
     /**
@@ -81,7 +81,7 @@ public class SimpleHTTPServer extends TransportListener {
 
 	/**
 	 * Constructor SimpleHTTPServer
-	 * 
+	 *
 	 * @param systemContext
 	 * @param pool
 	 */
@@ -103,7 +103,7 @@ public class SimpleHTTPServer extends TransportListener {
 
     /**
 	 * Constructor SimpleHTTPServer
-	 * 
+	 *
 	 * @param dir
 	 * @throws AxisFault
 	 */
@@ -112,7 +112,7 @@ public class SimpleHTTPServer extends TransportListener {
     }
     /**
 	 * Constructor SimpleHTTPServer
-	 * 
+	 *
 	 * @param dir
 	 * @param pool
 	 * @throws AxisFault
@@ -154,6 +154,7 @@ public class SimpleHTTPServer extends TransportListener {
      *
      * @throws Throwable
      */
+    //todo : Deepal , this is not the properway to handle , pls fix 
 //    protected void finalize() throws Throwable {
 //        stop();
 //        super.finalize();

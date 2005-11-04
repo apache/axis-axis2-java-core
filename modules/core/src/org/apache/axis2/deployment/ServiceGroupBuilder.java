@@ -34,8 +34,6 @@ public class ServiceGroupBuilder extends DescriptionBuilder{
         super.engine =engine;
         this.servcice = servcice;
     }
-
-
     public void populateServiceGroup(AxisServiceGroup axisServiceGroup) throws DeploymentException {
         try {
             //Processing service level paramters

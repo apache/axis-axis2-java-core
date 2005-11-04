@@ -38,11 +38,7 @@ import java.util.Iterator;
  */
 public class ModuleBuilder extends DescriptionBuilder{
 
-
-
     private ModuleDescription module;
-
-
     public ModuleBuilder(InputStream serviceInputSteram, DeploymentEngine engine
             ,ModuleDescription module) {
         super(serviceInputSteram, engine);

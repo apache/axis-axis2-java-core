@@ -46,8 +46,6 @@ public class AxisServlet extends HttpServlet {
     private static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     private ConfigurationContext configContext;
     public static final String SESSION_ID = "SessionId";
-//    private ServletContext servletContext;
-
     /**
      * Method init
      *

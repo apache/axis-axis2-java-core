@@ -107,7 +107,6 @@ public class ArchiveFileData {
     }
 
     public void setClassLoader(boolean extarctArichive, ClassLoader parent) throws AxisFault {
-//        ClassLoader parent = Thread.currentThread().getContextClassLoader();
         if (! extarctArichive) {
             // has to be craeted taking that file to the account
             if (file != null) {
