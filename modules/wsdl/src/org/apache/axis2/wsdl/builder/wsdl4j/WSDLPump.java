@@ -266,7 +266,12 @@ public class WSDLPump {
                             Types t = importedDef.getTypes();
                             List typesList = t.getExtensibilityElements();
                             for (int j = 0; j < typesList.size(); j++) {
-                                wsdl4JDefinition.getTypes().addExtensibilityElement(
+                                Types types = wsdl4JDefinition.getTypes();
+                                if(types == null){
+                                    types = wsdl4JDefinition.createTypes();
+                                    wsdl4JDefinition.setTypes(types);
+                                }
+                                types.addExtensibilityElement(
                                         (ExtensibilityElement)typesList.get(j));
 
                             }

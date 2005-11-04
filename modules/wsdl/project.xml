@@ -111,7 +111,17 @@
     </dependencies>
 	<!-- add the build properties-->
 	<build>
-	<resources>
+
+        <unitTest>
+            <excludes>
+                <exclude>**/*WriterTest.java</exclude>
+                </excludes>
+            <includes>
+                <include>**/*Test.java</include>
+            </includes>
+        </unitTest>
+
+    <resources>
 		<resource>
 			<directory>src</directory>
 			<includes>
