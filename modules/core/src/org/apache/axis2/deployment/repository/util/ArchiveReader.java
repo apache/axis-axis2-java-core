@@ -115,7 +115,6 @@ public class ArchiveReader implements DeploymentConstants {
                 bindings.remove(o) ;
 
             }
-
             Iterator iterator = womDescription.getServices().keySet()
                     .iterator();
             if (iterator.hasNext()) {
@@ -159,6 +158,7 @@ public class ArchiveReader implements DeploymentConstants {
                                 log.info(e);
                             }
                         }
+
                     }
                 } else {
                     throw new DeploymentException(Messages.getMessage(
@@ -285,7 +285,7 @@ public class ArchiveReader implements DeploymentConstants {
             axisService.setClassLoader(engine.getCurrentFileItem().getClassLoader());
             ServiceBuilder serviceBuilder = new ServiceBuilder(engine,axisService);
             serviceBuilder.populateService(services);
-            engine.getCurrentFileItem().getDeployableServices().add(axisService);
+            engine.getCurrentFileItem().getDeploybleServices().add(axisService);
         } else if(SERVICE_GROUP_ELEMENT.equals(rootelementName)){
             ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(services,engine);
             groupBuilder.populateServiceGroup(axisServiceGroup);

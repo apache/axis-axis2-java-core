@@ -115,9 +115,9 @@ public class ModuleBuilder extends DescriptionBuilder{
 
             //processing Operations
             Iterator op_itr = moduleElement.getChildrenWithName(new QName(OPRATIONST));
-            ArrayList opeartions = processOperations(op_itr);
-            for (int i = 0; i < opeartions.size(); i++) {
-                AxisOperation opeartion = (AxisOperation) opeartions.get(i);
+            ArrayList operations = processOperations(op_itr);
+            for (int i = 0; i < operations.size(); i++) {
+                AxisOperation opeartion = (AxisOperation) operations.get(i);
                 module.addOperation(opeartion);
             }
 

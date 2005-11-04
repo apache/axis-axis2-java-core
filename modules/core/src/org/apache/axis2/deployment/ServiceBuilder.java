@@ -213,7 +213,7 @@ public class ServiceBuilder extends DescriptionBuilder{
                 op_descrip.setMessageReceiver(messageReceiver);
             }  else {
                 //setting default message reciver
-                MessageReceiver msgReceiver = loadDefaultMessageReceiver();
+                MessageReceiver msgReceiver =loadDefaultMessageReceiver();
                 op_descrip.setMessageReceiver(msgReceiver);
             }
 
