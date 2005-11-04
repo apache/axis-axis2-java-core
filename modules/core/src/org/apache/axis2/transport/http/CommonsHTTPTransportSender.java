@@ -122,8 +122,14 @@ public class CommonsHTTPTransportSender
                     msgContext.getTo().getAddress())
                     && !AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(
                     msgContext.getTo().getAddress())) {
+
                 epr = msgContext.getTo();
             }
+            
+            // ######################################################
+            //Change this place to change the wsa:toepr
+            //epr = something
+            // ######################################################
 
             OMElement dataOut;
             /**
@@ -131,7 +137,7 @@ public class CommonsHTTPTransportSender
              */
             msgContext.setDoingREST(HTTPTransportUtils.isDoingREST(msgContext));
             msgContext.setRestThroughPOST(HTTPTransportUtils.isDoingRESTThoughPost(msgContext));
-            
+
             if (msgContext.isDoingREST()) {
                 dataOut = msgContext.getEnvelope().getBody().getFirstElement();
             } else {

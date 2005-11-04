@@ -131,6 +131,12 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
 
     }
 
+    /**
+     * 
+     * @param uri
+     * @return
+     * @throws WSDLException
+     */
     private Definition readInTheWSDLFile(String uri) throws WSDLException {
 
         WSDLReader reader =
@@ -159,6 +165,12 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
         return reader.readWSDL(baseURI, doc);
     }
 
+    /**
+     *
+     * @param in
+     * @return
+     * @throws WSDLException
+     */
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
 
         WSDLReader reader =
