@@ -26,8 +26,11 @@ import org.jaxen.JaxenException;
 import org.jaxen.SimpleNamespaceContext;
 import org.jaxen.XPath;
 
+import sun.security.krb5.internal.n;
+
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Utility class to handle MTOM-Optimizing Base64 Text values
@@ -37,21 +40,28 @@ public class MessageOptimizer {
 	/**
 	 * Mark the requied Base64 text values as optimized
 	 * @param env
-	 * @param optimizeParts This is a set of xPath expressions 
-	 * (NOTE: Right now we support only one expression)
+	 * @param optimizeParts This is a set of xPath expressions
+	 *  
 	 * @throws WSSecurityException
 	 */
 	public static void optimize(SOAPEnvelope env, String optimizeParts) throws WSSecurityException {
+		String separater = "<>";
+		StringTokenizer tokenizer = new StringTokenizer(optimizeParts, separater);
 		
-		//Find binary content
-		List list = findElements(env,optimizeParts);
-		
-		Iterator cipherValueElements = list.iterator();
-		
-		while (cipherValueElements.hasNext()) {
-			OMElement element = (OMElement) cipherValueElements.next();
-			OMText text = (OMText)element.getFirstOMChild();
-			text.setOptimize(true);
+		while(tokenizer.hasMoreTokens()) {
+			
+			String xpathExpr = tokenizer.nextToken(); 
+			
+			//Find binary content
+			List list = findElements(env,xpathExpr);
+			
+			Iterator cipherValueElements = list.iterator();
+			
+			while (cipherValueElements.hasNext()) {
+				OMElement element = (OMElement) cipherValueElements.next();
+				OMText text = (OMText)element.getFirstOMChild();
+				text.setOptimize(true);
+			}
 		}
 	}
 	

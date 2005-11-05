@@ -54,6 +54,9 @@ public interface WSSHandlerConstants {
 	 */
 	public static final String OPTIMIZE_PARTS = "optimizeParts";
 	
+	public static final String PRESERVE_ORIGINAL_ENV = "preserveOriginalEnvelope";
+	
+	
 	/*
 	 * These are useful in configuring using the OutflowConfiguration 
 	 * and InflowConfiguration 

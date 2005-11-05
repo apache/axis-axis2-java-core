@@ -190,6 +190,14 @@ public class WSDoAllSender extends WSDoAllHandler {
             } else {
             	SOAPEnvelope processedEnv = null;
 
+    	        String preserve = null;
+                if ((preserve = (String) getOption(WSSHandlerConstants.PRESERVE_ORIGINAL_ENV)) == null) {
+                    preserve = (String) getProperty(msgContext, WSSHandlerConstants.PRESERVE_ORIGINAL_ENV);
+                }
+                if(preserve != null) {
+                	this.preserveOriginalEnvelope = "true".equalsIgnoreCase(preserve);
+                }
+                
             	if(preserveOriginalEnvelope) {
             		processedEnv = Axis2Util.getSOAPEnvelopeFromDocument(doc,reqData.getSoapConstants(), msgContext.getEnvelope());
                    // msgContext.getEnvelope().build();

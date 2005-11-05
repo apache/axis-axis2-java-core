@@ -490,4 +490,22 @@ public class OutflowConfiguration {
 		return (String) this.actionList[this.currentAction]
 				.get(WSHandlerConstants.ENABLE_SIGNATURE_CONFIRMATION);
 	}
+	
+	/**
+	 * Sets whether signature confirmation should be enabled or not
+	 * @param embeddedKeyName
+	 */
+	public void setPreserveOriginalEnvelope(boolean value) {
+		this.actionList[this.currentAction].put(
+				WSSHandlerConstants.PRESERVE_ORIGINAL_ENV, value?"true":"false");
+	}
+	
+	/**
+	 * Returns whether signature confirmation should be enabled or not
+	 * @return
+	 */
+	public String getPreserveOriginalEnvelope() {
+		return (String) this.actionList[this.currentAction]
+				.get(WSSHandlerConstants.PRESERVE_ORIGINAL_ENV);
+	}
 }
