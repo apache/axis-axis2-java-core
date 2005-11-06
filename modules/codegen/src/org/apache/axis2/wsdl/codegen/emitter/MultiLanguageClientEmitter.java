@@ -80,10 +80,6 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
      */
     public void setMapper(TypeMapper mapper) {
         this.mapper = mapper;
-        ////////////////////////////
-        System.out.println("mapper = " + mapper);
-        ///////////////////////////
-
     }
 
     /**
@@ -1213,7 +1209,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     * Commented for now for the 
+     * Commented for now for the
      * @param policy
      * @return  the file name and the package of this policy
      */

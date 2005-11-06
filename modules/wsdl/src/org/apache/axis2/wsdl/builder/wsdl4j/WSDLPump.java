@@ -760,38 +760,11 @@ public class WSDLPump {
         }
 
 
-        ///////////////////////////////////
-        System.out.println("schemaElement = " + schemaElement);
-        ////////////////////////////////////
+       
         return schemaElement;
     }
 
-/*
- However we may need to check the types section of the WOM first
-   WSDLTypes types = womDefinition.getTypes();
 
-   //If types is null create a new one to be used for multipart
-   //resolution if any.
-
-   if (null == types) {
-       //create a new types section
-       types = wsdlComponentFactory.createTypes();
-       this.womDefinition.setTypes(types);
-   }
-
-   //create a new Schema extensions element
-   ExtensionFactory extensionFactory = wsdlComponentFactory.createExtensionFactory();
-   org.apache.wsdl.extensions.Schema schemaExtensibilityElement = (org.apache.wsdl.extensions.Schema) extensionFactory.getExtensionElement(
-           ExtensionConstants.SCHEMA);
-   types.addExtensibilityElement(schemaExtensibilityElement);
-
-   schemaExtensibilityElement.setElement(schemaElement);
-
-   //add this to the imported stack of the extensible element as well
-   Stack stack = new Stack();
-   stack.push(schemaElement);
-   schemaExtensibilityElement.setImportedSchemaStack(stack);
-*/
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * Generates a referenceQName
