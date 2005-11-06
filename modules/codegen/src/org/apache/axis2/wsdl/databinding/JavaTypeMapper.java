@@ -16,11 +16,15 @@
 
 package org.apache.axis2.wsdl.databinding;
 
+import javax.xml.namespace.QName;
+
 
 public class JavaTypeMapper extends TypeMappingAdapter {
 
     public JavaTypeMapper() {
     }
+
+
 
     public String toString() {
         return this.map.toString();

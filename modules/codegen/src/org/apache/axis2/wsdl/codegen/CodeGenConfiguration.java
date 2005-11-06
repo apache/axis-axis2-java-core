@@ -42,6 +42,17 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private boolean writeMessageReceiver = true;
     private String packageName = XSLTConstants.DEFAULT_PACKAGE_NAME;
 
+
+    private Map policyMap = new HashMap();
+
+    public Map getPolicyMap() {
+        return policyMap;
+    }
+
+    public void setPolicyMap(Map policyMap) {
+        this.policyMap = policyMap;
+    }
+
     /* Code generation style means whether to use the binding or the interface for code generation.
     * the default is automatic where the code generator looks for the binding and if the binding is
     * absent, switches to the interface. The user however, can switch to the interface or the binding

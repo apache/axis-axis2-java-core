@@ -65,5 +65,8 @@ public class SchemaImpl extends WSDLExtensibilityElementImpl implements Extensio
      */
     public void setElement(Element elelment) {
         this.element = elelment;
+        if (importedSchemaStack.isEmpty()){
+            importedSchemaStack.push(elelment);
+        }
     }
 }

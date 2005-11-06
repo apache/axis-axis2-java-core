@@ -61,8 +61,24 @@
         * Default Constructor
         */
         public <xsl:value-of select="@name"/>() throws java.lang.Exception {
-		    this(AXIS2_HOME,"<xsl:value-of select="endpoint"/>" );
-	    }
+         <!-- change this -->
+        <xsl:for-each select="endpoint">
+            <xsl:choose>
+                <xsl:when test="position()=1">
+                     this(AXIS2_HOME,"<xsl:value-of select="."/>" );
+                </xsl:when>
+                <xsl:otherwise>
+                     //this(AXIS2_HOME,"<xsl:value-of select="."/>" );
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:if test="@policyRef">
+                //this has a policy ! The policy is written to the follwing file<xsl:value-of select="@policyRef"></xsl:value-of>
+            </xsl:if>
+        </xsl:for-each>
+
+
+
+        }
 
 
 

@@ -41,6 +41,10 @@ public abstract class ClassWriter {
 
     protected boolean fileExists = false;//a flag saying the file is existing
 
+    public FileOutputStream getStream() {
+        return stream;
+    }
+
     /**
      * Sets the language
      *

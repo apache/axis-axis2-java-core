@@ -39,6 +39,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -79,6 +80,9 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
      */
     public void setMapper(TypeMapper mapper) {
         this.mapper = mapper;
+        ////////////////////////////
+        System.out.println("mapper = " + mapper);
+        ///////////////////////////
 
     }
 
@@ -452,6 +456,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
      */
     protected void writeInterfaceImplementation(WSDLBinding axisBinding,
                                                 WSDLService service) throws Exception {
+        //first check for the policies in this service and write them
         Document interfaceImplModel = createDOMDocumentForInterfaceImplementation(
                 axisBinding, service);
         InterfaceImplementationWriter writer =
@@ -919,12 +924,12 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     private void addHeaderOperations(List soapHeaderParameterQNameList, WSDLBindingOperation bindingOperation,boolean input) {
         Iterator extIterator;
         if (input){
-            extIterator = bindingOperation.getInput().getExtensibilityElements().iterator();
+            extIterator = bindingOperation.getInput()==null?null:bindingOperation.getInput().getExtensibilityElements().iterator();
         }else{
-            extIterator = bindingOperation.getOutput().getExtensibilityElements().iterator();
+            extIterator = bindingOperation.getOutput()==null?null: bindingOperation.getOutput().getExtensibilityElements().iterator();
         }
 
-        while (extIterator.hasNext()) {
+        while (extIterator!=null && extIterator.hasNext()) {
             WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
             if (element.getType().equals(ExtensionConstants.SOAP_11_HEADER)) {
                 SOAPHeader header = (SOAPHeader)element;
@@ -1095,7 +1100,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
      * @param service
      */
     protected Document createDOMDocumentForInterfaceImplementation(
-            WSDLBinding binding, WSDLService service) {
+            WSDLBinding binding, WSDLService service) throws Exception {
         WSDLInterface boundInterface = binding.getBoundInterface();
         HashMap endpoints = new HashMap(1);
         if (service!=null){
@@ -1169,13 +1174,24 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     protected void addEndpoints(Document doc,
                                 Element rootElement,
-                                HashMap endpointMap) {
+                                HashMap endpointMap) throws Exception{
+        Map endpointPolicyMap = configuration.getPolicyMap();
         Object[] endpoints = endpointMap.values().toArray();
         WSDLEndpoint endpoint;
         Element endpointElement;
         Text text;
         for (int i = 0; i < endpoints.length; i++) {
             endpoint = (WSDLEndpoint) endpoints[i];
+            //attach the policy for this endpoint here
+//            String policyFileResourceName = null;
+//            Policy policy =  (Policy)endpointPolicyMap.get(endpoint.getName());
+//            if (policy!=null){
+//                //process the policy for this end point
+//                 policyFileResourceName = processPolicy(policy,endpoint.getName().getLocalPart());
+//
+//            }
+
+
             endpointElement = doc.createElement("endpoint");
             org.apache.wsdl.extensions.SOAPAddress address = null;
             Iterator iterator = endpoint.getExtensibilityElements().iterator();
@@ -1187,11 +1203,32 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 }
             }
             text = doc.createTextNode(address!=null?address.getLocationURI():"");
+//            if (policyFileResourceName!=null){
+//                addAttribute(doc,"policyRef",policyFileResourceName,endpointElement);
+//            }
             endpointElement.appendChild(text);
             rootElement.appendChild(endpointElement);
         }
 
     }
+
+    /**
+     * Commented for now for the 
+     * @param policy
+     * @return  the file name and the package of this policy
+     */
+//    private String processPolicy(Policy policy,String name) throws Exception{
+//        PolicyFileWriter writer = new PolicyFileWriter(configuration.getOutputLocation());
+//        String fileName = name + "_policy";
+//        writer.createOutFile(configuration.getPackageName(),fileName);
+//        FileOutputStream stream = writer.getStream();
+//        if (stream!=null) WSPolicyParser.getInstance().printModel(policy,stream);
+//
+//        String packageName = configuration.getPackageName();
+//        String fullFileName = "\\" + packageName.replace('.','\\') +"\\"+fileName+ ".xml";
+//        return fullFileName;
+//
+//    }
 
     /**
      * Utility method to add an attribute to a given element
