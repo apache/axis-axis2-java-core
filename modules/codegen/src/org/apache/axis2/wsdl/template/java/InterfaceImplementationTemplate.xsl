@@ -283,12 +283,11 @@
          <xsl:for-each select="input/param[@type!='']">
             <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
          </xsl:for-each>) throws java.rmi.RemoteException{
-         org.apache.axis2.clientapi.Call _call = new org.apache.axis2.clientapi.Call(_serviceContext);
-            _call.setTransportInfo(this.senderTransport,this.listenerTransport,this.useSeparateListener);
+         org.apache.axis2.clientapi.MessageSender _msgSender = new org.apache.axis2.clientapi.MessageSender(_serviceContext);
             
  		    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-            _call.setTo(this.toEPR);
-            _call.setSoapAction("<xsl:value-of select="$soapAction"/>");
+            _msgSender.setTo(this.toEPR);
+            _msgSender.setSoapAction("<xsl:value-of select="$soapAction"/>");
             <xsl:for-each select="input/param[@Action!='']">_messageContext.setWSAAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
 
           org.apache.axis2.soap.SOAPEnvelope env = null;
@@ -334,7 +333,7 @@
              </xsl:otherwise>
             </xsl:choose>
              _messageContext.setEnvelope(env);
-             _call.invokeBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
+             _msgSender.send(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
                return;
           }
       </xsl:if>
