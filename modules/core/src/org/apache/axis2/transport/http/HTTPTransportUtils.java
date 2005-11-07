@@ -452,12 +452,13 @@ public class HTTPTransportUtils {
                     msgContext.getProperty(
                         Constants.Configuration.ENABLE_MTOM));
         }
-        boolean envelopeContainsOptimise =
-            HTTPTransportUtils.checkEnvelopeForOptimise(
+
+        boolean forceMIME = Constants.VALUE_TRUE.equals(msgContext.getProperty(Constants.Configuration.FORCE_MIME));
+        if(forceMIME) return true;
+
+        boolean envelopeContainsOptimise = HTTPTransportUtils.checkEnvelopeForOptimise(
                 msgContext.getEnvelope());
-        boolean doMTOM = enableMTOM && envelopeContainsOptimise;
-        msgContext.setDoingMTOM(doMTOM);
-        return doMTOM;
+        return enableMTOM && envelopeContainsOptimise;
     }
 
     public static boolean isDoingREST(MessageContext msgContext) {

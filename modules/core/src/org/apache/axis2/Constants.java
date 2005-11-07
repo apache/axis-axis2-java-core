@@ -195,6 +195,9 @@ public class Constants {
         public static final String ATTACHMENT_TEMP_DIR = "attachmentDIR";
         public static final String CACHE_ATTACHMENTS = "cacheAttachments";
         public static final String FILE_SIZE_THRESHOLD = "sizeThreshold";
+
+        // we need to some times send the message as multipart/related, even if there is no MTOM stuff in the envelope.
+        public static final String FORCE_MIME = "ForceMimeBoundary";
     }
 
     public static final String VALUE_TRUE = "true";
