@@ -22,13 +22,14 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.MessageContextConstants;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
@@ -41,11 +42,11 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.namespace.QName;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -75,12 +76,11 @@ public class CommonsHTTPTransportSender
 
     /**
      * proxydiscription
-     *
      */
     protected TransportOutDescription proxyOutSetting = null;
 
     protected static final String PROXY_HOST_NAME = "proxy_host";
-    protected static final String PROXY_PORT="proxy_port";
+    protected static final String PROXY_PORT = "proxy_port";
 
 
     protected Log log = LogFactory.getLog(getClass().getName());
@@ -113,11 +113,12 @@ public class CommonsHTTPTransportSender
 
             omOutput.setCharSetEncoding(charSetEnc);
 
-            //Check for the REST behaviour, if you desire rest beahaviour
-            //put a <parameter name="doREST" value="true"/> at the
-            // server.xml/client.xml file
+            // Trasnport URL can be different from the WSA-To. So processing that now.
             EndpointReference epr = null;
-            if (msgContext.getTo() != null
+            String transportURL = (String) msgContext.getProperty(MessageContextConstants.TRANSPORT_URL);
+            if (transportURL != null) {
+                epr = new EndpointReference(transportURL);
+            } else if (msgContext.getTo() != null
                     && !AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(
                     msgContext.getTo().getAddress())
                     && !AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(
@@ -125,7 +126,11 @@ public class CommonsHTTPTransportSender
 
                 epr = msgContext.getTo();
             }
-            
+
+            //Check for the REST behaviour, if you desire rest beahaviour
+            //put a <parameter name="doREST" value="true"/> at the
+            // server.xml/client.xml file
+
             // ######################################################
             //Change this place to change the wsa:toepr
             //epr = something
@@ -158,7 +163,7 @@ public class CommonsHTTPTransportSender
                     if (transportInfo != null) {
                         omOutput.setSoap11(msgContext.isSOAP11());
                         //this is the servlet2.3 way of setting encodings
-                        String encoding= omOutput.getContentType() +"; charset="+ omOutput.getCharSetEncoding();
+                        String encoding = omOutput.getContentType() + "; charset=" + omOutput.getCharSetEncoding();
                         transportInfo.setContentType(encoding);
                     } else {
                         throw new AxisFault(HTTPConstants.HTTPOutTransportInfo + " does not set");
@@ -524,7 +529,7 @@ public class CommonsHTTPTransportSender
 
         HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
 
-        this.httpClient.executeMethod(config,postMethod);
+        this.httpClient.executeMethod(config, postMethod);
 
         if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
             processResponse(postMethod, msgContext);
@@ -613,7 +618,7 @@ public class CommonsHTTPTransportSender
         this.httpClient = new HttpClient();
 
 
-        HostConfiguration hostConfig = this.getHostConfiguration(httpClient,msgContext, url);
+        HostConfiguration hostConfig = this.getHostConfiguration(httpClient, msgContext, url);
         //this.getHostConfiguration(msgContext, url);
 
         //Get the timeout values set in the runtime
@@ -627,7 +632,7 @@ public class CommonsHTTPTransportSender
         /**
          * with HostConfiguration
          */
-        this.httpClient.executeMethod(hostConfig, getMethod,null);
+        this.httpClient.executeMethod(hostConfig, getMethod, null);
 
         if (getMethod.getStatusCode() == HttpStatus.SC_OK) {
             processResponse(getMethod, msgContext);
@@ -698,22 +703,22 @@ public class CommonsHTTPTransportSender
     private HostConfiguration getHostConfiguration(HttpClient client, MessageContext msgCtx, URL targetURL) throws AxisFault {
         boolean isHostProxy = isProxyListered(msgCtx); //list the proxy
         int port = targetURL.getPort();
-        if ( port == -1 ) port = 80;
+        if (port == -1) port = 80;
         // to see the host is a proxy and in the proxy list - available in axis2.xml
         HostConfiguration config = new HostConfiguration();
 
         if (!isHostProxy) {
-            config.setHost(targetURL.getHost(),port,targetURL.getProtocol());
+            config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
         } else {
             //proxy and NTLM configuration
-            this.configProxyAuthentication(client,proxyOutSetting,config,msgCtx);
+            this.configProxyAuthentication(client, proxyOutSetting, config, msgCtx);
         }
 
-        return  config;
+        return config;
     }
 
     private boolean isProxyListered(MessageContext msgCtx) throws AxisFault {
-        boolean returnValue =false;
+        boolean returnValue = false;
         Parameter par = null;
         proxyOutSetting = msgCtx.getSystemContext()
                 .getAxisConfiguration()
@@ -750,6 +755,7 @@ public class CommonsHTTPTransportSender
 
     /**
      * Helper method to Proxy and NTLM authentication
+     *
      * @param client
      * @param proxySetting
      * @param config
@@ -757,7 +763,7 @@ public class CommonsHTTPTransportSender
 
     private void configProxyAuthentication(HttpClient client,
                                            TransportOutDescription proxySetting,
-                                           HostConfiguration config,MessageContext msgCtx) throws AxisFault {
+                                           HostConfiguration config, MessageContext msgCtx) throws AxisFault {
         Parameter proxyParam = proxySetting.getParameter(HTTPConstants.PROXY);
         String value = (String) proxyParam.getValue();
         String split[] = value.split(":");
@@ -775,8 +781,8 @@ public class CommonsHTTPTransportSender
             OMElement proxyParamElement = proxyParam.getParameterElement();
             Iterator ite = proxyParamElement.getAllAttributes();
             while (ite.hasNext()) {
-                OMAttribute att = (OMAttribute)ite.next();
-                if (att.getLocalName().equalsIgnoreCase(PROXY_HOST_NAME)){
+                OMAttribute att = (OMAttribute) ite.next();
+                if (att.getLocalName().equalsIgnoreCase(PROXY_HOST_NAME)) {
                     proxyHostName = att.getAttributeValue();
                 }
                 if (att.getLocalName().equalsIgnoreCase(PROXY_PORT)) {
@@ -799,9 +805,8 @@ public class CommonsHTTPTransportSender
         }
 
 
-
-        HttpTransportProperties.ProxyProperties proxyProperties = (HttpTransportProperties.ProxyProperties)msgCtx.getProperty(HTTPConstants.PROXY);
-        if ( proxyProperties != null) {
+        HttpTransportProperties.ProxyProperties proxyProperties = (HttpTransportProperties.ProxyProperties) msgCtx.getProperty(HTTPConstants.PROXY);
+        if (proxyProperties != null) {
             if (proxyProperties.getProxyPort() != -1) {
                 proxyPort = proxyProperties.getProxyPort();
             }
@@ -810,8 +815,8 @@ public class CommonsHTTPTransportSender
             } else {
                 throw new AxisFault("Proxy Name is not valied");
             }
-            if (proxyProperties.getUserName().equals("anonymous") || proxyProperties.getPassWord().equals("anonymous")){
-                proxyCred = new UsernamePasswordCredentials("","");
+            if (proxyProperties.getUserName().equals("anonymous") || proxyProperties.getPassWord().equals("anonymous")) {
+                proxyCred = new UsernamePasswordCredentials("", "");
             } else {
                 usrName = proxyProperties.getUserName();
                 passwd = proxyProperties.getPassWord();
@@ -819,7 +824,7 @@ public class CommonsHTTPTransportSender
             }
         }
         client.getState().setProxyCredentials(AuthScope.ANY, proxyCred);
-        config.setProxy(proxyHostName,proxyPort);
+        config.setProxy(proxyHostName, proxyPort);
     }
 
 }
