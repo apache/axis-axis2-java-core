@@ -276,10 +276,24 @@ public abstract class Stub {
             call.set(key,propertyMap.get(key));
         }
     }
+    protected void populateProperties(MessageSender sender){
+        Iterator keys = this.propertyMap.keySet().iterator();
+        String key;
+        while (keys.hasNext()) {
+            key = keys.next().toString();
+            sender.set(key,propertyMap.get(key));
+        }
+    }
 
     protected void populateModules(Call call) throws AxisFault {
     	for(int i = 0; i < modules.size(); i++) {
     		call.engageModule(new QName((String)this.modules.get(i)));
+    	}
+    }
+    
+    protected void populateModules(MessageSender sender) throws AxisFault {
+    	for(int i = 0; i < modules.size(); i++) {
+    		sender.engageModule(new QName((String)this.modules.get(i)));
     	}
     }
 }

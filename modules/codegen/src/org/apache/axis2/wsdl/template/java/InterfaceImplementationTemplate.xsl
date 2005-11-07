@@ -332,6 +332,11 @@
                   </xsl:choose>
              </xsl:otherwise>
             </xsl:choose>
+            
+            //set the properties
+            populateProperties(_msgSender);
+            populateModules(_msgSender);
+            
              _messageContext.setEnvelope(env);
              _msgSender.send(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
                return;
