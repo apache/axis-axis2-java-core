@@ -23,13 +23,13 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.serialize.StreamingOMSerializer;
 
-import java.util.Iterator;
-
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import java.util.Iterator;
 
 public class OMSerializerUtil {
+    private static int namespaceCounter = 0;
 
     /**
      * Method serializeEndpart
@@ -119,7 +119,7 @@ public class OMSerializerUtil {
                             element.getLocalName());
                 } else {
                     if (prefix == null) {
-                        prefix = "";
+                        prefix = "ns"+ ++namespaceCounter;
                     }
                     writer.writeStartElement(prefix, element.getLocalName(),
                             nameSpaceName);
