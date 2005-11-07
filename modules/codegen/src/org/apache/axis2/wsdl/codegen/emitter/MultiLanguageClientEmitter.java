@@ -416,8 +416,10 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
      */
     protected void writeAntBuild(WSDLInterface axisInterface, WSDLBinding axisBinding) throws Exception {
         //Write the service xml in a folder with the
-        Document skeletonModel = createDOMDocumentForInterface(
+        Document skeletonModel = createDOMDocumentForAntBuild(
                 axisInterface, axisBinding);
+        System.out.println("skeletonModel.getDocumentElement() = " + skeletonModel.getDocumentElement());
+
         ClassWriter antBuildWriter = new AntBuildWriter(
                 this.configuration.getOutputLocation(),
                 this.configuration.getOutputLanguage());
@@ -767,6 +769,32 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
         return doc;
     }
+
+    /**
+         * Creates the DOM tree for the interface creation. Uses the interface
+         * @param wsdlInterface
+         * @param axisBinding
+         */
+        protected Document createDOMDocumentForAntBuild(WSDLInterface wsdlInterface, WSDLBinding axisBinding) {
+
+            Document doc = getEmptyDocument();
+            Element rootElement = doc.createElement("ant");
+            String localPart = reformatName(wsdlInterface.getName().getLocalPart(),false);
+        String packageName = configuration.getPackageName();
+        String[] dotSeperatedValues = packageName.split("\\.");
+        addAttribute(doc,
+                "package",
+                dotSeperatedValues[0],
+                rootElement);
+
+            addAttribute(doc,
+                    "name",
+                    localPart,
+                    rootElement);
+            doc.appendChild(rootElement);
+            return doc;
+
+        }
 
     /**
      * Creates the DOM tree for the interface creation. Uses the interface

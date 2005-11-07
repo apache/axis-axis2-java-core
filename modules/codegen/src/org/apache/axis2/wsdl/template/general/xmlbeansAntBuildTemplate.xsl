@@ -1,6 +1,6 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
-    <xsl:template match="/interface">
+    <xsl:template match="/ant">
         <xsl:variable name="package"><xsl:value-of select="@package"/></xsl:variable>
 
         <project basedir="." default="jar.xbeans"  >

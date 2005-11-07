@@ -760,7 +760,7 @@ public class WSDLPump {
         }
 
 
-       
+
         return schemaElement;
     }
 
@@ -777,9 +777,7 @@ public class WSDLPump {
         if (isWrappable) {
             //The schema for this should be already made ! Find the QName from the list
             referenceQName=(QName)resolvedRpcWrappedElementMap.get(outerName.getLocalPart());
-            ////////////////////////////////////////////////////////////////////////////////
-            //System.out.println("referenceQName = " + referenceQName);
-            ////////////////////////////////////////////////////////////////////////////////
+
         } else {
             //Only one part so copy the QName of the referenced type.
             Iterator outputIterator =
