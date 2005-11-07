@@ -112,8 +112,12 @@
  		    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
             _call.setTo(this.toEPR);
             _call.setSoapAction("<xsl:value-of select="$soapAction"/>");
+            
+            if(wsaAction != null) {
+            	_messageContext.setWSAAction(wsaAction);
+            } else {
             <xsl:for-each select="input/param[@Action!='']">_messageContext.setWSAAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
-
+			}
              //set the properties
             populateProperties(_call);
             populateModules(_call);
@@ -201,11 +205,16 @@
             <xsl:if test="$paramCount>0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException{
 
              org.apache.axis2.clientapi.Call _call = new org.apache.axis2.clientapi.Call(_serviceContext);
+             _call.setTransportInfo(this.senderTransport,this.listenerTransport,this.useSeparateListener);
  		     org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
             _call.setTo(this.toEPR);
             _call.setSoapAction("<xsl:value-of select="$soapAction"/>");
+            
+            if(wsaAction != null) {
+            	_messageContext.setWSAAction(wsaAction);
+            } else {
             <xsl:for-each select="input/param[@Action!='']">_messageContext.setWSAAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
-
+			}
              org.apache.axis2.soap.SOAPEnvelope env = createEnvelope();
              <xsl:choose>
              <!-- There are more than 1 parameter in the input-->
@@ -288,8 +297,11 @@
  		    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
             _msgSender.setTo(this.toEPR);
             _msgSender.setSoapAction("<xsl:value-of select="$soapAction"/>");
+            if(wsaAction != null) {
+            	_messageContext.setWSAAction(wsaAction);
+            } else {
             <xsl:for-each select="input/param[@Action!='']">_messageContext.setWSAAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
-
+			}
           org.apache.axis2.soap.SOAPEnvelope env = null;
             env = createEnvelope();
             <xsl:choose>

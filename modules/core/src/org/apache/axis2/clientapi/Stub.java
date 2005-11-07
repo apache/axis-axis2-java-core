@@ -66,6 +66,8 @@ public abstract class Stub {
     protected HashMap propertyMap = new HashMap();
     protected ArrayList modules = new ArrayList();
 
+    protected String wsaAction;
+    
     /**
      *
      * @param senderTransport
@@ -296,5 +298,13 @@ public abstract class Stub {
     		sender.engageModule(new QName((String)this.modules.get(i)));
     	}
     }
+
+	public String getWsaAction() {
+		return wsaAction;
+	}
+
+	public void setWsaAction(String wsaAction) {
+		this.wsaAction = wsaAction;
+	}
 }
 
