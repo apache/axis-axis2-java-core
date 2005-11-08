@@ -79,6 +79,8 @@ public class WSDLPump {
     private List resolvedMultipartMessageList = new LinkedList();
 
     private Map resolvedRpcWrappedElementMap = new HashMap();
+    private static final String XSD_ELEMENT_FORM_DEFAULT = "elementFormDefault";
+    private static final String XSD_UNQUALIFIED = "unqualified";
 
     public WSDLPump(WSDLDescription womDefinition,
                     Definition wsdl4jParsedDefinition) {
@@ -739,6 +741,7 @@ public class WSDLPump {
                 XMLNS_AXIS2WRAPPED,
                 targetNamespaceUri);
         schemaElement.setAttribute(XSD_TARGETNAMESPACE,targetNamespaceUri);
+        schemaElement.setAttribute(XSD_ELEMENT_FORM_DEFAULT,XSD_UNQUALIFIED); 
 
         Element[] namespaceImports = (Element[])namespaceImportsMap.values().toArray(new Element[namespaceImportsMap.size()]);
         for (int i = 0; i < namespaceImports.length; i++) {
@@ -760,6 +763,7 @@ public class WSDLPump {
         }
 
 
+        System.out.println("schemaElement = " + schemaElement);
 
         return schemaElement;
     }
