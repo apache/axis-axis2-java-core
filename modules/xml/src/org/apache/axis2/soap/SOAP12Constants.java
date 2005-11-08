@@ -30,7 +30,7 @@ public interface SOAP12Constants extends SOAPConstants {
 
     // SOAP Fault Code
     public static final String SOAP_FAULT_CODE_LOCAL_NAME = "Code";
-    public static final String SOAP_FAULT_SUB_CODE_LOCAL_NAME = "SubCode";
+    public static final String SOAP_FAULT_SUB_CODE_LOCAL_NAME = "Subcode";
     public static final String SOAP_FAULT_VALUE_LOCAL_NAME = "Value";
 
     // SOAP Fault Codes
