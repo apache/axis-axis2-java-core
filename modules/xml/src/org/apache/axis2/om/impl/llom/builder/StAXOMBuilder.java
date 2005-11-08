@@ -46,6 +46,7 @@ public class StAXOMBuilder extends StAXBuilder {
      */
 
     private boolean doDebug = false;
+    private static int nsCount = 0;
 
     /**
      * Constructor StAXOMBuilder
@@ -296,21 +297,17 @@ public class StAXOMBuilder extends StAXBuilder {
      * @param isSOAPElement
      */
     protected void processNamespaceData(OMElement node, boolean isSOAPElement) {
-        int namespaceCount = parser.getNamespaceCount();
-        for (int i = 0; i < namespaceCount; i++) {
-            node.declareNamespace(parser.getNamespaceURI(i),
-                    parser.getNamespacePrefix(i));
-        }
         // set the own namespace
         String namespaceURI = parser.getNamespaceURI();
         String prefix = parser.getPrefix();
+
         OMNamespace namespace = null;
         if (namespaceURI != null && namespaceURI.length() > 0) {
             if (prefix == null) {
                 // this means, this elements has a default namespace or it has inherited a default namespace from its parent
                 namespace = node.findNamespace(namespaceURI, "");
                 if (namespace == null) {
-                    namespace = node.declareNamespace(namespaceURI, "");
+                    namespace = node.declareNamespace(namespaceURI, createPrefix());
                 }
                 if (node.getNamespace() == null) {
                     node.setNamespace(namespace);
@@ -324,6 +321,16 @@ public class StAXOMBuilder extends StAXBuilder {
                     node.setNamespace(namespace);
                 }
             }
+
+
+        }
+
+        int namespaceCount = parser.getNamespaceCount();
+        for (int i = 0; i < namespaceCount; i++) {
+            if (!parser.getNamespaceURI(i).equals(namespaceURI)){
+            node.declareNamespace(parser.getNamespaceURI(i),
+                    parser.getNamespacePrefix(i));
+            }
         }
     }
 
@@ -332,4 +339,9 @@ public class StAXOMBuilder extends StAXBuilder {
     public void setDoDebug(boolean doDebug) {
         this.doDebug = doDebug;
     }
+
+    protected String createPrefix(){
+        return "ns"+ nsCount++;
+    }
+
 }

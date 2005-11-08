@@ -118,8 +118,9 @@ public class OMSerializerUtil {
                     writer.writeStartElement(nameSpaceName,
                             element.getLocalName());
                 } else {
-                    if (prefix == null) {
-                        prefix = "ns"+ ++namespaceCounter;
+                    //todo - Need to verify whether this'll cause a problem!
+                    if (prefix == null || "".equals(prefix)) {
+                        prefix = "nsss"+ ++namespaceCounter;
                     }
                     writer.writeStartElement(prefix, element.getLocalName(),
                             nameSpaceName);
@@ -136,8 +137,8 @@ public class OMSerializerUtil {
             // a namespace, we deliberately associate it with the empty namespace
             // If the OMElement is associated with a namespace, even by inheritance
             // then it shouldn't be here!!!!. kind of ugly but perfectly legal
-            //and gets the thing done!
-            writer.writeDefaultNamespace("");
+            // and gets the thing done!
+            // writer.writeDefaultNamespace("");
             /////////////////////////////////////////////////////
         }
 

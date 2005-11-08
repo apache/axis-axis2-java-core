@@ -186,7 +186,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
      * @throws OMException
      */
     protected OMNode createOMElement() throws OMException {
-    	elementLevel++;
+        elementLevel++;
         OMElement node;
         String elementName = parser.getLocalName();
         if (lastNode == null) {
@@ -318,28 +318,28 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
 
     private String getSenderFaultCode() {
         if(senderfaultCode == null){
-           senderfaultCode = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(envelopeNamespace.getName()) ? SOAP12Constants.FAULT_CODE_SENDER : SOAP11Constants.FAULT_CODE_SENDER;
+            senderfaultCode = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(envelopeNamespace.getName()) ? SOAP12Constants.FAULT_CODE_SENDER : SOAP11Constants.FAULT_CODE_SENDER;
         }
         return senderfaultCode;
     }
 
     private String getReceiverFaultCode() {
         if(receiverfaultCode == null){
-           receiverfaultCode = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(envelopeNamespace.getName()) ? SOAP12Constants.FAULT_CODE_RECEIVER : SOAP11Constants.FAULT_CODE_RECEIVER;
+            receiverfaultCode = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(envelopeNamespace.getName()) ? SOAP12Constants.FAULT_CODE_RECEIVER : SOAP11Constants.FAULT_CODE_RECEIVER;
         }
         return receiverfaultCode;
     }
 
     public void endElement(){
-    	 if (lastNode.isComplete()) {
-             OMElement parent = (OMElement) lastNode.getParent();
-             ((OMNodeEx)parent).setComplete(true);
-             lastNode = parent;
-         } else {
-             OMNode e = lastNode;
-             ((OMNodeEx)e).setComplete(true);
-         }
-         elementLevel--;
+        if (lastNode.isComplete()) {
+            OMElement parent = (OMElement) lastNode.getParent();
+            ((OMNodeEx)parent).setComplete(true);
+            lastNode = parent;
+        } else {
+            OMNode e = lastNode;
+            ((OMNodeEx)e).setComplete(true);
+        }
+        elementLevel--;
     }
 
     /**
@@ -349,7 +349,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
      *  should not have a DTD
      */
     protected OMNode createDTD() throws OMException {
-    	throw new OMException("SOAP message MUST NOT contain a Document Type Declaration(DTD)");
+        throw new OMException("SOAP message MUST NOT contain a Document Type Declaration(DTD)");
     }
 
     /**
@@ -359,7 +359,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
      * should not have a PI
      */
     protected OMNode createPI() throws OMException {
-    	throw new OMException("SOAP message MUST NOT contain Processing Instructions(PI)");
+        throw new OMException("SOAP message MUST NOT contain Processing Instructions(PI)");
     }
 
     /**
@@ -378,11 +378,6 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
      * @param isSOAPElement
      */
     protected void processNamespaceData(OMElement node, boolean isSOAPElement) {
-        int namespaceCount = parser.getNamespaceCount();
-        for (int i = 0; i < namespaceCount; i++) {
-            node.declareNamespace(parser.getNamespaceURI(i),
-                    parser.getNamespacePrefix(i));
-        }
 
         // set the owner namespace
         String namespaceURI = parser.getNamespaceURI();
@@ -393,12 +388,20 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
                 // this means, this elements has a default namespace or it has inherited a default namespace from its parent
                 namespace = node.findNamespace(namespaceURI, "");
                 if (namespace == null) {
-                    namespace = node.declareNamespace(namespaceURI, "");
+                    namespace = node.declareNamespace(namespaceURI, createPrefix());
                 }
             } else {
                 namespace = node.findNamespace(namespaceURI, prefix);
             }
             node.setNamespace(namespace);
+        }
+
+        int namespaceCount = parser.getNamespaceCount();
+        for (int i = 0; i < namespaceCount; i++) {
+            if (!parser.getNamespaceURI(i).equals(namespaceURI)){
+                node.declareNamespace(parser.getNamespaceURI(i),
+                        parser.getNamespacePrefix(i));
+            }
         }
 
         if (isSOAPElement) {
