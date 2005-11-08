@@ -46,7 +46,7 @@ import javax.xml.namespace.QName;
  */
 public class InOutMEPClient extends MEPClient {
     protected long timeOutInMilliSeconds = 2000;
-    
+
     AxisEngine engine = null;
 
     protected TransportListener listener;
@@ -68,7 +68,6 @@ public class InOutMEPClient extends MEPClient {
     /**
      * The address the message should be send
      */
-    protected EndpointReference to;
 
     //variables use for internal implementations
 
@@ -123,7 +122,7 @@ public class InOutMEPClient extends MEPClient {
         prepareInvocation(axisop, msgctx);
 
         // The message ID is sent all the time
-        String messageID = String.valueOf("uuid:"+ UUIDGenerator.getUUID());
+        String messageID = String.valueOf("uuid:" + UUIDGenerator.getUUID());
         msgctx.setMessageID(messageID);
         //
         if (useSeparateListener) {
@@ -162,7 +161,7 @@ public class InOutMEPClient extends MEPClient {
             }
         } else {
             //This is the Usual Request-Response Sync implemetation
-            msgctx.setTo(to);
+//            msgctx.setTo(to);
             msgctx.setServiceContext(serviceContext);
             ConfigurationContext syscontext = serviceContext.getConfigurationContext();
             msgctx.setConfigurationContext(syscontext);
@@ -173,8 +172,8 @@ public class InOutMEPClient extends MEPClient {
 //                    axisop,
 //                    serviceContext);
 
-            OperationContext operationContext = new OperationContext(axisop,serviceContext);
-            axisop.registerOperationContext(msgctx,operationContext);
+            OperationContext operationContext = new OperationContext(axisop, serviceContext);
+            axisop.registerOperationContext(msgctx, operationContext);
 
             //Send the SOAP Message and receive a response                
             MessageContext response =
@@ -193,10 +192,10 @@ public class InOutMEPClient extends MEPClient {
                     } else {
                         //if detail element not present create a new Exception from the detail
                         String message = "";
-                        message = message + "Code =" + soapFault.getCode()==null?"":
-                                soapFault.getCode().getValue()==null?"":soapFault.getCode().getValue().getText();
-                        message = message + "Reason =" + soapFault.getReason()==null?"":
-                                soapFault.getReason().getSOAPText()==null?"":soapFault.getReason().getSOAPText().getText();
+                        message = message + "Code =" + soapFault.getCode() == null ? "" :
+                                soapFault.getCode().getValue() == null ? "" : soapFault.getCode().getValue().getText();
+                        message = message + "Reason =" + soapFault.getReason() == null ? "" :
+                                soapFault.getReason().getSOAPText() == null ? "" : soapFault.getReason().getSOAPText().getText();
                         throw new AxisFault(message);
                     }
                 }
@@ -214,7 +213,6 @@ public class InOutMEPClient extends MEPClient {
                                   final Callback callback)
             throws AxisFault {
         prepareInvocation(axisop, msgctx);
-        msgctx.setTo(to);
         try {
             final ConfigurationContext syscontext =
                     serviceContext.getConfigurationContext();
@@ -222,7 +220,7 @@ public class InOutMEPClient extends MEPClient {
             engine = new AxisEngine(syscontext);
             checkTransport(msgctx);
             //Use message id all the time!
-            String messageID = String.valueOf("uuid:"+ UUIDGenerator.getUUID());
+            String messageID = String.valueOf("uuid:" + UUIDGenerator.getUUID());
             msgctx.setMessageID(messageID);
             ////
             if (useSeparateListener) {
@@ -231,15 +229,23 @@ public class InOutMEPClient extends MEPClient {
 
                 axisop.setMessageReceiver(callbackReceiver);
                 callbackReceiver.addCallback(messageID, callback);
+
                 //set the replyto such that the response will arrive at the transport listener started
-                msgctx.setReplyTo(ListenerManager.replyToEPR(serviceContext
+                // Note that this will only change the replyTo Address property in the replyTo EPR
+                EndpointReference replyToFromTransport = ListenerManager.replyToEPR(serviceContext
                         .getAxisService()
                         .getName()
                         .getLocalPart()
                         + "/"
                         + axisop.getName().getLocalPart(),
-                        listenerTransport.getName().getLocalPart()));
-                msgctx.setTo(this.to);
+                        listenerTransport.getName().getLocalPart());
+
+                if (msgctx.getReplyTo() == null) {
+                    msgctx.setReplyTo(replyToFromTransport);
+                } else {
+                    msgctx.getReplyTo().setAddress(replyToFromTransport.getAddress());
+                }
+
                 //create and set the Operation context
                 msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext));
                 msgctx.setServiceContext(serviceContext);
@@ -259,24 +265,24 @@ public class InOutMEPClient extends MEPClient {
 						});*/
             } else {
                 // here a bloking invocation happens in a new thread, so the
-				// progamming model is non blocking
-                 serviceContext.getConfigurationContext().getThreadPool().execute(new NonBlockingInvocationWorker(callback, axisop, msgctx));
+                // progamming model is non blocking
+                serviceContext.getConfigurationContext().getThreadPool().execute(new NonBlockingInvocationWorker(callback, axisop, msgctx));
             }
 
         } catch (OMException e) {
             throw new AxisFault(e.getMessage(), e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new AxisFault(e.getMessage(), e);
         }
 
     }
 
-    /**
-	 * @param to
-	 */
-    public void setTo(EndpointReference to) {
-        this.to = to;
-    }
+//    /**
+//     * @param to
+//     */
+//    public void setTo(EndpointReference to) {
+//        this.to = to;
+//    }
 
     /**
      * Set transport information to the the Call, for find how the each parameter acts see the commant at the instance
@@ -349,7 +355,7 @@ public class InOutMEPClient extends MEPClient {
      */
     private void checkTransport(MessageContext msgctx) throws AxisFault {
         if (senderTransport == null) {
-            senderTransport = inferTransport(to);
+            senderTransport = inferTransport(msgctx.getTo());
         }
         if (listenerTransport == null) {
             listenerTransport =
@@ -412,7 +418,7 @@ public class InOutMEPClient extends MEPClient {
 
         public void run() {
             try {
-                OperationContext opcontxt = new OperationContext(axisop,serviceContext);
+                OperationContext opcontxt = new OperationContext(axisop, serviceContext);
                 msgctx.setOperationContext(opcontxt);
                 msgctx.setServiceContext(serviceContext);
                 //send the request and wait for reponse
@@ -421,15 +427,15 @@ public class InOutMEPClient extends MEPClient {
                 //call the callback                        
                 SOAPEnvelope resenvelope = response.getEnvelope();
                 SOAPBody body = resenvelope.getBody();
-                if (body.hasFault()){
+                if (body.hasFault()) {
                     Exception ex = body.getFault().getException();
-                    if (ex !=null){
+                    if (ex != null) {
                         callback.reportError(ex);
-                    }else{
+                    } else {
                         //todo this needs to be fixed
                         callback.reportError(new Exception(body.getFault().getReason().getText()));
                     }
-                }else{
+                } else {
                     AsyncResult asyncResult = new AsyncResult(response);
                     callback.onComplete(asyncResult);
                 }
@@ -444,6 +450,7 @@ public class InOutMEPClient extends MEPClient {
     /**
      * This will be used in invoke blocking scenario. Client will wait the amount of time specified here
      * and if there is no response, call will timeout. This should be given in multiples of 100 and defaults to 2000.
+     *
      * @param timeOutInMilliSeconds
      */
     public void setTimeOutInMilliSeconds(long timeOutInMilliSeconds) {

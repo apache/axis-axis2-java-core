@@ -701,7 +701,7 @@ public class CommonsHTTPTransportSender
      * getting host configuration to support standard http/s, proxy and NTLM support
      */
     private HostConfiguration getHostConfiguration(HttpClient client, MessageContext msgCtx, URL targetURL) throws AxisFault {
-        boolean isHostProxy = isProxyListered(msgCtx); //list the proxy
+        boolean isHostProxy = isProxyListed(msgCtx); //list the proxy
         int port = targetURL.getPort();
         if (port == -1) port = 80;
         // to see the host is a proxy and in the proxy list - available in axis2.xml
@@ -717,7 +717,7 @@ public class CommonsHTTPTransportSender
         return config;
     }
 
-    private boolean isProxyListered(MessageContext msgCtx) throws AxisFault {
+    private boolean isProxyListed(MessageContext msgCtx) throws AxisFault {
         boolean returnValue = false;
         Parameter par = null;
         proxyOutSetting = msgCtx.getSystemContext()

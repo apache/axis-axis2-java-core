@@ -54,7 +54,6 @@ public class InOnlyMEPClient extends MEPClient {
      */
     public void send(AxisOperation axisop, final MessageContext msgctx) throws AxisFault {
         prepareInvocation(axisop, msgctx);
-        msgctx.setMessageInformationHeaders(messageInformationHeaders);
         String messageID = String.valueOf("uuid:"+ UUIDGenerator.getUUID());
         msgctx.setMessageID(messageID);
         msgctx.setServiceContext(serviceContext);
@@ -79,51 +78,7 @@ public class InOnlyMEPClient extends MEPClient {
     /**
      * @param action
      */
-    public void setWsaAction(String action) {
-        messageInformationHeaders.setAction(action);
-    }
 
-    /**
-     * @param faultTo
-     */
-    public void setFaultTo(EndpointReference faultTo) {
-        messageInformationHeaders.setFaultTo(faultTo);
-    }
-
-    /**
-     * @param from
-     */
-    public void setFrom(EndpointReference from) {
-        messageInformationHeaders.setFrom(from);
-    }
-
-    /**
-     * @param messageId
-     */
-    public void setMessageId(String messageId) {
-        messageInformationHeaders.setMessageId(messageId);
-    }
-
-    /**
-     * @param relatesTo
-     */
-    public void setRelatesTo(RelatesTo relatesTo) {
-        messageInformationHeaders.setRelatesTo(relatesTo);
-    }
-
-    /**
-     * @param replyTo
-     */
-    public void setReplyTo(EndpointReference replyTo) {
-        messageInformationHeaders.setReplyTo(replyTo);
-    }
-
-    /**
-     * @param to
-     */
-    public void setTo(EndpointReference to) {
-        messageInformationHeaders.setTo(to);
-    }
 
     /**
      * set the transport to used for sending the SOAP Message

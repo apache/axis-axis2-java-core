@@ -18,6 +18,8 @@ package org.apache.axis2.clientapi;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.MessageInformationHeaders;
+import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
@@ -46,6 +48,8 @@ public abstract class MEPClient {
     protected String soapAction = "";
     protected String wsaAction;
 
+    protected MessageInformationHeaders messageInformationHeaders;
+
     protected List soapHeaderList;
 
     /*
@@ -64,6 +68,7 @@ public abstract class MEPClient {
     public MEPClient(ServiceContext service, String mep) {
         this.serviceContext = service;
         this.mep = mep;
+        messageInformationHeaders = new MessageInformationHeaders();
     }
 
     /**
@@ -87,9 +92,7 @@ public abstract class MEPClient {
         if (serviceContext.getAxisService().getOperation(axisop.getName()) == null) {
             serviceContext.getAxisService().addOperation(axisop);
         }
-        if (wsaAction != null) {
-            msgCtx.setWSAAction(wsaAction);
-        }
+        msgCtx.setMessageInformationHeaders(messageInformationHeaders);
         msgCtx.setSoapAction(soapAction);
 
         // check user has put any SOAPHeader using the call MEPClient methods and add them, if any, to the
@@ -215,9 +218,6 @@ public abstract class MEPClient {
     /**
      * @param string
      */
-    public void setWsaAction(String string) {
-        wsaAction = string;
-    }
 
     /**
      * @param exceptionToBeThrownOnSOAPFault - If there is a SOAP Fault in the body of the incoming
@@ -238,6 +238,59 @@ public abstract class MEPClient {
         }
         soapHeaderList.add(omElement);
     }
+
+    //==============================================================================
+    // Use these methods to set Addressing specific information to the SOAP envelope.
+    //===============================================================================
+
+    public void setWsaAction(String action) {
+        messageInformationHeaders.setAction(action);
+    }
+
+    /**
+     * @param faultTo
+     */
+    public void setFaultTo(EndpointReference faultTo) {
+        messageInformationHeaders.setFaultTo(faultTo);
+    }
+
+    /**
+     * @param from
+     */
+    public void setFrom(EndpointReference from) {
+        messageInformationHeaders.setFrom(from);
+    }
+
+    /**
+     * @param messageId
+     */
+    public void setMessageId(String messageId) {
+        messageInformationHeaders.setMessageId(messageId);
+    }
+
+    /**
+     * @param relatesTo
+     */
+    public void setRelatesTo(RelatesTo relatesTo) {
+        messageInformationHeaders.setRelatesTo(relatesTo);
+    }
+
+    /**
+     * @param replyTo
+     */
+    public void setReplyTo(EndpointReference replyTo) {
+        messageInformationHeaders.setReplyTo(replyTo);
+    }
+
+    /**
+     * @param to
+     */
+    public void setTo(EndpointReference to) {
+        messageInformationHeaders.setTo(to);
+    }
+
+    // ==============================================================================
+
 
     private SOAPFactory getCorrectSOAPFactory(MessageContext msgCtx) {
         String soapNSURI = msgCtx.getEnvelope().getNamespace().getName();
