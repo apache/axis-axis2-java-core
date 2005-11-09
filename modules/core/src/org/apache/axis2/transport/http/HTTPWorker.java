@@ -169,6 +169,8 @@ public class HTTPWorker implements HttpRequestHandler {
                     baos.toByteArray().length);
             conn.writeResponse(response);
         } catch (Throwable e) {
+            e.printStackTrace();
+            log.info(e.getMessage(), e);
             try {
                 AxisEngine engine = new AxisEngine(configurationContext);
                 if (msgContext != null) {
@@ -179,13 +181,10 @@ public class HTTPWorker implements HttpRequestHandler {
                     response.setBody(new ByteArrayInputStream(baos.toByteArray()));
                     setResponseHeaders(conn, request, response,baos.toByteArray().length);
                     conn.writeResponse(response);
-                } else {
-                    log.error(e, e);
-                }
+                } 
             } catch (Exception e1) {
-                log.error(e1.getMessage(), e1);
+                log.info(e1.getMessage(), e1);
             }
-            log.error(e.getMessage(), e);
         }
         return true;
     }
