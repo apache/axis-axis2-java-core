@@ -418,7 +418,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         //Write the service xml in a folder with the
         Document skeletonModel = createDOMDocumentForAntBuild(
                 axisInterface, axisBinding);
-        System.out.println("skeletonModel.getDocumentElement() = " + skeletonModel.getDocumentElement());
+        
 
         ClassWriter antBuildWriter = new AntBuildWriter(
                 this.configuration.getOutputLocation(),
@@ -972,7 +972,8 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
             Iterator extIterator = extensibilityElements.iterator();
             while (extIterator.hasNext()) {
                 WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
-                if (ExtensionConstants.SOAP_11_OPERATION.equals(element.getType())) {
+                if (ExtensionConstants.SOAP_11_OPERATION.equals(element.getType())
+                        || ExtensionConstants.SOAP_12_OPERATION.equals(element.getType()) ) {
                     addAttribute(doc,
                             "soapaction",
                             ((SOAPOperation) element).getSoapAction(),
