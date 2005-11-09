@@ -26,8 +26,6 @@ import org.jaxen.JaxenException;
 import org.jaxen.SimpleNamespaceContext;
 import org.jaxen.XPath;
 
-import sun.security.krb5.internal.n;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
