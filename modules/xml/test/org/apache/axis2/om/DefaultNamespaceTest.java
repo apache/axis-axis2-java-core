@@ -4,6 +4,8 @@ import junit.framework.TestCase;
 
 import javax.xml.namespace.QName;
 
+import org.custommonkey.xmlunit.XMLTestCase;
+
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
  *
@@ -22,9 +24,9 @@ import javax.xml.namespace.QName;
  * @author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-public class DefaultNamespaceTest extends TestCase {
+public class DefaultNamespaceTest extends XMLTestCase {
 
-    public void testDefaultNamespace() {
+    public void testDefaultNamespace() throws Exception {
 
         String expectedXML = "<Foo xmlns=\"http://defaultNsUri.org\"><Bar xmlns=\"\"></Bar><Baz></Baz></Foo>";
 
@@ -32,7 +34,7 @@ public class DefaultNamespaceTest extends TestCase {
         OMElement foo = factory.createOMElement(new QName("http://defaultNsUri.org", "Foo"), null);
         OMElement bar = factory.createOMElement("Bar", null, foo);
         OMElement baz = factory.createOMElement(new QName("http://defaultNsUri.org", "Baz"), foo);
-        assertEquals(expectedXML, foo.toString());
+        assertXMLEqual(expectedXML, foo.toString());
     }
 
     public void test() {
