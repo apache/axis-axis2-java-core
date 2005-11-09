@@ -118,6 +118,7 @@ public class OMSerializerUtil {
                     writer.writeStartElement(nameSpaceName,
                             element.getLocalName());
                 } else {
+                    prefix = (prefix == null) ? "" : prefix;
                     writer.writeStartElement(prefix, element.getLocalName(),
                             nameSpaceName);
                     writer.writeNamespace(prefix, nameSpaceName);
