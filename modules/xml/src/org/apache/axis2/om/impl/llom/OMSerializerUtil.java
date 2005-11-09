@@ -118,10 +118,6 @@ public class OMSerializerUtil {
                     writer.writeStartElement(nameSpaceName,
                             element.getLocalName());
                 } else {
-                    //todo - Need to verify whether this'll cause a problem!
-                    if (prefix == null || "".equals(prefix)) {
-                        prefix = "nsss"+ ++namespaceCounter;
-                    }
                     writer.writeStartElement(prefix, element.getLocalName(),
                             nameSpaceName);
                     writer.writeNamespace(prefix, nameSpaceName);
@@ -132,14 +128,12 @@ public class OMSerializerUtil {
             }
         } else {
             writer.writeStartElement(element.getLocalName());
-            /////////////////////////////////////////////////////
-            // A sort of a hack. If the OMElement is not associated with
-            // a namespace, we deliberately associate it with the empty namespace
-            // If the OMElement is associated with a namespace, even by inheritance
-            // then it shouldn't be here!!!!. kind of ugly but perfectly legal
-            // and gets the thing done!
-            // writer.writeDefaultNamespace("");
-            /////////////////////////////////////////////////////
+            // we need to check whether there's a default namespace visible at this point because
+            // otherwise this element will go into that namespace unintentionally. So we check
+            // whether there is a default NS visible and if so turn it off.
+            if (writer.getNamespaceContext().getNamespaceURI("") != null) {
+                writer.writeDefaultNamespace("");
+            }
         }
 
         // add the namespaces
@@ -198,15 +192,15 @@ public class OMSerializerUtil {
     }
 
     public static void serializeByPullStream(OMElement element, org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
-        serializeByPullStream(element,omOutput,false);
+        serializeByPullStream(element, omOutput, false);
     }
 
-    public static void serializeByPullStream(OMElement element, org.apache.axis2.om.impl.OMOutputImpl omOutput,boolean cache) throws XMLStreamException {
+    public static void serializeByPullStream(OMElement element, org.apache.axis2.om.impl.OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
         StreamingOMSerializer streamingOMSerializer = new StreamingOMSerializer();
-        if (cache){
+        if (cache) {
             streamingOMSerializer.serialize(element.getXMLStreamReader(),
                     omOutput);
-        }else{
+        } else {
             XMLStreamReader xmlStreamReaderWithoutCaching = element.getXMLStreamReaderWithoutCaching();
             streamingOMSerializer.serialize(xmlStreamReaderWithoutCaching,
                     omOutput);

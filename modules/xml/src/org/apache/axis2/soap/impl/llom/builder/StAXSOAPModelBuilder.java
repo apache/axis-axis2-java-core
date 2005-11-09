@@ -69,7 +69,6 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     private boolean processingFault = false;
 
 
-
     //added
     /* This is used to indicate whether detail element is processing in soap 1.2 builderhelper
     */
@@ -101,10 +100,10 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
      * @param parser
      * @param factory
      * @param soapVersion parameter is to give the soap version from the transport. For example, in
-     *          HTTP case you can identify the version of the soap message u have recd by looking at
-     *          the HTTP headers. By passing that here is to check whether actually the soap message
-     *          contained also of that version. If one is not creating the builder from the transport
-     *          he can just pass null for this.
+     *                    HTTP case you can identify the version of the soap message u have recd by looking at
+     *                    the HTTP headers. By passing that here is to check whether actually the soap message
+     *                    contained also of that version. If one is not creating the builder from the transport
+     *                    he can just pass null for this.
      */
     public StAXSOAPModelBuilder(XMLStreamReader parser, SOAPFactory factory, String soapVersion) {
         super(parser);
@@ -191,8 +190,8 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
                     constructNode((OMElement) lastNode.getParent(),
                             elementName,
                             false);
-            ((OMNodeEx)lastNode).setNextOMSibling(node);
-            ((OMNodeEx)node).setPreviousOMSibling(lastNode);
+            ((OMNodeEx) lastNode).setNextOMSibling(node);
+            ((OMNodeEx) node).setPreviousOMSibling(lastNode);
         } else {
             OMElement e = (OMElement) lastNode;
             node = constructNode((OMElement) lastNode, elementName, false);
@@ -309,36 +308,36 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     }
 
     private String getSenderFaultCode() {
-        if(senderfaultCode == null){
+        if (senderfaultCode == null) {
             senderfaultCode = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(envelopeNamespace.getName()) ? SOAP12Constants.FAULT_CODE_SENDER : SOAP11Constants.FAULT_CODE_SENDER;
         }
         return senderfaultCode;
     }
 
     private String getReceiverFaultCode() {
-        if(receiverfaultCode == null){
+        if (receiverfaultCode == null) {
             receiverfaultCode = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(envelopeNamespace.getName()) ? SOAP12Constants.FAULT_CODE_RECEIVER : SOAP11Constants.FAULT_CODE_RECEIVER;
         }
         return receiverfaultCode;
     }
 
-    public void endElement(){
+    public void endElement() {
         if (lastNode.isComplete()) {
             OMElement parent = (OMElement) lastNode.getParent();
-            ((OMNodeEx)parent).setComplete(true);
+            ((OMNodeEx) parent).setComplete(true);
             lastNode = parent;
         } else {
             OMNode e = lastNode;
-            ((OMNodeEx)e).setComplete(true);
+            ((OMNodeEx) e).setComplete(true);
         }
         elementLevel--;
     }
 
     /**
      * Method createDTD
-     * 
+     * <p/>
      * Overriding the default behaviour as a SOAPMessage
-     *  should not have a DTD
+     * should not have a DTD
      */
     protected OMNode createDTD() throws OMException {
         throw new OMException("SOAP message MUST NOT contain a Document Type Declaration(DTD)");
@@ -346,8 +345,8 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
 
     /**
      * Method createPI
-     * 
-     * Overriding the default behaviour as a SOAP Message 
+     * <p/>
+     * Overriding the default behaviour as a SOAP Message
      * should not have a PI
      */
     protected OMNode createPI() throws OMException {
@@ -376,24 +375,21 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
         String prefix = parser.getPrefix();
         OMNamespace namespace = null;
         if (namespaceURI != null && namespaceURI.length() > 0) {
-            if (prefix == null) {
-                // this means, this elements has a default namespace or it has inherited a default namespace from its parent
-                namespace = node.findNamespace(namespaceURI, "");
-                if (namespace == null) {
-                    namespace = node.declareNamespace(namespaceURI, createPrefix());
-                }
-            } else {
-                namespace = node.findNamespace(namespaceURI, prefix);
-                if(namespace == null){
-                    namespace = node.declareNamespace(namespaceURI, prefix);
-                }
+
+            // prefix being null means this elements has a default namespace or it has inherited
+            // a default namespace from its parent
+            prefix = prefix == null ? "" : prefix;
+            namespace = node.findNamespace(namespaceURI, prefix);
+
+            if (namespace == null) {
+                namespace = node.declareNamespace(namespaceURI, prefix);
             }
             node.setNamespace(namespace);
-        }
+        } 
 
         int namespaceCount = parser.getNamespaceCount();
         for (int i = 0; i < namespaceCount; i++) {
-            if (!parser.getNamespaceURI(i).equals(namespaceURI)){
+            if (!parser.getNamespaceURI(i).equals(namespaceURI)) {
                 node.declareNamespace(parser.getNamespaceURI(i),
                         parser.getNamespacePrefix(i));
             }
@@ -405,15 +401,17 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
                     !node.getNamespace().getName().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
                 throw new SOAPProcessingException("invalid SOAP namespace URI. " +
                         "Only " + SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI +
-                        " and "+ SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI +
+                        " and " + SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI +
                         " are supported.", SOAP12Constants.FAULT_CODE_SENDER);
             }
         }
 
     }
 
+
 /*these three methods to set and check detail element processing or mandatory fault element are present
 */
+
     public OMNamespace getEnvelopeNamespace() {
         return envelopeNamespace;
     }

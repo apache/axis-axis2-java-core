@@ -303,27 +303,18 @@ public class StAXOMBuilder extends StAXBuilder {
 
         OMNamespace namespace = null;
         if (namespaceURI != null && namespaceURI.length() > 0) {
-            if (prefix == null) {
-                // this means, this elements has a default namespace or it has inherited a default namespace from its parent
-                namespace = node.findNamespace(namespaceURI, "");
-                if (namespace == null) {
-                    namespace = node.declareNamespace(namespaceURI, createPrefix());
-                }
-                if (node.getNamespace() == null) {
-                    node.setNamespace(namespace);
-                }
-            } else {
-                namespace = node.findNamespace(namespaceURI, prefix);
-                if (namespace == null) {
-                    node.setNamespace(
-                            omfactory.createOMNamespace(namespaceURI, prefix));
-                } else {
-                    node.setNamespace(namespace);
-                }
+
+            // prefix being null means this elements has a default namespace or it has inherited
+            // a default namespace from its parent
+            prefix = prefix == null ? "" : prefix;
+            namespace = node.findNamespace(namespaceURI, prefix);
+
+            if (namespace == null) {
+                namespace = node.declareNamespace(namespaceURI, prefix);
             }
-
-
+            node.setNamespace(namespace);
         }
+
 
         int namespaceCount = parser.getNamespaceCount();
         for (int i = 0; i < namespaceCount; i++) {
@@ -334,7 +325,7 @@ public class StAXOMBuilder extends StAXBuilder {
         }
     }
 
-    
+
 
     public void setDoDebug(boolean doDebug) {
         this.doDebug = doDebug;

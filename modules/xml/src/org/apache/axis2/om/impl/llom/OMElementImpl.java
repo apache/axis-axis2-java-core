@@ -144,18 +144,16 @@ public class OMElementImpl extends OMNodeImpl
              */
             if (ns == null) {
                 String prefix = qname.getPrefix();
-                if (!"".equals(prefix)) {
-                    ns = declareNamespace(namespaceURI, prefix);
-                } else {
-                    ns =
-                            declareNamespace(namespaceURI,
-                                    getNextNamespacePrefix());
-                }
+                ns = declareNamespace(namespaceURI, prefix);
             }
             if (ns != null) {
                 this.ns = (ns);
             }
-        } else {
+        }
+
+        else
+
+        {
             // no namespace URI in the given QName. No need to bother about this ??
         }
 
@@ -284,7 +282,6 @@ public class OMElementImpl extends OMNodeImpl
         return declareNamespace(ns);
     }
 
-
     /**
      * @return namespace
      */
@@ -406,7 +403,7 @@ public class OMElementImpl extends OMNodeImpl
             this.attributes = new HashMap(5);
         }
         OMNamespace namespace = attr.getNamespace();
-        if ( namespace != null && this.findNamespace(namespace.getName(), namespace.getPrefix()) == null) {
+        if (namespace != null && this.findNamespace(namespace.getName(), namespace.getPrefix()) == null) {
             this.declareNamespace(namespace.getName(), namespace.getPrefix());
         }
 
@@ -632,8 +629,8 @@ public class OMElementImpl extends OMNodeImpl
         serialize(omOutput, true);
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 
     protected void serialize(OMOutputImpl omOutput, boolean cache) throws XMLStreamException {
 
@@ -641,7 +638,7 @@ public class OMElementImpl extends OMNodeImpl
             //in this case we don't care whether the elements are built or not
             //we just call the serializeAndConsume methods
             OMSerializerUtil.serializeStartpart(this, omOutput);
-            //serilize children
+//serilize children
             Iterator children = this.getChildren();
             while (children.hasNext()) {
                 ((OMNode) children.next()).serialize(omOutput);
@@ -653,7 +650,7 @@ public class OMElementImpl extends OMNodeImpl
             //has nothing to do if the element is already built!
             if (this.done) {
                 OMSerializerUtil.serializeStartpart(this, omOutput);
-                //serializeAndConsume children
+//serializeAndConsume children
                 Iterator children = this.getChildren();
                 while (children.hasNext()) {
                     //A call to the  Serialize or the serializeAndConsume wont make a difference here
@@ -670,8 +667,8 @@ public class OMElementImpl extends OMNodeImpl
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * This was requested during the second Axis2 summit. When one call this method, this will
@@ -684,7 +681,6 @@ public class OMElementImpl extends OMNodeImpl
     public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
         this.serialize(omOutput, false);
     }
-
 
     /**
      * Method getNextNamespacePrefix
@@ -736,7 +732,6 @@ public class OMElementImpl extends OMNodeImpl
     public OMNamespace getNamespace() throws OMException {
         return ns;
     }
-
 
     /**
      * Method setNamespace
@@ -805,15 +800,15 @@ public class OMElementImpl extends OMNodeImpl
         }
     }
 
-
     /**
      * Turn a prefix:local qname string into a proper QName, evaluating it in the OMElement context
      * unprefixed qnames resolve to the local namespace
+     *
      * @param qname prefixed qname string to resolve
      * @return null for any failure to extract a qname.
      */
     public QName resolveQName(String qname) {
-        ElementHelper helper=new ElementHelper(this);
+        ElementHelper helper = new ElementHelper(this);
         return helper.resolveQName(qname);
     }
 }

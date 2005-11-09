@@ -288,4 +288,6 @@ public interface OMElement extends OMNode, OMContainer {
      * @return null for any failure to extract a qname.
      */
     QName resolveQName(String qname);
+
+    
 }
