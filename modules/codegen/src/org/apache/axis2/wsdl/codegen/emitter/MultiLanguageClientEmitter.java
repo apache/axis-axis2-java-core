@@ -955,7 +955,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
         while (extIterator!=null && extIterator.hasNext()) {
             WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
-            if (element.getType().equals(ExtensionConstants.SOAP_11_HEADER)) {
+            if (ExtensionConstants.SOAP_11_HEADER.equals(element.getType())) {
                 SOAPHeader header = (SOAPHeader)element;
                 soapHeaderParameterQNameList.add(header.getElement());
             }
