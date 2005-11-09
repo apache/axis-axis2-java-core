@@ -17,9 +17,7 @@
 package org.apache.axis2.clientapi;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
-import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -37,7 +35,6 @@ import javax.xml.namespace.QName;
  * This class Hnadles In-Only (fire and forget) MEP
  */
 public class InOnlyMEPClient extends MEPClient {
-    protected MessageInformationHeaders messageInformationHeaders;
     protected TransportOutDescription senderTransport;
 
 
