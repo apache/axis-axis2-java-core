@@ -63,7 +63,7 @@ public class ElementHelper {
             return null;
         }
 
-        OMNamespace namespace = element.findNamespace(null, prefix);
+        OMNamespace namespace = element.findNamespaceURI(prefix);
         if (namespace == null) {
             return null;
         }

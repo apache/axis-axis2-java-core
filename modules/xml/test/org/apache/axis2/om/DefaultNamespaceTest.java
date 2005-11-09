@@ -35,4 +35,21 @@ public class DefaultNamespaceTest extends TestCase {
         assertEquals(expectedXML, foo.toString());
     }
 
+    public void test() {
+        OMFactory factory = OMAbstractFactory.getOMFactory();
+
+        String nsURI = "http://test.org";
+        String nsPrefix = "testPrefix";
+        OMElement element = factory.createOMElement("DocElement", null);
+
+        OMElement foo = factory.createOMElement(new QName(nsURI, "Foo", nsPrefix), element);
+        OMElement bar = factory.createOMElement(new QName(nsURI+1, "Bar", nsPrefix), element);
+
+        OMElement baz = factory.createOMElement(new QName(nsURI+2, "Baz", nsPrefix), foo);
+        OMElement baz2 = factory.createOMElement(new QName(nsURI, "Baz", nsPrefix), foo);
+
+        System.out.println("element = " + element);
+
+    }
+
 }

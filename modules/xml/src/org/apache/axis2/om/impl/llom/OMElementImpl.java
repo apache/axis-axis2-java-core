@@ -322,13 +322,22 @@ public class OMElementImpl extends OMNodeImpl
         return namespace;
     }
 
+    public OMNamespace findNamespaceURI(String prefix) {
+        OMNamespace ns = (OMNamespace) this.namespaces.get(prefix);
+        if (ns == null && this.parent instanceof OMElement) {
+            // try with the parent
+            ns = ((OMElement) this.parent).findNamespaceURI(prefix);
+        }
+        return ns;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     /**
      * This will ckeck for the namespace <B>only</B> in the current Element.
      * <p/>
      * This can also be used to retrieve the prefix of a known namespace URI
      */
     private OMNamespace findDeclaredNamespace(String uri, String prefix) {
-        if (namespaces == null) {
+        if (namespaces == null || uri == null) {
             return null;
         }
         if (prefix == null || "".equals(prefix)) {
@@ -343,7 +352,13 @@ public class OMElementImpl extends OMNodeImpl
             }
             return null;
         } else {
-            return (OMNamespace) namespaces.get(prefix);
+            OMNamespace namespace = (OMNamespace) namespaces.get(prefix);
+            if (namespace != null && uri.equalsIgnoreCase(namespace.getName())) {
+                return namespace;
+            } else {
+                return null;
+            }
+//            return (OMNamespace) namespaces.get(prefix);
         }
     }
 

@@ -370,30 +370,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
      */
     protected void processNamespaceData(OMElement node, boolean isSOAPElement) {
 
-        // set the owner namespace
-        String namespaceURI = parser.getNamespaceURI();
-        String prefix = parser.getPrefix();
-        OMNamespace namespace = null;
-        if (namespaceURI != null && namespaceURI.length() > 0) {
-
-            // prefix being null means this elements has a default namespace or it has inherited
-            // a default namespace from its parent
-            prefix = prefix == null ? "" : prefix;
-            namespace = node.findNamespace(namespaceURI, prefix);
-
-            if (namespace == null) {
-                namespace = node.declareNamespace(namespaceURI, prefix);
-            }
-            node.setNamespace(namespace);
-        } 
-
-        int namespaceCount = parser.getNamespaceCount();
-        for (int i = 0; i < namespaceCount; i++) {
-            if (!parser.getNamespaceURI(i).equals(namespaceURI)) {
-                node.declareNamespace(parser.getNamespaceURI(i),
-                        parser.getNamespacePrefix(i));
-            }
-        }
+        super.processNamespaceData(node, isSOAPElement);
 
         if (isSOAPElement) {
             if (node.getNamespace() != null &&
@@ -407,7 +384,6 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
         }
 
     }
-
 
 /*these three methods to set and check detail element processing or mandatory fault element are present
 */

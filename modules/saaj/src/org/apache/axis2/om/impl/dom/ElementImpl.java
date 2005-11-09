@@ -23,25 +23,24 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.util.ElementHelper;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.om.impl.llom.OMStAXWrapper;
 import org.apache.axis2.om.impl.llom.traverse.OMChildElementIterator;
 import org.apache.axis2.om.impl.llom.util.EmptyIterator;
+import org.apache.axis2.om.util.ElementHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Implementation of the org.w3c.dom.Element and org.apache.axis2.om.Element
@@ -511,6 +510,12 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
         }
         return namespace;
 	}
+
+    public OMNamespace findNamespaceURI(String prefix) {
+        // TODO Ruchith please fix this
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     /**
      * This will ckeck for the namespace <B>only</B> in the current Element.
      * <p/>
