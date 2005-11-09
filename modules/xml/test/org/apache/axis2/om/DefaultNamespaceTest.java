@@ -25,13 +25,14 @@ import javax.xml.namespace.QName;
 public class DefaultNamespaceTest extends TestCase {
 
     public void testDefaultNamespace() {
+
+        String expectedXML = "<Foo xmlns=\"http://defaultNsUri.org\"><Bar xmlns=\"\"></Bar><Baz></Baz></Foo>";
+
         OMFactory factory = OMAbstractFactory.getOMFactory();
         OMElement foo = factory.createOMElement(new QName("http://defaultNsUri.org", "Foo"), null);
         OMElement bar = factory.createOMElement("Bar", null, foo);
         OMElement baz = factory.createOMElement(new QName("http://defaultNsUri.org", "Baz"), foo);
-
-
-        System.out.println("foo = " + foo);
+        assertEquals(expectedXML, foo.toString());
     }
 
 }
