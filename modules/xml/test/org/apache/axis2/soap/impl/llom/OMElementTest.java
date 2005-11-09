@@ -53,7 +53,7 @@ public class OMElementTest extends OMTestCase implements OMConstants {
                         "http://testing.axis2.org", "axis2");
         firstElement = factory.createOMElement("FirstElement", testingNamespace);
         secondElement = factory.createOMElement("SecondElement", factory.createOMNamespace(
-                                "http://testing.axis2.org", "axis2"), firstElement);
+                                "http://moretesting.axis2.org", "axis2"), firstElement);
     }
 
     public void testGetText() {

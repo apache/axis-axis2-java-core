@@ -24,15 +24,7 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPConstants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPHeader;
-import org.apache.axis2.soap.SOAPMessage;
-import org.apache.axis2.soap.SOAPProcessingException;
+import org.apache.axis2.soap.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -392,6 +384,9 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
                 }
             } else {
                 namespace = node.findNamespace(namespaceURI, prefix);
+                if(namespace == null){
+                    namespace = node.declareNamespace(namespaceURI, prefix);
+                }
             }
             node.setNamespace(namespace);
         }

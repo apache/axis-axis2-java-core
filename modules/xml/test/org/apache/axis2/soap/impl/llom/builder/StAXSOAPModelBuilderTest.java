@@ -1,35 +1,18 @@
 package org.apache.axis2.soap.impl.llom.builder;
 
+import junit.framework.TestCase;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPConstants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFault;
-import org.apache.axis2.soap.SOAPFaultCode;
-import org.apache.axis2.soap.SOAPFaultDetail;
-import org.apache.axis2.soap.SOAPFaultNode;
-import org.apache.axis2.soap.SOAPFaultReason;
-import org.apache.axis2.soap.SOAPFaultRole;
-import org.apache.axis2.soap.SOAPFaultSubCode;
-import org.apache.axis2.soap.SOAPFaultText;
-import org.apache.axis2.soap.SOAPFaultValue;
-import org.apache.axis2.soap.SOAPHeader;
-import org.apache.axis2.soap.SOAPHeaderBlock;
+import org.apache.axis2.soap.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.StringReader;
-import java.util.Iterator;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import junit.framework.TestCase;
+import java.io.StringReader;
+import java.util.Iterator;
 
 public class StAXSOAPModelBuilderTest extends TestCase {
 
@@ -52,12 +35,12 @@ public class StAXSOAPModelBuilderTest extends TestCase {
                 "       <env:Fault>\n" +
                 "           <env:Code>\n" +
                 "               <env:Value>env:Sender</env:Value>\n" +
-                "               <env:SubCode>\n" +
+                "               <env:Subcode>\n" +
                 "                   <env:Value>m:MessageTimeout</env:Value>\n" +
-                "                   <env:SubCode>\n" +
+                "                   <env:Subcode>\n" +
                 "                       <env:Value>m:MessageTimeout</env:Value>\n" +
-                "                   </env:SubCode>\n" +
-                "               </env:SubCode>\n" +
+                "                   </env:Subcode>\n" +
+                "               </env:Subcode>\n" +
                 "           </env:Code>\n" +
                 "           <env:Reason>\n" +
                 "               <env:Text>Sender Timeout</env:Text>\n" +

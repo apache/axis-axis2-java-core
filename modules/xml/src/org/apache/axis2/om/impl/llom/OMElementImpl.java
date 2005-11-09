@@ -17,7 +17,6 @@
 package org.apache.axis2.om.impl.llom;
 
 import org.apache.axis2.om.*;
-import org.apache.axis2.om.util.ElementHelper;
 import org.apache.axis2.om.impl.OMContainerEx;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.OMOutputImpl;
@@ -25,6 +24,7 @@ import org.apache.axis2.om.impl.llom.traverse.OMChildElementIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
 import org.apache.axis2.om.impl.llom.util.EmptyIterator;
+import org.apache.axis2.om.util.ElementHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -319,12 +319,9 @@ public class OMElementImpl extends OMNodeImpl
             }
         }
 
-        if (namespace == null && uri != null && prefix != null
-                && prefix.equals(OMConstants.XMLNS_PREFIX)
-                && uri.equals(OMConstants.XMLNS_URI)) {
-            declareNamespace(OMConstants.XMLNS_URI, OMConstants.XMLNS_PREFIX);
-            namespace = findNamespace(uri, prefix);
-        }
+//        if (namespace == null && uri != null && prefix != null) {
+//            namespace = declareNamespace(uri, prefix);
+//        }
         return namespace;
     }
 
