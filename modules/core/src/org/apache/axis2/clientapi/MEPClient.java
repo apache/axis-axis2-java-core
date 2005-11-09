@@ -92,7 +92,11 @@ public abstract class MEPClient {
         if (serviceContext.getAxisService().getOperation(axisop.getName()) == null) {
             serviceContext.getAxisService().addOperation(axisop);
         }
-        msgCtx.setMessageInformationHeaders(messageInformationHeaders);
+        if (msgCtx.getMessageInformationHeaders() != null) {
+            messageInformationHeaders = msgCtx.getMessageInformationHeaders();
+        } else {
+            msgCtx.setMessageInformationHeaders(messageInformationHeaders);
+        }
         msgCtx.setSoapAction(soapAction);
 
         // check user has put any SOAPHeader using the call MEPClient methods and add them, if any, to the
