@@ -169,8 +169,9 @@ public class HTTPWorker implements HttpRequestHandler {
                     baos.toByteArray().length);
             conn.writeResponse(response);
         } catch (Throwable e) {
-            e.printStackTrace();
-            log.info(e.getMessage(), e);
+            if(!(e instanceof java.net.SocketException)) {
+                log.warn(e.getMessage(), e);
+            }
             try {
                 AxisEngine engine = new AxisEngine(configurationContext);
                 if (msgContext != null) {
@@ -183,7 +184,7 @@ public class HTTPWorker implements HttpRequestHandler {
                     conn.writeResponse(response);
                 } 
             } catch (Exception e1) {
-                log.info(e1.getMessage(), e1);
+                log.warn(e1.getMessage(), e1);
             }
         }
         return true;
