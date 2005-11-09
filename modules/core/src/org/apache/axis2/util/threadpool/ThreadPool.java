@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * This the thread pool for axis2. This class will be used a singleton
@@ -44,7 +45,7 @@ public class ThreadPool implements ThreadFactory {
 
     public ThreadPool() {
         threads = new ArrayList();
-        tasks = new ArrayList();
+        tasks = Collections.synchronizedList(new ArrayList());
 
         for (int i = 0; i < MAX_THREAD_COUNT; i++) {
             ThreadWorker threadWorker = new ThreadWorker();
