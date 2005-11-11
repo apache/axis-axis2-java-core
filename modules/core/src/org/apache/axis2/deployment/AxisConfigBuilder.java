@@ -72,13 +72,13 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             //processing Dispatching Order
             OMElement dispatch_order = config_element.getFirstChildWithName(
-                    new QName(DIPSTCH_ORDER));
+                    new QName(DISPATCH_ORDER));
             if (dispatch_order != null) {
                 processDispatchingOrder(dispatch_order);
-                log.info("found the custom disptaching order and continue with that order");
+                log.info("found the custom dispatching order and continue with that order");
             } else {
                 ((AxisConfigurationImpl) axisConfiguration).setDefaultDispatchers();
-                log.info("no custom diaptching order found continue with default dispatcing order");
+                log.info("no custom dispatching order found, continuing with the default dispaching order");
             }
 
             //Process Module refs
@@ -121,7 +121,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
 
     private void processDispatchingOrder(OMElement dispatch_order) throws DeploymentException {
-        Iterator dispatchers = dispatch_order.getChildrenWithName(new QName(DIPSTCHER));
+        Iterator dispatchers = dispatch_order.getChildrenWithName(new QName(DISPATCHER));
         boolean foundDiaptcher = false;
         Phase dispatchPhae = new Phase(PhaseMetadata.PHASE_DISPATCH);
         int count = 0;

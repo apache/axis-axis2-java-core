@@ -90,8 +90,8 @@ public interface DeploymentConstants {
     String HOTDEPLOYMENT = "hotdeployment";
     String HOTUPDATE = "hotupdate";
     String EXTRACTSERVICEARCHIVE = "extractServiceArchive";
-    String DIPSTCH_ORDER ="dispatchOrder";
-    String DIPSTCHER ="dispatcher";
+    String DISPATCH_ORDER ="dispatchOrder";
+    String DISPATCHER ="dispatcher";
 
     String AXIS_STORAGE = "axisStorage";
 
