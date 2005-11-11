@@ -21,14 +21,13 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.AsyncResult;
 import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.clientapi.Callback;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -40,20 +39,14 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
-public class EchoRawXMLTest extends TestCase {
-    protected EndpointReference targetEPR =
-            new EndpointReference("http://127.0.0.1:"
-                    + (UtilServer.TESTING_PORT)
-                    + "/axis/services/EchoXMLService/echoOMElement");
+public class EchoRawXMLTest extends TestCase implements TestConstants {
+
     protected Log log = LogFactory.getLog(getClass());
-    protected QName serviceName = new QName("EchoXMLService");
-    protected QName operationName = new QName("echoOMElement");
     protected QName transportName = new QName("http://localhost/my",
             "NullTransport");
 
     protected AxisConfiguration engineRegistry;
     protected MessageContext mc;
-    private ConfigurationContext config;
     protected ServiceContext serviceContext;
     protected AxisService service;
 

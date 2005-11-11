@@ -1,11 +1,11 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.InvokerThread;
+import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -33,15 +33,11 @@ import java.util.GregorianCalendar;
  * @author : Eran Chinthaka (chinthaka@apache.org)
  */
 
-public class ThreadingTest extends TestCase {
+public class ThreadingTest extends TestCase implements TestConstants {
 
-    protected EndpointReference targetEPR =
-            new EndpointReference("http://127.0.0.1:"
-                    + (UtilServer.TESTING_PORT)
-                    + "/axis/services/EchoXMLService/echoOMElement");
+
     protected Log log = LogFactory.getLog(getClass());
-    protected QName serviceName = new QName("EchoXMLService");
-    protected QName operationName = new QName("echoOMElement");
+
     protected QName transportName = new QName("http://localhost/my",
             "NullTransport");
 

@@ -19,13 +19,11 @@ package org.apache.axis2.engine;
 //todo
 
 import junit.framework.TestCase;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,9 +43,6 @@ public class MessageWithServerTest extends TestCase {
     private QName transportName = new QName("", "NullTransport");
 
     private AxisConfiguration engineRegistry;
-    private MessageContext mc;
-    private Thread thisThread;
-    private SimpleHTTPServer sas;
     private ClassLoader cl;
 
     public MessageWithServerTest(String testName) {

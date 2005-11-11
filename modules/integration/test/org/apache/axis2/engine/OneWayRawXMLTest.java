@@ -21,12 +21,12 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -36,21 +36,9 @@ import org.apache.axis2.soap.SOAPFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
+public class OneWayRawXMLTest extends TestCase implements TestConstants {
 
-public class OneWayRawXMLTest extends TestCase {
-    private EndpointReference targetEPR =
-            new EndpointReference("http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
-    private QName serviceName = new QName("EchoXMLService");
-    private QName operationName = new QName("echoOMElement");
-    private QName transportName = new QName("http://localhost/my",
-            "NullTransport");
-
-    private AxisConfiguration engineRegistry;
-    private MessageContext mc;
 
     private SOAPEnvelope envelope;
 

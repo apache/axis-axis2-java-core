@@ -18,7 +18,6 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -28,6 +27,7 @@ import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -43,12 +43,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-public class MessageContextInjectionTest extends TestCase {
-    private EndpointReference targetEPR =
-            new EndpointReference("/axis2/services/EchoXMLService/echoOMElement");
+public class MessageContextInjectionTest extends TestCase implements TestConstants {
+
     private Log log = LogFactory.getLog(getClass());
-    private QName serviceName = new QName("EchoXMLService");
-    private QName operationName = new QName("echoOMElement");
 
 
     private AxisConfiguration engineRegistry;

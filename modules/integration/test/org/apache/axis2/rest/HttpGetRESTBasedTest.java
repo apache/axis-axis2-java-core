@@ -21,18 +21,16 @@ package org.apache.axis2.rest;
 import junit.framework.TestCase;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
+import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
 
-import javax.xml.namespace.QName;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HttpGetRESTBasedTest extends TestCase {
-    private QName serviceName = new QName("EchoXMLService");
-    private QName operationName = new QName("echoOMElement");
+public class HttpGetRESTBasedTest extends TestCase implements TestConstants {
 
 
     public HttpGetRESTBasedTest() {

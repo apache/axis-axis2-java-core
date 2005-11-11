@@ -19,8 +19,8 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.engine.util.MyInOutMEPClient;
+import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAP11Constants;
@@ -32,21 +32,15 @@ import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.File;
 import java.io.FileReader;
 
-public class FaultHandlingTest extends TestCase {
-    private EndpointReference targetEPR =
-            new EndpointReference("http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
+public class FaultHandlingTest extends TestCase implements TestConstants {
 
-            + "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
-    private QName operationName = new QName("echoOMElement");
 
     protected String testResourceDir = "test-resources";
     private MyInOutMEPClient inOutMEPClient;

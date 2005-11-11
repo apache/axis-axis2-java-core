@@ -18,10 +18,10 @@ package org.apache.axis2.mtom;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
+import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -36,18 +36,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
 
-public class EchoRawMTOMLoadTest extends TestCase {
-    private EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoOMElement");
+public class EchoRawMTOMLoadTest extends TestCase implements TestConstants {
 
     private Log log = LogFactory.getLog(getClass());
-
-    private QName serviceName = new QName("EchoXMLService");
-
-    private QName operationName = new QName("echoOMElement");
 
     private ServiceContext serviceContext;
 

@@ -21,11 +21,11 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.FlowImpl;
+import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -37,26 +37,11 @@ import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 
 
-public class HandlerFailureTest extends TestCase {
+public class HandlerFailureTest extends TestCase implements TestConstants {
     private Log log = LogFactory.getLog(getClass());
-    private static final String SERVICE_NAME = "EchoXMLService";
-    private static final String OPERATION_NAME = "echoOMElement";
-
-
-    private static final String ADDRESS = "http://127.0.0.1:" +
-            (UtilServer.TESTING_PORT) +
-            "/axis/services/" + SERVICE_NAME + "/" + OPERATION_NAME;
-    private EndpointReference targetEPR = new EndpointReference(ADDRESS);
-    private QName serviceName = new QName("", SERVICE_NAME);
-
-    private QName operationName = new QName(OPERATION_NAME);
-
-
-
     public HandlerFailureTest() {
         super(HandlerFailureTest.class.getName());
     }

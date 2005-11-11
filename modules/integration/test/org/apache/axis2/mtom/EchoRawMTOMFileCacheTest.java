@@ -23,13 +23,8 @@ import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
 
-import javax.xml.namespace.QName;
-
 public class EchoRawMTOMFileCacheTest extends EchoRawMTOMTest{
 
-    private QName serviceName = new QName("EchoXMLService");
-
-    private QName operationName = new QName("echoOMElement");
 
     private ServiceContext serviceContext;
 

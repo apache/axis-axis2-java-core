@@ -18,9 +18,10 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.clientapi.Call;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -30,25 +31,12 @@ import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-
 /**
  * Testing charater encoding support
  */
-public class CharactersetEncodingTest extends TestCase {
-
-    private EndpointReference targetEPR = new EndpointReference(
-            "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
-                    + "/axis/services/EchoXMLService/echoOMElement");
-
-    private EndpointReference targetEPR1 = new EndpointReference(
-            "http://127.0.0.1:5556/axis/services/EchoXMLService/echoOMElement");
+public class CharactersetEncodingTest extends TestCase implements TestConstants {
 
     private Log log = LogFactory.getLog(getClass());
-
-    private QName serviceName = new QName("EchoXMLService");
-
-    private QName operationName = new QName("echoOMElement");
 
     private AxisService service;
 
@@ -86,7 +74,7 @@ public class CharactersetEncodingTest extends TestCase {
             text.addChild(fac.createText(text, value));
             payload.addChild(text);
 
-            org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+            Call call = new Call(
                     Constants.TESTING_PATH + "chuncked-enabledRepository");
             call.set(MessageContext.CHARACTER_SET_ENCODING, "UTF-16");
 

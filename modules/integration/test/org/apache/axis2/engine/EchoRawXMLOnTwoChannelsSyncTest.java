@@ -18,39 +18,24 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
-public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase {
-    private EndpointReference targetEPR =
-            new EndpointReference("http://127.0.0.1:"
-                    + (UtilServer.TESTING_PORT)
-                    + "/axis2/services/EchoXMLService");
-    private Log log = LogFactory.getLog(getClass());
-    private QName serviceName = new QName("EchoXMLService");
-    private QName operationName = new QName("echoOMElement");
-    private QName transportName = new QName("http://localhost/my",
-            "NullTransport");
+public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase implements TestConstants {
 
-    private AxisConfiguration engineRegistry;
-    private MessageContext mc;
-    private Thread thisThread;
-    private SimpleHTTPServer sas;
-    private ServiceContext serviceContext;
+    private Log log = LogFactory.getLog(getClass());
 
     private boolean finish = false;
 

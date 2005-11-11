@@ -1,5 +1,10 @@
 package org.apache.axis2.engine.util;
 
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.integration.UtilServer;
+
+import javax.xml.namespace.QName;
+
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
  *
@@ -22,4 +27,11 @@ package org.apache.axis2.engine.util;
  * This will contain the information shared across the integration test cases.
  */
 public interface TestConstants {
+    public static final EndpointReference targetEPR = new EndpointReference(
+            "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
+                    + "/axis/services/EchoXMLService/echoOMElement");
+
+    public static final QName serviceName = new QName("EchoXMLService");
+
+    public static final QName operationName = new QName("echoOMElement");
 }

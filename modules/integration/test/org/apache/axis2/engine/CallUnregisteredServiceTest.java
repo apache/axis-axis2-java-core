@@ -23,7 +23,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.Call;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -31,22 +30,8 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
 
 public class CallUnregisteredServiceTest extends TestCase {
-    private Log log = LogFactory.getLog(getClass());
-    private QName serviceName = new QName("", "EchoXMLService");
-    private QName operationName = new QName("http://localhost/my",
-            "echoOMElement");
-
-    private AxisConfiguration engineRegistry;
-    private MessageContext mc;
-    private Thread thisThread;
-    private SimpleHTTPServer sas;
 
     public CallUnregisteredServiceTest() {
         super(CallUnregisteredServiceTest.class.getName());
@@ -68,7 +53,6 @@ public class CallUnregisteredServiceTest extends TestCase {
         try {
             SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
-//            SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
             OMNamespace omNs = fac.createOMNamespace("http://localhost/my",
                     "my");
             OMElement method = fac.createOMElement("echoOMElement", omNs);
@@ -77,7 +61,6 @@ public class CallUnregisteredServiceTest extends TestCase {
                     fac.createText(value,
                             "Isaac Assimov, the foundation Sega"));
             method.addChild(value);
-//            reqEnv.getBody().addChild(method);
 
             Call call = new Call("target/test-resources/intregrationRepo");
             EndpointReference targetEPR =
@@ -90,7 +73,7 @@ public class CallUnregisteredServiceTest extends TestCase {
             call.setTo(targetEPR);
             SOAPEnvelope resEnv =
                     (SOAPEnvelope) call.invokeBlocking(
-                            operationName.getLocalPart(), method);
+                            "echoOMElement", method);
 
             SOAPBody sb = resEnv.getBody();
             if (sb.hasFault()) {
