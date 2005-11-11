@@ -24,9 +24,9 @@
                        HashMap services = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
                        Collection col = services.values();
                        for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-                           AxisService axisServicesService) iterator.next();
-                   %> <option value="<%=axisServicee().getLocalPart()%>">
-                           <%=axisServicee().getLocalPart()%></option> <%
+                           AxisService axisServices = (AxisService) iterator.next();
+                   %> <option value="<%=axisServices.getName().getLocalPart()%>">
+                           <%=axisServices.getName().getLocalPart()%></option> <%
                        }
                            %>
                   </td>

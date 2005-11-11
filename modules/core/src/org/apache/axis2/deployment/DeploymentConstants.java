@@ -33,6 +33,7 @@ public interface DeploymentConstants {
     String HANDERST = "handler";
     String MODULEST = "module";
     String MODULECONFIG = "moduleConfig";
+    String HOST_CONFIG = "hostConfiguration";
     String PHASEST = "phase";
     String PHASE_ORDER = "phaseOrder";
     String TYPEMAPPINGST = "typeMapping";// typeMapping start tag

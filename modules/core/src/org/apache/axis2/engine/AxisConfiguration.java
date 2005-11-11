@@ -17,6 +17,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.HostConfiguration;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.ModuleDescription;
@@ -162,4 +163,8 @@ public interface AxisConfiguration extends ParameterInclude {
     // the class loder that become the paranet of all the moduels
     public ClassLoader getModuleClassLoader();
     public void setModuleClassLoader(ClassLoader classLoader);
+
+    //to set and get host configuration
+    void setHostConfiguration(HostConfiguration hostConfiguration);
+    HostConfiguration getHostConfiguration();
 }

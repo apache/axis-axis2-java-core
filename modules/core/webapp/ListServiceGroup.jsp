@@ -5,8 +5,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp">
-</jsp:include>
+<jsp:include page="include/adminheader.jsp"/>
 <h1>Available Service Groups</h1>
 <%
     Iterator axisServiceGroupIter = (Iterator) request.getSession().getAttribute(
@@ -44,5 +43,4 @@
         }
     }
 %>
-<jsp:include page="include/adminfooter.jsp">
-</jsp:include>
+<jsp:include page="include/adminfooter.jsp"/>

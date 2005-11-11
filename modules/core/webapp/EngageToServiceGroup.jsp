@@ -3,6 +3,7 @@
                                                                              java.util.Collection,
                                                                              java.util.HashMap" errorPage="" %>
 <%@ page import="java.util.Iterator"%>
+<%@ page import="org.apache.axis2.description.ModuleDescription"%>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <%
     String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);

@@ -18,6 +18,7 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.InstanceDispatcher;
+import org.apache.axis2.util.HostConfiguration;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
@@ -53,6 +54,9 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     private Hashtable faultyModules;
     private Log log = LogFactory.getLog(getClass());
+    //to store hots configuration if any
+    HostConfiguration hostConfiguration;
+
 
     /**
      * Field modules
@@ -546,6 +550,15 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     public void setModuleClassLoader(ClassLoader classLoader) {
         this.moduleClassLoader = classLoader;
+    }
+
+    //to set and get host configuration
+    public void setHostConfiguration(HostConfiguration hostConfiguration) {
+        this.hostConfiguration = hostConfiguration;
+    }
+
+    public HostConfiguration getHostConfiguration() {
+        return this.hostConfiguration;
     }
 
     public void addObservers(AxisObserver axisObserver){

@@ -13,6 +13,10 @@
     <parameter name="password" locked="false">axis2</parameter>
 
     <parameter name="seralizeLocation" locked="false">.</parameter>
+    <hostConfiguration>
+        <ip>127.0.0.1</ip>
+        <port>5555</port>
+    </hostConfiguration>
 
 
 
@@ -22,10 +26,10 @@
     <!--<parameter name="extractServiceArchive" locked="false">true</parameter>-->
 
 
-<!--    The way of adding listener to the system-->
-<!--    <listener class="org.apache.axis2.ObserverIMPL">-->
-<!--        <parameter name="RSS_URL" locked="false">http://127.0.0.1/rss</parameter>-->
-<!--    </listener>-->
+    <!--    The way of adding listener to the system-->
+    <!--    <listener class="org.apache.axis2.ObserverIMPL">-->
+    <!--        <parameter name="RSS_URL" locked="false">http://127.0.0.1/rss</parameter>-->
+    <!--    </listener>-->
 
     <!--Registering Axis Storage Class if you comment this default one will -->
     <!--does the job (org.apache.axis2.storage.impl.AxisMemoryStorage) , if you-->
@@ -94,9 +98,9 @@
 
     <!--Configuring module , providing paramters for modules whether they refer or not-->
     <!--<moduleConfig name="addressing">-->
-         <!--<parameter name="addressingPara" locked="false">N/A</parameter>-->
+    <!--<parameter name="addressingPara" locked="false">N/A</parameter>-->
     <!--</moduleConfig>-->
-    
+
     <!-- ================================================= -->
     <!-- Phases  -->
     <!-- ================================================= -->

@@ -4,6 +4,8 @@
                  java.util.Collection,
                  java.util.HashMap,
                  java.util.Iterator"%>
+<%@ page import="org.apache.axis2.description.AxisService"%>
+<%@ page import="org.apache.axis2.description.Parameter"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Edit Service Parameters</h1>

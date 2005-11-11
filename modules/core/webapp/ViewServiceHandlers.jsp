@@ -6,6 +6,7 @@
                  java.util.Collection,
                  java.util.HashMap,
                  java.util.Iterator"%>
+<%@ page import="org.apache.axis2.description.AxisService"%>
   <%
            /*
 * Copyright 2004,2005 The Apache Software Foundation.
