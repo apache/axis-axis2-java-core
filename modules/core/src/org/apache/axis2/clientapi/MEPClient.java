@@ -92,8 +92,8 @@ public abstract class MEPClient {
         if (serviceContext.getAxisService().getOperation(axisop.getName()) == null) {
             serviceContext.getAxisService().addOperation(axisop);
         }
-        if(msgCtx.getMessageInformationHeaders() != null && msgCtx.getMessageInformationHeaders().getAction() != null) {
-            messageInformationHeaders.setAction(msgCtx.getMessageInformationHeaders().getAction());    
+        if (msgCtx.getMessageInformationHeaders() != null && msgCtx.getMessageInformationHeaders().getAction() != null) {
+            messageInformationHeaders.setAction(msgCtx.getMessageInformationHeaders().getAction());
         }
         msgCtx.setMessageInformationHeaders(messageInformationHeaders);
         msgCtx.setSoapAction(soapAction);
@@ -177,15 +177,13 @@ public abstract class MEPClient {
      * @throws AxisFault
      */
     public SOAPEnvelope createDefaultSOAPEnvelope() throws AxisFault {
-        SOAPFactory fac = null;
         if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
-            fac = OMAbstractFactory.getSOAP12Factory();
+            return OMAbstractFactory.getSOAP12Factory().getDefaultEnvelope();
         } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
-            fac = OMAbstractFactory.getSOAP11Factory();
+            return OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
         } else {
             throw new AxisFault(Messages.getMessage("invaidSOAPversion"));
         }
-        return fac.getDefaultEnvelope();
     }
 
     /**
@@ -233,6 +231,17 @@ public abstract class MEPClient {
         isExceptionToBeThrownOnSOAPFault = exceptionToBeThrownOnSOAPFault;
     }
 
+    /**
+     * User might sometimes needs to add his own headers to the out going message from the client. This
+     * method will facilitate that. But this is bit restrictive in the sense that user can only set a
+     * header with only one text as a child. <HeaderBlockName>your text</HeaderBlockName>. If you want
+     * a much flexible way to add a soap header block use addSOAPHeader(OMElement)
+     *
+     * @param soapHeaderQName - During the creation of an OMElement from the given QName, we extract
+     *                        the namespace information from the given QName and find whether there is an
+     *                        already defined namespace. And if found that will be conneted with this.
+     * @param soapHeaderText
+     */
     public void addSOAPHeader(QName soapHeaderQName, String soapHeaderText) {
         OMElement omElement = OMAbstractFactory.getOMFactory().createOMElement(soapHeaderQName, null);
         omElement.setText(soapHeaderText);
@@ -240,6 +249,22 @@ public abstract class MEPClient {
             soapHeaderList = new ArrayList();
         }
         soapHeaderList.add(omElement);
+    }
+
+    /**
+     * This is much flexible than the other method and allows user to put anything in to the SOAP header
+     * block.
+     * @param soapHeaderBlock
+     */
+    public void addSOAPHeader(OMElement soapHeaderBlock) {
+        if (soapHeaderBlock == null) {
+            // what are you trying to do here. You wanna set null to a header ??
+            return;
+        }
+        if (soapHeaderList == null) {
+            soapHeaderList = new ArrayList();
+        }
+        soapHeaderList.add(soapHeaderBlock);
     }
 
     //==============================================================================

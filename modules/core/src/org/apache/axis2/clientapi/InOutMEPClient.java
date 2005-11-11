@@ -123,7 +123,7 @@ public class InOutMEPClient extends MEPClient {
 
         // The message ID is sent all the time
         String messageID = String.valueOf("uuid:" + UUIDGenerator.getUUID());
-        msgctx.setMessageID(messageID);
+        this.messageInformationHeaders.setMessageId(messageID);
         //
         if (useSeparateListener) {
             //This mean doing a Request-Response invocation using two channel. If the
@@ -161,16 +161,11 @@ public class InOutMEPClient extends MEPClient {
             }
         } else {
             //This is the Usual Request-Response Sync implemetation
-//            msgctx.setTo(to);
             msgctx.setServiceContext(serviceContext);
             ConfigurationContext syscontext = serviceContext.getConfigurationContext();
             msgctx.setConfigurationContext(syscontext);
 
             checkTransport(msgctx);
-            //find and set the Operation Context
-//            OperationContext operationContext = OperationContextFactory.createOperationContext(WSDLConstants.MEP_CONSTANT_IN_OUT,
-//                    axisop,
-//                    serviceContext);
 
             OperationContext operationContext = new OperationContext(axisop, serviceContext);
             axisop.registerOperationContext(msgctx, operationContext);
@@ -221,7 +216,7 @@ public class InOutMEPClient extends MEPClient {
             checkTransport(msgctx);
             //Use message id all the time!
             String messageID = String.valueOf("uuid:" + UUIDGenerator.getUUID());
-            msgctx.setMessageID(messageID);
+            this.messageInformationHeaders.setMessageId(messageID);
             ////
             if (useSeparateListener) {
                 //the invocation happen via a seperate Channel, so we should set up the
@@ -252,17 +247,6 @@ public class InOutMEPClient extends MEPClient {
 
                 //send the message
                 engine.send(msgctx);
-/*				 serviceContext.getConfigurationContext().getThreadPool()
-						.execute(new Runnable() {
-							public void run() {
-								try {
-									engine.send(msgctx);
-								} catch (AxisFault e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-							}
-						});*/
             } else {
                 // here a bloking invocation happens in a new thread, so the
                 // progamming model is non blocking
@@ -276,13 +260,6 @@ public class InOutMEPClient extends MEPClient {
         }
 
     }
-
-//    /**
-//     * @param to
-//     */
-//    public void setTo(EndpointReference to) {
-//        this.to = to;
-//    }
 
     /**
      * Set transport information to the the Call, for find how the each parameter acts see the commant at the instance
