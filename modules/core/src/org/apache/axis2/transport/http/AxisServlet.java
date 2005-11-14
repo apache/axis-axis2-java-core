@@ -88,7 +88,8 @@ public class AxisServlet extends HttpServlet {
         try {
             Object sessionContext = getSessionContext(httpServletRequest);
             HashMap map = getHTTPParameters(httpServletRequest);
-            msgContext = createAndSetInitialParamsToMsgCtxt(sessionContext, msgContext, httpServletResponse, httpServletRequest);
+            msgContext = createAndSetInitialParamsToMsgCtxt(sessionContext, msgContext,
+                    httpServletResponse, httpServletRequest);
 
             msgContext.setDoingREST(true);
             msgContext.setServerSide(true);
