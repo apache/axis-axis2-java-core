@@ -32,7 +32,10 @@ import org.apache.axis2.util.threadpool.ThreadFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 
 /**
  * This is a simple implementation of an HTTP server for processing
@@ -231,20 +234,52 @@ public class SimpleHTTPServer extends TransportListener {
      * @param serviceName
      * @return an EndpointReference
      *
-     * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
+     * @see org.apache.axis2.transport.TransportListener#getReplyToEPR(java.lang.String)
      */
-    public EndpointReference replyToEPR(String serviceName) throws AxisFault {
-        String hostAddress = null;
-        try {
-            hostAddress = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            throw new AxisFault(e);
-        }
+    public EndpointReference getReplyToEPR(String serviceName) throws AxisFault {
+        String hostAddress = getIpAddress();
+ 
         return new EndpointReference("http://"+ hostAddress + ":" + (embedded.getLocalPort()) +
                 "/axis2/services/" +
                 serviceName);
     }
 
+    /**
+     * Returns the ip address to be used for the replyto epr
+     * CAUTION:
+     * This will simply go though the list of available network
+     * interfaces and will return the final address of the final interface
+     * available in the list. This workes fine for the simple cases where
+     * 1.) there's only the loopback interface, where the ip is 127.0.0.1
+     * 2.) there's an additional interface availbale which is used to 
+     * access an external network and has only one ip assigned to it.
+     * 
+     * TODO:
+     * - Improve this logic to genaralize it a bit more
+     * - Obtain the ip to be used here from the Call API
+     * @return
+     * @throws AxisFault
+     */
+    private String getIpAddress() throws AxisFault {
+		try {
+			Enumeration e = NetworkInterface.getNetworkInterfaces();
+
+			String address = null;
+			while (e.hasMoreElements()) {
+				NetworkInterface netface = (NetworkInterface) e.nextElement();
+				Enumeration addresses = netface.getInetAddresses();
+				while (addresses.hasMoreElements()) {
+					InetAddress ip = (InetAddress) addresses.nextElement();
+					//the last available ip address will be returned
+					address = ip.getHostAddress();
+				}
+			}
+			return address;
+		} catch (SocketException e) {
+			throw new AxisFault(e);
+		}
+	}
+    
     /**
      * init method in TransportListener
      *

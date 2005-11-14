@@ -95,7 +95,7 @@ public class ListenerManager {
         TransportListnerState tsState = (TransportListnerState) listeners.get(
                 transport);
         if (tsState != null) {
-            return tsState.listener.replyToEPR(serviceName);
+            return tsState.listener.getReplyToEPR(serviceName);
         } else {
             throw new AxisFault(Messages.getMessage("replyNeedStarting",transport));
         }
