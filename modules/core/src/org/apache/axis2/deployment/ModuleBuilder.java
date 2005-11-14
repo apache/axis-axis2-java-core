@@ -17,12 +17,15 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.modules.Module;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
@@ -39,9 +42,11 @@ import java.util.Iterator;
 public class ModuleBuilder extends DescriptionBuilder{
 
     private ModuleDescription module;
-    public ModuleBuilder(InputStream serviceInputSteram, DeploymentEngine engine
-            ,ModuleDescription module) {
-        super(serviceInputSteram, engine);
+    private AxisConfiguration axisConfig;
+    public ModuleBuilder(InputStream serviceInputSteram,ModuleDescription module ,
+                         AxisConfiguration axisConfig) {
+        super(serviceInputSteram, axisConfig);
+        this.axisConfig = axisConfig;
         this.module = module;
     }
 
@@ -49,7 +54,6 @@ public class ModuleBuilder extends DescriptionBuilder{
     public void populateModule() throws DeploymentException {
         try {
             OMElement moduleElement = buildOM();
-
             // Setting Module Name
             OMAttribute moduleNameAtt = moduleElement.getAttribute(
                     new QName(ATTNAME));
@@ -57,24 +61,15 @@ public class ModuleBuilder extends DescriptionBuilder{
                 String moduleName = moduleNameAtt.getAttributeValue();
                 if (moduleName != null && !"".equals(moduleName)) {
                     module.setName(new QName(moduleName));
-                } else {
-                    module.setName(new QName(getShortFileName(engine.getCurrentFileItem()
-                            .getServiceName())));
                 }
-            }else {
-                module.setName(new QName(getShortFileName(engine.getCurrentFileItem()
-                        .getServiceName())));
             }
-
             // Setting Module Class , if it is there
             OMAttribute moduleClassAtt = moduleElement.getAttribute(
                     new QName(CLASSNAME));
             if(moduleClassAtt !=null){
                 String moduleClass = moduleClassAtt.getAttributeValue();
                 if(moduleClass !=null && !"".equals(moduleClass)){
-                    if (engine !=null) {
-                        engine.getCurrentFileItem().setModuleClass(moduleClass);
-                    }
+                    loadModuleClass(module,moduleClass);
                 }
             }
 
@@ -120,9 +115,27 @@ public class ModuleBuilder extends DescriptionBuilder{
 
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
-
         }
     }
+
+
+    private void loadModuleClass(ModuleDescription module , String moduleClassName)
+            throws DeploymentException {
+        Class moduleClass;
+        try {
+            if (moduleClassName != null && !"".equals(moduleClassName)) {
+                moduleClass =
+                        Class.forName(moduleClassName,
+                                true,
+                                module.getModuleClassLoader());
+                module.setModule((Module) moduleClass.newInstance());
+            }
+        } catch (Exception e) {
+            throw new DeploymentException(e.getMessage(), e);
+        }
+
+    }
+
 
 
     private ArrayList processOperations(Iterator opeartinsItr) throws DeploymentException {
@@ -175,8 +188,8 @@ public class ModuleBuilder extends DescriptionBuilder{
             OMElement receiverElement = operation.getFirstChildWithName(
                     new QName(MESSAGERECEIVER));
             if(receiverElement !=null){
-                MessageReceiver messageReceiver = loadMessageReceiver(
-                        engine.getCurrentFileItem().getClassLoader(),receiverElement);
+                MessageReceiver messageReceiver = loadMessageReceiver(module.getModuleClassLoader()
+                        ,receiverElement);
                 op_descrip.setMessageReceiver(messageReceiver);
             }  else {
                 //setting default message reciver
@@ -189,7 +202,7 @@ public class ModuleBuilder extends DescriptionBuilder{
             processOperationModuleRefs(modules, op_descrip);
 
             //setting Operation phase
-            PhasesInfo info = engine.getPhasesinfo();
+            PhasesInfo info = ((AxisConfigurationImpl) axisConfig).getPhasesinfo();
             info.setOperationPhases(op_descrip);
 
             //adding the opeartion

@@ -1,6 +1,11 @@
 package org.apache.axis2.deployment.util;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Flow;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.engine.Handler;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -28,7 +33,7 @@ import java.util.ArrayList;
 
 public class Utils {
 
-    public static ClassLoader getClassLoader(ClassLoader parent , File file) throws DeploymentException {
+    public static ClassLoader getClassLoader(ClassLoader parent, File file) throws DeploymentException {
         URLClassLoader classLoader;
         if (file != null) {
             try {
@@ -69,5 +74,67 @@ public class Utils {
             }
         }
         return null;
+    }
+
+    /**
+     * This method is used to fill the axis service , it dose loading service class and also the provider class
+     * and it will also load the service handlers
+     *
+     * @param axisService
+     * @throws org.apache.axis2.AxisFault
+     */
+    public static void loadServiceProperties(AxisService axisService) throws AxisFault {
+        Flow inflow = axisService.getInFlow();
+        ClassLoader cls = axisService.getClassLoader();
+        if (inflow != null) {
+            addFlowHandlers(inflow, cls);
+        }
+
+        Flow outFlow = axisService.getOutFlow();
+        if (outFlow != null) {
+            addFlowHandlers(outFlow, cls);
+        }
+
+        Flow faultInFlow = axisService.getFaultInFlow();
+        if (faultInFlow != null) {
+            addFlowHandlers(faultInFlow, cls);
+        }
+
+        Flow faultOutFlow = axisService.getFaultOutFlow();
+        if (faultOutFlow != null) {
+            addFlowHandlers(faultOutFlow, cls);
+        }
+        // axisService.setClassLoader(currentArchiveFile.getClassLoader());
+    }
+
+    public static void  addFlowHandlers(Flow flow, ClassLoader clsLoader) throws AxisFault {
+        int count = flow.getHandlerCount();
+        for (int j = 0; j < count; j++) {
+            HandlerDescription handlermd = flow.getHandler(j);
+            Class handlerClass;
+            Handler handler;
+            handlerClass = getHandlerClass(handlermd.getClassName(), clsLoader);
+            try {
+                handler = (Handler) handlerClass.newInstance();
+                handler.init(handlermd);
+                handlermd.setHandler(handler);
+
+            } catch (InstantiationException e) {
+                throw new AxisFault(e);
+            } catch (IllegalAccessException e) {
+                throw new AxisFault(e);
+            }
+
+        }
+    }
+
+    private static Class getHandlerClass(String className, ClassLoader loader1) throws AxisFault {
+        Class handlerClass;
+        try {
+            handlerClass = Class.forName(className, true, loader1);
+        } catch (ClassNotFoundException e) {
+            throw new AxisFault(e.getMessage());
+        }
+        return handlerClass;
     }
 }

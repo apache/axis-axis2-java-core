@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMAttribute;
@@ -44,11 +45,12 @@ public class DescriptionBuilder implements DeploymentConstants{
 
     protected Log log = LogFactory.getLog(getClass());
     protected InputStream des_inputStream;
-    protected DeploymentEngine engine;
+    protected AxisConfiguration axisConfig;
+//    protected DeploymentEngine engine;
 
-    public DescriptionBuilder(InputStream serviceInputStream, DeploymentEngine engine) {
+    public DescriptionBuilder(InputStream serviceInputStream, AxisConfiguration axisConfig) {
         this.des_inputStream = serviceInputStream;
-        this.engine = engine;
+        this.axisConfig = axisConfig;
     }
 
     public DescriptionBuilder() {
@@ -257,7 +259,7 @@ public class DescriptionBuilder implements DeploymentConstants{
                         new QName(REF));
                 if (moduleRefAttribute !=null) {
                     String refName = moduleRefAttribute.getAttributeValue();
-                    if(engine.getModule(new QName(refName)) == null) {
+                    if(axisConfig.getModule(new QName(refName)) == null) {
                         throw new DeploymentException(Messages.getMessage(
                                 DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));
                     } else {

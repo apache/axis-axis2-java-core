@@ -130,7 +130,7 @@ public class ParamterLocked extends TestCase {
             ModuleDescription module = new ModuleDescription();
             module.setParent(ar);
             InputStream in = new FileInputStream(repo + "/module_overide_global_non_locked_para.xml");
-            ModuleBuilder mbuilder = new ModuleBuilder(in,null,module);
+            ModuleBuilder mbuilder = new ModuleBuilder(in,module,ar);
             mbuilder.populateModule();
         }catch (FileNotFoundException e) {
             fail("This can not fail with this FileNotFoundException " + e) ;
@@ -145,7 +145,7 @@ public class ParamterLocked extends TestCase {
             ModuleDescription module = new ModuleDescription();
             module.setParent(ar);
             InputStream in = new FileInputStream(repo + "/module_overide_locked_para.xml");
-            ModuleBuilder mbuilder = new ModuleBuilder(in,null,module);
+            ModuleBuilder mbuilder = new ModuleBuilder(in,module,ar);
             mbuilder.populateModule();
             fail("Parmter is locked can not overide" ) ;
         }catch (FileNotFoundException e) {

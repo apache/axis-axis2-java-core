@@ -27,6 +27,7 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLDescription;
@@ -37,7 +38,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -46,54 +48,7 @@ public class ArchiveReader implements DeploymentConstants {
 
     private Log log = LogFactory.getLog(getClass());
 
-    /**
-     * To create a ServiceDescrption <code>AxisService</code>   using given wsdl , if the
-     * service.wsdl there in the arcive file AxisService will be creted using that else
-     * default AxisService will be crated
-     *
-     * @param file
-     * @return
-     * @throws DeploymentException
-     */
-    public AxisService createService(ArchiveFileData file) throws DeploymentException {
-        AxisService service = null;
-        InputStream in = file.getClassLoader().getResourceAsStream(SERVICE_WSDL_WITH_FOLDER);
-        boolean foundservice = false;
-        try {
-            if (in != null) {
-                WOMBuilder builder = WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1);
-                WSDLVersionWrapper wsdlVersionWrapper = builder.build(in,
-                        new AxisDescWSDLComponentFactory());
-                WSDLDescription womDescription = wsdlVersionWrapper.getDescription();
-                Iterator iterator = womDescription.getServices().keySet()
-                        .iterator();
-                if (iterator.hasNext()) {
-                    foundservice = true;
-                    // remove <wsdl:service> and <wsdl:binding> elements from the service
-                    // description we read in as we will be replacing them anyway.
-
-                    WSDLServiceImpl serviceimpl = (WSDLServiceImpl) womDescription.getServices().get(iterator.next());
-                    service = new AxisService(serviceimpl);
-                }
-                if (!foundservice) {
-                    service = new AxisService();
-                }
-                service.setWSDLDefinition(wsdlVersionWrapper.getDefinition());
-                in.close();
-            } else {
-                service = new AxisService();
-                log.info(Messages.getMessage(DeploymentErrorMsgs.WSDL_FILE_NOT_FOUND,
-                        file.getName()));
-            }
-        } catch (Exception e) {
-            throw new DeploymentException(e);
-        }
-
-        return service;
-    }
-
-
-    private void processWSDLFile(InputStream in , DeploymentEngine depengine) throws DeploymentException {
+    private AxisService processWSDLFile(InputStream in) throws DeploymentException {
         try {
             WOMBuilder builder = WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1);
             WSDLVersionWrapper wsdlVersionWrapper = builder.build(in,
@@ -118,33 +73,39 @@ public class ArchiveReader implements DeploymentConstants {
                 AxisService service = new AxisService(serviceimpl);
                 service.setName(serviceimpl.getName());
                 service.setWSDLDefinition(wsdlVersionWrapper.getDefinition());
-                depengine.getCurrentFileItem().addService(service);
+                return service;
+//                depengine.getCurrentFileItem().addService(service);
             }
         } catch (WSDLException e) {
             throw new DeploymentException(e);
         }
+        return null;
     }
 
     /**
      * To create service objects out form wsdls file inside a service archive file
-     * @param file <code>ArchiveFileData</code>
+     *
+     * @param file      <code>ArchiveFileData</code>
      * @param depengine <code>DeploymentEngine</code>
-     * @throws DeploymentException  <code>DeploymentException</code>
+     * @throws DeploymentException <code>DeploymentException</code>
      */
-    public void processWSDLs(ArchiveFileData file , DeploymentEngine depengine) throws DeploymentException {
+    public HashMap processWSDLs(ArchiveFileData file, DeploymentEngine depengine) throws DeploymentException {
         File serviceFile = file.getFile();
+        //to store service come from wsdl files
+        HashMap servicesMap = new HashMap();
         boolean isDirectory = serviceFile.isDirectory();
-        if(isDirectory){
+        if (isDirectory) {
             try {
-                File meta_inf = new File(serviceFile,META_INF);
-                if(meta_inf.exists()){
+                File meta_inf = new File(serviceFile, META_INF);
+                if (meta_inf.exists()) {
                     File files [] = meta_inf.listFiles();
                     for (int i = 0; i < files.length; i++) {
                         File file1 = files[i];
                         String fileName = file1.getName();
-                        if(fileName.endsWith(".wsdl") || fileName.endsWith(".WSDL")){
+                        if (fileName.endsWith(".wsdl") || fileName.endsWith(".WSDL")) {
                             InputStream in = new FileInputStream(file1);
-                            processWSDLFile(in,depengine);
+                            AxisService service = processWSDLFile(in);
+                            servicesMap.put(service.getName().getLocalPart(), service);
                             try {
                                 in.close();
                             } catch (IOException e) {
@@ -162,7 +123,7 @@ public class ArchiveReader implements DeploymentConstants {
             } catch (IOException e) {
                 throw new DeploymentException(e);
             }
-        }   else {
+        } else {
 
             ZipInputStream zin;
             try {
@@ -170,7 +131,7 @@ public class ArchiveReader implements DeploymentConstants {
                 ZipEntry entry;
                 byte[] buf = new byte[1024];
                 int read;
-                ByteArrayOutputStream out ;
+                ByteArrayOutputStream out;
                 while ((entry = zin.getNextEntry()) != null) {
                     String entryName = entry.getName();
                     if ((entryName.startsWith(META_INF) ||
@@ -182,7 +143,8 @@ public class ArchiveReader implements DeploymentConstants {
                             out.write(buf, 0, read);
                         }
                         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-                        processWSDLFile(in,depengine);
+                        AxisService service = processWSDLFile(in);
+                        servicesMap.put(service.getName().getLocalPart(), service);
                     }
                 }
                 try {
@@ -196,7 +158,7 @@ public class ArchiveReader implements DeploymentConstants {
                 throw new DeploymentException(e);
             }
         }
-
+        return servicesMap;
     }
 
     /**
@@ -206,9 +168,10 @@ public class ArchiveReader implements DeploymentConstants {
      * @param filename
      * @param engine
      */
-    public void processServiceGroup(String filename,
-                                    DeploymentEngine engine,
-                                    AxisServiceGroup axisServiceGroup, boolean extarctService)
+    public ArrayList processServiceGroup(String filename,
+                                         DeploymentEngine engine,
+                                         AxisServiceGroup axisServiceGroup, boolean extarctService,
+                                         HashMap wsdls, AxisConfiguration axisConfig)
             throws DeploymentException {
         // get attribute values
         boolean foundServiceXML = false;
@@ -220,10 +183,9 @@ public class ArchiveReader implements DeploymentConstants {
                 while ((entry = zin.getNextEntry()) != null) {
                     if (entry.getName().equals(SERVICEXML)) {
                         foundServiceXML = true;
-                        buildServiceGroup(zin, engine, axisServiceGroup);
                         axisServiceGroup.setServiceGroupName(DescriptionBuilder.getShortFileName(
                                 engine.getCurrentFileItem().getName()));
-                        break;
+                        return buildServiceGroup(zin, engine, axisServiceGroup, wsdls, axisConfig);
                     }
                 }
                 //    zin.close();
@@ -237,38 +199,40 @@ public class ArchiveReader implements DeploymentConstants {
         } else {
             File file = new File(filename, SERVICEXML);
             if (file.exists()) {
-                InputStream in ;
+                InputStream in;
                 try {
                     in = new FileInputStream(file);
-                    buildServiceGroup(in,engine,axisServiceGroup);
                     axisServiceGroup.setServiceGroupName(engine.getCurrentFileItem().getName());
+                    return buildServiceGroup(in, engine, axisServiceGroup, wsdls, axisConfig);
                 } catch (FileNotFoundException e) {
                     throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.FNF_WITH_E
-                            ,e.getMessage()));
+                            , e.getMessage()));
                 } catch (XMLStreamException e) {
                     throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.XTZX_EXCEPTION
-                            ,e.getMessage()));
+                            , e.getMessage()));
                 }
             } else {
                 throw new DeploymentException(
                         Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND));
             }
         }
+        return null;
     }
 
-    private void buildServiceGroup(InputStream zin, DeploymentEngine engine,
-                                   AxisServiceGroup axisServiceGroup)
+    private ArrayList buildServiceGroup(InputStream zin, DeploymentEngine engine,
+                                        AxisServiceGroup axisServiceGroup, HashMap wsdlServices,
+                                        AxisConfiguration axisConfig)
             throws XMLStreamException, DeploymentException {
         DescriptionBuilder builder;
         String rootelementName;
-        builder = new DescriptionBuilder(zin, engine);
+        builder = new DescriptionBuilder(zin, axisConfig);
         OMElement services = builder.buildOM();
         rootelementName = services.getLocalName();
-        if(SERVICE_ELEMENT.equals(rootelementName)){
+        if (SERVICE_ELEMENT.equals(rootelementName)) {
             AxisService axisService = engine.getCurrentFileItem().
                     getService(DescriptionBuilder.getShortFileName(
                             engine.getCurrentFileItem().getName()));
-            if(axisService == null){
+            if (axisService == null) {
                 axisService = new AxisService(
                         new QName(DescriptionBuilder.getShortFileName(
                                 engine.getCurrentFileItem().getName())));
@@ -276,18 +240,22 @@ public class ArchiveReader implements DeploymentConstants {
             }
             axisService.setParent(axisServiceGroup);
             axisService.setClassLoader(engine.getCurrentFileItem().getClassLoader());
-            ServiceBuilder serviceBuilder = new ServiceBuilder(engine,axisService);
-            serviceBuilder.populateService(services);
-            engine.getCurrentFileItem().getDeploybleServices().add(axisService);
-        } else if(SERVICE_GROUP_ELEMENT.equals(rootelementName)){
-            ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(services,engine);
-            groupBuilder.populateServiceGroup(axisServiceGroup);
+            ServiceBuilder serviceBuilder = new ServiceBuilder(axisConfig, axisService);
+            AxisService service = serviceBuilder.populateService(services);
+            ArrayList serviceList = new ArrayList();
+            serviceList.add(service);
+            return serviceList;
+//            engine.getCurrentFileItem().getDeploybleServices().add(axisService);
+        } else if (SERVICE_GROUP_ELEMENT.equals(rootelementName)) {
+            ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(services, wsdlServices, axisConfig);
+            return groupBuilder.populateServiceGroup(axisServiceGroup);
         }
+        return null;
     }
 
     public void readModuleArchive(String filename,
                                   DeploymentEngine engine,
-                                  ModuleDescription module , boolean explodedDir)
+                                  ModuleDescription module, boolean explodedDir, AxisConfiguration axisConfig)
             throws DeploymentException {
         // get attribute values
         boolean foundmoduleXML = false;
@@ -299,7 +267,10 @@ public class ArchiveReader implements DeploymentConstants {
                 while ((entry = zin.getNextEntry()) != null) {
                     if (entry.getName().equals(MODULEXML)) {
                         foundmoduleXML = true;
-                        ModuleBuilder builder = new ModuleBuilder(zin, engine, module);
+                        ModuleBuilder builder = new ModuleBuilder(zin, module, axisConfig);
+                        //setting module name
+                        module.setName(new QName(DescriptionBuilder.getShortFileName(
+                                engine.getCurrentFileItem().getServiceName())));
                         builder.populateModule();
                         break;
                     }
@@ -318,11 +289,14 @@ public class ArchiveReader implements DeploymentConstants {
                 InputStream in;
                 try {
                     in = new FileInputStream(file);
-                    ModuleBuilder builder = new ModuleBuilder(in, engine, module);
+                    ModuleBuilder builder = new ModuleBuilder(in, module, axisConfig);
+                    // setting module name
+                    module.setName(new QName(DescriptionBuilder.getShortFileName(
+                            engine.getCurrentFileItem().getServiceName())));
                     builder.populateModule();
                 } catch (FileNotFoundException e) {
                     throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.FNF_WITH_E
-                            ,e.getMessage()));
+                            , e.getMessage()));
                 }
             } else {
                 throw new DeploymentException(Messages.getMessage(
@@ -368,9 +342,9 @@ public class ArchiveReader implements DeploymentConstants {
             }
             if (in == null) {
                 throw new DeploymentException(Messages.getMessage(
-                            DeploymentErrorMsgs.MODULEXML_NOT_FOUND_FOR_THE_MODULE, moduleName));
+                        DeploymentErrorMsgs.MODULEXML_NOT_FOUND_FOR_THE_MODULE, moduleName));
             } else {
-                if(!modules.exists()) {
+                if (!modules.exists()) {
                     modules.mkdirs();
                 }
                 modulearchiveFile.createNewFile();

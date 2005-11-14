@@ -38,7 +38,7 @@ public class ArchiveFileData {
     private File file = null;
     private int type;
     private String messgeReceiver;
-    private String moduleClass;
+//    private String moduleClass;
     private String name;
 
 
@@ -96,14 +96,6 @@ public class ArchiveFileData {
 
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
-    }
-
-    public String getModuleClass() {
-        return moduleClass;
-    }
-
-    public void setModuleClass(String moduleClass) {
-        this.moduleClass = moduleClass;
     }
 
     public void setClassLoader(boolean extarctArichive, ClassLoader parent) throws AxisFault {

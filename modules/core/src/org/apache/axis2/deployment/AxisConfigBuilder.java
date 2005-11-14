@@ -41,11 +41,13 @@ import java.util.Iterator;
 public class AxisConfigBuilder extends DescriptionBuilder {
 
     private AxisConfiguration axisConfiguration;
+    private DeploymentEngine engine;
 
     public AxisConfigBuilder(InputStream serviceInputSteram, DeploymentEngine engine,
                              AxisConfiguration axisConfiguration) {
-        super(serviceInputSteram, engine);
+        super(serviceInputSteram, axisConfiguration);
         this.axisConfiguration = axisConfiguration;
+        this.engine = engine;
     }
 
     public void populateConfig() throws DeploymentException {

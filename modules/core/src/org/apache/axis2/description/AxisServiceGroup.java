@@ -53,6 +53,8 @@ public class AxisServiceGroup implements ParameterInclude{
     //to store module ref at deploy time parsing
     private ArrayList mdoulesList = new ArrayList();
 
+    //class loader
+    private ClassLoader serviceGroupClassLoader;
 
     public AxisServiceGroup() {
         paramInclude = new ParameterIncludeImpl();
@@ -207,5 +209,13 @@ public class AxisServiceGroup implements ParameterInclude{
     public ServiceGroupContext getServiceGroupContext(ConfigurationContext parent){
         ServiceGroupContext serviceGroupContext = new ServiceGroupContext(parent,this) ;
         return serviceGroupContext;
+    }
+
+    public ClassLoader getServiceGroupClassLoader() {
+        return serviceGroupClassLoader;
+    }
+
+    public void setServiceGroupClassLoader(ClassLoader serviceGroupClassLoader) {
+        this.serviceGroupClassLoader = serviceGroupClassLoader;
     }
 }
