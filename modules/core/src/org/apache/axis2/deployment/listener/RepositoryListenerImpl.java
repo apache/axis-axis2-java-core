@@ -69,7 +69,7 @@ public class RepositoryListenerImpl implements RepositoryListener,
             for (int i = 0; i < files.length; i++) {
                 File file = files[i];
                 if (!file.isDirectory()) {
-                    if (ArchiveFileData.isServiceArchiveFile(file.getName())) {
+                    if (ArchiveFileData.isModuleArchiveFile(file.getName())) {
                         wsInfoList.addWSInfoItem(file, MODULE);
                     }
                 } else {
