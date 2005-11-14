@@ -123,7 +123,7 @@ public class InOutMEPClient extends MEPClient {
 
         // The message ID is sent all the time
         String messageID = String.valueOf("uuid:" + UUIDGenerator.getUUID());
-        this.messageInformationHeaders.setMessageId(messageID);
+        msgctx.setMessageID(messageID);
         //
         if (useSeparateListener) {
             //This mean doing a Request-Response invocation using two channel. If the
@@ -216,7 +216,7 @@ public class InOutMEPClient extends MEPClient {
             checkTransport(msgctx);
             //Use message id all the time!
             String messageID = String.valueOf("uuid:" + UUIDGenerator.getUUID());
-            this.messageInformationHeaders.setMessageId(messageID);
+            msgctx.setMessageID(messageID);
             ////
             if (useSeparateListener) {
                 //the invocation happen via a seperate Channel, so we should set up the

@@ -95,8 +95,11 @@ public abstract class MEPClient {
         if (msgCtx.getMessageInformationHeaders() != null && msgCtx.getMessageInformationHeaders().getAction() != null) {
             messageInformationHeaders.setAction(msgCtx.getMessageInformationHeaders().getAction());
         }
-        msgCtx.setMessageInformationHeaders(messageInformationHeaders);
-        msgCtx.setSoapAction(soapAction);
+
+        msgCtx.setMessageInformationHeaders(cloneMIHeaders());
+
+        //msgCtx.setMessageInformationHeaders(messageInformationHeaders);
+        msgCtx.setSoapAction(soapAction + "");
 
         // check user has put any SOAPHeader using the call MEPClient methods and add them, if any, to the
         // the SOAP message
@@ -202,6 +205,17 @@ public abstract class MEPClient {
         }
     }
 
+    public MessageInformationHeaders cloneMIHeaders() {
+        MessageInformationHeaders messageInformationHeaders = new MessageInformationHeaders();
+        messageInformationHeaders.setAction(this.messageInformationHeaders.getAction());
+        messageInformationHeaders.setFaultTo(this.messageInformationHeaders.getFaultTo());
+        messageInformationHeaders.setFrom(this.messageInformationHeaders.getFrom());
+        messageInformationHeaders.setMessageId(this.messageInformationHeaders.getMessageId());
+        messageInformationHeaders.setRelatesTo(this.messageInformationHeaders.getRelatesTo());
+        messageInformationHeaders.setReplyTo(this.messageInformationHeaders.getReplyTo());
+        messageInformationHeaders.setTo(this.messageInformationHeaders.getTo());
+        return messageInformationHeaders;
+    }
     /**
      * @param string
      */
