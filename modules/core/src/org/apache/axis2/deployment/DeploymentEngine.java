@@ -249,6 +249,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         axisConfig = createEngineConfig();
         AxisConfigBuilder builder = new AxisConfigBuilder(in, this, axisConfig);
+        ((AxisConfigurationImpl) axisConfig).setPhasesinfo(phasesinfo);
         builder.populateConfig();
         if (isRepositoryExist) {
             hotDeployment = false;
@@ -259,7 +260,6 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         try {
             ((AxisConfigurationImpl) axisConfig).setRepository(axis2repository);
-            ((AxisConfigurationImpl) axisConfig).setPhasesinfo(phasesinfo);
             engageModules();
         } catch (AxisFault axisFault) {
             log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VAL_FAILED, axisFault.getMessage()));
