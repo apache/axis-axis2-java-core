@@ -85,6 +85,11 @@ public class CommonsHTTPTransportSender
 
     protected Log log = LogFactory.getLog(getClass().getName());
 
+    /**
+     * {@value}
+     */
+    private static final String ANONYMOUS = "anonymous";
+
     public CommonsHTTPTransportSender() {
     } //default
 
@@ -462,7 +467,7 @@ public class CommonsHTTPTransportSender
         //HostConfiguration hostConfig = getHostConfiguration(msgContext, url);
 
         //Get the timeout values set in the runtime
-        getTimoutValues(msgContext);
+        getTimeoutValues(msgContext);
 
         // SO_TIMEOUT -- timeout for blocking reads
         httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
@@ -472,7 +477,7 @@ public class CommonsHTTPTransportSender
         //todo giving proxy and NTLM support
 
         PostMethod postMethod = new PostMethod(url.toString());
-        postMethod.setPath(url.getFile());
+        postMethod.setPath(url.getPath());
 
         msgContext.setProperty(HTTP_METHOD, postMethod);
 
@@ -563,7 +568,7 @@ public class CommonsHTTPTransportSender
      *
      * @param msgContext
      */
-    private void getTimoutValues(MessageContext msgContext) {
+    private void getTimeoutValues(MessageContext msgContext) {
         try {
             // If the SO_TIMEOUT of CONNECTION_TIMEOUT is set by dynamically the
             // override the static config
@@ -622,7 +627,7 @@ public class CommonsHTTPTransportSender
         //this.getHostConfiguration(msgContext, url);
 
         //Get the timeout values set in the runtime
-        getTimoutValues(msgContext);
+        getTimeoutValues(msgContext);
 
         // SO_TIMEOUT -- timeout for blocking reads
         httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
@@ -792,8 +797,8 @@ public class CommonsHTTPTransportSender
 
         }
 
-        if (domain.equals("") || domain == null || domain.equals("anonymous")) {
-            if (usrName.equals("anonymous") && passwd.equals("anonymous")) {
+        if (domain.equals("") || domain == null || domain.equals(ANONYMOUS)) {
+            if (usrName.equals(ANONYMOUS) && passwd.equals(ANONYMOUS)) {
                 proxyCred = new UsernamePasswordCredentials("", "");
             } else {
                 proxyCred = new UsernamePasswordCredentials(usrName,
@@ -815,7 +820,7 @@ public class CommonsHTTPTransportSender
             } else {
                 throw new AxisFault("Proxy Name is not valied");
             }
-            if (proxyProperties.getUserName().equals("anonymous") || proxyProperties.getPassWord().equals("anonymous")) {
+            if (proxyProperties.getUserName().equals(ANONYMOUS) || proxyProperties.getPassWord().equals(ANONYMOUS)) {
                 proxyCred = new UsernamePasswordCredentials("", "");
             } else {
                 usrName = proxyProperties.getUserName();
