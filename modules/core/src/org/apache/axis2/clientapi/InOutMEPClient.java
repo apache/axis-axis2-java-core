@@ -45,7 +45,9 @@ import javax.xml.namespace.QName;
  * MessageContext and the more convients API is provided by the Call
  */
 public class InOutMEPClient extends MEPClient {
-    protected long timeOutInMilliSeconds = 2000;
+
+
+    protected long timeOutInMilliSeconds = DEFAULT_TIMEOUT_MILLISECONDS;
 
     AxisEngine engine = null;
 
@@ -75,6 +77,12 @@ public class InOutMEPClient extends MEPClient {
      * This is used for the Receiving the Async Messages
      */
     protected CallbackReceiver callbackReceiver;
+
+    /**
+     * timeout in ms unless stated
+     * {@value}
+     */
+    private static final int DEFAULT_TIMEOUT_MILLISECONDS = 2000;
 
     /**
      * This accepts a ServiceContext, and the ServiceContext should have all the parents set in to it right
@@ -434,4 +442,13 @@ public class InOutMEPClient extends MEPClient {
         this.timeOutInMilliSeconds = timeOutInMilliSeconds;
     }
 
+    /**
+     * This will be used in invoke blocking scenario. Client will wait the amount of time specified here
+     * and if there is no response, call will timeout. This should be given in multiples of 100 and defaults to 2000.
+     *
+     * @return timeOutInMilliSeconds
+     */
+    public long getTimeOutInMilliSeconds() {
+        return timeOutInMilliSeconds;
+    }
 }
