@@ -28,7 +28,6 @@ import javax.xml.stream.XMLStreamWriter;
 public class SOAP11SerializerTest extends OMTestCase {
 
     private Log log = LogFactory.getLog(getClass());
-    private XMLStreamWriter output;
 
     public SOAP11SerializerTest(String testName) {
         super(testName);
@@ -43,20 +42,15 @@ public class SOAP11SerializerTest extends OMTestCase {
         soapEnvelope =
                 (SOAPEnvelope) getOMBuilder("soap/soap11/soap11fault.xml")
                 .getDocumentElement();
-        output = XMLOutputFactory.newInstance().
-                createXMLStreamWriter(System.out);
     }
 
-    public void testSerialize() {
-        try {
-            soapEnvelope.serialize(output);
+    public void testSerialize() throws Exception {
+        XMLStreamWriter output = XMLOutputFactory.newInstance().
+                createXMLStreamWriter(System.out);
+        soapEnvelope.serialize(output);
 
-//            System.out.println("");
-//            System.out.println("=======================");
-            soapEnvelope.serializeAndConsume(output);
-        } catch (XMLStreamException e) {
-            log.info(e.getMessage());
-        }
-
+        output = XMLOutputFactory.newInstance().
+                createXMLStreamWriter(System.out);
+        soapEnvelope.serializeAndConsume(output);
     }
 }

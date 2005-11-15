@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamConstants;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -248,7 +249,10 @@ public class OMElementImpl extends OMNodeImpl
      */
     public OMNode getNextOMSibling() throws OMException {
         while (!done) {
-            builder.next();
+            int token = builder.next();
+            if(token == XMLStreamConstants.END_DOCUMENT) {
+                throw new OMException();
+            }
         }
         return super.getNextOMSibling();
     }

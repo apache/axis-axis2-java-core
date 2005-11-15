@@ -91,6 +91,8 @@ public class OMSerializerTest extends AbstractTestCase {
            fail();
         } catch (XMLStreamException e) {
            assertTrue(true);
+        } catch (Exception e) {
+           assertTrue(true);
         }
     }
 
