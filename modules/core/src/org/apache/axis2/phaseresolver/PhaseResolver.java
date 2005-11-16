@@ -363,15 +363,15 @@ public class PhaseResolver {
         enageToGlobalChain(module);
         Iterator servicegroups = axisConfig.getServiceGroups();
         while (servicegroups.hasNext()) {
-            AxisServiceGroup sericeGroup = (AxisServiceGroup) servicegroups.next();
-            Iterator services = sericeGroup.getServices();
+            AxisServiceGroup serviceGroup = (AxisServiceGroup) servicegroups.next();
+            Iterator services = serviceGroup.getServices();
             while (services.hasNext()) {
                 AxisService axisService = (AxisService) services.next();
                 axisService.addModuleOperations(module, axisConfig);
                 engageModuleToServiceFromGlobal(axisService, module);
                 axisService.addToEngagModuleList(module);
             }
-            sericeGroup.addModule(module.getName());
+            serviceGroup.addModule(module.getName());
         }
     }
 
