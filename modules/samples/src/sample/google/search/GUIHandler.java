@@ -164,10 +164,10 @@ public class GUIHandler {
 
         SpringLayout.Constraints textBoxConstraints = layout.getConstraints(
                 textBox);
-        xSpring = Spring.constant(0); // Spring we値l use for X
-        ySpring = Spring.constant(0); // Spring we値l use for Y
-        wSpring = Spring.constant(frame.getBounds().width - 8); // Spring we値l use for width
-        hSpring = Spring.constant(30); // Strut we値l use for height
+        xSpring = Spring.constant(0); // Spring we'll use for X
+        ySpring = Spring.constant(0); // Spring we'll use for Y
+        wSpring = Spring.constant(frame.getBounds().width - 8); // Spring we'll use for width
+        hSpring = Spring.constant(30); // Strut we?ll use for height
         textBoxConstraints.setWidth(wSpring); // Set component width constraint
         textBoxConstraints.setHeight(hSpring);
         textBoxConstraints.setX(xSpring); // Set the WEST edge constraint
@@ -175,10 +175,10 @@ public class GUIHandler {
 
         SpringLayout.Constraints scrollConstraints = layout.getConstraints(
                 scroll);
-        xSpring = Spring.constant(0); // Spring we値l use for X
-        ySpring = Spring.constant(30); // Spring we値l use for Y
-        wSpring = Spring.constant(frame.getBounds().width - 8); // Spring we値l use for width
-        hSpring = Spring.constant(450); // Strut we値l use for height
+        xSpring = Spring.constant(0); // Spring we'll use for X
+        ySpring = Spring.constant(30); // Spring we'll use for Y
+        wSpring = Spring.constant(frame.getBounds().width - 8); // Spring we'll use for width
+        hSpring = Spring.constant(450); // Strut we'll use for height
         scrollConstraints.setWidth(wSpring); // Set component width constraint
         scrollConstraints.setHeight(hSpring);
         scrollConstraints.setX(xSpring); // Set the WEST edge constraint
@@ -186,10 +186,10 @@ public class GUIHandler {
 
         SpringLayout.Constraints backBtnConstraints = layout.getConstraints(
                 backButton);
-        xSpring = Spring.constant(50); // Spring we値l use for X
-        ySpring = Spring.constant(480); // Spring we値l use for Y
-        wSpring = Spring.constant(200); // Spring we値l use for width
-        hSpring = Spring.constant(30); // Strut we値l use for height
+        xSpring = Spring.constant(50); // Spring we'll use for X
+        ySpring = Spring.constant(480); // Spring we'll use for Y
+        wSpring = Spring.constant(200); // Spring we'll use for width
+        hSpring = Spring.constant(30); // Strut we'll use for height
         backBtnConstraints.setWidth(wSpring); // Set component width constraint
         backBtnConstraints.setHeight(hSpring);
         backBtnConstraints.setX(xSpring); // Set the WEST edge constraint
@@ -197,10 +197,10 @@ public class GUIHandler {
 
         SpringLayout.Constraints nextBtnConstraints = layout.getConstraints(
                 nextButton);
-        xSpring = Spring.constant(250); // Spring we値l use for X
-        ySpring = Spring.constant(480); // Spring we値l use for Y
-        wSpring = Spring.constant(200); // Spring we値l use for width
-        hSpring = Spring.constant(30); // Strut we値l use for height
+        xSpring = Spring.constant(250); // Spring we?ll use for X
+        ySpring = Spring.constant(480); // Spring we?ll use for Y
+        wSpring = Spring.constant(200); // Spring we?ll use for width
+        hSpring = Spring.constant(30); // Strut we?ll use for height
         nextBtnConstraints.setWidth(wSpring); // Set component width constraint
         nextBtnConstraints.setHeight(hSpring);
         nextBtnConstraints.setX(xSpring); // Set the WEST edge constraint

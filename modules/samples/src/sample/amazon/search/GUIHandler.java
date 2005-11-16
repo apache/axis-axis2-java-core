@@ -113,10 +113,10 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
 
         SpringLayout.Constraints textBoxConstraints = layout.getConstraints(
                 textBox);
-        xSpring = Spring.constant(0); // Spring we値l use for X
-        ySpring = Spring.constant(0); // Spring we値l use for Y
-        wSpring = Spring.constant(frame.getBounds().width); // Spring we値l use for width
-        hSpring = Spring.constant(30); // Strut we値l use for height
+        xSpring = Spring.constant(0); // Spring we'll use for X
+        ySpring = Spring.constant(0); // Spring we'll use for Y
+        wSpring = Spring.constant(frame.getBounds().width); // Spring we'll use for width
+        hSpring = Spring.constant(30); // Strut we'll use for height
         textBoxConstraints.setWidth(wSpring); // Set component width constraint
         textBoxConstraints.setHeight(hSpring);
         textBoxConstraints.setX(xSpring); // Set the WEST edge constraint
@@ -124,10 +124,10 @@ public class GUIHandler implements KeyListener, ActionListener, Runnable {
 
         SpringLayout.Constraints scrollConstraints = layout.getConstraints(
                 scroll);
-        xSpring = Spring.constant(0); // Spring we値l use for X
-        ySpring = Spring.constant(30); // Spring we値l use for Y
-        wSpring = Spring.constant(frame.getBounds().width); // Spring we値l use for width
-        hSpring = Spring.constant(500); // Strut we値l use for height
+        xSpring = Spring.constant(0); // Spring we'll use for X
+        ySpring = Spring.constant(30); // Spring we'll use for Y
+        wSpring = Spring.constant(frame.getBounds().width); // Spring we'll use for width
+        hSpring = Spring.constant(500); // Strut we'll use for height
         scrollConstraints.setWidth(wSpring); // Set component width constraint
         scrollConstraints.setHeight(hSpring);
         scrollConstraints.setX(xSpring); // Set the WEST edge constraint
