@@ -578,7 +578,7 @@ public class CommonsHTTPTransportSender
                     .getProperty(HTTPConstants.CONNECTION_TIMEOUT);
 
             if (tempSoTimeoutProperty != null) {
-                connectionTimeout = tempSoTimeoutProperty.intValue();
+                soTimeout = tempSoTimeoutProperty.intValue();
             }
 
             if (tempConnTimeoutProperty != null) {
