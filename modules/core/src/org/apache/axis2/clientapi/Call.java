@@ -246,7 +246,7 @@ public class Call extends InOutMEPClient {
      * @param value
      */
     public void set(String key, Object value) {
-        serviceContext.getConfigurationContext().setProperty(key, value);
+        serviceContext.setProperty(key, value);
     }
 
     /**
