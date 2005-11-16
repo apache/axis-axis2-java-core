@@ -104,15 +104,6 @@ public abstract class Stub {
     	this.modules.add(moduleName);
     }
     
-//    /**
-//     *
-//     * @param doRest
-//     */
-//    public void setDoREST(boolean doRest) {
-//        this.doRest = doRest;
-//    }
-
-
     /**
      * If _maintainSession is set to True all the calls will use the same
      * ServiceContext and the user can Share information through that

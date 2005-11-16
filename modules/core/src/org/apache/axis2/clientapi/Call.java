@@ -179,7 +179,6 @@ public class Call extends InOutMEPClient {
             //if the operation is not alrady define we will copy the
             //crated Phases from the templete operation to the this Operation
 
-//            opDesc = new AxisOperation(new QName(axisOp));
             opDesc = AxisOperationFactory.getAxisOperation(mepURL);
             opDesc.setName(new QName(axisOp));
             opDesc.setRemainingPhasesInFlow(
@@ -209,7 +208,6 @@ public class Call extends InOutMEPClient {
             ConfigurationContextFactory efac =
                     new ConfigurationContextFactory();
             sysContext = efac.buildClientConfigurationContext(clientHome);
-            // ListenerManager.configurationContext = sysContext;
         } else {
             sysContext = ListenerManager.configurationContext;
         }
