@@ -67,9 +67,8 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
             }
             QName serviceName = new QName(address);
 
-            String filePart = toEPR.getAddress();
             String[] values = Utils.parseRequestURLForServiceAndOperation(
-                    filePart);
+                    address);
             if (values[0] != null) {
                 serviceName = new QName(values[0]);
                 AxisConfiguration registry =

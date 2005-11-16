@@ -155,26 +155,32 @@ public class Utils {
     }
 
 
+    /**
+     * Break a full path into pieces
+     * @param path
+     * @return an array where element [0] always contains the service, and element 1, if not null, contains
+     * the path after the first element. all ? parameters are discarded.
+     */
     public static String[] parseRequestURLForServiceAndOperation(
-            String filePart) {
+            String path) {
         String[] values = new String[2];
+        //TODO. This is kind of brittle. Any service with the name /services would cause fun.
+        int index = path.lastIndexOf(Constants.REQUEST_URL_PREFIX);
+        String service = null;
 
-        int index = filePart.lastIndexOf(Constants.REQUEST_URL_PREFIX);
-        String serviceStr = null;
         if (-1 != index) {
-            serviceStr =
-                    filePart.substring(
-                            index + Constants.REQUEST_URL_PREFIX.length() + 1);
-            if ((index = serviceStr.indexOf('/')) > 0) {
-                values[0] = serviceStr.substring(0, index);
-                int lastIndex = serviceStr.indexOf('?');
-                if (lastIndex >= 0) {
-                    values[1] = serviceStr.substring(index + 1, lastIndex);
-                } else {
-                    values[1] = serviceStr.substring(index + 1);
-                }
+            int serviceStart = index + Constants.REQUEST_URL_PREFIX.length();
+            service = path.substring(serviceStart + 1);
+            int queryIndex = service.indexOf('?');
+            if(queryIndex>0) {
+                service = service.substring(0,queryIndex);
+            }
+            int operationIndex= service.indexOf('/');
+            if (operationIndex > 0) {
+                values[0] = service.substring(0, operationIndex);
+                values[1] = service.substring(operationIndex + 1);
             } else {
-                values[0] = serviceStr;
+                values[0] = service;
             }
         }
         return values;
