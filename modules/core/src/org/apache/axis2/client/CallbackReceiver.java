@@ -1,4 +1,4 @@
-package org.apache.axis2.clientapi;
+package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;

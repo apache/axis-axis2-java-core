@@ -21,8 +21,8 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.clientapi.AsyncResult;
-import org.apache.axis2.clientapi.Callback;
+import org.apache.axis2.client.AsyncResult;
+import org.apache.axis2.client.Callback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
@@ -118,7 +118,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
         value.setText("Isaac Assimov, the foundation Sega");
         method.addChild(value);
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 serviceContext);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
 

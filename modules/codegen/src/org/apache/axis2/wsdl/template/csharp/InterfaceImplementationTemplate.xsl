@@ -13,7 +13,7 @@
     /// This is meant to be used with the IKVM converted Axis libraries
     ///&lt;/summary&gt;
 
-    public class <xsl:value-of select="@name"/> :org.apache.axis2.clientapi.Stub,<xsl:value-of select="$interfaceName"/>{
+    public class <xsl:value-of select="@name"/> :org.apache.axis2.client.Stub,<xsl:value-of select="$interfaceName"/>{
 
         private static org.apache.axis2.description.AxisGlobal  _axisGlobal = null;
         private static org.apache.axis2.engine.AxisSystemImpl   _axisSystem = null;
@@ -53,7 +53,7 @@
         public  <xsl:if test="$outputtype=''">void</xsl:if><xsl:if test="$outputtype!=''"><xsl:value-of select="$outputtype"/></xsl:if><xsl:text> </xsl:text><xsl:value-of select="@name"/>(<xsl:if test="$inputtype!=''"><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>)
         {
 
-		    org.apache.axis2.clientapi.Call _call = new org.apache.axis2.clientapi.Call(_systemContext.getServiceContext("<xsl:value-of select="generate-id()"/>"));<!-- this needs to change -->
+		    org.apache.axis2.client.Call _call = new org.apache.axis2.client.Call(_systemContext.getServiceContext("<xsl:value-of select="generate-id()"/>"));<!-- this needs to change -->
  		    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
              <xsl:if test="$outputtype=''">
              _call.invokeBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
@@ -75,7 +75,7 @@
         public void start<xsl:value-of select="@name"/>(<xsl:if test="$inputtype!=''"><xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="$inputparam"></xsl:value-of></xsl:if>)
         {
                 // we know its call because we have the mep at the time of the stub generation.
-		        org.apache.axis2.clientapi.Call _call = new org.apache.axis2.clientapi.Call(_systemContext.getServiceContext("<xsl:value-of select="generate-id()"/>"));<!-- this needs to change -->
+		        org.apache.axis2.client.Call _call = new org.apache.axis2.client.Call(_systemContext.getServiceContext("<xsl:value-of select="generate-id()"/>"));<!-- this needs to change -->
  		        org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
 		        _call.invokeNonBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext, new CallBack<xsl:value-of select="generate-id()"/>());
             <!-- this needs to be changed -->
@@ -84,9 +84,9 @@
         ///&lt;summary&gt;
         ///  C# does not support anoynmous inner classes
         ///&lt;/summary&gt;
-        private class CallBack<xsl:value-of select="generate-id()"/>:org.apache.axis2.clientapi.CallBack
+        private class CallBack<xsl:value-of select="generate-id()"/>:org.apache.axis2.client.CallBack
         {
-          public void onComplete(org.apache.axis2.clientapi.AsyncResult result)
+          public void onComplete(org.apache.axis2.client.AsyncResult result)
            {
                     new <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/>().receiveResult<xsl:value-of select="@name"/>(result);
            }

@@ -18,7 +18,7 @@ package org.apache.axis2.rpc;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.clientapi.Call;
+import org.apache.axis2.client.Call;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.databinding.DeserializationContext;
 import org.apache.axis2.databinding.deserializers.SimpleDeserializerFactory;

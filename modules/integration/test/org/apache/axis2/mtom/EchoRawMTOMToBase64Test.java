@@ -21,8 +21,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.ByteArrayDataSource;
-import org.apache.axis2.clientapi.AsyncResult;
-import org.apache.axis2.clientapi.Callback;
+import org.apache.axis2.client.AsyncResult;
+import org.apache.axis2.client.Callback;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
@@ -98,8 +98,8 @@ public class EchoRawMTOMToBase64Test extends TestCase {
     public void testEchoXMLASync() throws Exception {
         OMElement payload = createPayload();
 
-        org.apache.axis2.clientapi.Call call =
-                new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
+        org.apache.axis2.client.Call call =
+                new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
 
 
         call.setTo(targetEPR);
@@ -143,8 +143,8 @@ public class EchoRawMTOMToBase64Test extends TestCase {
 
             OMElement payload = createPayload();
 
-            org.apache.axis2.clientapi.Call call =
-                    new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
+            org.apache.axis2.client.Call call =
+                    new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
 
             call.setTo(targetEPR);
             call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);

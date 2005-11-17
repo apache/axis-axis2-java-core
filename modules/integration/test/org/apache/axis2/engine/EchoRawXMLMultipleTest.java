@@ -18,8 +18,8 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.clientapi.AsyncResult;
-import org.apache.axis2.clientapi.Callback;
+import org.apache.axis2.client.AsyncResult;
+import org.apache.axis2.client.Callback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
@@ -77,8 +77,8 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
         OMElement payload = TestingUtils.createDummyOMElement();
 
         for (int i = 0; i < 5; i++) {
-            org.apache.axis2.clientapi.Call call =
-                    new org.apache.axis2.clientapi.Call(
+            org.apache.axis2.client.Call call =
+                    new org.apache.axis2.client.Call(
                             "target/test-resources/intregrationRepo");
 
             call.setTo(targetEPR);
@@ -123,8 +123,8 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
         OMElement payload = TestingUtils.createDummyOMElement();
 
         for (int i = 0; i < 5; i++) {
-            org.apache.axis2.clientapi.Call call =
-                    new org.apache.axis2.clientapi.Call(
+            org.apache.axis2.client.Call call =
+                    new org.apache.axis2.client.Call(
                             "target/test-resources/intregrationRepo");
 
             call.setTo(targetEPR);
@@ -170,8 +170,8 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
 
         OMElement payload = TestingUtils.createDummyOMElement();
         for (int i = 0; i < 5; i++) {
-            org.apache.axis2.clientapi.Call call =
-                    new org.apache.axis2.clientapi.Call(
+            org.apache.axis2.client.Call call =
+                    new org.apache.axis2.client.Call(
                             "target/test-resources/intregrationRepo");
 
             call.setTo(targetEPR);
@@ -191,8 +191,8 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
 
         OMElement payload = TestingUtils.createDummyOMElement();
         for (int i = 0; i < 5; i++) {
-            org.apache.axis2.clientapi.Call call =
-                    new org.apache.axis2.clientapi.Call(
+            org.apache.axis2.client.Call call =
+                    new org.apache.axis2.client.Call(
                             "target/test-resources/intregrationRepo");
 
             call.setTo(targetEPR);

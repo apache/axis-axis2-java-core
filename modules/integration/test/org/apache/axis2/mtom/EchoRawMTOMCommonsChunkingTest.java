@@ -97,7 +97,7 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase implements TestCons
 
         OMElement payload = createEnvelope();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 Constants.TESTING_PATH + "commons-http-enabledRepository");
         call.setTo(targetEPR);
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);

@@ -19,7 +19,7 @@ package test.interop.sun.round4.simple;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.clientapi.Call;
+import org.apache.axis2.client.Call;
 import test.interop.sun.round4.simple.util.SunGroupHClientUtil;
 import org.apache.axis2.om.OMElement;
 

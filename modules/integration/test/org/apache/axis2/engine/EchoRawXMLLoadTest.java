@@ -74,7 +74,7 @@ public class EchoRawXMLLoadTest extends TestCase implements TestConstants {
 //    public void testEchoXMLASync() throws Exception {
 //                OMElement payload = createEnvelope();
 //
-//        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call();
+//        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call();
 //
 //        call.setTo(targetEPR);
 //        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
@@ -114,8 +114,8 @@ public class EchoRawXMLLoadTest extends TestCase implements TestConstants {
 
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        org.apache.axis2.clientapi.Call call =
-                new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
+        org.apache.axis2.client.Call call =
+                new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
 
         call.setTo(targetEPR);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,

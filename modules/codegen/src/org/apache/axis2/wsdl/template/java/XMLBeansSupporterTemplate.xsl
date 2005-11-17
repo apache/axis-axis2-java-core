@@ -7,7 +7,7 @@
         *  Auto generated supporter class for XML beans by the Axis code generator
         */
 
-        public class <xsl:value-of select="@name"/> extends org.apache.axis2.clientapi.AbstractCallbackSupporter{
+        public class <xsl:value-of select="@name"/> extends org.apache.axis2.client.AbstractCallbackSupporter{
         <xsl:variable name="base64"><xsl:value-of select="base64Elements/name"/></xsl:variable>
         <xsl:if test="$base64">
             private static javax.xml.namespace.QName[] qNameArray = {
@@ -21,7 +21,7 @@
             <xsl:if test="@type!=''">
         public  static org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
         org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
-        (org.apache.axis2.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.clientapi.StreamWrapper(param.newXMLStreamReader())) ;
+        (org.apache.axis2.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.client.StreamWrapper(param.newXMLStreamReader())) ;
         org.apache.axis2.om.OMElement documentElement = builder.getDocumentElement();
         ///////Building the element is needed to avoid certain stream errors!
         documentElement.build();

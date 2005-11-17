@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.clientapi;
+package org.apache.axis2.client;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;

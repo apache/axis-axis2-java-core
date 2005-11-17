@@ -21,8 +21,8 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.clientapi.AsyncResult;
-import org.apache.axis2.clientapi.Callback;
+import org.apache.axis2.client.AsyncResult;
+import org.apache.axis2.client.Callback;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
@@ -68,7 +68,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
     public void testEchoXMLASync() throws Exception {
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 Constants.TESTING_PATH + "commons-http-enabledRepository");
 
 
@@ -113,7 +113,7 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 Constants.TESTING_PATH + "commons-http-enabledRepository");
 
         call.setTo(targetEPR);

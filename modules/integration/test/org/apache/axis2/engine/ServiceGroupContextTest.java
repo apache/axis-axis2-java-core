@@ -78,7 +78,7 @@ public class ServiceGroupContextTest extends TestCase {
 
         SOAPEnvelope payload = fac.getDefaultEnvelope();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
+        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
 
         call.setTo(targetEPR);
         call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);

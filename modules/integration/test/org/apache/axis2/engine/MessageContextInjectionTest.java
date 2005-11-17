@@ -18,7 +18,7 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
-import org.apache.axis2.clientapi.MessageSender;
+import org.apache.axis2.client.MessageSender;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;

@@ -21,8 +21,8 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.clientapi.AsyncResult;
-import org.apache.axis2.clientapi.Callback;
+import org.apache.axis2.client.AsyncResult;
+import org.apache.axis2.client.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -109,7 +109,7 @@ public class TCPEchoRawXMLTest extends TestCase {
     public void testEchoXMLASync() throws Exception {
         OMElement payload = createPayload();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 serviceContext);
 
         call.setTo(targetEPR);
@@ -156,7 +156,7 @@ public class TCPEchoRawXMLTest extends TestCase {
 
         OMElement payload = createPayload();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 serviceContext);
 
         call.setTo(targetEPR);
@@ -187,7 +187,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         value.setText("Isaac Assimov, the foundation Sega");
         payloadElement.addChild(value);
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 serviceContext);
         call.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
@@ -209,7 +209,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         ConfigurationContext configContext= confac.buildClientConfigurationContext(Constants.TESTING_REPOSITORY);
 
         AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(Constants.TESTING_REPOSITORY);
+        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(Constants.TESTING_REPOSITORY);
         call.setTo(targetEPR);
 
         call.setWsaAction(operationName.getLocalPart());

@@ -22,8 +22,8 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.clientapi.AsyncResult;
-import org.apache.axis2.clientapi.Callback;
+import org.apache.axis2.client.AsyncResult;
+import org.apache.axis2.client.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -126,7 +126,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
         ServiceContext serviceContext = service.getParent().getServiceGroupContext(configContext).getServiceContext(service.getName().getLocalPart());
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 serviceContext);
 //        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
 

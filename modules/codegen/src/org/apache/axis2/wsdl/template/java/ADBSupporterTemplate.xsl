@@ -7,7 +7,7 @@
         *  Auto generated supporter class for Axis2 own databinding by the Axis code generator
         */
 
-        public class <xsl:value-of select="@name"/> extends org.apache.axis2.clientapi.AbstractCallbackSupporter{
+        public class <xsl:value-of select="@name"/> extends org.apache.axis2.client.AbstractCallbackSupporter{
         <xsl:variable name="base64"><xsl:value-of select="base64Elements/name"/></xsl:variable>
         <xsl:if test="$base64">
             private static javax.xml.namespace.QName[] qNameArray = {

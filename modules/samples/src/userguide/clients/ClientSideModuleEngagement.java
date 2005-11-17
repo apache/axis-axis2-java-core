@@ -15,7 +15,7 @@ package userguide.clients;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.apache.axis2.clientapi.Call;
+import org.apache.axis2.client.Call;
 
 import javax.xml.namespace.QName;
 import java.io.File;

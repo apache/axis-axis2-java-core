@@ -122,7 +122,7 @@
         private class <xsl:value-of select="$tempCallbackName"/>  extends <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/>{
             public <xsl:value-of select="$tempCallbackName"/>(){ super(null);}
 
-            public void receiveResult<xsl:value-of select="@name"/>(org.apache.axis2.clientapi.AsyncResult result) {
+            public void receiveResult<xsl:value-of select="@name"/>(org.apache.axis2.client.AsyncResult result) {
 			    assertNotNull(result.getResponseEnvelope().getBody().getFirstChild());
             }
 

@@ -81,8 +81,8 @@ public class GroovyServiceTest extends TestCase {
         //OMElement payload = createPayLoad();
         OMElement payload = getpayLoad();
 
-        org.apache.axis2.clientapi.Call call =
-                new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
+        org.apache.axis2.client.Call call =
+                new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
 
         call.setTo(targetEPR);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,

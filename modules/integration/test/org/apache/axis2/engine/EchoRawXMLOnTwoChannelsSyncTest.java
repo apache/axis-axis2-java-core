@@ -84,7 +84,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase implements TestCon
         value.setText("Isaac Assimov, the foundation Sega");
         method.addChild(value);
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 serviceContext);
         call.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));

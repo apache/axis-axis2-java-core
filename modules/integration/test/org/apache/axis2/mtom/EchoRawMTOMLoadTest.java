@@ -100,8 +100,8 @@ public class EchoRawMTOMLoadTest extends TestCase implements TestConstants {
 
             OMElement payload = createEnvelope();
 
-            org.apache.axis2.clientapi.Call call =
-                    new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
+            org.apache.axis2.client.Call call =
+                    new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
             call.setTo(targetEPR);
             call.set(Constants.Configuration.ENABLE_MTOM,
                     Constants.VALUE_TRUE);

@@ -21,8 +21,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.attachments.utils.ImageDataSource;
 import org.apache.axis2.attachments.utils.ImageIO;
-import org.apache.axis2.clientapi.AsyncResult;
-import org.apache.axis2.clientapi.Callback;
+import org.apache.axis2.client.AsyncResult;
+import org.apache.axis2.client.Callback;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
@@ -102,7 +102,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
     public void testEchoXMLASync() throws Exception {
         OMElement payload = createEnvelope();
 
-        org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(
+        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 "target/test-resources/intregrationRepo" );
 
         call.setTo(targetEPR);
@@ -148,8 +148,8 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
 
         OMElement payload = createEnvelope();
 
-        org.apache.axis2.clientapi.Call call =
-                new org.apache.axis2.clientapi.Call("target/test-resources/intregrationRepo");
+        org.apache.axis2.client.Call call =
+                new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
         call.setTo(targetEPR);
         call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
