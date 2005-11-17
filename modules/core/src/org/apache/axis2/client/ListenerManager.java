@@ -55,7 +55,7 @@ public class ListenerManager {
         }
 
         ListenerManager.configurationContext = configurationContext;
-        TransportListnerState tsState = (TransportListnerState) listeners.get(
+        TransportListenerState tsState = (TransportListenerState) listeners.get(
                 transport);
         if (tsState == null) {
             //means this transport not yet started, start the transport
@@ -64,14 +64,14 @@ public class ListenerManager {
                             new QName(transport));
             TransportListener listener = tranportIn.getReceiver();
             listener.start();
-            tsState = new TransportListnerState(listener);
+            tsState = new TransportListenerState(listener);
             listeners.put(transport, tsState);
         }
         tsState.waitingCalls++;
     }
 
     public static synchronized final void stop(String transport) throws AxisFault {
-        TransportListnerState tsState = (TransportListnerState) listeners.get(
+        TransportListenerState tsState = (TransportListenerState) listeners.get(
                 transport);
         if (tsState != null) {
             tsState.waitingCalls--;
@@ -92,7 +92,7 @@ public class ListenerManager {
     public static EndpointReference replyToEPR(String serviceName,
                                                String transport)
             throws AxisFault {
-        TransportListnerState tsState = (TransportListnerState) listeners.get(
+        TransportListenerState tsState = (TransportListenerState) listeners.get(
                 transport);
         if (tsState != null) {
             return tsState.listener.getReplyToEPR(serviceName);
@@ -109,8 +109,8 @@ public class ListenerManager {
     /**
      * Class keep information about the listener for a given transport
      */
-    public static class TransportListnerState {
-        public TransportListnerState(TransportListener listener) {
+    public static class TransportListenerState {
+        public TransportListenerState(TransportListener listener) {
             this.listener = listener;
         }
 
