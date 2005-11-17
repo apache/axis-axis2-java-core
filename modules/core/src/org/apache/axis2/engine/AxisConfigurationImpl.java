@@ -17,7 +17,6 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.InstanceDispatcher;
 import org.apache.axis2.util.HostConfiguration;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
@@ -172,7 +171,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         DispatchingChecker dispatchingChecker = new DispatchingChecker();
         dispatchingChecker.getHandlerDesc().setParent(this);
 
-        InstanceDispatcher instanceDispatcher = new InstanceDispatcher();
+        InstanceDispatcher instanceDispatcher = new org.apache.axis2.engine.InstanceDispatcher();
         instanceDispatcher.getHandlerDesc().setParent(this);
 
         postDispatch.addHandler(dispatchingChecker,0);
@@ -192,7 +191,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         DispatchingChecker dispatchingChecker = new DispatchingChecker();
         dispatchingChecker.getHandlerDesc().setParent(this);
 
-        InstanceDispatcher instanceDispatcher = new InstanceDispatcher();
+        org.apache.axis2.engine.InstanceDispatcher instanceDispatcher = new InstanceDispatcher();
         instanceDispatcher.getHandlerDesc().setParent(this);
 
         postDispatch.addHandler(dispatchingChecker);

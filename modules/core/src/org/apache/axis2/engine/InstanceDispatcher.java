@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2;
+package org.apache.axis2.engine;
 
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -22,6 +22,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.AxisFault;
 
 public class InstanceDispatcher extends AbstractHandler {
     /**
@@ -36,7 +37,7 @@ public class InstanceDispatcher extends AbstractHandler {
      * Post Condition : All the Contexts must be populated.
      *
      * @param msgContext
-     * @throws AxisFault
+     * @throws org.apache.axis2.AxisFault
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
 
