@@ -22,7 +22,7 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
-import org.apache.axis2.addressing.miheaders.RelatesTo;
+import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.handlers.AbstractHandler;

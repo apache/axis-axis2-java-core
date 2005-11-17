@@ -19,7 +19,6 @@ package org.apache.axis2.clientapi;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
-import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
@@ -313,7 +312,7 @@ public abstract class MEPClient {
     /**
      * @param relatesTo
      */
-    public void setRelatesTo(RelatesTo relatesTo) {
+    public void setRelatesTo(org.apache.axis2.addressing.RelatesTo relatesTo) {
         messageInformationHeaders.setRelatesTo(relatesTo);
     }
 

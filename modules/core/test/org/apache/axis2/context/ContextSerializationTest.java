@@ -18,7 +18,6 @@ package org.apache.axis2.context;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -98,7 +97,7 @@ public class ContextSerializationTest extends TestCase {
         MessageContext outMessage = new MessageContext(configurationContext);
         inMessage.setMessageID(MSG1_ID);
         outMessage.setMessageID(MSG2_ID);
-        outMessage.setRelatesTo(new RelatesTo (MSG1_ID));
+        outMessage.setRelatesTo(new org.apache.axis2.addressing.RelatesTo (MSG1_ID));
         inMessage.setServiceGroupContextId(SERVICE_GROUP_CONTEXT_ID);
         outMessage.setServiceGroupContextId(SERVICE_GROUP_CONTEXT_ID);
         inMessage.setServiceGroupContext(serviceGroupContext);

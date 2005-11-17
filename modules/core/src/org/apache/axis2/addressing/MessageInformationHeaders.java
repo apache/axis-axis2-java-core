@@ -15,7 +15,6 @@
  */
 package org.apache.axis2.addressing;
 
-import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPHeader;
 
@@ -207,7 +206,7 @@ public class MessageInformationHeaders implements Serializable {
      *
      * @return
      */
-    public RelatesTo getRelatesTo() {
+    public org.apache.axis2.addressing.RelatesTo getRelatesTo() {
 
         return relatesTo;
     }
@@ -217,7 +216,7 @@ public class MessageInformationHeaders implements Serializable {
      *
      * @param relatesTo
      */
-    public void setRelatesTo(RelatesTo relatesTo) {
+    public void setRelatesTo(org.apache.axis2.addressing.RelatesTo relatesTo) {
 
         this.relatesTo = relatesTo;
     }

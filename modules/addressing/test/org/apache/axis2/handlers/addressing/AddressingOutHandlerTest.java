@@ -22,7 +22,6 @@ import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.ServiceName;
-import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.util.TestUtil;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -132,7 +131,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         mIHeaders.setMessageId("123456-7890");
         mIHeaders.setAction("http://www.actions.org/action");
 
-        RelatesTo relatesTo = new RelatesTo(
+        org.apache.axis2.addressing.RelatesTo relatesTo = new org.apache.axis2.addressing.RelatesTo(
                 "http://www.relatesTo.org/service/", "TestRelation");
         mIHeaders.setRelatesTo(relatesTo);
 

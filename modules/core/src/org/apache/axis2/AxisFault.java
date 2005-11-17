@@ -31,7 +31,7 @@ import java.rmi.RemoteException;
  * </ol>
  */
 
-public class AxisFault extends RemoteException implements SOAPFaultException{
+public class AxisFault extends RemoteException {
     private String soapFaultCode;
 
     public AxisFault(Throwable arg1) {

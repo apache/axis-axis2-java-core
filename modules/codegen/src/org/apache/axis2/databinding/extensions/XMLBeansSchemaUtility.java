@@ -1,4 +1,4 @@
-package org.apache.axis2.databinding.extensions.XMLBeans;
+package org.apache.axis2.databinding.extensions;
 
 import com.ibm.wsdl.DefinitionImpl;
 import com.ibm.wsdl.InputImpl;

@@ -20,7 +20,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.MessageInformationHeaders;
-import org.apache.axis2.addressing.miheaders.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -69,7 +68,7 @@ public class Utils {
                 oldMessageInfoHeaders.getFaultTo());
         messageInformationHeaders.setFrom(oldMessageInfoHeaders.getTo());
         messageInformationHeaders.setRelatesTo(
-                new RelatesTo(oldMessageInfoHeaders.getMessageId(),
+                new org.apache.axis2.addressing.RelatesTo(oldMessageInfoHeaders.getMessageId(),
                         AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
         messageInformationHeaders.setAction(oldMessageInfoHeaders.getAction());
         newmsgCtx.setMessageInformationHeaders(messageInformationHeaders);

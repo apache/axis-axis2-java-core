@@ -16,10 +16,9 @@
 
 package org.apache.axis2.soap;
 
-import org.apache.axis2.SOAPFaultException;
 import org.apache.axis2.om.OMException;
 
-public class SOAPProcessingException extends OMException implements SOAPFaultException{
+public class SOAPProcessingException extends OMException {
 
     private String soapFaultCode;
 

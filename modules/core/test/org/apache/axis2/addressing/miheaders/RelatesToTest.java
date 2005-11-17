@@ -17,6 +17,7 @@
 package org.apache.axis2.addressing.miheaders;
 
 import junit.framework.TestCase;
+import org.apache.axis2.addressing.RelatesTo;
 
 
 public class RelatesToTest extends TestCase {
@@ -35,7 +36,7 @@ public class RelatesToTest extends TestCase {
     }
 
     public void testGetAddress() {
-        relatesTo = new RelatesTo(address, relationshipType);
+        relatesTo = new org.apache.axis2.addressing.RelatesTo(address, relationshipType);
 
         assertEquals(
                 "RelatesTo address has not been set properly in the constructor",

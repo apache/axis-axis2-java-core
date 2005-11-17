@@ -18,7 +18,7 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.miheaders.RelatesTo;
+import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOutAxisOperation;

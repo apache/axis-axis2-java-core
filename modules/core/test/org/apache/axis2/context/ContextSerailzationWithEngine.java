@@ -2,7 +2,7 @@ package org.apache.axis2.context;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.miheaders.RelatesTo;
+import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;

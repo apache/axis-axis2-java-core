@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.addressing.miheaders;
+package org.apache.axis2.addressing;
 
 import java.io.Serializable;
 

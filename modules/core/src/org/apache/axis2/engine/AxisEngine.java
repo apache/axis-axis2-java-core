@@ -17,7 +17,6 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.SOAPFaultException;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -338,7 +337,7 @@ public class AxisEngine {
             MessageContext context,
             SOAPFault fault,
             Throwable e) {
-        SOAPFaultException soapException = null;
+        SOAPProcessingException soapException = null;
         String soapNamespaceURI = "";
 
         // get the current SOAP version
@@ -354,9 +353,7 @@ public class AxisEngine {
         } else if (e instanceof AxisFault) {
             if (e.getCause() instanceof SOAPProcessingException) {
                 soapException = (SOAPProcessingException) e.getCause();
-            } else {
-                soapException = (SOAPFaultException) e;
-            }
+            } 
         } else {
             // we have recd an instance of just the Exception class
         }
@@ -368,14 +365,16 @@ public class AxisEngine {
             fault.setCode((SOAPFaultCode) faultCode);
         } else if (soapException != null) {
             soapFaultCode = soapException.getFaultCode();
-
-            // defaulting to fault code Sender, if no message is available
-            soapFaultCode =
-                    ("".equals(soapFaultCode) || soapFaultCode == null)
-                            ? getSenderFaultCode(soapNamespaceURI)
-                            : soapFaultCode;
-            fault.getCode().getValue().setText(soapFaultCode);
+        } else if (e instanceof AxisFault) {
+            soapFaultCode = ((AxisFault)e).getFaultCode();
         }
+
+        // defaulting to fault code Sender, if no message is available
+        soapFaultCode =
+                ("".equals(soapFaultCode) || soapFaultCode == null)
+                        ? getSenderFaultCode(soapNamespaceURI)
+                        : soapFaultCode;
+        fault.getCode().getValue().setText(soapFaultCode);
 
         Object faultReason =
                 context.getProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME);
@@ -384,12 +383,14 @@ public class AxisEngine {
             fault.setReason((SOAPFaultReason) faultReason);
         } else if (soapException != null) {
             message = soapException.getMessage();
-
-            // defaulting to reason, unknown, if no reason is available
-            message =
-                    ("".equals(message) || message == null) ? "unknown" : message;
-            fault.getReason().getSOAPText().setText(message);
+        } else if (e instanceof AxisFault) {
+            message = ((AxisFault)e).getMessage();
         }
+
+        // defaulting to reason, unknown, if no reason is available
+        message =
+                ("".equals(message) || message == null) ? "unknown" : message;
+        fault.getReason().getSOAPText().setText(message);
 
         Object faultRole =
                 context.getProperty(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME);
