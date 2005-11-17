@@ -25,6 +25,8 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.TypeInfo;
+import org.w3c.dom.UserDataHandler;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -350,8 +352,19 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
         clone.isSpecified(true);
         return clone;
 	}
-    
-    
+
+	/*
+	 * DOM-Level 3 methods
+	 */
+	public TypeInfo getSchemaTypeInfo() {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public boolean isId() {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}    
     
 
 }

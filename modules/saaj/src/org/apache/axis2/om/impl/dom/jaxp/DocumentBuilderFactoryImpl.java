@@ -27,4 +27,14 @@ public class DocumentBuilderFactoryImpl extends DocumentBuilderFactory{
 	public static DocumentBuilderFactory newInstance() {
 		return new DocumentBuilderFactoryImpl();
 	}
+
+	public void setFeature(String arg0, boolean arg1) throws ParserConfigurationException {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public boolean getFeature(String arg0) throws ParserConfigurationException {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
 }

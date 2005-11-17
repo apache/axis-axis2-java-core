@@ -26,6 +26,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.UserDataHandler;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -472,5 +473,69 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
         omOutput.flush();
     }
 
-	
+	/*
+	 * DOM-Level 3 methods 
+	 */
+
+	public String getBaseURI() {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public short compareDocumentPosition(Node arg0) throws DOMException {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public String getTextContent() throws DOMException {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void setTextContent(String arg0) throws DOMException {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public boolean isSameNode(Node arg0) {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public String lookupPrefix(String arg0) {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public boolean isDefaultNamespace(String arg0) {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public String lookupNamespaceURI(String arg0) {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public boolean isEqualNode(Node arg0) {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public Object getFeature(String arg0, String arg1) {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public Object setUserData(String arg0, Object arg1, UserDataHandler arg2) {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public Object getUserData(String arg0) {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+    
+
 }

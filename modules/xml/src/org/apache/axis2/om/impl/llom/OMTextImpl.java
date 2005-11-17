@@ -204,7 +204,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
             try {
                 InputStream inStream;
                 inStream = this.getInputStream();
-                //int x = inStream.available();
                 byte[] data;
                 StringBuffer text = new StringBuffer();
                 do {
@@ -218,20 +217,6 @@ public class OMTextImpl extends OMNodeImpl implements OMText, OMConstants {
 
                 } while (inStream.available() > 0);
                 
-                //Breakup the base64 encoded text
-                StringBuffer newText = new StringBuffer();
-                
-//                while(72 <= text.length()) {
-//                	newText.append(text.substring(0,Base64.BASE64DEFAULTLENGTH));
-//                	newText.append("\n");
-//                	text = text.delete(0,Base64.BASE64DEFAULTLENGTH);
-//                }
-//                
-//                if(text.length() > 0) {
-//                	newText.append(text.toString());
-//                }
-                
-//                return newText.toString();
                 return text.toString();
             } catch (Exception e) {
                 throw new OMException(e);

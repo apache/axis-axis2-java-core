@@ -26,6 +26,7 @@ import org.apache.axis2.om.impl.dom.util.XMLChar;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
+import org.w3c.dom.DOMConfiguration;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -322,5 +323,79 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
             throw new DOMException(DOMException.INVALID_CHARACTER_ERR, msg);
         }
     }
+    
+    /*
+     * DOM-Level 3 methods 
+     */
+
+	public Node adoptNode(Node arg0) throws DOMException {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public String getDocumentURI() {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public DOMConfiguration getDomConfig() {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public String getInputEncoding() {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public boolean getStrictErrorChecking() {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public String getXmlEncoding() {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public boolean getXmlStandalone() {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public String getXmlVersion() {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void normalizeDocument() {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public Node renameNode(Node arg0, String arg1, String arg2) throws DOMException {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void setDocumentURI(String arg0) {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void setStrictErrorChecking(boolean arg0) {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void setXmlStandalone(boolean arg0) throws DOMException {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void setXmlVersion(String arg0) throws DOMException {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
 
 }

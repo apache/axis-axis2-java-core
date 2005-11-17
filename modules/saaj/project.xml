@@ -143,6 +143,16 @@
             <url>http://dist.codehaus.org/stax/jars/</url>
         </dependency>
 
+        <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>xbean</artifactId>
+            <version>${xbean.version}</version>
+            <type>jar</type>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        
     </dependencies>
 
     <reports/>

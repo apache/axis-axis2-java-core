@@ -34,6 +34,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.TypeInfo;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -858,4 +859,28 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
         ElementHelper helper = new ElementHelper(this);
         return helper.resolveQName(qname);
     }
+    
+	/*
+	 * DOM-Level 3 methods
+	 */
+
+	public TypeInfo getSchemaTypeInfo() {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void setIdAttribute(String arg0, boolean arg1) throws DOMException {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void setIdAttributeNode(Attr arg0, boolean arg1) throws DOMException {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void setIdAttributeNS(String arg0, String arg1, boolean arg2) throws DOMException {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
 }

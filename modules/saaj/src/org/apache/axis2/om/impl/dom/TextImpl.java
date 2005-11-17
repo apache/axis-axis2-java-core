@@ -466,6 +466,25 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
         }
     }
 
+	/*
+	 * DOM-Level 3 methods
+	 */
+    
+	public String getWholeText() {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public boolean isElementContentWhitespace() {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public Text replaceWholeText(String arg0) throws DOMException {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
     
 	
 }

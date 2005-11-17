@@ -43,4 +43,13 @@ public class DOMImplementationImpl implements DOMImplementation {
 		throw new UnsupportedOperationException("TODO");
 	}
 
+	/*
+	 * DOM-Level 3 methods
+	 */
+	
+	public Object getFeature(String arg0, String arg1) {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
 }

@@ -32,8 +32,6 @@ public class OMNamespaceImpl implements OMNamespace {
      */
     private String uri;
 
-    // private String value;
-
     /**
      * @param uri
      * @param prefix
