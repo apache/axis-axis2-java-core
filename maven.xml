@@ -384,7 +384,7 @@
     <!--- Create the Binary Distribution -->
     <!-- ================================================================ -->
 
-    <goal name="dist-bin" prereqs="war,javadocs,create-lib">
+    <goal name="dist-bin" prereqs="war,javadocs">
         <property name="bin.dist.dir" value="target/dist-bin/axis2-${pom.currentVersion}-bin"/>
         <ant:mkdir dir="${bin.dist.dir}"/>
         <ant:mkdir dir="${bin.dist.dir}/docs"/>
@@ -488,7 +488,7 @@
     <!--- Create the Java Docs -->
     <!-- ================================================================ -->
 
-    <goal name="javadocs" prereqs="init">
+    <goal name="javadocs" prereqs="init, create-lib">
         <ant:javadoc packagenames="org.apache.axis2.*"
             defaultexcludes="yes"
             destdir="target/apidocs"
@@ -507,6 +507,13 @@
                 <ant:pathelement location="modules/wsdl/src"/>
                 <ant:pathelement location="modules/xml/src"/>
             </ant:sourcepath>
+            <ant:classpath>
+              <ant:fileset dir="target/lib">
+                <ant:include name="**/*.jar"/>
+              </ant:fileset>
+            </ant:classpath>
+            <ant:excludepackage name="org.apache.axis2.tool.codegen.*"/>
+            <ant:excludepackage name="org.apache.axis2.tool.service.*"/>
         </ant:javadoc>
     </goal>
 
