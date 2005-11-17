@@ -18,6 +18,7 @@ package org.apache.axis2.soap.impl.dom;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.util.ElementHelper;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
 import org.apache.axis2.soap.SOAP12Constants;
@@ -25,7 +26,6 @@ import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPFaultReason;
 import org.apache.axis2.soap.SOAPFaultText;
 import org.apache.axis2.soap.SOAPProcessingException;
-import org.apache.axis2.soap.impl.llom.util.UtilProvider;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -56,11 +56,11 @@ public abstract class SOAPFaultReasonImpl extends SOAPElement implements SOAPFau
      * Eran Chinthaka (chinthaka@apache.org)
      */
     public void setSOAPText(SOAPFaultText soapFaultText) throws SOAPProcessingException {
-        UtilProvider.setNewElement(this, text, soapFaultText);
+        ElementHelper.setNewElement(this, text, soapFaultText);
     }
 
     public SOAPFaultText getSOAPText() {
-        return (SOAPFaultText) UtilProvider.getChildWithName(this,
+        return (SOAPFaultText) ElementHelper.getChildWithName(this,
                 SOAP12Constants.SOAP_FAULT_TEXT_LOCAL_NAME);
     }
 

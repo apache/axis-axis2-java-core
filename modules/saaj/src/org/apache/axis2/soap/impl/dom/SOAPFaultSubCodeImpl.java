@@ -18,11 +18,11 @@ package org.apache.axis2.soap.impl.dom;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.util.ElementHelper;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPFaultSubCode;
 import org.apache.axis2.soap.SOAPFaultValue;
 import org.apache.axis2.soap.SOAPProcessingException;
-import org.apache.axis2.soap.impl.llom.util.UtilProvider;
 
 public abstract class SOAPFaultSubCodeImpl extends SOAPElement implements SOAPFaultSubCode {
 
@@ -41,27 +41,27 @@ public abstract class SOAPFaultSubCodeImpl extends SOAPElement implements SOAPFa
     }
 
     public void setValue(SOAPFaultValue soapFaultSubCodeValue) throws SOAPProcessingException {
-        UtilProvider.setNewElement(this, value, soapFaultSubCodeValue);
+        ElementHelper.setNewElement(this, value, soapFaultSubCodeValue);
     }
 
     public SOAPFaultValue getValue() {
         if (value == null) {
             value =
-                    (SOAPFaultValue) UtilProvider.getChildWithName(this,
+                    (SOAPFaultValue) ElementHelper.getChildWithName(this,
                             SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME);
         }
         return value;
     }
 
     public void setSubCode(SOAPFaultSubCode subCode) throws SOAPProcessingException {
-        UtilProvider.setNewElement(this, this.subCode, subCode);
+        ElementHelper.setNewElement(this, this.subCode, subCode);
 
     }
 
     public SOAPFaultSubCode getSubCode() {
         if (subCode == null) {
             subCode =
-                    (SOAPFaultSubCode) UtilProvider.getChildWithName(this,
+                    (SOAPFaultSubCode) ElementHelper.getChildWithName(this,
                             SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME);
         }
         return subCode;

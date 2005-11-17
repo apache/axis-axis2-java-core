@@ -17,8 +17,10 @@ package org.apache.axis2.om.util;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
 
 import javax.xml.namespace.QName;
+import java.util.Iterator;
 
 /**
  * helper class to provide extra utility stuff against elements.
@@ -81,4 +83,26 @@ public class ElementHelper {
         return resolveQName(qname, true);
     }
 
+    public static void setNewElement(OMElement parent,
+                                     OMElement myElement,
+                                     OMElement newElement) {
+        if (myElement != null) {
+            myElement.discard();
+        }
+        parent.addChild(newElement);
+        myElement = newElement;
+    }
+
+    public static OMElement getChildWithName(OMElement parent,
+                                             String childName) {
+        Iterator childrenIter = parent.getChildren();
+        while (childrenIter.hasNext()) {
+            OMNode node = (OMNode) childrenIter.next();
+            if (node.getType() == OMNode.ELEMENT_NODE &&
+                    childName.equals(((OMElement) node).getLocalName())) {
+                return (OMElement) node;
+            }
+        }
+        return null;
+    }
 }

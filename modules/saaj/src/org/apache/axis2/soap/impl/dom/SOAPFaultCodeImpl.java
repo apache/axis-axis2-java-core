@@ -17,6 +17,7 @@
 package org.apache.axis2.soap.impl.dom;
 
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.util.ElementHelper;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
@@ -27,7 +28,6 @@ import org.apache.axis2.soap.SOAPFaultSubCode;
 import org.apache.axis2.soap.SOAPFaultValue;
 import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.dom.SOAPElement;
-import org.apache.axis2.soap.impl.llom.util.UtilProvider;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -60,20 +60,20 @@ public abstract class SOAPFaultCodeImpl  extends SOAPElement implements SOAPFaul
      * Eran Chinthaka (chinthaka@apache.org)
      */
     public void setValue(SOAPFaultValue value) throws SOAPProcessingException {
-        UtilProvider.setNewElement(this, value, value);
+        ElementHelper.setNewElement(this, value, value);
     }
 
     public SOAPFaultValue getValue() {
-        return (SOAPFaultValue) UtilProvider.getChildWithName(this,
+        return (SOAPFaultValue) ElementHelper.getChildWithName(this,
                 SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME);
     }
 
     public void setSubCode(SOAPFaultSubCode value) throws SOAPProcessingException {
-        UtilProvider.setNewElement(this, getSubCode(), value);
+        ElementHelper.setNewElement(this, getSubCode(), value);
     }
 
     public SOAPFaultSubCode getSubCode() {
-        return (SOAPFaultSubCode) UtilProvider.getChildWithName(this,
+        return (SOAPFaultSubCode) ElementHelper.getChildWithName(this,
                 SOAP12Constants.SOAP_FAULT_SUB_CODE_LOCAL_NAME);
     }
 
