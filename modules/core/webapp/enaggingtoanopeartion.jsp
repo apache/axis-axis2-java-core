@@ -49,7 +49,7 @@
         <td>
             <select name="axisOperation">
             <%
-                HashMap operations = (HashMap)request.getSession().getAttribute(Constants.OPEARTION_MAP);
+                HashMap operations = (HashMap)request.getSession().getAttribute(Constants.OPERATION_MAP);
                 Collection serviceCol =  operations.values();
                 for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
                     AxisOperation axisOperationtion = (AxisOperation)iterator.next();

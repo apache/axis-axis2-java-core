@@ -46,7 +46,7 @@ public class Constants {
     public static final String SESSION_SCOPE = "session";
 
     /**
-     * Field GLOBAL_SCOPE
+     * Field MESSAGE_SCOPE
      */
     public static final String MESSAGE_SCOPE = "message";
 
@@ -89,17 +89,17 @@ public class Constants {
     public static final String TRANSPORT_LOCAL = "local";
 
     /**
-     * Field LISTSERVICES
+     * Field LIST_SERVICES
      */
     public static final String REQUEST_URL_PREFIX = "/services";
 
-    public static final String LISTSERVICES = "listServices";
+    public static final String LIST_SERVICES = "listServices";
 
-    public static final String LIST_SERVICE_FOR_MODULE_ENGAMNET = "listoperation";
+    public static final String LIST_SERVICE_FOR_MODULE_ENGAGEMENT = "listoperation";
 
 
     /**
-     * List service for adminpagse
+     * List service for admin pages
      */
     public static final String ADMIN_LISTSERVICES = "listService";
 
@@ -124,22 +124,18 @@ public class Constants {
     public static final String EDIR_SERVICE_PARA = "editServicepara";
     public static final String SELECT_SERVICE_FOR_PARA_EDIT = "selectServiceParaEdit";
     public static final String VIEW_SERVICE_HANDLERS = "viewServiceHandlers";
-    public static final String LIST_SERVIC_GROUPS = "listServciceGroups";
+    public static final String LIST_SERVICE_GROUPS = "listServciceGroups";
 
-    /**
-     * Field SERVICE_MAP
-     */
     public static final String SERVICE_MAP = "servicemap";
+
     public static final String SERVICE_GROUP_MAP = "serviceGroupmap";
 
     public static final String CONFIG_CONTEXT = "config_context";
 
     public static final String SERVICE = "service";
 
-    public static final String OPEARTION_MAP = "operationmap";
-    /**
-     * Field Available modules
-     */
+    public static final String OPERATION_MAP = "operationmap";
+
     public static final String MODULE_MAP = "modulemap";
 
     public static final String SELECT_SERVICE_TYPE = "SELECT_SERVICE_TYPE";
@@ -158,7 +154,7 @@ public class Constants {
     public static final String SERVLET_CONTEXT = "servletContext";
 
     /**
-     * Errorness servcie
+     * Keys for service/module error maps
      */
     public static final String ERROR_SERVICE_MAP = "errprservicemap";
     public static final String ERROR_MODULE_MAP = "errormodulesmap";
@@ -177,9 +173,9 @@ public class Constants {
     public static final String WSDL_CONTENT = "wsdl";
 
     /**
-     * Field METHOD_NAME_ESCAPE_CHARACTOR
+     * Field METHOD_NAME_ESCAPE_CHARACTER
      */
-    public static final char METHOD_NAME_ESCAPE_CHARACTOR = '?';
+    public static final char METHOD_NAME_ESCAPE_CHARACTER = '?';
 
     public static final String LOGGED = "Logged";
 

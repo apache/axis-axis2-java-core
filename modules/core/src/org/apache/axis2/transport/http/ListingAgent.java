@@ -146,7 +146,7 @@ public class ListingAgent {
             return;
         } else if (
                 (filePart != null) &&
-                        filePart.endsWith(Constants.LIST_SERVICE_FOR_MODULE_ENGAMNET)) {
+                        filePart.endsWith(Constants.LIST_SERVICE_FOR_MODULE_ENGAGEMENT)) {
             lsitServiceformodules(httpServletRequest, httpServletResponse);
             return;
         } else if (
@@ -167,7 +167,7 @@ public class ListingAgent {
             chageParameters(httpServletRequest, httpServletResponse);
             return;
         }else if ((filePart != null) &&
-                filePart.endsWith(Constants.LIST_SERVIC_GROUPS)) {
+                filePart.endsWith(Constants.LIST_SERVICE_GROUPS)) {
             listServiceGroups(httpServletRequest, httpServletResponse);
             return;
         }else if ((filePart != null) &&
@@ -181,7 +181,7 @@ public class ListingAgent {
         }
 
         if ((filePart != null) &&
-                filePart.endsWith(Constants.LISTSERVICES)) {
+                filePart.endsWith(Constants.LIST_SERVICES)) {
             listServices(httpServletRequest, httpServletResponse);
             return;
         } else {
@@ -326,7 +326,7 @@ public class ListingAgent {
         } else {
             serviceName = (String) req.getSession().getAttribute("service");
         }
-        req.getSession().setAttribute(Constants.OPEARTION_MAP,
+        req.getSession().setAttribute(Constants.OPERATION_MAP,
                 configContext
                         .getAxisConfiguration()
                         .getService(serviceName)
