@@ -207,14 +207,6 @@ public class Constants {
     
     public static final String TESTING_REPOSITORY = TESTING_PATH + "samples";
 
-
-    public static interface REST_WITH_GET {
-        public static final String GET_PARAMETER_OPERATION = "operation";
-        public static final String GET_PARAMETER_URL = "http://ws.apache.org/goGetWithREST";
-
-    }
-
-
     public static final String AXIS2_NAMESPACE_PREFIX = "axis2";
     public static final String AXIS2_NAMESPACE_URI = "http://ws.apache.org/namespaces/axis2";
 
