@@ -384,7 +384,7 @@
     <!--- Create the Binary Distribution -->
     <!-- ================================================================ -->
 
-    <goal name="dist-bin" prereqs="war,javadoc-gen,create-lib">
+    <goal name="dist-bin" prereqs="war,javadocs,create-lib">
         <property name="bin.dist.dir" value="target/dist-bin/axis2-${pom.currentVersion}-bin"/>
         <ant:mkdir dir="${bin.dist.dir}"/>
         <ant:mkdir dir="${bin.dist.dir}/docs"/>
@@ -488,7 +488,7 @@
     <!--- Create the Java Docs -->
     <!-- ================================================================ -->
 
-    <goal name="javadoc-gen" prereqs="init">
+    <goal name="javadocs" prereqs="init">
         <ant:javadoc packagenames="org.apache.axis2.*"
             defaultexcludes="yes"
             destdir="target/apidocs"
@@ -497,13 +497,15 @@
             use="true"
             windowtitle="Axis2 API">
             <ant:sourcepath>
-                <ant:pathelement location="modules/core/src"/>
-                <ant:pathelement location="modules/wsdl/src"/>
-                <ant:pathelement location="modules/xml/src"/>
                 <ant:pathelement location="modules/addressing/src"/>
+                <ant:pathelement location="modules/codegen/src"/>
+                <ant:pathelement location="modules/common/src"/>
+                <ant:pathelement location="modules/core/src"/>
                 <ant:pathelement location="modules/saaj/src"/>
                 <ant:pathelement location="modules/security/src"/>
-                <ant:pathelement location="modules/codegen/src"/>
+                <ant:pathelement location="modules/tool/src"/>
+                <ant:pathelement location="modules/wsdl/src"/>
+                <ant:pathelement location="modules/xml/src"/>
             </ant:sourcepath>
         </ant:javadoc>
     </goal>
