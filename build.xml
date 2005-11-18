@@ -98,14 +98,15 @@
 
   <target name="m2-wagons" depends="init"
       xmlns:m2="antlib:org.apache.maven.artifact.ant">
+    <property name="wagon.version" value="1.0-alpha-5"/>
     <m2:install-provider artifactId="wagon-ssh"
-        version="${wagon-ssh.version}"/>
+        version="${wagon.version}"/>
     <m2:install-provider artifactId="wagon-ssh-external"
-        version="${wagon-ssh-external.version}"/>
+        version="${wagon.version}"/>
     <m2:install-provider artifactId="wagon-file"
-        version="${wagon-file.version}"/>
+        version="${wagon.version}"/>
     <m2:install-provider artifactId="wagon-ftp"
-        version="${wagon-ftp.version}"/>
+        version="${wagon.version}"/>
   </target>
 
   <target name="ready-to-deploy" depends="m2-pom,dist-lite" />
