@@ -16,21 +16,26 @@
 
 package org.apache.axis2.wsdl.codegen.writer;
 
+import org.apache.axis2.util.FileWriter;
+import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.XSLTTemplateProcessor;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
-import org.apache.axis2.util.FileWriter;
-import org.apache.axis2.util.XSLTTemplateProcessor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
 
 public abstract class ClassWriter {
 
     protected File outputFileLocation = null;
+    protected File outputFile = null;
     protected FileOutputStream stream = null;
     protected InputStream xsltStream = null;
     protected String language = ConfigPropertyFileLoader.getDefaultLanguage(); //default would java
@@ -40,10 +45,6 @@ public abstract class ClassWriter {
     protected static final String SEPERATOR_STRING = ",";
 
     protected boolean fileExists = false;//a flag saying the file is existing
-
-    public FileOutputStream getStream() {
-        return stream;
-    }
 
     /**
      * Sets the language
@@ -113,7 +114,7 @@ public abstract class ClassWriter {
      * @throws Exception
      */
     public void createOutFile(String packageName, String fileName) throws Exception {
-        File outputFile = FileWriter.createClassFile(outputFileLocation,
+        outputFile = FileWriter.createClassFile(outputFileLocation,
                 packageName,
                 fileName,
                 getFileExtensionForLanguage(language));
@@ -127,7 +128,7 @@ public abstract class ClassWriter {
     /**
      * Find the file name extension
      * @param language
-     * @return
+     * @return extension
      */
     protected String getFileExtensionForLanguage(String language){
         Map languageSpecificPropertyMap = (Map)ConfigPropertyFileLoader.getLanguageSpecificPropertiesMap().get(this.language);
@@ -150,7 +151,7 @@ public abstract class ClassWriter {
     /**
      * Writes the output file
      *
-     * @param documentStream
+     * @param doc
      * @throws Exception
      */
     public void parse(Document doc) throws Exception {
@@ -160,9 +161,9 @@ public abstract class ClassWriter {
                     this.xsltStream);
             this.stream.flush();
             this.stream.close();
+            if ("java".equals(language) && outputFile != null) {
+                PrettyPrinter.prettify(outputFile);
+            }
         }
-
     }
-
-
 }

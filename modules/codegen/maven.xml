@@ -6,8 +6,21 @@
     xmlns:j="jelly:core"
     xmlns:u="jelly:util"
     xmlns:maven="jelly:maven"
+    xmlns:util="jelly:util"
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
+
+    <preGoal name="java:compile">
+      <util:file var="file" name="${maven.home}/lib/jalopy.jar"/>
+      <j:if test="${file.exists()}">
+        <ant:path id="jalopy.library">
+          <ant:fileset dir="${maven.home}/lib">
+            <ant:include name="jalopy.jar"/>
+          </ant:fileset>
+        </ant:path>
+        <maven:addPath id="maven.dependency.classpath" refid="jalopy.library"/>
+      </j:if>
+    </preGoal>
 
     <preGoal name="itest:compile">
         <u:file var="file" name="${maven.itest.src}"/>
