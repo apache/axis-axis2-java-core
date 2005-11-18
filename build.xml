@@ -52,14 +52,21 @@
 
   </target>
 
+  <target name="clean" depends="init"
+      description="clean everything">
+    <maven>
+      <arg value="multiproject:clean"/>
+    </maven>
+  </target>
 
-
-  <target name="dist" depends="init">
+  <target name="dist" depends="init"
+      description="make a distribution">
     <maven>
     </maven>
   </target>
 
-  <target name="dist-lite" depends="init">
+  <target name="dist-lite" depends="init"
+      description="make a distribution, skip testing">
     <maven>
       <arg value="-Dmaven.test.skip=true" />
     </maven>
@@ -104,6 +111,7 @@
   <target name="ready-to-deploy" depends="m2-pom,dist-lite" />
 
   <target name="m2-install" depends="ready-to-deploy"
+      description="install the libray into the local m2 repository"
       xmlns:m2="antlib:org.apache.maven.artifact.ant">
     <m2:install file="${target.jar}">
       <pom refid="m2.pom"/>
