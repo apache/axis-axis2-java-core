@@ -89,7 +89,7 @@ public class Constants {
     public static final String TRANSPORT_LOCAL = "local";
 
     /**
-     * Field LIST_SERVICES
+     * Field REQUEST_URL_PREFIX
      */
     public static final String REQUEST_URL_PREFIX = "/services";
 

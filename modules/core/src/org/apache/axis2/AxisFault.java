@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
  * <li>A fault string
  * <li>A fault code
  * <li>A fault actor
- * <li>Fault details; an xml tree of fault specific stuff
+ * <li>Fault details; an xml tree of fault specific elements
  * </ol>
  */
 

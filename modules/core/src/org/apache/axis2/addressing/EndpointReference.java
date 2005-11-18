@@ -62,14 +62,14 @@ public class EndpointReference implements Serializable {
     }
 
     /**
-     * Method getValue
+     * Method getAddress
      */
     public String getAddress() {
         return address;
     }
 
     /**
-     * Method setValue
+     * Method setAddress
      *
      * @param address
      */
