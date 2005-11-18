@@ -86,13 +86,14 @@ public class MIMEHelper {
 
 
     /**
+     * Moves the pointer to the beginning of the first MIME part. Reads
+     * till first MIME boundary is found or end of stream is reached.
+     *
      * @param inStream
      * @param contentTypeString
      * @param fileCacheEnable
      * @param attachmentRepoDir
-     * @throws OMException
-     * Will move the pointer to the begining of the first MIME part. Will
-     *      read till first MIME boundary is found or end of stream reached.
+     * @throws OMException 
      */
     public MIMEHelper(InputStream inStream, String contentTypeString,
                       boolean fileCacheEnable, String attachmentRepoDir,
@@ -121,7 +122,7 @@ public class MIMEHelper {
         pushbackInStream = new PushbackInputStream(inStream,
                 (this.boundary.length + 2));
 
-        // Move the read pointer to the begining of the first part
+        // Move the read pointer to the beginning of the first part
         // read till the end of first boundary
         while (true) {
             int value;
@@ -152,10 +153,11 @@ public class MIMEHelper {
     }
 
     /**
+     * Sets file cache to false.
+     *
      * @param inStream
      * @param contentTypeString
      * @throws OMException
-     * Will set file cache to false
      */
     public MIMEHelper(InputStream inStream, String contentTypeString)
             throws OMException {
@@ -163,8 +165,8 @@ public class MIMEHelper {
     }
 
     /**
-     * @return whether Message Type is SOAP with Attachments or MTOM optimised
-     *         by checking the application type parameter in the Contant Type
+     * @return whether Message Type is SOAP with Attachments or MTOM optimized,
+     *         by checking the application type parameter in the Content Type.
      */
     public String getAttachmentSpecType() {
         if (this.applicationType == null) {
@@ -182,9 +184,9 @@ public class MIMEHelper {
     }
 
     /**
-     * @return the InputStream which includes the SOAP Envelope We assumes that
+     * @return the InputStream which includes the SOAP Envelope. It assumes that
      *         the root mime part is always pointed by "start" parameter in
-     *         content-type
+     *         content-type.
      */
     public InputStream getSOAPPartInputStream() throws OMException {
         DataHandler dh;
@@ -244,7 +246,7 @@ public class MIMEHelper {
     /**
      * @param blobContentID
      *            (without the surrounding angle brackets and "cid:" prefix)
-     * @return The DataHandler of the mime part refered by the content-Id
+     * @return The DataHandler of the mime part referred by the Content-Id
      * @throws OMException
      */
     public DataHandler getDataHandler(String blobContentID) throws OMException {
@@ -259,12 +261,14 @@ public class MIMEHelper {
     }
 
     /**
-     * @param blobContentID
-     * @return The Part refered by the content-Id
-     * @throws OMException
-     * First checks whether the MIME part is already parsed by checking the
+     * Checks whether the MIME part is already parsed by checking the
      * parts HashMap. If it is not parsed yet then call the getNextPart()
-     * till we find the required part.
+     * till the required part is found.
+     *
+     * @param blobContentID
+     * @return The Part referred by the Content-Id
+     * @throws OMException
+     * 
      */
     public Part getPart(String blobContentID) {
         Part bodyPart;
@@ -296,7 +300,7 @@ public class MIMEHelper {
     /**
      * @return the Next valid MIME part + store the Part in the Parts List
      * @throws OMException
-     *             throw if cotent id is null or if two MIME parts contain the
+     *             throw if content id is null or if two MIME parts contain the
      *             same content-ID & the exceptions throws by getPart()
      */
     private Part getNextPart() throws OMException {
