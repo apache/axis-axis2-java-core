@@ -71,7 +71,7 @@ public interface AddressingConstants {
 
 
     public static final String WS_ADDRESSING_VERSION = "WSAddressingVersion";
-    public static final String WSA_DEFAULT_PRFIX = "wsa";
+    public static final String WSA_DEFAULT_PREFIX = "wsa";
 
     public static final String PARAM_SERVICE_GROUP_CONTEXT_ID = "ServiceGroupContextIdFromAddressing";
 

@@ -86,7 +86,7 @@ public class AddressingOutHandler
         }
         addressingNamespaceObject =
                 OMAbstractFactory.getOMFactory().createOMNamespace(
-                        addressingNamespace, WSA_DEFAULT_PRFIX);
+                        addressingNamespace, WSA_DEFAULT_PREFIX);
 
 
         MessageInformationHeaders messageInformationHeaders =
