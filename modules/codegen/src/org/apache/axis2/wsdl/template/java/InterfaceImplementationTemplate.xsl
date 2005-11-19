@@ -8,13 +8,19 @@
     <xsl:variable name="isAsync"><xsl:value-of select="@isAsync"/></xsl:variable>
     <xsl:variable name="dbpackage"><xsl:value-of select="@dbsupportpackage"/></xsl:variable>
     <xsl:variable name="soapVersion"><xsl:value-of select="@soap-version"/></xsl:variable>
+    /**
+     * <xsl:value-of select="@name"/>.java
+     *
+     * This file was auto-generated from WSDL
+     * by the Apache Axis2 version: #axisVersion# #today#
+     */
     package <xsl:value-of select="$package"/>;
 
         <!-- Put the MTOM enable flag -->
 
 
     /*
-     *  Auto generated java implementation by the Axis code generator
+     *  <xsl:value-of select="@name"/> java implementation 
     */
 
     public class <xsl:value-of select="@name"/> extends org.apache.axis2.client.Stub implements <xsl:value-of select="$interfaceName"/>{

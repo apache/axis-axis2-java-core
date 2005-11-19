@@ -7,8 +7,8 @@
         package <xsl:value-of select="@package"/>;
 
         /**
-        *  Auto generated message receiver
-        */
+         *  <xsl:value-of select="@name"/> message receiver
+         */
 
         public class <xsl:value-of select="@name"/> extends <xsl:value-of select="@basereceiver"/>{
 

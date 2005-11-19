@@ -2,6 +2,12 @@
     <xsl:output method="text"/>
     <xsl:template match="/class">
 	<xsl:variable name="namespace"><xsl:value-of select="@namespace"/></xsl:variable>
+    /**
+     * <xsl:value-of select="@name"/>.java
+     *
+     * This file was auto-generated from WSDL
+     * by the Apache Axis2 version: #axisVersion# #today#
+     */
     package <xsl:value-of select="@package"/>;
     
 		import javax.xml.namespace.QName;
@@ -13,7 +19,7 @@
 		
 
     /**
-     *  Auto generated java skeleton for the axisService by the Axis code generator
+     *  <xsl:value-of select="@name"/> Skeleton for the Axis Service
      */
 
     public class <xsl:value-of select="@name"></xsl:value-of> extends <xsl:value-of select="@implpackage"/>.<xsl:value-of select="@servicename"></xsl:value-of>{

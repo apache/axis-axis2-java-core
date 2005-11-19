@@ -10,6 +10,12 @@
     <xsl:variable name="isAsync"><xsl:value-of select="@isAsync"/></xsl:variable>
     <xsl:variable name="address"><xsl:value-of select="@address"/></xsl:variable>
     <xsl:variable name="servicexmlpath"><xsl:value-of select="@servicexmlpath"/></xsl:variable>
+    /**
+     * <xsl:value-of select="@name"/>.java
+     *
+     * This file was auto-generated from WSDL
+     * by the Apache Axis2 version: #axisVersion# #today#
+     */
     package <xsl:value-of select="$package"/>;
     
 	import java.io.InputStream;
@@ -30,7 +36,7 @@
 
 
     /*
-     *  Auto generated Junit test case by the Axis code generator
+     *  <xsl:value-of select="@name"/> Junit test case 
     */
 
     public class <xsl:value-of select="@name"/> extends junit.framework.TestCase{

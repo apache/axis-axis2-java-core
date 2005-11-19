@@ -1,12 +1,18 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
     <xsl:template match="/bean">
+        /**
+         * <xsl:value-of select="@name"/>.java
+         *
+         * This file was auto-generated from WSDL
+         * by the Apache Axis2 version: #axisVersion# #today#
+         */
         package <xsl:value-of select="@package"/>;
         <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
 
         /**
-        *  Auto generated bean class by the Axis code generator
-        */
+         *  <xsl:value-of select="$name"/> bean class 
+         */
 
         public class <xsl:value-of select="$name"/> <xsl:if test="@extension"> extends <xsl:value-of select="@extension"/></xsl:if>
         implements org.apache.axis2.databinding.ADBBean{

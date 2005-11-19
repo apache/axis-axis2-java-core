@@ -1,11 +1,17 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
     <xsl:template match="/class">
+        /**
+         * <xsl:value-of select="@name"/>.java
+         *
+         * This file was auto-generated from WSDL
+         * by the Apache Axis2 version: #axisVersion# #today#
+         */
         package <xsl:value-of select="@package"/>;
 
         /**
-        *  Auto generated supporter class for Axis2 own databinding by the Axis code generator
-        */
+         *  <xsl:value-of select="@name"/> supporter class for Axis2's databinding
+         */
 
         public class <xsl:value-of select="@name"/> extends org.apache.axis2.client.AbstractCallbackSupporter{
         <xsl:variable name="base64"><xsl:value-of select="base64Elements/name"/></xsl:variable>

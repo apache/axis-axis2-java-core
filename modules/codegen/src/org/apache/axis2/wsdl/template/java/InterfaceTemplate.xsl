@@ -6,10 +6,16 @@
     <xsl:variable name="callbackname"><xsl:value-of select="@callbackname"/></xsl:variable>
     <xsl:variable name="package"><xsl:value-of select="@package"/></xsl:variable>
 
+    /**
+     * <xsl:value-of select="@name"/>.java
+     *
+     * This file was auto-generated from WSDL
+     * by the Apache Axis2 version: #axisVersion# #today#
+     */
     package <xsl:value-of select="$package"/>;
 
     /*
-     *  Auto generated java interface by the Axis code generator
+     *  <xsl:value-of select="@name"/> java interface
      */
 
     public interface <xsl:value-of select="@name"></xsl:value-of> {
