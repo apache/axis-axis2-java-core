@@ -203,6 +203,7 @@
     </preGoal>
 
     <!-- Check if the tests need to run -->
+    <!--
     <preGoal name="test:test">
         <j:if test="${context.getVariable('maven.test.force') == null}">
             <j:if test="${cloveroverride != 'true'}">
@@ -223,11 +224,13 @@
             </j:if>
         </j:if>
     </preGoal>
-
+    -->
     <!-- Update the timestamp of the last successful test -->
+    <!--
     <postGoal name="test:test">
         <j:if test="${context.getVariable('maven.test.failure') == null}">
             <ant:touch file="${basedir}/target/test-reports/tstamp"/>
         </j:if>
     </postGoal>
+    -->
 </project>
