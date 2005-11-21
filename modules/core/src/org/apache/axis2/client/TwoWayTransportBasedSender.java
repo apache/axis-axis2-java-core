@@ -25,7 +25,8 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.transport.TransportUtils;
 
 /**
- * This works for only a two way transport, this class send the SOAP Message and wait till the\result arrives
+ * This class is used for a two way transport.It sends the SOAP message and waits for a response.
+ *
  */
 public class TwoWayTransportBasedSender {
     public static MessageContext send(MessageContext msgctx,

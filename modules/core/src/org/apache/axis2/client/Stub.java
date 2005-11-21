@@ -105,8 +105,8 @@ public abstract class Stub {
     }
     
     /**
-     * If _maintainSession is set to True all the calls will use the same
-     * ServiceContext and the user can Share information through that
+     * If _maintainSession is set to true, all the calls can use the same
+     * ServiceContext. The user can share information through this
      * ServiceContext across operations.
      */
     protected boolean _maintainSession = false;
@@ -117,7 +117,7 @@ public abstract class Stub {
     }
 
     /**
-     * Set the soap version
+     * Sets the soap version.
      * @param soapVersion
      */
     public void setSOAPVersion(int soapVersion){
@@ -224,7 +224,7 @@ public abstract class Stub {
 
 
     /**
-     * Extract the correct element - A util method
+     * A util method that extracts the correct element.
      * @param env
      * @param type
      * @return the relevant element to be databound
@@ -244,7 +244,7 @@ public abstract class Stub {
     }
 
     /**
-     * get the message context
+     * Gets the message context.
      */
     protected MessageContext getMessageContext() throws AxisFault {
         return new MessageContext(_configurationContext);

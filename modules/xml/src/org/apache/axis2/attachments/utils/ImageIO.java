@@ -30,7 +30,7 @@ import java.util.Iterator;
  */
 public class ImageIO extends Component {
     /**
-     * Save an image.
+     * Saves an image.
      *
      * @param mimeType the mime-type of the format to save the image
      * @param image    the image to save
@@ -62,7 +62,7 @@ public class ImageIO extends Component {
     } // saveImage
 
     /**
-     * Load an Image.
+     * Loads an Image.
      *
      * @param in the stream to load the image
      * @return the Image

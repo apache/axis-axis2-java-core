@@ -34,7 +34,7 @@ import org.apache.wsdl.WSDLConstants;
 import javax.xml.namespace.QName;
 
 /**
- * This class should be used only to invoke INOUT web services and will serve as a more convenient
+ * This class is used to invoke INOUT web services and serves as a convenience
  * class to work with INOUT MEP.
  */
 public class Call extends InOutMEPClient {
@@ -51,8 +51,7 @@ public class Call extends InOutMEPClient {
     }
 
     /**
-     * This is used to create call object with client home , using only this constructor it can
-     * able to engage modules  , addning client side parameters
+     * This is used to create call object with client home.
      *
      * @param clientHome
      * @throws AxisFault
@@ -70,10 +69,10 @@ public class Call extends InOutMEPClient {
     }
 
     /**
-     * Invoke the blocking/Synchronous call
-     *
-     * @param axisop - this will be used to identify the operation in the client side, without dispatching
-     * @param toSend - This should be OM Element (payload)
+     * Invokes the blocking/synchronous call.
+     *s
+     * @param axisop - this is used to identify the operation on the client side explicitly.
+     * @param toSend - data to be sent (OMElement).
      * @return
      * @throws AxisFault
      */
@@ -93,10 +92,10 @@ public class Call extends InOutMEPClient {
     }
 
     /**
-     * Invoke the blocking/Synchronous call
+     * Invokes the blocking/synchronous call
      *
-     * @param axisop - this will be used to identify the operation in the client side, without dispatching
-     * @param envelope - This should be SOAPEnvelope
+     * @param axisop - this is used to identify the operation on the client side explicitly.
+     * @param envelope - data to be sent (SOAPEnvelope).
      * @return
      * @throws AxisFault
      */
@@ -118,11 +117,10 @@ public class Call extends InOutMEPClient {
     }
 
     /**
-     * Invoke the nonblocking/Asynchronous call
+     * Invokes the nonblocking/asynchronous call
      *
      * @param axisop
-     * @param toSend   -  This should be OM Element (payload)
-     *                 invocation behaves accordingly
+     * @param toSend   -  data to be sent (OMElement).
      * @param callback
      * @throws org.apache.axis2.AxisFault
      */
@@ -140,11 +138,10 @@ public class Call extends InOutMEPClient {
         super.invokeNonBlocking(opDesc, msgctx, callback);
     }
     /**
-     * Invoke the nonblocking/Asynchronous call
+     * Invokes the nonblocking/asynchronous call
      *
      * @param axisop
-     * @param envelope   -  This should be a SOAP Envelope
-     *                 invocation behaves accordingly
+     * @param envelope   -  data to be sent (SOAPEnvelope).
      * @param callback
      * @throws org.apache.axis2.AxisFault
      */
@@ -168,7 +165,9 @@ public class Call extends InOutMEPClient {
     }
 
     /**
-     * This method create a operation desc if it null and copy the flows from the template operation
+     * Creates an operation description if it is null and copies the flows from 
+     * the template operation.
+     *
      * @param opDesc
      * @param axisOp
      */
@@ -176,8 +175,8 @@ public class Call extends InOutMEPClient {
             AxisOperation opDesc,
             String axisOp , int mepURL) throws AxisFault {
         if (opDesc == null) {
-            //if the operation is not alrady define we will copy the
-            //crated Phases from the templete operation to the this Operation
+            //if the operation is not already defined we will copy the
+            //created Phases from the template operation to this Operation
 
             opDesc = AxisOperationFactory.getAxisOperation(mepURL);
             opDesc.setName(new QName(axisOp));
@@ -194,7 +193,7 @@ public class Call extends InOutMEPClient {
     }
 
     /**
-     * Assume the values for the ConfigurationContext and ServiceContext to make the NON WSDL cases simple.
+     * Assumes the values for the ConfigurationContext and ServiceContext to make the NON WSDL cases simple.
      *
      * @return ServiceContext that has a ConfigurationContext set in and has assumed values.
      * @throws org.apache.axis2.AxisFault

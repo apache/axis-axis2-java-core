@@ -36,15 +36,14 @@ import org.apache.wsdl.WSDLConstants;
 import javax.xml.namespace.QName;
 
 /**
- * Message Sender is the class simmiler to the Call, one that provides much simpler API
- * to users to work with.
+ * Message Sender is similar to the Call. Call is just a wrapper that provides a simple API.
  */
 public class MessageSender extends InOnlyMEPClient {
 
     protected static AxisOperation axisOperationTemplate;
 
     /**
-     * Service context of the Service this MessageSender handles, compare this with the Call, simpler method.
+     * Constructs a Message Sender from a Service Context.
      *
      * @param service
      */
@@ -57,7 +56,7 @@ public class MessageSender extends InOnlyMEPClient {
     }
 
     /**
-     * This constrctor is to take repository as aragumnet and build the Configurationcontext using that
+     * Constructs a Message Sender from a specified repository.
      *
      * @param repo repository location
      * @throws AxisFault
@@ -68,7 +67,7 @@ public class MessageSender extends InOnlyMEPClient {
     }
 
     /**
-     * Send the SOAP Message, the actual worker
+     * Sends a SOAP elvelope created from an OMElement.
      *
      * @param opName
      * @param toSend
@@ -114,7 +113,7 @@ public class MessageSender extends InOnlyMEPClient {
     }
 
     /**
-     * create a default service Context if the users are not intersted in the lower levels of control
+     * create a default service Context if the users are not interested in the lower levels of control
      *
      * @return
      * @throws AxisFault

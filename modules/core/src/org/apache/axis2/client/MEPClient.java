@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is the Super Class for all the MEPClients, All the MEPClient will extend this.
+ * This is the super class for all the MEPClients.
  */
 public abstract class MEPClient {
     protected ServiceContext serviceContext;
@@ -71,8 +71,8 @@ public abstract class MEPClient {
     }
 
     /**
-     * prepare the message context for invocation, here the properties kept in the
-     * MEPClient copied to the MessageContext
+     * Prepares the message context for invocation. The properties in the
+     * MEPClient are copied to the MessageContext.
      */
     protected void prepareInvocation(AxisOperation axisop, MessageContext msgCtx)
             throws AxisFault {
@@ -126,7 +126,7 @@ public abstract class MEPClient {
     }
 
     /**
-     * This class prepare the SOAP Envelope using the payload
+     * Prepares the SOAPEnvelope using the payload.
      *
      * @param toSend
      * @return
@@ -144,9 +144,8 @@ public abstract class MEPClient {
     }
 
     /**
-     * try to infer the transport looking at the URL, the URL can be http://
-     * tcp:// mail:// local://. The method will look for the trnasport name as the
-     * protocol part of the transport.
+     * Infers the transport by looking at the URL. The URL can be http://
+     * tcp:// mail:// local://. 
      *
      * @param epr
      * @return
@@ -173,7 +172,7 @@ public abstract class MEPClient {
     }
 
     /**
-     * create write SOAPEvelope(in terms of version) based on the values set.
+     * Creates SOAPEvelope(in terms of version) from the values set.
      *
      * @return
      * @throws AxisFault
@@ -189,9 +188,9 @@ public abstract class MEPClient {
     }
 
     /**
-     * Engage a given Module to the current invocation. But to call this method the
-     * Module *MUST* be enable (picked up by the deployment and known to Axis2) else
-     * Exception will be thrown. To be detected put the moduels to the AXIS2_REPOSITORY/modules directory
+     * Engages a given module to the current invocation. But in order to call this method, the
+     * module *MUST* be enabled ( i.e. picked up by the deployment and known to Axis Engine). If not,
+     * an exception will be thrown. To be enabled, the modules are added to the AXIS2_REPOSITORY/modules directory.
      *
      * @param name
      * @throws AxisFault
@@ -230,29 +229,23 @@ public abstract class MEPClient {
     }
 
     /**
-     * @param string
-     */
-
-    /**
-     * @param exceptionToBeThrownOnSOAPFault - If there is a SOAP Fault in the body of the incoming
-     *                                       SOAP Message, system can be configured to throw an exception with the details extracted from
-     *                                       the information from the fault message.
-     *                                       This boolean variable will enable that facility. If this is false, the response message will just
-     *                                       be returned to the application, irrespective of whether it has a Fault or not.
+     * Setting to configure if an exception is to be thrown when the SOAP message has a fault.
+     * If set to true, system throws an exeption with the details extracted from the fault message.
+     * Else the response message is returned to the application, irrespective of whether it has a Fault or not.
+     * 
+     * @param exceptionToBeThrownOnSOAPFault 
      */
     public void setExceptionToBeThrownOnSOAPFault(boolean exceptionToBeThrownOnSOAPFault) {
         isExceptionToBeThrownOnSOAPFault = exceptionToBeThrownOnSOAPFault;
     }
 
     /**
-     * User might sometimes needs to add his own headers to the out going message from the client. This
-     * method will facilitate that. But this is bit restrictive in the sense that user can only set a
-     * header with only one text as a child. <HeaderBlockName>your text</HeaderBlockName>. If you want
-     * a much flexible way to add a soap header block use addSOAPHeader(OMElement)
+     * Allows users to add their own headers to the out going message from the client. It is 
+     * restrictive, in the sense, that user can set a 
+     * header with only one text. <code><pre>&lt;HeaderBlockName&gt;your text&lt;/HeaderBlockName&gt;</pre></code>. A more flexible 
+     * way is to use addSOAPHeader(OMElement).
      *
-     * @param soapHeaderQName - During the creation of an OMElement from the given QName, we extract
-     *                        the namespace information from the given QName and find whether there is an
-     *                        already defined namespace. And if found that will be conneted with this.
+     * @param soapHeaderQName
      * @param soapHeaderText
      */
     public void addSOAPHeader(QName soapHeaderQName, String soapHeaderText) {
@@ -265,8 +258,7 @@ public abstract class MEPClient {
     }
 
     /**
-     * This is much flexible than the other method and allows user to put anything in to the SOAP header
-     * block.
+     * Allows users to add a SOAP header block.
      * @param soapHeaderBlock
      */
     public void addSOAPHeader(OMElement soapHeaderBlock) {
@@ -283,7 +275,9 @@ public abstract class MEPClient {
     //==============================================================================
     // Use these methods to set Addressing specific information to the SOAP envelope.
     //===============================================================================
-
+    /**
+     * @param action
+     */
     public void setWsaAction(String action) {
         messageInformationHeaders.setAction(action);
     }

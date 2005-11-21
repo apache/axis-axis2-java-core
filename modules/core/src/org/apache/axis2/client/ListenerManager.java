@@ -29,8 +29,8 @@ import java.net.ServerSocket;
 import java.util.HashMap;
 
 /**
- * This manages the Listners, this class havely depends on the static constructs and should be 
- * re-architectured. This class only allow the Client to keep one ConfigurationContext in a given JVM.
+ * This class manages the listeners and depends heavily on static constructs and should be 
+ * re-architectured. It allows the client to initialize only one ConfigurationContext in a given JVM.
  */
 public class ListenerManager {
 
@@ -39,8 +39,7 @@ public class ListenerManager {
     public static ConfigurationContext configurationContext;
 
     /**
-     * This Method starts a Listenet if it is not already started. But only a one listener started for
-     * a given one transport.
+     * Starts a listener for a given transport if it has not already started. 
      * @param transport
      * @param configurationContext
      * @throws AxisFault
@@ -84,9 +83,11 @@ public class ListenerManager {
     }
 
     /**
+     * Returns the replyTo endpoint reference for the servicename/transport combination. 
+     * 
      * @param serviceName
      * @param transport
-     * @return reply to URL return will direct the response for the message to the given transport listener
+     * @return endpoint reference
      * @throws AxisFault
      */
     public static EndpointReference replyToEPR(String serviceName,
@@ -107,7 +108,7 @@ public class ListenerManager {
         return port;
     }
     /**
-     * Class keep information about the listener for a given transport
+     * This class keeps information about the listener for a given transport.
      */
     public static class TransportListenerState {
         public TransportListenerState(TransportListener listener) {
@@ -119,7 +120,7 @@ public class ListenerManager {
     }
 
     /**
-     * this method control the number of server sockets kept open
+     * Controls the number of server sockets kept open.
      */
     public static ServerSocket openSocket(int port) throws AxisFault {
         for (int i = 0; i < 5; i++) {

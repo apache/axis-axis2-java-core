@@ -40,9 +40,9 @@ import org.apache.wsdl.WSDLConstants;
 import javax.xml.namespace.QName;
 
 /**
- * This Class capture handling the In-Out type Method invocations. this provides the
- * methods to do blocking and non blocking invocation. The basic API is based on the
- * MessageContext and the more convients API is provided by the Call
+ * This class captures the handling of In-Out type method invocations for both blocking 
+ * and non-blocking calls. The basic API is based on MessageContext and 
+ * provides more convenient APIs. 
  */
 public class InOutMEPClient extends MEPClient {
 
@@ -53,17 +53,16 @@ public class InOutMEPClient extends MEPClient {
 
     protected TransportListener listener;
     /**
-     * transport that should be used for sending and reciving the message
+     * This is used for sending and receiving messages.
      */
     protected TransportOutDescription senderTransport;
     protected TransportInDescription listenerTransport;
 
     /**
-     * Should the two SOAPMessage are sent over same channel over seperate channels.
-     * The value of this variable depends on the transport specified.
-     * e.g. If the transports are different this is true by default.
-     * HTTP transport support both cases
-     * SMTP transport support only two channel case
+     * Used to specify whether the two SOAP Messages are be sent over same channel 
+     * or over separate channels.The value of this variable depends on the transport specified.
+     * For e.g., if the transports are different this is true by default.
+     * HTTP transport supports both cases while SMTP transport supports only two channel case.
      */
     protected boolean useSeparateListener = false;
 
@@ -74,7 +73,7 @@ public class InOutMEPClient extends MEPClient {
     //variables use for internal implementations
 
     /**
-     * This is used for the Receiving the Async Messages
+     * This is used for the receiving the asynchronous messages.
      */
     protected CallbackReceiver callbackReceiver;
 
@@ -85,22 +84,23 @@ public class InOutMEPClient extends MEPClient {
     private static final int DEFAULT_TIMEOUT_MILLISECONDS = 2000;
 
     /**
-     * This accepts a ServiceContext, and the ServiceContext should have all the parents set in to it right
-     * Ideall this should be generated from a WSDL, we do not have it yet.
+     * Constructs a InOutMEPClient from a ServiceContext.
+     * Ideally this should be generated from a WSDL, we do not have it yet.
      * <p/>
-     * Follwoing code works for the time been
-     * <code>
-     * ConfigurationContextFactory efac = new ConfigurationContextFactory();
+     * Following code works for the time being. <p/>
+     * <blockquote><pre>
+     * ConfigurationContextFactory efac = new ConfigurationContextFactory(); 
+     * // Replace the null with your client repository if any
      * ConfigurationContext sysContext = efac.buildClientConfigurationContext(null);
      * // above line "null" may be a file name if you know the client repssitory
-     * <p/>
+     * 
      * //create new service
      * QName assumedServiceName = new QName("Your Service");
      * AxisService axisService = new AxisService(assumedServiceName);
      * sysContext.getEngineConfig().addService(axisService);
      * ServiceContext service = sysContext.createServiceContext(assumedServiceName);
      * return service;
-     * <p/>
+     * </pre></blockquote>
      * </code>
      *
      * @param serviceContext
@@ -114,13 +114,12 @@ public class InOutMEPClient extends MEPClient {
 
 
     /**
-     * This invocation done via this method blocks till the result arrives, using this method does not indicate
-     * anyhting about the transport used or the nature of the transport.
-     * e.g. invocation done with this method might
+     * This method is used to make blocking calls. This is independent of the transport.
+     * For e.g. invocation done with this method might
      * <ol>
-     * <li>send request via http and recevie the response via the return path of the same http connection</li>
-     * <li>send request via http and recevie the response different http connection</li>
-     * <li>send request via a email smtp and recevie the response via a email</li>
+     * <li>send request via http and receive the response at the same http connection.</li>
+     * <li>send request via http and receive the response at a different http connection.</li>
+     * <li>send request via an email smtp and receive the response via an email.</li>
      * </ol>
      */
 
@@ -208,8 +207,13 @@ public class InOutMEPClient extends MEPClient {
     }
 
     /**
-     * This invocation done via this method blocks till the result arrives, using this method does not indicate
-     * anyhting about the transport used or the nature of the transport.
+     * This method is used to make non-blocking calls and is independent of the transport.
+     * For e.g. invocation done with this method might
+     * <ol>
+     * <li>send request via http and receive the response at the same http connection.</li>
+     * <li>send request via http and receive the response at a different http connection.</li>
+     * <li>send request via an email smtp and receive the response via an email.</li>
+     * </ol>
      */
     public void invokeNonBlocking(final AxisOperation axisop,
                                   final MessageContext msgctx,
@@ -227,7 +231,7 @@ public class InOutMEPClient extends MEPClient {
             msgctx.setMessageID(messageID);
             ////
             if (useSeparateListener) {
-                //the invocation happen via a seperate Channel, so we should set up the
+                //the invocation happen via a separate Channel, so we should set up the
                 //information need to correlated the response message and invoke the call back
 
                 axisop.setMessageReceiver(callbackReceiver);
@@ -270,14 +274,15 @@ public class InOutMEPClient extends MEPClient {
     }
 
     /**
-     * Set transport information to the the Call, for find how the each parameter acts see the commant at the instance
-     * variables. The senarios supoorted are as follows.
+     * Sets transport information to the call. The senarios supported are as follows: 
+     * <blockquote><pre>
      * [senderTransport, listenerTransport, useSeparateListener]
      * http, http, true
      * http, http, false
      * http,smtp,true
      * smtp,http,true
      * smtp,smtp,true
+     * </pre></blockquote>
      *
      * @param senderTransport
      * @param listenerTransport
@@ -319,7 +324,7 @@ public class InOutMEPClient extends MEPClient {
             throw new AxisFault(Messages.getMessage("unknownTransport", listenerTransport));
         }
 
-        //if seperate transport is used, start the required listeners
+        //if separate transport is used, start the required listeners
         if (useSeparateListener) {
             if (!serviceContext
                     .getConfigurationContext()
@@ -333,7 +338,7 @@ public class InOutMEPClient extends MEPClient {
     }
 
     /**
-     * Check has the transports are identified correctly
+     * Checks if the transports are identified correctly.
      *
      * @param msgctx
      * @throws AxisFault
@@ -360,7 +365,7 @@ public class InOutMEPClient extends MEPClient {
     }
 
     /**
-     * This Class act as the Callback that allow users to wait on the result
+     * This class acts as a callback that allows users to wait on the result.
      */
     public class SyncCallBack extends Callback {
         private SOAPEnvelope envelope;
@@ -376,16 +381,16 @@ public class InOutMEPClient extends MEPClient {
     }
 
     /**
-     * Closing the Call, this will stop the started Transport Listeners. If there are multiple
-     * request to send the Call should be kept open closing only when done
+     * Closes the call initiated to the Transport Listeners. If there are multiple
+     * requests sent, the call should be closed only when all are are done.
      */
     public void close() throws AxisFault {
         ListenerManager.stop(listenerTransport.getName().getLocalPart());
     }
 
     /**
-     * This Class is the workhorse for a Non Blocking invocation that uses a
-     * two way transport
+     * This class is the workhorse for a non-blocking invocation that uses a
+     * two way transport.
      */
     private class NonBlockingInvocationWorker implements Runnable {
 
@@ -433,8 +438,8 @@ public class InOutMEPClient extends MEPClient {
     }
 
     /**
-     * This will be used in invoke blocking scenario. Client will wait the amount of time specified here
-     * and if there is no response, call will timeout. This should be given in multiples of 100 and defaults to 2000.
+     * This is used in blocking scenario. Client will time out after waiting this amount of time.
+     * The default is 2000 and must be provided in multiples of 100.
      *
      * @param timeOutInMilliSeconds
      */
@@ -443,8 +448,8 @@ public class InOutMEPClient extends MEPClient {
     }
 
     /**
-     * This will be used in invoke blocking scenario. Client will wait the amount of time specified here
-     * and if there is no response, call will timeout. This should be given in multiples of 100 and defaults to 2000.
+     * Gets the wait time after which a client times out in a blocking scenario.
+     * The default is 2000.
      *
      * @return timeOutInMilliSeconds
      */

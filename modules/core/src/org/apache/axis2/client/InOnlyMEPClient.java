@@ -32,7 +32,7 @@ import org.apache.wsdl.WSDLConstants;
 import javax.xml.namespace.QName;
 
 /**
- * This class Hnadles In-Only (fire and forget) MEP
+ * This class handles In-Only (fire and forget) MEP
  */
 public class InOnlyMEPClient extends MEPClient {
     protected TransportOutDescription senderTransport;
@@ -44,7 +44,7 @@ public class InOnlyMEPClient extends MEPClient {
     }
 
     /**
-     * Send the SOAP Message and forget about it. This is one way
+     * Sends the SOAP Message and forgets about it. This is one way
      * @param axisop
      * @param msgctx
      * @throws AxisFault
@@ -78,9 +78,9 @@ public class InOnlyMEPClient extends MEPClient {
 
 
     /**
-     * set the transport to used for sending the SOAP Message
+     * Sets the transport to be used for sending the SOAP Message
      * @param senderTransport
-     * @throws org.apache.axis2.AxisFault if the transport not found
+     * @throws org.apache.axis2.AxisFault if the transport is not found
      */
     public void setSenderTransport(String senderTransport) throws AxisFault {
         AxisConfiguration axisConfiguration =

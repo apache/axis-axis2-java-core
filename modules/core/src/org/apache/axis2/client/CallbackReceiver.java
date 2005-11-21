@@ -8,14 +8,14 @@ import org.apache.axis2.engine.MessageReceiver;
 import java.util.HashMap;
 
 /**
- * This is a MessageReceiver that is used at the client side to accept the 
- * Messages (response) that comes in the Client. This one correlated the incomming Message to
- * the related Messages and Call the correct callback. 
+ * This is a MessageReceiver which is used on the client side to accept the 
+ * messages (response) that come to the client. This correlates the incoming message to
+ * the related messages and makes a call to the appropriate callback. 
  */
 
 public class CallbackReceiver implements MessageReceiver {
 
-    public static String SERVIC_NAME = "ClientService";
+    public static String SERVICE_NAME = "ClientService";
 
     private HashMap callbackstore;
 

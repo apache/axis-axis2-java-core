@@ -2,8 +2,8 @@ package org.apache.axis2.client;
 
 
 /**
- * This Class is the abstract representation of the Callback that would be called in the completion of a 
- * Async invocation
+ * This Class is the abstract representation of a callback and is called at the completion of an
+ * asynchronous invocation.
  */
 public abstract class Callback {
     /**
@@ -13,23 +13,22 @@ public abstract class Callback {
 
 
     /**
-     * This Method is called by Axis2 once the Async Operation is sucessfully completed and the result returns
-     *
+     * This method is invoked by Axis Engine once the asynchronous operation has completed sucessfully.
+     *     
      * @param result
      */
     public abstract void onComplete(AsyncResult result);
 
     /**
-     * This Method is called by Axis2 once the Async Operation fails and the result returns
+     * This method is called by Axis Engine if the asynchronous operation fails. 
      *
      * @param e
      */
     public abstract void reportError(Exception e);
 
     /**
-     * This says has the Async Operation is completed or not. this could be useful for poleing 
-     * with a special callback written for poleing (checking repeatedly time to time).
-     * e.g.
+     * Returns true if the asynchronous operation has completed, false otherwise. Typically this is 
+     * used for polling. e.g.
      * <code>
      *      <pre>
      *          while(!callback.isComplete()){
