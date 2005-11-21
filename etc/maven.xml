@@ -63,6 +63,7 @@
     </goal>
 
     <!-- Remove classes which depend on changed files, so they will rebuild. -->
+    <!-- TODO: Fix me 
     <preGoal name="java:compile">
         <j:if test="${sourcesPresent}">
             <ant:depend srcdir="${maven.compile.source}"
@@ -83,6 +84,7 @@
             </ant:depend>
         </j:if>
     </preGoal>
+    -->
 
     <!-- Construct dependency lists for inclusion in generated jar. -->
     <!-- putting this goal here produces a circular dependency -->
