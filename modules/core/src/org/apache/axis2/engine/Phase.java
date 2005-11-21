@@ -171,9 +171,7 @@ public class Phase {
         }
         //If phase last handler is there will invoke that here
         if (phaseLast != null) {
-            if (msgctx.isPaused()) {
-                return;
-            } else {
+            if (!msgctx.isPaused()) {
                 log.info("Invoke the Phase first handler "
                         + phaseLast.getName()
                         + "with in the Phase "
@@ -304,7 +302,6 @@ public class Phase {
                 insertHandler(handler);
                 return;
             }
-
         }
     }
 
@@ -530,7 +527,7 @@ public class Phase {
     /**
      * To get the all the handlers in the phase
      *
-     * @return
+     * @return an ArrayList of Handlers
      */
     public ArrayList getHandlers() {
         ArrayList phaseHandlers = new ArrayList();

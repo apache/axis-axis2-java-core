@@ -48,7 +48,8 @@ public class DescriptionBuilder implements DeploymentConstants{
     protected AxisConfiguration axisConfig;
 //    protected DeploymentEngine engine;
 
-    public DescriptionBuilder(InputStream serviceInputStream, AxisConfiguration axisConfig) {
+    public DescriptionBuilder(InputStream serviceInputStream,
+                              AxisConfiguration axisConfig) {
         this.des_inputStream = serviceInputStream;
         this.axisConfig = axisConfig;
     }
@@ -80,7 +81,8 @@ public class DescriptionBuilder implements DeploymentConstants{
      * @return
      * @throws DeploymentException  <code>DeploymentException</code>
      */
-    protected Flow processFlow(OMElement flowelement, ParameterInclude parent) throws DeploymentException {
+    protected Flow processFlow(OMElement flowelement, ParameterInclude parent)
+            throws DeploymentException {
         Flow flow = new FlowImpl();
         if(flowelement == null){
             return flow;
@@ -100,7 +102,8 @@ public class DescriptionBuilder implements DeploymentConstants{
      * @return
      * @throws DeploymentException    <code>DeploymentException</code>
      */
-    protected HandlerDescription processHandler(OMElement handler_element, ParameterInclude parent)
+    protected HandlerDescription processHandler(OMElement handler_element,
+                                                ParameterInclude parent)
             throws DeploymentException {
         HandlerDescription handler = new HandlerDescription();
 
@@ -129,7 +132,8 @@ public class DescriptionBuilder implements DeploymentConstants{
                 new QName(ORDER));
         if(order_element == null){
             throw new DeploymentException((Messages.getMessage(
-                    DeploymentErrorMsgs.INVALID_HANDLER,"phase rule does not specify")));
+                    DeploymentErrorMsgs.INVALID_HANDLER,
+                    "phase rule does not specify")));
         } else {
             Iterator order_itr = order_element.getAllAttributes();
             while (order_itr.hasNext()) {
@@ -175,7 +179,8 @@ public class DescriptionBuilder implements DeploymentConstants{
      * return : will retuen paramters , wchih name is WSA-Mapping , since we need to treat them
      * seperately
      */
-    protected ArrayList processParameters(Iterator parameters, ParameterInclude parameterInclude,
+    protected ArrayList processParameters(Iterator parameters,
+                                          ParameterInclude parameterInclude,
                                           ParameterInclude parent )
             throws DeploymentException {
         ArrayList wsamapping = new ArrayList();
@@ -217,10 +222,12 @@ public class DescriptionBuilder implements DeploymentConstants{
             if (paraLocked !=null) {
                 String lockedValue = paraLocked.getAttributeValue();
                 if("true".equals(lockedValue)){
-                    //if the parameter is locked at some levle paramer value replace by that
-                    if(parent!=null && parent.isParameterLocked(parameter.getName())){
+                    // if the parameter is locked at some level parameter value replace by that
+                    if (parent!=null &&
+                            parent.isParameterLocked(parameter.getName())){
                         throw new DeploymentException(Messages.getMessage(
-                                DeploymentErrorMsgs.CONFIG_NOT_FOUND,parameter.getName()));
+                                DeploymentErrorMsgs.CONFIG_NOT_FOUND,
+                                parameter.getName()));
                     } else{
                         parameter.setLocked(true);
                     }
@@ -236,7 +243,8 @@ public class DescriptionBuilder implements DeploymentConstants{
             }
             try {
                 if(parent !=null){
-                    if(parentpara == null | !parent.isParameterLocked(parameter.getName())){
+                    if(parentpara == null ||
+                            !parent.isParameterLocked(parameter.getName())){
                         parameterInclude.addParameter(parameter);
                     }
                 } else {
@@ -250,8 +258,9 @@ public class DescriptionBuilder implements DeploymentConstants{
     }
 
 
-    protected void processOperationModuleRefs(Iterator moduleRefs
-            , AxisOperation opeartion) throws DeploymentException {
+    protected void processOperationModuleRefs(Iterator moduleRefs,
+                                              AxisOperation opeartion)
+            throws DeploymentException {
         try {
             while (moduleRefs.hasNext()) {
                 OMElement moduleref = (OMElement) moduleRefs.next();
@@ -261,7 +270,8 @@ public class DescriptionBuilder implements DeploymentConstants{
                     String refName = moduleRefAttribute.getAttributeValue();
                     if(axisConfig.getModule(new QName(refName)) == null) {
                         throw new DeploymentException(Messages.getMessage(
-                                DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));
+                                DeploymentErrorMsgs.MODEULE_NOT_FOUND,
+                                refName));
                     } else {
                         opeartion.addModule(new QName(refName));
                     }
@@ -269,11 +279,13 @@ public class DescriptionBuilder implements DeploymentConstants{
             }
         }catch (AxisFault axisFault) {
             throw new DeploymentException(Messages.getMessage(
-                    DeploymentErrorMsgs.MODEULE_NOT_FOUND, axisFault.getMessage()));
+                    DeploymentErrorMsgs.MODEULE_NOT_FOUND,
+                    axisFault.getMessage()));
         }
     }
 
-    protected MessageReceiver loadMessageReceiver(ClassLoader loader , OMElement reciverElement)
+    protected MessageReceiver loadMessageReceiver(ClassLoader loader,
+                                                  OMElement reciverElement)
             throws DeploymentException {
         OMAttribute recieverName = reciverElement.getAttribute(
                 new QName(CLASSNAME));
@@ -287,20 +299,28 @@ public class DescriptionBuilder implements DeploymentConstants{
             }
         } catch (ClassNotFoundException e) {
             throw new DeploymentException(Messages.getMessage(
-                    DeploymentErrorMsgs.ERROR_IN_LOADING_MR,"ClassNotFoundException", className));
+                    DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
+                    "ClassNotFoundException",
+                    className));
         } catch (IllegalAccessException e) {
             throw new DeploymentException(Messages.getMessage(
-                    DeploymentErrorMsgs.ERROR_IN_LOADING_MR,"IllegalAccessException", className));
+                    DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
+                    "IllegalAccessException",
+                    className));
         } catch (InstantiationException e) {
             throw new DeploymentException(Messages.getMessage(
-                    DeploymentErrorMsgs.ERROR_IN_LOADING_MR,"InstantiationException", className));
+                    DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
+                    "InstantiationException",
+                    className));
         }
         return receiver;
     }
 
-    protected MessageReceiver loadDefaultMessageReceiver() throws DeploymentException {
+    protected MessageReceiver loadDefaultMessageReceiver()
+            throws DeploymentException {
         MessageReceiver receiver;
-        String defaultMessageReciver ="org.apache.axis2.receivers.RawXMLINOutMessageReceiver";
+        String defaultMessageReceiver =
+                "org.apache.axis2.receivers.RawXMLINOutMessageReceiver";
         try {
             /**
              * Setting default Message Recive as Message Receiver
@@ -308,17 +328,23 @@ public class DescriptionBuilder implements DeploymentConstants{
             ClassLoader loader1 = Thread.currentThread()
                     .getContextClassLoader();
             Class messageReceiver =
-                    Class.forName(defaultMessageReciver,true,loader1);
+                    Class.forName(defaultMessageReceiver,true,loader1);
             receiver = ((MessageReceiver) messageReceiver.newInstance());
         } catch (ClassNotFoundException e) {
-            throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
-                    "ClassNotFoundException",defaultMessageReciver));
+            throw new DeploymentException(Messages.getMessage(
+                    DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
+                    "ClassNotFoundException",
+                    defaultMessageReceiver));
         } catch (IllegalAccessException e) {
-            throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
-                    "IllegalAccessException",defaultMessageReciver));
+            throw new DeploymentException(Messages.getMessage(
+                    DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
+                    "IllegalAccessException",
+                    defaultMessageReceiver));
         } catch (InstantiationException e) {
-            throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
-                    "InstantiationException",defaultMessageReciver));
+            throw new DeploymentException(Messages.getMessage(
+                    DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
+                    "InstantiationException",
+                    defaultMessageReceiver));
         }
         return receiver;
     }
