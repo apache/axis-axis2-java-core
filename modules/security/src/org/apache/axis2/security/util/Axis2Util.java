@@ -20,6 +20,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
+import org.apache.axis2.security.trust.TrustException;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.ws.security.SOAPConstants;
@@ -32,6 +33,7 @@ import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -187,5 +189,55 @@ public class Axis2Util {
 				return originalKey + repetition;
 		}
 		return originalKey;
+	}
+	
+	/**
+	 * Convert a given DOM Element to an OMElement
+	 * @param element
+	 * @return
+	 * @throws TrustException
+	 */
+	public static OMElement toOM(Element element) throws TrustException {
+		try {
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			XMLUtils.outputDOM(element, os, true);
+			
+			ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+			XMLStreamReader reader = XMLInputFactory.newInstance()
+					.createXMLStreamReader(is);
+
+			StAXOMBuilder builder = new StAXOMBuilder(reader);
+			builder.setCache(true);
+
+			return builder.getDocumentElement();
+		} catch (XMLStreamException e) {
+			throw new TrustException(TrustException.ERROR_IN_CONVERTING_TO_OM,
+					TrustException.ERROR_IN_CONVERTING_TO_OM, new Object[] {}, e);
+		}
+	}
+	
+
+	/**
+	 * Convert a given OMElement to a DOM Element
+	 * @param element
+	 * @return
+	 * @throws TrustException
+	 */
+	public static Element toDOM(OMElement element) throws TrustException {
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	
+			OMOutputImpl output = new OMOutputImpl(baos, false);
+			element.serialize(output);
+			output.flush();
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+	
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setNamespaceAware(true);
+			return factory.newDocumentBuilder().parse(bais).getDocumentElement();
+		} catch (Exception e) {
+			throw new TrustException(TrustException.ERROR_IN_CONVERTING_TO_DOM,
+					TrustException.ERROR_IN_CONVERTING_TO_DOM, new Object[] {}, e);			
+		}
 	}
 }

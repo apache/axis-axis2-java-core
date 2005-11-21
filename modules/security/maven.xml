@@ -40,14 +40,6 @@
         </jar>
         <copy file="target/security.mar" tofile="target/modules/security.mar"/>
 
-	<!-- Create the client specific security module -->
-	<copy file="src/META-INF/client.module.xml"
-            tofile="target/classes/META-INF/module.xml" overwrite="true"/>
-
-        <jar jarfile="target/client.security.mar" basedir="target/classes">
-            <include name="**/*"/>
-        </jar>
-        <copy file="target/client.security.mar" tofile="target/modules/client.security.mar"/>
     </postGoal>
 
     <preGoal name="java:compile">
