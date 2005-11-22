@@ -154,7 +154,7 @@ public class ADBPullParser implements XMLStreamReader {
                         This is the how the passed array should look like
      *                           Key             Value
      *                         String          String
-     *                         QName           ADBBean, OMElement, Bean
+     *                         QName           ADBBean, OMElement, Bean, String
                                String          String[]
                                QName           Object[] - this contains only one type of objects
      *                   <p/>
@@ -226,7 +226,7 @@ public class ADBPullParser implements XMLStreamReader {
             if (complexStringArray.length > ++secondArrayIndex) {
                 // we have some more to process
                 processingADBNameValuePair = true;
-                return processADBNameValuePair(complexStringArrayName, complexStringArray[secondArrayIndex]);
+                return processADBNameValuePair(new QName(complexStringArrayName), complexStringArray[secondArrayIndex]);
             } else {
                 // completed looking at all the entries. Now go forward with normal entries, if any.
                 processingComplexADBNameValuePair = false;
@@ -269,7 +269,10 @@ public class ADBPullParser implements XMLStreamReader {
                     complexArrayQName = (QName) o;
                     getPullParser(complexArray[secondArrayIndex], complexArrayQName);
                     processingComplexArray = true;
-                } else {
+                } else if(object instanceof String) {
+                    processingADBNameValuePair = true;
+                    return processADBNameValuePair((QName)o, (String) object);
+                }else {
                     getPullParser(object, (QName) o);
                 }
                 accessingChildPullParser = true;
@@ -289,7 +292,7 @@ public class ADBPullParser implements XMLStreamReader {
 
                     // use the simple name value pair processing recursively
                     processingADBNameValuePair = true;
-                    return processADBNameValuePair(simplePropertyName, complexStringArray[secondArrayIndex]);
+                    return processADBNameValuePair(new QName(simplePropertyName), complexStringArray[secondArrayIndex]);
 
                 } else if (property instanceof String) {
                     String simplePropertyValue = (String) properties[currentIndex];
@@ -298,7 +301,7 @@ public class ADBPullParser implements XMLStreamReader {
                         processingElementText = true;
                     }
                     processingADBNameValuePair = true;
-                    return processADBNameValuePair(simplePropertyName, simplePropertyValue);
+                    return processADBNameValuePair(new QName(simplePropertyName), simplePropertyValue);
                 }
                 throw new XMLStreamException("Only String and String[] are accepted as the values when the key is a String");
             } else {
@@ -672,7 +675,7 @@ public class ADBPullParser implements XMLStreamReader {
 // Utill methods inside this class
 // =============================================================================
 
-    private int processADBNameValuePair(String simplePropertyName, String simplePropertyValue) {
+    private int processADBNameValuePair(QName simplePropertyName, String simplePropertyValue) {
         int event = 0;
         if(processingElementText){
             this.parserInformation.setText(simplePropertyValue);
@@ -681,7 +684,7 @@ public class ADBPullParser implements XMLStreamReader {
         } else if (!nameValuePairStartElementProcessed) {
             event = XMLStreamConstants.START_ELEMENT;
             tempParserInfo = parserInformation;
-            parserInformation = new ParserInformation(new QName(simplePropertyName), simplePropertyValue);
+            parserInformation = new ParserInformation(simplePropertyName, simplePropertyValue);
             nameValuePairStartElementProcessed = true;
             finishedProcessingNameValuePair = false;
         } else if (nameValuePairStartElementProcessed && !nameValuePairTextProcessed) {

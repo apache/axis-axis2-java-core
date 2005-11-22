@@ -16,7 +16,7 @@
 
 package org.apache.wsdl;
 
-import org.w3c.dom.Element;
+import org.apache.ws.commons.schema.XmlSchemaElement;
 
 import javax.xml.namespace.QName;
 
@@ -63,6 +63,6 @@ public interface MessageReference extends ExtensibleComponent {
      */
     public void setMessageLabel(String messageLabel);
 
-    public Element getElementSchema();
-    public void setElementSchema(Element element);
+    public XmlSchemaElement getElementSchema();
+    public void setElementSchema(XmlSchemaElement element);
 }

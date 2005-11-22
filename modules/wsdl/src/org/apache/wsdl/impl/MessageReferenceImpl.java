@@ -16,8 +16,8 @@
 
 package org.apache.wsdl.impl;
 
+import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.wsdl.MessageReference;
-import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 
@@ -44,7 +44,7 @@ public class MessageReferenceImpl extends ExtensibleComponentImpl
      * Field elementQName
      */
     private QName elementQName;
-    private Element elementSchema;
+    private XmlSchemaElement elementSchema;
 
     /**
      * Method getDirection
@@ -102,11 +102,11 @@ public class MessageReferenceImpl extends ExtensibleComponentImpl
         this.messageLabel = messageLabel;
     }
 
-    public Element getElementSchema() {
+    public XmlSchemaElement getElementSchema() {
         return elementSchema;
     }
 
-    public void setElementSchema(Element element) {
+    public void setElementSchema(XmlSchemaElement element) {
         this.elementSchema = element;
     }
 }

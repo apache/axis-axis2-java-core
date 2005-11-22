@@ -512,6 +512,7 @@ public class ADBPullParserTest extends XMLTestCase {
 
         XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("http://testComplexStringArrayScenario.org", "TestComplexStringArrayScenario", "ns1"), propertyList.toArray(), null);
         String actualXML = getStringXML(pullParser);
+        System.out.println("actualXML = " + actualXML);
 
         try {
             assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
@@ -531,6 +532,30 @@ public class ADBPullParserTest extends XMLTestCase {
         try {
             ArrayList properties = new ArrayList();
             properties.add(ADBPullParser.ELEMENT_TEXT);
+            properties.add("This is some Text for the element");
+
+            XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("http://testElementText.org", "testElementText", "ns1"), properties.toArray(), null);
+
+            String actualXML = getStringXML(pullParser);
+
+            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
+        } catch (ParserConfigurationException e) {
+            fail("Error has occurred " + e);
+        } catch (SAXException e) {
+            fail("Error has occurred " + e);
+        } catch (IOException e) {
+            fail("Error has occurred " + e);
+        }
+    }
+
+    public void testQualifiedElement() {
+
+        String expectedXML = "<ns1:testElementText xmlns:ns1=\"http://testElementText.org\">" +
+                "<ns2:QualifiedElement xmlns:ns2=\"http://testQElementText.org\">" +
+                "This is some Text for the element</ns2:QualifiedElement></ns1:testElementText>";
+        try {
+            ArrayList properties = new ArrayList();
+            properties.add(new QName("http://testQElementText.org", "QualifiedElement", "ns2"));
             properties.add("This is some Text for the element");
 
             XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("http://testElementText.org", "testElementText", "ns1"), properties.toArray(), null);

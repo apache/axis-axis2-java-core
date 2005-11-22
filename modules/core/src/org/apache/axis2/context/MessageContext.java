@@ -618,8 +618,8 @@ public class MessageContext extends AbstractContext {
 
 
     /**
-     * To retrive configuration descriptor parameters , it is posible to get paramater specify at
-     * any levle via this method , and the preferance is as follows,
+     * To retrieve configuration descriptor parameters , it is posible to get paramaters specified in
+     * any level via this method , and the preference is as follows,
      * 1. Search in operation description if its there
      * 2. if the paramter not found or operationContext is null will search in
      * AxisService

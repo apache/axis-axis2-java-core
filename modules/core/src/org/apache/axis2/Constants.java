@@ -192,6 +192,11 @@ public class Constants {
         public static final String CACHE_ATTACHMENTS = "cacheAttachments";
         public static final String FILE_SIZE_THRESHOLD = "sizeThreshold";
 
+        public static final String HTTP_METHOD_GET = "GET";
+        public static final String HTTP_METHOD = "HTTP_METHOD";
+        public static final String HTTP_METHOD_POST = "POST";
+        public static final String CONTENT_TYPE = "ContentType";
+
         // we need to some times send the message as multipart/related, even if there is no MTOM stuff in the envelope.
         public static final String FORCE_MIME = "ForceMimeBoundary";
     }
