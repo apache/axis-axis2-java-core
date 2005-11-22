@@ -50,8 +50,6 @@ public class InOutMEPClient extends MEPClient {
 
     protected long timeOutInMilliSeconds = DEFAULT_TIMEOUT_MILLISECONDS;
 
-    AxisEngine engine = null;
-
     protected TransportListener listener;
     /**
      * This is used for sending and receiving messages.
@@ -225,7 +223,7 @@ public class InOutMEPClient extends MEPClient {
             final ConfigurationContext syscontext =
                     serviceContext.getConfigurationContext();
 
-            engine = new AxisEngine(syscontext);
+            AxisEngine engine = new AxisEngine(syscontext);
             checkTransport(msgctx);
             //Use message id all the time!
             String messageID = String.valueOf("uuid:" + UUIDGenerator.getUUID());
