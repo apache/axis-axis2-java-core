@@ -62,7 +62,7 @@ public abstract class Stub {
     protected boolean useSeparateListener;
 
     //Default SOAP version is 11
-    protected int soapVesrion = SOAP_11;
+    protected int soapVersion = SOAP_11;
     protected HashMap propertyMap = new HashMap();
     protected ArrayList modules = new ArrayList();
 
@@ -121,7 +121,7 @@ public abstract class Stub {
      * @param soapVersion
      */
     public void setSOAPVersion(int soapVersion){
-        this.soapVesrion = soapVersion;
+        this.soapVersion = soapVersion;
     }
 
 
@@ -169,7 +169,7 @@ public abstract class Stub {
 
 
     protected SOAPEnvelope createEnvelope() throws SOAPProcessingException {
-        return getFactory(this.soapVesrion).getDefaultEnvelope();
+        return getFactory(this.soapVersion).getDefaultEnvelope();
     }
 
     protected void setValueRPC(SOAPEnvelope env,
@@ -178,7 +178,7 @@ public abstract class Stub {
                                String[] paramNames,
                                Object[] values) {
         SOAPBody body = env.getBody();
-        OMFactory fac = this.getFactory(this.soapVesrion);
+        OMFactory fac = this.getFactory(this.soapVersion);
 
         OMNamespace methodNamespace = fac.createOMNamespace(methodNamespaceURI,
                 "ns1");
