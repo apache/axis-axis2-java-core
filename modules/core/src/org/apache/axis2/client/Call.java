@@ -40,7 +40,7 @@ import javax.xml.namespace.QName;
 public class Call extends InOutMEPClient {
 
     protected static AxisOperation axisOperationTemplate;
-    protected MessageContext lastResponseMessage;
+    protected MessageContext lastResponseMsgCtx;
 
     /**
      * @throws AxisFault
@@ -86,8 +86,8 @@ public class Call extends InOutMEPClient {
         opDesc.setParent(serviceContext.getAxisService());
         MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
 
-        this.lastResponseMessage = super.invokeBlocking(opDesc, msgctx);
-        SOAPEnvelope resEnvelope = lastResponseMessage.getEnvelope();
+        this.lastResponseMsgCtx = super.invokeBlocking(opDesc, msgctx);
+        SOAPEnvelope resEnvelope = lastResponseMsgCtx.getEnvelope();
         return resEnvelope.getBody().getFirstElement();
     }
 
@@ -112,8 +112,8 @@ public class Call extends InOutMEPClient {
         }
         msgctx.setEnvelope(envelope);
 
-        this.lastResponseMessage = super.invokeBlocking(opDesc, msgctx);
-        return lastResponseMessage.getEnvelope();
+        this.lastResponseMsgCtx = super.invokeBlocking(opDesc, msgctx);
+        return lastResponseMsgCtx.getEnvelope();
     }
 
     /**
@@ -231,14 +231,16 @@ public class Call extends InOutMEPClient {
     }
 
     /**
+     * Get the value corresponding to the key in the Service Context
      * @param key
-     * @return
+     * @return value
      */
     public Object get(String key) {
         return serviceContext.getProperty(key);
     }
 
     /**
+     * Set a property in the Service Context
      * @param key
      * @param value
      */
@@ -247,10 +249,12 @@ public class Call extends InOutMEPClient {
     }
 
     /**
-     * @return
+     * Get the MessageContext of the response
+     * 
+     * @return message context
      */
-    public MessageContext getLastResponseMessage() {
-        return lastResponseMessage;
+    public MessageContext getResponseMessageContext() {
+        return lastResponseMsgCtx;
     }
 
 }

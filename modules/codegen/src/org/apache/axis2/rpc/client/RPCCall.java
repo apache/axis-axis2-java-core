@@ -81,8 +81,8 @@ public class RPCCall extends Call {
         opDesc.setParent(serviceContext.getAxisService());
         MessageContext msgctx = prepareTheSOAPEnvelope(BeanSerializerUtil.getOMElement(opName, args));
 
-        this.lastResponseMessage = super.invokeBlocking(opDesc, msgctx);
-        SOAPEnvelope resEnvelope = lastResponseMessage.getEnvelope();
+        this.lastResponseMsgCtx = super.invokeBlocking(opDesc, msgctx);
+        SOAPEnvelope resEnvelope = lastResponseMsgCtx.getEnvelope();
         return resEnvelope.getBody().getFirstElement();
     }
 
@@ -109,8 +109,8 @@ public class RPCCall extends Call {
                 WSDLConstants.MEP_CONSTANT_IN_OUT);
         opDesc.setParent(serviceContext.getAxisService());
         MessageContext msgctx = prepareTheSOAPEnvelope(BeanSerializerUtil.getOMElement(opName, args));
-        this.lastResponseMessage = super.invokeBlocking(opDesc, msgctx);
-        SOAPEnvelope resEnvelope = lastResponseMessage.getEnvelope();
+        this.lastResponseMsgCtx = super.invokeBlocking(opDesc, msgctx);
+        SOAPEnvelope resEnvelope = lastResponseMsgCtx.getEnvelope();
         return BeanSerializerUtil.deserialize(resEnvelope.getBody().getFirstElement(), returnTypes);
     }
 
