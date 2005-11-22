@@ -38,7 +38,7 @@ public abstract class Callback {
      *      </pre>
      * </code>
      *
-     * @return
+     * @return boolean
      */
     public boolean isComplete() {
         return complete;
