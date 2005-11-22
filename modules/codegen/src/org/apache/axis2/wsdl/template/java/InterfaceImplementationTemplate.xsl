@@ -138,7 +138,7 @@
                   <xsl:choose>
                       <xsl:when test="$style='rpc'">
                // Style is RPC
-              setValueRPC(env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
+              org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(this.soapVersion), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
               new String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
               new Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                       </xsl:when>
@@ -163,7 +163,7 @@
                    <xsl:choose>
                    <xsl:when test="$style='rpc'">
                //Style is RPC. No input parameters
-               setValueRPC(env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",null,null);
+               org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(this.soapVersion), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",null,null);
                       </xsl:when>
                      <xsl:when test="$style='doc'">
                //Style is Doc. No input parameters
@@ -228,7 +228,7 @@
               <xsl:choose>
                <xsl:when test="$style='rpc'">
            // Style is RPC
-           setValueRPC(env,
+           org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(this.soapVersion), env,
             "<xsl:value-of select="@namespace"/>",
             "<xsl:value-of select="@name"/>",
              new String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
@@ -249,7 +249,7 @@
                    <xsl:choose>
                    <xsl:when test="$style='rpc'">
            //Style is RPC. No input parameters
-              setValueRPC(env,
+              org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(this.soapVersion), env,
                 "<xsl:value-of select="@namespace"/>",
                 "<xsl:value-of select="@name"/>",
                 null,
@@ -317,7 +317,7 @@
                   <xsl:choose>
                       <xsl:when test="$style='rpc'">
                // Style is RPC
-              setValueRPC(env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
+              org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(this.soapVersion), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
               new String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
               new Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                       </xsl:when>
@@ -337,7 +337,7 @@
                    <xsl:choose>
                    <xsl:when test="$style='rpc'">
                //Style is RPC. No input parameters
-               setValueRPC(env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",null,null);
+               org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(this.soapVersion), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",null,null);
                       </xsl:when>
                      <xsl:when test="$style='doc'">
                //Style is Doc. No input parameters

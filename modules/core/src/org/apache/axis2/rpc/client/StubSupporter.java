@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.client;
+package org.apache.axis2.rpc.client;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;

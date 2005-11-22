@@ -18,6 +18,7 @@ package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.rpc.client.StubSupporter;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -172,32 +173,6 @@ public abstract class Stub {
         return getFactory(this.soapVersion).getDefaultEnvelope();
     }
 
-    protected void setValueRPC(SOAPEnvelope env,
-                               String methodNamespaceURI,
-                               String methodName,
-                               String[] paramNames,
-                               Object[] values) {
-        SOAPBody body = env.getBody();
-        OMFactory fac = this.getFactory(this.soapVersion);
-
-        OMNamespace methodNamespace = fac.createOMNamespace(methodNamespaceURI,
-                "ns1");
-        OMElement elt = fac.createOMElement(methodName, methodNamespace);
-        if (paramNames != null) {
-            //find the relevant object here, convert it and add it to the elt
-            for (int i = 0; i < paramNames.length; i++) {
-                String paramName = paramNames[i];
-                Object value = values[i];
-                elt.addChild(StubSupporter.createRPCMappedElement(paramName,
-                        fac.createOMNamespace("", null), //empty namespace
-                        value,
-                        fac));
-            }
-        }
-        body.addChild(elt);
-    }
-
-
     protected OMElement getElementFromReader(XMLStreamReader reader) {
         StAXOMBuilder builder = OMXMLBuilderFactory.createStAXOMBuilder(
                 OMAbstractFactory.getOMFactory(), reader);
@@ -251,7 +226,7 @@ public abstract class Stub {
     }
 
 
-    private SOAPFactory getFactory(int soapVersion) {
+    protected SOAPFactory getFactory(int soapVersion) {
         if (soapVersion==SOAP_11){
             return OMAbstractFactory.getSOAP11Factory();
         }else if (soapVersion==SOAP_12){
