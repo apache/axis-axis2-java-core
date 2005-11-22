@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="axis2" default="default"
+<project name="axis2" default="quick"
 
     >
 
@@ -129,6 +129,44 @@
       <remoteRepository url="${filesys.url}"/>
       <pom refid="m2.pom"/>
     </m2:deploy>
+  </target>
+
+  <target name="quick" depends="init"
+      description="make a distribution">
+    <mkdir dir="${basedir}/target/classes/"/>
+    <path id="classpath">
+      <fileset dir="${lib.dir}">
+        <include name="**/*.jar"/>
+      </fileset>
+    </path>
+
+    <javac srcdir="${basedir}/modules"
+      destdir="${basedir}/target/classes/"
+      debug="true"
+      source="1.4"
+      classpathref="classpath">
+      <include name="addressing/src/**/*.java"/>
+      <include name="codegen/src/**/*.java"/>
+      <include name="common/src/**/*.java"/>
+      <include name="core/src/**/*.java"/>
+      <include name="integration/src/**/*.java"/>
+      <include name="saaj/src/**/*.java"/>
+      <include name="samples/src/**/*.java"/>
+      <include name="security/src/**/*.java"/>
+      <include name="wsdl/src/**/*.java"/>
+      <include name="xml/src/**/*.java"/>
+    </javac>
+    <copy todir="${basedir}/target/classes/">
+      <fileset dir="${basedir}/modules/common/src">
+        <include name="**/*.properties"/>
+        <include name="**/*.xsl"/>
+      </fileset>
+      <fileset dir="${basedir}/modules/codegen/src">
+        <include name="**/*.properties"/>
+        <include name="**/*.xsl"/>
+        <include name="**/*.xsd"/>
+      </fileset>
+    </copy>
   </target>
 
 
