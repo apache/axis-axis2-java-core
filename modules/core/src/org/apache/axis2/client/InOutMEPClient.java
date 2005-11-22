@@ -34,6 +34,7 @@ import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.wsdl.WSDLConstants;
 
@@ -179,7 +180,7 @@ public class InOutMEPClient extends MEPClient {
 
             //Send the SOAP Message and receive a response                
             MessageContext response =
-                    TwoWayTransportBasedSender.send(msgctx, listenerTransport);
+                    send(msgctx, listenerTransport);
 
             //check for a fault and return the result
             SOAPEnvelope resenvelope = response.getEnvelope();
@@ -413,7 +414,7 @@ public class InOutMEPClient extends MEPClient {
                 msgctx.setServiceContext(serviceContext);
                 //send the request and wait for reponse
                 MessageContext response =
-                        TwoWayTransportBasedSender.send(msgctx, listenerTransport);
+                        send(msgctx, listenerTransport);
                 //call the callback                        
                 SOAPEnvelope resenvelope = response.getEnvelope();
                 SOAPBody body = resenvelope.getBody();
@@ -455,5 +456,47 @@ public class InOutMEPClient extends MEPClient {
      */
     public long getTimeOutInMilliSeconds() {
         return timeOutInMilliSeconds;
+    }
+
+    /**
+     * Sends the message using a two way transport and waits for a response
+     * 
+     * @param msgctx
+     * @param transportIn
+     * @return
+     * @throws AxisFault
+     */
+    public MessageContext send(MessageContext msgctx,
+                                      TransportInDescription transportIn) throws AxisFault {
+
+        AxisEngine engine = new AxisEngine(msgctx.getSystemContext());
+        engine.send(msgctx);
+
+        //create the response
+        MessageContext response =
+                new MessageContext(msgctx.getSystemContext(),
+                        msgctx.getSessionContext(),
+                        msgctx.getTransportIn(),
+                        msgctx.getTransportOut());
+        response.setProperty(MessageContext.TRANSPORT_IN,
+                             msgctx.getProperty(MessageContext.TRANSPORT_IN));
+        msgctx.getAxisOperation().registerOperationContext(response,msgctx.getOperationContext());
+        response.setServerSide(false);
+        response.setServiceContext(msgctx.getServiceContext());
+        response.setServiceGroupContext(msgctx.getServiceGroupContext());
+
+        //If request is REST we assume the response is REST, so set the variable
+        response.setDoingREST(msgctx.isDoingREST());
+
+        SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(response, msgctx.getEnvelope().getNamespace().getName());
+
+        if (resenvelope != null) {
+            response.setEnvelope(resenvelope);
+            engine = new AxisEngine(msgctx.getSystemContext());
+            engine.receive(response);
+        } else {
+            throw new AxisFault(Messages.getMessage("blockingInvocationExpectsResponse"));
+        }
+        return response;
     }
 }
