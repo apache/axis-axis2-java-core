@@ -20,8 +20,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 
 /**
- * All the engine componets are stateless accross the executions and all the states should be kept in the
- * Contexts, there are three context Global, Session and Message
+ * All the engine components are stateless across the executions and all the states should be kept in the
+ * Contexts, there are three context Global, Session and Message.
  */
 public class SessionContext extends AbstractContext {
     /**

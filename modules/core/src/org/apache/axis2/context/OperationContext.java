@@ -70,7 +70,7 @@ public class OperationContext extends AbstractContext {
     private QName serviceDescName = null;
 
     /**
-     * The method is used to do the intialization of the EngineContext
+     * Initializes the engine context.
      * @throws AxisFault
      */
 
@@ -101,7 +101,7 @@ public class OperationContext extends AbstractContext {
     }
 
     /**
-     * Construct a new OperationContext.
+     * Constructs a new OperationContext.
      *
      * @param axisOperation  the AxisOperation whose running instances' state this
      *                       OperationContext represents.
@@ -143,7 +143,7 @@ public class OperationContext extends AbstractContext {
     }
 
     /**
-     * Return the ServiceContext in which this OperationContext lives.
+     * Returns the ServiceContext in which this OperationContext lives.
      *
      * @return parent ServiceContext
      */
@@ -152,7 +152,7 @@ public class OperationContext extends AbstractContext {
     }
 
     /**
-     * Return the EngineContext in which the parent ServiceContext lives.
+     * Returns the EngineContext in which the parent ServiceContext lives.
      *
      * @return parent ServiceContext's parent EngineContext
      */
@@ -164,7 +164,7 @@ public class OperationContext extends AbstractContext {
      * When a new message is added to the <code>MEPContext</code> the logic
      * should be included remove the MEPContext from the table in the
      * <code>EngineContext</code>. Example: IN_IN_OUT At the second IN
-     * message the MEPContext should be removed from the AxisOperation
+     * message the MEPContext should be removed from the AxisOperation.
      *
      * @param msgContext
      */

@@ -33,21 +33,18 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * The palce where all the service specific states are kept.
- * All the Global states kept in the <code>EngineRegistry</code> and all the
- * Service states kept in the <code>MessageContext</code>. Other runtime
- * artifacts does not keep states foward from the execution.
+ * MessageContext holds service specific state information. 
  */
 public class MessageContext extends AbstractContext {
 
     public static final String TRANSPORT_HEADERS = "TRANSPORT_HEADERS";
     /**
-     * Field TRANSPORT_WRITER
+     * Field TRANSPORT_OUT
      */
     public static final String TRANSPORT_OUT = "TRANSPORT_OUT";
 
     /**
-     * Field TRANSPORT_READER
+     * Field TRANSPORT_IN
      */
     public static final String TRANSPORT_IN = "TRANSPORT_IN";
 
@@ -58,20 +55,20 @@ public class MessageContext extends AbstractContext {
             "CHARACTER_SET_ENCODING";
 
     /**
-     * Field UTF_8
-     * This is the 'utf-8' value for CHARACTER_SET_ENCODING property
+     * Field UTF_8.
+     * This is the 'utf-8' value for CHARACTER_SET_ENCODING property.
      */
     public static final String UTF_8 = "UTF-8";
 
     /**
-     * Field UTF_8
-     * This is the 'utf-8' value for CHARACTER_SET_ENCODING property
+     * Field UTF_16.
+     * This is the 'utf-16' value for CHARACTER_SET_ENCODING property.
      */
     public static final String UTF_16 = "utf-16";
 
     /**
-     * Field DEFAULT_CHAR_SET_ENCODING
-     * This is the default value for CHARACTER_SET_ENCODING property
+     * Field DEFAULT_CHAR_SET_ENCODING.
+     * This is the default value for CHARACTER_SET_ENCODING property.
      */
     public static final String DEFAULT_CHAR_SET_ENCODING = UTF_8;
 
@@ -182,7 +179,7 @@ public class MessageContext extends AbstractContext {
     QName axisOperationName = null;
 
     /**
-     * The method is used to do the intialization of the EngineContext
+     * Initializes Axis Engine Context.
      *
      * @throws AxisFault
      */
@@ -220,7 +217,8 @@ public class MessageContext extends AbstractContext {
 
 
     /**
-     * Conveniance Method, but before call engine.send() or  engine.receive() one must send transport in/out
+     * Convenience Constructor. Before calling engine.send() or  engine.receive(), one must send 
+     * transport in/out
      *
      * @param engineContext
      * @throws AxisFault
@@ -273,84 +271,84 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @return
+     * @return Returns EndpointReference. 
      */
     public EndpointReference getFaultTo() {
         return messageInformationHeaders.getFaultTo();
     }
 
     /**
-     * @return
+     * @return Returns EndpointReference.
      */
     public EndpointReference getFrom() {
         return messageInformationHeaders.getFrom();
     }
 
     /**
-     * @return
+     * @return Returns boolean.
      */
     public boolean isInFaultFlow() {
         return inFaultFlow;
     }
 
     /**
-     * @return
+     * @return Returns SOAPEnvelope.
      */
     public SOAPEnvelope getEnvelope() {
         return envelope;
     }
 
     /**
-     * @return
+     * @return Returns message id.
      */
     public String getMessageID() {
         return messageInformationHeaders.getMessageId();
     }
 
     /**
-     * @return
+     * @return Returns boolean.
      */
     public boolean isProcessingFault() {
         return processingFault;
     }
 
     /**
-     * @return
+     * @return Returns RelatesTo.
      */
     public RelatesTo getRelatesTo() {
         return messageInformationHeaders.getRelatesTo();
     }
 
     /**
-     * @return
+     * @return  Returns EndpointReference.
      */
     public EndpointReference getReplyTo() {
         return messageInformationHeaders.getReplyTo();
     }
 
     /**
-     * @return
+     * @return Returns boolean.
      */
     public boolean isResponseWritten() {
         return responseWritten;
     }
 
     /**
-     * @return
+     * @return Returns boolean.
      */
     public boolean isServerSide() {
         return serverSide;
     }
 
     /**
-     * @return
+     * @return  Returns SessionContext.
      */
     public SessionContext getSessionContext() {
         return sessionContext;
     }
 
     /**
-     * @return
+     * @return Returns EndpointReference.
      */
     public EndpointReference getTo() {
         return messageInformationHeaders.getTo();
@@ -447,7 +445,7 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @return
+     * @return Returns boolean.
      */
     public boolean isNewThreadRequired() {
         return newThreadRequired;
@@ -485,7 +483,7 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @return
+     * @return Returns boolean.
      */
     public boolean isPaused() {
         return paused;
@@ -503,14 +501,14 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @return
+     * @return Returns TransportInDescription.
      */
     public TransportInDescription getTransportIn() {
         return transportIn;
     }
 
     /**
-     * @return
+     * @return Returns TransportOutDescription.
      */
     public TransportOutDescription getTransportOut() {
         return transportOut;
@@ -553,7 +551,7 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @return
+     * @return Returns boolean.
      */
     public boolean isOutPutWritten() {
         return outPutWritten;
@@ -574,7 +572,8 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @param serviceContextID The serviceContextID to set.
+     * Sets the service context id.
+     * @param serviceContextID
      */
     public void setServiceContextID(String serviceContextID) {
         this.serviceContextID = serviceContextID;
@@ -585,7 +584,7 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @return
+     * @return Returns ServiceContext.
      */
     public ServiceContext getServiceContext() {
         return serviceContext;
@@ -618,16 +617,17 @@ public class MessageContext extends AbstractContext {
 
 
     /**
-     * To retrieve configuration descriptor parameters , it is posible to get paramaters specified in
-     * any level via this method , and the preference is as follows,
-     * 1. Search in operation description if its there
-     * 2. if the paramter not found or operationContext is null will search in
-     * AxisService
-     * 3. If the axisService is null or , the paramter does not found will serach in
-     * AxisConfiguration
-     *
+     * Retrieves configuration descriptor parameters at any level. The order of search is
+     * as follows: 
+     * <ol>
+     * <li> Search in operation description if it exists </li>
+     * <li> If parameter is not found or if operationContext is null, search in
+     * AxisService </li>
+     * <li> If parameter is not found or if axisService is null, search in
+     * AxisConfiguration </li>
+     * </ol>
      * @param key
-     * @return Paramter <code>Paramter</code>
+     * @return Parameter <code>Parameter</code>
      */
     public Parameter getParameter(String key) {
         Parameter param = null;
@@ -662,23 +662,25 @@ public class MessageContext extends AbstractContext {
 
 
     /**
-     * This method is to retrive both module configuration parameters and othere paramerts
-     * The searching procedure is as follows;
-     * 1. Search in module configurations inside corresponding operation descripton if its three
-     * 2. Search in corresponding operation if its there
-     * 3. Search in module configurations inside corresponding service description if its there
-     * 4. Next search in Corresponding Service description if its there
-     * 5. Next sercah in module configurations inside axisConfiguration
-     * 6. Search in AxisConfiguration for paramters
-     * 7. Next get the corresponding module and search for the paramters
-     * 8. Search in HandlerDescription for the paramter
+     * Retrieves both module specific configuration parameters as well as other parameters. 
+     * The order of search is as follows:
+     * <ol>
+     * <li> Search in module configurations inside corresponding operation descripton if its there </li>
+     * <li> Search in corresponding operation if its there </li>
+     * <li> Search in module configurations inside corresponding service description if its there </li>
+     * <li> Next search in Corresponding Service description if its there </li>
+     * <li> Next search in module configurations inside axisConfiguration </li>
+     * <li> Search in AxisConfiguration for parameters </li>
+     * <li> Next get the corresponding module and search for the parameters </li>
+     * <li> Search in HandlerDescription for the parameter </li>
+     * </ol>
      * <p/>
-     * and the way of specifing mdoule configuration is as follows
+     * and the way of specifing module configuration is as follows
      * <moduleConfig name="addressing">
      * <parameter name="addressingPara" locked="false">N/A</parameter>
      * </moduleConfig>
      *
-     * @param key        : Paramtre Name
+     * @param key        : Parameter Name
      * @param moduleName : Name of the module
      * @param handler    <code>HandlerDescription</code>
      * @return Parameter <code>Parameter</code>
@@ -755,17 +757,18 @@ public class MessageContext extends AbstractContext {
         return param;
     }
 
-    /* (non-Javadoc)
-    * @see org.apache.axis2.context.AbstractContext#getProperty(java.lang.Object, boolean)
-    */
-
     /**
-     * To acess any property set at the run time , a handler can add property to wherever he wants
-     * to MesageContext , to OperationContext , to ServiceContext and to ConfigurationContext.
-     * This method is to retrive those properties NOT paramters
+     * Retrieves a property. The order of search is as follows:
      *
-     * @param key        : property Name
-     * @param persistent : need to be persistent even when server re-start
+     * <ol>
+     * <li> Search in OperationContext, </li>
+     * <li> If OperationContext is null or if property is not found, search in ServiceContext,</li>
+     * <li> If ServiceContext is null or if property is not found, search in ServiceGroupContext,</li>
+     * <li> If ServiceGroupContext is null or if property is not found, search in ConfigurationContext.</li>
+     * </ol>
+     * 
+     * @param key        property Name
+     * @param persistent 
      * @return Object
      */
     public Object getProperty(String key, boolean persistent) {
@@ -807,14 +810,14 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @return
+     * @return Returns QName.
      */
     public QName getPausedHandlerName() {
         return pausedHandlerName;
     }
 
     /**
-     * @return
+     * @return Returns paused phase name.
      */
     public String getPausedPhaseName() {
         return pausedPhaseName;
@@ -828,7 +831,7 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @return
+     * @return Returns soap action.
      */
     public String getSoapAction() {
         return soapAction;
@@ -842,7 +845,7 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @return
+     * @return Returns boolean.
      */
     public boolean isDoingMTOM() {
         return doingMTOM;
@@ -856,7 +859,7 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @return
+     * @return Returns boolean.
      */
     public boolean isDoingREST() {
         return doingREST;

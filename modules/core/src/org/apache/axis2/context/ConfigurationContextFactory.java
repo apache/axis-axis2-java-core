@@ -33,9 +33,9 @@ public class ConfigurationContextFactory {
     private Log log = LogFactory.getLog(getClass());
 
     /**
-     * Build the configuration for the Server
+     * Builds the configuration for the Server.
      * @param repositoryName
-     * @return
+     * @return Returns the built ConfigurationContext.
      * @throws DeploymentException
      */
     public ConfigurationContext buildConfigurationContext(
@@ -82,10 +82,9 @@ public class ConfigurationContextFactory {
     }
 
     /**
-     * Built the Configuration for the Client
-     * @param axis2home the value can be null and it is resolved to the default
-     * axis2.xml file
-     * @return
+     * Builds the configuration for the client.
+     * @param axis2home the value can be null and resolves to the default axis2.xml file
+     * @return Returns ConfigurationContext.
      * @throws DeploymentException
      */
     public ConfigurationContext buildClientConfigurationContext(
@@ -127,8 +126,8 @@ public class ConfigurationContextFactory {
     }
 
     /**
-     * Is used to initilize the modules , if the module needs to so some recovery process
-     * it can do inside init and this is differnt form module.engage()
+     * Initializes the modules. If the module needs to perform some recovery process
+     * it can do so in init and this is different from module.engage().
      *
      * @param context
      * @throws DeploymentException
@@ -155,7 +154,7 @@ public class ConfigurationContextFactory {
     }
 
     /**
-     * Here the Phases are resolved and the Order of the Handlers are established
+     * Resolves the phases and establishes the order of handlers.
      * @param service
      * @param configurationContextVal
      * @param modules
@@ -166,14 +165,14 @@ public class ConfigurationContextFactory {
                                     ArrayList modules)
             throws PhaseException {
         try {
-            PhaseResolver reolve =
+            PhaseResolver resolve =
                     new PhaseResolver(configurationContextVal, service);
-            reolve.buildchains();
+            resolve.buildchains();
             for (int i = 0; i < modules.size(); i++) {
                 QName qName = (QName) modules.get(i);
-                ModuleDescription moduledecs =
+                ModuleDescription moduledesc =
                         configurationContextVal.getModule(qName);
-                reolve.engageModuleToService(service, moduledecs);
+                resolve.engageModuleToService(service, moduledesc);
             }
         } catch (PhaseException e) {
             throw e;
@@ -183,9 +182,8 @@ public class ConfigurationContextFactory {
     }
 
     /**
-     * This method initilize the transports, passing the information taken from the
-     * deployment to the real instance, for and example here the <code>TransportSender</code>
-     * get a referance to the <code>TransportOutDescription</code>.
+     * Initializes TransportSenders and TransportListeners with appropriate configuration information 
+     * 
      * @param configContext
      * @throws AxisFault
      */

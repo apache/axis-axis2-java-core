@@ -34,8 +34,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * This is the biggest memeber of the Axis2 information hierachy, and if this is serialized completly
- * the whole Axis2 is saved to the disc.
+ * This contains all the configuration information for Axis2.
  */
 
 public class ConfigurationContext extends AbstractContext {
@@ -65,21 +64,15 @@ public class ConfigurationContext extends AbstractContext {
         this.axisConfiguration = axisConfiguration;
     }
 
-    /**
-     * The method is used to do the intialization of the EngineContext
-     *
-     * @throws AxisFault
-     */
-
-    public void init() throws AxisFault {
-
-    }
-
     public synchronized void removeService(QName name) {
         serviceContextMap.remove(name);
     }
 
-
+    /**
+     * Initializes the Configuration Context
+     * @param axisConfiguration
+     * @throws AxisFault
+     */
     public void init(AxisConfiguration axisConfiguration) throws AxisFault {
         this.axisConfiguration = axisConfiguration;
         Iterator operationContextIt = operationContextMap.keySet().iterator();
@@ -128,7 +121,7 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     /**
-     * Register a OperationContext agienst a given Message ID.
+     * Registers a OperationContext with a given message ID.
      *
      * @param messageID
      * @param mepContext
@@ -140,10 +133,10 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     /**
-     * get a OperationContext given a Message ID
+     * Gets a OperationContext given a Message ID.
      *
      * @param messageID
-     * @return OperationContext <code>OperationContext<code>
+     * @return Returns OperationContext <code>OperationContext<code>
      */
     public OperationContext getOperationContext(String messageID) {
         return (OperationContext) this.operationContextMap.get(messageID);
@@ -154,7 +147,7 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     /**
-     * Register a ServiceContext agienst a given Message ID.
+     * Registers a ServiceContext with a given service ID.
      */
     public synchronized void registerServiceContext(
             String serviceInstanceID,
@@ -163,7 +156,7 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     /**
-     * get the ServiceContext given a id
+     * Gets the ServiceContext for a service id.
      *
      * @param serviceInstanceID
      */
@@ -181,8 +174,8 @@ public class ConfigurationContext extends AbstractContext {
 
 
     /**
-     * Returns the thread factory
-     * @return configuration specific thread pool
+     * Returns the thread factory.
+     * @return Returns configuration specific thread pool
      */
     public ThreadFactory getThreadPool() {
         if (threadPool == null) {
@@ -192,7 +185,7 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     /**
-     * Sets the thread factory
+     * Sets the thread factory.
      * @param pool
      */
     public void setThreadPool(ThreadFactory pool) throws AxisFault{
@@ -205,8 +198,7 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     /**
-     * This method allows users to reolve the paths relative to the
-     * root diretory
+     * Allows users to resolve the path relative to the root diretory.
      *
      * @param path
      */
@@ -226,14 +218,16 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     /**
-     * This method should search for a SGC in the map with given id as the key.
+     * Searches for a ServiceGroupContext in the map with given id as the key.
+     * <pre>
      * If(key != null && found)
      * check for a service context for the intended service.
      * if (!found)
-     * create one and hook up to SGC
+     * create one and hook up to ServiceGroupContext
      * else
-     * create new sgc with the given key or if key is null with a new key
+     * create new ServiceGroupContext with the given key or if key is null with a new key
      * create a new service context for the service
+     * </pre>
      *
      * @param messageContext
      */
@@ -297,8 +291,8 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     /**
-     * To get all the service groups in the system
-     * @return
+     * Gets all service groups in the system.
+     * @return Returns hashmap of ServiceGroupContexts.
      */
     public HashMap getServiceGroupContexts(){
         return (HashMap)serviceGroupContextMap;

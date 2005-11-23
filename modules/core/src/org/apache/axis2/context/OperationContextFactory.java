@@ -22,7 +22,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.wsdl.WSDLConstants;
 
 /**
- * This is the facotry for the OperationContexts
+ * This is the factory for OperationContext.
  */
 
 public class OperationContextFactory implements WSDLConstants {
@@ -48,10 +48,10 @@ public class OperationContextFactory implements WSDLConstants {
     }
 
     /**
-     * When you call this make sure you set the parent later.
+     * Creates the operation context. When you call this make sure you set the parent later.
      * @param mepURI
      * @param axisOp
-     * @return
+     * @return Returns OperationContext.
      * @throws AxisFault
      */
     public static OperationContext createOperationContext(

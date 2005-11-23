@@ -26,8 +26,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
- *  This is the topmost level of the Context hierachy, is potentially a bag of 
- *  properties. 
+ *  This is the top most level of the Context hierachy and is a bag of properties. 
  */
 public abstract class AbstractContext implements Serializable {
 
@@ -53,9 +52,8 @@ public abstract class AbstractContext implements Serializable {
     }
 
     /**
-     * Store an object. depending on the persistent flag the
-     * object is either saved in the persistent way or the non-persistent
-     * way
+     * Stores an object with a key in a persistent or non-persistent manner. This 
+     * depends on the persistent flag.
      *
      * @param key
      * @param value
@@ -71,8 +69,7 @@ public abstract class AbstractContext implements Serializable {
     }
 
     /**
-     * Store an object with the default persistent flag.
-     * default is no persistance
+     * Stores an object with the default persistent flag set to no persistence.
      *
      * @param key
      * @param value
@@ -82,11 +79,11 @@ public abstract class AbstractContext implements Serializable {
     }
 
     /**
-     * Retrieve an object. Default search is done in the non persistent
-     * group
+     * Retrieves an object given a key. The search is done in the non-persistent
+     * group.
      *
      * @param key
-     * @return
+     * @return Returns the property.
      */
     public Object getProperty(String key) {
         return this.getProperty(key, false);
@@ -95,7 +92,7 @@ public abstract class AbstractContext implements Serializable {
     /**
      * @param key
      * @param persistent
-     * @return
+     * @return Returns the property.
      */
     public Object getProperty(String key, boolean persistent) {
         Object obj = null;
@@ -119,7 +116,7 @@ public abstract class AbstractContext implements Serializable {
     }
 
     /**
-     * @return
+     * @return Returns AbstractContext.
      */
     public AbstractContext getParent() {
         return parent;

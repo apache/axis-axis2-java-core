@@ -27,8 +27,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * Well this is never clearly defined, what is does nor the lifecycle
- * So I advised to NOT to use this .. as it might not live up to your expectation.
+ * Well this is never clearly defined, what it does or the lifecycle.
+ * So do NOT use this as it might not live up to your expectation.
  */
 public class ServiceContext extends AbstractContext {
 	
@@ -40,7 +40,7 @@ public class ServiceContext extends AbstractContext {
 
 
     /**
-     * The method is used to do the intialization of the EngineContext
+     * Initializes the engine context.
      * @throws AxisFault
      */
     public void init(AxisConfiguration axisConfiguration) throws AxisFault {
@@ -79,7 +79,8 @@ public class ServiceContext extends AbstractContext {
     }
 
     /**
-     * @param serviceInstanceID The serviceInstanceID to set.
+     * Sets service instance id.
+     * @param serviceInstanceID
      */
     public void setServiceInstanceID(String serviceInstanceID) {
         //todo we do not need this , this ID should equal to serviceName

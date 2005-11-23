@@ -72,7 +72,7 @@ public class ServiceGroupContext extends AbstractContext {
         this.id = id;
     }
 
-    //if the servic name is foo:bar , you should pass only bar
+    //if the service name is foo:bar , you should pass only bar
     public ServiceContext getServiceContext(String serviceName) {
         return (ServiceContext) serviceContextMap.get(serviceName);
     }
