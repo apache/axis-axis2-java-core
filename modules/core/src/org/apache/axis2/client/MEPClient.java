@@ -41,13 +41,13 @@ import java.util.List;
  * This is the super class for all the MEPClients.
  */
 public abstract class MEPClient {
-    protected ServiceContext serviceContext;
+    ServiceContext serviceContext;
     protected final String mep;
     protected String soapVersionURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
     protected String soapAction = "";
     protected String wsaAction;
 
-    protected MessageInformationHeaders messageInformationHeaders;
+    protected MessageInformationHeaders messageInformationHeaders = new MessageInformationHeaders();
 
     protected List soapHeaderList;
 
@@ -67,7 +67,6 @@ public abstract class MEPClient {
     public MEPClient(ServiceContext service, String mep) {
         this.serviceContext = service;
         this.mep = mep;
-        messageInformationHeaders = new MessageInformationHeaders();
     }
 
     /**
@@ -336,4 +335,11 @@ public abstract class MEPClient {
         }
     }
 
+    public void setServiceContext(ServiceContext serviceContext) {
+        this.serviceContext = serviceContext;
+    }
+
+    public ServiceContext getServiceContext() {
+        return serviceContext;
+    }
 }

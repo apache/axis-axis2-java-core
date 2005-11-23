@@ -39,7 +39,7 @@ import javax.xml.namespace.QName;
  */
 public class Call extends InOutMEPClient {
 
-    protected static AxisOperation axisOperationTemplate;
+    protected AxisOperation axisOperationTemplate;
     protected MessageContext lastResponseMsgCtx;
 
     /**
@@ -47,7 +47,8 @@ public class Call extends InOutMEPClient {
      */
 
     public Call() throws AxisFault {
-        super(assumeServiceContext(null));
+        super(null);
+        setServiceContext(assumeServiceContext(null));
     }
 
     /**
@@ -57,7 +58,8 @@ public class Call extends InOutMEPClient {
      * @throws AxisFault
      */
     public Call(String clientHome) throws AxisFault {
-        super(assumeServiceContext(clientHome));
+        super(null);
+        setServiceContext(assumeServiceContext(clientHome));
     }
 
     /**
@@ -198,7 +200,7 @@ public class Call extends InOutMEPClient {
      * @return ServiceContext that has a ConfigurationContext set in and has assumed values.
      * @throws org.apache.axis2.AxisFault
      */
-    protected static ServiceContext assumeServiceContext(String clientHome)
+    protected ServiceContext assumeServiceContext(String clientHome)
             throws AxisFault {
         ConfigurationContext sysContext = null;
         //we are trying to keep one configuration Context at the Client side. That make it easier to
@@ -215,7 +217,7 @@ public class Call extends InOutMEPClient {
         if(axisService == null) {
             //we will assume a Service and operations
             axisService = new AxisService(assumedServiceName);
-//        axisOperationTemplate = new AxisOperation(new QName("TemplateOperation"));
+
             axisOperationTemplate = new   OutInAxisOperation(new QName("TemplateOperation"));
 
             PhasesInfo info =((AxisConfigurationImpl)sysContext.getAxisConfiguration()).getPhasesinfo();

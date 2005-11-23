@@ -33,14 +33,12 @@ import javax.xml.namespace.QName;
 public class RPCCall extends Call {
 
 
-    protected static AxisOperation axisOperationTemplate;
-
     /**
      * @throws org.apache.axis2.AxisFault
      */
 
     public RPCCall() throws AxisFault {
-        super(assumeServiceContext(null));
+        super();
     }
 
     /**
@@ -51,7 +49,7 @@ public class RPCCall extends Call {
      * @throws org.apache.axis2.AxisFault
      */
     public RPCCall(String clientHome) throws AxisFault {
-        super(assumeServiceContext(clientHome));
+        super(clientHome);
     }
 
     /**
@@ -75,10 +73,10 @@ public class RPCCall extends Call {
      */
     public OMElement invokeBlocking(QName opName, Object [] args) throws AxisFault {
         AxisOperation opDesc =
-                serviceContext.getAxisService().getOperation(opName);
+                getServiceContext().getAxisService().getOperation(opName);
         opDesc = createOpDescAndFillInFlowInformation(opDesc, opName.getLocalPart(),
                 WSDLConstants.MEP_CONSTANT_IN_OUT);
-        opDesc.setParent(serviceContext.getAxisService());
+        opDesc.setParent(getServiceContext().getAxisService());
         MessageContext msgctx = prepareTheSOAPEnvelope(BeanSerializerUtil.getOMElement(opName, args));
 
         this.lastResponseMsgCtx = super.invokeBlocking(opDesc, msgctx);
@@ -104,10 +102,10 @@ public class RPCCall extends Call {
 
     public Object[]  invokeBlocking(QName opName, Object [] args, Object [] returnTypes) throws AxisFault {
         AxisOperation opDesc =
-                serviceContext.getAxisService().getOperation(opName);
+                getServiceContext().getAxisService().getOperation(opName);
         opDesc = createOpDescAndFillInFlowInformation(opDesc, opName.getLocalPart(),
                 WSDLConstants.MEP_CONSTANT_IN_OUT);
-        opDesc.setParent(serviceContext.getAxisService());
+        opDesc.setParent(getServiceContext().getAxisService());
         MessageContext msgctx = prepareTheSOAPEnvelope(BeanSerializerUtil.getOMElement(opName, args));
         this.lastResponseMsgCtx = super.invokeBlocking(opDesc, msgctx);
         SOAPEnvelope resEnvelope = lastResponseMsgCtx.getEnvelope();
@@ -130,7 +128,7 @@ public class RPCCall extends Call {
             Callback callback)
             throws AxisFault {
         AxisOperation opDesc =
-                serviceContext.getAxisService().getOperation(opName);
+                getServiceContext().getAxisService().getOperation(opName);
         opDesc = createOpDescAndFillInFlowInformation(opDesc, opName.getLocalPart(), WSDLConstants.MEP_CONSTANT_IN_OUT);
         MessageContext msgctx = prepareTheSOAPEnvelope(BeanSerializerUtil.getOMElement(opName, args));
         //call the underline implementation
