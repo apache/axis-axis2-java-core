@@ -572,6 +572,36 @@ public class ADBPullParserTest extends XMLTestCase {
         }
     }
 
+    public void testUnQualifiedAttributes() {
+
+        String expectedXML = "<ns1:testElementText xmlns:ns1=\"http://testElementText.org\" MyUnQualifiedAttribute=\"MyAttributeValue\">" +
+                "<ns2:QualifiedElement xmlns:ns2=\"http://testQElementText.org\">" +
+                "This is some Text for the element</ns2:QualifiedElement></ns1:testElementText>";
+        try {
+            ArrayList properties = new ArrayList();
+            properties.add(new QName("http://testQElementText.org", "QualifiedElement", "ns2"));
+            properties.add("This is some Text for the element");
+
+            String[] attributes = new String[2];
+            attributes[0] = "MyUnQualifiedAttribute";
+            attributes[1] = "MyAttributeValue";
+
+
+            XMLStreamReader pullParser = ADBPullParser.createPullParser(new QName("http://testElementText.org", "testElementText", "ns1"), properties.toArray(), attributes);
+
+            String actualXML = getStringXML(pullParser);
+            System.out.println("actualXML = " + actualXML);
+
+            assertXMLEqual(newDocument(expectedXML), newDocument(actualXML));
+        } catch (ParserConfigurationException e) {
+            fail("Error has occurred " + e);
+        } catch (SAXException e) {
+            fail("Error has occurred " + e);
+        } catch (IOException e) {
+            fail("Error has occurred " + e);
+        }
+    }
+
     public void testComplexScenarioOne() {
         /*
            <apache:Project xmlns:axis2="http://ws.apache.org/namespaces/axis2" xmlns:apache="http://www.apache.org/" xmlns:myAttr="mailto:myAttributes@axis2.org" myAttr:name="Apache Axis2">

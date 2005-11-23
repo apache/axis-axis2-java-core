@@ -163,6 +163,7 @@ public class ADBPullParser implements XMLStreamReader {
                                 Key             Value
                                null            OMAttribute[]
                                QName           String
+                               String          String
                   </pre>
      * @return XMLStreamReader
      */
@@ -365,6 +366,10 @@ public class ADBPullParser implements XMLStreamReader {
                     QName qName = (QName) key;
                     checkNamespaceList(qName.getNamespaceURI(), qName.getPrefix());
                     attributesList.add(qName);
+                    attributesList.add(attributes[i + 1]);
+                }else if (key instanceof String) {
+                    String keyString = (String) key;
+                    attributesList.add(new QName(keyString));
                     attributesList.add(attributes[i + 1]);
                 }
             }
