@@ -462,6 +462,12 @@ public class HTTPTransportUtils {
 
     public static boolean isDoingREST(MessageContext msgContext) {
         boolean enableREST = false;
+        
+        // check whether isDoingRest is already true in the message context
+        if (msgContext.isDoingREST()) {
+            return true;
+        }
+
         if (msgContext.getParameter(Constants.Configuration.ENABLE_REST)
             != null) {
             enableREST =
