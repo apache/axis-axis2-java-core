@@ -16,8 +16,6 @@
 
 package org.apache.axis2.rest;
 
-//todo
-
 import junit.framework.TestCase;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;

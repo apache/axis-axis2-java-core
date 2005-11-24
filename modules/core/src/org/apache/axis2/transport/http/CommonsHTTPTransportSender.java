@@ -107,69 +107,67 @@ public class CommonsHTTPTransportSender
 
     public CommonsHTTPTransportSender() {
     } //default
-    
+
     public RequestData createRequest(MessageContext msgContext) {
-    	//This used to obtain two strings to go with the url and to pass in the body when doing 
-    	//POST with application/x-www-form-urlencoded
-    	RequestData data = new RequestData();
-     	String contentType = findContentType(true,msgContext);
-    	OMElement dataOut = msgContext.getEnvelope().getBody().getFirstElement();
-    	
-    	Iterator iter1 = dataOut.getChildElements();
-		ArrayList paraList = new ArrayList();
-		ArrayList urlList = new ArrayList();
-    	
-    	//String[] s  = new String[] {"abc","def","pqr"};
-		String[] s = new String[] {};
-            String ns = "http:/rwrfr";
-            OMElement bodypara = OMAbstractFactory.getOMFactory().createOMElement("dummy", null);
-            
-        	while(iter1.hasNext()){    
-        		OMElement ele = (OMElement)iter1.next();
-        		 boolean has = false;
-        	        
-        	        for(int i = 0;i<s.length; i++)
-        	        {
-        	        	if(s[i].equals(ele.getLocalName())){
-        	        		has = true;
-        	        		break;
-        	        	}
-        	        }
-        	    String parameter1;
-        	   
-        		if(has){
-        			parameter1 = ele.getLocalName() + "=" + ele.getText();
-        			urlList.add(parameter1);
-        		
-        		}else {
-        			bodypara.addChild(ele);
-        		}
-    	  	}
-        	
-        	String urlString= "";
-        	for(int i= 0; i<urlList.size() ; i++){
-        		String c = (String)urlList.get(i);
-        		urlString = urlString + "&" + c;
-        		data.urlRequest = urlString;
-        	}
-        	
-        	Iterator it = bodypara.getChildElements();
-        	while (it.hasNext()){
-        		OMElement ele1 = (OMElement)it.next();
-        		String parameter2;
-        		parameter2 = ele1.getLocalName() + "=" + ele1.getText();
-        		paraList.add(parameter2);
-        	}
-        	
-        	String paraString= "";
-           	for(int j= 0; j<paraList.size() ; j++){
-            	String b = (String)paraList.get(j);
-            	paraString = paraString + "&" + b;
-            	data.bodyRequest = paraString;
-        	}
-           	return data;
-	}
-    
+        //This used to obtain two strings to go with the url and to pass in the body when doing 
+        //POST with application/x-www-form-urlencoded
+        RequestData data = new RequestData();
+        String contentType = findContentType(true, msgContext);
+        OMElement dataOut = msgContext.getEnvelope().getBody().getFirstElement();
+
+        Iterator iter1 = dataOut.getChildElements();
+        ArrayList paraList = new ArrayList();
+        ArrayList urlList = new ArrayList();
+
+        //TODO: s is ALWAYS EMPTY. so what gets added to urllist????
+        String[] s = new String[]{};
+        OMElement bodypara = OMAbstractFactory.getOMFactory().createOMElement("dummy", null);
+
+        while (iter1.hasNext()) {
+            OMElement ele = (OMElement) iter1.next();
+            boolean has = false;
+
+            for (int i = 0; i < s.length; i++) {
+                if (s[i].equals(ele.getLocalName())) {
+                    has = true;
+                    break;
+                }
+            }
+            String parameter1;
+
+            if (has) {
+                parameter1 = ele.getLocalName() + "=" + ele.getText();
+                urlList.add(parameter1);
+
+            } else {
+                bodypara.addChild(ele);
+            }
+        }
+
+        String urlString = "";
+        for (int i = 0; i < urlList.size(); i++) {
+            String c = (String) urlList.get(i);
+            urlString = urlString + "&" + c;
+            data.urlRequest = urlString;
+        }
+
+        Iterator it = bodypara.getChildElements();
+        while (it.hasNext()) {
+            OMElement ele1 = (OMElement) it.next();
+            String parameter2;
+            parameter2 = ele1.getLocalName() + "=" + ele1.getText();
+            paraList.add(parameter2);
+        }
+
+        String paraString = "";
+        for (int j = 0; j < paraList.size(); j++) {
+            String b = (String) paraList.get(j);
+            paraString = paraString + "&" + b;
+            data.bodyRequest = paraString;
+        }
+        return data;
+    }
+
     public synchronized void invoke(MessageContext msgContext) throws AxisFault {
         try {
             String charSetEnc =
@@ -219,15 +217,15 @@ public class CommonsHTTPTransportSender
             // ######################################################
 
             OMElement dataOut;
-             /**
+            /**
              * Figuringout the REST properties/parameters
              */
             msgContext.setDoingREST(HTTPTransportUtils.isDoingREST(msgContext));
             msgContext.setRestThroughPOST(HTTPTransportUtils.isDoingRESTThoughPost(msgContext));
             boolean isRest = msgContext.isDoingREST();
-            
+
             if (isRest) {
-            	dataOut = msgContext.getEnvelope().getBody().getFirstElement();
+                dataOut = msgContext.getEnvelope().getBody().getFirstElement();
             } else {
                 dataOut = msgContext.getEnvelope();
             }
@@ -246,8 +244,8 @@ public class CommonsHTTPTransportSender
                     if (transportInfo != null) {
                         omOutput.setSoap11(msgContext.isSOAP11());
                         //this is the servlet2.3 way of setting encodings
-                        String contentType = findContentType(isRest,msgContext);
-						String encoding = contentType + "; charset=" + omOutput.getCharSetEncoding();
+                        String contentType = findContentType(isRest, msgContext);
+                        String encoding = contentType + "; charset=" + omOutput.getCharSetEncoding();
                         transportInfo.setContentType(encoding);
                     } else {
                         throw new AxisFault(HTTPConstants.HTTPOutTransportInfo + " does not set");
@@ -272,25 +270,25 @@ public class CommonsHTTPTransportSender
     }
 
     /**
-	 * @return
-	 */
-	private String findContentType(boolean isRest,MessageContext msgContext) {
-		if (isRest){
-			if (msgContext.getProperty("content Type")!=null){
-				String contentType = (String)msgContext.getProperty("content Type");
-			//get the users setting from the axis2.xml parameters
-			//if present return that
-			//else return the default (application/xml)
-				return contentType;
-			}else{
-				return "application/xml";
-			}
-		}else{
-			return omOutput.getContentType();
-		}
-	}
+     * @return
+     */
+    private String findContentType(boolean isRest, MessageContext msgContext) {
+        if (isRest) {
+            if (msgContext.getProperty(HTTPConstants.REST_CONTENT_TYPE) != null) {
+                String contentType = (String) msgContext.getProperty(HTTPConstants.REST_CONTENT_TYPE);
+                //get the users setting from the axis2.xml parameters
+                //if present return that
+                //else return the default (application/xml)
+                return contentType;
+            } else {
+                return "application/xml";
+            }
+        } else {
+            return omOutput.getContentType();
+        }
+    }
 
-	public void writeMessageWithToOutPutStream(
+    public void writeMessageWithToOutPutStream(
             MessageContext msgContext,
             OutputStream out) {
 
@@ -321,19 +319,19 @@ public class CommonsHTTPTransportSender
                         soapActionString);
             }
             if (msgContext.isDoingREST()) {
-            	if (msgContext.isRestThroughPOST()) {
-            		this.transportConfigurationPOST(
-                                msgContext,
-                                dataout,
-                                url,
-                                soapActionString);          	
-            	}
-         
-                 else {
+                if (msgContext.isRestThroughPOST()) {
+                    this.transportConfigurationPOST(
+                            msgContext,
+                            dataout,
+                            url,
+                            soapActionString);
+                }
+
+                else {
                     this.transportConfigurationGET(msgContext, url);
                 }
-        }
-            
+            }
+
         } catch (MalformedURLException e) {
             throw new AxisFault(e);
         } catch (HttpException e) {
@@ -344,39 +342,39 @@ public class CommonsHTTPTransportSender
 
     }
     // POST application/x-www-form-urlencoded
-    
-    public class PostAxisRequestEntity implements RequestEntity{
 
-    	private String charSetEnc;
-    	private String postRequestBody;
-    	private MessageContext msgCtxt;
-    	private String contentType;
-    	
-    	public PostAxisRequestEntity(String postRequestBody, String charSetEnc,MessageContext msgCtxt, String contentType) {
-    		this.postRequestBody = postRequestBody;
-    		this.charSetEnc = charSetEnc;
-    		this.msgCtxt = msgCtxt;
-    		this.contentType = contentType;
-    	}
-    	
-		public boolean isRepeatable() {			
-			return true;
-		}
+    public class PostAxisRequestEntity implements RequestEntity {
 
-		
-		public void writeRequest(OutputStream output) throws IOException {		
-			output.write(postRequestBody.getBytes());			
-		}
-		
-		public long getContentLength() {
-			return this.postRequestBody.getBytes().length;
-		}
+        private String charSetEnc;
+        private String postRequestBody;
+        private MessageContext msgCtxt;
+        private String contentType;
 
-		
-		public String getContentType() {			
-			return this.contentType;
-		}
-    	
+        public PostAxisRequestEntity(String postRequestBody, String charSetEnc, MessageContext msgCtxt, String contentType) {
+            this.postRequestBody = postRequestBody;
+            this.charSetEnc = charSetEnc;
+            this.msgCtxt = msgCtxt;
+            this.contentType = contentType;
+        }
+
+        public boolean isRepeatable() {
+            return true;
+        }
+
+
+        public void writeRequest(OutputStream output) throws IOException {
+            output.write(postRequestBody.getBytes());
+        }
+
+        public long getContentLength() {
+            return this.postRequestBody.getBytes().length;
+        }
+
+
+        public String getContentType() {
+            return this.contentType;
+        }
+
     }
 
     //get the contentLength...
@@ -428,7 +426,7 @@ public class CommonsHTTPTransportSender
                     element.serializeAndConsume(output);
                     output.flush();
                     return bytesOut.toByteArray();
-            
+
                 } else {
                     omOutput.setCharSetEncoding(charSetEnc);
                     omOutput.setOutputStream(bytesOut, true);  //changed...
@@ -509,7 +507,7 @@ public class CommonsHTTPTransportSender
         }
 
         public String getContentType() {
-        	
+
             String encoding = omOutput.getCharSetEncoding();
             String contentType = omOutput.getContentType();
             if (encoding != null) {
@@ -615,8 +613,8 @@ public class CommonsHTTPTransportSender
         //todo giving proxy and NTLM support
 
         PostMethod postMethod = new PostMethod(url.toString());
-        String contentType = findContentType(true,msgContext);
-        
+        String contentType = findContentType(true, msgContext);
+
         msgContext.setProperty(HTTP_METHOD, postMethod);
         String charEncoding =
                 (String) msgContext.getProperty(
@@ -624,31 +622,31 @@ public class CommonsHTTPTransportSender
         if (charEncoding == null) {
             charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
-        
+
         //if POST as application/x-www-form-urlencoded
         RequestData reqData = null;
-        if (contentType.equalsIgnoreCase(HTTPConstants.REST_CONTENTTYPE_URL_ENCODED)){
-        	reqData = createRequest(msgContext);
-        	postMethod.setPath(url.getPath()+ ((reqData.urlRequest) != null ? ("?" + reqData.urlRequest) : ""));
-        	postMethod.setRequestEntity(new PostAxisRequestEntity(reqData.bodyRequest,charEncoding,msgContext,contentType));
-        	
-        }else{
-        	postMethod.setPath(url.getPath());
-        	
-                
-        postMethod.setRequestEntity(
-                new AxisRequestEntity(
-                        dataout,
-                        chuncked,
-                        msgContext,
-                        charEncoding,
-                        soapActionString));
+        if (contentType.equalsIgnoreCase(HTTPConstants.REST_CONTENT_TYPE_URL_ENCODED)) {
+            reqData = createRequest(msgContext);
+            postMethod.setPath(url.getPath() + ((reqData.urlRequest) != null ? ("?" + reqData.urlRequest) : ""));
+            postMethod.setRequestEntity(new PostAxisRequestEntity(reqData.bodyRequest, charEncoding, msgContext, contentType));
+
+        } else {
+            postMethod.setPath(url.getPath());
+
+
+            postMethod.setRequestEntity(
+                    new AxisRequestEntity(
+                            dataout,
+                            chuncked,
+                            msgContext,
+                            charEncoding,
+                            soapActionString));
         }
 
         if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)
                 && chuncked) {
             postMethod.setContentChunked(true);
-        } 
+        }
         postMethod.setRequestHeader(
                 HTTPConstants.HEADER_USER_AGENT,
                 "Axis/2.0");
@@ -751,50 +749,50 @@ public class CommonsHTTPTransportSender
     }
 
     //Method to return the parameter string to pass with the URL when using GET   
-    
-    public String getParam(MessageContext msgContext){
-    	OMElement dataOut;
-    	dataOut = msgContext.getEnvelope().getBody().getFirstElement();
-		Iterator iter1 = dataOut.getChildElements();
-    	ArrayList paraList = new ArrayList();
-    	       
-    	while(iter1.hasNext()){
-    		OMElement ele = (OMElement)iter1.next();
-    		String parameter;
-    		parameter = ele.getLocalName() + "=" + ele.getText();
-    		paraList.add(parameter);
-    	}
-    	
-    		String paraString= "";
-    		int count = paraList.size();
-    		for(int i= 0; i<count ; i++){
-    			String c = (String)paraList.get(i);
-    			paraString = paraString + "&" + c;
-    		}
-    	return paraString;
-	}
-    
+
+    public String getParam(MessageContext msgContext) {
+        OMElement dataOut;
+        dataOut = msgContext.getEnvelope().getBody().getFirstElement();
+        Iterator iter1 = dataOut.getChildElements();
+        ArrayList paraList = new ArrayList();
+
+        while (iter1.hasNext()) {
+            OMElement ele = (OMElement) iter1.next();
+            String parameter;
+            parameter = ele.getLocalName() + "=" + ele.getText();
+            paraList.add(parameter);
+        }
+
+        String paraString = "";
+        int count = paraList.size();
+        for (int i = 0; i < count; i++) {
+            String c = (String) paraList.get(i);
+            paraString = paraString + "&" + c;
+        }
+        return paraString;
+    }
+
     private void transportConfigurationGET(MessageContext msgContext, URL url)
             throws MalformedURLException, AxisFault, IOException {
-    	
-    	String param = getParam(msgContext);
-  	    GetMethod getMethod = new GetMethod();
-        getMethod.setPath(url.getFile()+"?"+param);
+
+        String param = getParam(msgContext);
+        GetMethod getMethod = new GetMethod();
+        getMethod.setPath(url.getFile() + "?" + param);
 
         //Serialization as "application/x-www-form-urlencoded"
-        
-       String charEncoding =
+
+        String charEncoding =
                 (String) msgContext.getProperty(
                         MessageContext.CHARACTER_SET_ENCODING);
         if (charEncoding == null) //Default encoding scheme
             getMethod.setRequestHeader(
                     HTTPConstants.HEADER_CONTENT_TYPE,
-                    HTTPConstants.REST_CONTENTTYPE_URL_ENCODED +"; charset="
+                    HTTPConstants.REST_CONTENT_TYPE_URL_ENCODED + "; charset="
                             + MessageContext.DEFAULT_CHAR_SET_ENCODING);
         else
             getMethod.setRequestHeader(
                     HTTPConstants.HEADER_CONTENT_TYPE,
-                    HTTPConstants.REST_CONTENTTYPE_URL_ENCODED + "; charset=" + charEncoding);
+                    HTTPConstants.REST_CONTENT_TYPE_URL_ENCODED + "; charset=" + charEncoding);
 
         this.httpClient = new HttpClient();
 
@@ -1007,14 +1005,15 @@ public class CommonsHTTPTransportSender
         client.getState().setProxyCredentials(AuthScope.ANY, proxyCred);
         config.setProxy(proxyHostName, proxyPort);
     }
-    
+
     //
-    private class RequestData{
-    	String urlRequest;
-		String bodyRequest;
-		}
-    	String urlRequest;
-    	String bodyRequest;
-	}
+    private class RequestData {
+        String urlRequest;
+        String bodyRequest;
+    }
+
+    String urlRequest;
+    String bodyRequest;
+}
 
 

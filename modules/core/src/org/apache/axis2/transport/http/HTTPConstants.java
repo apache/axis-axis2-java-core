@@ -24,7 +24,9 @@ import java.io.UnsupportedEncodingException;
  */
 public class HTTPConstants {
 
-	public static final String REST_CONTENTTYPE_URL_ENCODED="application/x-www-form-urlencoded" ;
+    public static final String REST_CONTENT_TYPE ="REST_CONTENT_TYPE" ;
+
+	public static final String REST_CONTENT_TYPE_URL_ENCODED ="application/x-www-form-urlencoded" ;
 	
     public static final String PROTOCOL_VERSION = "PROTOCOL";
 

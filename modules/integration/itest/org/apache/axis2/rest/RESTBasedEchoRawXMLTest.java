@@ -39,16 +39,7 @@ import javax.xml.stream.XMLOutputFactory;
 
 public class RESTBasedEchoRawXMLTest extends TestCase implements TestConstants {
 
-    private Log log = LogFactory.getLog(getClass());
-
     private AxisService service;
-
-    private boolean finish = false;
-
-
-    private Thread thread;
-
-    private final MessageInformation messageInfo = new MessageInformation();
 
     public RESTBasedEchoRawXMLTest() {
         super(RESTBasedEchoRawXMLTest.class.getName());
@@ -69,49 +60,6 @@ public class RESTBasedEchoRawXMLTest extends TestCase implements TestConstants {
                         Echo.class.getName(),
                         operationName);
         UtilServer.deployService(service);
-//                
-//         Runnable runnable = new Runnable() {
-//            public void run() {
-//                try {
-//                    ServerSocket socket = new ServerSocket(UtilServer.TESTING_PORT+345);
-//                    Socket clientSocket = socket.accept();
-//                    
-//                    InputStream in = clientSocket.getInputStream();
-//                    OutputStream out = clientSocket.getOutputStream();
-//                    
-//                    
-//                    byte[] byteBuff = new byte[in.available()];
-//                    in.read(byteBuff);
-//                    messageInfo.requestMessage = new String(byteBuff);
-//                    
-//                    Socket toServer = new Socket();
-//                    toServer.connect(new InetSocketAddress(UtilServer.TESTING_PORT));
-//                    OutputStream toServerOut = toServer.getOutputStream();
-//                    toServerOut.write(messageInfo.requestMessage.getBytes());
-//                    toServerOut.flush();
-//                    
-//                    InputStream fromServerIn = toServer.getInputStream();
-//                    byteBuff = new byte[fromServerIn.available()];
-//                    fromServerIn.read(byteBuff);
-//                    messageInfo.responseMessage = new String(byteBuff);
-//                    out.write(messageInfo.responseMessage.getBytes());
-//                    Thread.sleep(30000);
-//                    out.flush();
-//                    
-//                    toServer.close();
-//                    clientSocket.close();
-//                    socket.close();
-//                } catch (Exception e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        };
-//        thread = new Thread(runnable);
-//        thread.start();
-
-
     }
 
     protected void tearDown() throws Exception {
@@ -133,30 +81,22 @@ public class RESTBasedEchoRawXMLTest extends TestCase implements TestConstants {
 
 
     public void testEchoXMLSync() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
-
         OMElement payload = createEnvelope();
 
         org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
+                new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
 
         call.setTo(targetEPR);
         call.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
-        //call.setDoREST(true);
-        call.set(Constants.Configuration.ENABLE_REST,Constants.VALUE_TRUE);
+        call.set(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
         OMElement result =
                 call.invokeBlocking(operationName.getLocalPart(),
                         payload);
         result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
-                                System.out));
+                System.out));
 
         call.close();
-    }
-
-    public class MessageInformation {
-        private String requestMessage = null;
-        private String responseMessage = null;
     }
 }
