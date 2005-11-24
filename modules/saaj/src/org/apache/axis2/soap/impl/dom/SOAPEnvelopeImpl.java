@@ -23,6 +23,9 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.dom.DocumentImpl;
+import org.apache.axis2.om.impl.dom.NamespaceImpl;
+import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPConstants;
@@ -33,6 +36,7 @@ import org.apache.axis2.soap.SOAPHeaderBlock;
 import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.dom.SOAPElement;
 import org.apache.axis2.soap.impl.dom.factory.DOMSOAPFactory;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -49,7 +53,17 @@ public class SOAPEnvelopeImpl extends SOAPElement implements SOAPEnvelope,
 		super(null, SOAPConstants.SOAPENVELOPE_LOCAL_NAME, builder);
 		this.factory = factory;
 	}
-
+	
+	public SOAPEnvelopeImpl(DocumentImpl doc, OMXMLParserWrapper builder, SOAPFactory factory) {
+		super(
+				doc,
+				SOAPConstants.SOAPENVELOPE_LOCAL_NAME,
+				(NamespaceImpl)factory
+						.createOMNamespace((factory instanceof SOAP11Factory) ? SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI
+								: SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX),
+				builder);
+		this.factory = factory;
+	}
 	/**
 	 * @param ns
 	 */

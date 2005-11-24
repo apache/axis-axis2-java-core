@@ -37,7 +37,9 @@ class DOMUtil {
 		 * qualifiedName, or its prefix, is "xmlns" and the namespaceURI is
 		 * different from " http://www.w3.org/2000/xmlns/".
 		 */
-		throw new UnsupportedOperationException("TODO");
+		//throw new UnsupportedOperationException("TODO");
+		//temporary fix
+		return true;
 	}
 	
 	/**

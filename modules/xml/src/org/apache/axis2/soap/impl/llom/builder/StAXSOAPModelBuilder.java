@@ -106,7 +106,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
      *                    he can just pass null for this.
      */
     public StAXSOAPModelBuilder(XMLStreamReader parser, SOAPFactory factory, String soapVersion) {
-        super(parser);
+        super(factory, parser);
         soapFactory = factory;
         soapMessage = soapFactory.createSOAPMessage(this);
         identifySOAPVersion(soapVersion);

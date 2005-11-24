@@ -76,7 +76,7 @@ public class AttributeMap extends NamedNodeMapImpl {
         }
         
         
-        attr.parent = (DocumentImpl)this.ownerNode; //Set the owner node
+        attr.parent = this.ownerNode; //Set the owner node
         attr.isOwned(true); //To indicate that this attr belong to an element
         attr.setUsed(true); //Setting used to true 
         

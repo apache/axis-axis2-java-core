@@ -32,6 +32,7 @@ import org.apache.axis2.om.util.ElementHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.TypeInfo;
@@ -40,6 +41,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -63,6 +65,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		if(ownerDocument.firstChild == null)
 			ownerDocument.firstChild = this;
 		this.localName = tagName;
+		this.attributes = new AttributeMap(this);
 	}
 	
 	/**
@@ -76,6 +79,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		this.localName = tagName;
 		this.namespace = ns;
 		this.declareNamespace(ns);
+		this.attributes = new AttributeMap(this);
 	}
 	
 	public ElementImpl(DocumentImpl ownerDocument, String tagName, NamespaceImpl ns, OMXMLParserWrapper builder) {
@@ -84,6 +88,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		this.namespace = ns;
 		this.builder = builder;
 		this.declareNamespace(ns);
+		this.attributes = new AttributeMap(this);
 	}
 	
 	public ElementImpl(ParentNode parentNode, String tagName, NamespaceImpl ns) {
@@ -108,6 +113,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		if(ns != null) {
 			this.declareNamespace(ns);
 		}
+		this.attributes = new AttributeMap(this);
 	}
 	
 	
@@ -232,9 +238,9 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
             throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
 		}
 		if(this.attributes == null) {
-			this.attributes = new AttributeMap((ParentNode)this.ownerNode);
+			this.attributes = new AttributeMap(this);
 		}
-		this.attributes.setNamedItem(new AttrImpl(name, value));
+		this.attributes.setNamedItem(new AttrImpl(this.ownerNode, name, value));
 	}
 
 	/**
@@ -300,7 +306,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		}
 		
 		if(this.attributes == null) {
-			this.attributes = new AttributeMap((ParentNode)this.ownerNode);
+			this.attributes = new AttributeMap(this);
 		}
 
 		return (Attr)this.attributes.setNamedItem(attr);
@@ -333,7 +339,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		}
 		
 		if(this.attributes == null) {
-			this.attributes = new AttributeMap((ParentNode)this.ownerNode);
+			this.attributes = new AttributeMap(this);
 		}
 
 		//handle the namespaces
@@ -390,7 +396,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		}
 		
 		if(this.attributes == null) {
-			this.attributes = new AttributeMap((ParentNode)this.ownerNode);
+			this.attributes = new AttributeMap(this);
 		}
 		
 		//Check whether there's an existing Attr with same local name and namespace URI
@@ -814,9 +820,12 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
         if (attributes == null) {
             return new EmptyIterator();
         }
-//        return 
-        //TODO Create a new AttrIterator and return it
-        throw new UnsupportedOperationException("TODO");
+        ArrayList list = new ArrayList();
+        for (int i = 0; i < attributes.getLength(); i++) {
+        	list.add(attributes.getItem(i));
+        }
+        
+        return list.iterator();
 	}
 	
 	/**
@@ -858,6 +867,10 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     public QName resolveQName(String qname) {
         ElementHelper helper = new ElementHelper(this);
         return helper.resolveQName(qname);
+    }
+    
+    public NamedNodeMap getAttributes() {
+    	return this.attributes;
     }
     
 	/*

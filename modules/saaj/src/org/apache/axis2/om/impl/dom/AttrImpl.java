@@ -69,14 +69,14 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	public AttrImpl(DocumentImpl ownerDocument, String localName, OMNamespace ns, String value) {
 		super(ownerDocument);
 		this.attrName = localName;
-		this.attrValue = new TextImpl(value);
+		this.attrValue = new TextImpl(ownerDocument, value);
 		this.namespace = (NamespaceImpl)ns;
 	}
 	
 	public AttrImpl(DocumentImpl ownerDocument, String name, String value) {
 		super(ownerDocument);
 		this.attrName = name;
-		this.attrValue = new TextImpl(value);
+		this.attrValue = new TextImpl(ownerDocument,value);
 	}
 	
 	public AttrImpl(DocumentImpl ownerDocument, String name) {
@@ -92,13 +92,13 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	
 	public AttrImpl(String localName, OMNamespace ns, String value) {
 		this.attrName = localName;
-		this.attrValue = new TextImpl(value);
+		this.attrValue = new TextImpl((DocumentImpl)this.getOwnerDocument(),value);
 		this.namespace = (NamespaceImpl)ns;
 	}
 	
 	public AttrImpl(String name, String value) {
 		this.attrName = name;
-		this.attrValue = new TextImpl(value);
+		this.attrValue = new TextImpl((DocumentImpl)this.getOwnerDocument(),value);
 	}
 	
 

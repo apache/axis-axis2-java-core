@@ -60,6 +60,10 @@ public abstract class SOAPElement extends ElementImpl {
 		super(doc, localName, (NamespaceImpl)ns);
 	}
     
+    protected SOAPElement(DocumentImpl ownerDocument, String tagName, NamespaceImpl ns, OMXMLParserWrapper builder) {
+    	super(ownerDocument, tagName, ns, builder);
+    }
+    
 // /**
 // * Caution : This Constructor is meant to be used only by the SOAPEnvelope.
 //     * <p/>

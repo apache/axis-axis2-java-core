@@ -73,7 +73,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
     protected NodeImpl(DocumentImpl ownerDocument) {
     
         this.ownerNode = ownerDocument;
-        this.isOwned(true);
+//        this.isOwned(true);
         
     }
 

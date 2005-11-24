@@ -63,7 +63,11 @@ public class NodeListImpl implements NodeList  {
 		if(!enableNS) {
 			children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.tagName));
 		} else {
-			children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.nsName, DOMUtil.getLocalName(this.tagName), DOMUtil.getPrefix(this.tagName)));
+			if(DOMUtil.getPrefix(this.tagName) != null) {
+				children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.nsName, DOMUtil.getLocalName(this.tagName), DOMUtil.getPrefix(this.tagName)));
+			} else {
+				children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.nsName, DOMUtil.getLocalName(this.tagName)));
+			}
 		}
 		int count  = 0;
 		while (children.hasNext()) {

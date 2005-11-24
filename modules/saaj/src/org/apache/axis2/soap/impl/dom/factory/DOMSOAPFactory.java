@@ -17,6 +17,7 @@ package org.apache.axis2.soap.impl.dom.factory;
 
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -40,15 +41,19 @@ import org.apache.axis2.soap.impl.dom.SOAPMessageImpl;
 public class DOMSOAPFactory extends OMDOMFactory implements SOAPFactory {
 
 	public SOAPMessage createSOAPMessage(OMXMLParserWrapper builder) {
-		return new SOAPMessageImpl(builder);
+		SOAPMessageImpl messageImpl = new SOAPMessageImpl(builder);
+		this.document = messageImpl;
+		return messageImpl;
 	}
 
 	public SOAPMessage createSOAPMessage(SOAPEnvelope envelope, OMXMLParserWrapper parserWrapper) {
-		return new SOAPMessageImpl(envelope, parserWrapper);
+		SOAPMessageImpl messageImpl = new SOAPMessageImpl(envelope, parserWrapper);
+		this.document = messageImpl;
+		return messageImpl;
 	}
 
 	public SOAPEnvelope createSOAPEnvelope(OMXMLParserWrapper builder) {
-		return new SOAPEnvelopeImpl(builder, this);
+		return new SOAPEnvelopeImpl((DocumentImpl)this.createOMDocument(), builder, this);
 	}
 
 	public SOAPEnvelope createSOAPEnvelope() throws SOAPProcessingException {

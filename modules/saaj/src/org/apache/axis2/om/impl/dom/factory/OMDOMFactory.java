@@ -45,7 +45,7 @@ import javax.xml.namespace.QName;
  */
 public class OMDOMFactory implements OMFactory {
 	
-	private DocumentImpl document;
+	protected DocumentImpl document;
 	
 	public OMDocument createOMDocument() {
 		if(this.document == null)

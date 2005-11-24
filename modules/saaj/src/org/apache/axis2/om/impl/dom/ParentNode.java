@@ -22,6 +22,7 @@ import org.apache.axis2.om.impl.OMContainerEx;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
 import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -142,7 +143,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 							"HIERARCHY_REQUEST_ERR", null));
 		}
 		
-		if(!(this.ownerNode == newDomChild.getOwnerDocument())) {
+		if(!(this instanceof Document) && !(this.ownerNode == newDomChild.getOwnerDocument())) {
 			throw new DOMException(DOMException.WRONG_DOCUMENT_ERR,
 					DOMMessageFormatter.formatMessage(
 							DOMMessageFormatter.DOM_DOMAIN,
@@ -156,11 +157,27 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 							"NO_MODIFICATION_ALLOWED_ERR", null));
 		}
 		
+		if(this instanceof Document) {
+			if(this.firstChild != null) {
+				//Throw exception since there cannot be two document elements
+				throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
+						DOMMessageFormatter.formatMessage(
+								DOMMessageFormatter.DOM_DOMAIN,
+								"HIERARCHY_REQUEST_ERR", null));
+			} else {
+				this.firstChild = newDomChild;
+				newDomChild.isFirstChild(true);
+				this.lastChild = newDomChild;
+				return newDomChild;
+			}
+		}
+		
 		if(refChild == null) { //Append the child to the end of the list
 			//if there are no children 
 			if(this.lastChild == null && firstChild == null ) {
 				this.lastChild = newDomChild;
 				this.firstChild = newDomChild;
+				this.firstChild.isFirstChild(true);
 			} else {
 				this.lastChild.nextSibling = newDomChild;
 				newDomChild.previousSubling = this.lastChild;
