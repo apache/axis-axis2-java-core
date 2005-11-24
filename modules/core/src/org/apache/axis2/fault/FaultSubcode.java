@@ -19,9 +19,9 @@
  */
 package org.apache.axis2.fault;
 
+import org.apache.axis2.om.OMException;
 import org.apache.axis2.soap.SOAPFaultSubCode;
 import org.apache.axis2.soap.SOAPFaultValue;
-import org.apache.axis2.om.OMException;
 
 import javax.xml.namespace.QName;
 

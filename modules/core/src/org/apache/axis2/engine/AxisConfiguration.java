@@ -17,7 +17,6 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.util.HostConfiguration;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.ModuleDescription;
@@ -25,6 +24,7 @@ import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.storage.AxisStorage;
+import org.apache.axis2.util.HostConfiguration;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

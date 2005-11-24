@@ -20,8 +20,8 @@
 package org.apache.axis2.fault;
 
 import org.apache.axis2.soap.SOAPFaultCode;
-import org.apache.axis2.soap.SOAPFaultValue;
 import org.apache.axis2.soap.SOAPFaultSubCode;
+import org.apache.axis2.soap.SOAPFaultValue;
 
 import javax.xml.namespace.QName;
 

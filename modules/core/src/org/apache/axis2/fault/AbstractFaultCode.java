@@ -19,9 +19,6 @@
  */
 package org.apache.axis2.fault;
 
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
-
 import javax.xml.namespace.QName;
 
 /**

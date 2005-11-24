@@ -19,8 +19,8 @@
  */
 package org.apache.axis2.fault;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ListIterator;
 
 /**
