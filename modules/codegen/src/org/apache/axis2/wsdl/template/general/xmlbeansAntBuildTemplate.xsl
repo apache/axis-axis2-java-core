@@ -3,7 +3,7 @@
     <xsl:template match="/ant">
         <xsl:variable name="package"><xsl:value-of select="@package"/></xsl:variable>
 
-        <project basedir="." default="jar.xbeans"  >
+        <project basedir="." default="jar.xbeans">
             <xsl:comment>Auto generated ant build file</xsl:comment>
             <property name="src">
                 <xsl:attribute name="value">${basedir}\src</xsl:attribute>
@@ -21,11 +21,9 @@
                 <xsl:attribute name="value">${basedir}\temp</xsl:attribute>
             </property>
             <property name="xbeans.packaged.jar.name" value="XBeans-packaged.jar"></property>
-            <!--<property name="xbeans.jar.name" value="C:\Documents and Settings\Ajith\.maven\repository\xmlbeans\jars\xbean-2.0.0.jar"></property>-->
-            <property name="xbeans.available" value=""></property>
-            <!--<property name="stax.jar.name" value="C:\Documents and Settings\Ajith\.maven\repository\stax\jars\stax-api-1.0.jar"></property>-->
+            <!--<property name="xbeans.available" value=""></property>
             <property name="stax.available" value=""></property>
-            <property name="axis2.available" value=""></property>
+            <property name="axis2.available" value=""></property>-->
             <property name="jars.ok" value=""></property>
             <property name="mappings.folder.name" value="Mapping"></property>
             <property name="schemas.folder.name" value="schemas"></property>
@@ -35,7 +33,7 @@
                 <xsl:comment>first move the generated packages</xsl:comment>
                 <move>
                     <xsl:attribute name="todir">${src}</xsl:attribute>
-                    <fileset >
+                    <fileset>
                         <xsl:attribute name="dir">${basedir}</xsl:attribute>
                         <xsl:attribute name="includes"><xsl:value-of select="$package"></xsl:value-of>\**\</xsl:attribute>
                     </fileset>
@@ -44,7 +42,7 @@
                 <xsl:comment>move the XBeans stuff to the temp</xsl:comment>
                 <move>
                     <xsl:attribute name="todir">${temp}</xsl:attribute>
-                    <fileset >
+                    <fileset>
                         <xsl:attribute name="dir">${basedir}</xsl:attribute>
                         <xsl:attribute name="includes">schemaorg_apache_xmlbeans\**\</xsl:attribute>
                     </fileset>
@@ -52,14 +50,14 @@
                 <xsl:comment>move the rest of the stuff to the other folder</xsl:comment>
                 <move>
                     <xsl:attribute name="todir">${other}</xsl:attribute>
-                    <fileset >
+                    <fileset>
                         <xsl:attribute name="dir">${basedir}</xsl:attribute>
                         <xsl:attribute name="includes">${mappings.folder.name}\**\</xsl:attribute>
                     </fileset>
                 </move>
                 <move>
                     <xsl:attribute name="todir">${other}</xsl:attribute>
-                    <fileset >
+                    <fileset>
                         <xsl:attribute name="dir">${basedir}</xsl:attribute>
                         <xsl:attribute name="includes">${schemas.folder.name}\**\</xsl:attribute>
                     </fileset>
@@ -90,34 +88,33 @@
                 </jar>
             </target>
 
-            <target name="pre.compile.test">
-                <available classname="org.apache.xmlbeans.*">
-                    <xsl:attribute name="property">${xbeans.available}</xsl:attribute>
-                </available>
-                <available classname="javax.xml.stream.*" >
-                    <xsl:attribute name="property">${stax.available}</xsl:attribute>
-                </available>
-                <available classname="org.apache.axis.*">
-                    <xsl:attribute name="property">${axis2.available}</xsl:attribute>
-                </available>
-
-                <condition>
-                    <xsl:attribute name="property">${jars.ok}</xsl:attribute>
+            <target name="pre.compile.test" depends="jar.xbeans">
+                <xsl:comment>Test the classpath for the availability of necesary classes</xsl:comment>
+                <available classname="org.apache.xmlbeans.XmlObject" property="xbeans.available"/>
+                <available classname="javax.xml.stream.XMLStreamReader" property="stax.available"/>
+                <available classname="org.apache.axis2.engine.AxisEngine" property="axis2.available"/>
+                <condition property="jars.ok" >
                     <and>
-                        <isset>
-                            <xsl:attribute name="property">${xbeans.available}</xsl:attribute>
-                        </isset>
-                        <isset>
-                            <xsl:attribute name="property">${stax.available}</xsl:attribute>
-                        </isset>
-                        <isset>
-                            <xsl:attribute name="property">${axis2.available}</xsl:attribute>
-                        </isset>
+                        <isset property="xbeans.available"/>
+                        <isset property="stax.available"/>
+                        <isset property="axis2.available"/>
                     </and>
                 </condition>
+
+                <xsl:comment>Print out the availabilities</xsl:comment>
+                <echo>
+                     <xsl:attribute name="message">XmlBeans Availability = ${xbeans.available}</xsl:attribute>
+                </echo>
+                <echo>
+                     <xsl:attribute name="message">Stax Availability= ${stax.available}</xsl:attribute>
+                </echo>
+                <echo>
+                     <xsl:attribute name="message">Axis2 Availability= ${axis2.available}</xsl:attribute>
+                </echo>
+
             </target>
 
-            <target name="compile.all"  depends="pre.compile.test">
+            <target name="compile.all" depends="pre.compile.test">
                 <xsl:attribute name="if">${jars.ok}</xsl:attribute>
                 <javac>
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
@@ -125,17 +122,22 @@
                     <classpath>
                         <xsl:attribute name="location">${bin}\${xbeans.packaged.jar.name}</xsl:attribute>
                     </classpath>
-                    <classpath >
+                    <classpath>
                         <xsl:attribute name="location">${java.class.path}</xsl:attribute>
                     </classpath>
                 </javac>
             </target>
 
-            <target name="echo.classpath.problem"  depends="pre.compile.test">
+            <target name="echo.classpath.problem" depends="pre.compile.test">
                 <xsl:attribute name="unless">${jars.ok}</xsl:attribute>
-                <echo message="The class path is not set right!"></echo>
+                <echo message="The class path is not set right!
+                               Please make sure the following classes are in the classpath
+                               1. XmlBeans
+                               2. Stax
+                               3. Axis2
+                "></echo>
             </target>
-            <target name="jar.all" depends="compile.all,echo.classpath.problem" >
+            <target name="jar.all" depends="compile.all,echo.classpath.problem">
                 <xsl:attribute name="if">${jars.ok}</xsl:attribute>
                 <jar>
                     <xsl:attribute name="basedir">${classes}</xsl:attribute>
