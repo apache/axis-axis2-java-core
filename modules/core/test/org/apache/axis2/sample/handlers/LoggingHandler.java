@@ -26,20 +26,15 @@ import org.apache.commons.logging.LogFactory;
 
 public class LoggingHandler extends AbstractHandler {
 
-	private Log log = LogFactory.getLog(getClass());
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.engine.Handler#invoke(org.apache.axis2.context.MessageContext)
-	 */
+    private Log log = LogFactory.getLog(getClass());
 
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        log.info("Incoming message From " + msgContext.getTo().getAddress());
+    }
 
-
-	public void invoke(MessageContext msgContext) throws AxisFault {
-		log.info("Incomming message Frrom "+msgContext.getTo().getAddress());
-	}
-
-	public void revoke(MessageContext msgContext){
-		log.info("Incomming message Revovked at the server "+msgContext.getTo().getAddress() );
-	}
+    public void revoke(MessageContext msgContext) {
+        log.info("Incoming message Revoked at the server " + msgContext.getTo().getAddress());
+    }
 
 }
 
