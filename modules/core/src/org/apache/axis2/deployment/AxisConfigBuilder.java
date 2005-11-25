@@ -32,7 +32,6 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
-import org.apache.axis2.storage.AxisStorage;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.HostConfiguration;
@@ -109,10 +108,6 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             Iterator phaserders = config_element.getChildrenWithName(new QName(PHASE_ORDER));
             processPhaseOrders(phaserders);
 
-            //processing Axis Storages
-            OMElement storages = config_element.getFirstChildWithName(new QName(AXIS_STORAGE));
-            processAxisStorage(storages);
-
             Iterator moduleConfigs = config_element.getChildrenWithName(new QName(MODULECONFIG));
             processModuleConfig(moduleConfigs, axisConfiguration, axisConfiguration);
 
@@ -159,73 +154,6 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.NO_DISPATCHER_FOUND));
         } else {
             ((AxisConfigurationImpl) axisConfiguration).setDispatchPhase(dispatchPhae);
-        }
-
-    }
-
-    private void processAxisStorage(OMElement storageElement) throws DeploymentException {
-        AxisStorage axisStorage;
-        if (storageElement != null) {
-            OMAttribute className = storageElement.getAttribute(new QName(CLASSNAME));
-            if (className == null) {
-                throw new DeploymentException(Messages.getMessage(
-                        DeploymentErrorMsgs.INVALID_STORGE_CLASS));
-            } else {
-                String classNameStr = className.getAttributeValue();
-                Class stoarge;
-                if (classNameStr != null && !"".equals(classNameStr)) {
-                    try {
-                        stoarge = Class.forName(classNameStr, true,
-                                Thread.currentThread().getContextClassLoader());
-                        axisStorage = (AxisStorage) stoarge.newInstance();
-                        axisConfiguration.setAxisStorage(axisStorage);
-
-                        // adding storage paramters
-                        Iterator paramters = storageElement.getChildrenWithName(
-                                new QName(PARAMETERST));
-                        processParameters(paramters, axisStorage, axisConfiguration);
-
-
-                    } catch (ClassNotFoundException e) {
-                        throw new DeploymentException
-                                (Messages.getMessage(DeploymentErrorMsgs.CLASS_NOT_FOUND,
-                                        e.getMessage()));
-                    } catch (InstantiationException e) {
-                        throw new DeploymentException
-                                (Messages.getMessage(DeploymentErrorMsgs.INSTANTITAIONEXP,
-                                        e.getMessage()));
-                    } catch (IllegalAccessException e) {
-                        throw new DeploymentException
-                                (Messages.getMessage(DeploymentErrorMsgs.ILEGAL_ACESS,
-                                        e.getMessage()));
-                    }
-                } else {
-                    throw new DeploymentException(Messages.getMessage(
-                            DeploymentErrorMsgs.INVALID_STORGE_CLASS));
-                }
-
-            }
-
-        } else {
-            try {
-                //Default Storeg :  org.apache.axis2.storage.impl.AxisMemoryStorage
-                Class stoarge = Class.forName("org.apache.axis2.storage.impl.AxisMemoryStorage", true,
-                        Thread.currentThread().getContextClassLoader());
-                axisStorage = (AxisStorage) stoarge.newInstance();
-                axisConfiguration.setAxisStorage(axisStorage);
-            } catch (ClassNotFoundException e) {
-                throw new DeploymentException
-                        (Messages.getMessage(DeploymentErrorMsgs.CLASS_NOT_FOUND,
-                                e.getMessage()));
-            } catch (InstantiationException e) {
-                throw new DeploymentException
-                        (Messages.getMessage(DeploymentErrorMsgs.INSTANTITAIONEXP,
-                                e.getMessage()));
-            } catch (IllegalAccessException e) {
-                throw new DeploymentException
-                        (Messages.getMessage(DeploymentErrorMsgs.ILEGAL_ACESS,
-                                e.getMessage()));
-            }
         }
 
     }

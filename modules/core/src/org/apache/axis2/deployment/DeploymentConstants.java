@@ -93,8 +93,6 @@ public interface DeploymentConstants {
     String DISPATCH_ORDER ="dispatchOrder";
     String DISPATCHER ="dispatcher";
 
-    String AXIS_STORAGE = "axisStorage";
-
     //element in a services.xml
     String SERVICE_ELEMENT ="service";
     String SERVICE_GROUP_ELEMENT ="serviceGroup";

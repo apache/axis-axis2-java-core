@@ -28,7 +28,7 @@ import java.util.HashMap;
 /**
  *  This is the top most level of the Context hierachy and is a bag of properties. 
  */
-public abstract class AbstractContext implements Serializable {
+public abstract class AbstractContext {
 
     protected transient HashMap nonPersistentMap;
     protected final HashMap persistentMap;
@@ -36,15 +36,6 @@ public abstract class AbstractContext implements Serializable {
 
 	public abstract void init (AxisConfiguration axisConfiguration) throws AxisFault;
 	
-    private void writeObject(ObjectOutputStream out) throws IOException {
-    	out.defaultWriteObject();    	
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    	in.defaultReadObject();
-    	nonPersistentMap = new HashMap ();
-    }
-    
     protected AbstractContext(AbstractContext parent) {
         this.persistentMap = new HashMap();
         this.nonPersistentMap = new HashMap();

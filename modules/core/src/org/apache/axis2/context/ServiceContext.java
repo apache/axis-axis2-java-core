@@ -47,17 +47,6 @@ public class ServiceContext extends AbstractContext {
     	axisService = axisConfiguration.getService(axisServiceName.getLocalPart());
     }
     
-    private void writeObject(ObjectOutputStream out) throws IOException {	
-    	if (axisService !=null)
-    		this.axisServiceName = axisService.getName();
-    	
-    	out.defaultWriteObject();
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    	in.defaultReadObject();
-    }
-    
     public ServiceContext(
         AxisService serviceConfig,
         ServiceGroupContext serviceGroupContext) {

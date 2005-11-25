@@ -229,7 +229,6 @@ public class AxisServlet extends HttpServlet {
 
     public void destroy() {
         super.destroy();
-        new AxisEngine(configContext).serialize();
     }
 
 }

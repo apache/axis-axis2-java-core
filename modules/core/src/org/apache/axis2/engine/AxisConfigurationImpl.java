@@ -31,7 +31,6 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.phaseresolver.PhaseResolver;
-import org.apache.axis2.storage.AxisStorage;
 import org.apache.axis2.util.HostConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,9 +54,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     private Hashtable faultyServices;
 
     private HashMap moduleConfigmap;
-
-    //to keep axis2 storage class
-    private AxisStorage axisStorage;
 
     private Hashtable faultyModules;
     private Log log = LogFactory.getLog(getClass());
@@ -341,15 +337,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     public HashMap getTransportsOut() {
         return transportsOut;
-    }
-
-    //to get and set Axis2 storges (the class which should handle storeg)
-    public void setAxisStorage(AxisStorage axisStorage) {
-        this.axisStorage =axisStorage;
-    }
-
-    public AxisStorage getAxisStorage() {
-        return axisStorage;
     }
 
     //to check whether a given paramter is locked

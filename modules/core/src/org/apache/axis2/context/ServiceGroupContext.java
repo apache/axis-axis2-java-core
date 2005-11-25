@@ -42,18 +42,6 @@ public class ServiceGroupContext extends AbstractContext {
             axisServiceGroup = axisConfiguration.getServiceGroup(axisServiceGroupName);
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        if (axisServiceGroup !=null)
-            this.axisServiceGroupName = axisServiceGroup.getServiceGroupName();
-
-        out.defaultWriteObject();
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        nonPersistentMap = new HashMap ();
-    }
-
     public ServiceGroupContext(ConfigurationContext parent ,AxisServiceGroup axisServiceGroup) {
         super(parent);
         this.axisServiceGroup = axisServiceGroup;

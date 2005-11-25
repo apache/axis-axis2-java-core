@@ -19,7 +19,6 @@ package org.apache.axis2.context;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.storage.AxisStorage;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
@@ -40,10 +39,6 @@ import java.util.Map;
 public class ConfigurationContext extends AbstractContext {
 
     private transient AxisConfiguration axisConfiguration;
-    private AxisStorage storage;
-
-    private Map sessionContextMap;
-    private Map moduleContextMap;
 
     private transient ThreadFactory threadPool;
 
@@ -96,15 +91,6 @@ public class ConfigurationContext extends AbstractContext {
             if (serviceGroupContext != null)
                 serviceGroupContext.init(axisConfiguration);
         }
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        threadPool = new ThreadPool();
     }
 
     /**
@@ -163,15 +149,6 @@ public class ConfigurationContext extends AbstractContext {
     public ServiceContext getServiceContext(String serviceInstanceID) {
         return (ServiceContext) this.serviceContextMap.get(serviceInstanceID);
     }
-
-    public AxisStorage getStorage() {
-        return axisConfiguration.getAxisStorage();   //storage;
-    }
-
-    public void setStorage(AxisStorage storage) {
-        this.storage = storage;
-    }
-
 
     /**
      * Returns the thread factory.

@@ -48,27 +48,6 @@ public class ConfigurationContextFactory {
             AxisConfiguration configuration = deploymentEngine.load();
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
 
-            Parameter parameter = configuration.getParameter("seralizeLocation");
-            String serializeLocation = ".";
-            if (parameter !=null) {
-                serializeLocation = ((String)parameter.getValue()).trim();
-            }
-            File objFile = new File(serializeLocation,"Axis2.obj");
-            if(objFile.exists()){
-                try {
-                    FileInputStream filein = new FileInputStream(objFile);
-                    ObjectInputStream in = new ObjectInputStream(filein);
-                    Object obj = in.readObject();
-                    if(obj instanceof ConfigurationContext){
-                        configurationContext = (ConfigurationContext)obj;
-                        configurationContext.init(configuration);
-                    }
-                } catch (IOException e) {
-                    log.info(e.getMessage());
-                } catch (ClassNotFoundException e) {
-                    log.info(e.getMessage());
-                }
-            }
             if(configurationContext == null){
                 configurationContext = new ConfigurationContext(configuration);
             }
@@ -96,22 +75,6 @@ public class ConfigurationContextFactory {
                     new DeploymentEngine().loadClient(axis2home);
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
 
-            File objFile = new File("./Axis2.obj");
-            if(objFile.exists()){
-                try {
-                    FileInputStream filein = new FileInputStream(objFile);
-                    ObjectInputStream in = new ObjectInputStream(filein);
-                    Object obj = in.readObject();
-                    if(obj instanceof ConfigurationContext){
-                        engineContext = (ConfigurationContext)obj;
-                        engineContext.init(configuration);
-                    }
-                } catch (IOException e) {
-                    log.info(e.getMessage());
-                } catch (ClassNotFoundException e) {
-                    log.info(e.getMessage());
-                }
-            }
             if(engineContext == null){
                 engineContext = new ConfigurationContext(configuration);
             }

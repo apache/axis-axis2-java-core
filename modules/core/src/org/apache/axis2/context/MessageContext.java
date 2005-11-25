@@ -204,26 +204,6 @@ public class MessageContext extends AbstractContext {
             axisOperation = axisService.getOperation(axisOperationName);
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        if (transportIn != null)
-            transportInName = transportIn.getName();
-        if (transportOut != null)
-            transportOutname = transportOut.getName();
-        if (axisServiceGroup != null)
-            serviceGroupId = axisServiceGroup.getServiceGroupName();
-        if (axisService != null)
-            serviceDescName = axisService.getName();
-        if (axisOperation != null)
-            axisOperationName = axisOperation.getName();
-
-        out.defaultWriteObject();
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-    }
-
-
     /**
      * Convenience Constructor. Before calling engine.send() or  engine.receive(), one must send 
      * transport in/out

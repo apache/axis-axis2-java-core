@@ -69,10 +69,9 @@ public class AxisEngine {
      * Here the <code>ExecutionChain</code> is created using the Phases. The Handlers at the each Phases is ordered in
      * deployment time by the deployment module
      *
-     * @param context
+     * @param msgContext
      * @throws AxisFault
      * @see MessageContext
-     * @see ExecutionChain
      * @see Phase
      * @see Handler
      */
@@ -236,7 +235,7 @@ public class AxisEngine {
      * execution reach this method twice, means the sending the error handling failed an in that case the
      * this method just log the error and exit</p>
      *
-     * @param context
+     * @param processingContext
      * @param e
      * @throws AxisFault
      */
@@ -471,53 +470,6 @@ public class AxisEngine {
         }
     }
 
-    /* --------------------------------------------------------------------------------------------*/
-    /* -----------------   Methods related to storage ----------------------------------------------*/
-
-    /**
-     * Stores an object in the underlying storage
-     *
-     * @param context The relevant engine context
-     * @param obj     the object to be stored
-     * @return the storage key
-     */
-    public Object store(ConfigurationContext context, Object obj) {
-        return context.getStorage().put(obj);
-    }
-
-    /**
-     * retrieves an object from the underlying storage
-     *
-     * @param context
-     * @param key
-     * @return
-     */
-    public Object retrieve(ConfigurationContext context, Object key) {
-        return context.getStorage().get(key);
-    }
-
-    /**
-     * removes an object from the underlying storage
-     *
-     * @param context
-     * @param key
-     * @return the object removed
-     */
-    public Object remove(ConfigurationContext context, Object key) {
-        return context.getStorage().remove(key);
-    }
-
-    /**
-     * Clears the underlying storage
-     *
-     * @param context
-     * @return
-     */
-    public boolean clearStorage(ConfigurationContext context) {
-        return context.getStorage().clean();
-    }
-
-
     private String getSenderFaultCode(String soapNamespace) {
         return SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
                 soapNamespace)
@@ -531,29 +483,4 @@ public class AxisEngine {
                 ? SOAP12Constants.FAULT_CODE_RECEIVER
                 : SOAP11Constants.FAULT_CODE_RECEIVER;
     }
-
-    /**
-     * To serilze the entier context heirarachy to a given location from top to bottom
-     *
-     * @throws AxisFault
-     */
-    public synchronized void serialize() {
-        try {
-            String serailzeLocaion = ".";
-            //output location
-            Parameter parameter = engineContext.getAxisConfiguration().getParameter("seralizeLocation");
-            if (parameter != null) {
-                serailzeLocaion = ((String) parameter.getValue()).trim();
-            }
-            FileOutputStream fileOut = new FileOutputStream(new File(serailzeLocaion, "Axis2.obj"));
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(engineContext);
-        } catch (FileNotFoundException e) {
-            //todo has to be improved
-        } catch (IOException e) {
-            //todo has to be improved
-        }
-
-    }
-
 }

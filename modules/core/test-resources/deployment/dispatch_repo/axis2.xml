@@ -18,11 +18,6 @@
         <dispatcher name="SOAPActionBasedDispatcher" class="org.apache.axis2.engine.SOAPActionBasedDispatcher"/>
         <dispatcher name="SOAPMessageBodyBasedDispatcher" class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"/>
     </dispatchOrder>
-    <axisStorage class="org.apache.axis2.storage.impl.AxisMemoryStorage">
-        <parameter name="StoreLocation" locked="false">N:S</parameter>
-    </axisStorage>
-
-
 
     <!-- ================================================= -->
     <!-- Message Receivers -->
