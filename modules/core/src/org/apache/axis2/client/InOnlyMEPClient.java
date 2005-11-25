@@ -40,7 +40,6 @@ public class InOnlyMEPClient extends MEPClient {
 
     public InOnlyMEPClient(ServiceContext service) {
         super(service, WSDLConstants.MEP_URI_IN_ONLY);
-        messageInformationHeaders = new MessageInformationHeaders();
     }
 
     /**
@@ -59,7 +58,7 @@ public class InOnlyMEPClient extends MEPClient {
         //if the transport to use for sending is not specified, try to find it from the URL
         if (senderTransport == null) {
             senderTransport =
-                    inferTransport(messageInformationHeaders.getTo());
+                    inferTransport(msgctx.getTo());
         }
         msgctx.setTransportOut(senderTransport);
 

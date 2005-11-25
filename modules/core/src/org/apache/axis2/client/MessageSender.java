@@ -104,7 +104,7 @@ public class MessageSender extends InOnlyMEPClient {
             serviceContext.getAxisService().addOperation(axisOp);
         }
 
-        MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
+        MessageContext msgctx = createMessageContext();
 
         msgctx.setEnvelope(soapEnvelope);
         super.send(axisOp, msgctx);

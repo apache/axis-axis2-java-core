@@ -17,6 +17,7 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.RelatesTo;
@@ -39,6 +40,9 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * MessageContext holds service specific state information.
@@ -97,7 +101,7 @@ public class MessageContext extends AbstractContext {
      * information is present in the SOAP header.
      */
 
-    private MessageInformationHeaders messageInformationHeaders;
+    private MessageInformationHeaders messageInformationHeaders = new MessageInformationHeaders();
 
     private OperationContext operationContext;
     private ServiceContext serviceContext;
@@ -247,7 +251,6 @@ public class MessageContext extends AbstractContext {
         } else {
             this.sessionContext = sessionContext;
         }
-        messageInformationHeaders = new MessageInformationHeaders();
         this.transportIn = transportIn;
         this.transportOut = transportOut;
         this.configurationContext = engineContext;
@@ -598,12 +601,36 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
+     * Copy the values into the respective fields.
+     * 
      * @param collection
      */
-    public void setMessageInformationHeaders(MessageInformationHeaders collection) {
-        messageInformationHeaders = collection;
+    public void setContextProperties(HashMap collection) {
+        Iterator iterator = collection.entrySet().iterator();
+        while(iterator.hasNext()){
+            Map.Entry entry = (Map.Entry) iterator.next();
+            String key = (String)entry.getKey();
+            Object value = entry.getValue();
+            if(value!= null){
+                if(Constants.ADDRESSING_ACTION.equals(key)){
+                    messageInformationHeaders.setAction((String) value);                        
+                } else if (Constants.ADDRESSING_FAULT_TO.equals(key)){
+                    messageInformationHeaders.setFaultTo((EndpointReference) value);                        
+                } else if (Constants.ADDRESSING_FROM.equals(key)){
+                    messageInformationHeaders.setFrom((EndpointReference) value);                        
+                } else if (Constants.ADDRESSING_MESSAGE_ID.equals(key)){
+                    messageInformationHeaders.setMessageId((String) value);                        
+                } else if (Constants.ADDRESSING_RELATES_TO.equals(key)){
+                    messageInformationHeaders.setRelatesTo((RelatesTo) value);                        
+                } else if (Constants.ADDRESSING_REPLY_TO.equals(key)){
+                    messageInformationHeaders.setReplyTo((EndpointReference) value);                        
+                } else if (Constants.ADDRESSING_TO.equals(key)){
+                    System.out.println("TO" + value);
+                    messageInformationHeaders.setTo((EndpointReference) value);                        
+                }
+            }
+        }
     }
-
 
     /**
      * Retrieves configuration descriptor parameters at any level. The order of search is

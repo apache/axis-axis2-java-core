@@ -91,7 +91,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
     }
 
     public void testHeaderCreationFromMsgCtxtInformation() throws Exception {
-        MessageInformationHeaders mIHeaders = new MessageInformationHeaders();
+        msgCtxt = new MessageContext(null);
 
         AnyContentType referenceValues = new AnyContentType();
 
@@ -99,7 +99,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         referenceValues.addReferenceValue(new QName("Reference2"),
                 "Value 200");
         epr.setReferenceParameters(referenceValues);
-        mIHeaders.setFrom(epr);
+        msgCtxt.setFrom(epr);
 
         epr = new EndpointReference("http://www.to.org/service/");
         referenceValues = new AnyContentType();
@@ -122,21 +122,19 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
                 new QName("http://www.from.org/service/port/",
                         "Port",
                         "portNS"));
-        mIHeaders.setTo(epr);
+        msgCtxt.setTo(epr);
 
         epr =
                 new EndpointReference("http://www.replyTo.org/service/");
-        mIHeaders.setReplyTo(epr);
+        msgCtxt.setReplyTo(epr);
 
-        mIHeaders.setMessageId("123456-7890");
-        mIHeaders.setAction("http://www.actions.org/action");
+        msgCtxt.setMessageID("123456-7890");
+        msgCtxt.setWSAAction("http://www.actions.org/action");
 
         org.apache.axis2.addressing.RelatesTo relatesTo = new org.apache.axis2.addressing.RelatesTo(
                 "http://www.relatesTo.org/service/", "TestRelation");
-        mIHeaders.setRelatesTo(relatesTo);
+        msgCtxt.setRelatesTo(relatesTo);
 
-        msgCtxt = new MessageContext(null);
-        msgCtxt.setMessageInformationHeaders(mIHeaders);
         msgCtxt.setEnvelope(
                 OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope());
         outHandler.invoke(msgCtxt);

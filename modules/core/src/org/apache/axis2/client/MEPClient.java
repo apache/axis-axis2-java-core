@@ -17,8 +17,8 @@
 package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
@@ -40,6 +40,7 @@ import org.apache.axis2.soap.SOAPHeader;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 /**
  * This is the super class for all the MEPClients.
@@ -50,9 +51,8 @@ public abstract class MEPClient {
     protected String soapVersionURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
     protected String soapAction = "";
 
-    protected MessageInformationHeaders messageInformationHeaders = new MessageInformationHeaders();
-
     protected List soapHeaderList;
+    protected HashMap contextProperties = new HashMap();
 
     /*
       If there is a SOAP Fault in the body of the incoming SOAP Message, system can be configured to
@@ -88,13 +88,10 @@ public abstract class MEPClient {
         if (serviceContext.getAxisService().getOperation(axisop.getName()) == null) {
             serviceContext.getAxisService().addOperation(axisop);
         }
-        if (msgCtx.getMessageInformationHeaders() != null && msgCtx.getMessageInformationHeaders().getAction() != null) {
-            messageInformationHeaders.setAction(msgCtx.getMessageInformationHeaders().getAction());
+
+        if(!contextProperties.isEmpty()) {
+            msgCtx.setContextProperties(contextProperties);
         }
-
-        msgCtx.setMessageInformationHeaders(cloneMIHeaders());
-
-        //msgCtx.setMessageInformationHeaders(messageInformationHeaders);
         msgCtx.setSoapAction(soapAction + "");
 
         // check user has put any SOAPHeader using the call MEPClient methods and add them, if any, to the
@@ -130,7 +127,7 @@ public abstract class MEPClient {
      * @throws AxisFault
      */
     protected MessageContext prepareTheSOAPEnvelope(OMElement toSend) throws AxisFault {
-        MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
+        MessageContext msgctx = createMessageContext();
 
         SOAPEnvelope envelope = createDefaultSOAPEnvelope();
         if (toSend != null) {
@@ -200,18 +197,6 @@ public abstract class MEPClient {
         }
     }
 
-    public MessageInformationHeaders cloneMIHeaders() {
-        MessageInformationHeaders messageInformationHeaders = new MessageInformationHeaders();
-        messageInformationHeaders.setAction(this.messageInformationHeaders.getAction());
-        messageInformationHeaders.setFaultTo(this.messageInformationHeaders.getFaultTo());
-        messageInformationHeaders.setFrom(this.messageInformationHeaders.getFrom());
-        messageInformationHeaders.setMessageId(this.messageInformationHeaders.getMessageId());
-        messageInformationHeaders.setRelatesTo(this.messageInformationHeaders.getRelatesTo());
-        messageInformationHeaders.setReplyTo(this.messageInformationHeaders.getReplyTo());
-        messageInformationHeaders.setTo(this.messageInformationHeaders.getTo());
-        return messageInformationHeaders;
-    }
-
     /**
      * @param string
      */
@@ -279,49 +264,49 @@ public abstract class MEPClient {
      * @param action
      */
     public void setWsaAction(String action) {
-        messageInformationHeaders.setAction(action);
+        contextProperties.put(Constants.ADDRESSING_ACTION, action);
     }
 
     /**
      * @param faultTo
      */
     public void setFaultTo(EndpointReference faultTo) {
-        messageInformationHeaders.setFaultTo(faultTo);
+        contextProperties.put(Constants.ADDRESSING_FAULT_TO, faultTo);
     }
 
     /**
      * @param from
      */
     public void setFrom(EndpointReference from) {
-        messageInformationHeaders.setFrom(from);
+        contextProperties.put(Constants.ADDRESSING_FROM, from);
     }
 
     /**
      * @param messageId
      */
     public void setMessageId(String messageId) {
-        messageInformationHeaders.setMessageId(messageId);
+        contextProperties.put(Constants.ADDRESSING_MESSAGE_ID, messageId);
     }
 
     /**
      * @param relatesTo
      */
     public void setRelatesTo(RelatesTo relatesTo) {
-        messageInformationHeaders.setRelatesTo(relatesTo);
+        contextProperties.put(Constants.ADDRESSING_RELATES_TO, relatesTo);
     }
 
     /**
      * @param replyTo
      */
     public void setReplyTo(EndpointReference replyTo) {
-        messageInformationHeaders.setReplyTo(replyTo);
+        contextProperties.put(Constants.ADDRESSING_REPLY_TO, replyTo);
     }
 
     /**
      * @param to
      */
     public void setTo(EndpointReference to) {
-        messageInformationHeaders.setTo(to);
+        contextProperties.put(Constants.ADDRESSING_TO, to);
     }
 
     // ==============================================================================
@@ -349,6 +334,20 @@ public abstract class MEPClient {
         return serviceContext;
     }
 
+    /**
+     * Creates a message context and sets the contextProperties
+     * 
+     * @return
+     * @throws AxisFault
+     */
+    protected MessageContext createMessageContext() throws AxisFault {
+        MessageContext newMsgCtx = new MessageContext(serviceContext.getConfigurationContext());
+        if(!contextProperties.isEmpty()) {
+            newMsgCtx.setContextProperties(contextProperties);
+        }
+        return newMsgCtx;
+    }
+    
     /**
      * Assumes the values for the ConfigurationContext and ServiceContext to make the NON WSDL cases simple.
      *

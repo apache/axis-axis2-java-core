@@ -108,7 +108,7 @@ public class Call extends InOutMEPClient {
                 serviceContext.getAxisService().getOperation(new QName(axisop));
         opDesc = createOpDescAndFillInFlowInformation(opDesc, axisop, WSDLConstants.MEP_CONSTANT_OUT_IN);
 
-        MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
+        MessageContext msgctx = createMessageContext();
         if (envelope == null || envelope.getBody() == null) {
             throw new AxisFault("SOAP envelope or SOAP Body can not be null");
         }
@@ -158,7 +158,7 @@ public class Call extends InOutMEPClient {
                 serviceContext.getAxisService().getOperation(new QName(axisop));
         opDesc = createOpDescAndFillInFlowInformation(opDesc, axisop, WSDLConstants.MEP_CONSTANT_OUT_IN);
 
-        MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
+        MessageContext msgctx = createMessageContext();
         if (envelope == null || envelope.getBody() == null) {
             throw new AxisFault("SOAP envelope or SOAP Body can not be null");
         }

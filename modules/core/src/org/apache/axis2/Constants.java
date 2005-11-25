@@ -181,7 +181,15 @@ public class Constants {
 
 
     public static final char SERVICE_NAME_SPLIT_CHAR =':';
-
+    
+    /** Addressing Constants */
+    public static final String ADDRESSING_ACTION = "WS-Addressing:Action";
+    public static final String ADDRESSING_FAULT_TO = "WS-Addressing:FaultTo" ;
+    public static final String ADDRESSING_FROM = "WS-Addressing:From" ;
+    public static final String ADDRESSING_MESSAGE_ID = "WS-Addressing:MessageId";
+    public static final String ADDRESSING_RELATES_TO = "WS-Addressing:RelatesTo" ;
+    public static final String ADDRESSING_REPLY_TO = "WS-Addressing:ReplyTo" ;
+    public static final String ADDRESSING_TO = "WS-Addressing:To" ;
 
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";

@@ -68,18 +68,15 @@ public class Utils {
                         inMessageContext.getTransportOut());
         MessageInformationHeaders oldMessageInfoHeaders =
                 inMessageContext.getMessageInformationHeaders();
-        MessageInformationHeaders messageInformationHeaders =
-                new MessageInformationHeaders();
-        messageInformationHeaders.setMessageId(UUIDGenerator.getUUID());
-        messageInformationHeaders.setTo(oldMessageInfoHeaders.getReplyTo());
-        messageInformationHeaders.setFaultTo(
+        newmsgCtx.setMessageID(UUIDGenerator.getUUID());
+        newmsgCtx.setTo(oldMessageInfoHeaders.getReplyTo());
+        newmsgCtx.setFaultTo(
                 oldMessageInfoHeaders.getFaultTo());
-        messageInformationHeaders.setFrom(oldMessageInfoHeaders.getTo());
-        messageInformationHeaders.setRelatesTo(
+        newmsgCtx.setFrom(oldMessageInfoHeaders.getTo());
+        newmsgCtx.setRelatesTo(
                 new org.apache.axis2.addressing.RelatesTo(oldMessageInfoHeaders.getMessageId(),
                         AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
-        messageInformationHeaders.setAction(oldMessageInfoHeaders.getAction());
-        newmsgCtx.setMessageInformationHeaders(messageInformationHeaders);
+        newmsgCtx.setWSAAction(oldMessageInfoHeaders.getAction());
         newmsgCtx.setOperationContext(inMessageContext.getOperationContext());
         newmsgCtx.setServiceContext(inMessageContext.getServiceContext());
         newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT,
