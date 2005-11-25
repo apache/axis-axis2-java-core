@@ -16,6 +16,7 @@
 package org.apache.axis2.om.impl.dom;
 
 import org.apache.axis2.om.OMContainer;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMXMLParserWrapper;
@@ -473,6 +474,11 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
         omOutput.flush();
     }
 
+    public OMNode detach() {
+    	throw new OMException(
+                    "Elements that doesn't have a parent can not be detached");
+    }
+    
 	/*
 	 * DOM-Level 3 methods 
 	 */

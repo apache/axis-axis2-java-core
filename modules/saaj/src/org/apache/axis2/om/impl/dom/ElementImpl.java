@@ -201,11 +201,11 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	 * if the local list is null return null
 	 * @see org.w3c.dom.Element#getAttribute(java.lang.String)
 	 */
-	public String getAttribute(String arg0) {
+	public String getAttribute(String name) {
 		if(attributes == null) {
 			return "";
 		} else {
-			return ((Attr)attributes.getNamedItem(arg0)).getValue();
+			return ((Attr)attributes.getNamedItem(name)).getValue();
 		}
 	}
 
@@ -470,6 +470,8 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
+	 * This will allow overriding an existing declaration if the same 
+	 * prefix was used 
 	 * @see org.apache.axis2.om.OMElement#declareNamespace(org.apache.axis2.om.OMNamespace)
 	 */
 	public OMNamespace declareNamespace(OMNamespace namespace) {
@@ -481,6 +483,8 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
+	 * This will allow overriding an existing declaration
+	 * if the same prefix was used 
 	 * @see org.apache.axis2.om.OMElement#declareNamespace(java.lang.String, java.lang.String)
 	 */
 	public OMNamespace declareNamespace(String uri, String prefix) {
@@ -696,6 +700,15 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
             throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
 		}
 		
+		//if we already have other text nodes remove them
+		OMNode child = this.getFirstOMChild();
+		while (child != null) {
+            if (child.getType() == OMNode.TEXT_NODE) {
+                child.detach();
+            }
+            child = child.getNextOMSibling();
+		}
+		
 		TextImpl textNode = (TextImpl)((DocumentImpl)this.ownerNode).createTextNode(text);
 		this.addChild(textNode);
 	}
@@ -871,6 +884,32 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     
     public NamedNodeMap getAttributes() {
     	return this.attributes;
+    }
+    
+    /**
+     * return the namespace uri, given the prefix
+     * @param prefix
+     * @return
+     */
+    public String getNamespaceURI(String prefix) {
+    	return ((OMNamespace)this.namespaces.get(prefix)).getName();
+    }
+    
+    /**
+     * Remove a declared namespace give its prefix
+     * @param prefix
+     * @return whether the namespace relevant to the 
+     * given prefix was removed or not
+     */
+    public boolean removeNamespace(String prefix) {
+    	Object ns = this.namespaces.get(prefix);
+    	if(ns != null) {
+    		this.namespaces.remove(ns);
+    		return true;
+    	} else {
+    		return false;
+    	}
+    	
     }
     
 	/*

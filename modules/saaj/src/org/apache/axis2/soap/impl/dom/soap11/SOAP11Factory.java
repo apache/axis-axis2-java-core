@@ -18,6 +18,7 @@ package org.apache.axis2.soap.impl.dom.soap11;
 
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAPBody;
@@ -42,6 +43,12 @@ public class SOAP11Factory extends DOMSOAPFactory {
      * Eran Chinthaka (chinthaka@apache.org)
      */
 
+	public SOAP11Factory() {}
+	
+	public SOAP11Factory(DocumentImpl doc) {
+		super(doc);
+	}
+	
     public SOAPEnvelope createSOAPEnvelope() {
         return new SOAPEnvelopeImpl(
                 new NamespaceImpl(

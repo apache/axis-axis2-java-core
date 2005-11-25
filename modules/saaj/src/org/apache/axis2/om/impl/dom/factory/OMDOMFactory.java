@@ -47,6 +47,12 @@ public class OMDOMFactory implements OMFactory {
 	
 	protected DocumentImpl document;
 	
+	public OMDOMFactory() {}
+	
+	public OMDOMFactory(DocumentImpl doc) {
+		this.document = doc;
+	}
+	
 	public OMDocument createOMDocument() {
 		if(this.document == null)
 			this.document = new DocumentImpl();
@@ -54,6 +60,15 @@ public class OMDOMFactory implements OMFactory {
 		return this.document;
 	}
 
+	/**
+	 * Configure this factory to use the given document
+	 * Use with care :-)
+	 * @param document
+	 */
+	public void setDocument(DocumentImpl document) {
+		this.document = document;
+	}
+	
 	public OMElement createOMElement(String localName, OMNamespace ns) {
 		return new ElementImpl((DocumentImpl)this.createOMDocument(), localName, (NamespaceImpl)ns);
 	}

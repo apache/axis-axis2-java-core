@@ -78,6 +78,10 @@ public abstract class ChildNode extends NodeImpl {
 		return (OMContainer)this.parentNode;
 	}
 	
+	public Node getParentNode() {
+		return this.parentNode;
+	}
+	
 	public void setParent(OMContainer element) {
 		if(element instanceof ParentNode)
 			this.parentNode = (ParentNode)element;

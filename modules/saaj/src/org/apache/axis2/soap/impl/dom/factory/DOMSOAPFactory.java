@@ -40,6 +40,12 @@ import org.apache.axis2.soap.impl.dom.SOAPMessageImpl;
 
 public class DOMSOAPFactory extends OMDOMFactory implements SOAPFactory {
 
+	public DOMSOAPFactory() {}
+	
+	public DOMSOAPFactory(DocumentImpl doc) {
+		super(doc);
+	}
+	
 	public SOAPMessage createSOAPMessage(OMXMLParserWrapper builder) {
 		SOAPMessageImpl messageImpl = new SOAPMessageImpl(builder);
 		this.document = messageImpl;
