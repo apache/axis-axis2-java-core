@@ -27,86 +27,95 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
- * This class manages the listeners and depends heavily on static constructs and should be 
+ * This class manages the listeners and depends heavily on static constructs and should be
  * re-architectured. It allows the client to initialize only one ConfigurationContext in a given JVM.
  */
 public class ListenerManager {
 
     public static int port = 6059;
-    public static HashMap listeners = new HashMap();
-    public static ConfigurationContext configurationContext;
+    public static Map configurationContextMap = new HashMap();
 
     /**
-     * Starts a listener for a given transport if it has not already started. 
+     * Starts a listener for a given transport if it has not already started.
+     *
      * @param transport
      * @param configurationContext
      * @throws AxisFault
      */
     public static synchronized final void makeSureStarted(String transport,
-                                             ConfigurationContext configurationContext)
+                                                          ConfigurationContext configurationContext)
             throws AxisFault {
-        if (ListenerManager.configurationContext != null &&
-                configurationContext != ListenerManager.configurationContext) {
-            throw new AxisFault(
-                    "Only One ConfigurationContext Instance we support at the Client Side");
+        // If this config context is in the map, that means we already have a listener for that
+        // config context
+        HashMap listeners = (HashMap) configurationContextMap.get(configurationContext);
+        if (listeners == null) {
+            listeners = new HashMap();
+            configurationContextMap.put(configurationContext, listeners);
+        } else {
+            TransportListenerState tsState = (TransportListenerState) listeners.get(transport);
+            if (tsState != null) {
+                tsState.waitingCalls++;
+                return;
+            }
         }
 
-        ListenerManager.configurationContext = configurationContext;
-        TransportListenerState tsState = (TransportListenerState) listeners.get(
-                transport);
-        if (tsState == null) {
-            //means this transport not yet started, start the transport
-            TransportInDescription tranportIn =
-                    configurationContext.getAxisConfiguration().getTransportIn(
-                            new QName(transport));
-            TransportListener listener = tranportIn.getReceiver();
-            listener.start();
-            tsState = new TransportListenerState(listener);
-            listeners.put(transport, tsState);
-        }
+        //means this transport not yet started, start the transport
+        TransportInDescription tranportIn =
+                configurationContext.getAxisConfiguration().getTransportIn(
+                        new QName(transport));
+        TransportListener listener = tranportIn.getReceiver();
+        listener.start();
+        TransportListenerState tsState = new TransportListenerState(listener);
+        listeners.put(transport, tsState);
+
         tsState.waitingCalls++;
     }
 
-    public static synchronized final void stop(String transport) throws AxisFault {
-        TransportListenerState tsState = (TransportListenerState) listeners.get(
-                transport);
-        if (tsState != null) {
-            tsState.waitingCalls--;
-            if (tsState.waitingCalls == 0) {
-                tsState.listener.stop();
-                //todo I have to properly handle this.
-                listeners.remove(transport);
+    public static synchronized final void stop(ConfigurationContext configurationContext, String transport) throws AxisFault {
+        HashMap listeners = (HashMap) configurationContextMap.get(configurationContext);
+
+        if (listeners != null) {
+            TransportListenerState tsState = (TransportListenerState) listeners.get(transport);
+            if (tsState != null) {
+                tsState.waitingCalls--;
+                if (tsState.waitingCalls == 0) {
+                    tsState.listener.stop();
+                    listeners.remove(transport);
+                }
             }
         }
     }
 
     /**
-     * Returns the replyTo endpoint reference for the servicename/transport combination. 
-     * 
+     * Returns the replyTo endpoint reference for the servicename/transport combination.
+     *
      * @param serviceName
      * @param transport
      * @return endpoint reference
      * @throws AxisFault
      */
-    public static EndpointReference replyToEPR(String serviceName,
+    public static EndpointReference replyToEPR(ConfigurationContext configurationContext,
+                                               String serviceName,
                                                String transport)
             throws AxisFault {
-        TransportListenerState tsState = (TransportListenerState) listeners.get(
-                transport);
-        if (tsState != null) {
-            return tsState.listener.getReplyToEPR(serviceName);
+        HashMap listeners = (HashMap) configurationContextMap.get(configurationContext);
+        if (listeners != null) {
+            TransportListenerState tsState = (TransportListenerState) listeners.get(
+                    transport);
+            if (tsState != null) {
+                return tsState.listener.getReplyToEPR(serviceName);
+            } else {
+                throw new AxisFault(Messages.getMessage("replyNeedStarting", transport));
+            }
         } else {
-            throw new AxisFault(Messages.getMessage("replyNeedStarting",transport));
+            throw new AxisFault("Can not find listeners for " + transport + " for the given config" +
+                    " context " + configurationContext + ". So can not provide a replyTo epr here. ");
         }
-
     }
 
-    public int getPort() {
-        port++;
-        return port;
-    }
     /**
      * This class keeps information about the listener for a given transport.
      */
@@ -127,7 +136,7 @@ public class ListenerManager {
             try {
                 return new ServerSocket(port + i);
             } catch (IOException e) {
-              throw new AxisFault("Cannot open a server socket in port "+port + 1, e);
+                // What I'm gonna do here. Try again. 
             }
         }
         throw new AxisFault(Messages.getMessage("failedToOpenSocket"));

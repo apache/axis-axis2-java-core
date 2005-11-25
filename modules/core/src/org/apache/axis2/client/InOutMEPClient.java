@@ -41,9 +41,9 @@ import org.apache.wsdl.WSDLConstants;
 import javax.xml.namespace.QName;
 
 /**
- * This class captures the handling of In-Out type method invocations for both blocking 
- * and non-blocking calls. The basic API is based on MessageContext and 
- * provides more convenient APIs. 
+ * This class captures the handling of In-Out type method invocations for both blocking
+ * and non-blocking calls. The basic API is based on MessageContext and
+ * provides more convenient APIs.
  */
 public class InOutMEPClient extends MEPClient {
 
@@ -58,7 +58,7 @@ public class InOutMEPClient extends MEPClient {
     protected TransportInDescription listenerTransport;
 
     /**
-     * Used to specify whether the two SOAP Messages are be sent over same channel 
+     * Used to specify whether the two SOAP Messages are be sent over same channel
      * or over separate channels.The value of this variable depends on the transport specified.
      * For e.g., if the transports are different this is true by default.
      * HTTP transport supports both cases while SMTP transport supports only two channel case.
@@ -88,11 +88,11 @@ public class InOutMEPClient extends MEPClient {
      * <p/>
      * Following code works for the time being. <p/>
      * <blockquote><pre>
-     * ConfigurationContextFactory efac = new ConfigurationContextFactory(); 
+     * ConfigurationContextFactory efac = new ConfigurationContextFactory();
      * // Replace the null with your client repository if any
      * ConfigurationContext sysContext = efac.buildClientConfigurationContext(null);
      * // above line "null" may be a file name if you know the client repssitory
-     * 
+     * <p/>
      * //create new service
      * QName assumedServiceName = new QName("Your Service");
      * AxisService axisService = new AxisService(assumedServiceName);
@@ -238,10 +238,9 @@ public class InOutMEPClient extends MEPClient {
 
                 //set the replyto such that the response will arrive at the transport listener started
                 // Note that this will only change the replyTo Address property in the replyTo EPR
-                EndpointReference replyToFromTransport = ListenerManager.replyToEPR(serviceContext
-                        .getAxisService()
-                        .getName()
-                        .getLocalPart()
+                EndpointReference replyToFromTransport = ListenerManager.replyToEPR(
+                        serviceContext.getConfigurationContext(),
+                        serviceContext.getAxisService().getName().getLocalPart()
                         + "/"
                         + axisop.getName().getLocalPart(),
                         listenerTransport.getName().getLocalPart());
@@ -273,7 +272,7 @@ public class InOutMEPClient extends MEPClient {
     }
 
     /**
-     * Sets transport information to the call. The senarios supported are as follows: 
+     * Sets transport information to the call. The senarios supported are as follows:
      * <blockquote><pre>
      * [senderTransport, listenerTransport, useSeparateListener]
      * http, http, true
@@ -384,7 +383,7 @@ public class InOutMEPClient extends MEPClient {
      * requests sent, the call should be closed only when all are are done.
      */
     public void close() throws AxisFault {
-        ListenerManager.stop(listenerTransport.getName().getLocalPart());
+        ListenerManager.stop(serviceContext.getConfigurationContext(), listenerTransport.getName().getLocalPart());
     }
 
     /**
@@ -458,14 +457,14 @@ public class InOutMEPClient extends MEPClient {
 
     /**
      * Sends the message using a two way transport and waits for a response
-     * 
+     *
      * @param msgctx
      * @param transportIn
      * @return
      * @throws AxisFault
      */
     public MessageContext send(MessageContext msgctx,
-                                      TransportInDescription transportIn) throws AxisFault {
+                               TransportInDescription transportIn) throws AxisFault {
 
         AxisEngine engine = new AxisEngine(msgctx.getSystemContext());
         engine.send(msgctx);
@@ -477,8 +476,8 @@ public class InOutMEPClient extends MEPClient {
                         msgctx.getTransportIn(),
                         msgctx.getTransportOut());
         response.setProperty(MessageContext.TRANSPORT_IN,
-                             msgctx.getProperty(MessageContext.TRANSPORT_IN));
-        msgctx.getAxisOperation().registerOperationContext(response,msgctx.getOperationContext());
+                msgctx.getProperty(MessageContext.TRANSPORT_IN));
+        msgctx.getAxisOperation().registerOperationContext(response, msgctx.getOperationContext());
         response.setServerSide(false);
         response.setServiceContext(msgctx.getServiceContext());
         response.setServiceGroupContext(msgctx.getServiceGroupContext());

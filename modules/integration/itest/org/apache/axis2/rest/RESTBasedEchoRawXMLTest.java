@@ -29,10 +29,7 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLOutputFactory;
 
@@ -96,6 +93,7 @@ public class RESTBasedEchoRawXMLTest extends TestCase implements TestConstants {
                         payload);
         result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));
+
 
         call.close();
     }

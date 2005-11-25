@@ -40,7 +40,11 @@
            __operation = new org.apache.axis2.description.OutInAxisOperation();
            __operation.setName(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>", "<xsl:value-of select="@name"/>"));
            _operations[<xsl:value-of select="position()-1"/>]=__operation;
+            try{
            _service.addOperation(__operation);
+          }catch(org.apache.axis2.AxisFault e){
+            throw new RuntimeException(e);
+          }
      </xsl:for-each>
        }
 

@@ -17,8 +17,6 @@
 package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
@@ -26,6 +24,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -48,7 +47,7 @@ public class Call extends InOutMEPClient {
 
     public Call() throws AxisFault {
         super(null);
-        setServiceContext(assumeServiceContext(null));
+        assumeServiceContext(null);
     }
 
     /**
@@ -59,7 +58,7 @@ public class Call extends InOutMEPClient {
      */
     public Call(String clientHome) throws AxisFault {
         super(null);
-        setServiceContext(assumeServiceContext(clientHome));
+        assumeServiceContext(clientHome);
     }
 
     /**
@@ -72,7 +71,8 @@ public class Call extends InOutMEPClient {
 
     /**
      * Invokes the blocking/synchronous call.
-     *s
+     * s
+     *
      * @param axisop - this is used to identify the operation on the client side explicitly.
      * @param toSend - data to be sent (OMElement).
      * @return
@@ -84,7 +84,7 @@ public class Call extends InOutMEPClient {
 
         AxisOperation opDesc =
                 serviceContext.getAxisService().getOperation(new QName(axisop));
-        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_OUT_IN);
+        opDesc = createOpDescAndFillInFlowInformation(opDesc, axisop, WSDLConstants.MEP_CONSTANT_OUT_IN);
         opDesc.setParent(serviceContext.getAxisService());
         MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
 
@@ -96,7 +96,7 @@ public class Call extends InOutMEPClient {
     /**
      * Invokes the blocking/synchronous call
      *
-     * @param axisop - this is used to identify the operation on the client side explicitly.
+     * @param axisop   - this is used to identify the operation on the client side explicitly.
      * @param envelope - data to be sent (SOAPEnvelope).
      * @return
      * @throws AxisFault
@@ -106,10 +106,10 @@ public class Call extends InOutMEPClient {
 
         AxisOperation opDesc =
                 serviceContext.getAxisService().getOperation(new QName(axisop));
-        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop, WSDLConstants.MEP_CONSTANT_OUT_IN);
+        opDesc = createOpDescAndFillInFlowInformation(opDesc, axisop, WSDLConstants.MEP_CONSTANT_OUT_IN);
 
         MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
-        if(envelope == null || envelope.getBody() == null){
+        if (envelope == null || envelope.getBody() == null) {
             throw new AxisFault("SOAP envelope or SOAP Body can not be null");
         }
         msgctx.setEnvelope(envelope);
@@ -134,16 +134,17 @@ public class Call extends InOutMEPClient {
             throws AxisFault {
         AxisOperation opDesc =
                 serviceContext.getAxisService().getOperation(new QName(axisop));
-        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_OUT_IN);
+        opDesc = createOpDescAndFillInFlowInformation(opDesc, axisop, WSDLConstants.MEP_CONSTANT_OUT_IN);
         MessageContext msgctx = prepareTheSOAPEnvelope(toSend);
         //call the underline implementation
         super.invokeNonBlocking(opDesc, msgctx, callback);
     }
+
     /**
      * Invokes the nonblocking/asynchronous call
      *
      * @param axisop
-     * @param envelope   -  data to be sent (SOAPEnvelope).
+     * @param envelope -  data to be sent (SOAPEnvelope).
      * @param callback
      * @throws org.apache.axis2.AxisFault
      */
@@ -155,10 +156,10 @@ public class Call extends InOutMEPClient {
             throws AxisFault {
         AxisOperation opDesc =
                 serviceContext.getAxisService().getOperation(new QName(axisop));
-        opDesc = createOpDescAndFillInFlowInformation(opDesc,axisop,WSDLConstants.MEP_CONSTANT_OUT_IN);
+        opDesc = createOpDescAndFillInFlowInformation(opDesc, axisop, WSDLConstants.MEP_CONSTANT_OUT_IN);
 
         MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
-        if(envelope == null || envelope.getBody() == null){
+        if (envelope == null || envelope.getBody() == null) {
             throw new AxisFault("SOAP envelope or SOAP Body can not be null");
         }
         msgctx.setEnvelope(envelope);
@@ -166,8 +167,24 @@ public class Call extends InOutMEPClient {
         super.invokeNonBlocking(opDesc, msgctx, callback);
     }
 
+    protected void assumeServiceContext(String clientHome)
+            throws AxisFault {
+
+        super.assumeServiceContext(clientHome);
+        AxisService axisService = serviceContext.getAxisService();
+        axisOperationTemplate = new OutInAxisOperation(new QName("TemplateOperation"));
+
+        AxisConfiguration axisConfiguration = serviceContext.getConfigurationContext().getAxisConfiguration();
+        PhasesInfo info = ((AxisConfigurationImpl) axisConfiguration).getPhasesinfo();
+        //to set the operation flows
+        if (info != null) {
+            info.setOperationPhases(axisOperationTemplate);
+        }
+        axisService.addOperation(axisOperationTemplate);
+    }
+
     /**
-     * Creates an operation description if it is null and copies the flows from 
+     * Creates an operation description if it is null and copies the flows from
      * the template operation.
      *
      * @param opDesc
@@ -175,7 +192,7 @@ public class Call extends InOutMEPClient {
      */
     protected AxisOperation createOpDescAndFillInFlowInformation(
             AxisOperation opDesc,
-            String axisOp , int mepURL) throws AxisFault {
+            String axisOp, int mepURL) throws AxisFault {
         if (opDesc == null) {
             //if the operation is not already defined we will copy the
             //created Phases from the template operation to this Operation
@@ -195,45 +212,8 @@ public class Call extends InOutMEPClient {
     }
 
     /**
-     * Assumes the values for the ConfigurationContext and ServiceContext to make the NON WSDL cases simple.
-     *
-     * @return ServiceContext that has a ConfigurationContext set in and has assumed values.
-     * @throws org.apache.axis2.AxisFault
-     */
-    protected ServiceContext assumeServiceContext(String clientHome)
-            throws AxisFault {
-        ConfigurationContext sysContext = null;
-        //we are trying to keep one configuration Context at the Client side. That make it easier to
-        //manage the TransportListeners. But using the static referance is bit crude!.
-        if (ListenerManager.configurationContext == null) {
-            ConfigurationContextFactory efac =
-                    new ConfigurationContextFactory();
-            sysContext = efac.buildClientConfigurationContext(clientHome);
-        } else {
-            sysContext = ListenerManager.configurationContext;
-        }
-        QName assumedServiceName = new QName("AnonymousService");
-        AxisService axisService =sysContext.getAxisConfiguration().getService("AnonymousService");
-        if(axisService == null) {
-            //we will assume a Service and operations
-            axisService = new AxisService(assumedServiceName);
-
-            axisOperationTemplate = new   OutInAxisOperation(new QName("TemplateOperation"));
-
-            PhasesInfo info =((AxisConfigurationImpl)sysContext.getAxisConfiguration()).getPhasesinfo();
-            //to set the operation flows
-            if(info != null){
-                info.setOperationPhases(axisOperationTemplate);
-            }
-            axisService.addOperation(axisOperationTemplate);
-            sysContext.getAxisConfiguration().addService(axisService);
-        }
-        return axisService.getParent().getServiceGroupContext(sysContext).getServiceContext(
-                assumedServiceName.getLocalPart());
-    }
-
-    /**
      * Get the value corresponding to the key in the Service Context
+     *
      * @param key
      * @return value
      */
@@ -243,6 +223,7 @@ public class Call extends InOutMEPClient {
 
     /**
      * Set a property in the Service Context
+     *
      * @param key
      * @param value
      */
@@ -252,7 +233,7 @@ public class Call extends InOutMEPClient {
 
     /**
      * Get the MessageContext of the response
-     * 
+     *
      * @return message context
      */
     public MessageContext getResponseMessageContext() {

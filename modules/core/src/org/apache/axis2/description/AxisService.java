@@ -57,7 +57,7 @@ import java.util.Map;
  */
 public class AxisService
         //    extends WSDLServiceImpl
-        implements WSDLService ,
+        implements WSDLService,
         ParameterInclude,
         FlowInclude,
         DescriptionConstants {
@@ -66,12 +66,12 @@ public class AxisService
 
     private HashMap moduleConfigmap;
 
-    private  AxisServiceGroup parent;
+    private AxisServiceGroup parent;
     //to store the wsdl definition , which is build at the deployment time
 
     //to keep the time that last update time of the service
-    private long lastupdate ;
-    private String  axisServiceName ;
+    private long lastupdate;
+    private String axisServiceName;
     private String fileName = "";
 
     private WSDLServiceImpl serviceimpl = null;
@@ -82,12 +82,11 @@ public class AxisService
     private ArrayList mdoulesList = new ArrayList();
 
 
-
     /**
      * Constructor AxisService
      */
 
-    public AxisService(WSDLServiceImpl serviceimpl){
+    public AxisService(WSDLServiceImpl serviceimpl) {
         this.serviceimpl = serviceimpl;
         this.wasaction_opeartionmap = new HashMap();
         this.setComponentProperty(MODULEREF_KEY, new ArrayList());
@@ -167,7 +166,7 @@ public class AxisService
             ArrayList wsamappings = axisOperation.getWsamappingList();
             for (int j = 0; j < wsamappings.size(); j++) {
                 Parameter paramter = (Parameter) wsamappings.get(j);
-                this.addMapping((String)paramter.getValue(),axisOperation);
+                this.addMapping((String) paramter.getValue(), axisOperation);
             }
             pr.buildModuleOperation(axisOperation);
             this.addOperation(axisOperation);
@@ -206,15 +205,15 @@ public class AxisService
      * Method getOperation
      *
      * @param operationName
-     * @return   AxisOperation
+     * @return AxisOperation
      */
     public AxisOperation getOperation(QName operationName) {
         String opStr = operationName.getLocalPart();
 
         HashMap allOperations = this.getServiceInterface().getAllOperations();
         AxisOperation opeartion = (AxisOperation) allOperations.get(opStr);
-        if(opeartion == null ){
-            opeartion = (AxisOperation)wasaction_opeartionmap.get(
+        if (opeartion == null) {
+            opeartion = (AxisOperation) wasaction_opeartionmap.get(
                     operationName.getLocalPart());
         }
         return opeartion;
@@ -222,12 +221,13 @@ public class AxisService
 
     /**
      * To get the WSDL opeartion element in servic einterface
-     * @param operationName  <code>QName</cde>
-     * @return  WSDLOperation <code>WSDLOperation</code>
+     *
+     * @param operationName <code>QName</cde>
+     * @return WSDLOperation <code>WSDLOperation</code>
      */
-    public WSDLOperation getWSDLOPOperation(QName operationName){
+    public WSDLOperation getWSDLOPOperation(QName operationName) {
         String opStr = operationName.getLocalPart();
-        return this.getServiceInterface().getOperation(opStr) ;
+        return this.getServiceInterface().getOperation(opStr);
     }
 
     /*
@@ -241,8 +241,22 @@ public class AxisService
      *
      * @param axisOperation
      */
-    public void addOperation(AxisOperation axisOperation) {
+    public void addOperation(AxisOperation axisOperation) throws AxisFault {
         axisOperation.setParent(this);
+        //todo phase resolving and module engagement :
+//        Iterator modules = getEngagedModules().iterator();
+//        while (modules.hasNext()) {
+//            ModuleDescription module = (ModuleDescription) modules.next();
+//            axisOperation.engageModule(module);
+//        }
+        AxisServiceGroup parent = getParent();
+        if (parent != null) {
+            AxisConfiguration axisConfig = parent.getParent();
+            if (axisConfig != null) {
+                PhaseResolver pr = new PhaseResolver(axisConfig,this);
+                pr.buildModuleOperation(axisOperation);
+            }
+        }
         this.getServiceInterface().setOperation(axisOperation);
     }
 
@@ -272,7 +286,7 @@ public class AxisService
     /**
      * Method getClassLoader
      *
-     * @return  ClassLoader
+     * @return ClassLoader
      */
     public ClassLoader getClassLoader() {
         return (ClassLoader) this.getComponentProperty(CLASSLOADER_KEY);
@@ -304,7 +318,7 @@ public class AxisService
     /**
      * Method getContextPath
      *
-     * @return  String
+     * @return String
      */
     public String getContextPath() {
         return (String) this.getComponentProperty(CONTEXTPATH_KEY);
@@ -365,9 +379,9 @@ public class AxisService
             return;
         }
 
-        if(isParameterLocked(param.getName())){
+        if (isParameterLocked(param.getName())) {
             throw new AxisFault("Parmter is locked can not overide: " + param.getName());
-        } else{
+        } else {
             ParameterIncludeImpl paramInclude =
                     (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
             paramInclude.addParameter(param);
@@ -395,7 +409,7 @@ public class AxisService
     public ArrayList getParameters() {
         ParameterIncludeImpl paramInclude =
                 (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
-        return  paramInclude.getParameters();
+        return paramInclude.getParameters();
     }
 
     /*
@@ -507,7 +521,7 @@ public class AxisService
     /**
      * Method getOperations
      *
-     * @return  HashMap
+     * @return HashMap
      */
     public HashMap getOperations() {
         return this.getServiceInterface().getOperations();
@@ -531,7 +545,7 @@ public class AxisService
      *         otherwise will return null.
      */
     public AxisOperation getOperationBySOAPAction(String soapAction) {
-        if(soapAction == null || soapAction.equals("")){
+        if (soapAction == null || soapAction.equals("")) {
             return null;
         }
         Iterator iterator = this.getEndpoints().keySet().iterator();
@@ -574,7 +588,7 @@ public class AxisService
                     .iterator();
             while (extIterator.hasNext()) {
                 WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
-                if (ExtensionConstants.SOAP_11_OPERATION.equals(element.getType())||
+                if (ExtensionConstants.SOAP_11_OPERATION.equals(element.getType()) ||
                         ExtensionConstants.SOAP_12_OPERATION.equals(element.getType())) {
                     if (((SOAPOperation) element).getSoapAction().equals(
                             soapAction)) {
@@ -600,7 +614,7 @@ public class AxisService
      * EngineContext's ServiceContextMap.
      *
      * @param msgContext
-     * @return  ServiceContext
+     * @return ServiceContext
      */
     public ServiceContext u(MessageContext msgContext) {
         // TODO : Fix me. Can't look up a service context in the system context
@@ -624,7 +638,8 @@ public class AxisService
 
     /**
      * To get the description about the service
-     *                                                                   ty67tyuio
+     * ty67tyuio
+     *
      * @return String
      */
     public String getAxisServiceName() {
@@ -652,11 +667,11 @@ public class AxisService
         try {
             Definition wsdlDefinition = this.getWSDLDefinition();
             if (wsdlDefinition != null) {
-                Collection services =  wsdlDefinition.getServices().values();
+                Collection services = wsdlDefinition.getServices().values();
 
                 for (Iterator iterator = services.iterator(); iterator.hasNext();) {
                     Service service = (Service) iterator.next();
-                    Collection ports =  service.getPorts().values();
+                    Collection ports = service.getPorts().values();
                     for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();) {
                         Port port = (Port) iterator1.next();
                         service.setQName(this.getName());
@@ -689,11 +704,11 @@ public class AxisService
     /**
      * This method will set the current time as last update time of the service
      */
-    public void setLastupdate(){
+    public void setLastupdate() {
         lastupdate = new Date().getTime();
     }
 
-    public long getLastupdate(){
+    public long getLastupdate() {
         return lastupdate;
     }
 
@@ -713,7 +728,7 @@ public class AxisService
         serviceimpl.setEndpoints(endpoints);
     }
 
-    public void setEndpoint(WSDLEndpoint endpoint){
+    public void setEndpoint(WSDLEndpoint endpoint) {
         serviceimpl.setEndpoint(endpoint);
     }
 
@@ -750,7 +765,7 @@ public class AxisService
     }
 
     public void setComponentProperty(Object key, Object obj) {
-        serviceimpl.setComponentProperty(key,obj);
+        serviceimpl.setComponentProperty(key, obj);
     }
 
     public Object getComponentProperty(Object key) {
@@ -784,12 +799,13 @@ public class AxisService
     /**
      * To add the was action paramater into has map so that was action based dispatch can support
      */
-    public void addMapping(String mappingKey , AxisOperation axisOperation){
-        wasaction_opeartionmap.put(mappingKey,axisOperation);
+    public void addMapping(String mappingKey, AxisOperation axisOperation) {
+        wasaction_opeartionmap.put(mappingKey, axisOperation);
     }
 
     /**
      * To get the parent (which is AxisConfiguration in this case)
+     *
      * @return <code>AxisConfiguration</code>
      */
     public AxisServiceGroup getParent() {
@@ -805,10 +821,10 @@ public class AxisService
         // checking the locked value of parent
         boolean loscked = false;
 
-        if (getParent() !=null) {
-            loscked =  getParent().getAxisDescription().isParameterLocked(paramterName);
+        if (getParent() != null) {
+            loscked = getParent().getAxisDescription().isParameterLocked(paramterName);
         }
-        if(loscked){
+        if (loscked) {
             return true;
         } else {
             Parameter parameter = getParameter(paramterName);
@@ -818,22 +834,23 @@ public class AxisService
 
     /**
      * Adding module configuration , if there is moduleConfig tag in service
+     *
      * @param moduleConfiguration
      */
-    public void addModuleConfig(ModuleConfiguration moduleConfiguration){
-        moduleConfigmap.put(moduleConfiguration.getModuleName(),moduleConfiguration);
+    public void addModuleConfig(ModuleConfiguration moduleConfiguration) {
+        moduleConfigmap.put(moduleConfiguration.getModuleName(), moduleConfiguration);
     }
 
-    public ModuleConfiguration getModuleConfig(QName moduleName){
-        return  (ModuleConfiguration)moduleConfigmap.get(moduleName);
+    public ModuleConfiguration getModuleConfig(QName moduleName) {
+        return (ModuleConfiguration) moduleConfigmap.get(moduleName);
     }
 
 
-    public void addModuleref(QName moduleref){
+    public void addModuleref(QName moduleref) {
         mdoulesList.add(moduleref);
     }
 
-    public ArrayList getModules(){
+    public ArrayList getModules() {
         return mdoulesList;
     }
 

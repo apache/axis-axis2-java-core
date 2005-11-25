@@ -94,7 +94,7 @@ public class PhaseResolver {
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             AxisOperation axisOperation = (AxisOperation) iterator.next();
             for (int i = 1; i < 5; i++) {
-                buildExcutionChains(i, axisOperation);
+                buildExecutionChains(i, axisOperation);
             }
         }
         ArrayList modulqnames = (ArrayList) ((AxisConfigurationImpl) axisConfig).getEngadgedModules();
@@ -108,12 +108,12 @@ public class PhaseResolver {
     /**
      * To build the opration for the opeartion which the module going to be added
      *
-     * @param opartion <code>AxisOperation</code>
+     * @param operation <code>AxisOperation</code>
      * @throws AxisFault
      */
-    public void buildModuleOperation(AxisOperation opartion) throws AxisFault {
+    public void buildModuleOperation(AxisOperation operation) throws AxisFault {
         for (int i = 1; i < 5; i++) {
-            buildExcutionChains(i, opartion);
+            buildExecutionChains(i, operation);
         }
     }
 
@@ -128,7 +128,7 @@ public class PhaseResolver {
      * @throws AxisFault
      * @throws PhaseException
      */
-    private void buildExcutionChains(int type, AxisOperation axisOperation)
+    private void buildExecutionChains(int type, AxisOperation axisOperation)
             throws AxisFault, PhaseException {
         ArrayList allHandlers = new ArrayList();
         ModuleDescription module;

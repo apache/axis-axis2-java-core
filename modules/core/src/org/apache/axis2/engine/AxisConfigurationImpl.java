@@ -20,15 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.ParameterIncludeImpl;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.util.HostConfiguration;
@@ -445,7 +437,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     public void engageModule(QName moduleref) throws AxisFault {
         ModuleDescription module = getModule(moduleref);
         boolean isNewmodule = false;
-        boolean tobeEnaged = true;
+        boolean tobeEngaged = true;
         if (module == null) {
             File file = new ArchiveReader().creatModuleArchivefromResource(
                     moduleref.getLocalPart(), getRepository());
@@ -457,7 +449,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
                  iterator.hasNext();) {
                 QName qName = (QName) iterator.next();
                 if (moduleref.equals(qName)) {
-                    tobeEnaged = false;
+                    tobeEngaged = false;
                     //Instead of throwing the error, we can just log this problem
                     log.info("Attempt to engage an already engaged module "+ qName);
                 }
@@ -468,7 +460,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
                             + moduleref.getLocalPart() +
                             " has not bean deployed yet !");
         }
-        if (tobeEnaged) {
+        if (tobeEngaged) {
             new PhaseResolver(this).engageModuleGlobally(module);
             engagedModules.add(moduleref);
         }

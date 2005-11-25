@@ -4,22 +4,6 @@
         This is a testing service , to test the system is working or not
     </description>
     <parameter name="ServiceClass" locked="false">org.apache.axis2.sample.echo.EchoImpl</parameter>
-    <inflow>
-        <handler name="logging" class="org.apache.axis2.sample.handlers.LoggingHandler">
-            <order phase="userphase1" phaseFirst="true"/>
-        </handler>
-    </inflow>
-    <outflow/>
-    <INfaultflow>
-        <handler name="logging2" class="org.apache.axis2.sample.handlers.LoggingHandler">
-            <order phase="userphase1"/>
-        </handler>
-    </INfaultflow>
-    <Outfaultflow>
-        <handler name="logging2" class="org.apache.axis2.sample.handlers.LoggingHandler">
-            <order phase="userphase1"/>
-        </handler>
-    </Outfaultflow>
     <operation name="echoString">
         <module ref="module1"/>
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>

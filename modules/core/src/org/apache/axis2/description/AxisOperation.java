@@ -591,4 +591,6 @@ public abstract class AxisOperation  implements
     public void setWsamappingList(ArrayList wsamappingList) {
         this.wsamappingList = wsamappingList;
     }
+
+    
 }

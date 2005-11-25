@@ -18,7 +18,6 @@ package org.apache.axis2.integration;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.client.ListenerManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
@@ -53,9 +52,8 @@ public class UtilServer {
     }
 
     public static synchronized void unDeployClientService() throws AxisFault {
-        if(ListenerManager.configurationContext !=null){
-            ListenerManager.configurationContext.getAxisConfiguration()
-                    .removeService("AnonymousService");
+        if(receiver.getSystemContext().getAxisConfiguration() !=null){
+            receiver.getSystemContext().getAxisConfiguration().removeService("AnonymousService");
         }
     }
 

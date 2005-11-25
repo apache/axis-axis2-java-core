@@ -19,9 +19,13 @@ package org.apache.axis2.client;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
+import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
@@ -45,7 +49,6 @@ public abstract class MEPClient {
     protected final String mep;
     protected String soapVersionURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
     protected String soapAction = "";
-    protected String wsaAction;
 
     protected MessageInformationHeaders messageInformationHeaders = new MessageInformationHeaders();
 
@@ -58,11 +61,6 @@ public abstract class MEPClient {
       be returned to the application, irrespective of whether it has a Fault or not.
     */
     protected boolean isExceptionToBeThrownOnSOAPFault = true;
-
-
-    public String getSoapAction() {
-        return soapAction;
-    }
 
     public MEPClient(ServiceContext service, String mep) {
         this.serviceContext = service;
@@ -104,7 +102,7 @@ public abstract class MEPClient {
         addUserAddedSOAPHeaders(msgCtx);
     }
 
-    private void addUserAddedSOAPHeaders(MessageContext msgCtx) {
+    protected void addUserAddedSOAPHeaders(MessageContext msgCtx) {
         if (soapHeaderList != null && soapHeaderList.size() > 0 && msgCtx.getEnvelope() != null) {
             SOAPFactory soapFactory;
             SOAPHeader header = msgCtx.getEnvelope().getHeader();
@@ -144,7 +142,7 @@ public abstract class MEPClient {
 
     /**
      * Infers the transport by looking at the URL. The URL can be http://
-     * tcp:// mail:// local://. 
+     * tcp:// mail:// local://.
      *
      * @param epr
      * @return
@@ -213,6 +211,7 @@ public abstract class MEPClient {
         messageInformationHeaders.setTo(this.messageInformationHeaders.getTo());
         return messageInformationHeaders;
     }
+
     /**
      * @param string
      */
@@ -231,17 +230,17 @@ public abstract class MEPClient {
      * Setting to configure if an exception is to be thrown when the SOAP message has a fault.
      * If set to true, system throws an exeption with the details extracted from the fault message.
      * Else the response message is returned to the application, irrespective of whether it has a Fault or not.
-     * 
-     * @param exceptionToBeThrownOnSOAPFault 
+     *
+     * @param exceptionToBeThrownOnSOAPFault
      */
     public void setExceptionToBeThrownOnSOAPFault(boolean exceptionToBeThrownOnSOAPFault) {
         isExceptionToBeThrownOnSOAPFault = exceptionToBeThrownOnSOAPFault;
     }
 
     /**
-     * Allows users to add their own headers to the out going message from the client. It is 
-     * restrictive, in the sense, that user can set a 
-     * header with only one text. <code><pre>&lt;HeaderBlockName&gt;your text&lt;/HeaderBlockName&gt;</pre></code>. A more flexible 
+     * Allows users to add their own headers to the out going message from the client. It is
+     * restrictive, in the sense, that user can set a
+     * header with only one text. <code><pre>&lt;HeaderBlockName&gt;your text&lt;/HeaderBlockName&gt;</pre></code>. A more flexible
      * way is to use addSOAPHeader(OMElement).
      *
      * @param soapHeaderQName
@@ -258,6 +257,7 @@ public abstract class MEPClient {
 
     /**
      * Allows users to add a SOAP header block.
+     *
      * @param soapHeaderBlock
      */
     public void addSOAPHeader(OMElement soapHeaderBlock) {
@@ -274,6 +274,7 @@ public abstract class MEPClient {
     //==============================================================================
     // Use these methods to set Addressing specific information to the SOAP envelope.
     //===============================================================================
+
     /**
      * @param action
      */
@@ -305,7 +306,7 @@ public abstract class MEPClient {
     /**
      * @param relatesTo
      */
-    public void setRelatesTo(org.apache.axis2.addressing.RelatesTo relatesTo) {
+    public void setRelatesTo(RelatesTo relatesTo) {
         messageInformationHeaders.setRelatesTo(relatesTo);
     }
 
@@ -324,6 +325,11 @@ public abstract class MEPClient {
     }
 
     // ==============================================================================
+    //  Getteres and Setters
+    // ==============================================================================
+    public String getSoapAction() {
+        return soapAction;
+    }
 
 
     private SOAPFactory getCorrectSOAPFactory(MessageContext msgCtx) {
@@ -341,5 +347,26 @@ public abstract class MEPClient {
 
     public ServiceContext getServiceContext() {
         return serviceContext;
+    }
+
+    /**
+     * Assumes the values for the ConfigurationContext and ServiceContext to make the NON WSDL cases simple.
+     *
+     * @throws org.apache.axis2.AxisFault
+     */
+    protected void assumeServiceContext(String clientHome)
+            throws AxisFault {
+        ConfigurationContext configurationContext =
+                new ConfigurationContextFactory().buildClientConfigurationContext(clientHome);
+
+        QName assumedServiceName = new QName("AnonymousService");
+        AxisService axisService = configurationContext.getAxisConfiguration().getService("AnonymousService");
+        if (axisService == null) {
+            //we will assume a Service and operations
+            axisService = new AxisService(assumedServiceName);
+        }
+        configurationContext.getAxisConfiguration().addService(axisService);
+        serviceContext = axisService.getParent().getServiceGroupContext(configurationContext).getServiceContext(
+                assumedServiceName.getLocalPart());
     }
 }
