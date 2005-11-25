@@ -24,11 +24,15 @@ import java.io.UnsupportedEncodingException;
  */
 public class HTTPConstants {
 
-    public static final String REST_CONTENT_TYPE ="REST_CONTENT_TYPE" ;
+    public static final String HTTP_CONTENT_TYPE = "HTTP_CONTENT_TYPE";
 
-	public static final String REST_CONTENT_TYPE_URL_ENCODED ="application/x-www-form-urlencoded" ;
-	
     public static final String PROTOCOL_VERSION = "PROTOCOL";
+
+    public static final String MEDIA_TYPE_APPLICATION_XML = "application/xml";
+    public static final String MEDIA_TYPE_TEXT_XML = "text/xml";
+    public static final String MEDIA_TYPE_MULTIPART_RELATED = "multipart/related";
+    public static final String MEDIA_TYPE_X_WWW_FORM = "application/x-www-form-urlencoded";
+
 
     /**
      * Field REQUEST_URI
@@ -74,7 +78,7 @@ public class HTTPConstants {
      * Field HEADER_PROTOCOL_V11
      */
     public static final String HEADER_PROTOCOL_V11 = "1.1".intern();
-    
+
     /**
      * Field CHAR_SET_ENCODING
      */
@@ -408,23 +412,23 @@ public class HTTPConstants {
      * Field SO_TIMEOUT
      */
     public static final String SO_TIMEOUT = "SO_TIMEOUT";
-    
+
     /**
      * Field CONNECTION_TIMEOUT
      */
     public static final String CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT";
-    
+
     /**
      * Field DEFAULT_SO_TIMEOUT
      */
     public static final int DEFAULT_SO_TIMEOUT = 60000;
-    
+
     /**
      * Field DEFAULT_CONNECTION_TIMEOUT
      */
     public static final int DEFAULT_CONNECTION_TIMEOUT = 60000;
-    
-    
+
+
     /**
      * Method getBytes
      *

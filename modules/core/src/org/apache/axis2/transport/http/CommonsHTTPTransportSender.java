@@ -109,7 +109,7 @@ public class CommonsHTTPTransportSender
     } //default
 
     public RequestData createRequest(MessageContext msgContext) {
-        //This used to obtain two strings to go with the url and to pass in the body when doing 
+        //This used to obtain two strings to go with the url and to pass in the body when doing
         //POST with application/x-www-form-urlencoded
         RequestData data = new RequestData();
         String contentType = findContentType(true, msgContext);
@@ -274,8 +274,8 @@ public class CommonsHTTPTransportSender
      */
     private String findContentType(boolean isRest, MessageContext msgContext) {
         if (isRest) {
-            if (msgContext.getProperty(HTTPConstants.REST_CONTENT_TYPE) != null) {
-                String contentType = (String) msgContext.getProperty(HTTPConstants.REST_CONTENT_TYPE);
+            if (msgContext.getProperty(HTTPConstants.HTTP_CONTENT_TYPE) != null) {
+                String contentType = (String) msgContext.getProperty(HTTPConstants.HTTP_CONTENT_TYPE);
                 //get the users setting from the axis2.xml parameters
                 //if present return that
                 //else return the default (application/xml)
@@ -317,21 +317,17 @@ public class CommonsHTTPTransportSender
                         dataout,
                         url,
                         soapActionString);
-            }
-            if (msgContext.isDoingREST()) {
-                if (msgContext.isRestThroughPOST()) {
-                    this.transportConfigurationPOST(
+            }else {
+                if(msgContext.isRestThroughPOST()){
+                   this.transportConfigurationPOST(
                             msgContext,
                             dataout,
                             url,
                             soapActionString);
-                }
-
-                else {
-                    this.transportConfigurationGET(msgContext, url);
+                }else {
+                     this.transportConfigurationGET(msgContext, url);
                 }
             }
-
         } catch (MalformedURLException e) {
             throw new AxisFault(e);
         } catch (HttpException e) {
@@ -625,7 +621,7 @@ public class CommonsHTTPTransportSender
 
         //if POST as application/x-www-form-urlencoded
         RequestData reqData = null;
-        if (contentType.equalsIgnoreCase(HTTPConstants.REST_CONTENT_TYPE_URL_ENCODED)) {
+        if (contentType.equalsIgnoreCase(HTTPConstants.MEDIA_TYPE_X_WWW_FORM)) {
             reqData = createRequest(msgContext);
             postMethod.setPath(url.getPath() + ((reqData.urlRequest) != null ? ("?" + reqData.urlRequest) : ""));
             postMethod.setRequestEntity(new PostAxisRequestEntity(reqData.bodyRequest, charEncoding, msgContext, contentType));
@@ -748,7 +744,7 @@ public class CommonsHTTPTransportSender
                 in);
     }
 
-    //Method to return the parameter string to pass with the URL when using GET   
+    //Method to return the parameter string to pass with the URL when using GET
 
     public String getParam(MessageContext msgContext) {
         OMElement dataOut;
@@ -787,12 +783,12 @@ public class CommonsHTTPTransportSender
         if (charEncoding == null) //Default encoding scheme
             getMethod.setRequestHeader(
                     HTTPConstants.HEADER_CONTENT_TYPE,
-                    HTTPConstants.REST_CONTENT_TYPE_URL_ENCODED + "; charset="
+                    HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset="
                             + MessageContext.DEFAULT_CHAR_SET_ENCODING);
         else
             getMethod.setRequestHeader(
                     HTTPConstants.HEADER_CONTENT_TYPE,
-                    HTTPConstants.REST_CONTENT_TYPE_URL_ENCODED + "; charset=" + charEncoding);
+                    HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset=" + charEncoding);
 
         this.httpClient = new HttpClient();
 

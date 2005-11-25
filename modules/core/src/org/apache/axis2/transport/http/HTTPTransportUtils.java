@@ -468,12 +468,12 @@ public class HTTPTransportUtils {
             return true;
         }
 
-        if (msgContext.getParameter(Constants.Configuration.ENABLE_REST)
+        Parameter parameter = msgContext.getParameter(Constants.Configuration.ENABLE_REST);
+        if (parameter
             != null) {
             enableREST =
                 Constants.VALUE_TRUE.equals(
-                    msgContext.getParameter(
-                        Constants.Configuration.ENABLE_REST).getValue());
+                    parameter.getValue());
         } else if(msgContext.getProperty(Constants.Configuration.ENABLE_REST) != null) {
             enableREST =
                 Constants.VALUE_TRUE.equals(

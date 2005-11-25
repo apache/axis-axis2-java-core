@@ -70,7 +70,7 @@ public class PostTest extends TestCase implements TestConstants {
             call.setTo(targetEPR);
             call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
             call.set(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
-            call.set(HTTPConstants.REST_CONTENT_TYPE, "application/x-www-form-urlencoded");
+            call.set(HTTPConstants.HTTP_CONTENT_TYPE, "application/x-www-form-urlencoded");
 
             //Blocking invocation
             OMElement result = call.invokeBlocking("echo", websearch);
