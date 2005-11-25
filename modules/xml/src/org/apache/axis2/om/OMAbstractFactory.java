@@ -89,6 +89,16 @@ public class OMAbstractFactory {
         return FactoryFinder.findSOAP12Factory(classLoader);
     }
 
+    /**
+     * WARNING - DO NOT USE THIS METHOD !!!!!.
+     * This method is used in the case where we do not know the correct SOAP version to be used.
+     * We can do some operation using the factory returned from this, without knowing the SOAP version.
+     * But most of the methods have not been implemented.
+     * We use this in the builder, where we want to first create the SOAP envelope to get the SOAP version.
+     * So this method is to solve the chicken and egg problem, we have. If you do not know the SOAP version to be used
+     * to process a particluar SOAP message you have recd, use this method to buid the SOAP envelope, and then extract the SOAP
+     * version from that envlope and switch to the proper factory using that.
+     */
     public static SOAPFactory getDefaultSOAPFactory() {
         return new SOAPLinkedListImplFactory();
     }
