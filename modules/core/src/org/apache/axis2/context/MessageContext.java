@@ -41,7 +41,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * MessageContext holds service specific state information. 
+ * MessageContext holds service specific state information.
  */
 public class MessageContext extends AbstractContext {
 
@@ -205,7 +205,7 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * Convenience Constructor. Before calling engine.send() or  engine.receive(), one must send 
+     * Convenience Constructor. Before calling engine.send() or  engine.receive(), one must send
      * transport in/out
      *
      * @param engineContext
@@ -259,7 +259,7 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @return Returns EndpointReference. 
+     * @return Returns EndpointReference.
      */
     public EndpointReference getFaultTo() {
         return messageInformationHeaders.getFaultTo();
@@ -308,7 +308,7 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @return  Returns EndpointReference.
+     * @return Returns EndpointReference.
      */
     public EndpointReference getReplyTo() {
         return messageInformationHeaders.getReplyTo();
@@ -329,7 +329,7 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @return  Returns SessionContext.
+     * @return Returns SessionContext.
      */
     public SessionContext getSessionContext() {
         return sessionContext;
@@ -561,6 +561,7 @@ public class MessageContext extends AbstractContext {
 
     /**
      * Sets the service context id.
+     *
      * @param serviceContextID
      */
     public void setServiceContextID(String serviceContextID) {
@@ -606,7 +607,7 @@ public class MessageContext extends AbstractContext {
 
     /**
      * Retrieves configuration descriptor parameters at any level. The order of search is
-     * as follows: 
+     * as follows:
      * <ol>
      * <li> Search in operation description if it exists </li>
      * <li> If parameter is not found or if operationContext is null, search in
@@ -614,6 +615,7 @@ public class MessageContext extends AbstractContext {
      * <li> If parameter is not found or if axisService is null, search in
      * AxisConfiguration </li>
      * </ol>
+     *
      * @param key
      * @return Parameter <code>Parameter</code>
      */
@@ -622,21 +624,21 @@ public class MessageContext extends AbstractContext {
         if (getAxisOperation() != null) {
             AxisOperation opDesc = getAxisOperation();
             param = opDesc.getParameter(key);
-            if(param !=null){
+            if (param != null) {
                 return param;
             }
         }
         if (getAxisService() != null) {
             AxisService axisService = getAxisService();
             param = axisService.getParameter(key);
-            if(param !=null){
+            if (param != null) {
                 return param;
             }
         }
         if (getAxisServiceGroup() != null) {
             AxisServiceGroup axisServiceDesc = getAxisServiceGroup();
             param = axisServiceDesc.getParameter(key);
-            if(param !=null){
+            if (param != null) {
                 return param;
             }
         }
@@ -650,7 +652,7 @@ public class MessageContext extends AbstractContext {
 
 
     /**
-     * Retrieves both module specific configuration parameters as well as other parameters. 
+     * Retrieves both module specific configuration parameters as well as other parameters.
      * The order of search is as follows:
      * <ol>
      * <li> Search in module configurations inside corresponding operation descripton if its there </li>
@@ -681,11 +683,11 @@ public class MessageContext extends AbstractContext {
             moduleConfig = opDesc.getModuleConfig(new QName(moduleName));
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);
-                if(param !=null){
+                if (param != null) {
                     return param;
                 } else {
                     param = opDesc.getParameter(key);
-                    if(param !=null){
+                    if (param != null) {
                         return param;
                     }
                 }
@@ -696,11 +698,11 @@ public class MessageContext extends AbstractContext {
             moduleConfig = axisService.getModuleConfig(new QName(moduleName));
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);
-                if(param !=null){
+                if (param != null) {
                     return param;
                 } else {
                     param = axisService.getParameter(key);
-                    if(param !=null){
+                    if (param != null) {
                         return param;
                     }
                 }
@@ -711,11 +713,11 @@ public class MessageContext extends AbstractContext {
             moduleConfig = axisServiceDesc.getModuleConfig(new QName(moduleName));
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);
-                if(param !=null){
+                if (param != null) {
                     return param;
                 } else {
                     param = axisServiceDesc.getParameter(key);
-                    if(param !=null){
+                    if (param != null) {
                         return param;
                     }
                 }
@@ -725,11 +727,11 @@ public class MessageContext extends AbstractContext {
         moduleConfig = ((AxisConfigurationImpl) baseConfig).getModuleConfig(new QName(moduleName));
         if (moduleConfig != null) {
             param = moduleConfig.getParameter(key);
-            if(param !=null){
+            if (param != null) {
                 return param;
             } else {
                 param = baseConfig.getParameter(key);
-                if(param !=null){
+                if (param != null) {
                     return param;
                 }
             }
@@ -737,7 +739,7 @@ public class MessageContext extends AbstractContext {
         ModuleDescription module = baseConfig.getModule(new QName(moduleName));
         if (module != null) {
             param = module.getParameter(key);
-            if(param !=null){
+            if (param != null) {
                 return param;
             }
         }
@@ -747,52 +749,40 @@ public class MessageContext extends AbstractContext {
 
     /**
      * Retrieves a property. The order of search is as follows:
-     *
+     * <p/>
      * <ol>
      * <li> Search in OperationContext, </li>
      * <li> If OperationContext is null or if property is not found, search in ServiceContext,</li>
      * <li> If ServiceContext is null or if property is not found, search in ServiceGroupContext,</li>
      * <li> If ServiceGroupContext is null or if property is not found, search in ConfigurationContext.</li>
      * </ol>
-     * 
+     *
      * @param key        property Name
-     * @param persistent 
+     * @param persistent
      * @return Object
      */
     public Object getProperty(String key, boolean persistent) {
         // search in MC
         Object obj = super.getProperty(key, persistent);
-        if(obj !=null){
+        if (obj != null) {
             return obj;
         }
         //The context hirachy might not have constructed fully, the check should
         //look for the disconnected grandparents
         // Search in Operation Context
-        if (operationContext != null ) {
-            obj = operationContext.getProperty(key, persistent);
-            if(obj !=null){
-                return obj;
-            }
+        if (operationContext != null) {
+            return operationContext.getProperty(key, persistent);
         }
         //Search in ServiceContext
-        if (serviceContext != null ) {
-            obj = serviceContext.getProperty(key, persistent);
-            if(obj !=null){
-                return obj;
-            }
+        if (serviceContext != null) {
+            return serviceContext.getProperty(key, persistent);
         }
-        if (serviceGroupContext != null ) {
-            obj = serviceGroupContext.getProperty(key, persistent);
-            if(obj !=null){
-                return obj;
-            }
+        if (serviceGroupContext != null) {
+            return serviceGroupContext.getProperty(key, persistent);
         }
-        if (configurationContext != null ) {
+        if (configurationContext != null) {
             // search in Configuration Context
-            obj = configurationContext.getProperty(key, persistent);
-            if(obj !=null){
-                return obj;
-            }
+            return configurationContext.getProperty(key, persistent);
         }
         return obj;
     }
