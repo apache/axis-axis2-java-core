@@ -19,6 +19,7 @@ import javax.xml.soap.Node;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 
+import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
@@ -34,6 +35,10 @@ public abstract class NodeImplEx extends NodeImpl implements Node {
 
 	public SOAPElement getParentElement() {
 		return this.parentElement;
+	}
+	
+	public OMContainer getParent() {
+		return (OMContainer)this.parentElement;
 	}
 
 	public String getValue() {
