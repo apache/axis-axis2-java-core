@@ -198,7 +198,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     private void emitSkeletonAutomatic(WSDLDescription wom) throws Exception{
         Map bindings = wom.getBindings();
         if (bindings==null || bindings.isEmpty()){
-            //No binding is not present.use the interface mode
+            //No binding is present.use the interface mode
             emitSkeletonInterface(wom);
         }else{
             //use the binding mode

@@ -110,9 +110,22 @@ public class SchemaCompiler {
      */
     public void compile(XmlSchema schema) throws SchemaCompilationException{
 
+        //First look for the schemas that are imported and process them
+        //Note that these are processed recursively!
+
+        XmlSchemaObjectCollection includes = schema.getIncludes();
+        if (includes!=null){
+            Iterator tempIterator = includes.getIterator();
+            while (tempIterator.hasNext()) {
+                Object o =  tempIterator.next();
+                if (o instanceof XmlSchemaImport){
+                    XmlSchema schema1 = ((XmlSchemaImport) o).getSchema();
+                    if (schema1!=null) compile(schema1);
+                }
+            }
+        }
         //select all the elements. We generate the code for types
         //only if the elements refer them!!!
-
         XmlSchemaObjectTable elements = schema.getElements();
         Iterator  xmlSchemaElement1Iterator = elements.getValues();
         while (xmlSchemaElement1Iterator.hasNext()) {
