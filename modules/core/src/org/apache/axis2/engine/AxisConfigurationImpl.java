@@ -21,6 +21,7 @@ import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.util.HostConfiguration;
@@ -29,12 +30,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class EngineRegistryImpl
@@ -73,8 +69,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     private ArrayList inPhasesUptoAndIncludingPostDispatch;
 
-
-
     /////////////////////// From AxisGlobal /////////////////////////////////////
     /**
      * Field paramInclude
@@ -102,10 +96,9 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     private ClassLoader moduleClassLoader;
 
 
-
-
     protected HashMap messagReceivers;
     /////////////////////// From AxisGlobal /////////////////////////////////////
+
     /**
      * Constructor EngineRegistryImpl
      */
@@ -136,7 +129,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     /**
      * setting the default dispatching order
      */
-    public void setDefaultDispatchers(){
+    public void setDefaultDispatchers() {
 
         Phase dispatch = new Phase(PhaseMetadata.PHASE_DISPATCH);
         AddressingBasedDispatcher add_dispatch = new AddressingBasedDispatcher();
@@ -170,17 +163,18 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         InstanceDispatcher instanceDispatcher = new org.apache.axis2.engine.InstanceDispatcher();
         instanceDispatcher.getHandlerDesc().setParent(this);
 
-        postDispatch.addHandler(dispatchingChecker,0);
-        postDispatch.addHandler(instanceDispatcher,1);
+        postDispatch.addHandler(dispatchingChecker, 0);
+        postDispatch.addHandler(instanceDispatcher, 1);
         inPhasesUptoAndIncludingPostDispatch.add(postDispatch);
     }
 
 
     /**
      * Setting the custom dispatching order
+     *
      * @param dispatch
      */
-    public void setDispatchPhase(Phase dispatch){
+    public void setDispatchPhase(Phase dispatch) {
         inPhasesUptoAndIncludingPostDispatch.add(dispatch);
 
         Phase postDispatch = new Phase(PhaseMetadata.PHASE_POST_DISPATCH);
@@ -191,7 +185,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         instanceDispatcher.getHandlerDesc().setParent(this);
 
         postDispatch.addHandler(dispatchingChecker);
-        postDispatch.addHandler(instanceDispatcher,1);
+        postDispatch.addHandler(instanceDispatcher, 1);
         inPhasesUptoAndIncludingPostDispatch.add(postDispatch);
     }
 
@@ -231,10 +225,10 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     public void addServiceGroup(AxisServiceGroup axisServiceGroup) throws AxisFault {
         Iterator services = axisServiceGroup.getServices();
-        AxisService description ;
+        AxisService description;
         while (services.hasNext()) {
             description = (AxisService) services.next();
-            if(allservices.get(description.getName().getLocalPart()) !=null){
+            if (allservices.get(description.getName().getLocalPart()) != null) {
                 throw new AxisFault("Two services can not have same name, a service with " +
                         description.getName().getLocalPart() + " alredy exist in the system");
             }
@@ -242,15 +236,15 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         services = axisServiceGroup.getServices();
         while (services.hasNext()) {
             description = (AxisService) services.next();
-            allservices.put(description.getName().getLocalPart(),description);
-            notifyObservers(AxisEvent.SERVICE_DEPLOY ,description);
+            allservices.put(description.getName().getLocalPart(), description);
+            notifyObservers(AxisEvent.SERVICE_DEPLOY, description);
         }
         Iterator enModule = engagedModules.iterator();
         while (enModule.hasNext()) {
             QName moduleDescription = (QName) enModule.next();
-            axisServiceGroup.addModule(moduleDescription);
+            axisServiceGroup.engageModuleToGroup(moduleDescription);
         }
-        serviceGroups.put(axisServiceGroup.getServiceGroupName(),axisServiceGroup);
+        serviceGroups.put(axisServiceGroup.getServiceGroupName(), axisServiceGroup);
     }
 
     /**
@@ -269,6 +263,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     public HashMap getModules() {
         return modules;
     }
+
     /**
      * Method getService
      *
@@ -277,7 +272,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @throws AxisFault
      */
     public AxisService getService(String name) throws AxisFault {
-        return  (AxisService)allservices.get(name);
+        return (AxisService) allservices.get(name);
     }
 
     /**
@@ -287,8 +282,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      * @throws AxisFault
      */
     public synchronized void removeService(String name) throws AxisFault {
-        AxisService service =(AxisService)allservices.remove(name);
-        if(service != null){
+        AxisService service = (AxisService) allservices.remove(name);
+        if (service != null) {
             log.info("Removed service " + name);
         }
     }
@@ -337,8 +332,12 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         return parameter != null && parameter.isLocked();
     }
 
+    public void deserializeParameters(OMElement paramters) throws AxisFault {
+        this.paramInclude.deserializeParameters(paramters);
+    }
+
     public AxisServiceGroup getServiceGroup(String serviceNameAndGroupString) {
-        return (AxisServiceGroup)serviceGroups.get(serviceNameAndGroupString);
+        return (AxisServiceGroup) serviceGroups.get(serviceNameAndGroupString);
     }
 
     public Iterator getServiceGroups() {
@@ -417,10 +416,10 @@ public class AxisConfigurationImpl implements AxisConfiguration {
      *
      * @param param
      */
-    public void addParameter(Parameter param) throws AxisFault{
-        if(isParameterLocked(param.getName())){
+    public void addParameter(Parameter param) throws AxisFault {
+        if (isParameterLocked(param.getName())) {
             throw new AxisFault("Parmter is locked can not overide: " + param.getName());
-        } else{
+        } else {
             paramInclude.addParameter(param);
         }
     }
@@ -428,7 +427,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     /**
      * Method getEngadgedModules
      *
-     * @return  Collection
+     * @return Collection
      */
     public Collection getEngadgedModules() {
         return engagedModules;
@@ -441,7 +440,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         if (module == null) {
             File file = new ArchiveReader().creatModuleArchivefromResource(
                     moduleref.getLocalPart(), getRepository());
-            module = new DeploymentEngine().buildModule(file,this);
+            module = new DeploymentEngine().buildModule(file, this);
             isNewmodule = true;
         }
         if (module != null) {
@@ -451,7 +450,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
                 if (moduleref.equals(qName)) {
                     tobeEngaged = false;
                     //Instead of throwing the error, we can just log this problem
-                    log.info("Attempt to engage an already engaged module "+ qName);
+                    log.info("Attempt to engage an already engaged module " + qName);
                 }
             }
         } else {
@@ -461,6 +460,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
                             " has not bean deployed yet !");
         }
         if (tobeEngaged) {
+            Iterator sgs = getServiceGroups();
             new PhaseResolver(this).engageModuleGlobally(module);
             engagedModules.add(moduleref);
         }
@@ -474,10 +474,10 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         Iterator sgs = getServiceGroups();
         while (sgs.hasNext()) {
             AxisServiceGroup axisServiceGroup = (AxisServiceGroup) sgs.next();
-            Iterator servics =  axisServiceGroup.getServices();
+            Iterator servics = axisServiceGroup.getServices();
             while (servics.hasNext()) {
                 AxisService axisService = (AxisService) servics.next();
-                allservices.put(axisService.getName().getLocalPart(),axisService);
+                allservices.put(axisService.getName().getLocalPart(), axisService);
             }
         }
         return allservices;
@@ -503,8 +503,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         this.axis2Repository = axis2Repository;
     }
 
-    public void notifyObservers(int event_type , AxisService service){
-        AxisEvent event = new AxisEvent(service,event_type);
+    public void notifyObservers(int event_type, AxisService service) {
+        AxisEvent event = new AxisEvent(service, event_type);
         for (int i = 0; i < observersList.size(); i++) {
             AxisObserver axisObserver = (AxisObserver) observersList.get(i);
             axisObserver.update(event);
@@ -547,20 +547,21 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         return this.hostConfiguration;
     }
 
-    public void addObservers(AxisObserver axisObserver){
+    public void addObservers(AxisObserver axisObserver) {
         observersList.add(axisObserver);
     }
 
 
     /**
      * Adding module configuration , if there is moduleConfig tag in service
+     *
      * @param moduleConfiguration
      */
-    public void addModuleConfig(ModuleConfiguration moduleConfiguration){
-        moduleConfigmap.put(moduleConfiguration.getModuleName(),moduleConfiguration);
+    public void addModuleConfig(ModuleConfiguration moduleConfiguration) {
+        moduleConfigmap.put(moduleConfiguration.getModuleName(), moduleConfiguration);
     }
 
-    public ModuleConfiguration getModuleConfig(QName moduleName){
-        return  (ModuleConfiguration)moduleConfigmap.get(moduleName);
+    public ModuleConfiguration getModuleConfig(QName moduleName) {
+        return (ModuleConfiguration) moduleConfigmap.get(moduleName);
     }
 }

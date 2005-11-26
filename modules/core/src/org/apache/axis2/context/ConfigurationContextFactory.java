@@ -3,37 +3,25 @@ package org.apache.axis2.context;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.modules.Module;
-import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
 public class ConfigurationContextFactory {
 
-    private Log log = LogFactory.getLog(getClass());
-
     /**
      * Builds the configuration for the Server.
+     *
      * @param repositoryName
      * @return Returns the built ConfigurationContext.
      * @throws DeploymentException
@@ -41,16 +29,14 @@ public class ConfigurationContextFactory {
     public ConfigurationContext buildConfigurationContext(
             String repositoryName)
             throws DeploymentException {
-        ConfigurationContext configurationContext = null;
+        ConfigurationContext configurationContext;
         try {
             DeploymentEngine deploymentEngine =
                     new DeploymentEngine(repositoryName);
             AxisConfiguration configuration = deploymentEngine.load();
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
 
-            if(configurationContext == null){
-                configurationContext = new ConfigurationContext(configuration);
-            }
+            configurationContext = new ConfigurationContext(configuration);
             phaseResolver.buildTranspotsChains();
             initModules(configurationContext);
             initTransports(configurationContext);
@@ -62,6 +48,7 @@ public class ConfigurationContextFactory {
 
     /**
      * Builds the configuration for the client.
+     *
      * @param axis2home the value can be null and resolves to the default axis2.xml file
      * @return Returns ConfigurationContext.
      * @throws DeploymentException
@@ -69,23 +56,19 @@ public class ConfigurationContextFactory {
     public ConfigurationContext buildClientConfigurationContext(
             String axis2home)
             throws DeploymentException {
-        ConfigurationContext engineContext = null;
+        ConfigurationContext configContext;
         try {
             AxisConfiguration configuration =
                     new DeploymentEngine().loadClient(axis2home);
             PhaseResolver phaseResolver = new PhaseResolver(configuration);
-
-            if(engineContext == null){
-                engineContext = new ConfigurationContext(configuration);
-            }
-
+            configContext = new ConfigurationContext(configuration);
             phaseResolver.buildTranspotsChains();
-            initModules(engineContext);
-            initTransports(engineContext);
+            initModules(configContext);
+            initTransports(configContext);
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
         }
-        return engineContext;
+        return configContext;
     }
 
     /**
@@ -117,36 +100,8 @@ public class ConfigurationContextFactory {
     }
 
     /**
-     * Resolves the phases and establishes the order of handlers.
-     * @param service
-     * @param configurationContextVal
-     * @param modules
-     * @throws PhaseException
-     */
-    public static void createChains(AxisService service,
-                                    AxisConfiguration configurationContextVal,
-                                    ArrayList modules)
-            throws PhaseException {
-        try {
-            PhaseResolver resolve =
-                    new PhaseResolver(configurationContextVal, service);
-            resolve.buildchains();
-            for (int i = 0; i < modules.size(); i++) {
-                QName qName = (QName) modules.get(i);
-                ModuleDescription moduledesc =
-                        configurationContextVal.getModule(qName);
-                resolve.engageModuleToService(service, moduledesc);
-            }
-        } catch (PhaseException e) {
-            throw e;
-        } catch (AxisFault axisFault) {
-            throw new PhaseException(axisFault);
-        }
-    }
-
-    /**
-     * Initializes TransportSenders and TransportListeners with appropriate configuration information 
-     * 
+     * Initializes TransportSenders and TransportListeners with appropriate configuration information
+     *
      * @param configContext
      * @throws AxisFault
      */

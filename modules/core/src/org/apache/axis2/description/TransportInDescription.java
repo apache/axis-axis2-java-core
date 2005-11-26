@@ -17,6 +17,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.transport.TransportListener;
@@ -91,6 +92,10 @@ public class TransportInDescription
     //to check whether the paramter is locked at any levle
     public boolean isParameterLocked(String paramterName) {
         return paramInclude.isParameterLocked(paramterName);
+    }
+
+    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
+        this.paramInclude.deserializeParameters(parameterElement);
     }
 
     /**

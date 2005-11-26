@@ -74,7 +74,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             //Processing service level paramters
             Iterator itr = service_element.getChildrenWithName(
-                    new QName(PARAMETERST));
+                    new QName(PARAMETER));
             processParameters(itr, service, service.getParent());
 
             //process service description
@@ -203,7 +203,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             //Opeartion Paramters
             Iterator paramters = operation.getChildrenWithName(
-                    new QName(PARAMETERST));
+                    new QName(PARAMETER));
             ArrayList wsamappings = processParameters(paramters, op_descrip, service);
             op_descrip.setWsamappingList(wsamappings);
             // loading the message receivers
@@ -254,7 +254,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module), parent);
-                Iterator paramters = moduleConfig.getChildrenWithName(new QName(PARAMETERST));
+                Iterator paramters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
                 processParameters(paramters, moduleConfiguration, parent);
                 service.addModuleConfig(moduleConfiguration);
             }
@@ -275,7 +275,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module), parent);
-                Iterator paramters = moduleConfig.getChildrenWithName(new QName(PARAMETERST));
+                Iterator paramters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
                 processParameters(paramters, moduleConfiguration, parent);
                 opeartion.addModuleConfig(moduleConfiguration);
             }

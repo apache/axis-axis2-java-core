@@ -16,6 +16,12 @@
 
 package org.apache.axis2.description;
 
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.deployment.DeploymentConstants;
+
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -71,5 +77,51 @@ public class ParameterIncludeImpl implements ParameterInclude {
     //to check whether the paramter is locked at any levle
     public boolean isParameterLocked(String paramterName) {
         return false;
+    }
+
+    /**
+     * At the run time it can be able to change paramters , and system can save at any time and
+     * to get the original state this method can be used
+     * @param paramters <code>OMElement</code>
+     * @throws org.apache.axis2.AxisFault
+     */
+    public void  deserializeParameters(OMElement paramters) throws AxisFault {
+        Iterator parameters = paramters.getChildrenWithName(new QName(DeploymentConstants.PARAMETER));
+        while (parameters.hasNext()) {
+            //this is to check whether some one has locked the parmter at the top level
+            OMElement parameterElement = (OMElement) parameters.next();
+
+            Parameter parameter = new ParameterImpl();
+            //setting parameterElement
+            parameter.setParameterElement(parameterElement);
+
+            //setting parameter Name
+            OMAttribute paraName = parameterElement.getAttribute(
+                    new QName(DeploymentConstants.ATTNAME));
+            parameter.setName(paraName.getAttributeValue());
+
+            //setting paramter Value (the chiled elemnt of the paramter)
+            OMElement paraValue = parameterElement.getFirstElement();
+            if(paraValue !=null){
+                parameter.setValue(parameterElement);
+                parameter.setParameterType(Parameter.OM_PARAMETER);
+            } else {
+                String paratextValue = parameterElement.getText();
+                parameter.setValue(paratextValue);
+                parameter.setParameterType(Parameter.TEXT_PARAMETER);
+            }
+            //setting locking attribute
+            OMAttribute paraLocked = parameterElement.getAttribute(
+                    new QName(DeploymentConstants.ATTLOCKED));
+            if (paraLocked !=null) {
+                String lockedValue = paraLocked.getAttributeValue();
+                if("true".equals(lockedValue)){
+                    parameter.setLocked(true);
+                } else {
+                    parameter.setLocked(false);
+                }
+            }
+            addParameter(parameter);
+        }
     }
 }

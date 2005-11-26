@@ -50,7 +50,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
         try {
             //Processing service level paramters
             Iterator itr = servcice.getChildrenWithName(
-                    new QName(PARAMETERST));
+                    new QName(PARAMETER));
             processParameters(itr, axisServiceGroup, axisServiceGroup.getParent());
 
             Iterator moduleConfigs = servcice.getChildrenWithName(new QName(MODULECONFIG));
@@ -105,7 +105,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module), parent);
-                Iterator paramters = moduleConfig.getChildrenWithName(new QName(PARAMETERST));
+                Iterator paramters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
                 processParameters(paramters, moduleConfiguration, parent);
                 axisService.addModuleConfig(moduleConfiguration);
             }

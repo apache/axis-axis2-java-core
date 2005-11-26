@@ -1,16 +1,15 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.engine.AxisError;
-import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.engine.Phase;
-import org.apache.axis2.engine.SOAPProcessingModelChecker;
+import org.apache.axis2.engine.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
+import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLExtensibilityAttribute;
@@ -48,8 +47,8 @@ import java.util.Map;
 */
 
 public abstract class AxisOperation  implements
-        ParameterInclude, WSDLOperation, DescriptionConstants,
-        WSDLConstants {
+        ParameterInclude, DescriptionConstants,
+        WSDLConstants ,WSDLOperation{
 
     private MessageReceiver messageReceiver;
     private ArrayList remainingPhasesInFlow;
@@ -110,7 +109,8 @@ public abstract class AxisOperation  implements
      * @param moduleref
      * @throws org.apache.axis2.AxisFault
      */
-    public final void engageModule(ModuleDescription moduleref) throws AxisFault {
+    public final void engageModule(ModuleDescription moduleref,
+                                   AxisConfiguration axisConfig) throws AxisFault {
         if (moduleref == null) {
             return;
         }
@@ -126,7 +126,7 @@ public abstract class AxisOperation  implements
             }
 
         }
-        //    new PhaseResolver().engageModuleToOperation(this, moduleref);
+        new PhaseResolver(axisConfig).engageModuleToOperation(this, moduleref);
         collectionModule.add(moduleref);
     }
 
@@ -196,6 +196,12 @@ public abstract class AxisOperation  implements
     }
     public MessageReceiver getMessageReceiver() {
         return messageReceiver;
+    }
+
+    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
+        ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this
+                .getComponentProperty(PARAMETER_KEY);
+        paramInclude.deserializeParameters(parameterElement);
     }
 
     public void setMessageReceiver(MessageReceiver messageReceiver) {
@@ -485,7 +491,7 @@ public abstract class AxisOperation  implements
     }
 
     public void setMetadataBag(Map meMap){
-         wsdlopeartion.setMetadataBag(meMap);
+        wsdlopeartion.setMetadataBag(meMap);
     }
 
 
@@ -516,7 +522,7 @@ public abstract class AxisOperation  implements
         if (null == msgContext.getRelatesTo()) {
             //Its a new incomming message so get the factory to create a new
             // one
-           operationContext =  new OperationContext(this,serviceContext);
+            operationContext =  new OperationContext(this,serviceContext);
         } else {
             // So this message is part of an ongoing MEP
             //			operationContext =
@@ -544,10 +550,9 @@ public abstract class AxisOperation  implements
      * @throws AxisFault
      */
     public OperationContext findForExistingOperationContext(MessageContext msgContext) throws AxisFault {
-        OperationContext operationContext = null;
-
+        OperationContext operationContext ;
         if((operationContext = msgContext.getOperationContext()) != null) {
-        	return operationContext;
+            return operationContext;
         }
 
         if (null == msgContext.getRelatesTo()) {

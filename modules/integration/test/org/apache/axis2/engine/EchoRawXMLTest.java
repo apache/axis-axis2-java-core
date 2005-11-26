@@ -51,7 +51,7 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
     protected AxisService service;
 
     protected boolean finish = false;
-
+                                            
     public EchoRawXMLTest() {
         super(EchoRawXMLTest.class.getName());
     }

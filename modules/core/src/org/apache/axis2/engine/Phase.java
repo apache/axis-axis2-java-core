@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * <p>This is Phase, a orderd collection of Handlers.
@@ -112,8 +113,8 @@ public class Phase {
     public void addHandler(Handler handler, int index) {
         log.info(
                 "Handler " + handler.getName() + "Added to place " + 1 +
-                " At the Phase " +
-                phaseName);
+                        " At the Phase " +
+                        phaseName);
         handlers.add(index, handler);
     }
 
@@ -125,7 +126,7 @@ public class Phase {
     public void addHandler(Handler handler) {
         log.info(
                 "Handler " + handler.getName() + " Added to the Phase " +
-                phaseName);
+                        phaseName);
         handlers.add(handler);
     }
 
@@ -232,11 +233,13 @@ public class Phase {
      */
     public void setPhaseFirst(Handler phaseFirst) throws PhaseException {
         if (phasefirstset) {
-            throw new PhaseException("PhaseFirst alredy has been set, cannot have two phaseFirst Handler for same phase "
+            throw new PhaseException("PhaseFirst alredy has been set, cannot have two" +
+                    " phaseFirst Handler for same phase "
                     + this.getPhaseName());
         } else {
             if (getBeforeAfter(phaseFirst) != ANYWHERE) {
-                throw new PhaseException("Handler with PhaseFirst can not have any before or after proprty error in "
+                throw new PhaseException("Handler with PhaseFirst can not have " +
+                        "any before or after proprty error in "
                         + phaseFirst.getName());
             } else {
                 this.phaseFirst = phaseFirst;
@@ -253,11 +256,13 @@ public class Phase {
      */
     public void setPhaseLast(Handler phaseLast) throws PhaseException {
         if (phaselastset) {
-            throw new PhaseException("PhaseLast already has been set, cannot have two PhaseLast Handler for same phase "
+            throw new PhaseException("PhaseLast already has been set," +
+                    " cannot have two PhaseLast Handler for same phase "
                     + this.getPhaseName());
         } else {
             if (getBeforeAfter(phaseLast) != ANYWHERE) {
-                throw new PhaseException("Handler with PhaseLast property can not have any before or after property error in "
+                throw new PhaseException("Handler with PhaseLast property " +
+                        "can not have any before or after property error in "
                         + phaseLast.getName());
             } else {
                 this.phaseLast = phaseLast;
@@ -273,34 +278,41 @@ public class Phase {
      * @throws PhaseException
      */
     public void addHandler(HandlerDescription handler) throws PhaseException {
+        Iterator handlers_itr = getHandlers().iterator();
+        while (handlers_itr.hasNext()) {
+            Handler hand = (Handler) handlers_itr.next();
+            HandlerDescription handlerDesc = hand.getHandlerDesc();
+            if (handler.equals(handlerDesc)) {
+                //tryting to add the same handler twice to the phase
+                // this is can happen due to we are allowing service specifc module
+                //to add hndlers into gloal chain
+                return;
+            }
+        }
         if (isOneHanlder) {
             throw new PhaseException(
                     this.getPhaseName()
-                    + "can only have one handler, since there is a "
-                    + "handler with both phaseFirst and PhaseLast true ");
+                            + "can only have one handler, since there is a "
+                            + "handler with both phaseFirst and PhaseLast true ");
         } else {
             if (handler.getRules().isPhaseFirst() &&
                     handler.getRules().isPhaseLast()) {
                 if (handlers.size() > 0) {
                     throw new PhaseException(
                             this.getPhaseName()
-                            + " can not have more than one handler "
-                            + handler.getName()
-                            + " is invalid or incorrect phase rules");
+                                    + " can not have more than one handler "
+                                    + handler.getName()
+                                    + " is invalid or incorrect phase rules");
                 } else {
                     handlers.add(handler.getHandler());
                     isOneHanlder = true;
-                    return;
                 }
             } else if (handler.getRules().isPhaseFirst()) {
                 setPhaseFirst(handler.getHandler());
-                return;
             } else if (handler.getRules().isPhaseLast()) {
                 setPhaseLast(handler.getHandler());
-                return;
             } else {
                 insertHandler(handler);
-                return;
             }
         }
     }
@@ -466,12 +478,12 @@ public class Phase {
                     .getAfter()
                     .equals(
                             temphandler.getHandlerDesc().getName()
-                    .getLocalPart())) {
+                                    .getLocalPart())) {
                 after = i;
             } else if (
                     handler.getHandlerDesc().getRules().getBefore().equals(
                             temphandler.getHandlerDesc().getName()
-                    .getLocalPart())) {
+                                    .getLocalPart())) {
                 before = i;
             }
             if ((after >= 0) && (before >= 0)) {
@@ -480,7 +492,7 @@ public class Phase {
                     //TODO fix me Deepal , (have to check this)
                     throw new PhaseException(
                             "incorrect handler order for " +
-                            handler.getHandlerDesc().getName());
+                                    handler.getHandlerDesc().getName());
                 } else {
                     if (after + 1 <= handlers.size()) {
                         handlers.add(after + 1, handler);
@@ -501,26 +513,22 @@ public class Phase {
         validateafter(han);
         validatebefore(han);
         switch (type) {
-            case BOTH_BEFORE_AFTER:
-                {
-                    insertBeforeandAfter(han);
-                    break;
-                }
-            case BEFORE:
-                {
-                    insertBefore(han);
-                    break;
-                }
-            case AFTER:
-                {
-                    insertAfter(han);
-                    break;
-                }
-            case ANYWHERE:
-                {
-                    handlers.add(han);
-                    break;
-                }
+            case BOTH_BEFORE_AFTER: {
+                insertBeforeandAfter(han);
+                break;
+            }
+            case BEFORE: {
+                insertBefore(han);
+                break;
+            }
+            case AFTER: {
+                insertAfter(han);
+                break;
+            }
+            case ANYWHERE: {
+                handlers.add(han);
+                break;
+            }
         }
     }
 

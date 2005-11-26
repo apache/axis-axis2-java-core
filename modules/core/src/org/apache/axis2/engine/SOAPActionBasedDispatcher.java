@@ -25,7 +25,7 @@ import org.apache.axis2.description.HandlerDescription;
 import javax.xml.namespace.QName;
 
 /**
- * Dispatches based on the SOAPAction 
+ * Dispatches based on the SOAPAction
  */
 public class SOAPActionBasedDispatcher extends AbstractDispatcher {
     /**
@@ -35,11 +35,12 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
             new QName("http://axis.ws.apache.org",
                     "SOAPActionBasedDispatcher");
 
-     public void initDispatcher() {
+    public void initDispatcher() {
         init(new HandlerDescription(NAME));
     }
+
     public AxisOperation findOperation(AxisService service,
-                                              MessageContext messageContext)
+                                       MessageContext messageContext)
             throws AxisFault {
 
         String action = messageContext.getSoapAction();
@@ -49,8 +50,8 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
                 op = service.getOperation(new QName(action));
             }
             /* HACK: Please remove this when we add support for custom action uri */
-            if (op == null && action.lastIndexOf('/')!=-1) {
-                op = service.getOperation(new QName(action.substring(action.lastIndexOf('/'),action.length())));
+            if (op == null && action.lastIndexOf('/') != -1) {
+                op = service.getOperation(new QName(action.substring(action.lastIndexOf('/'), action.length())));
             }
             return op;
         }

@@ -29,7 +29,7 @@ public class AxisEvent {
     public static final int SERVICE_DEPLOY = 1;
     public static final int SERVICE_REMOVE = 0;
 
-    private AxisService service ;
+    private AxisService service;
 
     private int EVENT_TYPE;
 

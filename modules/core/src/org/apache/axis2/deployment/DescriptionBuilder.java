@@ -170,7 +170,7 @@ public class DescriptionBuilder implements DeploymentConstants{
 
             }
             Iterator parameters = handler_element.getChildrenWithName(
-                    new QName(PARAMETERST));
+                    new QName(PARAMETER));
             processParameters(parameters,handler,parent);
         }
         handler.setParent(parent);
@@ -211,7 +211,7 @@ public class DescriptionBuilder implements DeploymentConstants{
             OMElement paraValue = parameterElement.getFirstElement();
             if(paraValue !=null){
                 parameter.setValue(parameterElement);
-                parameter.setParameterType(Parameter.DOM_PARAMETER);
+                parameter.setParameterType(Parameter.OM_PARAMETER);
             } else {
                 String paratextValue = parameterElement.getText();
                 parameter.setValue(paratextValue);

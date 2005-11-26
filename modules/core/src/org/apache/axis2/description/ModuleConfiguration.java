@@ -17,6 +17,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -76,6 +77,10 @@ public class ModuleConfiguration implements ParameterInclude{
             Parameter parameter = getParameter(paramterName);
             return parameter != null && parameter.isLocked();
         }
+    }
+
+    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
+        this.paramterinclude.deserializeParameters(parameterElement);
     }
 
 }

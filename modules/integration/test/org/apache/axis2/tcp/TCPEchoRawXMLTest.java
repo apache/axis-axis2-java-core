@@ -66,6 +66,7 @@ public class TCPEchoRawXMLTest extends TestCase {
 
     private boolean finish = false;
     private Log log = LogFactory.getLog(getClass());
+
     public TCPEchoRawXMLTest() {
         super(TCPEchoRawXMLTest.class.getName());
     }
@@ -76,7 +77,6 @@ public class TCPEchoRawXMLTest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilsTCPServer.start();
-
 
         //create and deploy the service
         service =
@@ -206,7 +206,7 @@ public class TCPEchoRawXMLTest extends TestCase {
 
     public void testEchoXMLSyncMC() throws Exception {
         ConfigurationContextFactory confac = new ConfigurationContextFactory();
-        ConfigurationContext configContext= confac.buildClientConfigurationContext(Constants.TESTING_REPOSITORY);
+        ConfigurationContext configContext = confac.buildClientConfigurationContext(Constants.TESTING_REPOSITORY);
 
         AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
         org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(Constants.TESTING_REPOSITORY);
@@ -236,9 +236,9 @@ public class TCPEchoRawXMLTest extends TestCase {
         //  requestContext.setTo(targetEPR);
 
         requestContext.setEnvelope(envelope);
-        MessageContext res= call.invokeBlocking(opdesc, requestContext);
+        MessageContext res = call.invokeBlocking(opdesc, requestContext);
 
-        SOAPEnvelope env=   call.invokeBlocking("echoOMElement", envelope);
+        SOAPEnvelope env = call.invokeBlocking("echoOMElement", envelope);
 //        SOAPEnvelope env=  res.getEnvelope();
         env.getBody().serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
                 System.out));

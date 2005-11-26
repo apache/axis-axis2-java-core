@@ -341,7 +341,7 @@ public class ListingAgent {
                                 .getOperation(new QName(operationName));
                 od.engageModule(
                         configContext.getAxisConfiguration().getModule(
-                                new QName(moduleName)));
+                                new QName(moduleName)), configContext.getAxisConfiguration());
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                         moduleName +
                                 " module engaged to the operation Successfully");

@@ -376,7 +376,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private void addServiceGroup(AxisServiceGroup axisServiceMetaData, ArrayList service) throws AxisFault {
+    private void addServiceGroup(AxisServiceGroup serviceGroup, ArrayList service) throws AxisFault {
 //        Iterator services = currentArchiveFile.getService().values().iterator();
         Iterator services = service.iterator();//              currentArchiveFile.getDeploybleServices().iterator();
         while (services.hasNext()) {
@@ -386,7 +386,7 @@ public class DeploymentEngine implements DeploymentConstants {
             axisService.setFileName(currentArchiveFile.getFile().getAbsolutePath());
 
             //module form serviceGroup
-            ArrayList groupModules = axisServiceMetaData.getModules();
+            ArrayList groupModules = serviceGroup.getModules();
             for (int i = 0; i < groupModules.size(); i++) {
                 ModuleDescription module = axisConfig.getModule((QName) groupModules.get(i));
                 if (module != null) {
@@ -420,7 +420,7 @@ public class DeploymentEngine implements DeploymentConstants {
                     QName moduleName = (QName) modules.get(i);
                     ModuleDescription module = axisConfig.getModule(moduleName);
                     if (module != null) {
-                        opDesc.engageModule(module);
+                        opDesc.engageModule(module,axisConfig);
                     } else {
                         throw new DeploymentException(Messages.getMessage(
                                 DeploymentErrorMsgs.IN_VALID_MODUELE_REF_BY_OP, opDesc.getName()
@@ -429,9 +429,9 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
 
             }
-            axisServiceMetaData.addService(axisService);
+            serviceGroup.addService(axisService);
         }
-        axisConfig.addServiceGroup(axisServiceMetaData);
+        axisConfig.addServiceGroup(serviceGroup);
     }
 
 

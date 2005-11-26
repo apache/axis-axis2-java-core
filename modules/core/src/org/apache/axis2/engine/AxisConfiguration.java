@@ -24,7 +24,6 @@ import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.util.HostConfiguration;
-
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,7 +72,7 @@ public interface AxisConfiguration extends ParameterInclude {
     public void addService(AxisService service) throws AxisFault;
 
     //to Add service Groups
-     public void addServiceGroup(AxisServiceGroup axisServiceGroup) throws AxisFault;
+    public void addServiceGroup(AxisServiceGroup axisServiceGroup) throws AxisFault;
 
     /**
      * Method removeService
@@ -87,7 +86,6 @@ public interface AxisConfiguration extends ParameterInclude {
      * Modules is read only as they can not deployed while runing
      *
      * @param name
-     * @return
      */
     public ModuleDescription getModule(QName name);
 
@@ -110,9 +108,9 @@ public interface AxisConfiguration extends ParameterInclude {
     public void engageModule(QName moduleref) throws AxisFault;
 
 
-
     //
     public HashMap getServices();
+
     /**
      * This returns
      */
@@ -143,22 +141,26 @@ public interface AxisConfiguration extends ParameterInclude {
 
     Iterator getServiceGroups();
 
-    public void notifyObservers(int event_type , AxisService service);
+    public void notifyObservers(int event_type, AxisService service);
 
 
     //the class loder which become the top most parent of all the modules and services
     public ClassLoader getSystemClassLoader();
+
     public void setSystemClassLoader(ClassLoader classLoader);
 
     // the class loder that become the paranet of all the services
     public ClassLoader getServiceClassLoader();
+
     public void setServiceClassLoader(ClassLoader classLoader);
 
     // the class loder that become the paranet of all the moduels
     public ClassLoader getModuleClassLoader();
+
     public void setModuleClassLoader(ClassLoader classLoader);
 
     //to set and get host configuration
     void setHostConfiguration(HostConfiguration hostConfiguration);
+
     HostConfiguration getHostConfiguration();
 }

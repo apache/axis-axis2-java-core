@@ -21,6 +21,7 @@ import org.apache.axis2.description.ParameterInclude;
 public interface AxisObserver extends ParameterInclude {
     //The initilization code will go here
     void init();
+
     void update(AxisEvent event);
 
     //there can be parameters for the Observers

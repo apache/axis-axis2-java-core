@@ -17,6 +17,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.om.OMElement;
 
 import java.util.ArrayList;
 
@@ -53,5 +54,8 @@ public interface ParameterInclude {
      */
 
     boolean isParameterLocked(String paramterName);
+
+     public void  deserializeParameters(OMElement parameterElement) throws AxisFault;
+
 
 }

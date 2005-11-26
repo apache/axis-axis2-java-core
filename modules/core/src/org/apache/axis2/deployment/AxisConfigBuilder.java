@@ -61,7 +61,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             //processing Paramters
             //Processing service level paramters
             Iterator itr = config_element.getChildrenWithName(
-                    new QName(PARAMETERST));
+                    new QName(PARAMETER));
             processParameters(itr, axisConfiguration, axisConfiguration);
 
             //process MessageReciver
@@ -225,7 +225,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     //processing Paramters
                     //Processing service level paramters
                     Iterator itr = transport.getChildrenWithName(
-                            new QName(PARAMETERST));
+                            new QName(PARAMETER));
                     processParameters(itr, transportout, axisConfiguration);
 
                     //process INFLOW
@@ -311,7 +311,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     //processing Paramters
                     //Processing service level paramters
                     Iterator itr = transport.getChildrenWithName(
-                            new QName(PARAMETERST));
+                            new QName(PARAMETER));
                     processParameters(itr, transportIN, axisConfiguration);
 
                     //process INFLOW
@@ -394,7 +394,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 //processing Paramters
                 //Processing service level paramters
                 Iterator itr = observerelement.getChildrenWithName(
-                        new QName(PARAMETERST));
+                        new QName(PARAMETER));
                 processParameters(itr, observer, axisConfiguration);
 
                 // initilization
@@ -440,7 +440,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module), parent);
-                Iterator paramters = moduleConfig.getChildrenWithName(new QName(PARAMETERST));
+                Iterator paramters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
                 processParameters(paramters, moduleConfiguration, parent);
                 ((AxisConfigurationImpl) config).addModuleConfig(moduleConfiguration);
             }

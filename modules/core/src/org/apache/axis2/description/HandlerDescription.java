@@ -17,6 +17,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.engine.Handler;
 
 import javax.xml.namespace.QName;
@@ -134,6 +135,10 @@ public class HandlerDescription implements ParameterInclude {
             }
         }
         return parameterInclude.isParameterLocked(paramterName);
+    }
+
+    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
+        this.parameterInclude.deserializeParameters(parameterElement);
     }
 
     /**

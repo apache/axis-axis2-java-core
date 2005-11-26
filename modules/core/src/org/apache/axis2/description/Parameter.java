@@ -28,9 +28,9 @@ public interface Parameter {
     public static int TEXT_PARAMETER = 0;
 
     /**
-     * Field DOM_PARAMETER
+     * Field OM_PARAMETER
      */
-    public static int DOM_PARAMETER = 1;
+    public static int OM_PARAMETER = 1;
 
     /**
      * Method getName

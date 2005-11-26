@@ -28,7 +28,7 @@ public interface DeploymentConstants {
     public static final String SERVICE_WSDL_NAME = "service.wsdl";
     String SERVICE_WSDL_WITH_FOLDER = "META-INF/service.wsdl";
     String MODULEXML = "META-INF/module.xml";
-    String PARAMETERST = "parameter";// paramater start tag
+    String PARAMETER = "parameter";// paramater start tag
     String LISTENERST = "listener";// paramater start tag
     String HANDERST = "handler";
     String MODULEST = "module";

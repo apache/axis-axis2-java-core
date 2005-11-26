@@ -41,19 +41,19 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
     String serviceName = null;
     QName operationName = null;
 
-     public void initDispatcher() {
+    public void initDispatcher() {
         init(new HandlerDescription(NAME));
     }
 
     public AxisOperation findOperation(AxisService service,
-                                              MessageContext messageContext)
+                                       MessageContext messageContext)
             throws AxisFault {
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody()
                 .getFirstElement();
-        if(bodyFirstChild == null){
+        if (bodyFirstChild == null) {
             return null;
-        }else{
-              operationName = new QName(bodyFirstChild.getLocalName());
+        } else {
+            operationName = new QName(bodyFirstChild.getLocalName());
         }
 
         return service.getOperation(operationName);
@@ -64,8 +64,8 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
      */
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
-                
-        if(bodyFirstChild != null){
+
+        if (bodyFirstChild != null) {
             OMNamespace ns = bodyFirstChild.getNamespace();
             if (ns != null) {
                 String filePart = ns.getName();
@@ -82,7 +82,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
                     return registry.getService(serviceName);
                 }
             }
-        }        
+        }
         return null;
     }
 }

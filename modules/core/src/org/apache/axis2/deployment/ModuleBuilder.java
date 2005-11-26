@@ -76,7 +76,7 @@ public class ModuleBuilder extends DescriptionBuilder{
             //processing Paramters
             //Processing service level paramters
             Iterator itr = moduleElement.getChildrenWithName(
-                    new QName(PARAMETERST));
+                    new QName(PARAMETER));
             processParameters(itr,module,module.getParent());
 
             //process INFLOW
@@ -176,7 +176,7 @@ public class ModuleBuilder extends DescriptionBuilder{
 
             //Opeartion Paramters
             Iterator paramters = operation.getChildrenWithName(
-                    new QName(PARAMETERST));
+                    new QName(PARAMETER));
             ArrayList wsamapping =   processParameters(paramters,op_descrip,module);
             op_descrip.setWsamappingList(wsamapping);
 

@@ -38,10 +38,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLOutputFactory;
+import java.util.ArrayList;
 
 
 public class HandlerFailureTest extends TestCase implements TestConstants {
     private Log log = LogFactory.getLog(getClass());
+
     public HandlerFailureTest() {
         super(HandlerFailureTest.class.getName());
     }
@@ -55,33 +57,40 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
 
 
     public void testFailureAtServerRequestFlow() throws Exception {
-        Flow flow = new FlowImpl();
-        Utils.addHandler(flow,
-                new SpeakingHandler(),
-                PhaseMetadata.PHASE_POLICY_DETERMINATION);
-        Utils.addHandler(flow,
-                new SpeakingHandler(),
-                PhaseMetadata.PHASE_POLICY_DETERMINATION);
-        Utils.addHandler(flow,
-                new SpeakingHandler(),
-                PhaseMetadata.PHASE_POLICY_DETERMINATION);
-        Utils.addHandler(flow,
-                new SpeakingHandler(),
-                PhaseMetadata.PHASE_POLICY_DETERMINATION);
-        Utils.addHandler(flow,
-                culprit,
-                PhaseMetadata.PHASE_POLICY_DETERMINATION);
-        Utils.addHandler(flow,
-                new SpeakingHandler(),
-                PhaseMetadata.PHASE_POLICY_DETERMINATION);
+//        Flow flow = new FlowImpl();
+//        Utils.addHandler(flow,
+//                new SpeakingHandler(),
+//                PhaseMetadata.PHASE_POLICY_DETERMINATION);
+//        Utils.addHandler(flow,
+//                new SpeakingHandler(),
+//                PhaseMetadata.PHASE_POLICY_DETERMINATION);
+//        Utils.addHandler(flow,
+//                new SpeakingHandler(),
+//                PhaseMetadata.PHASE_POLICY_DETERMINATION);
+//        Utils.addHandler(flow,
+//                new SpeakingHandler(),
+//                PhaseMetadata.PHASE_POLICY_DETERMINATION);
+//        Utils.addHandler(flow,
+//                culprit,
+//                PhaseMetadata.PHASE_POLICY_DETERMINATION);
+//        Utils.addHandler(flow,
+//                new SpeakingHandler(),
+//                PhaseMetadata.PHASE_POLICY_DETERMINATION);
 
         AxisService service = Utils.createSimpleService(serviceName,
                 Echo.class.getName(),
                 operationName);
-        service.setInFlow(flow);
+//        service.setInFlow(flow); // we do not support this
 
         UtilServer.start();
         UtilServer.deployService(service);
+        ArrayList phase = service.getOperation(operationName).getRemainingPhasesInFlow();
+        for (int i = 0; i < phase.size(); i++) {
+            Phase phase1 = (Phase) phase.get(i);
+            if(PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phase1.getPhaseName())){
+                phase1.addHandler(culprit);
+            }
+        }
         try {
             callTheService();
         } finally {
@@ -143,9 +152,9 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
             method.addChild(value);
 
             org.apache.axis2.client.Call call =
-                    new      org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
+                    new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
             //EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + Utils.TESTING_PORT + "/axis/services/EchoXMLService");
-            
+
             call.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
                     false);
@@ -153,7 +162,7 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
             OMElement result = call.invokeBlocking(
                     operationName.getLocalPart(), method);
             result.serializeAndConsume(XMLOutputFactory.newInstance().createXMLStreamWriter(
-                            System.out));
+                    System.out));
             fail("the test must fail due to bad service Name");
         } catch (AxisFault e) {
             log.info(e.getMessage());

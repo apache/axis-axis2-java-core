@@ -21,23 +21,27 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEvent;
-import org.apache.axis2.phaseresolver.PhaseResolver;
+import org.apache.axis2.om.OMElement;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class AxisServiceGroup implements ParameterInclude{
+public class AxisServiceGroup implements ParameterInclude {
 
     //to add and get paramters
     protected ParameterInclude paramInclude;
+
+    private Log log = LogFactory.getLog(getClass());
 
     // to keep name of the service group
     private String serviceGroupName;
 
     // to keep the parent of service group , to chcek paramter lock checking and serching
-    private  AxisConfiguration parent;
+    private AxisConfiguration parent;
 
     /**
      * Field services
@@ -84,19 +88,19 @@ public class AxisServiceGroup implements ParameterInclude{
         // checking the locked value of parent
         boolean loscked = false;
 
-        if (getParent() !=null) {
-            loscked =  getParent().isParameterLocked(paramterName);
+        if (getParent() != null) {
+            loscked = getParent().isParameterLocked(paramterName);
         }
-        if(loscked){
+        if (loscked) {
             return true;
         } else {
             Parameter parameter = getParameter(paramterName);
-            if(parameter != null && parameter.isLocked()){
-                return true;
-            } else {
-                return false;
-            }
+            return parameter != null && parameter.isLocked();
         }
+    }
+
+    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
+        this.paramInclude.deserializeParameters(parameterElement);
     }
 
     public String getServiceGroupName() {
@@ -117,20 +121,21 @@ public class AxisServiceGroup implements ParameterInclude{
 
     /**
      * Adding module configuration , if there is moduleConfig tag in service
+     *
      * @param moduleConfiguration
      */
-    public void addModuleConfig(ModuleConfiguration moduleConfiguration){
-        if(moduleConfigmap == null){
+    public void addModuleConfig(ModuleConfiguration moduleConfiguration) {
+        if (moduleConfigmap == null) {
             moduleConfigmap = new HashMap();
         }
-        moduleConfigmap.put(moduleConfiguration.getModuleName(),moduleConfiguration);
+        moduleConfigmap.put(moduleConfiguration.getModuleName(), moduleConfiguration);
     }
 
-    public ModuleConfiguration getModuleConfig(QName moduleName){
-        return  (ModuleConfiguration)moduleConfigmap.get(moduleName);
+    public ModuleConfiguration getModuleConfig(QName moduleName) {
+        return (ModuleConfiguration) moduleConfigmap.get(moduleName);
     }
 
-    public void addModule(QName moduleName){
+    public void addModule(QName moduleName) {
         modules.add(moduleName);
     }
 
@@ -148,32 +153,51 @@ public class AxisServiceGroup implements ParameterInclude{
             }
         }
         Iterator srevice = getServices();
-        PhaseResolver phaseResolver = new PhaseResolver(this.getParent());
+//        PhaseResolver phaseResolver = new PhaseResolver(this.getParent());
         ModuleDescription module = this.parent.getModule(moduleName);
-        if (module !=null) {
+        if (module != null) {
             while (srevice.hasNext()) {
                 // engagin per each service
                 AxisService axisService = (AxisService) srevice.next();
-                phaseResolver.engageModuleToService(axisService, module);
+                try {
+                    axisService.engageModule(module, this.getParent());
+                } catch (AxisFault axisFault) {
+                    log.info(axisFault.getMessage());
+                }
+//                phaseResolver.engageModuleToService(axisService, module);
             }
         }
         addModule(moduleName);
     }
 
-    public ArrayList getServiceGroupModules(){
+    public ArrayList getServiceGroupModules() {
         return modules;
     }
 
 
-    public Iterator getServices(){
+    public Iterator getServices() {
         return services.values().iterator();
     }
 
     public synchronized void addService(AxisService service) throws AxisFault {
         services.put(service.getName(), service);
         service.setParent(this);
-        PhaseResolver handlerResolver = new PhaseResolver(this.parent, service);
-        handlerResolver.buildchains();
+        AxisConfiguration axisConfig = getParent();
+        if (axisConfig != null) {
+            Iterator modules = getModules().iterator();
+            while (modules.hasNext()) {
+                QName moduleName = (QName) modules.next();
+                ModuleDescription moduleDesc = axisConfig.getModule(moduleName);
+                if (moduleDesc != null) {
+                    service.engageModule(moduleDesc, axisConfig);
+                } else {
+                    throw new AxisFault("Trying to engage a module which is not " +
+                            "available : " + moduleName.getLocalPart());
+                }
+            }
+        }
+//        PhaseResolver handlerResolver = new PhaseResolver(this.parent, service);
+//        handlerResolver.buildchains();
         service.setLastupdate();
     }
 
@@ -189,11 +213,11 @@ public class AxisServiceGroup implements ParameterInclude{
         return (AxisService) services.get(name);
     }
 
-    public void addModuleref(QName moduleref){
+    public void addModuleref(QName moduleref) {
         mdoulesList.add(moduleref);
     }
 
-    public ArrayList getModules(){
+    public ArrayList getModules() {
         return mdoulesList;
     }
 
@@ -201,14 +225,13 @@ public class AxisServiceGroup implements ParameterInclude{
     public synchronized void removeService(QName name) throws AxisFault {
         AxisService service = getService(name);
         if (service != null) {
-            this.parent.notifyObservers(AxisEvent.SERVICE_DEPLOY , service);
+            this.parent.notifyObservers(AxisEvent.SERVICE_DEPLOY, service);
         }
         services.remove(name);
     }
 
-    public ServiceGroupContext getServiceGroupContext(ConfigurationContext parent){
-        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(parent,this) ;
-        return serviceGroupContext;
+    public ServiceGroupContext getServiceGroupContext(ConfigurationContext parent) {
+        return new ServiceGroupContext(parent, this);
     }
 
     public ClassLoader getServiceGroupClassLoader() {

@@ -52,7 +52,7 @@ public class SOAPProcessingModelChecker extends AbstractHandler {
             // additional roles and then to check that any headers targetted for
             // that role too have been dealt with.
 
-            
+
             String role = hb.getRole();
 
             if (!msgContext.isSOAP11()) {
@@ -61,7 +61,7 @@ public class SOAPProcessingModelChecker extends AbstractHandler {
                 if (role != null && !SOAP12Constants.SOAP_ROLE_NEXT.equals(role)) {
                     throw new AxisFault("Must Understand check failed", SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND);
                 }
-                
+
                 //TODO what should be do with the Ulitmate Receiver? Axis2 is ultimate Receiver most of the time
                 //should we support that as well
             } else {

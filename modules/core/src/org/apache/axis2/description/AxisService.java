@@ -22,18 +22,15 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.phaseresolver.PhaseResolver;
-import org.apache.wsdl.WSDLBindingOperation;
-import org.apache.wsdl.WSDLEndpoint;
-import org.apache.wsdl.WSDLExtensibilityAttribute;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLInterface;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLService;
+import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPOperation;
 import org.apache.wsdl.impl.WSDLInterfaceImpl;
 import org.apache.wsdl.impl.WSDLServiceImpl;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
@@ -44,13 +41,7 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class AxisService
@@ -63,6 +54,8 @@ public class AxisService
         DescriptionConstants {
 
     private Definition definition = null;
+
+    private Log log = LogFactory.getLog(getClass());
 
     private HashMap moduleConfigmap;
 
@@ -159,8 +152,7 @@ public class AxisService
                                     AxisConfiguration axisConfig) throws AxisFault {
         HashMap map = module.getOperations();
         Collection col = map.values();
-        PhaseResolver pr = new PhaseResolver(axisConfig, this);
-
+//        PhaseResolver pr = new PhaseResolver(axisConfig, this);
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             AxisOperation axisOperation = (AxisOperation) iterator.next();
             ArrayList wsamappings = axisOperation.getWsamappingList();
@@ -168,7 +160,7 @@ public class AxisService
                 Parameter paramter = (Parameter) wsamappings.get(j);
                 this.addMapping((String) paramter.getValue(), axisOperation);
             }
-            pr.buildModuleOperation(axisOperation);
+//            pr.buildModuleOperation(axisOperation);
             this.addOperation(axisOperation);
         }
     }
@@ -241,20 +233,22 @@ public class AxisService
      *
      * @param axisOperation
      */
-    public void addOperation(AxisOperation axisOperation) throws AxisFault {
+    public void addOperation(AxisOperation axisOperation) {
         axisOperation.setParent(this);
         //todo phase resolving and module engagement :
-//        Iterator modules = getEngagedModules().iterator();
-//        while (modules.hasNext()) {
-//            ModuleDescription module = (ModuleDescription) modules.next();
-//            axisOperation.engageModule(module);
-//        }
-        AxisServiceGroup parent = getParent();
-        if (parent != null) {
-            AxisConfiguration axisConfig = parent.getParent();
-            if (axisConfig != null) {
-                PhaseResolver pr = new PhaseResolver(axisConfig,this);
-                pr.buildModuleOperation(axisOperation);
+        Iterator modules = getEngagedModules().iterator();
+        while (modules.hasNext()) {
+            ModuleDescription module = (ModuleDescription) modules.next();
+            AxisServiceGroup parent = getParent();
+            AxisConfiguration axisConfig = null;
+            if (parent != null) {
+                axisConfig = parent.getParent();
+            }
+            try {
+                axisOperation.engageModule(module, axisConfig);
+            } catch (AxisFault axisFault) {
+                log.info("Trying to engage a module which is already engege:"
+                        + module.getName().getLocalPart());
             }
         }
         this.getServiceInterface().setOperation(axisOperation);
@@ -618,8 +612,7 @@ public class AxisService
      */
     public ServiceContext u(MessageContext msgContext) {
         // TODO : Fix me. Can't look up a service context in the system context
-
-        ServiceContext serviceContext = null;
+        ServiceContext serviceContext;
         if (null == msgContext.getServiceGroupContextId()) {
             serviceContext =
                     new ServiceContext(this, msgContext.getServiceGroupContext());
@@ -830,6 +823,12 @@ public class AxisService
             Parameter parameter = getParameter(paramterName);
             return parameter != null && parameter.isLocked();
         }
+    }
+
+    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
+        ParameterIncludeImpl paramInclude =
+                (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
+        paramInclude.deserializeParameters(parameterElement);
     }
 
     /**
