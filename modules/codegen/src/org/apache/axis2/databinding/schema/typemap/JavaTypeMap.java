@@ -2,6 +2,7 @@ package org.apache.axis2.databinding.schema.typemap;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.databinding.schema.SchemaConstants;
+import org.apache.axis2.databinding.schema.types.*;
 
 import javax.xml.namespace.QName;
 import java.util.Map;
@@ -46,7 +47,99 @@ public class JavaTypeMap implements TypeMap {
         addTypemapping(SchemaConstants.XSD_SHORT, short.class.getName());
         addTypemapping(SchemaConstants.XSD_BYTE, byte.class.getName());
         addTypemapping(SchemaConstants.XSD_ANY, OMElement.class.getName());
+
+        //anytype is mapped to the OMElement instead of the java.lang.Object
         addTypemapping(SchemaConstants.XSD_ANYTYPE, OMElement.class.getName());
+
+         //Qname maps to  jax rpc QName class
+        addTypemapping(SchemaConstants.XSD_QNAME, javax.xml.namespace.QName.class.getName());
+
+        //xsd Date is mapped to the java.util.date!
+        addTypemapping(SchemaConstants.XSD_DATE,  java.util.Date.class.getName());
+
+        // Mapping for xsd:time.  Map to Axis type Time
+        addTypemapping(SchemaConstants.XSD_TIME, Time.class.getName());
+
+        // These are the g* types (gYearMonth, etc) which map to Axis types
+        addTypemapping(SchemaConstants.XSD_YEARMONTH, YearMonth.class.getName());
+        addTypemapping(SchemaConstants.XSD_YEAR, Year.class.getName());
+        addTypemapping(SchemaConstants.XSD_MONTH, Month.class.getName());
+        addTypemapping(SchemaConstants.XSD_DAY, Day.class.getName());
+        addTypemapping(SchemaConstants.XSD_MONTHDAY, MonthDay.class.getName());
+
+// xsd:token
+        addTypemapping(SchemaConstants.XSD_TOKEN, Token.class.getName());
+
+        // a xsd:normalizedString
+        addTypemapping(SchemaConstants.XSD_NORMALIZEDSTRING, NormalizedString.class.getName());
+
+        // a xsd:unsignedLong
+        addTypemapping(SchemaConstants.XSD_UNSIGNEDLONG, UnsignedLong.class.getName());
+
+        // a xsd:unsignedInt
+        addTypemapping(SchemaConstants.XSD_UNSIGNEDINT, UnsignedInt.class.getName());
+
+        // a xsd:unsignedShort
+        addTypemapping(SchemaConstants.XSD_UNSIGNEDSHORT, UnsignedShort.class.getName());
+
+        // a xsd:unsignedByte
+        addTypemapping(SchemaConstants.XSD_UNSIGNEDBYTE, UnsignedByte.class.getName());
+
+        // a xsd:nonNegativeInteger
+        addTypemapping(SchemaConstants.XSD_NONNEGATIVEINTEGER, NonNegativeInteger.class.getName());
+
+        // a xsd:negativeInteger
+        addTypemapping(SchemaConstants.XSD_NEGATIVEINTEGER, NegativeInteger.class.getName() );
+
+        // a xsd:positiveInteger
+        addTypemapping(SchemaConstants.XSD_POSITIVEINTEGER, PositiveInteger.class.getName());
+
+        // a xsd:nonPositiveInteger
+        addTypemapping(SchemaConstants.XSD_NONPOSITIVEINTEGER, NonPositiveInteger.class.getName());
+
+        // a xsd:Name
+        addTypemapping(SchemaConstants.XSD_NAME, Name.class.getName());
+
+        // a xsd:NCName
+        addTypemapping(SchemaConstants.XSD_NCNAME, NCName.class.getName());
+
+         // a xsd:ID
+        addTypemapping(SchemaConstants.XSD_ID, Id.class.getName());
+
+        // a xml:lang
+       // addTypemapping(SchemaConstants.XML_LANG,Language.class.getName());
+
+        // a xsd:language
+        addTypemapping(SchemaConstants.XSD_LANGUAGE, Language.class.getName());
+
+        // a xsd:NmToken
+        addTypemapping(SchemaConstants.XSD_NMTOKEN, NMToken.class.getName());
+
+        // a xsd:NmTokens
+        addTypemapping(SchemaConstants.XSD_NMTOKENS, NMTokens.class.getName());
+
+        // a xsd:NOTATION
+        addTypemapping(SchemaConstants.XSD_NOTATION, Notation.class.getName());
+
+        // a xsd:XSD_ENTITY
+        addTypemapping(SchemaConstants.XSD_ENTITY, Entity.class.getName());
+
+        // a xsd:XSD_ENTITIES
+        addTypemapping(SchemaConstants.XSD_ENTITIES, Entities.class.getName());
+
+        // a xsd:XSD_IDREF
+        addTypemapping(SchemaConstants.XSD_IDREF, IDRef.class.getName());
+
+        // a xsd:XSD_XSD_IDREFS
+        addTypemapping(SchemaConstants.XSD_IDREFS, IDRefs.class.getName());
+
+        // a xsd:Duration
+        addTypemapping(SchemaConstants.XSD_DURATION, Duration.class.getName() );
+
+        // a xsd:anyURI
+        addTypemapping(SchemaConstants.XSD_ANYURI, URI.class.getName() );
+
+
 
     }
     private static void addTypemapping(QName name,String str) {
