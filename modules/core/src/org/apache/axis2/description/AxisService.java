@@ -24,13 +24,13 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.phaseresolver.PhaseResolver;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.ExtensionConstants;
 import org.apache.wsdl.extensions.SOAPOperation;
 import org.apache.wsdl.impl.WSDLInterfaceImpl;
 import org.apache.wsdl.impl.WSDLServiceImpl;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
@@ -161,6 +161,8 @@ public class AxisService
                 this.addMapping((String) paramter.getValue(), axisOperation);
             }
 //            pr.buildModuleOperation(axisOperation);
+            //this opration is a control opeartion.
+            axisOperation.setControlOperation(true);
             this.addOperation(axisOperation);
         }
     }
@@ -521,6 +523,37 @@ public class AxisService
         return this.getServiceInterface().getOperations();
     }
 
+    /**
+     * To get only the publish operations
+     */
+
+    public ArrayList getPublishedOperations() {
+        Iterator op_itr = getOperations().values().iterator();
+        ArrayList operationList= new ArrayList();
+        while (op_itr.hasNext()) {
+            AxisOperation operation = (AxisOperation) op_itr.next();
+            if(!operation.isControlOperation()){
+                operationList.add(operation);
+            }
+        }
+       return operationList;
+    }
+
+    /**
+     * To get the control operation which are added by module like RM
+     */
+    public ArrayList getControlOperations(){
+       Iterator op_itr = getOperations().values().iterator();
+        ArrayList operationList= new ArrayList();
+        while (op_itr.hasNext()) {
+            AxisOperation operation = (AxisOperation) op_itr.next();
+            if(operation.isControlOperation()){
+                operationList.add(operation);
+            }
+        }
+       return operationList;
+    }
+
     public AxisOperation getOperation(String ncName) {
         return (AxisOperation) this.getServiceInterface().getOperations()
                 .get(ncName);
@@ -852,5 +885,6 @@ public class AxisService
     public ArrayList getModules() {
         return mdoulesList;
     }
+
 
 }

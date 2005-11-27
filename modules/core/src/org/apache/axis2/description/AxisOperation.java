@@ -67,6 +67,8 @@ public abstract class AxisOperation  implements
 
     //To store deploytime module refs
     private ArrayList modulerefs;
+    //to hide control operation , operation which added by RM like module
+    private boolean controlOperation = false;
 
 
 
@@ -597,5 +599,13 @@ public abstract class AxisOperation  implements
         this.wsamappingList = wsamappingList;
     }
 
-    
+    public boolean isControlOperation() {
+        return controlOperation;
+    }
+
+    public void setControlOperation(boolean controlOperation) {
+        this.controlOperation = controlOperation;
+    }
+
+
 }
