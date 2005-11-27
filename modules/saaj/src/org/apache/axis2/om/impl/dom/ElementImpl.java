@@ -15,6 +15,15 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMConstants;
 import org.apache.axis2.om.OMElement;
@@ -25,7 +34,6 @@ import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
-import org.apache.axis2.om.impl.llom.OMStAXWrapper;
 import org.apache.axis2.om.impl.llom.traverse.OMChildElementIterator;
 import org.apache.axis2.om.impl.llom.util.EmptyIterator;
 import org.apache.axis2.om.util.ElementHelper;
@@ -36,14 +44,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.TypeInfo;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Implementation of the org.w3c.dom.Element and org.apache.axis2.om.Element
@@ -790,7 +790,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
             throw new UnsupportedOperationException(
                     "The parser is already consumed!");
         }
-        return new OMStAXWrapper(builder, this, cache);
+        return new DOMStAXWrapper(builder, this, cache);
     }
     
 	
