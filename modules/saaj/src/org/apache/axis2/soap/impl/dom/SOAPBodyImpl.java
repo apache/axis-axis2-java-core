@@ -35,7 +35,7 @@ public abstract class SOAPBodyImpl extends SOAPElement implements SOAPBody,
 	/**
 	 * Field hasSOAPFault
 	 */
-	private boolean hasSOAPFault = false;
+	protected boolean hasSOAPFault = false;
 
 	/**
 	 * @param envelope

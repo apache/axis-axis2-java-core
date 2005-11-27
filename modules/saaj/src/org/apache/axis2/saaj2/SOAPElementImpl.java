@@ -32,7 +32,6 @@ import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
@@ -46,7 +45,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 	 * org.apache.axis2.om.impl.dom.ElementImpl since this class
 	 * must extend SNodeImpl
 	 */
-	private ElementImpl element;
+	protected ElementImpl element;
 	
 	public SOAPElementImpl(ElementImpl element) {
 		this.element = element;
@@ -85,8 +84,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 	 * @see javax.xml.soap.SOAPElement#addChildElement(javax.xml.soap.Name)
 	 */
 	public SOAPElement addChildElement(Name name) throws SOAPException {
-		this.addChildElement(name.getLocalName(),name.getPrefix(), name.getURI());
-		return this;
+		return this.addChildElement(name.getLocalName(),name.getPrefix(), name.getURI());
 	}
 
 	/* (non-Javadoc)
@@ -94,7 +92,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 	 */
 	public SOAPElement addChildElement(SOAPElement soapElement) throws SOAPException {
 		this.element.appendChild(soapElement);
-		return this;
+		return soapElement;
 	}
 
 	/* (non-Javadoc)
@@ -102,8 +100,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 	 */
 	public SOAPElement addChildElement(String localName, String prefix, String uri) throws SOAPException {
 		this.element.declareNamespace(uri, prefix);
-		this.addChildElement(localName, prefix);
-		return this;
+		return this.addChildElement(localName, prefix);
 	}
 
 	/* (non-Javadoc)
@@ -114,18 +111,18 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 		if(namespaceURI == null) {
 			throw new SOAPException("Namespace not declared for the give prefix: " + prefix);
 		}
-		Element elem = this.getOwnerDocument().createElementNS(namespaceURI, localName);
+		SOAPElementImpl elem = new SOAPElementImpl((ElementImpl)this.getOwnerDocument().createElementNS(namespaceURI, localName));
 		this.element.appendChild(elem);
-		return this;
+		return elem;
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String)
 	 */
 	public SOAPElement addChildElement(String localName) throws SOAPException {
-		Element elem = this.getOwnerDocument().createElement(localName);
+		SOAPElementImpl elem = new SOAPElementImpl((ElementImpl)this.getOwnerDocument().createElement(localName));
 		this.element.appendChild(elem);
-		return this;
+		return elem;
 	}
 
 	/* (non-Javadoc)

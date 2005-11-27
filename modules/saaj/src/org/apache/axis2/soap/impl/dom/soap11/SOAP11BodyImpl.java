@@ -22,6 +22,7 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.dom.SOAPBodyImpl;
+import org.apache.axis2.soap.impl.dom.soap12.SOAP12FaultImpl;
 
 public class SOAP11BodyImpl extends SOAPBodyImpl {
     /**
@@ -42,6 +43,8 @@ public class SOAP11BodyImpl extends SOAPBodyImpl {
     }
 
     public SOAPFault addFault(Exception e) throws OMException {
-        return new SOAP11Factory().createSOAPFault(this, e);
+    	SOAPFault soapFault = new SOAP12FaultImpl(this, e);
+    	this.hasSOAPFault = true;
+    	return soapFault;
     }
 }

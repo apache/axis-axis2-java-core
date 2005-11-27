@@ -43,7 +43,7 @@ public class SOAP12BodyImpl extends SOAPBodyImpl {
 
     public SOAPFault addFault(Exception e) throws OMException {
         SOAPFault soapFault = new SOAP12FaultImpl(this, e);
-        addFault(soapFault);
+        this.hasSOAPFault = true;
         return soapFault;
     }
 }
