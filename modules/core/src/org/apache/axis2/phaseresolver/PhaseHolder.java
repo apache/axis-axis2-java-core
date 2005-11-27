@@ -59,16 +59,17 @@ public class PhaseHolder {
     /**
      * Method addHandler
      *
-     * @param handler
+     * @param handlerDesc
      * @throws PhaseException
      */
-    public void addHandler(HandlerDescription handler) throws PhaseException {
-        String phaseName = handler.getRules().getPhaseName();
+    public void addHandler(HandlerDescription handlerDesc) throws PhaseException {
+        String phaseName = handlerDesc.getRules().getPhaseName();
         if (isPhaseExist(phaseName)) {
-            getPhase(phaseName).addHandler(handler);
+            getPhase(phaseName).addHandler(handlerDesc);
         } else {
-            throw new PhaseException(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_PHASE,
-                    phaseName, handler.getName().getLocalPart()));
+            throw new PhaseException(Messages.getMessage(
+                    DeploymentErrorMsgs.INVALID_PHASE,
+                    phaseName, handlerDesc.getName().getLocalPart()));
         }
     }
 

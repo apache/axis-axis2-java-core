@@ -98,14 +98,16 @@ public class ArchiveFileData {
         this.classLoader = classLoader;
     }
 
-    public void setClassLoader(boolean extarctArichive, ClassLoader parent) throws AxisFault {
-        if (! extarctArichive) {
+    public void setClassLoader(boolean extractArichive, ClassLoader parent) throws AxisFault {
+        if (! extractArichive) {
             // has to be craeted taking that file to the account
             if (file != null) {
                 URL[] urlsToLoadFrom;
                 try {
                     if (!file.exists()) {
-                        throw new AxisFault(Messages.getMessage(DeploymentErrorMsgs.FNF));
+                        throw new AxisFault(Messages.getMessage(
+                                DeploymentErrorMsgs.FILE_NOT_FOUND,
+                                file.getAbsolutePath()));
                     }
                     urlsToLoadFrom = new URL[]{file.toURL()};
                     classLoader =

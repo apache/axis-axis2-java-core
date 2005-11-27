@@ -350,7 +350,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 inPhases.get(1).equals(PhaseMetadata.PHASE_PRE_DISPATCH) &&
                 inPhases.get(2).equals(PhaseMetadata.PHASE_DISPATCH) &&
                 inPhases.get(3).equals(PhaseMetadata.PHASE_POST_DISPATCH))) {
-            throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_PHASE));
+            throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.INVALID_PHASE));
         }
         //  ArrayList outPhaes = tempdata.getOutphases();
         //TODO do the validation code here
@@ -376,39 +376,43 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
 
-    private void addServiceGroup(AxisServiceGroup serviceGroup, ArrayList service) throws AxisFault {
+    private void addServiceGroup(AxisServiceGroup serviceGroup,
+                                 ArrayList service) throws AxisFault {
 //        Iterator services = currentArchiveFile.getService().values().iterator();
         Iterator services = service.iterator();//              currentArchiveFile.getDeploybleServices().iterator();
         while (services.hasNext()) {
             AxisService axisService = (AxisService) services.next();
 //            loadServiceProperties(axisService);
             Utils.loadServiceProperties(axisService);
-            axisService.setFileName(currentArchiveFile.getFile().getAbsolutePath());
+            axisService.setFileName(
+                    currentArchiveFile.getFile().getAbsolutePath());
 
             //module form serviceGroup
             ArrayList groupModules = serviceGroup.getModules();
             for (int i = 0; i < groupModules.size(); i++) {
-                ModuleDescription module = axisConfig.getModule((QName) groupModules.get(i));
-                if (module != null) {
-                    axisService.engageModule(module, axisConfig);
-                } else {
+                ModuleDescription module =
+                        axisConfig.getModule((QName) groupModules.get(i));
+                if (module == null) {
                     throw new DeploymentException(Messages.getMessage(
-                            DeploymentErrorMsgs.IN_VALID_MODUELE_REF, axisService.getName().
-                            getLocalPart(), ((QName) groupModules.get(i)).getLocalPart()));
+                            DeploymentErrorMsgs.BAD_MODULE_FROM_SERVICE,
+                            axisService.getName().getLocalPart(),
+                            ((QName) groupModules.get(i)).getLocalPart()));
                 }
+                axisService.engageModule(module, axisConfig);
             }
 
             //modules from <service>
             ArrayList list = axisService.getModules();
             for (int i = 0; i < list.size(); i++) {
-                ModuleDescription module = axisConfig.getModule((QName) list.get(i));
-                if (module != null) {
-                    axisService.engageModule(module, axisConfig);
-                } else {
+                ModuleDescription module =
+                        axisConfig.getModule((QName) list.get(i));
+                if (module == null) {
                     throw new DeploymentException(Messages.getMessage(
-                            DeploymentErrorMsgs.IN_VALID_MODUELE_REF, axisService.getName().
-                            getLocalPart(), ((QName) list.get(i)).getLocalPart()));
+                            DeploymentErrorMsgs.BAD_MODULE_FROM_SERVICE,
+                            axisService.getName().getLocalPart(),
+                            ((QName) list.get(i)).getLocalPart()));
                 }
+                axisService.engageModule(module, axisConfig);
             }
 
             HashMap opeartions = axisService.getOperations();
@@ -423,8 +427,9 @@ public class DeploymentEngine implements DeploymentConstants {
                         opDesc.engageModule(module,axisConfig);
                     } else {
                         throw new DeploymentException(Messages.getMessage(
-                                DeploymentErrorMsgs.IN_VALID_MODUELE_REF_BY_OP, opDesc.getName()
-                                .getLocalPart(), moduleName.getLocalPart()));
+                                DeploymentErrorMsgs.BAD_MODULE_FROM_OPERATION,
+                                opDesc.getName().getLocalPart(),
+                                moduleName.getLocalPart()));
                     }
                 }
 
@@ -505,7 +510,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 log.info(Messages.getMessage(
                                         DeploymentErrorMsgs.DEPLOYING_WS, currentArchiveFile.getName()));
                             } catch (DeploymentException de) {
-                                log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
+                                log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
                                         currentArchiveFile.getName(), de.getMessage()));
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 de.printStackTrace(error_ptintWriter);
@@ -513,7 +518,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                         errorWriter.toString();
                                 de.printStackTrace();
                             } catch (AxisFault axisFault) {
-                                log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
+                                log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
                                         currentArchiveFile.getName(), axisFault.getMessage()));
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 axisFault.printStackTrace(error_ptintWriter);
@@ -521,7 +526,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                         errorWriter.toString();
 
                             } catch (Exception e) {
-                                log.info(Messages.getMessage(DeploymentErrorMsgs.IN_VALID_SERVICE,
+                                log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
                                         currentArchiveFile.getName(), e.getMessage()));
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 e.printStackTrace(error_ptintWriter);

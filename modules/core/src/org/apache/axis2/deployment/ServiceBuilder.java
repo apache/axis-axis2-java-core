@@ -298,7 +298,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                     String refName = moduleRefAttribute.getAttributeValue();
                     if (axisConfig.getModule(new QName(refName)) == null) {
                         throw new DeploymentException(Messages.getMessage(
-                                DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));
+                                DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
                     } else {
                         service.addModuleref(new QName(refName));
                     }

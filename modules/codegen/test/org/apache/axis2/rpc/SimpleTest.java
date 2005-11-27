@@ -165,6 +165,7 @@ public class SimpleTest extends TestCase {
 
     public void testRPC() throws Exception {
         Call call = new Call("test-resources/xmls");
+//        Call call = new Call(".");
 
         // Make the SOAP envelope
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();

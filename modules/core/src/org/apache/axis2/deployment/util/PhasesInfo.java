@@ -19,7 +19,9 @@ package org.apache.axis2.deployment.util;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
+import org.apache.axis2.om.OMElement;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 public class PhasesInfo {
@@ -75,6 +77,12 @@ public class PhasesInfo {
             }
         }
         return oprationINPhases;
+    }
+
+    public Phase makePhase(OMElement phaseElement) {
+        String phaseName = phaseElement.getAttribute(new QName("foo")).getAttributeValue();
+        Phase phase = new Phase(phaseName);
+        return phase;
     }
 
     public ArrayList getOperationOutPhases() {

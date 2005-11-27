@@ -70,7 +70,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
                 String serviceName = serviceNameatt.getAttributeValue();
                 if (serviceName == null) {
                     throw new DeploymentException(Messages.getMessage(
-                            DeploymentErrorMsgs.SEERVICE_NAME_ERROR));
+                            DeploymentErrorMsgs.SERVICE_NAME_ERROR));
                 } else {
                     AxisService axisService = (AxisService) wsdlServices.get(serviceName);
                     if (axisService == null) {
@@ -129,7 +129,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
                     String refName = moduleRefAttribute.getAttributeValue();
                     if (axisConfig.getModule(new QName(refName)) == null) {
                         throw new DeploymentException(Messages.getMessage(
-                                DeploymentErrorMsgs.MODEULE_NOT_FOUND, refName));
+                                DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
                     } else {
                         axisServiceGroup.addModuleref(new QName(refName));
                     }

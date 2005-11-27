@@ -137,16 +137,19 @@ public class Phase {
      * @throws org.apache.axis2.AxisFault
      */
     public void invoke(MessageContext msgctx) throws AxisFault {
+        if (log.isDebugEnabled()) {
+            log.debug("Invoking phase \"" + phaseName + "\"");
+        }
         msgctx.setPausedPhaseName(this.getPhaseName());
         //If phase first Hnadler is there then it should run first
         if (phaseFirst != null) {
             if (msgctx.isPaused()) {
                 return;
             } else {
-                log.info("Invoke the Phase first handler "
+                log.info("Invoke PhaseFirst handler '"
                         + phaseFirst.getName()
-                        + "with in the Phase "
-                        + phaseName);
+                        + "' in Phase '"
+                        + phaseName + "'");
                 phaseFirst.invoke(msgctx);
             }
         }
@@ -159,10 +162,10 @@ public class Phase {
                 Handler handler = (Handler) handlers.get(
                         indexOfHandlerToExecute);
                 if (handler != null) {
-                    log.info("Invoke the Handler "
+                    log.info("Invoking Handler '"
                             + handler.getName()
-                            + "with in the Phase "
-                            + phaseName);
+                            + "' in Phase '"
+                            + phaseName + "'");
                     handler.invoke(msgctx);
                     //This line should be after the invoke as if the invocation failed this handlers is takn care of and
                     //no need to revoke agien
@@ -173,10 +176,10 @@ public class Phase {
         //If phase last handler is there will invoke that here
         if (phaseLast != null) {
             if (!msgctx.isPaused()) {
-                log.info("Invoke the Phase first handler "
+                log.info("Invoke PhaseLast handler '"
                         + phaseLast.getName()
-                        + "with in the Phase "
-                        + phaseName);
+                        + "' in Phase '"
+                        + phaseName + "'");
                 phaseLast.invoke(msgctx);
             }
         }

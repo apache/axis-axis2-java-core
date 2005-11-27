@@ -112,26 +112,26 @@ public class ArchiveReader implements DeploymentConstants {
         if (isDirectory) {
             try {
                 File meta_inf = new File(serviceFile, META_INF);
-                if (meta_inf.exists()) {
-                    File files [] = meta_inf.listFiles();
-                    for (int i = 0; i < files.length; i++) {
-                        File file1 = files[i];
-                        String fileName = file1.getName();
-                        if (fileName.endsWith(".wsdl") || fileName.endsWith(".WSDL")) {
-                            InputStream in = new FileInputStream(file1);
-                            AxisService service = processWSDLFile(in);
-                            servicesMap.put(service.getName().getLocalPart(), service);
-                            try {
-                                in.close();
-                            } catch (IOException e) {
-                                log.info(e);
-                            }
-                        }
-
-                    }
-                } else {
+                if (!meta_inf.exists()) {
                     throw new DeploymentException(Messages.getMessage(
-                            DeploymentErrorMsgs.INVALID_SERVICE));
+                            DeploymentErrorMsgs.NO_META_INF,
+                            serviceFile.getName()));
+                }
+                File files [] = meta_inf.listFiles();
+                for (int i = 0; i < files.length; i++) {
+                    File file1 = files[i];
+                    String fileName = file1.getName();
+                    if (fileName.endsWith(".wsdl") || fileName.endsWith(".WSDL")) {
+                        InputStream in = new FileInputStream(file1);
+                        AxisService service = processWSDLFile(in);
+                        servicesMap.put(service.getName().getLocalPart(), service);
+                        try {
+                            in.close();
+                        } catch (IOException e) {
+                            log.info(e);
+                        }
+                    }
+
                 }
             } catch (FileNotFoundException e) {
                 throw new DeploymentException(e);
@@ -185,12 +185,14 @@ public class ArchiveReader implements DeploymentConstants {
      */
     public ArrayList processServiceGroup(String filename,
                                          DeploymentEngine engine,
-                                         AxisServiceGroup axisServiceGroup, boolean extarctService,
-                                         HashMap wsdls, AxisConfiguration axisConfig)
+                                         AxisServiceGroup axisServiceGroup,
+                                         boolean extractService,
+                                         HashMap wsdls,
+                                         AxisConfiguration axisConfig)
             throws DeploymentException {
         // get attribute values
         boolean foundServiceXML = false;
-        if (! extarctService) {
+        if (!extractService) {
             ZipInputStream zin;
             try {
                 zin = new ZipInputStream(new FileInputStream(filename));
@@ -206,7 +208,9 @@ public class ArchiveReader implements DeploymentConstants {
                 //    zin.close();
                 if (!foundServiceXML) {
                     throw new DeploymentException(
-                            Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND));
+                            Messages.getMessage(
+                                    DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND,
+                                    filename));
                 }
             } catch (Exception e) {
                 throw new DeploymentException(e);
@@ -220,7 +224,7 @@ public class ArchiveReader implements DeploymentConstants {
                     axisServiceGroup.setServiceGroupName(engine.getCurrentFileItem().getName());
                     return buildServiceGroup(in, engine, axisServiceGroup, wsdls, axisConfig);
                 } catch (FileNotFoundException e) {
-                    throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.FNF_WITH_E
+                    throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND
                             , e.getMessage()));
                 } catch (XMLStreamException e) {
                     throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.XTZX_EXCEPTION
@@ -310,7 +314,7 @@ public class ArchiveReader implements DeploymentConstants {
                             engine.getCurrentFileItem().getServiceName())));
                     builder.populateModule();
                 } catch (FileNotFoundException e) {
-                    throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.FNF_WITH_E
+                    throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND
                             , e.getMessage()));
                 }
             } else {

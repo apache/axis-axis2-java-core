@@ -276,7 +276,7 @@ public class DescriptionBuilder implements DeploymentConstants{
                     String refName = moduleRefAttribute.getAttributeValue();
                     if(axisConfig.getModule(new QName(refName)) == null) {
                         throw new DeploymentException(Messages.getMessage(
-                                DeploymentErrorMsgs.MODEULE_NOT_FOUND,
+                                DeploymentErrorMsgs.MODULE_NOT_FOUND,
                                 refName));
                     } else {
                         opeartion.addModule(new QName(refName));
@@ -285,7 +285,7 @@ public class DescriptionBuilder implements DeploymentConstants{
             }
         }catch (AxisFault axisFault) {
             throw new DeploymentException(Messages.getMessage(
-                    DeploymentErrorMsgs.MODEULE_NOT_FOUND,
+                    DeploymentErrorMsgs.MODULE_NOT_FOUND,
                     axisFault.getMessage()));
         }
     }
