@@ -29,6 +29,10 @@ public class ThreadWorker extends Thread {
     private boolean stop;
     private ThreadPool pool;
 
+    public ThreadWorker() {
+        this.setDaemon(true);
+    }
+
     public void setPool(ThreadPool pool) {
         this.pool = pool;
     }
