@@ -25,6 +25,7 @@ import java.util.HashMap;
 
 /**
  * The java type map. uses a static map for caching
+ * Most code from Axis 1 Codebase
  */
 public class JavaTypeMap implements TypeMap {
     
@@ -59,6 +60,9 @@ public class JavaTypeMap implements TypeMap {
 
         // Mapping for xsd:time.  Map to Axis type Time
         addTypemapping(SchemaConstants.XSD_TIME, Time.class.getName());
+        addTypemapping(SchemaConstants.XSD_DATETIME, java.util.Calendar.class.getName());
+        addTypemapping(SchemaConstants.XSD_BASE64, "byte[]");    //todo need to be fixed!
+        addTypemapping(SchemaConstants.XSD_HEXBIN, HexBinary.class.getName());
 
         // These are the g* types (gYearMonth, etc) which map to Axis types
         addTypemapping(SchemaConstants.XSD_YEARMONTH, YearMonth.class.getName());
@@ -67,7 +71,7 @@ public class JavaTypeMap implements TypeMap {
         addTypemapping(SchemaConstants.XSD_DAY, Day.class.getName());
         addTypemapping(SchemaConstants.XSD_MONTHDAY, MonthDay.class.getName());
 
-// xsd:token
+         // xsd:token
         addTypemapping(SchemaConstants.XSD_TOKEN, Token.class.getName());
 
         // a xsd:normalizedString

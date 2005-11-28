@@ -1,6 +1,10 @@
 package org.apache.axis2.databinding.schema.util;
 
+import org.apache.axis2.databinding.schema.SchemaConstants;
+import org.apache.axis2.databinding.schema.types.*;
+
 import java.util.List;
+import java.util.Calendar;
 import java.lang.reflect.Array;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -66,7 +70,16 @@ public class ConverterUtil {
 
 
 
-    /* String to primitive type conversions */
+    /* String to java type conversions
+       These methods have a special signature structure
+       <code>convertTo</code> followed by the schema type name
+       Say for int, convertToint(String) is the converter method
+
+       Not very elegant but it seems to be the only way!
+
+    */
+
+
     public static int convertToint(String s){
         return Integer.parseInt(s);
     }
@@ -95,7 +108,118 @@ public class ConverterUtil {
         return Boolean.getBoolean(s);
     }
 
-    /* primitive types to Object conversion methods */
+    public static YearMonth convertTogYearMonth(String s){
+        return new YearMonth(s);
+    }
+
+    public static MonthDay convertTogMonthDay(String s){
+        return new MonthDay(s);
+    }
+
+    public static Year convertTogYear(String s){
+        return new Year(s);
+    }
+
+    public static Month convertTogMonth(String s){
+        return new Month(s);
+    }
+
+    public static Day convertTogDay(String s){
+        return new Day(s);
+    }
+
+    public static Duration convertToduration(String s){
+        return new Duration(s);
+    }
+
+
+    public static Token convertTotoken(String s){
+        return new Token(s);
+    }
+    public static NormalizedString convertTonormalizedString(String s){
+        return new NormalizedString(s);
+    }
+    public static UnsignedLong convertTounsignedLong(String s){
+        return new UnsignedLong(s);
+    }
+    public static UnsignedInt convertTounsignedInt(String s){
+        return new UnsignedInt(s);
+    }
+    public static UnsignedShort convertTounsignedShort(String s){
+        return new UnsignedShort(s);
+    }
+    public static UnsignedByte convertTounsignedByte(String s){
+        return new UnsignedByte(s);
+    }
+    public static NonNegativeInteger convertTononNegativeInteger(String s){
+        return new NonNegativeInteger(s);
+    }
+    public static NegativeInteger convertTonegativeInteger(String s){
+        return new NegativeInteger(s);
+    }
+    public static PositiveInteger convertTopositiveInteger(String s){
+        return new PositiveInteger(s);
+    }
+    public static NonPositiveInteger convertTononPositiveInteger(String s){
+        return new NonPositiveInteger(s);
+    }
+
+    public static Name convertToName(String s){
+        return new Name(s);
+    }
+    public static NCName convertToNCName(String s){
+        return new NCName(s);
+    }
+    public static Id convertToID(String s){
+        return new Id(s);
+    }
+    public static Language convertTolanguage(String s){
+        return new Language(s);
+    }
+    public static NMToken convertToNMTOKEN(String s){
+        return new NMToken(s);
+    }
+
+    public static NMTokens convertToNMTOKENS(String s){
+        return new NMTokens(s);
+    }
+
+    public static Notation convertToNOTATION(String s){
+        return null; //todo Need to fix this
+        // return new Notation(s);
+    }
+
+    public static Entity convertToENTITY(String s){
+        return new Entity(s);
+    }
+
+    public static Entities convertToENTITIES(String s){
+        return new Entities(s);
+    }
+
+    public static IDRef convertToIDREF(String s){
+        return new IDRef(s);
+    }
+    public static IDRefs convertToIDREFS(String s){
+        return new IDRefs(s);
+    }
+
+    public static URI convertToanyURI(String s) throws Exception{
+        return new URI(s);
+    }
+
+     public static int convertTointeger(String s) throws Exception{
+        return Integer.parseInt(s);
+    }
+
+     public static Calendar convertTodateTime(String s) throws Exception{ //need to fix this
+        return null;
+    }
+
+
+    /* ################################################################# */
+
+    /* java Primitive types to Object conversion methods */
     public static Object convertToObject(String i){
         return i;
     }
