@@ -51,6 +51,7 @@ public class PrettyPrinter {
             // format and overwrite the given input file
             Method format = clazz.getMethod("format", new Class[]{});
             format.invoke(prettifier, new Object[]{});
+            log.info("Pretty print file : " + file);
         } catch (ClassNotFoundException e) {
             log.info("Jalopy not found - unable to pretty print " + file);
         } catch (Exception e) {

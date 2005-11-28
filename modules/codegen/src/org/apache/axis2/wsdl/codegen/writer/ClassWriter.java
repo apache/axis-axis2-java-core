@@ -21,6 +21,7 @@ import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.XSLTTemplateProcessor;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
@@ -32,7 +33,9 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
 
-public abstract class ClassWriter {
+public abstract class ClassWriter {        
+    
+    private static Log log = LogFactory.getLog(ClassWriter.class);
 
     protected File outputFileLocation = null;
     protected File outputFile = null;
@@ -122,6 +125,8 @@ public abstract class ClassWriter {
         fileExists = outputFile.exists();
         if (!fileExists){
             this.stream = new FileOutputStream(outputFile);
+        } else {
+            log.info(Messages.getMessage("fileExistsNoOverwrite", outputFile.toString()));
         }
     }
 

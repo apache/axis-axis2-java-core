@@ -62,6 +62,18 @@
         </ant:echo>
     </goal>
 
+    <postGoal name="java:prepare-filesystem">
+      <u:file var="file" name="${maven.home}/lib/jalopy.jar"/>
+      <j:if test="${file.exists()}">
+        <ant:path id="jalopy.library">
+          <ant:fileset dir="${maven.home}/lib">
+            <ant:include name="jalopy.jar"/>
+          </ant:fileset>
+        </ant:path>
+        <maven:addPath id="maven.dependency.classpath" refid="jalopy.library"/>
+      </j:if>
+    </postGoal>
+
     <!-- Remove classes which depend on changed files, so they will rebuild. -->
     <!-- TODO: Fix me 
     <preGoal name="java:compile">

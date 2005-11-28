@@ -10,18 +10,6 @@
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
 
-    <preGoal name="test:test">
-      <util:file var="file" name="${maven.home}/lib/jalopy.jar"/>
-      <j:if test="${file.exists()}">
-        <ant:path id="jalopy.library">
-          <ant:fileset dir="${maven.home}/lib">
-            <ant:include name="jalopy.jar"/>
-          </ant:fileset>
-        </ant:path>
-        <maven:addPath id="maven.dependency.classpath" refid="jalopy.library"/>
-      </j:if>
-    </preGoal>
-
     <postGoal name="java:jar-resources">
       <tstamp>
         <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en"/>
@@ -42,15 +30,6 @@
 
      <!-- run the schema compiler -->
    <postGoal name="test:compile">
-      <util:file var="file" name="${maven.home}/lib/jalopy.jar"/>
-      <j:if test="${file.exists()}">
-        <ant:path id="jalopy.library">
-          <ant:fileset dir="${maven.home}/lib">
-            <ant:include name="jalopy.jar"/>
-          </ant:fileset>
-        </ant:path>
-        <maven:addPath id="maven.dependency.classpath" refid="jalopy.library"/>
-      </j:if> 
         <j:set var="compiled.classes.dir" value="target/classes"/>   <!-- Theres got to be a better way to do this -->
         <j:set var="schema.source.dir" value="test-resources/xsd"/>
         <j:set var="schema.output.base.dir" value="target/schema"/>

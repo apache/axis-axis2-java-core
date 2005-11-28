@@ -161,6 +161,9 @@
         <include name="**/*.properties"/>
         <include name="**/*.xsl"/>
       </fileset>
+      <fileset dir="${basedir}/modules/core/conf">
+        <include name="**/*.properties"/>
+      </fileset>
       <fileset dir="${basedir}/modules/codegen/src">
         <include name="**/*.properties"/>
         <include name="**/*.xsl"/>
