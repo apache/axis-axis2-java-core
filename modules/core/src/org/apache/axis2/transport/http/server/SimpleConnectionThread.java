@@ -96,8 +96,8 @@ public class SimpleConnectionThread implements Runnable {
             } while (this.conn.isKeepAlive());
         } catch (InterruptedIOException e) {
         } catch (IOException e) {
-            if (!this.stopped && !Thread.interrupted() && LOG.isWarnEnabled()) {
-                LOG.warn("[" + this.name + "] I/O error: " + e.getMessage());
+            if (!this.stopped && !Thread.interrupted() && LOG.isDebugEnabled()) {
+                LOG.debug("[" + this.name + "] I/O error: " + e.getMessage());
             }
         } finally {
             destroy();

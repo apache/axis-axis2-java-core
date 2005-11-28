@@ -247,16 +247,8 @@ public class SimpleHttpServer implements Runnable {
                             conn, 
                             this.connections,
                             this.requestHandler));
-/*                    Thread t = new SimpleConnectionThread(
-                            tg,
-                            this.testname + " thread " + this.count,
-                            conn, 
-                            this.connections,
-                            this.requestHandler);
-                    t.setDaemon(true);
-                    t.start();*/
                 } catch (IOException e) {
-                    LOG.error("I/O error: " + e.getMessage());
+                    LOG.debug("I/O error: " + e.getMessage());
                 }
                 this.count++;
                 Thread.sleep(100);
@@ -264,7 +256,7 @@ public class SimpleHttpServer implements Runnable {
         } catch (InterruptedException accept) {
         } catch (IOException e) {
             if (!stopped) {
-                LOG.error("I/O error: " + e.getMessage());
+                LOG.debug("I/O error: " + e.getMessage());
             }
         } finally {
             destroy();
