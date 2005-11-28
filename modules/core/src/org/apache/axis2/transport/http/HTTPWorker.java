@@ -44,6 +44,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.net.SocketException;
 
 public class HTTPWorker implements HttpRequestHandler {
     protected Log log = LogFactory.getLog(getClass().getName());
@@ -151,11 +152,11 @@ public class HTTPWorker implements HttpRequestHandler {
             }
 
             OperationContext operationContext = msgContext.getOperationContext();
-            
+
             Object contextWritten = null;
             if (operationContext!=null)
-            	contextWritten = operationContext.getProperty(Constants.RESPONSE_WRITTEN);
-            
+                contextWritten = operationContext.getProperty(Constants.RESPONSE_WRITTEN);
+
             if (contextWritten != null &&
                     Constants.VALUE_TRUE.equals(contextWritten)) {
                 response.setStatusLine(
@@ -170,7 +171,7 @@ public class HTTPWorker implements HttpRequestHandler {
             conn.writeResponse(response);
         } catch (Throwable e) {
             if(!(e instanceof java.net.SocketException)) {
-                log.warn(e.getMessage(), e);
+                log.debug(e.getMessage(), e);
             }
             try {
                 AxisEngine engine = new AxisEngine(configurationContext);
@@ -182,7 +183,9 @@ public class HTTPWorker implements HttpRequestHandler {
                     response.setBody(new ByteArrayInputStream(baos.toByteArray()));
                     setResponseHeaders(conn, request, response,baos.toByteArray().length);
                     conn.writeResponse(response);
-                } 
+                }
+            } catch (SocketException e1) {
+                log.debug(e1.getMessage(), e1);
             } catch (Exception e1) {
                 log.warn(e1.getMessage(), e1);
             }
@@ -267,7 +270,7 @@ public class HTTPWorker implements HttpRequestHandler {
                 } else {
                     if (HTTPConstants.HEADER_PROTOCOL_10.equals(version.getValue())) {
                         httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
-                    } 
+                    }
                 }
             }
 
