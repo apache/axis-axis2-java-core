@@ -417,8 +417,18 @@ public class OMElementImpl extends OMNodeImpl
      * @return an OMAttribute with the given name if found, or null
      */
     public OMAttribute getAttribute(QName qname) {
-
         return attributes == null ? null : (OMAttribute) attributes.get(qname);
+    }
+
+    /**
+     * Return a named attribute's value, if present.
+     *
+     * @param qname the qualified name to search for
+     * @return a String containing the attribute value, or null
+     */
+    public String getAttributeValue(QName qname) {
+        OMAttribute attr = getAttribute(qname);
+        return (attr == null) ? null : attr.getAttributeValue();
     }
 
     /**

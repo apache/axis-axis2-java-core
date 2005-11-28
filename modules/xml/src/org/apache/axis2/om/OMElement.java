@@ -138,6 +138,14 @@ public interface OMElement extends OMNode, OMContainer {
     public OMAttribute getAttribute(QName qname);
 
     /**
+     * Return a named attribute's value, if present.
+     *
+     * @param qname the qualified name to search for
+     * @return a String containing the attribute value, or null
+     */
+    public String getAttributeValue(QName qname);
+
+    /**
      * This will add an attribute to this element.
      * <p/>
      * <p>There is no order implied by added attributes.</p>

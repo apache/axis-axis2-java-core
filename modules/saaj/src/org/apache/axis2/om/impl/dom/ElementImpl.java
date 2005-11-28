@@ -568,9 +568,20 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.om.OMElement#getBuilder()
-	 */
+    /**
+     * Return a named attribute's value, if present.
+     *
+     * @param qname the qualified name to search for
+     * @return a String containing the attribute value, or null
+     */
+    public String getAttributeValue(QName qname) {
+        OMAttribute attr = getAttribute(qname);
+        return (attr == null) ? null : attr.getAttributeValue();
+    }
+
+    /* (non-Javadoc)
+    * @see org.apache.axis2.om.OMElement#getBuilder()
+    */
 	public OMXMLParserWrapper getBuilder() {
 		return this.builder;
 	}
