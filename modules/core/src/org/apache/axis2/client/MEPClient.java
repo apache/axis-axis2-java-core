@@ -39,8 +39,8 @@ import org.apache.axis2.soap.SOAPHeader;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This is the super class for all the MEPClients.
@@ -145,7 +145,7 @@ public abstract class MEPClient {
      * @return
      * @throws AxisFault
      */
-    public TransportOutDescription inferTransport(EndpointReference epr) throws AxisFault {
+    protected TransportOutDescription inferTransport(EndpointReference epr) throws AxisFault {
         String transport = null;
         if (epr != null) {
             String toURL = epr.getAddress();
@@ -171,7 +171,7 @@ public abstract class MEPClient {
      * @return
      * @throws AxisFault
      */
-    public SOAPEnvelope createDefaultSOAPEnvelope() throws AxisFault {
+    protected SOAPEnvelope createDefaultSOAPEnvelope() throws AxisFault {
         if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             return OMAbstractFactory.getSOAP12Factory().getDefaultEnvelope();
         } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
@@ -312,10 +312,6 @@ public abstract class MEPClient {
     // ==============================================================================
     //  Getteres and Setters
     // ==============================================================================
-    public String getSoapAction() {
-        return soapAction;
-    }
-
 
     private SOAPFactory getCorrectSOAPFactory(MessageContext msgCtx) {
         String soapNSURI = msgCtx.getEnvelope().getNamespace().getName();

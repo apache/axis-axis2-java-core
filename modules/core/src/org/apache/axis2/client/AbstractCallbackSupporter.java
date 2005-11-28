@@ -34,11 +34,8 @@ public abstract class AbstractCallbackSupporter {
      * @param qNames
      */
     protected static void optimizeContent(OMElement element, QName[] qNames){
-        int length = qNames.length;
-        QName qName;
-        for (int i = 0; i < length; i++) {
-            qName = qNames[i];
-            markElementsAsOptimized(qName,element);
+        for (int i = 0; i < qNames.length; i++) {
+            markElementsAsOptimized(qNames[i],element);
         }
     }
 

@@ -1,7 +1,9 @@
-package org.apache.axis2.client;
+package org.apache.axis2.util;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.client.async.AsyncResult;
+import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.MessageReceiver;
 
@@ -17,14 +19,14 @@ public class CallbackReceiver implements MessageReceiver {
 
     public static String SERVICE_NAME = "ClientService";
 
-    private HashMap callbackstore;
+    private HashMap callbackStore;
 
     public CallbackReceiver() {
-        callbackstore = new HashMap();
+        callbackStore = new HashMap();
     }
 
     public void addCallback(String MsgID, Callback callback) {
-        callbackstore.put(MsgID, callback);
+        callbackStore.put(MsgID, callback);
     }
 
     public void receive(MessageContext messgeCtx) throws AxisFault {
@@ -32,7 +34,7 @@ public class CallbackReceiver implements MessageReceiver {
                 .getRelatesTo();
 
         String messageID = relatesTO.getValue();
-        Callback callback = (Callback) callbackstore.get(messageID);
+        Callback callback = (Callback) callbackStore.get(messageID);
         AsyncResult result = new AsyncResult(messgeCtx);
         if (callback != null) {
             callback.onComplete(result);

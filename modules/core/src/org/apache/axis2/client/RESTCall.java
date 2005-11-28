@@ -17,6 +17,7 @@
 package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;

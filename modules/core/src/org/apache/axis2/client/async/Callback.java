@@ -1,5 +1,4 @@
-package org.apache.axis2.client;
-
+package org.apache.axis2.client.async;
 
 /**
  * This Class is the abstract representation of a callback and is called at the completion of an

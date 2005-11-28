@@ -79,7 +79,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                             "No Addressing Headers present in the IN message. Addressing In Handler does nothing.");
                 }
             }
-            msgContext.setProperty(WS_ADDRESSING_VERSION, addressingNamespace, true);
+            msgContext.setProperty(WS_ADDRESSING_VERSION, addressingNamespace);
 
             // extract service group context, if available
             extractServiceGroupContextId(header, msgContext);

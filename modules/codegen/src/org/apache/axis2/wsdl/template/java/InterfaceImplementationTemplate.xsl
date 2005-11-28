@@ -274,8 +274,8 @@
               _call.invokeNonBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext,null);
               </xsl:when>
               <xsl:otherwise>
-               _call.invokeNonBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext, new org.apache.axis2.client.Callback(){
-                public void onComplete(org.apache.axis2.client.AsyncResult result){
+               _call.invokeNonBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext, new org.apache.axis2.client.async.Callback(){
+                public void onComplete(org.apache.axis2.client.async.AsyncResult result){
 
 			    java.lang.Object object = <xsl:value-of select="$fullsupporterclassname"/>.fromOM(getElement(result.getResponseEnvelope(),"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
                              callback.receiveResult<xsl:value-of select="@name"/>((<xsl:value-of select="$outputtype"/>)object);

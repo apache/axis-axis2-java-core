@@ -86,7 +86,7 @@
         ///&lt;/summary&gt;
         private class CallBack<xsl:value-of select="generate-id()"/>:org.apache.axis2.client.CallBack
         {
-          public void onComplete(org.apache.axis2.client.AsyncResult result)
+          public void onComplete(org.apache.axis2.client.async.AsyncResult result)
            {
                     new <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/>().receiveResult<xsl:value-of select="@name"/>(result);
            }

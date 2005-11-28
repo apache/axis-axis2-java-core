@@ -18,7 +18,7 @@
         /// Auto generated Axis2 call back method
         ///&lt;/summary&gt;
         ///
-        public void receiveResult<xsl:value-of select="@name"/>(org.apache.axis2.client.AsyncResult result)
+        public void receiveResult<xsl:value-of select="@name"/>(org.apache.axis2.client.async.AsyncResult result)
         {
 			//Fill here with the code to handle the response
 			

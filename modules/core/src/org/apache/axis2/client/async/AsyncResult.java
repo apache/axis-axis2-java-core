@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.client;
+package org.apache.axis2.client.async;
 
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.soap.SOAPEnvelope;

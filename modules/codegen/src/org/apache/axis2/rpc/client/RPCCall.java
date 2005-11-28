@@ -18,8 +18,8 @@ package org.apache.axis2.rpc.client;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Call;
-import org.apache.axis2.client.Callback;
 import org.apache.axis2.client.InOutMEPClient;
+import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
