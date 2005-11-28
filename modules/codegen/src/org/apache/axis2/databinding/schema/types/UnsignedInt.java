@@ -24,7 +24,7 @@ package org.apache.axis2.databinding.schema.types;
  * @author Chris Haddad <chaddad@cobia.net>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#unsignedInt">XML Schema 3.3.22</a>
  */
-public class UnsignedInt extends java.lang.Number implements java.lang.Comparable {
+public class UnsignedInt extends java.lang.Number {
 
     protected Long lValue = new Long(0);
 
@@ -101,17 +101,6 @@ public class UnsignedInt extends java.lang.Number implements java.lang.Comparabl
               lValue.equals(other.lValue)));
         __equalsCalc = null;
         return _equals;
-    }
-
-    // implement java.lang.comparable interface
-    public int compareTo(Object obj) {
-      if (lValue != null)
-        return lValue.compareTo(obj);
-      else
-        if (equals(obj) == true)
-            return 0;  // null == null
-        else
-            return 1;  // object is greater
     }
 
     // Implement java.lang.Number interface
