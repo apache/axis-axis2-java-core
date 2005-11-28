@@ -23,7 +23,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.*;
@@ -72,7 +71,10 @@ public class AxisService
     private HashMap wasaction_opeartionmap = null;
 
     //to store module ref at deploy time parsing
-    private ArrayList mdoulesList = new ArrayList();
+    private ArrayList moduleRefs = new ArrayList();
+
+    //to store engaged mdodules
+    private ArrayList engagedModules = new ArrayList();
 
 
     /**
@@ -82,7 +84,6 @@ public class AxisService
     public AxisService(WSDLServiceImpl serviceimpl) {
         this.serviceimpl = serviceimpl;
         this.wasaction_opeartionmap = new HashMap();
-        this.setComponentProperty(MODULEREF_KEY, new ArrayList());
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setServiceInterface(new WSDLInterfaceImpl());
         moduleConfigmap = new HashMap();
@@ -92,7 +93,6 @@ public class AxisService
     public AxisService() {
         this.serviceimpl = new WSDLServiceImpl();
         this.wasaction_opeartionmap = new HashMap();
-        this.setComponentProperty(MODULEREF_KEY, new ArrayList());
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setServiceInterface(new WSDLInterfaceImpl());
         moduleConfigmap = new HashMap();
@@ -111,35 +111,38 @@ public class AxisService
     /*
     * (non-Javadoc)
     *
-    * @see org.apache.axis2.description.AxisService#addModule(javax.xml.namespace.QName)
+    * @see org.apache.axis2.description.AxisService#addToengagedModules(javax.xml.namespace.QName)
     */
 
     /**
      * To ebgage a module it is reuired to use this method
      *
      * @param moduleref
-     * @throws AxisFault
      */
     public void engageModule(ModuleDescription moduleref,
-                             AxisConfiguration axisConfig)
-            throws AxisFault {
+                             AxisConfiguration axisConfig) throws AxisFault {
         if (moduleref == null) {
             return;
         }
-        Collection collectionModule = (Collection) this.getComponentProperty(
-                MODULEREF_KEY);
-        for (Iterator iterator = collectionModule.iterator();
-             iterator.hasNext();) {
-            ModuleDescription modu = (ModuleDescription) iterator.next();
-            if (modu.getName().equals(moduleref.getName())) {
-                throw new AxisFault(moduleref.getName().getLocalPart() +
+        Iterator itr_engageModules = engagedModules.iterator();
+        while (itr_engageModules.hasNext()) {
+            ModuleDescription module = (ModuleDescription) itr_engageModules.next();
+            if (module.getName().equals(moduleref.getName())) {
+                log.info(moduleref.getName().getLocalPart() +
                         " module has alredy been engaged on the service. " +
                         " Operation terminated !!!");
+//                return;
             }
-
         }
-        new PhaseResolver(axisConfig).engageModuleToService(this, moduleref);
-        collectionModule.add(moduleref);
+//adding module operations
+        addModuleOperations(moduleref, axisConfig);
+
+        Iterator operations = getOperations().values().iterator();
+        while (operations.hasNext()) {
+            AxisOperation axisOperation = (AxisOperation) operations.next();
+            axisOperation.engageModule(moduleref, axisConfig);
+        }
+        engagedModules.add(moduleref);
     }
 
     /**
@@ -152,39 +155,44 @@ public class AxisService
                                     AxisConfiguration axisConfig) throws AxisFault {
         HashMap map = module.getOperations();
         Collection col = map.values();
-//        PhaseResolver pr = new PhaseResolver(axisConfig, this);
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-            AxisOperation axisOperation = (AxisOperation) iterator.next();
+            AxisOperation axisOperation = copyOperation((AxisOperation) iterator.next());
             ArrayList wsamappings = axisOperation.getWsamappingList();
             for (int j = 0; j < wsamappings.size(); j++) {
                 Parameter paramter = (Parameter) wsamappings.get(j);
                 this.addMapping((String) paramter.getValue(), axisOperation);
             }
-//            pr.buildModuleOperation(axisOperation);
             //this opration is a control opeartion.
             axisOperation.setControlOperation(true);
             this.addOperation(axisOperation);
         }
     }
 
-    public void addToEngagModuleList(ModuleDescription moduleName) {
-        Collection collectionModule = (Collection) this.getComponentProperty(
-                MODULEREF_KEY);
-        for (Iterator iterator = collectionModule.iterator();
-             iterator.hasNext();) {
-            ModuleDescription moduleDescription = (ModuleDescription) iterator.next();
-            if (moduleName.getName().equals(moduleDescription.getName())) {
-                return;
-            }
+    /**
+     * To get a copy from module operation
+     *
+     * @param axisOperation
+     * @return
+     * @throws AxisFault
+     */
+    private AxisOperation copyOperation(AxisOperation axisOperation) throws AxisFault {
+        AxisOperation operation = AxisOperationFactory.getOperetionDescription(
+                axisOperation.getMessageExchangePattern());
+        operation.setMessageReceiver(axisOperation.getMessageReceiver());
+        operation.setName(axisOperation.getName());
+        operation.setStyle(axisOperation.getStyle());
+        Iterator parameters = axisOperation.getParameters().iterator();
+        while (parameters.hasNext()) {
+            Parameter parameter = (Parameter) parameters.next();
+            operation.addParameter(parameter);
         }
-        collectionModule.add(moduleName);
+        operation.setWsamappingList(axisOperation.getWsamappingList());
+        operation.setRemainingPhasesInFlow(axisOperation.getRemainingPhasesInFlow());
+        operation.setPhasesInFaultFlow(axisOperation.getPhasesInFaultFlow());
+        operation.setPhasesOutFaultFlow(axisOperation.getPhasesOutFaultFlow());
+        operation.setPhasesOutFlow(axisOperation.getPhasesOutFlow());
+        return operation;
     }
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.AxisService#getEngadgedModules()
-    */
 
     /**
      * Method getEngadgedModules
@@ -192,7 +200,7 @@ public class AxisService
      * @return Collection
      */
     public Collection getEngagedModules() {
-        return (Collection) this.getComponentProperty(MODULEREF_KEY);
+        return engagedModules;
     }
 
     /**
@@ -237,7 +245,6 @@ public class AxisService
      */
     public void addOperation(AxisOperation axisOperation) {
         axisOperation.setParent(this);
-        //todo phase resolving and module engagement :
         Iterator modules = getEngagedModules().iterator();
         while (modules.hasNext()) {
             ModuleDescription module = (ModuleDescription) modules.next();
@@ -529,29 +536,29 @@ public class AxisService
 
     public ArrayList getPublishedOperations() {
         Iterator op_itr = getOperations().values().iterator();
-        ArrayList operationList= new ArrayList();
+        ArrayList operationList = new ArrayList();
         while (op_itr.hasNext()) {
             AxisOperation operation = (AxisOperation) op_itr.next();
-            if(!operation.isControlOperation()){
+            if (!operation.isControlOperation()) {
                 operationList.add(operation);
             }
         }
-       return operationList;
+        return operationList;
     }
 
     /**
      * To get the control operation which are added by module like RM
      */
-    public ArrayList getControlOperations(){
-       Iterator op_itr = getOperations().values().iterator();
-        ArrayList operationList= new ArrayList();
+    public ArrayList getControlOperations() {
+        Iterator op_itr = getOperations().values().iterator();
+        ArrayList operationList = new ArrayList();
         while (op_itr.hasNext()) {
             AxisOperation operation = (AxisOperation) op_itr.next();
-            if(operation.isControlOperation()){
+            if (operation.isControlOperation()) {
                 operationList.add(operation);
             }
         }
-       return operationList;
+        return operationList;
     }
 
     public AxisOperation getOperation(String ncName) {
@@ -879,11 +886,11 @@ public class AxisService
 
 
     public void addModuleref(QName moduleref) {
-        mdoulesList.add(moduleref);
+        moduleRefs.add(moduleref);
     }
 
     public ArrayList getModules() {
-        return mdoulesList;
+        return moduleRefs;
     }
 
 

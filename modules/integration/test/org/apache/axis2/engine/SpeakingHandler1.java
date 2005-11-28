@@ -32,13 +32,15 @@ public class SpeakingHandler1 extends AbstractHandler implements Handler {
     private String message;
     private QName name;
 
-    public SpeakingHandler1(String message) {
+    public SpeakingHandler1(String message, QName name) {
         this.message = message;
         HandlerDescription handlerDesc = new HandlerDescription();
+        handlerDesc.setName(new QName("SpeakingHandler1"));
         PhaseRule rule = new PhaseRule();
         rule.setPhaseName(PhaseMetadata.PHASE_POLICY_DETERMINATION);
         handlerDesc.setRules(rule);
         handlerDesc.setHandler(this);
+        handlerDesc.setName(name);
         init(handlerDesc);
     }
 

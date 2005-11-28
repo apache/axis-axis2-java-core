@@ -13,7 +13,7 @@
     while (axisServiceGroupIter.hasNext()) {
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisServiceGroupIter.next();
         String groupName = axisServiceGroup.getServiceGroupName();
-        ArrayList modules = axisServiceGroup.getServiceGroupModules();
+        ArrayList modules = axisServiceGroup.getEngagedModules();
         Iterator axisServiceIter = axisServiceGroup.getServices();
 %>
 <h2><%=groupName%></h2><ul>

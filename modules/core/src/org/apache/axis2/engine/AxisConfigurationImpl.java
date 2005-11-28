@@ -23,7 +23,6 @@ import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
-import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.util.HostConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -225,6 +224,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
     public void addServiceGroup(AxisServiceGroup axisServiceGroup) throws AxisFault {
         Iterator services = axisServiceGroup.getServices();
+        axisServiceGroup.setParent(this);
         AxisService description;
         while (services.hasNext()) {
             description = (AxisService) services.next();
@@ -436,7 +436,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     public void engageModule(QName moduleref) throws AxisFault {
         ModuleDescription module = getModule(moduleref);
         boolean isNewmodule = false;
-        boolean tobeEngaged = true;
         if (module == null) {
             File file = new ArchiveReader().creatModuleArchivefromResource(
                     moduleref.getLocalPart(), getRepository());
@@ -448,9 +447,8 @@ public class AxisConfigurationImpl implements AxisConfiguration {
                  iterator.hasNext();) {
                 QName qName = (QName) iterator.next();
                 if (moduleref.equals(qName)) {
-                    tobeEngaged = false;
-                    //Instead of throwing the error, we can just log this problem
                     log.info("Attempt to engage an already engaged module " + qName);
+                    return;
                 }
             }
         } else {
@@ -459,14 +457,15 @@ public class AxisConfigurationImpl implements AxisConfiguration {
                             + moduleref.getLocalPart() +
                             " has not bean deployed yet !");
         }
-        if (tobeEngaged) {
-            Iterator sgs = getServiceGroups();
-            new PhaseResolver(this).engageModuleGlobally(module);
-            engagedModules.add(moduleref);
+        Iterator servicegroups = getServiceGroups();
+        while (servicegroups.hasNext()) {
+            AxisServiceGroup serviceGroup = (AxisServiceGroup) servicegroups.next();
+            serviceGroup.engageModuleToGroup(module.getName());
         }
         if (isNewmodule) {
             addModule(module);
         }
+        engagedModules.add(moduleref);
     }
 
     //to get all the services in the system

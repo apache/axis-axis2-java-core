@@ -51,8 +51,8 @@ public class AxisServiceGroup implements ParameterInclude {
     //to store modeule configuration info
     private HashMap moduleConfigmap;
 
-    // to store service Group modules name
-    private ArrayList modules;
+    // to store service Group engagedModules name
+    private ArrayList engagedModules;
 
     //to store module ref at deploy time parsing
     private ArrayList mdoulesList = new ArrayList();
@@ -64,7 +64,7 @@ public class AxisServiceGroup implements ParameterInclude {
         paramInclude = new ParameterIncludeImpl();
         services = new HashMap();
         moduleConfigmap = new HashMap();
-        modules = new ArrayList();
+        engagedModules = new ArrayList();
     }
 
     public AxisServiceGroup(AxisConfiguration axisDescription) {
@@ -135,43 +135,42 @@ public class AxisServiceGroup implements ParameterInclude {
         return (ModuleConfiguration) moduleConfigmap.get(moduleName);
     }
 
-    public void addModule(QName moduleName) {
-        modules.add(moduleName);
+    public void addToengagedModules(QName moduleName) {
+        engagedModules.add(moduleName);
     }
 
-    public void engageModuleToGroup(QName moduleName) throws AxisFault {
+    public void engageModuleToGroup(QName moduleName)  {
         if (moduleName == null) {
             return;
         }
-        for (Iterator iterator = modules.iterator();
+        for (Iterator iterator = engagedModules.iterator();
              iterator.hasNext();) {
             QName modu = (QName) iterator.next();
             if (modu.getLocalPart().equals(moduleName.getLocalPart())) {
-                throw new AxisFault(moduleName.getLocalPart() +
+                log.info(moduleName.getLocalPart() +
                         " module has alredy been engaged on the service Group. " +
                         " Operation terminated !!!");
+                //return;
             }
         }
         Iterator srevice = getServices();
-//        PhaseResolver phaseResolver = new PhaseResolver(this.getParent());
-        ModuleDescription module = this.parent.getModule(moduleName);
+        ModuleDescription module = parent.getModule(moduleName);
         if (module != null) {
             while (srevice.hasNext()) {
                 // engagin per each service
                 AxisService axisService = (AxisService) srevice.next();
                 try {
-                    axisService.engageModule(module, this.getParent());
+                    axisService.engageModule(module, parent);
                 } catch (AxisFault axisFault) {
                     log.info(axisFault.getMessage());
                 }
-//                phaseResolver.engageModuleToService(axisService, module);
             }
         }
-        addModule(moduleName);
+        addToengagedModules(moduleName);
     }
 
-    public ArrayList getServiceGroupModules() {
-        return modules;
+    public ArrayList getEngagedModules() {
+        return engagedModules;
     }
 
 
@@ -180,11 +179,10 @@ public class AxisServiceGroup implements ParameterInclude {
     }
 
     public synchronized void addService(AxisService service) throws AxisFault {
-        services.put(service.getName(), service);
         service.setParent(this);
         AxisConfiguration axisConfig = getParent();
         if (axisConfig != null) {
-            Iterator modules = getModules().iterator();
+            Iterator modules = getEngagedModules().iterator();
             while (modules.hasNext()) {
                 QName moduleName = (QName) modules.next();
                 ModuleDescription moduleDesc = axisConfig.getModule(moduleName);
@@ -196,9 +194,8 @@ public class AxisServiceGroup implements ParameterInclude {
                 }
             }
         }
-//        PhaseResolver handlerResolver = new PhaseResolver(this.parent, service);
-//        handlerResolver.buildchains();
         service.setLastupdate();
+        services.put(service.getName(), service);
     }
 
     public AxisConfiguration getAxisDescription() {
@@ -217,7 +214,7 @@ public class AxisServiceGroup implements ParameterInclude {
         mdoulesList.add(moduleref);
     }
 
-    public ArrayList getModules() {
+    public ArrayList getModuleRefs() {
         return mdoulesList;
     }
 

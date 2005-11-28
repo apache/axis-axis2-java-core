@@ -285,7 +285,8 @@ public class Phase {
         while (handlers_itr.hasNext()) {
             Handler hand = (Handler) handlers_itr.next();
             HandlerDescription handlerDesc = hand.getHandlerDesc();
-            if (handler.equals(handlerDesc)) {
+            if( handler.getName().getLocalPart().equals(handlerDesc.getName().getLocalPart())){
+//            if (handler.equals(handlerDesc)) {
                 //tryting to add the same handler twice to the phase
                 // this is can happen due to we are allowing service specifc module
                 //to add hndlers into gloal chain

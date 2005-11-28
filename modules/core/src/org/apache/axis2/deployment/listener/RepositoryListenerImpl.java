@@ -89,11 +89,8 @@ public class RepositoryListenerImpl implements RepositoryListener,
      */
     public void checkServices() {
         String modulepath = folderName + SERVICE_PATH;
-
-        // exploded dir
-        //searchExplodedDir(modulepath);
-        //service archives
         searchWS(modulepath);
+        update();
     }
 
     /**
@@ -114,7 +111,7 @@ public class RepositoryListenerImpl implements RepositoryListener,
     public void init() {
         wsInfoList.init();
         checkModules();
-        checkServices();
+//        checkServices();
         update();
     }
 

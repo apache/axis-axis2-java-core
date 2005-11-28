@@ -38,8 +38,8 @@ public class SchedulerTask implements Runnable {
      * Creates a new scheduler task.
      */
 
-    public SchedulerTask(DeploymentEngine deploy_engine, String folderName ) {
-        wsListener = new RepositoryListenerImpl(folderName, deploy_engine);
+    public SchedulerTask(RepositoryListener listener) {
+        this.wsListener =listener;
     }
 
     /**

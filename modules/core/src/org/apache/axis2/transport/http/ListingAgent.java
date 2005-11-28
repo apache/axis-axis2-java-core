@@ -85,18 +85,16 @@ public class ListingAgent {
     /**
      * Field allowListServices
      */
-    private final boolean allowListServices = true;
 
     /**
      * Field allowListSingleService
      */
-    private final boolean allowListSingleService = true;
     private OutputStream out = null;
 
     public void handle(HttpServletRequest httpServletRequest,
                        HttpServletResponse httpServletResponse,
                        OutputStream out)
-            throws IOException,Exception {
+            throws IOException, Exception {
         this.out = out;
         String filePart = httpServletRequest.getRequestURL().toString();
         if ((filePart != null) &&
@@ -124,7 +122,7 @@ public class ListingAgent {
                 filePart.endsWith(Constants.ENGAGE_MODULE_TO_SERVICE)) {
             engageModulesToService(httpServletRequest, httpServletResponse);
             return;
-        }  else if ((filePart != null) &&
+        } else if ((filePart != null) &&
                 filePart.endsWith(Constants.ENGAGE_MODULE_TO_SERVICE_GROUP)) {
             engageModulesToServiceGroup(httpServletRequest, httpServletResponse);
             return;
@@ -158,7 +156,7 @@ public class ListingAgent {
                 filePart.endsWith(Constants.REMOVE_SERVICE)) {
             removeService(httpServletRequest, httpServletResponse);
             return;
-        }else if ((filePart != null) &&
+        } else if ((filePart != null) &&
                 filePart.endsWith(Constants.SELECT_SERVICE_FOR_PARA_EDIT)) {
             lsitServiceforParameterChanged(httpServletRequest, httpServletResponse);
             return;
@@ -166,15 +164,15 @@ public class ListingAgent {
                 filePart.endsWith(Constants.EDIR_SERVICE_PARA)) {
             chageParameters(httpServletRequest, httpServletResponse);
             return;
-        }else if ((filePart != null) &&
+        } else if ((filePart != null) &&
                 filePart.endsWith(Constants.LIST_SERVICE_GROUPS)) {
             listServiceGroups(httpServletRequest, httpServletResponse);
             return;
-        }else if ((filePart != null) &&
+        } else if ((filePart != null) &&
                 filePart.endsWith(Constants.LIST_CONTEXTS)) {
             listContexts(httpServletRequest, httpServletResponse);
             return;
-        }  else if ((filePart != null) &&
+        } else if ((filePart != null) &&
                 filePart.endsWith(Constants.LOGOUT)) {
             logout(httpServletRequest, httpServletResponse);
             return;
@@ -183,12 +181,8 @@ public class ListingAgent {
         if ((filePart != null) &&
                 filePart.endsWith(Constants.LIST_SERVICES)) {
             listServices(httpServletRequest, httpServletResponse);
-            return;
         } else {
-            if (allowListSingleService) {
-                listService(httpServletRequest, httpServletResponse, filePart);
-                return;
-            }
+            listService(httpServletRequest, httpServletResponse, filePart);
         }
     }
 
@@ -221,10 +215,11 @@ public class ListingAgent {
         res.sendRedirect("ViewContexts.jsp");
     }
 
-     private void logout(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    private void logout(HttpServletRequest req, HttpServletResponse res) throws IOException {
         req.getSession().invalidate();
         res.sendRedirect("index.jsp");
     }
+
     /**
      * @param req
      * @param res
@@ -266,9 +261,7 @@ public class ListingAgent {
                 (String) configContext.getAxisConfiguration()
                         .getParameter(Constants.PASSWORD)
                         .getValue();
-        if (username != null
-                && password != null
-                && username.equals(adminUserName)
+        if (username.equals(adminUserName)
                 && password.equals(adminPassword)) {
             req.getSession().setAttribute(Constants.LOGGED, "Yes");
             res.sendRedirect(ADMIN_JSP_NAME);
@@ -355,9 +348,8 @@ public class ListingAgent {
     }
 
 
-
     private void engageModulesToServiceGroup(HttpServletRequest req,
-                                        HttpServletResponse res)
+                                             HttpServletResponse res)
             throws IOException {
         HashMap modules =
                 ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
@@ -370,18 +362,12 @@ public class ListingAgent {
         String serviceName = req.getParameter("service");
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
         if (serviceName != null && moduleName != null) {
-            try {
-
-                configContext.getAxisConfiguration().getServiceGroup(
-                        serviceName)
-                        .engageModuleToGroup(new QName(moduleName));
-                req.getSession().setAttribute(Constants.ENGAGE_STATUS,
-                        moduleName +
-                                " module engaged to the serviceGroup Successfully");
-            } catch (AxisFault axisFault) {
-                req.getSession().setAttribute(Constants.ENGAGE_STATUS,
-                        axisFault.getMessage());
-            }
+            configContext.getAxisConfiguration().getServiceGroup(
+                    serviceName)
+                    .engageModuleToGroup(new QName(moduleName));
+            req.getSession().setAttribute(Constants.ENGAGE_STATUS,
+                    moduleName +
+                            " module engaged to the serviceGroup Successfully");
         }
         req.getSession().setAttribute("service", null);
         res.sendRedirect(ENGAGING_MODULE_TO_SERVICE_GROUP_JSP_NAME);
@@ -407,7 +393,7 @@ public class ListingAgent {
                         serviceName)
                         .engageModule(
                                 configContext.getAxisConfiguration().getModule(
-                                        new QName(moduleName)),configContext.getAxisConfiguration());
+                                        new QName(moduleName)), configContext.getAxisConfiguration());
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                         moduleName +
                                 " module engaged to the service Successfully");
@@ -448,20 +434,19 @@ public class ListingAgent {
     }
 
 
-
     private void chageParameters(HttpServletRequest req,
                                  HttpServletResponse res)
             throws IOException {
-        if(req.getParameter("changePara")!=null){
+        if (req.getParameter("changePara") != null) {
             String serviceName = req.getParameter("service");
-            AxisService service =  configContext.getAxisConfiguration().
+            AxisService service = configContext.getAxisConfiguration().
                     getService(serviceName);
-            if(service !=null){
+            if (service != null) {
                 ArrayList service_para = service.getParameters();
                 for (int i = 0; i < service_para.size(); i++) {
                     Parameter parameter = (Parameter) service_para.get(i);
-                    String para =  req.getParameter(serviceName + "_" + parameter.getName());
-                    service.addParameter(new ParameterImpl(parameter.getName(),para));
+                    String para = req.getParameter(serviceName + "_" + parameter.getName());
+                    service.addParameter(new ParameterImpl(parameter.getName(), para));
                 }
                 HashMap operation = service.getOperations();
                 Collection op_col = operation.values();
@@ -472,9 +457,9 @@ public class ListingAgent {
                     ArrayList operation_para = axisOperation.getParameters();
                     for (int i = 0; i < operation_para.size(); i++) {
                         Parameter parameter = (Parameter) operation_para.get(i);
-                        String para =  req.getParameter(op_name + "_" + parameter.getName());
+                        String para = req.getParameter(op_name + "_" + parameter.getName());
                         axisOperation.addParameter(
-                                new ParameterImpl(parameter.getName(),para));
+                                new ParameterImpl(parameter.getName(), para));
                     }
                 }
             }
@@ -486,7 +471,7 @@ public class ListingAgent {
             req.getSession().removeAttribute(Constants.SERVICE);
             return;
 
-        }   else {
+        } else {
             String service = req.getParameter("service");
             if (service != null) {
                 req.getSession().setAttribute(Constants.SERVICE,
@@ -502,9 +487,9 @@ public class ListingAgent {
             throws IOException {
         if (req.getParameter("submit") != null) {
             String serviceName = req.getParameter("service");
-            String turnoff = req.getParameter("turnoff") ;
-            if(serviceName !=null){
-                if(turnoff !=null){
+            String turnoff = req.getParameter("turnoff");
+            if (serviceName != null) {
+                if (turnoff != null) {
                     configContext.getAxisConfiguration().removeService(serviceName);
                     res.setContentType("text/css");
                     PrintWriter out_writer = new PrintWriter(out);
@@ -584,7 +569,6 @@ public class ListingAgent {
                             filePart);
                     out.flush();
                     out.close();
-                    wsdl = null;
                     return;
                 } else {
                     req.getSession().setAttribute(Constants.SINGLE_SERVICE,

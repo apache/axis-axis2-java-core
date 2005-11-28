@@ -19,6 +19,8 @@ import org.apache.wsdl.WSDLFeature;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.WSDLProperty;
 import org.apache.wsdl.impl.WSDLOperationImpl;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
@@ -49,6 +51,7 @@ import java.util.Map;
 public abstract class AxisOperation  implements
         ParameterInclude, DescriptionConstants,
         WSDLConstants ,WSDLOperation{
+    private Log log = LogFactory.getLog(getClass());
 
     private MessageReceiver messageReceiver;
     private ArrayList remainingPhasesInFlow;
@@ -69,6 +72,8 @@ public abstract class AxisOperation  implements
     private ArrayList modulerefs;
     //to hide control operation , operation which added by RM like module
     private boolean controlOperation = false;
+    //to store engaged modules
+    private ArrayList engagedModules = new ArrayList();
 
 
 
@@ -76,7 +81,6 @@ public abstract class AxisOperation  implements
         this.wsdlopeartion = (WSDLOperationImpl)wsdlopeartion;
         this.setMessageExchangePattern(MEP_URI_IN_OUT);
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
-        this.setComponentProperty(MODULEREF_KEY, new ArrayList());
 
         remainingPhasesInFlow = new ArrayList();
         remainingPhasesInFlow.add(
@@ -116,37 +120,19 @@ public abstract class AxisOperation  implements
         if (moduleref == null) {
             return;
         }
-        Collection collectionModule = (Collection) this.getComponentProperty(
-                MODULEREF_KEY);
-        for (Iterator iterator = collectionModule.iterator();
-             iterator.hasNext();) {
-            ModuleDescription modu = (ModuleDescription) iterator.next();
-            if (modu.getName().equals(moduleref.getName())) {
-                throw new AxisFault(moduleref.getName().getLocalPart() +
+      Iterator module_itr =  engagedModules.iterator();
+        while (module_itr.hasNext()) {
+            ModuleDescription module = (ModuleDescription) module_itr.next();
+            if (module.getName().equals(moduleref.getName())) {
+                log.info(moduleref.getName().getLocalPart() +
                         " module has alredy engaged to the operation" +
                         "  operation terminated !!!");
+//                return;
             }
-
         }
         new PhaseResolver(axisConfig).engageModuleToOperation(this, moduleref);
-        collectionModule.add(moduleref);
+        engagedModules.add(moduleref);
     }
-
-    public final void addToEngageModuleList(ModuleDescription moduleName) {
-        Collection collectionModule = (Collection) this.getComponentProperty(
-                MODULEREF_KEY);
-        for (Iterator iterator = collectionModule.iterator();
-             iterator.hasNext();) {
-            ModuleDescription moduleDescription = (ModuleDescription) iterator.next();
-            if (moduleName.getName().equals(moduleDescription.getName())) {
-                return;
-            }
-        }
-        collectionModule.add(moduleName);
-    }
-
-
-
 
     /*
     * (non-Javadoc)
@@ -158,8 +144,8 @@ public abstract class AxisOperation  implements
      * Method getEngadgedModules
      *
      */
-    public Collection getModules() {
-        return (Collection) this.getComponentProperty(MODULEREF_KEY);
+    public Collection getEngagedModules() {
+        return engagedModules;
     }
 
     /**
@@ -348,7 +334,7 @@ public abstract class AxisOperation  implements
      * Depending on the mep operation description know how to fill the message conetxt map
      * in operationContext.
      * As an exmple if the MEP is IN-OUT then depending on messagelbl operation description
-     * should know how to keep them in corret locations 
+     * should know how to keep them in corret locations
      * @param msgContext <code>MessageContext</code>
      * @param opContext  <code>OperationContext</code>
      * @throws AxisFault <code>AxisFault</code>

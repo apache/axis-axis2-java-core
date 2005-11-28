@@ -54,7 +54,7 @@
     <%--                 <br>Opeartion EPR : <%=prifix + axisService.getName().getLocalPart() + "/"+ axisOperation.getName().getLocalPart()%>--%>
     <%
         engagdeModules = null;
-        engagdeModules = axisOperation.getModules();
+        engagdeModules = axisOperation.getEngagedModules();
         moduleName = "";
         if(engagdeModules.size() >0){
     %>
