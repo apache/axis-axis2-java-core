@@ -4,6 +4,12 @@
         <xsl:variable name="skeletonname"><xsl:value-of select="@skeletonname"/></xsl:variable>
         <xsl:variable name="dbsupportpackage"><xsl:value-of select="@dbsupportpackage"/></xsl:variable>
 
+        /**
+         * <xsl:value-of select="@name"/>.java
+         *
+         * This file was auto-generated from WSDL
+         * by the Apache Axis2 version: #axisVersion# #today#
+         */
         package <xsl:value-of select="@package"/>;
 
         /**
