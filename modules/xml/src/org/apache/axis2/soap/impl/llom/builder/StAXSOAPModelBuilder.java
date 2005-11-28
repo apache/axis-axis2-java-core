@@ -16,6 +16,8 @@
 
 package org.apache.axis2.soap.impl.llom.builder;
 
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMDocument;
 import org.apache.axis2.om.OMElement;
@@ -24,11 +26,17 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.soap.*;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAP12Constants;
+import org.apache.axis2.soap.SOAPBody;
+import org.apache.axis2.soap.SOAPConstants;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.SOAPHeader;
+import org.apache.axis2.soap.SOAPMessage;
+import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.stream.XMLStreamReader;
 
 /**
  * Class StAXSOAPModelBuilder
@@ -78,6 +86,11 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     private String senderfaultCode;
     private String receiverfaultCode;
     private boolean processingMandatoryFaultElements;
+    
+    // We need to have soap factory, temporary, until we find out the correct SOAP version. If user has not provided
+    // a SOAP factory, internally we are creating a default one. This flag will be set if we create one internally, to
+    // warn that this should be replaced later.
+    private boolean isTempSOAPFactory = true;
 
     /**
      * Constructor StAXSOAPModelBuilder
@@ -91,6 +104,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     public StAXSOAPModelBuilder(XMLStreamReader parser, String soapVersion) {
         super(parser);
         soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
+        isTempSOAPFactory = true;
         soapMessage = soapFactory.createSOAPMessage(this);
         identifySOAPVersion(soapVersion);
         parseHeaders();
@@ -108,6 +122,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
     public StAXSOAPModelBuilder(XMLStreamReader parser, SOAPFactory factory, String soapVersion) {
         super(factory, parser);
         soapFactory = factory;
+        isTempSOAPFactory = false;
         soapMessage = soapFactory.createSOAPMessage(this);
         identifySOAPVersion(soapVersion);
         parseHeaders();
@@ -128,17 +143,18 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
                     " Message namespace URI", SOAPConstants.FAULT_CODE_VERSION_MISMATCH);
 
         }
-
-        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(namespaceName)) {
-            soapFactory = OMAbstractFactory.getSOAP12Factory();
-            log.info("Starting Process SOAP 1.2 message");
-        } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(namespaceName)) {
-            soapFactory = OMAbstractFactory.getSOAP11Factory();
-            log.info("Starting Process SOAP 1.1 message");
-
-        } else {
-            throw new SOAPProcessingException("Only SOAP 1.1 or SOAP 1.2 messages are supported in the" +
-                    " system", SOAPConstants.FAULT_CODE_VERSION_MISMATCH);
+        if(isTempSOAPFactory) {
+	        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(namespaceName)) {
+	            soapFactory = OMAbstractFactory.getSOAP12Factory();
+	            log.info("Starting Process SOAP 1.2 message");
+	        } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(namespaceName)) {
+	            soapFactory = OMAbstractFactory.getSOAP11Factory();
+	            log.info("Starting Process SOAP 1.1 message");
+	
+	        } else {
+	            throw new SOAPProcessingException("Only SOAP 1.1 or SOAP 1.2 messages are supported in the" +
+	                    " system", SOAPConstants.FAULT_CODE_VERSION_MISMATCH);
+	        }
         }
     }
 

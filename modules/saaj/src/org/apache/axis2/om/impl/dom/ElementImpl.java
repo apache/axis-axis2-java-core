@@ -66,6 +66,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 			ownerDocument.firstChild = this;
 		this.localName = tagName;
 		this.attributes = new AttributeMap(this);
+		this.done = true;
 	}
 	
 	/**
@@ -80,6 +81,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		this.namespace = ns;
 		this.declareNamespace(ns);
 		this.attributes = new AttributeMap(this);
+		this.done = true;
 	}
 	
 	public ElementImpl(DocumentImpl ownerDocument, String tagName, NamespaceImpl ns, OMXMLParserWrapper builder) {
@@ -93,14 +95,17 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	
 	public ElementImpl(ParentNode parentNode, String tagName, NamespaceImpl ns) {
 		this((DocumentImpl)parentNode.getOwnerDocument(), tagName, ns);
+		this.parentNode = parentNode;
 		this.parentNode.addChild(this);
+		this.done = true;
 	}
 	
 	public ElementImpl(ParentNode parentNode, String tagName, NamespaceImpl ns, OMXMLParserWrapper builder) {
 		this(tagName,ns,builder);
-		if(this.parentNode != null) {
+		if(parentNode != null) {
 			this.ownerNode = (DocumentImpl)parentNode.getOwnerDocument();
 			this.isOwned(true);
+			this.parentNode = parentNode;
 			this.parentNode.addChild(this);
 		}
 		
@@ -390,26 +395,36 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
             throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
 		}
 		
-		if(!DOMUtil.isValidNamespace(namespaceURI, qualifiedName)) {
-			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NAMESPACE_ERR", null);
-            throw new DOMException(DOMException.NAMESPACE_ERR, msg);			
-		}
-		
 		if(this.attributes == null) {
 			this.attributes = new AttributeMap(this);
 		}
-		
-		//Check whether there's an existing Attr with same local name and namespace URI
-		Attr attributeNode = this.getAttributeNodeNS(namespaceURI, DOMUtil.getLocalName(qualifiedName));
-		if(attributeNode != null) {
-			AttrImpl tempAttr = ((AttrImpl)attributeNode);
-			tempAttr.setOMNamespace(new NamespaceImpl(namespaceURI,DOMUtil.getPrefix(qualifiedName)));
-			tempAttr.setAttributeValue(value);
-			return tempAttr;
+		if(namespaceURI != null) {
+			if(!DOMUtil.isValidNamespace(namespaceURI, qualifiedName)) {
+				String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NAMESPACE_ERR", null);
+	            throw new DOMException(DOMException.NAMESPACE_ERR, msg);			
+			}
+			//Check whether there's an existing Attr with same local name and namespace URI
+			Attr attributeNode = this.getAttributeNodeNS(namespaceURI, DOMUtil.getLocalName(qualifiedName));
+			if(attributeNode != null) {
+				AttrImpl tempAttr = ((AttrImpl)attributeNode);
+				tempAttr.setOMNamespace(new NamespaceImpl(namespaceURI,DOMUtil.getPrefix(qualifiedName)));
+				tempAttr.setAttributeValue(value);
+				return tempAttr;
+			} else {
+				NamespaceImpl ns = new NamespaceImpl(namespaceURI, DOMUtil.getPrefix(qualifiedName));
+				AttrImpl attr = new AttrImpl(DOMUtil.getLocalName(qualifiedName),ns,value);
+				return attr;
+			}
 		} else {
-			NamespaceImpl ns = new NamespaceImpl(namespaceURI, DOMUtil.getPrefix(qualifiedName));
-			AttrImpl attr = new AttrImpl(DOMUtil.getLocalName(qualifiedName),ns,value);
-			return attr;
+			Attr attributeNode = this.getAttributeNode(qualifiedName);
+			if(attributeNode != null) {
+				AttrImpl tempAttr = ((AttrImpl)attributeNode);
+				tempAttr.setAttributeValue(value);
+				return tempAttr;
+			} else {
+				AttrImpl attr = new AttrImpl(qualifiedName,value);
+				return attr;
+			}
 		}
 	}
 
@@ -465,8 +480,11 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
         if (ns != null && findNamespace(ns.getName(), ns.getPrefix()) != null){
             declareNamespace(ns);
         }
-        
-		return this.addAttribute(ns.getName(),attributeName,value);
+        if(ns != null) {
+        	return this.addAttribute(ns.getName(),attributeName,value);
+        } else {
+        	return this.addAttribute(null,attributeName,value);
+        }
 	}
 
 	/**
@@ -478,7 +496,9 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
         if (namespaces == null) {
             this.namespaces = new HashMap(5);
         }
-        namespaces.put(namespace.getPrefix(), namespace);
+        if(namespace != null) {
+        	namespaces.put(namespace.getPrefix(), namespace);
+        }
         return namespace;
 	}
 
@@ -568,20 +588,19 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		}
 	}
 
-    /**
-     * Return a named attribute's value, if present.
-     *
-     * @param qname the qualified name to search for
-     * @return a String containing the attribute value, or null
-     */
-    public String getAttributeValue(QName qname) {
-        OMAttribute attr = getAttribute(qname);
+   /**
+    * Return a named attribute's value, if present.
+    *
+    * @param qname the qualified name to search for
+    * @return a String containing the attribute value, or null
+    */
+   public String getAttributeValue(QName qname) {
+       OMAttribute attr = getAttribute(qname);
         return (attr == null) ? null : attr.getAttributeValue();
     }
-
-    /* (non-Javadoc)
-    * @see org.apache.axis2.om.OMElement#getBuilder()
-    */
+   /* (non-Javadoc)
+   * @see org.apache.axis2.om.OMElement#getBuilder()
+   */
 	public OMXMLParserWrapper getBuilder() {
 		return this.builder;
 	}

@@ -60,15 +60,7 @@ public class NodeListImpl implements NodeList  {
 	 */
 	public int getLength() {
 		Iterator children;
-		if(!enableNS) {
-			children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.tagName));
-		} else {
-			if(DOMUtil.getPrefix(this.tagName) != null) {
-				children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.nsName, DOMUtil.getLocalName(this.tagName), DOMUtil.getPrefix(this.tagName)));
-			} else {
-				children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.nsName, DOMUtil.getLocalName(this.tagName)));
-			}
-		}
+		children = ((OMContainerEx)rootNode).getChildren();
 		int count  = 0;
 		while (children.hasNext()) {
 			count++;
@@ -83,20 +75,15 @@ public class NodeListImpl implements NodeList  {
 	 * @see org.w3c.dom.NodeList#item(int)
 	 */
 	public Node item(int index) {
-		Iterator children;
-		if(enableNS) {
-			children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.tagName));
-		} else {
-			children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.nsName, this.tagName));
-		}
+		Iterator children = ((OMContainerEx)rootNode).getChildren();
 		int count  = 0;
 		while (children.hasNext()) {
-			count++;
 			if(count == index) {
 				return (Node)children.next();
 			} else {
 				children.next();
 			}
+			count++;
 		}
 		return null;
 	}

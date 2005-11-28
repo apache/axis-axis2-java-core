@@ -21,6 +21,8 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNode;
 
 /**
+ * This is exatly the same as org.apache.axis2.om.impl.om.OMNavigator, only the
+ * llom specifics are changed to dom
  * Refer to the testClass to find out how to use
  * features like isNavigable, isComplete and step
  */

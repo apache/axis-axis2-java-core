@@ -168,6 +168,9 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 				this.firstChild = newDomChild;
 				newDomChild.isFirstChild(true);
 				this.lastChild = newDomChild;
+				if(newDomChild.parentNode == null) {
+					newDomChild.parentNode = this;
+				}
 				return newDomChild;
 			}
 		}
@@ -183,6 +186,9 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 				newDomChild.previousSubling = this.lastChild;
 			
 				this.lastChild = newDomChild;
+			}
+			if(newDomChild.parentNode == null) {
+				newDomChild.parentNode = this;
 			}
 			return newChild;
 		} else {
@@ -201,7 +207,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 							this.firstChild = docFrag.firstChild;
 							docFrag.lastChild.nextSibling = refDomChild;
 							refDomChild.previousSubling = docFrag.lastChild.nextSibling; 
-					
+							
 						} else {
 							
 							//Make the newNode the first Child
@@ -211,6 +217,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 							refDomChild.previousSubling = newDomChild;
 							
 							newDomChild.previousSubling = null; //Just to be sure :-)
+							
 						}
 					} else { //If the refChild is not the fist child
 						ChildNode previousNode = refDomChild.previousSubling;
@@ -245,6 +252,11 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 								DOMMessageFormatter.DOM_DOMAIN,
 								"NOT_FOUND_ERR", null));
 			}
+			
+			if(newDomChild.parentNode == null) {
+				newDomChild.parentNode = this;
+			}
+			
 			return newChild;
 		}
 	}

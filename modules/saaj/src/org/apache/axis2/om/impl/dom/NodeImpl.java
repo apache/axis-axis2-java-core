@@ -448,7 +448,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
 	 * @see org.apache.axis.om.OMNode#build()
 	 */
 	public void build() {
-		if(!done)
+		while (!done)
 			this.builder.next();
 	}
 	

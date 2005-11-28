@@ -89,6 +89,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
 	 */
 	public TextImpl(String text) {
 		this.textValue = new StringBuffer(text);
+		this.done = true;
 	}
 	
     /**
@@ -104,6 +105,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
         this.contentID = contentID;
         this.optimize = true;
         this.isBinary = true;
+        this.done = true;
         this.builder = builder;
     }
     
@@ -135,6 +137,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
 	 */
 	public TextImpl(DocumentImpl ownerNode) {
 		super(ownerNode);
+		this.done =true; 
 	}
 
 	/**
@@ -143,6 +146,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
 	 */
 	public TextImpl(DocumentImpl ownerNode, String value) {
 		super(ownerNode, value);
+		this.done = true;
 	}
 
 	/**
