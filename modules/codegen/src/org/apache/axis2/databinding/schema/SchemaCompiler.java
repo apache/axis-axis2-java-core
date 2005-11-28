@@ -508,6 +508,7 @@ public class SchemaCompiler {
      */
     private void processSimpleSchemaType(XmlSchemaSimpleType simpleType){
         //nothing to here yet.
+        //todo need to populate the processed type map here
 
     }
 

@@ -49,7 +49,7 @@ public abstract class AbstractSchemaCompilerTester extends TestCase {
         Document doc = builder.parse(new File(fileName));
 
         //now read it to a schema
-        XmlSchemaCollection schemaCol =  new XmlSchemaCollection();
+        XmlSchemaCollection schemaCol =  getSchemaReader();
         currentSchema = schemaCol.read(doc,null);
 
         outputFolder = new File(TEMP_OUT_FOLDER);
@@ -63,7 +63,9 @@ public abstract class AbstractSchemaCompilerTester extends TestCase {
         }
     }
 
-
+    protected  XmlSchemaCollection getSchemaReader(){
+        return new XmlSchemaCollection();
+    }
 
     public void testSchema() throws Exception{
         SchemaCompiler compiler = new SchemaCompiler( new CompilerOptions().setOutputLocation(outputFolder));
