@@ -17,12 +17,15 @@
 package org.apache.axis2.deployment.util;
 
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
+import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class PhasesInfo {
 
@@ -64,8 +67,8 @@ public class PhasesInfo {
     }
 
     public ArrayList getOperationInPhases() {
-        ArrayList oprationINPhases = new ArrayList();
-        oprationINPhases.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
+        ArrayList operationINPhases = new ArrayList();
+        operationINPhases.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
         for (int i = 0; i < INPhases.size(); i++) {
             String phaseName = (String) INPhases.get(i);
             if (PhaseMetadata.PHASE_TRANSPORTIN.equals(phaseName) ||
@@ -73,16 +76,31 @@ public class PhasesInfo {
                     PhaseMetadata.PHASE_DISPATCH.equals(phaseName) ||
                     PhaseMetadata.PHASE_POST_DISPATCH.equals(phaseName)) {
             } else {
-                oprationINPhases.add(new Phase(phaseName));
+                operationINPhases.add(new Phase(phaseName));
             }
         }
-        return oprationINPhases;
+        return operationINPhases;
     }
 
-    public Phase makePhase(OMElement phaseElement) {
-        String phaseName = phaseElement.getAttribute(new QName("foo")).getAttributeValue();
+    public Phase makePhase(OMElement phaseElement) throws PhaseException {
+        String phaseName = phaseElement.getAttributeValue(new QName("name"));
         Phase phase = new Phase(phaseName);
+        Iterator children = phaseElement.getChildElements();
+        while (children.hasNext()) {
+            OMElement handlerElement = (OMElement) children.next();
+            HandlerDescription handlerDesc = makeHandler(handlerElement);
+            phase.addHandler(handlerDesc);
+        }
         return phase;
+    }
+
+    HandlerDescription makeHandler(OMElement handlerElement) {
+        String name = handlerElement.getAttributeValue(new QName("name"));
+        QName qname = handlerElement.resolveQName(name);
+        HandlerDescription desc = new HandlerDescription(qname);
+        String className = handlerElement.getAttributeValue(new QName("class"));
+        desc.setClassName(className);
+        return desc;
     }
 
     public ArrayList getOperationOutPhases() {

@@ -262,7 +262,8 @@ public class ServiceBuilder extends DescriptionBuilder {
     }
 
     protected void processOperationModuleConfig(Iterator moduleConfigs,
-                                                ParameterInclude parent, AxisOperation opeartion)
+                                                ParameterInclude parent,
+                                                AxisOperation opeartion)
             throws DeploymentException {
         while (moduleConfigs.hasNext()) {
             OMElement moduleConfig = (OMElement) moduleConfigs.next();
