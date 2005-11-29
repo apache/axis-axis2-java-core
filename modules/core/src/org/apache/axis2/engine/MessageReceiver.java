@@ -20,10 +20,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 
 /**
- * This one receives the Message, what is does is not of concern for Axis2 (litirally).
- * Any incomming message is hand over to the MessageReceiver, if the processing produce something
- * or not as well as is there areany more SOAP Message to be sent or recived is up to the
- * Message Receiver to decide.
+ * An instance of MessageReceiver can be setup to receive messages. The application logic has no impact
+ * on the Axis Engine iself. It is upto the application logic to do whatever it needs. For e.g. 
+ * the MessageReceiver can handle a message, send a response back and/or send other messages.
  */
 public interface MessageReceiver {
     public void receive(MessageContext messgeCtx) throws AxisFault;

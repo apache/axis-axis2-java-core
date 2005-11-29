@@ -26,12 +26,12 @@ import javax.xml.stream.XMLStreamReader;
 
 public interface ADBBean {
     /**
-     * This method is used to serialize an ADBBean: get the pull parser and pull
-     * the XML pull events to represent the bean.
+     * Serializes an ADBBean. Gets the pull parser and fetches the XML pull 
+     * events to represent the bean.
      * 
      * @param adbBeanQName
-     *            the name of the element to be generated for this ADBBean
-     * @return a pull parser for this ADBBean.
+     *            the name of the element to be generated for this ADBBean.
+     * @return Returns a pull parser for this ADBBean.
      */
     public XMLStreamReader getPullParser(QName adbBeanQName);
 

@@ -31,7 +31,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 /**
- * The palce where all the Global states of Axis is kept.
+ * The place where all the Global states of Axis is kept.
  * All the Global states kept in the <code>EngineRegistry</code> and all the
  * Service states kept in the <code>MessageContext</code>. Other runtime
  * artifacts does not keep states foward from the execution.
@@ -55,16 +55,16 @@ public interface AxisConfiguration extends ParameterInclude {
     public static final int FAULT_OUT_FLOW = 10006;
 
     /**
-     * Method getService
+     * Method getService.
      *
      * @param name
-     * @return
+     * @return Returns AxisService.
      * @throws AxisFault
      */
     public AxisService getService(String name) throws AxisFault;
 
     /**
-     * Method addService
+     * Method addService.
      *
      * @param service
      * @throws AxisFault
@@ -75,7 +75,7 @@ public interface AxisConfiguration extends ParameterInclude {
     public void addServiceGroup(AxisServiceGroup axisServiceGroup) throws AxisFault;
 
     /**
-     * Method removeService
+     * Method removeService.
      *
      * @param name
      * @throws AxisFault
@@ -83,14 +83,15 @@ public interface AxisConfiguration extends ParameterInclude {
     public void removeService(String name) throws AxisFault;
 
     /**
-     * Modules is read only as they can not deployed while runing
+     * Modules is read only as they can not deployed while running.
      *
      * @param name
+     * @return Returns ModuleDescription.
      */
     public ModuleDescription getModule(QName name);
 
     /**
-     * Method addMdoule
+     * Method addMdoule.
      *
      * @param module
      * @throws AxisFault
@@ -100,7 +101,7 @@ public interface AxisConfiguration extends ParameterInclude {
     public boolean isEngaged(QName moduleName);
 
     /**
-     * To engage a module at the run time it can be used this method
+     * Engages a module at run time.
      *
      * @param moduleref
      * @throws AxisFault
@@ -112,7 +113,7 @@ public interface AxisConfiguration extends ParameterInclude {
     public HashMap getServices();
 
     /**
-     * This returns
+     * 
      */
     public ArrayList getInPhasesUptoAndIncludingPostDispatch();
 
@@ -134,8 +135,8 @@ public interface AxisConfiguration extends ParameterInclude {
 
     public HashMap getTransportsOut();
 
-    //to check whether a given paramter is locked
-    public boolean isParameterLocked(String paramterName);
+    //Checks whether a given parameter is locked.
+    public boolean isParameterLocked(String parameterName);
 
     public AxisServiceGroup getServiceGroup(String serviceNameAndGroupString);
 

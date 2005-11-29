@@ -370,7 +370,7 @@ public class DeploymentEngine implements DeploymentConstants {
         serviceGroup.setParent(axisConfig);
         //engaging globally engage module to this service group
         Iterator itr_global_modules =
-                ((AxisConfigurationImpl) axisConfig).getEngadgedModules().iterator();
+                ((AxisConfigurationImpl) axisConfig).getEngagedModules().iterator();
         while (itr_global_modules.hasNext()) {
             QName qName = (QName) itr_global_modules.next();
             serviceGroup.engageModuleToGroup(qName);

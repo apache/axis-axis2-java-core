@@ -25,7 +25,7 @@ import org.apache.axis2.description.HandlerDescription;
 import javax.xml.namespace.QName;
 
 /**
- * Dispatches based on the SOAPAction
+ * Dispatches based on the SOAPAction.
  */
 public class SOAPActionBasedDispatcher extends AbstractDispatcher {
     /**

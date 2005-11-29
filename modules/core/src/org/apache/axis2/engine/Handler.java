@@ -29,7 +29,7 @@ import java.io.Serializable;
  */
 public interface Handler extends Serializable {
     /**
-     * Method init
+     * Method init.
      *
      * @param handlerdesc
      */
@@ -40,7 +40,7 @@ public interface Handler extends Serializable {
      * If there is a fault during the processing of this method it is
      * invoke's job to catch the exception and undo any partial work
      * that has been completed.  Once we leave 'invoke' if a fault
-     * is thrown, this classes 'onFault' method will be called.
+     * is thrown, this class's 'onFault' method will be called.
      * Invoke should rethrow any exceptions it catches, wrapped in
      * an AxisFault.
      *
@@ -52,32 +52,31 @@ public interface Handler extends Serializable {
 
 
     /**
-     * Method getName
+     * Method getName.
      *
-     * @return
+     * @return Returns QName
      */
     public QName getName();
 
     /**
-     * Method getParameter
+     * Method getParameter.
      *
      * @param name
-     * @return
+     * @return Returns Parameter.
      */
     public Parameter getParameter(String name);
 
     /**
-     * Method cleanup
+     * Method cleanup.
      *
      * @throws AxisFault
      */
     public void cleanup() throws AxisFault;
 
     /**
-     * To get the phaseRule of a handler it is required to get the HnadlerDescription of the handler
-     * so the argumnet pass when it call return as HnadlerDescription
+     * Gets the HandlerDescription of a handler. This is used as an input to get phaseRule of a handler. 
      *
-     * @return
+     * @return Returns HandlerDescription.
      */
     public HandlerDescription getHandlerDesc();
 }

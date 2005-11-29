@@ -410,7 +410,7 @@ public class ListingAgent {
                                      HttpServletResponse res)
             throws IOException {
         Collection modules =
-                ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getEngadgedModules();
+                ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getEngagedModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         res.sendRedirect(LIST_GLOABLLY_ENGAGED_MODULES_JSP_NAME);
     }

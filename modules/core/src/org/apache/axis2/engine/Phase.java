@@ -28,9 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * <p>This is Phase, a orderd collection of Handlers.
- * seems this is Handler Chain with order.</p>
- * Should this exttends Hanlders?
+ * A Phase is an ordered collection of Handlers.
  */
 public class Phase {
     /**
@@ -95,7 +93,7 @@ public class Phase {
     private boolean isOneHanlder;
 
     /**
-     * Constructor Phase
+     * Constructor Phase.
      *
      * @param phaseName
      */
@@ -105,7 +103,7 @@ public class Phase {
     }
 
     /**
-     * Method addHandler
+     * Method addHandler.
      *
      * @param handler
      * @param index
@@ -119,7 +117,7 @@ public class Phase {
     }
 
     /**
-     * add to next empty handler
+     * Adds handler to the collection.
      *
      * @param handler
      */
@@ -131,7 +129,7 @@ public class Phase {
     }
 
     /**
-     * If need to see how this works look at the stack!
+     * invokes all the handlers in this Phase
      *
      * @param msgctx
      * @throws org.apache.axis2.AxisFault
@@ -141,7 +139,7 @@ public class Phase {
             log.debug("Invoking phase \"" + phaseName + "\"");
         }
         msgctx.setPausedPhaseName(this.getPhaseName());
-        //If phase first Hnadler is there then it should run first
+        //If phase first Handler is there then it should run first
         if (phaseFirst != null) {
             if (msgctx.isPaused()) {
                 return;
@@ -199,10 +197,10 @@ public class Phase {
     //////////////////////////////////////////////////////////////// FROM PhaseMetaData //////////
 
     /**
-     * Method getBeforeAfter
+     * Method getBeforeAfter.
      *
      * @param handler
-     * @return
+     * @return Returns AFTER or ANYWHERE or BOTH_BEFORE_AFTER
      * @throws org.apache.axis2.phaseresolver.PhaseException
      *
      */
@@ -229,7 +227,7 @@ public class Phase {
     }
 
     /**
-     * Method setPhaseFirst
+     * Method setPhaseFirst.
      *
      * @param phaseFirst
      * @throws PhaseException
@@ -252,7 +250,7 @@ public class Phase {
     }
 
     /**
-     * Method setPhaseLast
+     * Method setPhaseLast.
      *
      * @param phaseLast
      * @throws PhaseException
@@ -275,7 +273,7 @@ public class Phase {
     }
 
     /**
-     * Method addHandler
+     * Method addHandler.
      *
      * @param handler
      * @throws PhaseException
@@ -322,9 +320,7 @@ public class Phase {
     }
 
     /**
-     * This method is to check whether  user try to add a handler whose before property is
-     * phaseFitsr handler , this cannot allowed , so this will throws an exception
-     * otherewise it will retun
+     * If the user tries to add a handler before the phase first handler, then throw an exception.
      *
      * @throws PhaseException
      */
@@ -343,8 +339,7 @@ public class Phase {
     }
 
     /**
-     * This method is to check user try to add or plase a hander after the phaseLast
-     * that operation dose not allowd  so then this throw a exception
+     * If the user tries to add a handler after the phase last handler, then throw an exception.
      *
      * @throws PhaseException
      */
@@ -362,7 +357,7 @@ public class Phase {
     }
 
     /**
-     * Method insertBefore
+     * Method insertBefore.
      *
      * @param handler
      */
@@ -393,7 +388,7 @@ public class Phase {
     }
 
     /**
-     * Method insertAfter
+     * Method insertAfter.
      *
      * @param handler
      */
@@ -537,9 +532,9 @@ public class Phase {
     }
 
     /**
-     * To get the all the handlers in the phase
+     * Gets all the handlers in the phase.
      *
-     * @return an ArrayList of Handlers
+     * @return Returns an ArrayList of Handlers
      */
     public ArrayList getHandlers() {
         ArrayList phaseHandlers = new ArrayList();

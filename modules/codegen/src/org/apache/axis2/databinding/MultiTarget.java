@@ -21,14 +21,14 @@ import java.util.Iterator;
 
 /**
  * A MultiTarget aggregates a bunch of targets into a single one.
- * This is used when multiple targets are waiting for a single SOAP
- * multiref deserialization, for instance.
+ * This is used, for instance, when multiple targets are waiting for a single SOAP
+ * multiref deserialization.
  */
 public class MultiTarget implements DeserializationTarget {
     ArrayList targets = new ArrayList();
 
     /**
-     * Add a target to the list of targets which will be updated when
+     * Adds a target to the list of targets which will be updated when
      * we receive a value.
      *
      * @param target

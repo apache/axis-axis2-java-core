@@ -23,14 +23,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * This one Handlers the dependancy of the Service implemetation are injected before invoke the Service
+ * If the service implementation has an init method with 1 or 2 message context as its parameters, then
+ * the DependencyManager calls the init method with appropriate parameters.
  */
 public class DependencyManager {
     private final static String MESSAGE_CONTEXT_INJECTION_METHOD = "init";
 
     public static void configureBusinessLogicProvider(Object obj,
-                                                      MessageContext msgctx,
-                                                      MessageContext newMsgCtx)
+                                                      MessageContext requestMsgCtx,
+                                                      MessageContext responseMsgCtx)
             throws AxisFault {
         try {
             Class classToLoad = obj.getClass();
@@ -42,13 +43,13 @@ public class DependencyManager {
                         methods[i].getParameterTypes().length == 1 &&
                         methods[i].getParameterTypes()[0] ==
                                 MessageContext.class) {
-                    methods[i].invoke(obj, new Object[]{msgctx});
+                    methods[i].invoke(obj, new Object[]{requestMsgCtx});
                 } else if (MESSAGE_CONTEXT_INJECTION_METHOD.equals(
                         methods[i].getName()) &&
                         methods[i].getParameterTypes().length == 2 &&
                         methods[i].getParameterTypes()[0] == MessageContext.class &&
                         methods[i].getParameterTypes()[1] == MessageContext.class) {
-                    methods[i].invoke(obj, new Object[]{msgctx, newMsgCtx});
+                    methods[i].invoke(obj, new Object[]{requestMsgCtx, responseMsgCtx});
                 }
             }
         } catch (SecurityException e) {

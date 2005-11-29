@@ -17,7 +17,7 @@
 package org.apache.axis2.databinding;
 
 /**
- * Holder
+ * Interface Holder
  */
 public interface Holder {
 }

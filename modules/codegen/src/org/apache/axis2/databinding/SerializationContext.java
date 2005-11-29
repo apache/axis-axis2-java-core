@@ -146,12 +146,12 @@ public class SerializationContext {
     }
 
     /**
-     * Obtain an ID for this object, which will be written (according to the
+     * Obtains an ID for this object, which will be written (according to the
      * SOAP 1.1 multiref rules) as an independent element at the end of the
-     * SOAP body - see finish()).
+     * SOAP body
      *
      * @param obj
-     * @return an ID, always.  Either a new one or a previously registered one.
+     * @return Returns an ID, always - either a new one or a previously registered one.
      */
     public String getSOAP11IDForObject(Object obj, Serializer serializer) {
         if (multirefObjects != null) {

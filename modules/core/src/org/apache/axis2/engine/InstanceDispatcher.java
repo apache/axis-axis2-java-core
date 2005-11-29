@@ -24,13 +24,14 @@ import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.handlers.AbstractHandler;
 
+/**
+ * By the time the control comes to this handler, the dispatching must have happened
+ * so that the message context contains the AxisServiceGroup, AxisService and
+ * AxisOperation.
+ * This will then try to find the Contexts of ServiceGroup, Service and the Operation.
+ */
 public class InstanceDispatcher extends AbstractHandler {
-    /**
-     * By the time the control comes to this handler the dispatching must have happened
-     * so that the message context contains the AxisServiceGroup, AxisService and
-     * AxisOperation.
-     * This will then try to find the Contexts of ServiceGroup, Service and the Operation.
-     */
+    
 
 
     /**

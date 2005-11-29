@@ -21,9 +21,8 @@ import org.apache.axis2.description.AxisService;
 public class AxisEvent {
 
     /**
-     * Axis event will throw when ever some considerable thing happen to
-     * <code>AxisConfiguration</code>  and registred Listeners will get
-     * informed.
+     * An Axis event is sent to registered listeners whenever anything significant 
+     * happens to <code>AxisConfiguration</code>.
      */
 
     public static final int SERVICE_DEPLOY = 1;

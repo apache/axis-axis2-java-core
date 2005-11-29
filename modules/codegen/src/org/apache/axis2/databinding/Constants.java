@@ -73,7 +73,7 @@ public class Constants {
     public static final String ENTERPRISE_LOG_CATEGORY = "org.apache.axis.enterprise";
 
     /**
-     * time logged stuff.
+     * Time logged stuff.
      */
     public static final String TIME_LOG_CATEGORY = "org.apache.axis.TIME";
 
@@ -85,7 +85,7 @@ public class Constants {
     /** The name of the field which accepts xsd:any content in Beans. */
     public static final String ANYCONTENT = "_any";
     /**
-     * The size of the buffer size for.
+     * Buffer size for http.
      */
     public static final int HTTP_TXR_BUFFER_SIZE = 8 * 1024;
     
@@ -93,11 +93,11 @@ public class Constants {
     public static final String WSIBP11_COMPAT_PROPERTY = "axis.ws-i.bp11.compatibility";
 
     /**
-     * Returns true if the string is the SOAP_ENV Namespace.
+     * Returns true if the string is the SOAP_ENV namespace.
      *
      * @param s  the string representation of a URI
-     * @return <code>true</code> if s represents any of the supported soap
-     *              envelope URI strings
+     * @return Returns <code>true</code> if s represents any of the supported soap
+     *              envelope URI strings,false otherwise.
      */
     public static boolean isSOAP_ENV(String s) {
         for (int i=0; i<URIS_SOAP_ENV.length; i++) {
@@ -127,11 +127,11 @@ public class Constants {
     };
 
     /**
-     * Returns true if SOAP_ENC Namespace.
+     * Returns true if SOAP_ENC namespace.
      *
      * @param s  a string representing the URI to check
-     * @return true if <code>s</code> matches a SOAP ENCODING namespace URI,
-     *              false otherwise
+     * @return Returns true if <code>s</code> matches a SOAP ENCODING namespace URI,
+     *              false otherwise.
      */
     public static boolean isSOAP_ENC(String s) {
         for (int i=0; i<URIS_SOAP_ENC.length; i++) {
@@ -143,13 +143,12 @@ public class Constants {
     }
 
     /**
-     * This utility routine returns the value of an attribute which might
-     * be in one of several namespaces.
+     * Returns the value of an attribute which might be in one of several namespaces.
      *
-     * @param attributes the attributes to search
-     * @param search an array of namespace URI strings to search
-     * @param localPart is the local part of the attribute name
-     * @return the value of the attribute or null
+     * @param attributes the attributes to search.
+     * @param search an array of namespace URI strings to search.
+     * @param localPart is the local part of the attribute name.
+     * @return Returns the value of the attribute or null.
      */
     public static String getValue(Attributes attributes,
                                   String [] search,
@@ -177,12 +176,12 @@ public class Constants {
     }
 
     /**
-     * Search an attribute collection for a list of QNames, returning
+     * Searches an attribute collection for a list of QNames, returning
      * the value of the first one found, or null if none were found.
      *
      * @param attributes
      * @param search
-     * @return the value of the attribute
+     * @return Returns the value of the attribute.
      */
     public static String getValue(Attributes attributes,
                                   QName [] search) {
@@ -201,12 +200,11 @@ public class Constants {
     }
 
     /**
-     * equals
      * The first QName is the current version of the name.  The second qname is compared
      * with the first considering all namespace uri versions.
-     * @param first Currently supported QName
-     * @param second any qname
-     * @return true if the qnames represent the same qname (paster namespace uri versions considered
+     * @param first Currently supported QName.
+     * @param second any qname.
+     * @return Returns true if the qnames represent the same qname (paster namespace uri versions considered).
      */
     public static boolean equals(QName first, QName second) {
         if (first == second) {
@@ -286,10 +284,10 @@ public class Constants {
 
 
     /**
-     * Returns true if SchemaXSD Namespace.
+     * Returns true if SchemaXSD namespace.
      *
      * @param s  the string representing the URI to check
-     * @return true if s represents the Schema XSD namespace, false otherwise
+     * @return Returns true if s represents the Schema XSD namespace, false otherwise.
      */
     public static boolean isSchemaXSD(String s) {
         for (int i=0; i<URIS_SCHEMA_XSD.length; i++) {
@@ -318,10 +316,10 @@ public class Constants {
     };
 
     /**
-     * Returns true if SchemaXSI Namespace.
+     * Returns true if SchemaXSI namespace.
      *
-     * @param s  the string of the URI to check
-     * @return   true if <code>s</code> is a Schema XSI URI, false otherwise
+     * @param s  the string of the URI to check.
+     * @return   Returns true if <code>s</code> is a Schema XSI URI, false otherwise.
      */
     public static boolean isSchemaXSI(String s) {
         for (int i=0; i<URIS_SCHEMA_XSI.length; i++) {
@@ -333,7 +331,7 @@ public class Constants {
     }
 
     /**
-     * WSDL Namespace.
+     * WSDL namespace.
      */
     public static final String NS_URI_WSDL11 =
                                  "http://schemas.xmlsoap.org/wsdl/";
@@ -343,10 +341,10 @@ public class Constants {
     };
 
     /**
-     * Returns true if this is a WSDL Namespace.
+     * Returns true if this is a WSDL namespace.
      *
-     * @param s  a string of a URI to check
-     * @return   true if <code>s</code> is a WSDL namespace URI, false otherwise
+     * @param s  a string of a URI to check.
+     * @return   Returns true if <code>s</code> is a WSDL namespace URI, false otherwise
      */
     public static boolean isWSDL(String s) {
         for (int i=0; i<NS_URIS_WSDL.length; i++) {
@@ -377,7 +375,7 @@ public class Constants {
                                  "http://schemas.xmlsoap.org/ws/2002/04/dime/open-layout";
 
     //
-    // WSDL SOAP Namespace
+    // WSDL SOAP namespace
     //
     public static final String URI_WSDL11_SOAP =
                                  "http://schemas.xmlsoap.org/wsdl/soap/";
@@ -390,11 +388,11 @@ public class Constants {
     };
 
     /**
-     * Returns true if s is a WSDL SOAP Namespace.
+     * Returns true if s is a WSDL SOAP namespace.
      *
-     * @param s  a string of a URI to check
-     * @return   true if <code>s</code> matches any of the WSDL SOAP namepace
-     *              URIs, false otherwise
+     * @param s  a string of a URI to check.
+     * @return   Returns true if <code>s</code> matches any of the WSDL SOAP namepace
+     *              URIs, false otherwise.
      */
     public static boolean isWSDLSOAP(String s) {
         for (int i=0; i<NS_URIS_WSDL_SOAP.length; i++) {
@@ -604,7 +602,7 @@ public class Constants {
     public static final QName QNAME_FAULTDETAIL_STACKTRACE = new QName(NS_URI_AXIS,"stackTrace");
 
     /**
-     * QName of exception Name element in an axis fault detail.
+     * QName of exception name element in an axis fault detail.
      * Do not use - this is for pre-1.0 server->client exceptions.
      */
     public static final QName QNAME_FAULTDETAIL_EXCEPTIONNAME = new QName(NS_URI_AXIS, "exceptionName");
@@ -616,7 +614,7 @@ public class Constants {
     public static final QName QNAME_FAULTDETAIL_RUNTIMEEXCEPTION = new QName(NS_URI_AXIS, "isRuntimeException");
 
     /**
-     * QName of stack trace element in an axis fault detail.
+     * QName of HTTP Error code element in an axis fault detail. 
      */
     public static final QName QNAME_FAULTDETAIL_HTTPERRORCODE = new QName(NS_URI_AXIS, "HttpErrorCode");
 
@@ -684,7 +682,7 @@ public class Constants {
     public static final int DEFAULT_MESSAGE_TIMEOUT=60*1000*10;
 
     /**
-     * MIME Content Types
+     * MIME Content Types.
      * 
      * @since Axis1.2
      */

@@ -26,8 +26,8 @@ import org.apache.axis2.handlers.AbstractHandler;
 import javax.xml.namespace.QName;
 
 /**
- * This one is run after all the dispatchers and make a Operation and a Service is idenitified
- * if the message to go any further
+ * This runs after all the dispatchers and ensures that a specific operation and a service has
+ * been identified. Only then, it allows for a message to go further.
  */
 public class DispatchingChecker extends AbstractHandler implements Handler {
     /**
@@ -47,7 +47,7 @@ public class DispatchingChecker extends AbstractHandler implements Handler {
     }
 
     /**
-     * Method invoke
+     * Method invoke.
      *
      * @param msgctx
      * @throws AxisFault

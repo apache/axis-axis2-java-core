@@ -32,7 +32,7 @@ import java.io.File;
 import java.util.*;
 
 /**
- * Class EngineRegistryImpl
+ * Class AxisConfigurationImpl
  */
 public class AxisConfigurationImpl implements AxisConfiguration {
     /**
@@ -78,7 +78,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     protected PhasesInfo phasesinfo;
 
     /**
-     * Field modules
+     * Field engagedModules
      */
     protected final List engagedModules;
 
@@ -99,7 +99,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     /////////////////////// From AxisGlobal /////////////////////////////////////
 
     /**
-     * Constructor EngineRegistryImpl
+     * Constructor AxisConfigurationImpl
      */
     public AxisConfigurationImpl() {
         moduleConfigmap = new HashMap();
@@ -126,7 +126,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
 
     /**
-     * setting the default dispatching order
+     * Sets the default dispatching order.
      */
     public void setDefaultDispatchers() {
 
@@ -169,7 +169,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
 
     /**
-     * Setting the custom dispatching order
+     * Sets the custom dispatching order.
      *
      * @param dispatch
      */
@@ -198,7 +198,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     }
 
     /**
-     * Method addMdoule
+     * Method addModule.
      *
      * @param module
      * @throws AxisFault
@@ -209,7 +209,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     }
 
     /**
-     * Method addService
+     * Method addService.
      *
      * @param service
      * @throws AxisFault
@@ -248,27 +248,27 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     }
 
     /**
-     * Method getModule
+     * Method getModule.
      *
      * @param name
-     * @return ModuleDescription
+     * @return Returns ModuleDescription.
      */
     public ModuleDescription getModule(QName name) {
         return (ModuleDescription) modules.get(name);
     }
 
     /**
-     * @return HashMap
+     * @return Returns HashMap.
      */
     public HashMap getModules() {
         return modules;
     }
 
     /**
-     * Method getService
+     * Method getService.
      *
      * @param name
-     * @return
+     * @return Returns AxisService.
      * @throws AxisFault
      */
     public AxisService getService(String name) throws AxisFault {
@@ -276,7 +276,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     }
 
     /**
-     * Method removeService
+     * Method removeService.
      *
      * @param name
      * @throws AxisFault
@@ -293,7 +293,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     }
 
     /**
-     * Method addTransport
+     * Method addTransportIn.
      *
      * @param transport
      * @throws AxisFault
@@ -308,7 +308,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     }
 
     /**
-     * Method addTransport
+     * Method addTransportOut.
      *
      * @param transport
      * @throws AxisFault
@@ -326,9 +326,14 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         return transportsOut;
     }
 
-    //to check whether a given paramter is locked
-    public boolean isParameterLocked(String paramterName) {
-        Parameter parameter = getParameter(paramterName);
+    /**
+     * Checks whether a given parameter is locked.
+     *
+     * @param parameterName
+     * @return Returns boolean
+     */
+    public boolean isParameterLocked(String parameterName) {
+        Parameter parameter = getParameter(parameterName);
         return parameter != null && parameter.isLocked();
     }
 
@@ -359,14 +364,14 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
 
     /**
-     * @return ArrayList
+     * @return Returns ArrayList
      */
     public ArrayList getInFaultFlow() {
         return inFaultPhases;
     }
 
     /**
-     * @return ArrayList
+     * @return Returns ArrayList
      */
     public ArrayList getOutFaultFlow() {
         return outFaultPhases;
@@ -398,10 +403,10 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     }
 
     /**
-     * Method getParameter
+     * Method getParameter.
      *
      * @param name
-     * @return Parameter
+     * @return Returns Parameter
      */
     public Parameter getParameter(String name) {
         return paramInclude.getParameter(name);
@@ -412,7 +417,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     }
 
     /**
-     * Method addParameter
+     * Method addParameter.
      *
      * @param param
      */
@@ -425,11 +430,11 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     }
 
     /**
-     * Method getEngadgedModules
+     * Method getEngagedModules.
      *
      * @return Collection
      */
-    public Collection getEngadgedModules() {
+    public Collection getEngagedModules() {
         return engagedModules;
     }
 
@@ -552,7 +557,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
 
 
     /**
-     * Adding module configuration , if there is moduleConfig tag in service
+     * Adds module configuration, if there is moduleConfig tag in service.
      *
      * @param moduleConfiguration
      */

@@ -154,7 +154,7 @@ public class AxisEngine {
     }
 
     /**
-     * This Method Send the SOAP Fault to a Other SOAP Node
+     * Sends the SOAP Fault to another SOAP node.
      *
      * @param msgContext
      * @throws AxisFault
@@ -183,6 +183,7 @@ public class AxisEngine {
 
     /**
      * This is invoked when a SOAP Fault is received from a Other SOAP Node
+     * Receives a SOAP fault from another SOAP node.
      *
      * @param msgContext
      * @throws AxisFault
@@ -220,9 +221,9 @@ public class AxisEngine {
     }
 
     /**
-     * If error occurs at inflow or the out flow this method will call to handle the error. But if the
-     * execution reach this method twice, means the sending the error handling failed an in that case the
-     * this method just log the error and exit</p>
+     * This method is called to handle any error that occurs at inflow or outflow. But if the
+     * method is called twice, it implies that sending the error handling has failed, in which case
+     * the method logs the error and exists.
      *
      * @param processingContext
      * @param e

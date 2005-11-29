@@ -29,7 +29,7 @@ import javax.xml.namespace.QName;
 
 /**
  * Dispatches based on the namespace URI of the first child of
- * the Body.
+ * the body.
  */
 public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
     /**

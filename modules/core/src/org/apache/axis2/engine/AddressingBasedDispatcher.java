@@ -28,7 +28,7 @@ import org.apache.axis2.util.Utils;
 import javax.xml.namespace.QName;
 
 /**
- * Dispatcher based on the WS-Addressing properties
+ * Dispatcher based on the WS-Addressing properties.
  */
 public class AddressingBasedDispatcher extends AbstractDispatcher implements AddressingConstants {
     /**
