@@ -17,7 +17,7 @@
     </preGoal>
     
     <postGoal name="test:compile">
-
+      <j:if test="context.getVariable('maven.test.skip') != 'true'}">
         <mkdir dir="target/classes/META-INF"/>
         <copy file="src/META-INF/module.xml"
             tofile="target/classes/META-INF/module.xml"/>
@@ -39,10 +39,12 @@
             <include name="**/*"/>
         </jar>
         <copy file="target/security.mar" tofile="target/modules/security.mar"/>
-
+      </j:if>
     </postGoal>
 
     <preGoal name="java:compile">
+     <j:if test="context.getVariable('maven.test.skip') != 'true'}">
+
        	<j:set var="interop.dir" value="target/interop"/>
         <j:set var="work.dir" value="${interop.dir}/work"/>
         <j:set var="class.dir" value="${interop.dir}/classes"/>
@@ -88,10 +90,12 @@
 
    	    <ant:path id="src.dir" location="${work.dir}"/>
         <maven:addPath id="maven.compile.src.set" refid="src.dir"/>	
+     </j:if>
     </preGoal>
 
 	<!--Create the service.aar" -->
     <postGoal name="java:compile">
+      <j:if test="context.getVariable('maven.test.skip') != 'true'}">
 
 		<!-- move/copy interop classes into class.dir -->
     	<ant:move todir="${class.dir}">
@@ -147,7 +151,7 @@
 	<jar jarfile="target/PingPort.aar" basedir="target/interop/classes">
             <include name="**/*"/>
         </jar>
-        
+     </j:if>
     </postGoal>
 
 </project>

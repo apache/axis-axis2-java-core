@@ -17,6 +17,7 @@
     </postGoal>
 
     <postGoal name="test:compile">
+      <j:if test="context.getVariable('maven.test.skip') != 'true'}">
         <mkdir dir="target/test-resources/samples/modules"/>
         <mkdir dir="target/test-resources/repository-client/modules"/>
         <copy file="../addressing/target/addressing.mar"
@@ -433,6 +434,7 @@
             <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestServiceB"/>
             <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/SOAP12Testing/SOAP12TestServiceC"/>
         </j:jelly>
+      </j:if>
     </postGoal>
 
     <postGoal name="test:test">
