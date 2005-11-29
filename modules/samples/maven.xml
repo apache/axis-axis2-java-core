@@ -11,7 +11,7 @@
     <j:set var="samples.dir" value="target/samples"/>
 
     <postGoal name="test:test">
-      <j:if test="context.getVariable('maven.test.skip') != 'true'}">
+      <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
         <attainGoal name="create-samples"/>
       </j:if>
     </postGoal>

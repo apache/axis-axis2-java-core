@@ -30,7 +30,7 @@
 
     <!-- run the schema compiler -->
     <postGoal name="test:compile">
-     <!--<j:if test="context.getVariable('maven.test.skip') != 'true'}">-->
+       <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
 
         <j:set var="compiled.classes.dir" value="target/classes"/>   <!-- Theres got to be a better way to do this -->
         <j:set var="schema.source.dir" value="test-resources/xsd"/>
@@ -89,7 +89,7 @@
 
         <ant:path id="schema.generated.classes.dir" location="${schema.generated.classes.dir}"/>
         <maven:addPath id="maven.dependency.classpath" refid="schema.generated.classes.dir"/>
-      <!--</j:if>-->
+      </j:if>
     </postGoal>
 
 </project>

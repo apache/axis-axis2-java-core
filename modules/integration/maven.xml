@@ -17,7 +17,7 @@
     </postGoal>
 
     <postGoal name="test:compile">
-      <j:if test="context.getVariable('maven.test.skip') != 'true'}">
+      <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
         <mkdir dir="target/test-resources/samples/modules"/>
         <mkdir dir="target/test-resources/repository-client/modules"/>
         <copy file="../addressing/target/addressing.mar"
