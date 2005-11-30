@@ -7,6 +7,7 @@ import org.apache.axis2.databinding.schema.types.*;
 import javax.xml.namespace.QName;
 import java.util.Map;
 import java.util.HashMap;
+import java.math.BigDecimal;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -44,10 +45,12 @@ public class JavaTypeMap implements TypeMap {
         addTypemapping(SchemaConstants.XSD_DOUBLE, double.class.getName());
         addTypemapping(SchemaConstants.XSD_FLOAT, float.class.getName());
         addTypemapping(SchemaConstants.XSD_INT, int.class.getName());
+        addTypemapping(SchemaConstants.XSD_INTEGER, java.math.BigInteger.class.getName());
         addTypemapping(SchemaConstants.XSD_LONG, long.class.getName());
         addTypemapping(SchemaConstants.XSD_SHORT, short.class.getName());
         addTypemapping(SchemaConstants.XSD_BYTE, byte.class.getName());
         addTypemapping(SchemaConstants.XSD_ANY, OMElement.class.getName());
+        addTypemapping(SchemaConstants.XSD_DECIMAL, BigDecimal.class.getName());
 
         //anytype is mapped to the OMElement instead of the java.lang.Object
         addTypemapping(SchemaConstants.XSD_ANYTYPE, OMElement.class.getName());

@@ -1,4 +1,4 @@
-package org.apache.axis2.databinding.schema.populate.simple;
+package org.apache.axis2.databinding.schema.populate.derived;
 
 import junit.framework.TestCase;
 
@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
  * limitations under the License.
  */
 
-public abstract class AbstractSimplePopulater extends TestCase {
+public abstract class AbstractDerivedPopulater extends TestCase {
 
     // force others to implement this method
     public abstract void testPopulate() throws Exception;
@@ -36,6 +36,7 @@ public abstract class AbstractSimplePopulater extends TestCase {
         assertNotNull(obj);
 
         return obj;
+
 
     }
 }

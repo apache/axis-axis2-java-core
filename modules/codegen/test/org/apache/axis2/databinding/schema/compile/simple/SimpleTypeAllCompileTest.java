@@ -17,10 +17,10 @@ import org.apache.axis2.databinding.schema.compile.AbstractSchemaCompilerTester;
  * limitations under the License.
  */
 
-public class SimpleTypegYearTest extends AbstractSchemaCompilerTester {
+public class SimpleTypeAllCompileTest extends AbstractSchemaCompilerTester {
 
     protected void setUp() throws Exception {
-        this.fileName = "test-resources/xsd/simple/simpleType-Year.xsd";
+        this.fileName = "test-resources/xsd/simple/simpleType-All.xsd";
         super.setUp();
     }
 }

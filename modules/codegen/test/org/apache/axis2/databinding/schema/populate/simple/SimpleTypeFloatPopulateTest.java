@@ -1,6 +1,4 @@
-package org.apache.axis2.databinding.schema.compile.simple;
-
-import org.apache.axis2.databinding.schema.compile.AbstractSchemaCompilerTester;
+package org.apache.axis2.databinding.schema.populate.simple;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,10 +15,16 @@ import org.apache.axis2.databinding.schema.compile.AbstractSchemaCompilerTester;
  * limitations under the License.
  */
 
-public class SimpleTypegMonthTest extends AbstractSchemaCompilerTester {
-
-    protected void setUp() throws Exception {
-        this.fileName = "test-resources/xsd/simple/simpleType-Month.xsd";
-        super.setUp();
+public class SimpleTypeFloatPopulateTest extends AbstractSimplePopulater{
+    private String xmlString[] = {
+            "<doubleParam>20300.00554433422</doubleParam>",
+            "<doubleParam>203045534234</doubleParam>",
+            "<doubleParam>66733.0060604343</doubleParam>"
+    };
+    // force others to implement this method
+    public void testPopulate() throws Exception {
+        process(xmlString[0],"org.soapinterop.doubleParam");
+        process(xmlString[1],"org.soapinterop.doubleParam");
+        process(xmlString[2],"org.soapinterop.doubleParam");
     }
 }
