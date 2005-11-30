@@ -19,6 +19,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMConstants;
 import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
@@ -126,7 +127,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	 * @see org.w3c.dom.Node#getNodeValue()
 	 */
 	public String getNodeValue() throws DOMException {
-		return (this.attrName==null)?"":this.attrValue.getData();
+		return (this.attrName==null) ? "" : this.attrValue.getData();
 	}
 	
 	/**
@@ -134,14 +135,14 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	 * @see org.w3c.dom.Attr#getValue()
 	 */
 	public String getValue() {
-		return (this.attrValue == null)? null:this.attrValue.getText();
+		return (this.attrValue == null) ? null:this.attrValue.getText();
 	}
 
 	///
 	///org.w3c.dom.Attr methods
 	///
 	public String getName() {
-		return this.attrName;
+		return (this.namespace==null) ? this.attrName:OMConstants.XMLNS_NS_PREFIX + ":" + this.attrName;
 	}
 	
 	/**
@@ -310,7 +311,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	 * @see org.w3c.dom.Node#getLocalName()
 	 */
     public String getLocalName() {
-        return this.attrName;
+        return (this.namespace == null) ? null : this.attrName;
     }
 
     /**

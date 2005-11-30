@@ -15,22 +15,21 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
-import org.apache.axis2.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
+import org.apache.axis2.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 public class ElementImplTest extends TestCase {
 

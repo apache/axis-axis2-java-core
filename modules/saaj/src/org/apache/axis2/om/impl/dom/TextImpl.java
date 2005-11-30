@@ -206,7 +206,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
 		return "#text";
 	}
 	public short getNodeType() {
-		return OMNode.TEXT_NODE;
+		return Node.TEXT_NODE;
 	}
 	
 	

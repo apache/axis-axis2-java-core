@@ -16,16 +16,15 @@
 
 package org.apache.axis2.soap.impl.dom;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPMessage;
 import org.apache.axis2.soap.SOAPProcessingException;
-
-import javax.xml.stream.XMLStreamException;
 
 public class SOAPMessageImpl extends DocumentImpl implements SOAPMessage {
 
@@ -48,24 +47,7 @@ public class SOAPMessageImpl extends DocumentImpl implements SOAPMessage {
     }
 
     public void setSOAPEnvelope(SOAPEnvelope envelope) throws SOAPProcessingException {
-    	if(this.getDocumentElement() != null) {
-    		this.replaceChild(this.getDocumentElement(), (SOAPEnvelopeImpl)envelope);
-    	} else {
-    		this.appendChild((SOAPEnvelopeImpl)envelope);
-    	}
-    }
-
-    public void setOMDocumentElement(OMElement rootElement) {
-        throw new UnsupportedOperationException("This is not allowed. Use set SOAPEnvelope instead");
-    }
-
-    public void addChild(OMNode child) {
-        throw new UnsupportedOperationException("Can not add normal children to SOAP envelope. Use setSOAPEnvelope()");
-    }
-
-
-    public void setFirstChild(OMNode firstChild) {
-        throw new UnsupportedOperationException("This is not allowed. Use set SOAPEnvelope instead");
+    	this.addChild(envelope);
     }
 
     protected void serialize(OMOutputImpl omOutput, boolean cache, boolean includeXMLDeclaration) throws XMLStreamException {

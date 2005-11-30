@@ -20,8 +20,8 @@ public class DocumentBuilderFactoryImpl extends DocumentBuilderFactory{
 	}
 
 	public void setAttribute(String arg0, Object arg1) throws IllegalArgumentException {
-		// TODO 
-		throw new UnsupportedOperationException("TODO");
+//		// TODO 
+//		throw new UnsupportedOperationException("TODO");
 	}
 
 	public static DocumentBuilderFactory newInstance() {

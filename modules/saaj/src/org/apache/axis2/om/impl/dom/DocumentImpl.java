@@ -15,6 +15,11 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import java.util.Hashtable;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMDocument;
 import org.apache.axis2.om.OMElement;
@@ -34,15 +39,11 @@ import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
 import org.w3c.dom.EntityReference;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
-
-import java.util.Hashtable;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 /**
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
@@ -159,8 +160,7 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	}
 	
 	public DocumentFragment createDocumentFragment() {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		return new DocumentFragmentimpl(this);
 	}
 	
 	public Element createElement(String tagName) throws DOMException {
@@ -213,10 +213,91 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 		//TODO
 		throw new UnsupportedOperationException("TODO");
 	}
-	public Node importNode(Node arg0, boolean arg1) throws DOMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public Node importNode(Node importedNode, boolean deep) throws DOMException {
+		
+		short type = importedNode.getNodeType();
+		Node newNode = null;
+		switch(type) {
+			case Node.ELEMENT_NODE : {
+				Element newElement;
+				if(importedNode.getLocalName() == null) {
+					newElement = this.createElement(importedNode.getNodeName());
+				} else {
+					newElement = createElementNS(importedNode.getNamespaceURI(),importedNode.getNodeName());
+				}
+				
+				//Copy element's attributes, if any.
+                NamedNodeMap sourceAttrs = importedNode.getAttributes();
+                if (sourceAttrs != null) {
+                    int length = sourceAttrs.getLength();
+                    for (int index = 0; index < length; index++) {
+                        Attr attr = (Attr)sourceAttrs.item(index);
+                        
+                        Attr newAttr = (Attr) importNode(attr, true);
+                        if(attr.getLocalName() == null) {
+                        	newElement.setAttributeNode(newAttr);
+                        } else {
+                        	newElement.setAttributeNodeNS(newAttr);
+                        }
+                        
+                    }
+                }
+                newNode = newElement;
+				break;
+			}
+			
+			case Node.ATTRIBUTE_NODE : {
+                if (importedNode.getLocalName() == null) {
+                	newNode = createAttribute(importedNode.getNodeName());
+	            } else {
+	                newNode = createAttributeNS(importedNode.getNamespaceURI(),
+							importedNode.getNodeName());
+	            }
+                ((Attr)newNode).setValue(importedNode.getNodeValue());
+				break;
+			}
+			
+			case Node.TEXT_NODE : {
+				newNode = createTextNode(importedNode.getNodeValue());
+				break;
+			}
+			
+	        case Node.DOCUMENT_FRAGMENT_NODE: {
+	        	newNode = createDocumentFragment();
+	            // No name, kids carry value
+	            break;
+	        }	
+			
+            case Node.CDATA_SECTION_NODE:
+	        case Node.ENTITY_REFERENCE_NODE: 
+			case Node.ENTITY_NODE: 
+			case Node.PROCESSING_INSTRUCTION_NODE:
+			case Node.COMMENT_NODE: 
+			case Node.DOCUMENT_TYPE_NODE:
+			case Node.NOTATION_NODE: 
+				throw new UnsupportedOperationException("TODO");
+
+			case Node.DOCUMENT_NODE: // Can't import document nodes				
+			default: {           // Unknown node type
+                String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NOT_SUPPORTED_ERR", null);
+                throw new DOMException(DOMException.NOT_SUPPORTED_ERR, msg);
+            }
+				
+		}
+		
+        // If deep, replicate and attach the kids.
+        if (deep) {
+            for (Node srckid = importedNode.getFirstChild(); srckid != null; srckid = srckid.getNextSibling()) {
+            	newNode.appendChild(importNode(srckid, true));
+            }
+        }
+		
+		return newNode;
+		
 	}
+	
+
+	
 
 	public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException {
 		//TODO
@@ -296,6 +377,11 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	 * @see org.w3c.dom.Document#getDocumentElement()
 	 */
 	public Element getDocumentElement() {
+		
+		if(this.firstChild == null && !this.done) {
+			this.build();
+		}
+			
 		return (Element)this.firstChild;
 	}
 	

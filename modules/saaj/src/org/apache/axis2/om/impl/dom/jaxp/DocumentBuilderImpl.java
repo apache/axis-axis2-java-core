@@ -70,7 +70,9 @@ public class DocumentBuilderImpl extends DocumentBuilder {
 	 * @see javax.xml.parsers.DocumentBuilder#newDocument()
 	 */
 	public Document newDocument() {
-		return new DocumentImpl();
+		DocumentImpl documentImpl = new DocumentImpl();
+		documentImpl.setComplete(true);
+		return documentImpl;
 	}
 
 	public void setEntityResolver(EntityResolver arg0) {
@@ -87,7 +89,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
 		try {
 			OMDOMFactory factory = new OMDOMFactory();
 			//Not really sure whether this will work :-?
-			XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(inputSource.getByteStream());
+			XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(inputSource.getCharacterStream());
 			StAXOMBuilder builder = new StAXOMBuilder(factory,reader);
 			return (DocumentImpl)builder.getDocument();
 		}catch (XMLStreamException e) {

@@ -216,6 +216,8 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 							newDomChild.nextSibling = refDomChild;
 							refDomChild.previousSubling = newDomChild;
 							
+							this.firstChild.isFirstChild(true);
+							refDomChild.isFirstChild(false);
 							newDomChild.previousSubling = null; //Just to be sure :-)
 							
 						}
@@ -303,13 +305,25 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 					newDomChild.previousSubling = oldDomChild.previousSubling;
 					
 					oldDomChild.previousSubling.nextSibling = newDomChild;
-					oldDomChild.nextSibling.previousSubling = newDomChild;
+					
+					//If the old child is not the last
+					if(oldDomChild.nextSibling != null) {
+						oldDomChild.nextSibling.previousSubling = newDomChild;
+					} else {
+						this.lastChild = newDomChild;
+					}
+					
+					if(newDomChild.parentNode == null) {
+						newDomChild.parentNode = this;
+					}
+					
 				}
 				found = true;
 				
 				//remove the old child's references to this tree
 				oldDomChild.nextSibling = null;
 				oldDomChild.previousSubling = null;
+				oldDomChild.parentNode = null;
 			}	
 		}
 		
@@ -342,17 +356,31 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 		while(children.hasNext()) {
 			ChildNode tempNode = (ChildNode)children.next();
 			if(tempNode.equals(oldChild)) {
+				
+				if(tempNode.isFirstChild()) {
+					//If this is the first child
+					this.firstChild = null;
+					this.lastChild = null;
+					tempNode.parentNode = null;
+				} else if (this.lastChild == tempNode) {
+					//not the first child, but the last child 
+					ChildNode prevSib = tempNode.previousSubling;
+					prevSib.nextSibling = null;
+					tempNode.parentNode = null;
+					tempNode.previousSubling = null;
+				} else {
+	
+					ChildNode oldDomChild = (ChildNode)oldChild;
+					ChildNode privChild = oldDomChild.previousSubling;
+					
+					privChild.nextSibling = oldDomChild.nextSibling;
+					oldDomChild.nextSibling.previousSubling = privChild;
+					
+					//Remove old child's references to this tree
+					oldDomChild.nextSibling = null;
+					oldDomChild.previousSubling = null;
+				}
 				//Child found
-				ChildNode oldDomChild = (ChildNode)oldChild;
-				ChildNode privChild = oldDomChild.previousSubling;
-				
-				privChild.nextSibling = oldDomChild.nextSibling;
-				oldDomChild.nextSibling.previousSubling = privChild;
-				
-				//Remove old child's references to this tree
-				oldDomChild.nextSibling = null;
-				oldDomChild.previousSubling = null;
-				
 				childFound = true;
 			}
 		}

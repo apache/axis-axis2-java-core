@@ -137,7 +137,8 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	 * @see org.w3c.dom.Node#getNodeName()
 	 */
 	public String getNodeName() {
-		return this.localName;
+		return (this.namespace != null) ? this.namespace.getPrefix() + ":"
+				+ this.localName : this.localName;
 	}
 
 	/**
@@ -189,31 +190,18 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
             throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
 		}
 		
+		if(name.startsWith(OMConstants.XMLNS_NS_PREFIX)) {
+			String namespacePrefix = DOMUtil.getLocalName(name);
+			if(this.findNamespaceURI(namespacePrefix) != null) {
+				this.removeNamespace(namespacePrefix);
+			}
+		}
+		
 		if(this.attributes != null) {
 			this.attributes.removeNamedItem(name);
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see org.w3c.dom.Element#hasAttribute(java.lang.String)
-	 */
-	public boolean hasAttribute(String name) {
-		return this.getAttributeNode(name) != null;
-	}
-
-	/**
-	 * Look in the local list of attributes and return if found
-	 * if the local list is null return null
-	 * @see org.w3c.dom.Element#getAttribute(java.lang.String)
-	 */
-	public String getAttribute(String name) {
-		if(attributes == null) {
-			return "";
-		} else {
-			return ((Attr)attributes.getNamedItem(name)).getValue();
-		}
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.w3c.dom.Element#removeAttributeNS(java.lang.String, java.lang.String)
 	 */
@@ -226,46 +214,6 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		if(this.attributes != null) {
 			this.attributes.removeNamedItemNS(namespaceURI, localName);
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.w3c.dom.Element#setAttribute(java.lang.String, java.lang.String)
-	 */
-	public void setAttribute(String name, String value) throws DOMException {
-		//Check for invalid charaters
-		if(!DOMUtil.isValidChras(name)) {
-			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "INVALID_CHARACTER_ERR", null);
-            throw new DOMException(DOMException.INVALID_CHARACTER_ERR, msg);
-		}
-		
-		if(this.isReadonly()) {
-			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NO_MODIFICATION_ALLOWED_ERR", null);
-            throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
-		}
-		if(this.attributes == null) {
-			this.attributes = new AttributeMap(this);
-		}
-		this.attributes.setNamedItem(new AttrImpl(this.ownerNode, name, value));
-	}
-
-	/**
-	 * Returns whether the  given attr is available or not
-	 * @see org.w3c.dom.Element#hasAttributeNS(java.lang.String, java.lang.String)
-	 */
-	public boolean hasAttributeNS(String namespaceURI, String localName) {
-		return this.getAttributeNodeNS(namespaceURI, localName) != null;
-	}
-
-	/**
-	 * Retrieves an attribute node by name. 
-	 * @see org.w3c.dom.Element#getAttributeNode(java.lang.String)
-	 */
-	public Attr getAttributeNode(String name) {
-		if(this.attributes == null) {
-			return null;
-		}
-		
-		return (AttrImpl)this.attributes.getNamedItem(name);
 	}
 
 	/**
@@ -283,6 +231,72 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		}
 		AttrImpl tempAttr = (AttrImpl)this.attributes.removeNamedItem(oldAttr.getName());
 		return tempAttr;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.w3c.dom.Element#hasAttribute(java.lang.String)
+	 */
+	public boolean hasAttribute(String name) {
+		return this.getAttributeNode(name) != null;
+	}
+
+	/**
+	 * Returns whether the  given attr is available or not
+	 * @see org.w3c.dom.Element#hasAttributeNS(java.lang.String, java.lang.String)
+	 */
+	public boolean hasAttributeNS(String namespaceURI, String localName) {
+		return this.getAttributeNodeNS(namespaceURI, localName) != null;
+	}
+	
+	/**
+	 * Look in the local list of attributes and return if found
+	 * if the local list is null return null
+	 * @see org.w3c.dom.Element#getAttribute(java.lang.String)
+	 */
+	public String getAttribute(String name) {
+		if(attributes == null) {
+			return "";
+		} else {
+			return ((Attr)attributes.getNamedItem(name)).getValue();
+		}
+	}
+
+	/**
+	 * Retrieves an attribute node by name. 
+	 * @see org.w3c.dom.Element#getAttributeNode(java.lang.String)
+	 */
+	public Attr getAttributeNode(String name) {
+		return (this.attributes==null)?null:(AttrImpl)this.attributes.getNamedItem(name);
+	}
+
+	/**
+	 * Retrieves an attribute value by local name and namespace URI. 
+	 * @see org.w3c.dom.Element#getAttributeNS(java.lang.String, java.lang.String)
+	 */
+	public String getAttributeNS(String namespaceURI, String localName) {
+		if(this.attributes == null) {
+			return "";
+		}
+		Attr attributeNodeNS = this.getAttributeNodeNS(namespaceURI, localName);
+		return attributeNodeNS == null? "" : attributeNodeNS.getValue();
+	}
+
+	/**
+	 * Retrieves an Attr node by local name and namespace URI. 
+	 * @see org.w3c.dom.Element#getAttributeNodeNS(java.lang.String, java.lang.String)
+	 */
+	public Attr getAttributeNodeNS(String namespaceURI, String localName) {
+
+		if(namespaceURI == OMConstants.XMLNS_NS_URI) {
+			OMNamespace ns = this.findNamespaceURI(localName);
+			AttrImpl namespaceAttr = new AttrImpl(localName, ns.getName());
+			NamespaceImpl xmlNs = new NamespaceImpl(OMConstants.XMLNS_NS_URI);
+			namespaceAttr.setOMNamespace(xmlNs);
+			return namespaceAttr;
+		}
+		
+		return (this.attributes == null)?null:(Attr)this.attributes.getNamedItemNS(namespaceURI,localName);
+
 	}
 
 	/**
@@ -317,73 +331,90 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		return (Attr)this.attributes.setNamedItem(attr);
 
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.w3c.dom.Element#setAttribute(java.lang.String, java.lang.String)
+	 */
+	public void setAttribute(String name, String value) throws DOMException {
+		//Check for invalid charaters
+		if(!DOMUtil.isValidChras(name)) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "INVALID_CHARACTER_ERR", null);
+            throw new DOMException(DOMException.INVALID_CHARACTER_ERR, msg);
+		}
+		
+		this.setAttributeNode(new AttrImpl(this.ownerNode, name, value));
+	}
 
 	/* (non-Javadoc)
 	 * @see org.w3c.dom.Element#setAttributeNodeNS(org.w3c.dom.Attr)
 	 */
 	public Attr setAttributeNodeNS(Attr attr) throws DOMException {
-		
-		AttrImpl attrImpl = (AttrImpl)attr;
 
-		if(attrImpl.isOwned()) {//check for ownership
-			if(!this.getOwnerDocument().equals(attr.getOwnerDocument())) {
-				String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "WRONG_DOCUMENT_ERR", null);
-	            throw new DOMException(DOMException.WRONG_DOCUMENT_ERR, msg);
+		//Check whether the attr is a namespace declaration
+		//if so add a namespace NOT an attribute
+		if(attr.getNamespaceURI() != null && attr.getNamespaceURI().equals(OMConstants.XMLNS_NS_URI)) {
+			this.declareNamespace(attr.getName(), attr.getValue());
+			return attr;
+		} else {
+			AttrImpl attrImpl = (AttrImpl)attr;
+	
+			if(attrImpl.isOwned()) {//check for ownership
+				if(!this.getOwnerDocument().equals(attr.getOwnerDocument())) {
+					String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "WRONG_DOCUMENT_ERR", null);
+		            throw new DOMException(DOMException.WRONG_DOCUMENT_ERR, msg);
+				}
 			}
+			
+			if(this.isReadonly()) {
+				String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NO_MODIFICATION_ALLOWED_ERR", null);
+	            throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
+			}
+			
+			//check whether the attr is in use
+			if(attrImpl.isUsed()) {
+				String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "INUSE_ATTRIBUTE_ERR", null);
+	            throw new DOMException(DOMException.INUSE_ATTRIBUTE_ERR, msg);
+			}
+		
+			if(this.attributes == null) {
+				this.attributes = new AttributeMap(this);
+			}
+	
+			//handle the namespaces
+	        if (attr.getNamespaceURI() != null && findNamespace(attr.getNamespaceURI(), attr.getPrefix()) == null) {
+	        	//TODO checkwhether the same ns is declared with a different prefix and remove it
+	        	this.declareNamespace(new NamespaceImpl(attr.getNamespaceURI(),attr.getPrefix()));
+	        }
+			
+			return (Attr)this.attributes.setNamedItemNS(attr);
 		}
-		
-		if(this.isReadonly()) {
-			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NO_MODIFICATION_ALLOWED_ERR", null);
-            throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, msg);
-		}
-		
-		//check whether the attr is in use
-		if(attrImpl.isUsed()) {
-			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "INUSE_ATTRIBUTE_ERR", null);
-            throw new DOMException(DOMException.INUSE_ATTRIBUTE_ERR, msg);
-		}
-		
-		if(this.attributes == null) {
-			this.attributes = new AttributeMap(this);
-		}
-
-		//handle the namespaces
-        if (attr.getNamespaceURI() != null && findNamespace(attr.getNamespaceURI(), attr.getPrefix()) == null) {
-        	//TODO checkwhether the same ns is declared with a different prefix and remove it
-        	this.declareNamespace(new NamespaceImpl(attr.getNamespaceURI(),attr.getPrefix()));
-        }
-		
-		return (Attr)this.attributes.setNamedItemNS(attr);
-		
 	}
-
-
-	/**
-	 * Retrieves an attribute value by local name and namespace URI. 
-	 * @see org.w3c.dom.Element#getAttributeNS(java.lang.String, java.lang.String)
-	 */
-	public String getAttributeNS(String namespaceURI, String localName) {
-		if(this.attributes == null) {
-			return "";
-		}
-		
-		return this.attributes.getNamedItemNS(namespaceURI, localName).getNodeValue();
-	}
-
+	
 	/**
 	 * Adds a new attribute
 	 * @see org.w3c.dom.Element#setAttributeNS(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public void setAttributeNS(String namespaceURI, String qualifiedName, String value) throws DOMException {
 		
-        if (namespaceURI != null && findNamespace(namespaceURI, DOMUtil.getPrefix(qualifiedName)) == null) {
-        	//TODO checkwhether the same ns is declared with a different prefix and remove it
-        	this.declareNamespace(new NamespaceImpl(namespaceURI,DOMUtil.getPrefix(qualifiedName)));
-        }
-        
-		this.addAttribute(namespaceURI,qualifiedName,value);
+		if(namespaceURI != null) {
+			if(namespaceURI.equals(OMConstants.XMLNS_NS_URI)) {
+				this.declareNamespace(value, DOMUtil.getLocalName(qualifiedName));
+			} else {
+		        AttrImpl attr = new AttrImpl(this.ownerNode, DOMUtil.getLocalName(qualifiedName), value);
+		        attr.setOMNamespace(new NamespaceImpl(namespaceURI, DOMUtil.getPrefix(qualifiedName)));
+		        
+				this.setAttributeNodeNS(attr);
+			}
+		} else {
+			//When the namespace is null, the attr name given better not be
+			//a qualified name
+			//But anyway check and set it
+			this.setAttribute(DOMUtil.getLocalName(qualifiedName), value);
+		}
+
 	}
-	
+
+
 	private OMAttribute addAttribute(String namespaceURI, String qualifiedName, String value) throws DOMException {
 		if(!DOMUtil.isValidChras(qualifiedName)) {
 			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "INVALID_CHARACTER_ERR", null);
@@ -433,24 +464,11 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
 	/**
-	 * Retrieves an Attr node by local name and namespace URI. 
-	 * @see org.w3c.dom.Element#getAttributeNodeNS(java.lang.String, java.lang.String)
+	 * Returns whether this element contains any attr or not
 	 */
-	public Attr getAttributeNodeNS(String namespaceURI, String localName) {
-		Attr attr = (this.attributes == null)?null:(Attr)this.attributes.getNamedItemNS(namespaceURI,localName);
-
-		//In the case of a namespace decalation attribute go check the parent as well
-		//When the namespaceURI is http://www.w3.org/2000/xmlns/
-		if (attr == null
-				&& namespaceURI == OMConstants.XMLNS_NS_URI
-				&& this.parentNode instanceof ElementImpl) {
-			((ElementImpl) this.parentNode).getAttributeNodeNS(namespaceURI,
-					localName);
-		}
-		
-		return (this.attributes == null)?null:(Attr)this.attributes.getNamedItemNS(namespaceURI,localName);
-
-	}
+    public boolean hasAttributes() {
+    	return this.attributes==null?false:this.attributes.getLength()>0;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.w3c.dom.Element#getElementsByTagNameNS(java.lang.String, java.lang.String)
@@ -496,11 +514,17 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
         if (ns != null && findNamespace(ns.getName(), ns.getPrefix()) != null){
             declareNamespace(ns);
         }
+//        if(ns != null) {
+//        	return this.addAttribute(ns.getName(),attributeName,value);
+//        } else {
+//        	return this.addAttribute(null,attributeName,value);
+//        }
         if(ns != null) {
         	return this.addAttribute(ns.getName(),attributeName,value);
         } else {
         	return this.addAttribute(null,attributeName,value);
         }
+
 	}
 
 	/**
@@ -892,7 +916,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	 */
     public String getLocalName()
     {
-        return this.localName; 
+    	return this.namespace != null ? this.localName : null;
     }
     
     /**
@@ -931,8 +955,30 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
         throw new UnsupportedOperationException("Cloning is not supported yet !!");
     }
 
+    /**
+     * This will return the set of attributes of this node and the 
+     * namespace declarations available
+     */
     public NamedNodeMap getAttributes() {
-        return this.attributes;
+    	AttributeMap attributeMap =  new AttributeMap(this);
+    	
+    	//Add the set of existing attrs
+    	for(int i = 0; i < attributeMap.getLength(); i++) {
+        	attributeMap.setNamedItem((Attr)attributeMap.getItem(i));
+    	}
+    	
+    	//Add the NS declarations
+    	if(this.namespaces != null) {
+	    	Iterator nsDecls = this.namespaces.keySet().iterator();
+			while (nsDecls.hasNext()) {
+				String prefix = (String) nsDecls.next();
+				OMNamespace ns = (OMNamespace)this.namespaces.get(prefix);
+				AttrImpl attr = new AttrImpl(this.ownerNode, OMConstants.XMLNS_NS_PREFIX + ":" + prefix, ns.getName());
+				attributeMap.addItem(attr);
+			}
+    	}
+    	
+    	return attributeMap;
     }
     
     /**

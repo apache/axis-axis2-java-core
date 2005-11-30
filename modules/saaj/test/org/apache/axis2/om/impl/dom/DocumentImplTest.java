@@ -37,7 +37,7 @@ public class DocumentImplTest extends TestCase {
 		DocumentImpl doc = new DocumentImpl();
 		Element elem = doc.createElement(tagName);
 		
-		assertEquals("Local name misnatch",tagName,elem.getLocalName());
+		assertEquals("Local name misnatch",tagName,elem.getNodeName());
 		
 		elem = doc.createElementNS(namespace, tagName);
 		assertEquals("Local name misnatch",tagName,elem.getLocalName());
@@ -54,7 +54,7 @@ public class DocumentImplTest extends TestCase {
 		DocumentImpl doc = new DocumentImpl();
 		Attr attr = doc.createAttribute(attrName);
 
-		assertEquals("Attr name mismatch",attrName,attr.getLocalName());
+		assertEquals("Attr name mismatch",attrName,attr.getName());
 		assertNull("Namespace value should be null", attr.getNamespaceURI());
 		
 		

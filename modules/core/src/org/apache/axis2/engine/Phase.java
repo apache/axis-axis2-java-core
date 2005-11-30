@@ -109,7 +109,7 @@ public class Phase {
      * @param index
      */
     public void addHandler(Handler handler, int index) {
-        log.info(
+        log.debug(
                 "Handler " + handler.getName() + "Added to place " + 1 +
                         " At the Phase " +
                         phaseName);
@@ -122,7 +122,7 @@ public class Phase {
      * @param handler
      */
     public void addHandler(Handler handler) {
-        log.info(
+        log.debug(
                 "Handler " + handler.getName() + " Added to the Phase " +
                         phaseName);
         handlers.add(handler);
