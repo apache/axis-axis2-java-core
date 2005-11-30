@@ -36,7 +36,7 @@ public class OMElementCloneTest extends XMLTestCase {
 
     File dir = new File(TestConstants.TEST_RESOURCES, TestConstants.SOAP_DIR);
 
-    public void testElementCloning() throws Exception {
+    public void testElementCloningWithoutUsingOMElementMethod() throws Exception {
         SOAPEnvelope soapEnvelope =
                 (SOAPEnvelope) OMTestUtils.getOMBuilder(
                         new File(dir, TestConstants.SOAPMESSAGE))
@@ -45,6 +45,28 @@ public class OMElementCloneTest extends XMLTestCase {
 
         OMElement firstClonedBodyElement = new StAXOMBuilder(body.getXMLStreamReader()).getDocumentElement();
         OMElement secondClonedBodyElement = new StAXOMBuilder(body.getXMLStreamReader()).getDocumentElement();
+
+        // first check whether both have the same information
+        assertXMLEqual(newDocument(body.toString()), newDocument(firstClonedBodyElement.toString()));
+        assertXMLEqual(newDocument(body.toString()), newDocument(secondClonedBodyElement.toString()));
+        assertXMLEqual(newDocument(firstClonedBodyElement.toString()), newDocument(secondClonedBodyElement.toString()));
+
+        // lets check some links. They must not be equal
+        assertNotSame(body.getParent(), firstClonedBodyElement.getParent());
+        assertNotSame(body.getParent(), secondClonedBodyElement.getParent());
+        assertNotSame(firstClonedBodyElement.getParent(), secondClonedBodyElement.getParent());
+
+    }
+
+    public void testElementCloningUsingOMElementMethod() throws Exception {
+        SOAPEnvelope soapEnvelope =
+                (SOAPEnvelope) OMTestUtils.getOMBuilder(
+                        new File(dir, TestConstants.SOAPMESSAGE))
+                        .getDocumentElement();
+        SOAPBody body = soapEnvelope.getBody();
+
+        OMElement firstClonedBodyElement = body.cloneOMElement();
+        OMElement secondClonedBodyElement = body.cloneOMElement();
 
         // first check whether both have the same information
         assertXMLEqual(newDocument(body.toString()), newDocument(firstClonedBodyElement.toString()));

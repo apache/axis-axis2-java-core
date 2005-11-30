@@ -296,5 +296,12 @@ public interface OMElement extends OMNode, OMContainer {
      */
     QName resolveQName(String qname);
 
+    /**
+     * This method will clone this element. But both elements will be build compleletely. So you will
+     * lose the differed building capability.
+     * @return
+     */
+    public OMElement cloneOMElement();
+
 
 }

@@ -24,6 +24,7 @@ import org.apache.axis2.om.impl.llom.traverse.OMChildElementIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
 import org.apache.axis2.om.impl.llom.util.EmptyIterator;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.util.ElementHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,10 +33,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLOutputFactory;
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -852,5 +850,11 @@ public class OMElementImpl extends OMNodeImpl
     public QName resolveQName(String qname) {
         ElementHelper helper = new ElementHelper(this);
         return helper.resolveQName(qname);
+    }
+
+    public OMElement cloneOMElement() {
+        OMElement clonedElement = new StAXOMBuilder(this.getXMLStreamReader(true)).getDocumentElement();
+        clonedElement.build();
+        return clonedElement;
     }
 }

@@ -926,9 +926,13 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
         ElementHelper helper = new ElementHelper(this);
         return helper.resolveQName(qname);
     }
-    
+
+    public OMElement cloneOMElement() {
+        throw new UnsupportedOperationException("Cloning is not supported yet !!");
+    }
+
     public NamedNodeMap getAttributes() {
-    	return this.attributes;
+        return this.attributes;
     }
     
     /**
