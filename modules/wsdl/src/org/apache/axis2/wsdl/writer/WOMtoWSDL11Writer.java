@@ -1,26 +1,22 @@
 package org.apache.axis2.wsdl.writer;
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.wsdl.*;
-import org.apache.wsdl.extensions.SOAPAddress;
-import org.apache.wsdl.extensions.SOAPBinding;
-import org.apache.wsdl.extensions.SOAPBody;
-import org.apache.wsdl.extensions.SOAPHeader;
-import org.apache.wsdl.extensions.SOAPOperation;
-import org.apache.wsdl.extensions.Schema;
+import org.apache.wsdl.extensions.*;
 import org.w3c.dom.Element;
 
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLWriter;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
+import javax.xml.stream.*;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -71,9 +67,16 @@ public class WOMtoWSDL11Writer implements WOMWriter {
     private String soapNsPrefix = null;
     private XMLStreamWriter writer;
 
+    private Writer rawWriter = null;
+
 
     public void setEncoding(String encoding) {
         this.encoding = encoding;
+    }
+
+    //to set the defaultWSDLPrefix for the wsdl file
+    public void setdefaultWSDLPrefix(String defaultWSDLPrefix) {
+        this.defaultWSDLPrefix = defaultWSDLPrefix;
     }
 
     /**
@@ -114,7 +117,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
     public void writeWOM(WSDLDescription wsdlDescription, OutputStream out) throws WriterException, XMLStreamException {
         try {
             //create a writer from the stream
-//            Writer writer = new OutputStreamWriter(out,encoding);
+            rawWriter = new OutputStreamWriter(out, encoding);
             writer = XMLOutputFactory.newInstance().createXMLStreamWriter(out);
 
             writeStartDescripton(wsdlDescription, writer);
@@ -312,6 +315,10 @@ public class WOMtoWSDL11Writer implements WOMWriter {
                         writer.writeAttribute("name", part.getName());
                         String elementName = part.getElementName();
                         if (elementName != null) {
+                            //todo ajith pls take a look at that I have done the correct thing here
+                            if (part.getPrefix() != null && !part.getPrefix().trim().equals("")) {
+                                elementName = part.getPrefix() + ":" + elementName;
+                            }
                             writer.writeAttribute("element", elementName);
                         }
                         //put the type also here. For the time being let this be like it
@@ -352,6 +359,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
             WSDL11MessagePart part = new WSDL11MessagePart();
             part.setName("part1");
             part.setElementName(reference.getLocalPart());  //todo prefix needs to be here!!!!
+            part.setPrefix(reference.getPrefix());
             WSDL11Message message = new WSDL11Message();
             message.setMessageName(reference.getLocalPart() + MESSAGE_NAME_SUFFIX);
             message.setParts(new WSDL11MessagePart[]{part});
@@ -451,7 +459,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
                 MessageReference inputMessage = operation.getInputMessage();
                 if (inputMessage != null) {
                     message = (WSDL11Message) messageMap.get(inputMessage.getElementQName());
-                    writer.writeStartElement(defaultWSDLPrefix,INPUT_NAME, WSDL1_1_NAMESPACE_URI);
+                    writer.writeStartElement(defaultWSDLPrefix, INPUT_NAME, WSDL1_1_NAMESPACE_URI);
                     writer.writeAttribute("message", targetNamespacePrefix + ":" + message.getMessageName());
                     writer.writeEndElement();
                 }
@@ -514,12 +522,13 @@ public class WOMtoWSDL11Writer implements WOMWriter {
         //write the input
         WSDLBindingMessageReference input = bindingOp.getInput();
         if (input != null) {
-            writer.writeStartElement(defaultWSDLPrefix, BINDING_OUTPUT, WSDL1_1_NAMESPACE_URI);
+            //
+            writer.writeStartElement(defaultWSDLPrefix, BINDING_INPUT, WSDL1_1_NAMESPACE_URI);
             handleExtensibiltyElements(input.getExtensibilityElements());
             writer.writeEndElement();
         }
 
-        WSDLBindingMessageReference output = bindingOp.getInput();
+        WSDLBindingMessageReference output = bindingOp.getOutput();
         if (output != null) {
             writer.writeStartElement(defaultWSDLPrefix, BINDING_OUTPUT, WSDL1_1_NAMESPACE_URI);
             handleExtensibiltyElements(output.getExtensibilityElements());
@@ -536,17 +545,31 @@ public class WOMtoWSDL11Writer implements WOMWriter {
 
     }
 
+    //to write scheam types into output straem
+    private void writeScheams(Element element) throws XMLStreamException {
+        String scheamTypes = DOM2Writer.nodeToString(element);
+        System.out.println(scheamTypes);
+        XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new
+                ByteArrayInputStream(scheamTypes.getBytes()));
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+
+        StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
+        OMElement scheamElement = staxOMBuilder.getDocumentElement();
+        scheamElement.serialize(new OMOutputImpl(writer));
+    }
+
     /**
      * @param extElement
      * @throws IOException
      */
     protected void writeExtensibiltyElement(WSDLExtensibilityElement extElement) throws IOException, XMLStreamException {
+
         if (extElement instanceof Schema) {
             Element element = ((Schema) extElement).getElement();
-            if (element.getNodeValue() != null) {
-                writer.writeStartElement(element.toString());
-                writer.writeEndElement();
-            }
+//            if (element.getNodeValue() != null) {
+            writeScheams(element);
+//            rawWriter.write(element.toString()); //quick hack for crimson
+//            }
         } else if (extElement instanceof SOAPAddress) {
             writeSOAPAddressExtensibilityElement((SOAPAddress) extElement);
         } else if (extElement instanceof SOAPBinding) {
@@ -579,6 +602,9 @@ public class WOMtoWSDL11Writer implements WOMWriter {
     protected void writeSOAPBodyExtensibilityElement(SOAPBody soapBody) throws IOException, XMLStreamException {
         writer.writeStartElement(soapNsPrefix, "body", WSDL1_1_SOAP_NAMESPACE_URI);
         writer.writeAttribute("use", soapBody.getUse());
+        if (soapBody.getNamespaceURI() != null) {
+            writer.writeAttribute("namespace", soapBody.getNamespaceURI());
+        }
         writer.writeEndElement();
     }
 
@@ -593,6 +619,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
         writer.writeStartElement(soapNsPrefix, BINDING_OPERATION, WSDL1_1_SOAP_NAMESPACE_URI);
         writer.writeAttribute("name", soapop.getType().getLocalPart());
         writer.writeAttribute("soapaction", soapop.getSoapAction());
+        writer.writeAttribute("style", soapop.getStyle());
         writer.writeEndElement();
     }
 
@@ -630,6 +657,15 @@ public class WOMtoWSDL11Writer implements WOMWriter {
         private String name;
         private String elementName;
         private String type;
+        private String prefix;
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public void setPrefix(String prefix) {
+            this.prefix = prefix;
+        }
 
         public String getName() {
             return name;

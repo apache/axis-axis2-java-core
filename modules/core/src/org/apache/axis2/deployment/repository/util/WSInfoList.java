@@ -30,6 +30,8 @@ public class WSInfoList implements DeploymentConstants {
      */
     private static List jarList = new ArrayList();
 
+    private boolean compair = false; // to check wheter the checking is dond
+
     /**
      * All the curently updated jars
      */
@@ -104,25 +106,26 @@ public class WSInfoList implements DeploymentConstants {
                         ArchiveFileData archiveFileData = new ArchiveFileData(file, MODULE);
                         deployer.addWSToDeploy(archiveFileData);//to inform that new web service is deployed
                     } else {
-                        if (deployer.isHotUpdate()) {
-                            WSInfo tempWSInfo = getFileItem(file.getName());
-                            if (isModified(file, tempWSInfo)) {
-                                tempWSInfo.setLastModifiedDate(file.lastModified());
-                                WSInfo wsInfo = new WSInfo(tempWSInfo.getFileName(),
-                                        tempWSInfo.getLastModifiedDate(),
-                                        MODULE);
-                                deployer.addWSToUndeploy(wsInfo);   // add entry to undeploy list
-                                ArchiveFileData archiveFileData = new ArchiveFileData(file, MODULE);
-                                deployer.addWSToDeploy(archiveFileData); // add entry to deploylist
-
-                            }
-                        }
+//                        if (deployer.isHotUpdate()) {
+//                            WSInfo tempWSInfo = getFileItem(file.getName());
+//                            if (isModified(file, tempWSInfo)) {
+//                                tempWSInfo.setLastModifiedDate(file.lastModified());
+//                                WSInfo wsInfo = new WSInfo(tempWSInfo.getFileName(),
+//                                        tempWSInfo.getLastModifiedDate(),
+//                                        MODULE);
+//                                deployer.addWSToUndeploy(wsInfo);   // add entry to undeploy list
+//                                ArchiveFileData archiveFileData = new ArchiveFileData(file, MODULE);
+//                                deployer.addWSToDeploy(archiveFileData); // add entry to deploylist
+//
+//                            }
+//                        }
                     }
                     break;
                 }
         }
         String jarname = file.getName();
         currentJars.add(jarname);
+        compair = true;
     }
 
     /**
@@ -170,6 +173,11 @@ public class WSInfoList implements DeploymentConstants {
      * that is hot undeployment
      */
     public void checkForUndeploye() {
+        if(!compair){
+            return;
+        } else {
+            compair = false;
+        }
         Iterator iter = jarList.listIterator();
         int size = currentJars.size();
         List tempvector = new ArrayList();
@@ -178,6 +186,9 @@ public class WSInfoList implements DeploymentConstants {
         boolean exist ;
         while (iter.hasNext()) {
             WSInfo fileitem = (WSInfo) iter.next();
+            if(fileitem.getType() == MODULE){
+                continue;
+            }
             exist = false;
             for (int i = 0; i < size; i++) {
                 filename = (String) currentJars.get(i);
@@ -209,12 +220,13 @@ public class WSInfoList implements DeploymentConstants {
      *
      */
     public void update() {
-        checkForUndeploye();
-        if (deployer.isHotUpdate()) {
-            deployer.unDeploy();
+        synchronized (deployer) {
+            checkForUndeploye();
+            if (deployer.isHotUpdate()) {
+                deployer.unDeploy();
+            }
+            deployer.doDeploy();
         }
-        deployer.doDeploy();
-
     }
 
 }

@@ -20,29 +20,32 @@ import java.io.OutputStream;
  * limitations under the License.
  */
 
-public class WOMtoWSDL20Writer implements WOMWriter{
+public class WOMtoWSDL20Writer implements WOMWriter {
 
     public void setEncoding(String encoding) {
-          throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
+    }
+
+    //to set the defaultWSDLPrefix for the wsdl file
+    public void setdefaultWSDLPrefix(String defaultWSDLPrefix) {
+        throw new UnsupportedOperationException("Not complete!");
     }
 
     /**
-     *
      * @param wsdlWrapper
      * @param out
      * @throws WriterException
      */
     public void writeWOM(WSDLVersionWrapper wsdlWrapper, OutputStream out) throws WriterException {
-       throw new WriterException("Not complete!");
+        throw new WriterException("Not complete!");
     }
 
     /**
-     *
      * @param wsdlDescription
      * @param out
      * @throws WriterException
      */
     public void writeWOM(WSDLDescription wsdlDescription, OutputStream out) throws WriterException {
-         throw new WriterException("Not complete!");
+        throw new WriterException("Not complete!");
     }
 }

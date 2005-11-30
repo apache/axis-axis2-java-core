@@ -44,8 +44,7 @@ public interface WOMWriter {
 
     public void setEncoding(String encoding);
 
-
-
-
+    //to set the defaultWSDLPrefix for the wsdl file
+     void setdefaultWSDLPrefix(String defaultWSDLPrefix);
 
 }

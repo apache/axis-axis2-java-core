@@ -33,6 +33,7 @@ public class RepositoryListenerImpl implements RepositoryListener,
      * Referance to a WSInfoList
      */
     private WSInfoList wsInfoList;
+    private DeploymentEngine deEngine;
 
 
     /**
@@ -54,6 +55,7 @@ public class RepositoryListenerImpl implements RepositoryListener,
                                   DeploymentEngine deploy_engine) {
         this.folderName = folderName;
         wsInfoList = new WSInfoList(deploy_engine);
+        this.deEngine = deploy_engine;
         init();
     }
 
@@ -97,8 +99,6 @@ public class RepositoryListenerImpl implements RepositoryListener,
      * call to update method of WSInfoList object
      */
     public void update() {
-        //todo completet this
-        // this call the update method of WSInfoList
         wsInfoList.update();
     }
 
@@ -112,7 +112,7 @@ public class RepositoryListenerImpl implements RepositoryListener,
         wsInfoList.init();
         checkModules();
 //        checkServices();
-        update();
+        deEngine.doDeploy();
     }
 
     /**
