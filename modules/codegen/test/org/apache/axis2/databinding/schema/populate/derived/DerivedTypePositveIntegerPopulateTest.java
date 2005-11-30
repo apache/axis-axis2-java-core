@@ -1,5 +1,9 @@
 package org.apache.axis2.databinding.schema.populate.derived;
 
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
+import org.apache.axis2.databinding.schema.types.NonPositiveInteger;
+import org.apache.axis2.databinding.schema.types.PositiveInteger;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,27 +21,49 @@ package org.apache.axis2.databinding.schema.populate.derived;
  */
 
 public class DerivedTypePositveIntegerPopulateTest extends AbstractDerivedPopulater{
-    private String xmlString[] = {
-            "<DerivedPositiveInteger>18443</DerivedPositiveInteger>",
-            "<DerivedPositiveInteger>1</DerivedPositiveInteger>",
-            "<DerivedPositiveInteger>2633</DerivedPositiveInteger>",
-            "<DerivedPositiveInteger>-267582233</DerivedPositiveInteger>",
-            "<DerivedPositiveInteger>0</DerivedPositiveInteger>"
+
+     private String values[]= {
+            "18444",
+            "1",
+            "5636332" ,
+            "0" ,
+            "-3453434"
+
     };
+
+    private String xmlString[] = {
+            "<DerivedPositiveInteger>"+values[0]+"</DerivedPositiveInteger>",
+            "<DerivedPositiveInteger>"+values[1]+"</DerivedPositiveInteger>",
+            "<DerivedPositiveInteger>"+values[2]+"</DerivedPositiveInteger>",
+            "<DerivedPositiveInteger>"+values[3]+"</DerivedPositiveInteger>",
+            "<DerivedPositiveInteger>"+values[4]+"</DerivedPositiveInteger>"
+    };
+
+
+
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.DerivedPositiveInteger";
+        propertyClass = PositiveInteger.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.DerivedPositiveInteger");
-        process(xmlString[1],"org.soapinterop.DerivedPositiveInteger");
-        process(xmlString[2],"org.soapinterop.DerivedPositiveInteger");
 
-        try {
-            process(xmlString[3],"org.soapinterop.DerivedPositiveInteger");
-            fail();
-        } catch (Exception e) {}
+        for (int i = 0; i < 3; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
+        for (int i = 3; i < values.length; i++) {
+            try {
+                checkValue(xmlString[i],values[i]);
+                fail();
+            } catch (Exception e) {
 
-        try {
-            process(xmlString[4],"org.soapinterop.DerivedPositiveInteger");
-            fail();
-        } catch (Exception e) {}
+            }
+        }
+    }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((PositiveInteger)o);
     }
 }

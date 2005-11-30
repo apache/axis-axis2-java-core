@@ -1,5 +1,7 @@
 package org.apache.axis2.databinding.schema.populate.derived;
 
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,15 +19,39 @@ package org.apache.axis2.databinding.schema.populate.derived;
  */
 
 public class DerivedTypeLongPopulateTest extends AbstractDerivedPopulater{
-    private String xmlString[] = {
-            "<DerivedLong>17578283282</DerivedLong>",
-            "<DerivedLong>-1228284443</DerivedLong>",
-            "<DerivedLong>2</DerivedLong>"
+
+    private String values[]= {
+            "17578283282",
+            "-1228284443",
+            "2",
+            Long.MAX_VALUE + "",
+            Long.MIN_VALUE + ""
     };
+
+    private String xmlString[] = {
+            "<DerivedLong>"+values[0]+"</DerivedLong>",
+            "<DerivedLong>"+values[1]+"</DerivedLong>",
+            "<DerivedLong>"+values[2]+"</DerivedLong>",
+            "<DerivedLong>"+values[3]+"</DerivedLong>",
+            "<DerivedLong>"+values[4]+"</DerivedLong>"
+    };
+
+
+
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.DerivedLong";
+        propertyClass = long.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.DerivedLong");
-        process(xmlString[1],"org.soapinterop.DerivedLong");
-        process(xmlString[2],"org.soapinterop.DerivedLong");
+        for (int i = 0; i < 2; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
+    }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((Long)o);
     }
 }

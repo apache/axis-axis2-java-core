@@ -1,5 +1,7 @@
 package org.apache.axis2.databinding.schema.populate.derived;
 
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,15 +19,32 @@ package org.apache.axis2.databinding.schema.populate.derived;
  */
 
 public class DerivedTypeIntPopulateTest extends AbstractDerivedPopulater{
-    private String xmlString[] = {
-            "<DerivedInt>122222</DerivedInt>",
-            "<DerivedInt>0</DerivedInt>",
-            "<DerivedInt>-2344556</DerivedInt>"
+    private String values[]= {
+            "122222",
+            "0",
+            "-2344556"
     };
+
+
+    private String xmlString[] = {
+            "<DerivedInt>"+values[0]+"</DerivedInt>",
+            "<DerivedInt>"+values[1]+"</DerivedInt>",
+            "<DerivedInt>"+values[2]+"</DerivedInt>"
+    };
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.DerivedInt";
+        propertyClass = int.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.DerivedInt");
-        process(xmlString[1],"org.soapinterop.DerivedInt");
-        process(xmlString[2],"org.soapinterop.DerivedInt");
+        for (int i = 0; i < 2; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
+    }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((Integer)o);
     }
 }

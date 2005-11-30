@@ -110,6 +110,48 @@ public class ConverterUtil {
         return o.toString();
     }
 
+    public static String convertToString(HexBinary o) {
+        return o.toString();
+    }
+
+    public static String convertToString(MonthDay o) {
+        return o.toString();
+    }
+
+    public static String convertToString(Time o) {
+        return o.toString();
+    }
+    public static String convertToString(Byte o) {
+        return o.toString();
+    }
+
+    public static String convertToString(BigInteger o) {
+        return o.toString();
+    }
+    public static String convertToString(Integer o) {
+        return o.toString();
+    }
+
+    public static String convertToString(Long o) {
+        return o.toString();
+    }
+
+     public static String convertToString(Short o) {
+        return o.toString();
+    }
+
+    public static String convertToString(UnsignedByte o) {
+           return o.toString();
+       }
+
+     public static String convertToString(UnsignedInt o) {
+           return o.toString();
+       }
+
+    public static String convertToString(UnsignedLong o) {
+           return o.toString();
+       }
+
     public static String convertToString(Object o) {
         return o.toString();
     }
@@ -126,7 +168,7 @@ public class ConverterUtil {
         return o.toString();
     }
 
-     public static String convertToString(Month o) {
+    public static String convertToString(Month o) {
         return o.toString();
     }
     /* ################################################################################ */

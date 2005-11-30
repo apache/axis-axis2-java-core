@@ -1,4 +1,8 @@
 package org.apache.axis2.databinding.schema.populate.simple;
+
+import org.apache.axis2.databinding.schema.types.Year;
+import org.apache.axis2.databinding.schema.types.HexBinary;
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -16,13 +20,35 @@ package org.apache.axis2.databinding.schema.populate.simple;
  */
 
 public class SimpleTypeHexBinaryPopulateTest extends AbstractSimplePopulater{
-    private String xmlString[] = {
-            "<hexBinParam>0FB7</hexBinParam>",
-            "<hexBinParam>FFFFFFFF</hexBinParam>",
+
+    private String values[]= {
+            "0FB7",
+            "FFFFFFFF",
+            "1978"
     };
+    private String xmlString[] = {
+            "<hexBinParam>"+values[0]+"</hexBinParam>",
+            "<hexBinParam>"+values[1]+"</hexBinParam>",
+            "<hexBinParam>"+values[2]+"</hexBinParam>"
+    };
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.hexBinParam";
+        propertyClass = HexBinary.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.hexBinParam");
-        process(xmlString[1],"org.soapinterop.hexBinParam");
+        for (int i = 0; i < 2; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
+    }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((HexBinary)o);
+    }
+
+    protected void compare(String val1, String val2) {
+       assertTrue(val1.equalsIgnoreCase(val2));
     }
 }

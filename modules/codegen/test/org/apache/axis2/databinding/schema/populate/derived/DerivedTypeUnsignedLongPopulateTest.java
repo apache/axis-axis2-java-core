@@ -1,5 +1,9 @@
 package org.apache.axis2.databinding.schema.populate.derived;
 
+import org.apache.axis2.databinding.schema.types.UnsignedByte;
+import org.apache.axis2.databinding.schema.types.UnsignedLong;
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,23 +21,51 @@ package org.apache.axis2.databinding.schema.populate.derived;
  */
 
 public class DerivedTypeUnsignedLongPopulateTest extends AbstractDerivedPopulater{
-    private String xmlString[] = {
-            "<DerivedUnsignedLong>18443</DerivedUnsignedLong>",
-            "<DerivedUnsignedLong>0</DerivedUnsignedLong>",
-            "<DerivedUnsignedLong>2633</DerivedUnsignedLong>",
-            "<DerivedUnsignedLong>-267582233</DerivedUnsignedLong>"
+
+    private String values[]= {
+            "1",
+            "0",
+            "26758223334334" ,
+            "-1" ,
+            "-267582233"
+
     };
+
+    private String xmlString[] = {
+            "<DerivedUnsignedLong>"+values[0]+"</DerivedUnsignedLong>",
+            "<DerivedUnsignedLong>"+values[1]+"</DerivedUnsignedLong>",
+            "<DerivedUnsignedLong>"+values[2]+"</DerivedUnsignedLong>",
+            "<DerivedUnsignedLong>"+values[3]+"</DerivedUnsignedLong>",
+            "<DerivedUnsignedLong>"+values[4]+"</DerivedUnsignedLong>"
+    };
+
+
+
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.DerivedUnsignedLong";
+        propertyClass = UnsignedLong.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.DerivedUnsignedLong");
-        process(xmlString[1],"org.soapinterop.DerivedUnsignedLong");
-        process(xmlString[2],"org.soapinterop.DerivedUnsignedLong");
 
-        try {
-            process(xmlString[3],"org.soapinterop.DerivedUnsignedLong");
-            fail();
-        } catch (Exception e) {
-
+        for (int i = 0; i < 3; i++) {
+            checkValue(xmlString[i],values[i]);
         }
+
+        for (int i = 3; i < values.length; i++) {
+            try {
+                checkValue(xmlString[i],values[i]);
+                fail();
+            } catch (Exception e) {
+
+            }
+        }
+
+    }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((UnsignedLong)o);
     }
 }

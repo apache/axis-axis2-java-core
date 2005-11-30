@@ -1,5 +1,8 @@
 package org.apache.axis2.databinding.schema.populate.derived;
 
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
+import org.apache.axis2.databinding.schema.types.NegativeInteger;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,27 +20,45 @@ package org.apache.axis2.databinding.schema.populate.derived;
  */
 
 public class DerivedTypeNegativeIntegerPopulateTest extends AbstractDerivedPopulater{
-    private String xmlString[] = {
-            "<DerivedNegativeInteger>-18443</DerivedNegativeInteger>",
-            "<DerivedNegativeInteger>-1</DerivedNegativeInteger>",
-            "<DerivedNegativeInteger>-2633</DerivedNegativeInteger>",
-            "<DerivedNegativeInteger>267582233</DerivedNegativeInteger>",
-            "<DerivedNegativeInteger>0</DerivedNegativeInteger>"
+    
+     private String values[]= {
+            "-18443",
+            "-1",
+            "-2633",
+            "267582233",
+            "0",
     };
+    private String xmlString[] = {
+            "<DerivedNegativeInteger>"+values[0]+"</DerivedNegativeInteger>",
+            "<DerivedNegativeInteger>"+values[1]+"</DerivedNegativeInteger>",
+            "<DerivedNegativeInteger>"+values[2]+"</DerivedNegativeInteger>",
+            "<DerivedNegativeInteger>"+values[3]+"</DerivedNegativeInteger>",
+            "<DerivedNegativeInteger>"+values[4]+"</DerivedNegativeInteger>"
+    };
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.DerivedNegativeInteger";
+        propertyClass = NegativeInteger.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.DerivedNegativeInteger");
-        process(xmlString[1],"org.soapinterop.DerivedNegativeInteger");
-        process(xmlString[2],"org.soapinterop.DerivedNegativeInteger");
+        for (int i = 0; i < 3; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
 
-        try {
-            process(xmlString[3],"org.soapinterop.DerivedNegativeInteger");
-            fail();
-        } catch (Exception e) {}
+        for (int i = 3; i < values.length; i++) {
+            try {
+                checkValue(xmlString[i],values[i]);
+                fail();
+            } catch (Exception e) {
 
-        try {
-            process(xmlString[4],"org.soapinterop.DerivedNegativeInteger");
-            fail();
-        } catch (Exception e) {}
+            }
+        }
+
+    }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((NegativeInteger)o);
     }
 }

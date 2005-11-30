@@ -1,4 +1,8 @@
 package org.apache.axis2.databinding.schema.populate.simple;
+
+import org.apache.axis2.databinding.schema.types.HexBinary;
+import org.apache.axis2.databinding.schema.types.MonthDay;
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -16,15 +20,32 @@ package org.apache.axis2.databinding.schema.populate.simple;
  */
 
 public class SimpleTypeMonthDayPopulateTest extends AbstractSimplePopulater{
-    private String xmlString[] = {
-            "<monthDayParam>--05-12</monthDayParam>",
-            "<monthDayParam>--06-30</monthDayParam>",
-            "<monthDayParam>--12-31+05:00</monthDayParam>"
+
+    private String values[]= {
+            "--05-12",
+            "--06-30",
+            "--12-31"
     };
+    private String xmlString[] = {
+            "<monthDayParam>"+values[0]+"</monthDayParam>",
+            "<monthDayParam>"+values[1]+"</monthDayParam>",
+            "<monthDayParam>"+values[2]+"</monthDayParam>"
+    };
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.monthDayParam";
+        propertyClass = MonthDay.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.monthDayParam");
-        process(xmlString[1],"org.soapinterop.monthDayParam");
-        process(xmlString[2],"org.soapinterop.monthDayParam");
+        for (int i = 0; i < 2; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
     }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((MonthDay)o);
+    }
+
 }

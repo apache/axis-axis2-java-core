@@ -1,5 +1,9 @@
 package org.apache.axis2.databinding.schema.populate.derived;
 
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
+
+import java.math.BigInteger;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,15 +21,31 @@ package org.apache.axis2.databinding.schema.populate.derived;
  */
 
 public class DerivedTypeIntegerPopulateTest extends AbstractDerivedPopulater{
-    private String xmlString[] = {
-            "<DerivedInteger>122222</DerivedInteger>",
-            "<DerivedInteger>0</DerivedInteger>",
-            "<DerivedInteger>-2344556</DerivedInteger>"
+
+     private String values[]= {
+            "122222",
+            "0",
+            "-2344556"
     };
+    private String xmlString[] = {
+            "<DerivedInteger>"+values[0]+"</DerivedInteger>",
+            "<DerivedInteger>"+values[1]+"</DerivedInteger>",
+            "<DerivedInteger>"+values[2]+"</DerivedInteger>"
+    };
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.DerivedInteger";
+        propertyClass = BigInteger.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.DerivedInteger");
-        process(xmlString[1],"org.soapinterop.DerivedInteger");
-        process(xmlString[2],"org.soapinterop.DerivedInteger");
+        for (int i = 0; i < values.length; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
+    }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((BigInteger)o);
     }
 }

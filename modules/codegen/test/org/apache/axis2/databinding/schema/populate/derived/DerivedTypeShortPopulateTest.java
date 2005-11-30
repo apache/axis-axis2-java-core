@@ -1,5 +1,8 @@
 package org.apache.axis2.databinding.schema.populate.derived;
 
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
+import org.apache.axis2.databinding.schema.types.PositiveInteger;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,15 +20,42 @@ package org.apache.axis2.databinding.schema.populate.derived;
  */
 
 public class DerivedTypeShortPopulateTest extends AbstractDerivedPopulater{
-    private String xmlString[] = {
-            "<DerivedShort>17578</DerivedShort>",
-            "<DerivedShort>-12282</DerivedShort>",
-            "<DerivedShort>2</DerivedShort>"
+        
+    private String values[]= {
+            "17444",
+            "-12343",
+            "2" ,
+            "0" ,
+            "-6"
+
     };
+
+    private String xmlString[] = {
+            "<DerivedShort>"+values[0]+"</DerivedShort>",
+            "<DerivedShort>"+values[1]+"</DerivedShort>",
+            "<DerivedShort>"+values[2]+"</DerivedShort>",
+            "<DerivedShort>"+values[3]+"</DerivedShort>",
+            "<DerivedShort>"+values[4]+"</DerivedShort>"
+    };
+
+
+
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.DerivedShort";
+        propertyClass = Short.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.DerivedShort");
-        process(xmlString[1],"org.soapinterop.DerivedShort");
-        process(xmlString[2],"org.soapinterop.DerivedShort");
+
+        for (int i = 0; i < values.length; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
+
+    }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((Short)o);
     }
 }

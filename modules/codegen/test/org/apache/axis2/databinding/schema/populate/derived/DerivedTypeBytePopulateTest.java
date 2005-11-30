@@ -1,5 +1,8 @@
 package org.apache.axis2.databinding.schema.populate.derived;
 
+import org.apache.axis2.databinding.schema.types.HexBinary;
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,15 +20,31 @@ package org.apache.axis2.databinding.schema.populate.derived;
  */
 
 public class DerivedTypeBytePopulateTest extends AbstractDerivedPopulater{
-    private String xmlString[] = {
-            "<DerivedByte>1</DerivedByte>",
-            "<DerivedByte>0</DerivedByte>",
-            "<DerivedByte>2</DerivedByte>"
+
+     private String values[]= {
+            "1",
+            "0",
+            "2"
     };
+    private String xmlString[] = {
+            "<DerivedByte>"+values[0]+"</DerivedByte>",
+            "<DerivedByte>"+values[1]+"</DerivedByte>",
+            "<DerivedByte>"+values[2]+"</DerivedByte>"
+    };
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.DerivedByte";
+        propertyClass = byte.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.DerivedByte");
-        process(xmlString[1],"org.soapinterop.DerivedByte");
-        process(xmlString[2],"org.soapinterop.DerivedByte");
+        for (int i = 0; i < values.length; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
+    }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((Byte)o);
     }
 }

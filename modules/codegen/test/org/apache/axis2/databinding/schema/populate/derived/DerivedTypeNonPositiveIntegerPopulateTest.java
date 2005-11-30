@@ -1,5 +1,9 @@
 package org.apache.axis2.databinding.schema.populate.derived;
 
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
+import org.apache.axis2.databinding.schema.types.NonNegativeInteger;
+import org.apache.axis2.databinding.schema.types.NonPositiveInteger;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,23 +21,49 @@ package org.apache.axis2.databinding.schema.populate.derived;
  */
 
 public class DerivedTypeNonPositiveIntegerPopulateTest extends AbstractDerivedPopulater{
-    private String xmlString[] = {
-            "<DerivedNonPositiveInteger>-18443</DerivedNonPositiveInteger>",
-            "<DerivedNonPositiveInteger>-1</DerivedNonPositiveInteger>",
-            "<DerivedNonPositiveInteger>0</DerivedNonPositiveInteger>",
-            "<DerivedNonPositiveInteger>267582233</DerivedNonPositiveInteger>"
+
+    private String values[]= {
+            "-18444",
+            "-1",
+            "0" ,
+            "1" ,
+            "3453434"
+
     };
+
+    private String xmlString[] = {
+            "<DerivedNonPositiveInteger>"+values[0]+"</DerivedNonPositiveInteger>",
+            "<DerivedNonPositiveInteger>"+values[1]+"</DerivedNonPositiveInteger>",
+            "<DerivedNonPositiveInteger>"+values[2]+"</DerivedNonPositiveInteger>",
+            "<DerivedNonPositiveInteger>"+values[3]+"</DerivedNonPositiveInteger>",
+            "<DerivedNonPositiveInteger>"+values[4]+"</DerivedNonPositiveInteger>"
+    };
+
+
+
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.DerivedNonPositiveInteger";
+        propertyClass = long.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.DerivedNonPositiveInteger");
-        process(xmlString[1],"org.soapinterop.DerivedNonPositiveInteger");
-        process(xmlString[2],"org.soapinterop.DerivedNonPositiveInteger");
 
-        try {
-            process(xmlString[3],"org.soapinterop.DerivedNonPositiveInteger");
-            fail();
-        } catch (Exception e) {}
+        for (int i = 0; i < 3; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
+        for (int i = 3; i < values.length; i++) {
+            try {
+                checkValue(xmlString[i],values[i]);
+                fail();
+            } catch (Exception e) {
 
-       
+            }
+        }
+    }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((NonPositiveInteger)o);
     }
 }
