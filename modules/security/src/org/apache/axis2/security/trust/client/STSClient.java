@@ -19,6 +19,7 @@ package org.apache.axis2.security.trust.client;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.handler.config.InflowConfiguration;
@@ -30,48 +31,51 @@ import org.apache.axis2.security.trust.token.RequestSecurityTokenResponse;
 
 /**
  * Client to interact with a given SecurityTokenService
- * 
+ *
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class STSClient {
 
-	private String stsUrl;
-	
-	private OutflowConfiguration outConfig;
-	private InflowConfiguration inConfig;
-	
-	public STSClient(String stsUrl, OutflowConfiguration outConfig, InflowConfiguration inConfig) {
-		this.stsUrl = stsUrl;
-		this.outConfig = outConfig;
-		this.inConfig = inConfig;
-	}
+    private String stsUrl;
 
-	
-	public RequestSecurityTokenResponse doRequest(RequestSecurityToken rst) throws TrustException {
-		try {
-			Call call = new Call();
-			call.setTo(new EndpointReference(this.stsUrl));
-			call.set(WSSHandlerConstants.OUTFLOW_SECURITY,this.outConfig.getProperty());
-			call.set(WSSHandlerConstants.INFLOW_SECURITY,this.inConfig.getProperty());
-			
-			OMElement res = call.invokeBlocking(Constants.LN.REQUEST_SECURITY_TOKEN,this.prepareRequst(rst));
-			RequestSecurityTokenResponse rstr = new RequestSecurityTokenResponse(res);
-			return rstr;
-		} catch (AxisFault e) { 
-			throw new TrustException("Problem in communicating with the SecurityTokenService", e);
-		}
-	}
-	
-	/**
-	 * Do Encryption and Signing of the request
-	 * @param rst
-	 * @return
-	 * @throws TrustException
-	 */
-	private OMElement prepareRequst(RequestSecurityToken rst) throws TrustException {
-		
-		throw new UnsupportedOperationException();
-	}
-	
-	
+    private OutflowConfiguration outConfig;
+    private InflowConfiguration inConfig;
+
+    public STSClient(String stsUrl, OutflowConfiguration outConfig, InflowConfiguration inConfig) {
+        this.stsUrl = stsUrl;
+        this.outConfig = outConfig;
+        this.inConfig = inConfig;
+    }
+
+
+    public RequestSecurityTokenResponse doRequest(RequestSecurityToken rst) throws TrustException {
+        try {
+            Call call = new Call();
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setTo(new EndpointReference(this.stsUrl));
+            options.setProperty(WSSHandlerConstants.OUTFLOW_SECURITY, this.outConfig.getProperty());
+            options.setProperty(WSSHandlerConstants.INFLOW_SECURITY, this.inConfig.getProperty());
+
+            OMElement res = call.invokeBlocking(Constants.LN.REQUEST_SECURITY_TOKEN, this.prepareRequst(rst));
+            RequestSecurityTokenResponse rstr = new RequestSecurityTokenResponse(res);
+            return rstr;
+        } catch (AxisFault e) {
+            throw new TrustException("Problem in communicating with the SecurityTokenService", e);
+        }
+    }
+
+    /**
+     * Do Encryption and Signing of the request
+     *
+     * @param rst
+     * @return
+     * @throws TrustException
+     */
+    private OMElement prepareRequst(RequestSecurityToken rst) throws TrustException {
+
+        throw new UnsupportedOperationException();
+    }
+
+
 }

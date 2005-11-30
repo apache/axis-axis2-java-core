@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ServiceContext;
@@ -94,11 +95,14 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
 
         try {
-            call.setTo(targetEPR);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+            Options options = new Options();
+            options.setTo(targetEPR);
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
                     true);
-            call.setWsaAction(operationName.getLocalPart());
+            options.setAction(operationName.getLocalPart());
+            call.setClientOptions(options);
+
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
                     TestingUtils.campareWithCreatedOMElement(

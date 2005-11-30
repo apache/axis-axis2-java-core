@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.databinding.DeserializationContext;
 import org.apache.axis2.databinding.deserializers.SimpleDeserializerFactory;
@@ -181,7 +182,10 @@ public class SimpleTest extends TestCase {
         new RPCRequestElement(method, values, body);
 
         // Ready to go - set the To address and make the call
-        call.setTo(new EndpointReference("local://services/testService"));
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(new EndpointReference("local://services/testService"));
+        
         SOAPEnvelope respEnv = call.invokeBlocking("echoArray", env);
         assertNotNull("No response envelope!", respEnv);
 

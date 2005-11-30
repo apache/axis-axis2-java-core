@@ -20,8 +20,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
-import test.interop.sun.round4.simple.util.SunGroupHClientUtil;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.om.OMElement;
+import test.interop.sun.round4.simple.util.SunGroupHClientUtil;
 
 public class EchoBlockingClient {
     public OMElement sendMsg(SunGroupHClientUtil util,String soapAction){
@@ -32,10 +33,12 @@ public class EchoBlockingClient {
 
 
             Call call = new Call();
-            call.setTo(targetEPR);
-            call.setExceptionToBeThrownOnSOAPFault(false);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP,false);
-            call.setSoapAction(soapAction);
+             Options options = new Options();
+        call.setClientOptions(options);
+            options.setTo(targetEPR);
+            options.setExceptionToBeThrownOnSOAPFault(false);
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP,false);
+            options.setSoapAction(soapAction);
             //Blocking invocation
 
             firstchild = call.invokeBlocking("",util.getEchoOMElement());

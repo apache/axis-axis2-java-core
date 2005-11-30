@@ -18,6 +18,7 @@ package userguide.clients;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -27,11 +28,12 @@ import java.io.StringWriter;
 
 /**
  * To run this sample you have to deploy WsaMappingService.aar to the
- * service folder. 
+ * service folder.
  */
 public class EchoBlockingWsaBasedClient {
 
     private static EndpointReference targetEPR = new EndpointReference("http://localhost:8080/axis2/services/WsaMappingTest");
+
     private static OMElement getBody() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac
@@ -44,12 +46,14 @@ public class EchoBlockingWsaBasedClient {
     public static void main(String[] args) throws Exception {
 
         Call call = new Call();
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP, false);
 
         //Blocking invocation via wsa mapping
-        call.setWsaAction("urn:sample/echo");
+        options.setAction("urn:sample/echo");
         OMElement result = (OMElement) call.invokeBlocking("echo", getBody());
 
         StringWriter writer = new StringWriter();

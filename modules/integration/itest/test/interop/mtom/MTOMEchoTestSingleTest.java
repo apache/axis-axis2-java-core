@@ -15,13 +15,15 @@
  */
 
 package test.interop.mtom;
+
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
-import test.interop.util.BodyElements;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAP12Constants;
+import test.interop.util.BodyElements;
 
 /**
  * white mesa interop test
@@ -36,21 +38,26 @@ public class MTOMEchoTestSingleTest extends TestCase {
     public MTOMEchoTestSingleTest(String testName) {
         super(testName);
     }
+
     public void runTest(boolean optimized) throws Exception {
         Call call = new Call("target/test-resources/intregrationRepo");
-         call.setTo(targetEPR);
-        call.set(Constants.Configuration.ENABLE_MTOM,
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(targetEPR);
+        options.setProperty(Constants.Configuration.ENABLE_MTOM,
                 Constants.VALUE_TRUE);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP, false);
-        call.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
         OMElement resultElem = call.invokeBlocking("EchoTestSingle", BodyElements.bodySingle(optimized));
-        responseAssertion(resultElem,optimized);
+        responseAssertion(resultElem, optimized);
     }
+
     public void testNonOptimized() throws Exception {
         runTest(false);
     }
+
     public void testOptimized() throws Exception {
         runTest(true);
     }
@@ -59,6 +66,6 @@ public class MTOMEchoTestSingleTest extends TestCase {
         TestCase.assertNotNull(response);
 
         String responseText = response.getText();
-        TestCase.assertEquals(BodyElements.bodySingle(optimized).getText(),responseText);
+        TestCase.assertEquals(BodyElements.bodySingle(optimized).getText(), responseText);
     }
 }

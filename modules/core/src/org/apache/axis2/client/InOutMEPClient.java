@@ -35,7 +35,6 @@ import org.apache.axis2.om.OMException;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFault;
-import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.util.UUIDGenerator;
@@ -51,39 +50,10 @@ import javax.xml.namespace.QName;
 public class InOutMEPClient extends MEPClient {
 
 
-    protected long timeOutInMilliSeconds = DEFAULT_TIMEOUT_MILLISECONDS;
-
-    protected TransportListener listener;
-    /**
-     * This is used for sending and receiving messages.
-     */
-    protected TransportOutDescription senderTransport;
-    protected TransportInDescription listenerTransport;
-
-    /**
-     * Used to specify whether the two SOAP Messages are be sent over same channel
-     * or over separate channels.The value of this variable depends on the transport specified.
-     * For e.g., if the transports are different this is true by default.
-     * HTTP transport supports both cases while SMTP transport supports only two channel case.
-     */
-    protected boolean useSeparateListener = false;
-
-    /**
-     * The address the message should be send
-     */
-
-    //variables use for internal implementations
-
     /**
      * This is used for the receiving the asynchronous messages.
      */
     protected CallbackReceiver callbackReceiver;
-
-    /**
-     * timeout in ms unless stated
-     * {@value}
-     */
-    private static final int DEFAULT_TIMEOUT_MILLISECONDS = 2000;
 
     /**
      * Constructs a InOutMEPClient from a ServiceContext.
@@ -128,13 +98,13 @@ public class InOutMEPClient extends MEPClient {
     public MessageContext invokeBlocking(AxisOperation axisop,
                                          final MessageContext msgctx)
             throws AxisFault {
-        prepareInvocation(axisop, msgctx);
 
         // The message ID is sent all the time
         String messageID = String.valueOf("uuid:" + UUIDGenerator.getUUID());
         msgctx.setMessageID(messageID);
         //
-        if (useSeparateListener) {
+        if (clientOptions.isUseSeperateListener()) {
+
             //This mean doing a Request-Response invocation using two channel. If the
             //transport is two way transport (e.g. http) Only one channel is used (e.g. in http cases
             //202 OK is sent to say no repsone avalible). Axis2 get blocked return when the response is avalible.
@@ -142,7 +112,7 @@ public class InOutMEPClient extends MEPClient {
             SyncCallBack callback = new SyncCallBack();
             //this method call two channel non blocking method to do the work and wait on the callbck
             invokeNonBlocking(axisop, msgctx, callback);
-            long index = timeOutInMilliSeconds / 100;
+            long index = clientOptions.getTimeOutInMilliSeconds() / 100;
             while (!callback.isComplete()) {
                 //wait till the reponse arrives
                 if (index-- >= 0) {
@@ -169,8 +139,9 @@ public class InOutMEPClient extends MEPClient {
                 }
             }
         } else {
-            //This is the Usual Request-Response Sync implemetation
             msgctx.setServiceContext(serviceContext);
+            prepareInvocation(axisop, msgctx);
+            //This is the Usual Request-Response Sync implemetation
             ConfigurationContext syscontext = serviceContext.getConfigurationContext();
             msgctx.setConfigurationContext(syscontext);
 
@@ -178,10 +149,11 @@ public class InOutMEPClient extends MEPClient {
 
             OperationContext operationContext = new OperationContext(axisop, serviceContext);
             axisop.registerOperationContext(msgctx, operationContext);
+            operationContext.setProperties(clientOptions.getProperties());
 
-            //Send the SOAP Message and receive a response                
+            //Send the SOAP Message and receive a response
             MessageContext response =
-                    send(msgctx, listenerTransport);
+                    send(msgctx, clientOptions.getListenerTransport());
 
             //check for a fault and return the result
             SOAPEnvelope resenvelope = response.getEnvelope();
@@ -189,7 +161,7 @@ public class InOutMEPClient extends MEPClient {
                 SOAPFault soapFault = resenvelope.getBody().getFault();
                 Exception ex = soapFault.getException();
 
-                if (isExceptionToBeThrownOnSOAPFault) {
+                if (clientOptions.isExceptionToBeThrownOnSOAPFault()) {
                     //does the SOAPFault has a detail element for Excpetion
                     if (ex != null) {
                         throw new AxisFault(ex);
@@ -222,6 +194,7 @@ public class InOutMEPClient extends MEPClient {
                                   final Callback callback)
             throws AxisFault {
         prepareInvocation(axisop, msgctx);
+
         try {
             final ConfigurationContext syscontext =
                     serviceContext.getConfigurationContext();
@@ -232,7 +205,7 @@ public class InOutMEPClient extends MEPClient {
             String messageID = String.valueOf("uuid:" + UUIDGenerator.getUUID());
             msgctx.setMessageID(messageID);
             ////
-            if (useSeparateListener) {
+            if (clientOptions.isUseSeperateListener()) {
                 //the invocation happen via a separate Channel, so we should set up the
                 //information need to correlated the response message and invoke the call back
 
@@ -244,9 +217,9 @@ public class InOutMEPClient extends MEPClient {
                 EndpointReference replyToFromTransport = ListenerManager.replyToEPR(
                         serviceContext.getConfigurationContext(),
                         serviceContext.getAxisService().getName().getLocalPart()
-                        + "/"
-                        + axisop.getName().getLocalPart(),
-                        listenerTransport.getName().getLocalPart());
+                                + "/"
+                                + axisop.getName().getLocalPart(),
+                        clientOptions.getListenerTransport().getName().getLocalPart());
 
                 if (msgctx.getReplyTo() == null) {
                     msgctx.setReplyTo(replyToFromTransport);
@@ -257,12 +230,17 @@ public class InOutMEPClient extends MEPClient {
                 //create and set the Operation context
                 msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext));
                 msgctx.setServiceContext(serviceContext);
+                msgctx.getOperationContext().setProperties(clientOptions.getProperties());
 
                 //send the message
                 engine.send(msgctx);
             } else {
                 // here a bloking invocation happens in a new thread, so the
                 // progamming model is non blocking
+                OperationContext opcontxt = new OperationContext(axisop, serviceContext);
+                msgctx.setOperationContext(opcontxt);
+                msgctx.setServiceContext(serviceContext);
+                opcontxt.setProperties(clientOptions.getProperties());
                 serviceContext.getConfigurationContext().getThreadPool().execute(new NonBlockingInvocationWorker(callback, axisop, msgctx));
             }
 
@@ -274,69 +252,42 @@ public class InOutMEPClient extends MEPClient {
 
     }
 
-    /**
-     * Sets transport information to the call. The senarios supported are as follows:
-     * <blockquote><pre>
-     * [senderTransport, listenerTransport, useSeparateListener]
-     * http, http, true
-     * http, http, false
-     * http,smtp,true
-     * smtp,http,true
-     * smtp,smtp,true
-     * </pre></blockquote>
-     *
-     * @param senderTransport
-     * @param listenerTransport
-     * @param useSeparateListener
-     * @throws AxisFault
-     */
 
-    public void setTransportInfo(String senderTransport,
-                                 String listenerTransport,
-                                 boolean useSeparateListener)
-            throws AxisFault {
-        //here we check for a legal combination, for and example if the sendertransport is http and listner
-        //transport is smtp the invocation must using seperate transport 
-        if (!useSeparateListener) {
-            boolean isTransportsEqual =
-                    senderTransport.equals(listenerTransport);
-            boolean isATwoWaytransport =
-                    Constants.TRANSPORT_HTTP.equals(senderTransport)
-                            || Constants.TRANSPORT_TCP.equals(senderTransport);
-            if ((!isTransportsEqual || !isATwoWaytransport)) {
-                throw new AxisFault(Messages.getMessage("useSeparateListenerLimited"));
+
+    protected void configureTransportInformation() throws AxisFault {
+        AxisConfiguration axisConfig = this.serviceContext.getConfigurationContext().getAxisConfiguration();
+        String listenerTransportProtocol = clientOptions.getListenerTransportProtocol();
+        String senderTrasportProtocol = clientOptions.getSenderTrasportProtocol();
+        if (axisConfig != null) {
+            if (listenerTransportProtocol != null && !"".equals(listenerTransportProtocol)) {
+                TransportInDescription transportIn = axisConfig.getTransportIn(new QName(listenerTransportProtocol));
+                if (transportIn == null) {
+                    throw new AxisFault(Messages.getMessage("unknownTransport", listenerTransportProtocol));
+                }
+                clientOptions.setListenerTransport(transportIn);
             }
-        } else {
-            this.useSeparateListener = useSeparateListener;
-
+            if (senderTrasportProtocol != null && "".equals(senderTrasportProtocol)) {
+                TransportOutDescription transportOut = axisConfig.getTransportOut(new QName(senderTrasportProtocol));
+                if (transportOut == null) {
+                    throw new AxisFault(Messages.getMessage("unknownTransport", senderTrasportProtocol));
+                }
+                clientOptions.setSenderTransport(transportOut);
+            }
         }
 
-        //find and set the transport details
-        AxisConfiguration axisConfig =
-                serviceContext.getConfigurationContext().getAxisConfiguration();
-        this.listenerTransport =
-                axisConfig.getTransportIn(new QName(listenerTransport));
-        this.senderTransport =
-                axisConfig.getTransportOut(new QName(senderTransport));
-        if (this.senderTransport == null) {
-            throw new AxisFault(Messages.getMessage("unknownTransport", senderTransport));
-        }
-        if (this.listenerTransport == null) {
-            throw new AxisFault(Messages.getMessage("unknownTransport", listenerTransport));
-        }
-
-        //if separate transport is used, start the required listeners
-        if (useSeparateListener) {
+        if (clientOptions.isUseSeperateListener()) {
+            //if separate transport is used, start the required listeners
             if (!serviceContext
                     .getConfigurationContext()
                     .getAxisConfiguration()
                     .isEngaged(new QName(Constants.MODULE_ADDRESSING))) {
                 throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));
             }
-            ListenerManager.makeSureStarted(listenerTransport,
+            ListenerManager.makeSureStarted(clientOptions.getListenerTransportProtocol(),
                     serviceContext.getConfigurationContext());
         }
     }
+
 
     /**
      * Checks if the transports are identified correctly.
@@ -345,22 +296,20 @@ public class InOutMEPClient extends MEPClient {
      * @throws AxisFault
      */
     private void checkTransport(MessageContext msgctx) throws AxisFault {
-        if (senderTransport == null) {
-            senderTransport = inferTransport(msgctx.getTo());
+        if (clientOptions.getSenderTransport() == null) {
+            clientOptions.setSenderTransport(inferTransport(msgctx.getTo()));
         }
-        if (listenerTransport == null) {
-            listenerTransport =
-                    serviceContext
-                            .getConfigurationContext()
-                            .getAxisConfiguration()
-                            .getTransportIn(senderTransport.getName());
+        if (clientOptions.getListenerTransport() == null) {
+            clientOptions.setListenerTransport(serviceContext.getConfigurationContext()
+                    .getAxisConfiguration()
+                    .getTransportIn(clientOptions.getSenderTransport().getName()));
         }
 
         if (msgctx.getTransportIn() == null) {
-            msgctx.setTransportIn(listenerTransport);
+            msgctx.setTransportIn(clientOptions.getListenerTransport());
         }
         if (msgctx.getTransportOut() == null) {
-            msgctx.setTransportOut(senderTransport);
+            msgctx.setTransportOut(clientOptions.getSenderTransport());
         }
 
     }
@@ -386,7 +335,7 @@ public class InOutMEPClient extends MEPClient {
      * requests sent, the call should be closed only when all are are done.
      */
     public void close() throws AxisFault {
-        ListenerManager.stop(serviceContext.getConfigurationContext(), listenerTransport.getName().getLocalPart());
+        ListenerManager.stop(serviceContext.getConfigurationContext(), clientOptions.getListenerTransport().getName().getLocalPart());
     }
 
     /**
@@ -409,12 +358,9 @@ public class InOutMEPClient extends MEPClient {
 
         public void run() {
             try {
-                OperationContext opcontxt = new OperationContext(axisop, serviceContext);
-                msgctx.setOperationContext(opcontxt);
-                msgctx.setServiceContext(serviceContext);
                 //send the request and wait for reponse
                 MessageContext response =
-                        send(msgctx, listenerTransport);
+                        send(msgctx, clientOptions.getListenerTransport());
                 //call the callback                        
                 SOAPEnvelope resenvelope = response.getEnvelope();
                 SOAPBody body = resenvelope.getBody();
@@ -436,26 +382,6 @@ public class InOutMEPClient extends MEPClient {
                 callback.reportError(e);
             }
         }
-    }
-
-    /**
-     * This is used in blocking scenario. Client will time out after waiting this amount of time.
-     * The default is 2000 and must be provided in multiples of 100.
-     *
-     * @param timeOutInMilliSeconds
-     */
-    public void setTimeOutInMilliSeconds(long timeOutInMilliSeconds) {
-        this.timeOutInMilliSeconds = timeOutInMilliSeconds;
-    }
-
-    /**
-     * Gets the wait time after which a client times out in a blocking scenario.
-     * The default is 2000.
-     *
-     * @return timeOutInMilliSeconds
-     */
-    public long getTimeOutInMilliSeconds() {
-        return timeOutInMilliSeconds;
     }
 
     /**

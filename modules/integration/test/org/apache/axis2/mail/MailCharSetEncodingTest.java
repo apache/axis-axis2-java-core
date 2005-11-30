@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
@@ -126,8 +127,10 @@ public class MailCharSetEncodingTest extends TestCase {
             org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                     clientServiceContext);
 
-            call.setTo(targetEPR);
-            call.setTransportInfo(Constants.TRANSPORT_MAIL,
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setTo(targetEPR);
+            options.setTransportInfo(Constants.TRANSPORT_MAIL,
                     Constants.TRANSPORT_MAIL, true);
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {

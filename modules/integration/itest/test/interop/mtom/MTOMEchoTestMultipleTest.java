@@ -20,9 +20,10 @@ import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
-import test.interop.util.BodyElements;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAP12Constants;
+import test.interop.util.BodyElements;
 
 import java.util.Iterator;
 
@@ -32,6 +33,7 @@ import java.util.Iterator;
 public class MTOMEchoTestMultipleTest extends TestCase {
     private EndpointReference targetEPR = new EndpointReference("http://www.whitemesa.net/mtom-test-cr-inter");
     private int repeat = 8;
+
     public MTOMEchoTestMultipleTest() {
         super(MTOMEchoTestMultipleTest.class.getName());
     }
@@ -42,21 +44,25 @@ public class MTOMEchoTestMultipleTest extends TestCase {
 
     public void runTest(boolean optimized, int repeat) throws Exception {
         Call call = new Call("target/test-resources/intregrationRepo");
-         call.setTo(targetEPR);
-        call.set(Constants.Configuration.ENABLE_MTOM,
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(targetEPR);
+        options.setProperty(Constants.Configuration.ENABLE_MTOM,
                 Constants.VALUE_TRUE);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP, false);
-        call.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
-        OMElement resultElem = call.invokeBlocking("EchoTestMultiple", BodyElements.bodyMultiple(optimized,repeat));
+        OMElement resultElem = call.invokeBlocking("EchoTestMultiple", BodyElements.bodyMultiple(optimized, repeat));
         responseAssertion(resultElem);
     }
+
     public void testNonOptimized() throws Exception {
-        runTest(false,repeat);
+        runTest(false, repeat);
     }
+
     public void testOptimized() throws Exception {
-        runTest(true,repeat);
+        runTest(true, repeat);
     }
 
     private void responseAssertion(OMElement response) {

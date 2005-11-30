@@ -3,6 +3,7 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.RequestCounter;
 import org.apache.axis2.engine.util.RequestCounterMessageReceiver;
@@ -35,6 +36,7 @@ import javax.xml.namespace.QName;
 *
 * @author : Eran Chinthaka (chinthaka@apache.org)
 */
+
 public class ServiceGroupContextTest extends TestCase {
 
     /**
@@ -47,13 +49,13 @@ public class ServiceGroupContextTest extends TestCase {
      * Server will correctly identify the service group from the information sent by the client and
      * retrieve the sgc earlier used and will use that for the current request as well.
      * The service will retrieve the request count from the sgc and increase that by one.
-     *
+     * <p/>
      * Test will asserts whether the client gets the number of requests as 2, when he invokes two times.
      */
 
     protected EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:" +
-                                                                  (UtilServer.TESTING_PORT) +
-                                                                  "/axis/services/RequestCounter");
+            (UtilServer.TESTING_PORT) +
+            "/axis/services/RequestCounter");
     protected Log log = LogFactory.getLog(getClass());
     protected QName serviceName = new QName("RequestCounter");
     protected QName operationName = new QName("getRequestCount");
@@ -63,7 +65,7 @@ public class ServiceGroupContextTest extends TestCase {
     protected void setUp() throws Exception {
         UtilServer.start();
         service = Utils.createSimpleService(serviceName, new RequestCounterMessageReceiver(),
-                                            RequestCounter.class.getName(), operationName);
+                RequestCounter.class.getName(), operationName);
         UtilServer.deployService(service);
     }
 
@@ -80,18 +82,20 @@ public class ServiceGroupContextTest extends TestCase {
 
         org.apache.axis2.client.Call call = new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
-        call.setWsaAction(operationName.getLocalPart());
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        options.setAction(operationName.getLocalPart());
 
         SOAPEnvelope result = call.invokeBlocking(operationName.getLocalPart(), payload);
 
 
         OMNamespace axis2Namespace = fac.createOMNamespace(Constants.AXIS2_NAMESPACE_URI,
-                                                           Constants.AXIS2_NAMESPACE_PREFIX);
+                Constants.AXIS2_NAMESPACE_PREFIX);
         SOAPEnvelope defaultEnvelope = fac.getDefaultEnvelope();
         SOAPHeaderBlock soapHeaderBlock = defaultEnvelope.getHeader().addHeaderBlock(Constants.SERVICE_GROUP_ID,
-                                                                                     axis2Namespace);
+                axis2Namespace);
 
         System.out.println("soapHeaderBlock = " + soapHeaderBlock);
         String serviceGroupId = result.getHeader().getFirstChildWithName(new QName("ReplyTo"))
@@ -101,7 +105,7 @@ public class ServiceGroupContextTest extends TestCase {
         soapHeaderBlock.setText(serviceGroupId);
 
         SOAPEnvelope soapEnvelope = call.invokeBlocking(operationName.getLocalPart(),
-                                                        defaultEnvelope);
+                defaultEnvelope);
         String text = soapEnvelope.getBody().getFirstElement().getText();
         assertEquals("Number of requests should be 2", 2, Integer.parseInt(text));
     }

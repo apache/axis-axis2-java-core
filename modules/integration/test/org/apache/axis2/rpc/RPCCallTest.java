@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
@@ -96,13 +97,17 @@ public class RPCCallTest extends TestCase {
 
     public void testEditBean() throws AxisFault {
         configureSystem("editBean");
-        RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+        String clientHome = "target/test-resources/intregrationRepo";
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
+
+        RPCCall call = new RPCCall(clientHome);
+        call.setClientOptions(options);
+
         MyBean bean = new MyBean();
         bean.setAge(100);
         bean.setName("Deepal");
@@ -146,13 +151,16 @@ public class RPCCallTest extends TestCase {
 
     public void testEchoBean() throws AxisFault {
         configureSystem("echoBean");
-        RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
+
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+        call.setClientOptions(options);
 
         MyBean bean = new MyBean();
         bean.setAge(100);
@@ -178,13 +186,16 @@ public class RPCCallTest extends TestCase {
 
     public void testEchoString() throws AxisFault {
         configureSystem("echoString");
-        RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
+
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+        call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("foo");
@@ -195,13 +206,16 @@ public class RPCCallTest extends TestCase {
 
     public void testEchoInt() throws AxisFault {
         configureSystem("echoInt");
-        RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
+
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+        call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("100");
@@ -216,10 +230,12 @@ public class RPCCallTest extends TestCase {
         RPCCall call =
                 new RPCCall("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
+        call.setClientOptions(options);
         ArrayList args = new ArrayList();
         args.add("100");
         args.add("200");
@@ -234,8 +250,10 @@ public class RPCCallTest extends TestCase {
         RPCCall call =
                 new RPCCall("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
 
@@ -252,11 +270,13 @@ public class RPCCallTest extends TestCase {
         RPCCall call =
                 new RPCCall("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
 
+        call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("true");
@@ -268,13 +288,17 @@ public class RPCCallTest extends TestCase {
 
     public void testEchoByte() throws AxisFault {
         configureSystem("echoByte");
-        RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
+
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+        call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("1");
@@ -285,13 +309,16 @@ public class RPCCallTest extends TestCase {
 
     public void testCompany() throws AxisFault {
         configureSystem("echoCompany");
-        RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
+
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+        call.setClientOptions(options);
 
         Company com = new Company();
         com.setName("MyCompany");
@@ -322,13 +349,16 @@ public class RPCCallTest extends TestCase {
 
     public void testEchoOM() throws AxisFault {
         configureSystem("echoOM");
-        RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
+
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+        call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("1");
@@ -340,13 +370,16 @@ public class RPCCallTest extends TestCase {
     public void testCalender() throws AxisFault {
         zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
         configureSystem("echoCalander");
-        RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
+
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+        call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
         Date date = Calendar.getInstance().getTime();
@@ -360,13 +393,16 @@ public class RPCCallTest extends TestCase {
     ////////////////////////////////////////////////// Invoking by Passing Return types //////////
     public void testechoBean2() throws AxisFault {
         configureSystem("echoBean");
-        RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
+
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+        call.setClientOptions(options);
 
         MyBean bean = new MyBean();
         bean.setAge(100);
@@ -392,13 +428,16 @@ public class RPCCallTest extends TestCase {
 
     public void testechoInt2() throws AxisFault {
         configureSystem("echoInt");
-        RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
+
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+        call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("100");
@@ -413,13 +452,16 @@ public class RPCCallTest extends TestCase {
 
     public void testmultireturn() throws AxisFault {
         configureSystem("multireturn");
-        RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
+
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+        call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("1");
@@ -437,13 +479,16 @@ public class RPCCallTest extends TestCase {
 
     public void testmulReturn() throws AxisFault {
         configureSystem("mulReturn");
-        RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
+
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+        call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
         args.add("foo");
@@ -457,13 +502,16 @@ public class RPCCallTest extends TestCase {
 
     public void testhandleArrayList() throws AxisFault {
         configureSystem("handleArrayList");
-        RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
+
+        RPCCall call =
+                new RPCCall("target/test-resources/intregrationRepo");
+        call.setClientOptions(options);
 
         OMElement elem = call.invokeBlocking("handleArrayList", getpayLoad());
         assertEquals(elem.getFirstElement().getText(), "abcdefghiklm10");

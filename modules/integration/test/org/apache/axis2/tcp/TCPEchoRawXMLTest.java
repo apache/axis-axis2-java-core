@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
@@ -112,9 +113,11 @@ public class TCPEchoRawXMLTest extends TestCase {
         org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 serviceContext);
 
-        call.setTo(targetEPR);
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-        call.setTransportInfo(Constants.TRANSPORT_TCP,
+        options.setTransportInfo(Constants.TRANSPORT_TCP,
                 Constants.TRANSPORT_TCP,
                 false);
 
@@ -159,9 +162,11 @@ public class TCPEchoRawXMLTest extends TestCase {
         org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 serviceContext);
 
-        call.setTo(targetEPR);
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-        call.setTransportInfo(Constants.TRANSPORT_TCP,
+        options.setTransportInfo(Constants.TRANSPORT_TCP,
                 Constants.TRANSPORT_TCP,
                 false);
 
@@ -189,10 +194,12 @@ public class TCPEchoRawXMLTest extends TestCase {
 
         org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 serviceContext);
-        call.setTo(targetEPR);
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-        call.setWsaAction(operationName.getLocalPart());
-        call.setTransportInfo(Constants.TRANSPORT_TCP,
+        options.setAction(operationName.getLocalPart());
+        options.setTransportInfo(Constants.TRANSPORT_TCP,
                 Constants.TRANSPORT_TCP,
                 true);
 
@@ -210,10 +217,11 @@ public class TCPEchoRawXMLTest extends TestCase {
 
         AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
         org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(Constants.TESTING_REPOSITORY);
-        call.setTo(targetEPR);
-
-        call.setWsaAction(operationName.getLocalPart());
-        call.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, false);
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(targetEPR);
+        options.setAction(operationName.getLocalPart());
+        options.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, false);
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
 

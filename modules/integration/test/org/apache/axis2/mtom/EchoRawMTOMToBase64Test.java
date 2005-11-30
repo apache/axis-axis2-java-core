@@ -21,6 +21,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.ByteArrayDataSource;
+import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.description.AxisService;
@@ -98,14 +100,16 @@ public class EchoRawMTOMToBase64Test extends TestCase {
     public void testEchoXMLASync() throws Exception {
         OMElement payload = createPayload();
 
-        org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
+        String clientHome = "target/test-resources/intregrationRepo";
 
-
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
-                Constants.TRANSPORT_HTTP,
+        Options clientOptions = new Options();
+        clientOptions.setTo(targetEPR);
+        clientOptions.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP,
                 false);
+
+        Call call = new Call(clientHome);
+        call.setClientOptions(clientOptions);
+
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
@@ -143,15 +147,19 @@ public class EchoRawMTOMToBase64Test extends TestCase {
 
             OMElement payload = createPayload();
 
-            org.apache.axis2.client.Call call =
-                    new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
+            String clientHome = "target/test-resources/intregrationRepo";
 
-            call.setTo(targetEPR);
-            call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+            Options clientOptions = new Options();
+            clientOptions.setTo(targetEPR);
+            clientOptions.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+            clientOptions.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP, false);
-            call.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+            clientOptions.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
+            Call call =
+                     new Call(clientHome);
+            call.setClientOptions(clientOptions);
+            
             OMElement result = call.invokeBlocking(operationName
                     .getLocalPart(), payload);
 

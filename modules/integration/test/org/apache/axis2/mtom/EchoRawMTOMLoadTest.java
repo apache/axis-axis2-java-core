@@ -18,6 +18,7 @@ package org.apache.axis2.mtom;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
@@ -82,7 +83,7 @@ public class EchoRawMTOMLoadTest extends TestCase implements TestConstants {
                 98};
         for (int i = 0; i < 4; i++) {
             OMElement subData = fac.createOMElement("subData", omNs);
-            DataHandler dataHandler = new DataHandler("Thilina","text/plain");
+            DataHandler dataHandler = new DataHandler("Thilina", "text/plain");
             //new ByteArrayDataSource(expectedByteArray));
             textData = new OMTextImpl(dataHandler, true);
             subData.addChild(textData);
@@ -102,12 +103,15 @@ public class EchoRawMTOMLoadTest extends TestCase implements TestConstants {
 
             org.apache.axis2.client.Call call =
                     new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
-            call.setTo(targetEPR);
-            call.set(Constants.Configuration.ENABLE_MTOM,
+
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setTo(targetEPR);
+            options.setProperty(Constants.Configuration.ENABLE_MTOM,
                     Constants.VALUE_TRUE);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP, false);
-            call.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+            options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
             OMElement result = call.invokeBlocking(operationName
                     .getLocalPart(),
@@ -120,9 +124,9 @@ public class EchoRawMTOMLoadTest extends TestCase implements TestConstants {
             UtilServer.unDeployClientService();
         }
     }
-    protected void compareWithActualOMText(OMText binaryNode)
-    {
-        assertEquals(textData.getText(),binaryNode.getText());
+
+    protected void compareWithActualOMText(OMText binaryNode) {
+        assertEquals(textData.getText(), binaryNode.getText());
     }
 
 }

@@ -16,8 +16,6 @@
 
 package org.apache.axis2.client;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -30,19 +28,20 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.wsdl.WSDLConstants;
 
+import javax.xml.namespace.QName;
+
 /**
  * This class handles In-Only (fire and forget) MEP
  */
 public class InOnlyMEPClient extends MEPClient {
-    protected TransportOutDescription senderTransport;
 
- 
     public InOnlyMEPClient(ServiceContext service) {
         super(service, WSDLConstants.MEP_URI_IN_ONLY);
     }
 
     /**
      * Sends the SOAP Message and forgets about it. This is one way
+     *
      * @param axisop
      * @param msgctx
      * @throws AxisFault
@@ -57,6 +56,7 @@ public class InOnlyMEPClient extends MEPClient {
 
 
         //if the transport to use for sending is not specified, try to find it from the URL
+        TransportOutDescription senderTransport = clientOptions.getSenderTransport();
         if (senderTransport == null) {
             senderTransport =
                     inferTransport(msgctx.getTo());
@@ -71,23 +71,15 @@ public class InOnlyMEPClient extends MEPClient {
         engine.send(msgctx);
     }
 
-    /**
-     * @param action
-     */
-
-
-    /**
-     * Sets the transport to be used for sending the SOAP Message
-     * @param senderTransport
-     * @throws org.apache.axis2.AxisFault if the transport is not found
-     */
-    public void setSenderTransport(String senderTransport) throws AxisFault {
-        AxisConfiguration axisConfiguration =
-            serviceContext.getConfigurationContext().getAxisConfiguration();
-        this.senderTransport =
-            axisConfiguration.getTransportOut(new QName(senderTransport));
-        if(senderTransport == null){
-            throw new AxisFault(Messages.getMessage("unknownTransport",senderTransport));
+    protected void configureTransportInformation() throws AxisFault {
+        AxisConfiguration axisConfig = this.serviceContext.getConfigurationContext().getAxisConfiguration();
+        String senderTrasportProtocol = clientOptions.getSenderTrasportProtocol();
+        if (axisConfig != null) {
+            clientOptions.setSenderTransport(axisConfig.getTransportOut(new QName(senderTrasportProtocol)));
         }
+        if (this.clientOptions.getSenderTransport() == null) {
+            throw new AxisFault(Messages.getMessage("unknownTransport", senderTrasportProtocol));
+        }
+
     }
 }

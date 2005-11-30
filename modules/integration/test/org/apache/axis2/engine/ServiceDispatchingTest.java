@@ -21,6 +21,7 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
@@ -71,9 +72,11 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         OMElement payload = TestingUtils.createDummyOMElement();
         org.apache.axis2.client.Call call =
                 new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
-        call.setTo(
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis/services/EchoXMLService/echoOMElement"));
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
         OMElement result = call.invokeBlocking(
@@ -92,12 +95,14 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         payload.addChild(value);
         org.apache.axis2.client.Call call =
                 new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
-        call.setTo(
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis/services/EchoXMLService/"));
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
-        call.setSoapAction("echoOMElement");
+        options.setSoapAction("echoOMElement");
         OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), payload);
         TestingUtils.campareWithCreatedOMElement(result);
@@ -118,9 +123,11 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
 
         org.apache.axis2.client.Call call =
                 new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
-        call.setTo(
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis/services/"));
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
         OMElement result = call.invokeBlocking(

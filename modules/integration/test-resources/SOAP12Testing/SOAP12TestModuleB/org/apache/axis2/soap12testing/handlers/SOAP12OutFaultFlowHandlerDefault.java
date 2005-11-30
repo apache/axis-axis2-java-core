@@ -31,9 +31,9 @@ public class SOAP12OutFaultFlowHandlerDefault extends AbstractHandler {
     }
 
     public void invoke(MessageContext msgContext) {
-        Integer headerBlockPresent = (Integer) msgContext.getOperationContext().getProperty("HEADER_BLOCK_PRESENT", true);
+        Integer headerBlockPresent = (Integer) msgContext.getOperationContext().getProperty("HEADER_BLOCK_PRESENT");
         if (headerBlockPresent.equals(new Integer(1))) {
-            SOAPHeader headerAdd = (SOAPHeader) msgContext.getOperationContext().getProperty("HEADER_BLOCK", true);
+            SOAPHeader headerAdd = (SOAPHeader) msgContext.getOperationContext().getProperty("HEADER_BLOCK");
            Iterator headerBlocks = headerAdd.examineAllHeaderBlocks();
             while(headerBlocks.hasNext()){
                 SOAPHeaderBlock headerBlock=(SOAPHeaderBlock) headerBlocks.next();

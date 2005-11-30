@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -39,14 +40,15 @@ public class RESTClient {
 
     public static void main(String[] args) throws AxisFault {
 
-        Call call = new Call();
-        call.setTo(new EndpointReference(toEpr));
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
-                Constants.TRANSPORT_HTTP,
-                false);
-        
-        call.set(Constants.Configuration.ENABLE_REST,Constants.VALUE_TRUE);
+        Options options = new Options();
+        options.setTo(new EndpointReference(toEpr));
+        options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
 
+        options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
+
+        Call call = new Call();
+        call.setClientOptions(options);
+        
         OMElement result = call.invokeBlocking("echo", getPayload());
 
         try {

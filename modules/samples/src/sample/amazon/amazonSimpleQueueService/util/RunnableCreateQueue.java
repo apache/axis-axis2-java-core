@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.om.OMElement;
 import sample.amazon.amazonSimpleQueueService.OMElementCreator;
@@ -71,11 +72,14 @@ public class RunnableCreateQueue extends QueueManager implements Runnable {
         String url = "http://webservices.amazon.com/onca/soap?Service=AWSSimpleQueueService";
         try {
             Call call = new Call();
-            call.setTo(new EndpointReference(url));
-            call.setSoapAction("http://soap.amazon.com");
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+
+            Options options = new Options();
+            options.setTo(new EndpointReference(url));
+            options.setSoapAction("http://soap.amazon.com");
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
                     false);
+            call.setClientOptions(options);
             call.invokeNonBlocking(operation, element, specificCallbackObject);
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();

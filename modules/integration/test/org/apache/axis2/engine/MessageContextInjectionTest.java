@@ -19,6 +19,7 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.MessageSender;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
@@ -43,6 +44,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+
 public class MessageContextInjectionTest extends TestCase implements TestConstants {
 
     private Log log = LogFactory.getLog(getClass());
@@ -64,15 +66,15 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
     }
 
     protected void setUp() throws Exception {
-        AxisConfiguration config =   new AxisConfigurationImpl();
+        AxisConfiguration config = new AxisConfigurationImpl();
 
         TransportInDescription tIn = new TransportInDescription(new QName(Constants.TRANSPORT_LOCAL));
         config.addTransportIn(tIn);
 
         TransportOutDescription tOut = new TransportOutDescription(new QName(Constants.TRANSPORT_LOCAL));
         config.addTransportOut(tOut);
-        
-        ((AxisConfigurationImpl)config).setDefaultDispatchers();
+
+        ((AxisConfigurationImpl) config).setDefaultDispatchers();
         LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(
                 config);
 
@@ -114,9 +116,12 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
 
         MessageSender sender = new MessageSender("target/test-resources/intregrationRepo");
 
-        sender.setTo(targetEPR);
-        sender.setSenderTransport(Constants.TRANSPORT_LOCAL);
-        sender.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        Options options = new Options();
+        sender.setClientOptions(options);
+        options.setTo(targetEPR);
+        options.setSenderTransportProtocol(Constants.TRANSPORT_LOCAL);
+        options.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        
         sender.send(operationName.getLocalPart(), payload);
 
     }

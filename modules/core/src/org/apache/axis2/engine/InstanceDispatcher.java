@@ -64,7 +64,7 @@ public class InstanceDispatcher extends AbstractHandler {
 
         } else { //  2. if null, create new opCtxt
             operationContext =new OperationContext(axisOperation);
-//            operationContext = OperationContextFactory.createOperationContext(axisOperation.getAxisSpecifMEPConstant(), axisOperation);
+//            operationContext = OperationContextFactory.createOrFindOperationContext(axisOperation.getAxisSpecifMEPConstant(), axisOperation);
             axisOperation.registerOperationContext(msgContext, operationContext);
 
             //  fill the service group context and service context info

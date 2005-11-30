@@ -19,6 +19,7 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.engine.util.MyInOutMEPClient;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
@@ -49,8 +50,8 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
     private boolean finish = false;
 
     protected void setUp() throws Exception {
-            UtilServer.start();
-            inOutMEPClient = getMyInOutMEPClient();
+        UtilServer.start();
+        inOutMEPClient = getMyInOutMEPClient();
     }
 
     public void testTwoHeadersSOAPMessage() throws AxisFault, XMLStreamException {
@@ -92,8 +93,8 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
     }
 
     private SOAPEnvelope getResponse(SOAPEnvelope inEnvelope) throws AxisFault {
-            inOutMEPClient.setExceptionToBeThrownOnSOAPFault(false);
-            return inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), inEnvelope);
+        inOutMEPClient.getClientOptions().setExceptionToBeThrownOnSOAPFault(false);
+        return inOutMEPClient.invokeBlockingWithEnvelopeOut(operationName.getLocalPart(), inEnvelope);
     }
 
     private SOAPEnvelope getTwoHeadersSOAPEnvelope(SOAPFactory fac) {
@@ -106,9 +107,11 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
 
     private MyInOutMEPClient getMyInOutMEPClient() throws AxisFault {
         MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/intregrationRepo");
-        inOutMEPClient.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        inOutMEPClient.setTo(targetEPR);
-        inOutMEPClient.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        inOutMEPClient.setClientOptions(options);
+        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
         return inOutMEPClient;

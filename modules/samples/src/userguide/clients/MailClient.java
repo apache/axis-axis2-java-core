@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.MessageSender;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -34,9 +35,13 @@ public class MailClient {
 
     public static void main(String[] args) throws AxisFault {
         MessageSender msgSender = new MessageSender();
-        msgSender.setTo(
+
+        Options options = new Options();
+        options.setTo(
                 new EndpointReference(toEpr));
-        msgSender.setSenderTransport(Constants.TRANSPORT_MAIL);
+        options.setSenderTransportProtocol(Constants.TRANSPORT_MAIL);
+        msgSender.setClientOptions(options);
+
         msgSender.send("echo", getPayload());
     }
 

@@ -21,6 +21,8 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.description.AxisService;
@@ -68,13 +70,13 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
     public void testEchoXMLASync() throws Exception {
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
+        Call call = new Call(
                 Constants.TESTING_PATH + "commons-http-enabledRepository");
 
-
-        call.setTo(targetEPR);
-//        call.setWsaAction(operationName.getLocalPart());
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
 
@@ -113,11 +115,13 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
+        Call call = new Call(
                 Constants.TESTING_PATH + "commons-http-enabledRepository");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
 

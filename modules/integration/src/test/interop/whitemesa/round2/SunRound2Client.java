@@ -20,14 +20,15 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
-import test.interop.whitemesa.round2.util.SunRound2ClientUtil;
 import org.apache.axis2.soap.SOAPEnvelope;
+import test.interop.whitemesa.round2.util.SunRound2ClientUtil;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
@@ -42,9 +43,12 @@ public class SunRound2Client {
         try {
             call = new Call("target/test-resources/intregrationRepo");
             url = new URL(epUrl);
-            call.setTo(new EndpointReference(url.toString()));
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
-            call.setSoapAction(soapAction);
+
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setTo(new EndpointReference(url.toString()));
+            options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            options.setSoapAction(soapAction);
 
             AxisConfiguration axisConfig = new AxisConfigurationImpl();
             ConfigurationContext configCtx = new ConfigurationContext(axisConfig);

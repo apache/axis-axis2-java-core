@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.OutInAxisOperation;
@@ -151,11 +152,14 @@ public class AsynchronousClient {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        call.setTo(
+
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(
                 new EndpointReference(url.toString()));
         MessageContext requestContext = ClientUtil.getMessageContext();
         try {
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
                     false);
 

@@ -19,82 +19,47 @@ package org.apache.axis2.context;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
- *  This is the top most level of the Context hierachy and is a bag of properties. 
+ * This is the top most level of the Context hierachy and is a bag of properties.
  */
 public abstract class AbstractContext {
 
-    protected transient HashMap nonPersistentMap;
-    protected final HashMap persistentMap;
+    protected Map properties;
+
     protected AbstractContext parent;
 
-	public abstract void init (AxisConfiguration axisConfiguration) throws AxisFault;
-	
+    public abstract void init(AxisConfiguration axisConfiguration) throws AxisFault;
+
     protected AbstractContext(AbstractContext parent) {
-        this.persistentMap = new HashMap();
-        this.nonPersistentMap = new HashMap();
+        this.properties = new HashMap();
         this.parent = parent;
     }
 
-    /**
-     * Stores an object with a key in a persistent or non-persistent manner. This 
-     * depends on the persistent flag.
-     *
-     * @param key
-     * @param value
-     * @param persistent
-     */
-    public void setProperty(String key, Object value, boolean persistent) {
-        if (persistent) {
-            //todo has to check the seralizabilty 
-            persistentMap.put(key, value);
-        } else {
-            nonPersistentMap.put(key, value);
-        }
-    }
 
     /**
-     * Stores an object with the default persistent flag set to no persistence.
+     * Store a property for message context
      *
      * @param key
      * @param value
      */
     public void setProperty(String key, Object value) {
-        this.setProperty(key, value, false);
+        properties.put(key, value);
     }
 
     /**
-     * Retrieves an object given a key. The search is done in the non-persistent
-     * group.
+     * Retrieves an object given a key.
      *
-     * @param key
+     * @param key - if not found, will return null
      * @return Returns the property.
      */
     public Object getProperty(String key) {
-        return this.getProperty(key, false);
-    }
-
-    /**
-     * @param key
-     * @param persistent
-     * @return Returns the property.
-     */
-    public Object getProperty(String key, boolean persistent) {
         Object obj = null;
-        if (persistent) {
-            obj = persistentMap.get(key);
-        }
-        if (obj == null) {
-            obj = nonPersistentMap.get(key);
-        }
+        obj = properties.get(key);
         if (obj == null && parent != null) {
-            obj = parent.getProperty(key, persistent);
+            obj = parent.getProperty(key);
         }
         return obj;
     }
@@ -113,12 +78,12 @@ public abstract class AbstractContext {
         return parent;
     }
 
-    public HashMap getNonPersistentMap() {
-        return nonPersistentMap;
+    public Map getProperties() {
+        return properties;
     }
 
-    public HashMap getPersistentMap() {
-        return persistentMap;
+    public void setProperties(Map properties) {
+        this.properties = properties;
     }
 
 }

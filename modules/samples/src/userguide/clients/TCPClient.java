@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -40,8 +41,10 @@ public class TCPClient {
     public static void main(String[] args) throws AxisFault {
 
         Call call = new Call();
-        call.setTo(new EndpointReference(toEpr));
-        call.setTransportInfo(Constants.TRANSPORT_TCP,
+        Options options = new Options();
+            call.setClientOptions(options);
+        options.setTo(new EndpointReference(toEpr));
+        options.setTransportInfo(Constants.TRANSPORT_TCP,
                 Constants.TRANSPORT_TCP,
                 false);
         //call.engageModule(new QName(Constants.MODULE_ADDRESSING));

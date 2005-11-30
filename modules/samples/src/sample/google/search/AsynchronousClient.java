@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.OutInAxisOperation;
@@ -84,19 +85,21 @@ public class AsynchronousClient {
         Call call = new Call();
         URL url = null;
         try {
-            url = new URL("http", "api.google.com","/search/beta2");
+            url = new URL("http", "api.google.com", "/search/beta2");
             //  url = new URL("http://127.0.0.1:8080/axis2/services/axisversion/viewVersion");
         } catch (MalformedURLException e) {
             e.printStackTrace();
             System.exit(0);
         }
 
-        call.setTo(
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(
                 new EndpointReference(url.toString()));
 
         MessageContext requestContext = ClientUtil.getMessageContext(this);
         try {
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
                     false);
             QName opName = new QName("urn:GoogleSearch", "doGoogleSearch");

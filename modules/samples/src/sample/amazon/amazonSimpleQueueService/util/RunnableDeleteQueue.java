@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.om.OMElement;
 import sample.amazon.amazonSimpleQueueService.OMElementCreator;
@@ -60,9 +61,12 @@ public class RunnableDeleteQueue extends QueueManager implements Runnable {
         String url = "http://webservices.amazon.com/onca/soap?Service=AWSSimpleQueueService";
         try {
             Call call = new Call();
-            call.setSoapAction("http://soap.amazon.com");
-            call.setTo(new EndpointReference(url));
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setSoapAction("http://soap.amazon.com");
+            options.setTo(new EndpointReference(url));
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
                     false);
             call.invokeNonBlocking(operation, element, specificCallbackObject);

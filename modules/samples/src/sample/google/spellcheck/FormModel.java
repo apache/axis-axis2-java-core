@@ -3,6 +3,7 @@ package sample.google.spellcheck;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -80,8 +81,9 @@ public class FormModel {
             ;
         }
 
-        call.setTo(
-                new EndpointReference(url.toString()));
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(new EndpointReference(url.toString()));
         try {
             call.invokeNonBlocking("doGoogleSpellingSugg",
                     requestElement,
@@ -112,8 +114,9 @@ public class FormModel {
             observer.updateError(e.getMessage());
         }
 
-        call.setTo(
-                new EndpointReference(url.toString()));
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(new EndpointReference(url.toString()));
         try {
             responseElement =
                     call.invokeBlocking("doGoogleSpellingSugg",

@@ -26,15 +26,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.PhaseRule;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
@@ -219,7 +211,7 @@ public class Utils {
         MessageContext msgContext;
         //  2. if null, create new opCtxt
         OperationContext operationContext = new OperationContext(axisOperation);
-//        OperationContext operationContext = OperationContextFactory.createOperationContext(axisOperation.getAxisSpecifMEPConstant(), axisOperation);
+//        OperationContext operationContext = OperationContextFactory.createOrFindOperationContext(axisOperation.getAxisSpecifMEPConstant(), axisOperation);
 
         //  fill the service group context and service context info
         return fillServiceContextAndServiceGroupContext(axisService, configurationContext);

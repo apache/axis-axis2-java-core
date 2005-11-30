@@ -23,6 +23,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.MessageSender;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -126,8 +127,9 @@ public class MailOneWayRawXMLTest extends TestCase {
 
         MessageSender sender = new MessageSender(serviceContext);
 
-        sender.setTo(targetEPR);
-        sender.setSenderTransport(Constants.TRANSPORT_MAIL);
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setSenderTransportProtocol(Constants.TRANSPORT_MAIL);
 
         sender.send(operationName.getLocalPart(), payload);
         int index = 0;

@@ -16,12 +16,11 @@
 
 package org.apache.axis2.security;
 
+import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;
-
-import junit.framework.TestCase;
 
 public abstract class InteropTestBase extends TestCase {
 
@@ -80,10 +79,9 @@ public abstract class InteropTestBase extends TestCase {
     protected static final String DEFAULT_CLIENT_REPOSITORY = "default_security_client_repo";
 
     private String targetEpr = "http://127.0.0.1:" +
-    		//5556 +
     		UtilServer.TESTING_PORT +
     		"/axis2/services/PingPort";
-    
+
 	public InteropTestBase() {
 		super();
 	}
@@ -131,7 +129,7 @@ public abstract class InteropTestBase extends TestCase {
     		e.printStackTrace();
     		fail("Error in introperating with " + targetEpr + ", client configuration: " + getClientRepo());
     	}
-    	
+
     }
     
     protected abstract OutflowConfiguration getOutflowConfiguration();

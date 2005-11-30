@@ -15,10 +15,12 @@
  */
 
 package org.apache.axis2.engine;
+
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
@@ -32,7 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Testing charater encoding support
+ * Testing character encoding support
  */
 public class CharactersetEncodingTest extends TestCase implements TestConstants {
 
@@ -63,7 +65,6 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
     }
 
 
-
     private void runTest(String value, String expected) {
 
         try {
@@ -76,15 +77,15 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
 
             Call call = new Call(
                     Constants.TESTING_PATH + "chuncked-enabledRepository");
-            call.set(MessageContext.CHARACTER_SET_ENCODING, "UTF-16");
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setProperty(MessageContext.CHARACTER_SET_ENCODING, "utf-16");
 
-            call.setTo(targetEPR);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+            options.setTo(targetEPR);
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP, false);
 
-            OMElement resultElem = call.invokeBlocking(operationName
-                    .getLocalPart(), payload);
-
+            OMElement resultElem = call.invokeBlocking(operationName.getLocalPart(), payload);
 
 
             assertNotNull("Result is null", resultElem);
@@ -122,6 +123,7 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
     public void testStringWithRawEntities() throws Exception {
         runTest("&<>'\"", "&<>'\"");
     }
+
     public void testStringWithLeadingAndTrailingSpaces() throws Exception {
         runtest("          centered          ");
     }

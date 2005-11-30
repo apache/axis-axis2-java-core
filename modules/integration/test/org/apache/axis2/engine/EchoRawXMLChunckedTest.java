@@ -20,6 +20,8 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
+import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
@@ -42,6 +44,7 @@ public class EchoRawXMLChunckedTest extends TestCase implements TestConstants {
     private AxisService service;
 
     private boolean finish = false;
+    private static final String CLIENT_HOME = Constants.TESTING_PATH + "chuncked-enabledRepository";
 
     public EchoRawXMLChunckedTest() {
         super(EchoRawXMLChunckedTest.class.getName());
@@ -52,7 +55,7 @@ public class EchoRawXMLChunckedTest extends TestCase implements TestConstants {
     }
 
     protected void setUp() throws Exception {
-       UtilServer.start(Constants.TESTING_PATH + "chuncked-enabledRepository");
+       UtilServer.start(CLIENT_HOME);
         service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
@@ -110,14 +113,14 @@ public class EchoRawXMLChunckedTest extends TestCase implements TestConstants {
 
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-                Constants.TESTING_PATH + "chuncked-enabledRepository");
+        Options clientOptions = new Options();
+        Call call = new Call(CLIENT_HOME);
+        call.setClientOptions(clientOptions);
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
-                Constants.TRANSPORT_HTTP,
+        clientOptions.setTo(targetEPR);
+        clientOptions.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP,
                 false);
-        
+
         OMElement result =
                 call.invokeBlocking(operationName.getLocalPart(),
                         payload);

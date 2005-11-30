@@ -19,6 +19,8 @@ package org.apache.axis2.groovy;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.EchoRawXMLTest;
 import org.apache.axis2.integration.UtilServer;
@@ -40,8 +42,8 @@ public class GroovyServiceTest extends TestCase {
 
     private EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
-            + "/axis/services/groovyService/echo");
+                    + (UtilServer.TESTING_PORT)
+                    + "/axis/services/groovyService/echo");
     private QName serviceName = new QName("groovyService");
     private QName operationName = new QName("echo");
 
@@ -79,20 +81,23 @@ public class GroovyServiceTest extends TestCase {
         //OMElement payload = createPayLoad();
         OMElement payload = getpayLoad();
 
-        org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
+        Call call =
+                new Call("target/test-resources/intregrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
-        call.setWsaAction(operationName.getLocalPart());
+        options.setAction(operationName.getLocalPart());
+
+        call.setClientOptions(options);
 
         OMElement result = call.invokeBlocking(operationName.getLocalPart(),
                 payload);
         assertNotNull(result);
-        OMElement person = (OMElement)result.getFirstOMChild();
-        assertEquals(person.getLocalName(),"person");
+        OMElement person = (OMElement) result.getFirstOMChild();
+        assertEquals(person.getLocalName(), "person");
 
         StringWriter writer = new StringWriter();
         result.build();
@@ -102,21 +107,20 @@ public class GroovyServiceTest extends TestCase {
     }
 
 
-
     private OMElement getpayLoad() throws XMLStreamException {
-        String str= "<ADDRESS><DET><NAME>Ponnampalam Thayaparan</NAME> <OCC>Student</OCC>" +
+        String str = "<ADDRESS><DET><NAME>Ponnampalam Thayaparan</NAME> <OCC>Student</OCC>" +
                 "<ADD>3-2/1,Hudson Road,Colombo-03</ADD><GENDER>Male</GENDER>" +
                 "</DET><DET><NAME>Eranka Samaraweera</NAME><OCC>Student</OCC><ADD>Martara</ADD>" +
                 "<GENDER>Male</GENDER></DET><DET><NAME>Sriskantharaja Ahilan</NAME>" +
                 "<OCC>Student</OCC><ADD>Trincomalee</ADD><GENDER>Male</GENDER>" +
                 "</DET></ADDRESS>";
-        XMLStreamReader xmlReader=  XMLInputFactory.newInstance().createXMLStreamReader(new
+        XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new
                 ByteArrayInputStream(str.getBytes()));
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         StAXOMBuilder staxOMBuilder = new
-                StAXOMBuilder(fac,xmlReader);
-        return   staxOMBuilder.getDocumentElement();
+                StAXOMBuilder(fac, xmlReader);
+        return staxOMBuilder.getDocumentElement();
     }
 
 

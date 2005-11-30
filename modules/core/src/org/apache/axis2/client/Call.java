@@ -109,7 +109,7 @@ public class Call extends InOutMEPClient {
                 serviceContext.getAxisService().getOperation(new QName(axisop));
         opDesc = createOpDescAndFillInFlowInformation(opDesc, axisop, WSDLConstants.MEP_CONSTANT_OUT_IN);
 
-        MessageContext msgctx = createMessageContext();
+        MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
         if (envelope == null || envelope.getBody() == null) {
             throw new AxisFault("SOAP envelope or SOAP Body can not be null");
         }
@@ -159,7 +159,7 @@ public class Call extends InOutMEPClient {
                 serviceContext.getAxisService().getOperation(new QName(axisop));
         opDesc = createOpDescAndFillInFlowInformation(opDesc, axisop, WSDLConstants.MEP_CONSTANT_OUT_IN);
 
-        MessageContext msgctx = createMessageContext();
+        MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
         if (envelope == null || envelope.getBody() == null) {
             throw new AxisFault("SOAP envelope or SOAP Body can not be null");
         }
@@ -210,26 +210,6 @@ public class Call extends InOutMEPClient {
             serviceContext.getAxisService().addOperation(opDesc);
         }
         return opDesc;
-    }
-
-    /**
-     * Get the value corresponding to the key in the Service Context
-     *
-     * @param key
-     * @return value
-     */
-    public Object get(String key) {
-        return serviceContext.getProperty(key);
-    }
-
-    /**
-     * Set a property in the Service Context
-     *
-     * @param key
-     * @param value
-     */
-    public void set(String key, Object value) {
-        serviceContext.setProperty(key, value);
     }
 
     /**

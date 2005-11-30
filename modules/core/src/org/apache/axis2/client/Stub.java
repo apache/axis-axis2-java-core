@@ -232,20 +232,13 @@ public abstract class Stub {
         }
     }
 
-    protected void populateProperties(Call call){
+    protected void populateProperties(MEPClient client){
         Iterator keys = this.propertyMap.keySet().iterator();
         String key;
+        Options clientOptions = client.getClientOptions();
         while (keys.hasNext()) {
             key = keys.next().toString();
-            call.set(key,propertyMap.get(key));
-        }
-    }
-    protected void populateProperties(MessageSender sender){
-        Iterator keys = this.propertyMap.keySet().iterator();
-        String key;
-        while (keys.hasNext()) {
-            key = keys.next().toString();
-            sender.set(key,propertyMap.get(key));
+            clientOptions.setProperty(key,propertyMap.get(key));
         }
     }
 

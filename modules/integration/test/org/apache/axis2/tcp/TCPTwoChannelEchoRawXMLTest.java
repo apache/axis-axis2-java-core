@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.MessageContext;
@@ -123,11 +124,13 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
 
         try {
-            call.setTo(targetEPR);
-            call.setTransportInfo(Constants.TRANSPORT_TCP,
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setTo(targetEPR);
+            options.setTransportInfo(Constants.TRANSPORT_TCP,
                     Constants.TRANSPORT_TCP,
                     true);
-            call.setWsaAction(operationName.getLocalPart());
+            options.setAction(operationName.getLocalPart());
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
                     try {

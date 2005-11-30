@@ -19,11 +19,12 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.MessageSender;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.om.OMElement;
 
 /**
  * Sample for fire-and-forget service invocation
- * Message Exchage Pattern IN-Only 
+ * Message Exchage Pattern IN-Only
  */
 public class PingClient {
     private static EndpointReference targetEPR = new EndpointReference("http://localhost:8080/axis2/services/MyService");
@@ -33,8 +34,11 @@ public class PingClient {
             OMElement payload = ClientUtil.getPingOMElement();
 
             MessageSender msgSender = new MessageSender();
-            msgSender.setTo(targetEPR);
-            msgSender.setSenderTransport(Constants.TRANSPORT_HTTP);
+
+            Options options = new Options();
+            msgSender.setClientOptions(options);
+            options.setTo(targetEPR);
+            options.setSenderTransportProtocol(Constants.TRANSPORT_HTTP);
 
             msgSender.send("ping", payload);
 

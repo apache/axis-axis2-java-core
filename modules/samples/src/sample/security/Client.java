@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -31,43 +32,44 @@ import java.io.StringWriter;
 
 public class Client {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		try {
-			
-			// Get the repository location from the args
-			String repo = args[0];
-			String port = args[1];
-			
-			OMElement payload = getEchoElement();
-			Call call = new Call(repo);
-			
-			call.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/SecureService"));
-			call.setTransportInfo(Constants.TRANSPORT_HTTP,
-					Constants.TRANSPORT_HTTP, false);
-			call.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        try {
 
-			//Blocking invocation
-			OMElement result = call.invokeBlocking("echo", payload);
+            // Get the repository location from the args
+            String repo = args[0];
+            String port = args[1];
 
-			StringWriter writer = new StringWriter();
-			result.serialize(XMLOutputFactory.newInstance()
+            OMElement payload = getEchoElement();
+            Call call = new Call(repo);
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/SecureService"));
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,
+                    Constants.TRANSPORT_HTTP, false);
+            options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+
+            //Blocking invocation
+            OMElement result = call.invokeBlocking("echo", payload);
+
+            StringWriter writer = new StringWriter();
+            result.serialize(XMLOutputFactory.newInstance()
                     .createXMLStreamWriter(writer));
-			writer.flush();
+            writer.flush();
 
-			System.out.println("Response: " + writer.toString());
+            System.out.println("Response: " + writer.toString());
 
-			System.out.println("SecureService Invocation successful :-)");
-		} catch (AxisFault axisFault) {
-			axisFault.printStackTrace();
-		} catch (XMLStreamException e) {
-			e.printStackTrace();
-		}
-	}
+            System.out.println("SecureService Invocation successful :-)");
+        } catch (AxisFault axisFault) {
+            axisFault.printStackTrace();
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
+    }
 
-	private static OMElement getEchoElement() {
+    private static OMElement getEchoElement() {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace(
                 "http://example1.org/example1", "example1");
@@ -77,6 +79,6 @@ public class Client {
         method.addChild(value);
 
         return method;
-	}
+    }
 
 }

@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.InOutMEPClient;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -84,8 +85,10 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
 
             msgctx.setEnvelope(envelope);
 
-            inOutMC.setTo(targetEPR);
-            inOutMC.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            Options options = new Options();
+            inOutMC.setClientOptions(options);
+            options.setTo(targetEPR);
+            options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
 
             MessageContext result =
                     inOutMC.invokeBlocking(
@@ -93,7 +96,7 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
                             msgctx);
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Exception Occurred !! ." + e.getMessage() );
+            fail("Exception Occurred !! ." + e.getMessage());
             throw new AxisFault(e);
         } finally {
             inOutMC.close();
@@ -106,7 +109,7 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
         SOAPEnvelope envelope = fac.getDefaultEnvelope();
         OMNamespace headerNs = fac.createOMNamespace("http://dummyHeader", "dh");
         SOAPHeaderBlock h1 =
-            fac.createSOAPHeaderBlock("DummyHeader", headerNs, envelope.getHeader());
+                fac.createSOAPHeaderBlock("DummyHeader", headerNs, envelope.getHeader());
         h1.setMustUnderstand(true);
         h1.addChild(fac.createText("Dummy String"));
         h1.setRole(SOAP12Constants.SOAP_ROLE_NEXT);

@@ -75,9 +75,9 @@ public class SOAP12InFlowHandlerDefaultC extends AbstractHandler implements Head
                             attributePresent = false;
                         }
                         headerBlockPresent = new Integer(1);
-                        msgContext.getOperationContext().setProperty("HEADER_BLOCK_PRESENT", headerBlockPresent, true);
+                        msgContext.getOperationContext().setProperty("HEADER_BLOCK_PRESENT", headerBlockPresent);
                         headerAdd.addChild(headerBlock);
-                        msgContext.getOperationContext().setProperty("HEADER_BLOCK", headerAdd, true);
+                        msgContext.getOperationContext().setProperty("HEADER_BLOCK", headerAdd);
 
                     }
                 } else {
@@ -107,8 +107,8 @@ public class SOAP12InFlowHandlerDefaultC extends AbstractHandler implements Head
                                         node.setNodeValue(SAMPLE_ROLE + "/" + ROLE_BY_B);
                                         SOAPFaultRole role = factory.createSOAPFaultRole(fault);
                                         role.setRoleValue(SAMPLE_ROLE + "/" + ROLE_BY_B);
-                                        msgContext.setProperty(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME, node, true);
-                                        msgContext.setProperty(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME, role, true);
+                                        msgContext.setProperty(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME, node);
+                                        msgContext.setProperty(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME, role);
                                     }
 
                                     msgContext.setProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, code);
@@ -129,9 +129,9 @@ public class SOAP12InFlowHandlerDefaultC extends AbstractHandler implements Head
                                     //e.printStackTrace();
                                 }
                                 headerBlockPresent = new Integer(1);
-                                msgContext.getOperationContext().setProperty("HEADER_BLOCK_PRESENT", headerBlockPresent, true);
+                                msgContext.getOperationContext().setProperty("HEADER_BLOCK_PRESENT", headerBlockPresent);
                                 headerAdd.addChild(newHeaderBlock);
-                                msgContext.getOperationContext().setProperty("HEADER_BLOCK", headerAdd, true);
+                                msgContext.getOperationContext().setProperty("HEADER_BLOCK", headerAdd);
                                 throw new AxisFault("Intentional Failure from SOAP 1.2 testing ...");
                             }
                         }
@@ -140,14 +140,14 @@ public class SOAP12InFlowHandlerDefaultC extends AbstractHandler implements Head
                 }
             }
             if (headerBlockPresent.equals(new Integer(0))) {
-                msgContext.getOperationContext().setProperty("HEADER_BLOCK_PRESENT", headerBlockPresent, true);
+                msgContext.getOperationContext().setProperty("HEADER_BLOCK_PRESENT", headerBlockPresent);
             }
 
             headerBlockPresent = new Integer(0);
 
         } else {
             headerBlockPresent = new Integer(0);
-            msgContext.getOperationContext().setProperty("HEADER_BLOCK_PRESENT", headerBlockPresent, true);
+            msgContext.getOperationContext().setProperty("HEADER_BLOCK_PRESENT", headerBlockPresent);
         }
     }
 }

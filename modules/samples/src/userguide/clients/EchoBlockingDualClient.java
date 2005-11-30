@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
@@ -38,12 +39,14 @@ public class EchoBlockingDualClient {
             OMElement payload = ClientUtil.getEchoOMElement();
 
             Call call = new Call();
-            call.setTo(targetEPR);
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setTo(targetEPR);
 
             //The boolean flag informs the axis2 engine to use two separate transport connection
             //to retrieve the response.
             call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
                     true);
 
@@ -56,7 +59,6 @@ public class EchoBlockingDualClient {
                     .createXMLStreamWriter(writer));
             writer.flush();
             System.out.println(writer.toString());
-
 
             //Need to close the Client Side Listener.
             call.close();

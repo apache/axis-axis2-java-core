@@ -112,12 +112,14 @@
             <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
          </xsl:for-each>) throws java.rmi.RemoteException{
 
-		    org.apache.axis2.client.Call _call = new org.apache.axis2.client.Call(_serviceContext);
-            _call.setTransportInfo(this.senderTransport,this.listenerTransport,this.useSeparateListener);
+		     org.apache.axis2.client.Call _call = new org.apache.axis2.client.Call(_serviceContext);
+             org.apache.axis2.client.Options _options = new org.apache.axis2.client.Options();
+             _call.setClientOptions(_options);
+             _options.setTransportInfo(this.senderTransport,this.listenerTransport,this.useSeparateListener);
 
- 		    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-            _call.setTo(this.toEPR);
-            _call.setSoapAction("<xsl:value-of select="$soapAction"/>");
+ 		     org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
+             _options.setTo(this.toEPR);
+             _options.setSoapAction("<xsl:value-of select="$soapAction"/>");
             
             if(wsaAction != null) {
             	_messageContext.setWSAAction(wsaAction);
@@ -185,7 +187,7 @@
               </xsl:when>
               <xsl:otherwise>
              //set the exception throwing status
-             _call.setExceptionToBeThrownOnSOAPFault(true);
+             _call.getClientOptions().setExceptionToBeThrownOnSOAPFault(true);
              org.apache.axis2.context.MessageContext  _returnMessageContext = _call.invokeBlocking(_operations[<xsl:value-of select="position()-1"/>], _messageContext);
              org.apache.axis2.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
              java.lang.Object object = <xsl:value-of select="$fullsupporterclassname"/>.fromOM(getElement(_returnEnv,"<xsl:value-of select="$style"/>"),<xsl:value-of select="$outputtype"/>.class);
@@ -211,10 +213,12 @@
             <xsl:if test="$paramCount>0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException{
 
              org.apache.axis2.client.Call _call = new org.apache.axis2.client.Call(_serviceContext);
-             _call.setTransportInfo(this.senderTransport,this.listenerTransport,this.useSeparateListener);
+             org.apache.axis2.client.Options _options = new org.apache.axis2.client.Options();
+             _call.setClientOptions(_options);
+             _options.setTransportInfo(this.senderTransport,this.listenerTransport,this.useSeparateListener);
  		     org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-            _call.setTo(this.toEPR);
-            _call.setSoapAction("<xsl:value-of select="$soapAction"/>");
+             _options.setTo(this.toEPR);
+             _options.setSoapAction("<xsl:value-of select="$soapAction"/>");
             
             if(wsaAction != null) {
             	_messageContext.setWSAAction(wsaAction);

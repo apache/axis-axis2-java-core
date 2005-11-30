@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.om.OMElement;
 
 public class EchoBlockingClient {
@@ -34,10 +35,12 @@ public class EchoBlockingClient {
 
 
             Call call = new Call();
-            call.setTo(targetEPR);
-            call.setExceptionToBeThrownOnSOAPFault(false);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP,false);
-            call.setSoapAction(soapAction);
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setTo(targetEPR);
+            options.setExceptionToBeThrownOnSOAPFault(false);
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP,false);
+            options.setSoapAction(soapAction);
 
             //Blocking invocation
 

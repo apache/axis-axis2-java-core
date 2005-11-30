@@ -18,6 +18,7 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
@@ -86,13 +87,14 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase implements TestCon
 
         org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 serviceContext);
-        call.setTo(targetEPR);
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 true);
-        call.setWsaAction(operationName.getLocalPart());
-//        call.setTimeOutInMilliSeconds(60*10000);
+        options.setAction(operationName.getLocalPart());
 
         OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), method);

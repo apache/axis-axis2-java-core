@@ -21,11 +21,11 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.om.OMElement;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.StringWriter;
@@ -42,15 +42,14 @@ public class EchoNonBlockingDualClient {
         try {
             OMElement payload = ClientUtil.getEchoOMElement();
 
-            Call call = new Call();
-            call.setTo(targetEPR);
-
-            //The boolean flag informs the axis2 engine to use two separate transport connection
-            //to retrieve the response.
-            call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+            Options options = new Options();
+            options.setTo(targetEPR);
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
                     true);
+
+            Call call = new Call();
+            call.setClientOptions(options);
 
             //Callback to handle the response
             Callback callback = new Callback() {

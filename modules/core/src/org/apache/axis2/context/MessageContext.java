@@ -17,19 +17,10 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.soap.SOAP11Constants;
@@ -37,12 +28,6 @@ import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
 
 import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * MessageContext holds service specific state information.
@@ -600,37 +585,6 @@ public class MessageContext extends AbstractContext {
         this.setAxisService(context.getAxisService());
     }
 
-    /**
-     * Copy the values into the respective fields.
-     * 
-     * @param collection
-     */
-    public void setContextProperties(HashMap collection) {
-        Iterator iterator = collection.entrySet().iterator();
-        while(iterator.hasNext()){
-            Map.Entry entry = (Map.Entry) iterator.next();
-            String key = (String)entry.getKey();
-            Object value = entry.getValue();
-            if(value!= null){
-                if(Constants.ADDRESSING_ACTION.equals(key)){
-                    messageInformationHeaders.setAction((String) value);                        
-                } else if (Constants.ADDRESSING_FAULT_TO.equals(key)){
-                    messageInformationHeaders.setFaultTo((EndpointReference) value);                        
-                } else if (Constants.ADDRESSING_FROM.equals(key)){
-                    messageInformationHeaders.setFrom((EndpointReference) value);                        
-                } else if (Constants.ADDRESSING_MESSAGE_ID.equals(key)){
-                    messageInformationHeaders.setMessageId((String) value);                        
-                } else if (Constants.ADDRESSING_RELATES_TO.equals(key)){
-                    messageInformationHeaders.setRelatesTo((RelatesTo) value);                        
-                } else if (Constants.ADDRESSING_REPLY_TO.equals(key)){
-                    messageInformationHeaders.setReplyTo((EndpointReference) value);                        
-                } else if (Constants.ADDRESSING_TO.equals(key)){
-                    System.out.println("TO" + value);
-                    messageInformationHeaders.setTo((EndpointReference) value);                        
-                }
-            }
-        }
-    }
 
     /**
      * Retrieves configuration descriptor parameters at any level. The order of search is
@@ -784,13 +738,12 @@ public class MessageContext extends AbstractContext {
      * <li> If ServiceGroupContext is null or if property is not found, search in ConfigurationContext.</li>
      * </ol>
      *
-     * @param key        property Name
-     * @param persistent
+     * @param key property Name
      * @return Object
      */
-    public Object getProperty(String key, boolean persistent) {
+    public Object getProperty(String key) {
         // search in MC
-        Object obj = super.getProperty(key, persistent);
+        Object obj = super.getProperty(key);
         if (obj != null) {
             return obj;
         }
@@ -798,18 +751,18 @@ public class MessageContext extends AbstractContext {
         //look for the disconnected grandparents
         // Search in Operation Context
         if (operationContext != null) {
-            return operationContext.getProperty(key, persistent);
+            return operationContext.getProperty(key);
         }
         //Search in ServiceContext
         if (serviceContext != null) {
-            return serviceContext.getProperty(key, persistent);
+            return serviceContext.getProperty(key);
         }
         if (serviceGroupContext != null) {
-            return serviceGroupContext.getProperty(key, persistent);
+            return serviceGroupContext.getProperty(key);
         }
         if (configurationContext != null) {
             // search in Configuration Context
-            return configurationContext.getProperty(key, persistent);
+            return configurationContext.getProperty(key);
         }
         return obj;
     }

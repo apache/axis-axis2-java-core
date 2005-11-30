@@ -19,6 +19,7 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.MyInOutMEPClient;
 import org.apache.axis2.engine.util.TestConstants;
@@ -68,10 +69,12 @@ public class SOAPversionTest extends TestCase implements TestConstants {
 
         OMElement payload = createEnvelope();
         MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/intregrationRepo");
-        inOutMEPClient.setSoapVersionURI(
+        Options options = new Options();
+        inOutMEPClient.setClientOptions(options);
+        options.setSoapVersionURI(
                 SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        inOutMEPClient.setTo(targetEPR);
-        inOutMEPClient.setTransportInfo(Constants.TRANSPORT_HTTP,
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
 
@@ -89,10 +92,12 @@ public class SOAPversionTest extends TestCase implements TestConstants {
 
         OMElement payload = createEnvelope();
         MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/intregrationRepo");
-        inOutMEPClient.setSoapVersionURI(
+        Options options = new Options();
+        inOutMEPClient.setClientOptions(options);
+        options.setSoapVersionURI(
                 SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        inOutMEPClient.setTo(targetEPR);
-        inOutMEPClient.setTransportInfo(Constants.TRANSPORT_HTTP,
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
 
@@ -112,11 +117,13 @@ public class SOAPversionTest extends TestCase implements TestConstants {
 
         OMElement payload = createEnvelope();
         MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/intregrationRepo");
-        inOutMEPClient.setSoapVersionURI(
+        Options options = new Options();
+        inOutMEPClient.setClientOptions(options);
+        options.setSoapVersionURI(
                 SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
-        inOutMEPClient.setTo(targetEPR);
-        inOutMEPClient.setTransportInfo(Constants.TRANSPORT_HTTP,
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
 

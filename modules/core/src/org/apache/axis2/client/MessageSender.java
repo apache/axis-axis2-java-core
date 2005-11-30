@@ -49,7 +49,7 @@ public class MessageSender extends InOnlyMEPClient {
     }
 
     public MessageSender() throws AxisFault {
-       this((String) null);
+        this((String) null);
     }
 
     /**
@@ -104,7 +104,7 @@ public class MessageSender extends InOnlyMEPClient {
             serviceContext.getAxisService().addOperation(axisOp);
         }
 
-        MessageContext msgctx = createMessageContext();
+        MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
 
         msgctx.setEnvelope(soapEnvelope);
         super.send(axisOp, msgctx);
@@ -128,13 +128,4 @@ public class MessageSender extends InOnlyMEPClient {
         }
         axisService.addOperation(axisOperationTemplate);
     }
-
-    public Object get(String key) {
-        return serviceContext.getProperty(key);
-    }
-
-    public void set(String key, Object value) {
-        serviceContext.getConfigurationContext().setProperty(key, value);
-    }
-
 }

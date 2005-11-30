@@ -20,14 +20,15 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
-import test.interop.whitemesa.round1.util.Round1ClientUtil;
 import org.apache.axis2.soap.SOAPEnvelope;
+import test.interop.whitemesa.round1.util.Round1ClientUtil;
 
 import javax.xml.namespace.QName;
 import java.net.MalformedURLException;
@@ -46,10 +47,15 @@ public class Round1Client {
             throw new AxisFault(e);
         }
 
-        Call call = new Call("target/test-resources/intregrationRepo");
-        call.setTo(new EndpointReference(url.toString()));
-        call.setSoapAction(soapAction);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        String clientHome = "target/test-resources/intregrationRepo";
+
+        Options options = new Options();
+        options.setTo(new EndpointReference(url.toString()));
+        options.setSoapAction(soapAction);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+
+        Call call = new Call(clientHome);
+        call.setClientOptions(options);
         SOAPEnvelope reqEnv = util.getEchoSoapEnvelope();
 
 

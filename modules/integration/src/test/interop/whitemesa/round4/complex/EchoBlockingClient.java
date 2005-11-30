@@ -20,8 +20,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
-import test.interop.whitemesa.round4.complex.utils.WhitemesaR4ClientUtil;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.om.OMElement;
+import test.interop.whitemesa.round4.complex.utils.WhitemesaR4ClientUtil;
 
 
 public class EchoBlockingClient {
@@ -35,10 +36,13 @@ public class EchoBlockingClient {
 
 
             Call call = new Call("target/test-resources/intregrationRepo");
-            call.setTo(targetEPR);
-            call.setExceptionToBeThrownOnSOAPFault(false);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
-            call.setSoapAction(soapAction);
+
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setTo(targetEPR);
+            options.setExceptionToBeThrownOnSOAPFault(false);
+            options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            options.setSoapAction(soapAction);
 
             //Blocking invocation
 

@@ -19,6 +19,8 @@ package org.apache.axis2.rest;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
+import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterImpl;
@@ -80,14 +82,16 @@ public class RESTBasedEchoRawXMLTest extends TestCase implements TestConstants {
     public void testEchoXMLSync() throws Exception {
         OMElement payload = createEnvelope();
 
-        org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
+        Call call = new Call("target/test-resources/integrationRepo");
 
-        call.setTo(targetEPR);
-        call.setTransportInfo(Constants.TRANSPORT_HTTP,
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInfo(Constants.TRANSPORT_HTTP,
                 Constants.TRANSPORT_HTTP,
                 false);
-        call.set(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
+        options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
+
+        call.setClientOptions(options);
         OMElement result =
                 call.invokeBlocking(operationName.getLocalPart(),
                         payload);

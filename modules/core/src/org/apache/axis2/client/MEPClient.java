@@ -17,9 +17,7 @@
 package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -36,10 +34,10 @@ import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPHeader;
+import org.apache.axis2.util.UUIDGenerator;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -48,19 +46,12 @@ import java.util.List;
 public abstract class MEPClient {
     ServiceContext serviceContext;
     protected final String mep;
-    protected String soapVersionURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-    protected String soapAction = "";
+    private List soapHeaderList;
 
-    protected List soapHeaderList;
-    protected HashMap contextProperties = new HashMap();
-
-    /*
-      If there is a SOAP Fault in the body of the incoming SOAP Message, system can be configured to
-      throw an exception with the details extracted from the information from the fault message.
-      This boolean variable will enable that facility. If this is false, the response message will just
-      be returned to the application, irrespective of whether it has a Fault or not.
-    */
-    protected boolean isExceptionToBeThrownOnSOAPFault = true;
+    /**
+     * Client will pass all the parameters to this invocation using this.
+     */
+    protected Options clientOptions;
 
     public MEPClient(ServiceContext service, String mep) {
         this.serviceContext = service;
@@ -73,6 +64,11 @@ public abstract class MEPClient {
      */
     protected void prepareInvocation(AxisOperation axisop, MessageContext msgCtx)
             throws AxisFault {
+
+        if (clientOptions == null) {
+            throw new AxisFault("Can not proceed without options being set for invocation. Set the" +
+                    "properties for this invocation via MEPClient.setOptions(Options) first.");
+        }
         if (axisop == null) {
             throw new AxisFault(Messages.getMessage("cannotBeNullAxisOperation"));
         }
@@ -84,22 +80,51 @@ public abstract class MEPClient {
                             mep,
                             axisop.getMessageExchangePattern()));
         }
+
         //if operation not alrady added, add it
         if (serviceContext.getAxisService().getOperation(axisop.getName()) == null) {
             serviceContext.getAxisService().addOperation(axisop);
         }
 
-        if(!contextProperties.isEmpty()) {
-            msgCtx.setContextProperties(contextProperties);
-        }
-        msgCtx.setSoapAction(soapAction + "");
+        // now its the time to put the parameters set by the user in to the correct places and to the
+        // operation context.
+        extractPropertiesFromOptionsToContexts(msgCtx);
 
         // check user has put any SOAPHeader using the call MEPClient methods and add them, if any, to the
         // the SOAP message
-        addUserAddedSOAPHeaders(msgCtx);
+        addUserAddedSOAPHeaders(msgCtx, clientOptions);
+
+        //find and set the transport details
+        configureTransportInformation();
+
     }
 
-    protected void addUserAddedSOAPHeaders(MessageContext msgCtx) {
+    /**
+     * This will give chance to the derived class to configure his transport from the information
+     * injected by the user via options.
+     * This will be called within the prepare invocation method, so user should not bother to call
+     * this explicitly.
+     */
+    protected abstract void configureTransportInformation() throws AxisFault;
+
+    private void extractPropertiesFromOptionsToContexts(MessageContext msgCtx) throws AxisFault {
+
+        // copy addressing parameters
+        msgCtx.setTo(clientOptions.getTo());
+        msgCtx.setFrom(clientOptions.getFrom());
+        msgCtx.setFaultTo(clientOptions.getFaultTo());
+        msgCtx.setReplyTo(clientOptions.getReplyTo());
+        msgCtx.setRelatesTo(clientOptions.getRelatesTo());
+        msgCtx.setMessageID((clientOptions.getMessageId() == null || "".equals(clientOptions.getMessageId())) ? UUIDGenerator.getUUID() : clientOptions.getMessageId());
+        msgCtx.setWSAAction(clientOptions.getAction());
+
+        msgCtx.setSoapAction(clientOptions.getSoapAction());
+
+        // I'm not setting the properties here. Those will be set, when we create the operation context
+
+    }
+
+    protected void addUserAddedSOAPHeaders(MessageContext msgCtx, Options options) {
         if (soapHeaderList != null && soapHeaderList.size() > 0 && msgCtx.getEnvelope() != null) {
             SOAPFactory soapFactory;
             SOAPHeader header = msgCtx.getEnvelope().getHeader();
@@ -127,7 +152,7 @@ public abstract class MEPClient {
      * @throws AxisFault
      */
     protected MessageContext prepareTheSOAPEnvelope(OMElement toSend) throws AxisFault {
-        MessageContext msgctx = createMessageContext();
+        MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
 
         SOAPEnvelope envelope = createDefaultSOAPEnvelope();
         if (toSend != null) {
@@ -172,6 +197,7 @@ public abstract class MEPClient {
      * @throws AxisFault
      */
     protected SOAPEnvelope createDefaultSOAPEnvelope() throws AxisFault {
+        String soapVersionURI = clientOptions.getSoapVersionURI();
         if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             return OMAbstractFactory.getSOAP12Factory().getDefaultEnvelope();
         } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
@@ -197,29 +223,56 @@ public abstract class MEPClient {
         }
     }
 
-    /**
-     * @param string
-     */
-    public void setSoapVersionURI(String string) {
-        soapVersionURI = string;
+    private SOAPFactory getCorrectSOAPFactory(MessageContext msgCtx) {
+        String soapNSURI = msgCtx.getEnvelope().getNamespace().getName();
+        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNSURI)) {
+            return OMAbstractFactory.getSOAP11Factory();
+        } else {
+            return OMAbstractFactory.getSOAP12Factory();
+        }
+    }
+
+    public void setServiceContext(ServiceContext serviceContext) {
+        this.serviceContext = serviceContext;
+    }
+
+    public ServiceContext getServiceContext() {
+        return serviceContext;
     }
 
     /**
-     * @param string
-     */
-    public void setSoapAction(String string) {
-        soapAction = string;
-    }
-
-    /**
-     * Setting to configure if an exception is to be thrown when the SOAP message has a fault.
-     * If set to true, system throws an exeption with the details extracted from the fault message.
-     * Else the response message is returned to the application, irrespective of whether it has a Fault or not.
+     * Assumes the values for the ConfigurationContext and ServiceContext to make the NON WSDL cases simple.
      *
-     * @param exceptionToBeThrownOnSOAPFault
+     * @throws org.apache.axis2.AxisFault
      */
-    public void setExceptionToBeThrownOnSOAPFault(boolean exceptionToBeThrownOnSOAPFault) {
-        isExceptionToBeThrownOnSOAPFault = exceptionToBeThrownOnSOAPFault;
+    protected void assumeServiceContext(String clientHome)
+            throws AxisFault {
+        ConfigurationContext configurationContext =
+                new ConfigurationContextFactory().buildClientConfigurationContext(clientHome);
+
+        QName assumedServiceName = new QName("AnonymousService");
+        AxisService axisService = configurationContext.getAxisConfiguration().getService("AnonymousService");
+        if (axisService == null) {
+            //we will assume a Service and operations
+            axisService = new AxisService(assumedServiceName);
+        }
+        configurationContext.getAxisConfiguration().addService(axisService);
+        serviceContext = axisService.getParent().getServiceGroupContext(configurationContext).getServiceContext(
+                assumedServiceName.getLocalPart());
+    }
+
+    public Options getClientOptions() {
+        return clientOptions;
+    }
+
+    /**
+     * User will set all the options and parameters for this invocation using this.
+     *
+     * @param clientOptions
+     * @see Options for more details.
+     */
+    public void setClientOptions(Options clientOptions) {
+        this.clientOptions = clientOptions;
     }
 
     /**
@@ -256,112 +309,5 @@ public abstract class MEPClient {
         soapHeaderList.add(soapHeaderBlock);
     }
 
-    //==============================================================================
-    // Use these methods to set Addressing specific information to the SOAP envelope.
-    //===============================================================================
 
-    /**
-     * @param action
-     */
-    public void setWsaAction(String action) {
-        contextProperties.put(Constants.ADDRESSING_ACTION, action);
-    }
-
-    /**
-     * @param faultTo
-     */
-    public void setFaultTo(EndpointReference faultTo) {
-        contextProperties.put(Constants.ADDRESSING_FAULT_TO, faultTo);
-    }
-
-    /**
-     * @param from
-     */
-    public void setFrom(EndpointReference from) {
-        contextProperties.put(Constants.ADDRESSING_FROM, from);
-    }
-
-    /**
-     * @param messageId
-     */
-    public void setMessageId(String messageId) {
-        contextProperties.put(Constants.ADDRESSING_MESSAGE_ID, messageId);
-    }
-
-    /**
-     * @param relatesTo
-     */
-    public void setRelatesTo(RelatesTo relatesTo) {
-        contextProperties.put(Constants.ADDRESSING_RELATES_TO, relatesTo);
-    }
-
-    /**
-     * @param replyTo
-     */
-    public void setReplyTo(EndpointReference replyTo) {
-        contextProperties.put(Constants.ADDRESSING_REPLY_TO, replyTo);
-    }
-
-    /**
-     * @param to
-     */
-    public void setTo(EndpointReference to) {
-        contextProperties.put(Constants.ADDRESSING_TO, to);
-    }
-
-    // ==============================================================================
-    //  Getteres and Setters
-    // ==============================================================================
-
-    private SOAPFactory getCorrectSOAPFactory(MessageContext msgCtx) {
-        String soapNSURI = msgCtx.getEnvelope().getNamespace().getName();
-        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNSURI)) {
-            return OMAbstractFactory.getSOAP11Factory();
-        } else {
-            return OMAbstractFactory.getSOAP12Factory();
-        }
-    }
-
-    public void setServiceContext(ServiceContext serviceContext) {
-        this.serviceContext = serviceContext;
-    }
-
-    public ServiceContext getServiceContext() {
-        return serviceContext;
-    }
-
-    /**
-     * Creates a message context and sets the contextProperties
-     * 
-     * @return
-     * @throws AxisFault
-     */
-    protected MessageContext createMessageContext() throws AxisFault {
-        MessageContext newMsgCtx = new MessageContext(serviceContext.getConfigurationContext());
-        if(!contextProperties.isEmpty()) {
-            newMsgCtx.setContextProperties(contextProperties);
-        }
-        return newMsgCtx;
-    }
-    
-    /**
-     * Assumes the values for the ConfigurationContext and ServiceContext to make the NON WSDL cases simple.
-     *
-     * @throws org.apache.axis2.AxisFault
-     */
-    protected  void assumeServiceContext(String clientHome)
-            throws AxisFault {
-        ConfigurationContext configurationContext =
-                new ConfigurationContextFactory().buildClientConfigurationContext(clientHome);
-
-        QName assumedServiceName = new QName("AnonymousService");
-        AxisService axisService = configurationContext.getAxisConfiguration().getService("AnonymousService");
-        if (axisService == null) {
-            //we will assume a Service and operations
-            axisService = new AxisService(assumedServiceName);
-        }
-        configurationContext.getAxisConfiguration().addService(axisService);
-        serviceContext = axisService.getParent().getServiceGroupContext(configurationContext).getServiceContext(
-                assumedServiceName.getLocalPart());
-    }
 }

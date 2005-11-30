@@ -82,7 +82,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
 
         OperationContext opCOntext = new OperationContext(axisOp);
 
-//        mc.setOperationContext(OperationContextFactory.createOperationContext(
+//        mc.setOperationContext(OperationContextFactory.createOrFindOperationContext(
 //                        WSDLConstants.MEP_CONSTANT_IN_OUT,
 //                        axisOp
 //                        ));

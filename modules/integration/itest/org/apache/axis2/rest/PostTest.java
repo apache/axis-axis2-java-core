@@ -22,6 +22,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
@@ -67,10 +68,13 @@ public class PostTest extends TestCase implements TestConstants {
             OMElement websearch = builder.getDocumentElement();
 
             Call call = new Call();
-            call.setTo(targetEPR);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
-            call.set(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
-            call.set(HTTPConstants.HTTP_CONTENT_TYPE, "application/x-www-form-urlencoded");
+
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setTo(targetEPR);
+            options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
+            options.setProperty(HTTPConstants.HTTP_CONTENT_TYPE, "application/x-www-form-urlencoded");
 
             //Blocking invocation
             OMElement result = call.invokeBlocking("echo", websearch);

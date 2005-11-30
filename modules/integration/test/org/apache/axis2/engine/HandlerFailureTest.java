@@ -21,10 +21,10 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.FlowImpl;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.integration.UtilServer;
@@ -151,14 +151,17 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
             value.setText("Isaac Assimov, the foundation Sega");
             method.addChild(value);
 
-            org.apache.axis2.client.Call call =
-                    new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
-            //EndpointReference targetEPR = new EndpointReference(AddressingConstants.WSA_TO, "http://127.0.0.1:" + Utils.TESTING_PORT + "/axis/services/EchoXMLService");
+            String clientHome = "target/test-resources/intregrationRepo";
 
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+            Options options = new Options();
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
                     false);
-            call.setTo(targetEPR);
+            options.setTo(targetEPR);
+
+            Call call = new Call(clientHome);
+            call.setClientOptions(options);
+
             OMElement result = call.invokeBlocking(
                     operationName.getLocalPart(), method);
             result.serializeAndConsume(XMLOutputFactory.newInstance().createXMLStreamWriter(

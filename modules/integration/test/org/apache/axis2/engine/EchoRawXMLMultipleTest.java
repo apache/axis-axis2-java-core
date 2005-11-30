@@ -18,6 +18,7 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.MessageContext;
@@ -80,9 +81,10 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             org.apache.axis2.client.Call call =
                     new org.apache.axis2.client.Call(
                             "target/test-resources/intregrationRepo");
-
-            call.setTo(targetEPR);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setTo(targetEPR);
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
                     false);
 
@@ -126,9 +128,10 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             org.apache.axis2.client.Call call =
                     new org.apache.axis2.client.Call(
                             "target/test-resources/intregrationRepo");
-
-            call.setTo(targetEPR);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setTo(targetEPR);
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
                     true);
 
@@ -173,9 +176,10 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             org.apache.axis2.client.Call call =
                     new org.apache.axis2.client.Call(
                             "target/test-resources/intregrationRepo");
-
-            call.setTo(targetEPR);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setTo(targetEPR);
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
                     false);
 
@@ -195,8 +199,10 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
                     new org.apache.axis2.client.Call(
                             "target/test-resources/intregrationRepo");
 
-            call.setTo(targetEPR);
-            call.setTransportInfo(Constants.TRANSPORT_HTTP,
+            Options options = new Options();
+            call.setClientOptions(options);
+            options.setTo(targetEPR);
+            options.setTransportInfo(Constants.TRANSPORT_HTTP,
                     Constants.TRANSPORT_HTTP,
                     true);
 

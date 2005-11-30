@@ -10,6 +10,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Call;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
@@ -46,10 +47,13 @@ public class RESTGetTest extends TestCase implements TestConstants {
         OMElement data = builder.getDocumentElement();
 
         Call call = new Call();
-        call.setTo(new EndpointReference(epr));
-        call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
-        call.set(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
-        call.set(Constants.Configuration.ENABLE_REST_THROUGH_GET, Constants.VALUE_TRUE);
+
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(new EndpointReference(epr));
+        options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
+        options.setProperty(Constants.Configuration.ENABLE_REST_THROUGH_GET, Constants.VALUE_TRUE);
 
         //if post is through GET of HTTP
         OMElement response = call.invokeBlocking("webSearch", data);
