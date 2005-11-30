@@ -547,8 +547,8 @@ public class WOMtoWSDL11Writer implements WOMWriter {
 
     //to write scheam types into output straem
     private void writeScheams(Element element) throws XMLStreamException {
+        writer.flush();
         String scheamTypes = DOM2Writer.nodeToString(element);
-        System.out.println(scheamTypes);
         XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new
                 ByteArrayInputStream(scheamTypes.getBytes()));
         OMFactory fac = OMAbstractFactory.getOMFactory();
@@ -556,6 +556,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
         StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
         OMElement scheamElement = staxOMBuilder.getDocumentElement();
         scheamElement.serialize(new OMOutputImpl(writer));
+       // writer.flush();
     }
 
     /**

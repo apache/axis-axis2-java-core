@@ -492,7 +492,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             String serviceStatus = "";
                             try {
                                 HashMap wsdlservice = archiveReader.processWSDLs(currentArchiveFile, this);
-                                // AxisService service = archiveReader.createService(currentArchiveFile.getAbsolutePath());
+                                // AxisService service = archiveReader.generateService(currentArchiveFile.getAbsolutePath());
                                 AxisServiceGroup sericeGroup =
                                         new AxisServiceGroup(axisConfig);
                                 sericeGroup.setServiceGroupClassLoader(axisConfig.getServiceClassLoader());
