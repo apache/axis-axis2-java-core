@@ -247,7 +247,7 @@ public class SOAPMessageImpl extends SOAPMessage {
             output.setCharSetEncoding((String)getProperty(CHARACTER_SET_ENCODING));
             String writeXmlDecl = (String)getProperty(WRITE_XML_DECLARATION);
             if(writeXmlDecl==null || writeXmlDecl.equals("false")) { //SAAJ default case doesn't send XML decl
-            	output.ignoreXMLDeclaration(true);
+            	output.setIgnoreXMLDeclaration(true);
             }
             output.setOutputStream(out, false);
             //the writeTo method forces the elements to be built!!!

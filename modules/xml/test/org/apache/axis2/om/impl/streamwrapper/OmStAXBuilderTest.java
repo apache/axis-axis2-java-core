@@ -53,10 +53,7 @@ public class OmStAXBuilderTest extends AbstractTestCase {
     public void testStaxBuilder() throws Exception {
         SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
         assertNotNull(envelope);
-        org.apache.axis2.om.impl.OMOutputImpl omOutput = new org.apache.axis2.om.impl.OMOutputImpl(new FileOutputStream(tempFile),
-                false);
-        //        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-        envelope.serialize(omOutput);
+        envelope.serialize(new FileOutputStream(tempFile));
 
 
     }

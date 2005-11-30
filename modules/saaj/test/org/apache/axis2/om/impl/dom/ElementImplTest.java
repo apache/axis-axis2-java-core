@@ -71,9 +71,7 @@ public class ElementImplTest extends TestCase {
 		((Text)textNode).appendData(textToAppend);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
-			OMOutputImpl output = new OMOutputImpl(baos, false);
-			elem.serialize(output);
-			output.flush();
+			elem.serialize(baos);
 			System.out.println(new String(baos.toByteArray()));
 			//TODO TEMPORARY: remove this
 		} catch (Exception e) {

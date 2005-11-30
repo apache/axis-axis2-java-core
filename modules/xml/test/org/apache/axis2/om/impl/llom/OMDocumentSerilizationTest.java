@@ -65,9 +65,7 @@ public class OMDocumentSerilizationTest extends TestCase {
 	
 	public void testXMLDecleration() throws XMLStreamException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		OMOutputImpl output = new OMOutputImpl(baos,false);
-		document.serializeAndConsume(output);
-		output.flush();
+		document.serializeAndConsume(baos);
 		
 		String xmlDocument = new String(baos.toByteArray());
 		
@@ -77,7 +75,8 @@ public class OMDocumentSerilizationTest extends TestCase {
 	public void testExcludeXMLDeclaration() throws XMLStreamException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		OMOutputImpl output = new OMOutputImpl(baos,false);
-		document.serializeAndConsume(output,false);
+        output.setIgnoreXMLDeclaration(true);
+        document.serializeAndConsume(output);
 		output.flush();
 		
 		String xmlDocument = new String(baos.toByteArray());
@@ -89,10 +88,7 @@ public class OMDocumentSerilizationTest extends TestCase {
 	
 	public void testCharsetEncoding() throws XMLStreamException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		OMOutputImpl output = new OMOutputImpl(baos,false);
-        output.ignoreXMLDeclaration(false);
-        document.serializeAndConsume(output);
-		output.flush();
+        document.serializeAndConsume(baos);
 
         String xmlDocument = new String(baos.toByteArray());
 
@@ -117,9 +113,7 @@ public class OMDocumentSerilizationTest extends TestCase {
 	
 	public void testXMLVersion() throws XMLStreamException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		OMOutputImpl output = new OMOutputImpl(baos,false);
-		document.serializeAndConsume(output);
-		output.flush();
+		document.serializeAndConsume(baos);
 		
 		String xmlDocument = new String(baos.toByteArray());
 		assertTrue("Charset declaration missing",-1<xmlDocument.indexOf(version) ||
@@ -128,10 +122,8 @@ public class OMDocumentSerilizationTest extends TestCase {
 
 	public void testXMLVersion_11() throws XMLStreamException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		OMOutputImpl output = new OMOutputImpl(baos,false);
 		document.setXMLVersion("1.1");
-		document.serializeAndConsume(output);
-		output.flush();
+		document.serializeAndConsume(baos);
 		
 		String xmlDocument = new String(baos.toByteArray());
 		assertTrue("Charset declaration missing",-1<xmlDocument.indexOf(version_11) ||

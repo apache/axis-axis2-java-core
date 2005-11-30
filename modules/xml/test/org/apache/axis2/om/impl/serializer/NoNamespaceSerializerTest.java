@@ -133,14 +133,7 @@ public class NoNamespaceSerializerTest extends TestCase {
                                 new ByteArrayInputStream(xmlText2.getBytes()))));
         env.getBody().addChild(builder.getDocumentElement());
 
-        org.apache.axis2.om.impl.OMOutputImpl omOutput = new org.apache.axis2.om.impl.OMOutputImpl(System.out, false);
-        //env.getBody().addChild(builder.getDocumentElement());
-        
-        env.serialize(omOutput);
-        // env.serializeAndConsume(xmlStreamWriter, true);
-
-        omOutput.flush();
-
+        env.serialize(System.out);
     }
 
     public void testSerilizationWithCacheOn() throws Exception {

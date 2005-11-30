@@ -22,9 +22,7 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.impl.OMOutputImpl;
 
-import javax.xml.stream.XMLOutputFactory;
 import java.io.StringWriter;
 
 /**
@@ -55,9 +53,7 @@ public class EchoBlockingWsaBasedClient {
         OMElement result = (OMElement) call.invokeBlocking("echo", getBody());
 
         StringWriter writer = new StringWriter();
-        result.serialize(new OMOutputImpl(
-                XMLOutputFactory.newInstance().createXMLStreamWriter(
-                        writer)));
+        result.serialize(writer);
         writer.flush();
 
         System.out.println(writer.toString());

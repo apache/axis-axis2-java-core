@@ -19,94 +19,92 @@ package org.apache.axis2.om;
 import org.apache.axis2.om.impl.OMOutputImpl;
 
 import javax.xml.stream.XMLStreamException;
+import java.io.OutputStream;
 
 
 public interface OMDocument extends OMContainer {
 
-	/**
-	 * Field XML_10 XML Version 1.0
-	 */
-	public final static String XML_10 = "1.0";
-	
-	/**
-	 * Field XML_11 XML Version 1.1
-	 */
-	public final static String XML_11 = "1.1";
-	
-	/**
-	 * Returns the document element
-	 * @return
-	 */
-	public OMElement getOMDocumentElement();
-	
-	/**
-	 * Sets the document element of the XML document
-	 * @param rootElement
-	 */
-	public void setOMDocumentElement(OMElement rootElement);
-	
-	/**
-	 * Returns the XML version
-	 * @return
-	 */
-	public String getXMLVersion();
-	
-	/**
-	 * Sets the XML version
-	 * @see org.apache.axis2.om.impl.llom.OMDocumentImpl#XML_10 XML 1.0
-	 * @see org.apache.axis2.om.impl.llom.OMDocumentImpl#XML_11 XML 1.1
-	 * @param version
-	 */
-	public void setXMLVersion(String version);
-	
-	/**
-	 * Returns the caracter set encoding scheme
-	 * @return
-	 */
-	public String getCharsetEncoding();
-	
-	/**
-	 * Sets the character set encoding scheme to be used
-	 * @param charsetEncoding
-	 */
-	public void setCharsetEncoding(String charsetEncoding);
+    /**
+     * Field XML_10 XML Version 1.0
+     */
+    public final static String XML_10 = "1.0";
+
+    /**
+     * Field XML_11 XML Version 1.1
+     */
+    public final static String XML_11 = "1.1";
+
+    /**
+     * Returns the document element
+     * @return
+     */
+    public OMElement getOMDocumentElement();
+
+    /**
+     * Sets the document element of the XML document
+     * @param rootElement
+     */
+    public void setOMDocumentElement(OMElement rootElement);
+
+    /**
+     * Returns the XML version
+     * @return
+     */
+    public String getXMLVersion();
+
+    /**
+     * Sets the XML version
+     * @see org.apache.axis2.om.impl.llom.OMDocumentImpl#XML_10 XML 1.0
+     * @see org.apache.axis2.om.impl.llom.OMDocumentImpl#XML_11 XML 1.1
+     * @param version
+     */
+    public void setXMLVersion(String version);
+
+    /**
+     * Returns the caracter set encoding scheme
+     * @return
+     */
+    public String getCharsetEncoding();
+
+    /**
+     * Sets the character set encoding scheme to be used
+     * @param charsetEncoding
+     */
+    public void setCharsetEncoding(String charsetEncoding);
 
     /**
      * XML standalone value
      * This will be yes, no or null (if not available)
-     * @return
+     * @return boolean
      */
     public String isStandalone();
     public void setStandalone(String isStandalone);
 
     /**
-	 * Serialize the OMDocument
-	 * @param omOutput
-	 * @throws XMLStreamException
-	 */
-	public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException;
-	
-	/**
-	 * Serilize the OMDocument with the option of excluding/including the 
-	 * XML declaration
-	 * @param omOutput
-	 * @param includeXMLDeclaration Whether to include the XML declaration or not 
-	 * @throws XMLStreamException
-	 */
-	public void serializeAndConsume(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException;
-	
-	/**
-	 * Serializa the document with cache on
-	 * @param omOutput
-	 * @throws XMLStreamException
-	 */
-	public void serialize(OMOutputImpl omOutput) throws XMLStreamException;
-	
-	/**
-	 * Seralize the document with cache on with the option on excluding the XML declaration
-	 * @param omOutput
-	 * @param includeXMLDeclaration
-	 * @throws XMLStreamException
-	 */
-	public void serialize(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException;
+     * Serialize the OMDocument
+     * @param omOutput
+     * @throws XMLStreamException
+     */
+    public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException;
+
+    /**
+     * Serializa the document with cache on
+     * @param omOutput
+     * @throws XMLStreamException
+     */
+    public void serialize(OMOutputImpl omOutput) throws XMLStreamException;
+
+    /**
+     * Serialize the OMDocument
+     * @param output
+     * @throws XMLStreamException
+     */
+    public void serializeAndConsume(OutputStream output) throws XMLStreamException;
+
+    /**
+     * Serializa the document with cache on
+     * @param output
+     * @throws XMLStreamException
+     */
+    public void serialize(OutputStream output) throws XMLStreamException;
 }

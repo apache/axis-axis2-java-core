@@ -29,7 +29,6 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -84,10 +83,7 @@ public class GroovyReceiver
             inMessage.getEnvelope().build();
             StringWriter writer = new StringWriter();
             firstChild.build();
-            firstChild.serialize(
-                new OMOutputImpl(
-                    XMLOutputFactory.newInstance().createXMLStreamWriter(
-                        writer)));
+            firstChild.serialize(writer);
             writer.flush();
             String value = writer.toString();
             if (value != null) {

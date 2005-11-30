@@ -218,7 +218,7 @@ public class OMOutputImpl {
         return ignoreXMLDeclaration;
     }
 
-    public void ignoreXMLDeclaration(boolean ignoreXMLDeclaration) {
+    public void setIgnoreXMLDeclaration(boolean ignoreXMLDeclaration) {
         this.ignoreXMLDeclaration = ignoreXMLDeclaration;
     }
 

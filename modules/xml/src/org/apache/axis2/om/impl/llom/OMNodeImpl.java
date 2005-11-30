@@ -26,6 +26,9 @@ import org.apache.axis2.om.impl.OMOutputImpl;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLOutputFactory;
+import java.io.OutputStream;
+import java.io.Writer;
 
 /**
  * Class OMNodeImpl
@@ -238,7 +241,7 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
      *
      * @return Returns the type of node as indicated by {@link #setType}
      *
-     * @see #setType 
+     * @see #setType
      */
     public int getType() {
         return nodeType;
@@ -334,6 +337,22 @@ public abstract class OMNodeImpl implements OMNode, OMNodeEx {
      */
     public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException {
         throw new RuntimeException("Not implemented yet!");
+    }
+
+    public void serialize(OutputStream output) throws XMLStreamException {
+        serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(output));
+    }
+
+    public void serialize(Writer writer) throws XMLStreamException {
+        serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+    }
+
+    public void serializeAndConsume(OutputStream output) throws XMLStreamException {
+        serializeAndConsume(XMLOutputFactory.newInstance().createXMLStreamWriter(output));
+    }
+
+    public void serializeAndConsume(Writer writer) throws XMLStreamException {
+        serializeAndConsume(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
     }
 
 }

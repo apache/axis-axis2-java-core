@@ -18,7 +18,6 @@ package test.soap12testing.client;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.exception.XMLComparisonException;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
@@ -62,14 +61,10 @@ public class MessageComparator {
             soapComparator.addIgnorableNamespace("http://schemas.xmlsoap.org/ws/2004/08/addressing");
 
             System.out.println("######################################################");
-            OMOutputImpl omOutput = new OMOutputImpl(System.out,false);
-            requiredMessageEnvelope.serialize(omOutput);
-            omOutput.flush();
+            requiredMessageEnvelope.serialize(System.out);
             System.out.println("");
             System.out.println("-------------------------------------------------------");
-           OMOutputImpl omOutput1 = new OMOutputImpl(System.out,false);
-            replyMessageEnvelope.serialize(omOutput1);
-            omOutput1.flush();
+            replyMessageEnvelope.serialize(System.out);
             System.out.println("");
                    System.out.println("`######################################################");
 

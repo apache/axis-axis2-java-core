@@ -31,12 +31,10 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.wsdl.WSDLOperation;
 import org.apache.wsdl.impl.WSDLOperationImpl;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -85,8 +83,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 if (descriptionValue != null) {
                     StringWriter writer = new StringWriter();
                     descriptionValue.build();
-                    descriptionValue.serialize(new
-                            OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
+                    descriptionValue.serialize(writer);
                     writer.flush();
                     service.setAxisServiceName(writer.toString());
                 } else {

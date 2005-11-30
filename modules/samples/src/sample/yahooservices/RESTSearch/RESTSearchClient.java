@@ -4,10 +4,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.RESTCall;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.impl.OMOutputImpl;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
 
 public class RESTSearchClient {
     public static void main(String[] args) {
@@ -23,9 +19,7 @@ public class RESTSearchClient {
 
             //if post is through GET of HTTP
             OMElement response = call.invokeBlocking();
-            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(System.out);
-            response.serialize(new OMOutputImpl(writer));
-            writer.flush();
+            response.serialize(System.out);
 
         }catch(Exception e){
             e.printStackTrace();

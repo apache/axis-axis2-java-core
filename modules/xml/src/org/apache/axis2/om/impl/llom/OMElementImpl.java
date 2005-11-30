@@ -32,7 +32,10 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLOutputFactory;
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Iterator;
 

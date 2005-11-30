@@ -35,8 +35,7 @@ public class OMBlankElementTest extends TestCase {
 
         StringWriter writer = new StringWriter();
         elem1.build();
-        elem1.serialize(
-            new OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
+        elem1.serialize(writer);
         writer.flush();
         return writer.toString();
     }
@@ -59,8 +58,7 @@ public class OMBlankElementTest extends TestCase {
 
         StringWriter writer = new StringWriter();
         elem1.build();
-        elem1.serialize(
-            new OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
+        elem1.serialize(writer);
         writer.flush();
         return writer.toString();
     }

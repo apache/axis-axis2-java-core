@@ -21,6 +21,8 @@ import org.apache.axis2.om.impl.OMOutputImpl;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.io.OutputStream;
+import java.io.Writer;
 
 /**
  * Defines the the base interface used by most of the XML object model within Axis.
@@ -194,6 +196,27 @@ public interface OMNode {
             throws XMLStreamException;
 
     /**
+     * Serialize the node with caching
+     *
+     * @param output
+     * @throws XMLStreamException
+     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
+     */
+    public void serialize(OutputStream output)
+            throws XMLStreamException;
+
+    /**
+     * Serialize the node with caching
+     *
+     * @param writer
+     * @throws XMLStreamException
+     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
+     */
+    public void serialize(Writer writer)
+            throws XMLStreamException;
+
+
+    /**
      * Serialize the node without caching
      *
      * @param xmlWriter
@@ -210,6 +233,24 @@ public interface OMNode {
      * @see #serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl)
      */
     public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException;
+
+    /**
+     * Serialize the node without caching
+     *
+     * @param output
+     * @throws XMLStreamException
+     * @see #serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl)
+     */
+    public void serializeAndConsume(OutputStream output) throws XMLStreamException;
+
+    /**
+     * Serialize the node without caching
+     *
+     * @param writer
+     * @throws XMLStreamException
+     * @see #serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl)
+     */
+    public void serializeAndConsume(Writer writer) throws XMLStreamException;
 
     /**
      * Builds itself

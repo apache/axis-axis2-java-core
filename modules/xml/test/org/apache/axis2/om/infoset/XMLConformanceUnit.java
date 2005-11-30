@@ -67,15 +67,8 @@ public class XMLConformanceUnit extends XMLTestCase implements EntityResolver {
                                 new FileInputStream(filePath)));
         rootElement = staxOMBuilder.getDocumentElement();
 
-        XMLStreamWriter writer;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        writer = XMLOutputFactory.newInstance().
-                createXMLStreamWriter(baos);
-
-        ((OMDocument)rootElement.getParent()).serialize(new OMOutputImpl(writer));
-
-        writer.flush();
-        writer.close();
+        ((OMDocument)rootElement.getParent()).serialize(baos);
 
         InputSource resultXML = new InputSource(new InputStreamReader(
                 new ByteArrayInputStream(baos.toByteArray())));

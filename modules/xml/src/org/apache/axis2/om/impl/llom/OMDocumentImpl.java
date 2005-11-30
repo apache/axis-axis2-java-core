@@ -30,6 +30,8 @@ import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.util.Iterator;
+import java.io.OutputStream;
+import java.io.IOException;
 
 /**
  * Class OMDocumentImpl
@@ -100,7 +102,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     /**
      * Method getRootElement
      *
-     * @return
+     * @return om element
      */
     public OMElement getOMDocumentElement() {
         while (rootElement == null) {
@@ -123,7 +125,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
      * If somethings info are not available in the item, one has to check this attribute to make sure that, this
      * item has been parsed completely or not.
      *
-     * @return
+     * @return boolean
      */
     public boolean isComplete() {
         return done;
@@ -188,7 +190,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
      * This returns a collection of this element.
      * Children can be of types OMElement, OMText.
      *
-     * @return
+     * @return iterator
      */
     public Iterator getChildren() {
         return new OMChildrenIterator(getFirstOMChild());
@@ -211,7 +213,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     /**
      * Method getFirstOMChild
      *
-     * @return
+     * @return first om child
      */
     public OMNode getFirstOMChild() {
         while ((firstChild == null) && !done) {
@@ -254,7 +256,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     /**
      * Returns the character set encoding scheme to be used
      *
-     * @return
+     * @return charset
      */
     public String getCharsetEncoding() {
         return charSetEncoding;
@@ -294,9 +296,6 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
 
     /**
      * Serialize the document with the XML declaration
-     *
-     * @see org.apache.axis2.om.OMDocument#serializeAndConsume(org.apache.axis2.om.impl.OMOutputImpl,
-     *      boolean)
      */
     public void serializeAndConsume(OMOutputImpl omOutput)
             throws XMLStreamException {
@@ -315,9 +314,31 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
+     * Serialize the document directly to the outputstream with Caching disabled
+     * 
+     * @param output
+     * @throws XMLStreamException
+     */
+    public void serializeAndConsume(OutputStream output) throws XMLStreamException {
+        OMOutputImpl omOutput = new OMOutputImpl(output,false);
+        serializeAndConsume(omOutput);
+        omOutput.flush();
+    }
+
+    /**
+     * Serialize the document directly to the outputstream with Caching enabled
+     * 
+     * @param output
+     * @throws XMLStreamException
+     */
+    public void serialize(OutputStream output) throws XMLStreamException {
+        OMOutputImpl omOutput = new OMOutputImpl(output,false);
+        serialize(omOutput);
+        omOutput.flush();
+    }
+
+    /**
      * Serialize the document with cache
-     *
-     * @see org.apache.axis2.om.OMDocument#serialize(org.apache.axis2.om.impl.OMOutputImpl, boolean)
      */
     public void serialize(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException {
         serialize(omOutput, true, includeXMLDeclaration);

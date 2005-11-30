@@ -25,13 +25,11 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.soap.SOAPFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
@@ -98,7 +96,7 @@ public class GroovyServiceTest extends TestCase {
 
         StringWriter writer = new StringWriter();
         result.build();
-        result.serialize(new OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer)));
+        result.serialize(writer);
         writer.flush();
         call.close();
     }

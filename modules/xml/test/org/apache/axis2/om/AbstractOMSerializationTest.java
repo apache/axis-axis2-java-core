@@ -81,7 +81,7 @@ public class AbstractOMSerializationTest extends XMLTestCase {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
             OMOutputImpl omOutput = new OMOutputImpl(baos, false);
-            omOutput.ignoreXMLDeclaration(ignoreXMLDeclaration);
+            omOutput.setIgnoreXMLDeclaration(ignoreXMLDeclaration);
 
 //            rootElement.serializeAndConsume(omOutput);
             ((OMDocument) rootElement.getParent()).serialize(omOutput);
@@ -107,15 +107,11 @@ public class AbstractOMSerializationTest extends XMLTestCase {
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-            OMOutputImpl omOutput = new OMOutputImpl(baos, false);
-//            omOutput.ignoreXMLDeclaration(ignoreXMLDeclaration);
-
             if (ignoreDocument) {
-                rootElement.serialize(omOutput);
+                rootElement.serialize(baos);
             } else {
-                ((OMDocument) rootElement.getParent()).serialize(omOutput);
+                ((OMDocument) rootElement.getParent()).serialize(baos);
             }
-            omOutput.flush();
 
             InputSource resultXML = new InputSource(new InputStreamReader(
                     new ByteArrayInputStream(baos.toByteArray())));

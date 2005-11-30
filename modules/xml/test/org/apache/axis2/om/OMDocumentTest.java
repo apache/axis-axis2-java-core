@@ -42,9 +42,7 @@ public class OMDocumentTest extends TestCase {
         // serialise it to a string
         String outXML = "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        OMOutputImpl output = new OMOutputImpl(outStream, false);
-        omDocument.serializeAndConsume(output);
-        output.flush();
+        omDocument.serializeAndConsume(outStream);
         outXML = new String(outStream.toByteArray());
 
         // again load that to another builder
