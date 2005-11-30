@@ -110,6 +110,7 @@ public class OMDOMFactory implements OMFactory {
 				DocumentImpl docImpl = (DocumentImpl) parent;
 				ElementImpl elem2 = new ElementImpl(docImpl, localName,
 						(NamespaceImpl) ns, builder);
+				docImpl.appendChild(elem2);
 				return elem2;
 	
 			case Node.DOCUMENT_FRAGMENT_NODE:
@@ -244,6 +245,12 @@ public class OMDOMFactory implements OMFactory {
 	}
 	
 	public DocumentImpl getDocument() {
+		return this.document;
+	}
+
+
+	public OMDocument createOMDocument(OMXMLParserWrapper builder) {
+		this.document = new DocumentImpl(builder);
 		return this.document;
 	}
 	

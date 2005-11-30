@@ -223,4 +223,11 @@ public class OMLinkedListImplFactory implements OMFactory {
 	public OMDocument createOMDocument() {
 		return new OMDocumentImpl();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.om.OMFactory#createOMDocument(org.apache.axis2.om.OMXMLParserWrapper)
+	 */
+	public OMDocument createOMDocument(OMXMLParserWrapper builder) {
+		return new OMDocumentImpl(builder);
+	}
 }

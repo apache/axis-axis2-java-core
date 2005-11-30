@@ -409,10 +409,12 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 				AttrImpl tempAttr = ((AttrImpl)attributeNode);
 				tempAttr.setOMNamespace(new NamespaceImpl(namespaceURI,DOMUtil.getPrefix(qualifiedName)));
 				tempAttr.setAttributeValue(value);
+				this.attributes.setNamedItem(tempAttr);
 				return tempAttr;
 			} else {
 				NamespaceImpl ns = new NamespaceImpl(namespaceURI, DOMUtil.getPrefix(qualifiedName));
-				AttrImpl attr = new AttrImpl(DOMUtil.getLocalName(qualifiedName),ns,value);
+				AttrImpl attr = new AttrImpl((DocumentImpl)this.getOwnerDocument(),DOMUtil.getLocalName(qualifiedName),ns,value);
+				this.attributes.setNamedItem(attr);
 				return attr;
 			}
 		} else {
@@ -420,9 +422,11 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 			if(attributeNode != null) {
 				AttrImpl tempAttr = ((AttrImpl)attributeNode);
 				tempAttr.setAttributeValue(value);
+				this.attributes.setNamedItem(tempAttr);
 				return tempAttr;
 			} else {
-				AttrImpl attr = new AttrImpl(qualifiedName,value);
+				AttrImpl attr = new AttrImpl((DocumentImpl)this.getOwnerDocument(),qualifiedName,value);
+				this.attributes.setNamedItem(attr);
 				return attr;
 			}
 		}
@@ -433,7 +437,19 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	 * @see org.w3c.dom.Element#getAttributeNodeNS(java.lang.String, java.lang.String)
 	 */
 	public Attr getAttributeNodeNS(String namespaceURI, String localName) {
+		Attr attr = (this.attributes == null)?null:(Attr)this.attributes.getNamedItemNS(namespaceURI,localName);
+
+		//In the case of a namespace decalation attribute go check the parent as well
+		//When the namespaceURI is http://www.w3.org/2000/xmlns/
+		if (attr == null
+				&& namespaceURI == OMConstants.XMLNS_NS_URI
+				&& this.parentNode instanceof ElementImpl) {
+			((ElementImpl) this.parentNode).getAttributeNodeNS(namespaceURI,
+					localName);
+		}
+		
 		return (this.attributes == null)?null:(Attr)this.attributes.getNamedItemNS(namespaceURI,localName);
+
 	}
 
 	/* (non-Javadoc)
@@ -543,8 +559,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
     public OMNamespace findNamespaceURI(String prefix) {
-        // TODO Ruchith please fix this
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return (OMNamespace)this.namespaces.get(prefix);
     }
 
     /**

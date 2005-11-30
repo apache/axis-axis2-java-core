@@ -153,7 +153,16 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
      * @param child
      */
     public void addChild(OMNode child) {
-        addChild((OMNodeImpl) child);
+    	if(child instanceof OMElement) {
+    		if(this.rootElement == null) {
+    			addChild((OMNodeImpl) child);
+    			this.rootElement = (OMElement)child;
+    		} else {
+    			throw new OMException("Document element already exists");
+    		}
+    	} else {
+    		addChild((OMNodeImpl) child);
+    	}
     }
 
     /**

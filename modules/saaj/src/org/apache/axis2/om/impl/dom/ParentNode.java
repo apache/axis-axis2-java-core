@@ -112,7 +112,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 	///	
 	
 	public NodeList getChildNodes() {
-		return new NodeListImpl(this, this.getNamespaceURI(),this.getLocalName());
+		return new NodeListImpl(this, null,null);
 	}
 	
 	public Node getFirstChild() {

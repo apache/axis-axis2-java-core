@@ -64,8 +64,7 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	}
 	
 	public DocumentImpl(OMXMLParserWrapper parserWrapper) {
-		ElementImpl docElem = (ElementImpl)parserWrapper.getDocumentElement();
-		this.appendChild(docElem);
+		this.builder = parserWrapper;
 	}
 
 	public DocumentImpl() {
@@ -286,6 +285,9 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 		 * We'r sure that only an element can be the first child 
 		 * of a Document
 		 */
+		if(this.firstChild == null && !this.done) {
+			this.build();
+		}
 		return (OMElement)this.firstChild;
 	}
 	

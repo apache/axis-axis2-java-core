@@ -27,6 +27,8 @@ public interface OMFactory {
 	 * Create a new OMDocument
 	 */
 	public OMDocument createOMDocument();
+	public OMDocument createOMDocument(OMXMLParserWrapper builder);
+	
 	
     /**
      * @param localName

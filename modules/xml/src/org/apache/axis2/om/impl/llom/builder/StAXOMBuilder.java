@@ -24,6 +24,7 @@ import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.impl.OMContainerEx;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.llom.OMDocumentImpl;
 
@@ -56,7 +57,7 @@ public class StAXOMBuilder extends StAXBuilder {
      */
     public StAXOMBuilder(OMFactory ombuilderFactory, XMLStreamReader parser) {
         super(ombuilderFactory, parser);
-        document = new OMDocumentImpl(this);
+        document = ombuilderFactory.createOMDocument(this);
     }
 
     /**
@@ -85,8 +86,8 @@ public class StAXOMBuilder extends StAXBuilder {
      */
     public StAXOMBuilder(XMLStreamReader parser) {
         super(parser);
-        document = new OMDocumentImpl(this);
         omfactory = OMAbstractFactory.getOMFactory();
+        document = omfactory.createOMDocument(this);
     }
 
     /**
@@ -99,9 +100,7 @@ public class StAXOMBuilder extends StAXBuilder {
         OMElement node;
         String elementName = parser.getLocalName();
         if (lastNode == null) {
-            node = omfactory.createOMElement(elementName, null, null, this);
-            document.setOMDocumentElement(node);
-            document.addChild(node);
+            node = omfactory.createOMElement(elementName, null, document, this);
         } else if (lastNode.isComplete()) {
             node = omfactory.createOMElement(elementName, null,
                     lastNode.getParent(), this);
@@ -183,7 +182,7 @@ public class StAXOMBuilder extends StAXBuilder {
 
         //return lastNode;
     }
-
+    
     /**
      * Method next
      *
@@ -239,6 +238,7 @@ public class StAXOMBuilder extends StAXBuilder {
                         System.out.println("END_DOCUMENT: ");
                     }
                     done = true;
+                    ((OMContainerEx)this.document).setComplete(true);
                     break;
                 case XMLStreamConstants.SPACE:
                     if(doDebug) {

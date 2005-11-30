@@ -42,7 +42,7 @@ public class NodeListImpl implements NodeList  {
     /** Constructor. */
     public NodeListImpl(NodeImpl rootNode, String tagName) {
         this.rootNode = rootNode;
-        this.tagName  = tagName;
+        this.tagName  = (tagName != null && !tagName.equals("")) ? tagName : null;
         nodes = new Vector();
     }  
 
@@ -51,7 +51,9 @@ public class NodeListImpl implements NodeList  {
                             String namespaceURI, String localName) {
         this(rootNode, localName);
         this.nsName = (namespaceURI != null && !namespaceURI.equals("")) ? namespaceURI : null;
-        enableNS = true;
+        if(this.nsName != null) {
+        	enableNS = true;
+        }
     }
 
 	/**
@@ -60,7 +62,17 @@ public class NodeListImpl implements NodeList  {
 	 */
 	public int getLength() {
 		Iterator children;
-		children = ((OMContainerEx)rootNode).getChildren();
+		if(this.tagName == null) {
+			children = ((OMContainerEx)rootNode).getChildren();
+		} else if(!enableNS) {
+			children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.tagName));
+		} else {
+			if(DOMUtil.getPrefix(this.tagName) != null) {
+				children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.nsName, DOMUtil.getLocalName(this.tagName), DOMUtil.getPrefix(this.tagName)));
+			} else {
+				children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.nsName, DOMUtil.getLocalName(this.tagName)));
+			}
+		}
 		int count  = 0;
 		while (children.hasNext()) {
 			count++;
@@ -75,7 +87,20 @@ public class NodeListImpl implements NodeList  {
 	 * @see org.w3c.dom.NodeList#item(int)
 	 */
 	public Node item(int index) {
-		Iterator children = ((OMContainerEx)rootNode).getChildren();
+		Iterator children;
+
+		if(this.tagName == null) {
+			children = ((OMContainerEx)rootNode).getChildren();
+		} else if(!enableNS) {
+			children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.tagName));
+		} else {
+			if(DOMUtil.getPrefix(this.tagName) != null) {
+				children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.nsName, DOMUtil.getLocalName(this.tagName), DOMUtil.getPrefix(this.tagName)));
+			} else {
+				children = ((OMContainerEx)rootNode).getChildrenWithName(new QName(this.nsName, DOMUtil.getLocalName(this.tagName)));
+			}
+		}
+
 		int count  = 0;
 		while (children.hasNext()) {
 			if(count == index) {
