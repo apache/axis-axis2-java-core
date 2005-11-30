@@ -17,7 +17,6 @@
 package org.apache.axis2.transport.mail;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.transport.EmailReceiver;
 import org.apache.axis2.transport.mail.server.MailSrvConstants;
 
 import javax.mail.Authenticator;

@@ -288,12 +288,6 @@ public class CommonsHTTPTransportSender
         }
     }
 
-    public void writeMessageWithToOutPutStream(
-            MessageContext msgContext,
-            OutputStream out) {
-
-    }
-
     public void writeMessageWithCommons(
             MessageContext msgContext,
             EndpointReference toURL,

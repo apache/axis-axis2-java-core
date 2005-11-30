@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.transport;
+package org.apache.axis2.transport.mail;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.i18n.Messages;

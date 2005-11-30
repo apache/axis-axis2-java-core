@@ -23,7 +23,6 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.transport.EmailReceiver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.mail.server.MailSrvConstants;
 import org.apache.axis2.util.Utils;
