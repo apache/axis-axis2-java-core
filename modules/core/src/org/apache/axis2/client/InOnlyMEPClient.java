@@ -16,8 +16,9 @@
 
 package org.apache.axis2.client;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -29,15 +30,13 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.wsdl.WSDLConstants;
 
-import javax.xml.namespace.QName;
-
 /**
  * This class handles In-Only (fire and forget) MEP
  */
 public class InOnlyMEPClient extends MEPClient {
     protected TransportOutDescription senderTransport;
 
-
+ 
     public InOnlyMEPClient(ServiceContext service) {
         super(service, WSDLConstants.MEP_URI_IN_ONLY);
     }
@@ -50,10 +49,12 @@ public class InOnlyMEPClient extends MEPClient {
      */
     public void send(AxisOperation axisop, final MessageContext msgctx) throws AxisFault {
         prepareInvocation(axisop, msgctx);
-        String messageID = String.valueOf("uuid:"+ UUIDGenerator.getUUID());
-        msgctx.setMessageID(messageID);
+        if(msgctx.getMessageID() == null){
+            String messageID = String.valueOf("uuid:"+ UUIDGenerator.getUUID());
+            msgctx.setMessageID(messageID);
+        }
         msgctx.setServiceContext(serviceContext);
-        ConfigurationContext syscontext = serviceContext.getConfigurationContext();
+
 
         //if the transport to use for sending is not specified, try to find it from the URL
         if (senderTransport == null) {
@@ -64,7 +65,6 @@ public class InOnlyMEPClient extends MEPClient {
 
         //initialize and set the Operation Context
         ConfigurationContext sysContext = serviceContext.getConfigurationContext();
-        AxisConfiguration registry = sysContext.getAxisConfiguration();
         msgctx.setOperationContext(axisop.findOperationContext(msgctx, serviceContext));
 
         AxisEngine engine = new AxisEngine(sysContext);

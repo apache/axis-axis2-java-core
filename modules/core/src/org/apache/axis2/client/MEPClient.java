@@ -349,7 +349,7 @@ public abstract class MEPClient {
      *
      * @throws org.apache.axis2.AxisFault
      */
-    protected void assumeServiceContext(String clientHome)
+    protected  void assumeServiceContext(String clientHome)
             throws AxisFault {
         ConfigurationContext configurationContext =
                 new ConfigurationContextFactory().buildClientConfigurationContext(clientHome);
