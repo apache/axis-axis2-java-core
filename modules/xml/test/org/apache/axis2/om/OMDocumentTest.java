@@ -17,7 +17,6 @@
 package org.apache.axis2.om;
 
 import junit.framework.TestCase;
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 
 import javax.xml.stream.XMLInputFactory;

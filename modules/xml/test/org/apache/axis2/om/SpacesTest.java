@@ -16,7 +16,6 @@
 
 package org.apache.axis2.om;
 
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.custommonkey.xmlunit.Diff;
@@ -29,9 +28,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -63,16 +60,8 @@ public class SpacesTest extends XMLTestCase {
             staxOMBuilder.setDoDebug(true);
             rootElement = staxOMBuilder.getDocumentElement();
 
-            XMLStreamWriter writer;
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            writer = XMLOutputFactory.newInstance().
-                    createXMLStreamWriter(baos);
-
-            ((OMDocument) rootElement.getParent()).serialize(new OMOutputImpl(writer));
-
-            writer.flush();
-            writer.close();
-
+            ((OMDocument) rootElement.getParent()).serialize(baos);
 
             InputSource resultXML = new InputSource(new InputStreamReader(
                     new ByteArrayInputStream(baos.toByteArray())));

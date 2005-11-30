@@ -17,9 +17,7 @@
 package org.apache.axis2.om;
 
 import junit.framework.TestCase;
-import org.apache.axis2.om.impl.OMOutputImpl;
 
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.StringWriter;
 
