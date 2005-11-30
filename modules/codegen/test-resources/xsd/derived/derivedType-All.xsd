@@ -7,7 +7,7 @@
     <xs:element name="DerivedPositiveInteger" type="xs:positiveInteger"/>
 	<xs:element name="DerivedNegativeInteger" type="xs:negativeInteger"/>
 	<xs:element name="DerivedNonNegativeInteger" type="xs:nonNegativeInteger"/>
-	<xs:element name="DerivedNonpositiveInteger" type="xs:nonPositiveInteger"/>
+	<xs:element name="DerivedNonPositiveInteger" type="xs:nonPositiveInteger"/>
 	<xs:element name="DerivedUnsignedShort" type="xs:unsignedShort"/>
 	<xs:element name="DerivedUnsignedLong" type="xs:unsignedLong"/>
 	<xs:element name="DerivedUnsignedInt" type="xs:unsignedInt"/>
@@ -29,5 +29,5 @@
 	<xs:element name="DerivedNCName" type="xs:NCName"/>
 	<xs:element name="DerivedNormalizedString" type="xs:normalizedString"/>
 	<xs:element name="DerivedInteger" type="xs:integer"/>
-    
+
 </schema>

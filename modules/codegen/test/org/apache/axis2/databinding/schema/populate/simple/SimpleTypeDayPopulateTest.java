@@ -1,4 +1,7 @@
 package org.apache.axis2.databinding.schema.populate.simple;
+
+import org.apache.axis2.databinding.schema.types.Day;
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -16,15 +19,31 @@ package org.apache.axis2.databinding.schema.populate.simple;
  */
 
 public class SimpleTypeDayPopulateTest extends AbstractSimplePopulater{
-    private String xmlString[] = {
-            "<dayParam>---05</dayParam>",
-            "<dayParam>---06</dayParam>",
-            "<dayParam>---12+05:00</dayParam>"
+    private String values[] = {
+                        "---05",
+                        "---06",
+                        "---12"
     };
+    private String xmlString[] = {
+            "<dayParam>"+values[0]+"</dayParam>",
+            "<dayParam>"+values[1]+"</dayParam>",
+            "<dayParam>"+values[2]+"</dayParam>"
+    };
+
+    protected void setUp() throws Exception {
+        className ="org.soapinterop.dayParam";
+        propertyClass = Day.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.dayParam");
-        process(xmlString[1],"org.soapinterop.dayParam");
-        process(xmlString[2],"org.soapinterop.dayParam");
+         for (int i = 0; i < values.length; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
     }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((Day)o);
+    }
+
 }

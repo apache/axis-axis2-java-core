@@ -1,4 +1,8 @@
 package org.apache.axis2.databinding.schema.populate.simple;
+
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
+
+import java.util.Date;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -16,15 +20,32 @@ package org.apache.axis2.databinding.schema.populate.simple;
  */
 
 public class SimpleTypeDatePopulateTest extends AbstractSimplePopulater{
+    private String values[]={
+                "2002-10-10",
+                "2000-12-31",
+                "2002-02-28"
+    } ;
     private String xmlString[] = {
-            "<dateParam>2002-10-10T12:00:00+05:00</dateParam>",
-            "<dateParam>2000-12-31T11:59:59-05:00</dateParam>",
-            "<dateParam>2002-10-10T07:00:00Z</dateParam>"
+            "<dateParam>"+values[0]+"</dateParam>",
+            "<dateParam>"+values[1]+"</dateParam>",
+            "<dateParam>"+values[2]+"</dateParam>"
     };
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.dateParam";
+        propertyClass = java.util.Date.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.dateParam");
-        process(xmlString[1],"org.soapinterop.dateParam");
-        process(xmlString[2],"org.soapinterop.dateParam");
+        for (int i = 0; i < values.length; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
+    }
+
+    protected String convertToString(Object o) {
+        String s = ConverterUtil.convertToString((Date) o);
+        System.out.println("s = " + s);
+        return s;
     }
 }

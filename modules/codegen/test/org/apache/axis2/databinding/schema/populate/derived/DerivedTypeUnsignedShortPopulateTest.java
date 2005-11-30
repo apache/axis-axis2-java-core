@@ -1,6 +1,5 @@
-package org.apache.axis2.databinding.schema.populate.simple;
+package org.apache.axis2.databinding.schema.populate.derived;
 
-import org.apache.axis2.databinding.schema.types.URI;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,19 +16,24 @@ import org.apache.axis2.databinding.schema.types.URI;
  * limitations under the License.
  */
 
-public class SimpleTypeBase64BinPopulateTest extends AbstractSimplePopulater{
+public class DerivedTypeUnsignedShortPopulateTest extends AbstractDerivedPopulater{
     private String xmlString[] = {
-            "<base64BinParam>abcdABCD</base64BinParam>",
-            "<base64BinParam>abcdABCD09rT</base64BinParam>",
+            "<DerivedUnsignedShort>18443</DerivedUnsignedShort>",
+            "<DerivedUnsignedShort>0</DerivedUnsignedShort>",
+            "<DerivedUnsignedShort>2633</DerivedUnsignedShort>",
+            "<DerivedUnsignedShort>-267582233</DerivedUnsignedShort>"
     };
-
-     protected void setUp() throws Exception {
-        className = "org.soapinterop.base64BinParam";
-        propertyClass = byte[].class;
-    }
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.base64BinParam");
-        process(xmlString[1],"org.soapinterop.base64BinParam");
+        process(xmlString[0],"org.soapinterop.DerivedUnsignedShort");
+        process(xmlString[1],"org.soapinterop.DerivedUnsignedShort");
+        process(xmlString[2],"org.soapinterop.DerivedUnsignedShort");
+
+        try {
+            process(xmlString[3],"org.soapinterop.DerivedUnsignedShort");
+            fail();
+        } catch (Exception e) {
+
+        }
     }
 }

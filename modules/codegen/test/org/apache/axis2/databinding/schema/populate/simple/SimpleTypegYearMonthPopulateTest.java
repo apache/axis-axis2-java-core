@@ -1,4 +1,7 @@
 package org.apache.axis2.databinding.schema.populate.simple;
+
+import org.apache.axis2.databinding.schema.types.YearMonth;
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -16,21 +19,29 @@ package org.apache.axis2.databinding.schema.populate.simple;
  */
 
 public class SimpleTypegYearMonthPopulateTest extends AbstractSimplePopulater{
-    private String xmlString[] = {
-            "<yearMonthParam>0001-05</yearMonthParam>",
-            "<yearMonthParam>-0234-09</yearMonthParam>",
-            "<yearMonthParam>1978-01</yearMonthParam>",
-            "<yearMonthParam>1978-01-GMT</yearMonthParam>"
-
-            //todo Need to add the invalid combinations here
-
+    private String values[]= {
+            "0001-05",
+            "-0234-09",
+            "1978-01",
+            "1978-01-GMT"
     };
+    private String xmlString[] = {
+            "<yearMonthParam>"+values[0]+"</yearMonthParam>",
+            "<yearMonthParam>"+values[1]+"</yearMonthParam>",
+            "<yearMonthParam>"+values[2]+"</yearMonthParam>"
+    };
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.yearMonthParam";
+        propertyClass = YearMonth.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.yearMonthParam");
-        process(xmlString[1],"org.soapinterop.yearMonthParam");
-        process(xmlString[2],"org.soapinterop.yearMonthParam");
-        
+        for (int i = 0; i < 2; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
+
         try {
             process(xmlString[3],"org.soapinterop.yearMonthParam");
             fail();
@@ -38,4 +49,9 @@ public class SimpleTypegYearMonthPopulateTest extends AbstractSimplePopulater{
 
         }
     }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((YearMonth)o);
+    }
+
 }

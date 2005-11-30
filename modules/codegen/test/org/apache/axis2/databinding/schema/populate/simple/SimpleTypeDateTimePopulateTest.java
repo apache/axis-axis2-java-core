@@ -1,4 +1,8 @@
 package org.apache.axis2.databinding.schema.populate.simple;
+
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
+
+import java.util.Calendar;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -16,15 +20,33 @@ package org.apache.axis2.databinding.schema.populate.simple;
  */
 
 public class SimpleTypeDateTimePopulateTest extends AbstractSimplePopulater{
+    private String values[] ={"2002-10-10T12:00:00+05:00",
+            "2000-12-31T11:59:59-05:00",
+            "2002-10-10T07:00:00Z"
+    };
     private String xmlString[] = {
-            "<dateTimeParam>2002-10-10T12:00:00+05:00</dateTimeParam>",
-            "<dateTimeParam>2000-12-31T11:59:59-05:00</dateTimeParam>",
-            "<dateTimeParam>2002-10-10T07:00:00Z</dateTimeParam>"
+            "<dateTimeParam>"+values[0]+"</dateTimeParam>",
+            "<dateTimeParam>"+values[1]+"</dateTimeParam>",
+            "<dateTimeParam>"+values[2]+"</dateTimeParam>"
     };
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.dateTimeParam");
-        process(xmlString[1],"org.soapinterop.dateTimeParam");
-        process(xmlString[2],"org.soapinterop.dateTimeParam");
+         for (int i = 0; i < values.length; i++) {
+             checkValue(xmlString[i],values[i]);
+        }
+    }
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.dateTimeParam";
+        propertyClass = Calendar.class;
+    }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((Calendar) o);
+    }
+
+    protected void compare(String val1, String val2) {
+        //do nothing for this comparison. We dont know how to compare these yet
+        //todo Fix this comparison
     }
 }

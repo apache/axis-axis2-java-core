@@ -1,4 +1,6 @@
 package org.apache.axis2.databinding.schema.populate.simple;
+
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -16,15 +18,30 @@ package org.apache.axis2.databinding.schema.populate.simple;
  */
 
 public class SimpleTypeDoublePopulateTest extends AbstractSimplePopulater{
-    private String xmlString[] = {
-            "<floatParam>20300.0055</floatParam>",
-            "<floatParam>3045534234</floatParam>",
-            "<floatParam>66733.88</floatParam>"
+    private String values[]= {
+            "20300.00554433422",
+            "203045534234",
+            "66733.0060604343"
     };
+    private String xmlString[] = {
+            "<doubleParam>"+values[0]+"</doubleParam>",
+            "<doubleParam>"+values[1]+"</doubleParam>",
+            "<doubleParam>"+values[2]+"</doubleParam>"
+    };
+
+    protected void setUp() throws Exception {
+       className = "org.soapinterop.doubleParam";
+       propertyClass = float.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.floatParam");
-        process(xmlString[1],"org.soapinterop.floatParam");
-        process(xmlString[2],"org.soapinterop.floatParam");
+         for (int i = 0; i < values.length; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
+    }
+
+    protected String convertToString(Object o) {
+        return  ConverterUtil.convertToString((Double)o) ;
     }
 }

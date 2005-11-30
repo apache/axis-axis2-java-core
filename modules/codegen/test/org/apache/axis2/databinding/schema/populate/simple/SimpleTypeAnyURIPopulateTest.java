@@ -1,4 +1,10 @@
 package org.apache.axis2.databinding.schema.populate.simple;
+
+import org.apache.axis2.databinding.schema.types.URI;
+
+import java.beans.Introspector;
+import java.beans.BeanInfo;
+import java.beans.PropertyDescriptor;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -16,15 +22,27 @@ package org.apache.axis2.databinding.schema.populate.simple;
  */
 
 public class SimpleTypeAnyURIPopulateTest extends AbstractSimplePopulater{
+    private String values[] = {"http://www.wisc.edu/grad/education/mas/229.html",
+            "ftp://grad/education/mas/229.html",
+            "http://mail.google.com/mail/?auth=DQAAAHEAAAC041"};
     private String xmlString[] = {
-            "<anyURIParam>http://www.wisc.edu/grad/education/mas/229.html</anyURIParam>",
-            "<anyURIParam>ftp://grad/education/mas/229.html</anyURIParam>",
-            "<anyURIParam>http://mail.google.com/mail/?auth=DQAAAHEAAAC041</anyURIParam>"
+            "<anyURIParam>" + values[0]+"</anyURIParam>",
+            "<anyURIParam>" + values[1]+"</anyURIParam>",
+            "<anyURIParam>" + values[2]+"</anyURIParam>"
     };
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.anyURIParam";
+        propertyClass = URI.class;
+    }
+
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.anyURIParam");
-        process(xmlString[1],"org.soapinterop.anyURIParam");
-        process(xmlString[2],"org.soapinterop.anyURIParam");
+        for (int i = 0; i < values.length; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
+
     }
+
 }

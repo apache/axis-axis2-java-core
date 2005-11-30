@@ -6,6 +6,9 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Method;
+
+import org.apache.axis2.databinding.schema.types.Month;
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -23,20 +26,35 @@ import java.lang.reflect.Method;
  */
 
 public class SimpleTypegMonthPopulateTest  extends AbstractSimplePopulater {
-    private String xmlString[] = {
-            "<monthParam>--01--</monthParam>",
-            "<monthParam>--12--+02:50</monthParam>",
-            "<monthParam>--03---03:00</monthParam>"
+     private String values[]={
+             "--01--",
+             "--12--",
+             "--03--"
+
     };
 
-    /**
-     *  test the poplate methos=d
-     */
-    public void testPopulate() throws Exception{
-       process(xmlString[0],"org.soapinterop.monthParam");
-       process(xmlString[1],"org.soapinterop.monthParam");
-       process(xmlString[2],"org.soapinterop.monthParam");
 
+    private String xmlString[] = {
+            "<monthParam>"+values[0]+"</monthParam>",
+            "<monthParam>"+values[1]+"</monthParam>",
+            "<monthParam>"+values[2]+"</monthParam>"
+    };
+
+
+     protected void setUp() throws Exception {
+        className = "org.soapinterop.monthParam";
+        propertyClass = Month.class;
+    }
+
+    // force others to implement this method
+    public void testPopulate() throws Exception {
+         for (int i = 0; i < values.length; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
+    }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((Month)o);
     }
 
 

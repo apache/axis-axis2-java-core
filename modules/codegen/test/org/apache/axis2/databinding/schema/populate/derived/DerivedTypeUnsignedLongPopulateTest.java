@@ -1,8 +1,5 @@
-package org.apache.axis2.databinding.schema.populate.simple;
+package org.apache.axis2.databinding.schema.populate.derived;
 
-import java.beans.BeanInfo;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -19,28 +16,24 @@ import java.beans.PropertyDescriptor;
  * limitations under the License.
  */
 
-public class SimpleTypeBooleanPopulateTest extends AbstractSimplePopulater{
-    private String values[]= {
-            "true",
-            "false"
-    };
-
+public class DerivedTypeUnsignedLongPopulateTest extends AbstractDerivedPopulater{
     private String xmlString[] = {
-            "<booleanParam>"+ values[0] +"</booleanParam>",
-            "<booleanParam>"+ values[1] +"</booleanParam>",
+            "<DerivedUnsignedLong>18443</DerivedUnsignedLong>",
+            "<DerivedUnsignedLong>0</DerivedUnsignedLong>",
+            "<DerivedUnsignedLong>2633</DerivedUnsignedLong>",
+            "<DerivedUnsignedLong>-267582233</DerivedUnsignedLong>"
     };
-
-    protected void setUp() throws Exception {
-        className ="org.soapinterop.booleanParam";
-        propertyClass = boolean.class;
-    }
-
     // force others to implement this method
     public void testPopulate() throws Exception {
-        for (int i = 0; i < values.length; i++) {
-             checkValue(xmlString[i],values[i]);
+        process(xmlString[0],"org.soapinterop.DerivedUnsignedLong");
+        process(xmlString[1],"org.soapinterop.DerivedUnsignedLong");
+        process(xmlString[2],"org.soapinterop.DerivedUnsignedLong");
+
+        try {
+            process(xmlString[3],"org.soapinterop.DerivedUnsignedLong");
+            fail();
+        } catch (Exception e) {
+
         }
     }
-
-
 }

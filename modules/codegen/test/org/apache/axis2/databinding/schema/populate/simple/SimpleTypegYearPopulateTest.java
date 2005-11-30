@@ -1,4 +1,8 @@
 package org.apache.axis2.databinding.schema.populate.simple;
+
+import org.apache.axis2.databinding.schema.types.YearMonth;
+import org.apache.axis2.databinding.schema.types.Year;
+import org.apache.axis2.databinding.schema.util.ConverterUtil;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -16,15 +20,31 @@ package org.apache.axis2.databinding.schema.populate.simple;
  */
 
 public class SimpleTypegYearPopulateTest extends AbstractSimplePopulater{
-    private String xmlString[] = {
-            "<yearParam>0001</yearParam>",
-            "<yearParam>-0234</yearParam>",
-            "<yearParam>1978</yearParam>"
+
+    private String values[]= {
+            "0001",
+            "-0234",
+            "1978"
     };
+    private String xmlString[] = {
+            "<yearParam>"+values[0]+"</yearParam>",
+            "<yearParam>"+values[1]+"</yearParam>",
+            "<yearParam>"+values[2]+"</yearParam>"
+    };
+
+    protected void setUp() throws Exception {
+        className = "org.soapinterop.yearParam";
+        propertyClass = Year.class;
+    }
+
     // force others to implement this method
     public void testPopulate() throws Exception {
-        process(xmlString[0],"org.soapinterop.yearParam");
-        process(xmlString[1],"org.soapinterop.yearParam");
-        process(xmlString[2],"org.soapinterop.yearParam");
+        for (int i = 0; i < 2; i++) {
+            checkValue(xmlString[i],values[i]);
+        }
+    }
+
+    protected String convertToString(Object o) {
+        return ConverterUtil.convertToString((Year)o);
     }
 }

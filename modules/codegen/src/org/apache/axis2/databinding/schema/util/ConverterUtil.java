@@ -70,10 +70,66 @@ public class ConverterUtil {
         return i + "";
     }
 
+    public static String convertToString(Date value) {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd");
+        StringBuffer buf = new StringBuffer();
+        synchronized (calendar) {
+            if (calendar.get(Calendar.ERA) == GregorianCalendar.BC) {
+                buf.append("-");
+                calendar.setTime((Date)value);
+                calendar.set(Calendar.ERA, GregorianCalendar.AD);
+                value = calendar.getTime();
+            }
+            buf.append(zulu.format(value));
+        }
+        return buf.toString();
+    }
+
+    public static String convertToString(Calendar value) {
+        SimpleDateFormat zulu =
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        Date date = value.getTime();
+
+        // Serialize including convert to GMT
+        synchronized (zulu) {
+            // Sun JDK bug http://developer.java.sun.com/developer/bugParade/bugs/4229798.html
+            return zulu.format(date);
+        }
+    }
+
+    public static String convertToString(Day o) {
+        return o.toString();
+    }
+
+    public static String convertToString(YearMonth o) {
+        return o.toString();
+    }
+
+    public static String convertToString(Year o) {
+        return o.toString();
+    }
+
     public static String convertToString(Object o) {
         return o.toString();
     }
 
+    public static String convertToString(Double o) {
+        return o.toString();
+    }
+
+    public static String convertToString(Duration o) {
+        return o.toString();
+    }
+
+    public static String convertToString(Float o) {
+        return o.toString();
+    }
+
+     public static String convertToString(Month o) {
+        return o.toString();
+    }
+    /* ################################################################################ */
     /* String to java type conversions
        These methods have a special signature structure
        <code>convertTo</code> followed by the schema type name
@@ -113,7 +169,7 @@ public class ConverterUtil {
     }
 
     public static boolean convertToboolean(String s) {
-        return Boolean.getBoolean(s);
+        return Boolean.valueOf(s).booleanValue();
     }
 
     public static Object convertToanyType(String s) {

@@ -6,6 +6,9 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Method;
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -26,6 +29,8 @@ public abstract class AbstractSimplePopulater extends TestCase {
 
     // force others to implement this method
     public abstract void testPopulate() throws Exception;
+    protected  String className= null;
+    protected Class propertyClass = null;
 
     // Simple reusable method to make object instances via reflection
     protected Object process(String testString,String className) throws Exception{
@@ -37,5 +42,30 @@ public abstract class AbstractSimplePopulater extends TestCase {
 
         return obj;
 
+    }
+
+    protected void checkValue(String xmlToSet, String value) throws Exception {
+        Object o = process(xmlToSet, className);
+        Class beanClass = Class.forName(className);
+        BeanInfo info = Introspector.getBeanInfo(beanClass);
+        PropertyDescriptor[] propDescs = info.getPropertyDescriptors();
+        for (int i = 0; i < propDescs.length; i++) {
+            PropertyDescriptor propDesc = propDescs[i];
+            if  (propDesc.getPropertyType().equals(propertyClass)){
+                String s = convertToString(propDesc.getReadMethod().invoke(o, null));
+                System.out.println("Asserting value = " + s + " from " + o);
+                compare(value,s);
+            }
+
+        }
+
+    }
+
+    protected void compare(String val1,String val2){
+         assertEquals(val1,val2);
+    }
+
+    protected String convertToString(Object o){
+        return o.toString();
     }
 }
