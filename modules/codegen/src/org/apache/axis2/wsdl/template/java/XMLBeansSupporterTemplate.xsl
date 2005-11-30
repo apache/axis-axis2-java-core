@@ -13,7 +13,13 @@
          *  <xsl:value-of select="@name"/> Supporter class for XML beans 
          */
 
-        public class <xsl:value-of select="@name"/> extends org.apache.axis2.client.AbstractCallbackSupporter{
+        import org.apache.axis2.om.OMElement;
+        import org.apache.axis2.om.OMNode;
+        import org.apache.axis2.om.OMText;
+        import javax.xml.namespace.QName;
+        import java.util.Iterator;
+
+        public class <xsl:value-of select="@name"/> {
         <xsl:variable name="base64"><xsl:value-of select="base64Elements/name"/></xsl:variable>
         <xsl:if test="$base64">
             private static javax.xml.namespace.QName[] qNameArray = {
@@ -79,6 +85,37 @@
         }
         return null;
         }
+
+        /**
+     *
+     * @param element
+     * @param qNames
+     */
+    protected static void optimizeContent(OMElement element, QName[] qNames){
+        for (int i = 0; i &lt; qNames.length; i++) {
+            markElementsAsOptimized(qNames[i],element);
+        }
+    }
+
+    /**
+     *
+     * @param qName
+     * @param rootElt
+     */
+    private static void markElementsAsOptimized(QName qName,OMElement rootElt){
+        if (rootElt.getQName().equals(qName)){
+            //get the text node and mark it
+            OMNode node = rootElt.getFirstOMChild();
+            if (node.getType()==OMNode.TEXT_NODE){
+                ((OMText)node).setOptimize(true);
+            }
+
+        }
+        Iterator childElements = rootElt.getChildElements();
+        while (childElements.hasNext()) {
+            markElementsAsOptimized(qName,(OMElement)childElements.next());
+        }
+    }
         }
     </xsl:template>
 
