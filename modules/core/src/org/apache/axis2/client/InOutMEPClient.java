@@ -27,7 +27,6 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
@@ -254,10 +253,9 @@ public class InOutMEPClient extends MEPClient {
 
 
 
-    protected void configureTransportInformation() throws AxisFault {
+    protected void configureTransportInformation(MessageContext msgCtx) throws AxisFault {
         AxisConfiguration axisConfig = this.serviceContext.getConfigurationContext().getAxisConfiguration();
         String listenerTransportProtocol = clientOptions.getListenerTransportProtocol();
-        String senderTrasportProtocol = clientOptions.getSenderTrasportProtocol();
         if (axisConfig != null) {
             if (listenerTransportProtocol != null && !"".equals(listenerTransportProtocol)) {
                 TransportInDescription transportIn = axisConfig.getTransportIn(new QName(listenerTransportProtocol));
@@ -266,13 +264,8 @@ public class InOutMEPClient extends MEPClient {
                 }
                 clientOptions.setListenerTransport(transportIn);
             }
-            if (senderTrasportProtocol != null && "".equals(senderTrasportProtocol)) {
-                TransportOutDescription transportOut = axisConfig.getTransportOut(new QName(senderTrasportProtocol));
-                if (transportOut == null) {
-                    throw new AxisFault(Messages.getMessage("unknownTransport", senderTrasportProtocol));
-                }
-                clientOptions.setSenderTransport(transportOut);
-            }
+
+            inferTransportOutDescription(msgCtx);
         }
 
         if (clientOptions.isUseSeperateListener()) {

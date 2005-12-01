@@ -46,7 +46,7 @@ import javax.xml.namespace.QName;
 
 public class MailOneWayRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
-            new EndpointReference("foo@127.0.0.1" +
+            new EndpointReference("mailto:foo@127.0.0.1" +
             "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
@@ -129,7 +129,6 @@ public class MailOneWayRawXMLTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setSenderTransportProtocol(Constants.TRANSPORT_MAIL);
 
         sender.send(operationName.getLocalPart(), payload);
         int index = 0;

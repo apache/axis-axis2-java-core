@@ -321,10 +321,10 @@ framework.</p>
 
 <p>The two pipes does not differentiate between the Server and the Client,
 the SOAP Processing Model handles the complexity and provides two abstract
-pipes to the user. Each pipe is a set of Handlers, the different areas of the
+pipes to the user. Each pipe is a set of Handlers. The different areas or the stages of the
 pipes are given names, and according to the Axis2 slang those are named
 'Phases'. A Handler always runs inside a Phase, and the Phase provides a
-mechanism to specify the ordering of Handlers. Both Pipes has built in
+mechanism to specify the ordering of Handlers. Both Pipes have built in
 Phases, and both define the areas for 'User Phases' which can be defined by
 the user.</p>
 
@@ -342,10 +342,10 @@ how to extend the default processing Model in the next section.</p>
 
 <p>There are four special handlers defined in Axis2.</p>
 <ol>
-  <li><p style="margin-bottom: 0in">Dispatchers - Find the Service the SOAP
+  <li>
+    <p style="margin-bottom: 0in">Dispatchers - Finds the service and the operation the SOAP
     message is directed to, always run on the In-Pipe and inside the Dispatch
-    Phase. There is a inbuilt Dispatcher, that run in any case and user may
-    override it by placing the dispatchers before the inbuilt Dispatcher.</p>
+    Phase. The in-built dispatchers dispatches to a particular operation depending on various conditions like WS-Addressing information, URI information, SOAP action information, etc., </p>
   </li>
   <li><p style="margin-bottom: 0in"><a name="mr"></a>Message Receiver -
     Consume the SOAP Message and run on the Message Processing Phase in the

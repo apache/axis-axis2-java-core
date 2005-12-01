@@ -23,13 +23,9 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.wsdl.WSDLConstants;
-
-import javax.xml.namespace.QName;
 
 /**
  * This class handles In-Only (fire and forget) MEP
@@ -73,15 +69,7 @@ public class InOnlyMEPClient extends MEPClient {
         engine.send(msgctx);
     }
 
-    protected void configureTransportInformation() throws AxisFault {
-        AxisConfiguration axisConfig = this.serviceContext.getConfigurationContext().getAxisConfiguration();
-        String senderTrasportProtocol = clientOptions.getSenderTrasportProtocol();
-        if (axisConfig != null) {
-            clientOptions.setSenderTransport(axisConfig.getTransportOut(new QName(senderTrasportProtocol)));
-        }
-        if (this.clientOptions.getSenderTransport() == null) {
-            throw new AxisFault(Messages.getMessage("unknownTransport", senderTrasportProtocol));
-        }
-
+    protected void configureTransportInformation(MessageContext msgCtx) throws AxisFault {
+        inferTransportOutDescription(msgCtx);
     }
 }

@@ -68,7 +68,7 @@ public abstract class MEPClient {
         // user must provide the minimum information for the engine to proceed with the invocation.
         // For the time being, I think he should at least provide the toEPR. So I should check that is
         // available either from the message context or from the options.
-        if ( (msgCtx == null || msgCtx.getTo() == null) && (clientOptions == null || clientOptions.getTo() == null ) ) {
+        if ((msgCtx == null || msgCtx.getTo() == null) && (clientOptions == null || clientOptions.getTo() == null)) {
             throw new AxisFault("Can not proceed without options being set for invocation. Set the" +
                     "properties for this invocation via MEPClient.setOptions(Options) first.");
         }
@@ -98,7 +98,7 @@ public abstract class MEPClient {
         addUserAddedSOAPHeaders(msgCtx, clientOptions);
 
         //find and set the transport details
-        configureTransportInformation();
+        configureTransportInformation(msgCtx);
 
     }
 
@@ -108,7 +108,7 @@ public abstract class MEPClient {
      * This will be called within the prepare invocation method, so user should not bother to call
      * this explicitly.
      */
-    protected abstract void configureTransportInformation() throws AxisFault;
+    protected abstract void configureTransportInformation(MessageContext msgCtxt) throws AxisFault;
 
     private void extractPropertiesFromOptionsToContexts(MessageContext msgCtx) throws AxisFault {
 
@@ -174,12 +174,19 @@ public abstract class MEPClient {
      * @throws AxisFault
      */
     protected TransportOutDescription inferTransport(EndpointReference epr) throws AxisFault {
-        String transport = null;
         if (epr != null) {
-            String toURL = epr.getAddress();
-            int index = toURL.indexOf(':');
+            return inferTransport(epr.getAddress());
+        } else {
+            throw new AxisFault(Messages.getMessage("cannotInferTransport"));
+        }
+    }
+
+    protected TransportOutDescription inferTransport(String uri) throws AxisFault {
+        String transport = null;
+        if (uri != null) {
+            int index = uri.indexOf(':');
             if (index > 0) {
-                transport = toURL.substring(0, index);
+                transport = uri.substring(0, index);
             }
         }
 
@@ -203,8 +210,8 @@ public abstract class MEPClient {
 
         // I added code to check the nullity in the prepareInvocation(). But it seems that this method
         // can be called before prepareInvocation().
-        if(clientOptions == null){
-           throw new AxisFault("Can not proceed without options being set for invocation. Set the" +
+        if (clientOptions == null) {
+            throw new AxisFault("Can not proceed without options being set for invocation. Set the" +
                     "properties for this invocation via MEPClient.setOptions(Options) first.");
         }
 
@@ -318,6 +325,33 @@ public abstract class MEPClient {
             soapHeaderList = new ArrayList();
         }
         soapHeaderList.add(soapHeaderBlock);
+    }
+
+    protected void inferTransportOutDescription(MessageContext msgCtx) throws AxisFault {
+        // user can set the transport by giving a TransportOutDescription or we will deduce that from the
+        // to epr information
+
+        // if user has not set the TransportOutDescription, lets infer that
+        if (clientOptions.getSenderTransport() == null) {
+            AxisConfiguration axisConfig = this.serviceContext.getConfigurationContext().getAxisConfiguration();
+
+            // we have a deprecated method for user to set the transport protocol directly. Lets support that also
+            String senderTrasportProtocol = clientOptions.getSenderTrasportProtocol();
+            if (axisConfig != null) {
+                if (senderTrasportProtocol == null || "".equals(senderTrasportProtocol)) {
+                    // by this time we have passed all the information we collected via Options to the
+                    // message context
+                    clientOptions.setSenderTransport(inferTransport(msgCtx.getTo()));
+                } else {
+                    // if he has not set the transport information, we gonna infer that from the to EPR
+                    clientOptions.setSenderTransport(axisConfig.getTransportOut(new QName(senderTrasportProtocol)));
+                }
+            }
+            if (this.clientOptions.getSenderTransport() == null) {
+                throw new AxisFault(Messages.getMessage("unknownTransport", senderTrasportProtocol));
+            }
+        }
+
     }
 
 

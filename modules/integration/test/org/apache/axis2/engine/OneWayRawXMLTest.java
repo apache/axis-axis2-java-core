@@ -20,7 +20,6 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.client.MessageSender;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
@@ -87,7 +86,6 @@ public class OneWayRawXMLTest extends TestCase implements TestConstants {
         Options options = new Options();
         sender.setClientOptions(options);
         options.setTo(targetEPR);
-        options.setSenderTransportProtocol(Constants.TRANSPORT_HTTP);
 
         sender.send(operationName.getLocalPart(), payload);
         int index = 0;

@@ -39,6 +39,7 @@ import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
+import org.apache.axis2.transport.local.LocalTransportSender;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,6 +57,7 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
     private SOAPEnvelope envelope;
 
     private boolean finish = false;
+    private TransportOutDescription tOut;
 
     public MessageContextInjectionTest() {
         super(MessageContextInjectionTest.class.getName());
@@ -71,7 +73,8 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         TransportInDescription tIn = new TransportInDescription(new QName(Constants.TRANSPORT_LOCAL));
         config.addTransportIn(tIn);
 
-        TransportOutDescription tOut = new TransportOutDescription(new QName(Constants.TRANSPORT_LOCAL));
+        tOut = new TransportOutDescription(new QName(Constants.TRANSPORT_LOCAL));
+        tOut.setSender(new LocalTransportSender());
         config.addTransportOut(tOut);
 
         LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(
@@ -118,9 +121,8 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         Options options = new Options();
         sender.setClientOptions(options);
         options.setTo(targetEPR);
-        options.setSenderTransportProtocol(Constants.TRANSPORT_LOCAL);
+        options.setSenderTransport(tOut);
         options.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        
         sender.send(operationName.getLocalPart(), payload);
 
     }

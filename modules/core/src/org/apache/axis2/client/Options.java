@@ -207,14 +207,6 @@ public class Options {
         }
     }
 
-    public String getSenderTrasportProtocol() {
-        return senderTrasportProtocol;
-    }
-
-    public void setSenderTransportProtocol(String senderTrasportProtocol) throws AxisFault {
-        this.senderTrasportProtocol = senderTrasportProtocol;
-    }
-
     public TransportInDescription getListenerTransport() {
         return listenerTransport;
     }
@@ -299,6 +291,14 @@ public class Options {
         return listenerTransportProtocol;
     }
 
+    public void setListenerTransportProtocol(String listenerTransportProtocol) {
+        this.listenerTransportProtocol = listenerTransportProtocol;
+    }
+
+    public String getSenderTrasportProtocol() {
+        return senderTrasportProtocol;
+    }
+
 
     /**
      * Sets transport information to the call. The senarios supported are as follows:
@@ -315,6 +315,9 @@ public class Options {
      * @param listenerTransport
      * @param useSeperateListener
      * @throws AxisFault
+     * @deprecated Use setListenerTransportProtocol(String) and useSeparateListener(boolean) instead.
+     *             You do not need to setSenderTransportProtocol(String) as sender transport can be inferred from the
+     *             to EPR. But still you can setSenderTransport(TransportOutDescription).
      */
 
     public void setTransportInfo(String senderTransport, String listenerTransport,
@@ -332,10 +335,10 @@ public class Options {
                 throw new AxisFault(Messages.getMessage("useSeparateListenerLimited"));
             }
         } else {
-            this.useSeperateListener = useSeperateListener;
+            setUseSeperateListener(useSeperateListener);
         }
 
-        this.listenerTransportProtocol = listenerTransport;
+        setListenerTransportProtocol(listenerTransport);
         this.senderTrasportProtocol = senderTransport;
     }
 }
