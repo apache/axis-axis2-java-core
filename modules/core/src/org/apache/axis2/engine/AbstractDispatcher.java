@@ -22,6 +22,8 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
@@ -33,6 +35,7 @@ import javax.xml.namespace.QName;
  * dispatch and returns without throwing an exception, in case, it fails.
  */
 public abstract class AbstractDispatcher extends AbstractHandler {
+    private Log log = LogFactory.getLog(getClass());
     /**
      * Field NAME
      */
@@ -57,30 +60,14 @@ public abstract class AbstractDispatcher extends AbstractHandler {
      * @param msgctx
      * @throws org.apache.axis2.AxisFault
      */
-    public final void invoke(MessageContext msgctx) throws AxisFault {
-
-        // first check we can dispatch using the relates to
-        if (msgctx.getRelatesTo() != null) {
-            String relatesTo = msgctx.getRelatesTo().getValue();
-            if (relatesTo != null || "".equals(relatesTo)) {
-                OperationContext operationContext = msgctx.getConfigurationContext().getOperationContext(relatesTo);
-                if (operationContext != null) {
-                    msgctx.setAxisOperation(operationContext.getAxisOperation());
-                    msgctx.setOperationContext(operationContext);
-                    msgctx.setServiceContext((ServiceContext) operationContext.getParent());
-                    msgctx.setAxisService(((ServiceContext) operationContext.getParent()).getAxisService());
-                    msgctx.getAxisOperation().registerOperationContext(msgctx, operationContext);
-                    msgctx.setServiceGroupContextId(((ServiceGroupContext) msgctx.getServiceContext().getParent()).getId());
-                }
-            }
-            return;
-        }
-
-
+    public void invoke(MessageContext msgctx) throws AxisFault {
         AxisService axisService = msgctx.getAxisService();
         if (axisService == null) {
             axisService = findService(msgctx);
             if (axisService != null) {
+                if(log.isDebugEnabled()) {
+                    log.debug("Found AxisService : " + axisService.getAxisServiceName()) ;
+                }
                 msgctx.setAxisService(axisService);
                 // TODO Chinthaka : set the Service Group Context to the message Context
             }
@@ -89,6 +76,9 @@ public abstract class AbstractDispatcher extends AbstractHandler {
         if (msgctx.getAxisService() != null && msgctx.getAxisOperation() == null) {
             AxisOperation axisOperation = findOperation(axisService, msgctx);
             if (axisOperation != null) {
+                if(log.isDebugEnabled()) {
+                    log.debug("Found AxisOperation : " + axisOperation.getName()) ;
+                }
                 msgctx.setAxisOperation(axisOperation);
             }
         }

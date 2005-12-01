@@ -21,6 +21,8 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
@@ -28,6 +30,7 @@ import javax.xml.namespace.QName;
  * Dispatches based on the SOAPAction.
  */
 public class SOAPActionBasedDispatcher extends AbstractDispatcher {
+    private Log log = LogFactory.getLog(getClass());
     /**
      * Field NAME
      */
@@ -44,6 +47,7 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
             throws AxisFault {
 
         String action = messageContext.getSoapAction();
+        log.debug("Checking for Operation using SOAPAction : " + action);
         if (action != null) {
             AxisOperation op = service.getOperationBySOAPAction(action);
             if (op == null) {
@@ -62,6 +66,7 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
      * @see org.apache.axis2.engine.AbstractDispatcher#findService(org.apache.axis2.context.MessageContext)
      */
     public AxisService findService(MessageContext messageContext) throws AxisFault {
+        log.debug("Checking for Service using SOAPAction is a TODO item");
         return null;
     }
 

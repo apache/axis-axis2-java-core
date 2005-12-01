@@ -24,6 +24,8 @@ import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.util.Utils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
@@ -32,6 +34,7 @@ import javax.xml.namespace.QName;
  * the body.
  */
 public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
+    private Log log = LogFactory.getLog(getClass());
     /**
      * Field NAME
      */
@@ -53,6 +56,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
         if (bodyFirstChild == null) {
             return null;
         } else {
+            log.debug("Checking for Operation using SOAP message body's first child's local name : " + bodyFirstChild.getLocalName());
             operationName = new QName(bodyFirstChild.getLocalName());
         }
 
@@ -69,6 +73,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
             OMNamespace ns = bodyFirstChild.getNamespace();
             if (ns != null) {
                 String filePart = ns.getName();
+                log.debug("Checking for Service using SOAP message body's first child's namespace : " + filePart);
 
                 String[] values = Utils.parseRequestURLForServiceAndOperation(
                         filePart);

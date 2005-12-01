@@ -20,10 +20,15 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.util.Utils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
@@ -31,6 +36,7 @@ import javax.xml.namespace.QName;
  * Dispatcher based on the WS-Addressing properties.
  */
 public class AddressingBasedDispatcher extends AbstractDispatcher implements AddressingConstants {
+    private Log log = LogFactory.getLog(getClass());
     /**
      * Field NAME
      */
@@ -42,17 +48,42 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
         init(new HandlerDescription(NAME));
     }
 
+    /**
+     * 
+     * @param msgctx
+     * @throws org.apache.axis2.AxisFault
+     */
+    public void invoke(MessageContext msgctx) throws AxisFault {
+        // first check we can dispatch using the relates to
+        if (msgctx.getRelatesTo() != null) {
+            log.debug("Checking RelatesTo : " + msgctx.getRelatesTo());
+            String relatesTo = msgctx.getRelatesTo().getValue();
+            if (relatesTo != null || "".equals(relatesTo)) {
+                OperationContext operationContext = msgctx.getConfigurationContext().getOperationContext(relatesTo);
+                if (operationContext != null) {
+                    msgctx.setAxisOperation(operationContext.getAxisOperation());
+                    msgctx.setOperationContext(operationContext);
+                    msgctx.setServiceContext((ServiceContext) operationContext.getParent());
+                    msgctx.setAxisService(((ServiceContext) operationContext.getParent()).getAxisService());
+                    msgctx.getAxisOperation().registerOperationContext(msgctx, operationContext);
+                    msgctx.setServiceGroupContextId(((ServiceGroupContext) msgctx.getServiceContext().getParent()).getId());
+                }
+            }
+            return;
+        }
+        super.invoke(msgctx);
+    }
+    
     //TODO this logic needed to be improved, as the Dispatching is almost garentnee to fail
     public AxisOperation findOperation(AxisService service,
                                        MessageContext messageContext)
             throws AxisFault {
+        log.debug("Checking for Operation using WSAAction : " + messageContext.getWSAAction());
         String action = messageContext.getWSAAction();
         if (action != null) {
             QName operationName = new QName(action);
             return service.getOperation(operationName);
         }
-
-
         return null;
     }
 
@@ -62,6 +93,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
         AxisService service = null;
         if (toEPR != null) {
             String address = toEPR.getAddress();
+            log.debug("Checking for Service using toEPR's address : " + address);
             if (Final.WSA_ANONYMOUS_URL.equals(address) || Submission.WSA_ANONYMOUS_URL.equals(address)) {
                 return null;
             }
@@ -69,6 +101,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
 
             String[] values = Utils.parseRequestURLForServiceAndOperation(
                     address);
+            log.debug("Checking for Service using toEPR : " + values[0]);
             if (values[0] != null) {
                 serviceName = new QName(values[0]);
                 AxisConfiguration registry =

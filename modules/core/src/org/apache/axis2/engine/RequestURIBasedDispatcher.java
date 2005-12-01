@@ -23,6 +23,8 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.util.Utils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
@@ -30,6 +32,7 @@ import javax.xml.namespace.QName;
  * Dispatches the service based on the information from the target endpoint URL.
  */
 public class RequestURIBasedDispatcher extends AbstractDispatcher {
+    private Log log = LogFactory.getLog(getClass());
     /**
      * Field NAME
      */
@@ -43,6 +46,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
     public AxisOperation findOperation(AxisService service,
                                        MessageContext messageContext)
             throws AxisFault {
+        log.debug("Checking for Operation using target endpoint uri fragment : " + operationName);
         if (operationName != null) {
             return service.getOperation(operationName);
         }
@@ -56,6 +60,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
         if (toEPR != null) {
+            log.debug("Checking for Service using target endpoint address : " + toEPR.getAddress());
             String filePart = toEPR.getAddress();
             String[] values = Utils.parseRequestURLForServiceAndOperation(
                     filePart);

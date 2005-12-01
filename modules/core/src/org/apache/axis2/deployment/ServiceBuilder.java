@@ -89,6 +89,12 @@ public class ServiceBuilder extends DescriptionBuilder {
                 } else {
                     service.setAxisServiceName(descriptionElement.getText());
                 }
+            } else {
+                OMAttribute serviceNameatt = service_element.getAttribute(
+                        new QName(ATTNAME));
+                if(serviceNameatt != null) {
+                    service.setAxisServiceName(serviceNameatt.getAttributeValue());
+                }                
             }
 
             //processing servicewide modules which required to engage gloabbly
