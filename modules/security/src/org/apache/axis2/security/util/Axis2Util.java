@@ -17,7 +17,6 @@
 package org.apache.axis2.security.util;
 
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.trust.TrustException;

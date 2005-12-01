@@ -16,7 +16,6 @@
 
 package org.apache.axis2.om;
 
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.commons.logging.Log;

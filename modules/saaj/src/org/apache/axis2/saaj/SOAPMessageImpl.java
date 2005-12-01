@@ -15,8 +15,6 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
