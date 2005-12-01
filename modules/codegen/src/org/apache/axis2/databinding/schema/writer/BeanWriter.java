@@ -5,6 +5,7 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.axis2.databinding.schema.BeanWriterMetaInfoHolder;
 import org.apache.axis2.databinding.schema.SchemaCompilationException;
+import org.apache.axis2.databinding.schema.CompilerOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +38,15 @@ public interface BeanWriter {
      * @throws IOException
      */
     public void init(File rootDir) throws IOException ;
+
+    /**
+     *  Init the write with compiler options
+     * @param options
+     * @throws IOException
+     */
+    public void init(CompilerOptions options) throws IOException ;
+
+
 
     /**
      * Write a complex type

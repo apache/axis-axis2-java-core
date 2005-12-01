@@ -6,6 +6,7 @@ import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.axis2.util.*;
 import org.apache.axis2.databinding.schema.BeanWriterMetaInfoHolder;
 import org.apache.axis2.databinding.schema.SchemaCompilationException;
+import org.apache.axis2.databinding.schema.CompilerOptions;
 import org.apache.axis2.databinding.schema.util.SchemaPropertyLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,6 +50,8 @@ public class JavaBeanWriter implements BeanWriter{
     private List namesList;
     private static int count = 0;
 
+    private String packageName=null;
+
 
 
     private File rootDir;
@@ -57,6 +60,11 @@ public class JavaBeanWriter implements BeanWriter{
      * Default constructor
      */
     public JavaBeanWriter(){
+    }
+
+    public void init(CompilerOptions options) throws IOException {
+        init(options.getOutputLocation());
+        this.packageName = options.getPackageName();
     }
 
     /**
@@ -111,7 +119,14 @@ public class JavaBeanWriter implements BeanWriter{
      * @throws Exception
      */
     private String process(QName qName, BeanWriterMetaInfoHolder metainf, Map typeMap, boolean isElement) throws Exception {
-        String packageName = URLProcessor.getNameSpaceFromURL(qName.getNamespaceURI());
+
+        String nameSpaceFromURL = URLProcessor.getNameSpaceFromURL(qName.getNamespaceURI());
+        String packageName = this.packageName==null?
+                     nameSpaceFromURL :
+                     this.packageName +nameSpaceFromURL;
+
+        
+
         String originalName = qName.getLocalPart();
         String className = getNonConflictingName(this.namesList,originalName);
 
@@ -168,7 +183,7 @@ public class JavaBeanWriter implements BeanWriter{
             XSLTUtils.addAttribute(model,"name",xmlName,property);
             XSLTUtils.addAttribute(model,"javaname",javaName,property);
             String javaClassNameForElement = metainf.getClassNameForQName(name);
-            
+
             String shortTypeName = "";
             if (metainf.getSchemaQNameForQName(name)!=null){
                 shortTypeName = metainf.getSchemaQNameForQName(name).getLocalPart();
@@ -270,7 +285,6 @@ public class JavaBeanWriter implements BeanWriter{
     public String write(XmlSchemaElement element, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException{
 
         try {
-            //determine the package for this type.
             QName qName = element.getQName();
             return process(qName, metainf, typeMap, true);
         } catch (Exception e) {

@@ -1,6 +1,8 @@
 package org.apache.axis2.databinding.schema;
 
 import java.io.File;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -29,6 +31,23 @@ public class CompilerOptions {
      * Generated output file
      */
     File outputLocation;
+    String packageName=null;
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public CompilerOptions setPackageName(String packageName) {
+        //validate the package name
+        //should be ***.***.***. type value
+        if (packageName!=null && testValue(packageName)){
+           this.packageName = packageName;
+        }else{
+            throw new RuntimeException("Unsupported value!");
+        }
+
+        return this;
+    }
 
     public File getOutputLocation() {
         return outputLocation;
@@ -39,4 +58,9 @@ public class CompilerOptions {
         return this;
     }
 
+    private boolean testValue(String wordToMatch){
+         Pattern pat = Pattern.compile("^(\\w+\\.)+$");
+         Matcher m= pat.matcher(wordToMatch);
+         return m.matches();
+    }
 }

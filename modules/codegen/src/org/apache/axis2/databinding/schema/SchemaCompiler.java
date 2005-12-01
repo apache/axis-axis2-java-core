@@ -75,7 +75,7 @@ public class SchemaCompiler {
 
             //load the writer
             this.writer = SchemaPropertyLoader.getBeanWriterInstance();
-            this.writer.init(this.options.getOutputLocation());
+            this.writer.init(this.options);
 
             //laod the base types
             baseSchemaTypeMap =SchemaPropertyLoader.getTypeMapperInstance().getTypeMap();
@@ -284,7 +284,7 @@ public class SchemaCompiler {
             }
         }else if (schemaType instanceof XmlSchemaSimpleType){
             //process simple type
-            processSimpleSchemaType((XmlSchemaSimpleType)schemaType);
+            processSimpleSchemaType(xsElt,(XmlSchemaSimpleType)schemaType);
         }
     }
 
@@ -520,7 +520,7 @@ public class SchemaCompiler {
      * Handle the simple content
      * @param simpleType
      */
-    private void processSimpleSchemaType(XmlSchemaSimpleType simpleType){
+    private void processSimpleSchemaType(XmlSchemaElement xsElt,XmlSchemaSimpleType simpleType){
         // handle the restriction
         XmlSchemaSimpleTypeContent content = simpleType.getContent();
         if (content!=null){
@@ -537,9 +537,13 @@ public class SchemaCompiler {
                     this.changedTypeMap.put(simpleType.getQName(),baseTypeName);
                 }else{
                     //recurse
+                    if (restriction.getBaseType()!= null){
+                        processSimpleSchemaType(xsElt, restriction.getBaseType());
+                    }
                     //processSimpleSchemaType(xsElt, new XmlSchemaSimpleType());
                 }
             }
+            //We still don't handle UNIONS of  simple types
         }
 
 

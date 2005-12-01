@@ -1,9 +1,12 @@
 package org.apache.axis2.wsdl.codegen.writer;
 
 import org.apache.axis2.util.FileWriter;
+import org.apache.axis2.wsdl.codegen.XSLTConstants;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Map;
+import java.util.Iterator;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -21,6 +24,9 @@ import java.io.FileOutputStream;
  */
 
 public class AntBuildWriter extends ClassWriter{
+
+    int databindingFramework = 0;
+
      public AntBuildWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);
     }
@@ -30,7 +36,9 @@ public class AntBuildWriter extends ClassWriter{
         this.language = language;
     }
 
-
+    public void setDatabindingFramework(int databindingFramework) {
+        this.databindingFramework = databindingFramework;
+    }
 
     public void createOutFile(String packageName, String fileName) throws Exception {
         File outputFile = FileWriter.createClassFile(outputFileLocation,
@@ -42,5 +50,49 @@ public class AntBuildWriter extends ClassWriter{
         if (!fileExists){
             this.stream = new FileOutputStream(outputFile);
         }
+    }
+
+     //overridden to get the correct behavior
+    protected String findTemplate(Map languageSpecificPropertyMap) {
+        String ownClazzName =  this.getClass().getName();
+        String key;
+        String propertyValue;
+        String templateName = null;
+        Iterator keys = languageSpecificPropertyMap.keySet().iterator();
+        String databindString;
+
+        //set the correct databinding type string
+        switch(this.databindingFramework)  {
+            case XSLTConstants.DataBindingTypes.XML_BEANS:
+                databindString = "xmlbeans";
+                break;
+            case XSLTConstants.DataBindingTypes.JAXB:
+                databindString = "jaxb";
+                break;
+            case XSLTConstants.DataBindingTypes.ADB:
+                databindString = "adb";
+                break;
+            default:
+                databindString = "default";
+        }
+
+        while (keys.hasNext()) {
+            //check for template entries
+            key = keys.next().toString();
+            if (key.endsWith(TEMPLATE_SUFFIX)){
+                // check if the class name is there
+                propertyValue = languageSpecificPropertyMap.get(key).toString();
+                if (propertyValue.startsWith(ownClazzName)){
+                    if (key.indexOf(databindString)!=-1){
+                        templateName = propertyValue.substring(propertyValue.indexOf(SEPERATOR_STRING)+1) ;
+                        break;
+                    }
+                }
+            }
+
+        }
+
+        return templateName;
+
     }
 }

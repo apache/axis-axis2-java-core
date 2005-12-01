@@ -42,6 +42,8 @@ import java.util.Vector;
  *
  */
 public class SimpleDBExtension extends AbstractCodeGenerationExtension {
+    public static final String ADB_PACKAGE_NAME_PREFIX = "adb.";
+
     public void init(CodeGenConfiguration configuration) {
         this.configuration = configuration;
     }
@@ -95,6 +97,8 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
             }
             //call the schema compiler
             CompilerOptions options = new CompilerOptions().setOutputLocation(configuration.getOutputLocation());
+            options.setPackageName(ADB_PACKAGE_NAME_PREFIX);
+
             SchemaCompiler schemaCompiler = new SchemaCompiler(options);
             schemaCompiler
                     .compile(xmlSchemaTypeVector);

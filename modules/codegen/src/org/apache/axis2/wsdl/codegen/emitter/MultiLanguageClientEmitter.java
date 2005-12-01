@@ -420,9 +420,10 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 axisInterface, axisBinding);
         
 
-        ClassWriter antBuildWriter = new AntBuildWriter(
+        AntBuildWriter antBuildWriter = new AntBuildWriter(
                 this.configuration.getOutputLocation(),
                 this.configuration.getOutputLanguage());
+        antBuildWriter.setDatabindingFramework(this.configuration.getDatabindingType());
         writeClass(skeletonModel, antBuildWriter);
     }
 
