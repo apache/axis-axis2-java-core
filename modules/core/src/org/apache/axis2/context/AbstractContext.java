@@ -82,8 +82,35 @@ public abstract class AbstractContext {
         return properties;
     }
 
-    public void setProperties(Map properties) {
-        this.properties = properties;
-    }
+//    /**
+//     * This will set the properties to the context. But in setting that one may need to "copy" all
+//     * the properties from the source properties to the target properties. To enable this we introduced
+//     * a property (org.apache.axis2.client.Options#COPY_PROPERTIES) so that if set to true, this code
+//     * will copy the whole thing, without just referencing to the source.
+//     *
+//     * @param properties
+//     * @see org.apache.axis2.client.Options#COPY_PROPERTIES
+//     */
+//    public void setProperties(Map properties) {
+//        properties = new HashMap();
+//        if (properties == null) {
+//            this.properties = null;
+//        } else {
+//            Boolean copyProperties = ((Boolean) properties.get(Options.COPY_PROPERTIES));
+//            if (copyProperties != null && copyProperties.booleanValue()) {
+//                Iterator iterator = properties.keySet().iterator();
+//                while (iterator.hasNext()) {
+//                    Object key = iterator.next();
+//                    this.properties.put(key, properties.get(key));
+//                }
+//            } else {
+//                this.properties = properties;
+//            }
+//        }
+//    }
+
+     public void setProperties(Map properties) {
+         this.properties = properties;
+     }
 
 }

@@ -40,7 +40,7 @@
 <h2><a name="bmBP"></a>The Big Picture</h2>
 
 <p>Any architecture is a result of what that architecture should yield, the
-success of an architecture should be evaluated bases on the requirements the
+success of an architecture should be evaluated based on the requirements the
 architecture should meet. Let us start our journey in to Axis2 looking at the
 requirements that are expected from Axis2.</p>
 
@@ -54,13 +54,13 @@ delivery is the most basic unit that builds the Web Service interactions.</p>
 
 <p>Each SOAP Node may be written in specific programming language, may it be
 Java, C++, .NET or Perl, the Web Services allow them to inter operate. This
-is possible because at the wire each Web Service interaction is done via
+is possible because, at the wire, each Web Service interaction is done via
 SOAP, which is common to every SOAP Node.</p>
 
 <p><img src="images/archi-guide/soap.gif" name="Graphic1" align="bottom"
 width="691" height="319" border="0"></p>
 
-<p>Web Service middleware handles the complexity SOAP messaging and let the
+<p>Web Service middleware handles the complexity in SOAP messaging and let the
 users to work with the programming language they are accustomed to. Axis2
 allows the java users to invoke the Web Services using java representations
 and handles the SOAP messaging behind the curtain.</p>
@@ -69,25 +69,22 @@ and handles the SOAP messaging behind the curtain.</p>
 that make the life of the Web Service developer convenient. Following are the
 identified requirements:</p>
 <ol>
-  <li><p style="margin-bottom: 0in">Provide a framework to process the SOAP
+  <li>
+    <p style="margin-bottom: 0in">Provide a framework to process the SOAP
     messages, the framework should be extensible and the users should be able
-    to extend the SOAP processing per service or operation basis. Furthermore
-    it should be able to model different Message Exchange Patterns using the
+    to extend the SOAP processing per service or per operation basis. Furthermore
+    it should be able to model different Message Exchange Patterns (MEP) using the
     processing framework.</p>
   </li>
-  <li><p style="margin-bottom: 0in">Ability to deploy the Web Services (with
-    or without WSDL)</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Provide a Client API that can be used to
-    invoke Web Services, the API should supports both the Synchronous and
-    Asynchronous programming models.</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Ability to configure Axis2 and it's
-    components via the deployment</p>
-  </li>
-  <li><p>Ability to send and receive SOAP messages with different
-    transports</p>
-  </li>
+  <li>Ability to deploy the Web Services (with
+  or without WSDL)</li>
+  <li>Provide a Client API that can be used to
+    invoke Web Services, the API should support both the Synchronous and
+  Asynchronous programming models.</li>
+  <li>Ability to configure Axis2 and it's
+  components via the deployment</li>
+  <li>Ability to send and receive SOAP messages with different
+  transports</li>
 </ol>
 
 <p>Apart from the above functionalities, performance, both in the terms of
@@ -102,39 +99,36 @@ future.</p>
 <p>Now having look at the requirements of the Axis2 we can direct our
 attention to the Architecture.</p>
 
-<p>Axis2 architecture lay out few Principals to preserve the uniformity of
+<p>Axis2 architecture lay out few principals to preserve the uniformity of
 the architecture, they are as follows.</p>
 <ul>
   <li><p style="margin-bottom: 0in">Axis2 Architecture separates the logic
     and the states, the code that process the logic is usually stateless.
     This allows the code to be executed freely by parallel threads.</p>
   </li>
-  <li><p>All the information is kept in a one Information model, this allows
-    the system to be stored and resumed</p>
-  </li>
+  <li>All the information is kept in a one information model, this allows
+  the system to be stored and resumed</li>
 </ul>
 
 <p>Axis2 architecture is modular, the architecture broke the Axis2 in to
-Seven modules.</p>
+seven modules.</p>
 <ol>
   <li><p style="margin-bottom: 0in">Information Model</p>
   </li>
-  <li><p style="margin-bottom: 0in">XML processing Model</p>
-  </li>
-  <li><p style="margin-bottom: 0in">SOAP Processing Model</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Deployment</p>
-  </li>
-  <li><p style="margin-bottom: 0in">WSDL and Code Generation</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Client API</p>
-  </li>
-  <li><p>Transports</p>
-  </li>
+  <li>XML processing Model</li>
+  <li>SOAP Processing Model</li>
+  <li>Deployment</li>
+  <li>WSDL and Code Generation</li>
+  <li>Client API</li>
+  <li>Transports</li>
 </ol>
 
-<p><img src="images/archi-guide/all.png" name="Graphic2" align="bottom"
-width="426" height="189" border="0"></p>
+<p><img src="images/archi-guide/all.png" name="Graphic2"
+width="426" height="189" border="0" align="bottom" usemap="#Graphic2Map">
+  <map name="Graphic2Map">
+    <area shape="rect" coords="123,31,222,97" href="#bmInfoMod">
+  </map>
+</p>
 
 <p>Let us look in to the rationale for each Module, and what each does?</p>
 
@@ -145,11 +139,11 @@ system manages the life cycle of the objects in this hierarchy.</p>
 <p>Handling the SOAP Message is the most important and the most complex task,
 the efficiency of this is the single most important factor that decides the
 performance. It make sense to delegate this task to a separate module, and
-that module, AXIOM provide a simple API for SOAP and XML info-set and while
-hiding the complexities of the efficient XML processing with in the
+that module, AXIOM provide a simple API for SOAP and XML info-set  while
+hiding the complexities of the efficient XML processing within the
 implementation.</p>
 
-<p>SOAP Processing Model controls the execution of the processing, the Model
+<p>SOAP Processing Model controls the execution of the processing, the model
 defines different phases the execution would walk though, and the user can
 extend the Processing Model at some specific places.</p>
 

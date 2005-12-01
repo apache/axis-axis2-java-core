@@ -40,6 +40,7 @@ import java.util.Map;
  */
 public class Options {
 
+
     private Map properties = new HashMap();
 
     // ==========================================================================
@@ -76,6 +77,8 @@ public class Options {
     // ==========================================================================
     //  Constants
     // ==========================================================================
+    public static final String COPY_PROPERTIES = "CopyProperties";
+
     private static final int DEFAULT_TIMEOUT_MILLISECONDS = 2000;
     // ==========================================================================
 
@@ -103,6 +106,14 @@ public class Options {
         return properties;
     }
 
+    /**
+     * This will set the properties to the context. But in setting that one may need to "copy" all
+     * the properties from the source properties to the target properties. To enable this we introduced
+     * a property (org.apache.axis2.client.Options#COPY_PROPERTIES) so that if set to Boolean(true),
+     * this code will copy the whole thing, without just referencing to the source.
+     *
+     * @param properties
+     */
     public void setProperties(Map properties) {
         this.properties = properties;
     }
