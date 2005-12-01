@@ -122,9 +122,9 @@
              _options.setSoapAction("<xsl:value-of select="$soapAction"/>");
             
             if(wsaAction != null) {
-            	_messageContext.setWSAAction(wsaAction);
+            	_call.getClientOptions().setAction(wsaAction);
             } else {
-            <xsl:for-each select="input/param[@Action!='']">_messageContext.setWSAAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
+            <xsl:for-each select="input/param[@Action!='']">_call.getClientOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
 			}
              //set the properties
             populateProperties(_call);
@@ -221,9 +221,9 @@
              _options.setSoapAction("<xsl:value-of select="$soapAction"/>");
             
             if(wsaAction != null) {
-            	_messageContext.setWSAAction(wsaAction);
+               _call.getClientOptions().setAction(wsaAction);
             } else {
-            <xsl:for-each select="input/param[@Action!='']">_messageContext.setWSAAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
+            <xsl:for-each select="input/param[@Action!='']">_call.getClientOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
 			}
              org.apache.axis2.soap.SOAPEnvelope env = createEnvelope();
              <xsl:choose>
@@ -308,9 +308,9 @@
             _msgSender.setTo(this.toEPR);
             _msgSender.setSoapAction("<xsl:value-of select="$soapAction"/>");
             if(wsaAction != null) {
-            	_messageContext.setWSAAction(wsaAction);
+            	_call.getClientOptions().setAction(wsaAction);
             } else {
-            <xsl:for-each select="input/param[@Action!='']">_messageContext.setWSAAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
+            <xsl:for-each select="input/param[@Action!='']">_call.getClientOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
 			}
           org.apache.axis2.soap.SOAPEnvelope env = null;
             env = createEnvelope();
