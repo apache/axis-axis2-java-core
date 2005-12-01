@@ -248,8 +248,10 @@ public class DeploymentEngine implements DeploymentConstants {
             }
         } else {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            in =
-                    cl.getResourceAsStream(AXIS2_CONFIGURATION_RESOURCE);
+            in = cl.getResourceAsStream(AXIS2_CONFIGURATION_RESOURCE);
+            if (in == null) {
+                throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.CONFIG_NOT_FOUND));
+            }
         }
         axisConfig = createEngineConfig();
         AxisConfigBuilder builder = new AxisConfigBuilder(in, this, axisConfig);
