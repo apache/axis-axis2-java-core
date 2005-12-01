@@ -23,6 +23,7 @@ import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.w3c.dom.DOMException;
@@ -304,7 +305,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
      * @see ParentNode
      *
      * @return org.w3c.dom.Node
-     * @param Index int
+     * @param index
      */
     public Node item(int index) {
         return null;
@@ -560,5 +561,29 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
 
     public void serializeAndConsume(Writer writer) throws XMLStreamException {
         serializeAndConsume(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+    }
+
+    public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {    
+        OMOutputImpl omOutput = new  OMOutputImpl(output, false);
+        omOutput.setOutputFormat(format);
+        serialize(omOutput);
+    }
+
+    public void serialize(Writer writer, OMOutputFormat format) throws XMLStreamException {
+        OMOutputImpl omOutput = new  OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+        omOutput.setOutputFormat(format);
+        serialize(omOutput);
+    }
+
+    public void serializeAndConsume(OutputStream output, OMOutputFormat format) throws XMLStreamException {
+        OMOutputImpl omOutput = new  OMOutputImpl(output, false);
+        omOutput.setOutputFormat(format);
+        serializeAndConsume(omOutput);
+    }
+
+    public void serializeAndConsume(Writer writer, OMOutputFormat format) throws XMLStreamException {
+        OMOutputImpl omOutput = new  OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+        omOutput.setOutputFormat(format);
+        serializeAndConsume(omOutput);
     }
 }

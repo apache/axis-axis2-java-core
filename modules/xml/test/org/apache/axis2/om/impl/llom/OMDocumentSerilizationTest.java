@@ -22,7 +22,7 @@ import org.apache.axis2.om.OMDocument;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.OMOutputFormat;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayOutputStream;
@@ -74,10 +74,9 @@ public class OMDocumentSerilizationTest extends TestCase {
 	
 	public void testExcludeXMLDeclaration() throws XMLStreamException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		OMOutputImpl output = new OMOutputImpl(baos,false);
-        output.setIgnoreXMLDeclaration(true);
-        document.serializeAndConsume(output);
-		output.flush();
+		OMOutputFormat format = new OMOutputFormat();
+        format.setIgnoreXMLDeclaration(true);
+        document.serializeAndConsume(baos, format);
 		
 		String xmlDocument = new String(baos.toByteArray());
 		
@@ -100,10 +99,9 @@ public class OMDocumentSerilizationTest extends TestCase {
 	
 	public void testCharsetEncodingUTF_16() throws XMLStreamException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		OMOutputImpl output = new OMOutputImpl(baos,false);
-		output.setCharSetEncoding("UTF-16");
-		document.serializeAndConsume(output);
-		output.flush();
+		OMOutputFormat format = new OMOutputFormat();
+		format.setCharSetEncoding("UTF-16");
+		document.serializeAndConsume(baos, format);
 		
 		String xmlDocument = new String(baos.toByteArray());
 		assertTrue("Charset declaration missing",-1<xmlDocument.indexOf(encoding_UTF16) ||

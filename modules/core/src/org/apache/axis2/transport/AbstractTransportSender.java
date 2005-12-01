@@ -28,6 +28,7 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
 import org.apache.commons.logging.Log;
@@ -138,7 +139,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
 						.getProperty(MessageContext.CHARACTER_SET_ENCODING);
 				omOutput.setOutputStream(out, msgContext.isDoingMTOM());
                 omOutput.setCharSetEncoding(charSetEnc);
-				outputMessage.serializeAndConsume(omOutput);
+				((OMNodeEx)outputMessage).serializeAndConsume(omOutput);
                 omOutput.flush();
                 out.flush();
             } catch (Exception e) {

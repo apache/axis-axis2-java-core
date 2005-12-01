@@ -32,6 +32,7 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.transport.TransportSender;
@@ -252,7 +253,7 @@ public class CommonsHTTPTransportSender
                     }
                 }
                 omOutput.setOutputStream(out, msgContext.isDoingMTOM());
-                dataOut.serializeAndConsume(omOutput);
+                ((OMNodeEx)dataOut).serializeAndConsume(omOutput);
                 omOutput.flush();
             }
             if (msgContext.getOperationContext() != null) {
@@ -269,9 +270,6 @@ public class CommonsHTTPTransportSender
         }
     }
 
-    /**
-     * @return
-     */
     private String findContentType(boolean isRest, MessageContext msgContext) {
         if (isRest) {
             if (msgContext.getProperty(HTTPConstants.HTTP_CONTENT_TYPE) != null) {
@@ -413,14 +411,14 @@ public class CommonsHTTPTransportSender
                                             charSetEnc);
                     OMOutputImpl output = new OMOutputImpl(outputWriter);
                     output.setCharSetEncoding(charSetEnc);
-                    element.serializeAndConsume(output);
+                    ((OMNodeEx)element).serializeAndConsume(output);
                     output.flush();
                     return bytesOut.toByteArray();
 
                 } else {
                     omOutput.setCharSetEncoding(charSetEnc);
                     omOutput.setOutputStream(bytesOut, true);  //changed...
-                    element.serializeAndConsume(omOutput);
+                    ((OMNodeEx)element).serializeAndConsume(omOutput);
                     omOutput.flush();
                     return bytesOut.toByteArray();
                 }
@@ -434,7 +432,7 @@ public class CommonsHTTPTransportSender
         private void handleOMOutput(OutputStream out, boolean doingMTOM)
                 throws XMLStreamException {
             omOutput.setOutputStream(out, doingMTOM);
-            element.serializeAndConsume(omOutput);
+            ((OMNodeEx)element).serializeAndConsume(omOutput);
             omOutput.flush();
         }
 

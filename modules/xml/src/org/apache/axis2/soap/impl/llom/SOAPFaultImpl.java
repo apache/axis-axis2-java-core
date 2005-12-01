@@ -24,6 +24,7 @@ import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.OMElementImpl;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPConstants;
@@ -208,23 +209,23 @@ public abstract class SOAPFaultImpl extends SOAPElement
         OMSerializerUtil.serializeStartpart(this, omOutput);
         SOAPFaultCode faultCode = getCode();
         if (faultCode != null) {
-            faultCode.serialize(omOutput);
+            ((OMNodeEx)faultCode).serialize(omOutput);
         }
         SOAPFaultReason faultReason = getReason();
         if (faultReason != null) {
-            faultReason.serialize(omOutput);
+            ((OMNodeEx)faultReason).serialize(omOutput);
         }
 
         serializeFaultNode(omOutput);
 
         SOAPFaultRole faultRole = getRole();
         if (faultRole != null) {
-            faultRole.serialize(omOutput);
+            ((OMNodeEx)faultRole).serialize(omOutput);
         }
 
         SOAPFaultDetail faultDetail = getDetail();
         if (faultDetail != null) {
-            faultDetail.serialize(omOutput);
+            ((OMNodeEx)faultDetail).serialize(omOutput);
         }
 
         OMSerializerUtil.serializeEndpart(omOutput);

@@ -33,6 +33,7 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.om.impl.llom.traverse.OMChildElementIterator;
 import org.apache.axis2.om.impl.llom.util.EmptyIterator;
@@ -803,7 +804,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
             //serilize children
             Iterator children = this.getChildren();
             while (children.hasNext()) {
-                ((OMNode) children.next()).serialize(omOutput);
+                ((OMNodeEx) children.next()).serialize(omOutput);
             }
             OMSerializerUtil.serializeEndpart(omOutput);
 
@@ -816,7 +817,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
                 Iterator children = this.getChildren();
                 while (children.hasNext()) {
                     //A call to the  Serialize or the serializeAndConsume wont make a difference here
-                    ((OMNode) children.next()).serializeAndConsume(omOutput);
+                    ((OMNodeEx) children.next()).serializeAndConsume(omOutput);
                 }
                 OMSerializerUtil.serializeEndpart(omOutput);
             } else {
@@ -984,7 +985,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     /**
      * return the namespace uri, given the prefix
      * @param prefix
-     * @return
+     * @return namespace
      */
     public String getNamespaceURI(String prefix) {
     	return ((OMNamespace)this.namespaces.get(prefix)).getName();

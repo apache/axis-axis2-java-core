@@ -69,7 +69,6 @@ public class AbstractOMSerializationTest extends XMLTestCase {
     public String getSerializedOM(String xmlString) throws Exception {
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
-//            factory.setProperty("http://java.sun.com/xml/stream/properties/report-cdata-event", Boolean.TRUE);
 
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(xmlString.getBytes());
             StAXOMBuilder staxOMBuilder = OMXMLBuilderFactory.
@@ -80,12 +79,10 @@ public class AbstractOMSerializationTest extends XMLTestCase {
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-            OMOutputImpl omOutput = new OMOutputImpl(baos, false);
-            omOutput.setIgnoreXMLDeclaration(ignoreXMLDeclaration);
+            OMOutputFormat format = new OMOutputFormat();
+            format.setIgnoreXMLDeclaration(ignoreXMLDeclaration);
 
-//            rootElement.serializeAndConsume(omOutput);
-            ((OMDocument) rootElement.getParent()).serialize(omOutput);
-            omOutput.flush();
+            ((OMDocument) rootElement.getParent()).serialize(baos, format);
 
             return new String(baos.toByteArray());
         } catch (Exception e) {
@@ -97,7 +94,6 @@ public class AbstractOMSerializationTest extends XMLTestCase {
 
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
-//            factory.setProperty("http://java.sun.com/xml/stream/properties/report-cdata-event", Boolean.TRUE);
 
             StAXOMBuilder staxOMBuilder = OMXMLBuilderFactory.
                     createStAXOMBuilder(OMAbstractFactory.getOMFactory(),
@@ -120,7 +116,6 @@ public class AbstractOMSerializationTest extends XMLTestCase {
             Document dom1 = newDocument(inStream);
 
             return compareXML(dom1, dom2);
-//            assertXMLEqual(diff, true);
         } catch (XMLStreamException e) {
             fail(e.getMessage());
             throw new Exception(e);

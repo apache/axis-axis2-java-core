@@ -4,7 +4,6 @@ import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.wsdl.*;
@@ -540,13 +539,13 @@ public class WOMtoWSDL11Writer implements WOMWriter {
     protected void handleExtensibiltyElements(List extElementList) throws XMLStreamException, IOException {
         int extensibilityElementCount = extElementList.size();
         for (int i = 0; i < extensibilityElementCount; i++) {
-            writeExtensibiltyElement((WSDLExtensibilityElement) extElementList.get(i));
+            writeExtensibilityElement((WSDLExtensibilityElement) extElementList.get(i));
         }
 
     }
 
     //to write scheam types into output straem
-    private void writeScheams(Element element) throws XMLStreamException {
+    private void writeSchemas(Element element) throws XMLStreamException {
         writer.flush();
         String scheamTypes = DOM2Writer.nodeToString(element);
         XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(new
@@ -555,20 +554,19 @@ public class WOMtoWSDL11Writer implements WOMWriter {
 
         StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
         OMElement scheamElement = staxOMBuilder.getDocumentElement();
-        scheamElement.serialize(new OMOutputImpl(writer));
-       // writer.flush();
+        scheamElement.serialize(writer);
     }
 
     /**
      * @param extElement
      * @throws IOException
      */
-    protected void writeExtensibiltyElement(WSDLExtensibilityElement extElement) throws IOException, XMLStreamException {
+    protected void writeExtensibilityElement(WSDLExtensibilityElement extElement) throws IOException, XMLStreamException {
 
         if (extElement instanceof Schema) {
             Element element = ((Schema) extElement).getElement();
 //            if (element.getNodeValue() != null) {
-            writeScheams(element);
+            writeSchemas(element);
 //            rawWriter.write(element.toString()); //quick hack for crimson
 //            }
         } else if (extElement instanceof SOAPAddress) {

@@ -18,6 +18,7 @@ package org.apache.axis2.soap.impl.llom.soap12;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPFaultCode;
@@ -48,7 +49,6 @@ public class SOAP12FaultImpl extends SOAPFaultImpl {
      * This is a convenience method for the SOAP Fault Impl.
      *
      * @param parent
-     * @param e
      */
     public SOAP12FaultImpl(SOAPBody parent) throws SOAPProcessingException {
         super(parent);
@@ -110,7 +110,7 @@ public class SOAP12FaultImpl extends SOAPFaultImpl {
     protected void serializeFaultNode(org.apache.axis2.om.impl.OMOutputImpl omOutput) throws XMLStreamException {
         SOAPFaultNode faultNode = getNode();
         if (faultNode != null) {
-            faultNode.serialize(omOutput);
+            ((OMNodeEx)faultNode).serialize(omOutput);
         }
     }
 }

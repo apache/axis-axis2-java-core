@@ -20,6 +20,7 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
@@ -67,7 +68,7 @@ public class CharacterEncodingTest extends TestCase {
 				.newInstance().createXMLStreamWriter(byteOutStr,UTF_16);
 		OMOutputImpl outputImpl = new OMOutputImpl(writer);
         outputImpl.setCharSetEncoding(UTF_16);
-		envelope.serialize(outputImpl);
+		((OMNodeEx)envelope).serialize(outputImpl);
 		outputImpl.flush();
 		
 		ByteArrayInputStream byteInStr = new ByteArrayInputStream(byteOutStr.toByteArray());

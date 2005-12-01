@@ -82,17 +82,19 @@ public interface OMDocument extends OMContainer {
 
     /**
      * Serialize the OMDocument
-     * @param omOutput
+     * @param output
+     * @param format
      * @throws XMLStreamException
      */
-    public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException;
+    public void serializeAndConsume(OutputStream output, OMOutputFormat format) throws XMLStreamException;
 
     /**
      * Serializa the document with cache on
-     * @param omOutput
+     * @param output
+     * @param format
      * @throws XMLStreamException
      */
-    public void serialize(OMOutputImpl omOutput) throws XMLStreamException;
+    public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException;
 
     /**
      * Serialize the OMDocument

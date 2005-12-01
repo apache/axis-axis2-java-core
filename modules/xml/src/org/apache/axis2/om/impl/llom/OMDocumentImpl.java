@@ -21,6 +21,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMXMLParserWrapper;
+import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.om.impl.OMContainerEx;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.OMOutputImpl;
@@ -305,8 +306,6 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
 
     /**
      * Serialize the document with cache
-     *
-     * @see org.apache.axis2.om.OMDocument#serialize(org.apache.axis2.om.impl.OMOutputImpl)
      */
     public void serialize(OMOutputImpl omOutput) throws XMLStreamException {
         serialize(omOutput, true, !omOutput.isIgnoreXMLDeclaration());
@@ -338,6 +337,34 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
+     * Serialize the document directly to the outputstream with Caching disabled
+     * 
+     * @param output
+     * @param format
+     * @throws XMLStreamException
+     */
+    public void serializeAndConsume(OutputStream output, OMOutputFormat format) throws XMLStreamException {
+        OMOutputImpl omOutput = new OMOutputImpl(output,false);
+        omOutput.setOutputFormat(format);
+        serializeAndConsume(omOutput);
+        omOutput.flush();
+    }
+
+    /**
+     * Serialize the document directly to the outputstream with Caching enabled
+     * 
+     * @param output
+     * @param format
+     * @throws XMLStreamException
+     */
+    public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
+        OMOutputImpl omOutput = new OMOutputImpl(output,false);
+        omOutput.setOutputFormat(format);
+        serialize(omOutput);
+        omOutput.flush();
+    }
+
+    /**
      * Serialize the document with cache
      */
     public void serialize(OMOutputImpl omOutput, boolean includeXMLDeclaration) throws XMLStreamException {
@@ -363,12 +390,12 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
 
         if (cache) {
             while (children.hasNext()) {
-                OMNode omNode = (OMNode) children.next();
+                OMNodeEx omNode = (OMNodeEx) children.next();
                 omNode.serialize(omOutput);
             }
         } else {
             while (children.hasNext()) {
-                OMNode omNode = (OMNode) children.next();
+                OMNodeEx omNode = (OMNodeEx) children.next();
                 omNode.serializeAndConsume(omOutput);
             }
         }

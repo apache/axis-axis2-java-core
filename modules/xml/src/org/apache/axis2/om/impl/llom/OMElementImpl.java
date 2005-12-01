@@ -678,10 +678,10 @@ public class OMElementImpl extends OMNodeImpl
             //in this case we don't care whether the elements are built or not
             //we just call the serializeAndConsume methods
             OMSerializerUtil.serializeStartpart(this, omOutput);
-//serilize children
+            //serialize children
             Iterator children = this.getChildren();
             while (children.hasNext()) {
-                ((OMNode) children.next()).serialize(omOutput);
+                ((OMNodeEx) children.next()).serialize(omOutput);
             }
             OMSerializerUtil.serializeEndpart(omOutput);
 
@@ -690,11 +690,11 @@ public class OMElementImpl extends OMNodeImpl
             //has nothing to do if the element is already built!
             if (this.done) {
                 OMSerializerUtil.serializeStartpart(this, omOutput);
-//serializeAndConsume children
+                //serializeAndConsume children
                 Iterator children = this.getChildren();
                 while (children.hasNext()) {
                     //A call to the  Serialize or the serializeAndConsume wont make a difference here
-                    ((OMNode) children.next()).serializeAndConsume(omOutput);
+                    ((OMNodeEx) children.next()).serializeAndConsume(omOutput);
                 }
                 OMSerializerUtil.serializeEndpart(omOutput);
             } else {

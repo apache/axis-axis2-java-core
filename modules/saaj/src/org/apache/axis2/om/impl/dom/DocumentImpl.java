@@ -15,16 +15,12 @@
  */
 package org.apache.axis2.om.impl.dom;
 
-import java.util.Hashtable;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMDocument;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.dom.util.XMLChar;
@@ -44,6 +40,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.OutputStream;
+import java.util.Hashtable;
 
 /**
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
@@ -353,9 +354,19 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 		throw new UnsupportedOperationException("TODO");
 	}
 
-	public void setXMLVersion(String version) {
-		this.xmlVersion = version;
-	}
+    public void serializeAndConsume(OutputStream output, OMOutputFormat format) throws XMLStreamException {
+        //TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
+        //TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    public void setXMLVersion(String version) {
+        this.xmlVersion = version;
+    }
 	
 	/**
 	 * Returns the document element

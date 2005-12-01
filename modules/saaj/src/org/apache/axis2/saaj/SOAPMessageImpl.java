@@ -16,6 +16,7 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -251,7 +252,7 @@ public class SOAPMessageImpl extends SOAPMessage {
             }
             output.setOutputStream(out, false);
             //the writeTo method forces the elements to be built!!!
-            ((SOAPEnvelopeImpl) mSOAPPart.getEnvelope()).getOMEnvelope()
+            ((OMNodeEx)((SOAPEnvelopeImpl) mSOAPPart.getEnvelope()).getOMEnvelope())
                     .serialize(output);
             output.flush();
         } catch (Exception e) {

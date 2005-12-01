@@ -19,6 +19,7 @@ package org.apache.axis2.soap.impl.llom;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
 import org.apache.axis2.om.impl.llom.serialize.StreamWriterToContentHandlerConverter;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPFaultNode;
@@ -60,7 +61,7 @@ public abstract class SOAPFaultNodeImpl extends SOAPElement implements SOAPFault
                 //No caching
                 if (this.firstChild != null) {
                     OMSerializerUtil.serializeStartpart(this, omOutput);
-                    firstChild.serializeAndConsume(omOutput);
+                    ((OMNodeEx)firstChild).serializeAndConsume(omOutput);
                     OMSerializerUtil.serializeEndpart(omOutput);
                 } else if (!this.done) {
                     if (builderType == PULL_TYPE_BUILDER) {

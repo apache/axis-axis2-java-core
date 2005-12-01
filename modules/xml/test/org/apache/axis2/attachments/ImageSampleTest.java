@@ -22,6 +22,7 @@ import org.apache.axis2.om.AbstractTestCase;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.llom.OMElementImpl;
 import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis2.om.impl.llom.OMTextImpl;
@@ -102,10 +103,10 @@ public class ImageSampleTest extends AbstractTestCase {
         body.addChild(data);
         data.addChild(binaryNode);
 
-        envelope.serializeAndConsume(baseOutput);
+        ((OMNodeEx)envelope).serializeAndConsume(baseOutput);
         baseOutput.flush();
 
-        envelope.serializeAndConsume(mtomOutput);
+        ((OMNodeEx)envelope).serializeAndConsume(mtomOutput);
         mtomOutput.flush();
     }
 

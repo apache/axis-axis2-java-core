@@ -21,6 +21,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPMessage;
@@ -52,9 +53,9 @@ public class SOAPMessageImpl extends DocumentImpl implements SOAPMessage {
 
     protected void serialize(OMOutputImpl omOutput, boolean cache, boolean includeXMLDeclaration) throws XMLStreamException {
         if (cache) {
-            ((OMElement)this.ownerNode.getDocumentElement()).serialize(omOutput);
+            ((OMNodeEx)this.ownerNode.getDocumentElement()).serialize(omOutput);
         } else {
-        	((OMElement)this.ownerNode.getDocumentElement()).serializeAndConsume(omOutput);
+        	((OMNodeEx)this.ownerNode.getDocumentElement()).serializeAndConsume(omOutput);
         }
     }
 }

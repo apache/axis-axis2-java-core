@@ -20,6 +20,8 @@ import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 
+import javax.xml.stream.XMLStreamException;
+
 /**
  * Interface OMNodeEx
  *
@@ -36,4 +38,22 @@ public interface OMNodeEx extends OMNode {
     public void setComplete(boolean state);
 
     public void setType(int nodeType) throws OMException;
+
+    /**
+     * Serialize the node with caching
+     *
+     * @param omOutput
+     * @throws javax.xml.stream.XMLStreamException
+     * @see #serialize(org.apache.axis2.om.impl.OMOutputImpl)
+     */
+    public void serialize(org.apache.axis2.om.impl.OMOutputImpl omOutput)
+            throws XMLStreamException;
+
+    /**
+     * Serialize the node without caching
+     *
+     * @param omOutput
+     * @throws XMLStreamException
+     */
+    public void serializeAndConsume(OMOutputImpl omOutput) throws XMLStreamException;
 }

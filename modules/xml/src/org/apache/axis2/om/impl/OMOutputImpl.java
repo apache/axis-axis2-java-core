@@ -17,9 +17,9 @@
 package org.apache.axis2.om.impl;
 
 import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.util.UUIDGenerator;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
@@ -37,25 +37,10 @@ import java.util.LinkedList;
  */
 public class OMOutputImpl {
     private XMLStreamWriter xmlWriter;
-    private boolean doOptimize;
     private OutputStream outStream;
     private LinkedList binaryNodeList;
     private ByteArrayOutputStream bufferedSoapOutStream;
-    private String mimeBoundary = null;
-    private String rootContentId = null;
-    private int nextid = 0;
-    private boolean isSoap11 = true;
-
-    /**
-     * Field DEFAULT_CHAR_SET_ENCODING specifies the default
-     * character encoding scheme to be used
-     */
-    public static final String DEFAULT_CHAR_SET_ENCODING = "utf-8";
-
-    private String charSetEncoding;
-    private String xmlVersion;
-    private boolean ignoreXMLDeclaration = false;
-
+    private OMOutputFormat format = new OMOutputFormat();
 
     public OMOutputImpl() {
     }
@@ -66,69 +51,67 @@ public class OMOutputImpl {
 
     /**
      * This creates a new OMOutputImpl with default encoding
-     * @see OMOutputImpl#DEFAULT_CHAR_SET_ENCODING
+     *
      * @param outStream
      * @param doOptimize
      * @throws XMLStreamException
      * @throws FactoryConfigurationError
+     * @see OMOutputFormat#DEFAULT_CHAR_SET_ENCODING
      */
     public OMOutputImpl(OutputStream outStream, boolean doOptimize)
-        throws XMLStreamException, FactoryConfigurationError {
+            throws XMLStreamException, FactoryConfigurationError {
         setOutputStream(outStream, doOptimize);
     }
 
     public void setOutputStream(OutputStream outStream, boolean doOptimize)
-        throws XMLStreamException, FactoryConfigurationError {
+            throws XMLStreamException, FactoryConfigurationError {
 
-        this.doOptimize = doOptimize;
+        format.setDoOptimize(doOptimize);
         this.outStream = outStream;
 
-        if (charSetEncoding == null) //Default encoding is UTF-8
-            this.charSetEncoding = DEFAULT_CHAR_SET_ENCODING;
+        if (format.getCharSetEncoding() == null) //Default encoding is UTF-8
+            format.setCharSetEncoding(OMOutputFormat.DEFAULT_CHAR_SET_ENCODING);
 
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         //factory.setProperty("javax.xml.stream.isRepairingNamespaces", Boolean.TRUE);
         if (doOptimize) {
             bufferedSoapOutStream = new ByteArrayOutputStream();
             xmlWriter = factory.createXMLStreamWriter(bufferedSoapOutStream,
-                                                      this.charSetEncoding);
+                    format.getCharSetEncoding());
             binaryNodeList = new LinkedList();
         } else {
             xmlWriter = factory.createXMLStreamWriter(outStream,
-                                                      this.charSetEncoding);
+                    format.getCharSetEncoding());
         }
     }
 
     public void flush() throws XMLStreamException {
         xmlWriter.flush();
         String SOAPContentType;
-        if (doOptimize) {
-            if (isSoap11)
-            {
+        if (format.isOptimized()) {
+            if (format.isSOAP11()) {
                 SOAPContentType = SOAP11Constants.SOAP_11_CONTENT_TYPE;
-            }
-            else
-            {
+            } else {
                 SOAPContentType = SOAP12Constants.SOAP_12_CONTENT_TYPE;
             }
             MIMEOutputUtils.complete(
-                outStream,
-                bufferedSoapOutStream,
-                binaryNodeList,
-                getMimeBoundary(),
-                getRootContentId(),
-                this.charSetEncoding,SOAPContentType);
+                    outStream,
+                    bufferedSoapOutStream,
+                    binaryNodeList,
+                    getMimeBoundary(),
+                    getRootContentId(),
+                    format.getCharSetEncoding(), SOAPContentType);
         }
     }
 
     public boolean isOptimized() {
-        return doOptimize;
+        return format.isOptimized();
     }
 
     public String getContentType() {
         String SOAPContentType;
         if (isOptimized()) {
-            if (isSoap11) {
+            if (format.isSOAP11()) {
                 SOAPContentType = SOAP11Constants.SOAP_11_CONTENT_TYPE;
             } else {
                 SOAPContentType = SOAP12Constants.SOAP_12_CONTENT_TYPE;
@@ -138,7 +121,7 @@ public class OMOutputImpl {
                     getRootContentId(),
                     this.getCharSetEncoding(), SOAPContentType);
         } else {
-            if (!isSoap11) {
+            if (!format.isSOAP11()) {
                 return SOAP12Constants.SOAP_12_CONTENT_TYPE;
             } else {
                 return SOAP11Constants.SOAP_11_CONTENT_TYPE;
@@ -159,67 +142,52 @@ public class OMOutputImpl {
     }
 
     public String getMimeBoundary() {
-        if (mimeBoundary == null) {
-            mimeBoundary =
-                "MIMEBoundary"
-                    + UUIDGenerator.getUUID();
-        }
-        return mimeBoundary;
+        return format.getMimeBoundary();
     }
 
     public String getRootContentId() {
-        if (rootContentId == null) {
-            rootContentId =
-                "0."
-                    + UUIDGenerator.getUUID()
-                    + "@apache.org";
-        }
-        return rootContentId;
+        return format.getRootContentId();
     }
 
     public String getNextContentId() {
-        nextid++;
-        return nextid
-            + "."
-            + UUIDGenerator.getUUID()
-            + "@apache.org";
+        return format.getNextContentId();
     }
 
     /**
      * Returns the character set endocing scheme If the value of the
      * charSetEncoding is not set then the default will be returned
-     * 
-     * @return
+     *
+     * @return encoding
      */
     public String getCharSetEncoding() {
-        return this.charSetEncoding;
+        return format.getCharSetEncoding();
     }
 
     public void setCharSetEncoding(String charSetEncoding) {
-        this.charSetEncoding = charSetEncoding;
+        format.setCharSetEncoding(charSetEncoding);
     }
 
     public String getXmlVersion() {
-        return xmlVersion;
+        return format.getXmlVersion();
     }
 
     public void setXmlVersion(String xmlVersion) {
-        this.xmlVersion = xmlVersion;
+        format.setXmlVersion(xmlVersion);
     }
 
     /**
      * @param b
      */
     public void setSoap11(boolean b) {
-        isSoap11 = b;
+        format.setSSOAP11(b);
     }
 
     public boolean isIgnoreXMLDeclaration() {
-        return ignoreXMLDeclaration;
+        return format.isIgnoreXMLDeclaration();
     }
 
     public void setIgnoreXMLDeclaration(boolean ignoreXMLDeclaration) {
-        this.ignoreXMLDeclaration = ignoreXMLDeclaration;
+        format.setIgnoreXMLDeclaration(ignoreXMLDeclaration);
     }
 
 
@@ -227,6 +195,14 @@ public class OMOutputImpl {
      * @param b
      */
     public void setDoOptimize(boolean b) {
-        doOptimize = b;
+        format.setDoOptimize(b);
+    }
+    
+    public OMOutputFormat getOutputFormat() {
+        return format;
+    }
+    
+    public void setOutputFormat(OMOutputFormat format) {
+        this.format = format;        
     }
 }
