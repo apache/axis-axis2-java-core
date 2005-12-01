@@ -25,6 +25,7 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.llom.exception.OMStreamingException;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 
 import javax.xml.namespace.NamespaceContext;
@@ -562,14 +563,18 @@ public class DOMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
             if (isStartElement() || (currentEvent == ATTRIBUTE)) {
                 OMAttribute attrib = getAttribute((OMElement) lastNode, i);
                 if (attrib != null) {
-                    returnString = attrib.getLocalName();
+                	if(attrib.getNamespace() != null) {
+                		returnString = attrib.getLocalName();
+                	} else {
+                		returnString = ((Attr)attrib).getNodeName();
+                	}
                 }
             } else {
                 throw new IllegalStateException(
                         "attribute localName accessed in illegal event!");
             }
         }
-        return returnString;
+         return returnString;
     }
 
     /**

@@ -298,8 +298,12 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 			if(tempNode.equals(oldChild)) {
 				if(newChild instanceof DocumentFragmentimpl) {
 					DocumentFragmentimpl docFrag = (DocumentFragmentimpl)newDomChild;
-					docFrag.firstChild.previousSubling = oldDomChild.previousSubling;
-					
+					ChildNode child = (ChildNode)docFrag.getFirstChild();
+					child.parentNode = this;
+					this.replaceChild(child, oldChild);
+//					DocumentFragmentimpl docFrag = (DocumentFragmentimpl)newDomChild;
+//					docFrag.firstChild.previousSubling = oldDomChild.previousSubling;
+//					
 				} else {
 					newDomChild.nextSibling = oldDomChild.nextSibling;
 					newDomChild.previousSubling = oldDomChild.previousSubling;

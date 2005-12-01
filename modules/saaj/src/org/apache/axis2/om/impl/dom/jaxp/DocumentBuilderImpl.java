@@ -17,6 +17,7 @@ package org.apache.axis2.om.impl.dom.jaxp;
 
 import org.apache.axis2.om.impl.dom.DOMImplementationImpl;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
+import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.w3c.dom.DOMImplementation;
@@ -91,6 +92,8 @@ public class DocumentBuilderImpl extends DocumentBuilder {
 			//Not really sure whether this will work :-?
 			XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(inputSource.getCharacterStream());
 			StAXOMBuilder builder = new StAXOMBuilder(factory,reader);
+			DocumentImpl doc = (DocumentImpl)builder.getDocument();
+			((ElementImpl)doc.getDocumentElement()).build();
 			return (DocumentImpl)builder.getDocument();
 		}catch (XMLStreamException e) {
 			throw new SAXException(e);

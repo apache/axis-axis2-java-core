@@ -79,6 +79,7 @@ public abstract class InteropTestBase extends TestCase {
     protected static final String DEFAULT_CLIENT_REPOSITORY = "default_security_client_repo";
 
     private String targetEpr = "http://127.0.0.1:" +
+    		//5556 + 
     		UtilServer.TESTING_PORT +
     		"/axis2/services/PingPort";
 

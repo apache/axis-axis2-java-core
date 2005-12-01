@@ -37,9 +37,9 @@ public class DocumentImplTest extends TestCase {
 		DocumentImpl doc = new DocumentImpl();
 		Element elem = doc.createElement(tagName);
 		
-		assertEquals("Local name misnatch",tagName,elem.getNodeName());
+		assertEquals("Local name misnatch",tagName, elem.getNodeName());
 		
-		elem = doc.createElementNS(namespace, tagName);
+		elem = doc.createElementNS(namespace, "axis2:" + tagName);
 		assertEquals("Local name misnatch",tagName,elem.getLocalName());
 		assertEquals("Namespace misnatch",namespace,elem.getNamespaceURI());
 		

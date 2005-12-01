@@ -111,7 +111,8 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	 * Returns the name of this attribute 
 	 */
 	public String getNodeName() {
-		return this.attrName;
+		return (this.namespace != null) ? this.namespace.getPrefix() + ":"
+				+ this.attrName : this.attrName;
 	}
 	
 	/**
@@ -127,7 +128,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	 * @see org.w3c.dom.Node#getNodeValue()
 	 */
 	public String getNodeValue() throws DOMException {
-		return (this.attrName==null) ? "" : this.attrValue.getData();
+		return (this.attrValue == null) ? "" : this.attrValue.getData();
 	}
 	
 	/**
@@ -311,7 +312,8 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	 * @see org.w3c.dom.Node#getLocalName()
 	 */
     public String getLocalName() {
-        return (this.namespace == null) ? null : this.attrName;
+        return (this.namespace == null) ? null : DOMUtil.getLocalName(this.attrName);
+//    	return this.attrName;
     }
 
     /**
@@ -321,8 +323,11 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
     public String getNamespaceURI() {
 		if(this.namespace != null) {
 			return namespace.getName();
-		}
-		
+		} 
+//		else if (this.attrName != null && this.attrName.startsWith(OMConstants.XMLNS_NS_PREFIX + ":")) {
+//			return OMConstants.XMLNS_NS_URI;
+//		}
+//		
 		return null;
 	}
     

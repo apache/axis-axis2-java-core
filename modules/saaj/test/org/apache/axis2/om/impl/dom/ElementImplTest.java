@@ -173,7 +173,7 @@ public class ElementImplTest extends TestCase {
 			Element docElem = doc.getDocumentElement();
 			assertNull("The document element shoudl be null", docElem);
 			
-			docElem = doc.createElementNS("http://test.org", "Test");
+			docElem = doc.createElementNS("http://test.org", "test:Test");
 			
 			docElem.appendChild(doc.createElementNS(childElementNS, childElementLN));
 			docElem.appendChild(doc.createElementNS(childElementNS, childElementLN));

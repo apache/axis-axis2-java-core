@@ -146,7 +146,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	 * Returns the value of the namespace URI
 	 */
 	public String getNamespaceURI() {
-		return this.namespace.getName();
+		return (this.namespace != null)?this.namespace.getName(): null;
 	}
 	
 	///
@@ -177,7 +177,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	 * @see org.w3c.dom.Element#getTagName()
 	 */
 	public String getTagName() {
-		return this.localName;
+		return (this.namespace != null) ? this.namespace.getPrefix() + ":" + this.localName : this.localName;
 	}
 
 	/**
@@ -325,6 +325,10 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
             throw new DOMException(DOMException.INUSE_ATTRIBUTE_ERR, msg);
 		}
 		
+		if(attr.getName().startsWith(OMConstants.XMLNS_NS_PREFIX + ":")) {
+			//This is a ns declaration
+			this.declareNamespace(attr.getNodeValue(), DOMUtil.getLocalName(attr.getName()));
+		}
 		if(this.attributes == null) {
 			this.attributes = new AttributeMap(this);
 		}
@@ -342,8 +346,13 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "INVALID_CHARACTER_ERR", null);
             throw new DOMException(DOMException.INVALID_CHARACTER_ERR, msg);
 		}
-		
-		this.setAttributeNode(new AttrImpl(this.ownerNode, name, value));
+		if(name.startsWith(OMConstants.XMLNS_NS_PREFIX + ":")) {
+			//This is a ns declaration
+			this.declareNamespace(value, DOMUtil.getLocalName(name));
+		} else {
+			this.setAttributeNode(new AttrImpl(this.ownerNode, name, value));			
+		}
+
 	}
 
 	/* (non-Javadoc)
@@ -493,7 +502,6 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	 * @see org.apache.axis2.om.OMElement#addAttribute(org.apache.axis2.om.OMAttribute)
 	 */
 	public OMAttribute addAttribute(OMAttribute attr) {
-		
         OMNamespace namespace = attr.getNamespace();
         if ( namespace != null && this.findNamespace(namespace.getName(), namespace.getPrefix()) == null) {
             this.declareNamespace(namespace.getName(), namespace.getPrefix());
@@ -511,17 +519,12 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	 * @see org.apache.axis2.om.OMElement#addAttribute(java.lang.String, java.lang.String, org.apache.axis2.om.OMNamespace)
 	 */
 	public OMAttribute addAttribute(String attributeName, String value, OMNamespace ns) {
-		
         if (ns != null && findNamespace(ns.getName(), ns.getPrefix()) != null){
             declareNamespace(ns);
         }
-//        if(ns != null) {
-//        	return this.addAttribute(ns.getName(),attributeName,value);
-//        } else {
-//        	return this.addAttribute(null,attributeName,value);
-//        }
         if(ns != null) {
-        	return this.addAttribute(ns.getName(),attributeName,value);
+        	return this.addAttribute(ns.getName(), ns.getPrefix() + ":"
+					+ attributeName, value);
         } else {
         	return this.addAttribute(null,attributeName,value);
         }
@@ -538,7 +541,10 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
             this.namespaces = new HashMap(5);
         }
         if(namespace != null) {
-        	namespaces.put(namespace.getPrefix(), namespace);
+        	if(!namespace.getPrefix().startsWith(OMConstants.XMLNS_NS_PREFIX)) {
+        		namespaces.put(namespace.getPrefix(), namespace);
+        	}
+        	
         }
         return namespace;
 	}
@@ -962,8 +968,8 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     	AttributeMap attributeMap =  new AttributeMap(this);
     	
     	//Add the set of existing attrs
-    	for(int i = 0; i < attributeMap.getLength(); i++) {
-        	attributeMap.setNamedItem((Attr)attributeMap.getItem(i));
+    	for(int i = 0; i < this.attributes.getLength(); i++) {
+        	attributeMap.addItem((Attr)this.attributes.getItem(i));
     	}
     	
     	//Add the NS declarations
@@ -971,9 +977,12 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	    	Iterator nsDecls = this.namespaces.keySet().iterator();
 			while (nsDecls.hasNext()) {
 				String prefix = (String) nsDecls.next();
-				OMNamespace ns = (OMNamespace)this.namespaces.get(prefix);
-				AttrImpl attr = new AttrImpl(this.ownerNode, OMConstants.XMLNS_NS_PREFIX + ":" + prefix, ns.getName());
-				attributeMap.addItem(attr);
+				if(!prefix.equals(OMConstants.XMLNS_NS_PREFIX)){
+					OMNamespace ns = (OMNamespace)this.namespaces.get(prefix);
+					AttrImpl attr = new AttrImpl(this.ownerNode,prefix, ns.getName());
+					attr.setOMNamespace(new NamespaceImpl(OMConstants.XMLNS_NS_URI, OMConstants.XMLNS_NS_PREFIX));
+					attributeMap.addItem(attr);
+				}
 			}
     	}
     	

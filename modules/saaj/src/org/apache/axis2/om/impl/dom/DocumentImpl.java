@@ -421,6 +421,11 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
             null);
             throw new DOMException(DOMException.INVALID_CHARACTER_ERR, msg);
         }
+        
+		if(prefix == null || prefix.equals("")) {
+			String msg = DOMMessageFormatter.formatMessage(DOMMessageFormatter.DOM_DOMAIN, "NAMESPACE_ERR", null);
+            throw new DOMException(DOMException.NAMESPACE_ERR, msg);
+		}
     }
     
     /*
