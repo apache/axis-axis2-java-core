@@ -17,10 +17,10 @@
 package org.apache.axis2.handlers.addressing;
 
 import junit.framework.TestCase;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.ServiceName;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.util.TestUtil;
@@ -144,5 +144,30 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
                 xmlComparator.compare(msgCtxt.getEnvelope(),
                         testUtil.getOMBuilder("OutHandlerTest.xml")
                 .getDocumentElement()));
+    }
+
+    public void testDuplicateHeaders() throws AxisFault {
+
+        // this will check whether we can add to epr, if there is one already.
+        EndpointReference eprOne = new EndpointReference("http://whatever.org");
+        EndpointReference duplicateEpr = new EndpointReference("http://whatever.duplicate.org");
+        msgCtxt = new MessageContext(null);
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
+        msgCtxt.setEnvelope(defaultEnvelope);
+
+        msgCtxt.setTo(eprOne);
+        outHandler.invoke(msgCtxt);
+        System.out.println("defaultEnvelope = " + defaultEnvelope);
+
+        // now the soap message within the msgCtxt must have a to header.
+        // lets invoke twice and see
+        msgCtxt.setTo(duplicateEpr);
+        outHandler.invoke(msgCtxt);
+
+        System.out.println("defaultEnvelope = " + defaultEnvelope);
+        assertTrue(defaultEnvelope.getHeader().getFirstChildWithName(new QName("http://whatever.duplicate.org")) == null);
+
+
     }
 }
