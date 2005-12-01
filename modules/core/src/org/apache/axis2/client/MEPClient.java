@@ -197,10 +197,18 @@ public abstract class MEPClient {
      * @throws AxisFault
      */
     protected SOAPEnvelope createDefaultSOAPEnvelope() throws AxisFault {
+
+        // I added code to check the nullity in the prepareInvocation(). But it seems that this method
+        // can be called before prepareInvocation().
+        if(clientOptions == null){
+           throw new AxisFault("Can not proceed without options being set for invocation. Set the" +
+                    "properties for this invocation via MEPClient.setOptions(Options) first.");
+        }
+
         String soapVersionURI = clientOptions.getSoapVersionURI();
         if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             return OMAbstractFactory.getSOAP12Factory().getDefaultEnvelope();
-        } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
+        } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI) || "".equals(soapVersionURI) || soapVersionURI == null) {
             return OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
         } else {
             throw new AxisFault(Messages.getMessage("invaidSOAPversion"));
