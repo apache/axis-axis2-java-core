@@ -27,6 +27,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -49,8 +50,6 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
      * Field log
      */
     private Log log = LogFactory.getLog(getClass());
-
-    protected OMOutputImpl omOutput = new OMOutputImpl();
 
     /**
      * Field NAME
@@ -134,13 +133,13 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
 
         if (outputMessage != null) {
             try {
-            	//Pick the char set encoding from the msgContext
+                OMOutputFormat format = new OMOutputFormat();
+                //Pick the char set encoding from the msgContext
                 String charSetEnc = (String) msgContext
 						.getProperty(MessageContext.CHARACTER_SET_ENCODING);
-				omOutput.setOutputStream(out, msgContext.isDoingMTOM());
-                omOutput.setCharSetEncoding(charSetEnc);
-				((OMNodeEx)outputMessage).serializeAndConsume(omOutput);
-                omOutput.flush();
+                format.setDoOptimize(msgContext.isDoingMTOM());
+                format.setCharSetEncoding(charSetEnc);
+				((OMNodeEx)outputMessage).serializeAndConsume(out, format);
                 out.flush();
             } catch (Exception e) {
                 throw new AxisFault(e);

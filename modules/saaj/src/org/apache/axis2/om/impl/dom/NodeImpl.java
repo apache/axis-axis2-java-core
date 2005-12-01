@@ -450,7 +450,6 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
 
     /**
      * Build next element
-     * @see org.apache.axis.om.OMNode#build()
      */
     public void build() {
         while (!done)
@@ -564,26 +563,28 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
     }
 
     public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {    
-        OMOutputImpl omOutput = new  OMOutputImpl(output, false);
-        omOutput.setOutputFormat(format);
+        OMOutputImpl omOutput = new  OMOutputImpl(output, format);
         serialize(omOutput);
+        omOutput.flush();
     }
 
     public void serialize(Writer writer, OMOutputFormat format) throws XMLStreamException {
         OMOutputImpl omOutput = new  OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
         omOutput.setOutputFormat(format);
         serialize(omOutput);
+        omOutput.flush();
     }
 
     public void serializeAndConsume(OutputStream output, OMOutputFormat format) throws XMLStreamException {
-        OMOutputImpl omOutput = new  OMOutputImpl(output, false);
-        omOutput.setOutputFormat(format);
+        OMOutputImpl omOutput = new  OMOutputImpl(output, format);
         serializeAndConsume(omOutput);
+        omOutput.flush();
     }
 
     public void serializeAndConsume(Writer writer, OMOutputFormat format) throws XMLStreamException {
         OMOutputImpl omOutput = new  OMOutputImpl(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
         omOutput.setOutputFormat(format);
         serializeAndConsume(omOutput);
+        omOutput.flush();
     }
 }

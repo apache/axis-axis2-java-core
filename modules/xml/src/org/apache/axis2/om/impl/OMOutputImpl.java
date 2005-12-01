@@ -38,47 +38,37 @@ import java.util.LinkedList;
 public class OMOutputImpl {
     private XMLStreamWriter xmlWriter;
     private OutputStream outStream;
-    private LinkedList binaryNodeList;
+    private LinkedList binaryNodeList = new LinkedList();
     private ByteArrayOutputStream bufferedSoapOutStream;
     private OMOutputFormat format = new OMOutputFormat();
-
-    public OMOutputImpl() {
-    }
 
     public OMOutputImpl(XMLStreamWriter xmlWriter) {
         this.xmlWriter = xmlWriter;
     }
 
     /**
-     * This creates a new OMOutputImpl with default encoding
+     * This creates a new OMOutputImpl with specified encoding
      *
      * @param outStream
-     * @param doOptimize
+     * @param format
      * @throws XMLStreamException
      * @throws FactoryConfigurationError
      * @see OMOutputFormat#DEFAULT_CHAR_SET_ENCODING
      */
-    public OMOutputImpl(OutputStream outStream, boolean doOptimize)
+    public OMOutputImpl(OutputStream outStream, OMOutputFormat format)
             throws XMLStreamException, FactoryConfigurationError {
-        setOutputStream(outStream, doOptimize);
-    }
-
-    public void setOutputStream(OutputStream outStream, boolean doOptimize)
-            throws XMLStreamException, FactoryConfigurationError {
-
-        format.setDoOptimize(doOptimize);
+        this.format = format;
         this.outStream = outStream;
 
         if (format.getCharSetEncoding() == null) //Default encoding is UTF-8
             format.setCharSetEncoding(OMOutputFormat.DEFAULT_CHAR_SET_ENCODING);
 
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        //factory.setProperty("javax.xml.stream.isRepairingNamespaces", Boolean.TRUE);
-        if (doOptimize) {
+
+        if (format.isOptimized()) {
             bufferedSoapOutStream = new ByteArrayOutputStream();
             xmlWriter = factory.createXMLStreamWriter(bufferedSoapOutStream,
                     format.getCharSetEncoding());
-            binaryNodeList = new LinkedList();
         } else {
             xmlWriter = factory.createXMLStreamWriter(outStream,
                     format.getCharSetEncoding());
@@ -98,8 +88,8 @@ public class OMOutputImpl {
                     outStream,
                     bufferedSoapOutStream,
                     binaryNodeList,
-                    getMimeBoundary(),
-                    getRootContentId(),
+                    format.getMimeBoundary(),
+                    format.getRootContentId(),
                     format.getCharSetEncoding(), SOAPContentType);
         }
     }
@@ -109,24 +99,7 @@ public class OMOutputImpl {
     }
 
     public String getContentType() {
-        String SOAPContentType;
-        if (isOptimized()) {
-            if (format.isSOAP11()) {
-                SOAPContentType = SOAP11Constants.SOAP_11_CONTENT_TYPE;
-            } else {
-                SOAPContentType = SOAP12Constants.SOAP_12_CONTENT_TYPE;
-            }
-            return MIMEOutputUtils.getContentTypeForMime(
-                    getMimeBoundary(),
-                    getRootContentId(),
-                    this.getCharSetEncoding(), SOAPContentType);
-        } else {
-            if (!format.isSOAP11()) {
-                return SOAP12Constants.SOAP_12_CONTENT_TYPE;
-            } else {
-                return SOAP11Constants.SOAP_11_CONTENT_TYPE;
-            }
-        }
+        return format.getContentType();
     }
 
     public void writeOptimized(OMText node) {
@@ -175,11 +148,8 @@ public class OMOutputImpl {
         format.setXmlVersion(xmlVersion);
     }
 
-    /**
-     * @param b
-     */
     public void setSoap11(boolean b) {
-        format.setSSOAP11(b);
+        format.setSOAP11(b);
     }
 
     public boolean isIgnoreXMLDeclaration() {
@@ -190,19 +160,11 @@ public class OMOutputImpl {
         format.setIgnoreXMLDeclaration(ignoreXMLDeclaration);
     }
 
-
-    /**
-     * @param b
-     */
     public void setDoOptimize(boolean b) {
         format.setDoOptimize(b);
     }
-    
-    public OMOutputFormat getOutputFormat() {
-        return format;
-    }
-    
+
     public void setOutputFormat(OMOutputFormat format) {
-        this.format = format;        
+        this.format = format;
     }
 }

@@ -866,9 +866,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	
     public String toStringWithConsume() throws XMLStreamException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        OMOutputImpl out = new OMOutputImpl(baos, false);
-        this.serializeAndConsume(out);
-        out.flush();
+        this.serializeAndConsume(baos);
         return new String(baos.toByteArray());
     }
     

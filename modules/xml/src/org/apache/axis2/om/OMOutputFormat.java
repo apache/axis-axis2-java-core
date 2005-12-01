@@ -120,7 +120,7 @@ public class OMOutputFormat {
         this.xmlVersion = xmlVersion;
     }
 
-    public void setSSOAP11(boolean b) {
+    public void setSOAP11(boolean b) {
         isSoap11 = b;
     }
     

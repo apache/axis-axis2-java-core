@@ -44,7 +44,7 @@ public class MIMEOutputUtilsTest extends TestCase {
         ByteArrayOutputStream outStream;
         String boundary;
         
-        OMOutputImpl omOutput = new OMOutputImpl(null);
+        OMOutputFormat omOutput = new OMOutputFormat();
         boundary = omOutput.getMimeBoundary();
 
         String contentType = org.apache.axis2.om.impl.MIMEOutputUtils

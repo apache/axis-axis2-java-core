@@ -31,6 +31,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.soap.SOAP11Constants;
@@ -88,7 +89,7 @@ public class CommonsHTTPTransportSender
 
     protected OMElement outputMessage;
 
-    protected OMOutputImpl omOutput = new OMOutputImpl();
+    protected OMOutputFormat format = new OMOutputFormat();
 
     /**
      * proxydiscription
@@ -175,7 +176,7 @@ public class CommonsHTTPTransportSender
                     (String) msgContext.getProperty(
                             MessageContext.CHARACTER_SET_ENCODING);
             if (charSetEnc != null) {
-                omOutput.setCharSetEncoding(charSetEnc);
+                format.setCharSetEncoding(charSetEnc);
             } else {
                 OperationContext opctx = msgContext.getOperationContext();
                 if (opctx != null) {
@@ -189,10 +190,10 @@ public class CommonsHTTPTransportSender
                 charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
             }
             msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
-            omOutput.setSoap11(msgContext.isSOAP11());
-            omOutput.setDoOptimize(msgContext.isDoingMTOM());
+            format.setSOAP11(msgContext.isSOAP11());
+            format.setDoOptimize(msgContext.isDoingMTOM());
 
-            omOutput.setCharSetEncoding(charSetEnc);
+            format.setCharSetEncoding(charSetEnc);
 
             // Trasnport URL can be different from the WSA-To. So processing that now.
             EndpointReference epr = null;
@@ -243,18 +244,17 @@ public class CommonsHTTPTransportSender
                             (HTTPOutTransportInfo) msgContext.getProperty(
                                     HTTPConstants.HTTPOutTransportInfo);
                     if (transportInfo != null) {
-                        omOutput.setSoap11(msgContext.isSOAP11());
+                        format.setSOAP11(msgContext.isSOAP11());
                         //this is the servlet2.3 way of setting encodings
                         String contentType = findContentType(isRest, msgContext);
-                        String encoding = contentType + "; charset=" + omOutput.getCharSetEncoding();
+                        String encoding = contentType + "; charset=" + format.getCharSetEncoding();
                         transportInfo.setContentType(encoding);
                     } else {
                         throw new AxisFault(HTTPConstants.HTTPOutTransportInfo + " does not set");
                     }
                 }
-                omOutput.setOutputStream(out, msgContext.isDoingMTOM());
-                ((OMNodeEx)dataOut).serializeAndConsume(omOutput);
-                omOutput.flush();
+                format.setDoOptimize(msgContext.isDoingMTOM());
+                ((OMNodeEx)dataOut).serializeAndConsume(out, format);
             }
             if (msgContext.getOperationContext() != null) {
                 msgContext.getOperationContext().setProperty(
@@ -282,7 +282,7 @@ public class CommonsHTTPTransportSender
                 return "application/xml";
             }
         } else {
-            return omOutput.getContentType();
+            return format.getContentType();
         }
     }
 
@@ -405,21 +405,15 @@ public class CommonsHTTPTransportSender
                 ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
 
                 if (!doingMTOM) {
-                    XMLStreamWriter outputWriter =
-                            XMLOutputFactory.newInstance()
-                                    .createXMLStreamWriter(bytesOut,
-                                            charSetEnc);
-                    OMOutputImpl output = new OMOutputImpl(outputWriter);
-                    output.setCharSetEncoding(charSetEnc);
-                    ((OMNodeEx)element).serializeAndConsume(output);
-                    output.flush();
+                    OMOutputFormat format2 = new OMOutputFormat();
+                    format2.setCharSetEncoding(charSetEnc);
+                    element.serializeAndConsume(bytesOut, format2);
                     return bytesOut.toByteArray();
 
                 } else {
-                    omOutput.setCharSetEncoding(charSetEnc);
-                    omOutput.setOutputStream(bytesOut, true);  //changed...
-                    ((OMNodeEx)element).serializeAndConsume(omOutput);
-                    omOutput.flush();
+                    format.setCharSetEncoding(charSetEnc);
+                    format.setDoOptimize(true);
+                    element.serializeAndConsume(bytesOut, format);
                     return bytesOut.toByteArray();
                 }
             } catch (XMLStreamException e) {
@@ -431,14 +425,13 @@ public class CommonsHTTPTransportSender
 
         private void handleOMOutput(OutputStream out, boolean doingMTOM)
                 throws XMLStreamException {
-            omOutput.setOutputStream(out, doingMTOM);
-            ((OMNodeEx)element).serializeAndConsume(omOutput);
-            omOutput.flush();
+            format.setDoOptimize(doingMTOM);
+            element.serializeAndConsume(out, format);
         }
 
         public void writeRequest(OutputStream out) throws IOException {
             try {
-                if (doingMTOM) { //chagened ..
+                if (doingMTOM) { 
                     if (chuncked) {
                         this.handleOMOutput(out, doingMTOM);
                     } else {
@@ -496,8 +489,8 @@ public class CommonsHTTPTransportSender
 
         public String getContentType() {
 
-            String encoding = omOutput.getCharSetEncoding();
-            String contentType = omOutput.getContentType();
+            String encoding = format.getCharSetEncoding();
+            String contentType = format.getContentType();
             if (encoding != null) {
                 contentType += "; charset=" + encoding;
             }

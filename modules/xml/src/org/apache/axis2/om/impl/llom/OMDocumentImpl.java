@@ -319,7 +319,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
      * @throws XMLStreamException
      */
     public void serializeAndConsume(OutputStream output) throws XMLStreamException {
-        OMOutputImpl omOutput = new OMOutputImpl(output,false);
+        OMOutputImpl omOutput = new OMOutputImpl(output, new OMOutputFormat());
         serializeAndConsume(omOutput);
         omOutput.flush();
     }
@@ -331,7 +331,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
      * @throws XMLStreamException
      */
     public void serialize(OutputStream output) throws XMLStreamException {
-        OMOutputImpl omOutput = new OMOutputImpl(output,false);
+        OMOutputImpl omOutput = new OMOutputImpl(output, new OMOutputFormat());
         serialize(omOutput);
         omOutput.flush();
     }
@@ -344,8 +344,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
      * @throws XMLStreamException
      */
     public void serializeAndConsume(OutputStream output, OMOutputFormat format) throws XMLStreamException {
-        OMOutputImpl omOutput = new OMOutputImpl(output,false);
-        omOutput.setOutputFormat(format);
+        OMOutputImpl omOutput = new OMOutputImpl(output, format);
         serializeAndConsume(omOutput);
         omOutput.flush();
     }
@@ -358,8 +357,7 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
      * @throws XMLStreamException
      */
     public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
-        OMOutputImpl omOutput = new OMOutputImpl(output,false);
-        omOutput.setOutputFormat(format);
+        OMOutputImpl omOutput = new OMOutputImpl(output, format);
         serialize(omOutput);
         omOutput.flush();
     }

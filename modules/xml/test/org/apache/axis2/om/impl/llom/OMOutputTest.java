@@ -20,6 +20,7 @@ import org.apache.axis2.attachments.ByteArrayDataSource;
 import org.apache.axis2.om.AbstractTestCase;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.om.impl.OMNodeEx;
 
 import javax.activation.DataHandler;
@@ -99,16 +100,12 @@ public class OMOutputTest extends AbstractTestCase {
     }
 
     public void testComplete() throws Exception {
-
-        org.apache.axis2.om.impl.OMOutputImpl mtomOutput = new org.apache.axis2.om.impl.OMOutputImpl(new FileOutputStream(outMTOMFile),
-                true);
-        org.apache.axis2.om.impl.OMOutputImpl baseOutput = new org.apache.axis2.om.impl.OMOutputImpl(new FileOutputStream(outBase64File),
-                false);
-
-        ((OMNodeEx)envelope).serializeAndConsume(baseOutput);
-        baseOutput.flush();
-
-        ((OMNodeEx)envelope).serializeAndConsume(mtomOutput);
-        mtomOutput.flush();
+        OMOutputFormat mtomOutputFormat = new OMOutputFormat();
+        mtomOutputFormat.setDoOptimize(true);
+        OMOutputFormat baseOutputFormat = new OMOutputFormat();
+        baseOutputFormat.setDoOptimize(false);
+        
+        envelope.serializeAndConsume(new FileOutputStream(outBase64File), baseOutputFormat);
+        envelope.serializeAndConsume(new FileOutputStream(outMTOMFile), mtomOutputFormat);
     }
 }

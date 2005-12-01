@@ -17,6 +17,7 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.OMNodeEx;
+import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -244,17 +245,15 @@ public class SOAPMessageImpl extends SOAPMessage {
      */
     public void writeTo(OutputStream out) throws SOAPException, IOException {
         try {
-            OMOutputImpl output = new OMOutputImpl();
-            output.setCharSetEncoding((String)getProperty(CHARACTER_SET_ENCODING));
+            OMOutputFormat format = new OMOutputFormat();
+            format.setCharSetEncoding((String)getProperty(CHARACTER_SET_ENCODING));
             String writeXmlDecl = (String)getProperty(WRITE_XML_DECLARATION);
             if(writeXmlDecl==null || writeXmlDecl.equals("false")) { //SAAJ default case doesn't send XML decl
-            	output.setIgnoreXMLDeclaration(true);
+            	format.setIgnoreXMLDeclaration(true);
             }
-            output.setOutputStream(out, false);
             //the writeTo method forces the elements to be built!!!
-            ((OMNodeEx)((SOAPEnvelopeImpl) mSOAPPart.getEnvelope()).getOMEnvelope())
-                    .serialize(output);
-            output.flush();
+            ((SOAPEnvelopeImpl) mSOAPPart.getEnvelope()).getOMEnvelope()
+                    .serialize(out, format);
         } catch (Exception e) {
             throw new SOAPException(e);
         }

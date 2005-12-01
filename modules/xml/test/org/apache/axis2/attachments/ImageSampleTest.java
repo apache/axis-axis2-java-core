@@ -21,6 +21,7 @@ import org.apache.axis2.attachments.utils.ImageIO;
 import org.apache.axis2.om.AbstractTestCase;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.llom.OMElementImpl;
@@ -76,10 +77,10 @@ public class ImageSampleTest extends AbstractTestCase {
 
         outMTOMFile = new File(outFileName);
         outBase64File = new File(outBase64FileName);
-        org.apache.axis2.om.impl.OMOutputImpl mtomOutput = new OMOutputImpl(new FileOutputStream(outMTOMFile),
-                true);
-        org.apache.axis2.om.impl.OMOutputImpl baseOutput = new OMOutputImpl(new FileOutputStream(outBase64File),
-                false);
+        OMOutputFormat mtomOutputFormat = new OMOutputFormat();
+        mtomOutputFormat.setDoOptimize(true); 
+        OMOutputFormat baseOutputFormat = new OMOutputFormat();
+        baseOutputFormat.setDoOptimize(false);
 
         OMNamespaceImpl soap = new OMNamespaceImpl(
                 "http://schemas.xmlsoap.org/soap/envelope/", "soap");
@@ -103,11 +104,8 @@ public class ImageSampleTest extends AbstractTestCase {
         body.addChild(data);
         data.addChild(binaryNode);
 
-        ((OMNodeEx)envelope).serializeAndConsume(baseOutput);
-        baseOutput.flush();
-
-        ((OMNodeEx)envelope).serializeAndConsume(mtomOutput);
-        mtomOutput.flush();
+        envelope.serializeAndConsume(new FileOutputStream(outBase64File), baseOutputFormat);
+        envelope.serializeAndConsume(new FileOutputStream(outMTOMFile), mtomOutputFormat);
     }
 
     public void testImageSampleDeserialize() throws Exception {

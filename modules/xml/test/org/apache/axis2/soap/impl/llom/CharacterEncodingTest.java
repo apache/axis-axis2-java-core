@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -64,12 +65,9 @@ public class CharacterEncodingTest extends TestCase {
 
 		ByteArrayOutputStream byteOutStr = new ByteArrayOutputStream();
 		
-		XMLStreamWriter writer = XMLOutputFactory
-				.newInstance().createXMLStreamWriter(byteOutStr,UTF_16);
-		OMOutputImpl outputImpl = new OMOutputImpl(writer);
-        outputImpl.setCharSetEncoding(UTF_16);
-		((OMNodeEx)envelope).serialize(outputImpl);
-		outputImpl.flush();
+		OMOutputFormat outputFormat = new OMOutputFormat();
+        outputFormat.setCharSetEncoding(UTF_16);
+		envelope.serialize(byteOutStr, outputFormat);
 		
 		ByteArrayInputStream byteInStr = new ByteArrayInputStream(byteOutStr.toByteArray());
 		

@@ -32,9 +32,4 @@ public class DOMSerializerUtil {
 	public void serializeEndPart(OMOutputImpl output) throws XMLStreamException {
 		output.getXmlStreamWriter().writeEndElement();
 	}
-	
-	
-    //static void serializeAttribute(AttributeI attr, OMOutput omOutput) throws XMLStreamException {
-	
-	
 }

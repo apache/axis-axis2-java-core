@@ -805,19 +805,14 @@ public class OMElementImpl extends OMNodeImpl
 
     public String toStringWithConsume() throws XMLStreamException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        OMOutputImpl out = new OMOutputImpl(baos, false);
-        this.serializeAndConsume(out);
-        out.flush();
+        this.serializeAndConsume(baos);
         return new String(baos.toByteArray());
     }
 
     public String toString() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        OMOutputImpl out = null;
         try {
-            out = new OMOutputImpl(baos, false);
-            this.serialize(out);
-            out.flush();
+            this.serialize(baos);
         } catch (XMLStreamException e) {
             // can not throw out an exception here. Can't do anything other than logging
             // and swallowing this :(
