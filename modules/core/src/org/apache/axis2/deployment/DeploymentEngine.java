@@ -30,6 +30,7 @@ import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationImpl;
+import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.commons.logging.Log;
@@ -335,16 +336,24 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     private void validateSystemPredefinedPhases() throws DeploymentException {
         ArrayList inPhases = phasesinfo.getINPhases();
-        //TODO condition checking should be otherway since null value can occur
-        if (!(inPhases.get(0).equals(PhaseMetadata.PHASE_TRANSPORTIN) &&
-                inPhases.get(1).equals(PhaseMetadata.PHASE_PRE_DISPATCH) &&
-                inPhases.get(2).equals(PhaseMetadata.PHASE_DISPATCH) &&
-                inPhases.get(3).equals(PhaseMetadata.PHASE_POST_DISPATCH))) {
+        try {
+            String phase1 = ((Phase) inPhases.get(0)).getPhaseName();
+            String phases = ((Phase) inPhases.get(1)).getPhaseName();
+            String phase3 = ((Phase) inPhases.get(2)).getPhaseName();
+            String phase4 = ((Phase) inPhases.get(3)).getPhaseName();
+            if (!(phase1.equals(PhaseMetadata.PHASE_TRANSPORTIN) &&
+                    phases.equals(PhaseMetadata.PHASE_PRE_DISPATCH) &&
+                    phase3.equals(PhaseMetadata.PHASE_DISPATCH) &&
+                    phase4.equals(PhaseMetadata.PHASE_POST_DISPATCH))) {
+                throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.INVALID_PHASE));
+            }
+        } catch (Exception e) {
             throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.INVALID_PHASE));
         }
-        //  ArrayList outPhaes = tempdata.getOutphases();
-        //TODO do the validation code here
-        //ArrayList systemDefaultPhases =((AxisConfigurationImpl)axisConfig).getInPhasesUptoAndIncludingPostDispatch();
+
+        ((AxisConfigurationImpl) axisConfig).setInPhasesUptoAndIncludingPostDispatch(
+                phasesinfo.getGlobalInflow());
+        ((AxisConfigurationImpl) axisConfig).setInFaultPhases(phasesinfo.getIN_FaultPhases());
     }
 
     public ModuleDescription getModule(QName moduleName) throws AxisFault {

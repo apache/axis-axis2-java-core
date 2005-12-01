@@ -18,20 +18,13 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.AbstractDispatcher;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationImpl;
-import org.apache.axis2.engine.AxisObserver;
-import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.engine.Phase;
+import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.description.*;
+import org.apache.axis2.engine.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.phaseresolver.PhaseMetadata;
+import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.HostConfiguration;
@@ -76,17 +69,6 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                         mepAtt.getAttributeValue(), msgrecivere);
             }
 
-            //processing Dispatching Order
-            OMElement dispatch_order = config_element.getFirstChildWithName(
-                    new QName(DISPATCH_ORDER));
-            if (dispatch_order != null) {
-                processDispatchingOrder(dispatch_order);
-                log.info("found the custom dispatching order and continue with that order");
-            } else {
-                ((AxisConfigurationImpl) axisConfiguration).setDefaultDispatchers();
-                log.info("no custom dispatching order found, continuing with the default dispaching order");
-            }
-
             //Process Module refs
             Iterator moduleitr = config_element.getChildrenWithName(
                     new QName(DeploymentConstants.MODULEST));
@@ -121,61 +103,24 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         }
     }
 
-
-    private void processDispatchingOrder(OMElement dispatch_order) throws DeploymentException {
-        Iterator dispatchers = dispatch_order.getChildrenWithName(new QName(DISPATCHER));
-        boolean foundDiaptcher = false;
-        Phase dispatchPhae = new Phase(PhaseMetadata.PHASE_DISPATCH);
-        int count = 0;
-        while (dispatchers.hasNext()) {
-            foundDiaptcher = true;
-            OMElement dispchter = (OMElement) dispatchers.next();
-            String clssName = dispchter.getAttribute(new QName(CLASSNAME)).getAttributeValue();
-            AbstractDispatcher disptachClas;
-            Class classInstance;
-            try {
-                classInstance = Class.forName(
-                        clssName, true, Thread.currentThread().getContextClassLoader());
-                disptachClas = (AbstractDispatcher) classInstance.newInstance();
-                disptachClas.initDispatcher();
-                disptachClas.getHandlerDesc().setParent(axisConfiguration);
-                dispatchPhae.addHandler(disptachClas, count);
-                count ++;
-            } catch (ClassNotFoundException e) {
-                throw new DeploymentException(e);
-            } catch (IllegalAccessException e) {
-                throw new DeploymentException(e);
-            } catch (InstantiationException e) {
-                throw new DeploymentException(e);
-            }
-        }
-
-        if (!foundDiaptcher) {
-            throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.NO_DISPATCHER_FOUND));
-        } else {
-            ((AxisConfigurationImpl) axisConfiguration).setDispatchPhase(dispatchPhae);
-        }
-
-    }
-
     /**
      * To process all the phase orders which are defined in axis2.xml
      *
      * @param phaserders
      */
-    private void processPhaseOrders(Iterator phaserders) {
+    private void processPhaseOrders(Iterator phaserders) throws DeploymentException {
         PhasesInfo info = engine.getPhasesinfo();
         while (phaserders.hasNext()) {
             OMElement phaseOrders = (OMElement) phaserders.next();
             String flowType = phaseOrders.getAttribute(new QName(TYPE)).getAttributeValue();
             if (INFLOWST.equals(flowType)) {
-                info.setINPhases(getPhaseList(phaseOrders));
+                info.setINPhases(processPhaseList(phaseOrders));
             } else if (IN_FAILTFLOW.equals(flowType)) {
-                info.setIN_FaultPhases(getPhaseList(phaseOrders));
+                info.setIN_FaultPhases(processPhaseList(phaseOrders));
             } else if (OUTFLOWST.equals(flowType)) {
-                info.setOUTPhases(getPhaseList(phaseOrders));
+                info.setOUTPhases(processPhaseList(phaseOrders));
             } else if (OUT_FAILTFLOW.equals(flowType)) {
-                info.setOUT_FaultPhases(getPhaseList(phaseOrders));
+                info.setOUT_FaultPhases(processPhaseList(phaseOrders));
             }
 
         }
@@ -188,6 +133,30 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         while (phases.hasNext()) {
             OMElement phase = (OMElement) phases.next();
             phaselist.add(phase.getAttribute(new QName(ATTNAME)).getAttributeValue());
+        }
+        return phaselist;
+    }
+
+    private ArrayList processPhaseList(OMElement phaseOrders) throws DeploymentException {
+        ArrayList phaselist = new ArrayList();
+        Iterator phases = phaseOrders.getChildrenWithName(new QName(PHASE));
+        while (phases.hasNext()) {
+            OMElement phaseelement = (OMElement) phases.next();
+            String phaseName = phaseelement.getAttribute(new QName(ATTNAME)).getAttributeValue();
+            Phase phase = new Phase(phaseName);
+            Iterator handlers = phaseelement.getChildrenWithName(new QName(HANDERST));
+            while (handlers.hasNext()) {
+                OMElement omElement = (OMElement) handlers.next();
+                HandlerDescription handler = processHandler(omElement, axisConfiguration);
+                handler.getRules().setPhaseName(phaseName);
+                Utils.loadHandler(axisConfiguration.getSystemClassLoader(), handler);
+                try {
+                    phase.addHandler(handler);
+                } catch (PhaseException e) {
+                    throw new DeploymentException(e);
+                }
+            }
+            phaselist.add(phase);
         }
         return phaselist;
     }

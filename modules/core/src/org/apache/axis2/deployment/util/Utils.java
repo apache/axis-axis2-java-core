@@ -107,7 +107,7 @@ public class Utils {
         // axisService.setClassLoader(currentArchiveFile.getClassLoader());
     }
 
-    public static void  addFlowHandlers(Flow flow, ClassLoader clsLoader) throws AxisFault {
+    public static void addFlowHandlers(Flow flow, ClassLoader clsLoader) throws AxisFault {
         int count = flow.getHandlerCount();
         for (int j = 0; j < count; j++) {
             HandlerDescription handlermd = flow.getHandler(j);
@@ -136,5 +136,21 @@ public class Utils {
             throw new AxisFault(e.getMessage());
         }
         return handlerClass;
+    }
+
+    public static void loadHandler(ClassLoader loader1, HandlerDescription desc) throws DeploymentException {
+        String handlername = desc.getClassName();
+        Handler handler;
+        Class handlerClass;
+        try {
+            handlerClass = Class.forName(handlername, true, loader1);
+            handler = (Handler) handlerClass.newInstance();
+            handler.init(desc);
+            desc.setHandler(handler);
+        } catch (ClassNotFoundException e) {
+            throw new DeploymentException(e);
+        } catch (Exception e) {
+            throw new DeploymentException(e);
+        }
     }
 }

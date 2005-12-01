@@ -40,7 +40,6 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
         //TODO Fix me
         phaserul = new PreDispatchPhaseRuleTest("");
         axisSytem = new AxisConfigurationImpl();
-       ((AxisConfigurationImpl)axisSytem).setDefaultDispatchers();
         ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
 
         Handler han = null;

@@ -122,14 +122,17 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         systemClassLoader = Thread.currentThread().getContextClassLoader();
         serviceClassLoader = Thread.currentThread().getContextClassLoader();
         moduleClassLoader = Thread.currentThread().getContextClassLoader();
+        // setting the dafualt flow , if some one creat AxisConfig programatically
+        //  most requird handles will be there in the flow.
+
+        setDefaultGlobalFlow();
     }
 
 
     /**
-     * Sets the default dispatching order.
+     * to set the default global flow if some one create a AxisConfiguration by hand.
      */
-    public void setDefaultDispatchers() {
-
+    private void setDefaultGlobalFlow() {
         Phase dispatch = new Phase(PhaseMetadata.PHASE_DISPATCH);
         AddressingBasedDispatcher add_dispatch = new AddressingBasedDispatcher();
         add_dispatch.initDispatcher();
@@ -166,28 +169,6 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         postDispatch.addHandler(instanceDispatcher, 1);
         inPhasesUptoAndIncludingPostDispatch.add(postDispatch);
     }
-
-
-    /**
-     * Sets the custom dispatching order.
-     *
-     * @param dispatch
-     */
-    public void setDispatchPhase(Phase dispatch) {
-        inPhasesUptoAndIncludingPostDispatch.add(dispatch);
-
-        Phase postDispatch = new Phase(PhaseMetadata.PHASE_POST_DISPATCH);
-        DispatchingChecker dispatchingChecker = new DispatchingChecker();
-        dispatchingChecker.getHandlerDesc().setParent(this);
-
-        org.apache.axis2.engine.InstanceDispatcher instanceDispatcher = new InstanceDispatcher();
-        instanceDispatcher.getHandlerDesc().setParent(this);
-
-        postDispatch.addHandler(dispatchingChecker);
-        postDispatch.addHandler(instanceDispatcher, 1);
-        inPhasesUptoAndIncludingPostDispatch.add(postDispatch);
-    }
-
 
     public Hashtable getFaultyServices() {
         return faultyServices;
@@ -358,6 +339,10 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         return inPhasesUptoAndIncludingPostDispatch;
     }
 
+    public void setInPhasesUptoAndIncludingPostDispatch(ArrayList inPhasesUptoAndIncludingPostDispatch) {
+        this.inPhasesUptoAndIncludingPostDispatch = inPhasesUptoAndIncludingPostDispatch;
+    }
+
     public ArrayList getOutFlow() {
         return outPhases;
     }
@@ -369,6 +354,7 @@ public class AxisConfigurationImpl implements AxisConfiguration {
     public ArrayList getInFaultFlow() {
         return inFaultPhases;
     }
+
 
     /**
      * @return Returns ArrayList

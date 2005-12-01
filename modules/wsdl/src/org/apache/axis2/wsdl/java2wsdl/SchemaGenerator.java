@@ -38,12 +38,20 @@ public class SchemaGenerator {
     public static String TARGET_NAMESPACE = null;
     public static String SCHEMA_TARGET_NAMESPASE = "http://org.apache.axis2/xsd";
     public static String SCHEMA_NAMESPASE_PRFIX = "ns1";
-    public static final String TARGET_NAMESPACE_PRFIX = "tns";
+    public static String TARGET_NAMESPACE_PRFIX = "tns";
 
-    public SchemaGenerator(ClassLoader loader, String className) {
+    public SchemaGenerator(ClassLoader loader, String className,
+                           String scheamtargetNamespace,
+                           String scheamtargetNamespacePrefix) {
         this.classLoader = loader;
         this.className = className;
         TARGET_NAMESPACE = "http://" + className;
+        if (scheamtargetNamespace != null && !scheamtargetNamespace.trim().equals("")) {
+            SCHEMA_TARGET_NAMESPASE = scheamtargetNamespace;
+        }
+        if (scheamtargetNamespacePrefix != null && !scheamtargetNamespacePrefix.trim().equals("")) {
+            SCHEMA_NAMESPASE_PRFIX = scheamtargetNamespacePrefix;
+        }
 
         prefixmap = new Hashtable();
         prefixmap.put(SCHEMA_NAMESPASE_PRFIX, SCHEMA_TARGET_NAMESPASE);
@@ -56,6 +64,13 @@ public class SchemaGenerator {
         this.typeTable = new TypeTable();
     }
 
+    /**
+     * To generate schema for all the parameters in method , first generate scheam for all diffrent
+     * paramter type and latter refferd them
+     *
+     * @return
+     * @throws Exception
+     */
     public XmlSchema generateSchema() throws Exception {
 
         JamServiceFactory factory = JamServiceFactory.getInstance();
@@ -69,10 +84,9 @@ public class SchemaGenerator {
 
         JamClassIterator jClassIter = service.getClasses();
         //all most all the time the ittr will have only one class in it
-        String serviceName;
         while (jClassIter.hasNext()) {
             JClass jclass = (JClass) jClassIter.next();
-            serviceName = jclass.getSimpleName();
+            // serviceName = jclass.getSimpleName();
             //todo in the future , when we support annotation we can use this
             //JAnnotation[] annotations = jclass.getAnnotations();
 
@@ -94,26 +108,38 @@ public class SchemaGenerator {
                 JParameter [] paras = jMethod.getParameters();
                 for (int j = 0; j < paras.length; j++) {
                     JParameter methodParamter = paras[j];
-                    String classTypeName = methodParamter.getType().getQualifiedName();
+                    JClass paraType = methodParamter.getType();
+                    String classTypeName = paraType.getQualifiedName();
+                    if (paraType.isArrayType()) {
+                        classTypeName = paraType.getArrayComponentType().getQualifiedName();
+                        if (!typeTable.isSimpleType(classTypeName)) {
+                            generateSchema(paraType.getArrayComponentType());
+                        }
+                    } else {
+                        if (!typeTable.isSimpleType(classTypeName)) {
+                            generateSchema(methodParamter.getType());
+                        }
+                    }
                     /**
                      * 1. have to check whethet its a simple type
                      * 2. then to check whther its a simple type array
                      * 3. OM elemney
                      * 4. Bean
                      */
-                    if (typeTable.isSimpleType(classTypeName)) {
-                    } else {
-                        //todo this need to be improved to check OMElement sa well
-                        generateSchema(methodParamter.getType());
-                    }
+
                 }
                 // for its return type
                 JClass retuenType = jMethod.getReturnType();
                 if (!retuenType.isVoidType()) {
-                    if (typeTable.isSimpleType(retuenType.getQualifiedName())) {
+                    if (retuenType.isArrayType()) {
+                        String returnTypeName = retuenType.getArrayComponentType().getQualifiedName();
+                        if (!typeTable.isSimpleType(returnTypeName)) {
+                            generateSchema(retuenType.getArrayComponentType());
+                        }
                     } else {
-                        //todo this need to be improved to check OMElement sa well
-                        generateSchema(retuenType);
+                        if (!typeTable.isSimpleType(retuenType.getQualifiedName())) {
+                            generateSchema(retuenType);
+                        }
                     }
                 }
 
@@ -139,10 +165,7 @@ public class SchemaGenerator {
     private void generateWrapperElements(JMethod methods[]) {
         for (int i = 0; i < methods.length; i++) {
             JMethod method = methods[i];
-            JParameter [] paras = method.getParameters();
-            // if (paras.length > 1) {
             genereteWrapperElementforMethod(method);
-//            }
         }
     }
 
@@ -153,7 +176,6 @@ public class SchemaGenerator {
 
         XmlSchemaElement eltOuter = new XmlSchemaElement();
         eltOuter.setName(methodName + METHOD_REQUEST_WRAPPER);
-        complexType.setParticle(sequence);
 //        String complexTypeName = methodName + METHOD_REQUEST_WRAPPER;
 //        complexType.setName(complexTypeName);
         schema.getItems().add(eltOuter);
@@ -162,10 +184,14 @@ public class SchemaGenerator {
         eltOuter.setSchemaType(complexType);
         // adding this type to the table
         //todo pls ask this from Ajith
-        QName comTypeName = new QName(SchemaGenerator.SCHEMA_TARGET_NAMESPASE, eltOuter.getName(), SCHEMA_NAMESPASE_PRFIX);
-        typeTable.addComplexScheam(methodName + METHOD_REQUEST_WRAPPER, comTypeName);
+        QName elementName = new QName(SchemaGenerator.SCHEMA_TARGET_NAMESPASE,
+                eltOuter.getName(), SCHEMA_NAMESPASE_PRFIX);
+        typeTable.addComplexScheam(methodName + METHOD_REQUEST_WRAPPER, elementName);
 
         JParameter [] paras = method.getParameters();
+        if (paras.length > 0) {
+            complexType.setParticle(sequence);
+        }
         for (int j = 0; j < paras.length; j++) {
             JParameter methodParamter = paras[j];
             String classTypeName = methodParamter.getType().getQualifiedName();
@@ -305,5 +331,5 @@ public class SchemaGenerator {
     public JMethod[] getMethods() {
         return methods;
     }
-    
+
 }

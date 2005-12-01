@@ -1,8 +1,9 @@
 package org.apache.axis2.wsdl.java2wsdl;
 
+import org.apache.axis2.om.OMElement;
+
 import javax.xml.namespace.QName;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -74,6 +75,16 @@ public class TypeTable {
                 new QName("http://www.w3.org/2001/XMLSchema", "dateTime", "xs"));
 
         simpleTypetoxsd.put("java.lang.Object",
+                new QName("http://www.w3.org/2001/XMLSchema", "anyType", "xs"));
+
+        // Any types
+        simpleTypetoxsd.put(OMElement.class.getName(),
+                new QName("http://www.w3.org/2001/XMLSchema", "anyType", "xs"));
+        simpleTypetoxsd.put(ArrayList.class.getName(),
+                new QName("http://www.w3.org/2001/XMLSchema", "anyType", "xs"));
+        simpleTypetoxsd.put(Vector.class.getName(),
+                new QName("http://www.w3.org/2001/XMLSchema", "anyType", "xs"));
+        simpleTypetoxsd.put(List.class.getName(),
                 new QName("http://www.w3.org/2001/XMLSchema", "anyType", "xs"));
     }
 

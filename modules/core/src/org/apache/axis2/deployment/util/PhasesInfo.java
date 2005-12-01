@@ -16,12 +16,13 @@
 
 package org.apache.axis2.deployment.util;
 
+import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.engine.Phase;
-import org.apache.axis2.phaseresolver.PhaseMetadata;
-import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.phaseresolver.PhaseException;
+import org.apache.axis2.phaseresolver.PhaseMetadata;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -66,17 +67,32 @@ public class PhasesInfo {
         return OUT_FaultPhases;
     }
 
-    public ArrayList getOperationInPhases() {
-        ArrayList operationINPhases = new ArrayList();
-        operationINPhases.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
+    public ArrayList getGlobalInflow() {
+        ArrayList globalphase = new ArrayList();
         for (int i = 0; i < INPhases.size(); i++) {
-            String phaseName = (String) INPhases.get(i);
+            Phase phase = (Phase) INPhases.get(i);
+            String phaseName = phase.getPhaseName();
+            if (PhaseMetadata.PHASE_TRANSPORTIN.equals(phaseName) ||
+                    PhaseMetadata.PHASE_PRE_DISPATCH.equals(phaseName) ||
+                    PhaseMetadata.PHASE_DISPATCH.equals(phaseName) ||
+                    PhaseMetadata.PHASE_POST_DISPATCH.equals(phaseName)) {
+                globalphase.add(phase);
+            }
+        }
+        return globalphase;
+    }
+
+    public ArrayList getOperationInPhases() throws DeploymentException {
+        ArrayList operationINPhases = new ArrayList();
+        for (int i = 0; i < INPhases.size(); i++) {
+            Phase phase = (Phase) INPhases.get(i);
+            String phaseName = phase.getPhaseName();
             if (PhaseMetadata.PHASE_TRANSPORTIN.equals(phaseName) ||
                     PhaseMetadata.PHASE_PRE_DISPATCH.equals(phaseName) ||
                     PhaseMetadata.PHASE_DISPATCH.equals(phaseName) ||
                     PhaseMetadata.PHASE_POST_DISPATCH.equals(phaseName)) {
             } else {
-                operationINPhases.add(new Phase(phaseName));
+                operationINPhases.add(copyPhase(phase));
             }
         }
         return operationINPhases;
@@ -103,45 +119,60 @@ public class PhasesInfo {
         return desc;
     }
 
-    public ArrayList getOperationOutPhases() {
+    public ArrayList getOperationOutPhases() throws DeploymentException {
         ArrayList oprationOUTPhases = new ArrayList();
         for (int i = 0; i < OUTPhases.size(); i++) {
-            String phaseName = (String) OUTPhases.get(i);
-            if (PhaseMetadata.PHASE_TRANSPORT_OUT.equals(phaseName)) {
-            } else {
-                oprationOUTPhases.add(new Phase(phaseName));
-            }
+            Phase phase = (Phase) OUTPhases.get(i);
+            oprationOUTPhases.add(copyPhase(phase));
         }
-        oprationOUTPhases.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
-        oprationOUTPhases.add(new Phase(PhaseMetadata.PHASE_MESSAGE_OUT));
         return oprationOUTPhases;
     }
 
-    public ArrayList getOperationInFaultPhases() {
+    public ArrayList getOperationInFaultPhases() throws DeploymentException {
         ArrayList oprationIN_FaultPhases = new ArrayList();
         for (int i = 0; i < IN_FaultPhases.size(); i++) {
-            String phaseName = (String) IN_FaultPhases.get(i);
-            oprationIN_FaultPhases.add(new Phase(phaseName));
+            Phase phase = (Phase) IN_FaultPhases.get(i);
+            oprationIN_FaultPhases.add(copyPhase(phase));
         }
         return oprationIN_FaultPhases;
     }
 
-    public ArrayList getOperationOutFaultPhases() {
+    public ArrayList getOperationOutFaultPhases() throws DeploymentException {
         ArrayList oprationOUT_FaultPhases = new ArrayList();
         for (int i = 0; i < OUT_FaultPhases.size(); i++) {
-            String phaseName = (String) OUT_FaultPhases.get(i);
-            oprationOUT_FaultPhases.add(new Phase(phaseName));
+            Phase phase = (Phase) OUT_FaultPhases.get(i);
+            oprationOUT_FaultPhases.add(copyPhase(phase));
         }
         return oprationOUT_FaultPhases;
     }
 
-    public void setOperationPhases(AxisOperation axisOperation) {
+    public void setOperationPhases(AxisOperation axisOperation) throws DeploymentException{
         if (axisOperation != null) {
             axisOperation.setRemainingPhasesInFlow(getOperationInPhases());
             axisOperation.setPhasesOutFlow(getOperationOutPhases());
             axisOperation.setPhasesInFaultFlow(getOperationInFaultPhases());
             axisOperation.setPhasesOutFaultFlow(getOperationOutFaultPhases());
         }
+    }
+
+    /**
+     * To copy phase informatoin from one to another
+     *
+     * @param phase
+     * @return
+     */
+    private Phase copyPhase(Phase phase) throws DeploymentException {
+        Phase newPhase = new Phase(phase.getPhaseName());
+        Iterator handlers = phase.getHandlers().iterator();
+        while (handlers.hasNext()) {
+            try {
+                HandlerDescription handlerDescription = (HandlerDescription) handlers.next();
+                newPhase.addHandler(handlerDescription);
+            } catch (PhaseException e) {
+                throw new DeploymentException(e);
+            }
+        }
+        return newPhase;
     }
 
 }

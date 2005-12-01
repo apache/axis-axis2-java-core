@@ -1,8 +1,6 @@
 package org.apache.axis2.wsdl.java2wsdl;
 
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
-import org.apache.axis2.wsdl.writer.WOMWriter;
-import org.apache.axis2.wsdl.writer.WOMWriterFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.ExtensionConstants;
@@ -13,7 +11,6 @@ import org.apache.wsdl.extensions.impl.SOAPBodyImpl;
 import org.apache.wsdl.extensions.impl.SOAPOperationImpl;
 import org.apache.wsdl.impl.WSDLDescriptionImpl;
 import org.apache.xmlbeans.impl.jam.JMethod;
-import org.apache.xmlbeans.impl.jam.JParameter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -23,6 +20,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.Iterator;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -49,11 +47,21 @@ public class Java2WOM {
     private XmlSchema schema;
     private String serviceName;
 
-    public Java2WOM(TypeTable table, JMethod[] method, XmlSchema schema, String serviceName) {
+    public Java2WOM(TypeTable table, JMethod[] method, XmlSchema schema, String serviceName,
+                    String targentNamespece,
+                    String targetNamespecheprefix) {
         this.table = table;
         this.method = method;
         this.schema = schema;
         this.serviceName = serviceName;
+
+        if (targentNamespece != null && !targentNamespece.trim().equals("")) {
+            SchemaGenerator.TARGET_NAMESPACE = targentNamespece;
+        }
+        if (targetNamespecheprefix != null && !targetNamespecheprefix.trim().equals("")) {
+            SchemaGenerator.TARGET_NAMESPACE_PRFIX = targetNamespecheprefix;
+        }
+
     }
 
     public WSDLDescription generateWOM() throws Exception {
@@ -67,19 +75,29 @@ public class Java2WOM {
         WSDLDescription womDescription;
         WSDLComponentFactory wsdlComponentFactory = new WSDLDescriptionImpl();
         womDescription = wsdlComponentFactory.createDescription();
+        HashMap namspaseMap = new HashMap();
+        namspaseMap.put("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
+        namspaseMap.put(SchemaGenerator.TARGET_NAMESPACE_PRFIX, SchemaGenerator.TARGET_NAMESPACE);
+        namspaseMap.put("ns1", "http://org.apache.axis2/xsd");
+        namspaseMap.put("xs", "http://www.w3.org/2001/XMLSchema");
+        womDescription.setNamespaces(namspaseMap);
+        womDescription.setTargetNameSpace(SchemaGenerator.TARGET_NAMESPACE);
 
-        WOMWriter womWriter = WOMWriterFactory.createWriter(org.apache.axis2.wsdl.WSDLConstants.WSDL_1_1);
-        womWriter.setdefaultWSDLPrefix("wsdl");
-        womWriter.writeWOM(womDescription, System.out);
+        //generating port type
         WSDLInterface portType = generatePortType(womDescription, wsdlComponentFactory, documentElement);
+        womDescription.addInterface(portType);
 
         QName bindingName = new QName(SchemaGenerator.TARGET_NAMESPACE, serviceName + "Binding"
                 , SchemaGenerator.TARGET_NAMESPACE_PRFIX);
+        //generating binding
         WSDLBinding binding = genareteBinding(wsdlComponentFactory,
-                womDescription, portType,
+                portType,
                 bindingName,
-                method, "document", "literal", "http://schemas.xmlsoap.org/soap/http",
+                "document", "literal", "http://schemas.xmlsoap.org/soap/http",
                 "http://www.org.apache.axis2");
+        womDescription.addBinding(binding);
+
+        //generating service
         WSDLService service = generateService(wsdlComponentFactory, womDescription, binding, serviceName);
         womDescription.addService(service);
         return womDescription;
@@ -88,14 +106,6 @@ public class Java2WOM {
     public WSDLInterface generatePortType(WSDLDescription womDescription,
                                           WSDLComponentFactory wsdlComponentFactory,
                                           Element documentElement) {
-        HashMap namspaseMap = new HashMap();
-        namspaseMap.put("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
-        namspaseMap.put(SchemaGenerator.TARGET_NAMESPACE_PRFIX, SchemaGenerator.TARGET_NAMESPACE);
-        namspaseMap.put("ns1", "http://org.apache.axis2/xsd");
-        namspaseMap.put("xs", "http://www.w3.org/2001/XMLSchema");
-        womDescription.setNamespaces(namspaseMap);
-
-        womDescription.setTargetNameSpace(SchemaGenerator.TARGET_NAMESPACE);
         WSDLTypes wsdlTypes = wsdlComponentFactory.createTypes();
         ExtensionFactory extensionFactory = wsdlComponentFactory.createExtensionFactory();
         org.apache.wsdl.extensions.Schema schemaExtensibilityElement =
@@ -107,7 +117,7 @@ public class Java2WOM {
 
         WSDLInterface portType = womDescription.createInterface();
         portType.setName(new QName(serviceName + "Port"));
-        womDescription.addInterface(portType);
+//        womDescription.addInterface(portType);
         //adding message refs
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
@@ -116,25 +126,12 @@ public class Java2WOM {
             operation.setName(new QName(jmethod.getSimpleName()));
 
             MessageReference messageRefinput = wsdlComponentFactory.createMessageReference();
-            JParameter [] paras = jmethod.getParameters();
-            QName typeName = null;
-            boolean addMessage = false;
-            if (paras.length == 0) {
-                //todo have to fix this, method take no arugment
-//                } else if (paras.length == 1) {
-//                    typeName = table.getQNamefortheType(paras[0].getType().getQualifiedName());
-//                    addMessage = true;
-            } else {
-                typeName = table.getComplexScheamType(jmethod.getSimpleName() +
-                        SchemaGenerator.METHOD_REQUEST_WRAPPER);
-                addMessage = true;
-            }
-            if (addMessage) {
-                messageRefinput.setElementQName(typeName);
-                messageRefinput.setDirection(org.apache.wsdl.WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
-                operation.setInputMessage(messageRefinput);
-                portType.setOperation(operation);
-            }
+            QName typeName = table.getComplexScheamType(jmethod.getSimpleName() +
+                    SchemaGenerator.METHOD_REQUEST_WRAPPER);
+            messageRefinput.setElementQName(typeName);
+            messageRefinput.setDirection(org.apache.wsdl.WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+            operation.setInputMessage(messageRefinput);
+            portType.setOperation(operation);
 
             if (!jmethod.getReturnType().isVoidType()) {
                 MessageReference messageRefiout = wsdlComponentFactory.createMessageReference();
@@ -217,5 +214,64 @@ public class Java2WOM {
         service.setEndpoint(endpoints);
         return service;
     }
+
+
+    private WSDLBinding genareteBinding(WSDLComponentFactory wsdlComponentFactory,
+                                        WSDLInterface portType, QName bindingName,
+                                        String style,
+                                        String use,
+                                        String trsportURI,
+                                        String namespeceURI) {
+        WSDLBinding binding = wsdlComponentFactory.createBinding();
+        binding.setBoundInterface(portType);
+        binding.setName(bindingName);
+
+        SOAPBindingImpl soapbindingImpl = new SOAPBindingImpl();
+        soapbindingImpl.setStyle(style);
+        soapbindingImpl.setTransportURI(trsportURI);
+        binding.addExtensibilityElement(soapbindingImpl);
+
+        Iterator op_itr = portType.getOperations().keySet().iterator();
+        while (op_itr.hasNext()) {
+            String opName = (String) op_itr.next();
+            WSDLOperation wsdlOperation = portType.getOperation(opName);
+            MessageReference inMessage = wsdlOperation.getInputMessage();
+
+            WSDLBindingOperation bindingoperation = wsdlComponentFactory.createWSDLBindingOperation();
+            bindingoperation.setName(new QName(opName));
+            bindingoperation.setOperation(wsdlOperation);
+            binding.addBindingOperation(bindingoperation);
+
+            SOAPOperationImpl soapOpimpl = new SOAPOperationImpl();
+            soapOpimpl.setStyle(style);
+            //to do heve to set a proper SOAPAction
+            soapOpimpl.setSoapAction(opName);
+            bindingoperation.addExtensibilityElement(soapOpimpl);
+            if (inMessage != null) {
+                WSDLBindingMessageReference bindingInMessage = wsdlComponentFactory.createWSDLBindingMessageReference();
+                bindingInMessage.setDirection(org.apache.wsdl.WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+                bindingoperation.setInput(bindingInMessage);
+                SOAPBodyImpl requestSoapbody = new SOAPBodyImpl();
+                requestSoapbody.setUse(use);
+                //todo need to fix this
+                requestSoapbody.setNamespaceURI(namespeceURI);
+                bindingInMessage.addExtensibilityElement(requestSoapbody);
+            }
+
+            MessageReference outMessage = wsdlOperation.getOutputMessage();
+            if (outMessage != null) {
+                WSDLBindingMessageReference bindingOutMessage = wsdlComponentFactory.createWSDLBindingMessageReference();
+
+                bindingOutMessage.setDirection(org.apache.wsdl.WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+                bindingoperation.setOutput(bindingOutMessage);
+                SOAPBodyImpl resSoapbody = new SOAPBodyImpl();
+                resSoapbody.setUse(use);
+                resSoapbody.setNamespaceURI(namespeceURI);
+                bindingOutMessage.addExtensibilityElement(resSoapbody);
+            }
+        }
+        return binding;
+    }
+
 
 }

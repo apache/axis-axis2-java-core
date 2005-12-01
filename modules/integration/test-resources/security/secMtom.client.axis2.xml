@@ -40,14 +40,38 @@
         <parameter name="PROTOCOL" locked="false">HTTP/1.0</parameter>
     </transportSender>
 
-
-    
-    <phaseOrder type="inflow">
+   <phaseOrder type="inflow">
         <!--  System pre defined phases       -->
         <phase name="TransportIn"/>
         <phase name="PreDispatch"/>
-        <phase name="Dispatch"/>
-        <phase name="PostDispatch"/>
+        <phase name="Dispatch">
+            <handler name="AddressingBasedDispatcher"
+                     class="org.apache.axis2.engine.AddressingBasedDispatcher">
+                <order phase="Dispatch"/>
+            </handler>
+             <handler name="RequestURIBasedDispatcher"
+                     class="org.apache.axis2.engine.RequestURIBasedDispatcher">
+                <order phase="Dispatch"/>
+            </handler>
+             <handler name="SOAPActionBasedDispatcher"
+                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher">
+                <order phase="Dispatch"/>
+            </handler>
+             <handler name="SOAPMessageBodyBasedDispatcher"
+                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher">
+                <order phase="Dispatch"/>
+            </handler>
+        </phase>
+        <phase name="PostDispatch">
+             <handler name="DispatchPostConditionsEvaluator"
+                     class="org.apache.axis2.engine.DispatchingChecker">
+                <order phase="PostDispatch"/>
+            </handler>
+            <handler name="InstanceDispatcher"
+                     class="org.apache.axis2.engine.InstanceDispatcher">
+                <order phase="PostDispatch"/>
+            </handler>
+        </phase>
         <!--  System pre defined phases       -->
         <!--   After Postdispatch phase module author or or service author can add any phase he want      -->
         <phase name="userphase1"/>
@@ -55,8 +79,9 @@
     <phaseOrder type="outflow">
         <!--      user can add his own phases to this area  -->
         <phase name="userphase1"/>
-        <!--        This is temporray solution will be change soon-->
-        <phase name="security"/>
+        <!--system predefined phase-->
+        <phase name="PolicyDetermination"/>
+        <phase name="MessageOut"/>
     </phaseOrder>
     <phaseOrder type="INfaultflow">
         <!--      user can add his own phases to this area  -->
@@ -65,6 +90,10 @@
     <phaseOrder type="Outfaultflow">
         <!--      user can add his own phases to this area  -->
         <phase name="userphase1"/>
+        <phase name="PolicyDetermination"/>
+        <phase name="MessageOut"/>
     </phaseOrder>
+    
+
 </axisconfig>
 

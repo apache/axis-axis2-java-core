@@ -74,7 +74,6 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         TransportOutDescription tOut = new TransportOutDescription(new QName(Constants.TRANSPORT_LOCAL));
         config.addTransportOut(tOut);
 
-        ((AxisConfigurationImpl) config).setDefaultDispatchers();
         LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(
                 config);
 
