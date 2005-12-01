@@ -126,6 +126,7 @@ public class HTTPWorker implements HttpRequestHandler {
                                         request.getRequestLine().getUri()));
                 if (!processed) {
                     response.setStatusLine(request.getRequestLine().getHttpVersion(), 200, "OK");
+                    response.addHeader(new Header("Content-Type", "text/html"));
                     response.setBodyString(HTTPTransportReceiver.getServicesHTML(configurationContext));
                     setResponseHeaders(conn, request, response,0);
                     conn.writeResponse(response);

@@ -170,6 +170,20 @@
         <include name="**/*.xsd"/>
       </fileset>
     </copy>
+    <mkdir dir="${basedir}/target/repo/modules"/>
+    <copy todir="${basedir}/target/repo/modules">
+      <fileset dir="${basedir}/modules/addressing/target">
+        <include name="**/*.mar"/>
+      </fileset>
+      <fileset dir="${basedir}/modules/security/target">
+        <include name="**/*.mar"/>
+      </fileset>
+    </copy>
+    <copy todir="${basedir}/target/repo">
+      <fileset dir="${basedir}/modules/core/src/org/apache/axis2/deployment">
+        <include name="axis2.xml"/>
+      </fileset>
+    </copy>
   </target>
 
 
