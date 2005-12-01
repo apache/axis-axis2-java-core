@@ -16,8 +16,6 @@
 
 package org.apache.axis2.om;
 
-import org.apache.axis2.om.impl.OMOutputImpl;
-
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;

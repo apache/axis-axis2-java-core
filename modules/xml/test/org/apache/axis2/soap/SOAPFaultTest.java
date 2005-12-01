@@ -370,7 +370,6 @@ public class SOAPFaultTest extends SOAPFaultTestCase {
     }
 
     public void testMoreChildrenAddition() {
-        org.apache.axis2.om.impl.OMOutputImpl output = null;
         try {
             SOAPFactory soapFactory = OMAbstractFactory.getSOAP12Factory();
             SOAPEnvelope envelope = soapFactory.getDefaultFaultEnvelope();
