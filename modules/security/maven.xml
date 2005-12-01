@@ -17,7 +17,6 @@
     </preGoal>
     
     <postGoal name="test:compile">
-      <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
         <mkdir dir="target/classes/META-INF"/>
         <copy file="src/META-INF/module.xml"
             tofile="target/classes/META-INF/module.xml"/>
@@ -39,7 +38,6 @@
             <include name="**/*"/>
         </jar>
         <copy file="target/security.mar" tofile="target/modules/security.mar"/>
-      </j:if>
     </postGoal>
 
     <preGoal name="java:compile">
