@@ -127,6 +127,12 @@ seven modules.</p>
 width="426" height="189" border="0" align="bottom" usemap="#Graphic2Map">
   <map name="Graphic2Map">
     <area shape="rect" coords="123,31,222,97" href="#bmInfoMod">
+    <area shape="rect" coords="239,62,319,134" href="#bmXML">
+    <area shape="rect" coords="127,112,218,177" href="#bmSOAPPM">
+    <area shape="rect" coords="12,39,89,95" href="#bmDeployment">
+    <area shape="rect" coords="0,108,94,156" href="#bmWSDL">
+    <area shape="rect" coords="350,31,426,86" href="#bmClientAPI">
+    <area shape="rect" coords="350,114,421,164" href="#bmTransports">
   </map>
 </p>
 
@@ -173,7 +179,7 @@ width="400" height="443" border="0"></p>
 of A. A------&gt;B means the given relationship holds between A and B.)</p>
 
 <p>The two hierarchies are connected as shown in the above figure. The
-Description hierarchy represents data that exists throughout the lifetime of
+Description hierarchy represents the static data, may be loaded from a configuration file that exists throughout the lifetime of
 Axis2. Examples for such data would be deployed Web Services, operations,
 etc. On the other hand, the context hierarchy holds more dynamic information
 about things that has more than one instances (e.g.Message Context).</p>
@@ -228,7 +234,7 @@ would serve better in this instants and opt for the flexibility.</p>
       </td>
       <td width="371"><p>This context is avaliable throughout a usage of the
         respective service. This can be used to share information between
-        several MAPs that belong to the same service, within a single
+        several MEPs that belong to the same service, within a single
         interaction.</p>
       </td>
       <td width="103"><p>Service Description</p>
@@ -263,18 +269,14 @@ would serve better in this instants and opt for the flexibility.</p>
   </tbody>
 </table>
 
-<p><br>
-<br>
-</p>
-
+<p>&nbsp;</p>
 <p>All context classes implement readObject, writeObject methods that allows
-to serialize and de-serialize them correctly. Serializing the current
-Configuration Context object would essentially serialize the whole context
-hierarchy. To restore it, the user has to fist perform the de-serialization
-of the ConfigurationContext object. He can restore the description hierarchy
-by calling the init (axisConfiguration) method of the de-serialized
-ConfigurationContext object.</p>
-
+  to serialize and de-serialize them correctly. Serializing the current
+  Configuration Context object would essentially serialize the whole context
+  hierarchy. To restore it, the user has to fist perform the de-serialization
+  of the ConfigurationContext object. He can restore the description hierarchy
+  by calling the init (axisConfiguration) method of the de-serialized
+  ConfigurationContext object.</p>
 <h2><a name="bmXML"></a>XML Processing Model</h2>
 
 <p>Please refer to the <a href="OMTutorial.html">OM Tutorial</a></p>
@@ -289,7 +291,7 @@ perform, sending and receiving SOAP messages. The architecture provides two
 Pipes (also named 'Flows'), to perform these two basic actions. Axis Engine
 or the driver of Axis2 defines two methods send() and receive() to implement
 these two Pipes. The two pipes are named <i>In Pipe</i> and <i>Out Pipe</i>,
-the complex Message Exchange Patterns are constructed by combining these two
+and the complex Message Exchange Patterns are constructed by combining these two
 pipes.</p>
 
 <p>Extensibility of the SOAP processing model is provided through the
@@ -300,14 +302,14 @@ combining the Handlers from all the scopes.</p>
 
 <p>The Handlers act as interceptors and they process the parts of the SOAP
 message and provide add on services. Usually Handlers work on the SOAP
-Headers yet they may access or change the SOAP Body as well.</p>
+headers yet they may access or change the SOAP Body as well.</p>
 
-<p>When a SOAP message is send from the Client API, a <i>Out Pipe</i> would
+<p>When a SOAP message is being sent through the Client API, an <i>Out Pipe</i> would
 begin, the <i>Out Pipe</i> invokes the Handlers and ends with a Transport
 Sender that sends the SOAP message to the target endpoint. The SOAP message
 is received by a Transport Receiver at the target endpoint, which reads the
-SOAP message and starts the <i>In Pipe</i>. The In Pipe consists of Handlers
-and ends with a <a href="#mr">Message Receiver</a>, which consumes the SOAP
+SOAP message and starts the <i>In Pipe</i>. The In Pipe consists of handlers
+that ends with a <a href="#mr">Message Receiver</a>, which consumes the SOAP
 message.</p>
 
 <p>Above explained processing happens for each and every SOAP message

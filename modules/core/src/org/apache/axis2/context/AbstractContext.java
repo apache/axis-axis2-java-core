@@ -17,9 +17,11 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.engine.AxisConfiguration;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -91,26 +93,21 @@ public abstract class AbstractContext {
 //     * @param properties
 //     * @see org.apache.axis2.client.Options#COPY_PROPERTIES
 //     */
-//    public void setProperties(Map properties) {
-//        properties = new HashMap();
-//        if (properties == null) {
-//            this.properties = null;
-//        } else {
-//            Boolean copyProperties = ((Boolean) properties.get(Options.COPY_PROPERTIES));
-//            if (copyProperties != null && copyProperties.booleanValue()) {
-//                Iterator iterator = properties.keySet().iterator();
-//                while (iterator.hasNext()) {
-//                    Object key = iterator.next();
-//                    this.properties.put(key, properties.get(key));
-//                }
-//            } else {
-//                this.properties = properties;
-//            }
-//        }
-//    }
 
-     public void setProperties(Map properties) {
-         this.properties = properties;
-     }
-
+    public void setProperties(Map properties) {
+        if (properties == null) {
+            this.properties = null;
+        } else {
+            Boolean copyProperties = ((Boolean) properties.get(Options.COPY_PROPERTIES));
+            if (copyProperties != null && copyProperties.booleanValue()) {
+                Iterator iterator = properties.keySet().iterator();
+                while (iterator.hasNext()) {
+                    Object key = iterator.next();
+                    this.properties.put(key, properties.get(key));
+                }
+            } else {
+                this.properties = properties;
+            }
+        }
+    }
 }
