@@ -164,6 +164,9 @@
       <fileset dir="${basedir}/modules/core/conf">
         <include name="**/*.properties"/>
       </fileset>
+      <fileset dir="${basedir}/modules/core/src">
+        <include name="**/axis2.xml"/>
+      </fileset>
       <fileset dir="${basedir}/modules/codegen/src">
         <include name="**/*.properties"/>
         <include name="**/*.xsl"/>
