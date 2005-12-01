@@ -72,7 +72,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
             if (values[0] != null) {
                 serviceName = new QName(values[0]);
                 AxisConfiguration registry =
-                        messageContext.getSystemContext().getAxisConfiguration();
+                        messageContext.getConfigurationContext().getAxisConfiguration();
                 return registry.getService(serviceName.getLocalPart());
 
             }

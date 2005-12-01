@@ -166,8 +166,22 @@ public class PhaseResolver {
                     break;
                 }
                 case PhaseMetadata.OUT_FLOW: {
+                    ArrayList phases = new ArrayList();
+                    Iterator itr_ops = axisOperation.getPhasesOutFlow().iterator();
+                    while (itr_ops.hasNext()) {
+                        Object o = itr_ops.next();
+                        phases.add(o);
+                    }
+                    if (axisConfig != null) {
+                        Iterator itr_axis_config =
+                                axisConfig.getGlobalOutPhases().iterator();
+                        while (itr_axis_config.hasNext()) {
+                            Object o = itr_axis_config.next();
+                            phases.add(o);
+                        }
+                    }
                     phaseHolder =
-                            new PhaseHolder(axisOperation.getPhasesOutFlow());
+                            new PhaseHolder(phases);
                     break;
                 }
                 case PhaseMetadata.FAULT_IN_FLOW: {

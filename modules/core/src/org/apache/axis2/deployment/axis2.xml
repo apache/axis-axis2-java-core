@@ -134,6 +134,7 @@
         <!--      user can add his own phases to this area  -->
         <phase name="userphase1"/>
         <!--system predefined phase-->
+        <!--these phase will run irrespective of the service-->
         <phase name="PolicyDetermination"/>
         <phase name="MessageOut"/>
     </phaseOrder>

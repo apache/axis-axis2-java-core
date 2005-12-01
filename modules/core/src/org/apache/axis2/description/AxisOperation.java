@@ -514,7 +514,7 @@ public abstract class AxisOperation  implements
         } else {
             // So this message is part of an ongoing MEP
             //			operationContext =
-            ConfigurationContext configContext = msgContext.getSystemContext();
+            ConfigurationContext configContext = msgContext.getConfigurationContext();
             operationContext =
                     configContext.getOperationContext( msgContext.getRelatesTo().getValue());
 
@@ -548,7 +548,7 @@ public abstract class AxisOperation  implements
         } else {
             // So this message is part of an ongoing MEP
             //			operationContext =
-            ConfigurationContext configContext = msgContext.getSystemContext();
+            ConfigurationContext configContext = msgContext.getConfigurationContext();
             operationContext = configContext.getOperationContext(msgContext.getRelatesTo().getValue());
 
             if (null == operationContext) {
@@ -564,7 +564,7 @@ public abstract class AxisOperation  implements
     }
 
     public void registerOperationContext(MessageContext msgContext, OperationContext operationContext) throws AxisFault {
-        msgContext.getSystemContext().registerOperationContext(
+        msgContext.getConfigurationContext().registerOperationContext(
                 msgContext.getMessageID(), operationContext);
         operationContext.addMessageContext(msgContext);
         msgContext.setOperationContext(operationContext);

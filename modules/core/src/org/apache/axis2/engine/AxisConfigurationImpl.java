@@ -330,21 +330,21 @@ public class AxisConfigurationImpl implements AxisConfiguration {
         return serviceGroups.values().iterator();
     }
 
-    public void setOutPhases(ArrayList outPhases) {
-        this.outPhases = outPhases;
-    }
-
-
     public ArrayList getInPhasesUptoAndIncludingPostDispatch() {
         return inPhasesUptoAndIncludingPostDispatch;
     }
 
-    public void setInPhasesUptoAndIncludingPostDispatch(ArrayList inPhasesUptoAndIncludingPostDispatch) {
-        this.inPhasesUptoAndIncludingPostDispatch = inPhasesUptoAndIncludingPostDispatch;
+    //to get the out flow correpodning to the global out flow;
+    public ArrayList getGlobalOutPhases() {
+       return this.outPhases;
     }
 
-    public ArrayList getOutFlow() {
-        return outPhases;
+    public void setGlobalOutPhase(ArrayList outPhases) {
+        this.outPhases = outPhases;
+    }
+
+    public void setInPhasesUptoAndIncludingPostDispatch(ArrayList inPhasesUptoAndIncludingPostDispatch) {
+        this.inPhasesUptoAndIncludingPostDispatch = inPhasesUptoAndIncludingPostDispatch;
     }
 
 

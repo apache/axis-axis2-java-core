@@ -43,7 +43,7 @@ public class UtilServer {
         receiver.getSystemContext().getAxisConfiguration().addService(service);
         Utils.resolvePhases(receiver.getSystemContext().getAxisConfiguration(),
                 service);
-//        ServiceGroupContext serviceGroupContext = service.getParent().getServiceGroupContext(receiver.getSystemContext());
+//        ServiceGroupContext serviceGroupContext = service.getParent().getServiceGroupContext(receiver.getConfigurationContext());
     }
 
     public static synchronized void unDeployService(QName service) throws AxisFault {

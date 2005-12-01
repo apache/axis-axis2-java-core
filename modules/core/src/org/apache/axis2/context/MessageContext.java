@@ -556,7 +556,7 @@ public class MessageContext extends AbstractContext {
         this.serviceContextID = serviceContextID;
     }
 
-    public ConfigurationContext getSystemContext() {
+    public ConfigurationContext getConfigurationContext() {
         return configurationContext;
     }
 

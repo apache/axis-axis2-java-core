@@ -657,11 +657,11 @@ public class AxisService
             serviceContext =
                     new ServiceContext(this, msgContext.getServiceGroupContext());
             //TODO Once the ServiceContext is bound to an incomming serviceContext ID(like a cookie,reference Property) FIX this
-            //			msgContext.getSystemContext().registerServiceContext(serviceContext.getServiceContextID(),
+            //			msgContext.getConfigurationContext().registerServiceContext(serviceContext.getServiceContextID(),
             // serviceContext);
         } else {
             serviceContext =
-                    msgContext.getSystemContext()
+                    msgContext.getConfigurationContext()
                             .getServiceContext(msgContext.getServiceContextID());
         }
 

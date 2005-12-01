@@ -188,7 +188,7 @@ public class SimpleHTTPServer extends TransportListener {
     }
 
     /**
-     * Method getSystemContext
+     * Method getConfigurationContext
      *
      * @return the system context
      */

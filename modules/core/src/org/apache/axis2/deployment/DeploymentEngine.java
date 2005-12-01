@@ -264,6 +264,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         try {
             ((AxisConfigurationImpl) axisConfig).setRepository(axis2repository);
+            validateSystemPredefinedPhases();
             engageModules();
         } catch (AxisFault axisFault) {
             log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VAL_FAILED, axisFault.getMessage()));
@@ -350,10 +351,10 @@ public class DeploymentEngine implements DeploymentConstants {
         } catch (Exception e) {
             throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.INVALID_PHASE));
         }
-
         ((AxisConfigurationImpl) axisConfig).setInPhasesUptoAndIncludingPostDispatch(
                 phasesinfo.getGlobalInflow());
         ((AxisConfigurationImpl) axisConfig).setInFaultPhases(phasesinfo.getIN_FaultPhases());
+        axisConfig.setGlobalOutPhase(phasesinfo.getGlobalOutPhaseList());
     }
 
     public ModuleDescription getModule(QName moduleName) throws AxisFault {

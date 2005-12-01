@@ -97,7 +97,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
 //            ((AxisConfigurationImpl) axisSytem).setInPhases(inPhase);
             ((AxisConfigurationImpl) axisSytem).setInFaultPhases(inPhase);
             ((AxisConfigurationImpl) axisSytem).setOutFaultPhases(inPhase);
-            ((AxisConfigurationImpl) axisSytem).setOutPhases(inPhase);
+            ((AxisConfigurationImpl) axisSytem).setGlobalOutPhase(inPhase);
 
             Handler han = null;
             PhaseHolder ph = new PhaseHolder(inPhase);

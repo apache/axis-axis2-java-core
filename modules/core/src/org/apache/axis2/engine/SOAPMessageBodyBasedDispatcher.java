@@ -78,7 +78,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
                 if (values[0] != null) {
                     serviceName = values[0];
                     AxisConfiguration registry =
-                            messageContext.getSystemContext().getAxisConfiguration();
+                            messageContext.getConfigurationContext().getAxisConfiguration();
                     return registry.getService(serviceName);
                 }
             }

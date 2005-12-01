@@ -395,12 +395,12 @@ public class InOutMEPClient extends MEPClient {
     public MessageContext send(MessageContext msgctx,
                                TransportInDescription transportIn) throws AxisFault {
 
-        AxisEngine engine = new AxisEngine(msgctx.getSystemContext());
+        AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
         engine.send(msgctx);
 
         //create the response
         MessageContext response =
-                new MessageContext(msgctx.getSystemContext(),
+                new MessageContext(msgctx.getConfigurationContext(),
                         msgctx.getSessionContext(),
                         msgctx.getTransportIn(),
                         msgctx.getTransportOut());
@@ -418,7 +418,7 @@ public class InOutMEPClient extends MEPClient {
 
         if (resenvelope != null) {
             response.setEnvelope(resenvelope);
-            engine = new AxisEngine(msgctx.getSystemContext());
+            engine = new AxisEngine(msgctx.getConfigurationContext());
             engine.receive(response);
         } else {
             throw new AxisFault(Messages.getMessage("blockingInvocationExpectsResponse"));

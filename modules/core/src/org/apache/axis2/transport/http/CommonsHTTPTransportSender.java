@@ -876,7 +876,7 @@ public class CommonsHTTPTransportSender
     private boolean isProxyListed(MessageContext msgCtx) throws AxisFault {
         boolean returnValue = false;
         Parameter par = null;
-        proxyOutSetting = msgCtx.getSystemContext()
+        proxyOutSetting = msgCtx.getConfigurationContext()
                 .getAxisConfiguration()
                 .getTransportOut(new QName(Constants.TRANSPORT_HTTP));
         if (proxyOutSetting != null) {

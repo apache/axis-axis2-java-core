@@ -21,7 +21,6 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -31,7 +30,6 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -78,6 +76,10 @@ public class AxisEngine {
             resumeInvocationPhases(phases, msgContext);
         } else {
             invokePhases(phases, msgContext);
+            ArrayList globaleOutphase = msgContext.getConfigurationContext().
+                    getAxisConfiguration().getGlobalOutPhases();
+            //invoking global phase.
+            invokePhases(globaleOutphase, msgContext);
         }
 
         if (!msgContext.isPaused()) {
@@ -100,13 +102,13 @@ public class AxisEngine {
      */
     public void receive(MessageContext msgContext) throws AxisFault {
 
-        ConfigurationContext sysCtx = msgContext.getSystemContext();
-        AxisOperation axisOperation = null;
+        ConfigurationContext sysCtx = msgContext.getConfigurationContext();
+        AxisOperation axisOperation;
         ArrayList preCalculatedPhases =
                 sysCtx
                         .getAxisConfiguration()
                         .getInPhasesUptoAndIncludingPostDispatch();
-        ArrayList operationSpecificPhases = null;
+        ArrayList operationSpecificPhases;
 
         if (msgContext.isPaused()) {
             // the message has paused, so rerun them from the position they stoped. The Handler
@@ -194,7 +196,7 @@ public class AxisEngine {
         if (opContext == null) {
             //If we do not have a OperationContext that means this may be a incoming 
             //Dual Channel response. So try to dispatch the Service 
-            ConfigurationContext sysCtx = msgContext.getSystemContext();
+            ConfigurationContext sysCtx = msgContext.getConfigurationContext();
             ArrayList phases =
                     sysCtx
                             .getAxisConfiguration()
@@ -262,7 +264,7 @@ public class AxisEngine {
         faultContext.setOperationContext(processingContext.getOperationContext());
         faultContext.setProcessingFault(true);
         faultContext.setServerSide(true);
-        SOAPEnvelope envelope = null;
+        SOAPEnvelope envelope;
 
         faultContext.setProperty(HTTPConstants.HTTPOutTransportInfo,
                 processingContext.getProperty(HTTPConstants.HTTPOutTransportInfo));
@@ -327,7 +329,7 @@ public class AxisEngine {
             SOAPFault fault,
             Throwable e) {
         SOAPProcessingException soapException = null;
-        String soapNamespaceURI = "";
+        String soapNamespaceURI;
 
         // get the current SOAP version
         if (!context.isSOAP11()) {
@@ -342,7 +344,7 @@ public class AxisEngine {
         } else if (e instanceof AxisFault) {
             if (e.getCause() instanceof SOAPProcessingException) {
                 soapException = (SOAPProcessingException) e.getCause();
-            } 
+            }
         } else {
             // we have recd an instance of just the Exception class
         }
@@ -355,7 +357,7 @@ public class AxisEngine {
         } else if (soapException != null) {
             soapFaultCode = soapException.getFaultCode();
         } else if (e instanceof AxisFault) {
-            soapFaultCode = ((AxisFault)e).getFaultCode();
+            soapFaultCode = ((AxisFault) e).getFaultCode();
         }
 
         // defaulting to fault code Sender, if no message is available
@@ -373,7 +375,7 @@ public class AxisEngine {
         } else if (soapException != null) {
             message = soapException.getMessage();
         } else if (e instanceof AxisFault) {
-            message = ((AxisFault)e).getMessage();
+            message = ((AxisFault) e).getMessage();
         }
 
         // defaulting to reason, unknown, if no reason is available
@@ -415,7 +417,7 @@ public class AxisEngine {
     }
 
     private void verifyContextBuilt(MessageContext msgctx) throws AxisFault {
-        if (msgctx.getSystemContext() == null) {
+        if (msgctx.getConfigurationContext() == null) {
             throw new AxisFault(
                     Messages.getMessage("cannotBeNullConfigurationContext"));
         }

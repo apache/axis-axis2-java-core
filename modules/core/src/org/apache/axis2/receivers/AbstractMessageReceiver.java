@@ -117,7 +117,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
         } else if (
             scopeParam != null
                 && Constants.APPLICATION_SCOPE.equals(scopeParam.getValue())) {
-            ConfigurationContext globalContext = msgContext.getSystemContext();
+            ConfigurationContext globalContext = msgContext.getConfigurationContext();
             synchronized (globalContext) {
                 Object obj =
                     globalContext.getProperty(serviceName.getLocalPart());

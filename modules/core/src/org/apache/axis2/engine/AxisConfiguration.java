@@ -117,6 +117,11 @@ public interface AxisConfiguration extends ParameterInclude {
      */
     public ArrayList getInPhasesUptoAndIncludingPostDispatch();
 
+    //to get the out flow correpodning to the global out flow;
+    public ArrayList getGlobalOutPhases();
+
+    public void setGlobalOutPhase(ArrayList outPhases);
+
     public ArrayList getInFaultFlow();
 
     public Hashtable getFaultyServices();

@@ -54,7 +54,7 @@ public class Utils {
 
     public static MessageContext createOutMessageContext(MessageContext inMessageContext) throws AxisFault {
         MessageContext newmsgCtx =
-                new MessageContext(inMessageContext.getSystemContext(),
+                new MessageContext(inMessageContext.getConfigurationContext(),
                         inMessageContext.getSessionContext(),
                         inMessageContext.getTransportIn(),
                         inMessageContext.getTransportOut());
@@ -189,7 +189,7 @@ public class Utils {
         if (serviceNameAndGroup != null) {
             String[] serviceNameAndGroupStrings = serviceNameAndGroup.split(":");
             AxisConfiguration registry =
-                    messageContext.getSystemContext().getAxisConfiguration();
+                    messageContext.getConfigurationContext().getAxisConfiguration();
             if (serviceNameAndGroupStrings[0] != null) {
                 AxisServiceGroup axisServiceGroup = registry.getServiceGroup(serviceNameAndGroupStrings[0]);
                 String serviceNameStr = "";

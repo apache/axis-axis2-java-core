@@ -63,7 +63,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
         if (msgctx.getRelatesTo() != null) {
             String relatesTo = msgctx.getRelatesTo().getValue();
             if (relatesTo != null || "".equals(relatesTo)) {
-                OperationContext operationContext = msgctx.getSystemContext().getOperationContext(relatesTo);
+                OperationContext operationContext = msgctx.getConfigurationContext().getOperationContext(relatesTo);
                 if (operationContext != null) {
                     msgctx.setAxisOperation(operationContext.getAxisOperation());
                     msgctx.setOperationContext(operationContext);

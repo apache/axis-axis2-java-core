@@ -68,7 +68,7 @@ public class InstanceDispatcher extends AbstractHandler {
             axisOperation.registerOperationContext(msgContext, operationContext);
 
             //  fill the service group context and service context info
-            msgContext.getSystemContext().
+            msgContext.getConfigurationContext().
                     fillServiceContextAndServiceGroupContext(msgContext);
         }
     }

@@ -119,11 +119,34 @@ public class PhasesInfo {
         return desc;
     }
 
+    public ArrayList getGlobalOutPhaseList() throws DeploymentException {
+        /**
+         * I have assumed that     PolicyDetermination and  MessageProcessing are global out phase
+         */
+        ArrayList globalPhaseList = new ArrayList();
+        for (int i = 0; i < OUTPhases.size(); i++) {
+            Phase phase = (Phase) OUTPhases.get(i);
+            String phaseName = phase.getPhaseName();
+            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phaseName) ||
+                    PhaseMetadata.PHASE_MESSAGE_OUT.equals(phaseName)) {
+                globalPhaseList.add(copyPhase(phase));
+            }
+        }
+        return globalPhaseList;
+    }
+
     public ArrayList getOperationOutPhases() throws DeploymentException {
         ArrayList oprationOUTPhases = new ArrayList();
         for (int i = 0; i < OUTPhases.size(); i++) {
             Phase phase = (Phase) OUTPhases.get(i);
-            oprationOUTPhases.add(copyPhase(phase));
+            String phaseName = phase.getPhaseName();
+            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phaseName) ||
+                    PhaseMetadata.PHASE_MESSAGE_OUT.equals(phaseName)) {
+                //todo pls check this
+            } else {
+                oprationOUTPhases.add(copyPhase(phase));
+            }
+
         }
         return oprationOUTPhases;
     }
@@ -146,7 +169,7 @@ public class PhasesInfo {
         return oprationOUT_FaultPhases;
     }
 
-    public void setOperationPhases(AxisOperation axisOperation) throws DeploymentException{
+    public void setOperationPhases(AxisOperation axisOperation) throws DeploymentException {
         if (axisOperation != null) {
             axisOperation.setRemainingPhasesInFlow(getOperationInPhases());
             axisOperation.setPhasesOutFlow(getOperationOutPhases());
@@ -159,7 +182,6 @@ public class PhasesInfo {
      * To copy phase informatoin from one to another
      *
      * @param phase
-     * @return
      */
     private Phase copyPhase(Phase phase) throws DeploymentException {
         Phase newPhase = new Phase(phase.getPhaseName());

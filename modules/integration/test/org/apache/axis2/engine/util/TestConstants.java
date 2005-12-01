@@ -29,7 +29,7 @@ import javax.xml.namespace.QName;
 public interface TestConstants {
     public static final EndpointReference targetEPR = new EndpointReference(
             "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
-                    + "/axis/services/EchoXMLService/echoOMElement");
+                    + "/axis2/services/EchoXMLService/echoOMElement");
 
     public static final QName serviceName = new QName("EchoXMLService");
 
