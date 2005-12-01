@@ -65,7 +65,10 @@ public abstract class MEPClient {
     protected void prepareInvocation(AxisOperation axisop, MessageContext msgCtx)
             throws AxisFault {
 
-        if (clientOptions == null) {
+        // user must provide the minimum information for the engine to proceed with the invocation.
+        // For the time being, I think he should at least provide the toEPR. So I should check that is
+        // available either from the message context or from the options.
+        if ( (msgCtx == null || msgCtx.getTo() == null) && (clientOptions == null || clientOptions.getTo() == null ) ) {
             throw new AxisFault("Can not proceed without options being set for invocation. Set the" +
                     "properties for this invocation via MEPClient.setOptions(Options) first.");
         }

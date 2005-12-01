@@ -84,15 +84,15 @@ public abstract class AbstractContext {
         return properties;
     }
 
-//    /**
-//     * This will set the properties to the context. But in setting that one may need to "copy" all
-//     * the properties from the source properties to the target properties. To enable this we introduced
-//     * a property (org.apache.axis2.client.Options#COPY_PROPERTIES) so that if set to true, this code
-//     * will copy the whole thing, without just referencing to the source.
-//     *
-//     * @param properties
-//     * @see org.apache.axis2.client.Options#COPY_PROPERTIES
-//     */
+    /**
+     * This will set the properties to the context. But in setting that one may need to "copy" all
+     * the properties from the source properties to the target properties. To enable this we introduced
+     * a property (org.apache.axis2.client.Options#COPY_PROPERTIES) so that if set to true, this code
+     * will copy the whole thing, without just referencing to the source.
+     *
+     * @param properties
+     * @see org.apache.axis2.client.Options#COPY_PROPERTIES
+     */
 
     public void setProperties(Map properties) {
         if (properties == null) {
