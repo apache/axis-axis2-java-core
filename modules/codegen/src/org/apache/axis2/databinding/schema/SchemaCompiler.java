@@ -36,6 +36,8 @@ public class SchemaCompiler {
     //The writing to the processedElementList happens when an outer element is processed.
     private HashMap processedElementMap;
     private HashMap processedAnonymousComplexTypesMap;
+    private HashMap simpleTypesMap;
+    private HashMap changedTypeMap;
     private ArrayList processedElementList;
 
 
@@ -66,8 +68,10 @@ public class SchemaCompiler {
 
             this.processedTypemap = new HashMap();
             this.processedElementMap = new HashMap();
+            this.simpleTypesMap = new HashMap();
             this.processedElementList = new ArrayList();
             this.processedAnonymousComplexTypesMap = new HashMap();
+            this.changedTypeMap = new HashMap();
 
             //load the writer
             this.writer = SchemaPropertyLoader.getBeanWriterInstance();
@@ -135,7 +139,7 @@ public class SchemaCompiler {
             processElement((XmlSchemaElement)xmlSchemaElement1Iterator.next(),true);
         }
 
-        //Now re iterate through the elements and write them
+        //Now re-iterate through the elements and write them
         Iterator xmlSchemaElement2Iterator = elements.getValues();
         while (xmlSchemaElement2Iterator.hasNext()) {
             //this is the set of outer elements so we need to generate classes
@@ -163,9 +167,17 @@ public class SchemaCompiler {
                 QName qName = schemaType.getQName();
                 //find the class name
                 String className = findClassName(qName,isArray(xsElt));
-                metainf.registerMapping(xsElt.getQName(),
+                //this means the schema type actually returns a different QName
+                if (changedTypeMap.containsKey(qName)){
+                    metainf.registerMapping(xsElt.getQName(),
+                        (QName)changedTypeMap.get(qName),
+                        className);
+                }else{
+                     metainf.registerMapping(xsElt.getQName(),
                         qName,
                         className);
+                }
+
 
             }else{
                 //we are going to special case the anonymous complex type. Our algorithm for dealing
@@ -237,6 +249,8 @@ public class SchemaCompiler {
         String className;
         if (processedTypemap.containsKey(qName)) {
             className = (String)processedTypemap.get(qName);
+        }else if(simpleTypesMap.containsKey(qName)){
+            className =(String)simpleTypesMap.get(qName);
         }else if(baseSchemaTypeMap.containsKey(qName)){
             className =(String)baseSchemaTypeMap.get(qName);
         }else{
@@ -507,8 +521,27 @@ public class SchemaCompiler {
      * @param simpleType
      */
     private void processSimpleSchemaType(XmlSchemaSimpleType simpleType){
-        //nothing to here yet.
-        //todo perhaps we need to populate the processed type map here
+        // handle the restriction
+        XmlSchemaSimpleTypeContent content = simpleType.getContent();
+        if (content!=null){
+            if (content instanceof XmlSchemaSimpleTypeRestriction){
+                XmlSchemaSimpleTypeRestriction restriction = (XmlSchemaSimpleTypeRestriction) content;
+                QName baseTypeName = restriction.getBaseTypeName();
+                //check whether the base type is one of the base schema types
+                if (baseSchemaTypeMap.containsKey(baseTypeName)){
+                    //this is a basic xsd datatype. Populate the map and populate
+                    //the mappings map
+                    String className =(String)baseSchemaTypeMap.get(baseTypeName);
+                    this.simpleTypesMap.put(simpleType.getQName(),className);
+                    //set the old schema type QName and the new schema type QName
+                    this.changedTypeMap.put(simpleType.getQName(),baseTypeName);
+                }else{
+                    //recurse
+                    //processSimpleSchemaType(xsElt, new XmlSchemaSimpleType());
+                }
+            }
+        }
+
 
     }
 

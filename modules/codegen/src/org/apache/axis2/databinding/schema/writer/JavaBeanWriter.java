@@ -168,6 +168,7 @@ public class JavaBeanWriter implements BeanWriter{
             XSLTUtils.addAttribute(model,"name",xmlName,property);
             XSLTUtils.addAttribute(model,"javaname",javaName,property);
             String javaClassNameForElement = metainf.getClassNameForQName(name);
+            
             String shortTypeName = "";
             if (metainf.getSchemaQNameForQName(name)!=null){
                 shortTypeName = metainf.getSchemaQNameForQName(name).getLocalPart();

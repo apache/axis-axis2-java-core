@@ -65,7 +65,7 @@ public class AxisEngine {
     public void send(MessageContext msgContext) throws AxisFault {
         verifyContextBuilt(msgContext);
 
-        //find and invoke the Phases        
+        //find and invoke the Phases
         OperationContext operationContext = msgContext.getOperationContext();
         ArrayList phases =
                 operationContext.getAxisOperation().getPhasesOutFlow();
@@ -74,6 +74,10 @@ public class AxisEngine {
             //who paused the Message will be the first one to run
             //resume fixed, global precalulated phases
             resumeInvocationPhases(phases, msgContext);
+            ArrayList globaleOutphase = msgContext.getConfigurationContext().
+                    getAxisConfiguration().getGlobalOutPhases();
+            //invoking global phase.
+            invokePhases(globaleOutphase, msgContext);
         } else {
             invokePhases(phases, msgContext);
             ArrayList globaleOutphase = msgContext.getConfigurationContext().
@@ -173,8 +177,8 @@ public class AxisEngine {
                 invokePhases(phases, msgContext);
             }
         }
-        //it is possible that Operation Context is Null as the error occered before the 
-        //Dispatcher. We do not run Handlers in that case 
+        //it is possible that Operation Context is Null as the error occered before the
+        //Dispatcher. We do not run Handlers in that case
 
         if (!msgContext.isPaused()) {
             //Actually send the SOAP Fault
@@ -194,8 +198,8 @@ public class AxisEngine {
 
         OperationContext opContext = msgContext.getOperationContext();
         if (opContext == null) {
-            //If we do not have a OperationContext that means this may be a incoming 
-            //Dual Channel response. So try to dispatch the Service 
+            //If we do not have a OperationContext that means this may be a incoming
+            //Dual Channel response. So try to dispatch the Service
             ConfigurationContext sysCtx = msgContext.getConfigurationContext();
             ArrayList phases =
                     sysCtx
