@@ -16,8 +16,8 @@
 
 package org.apache.axis2;
 
-//import org.apache.axis2.fault.FaultCode;
-//import org.apache.axis2.fault.FaultReasonList;
+import org.apache.axis2.fault.FaultCode;
+import org.apache.axis2.fault.FaultReasonList;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPFault;
 import org.apache.axis2.soap.SOAPFaultCode;
@@ -65,7 +65,7 @@ public class AxisFault extends RemoteException {
     /**
      * Contains the faultcode
      */
-    //private FaultCode faultCode=new FaultCode();
+    private FaultCode faultCode=new FaultCode();
 
     /**
      * SOAP1.2: URI of faulting node. Null for unknown.
@@ -82,7 +82,7 @@ public class AxisFault extends RemoteException {
     /**
      * our failt reasons
      */
-    //private FaultReasonList reasons=new FaultReasonList();
+    private FaultReasonList reasons=new FaultReasonList();
 
     private OMElement detail;
 
@@ -132,7 +132,7 @@ public class AxisFault extends RemoteException {
      */
     public AxisFault(String messageText, String faultCode) {
         this(messageText);
-        //setFaultCode(faultCode);
+        setFaultCode(faultCode);
     }
 
     /**
@@ -142,7 +142,7 @@ public class AxisFault extends RemoteException {
      */
     public AxisFault(String messageText, String faultCode, Throwable cause) {
         this(messageText, cause);
-        //setFaultCode(faultCode);
+        setFaultCode(faultCode);
     }
 
 
@@ -153,7 +153,7 @@ public class AxisFault extends RemoteException {
      */
     public AxisFault(String messageText, QName faultCode, Throwable cause) {
         this(messageText, cause);
-        //setFaultCode(faultCode);
+        setFaultCode(faultCode);
     }
 
 
@@ -198,24 +198,24 @@ public class AxisFault extends RemoteException {
      */
     private void init(SOAPFault fault) {
         SOAPFaultCode faultcodesource =fault.getCode();
-        //faultCode=new FaultCode(faultcodesource);
+        faultCode=new FaultCode(faultcodesource);
         detail=fault.getDetail();
         fault.getNode();
     }
 
 
 
-//    public String getFaultCode() {
-//        return faultCode.getValueString();
-//    }
-//
-//    public void setFaultCode(String soapFaultCode) {
-//        faultCode.setValueString(soapFaultCode);
-//    }
-//
-//    public void setFaultCode(QName soapFaultCode) {
-//        faultCode.setValue(soapFaultCode);
-//    }
+    public String getFaultCode() {
+        return faultCode.getValueString();
+    }
+
+    public void setFaultCode(String soapFaultCode) {
+        faultCode.setValueString(soapFaultCode);
+    }
+
+    public void setFaultCode(QName soapFaultCode) {
+        faultCode.setValue(soapFaultCode);
+    }
 
     /**
      * Add a reason for the fault
@@ -223,7 +223,7 @@ public class AxisFault extends RemoteException {
      * @param language language
      */
     public void addReason(String text,String language) {
-        //reasons.add(text,language);
+        reasons.add(text,language);
     }
 
     /**
