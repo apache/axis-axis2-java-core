@@ -16,6 +16,7 @@ This is the 0.93 release of the Apache Axis2.
   <li>Archives based deployment model </li>
   <li>WSDL2Java code generation tool for stub and skeltons</li>
   <li>XML Beans based data binding support</li>
+  <li>ADB (Axis Data Binding)  with complete simple type support and limited complex type support </li>
   <li>Support for WS-Addressing, both the submission and final versions</li>
   <li>Client API</li>
   <li>REST web service support</li>
@@ -24,10 +25,10 @@ This is the 0.93 release of the Apache Axis2.
   <li>TCP transport support</li>
   <li>MTOM/SWA attachments support</li>
   <li>SAAJ implementation</li>
-  <li>Improved WS-Security support using WSS4J</li>
+  <li> WS-Security support using WSS4J</li>
 </ul>
 
-<h3>New Features</h3>
+<h2>What's new in this release ? </h2>
 <ul>
   <li>JDK 1.5 compatibility
   </li>
@@ -44,10 +45,12 @@ This is the 0.93 release of the Apache Axis2.
     ADB (Axis Data Binding) with complete simple types support and limited complex type support 
   </li>
   <li>
-  Jalopy based code formatting for generated code </li>
-  <li>and numerous bug fixes after 0.92 release </li>
+  Jalopy based code formatting of generated code </li>
+  <li>Proxy support and NTLM authentication </li>
+  <li>support for rpc/literal </li>
+  <li>And numerous bug fixes after 0.92 release </li>
 </ul>
-<h3 id="head-4804f145dbcf856d6cfef8fc5fff555e5590931b">Experimental Features List</h3>
+<h3 id="head-4804f145dbcf856d6cfef8fc5fff555e5590931b">Experimental features list</h3>
 <ol type="1">
   <li>
     DOOM - DOM implementation over OM 
@@ -56,9 +59,14 @@ This is the 0.93 release of the Apache Axis2.
     Java2WSDL 
   </li>
   <li>
-    RPC Support 
-  </li>
+  RPC Support </li>
 </ol>
+<h3>Major changes since last release </h3>
+<ol>
+  <li> Refactored org.apache.axis2.clientapi to org.apache.axis2.client </li>
+  <li> Introduction of Options to configure clients </li>
+  <li>Renaming of descriptors. OperationDescription -&gt; AxisOperation, ServiceDescription -&gt; AxisService, ServiceGroupDescription -&gt; AxisServiceGroup</li>
+  </ol>
 <h2>What's still to do?</h2>
 <p>Please see a list of what we think needs doing - and please consider helping out if 
 you're interested & able!</p>
@@ -73,7 +81,7 @@ you're interested & able!</p>
 
 <p>Axis2 is taking shape, this 0.93 release is a glimpse of 1.0 that should be comming soon. 
 If you happen to have vision of how the next generation of the Web Service should be, and like to contribute to 
-Apache Axis2 please help us to shape the Apache Axis2. Any contribution in the form of Coding, testing, submiting 
+Apache Axis2 please help us to shape the Apache Axis2. Any contribution in the form of coding, testing, submiting 
 improvements to the documentation, and reporting bugs are always welcome.</p>
 <p>Thanks for your interest in Axis2!</p>
 -- The Axis Development Team

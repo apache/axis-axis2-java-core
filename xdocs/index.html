@@ -43,15 +43,31 @@ Web Services protocols including:</p>
 href="http://ws.apache.org/axis2/download.cgi">(Download 0.93)</a></p>
 
 <p>Axis2 is becoming more and more stable. <a href="http://ws.apache.org/axis2/download.cgi">Download
-it!. </a>This 0.92 release contains the following additional features:</p>
+it!. </a>This 0.93 release contains the following additional features:</p>
 <ul>
-  <li>JDK 1.5 compatibility</li>
-  <li>Numerous bug fixes after 0.92 release </li>
-  <p><strong>Experimental Features</strong></p>
-  <li>Java2WSDL</li>
-  <li>DOOM (DOM over OM implementation) </li>
+  <li>JDK 1.5 compatibility </li>
+  <li> Configurable handler chains using axis2.xml </li>
+  <li> Improved class loader hierarchy </li>
+  <li> Improved security module with dynamic configurability </li>
+  <li> ADB (Axis Data Binding) with complete simple types support and limited complex type support </li>
+  <li> Jalopy based code formatting of generated code </li>
+  <li>Proxy support and NTLM authentication </li>
+  <li>support for rpc/literal </li>
+  <li>And numerous bug fixes after 0.92 release </li>
 </ul>
 
+<h3 id="head-4804f145dbcf856d6cfef8fc5fff555e5590931b">Experimental features list</h3>
+<ol type="1">
+  <li> DOOM - DOM implementation over OM </li>
+  <li> Java2WSDL </li>
+  <li> RPC Support </li>
+</ol>
+<h3>Major changes since last release </h3>
+<ol>
+  <li> Refactored org.apache.axis2.clientapi to org.apache.axis2.client </li>
+  <li> Introduction of Options to configure clients </li>
+  <li>Renaming of descriptors. OperationDescription -&gt; AxisOperation, ServiceDescription -&gt; AxisService, ServiceGroupDescription -&gt; AxisServiceGroup</li>
+</ol>
 <p>We are getting closer to a 1.0 release, the remaining tasks to be
 completed before a 1.0 release include: SOAP 1.1 and 1.2 validation, Our own
 data binding implementation, WSDL Generation.</p>
