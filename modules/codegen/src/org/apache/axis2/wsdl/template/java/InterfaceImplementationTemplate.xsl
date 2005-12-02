@@ -50,7 +50,7 @@
         public <xsl:value-of select="@name"/>(String axis2Home,String targetEndpoint) throws java.lang.Exception {
 		    //creating the configuration
            _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory().buildClientConfigurationContext(axis2Home);
-            _configurationContext.getAxisConfiguration().addService(_service);
+           _configurationContext.getAxisConfiguration().addService(_service);
            _serviceContext =_service.getParent().getServiceGroupContext(_configurationContext).getServiceContext(_service.getName().getLocalPart());
            _clientOptions.setTo(new org.apache.axis2.addressing.EndpointReference(targetEndpoint));
 
@@ -115,11 +115,13 @@
              _call.setClientOptions(_clientOptions);
 
  		     org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-             _clientOptions.setSoapAction("<xsl:value-of select="$soapAction"/>");
-            
-            if(_clientOptions.getAction() == null) {
+             if(_clientOptions.getSoapAction() == null) {
                <xsl:for-each select="input/param[@Action!='']">_clientOptions.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
-			}
+			 }
+
+             if(_clientOptions.getAction() == null) {
+               <xsl:for-each select="input/param[@Action!='']">_clientOptions.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
+			 }
              //set the properties
             populateModules(_call);
 
@@ -208,7 +210,9 @@
              org.apache.axis2.client.Call _call = new org.apache.axis2.client.Call(_serviceContext);
              _call.setClientOptions(_clientOptions);
  		     org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
+            if(_clientOptions.getSoapAction() == null) {
              _clientOptions.setSoapAction("<xsl:value-of select="$soapAction"/>");
+            }
             
            if(_clientOptions.getAction() == null) {
             <xsl:for-each select="input/param[@Action!='']">_lientOptions.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
@@ -294,7 +298,11 @@
             
  		    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
           _msgSender.setClientOptions(_clientOptions);
+
+          if(_clientOptions.getSoapAction() == null) {
             _clientOptions.setSoapAction("<xsl:value-of select="$soapAction"/>");
+          }
+
             if(_clientOptions.getAction() == null) {
             <xsl:for-each select="input/param[@Action!='']">_clientOptions.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
 			}
