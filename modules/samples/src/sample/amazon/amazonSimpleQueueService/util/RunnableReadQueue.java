@@ -28,7 +28,7 @@ import sample.amazon.amazonSimpleQueueService.OMElementCreator;
 import javax.swing.*;
 
 /**
- * This will create the Excutable code which runs seperately of GUI interations
+ * This will create the Excutable code which runs separately of GUI interations
  */
 public class RunnableReadQueue extends QueueManager implements Runnable {
     JTextField createQueue;

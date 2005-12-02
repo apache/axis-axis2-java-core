@@ -39,7 +39,7 @@ public class MIMEHelper {
     ContentType contentType;
 
     /**
-     * Mime <code>boundary</code> which seperates mime parts
+     * Mime <code>boundary</code> which separates mime parts
      */
     byte[] boundary;
 

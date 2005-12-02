@@ -313,7 +313,7 @@ public class Options {
      *
      * @param senderTransport
      * @param listenerTransport
-     * @param useSeperateListener
+     * @param useSeparateListener
      * @throws AxisFault
      * @deprecated Use setListenerTransportProtocol(String) and useSeparateListener(boolean) instead.
      *             You do not need to setSenderTransportProtocol(String) as sender transport can be inferred from the
@@ -321,11 +321,11 @@ public class Options {
      */
 
     public void setTransportInfo(String senderTransport, String listenerTransport,
-                                 boolean useSeperateListener)
+                                 boolean useSeparateListener)
             throws AxisFault {
         //here we check for a legal combination, for and example if the sendertransport is http and listner
-        //transport is smtp the invocation must using seperate transport
-        if (!useSeperateListener) {
+        //transport is smtp the invocation must using separate transport
+        if (!useSeparateListener) {
             boolean isTransportsEqual =
                     senderTransport.equals(listenerTransport);
             boolean isATwoWaytransport =
@@ -335,7 +335,7 @@ public class Options {
                 throw new AxisFault(Messages.getMessage("useSeparateListenerLimited"));
             }
         } else {
-            setUseSeparateListener(useSeperateListener);
+            setUseSeparateListener(useSeparateListener);
         }
 
         setListenerTransportProtocol(listenerTransport);

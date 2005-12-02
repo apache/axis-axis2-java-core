@@ -182,8 +182,8 @@ public class DescriptionBuilder implements DeploymentConstants{
      * @param parameters <code>Parameter</code>
      * @param parameterInclude <code>ParameterInclude</code>
      * @param parent <code>ParameterInclude</code>
-     * return : will retuen paramters , wchih name is WSA-Mapping , since we need to treat them
-     * seperately
+     * return : will return parameters , wchih name is WSA-Mapping , since we need to treat them
+     * separately
      */
     protected ArrayList processParameters(Iterator parameters,
                                           ParameterInclude parameterInclude,

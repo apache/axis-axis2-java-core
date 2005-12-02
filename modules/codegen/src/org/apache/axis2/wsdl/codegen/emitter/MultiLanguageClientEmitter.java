@@ -39,7 +39,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -782,10 +781,10 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
             Element rootElement = doc.createElement("ant");
             String localPart = reformatName(wsdlInterface.getName().getLocalPart(),false);
         String packageName = configuration.getPackageName();
-        String[] dotSeperatedValues = packageName.split("\\.");
+        String[] dotSeparatedValues = packageName.split("\\.");
         addAttribute(doc,
                 "package",
-                dotSeperatedValues[0],
+                dotSeparatedValues[0],
                 rootElement);
 
             addAttribute(doc,
