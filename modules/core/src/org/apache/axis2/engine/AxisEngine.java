@@ -361,7 +361,7 @@ public class AxisEngine {
         } else if (soapException != null) {
             soapFaultCode = soapException.getFaultCode();
         } else if (e instanceof AxisFault) {
-            soapFaultCode = ((AxisFault) e).getFaultCode();
+            //soapFaultCode = ((AxisFault) e).getFaultCode();
         }
 
         // defaulting to fault code Sender, if no message is available
