@@ -87,7 +87,7 @@
                  </ul>
                  <%
 
-                 phases = axisConfig.getOutFlow();
+                 phases = axisConfig.getGlobalOutPhases();
                  %>
                  <h3> Out Flow </h3>
                  <ul>

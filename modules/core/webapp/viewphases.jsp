@@ -38,8 +38,8 @@
          <%
              tempList = (ArrayList)phases.get(0);
              for (int i = 0; i < tempList.size(); i++) {
-                 String phase = (String) tempList.get(i);
-         %><%=phase%><br><%
+                 Phase phase = (Phase) tempList.get(i);
+         %><%=phase.getPhaseName()%><br><%
              }
          %>
          </blockquote>

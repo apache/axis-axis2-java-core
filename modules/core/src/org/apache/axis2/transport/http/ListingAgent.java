@@ -437,8 +437,8 @@ public class ListingAgent {
     private void chageParameters(HttpServletRequest req,
                                  HttpServletResponse res)
             throws IOException {
-        if (req.getParameter("changePara") != null) {
-            String serviceName = req.getParameter("service");
+        if (req.getParameter("editServicepara") != null) {
+            String serviceName = req.getParameter("axisService");
             AxisService service = configContext.getAxisConfiguration().
                     getService(serviceName);
             if (service != null) {
@@ -472,7 +472,7 @@ public class ListingAgent {
             return;
 
         } else {
-            String service = req.getParameter("service");
+            String service = req.getParameter("axisService");
             if (service != null) {
                 req.getSession().setAttribute(Constants.SERVICE,
                         configContext.getAxisConfiguration().getService(
@@ -518,7 +518,7 @@ public class ListingAgent {
     private void viewServiceHandlers(HttpServletRequest req,
                                      HttpServletResponse res)
             throws IOException {
-        String service = req.getParameter("service");
+        String service = req.getParameter("axisService");
         if (service != null) {
             req.getSession().setAttribute(Constants.SERVICE_HANDLERS,
                     configContext.getAxisConfiguration().getService(
@@ -529,7 +529,7 @@ public class ListingAgent {
 
     private void listPhases(HttpServletRequest req, HttpServletResponse res) throws IOException {
         ArrayList phaselist = new ArrayList();
-        PhasesInfo info = ((AxisConfiguration) configContext.getAxisConfiguration()).getPhasesinfo();
+        PhasesInfo info = configContext.getAxisConfiguration().getPhasesinfo();
         phaselist.add(info.getINPhases());
         phaselist.add(info.getIN_FaultPhases());
         phaselist.add(info.getOUTPhases());
