@@ -47,12 +47,10 @@ public abstract class Stub {
     protected static AxisService _service;
     protected ServiceContext _serviceContext;
     protected EndpointReference toEPR;
-
-    //Default SOAP version is 11
     protected ArrayList modules = new ArrayList();
 
     protected Options _clientOptions;
-               protected boolean useSeparateListener;
+    protected boolean useSeparateListener;
     protected String listenerTransport =Constants.TRANSPORT_HTTP ;
 
     public void engageModule(String moduleName) {
@@ -70,15 +68,6 @@ public abstract class Stub {
 
     protected Stub() {
     }
-
-//    /**
-//     * Sets the soap version.
-//     * @param soapVersion
-//     */
-//    public void setSOAPVersion(int soapVersion){
-//        this.soapVersion = soapVersion;
-//    }
-
 
     public void _setSessionInfo(String key, Object value) throws java.lang.Exception {
         if (!_maintainSession) {
