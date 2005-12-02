@@ -1,4 +1,4 @@
-package org.apache.idaeplugin.bean;
+package org.apache.ideaplugin.bean;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

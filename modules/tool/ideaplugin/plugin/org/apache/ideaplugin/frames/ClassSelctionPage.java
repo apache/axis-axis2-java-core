@@ -1,7 +1,7 @@
-package org.apache.idaeplugin.frames;
+package org.apache.ideaplugin.frames;
 
-import org.apache.idaeplugin.bean.ObjectKeeper;
-import org.apache.idaeplugin.bean.ArchiveBean;
+import org.apache.ideaplugin.bean.ObjectKeeper;
+import org.apache.ideaplugin.bean.ArchiveBean;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;

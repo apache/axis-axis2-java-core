@@ -1,4 +1,4 @@
-package org.apache.idaeplugin;
+package org.apache.ideaplugin;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;

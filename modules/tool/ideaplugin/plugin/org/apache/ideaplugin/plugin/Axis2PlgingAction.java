@@ -1,4 +1,4 @@
-package org.apache.idaeplugin.plugin;
+package org.apache.ideaplugin.plugin;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.ActionPlaces;
 
 import javax.swing.*;
 
-import org.apache.idaeplugin.frames.Axi2PluginPage;
+import org.apache.ideaplugin.frames.Axi2PluginPage;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

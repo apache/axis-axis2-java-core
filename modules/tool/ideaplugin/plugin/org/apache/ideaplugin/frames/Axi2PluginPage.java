@@ -1,4 +1,4 @@
-package org.apache.idaeplugin.frames;
+package org.apache.ideaplugin.frames;
 
 import org.apache.axis2.tools.idea.*;
 

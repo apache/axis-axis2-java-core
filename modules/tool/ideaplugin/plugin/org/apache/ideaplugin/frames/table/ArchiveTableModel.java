@@ -1,6 +1,6 @@
-package org.apache.idaeplugin.frames.table;
+package org.apache.ideaplugin.frames.table;
 
-import org.apache.idaeplugin.bean.OprationObj;
+import org.apache.ideaplugin.bean.OprationObj;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.HashMap;

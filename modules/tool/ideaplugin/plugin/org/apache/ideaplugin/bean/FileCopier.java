@@ -1,10 +1,10 @@
-package org.apache.idaeplugin.bean;
+package org.apache.ideaplugin.bean;
 
+import org.apache.tools.ant.taskdefs.Copy;
+import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Jar;
 
 import java.io.File;
-import java.io.IOException;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -26,36 +26,36 @@ import java.io.IOException;
 /**
  * Author: Deepal Jayasinghe
  * Date: Sep 23, 2005
- * Time: 8:48:21 PM
+ * Time: 6:15:54 PM
  */
-public class JarFileWriter extends Jar {
-
-
-    public JarFileWriter() {
+public class FileCopier extends Copy {
+    public FileCopier() {
         this.setProject(new Project());
         this.getProject().init();
-        this.setTaskType("jar");
-        this.setTaskName("jar");
+        this.setTaskType("copy");
+        this.setTaskName("copy-files");
         this.setOwningTarget(new org.apache.tools.ant.Target());
     }
 
-    public void writeJarFile(File outputFolder,String outputFileName, File inputFileFolder) throws IOException,Exception {
+    public void copyFiles(File sourceFile, File destinationDirectory,String filter){
 
-        if (!outputFolder.exists()){
-            outputFolder.mkdir(); //create the output path
-        }else{
-            if (!outputFolder.isDirectory())
-                return;
+        this.filesets.clear();
+
+        if (sourceFile.isFile())
+            this.setFile(sourceFile);
+        else {
+            FileSet fileset = new FileSet();
+            fileset.setDir(sourceFile);
+            if (filter!=null){
+                if (filter.matches("\\.\\w*")){
+                    fileset.setIncludes("*/**/*"+filter);
+                }
+            }
+
+            this.addFileset(fileset);
         }
-
-        File targetFile = new File(outputFolder,outputFileName);
-        this.setBasedir(inputFileFolder);
-        this.setDestFile(targetFile);
-
-        //run the task
+        this.setTodir(destinationDirectory);
         this.perform();
-
-
     }
 
 

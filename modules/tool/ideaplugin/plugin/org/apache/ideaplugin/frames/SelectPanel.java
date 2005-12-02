@@ -1,10 +1,10 @@
-package org.apache.idaeplugin.frames;
+package org.apache.ideaplugin.frames;
 
-import org.apache.idaeplugin.bean.ObjectKeeper;
-import org.apache.idaeplugin.bean.ArchiveBean;
-import org.apache.idaeplugin.bean.OprationObj;
-import org.apache.idaeplugin.bean.ServiceObj;
-import org.apache.idaeplugin.frames.table.ArchiveTableModel;
+import org.apache.ideaplugin.bean.ObjectKeeper;
+import org.apache.ideaplugin.bean.ArchiveBean;
+import org.apache.ideaplugin.bean.OprationObj;
+import org.apache.ideaplugin.bean.ServiceObj;
+import org.apache.ideaplugin.frames.table.ArchiveTableModel;
 
 import javax.swing.*;
 import java.awt.*;

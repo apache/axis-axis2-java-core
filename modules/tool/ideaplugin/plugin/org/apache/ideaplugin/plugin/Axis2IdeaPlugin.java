@@ -1,4 +1,4 @@
-package org.apache.idaeplugin.plugin;
+package org.apache.ideaplugin.plugin;
 
 import com.intellij.openapi.components.ApplicationComponent;
 /*

@@ -1,9 +1,9 @@
-package org.apache.idaeplugin;
+package org.apache.ideaplugin;
 
-import org.apache.idaeplugin.bean.ArchiveBean;
-import org.apache.idaeplugin.frames.ImagePanel;
-import org.apache.idaeplugin.frames.FirstFrame;
-import org.apache.idaeplugin.frames.BottomPanel;
+import org.apache.ideaplugin.bean.ArchiveBean;
+import org.apache.ideaplugin.frames.ImagePanel;
+import org.apache.ideaplugin.frames.FirstFrame;
+import org.apache.ideaplugin.frames.BottomPanel;
 
 import javax.swing.*;
 import java.awt.*;

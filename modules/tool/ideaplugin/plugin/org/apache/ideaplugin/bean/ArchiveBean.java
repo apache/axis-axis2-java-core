@@ -1,4 +1,4 @@
-package org.apache.idaeplugin.bean;
+package org.apache.ideaplugin.bean;
 
 import java.io.*;
 import java.net.URLClassLoader;

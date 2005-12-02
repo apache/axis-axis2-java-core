@@ -1,9 +1,9 @@
-package org.apache.idaeplugin.frames;
+package org.apache.ideaplugin.frames;
 
-import org.apache.idaeplugin.bean.ObjectKeeper;
-import org.apache.idaeplugin.bean.ArchiveBean;
-import org.apache.idaeplugin.ParameterDialog;
-import org.apache.idaeplugin.ModuleDialog;
+import org.apache.ideaplugin.bean.ObjectKeeper;
+import org.apache.ideaplugin.bean.ArchiveBean;
+import org.apache.ideaplugin.ParameterDialog;
+import org.apache.ideaplugin.ModuleDialog;
 
 import javax.swing.*;
 import java.awt.event.*;

@@ -1,4 +1,4 @@
-package org.apache.idaeplugin.frames;
+package org.apache.ideaplugin.frames;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,49 +22,30 @@ import java.awt.*;
 
 /**
  * Author: Deepal Jayasinghe
- * Date: Sep 18, 2005
- * Time: 8:50:16 PM
+ * Date: Sep 24, 2005
+ * Time: 11:04:25 AM
  */
-public class ImagePanel extends JPanel {
-    JLabel lblImage;
-    JLabel labTop;
-    JLabel lblBottom;
+public class LogoPage extends JPanel {
+    JLabel imagelbl;
     ImageIcon apachelogo ;
 
-    public ImagePanel() {
-        ImageLayout customLayout = new ImageLayout();
+    public LogoPage() {
+        LogoPageLayout customLayout = new LogoPageLayout();
+        setFont(new Font("Helvetica", Font.PLAIN, 12));
         setLayout(customLayout);
 
-        java.net.URL resource = ImagePanel.class.getResource("/icons/asf-feather.png");
+        java.net.URL resource = LogoPage.class.getResource("/icons/asf-feather.png");
         apachelogo = new ImageIcon(resource);
-
-        lblImage = new JLabel(apachelogo);
-        add(lblImage);
-        lblImage.setBackground(Color.white);
-
-        labTop = new JLabel();
-        labTop.setBackground(Color.white);
-        add(labTop);
-        labTop.setFont(new Font("Helvetica", Font.BOLD, 12));
-
-        lblBottom = new JLabel();
-        add(lblBottom);
-        lblBottom.setBackground(Color.white);
-        lblBottom.setFont(new Font("Helvetica", Font.PLAIN, 10));
-
+        imagelbl = new JLabel(apachelogo);
+        add(imagelbl);
         setSize(getPreferredSize());
-        this.setBackground(Color.white);
-    }
-
-    public void setCaptions(String lbl1 , String lbl2){
-        labTop.setText("  " + lbl1);
-        lblBottom.setText("  " + lbl2);
+        setBackground(Color.white);
     }
 }
 
-class ImageLayout implements LayoutManager {
+class LogoPageLayout implements LayoutManager {
 
-    public ImageLayout() {
+    public LogoPageLayout() {
     }
 
     public void addLayoutComponent(String name, Component comp) {
@@ -77,8 +58,8 @@ class ImageLayout implements LayoutManager {
         Dimension dim = new Dimension(0, 0);
 
         Insets insets = parent.getInsets();
-        dim.width = 535 + insets.left + insets.right;
-        dim.height = 77 + insets.top + insets.bottom;
+        dim.width = 320 + insets.left + insets.right;
+        dim.height = 76 + insets.top + insets.bottom;
 
         return dim;
     }
@@ -93,10 +74,6 @@ class ImageLayout implements LayoutManager {
 
         Component c;
         c = parent.getComponent(0);
-        if (c.isVisible()) {c.setBounds(insets.left+368,insets.top+0,168,80);}
-        c = parent.getComponent(1);
-        if (c.isVisible()) {c.setBounds(insets.left+0,insets.top+0,368,40);}
-        c = parent.getComponent(2);
-        if (c.isVisible()) {c.setBounds(insets.left+0,insets.top+40,368,40);}
+        if (c.isVisible()) {c.setBounds(insets.left+8,insets.top+8,304,64);}
     }
 }
