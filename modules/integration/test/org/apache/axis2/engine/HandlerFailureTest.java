@@ -25,6 +25,7 @@ import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.integration.UtilServer;
@@ -84,7 +85,11 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
 
         UtilServer.start();
         UtilServer.deployService(service);
-        ArrayList phase = service.getOperation(operationName).getRemainingPhasesInFlow();
+        AxisOperation operation = service.getOperation(operationName);
+        ArrayList phasec= new ArrayList();
+        phasec.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
+        operation.setRemainingPhasesInFlow(phasec);
+        ArrayList phase = operation.getRemainingPhasesInFlow();
         for (int i = 0; i < phase.size(); i++) {
             Phase phase1 = (Phase) phase.get(i);
             if(PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phase1.getPhaseName())){

@@ -65,7 +65,7 @@ public class MessageWithServerTest extends TestCase {
                 new QName("", "A Mdoule 1"));
         m1.setInFlow(new MockFlow("service module inflow", 4));
         //m1.setFaultInFlow(new MockFlow("service module faultflow", 1));
-        engineRegistry = new AxisConfigurationImpl();
+        engineRegistry = new AxisConfiguration();
         service.engageModule(m1,engineRegistry);
 
         AxisOperation axisOperation = new OutInAxisOperation(

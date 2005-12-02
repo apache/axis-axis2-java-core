@@ -20,7 +20,6 @@ import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.phaseresolver.PhaseHolder;
 import org.apache.commons.logging.Log;
@@ -43,7 +42,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
         try {
             super.setUp();
             phaserul = new InvalidPhaseRuleTest("");
-            axisSytem = new AxisConfigurationImpl();
+            axisSytem = new AxisConfiguration();
             ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
 
             Handler han = null;
@@ -90,14 +89,14 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
             super.setUp();
 
             phaserul = new InvalidPhaseRuleTest("");
-            axisSytem = new AxisConfigurationImpl();
+            axisSytem = new AxisConfiguration();
             ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
 
             inPhase.add("global");
 //            ((AxisConfigurationImpl) axisSytem).setInPhases(inPhase);
-            ((AxisConfigurationImpl) axisSytem).setInFaultPhases(inPhase);
-            ((AxisConfigurationImpl) axisSytem).setOutFaultPhases(inPhase);
-            ((AxisConfigurationImpl) axisSytem).setGlobalOutPhase(inPhase);
+            ((AxisConfiguration) axisSytem).setInFaultPhases(inPhase);
+            ((AxisConfiguration) axisSytem).setOutFaultPhases(inPhase);
+            ((AxisConfiguration) axisSytem).setGlobalOutPhase(inPhase);
 
             Handler han = null;
             PhaseHolder ph = new PhaseHolder(inPhase);

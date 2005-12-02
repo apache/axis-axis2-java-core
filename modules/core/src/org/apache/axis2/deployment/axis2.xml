@@ -125,6 +125,10 @@
                      class="org.apache.axis2.engine.InstanceDispatcher">
                 <order phase="PostDispatch"/>
             </handler>
+            <handler name="SOAPProcessingModelChecker"
+                     class="org.apache.axis2.engine.SOAPProcessingModelChecker">
+                <order phase="PostDispatch"/>
+            </handler>
         </phase>
         <!--  System pre defined phases       -->
         <!--   After Postdispatch phase module author or or service author can add any phase he want      -->

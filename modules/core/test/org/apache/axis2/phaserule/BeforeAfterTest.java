@@ -22,7 +22,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.PhaseRule;
-import org.apache.axis2.engine.AxisConfigurationImpl;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseHolder;
@@ -41,7 +41,7 @@ public class BeforeAfterTest extends TestCase {
             phases.add(p2);
 
             MessageContext msg = new MessageContext(
-                    new ConfigurationContext(new AxisConfigurationImpl()));
+                    new ConfigurationContext(new AxisConfiguration()));
 
             PhaseHolder ph = new PhaseHolder(phases);
             HandlerDescription hm = new HandlerDescription();

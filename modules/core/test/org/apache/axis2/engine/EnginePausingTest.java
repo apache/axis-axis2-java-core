@@ -50,7 +50,7 @@ public class EnginePausingTest extends TestCase {
     public EnginePausingTest(String arg0) throws AxisFault {
         super(arg0);
         executedHandlers = new ArrayList();
-        AxisConfiguration engineRegistry = new AxisConfigurationImpl();
+        AxisConfiguration engineRegistry = new AxisConfiguration();
         engineContext = new ConfigurationContext(engineRegistry);
         transportOut = new TransportOutDescription(new QName("null"));
         transportOut.setSender(new CommonsHTTPTransportSender());

@@ -29,7 +29,6 @@ import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
@@ -202,13 +201,13 @@ public class DeploymentEngine implements DeploymentConstants {
             throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.PATH_TO_CONFIG_CAN_NOT_B_NULL));
         }
         File tempfile = new File(engineConfigName);
-        RepositoryListenerImpl repoListener = null;
+        RepositoryListenerImpl repoListener;
         try {
             InputStream in = new FileInputStream(tempfile);
             axisConfig = createEngineConfig();
             AxisConfigBuilder builder = new AxisConfigBuilder(in, this, axisConfig);
             builder.populateConfig();
-            ((AxisConfigurationImpl) axisConfig).setPhasesinfo(phasesinfo);
+            axisConfig.setPhasesinfo(phasesinfo);
             //setting the CLs
             setClassLoaders(repository);
         } catch (FileNotFoundException e) {
@@ -217,7 +216,7 @@ public class DeploymentEngine implements DeploymentConstants {
         setDeploymentFeatures();
         repoListener = new RepositoryListenerImpl(folderName, this);
         try {
-            ((AxisConfigurationImpl) axisConfig).setRepository(axis2repository);
+            axisConfig.setRepository(axis2repository);
             validateSystemPredefinedPhases();
             engageModules();
         } catch (AxisFault axisFault) {
@@ -255,7 +254,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         axisConfig = createEngineConfig();
         AxisConfigBuilder builder = new AxisConfigBuilder(in, this, axisConfig);
-        ((AxisConfigurationImpl) axisConfig).setPhasesinfo(phasesinfo);
+        axisConfig.setPhasesinfo(phasesinfo);
         builder.populateConfig();
         if (isRepositoryExist) {
             hotDeployment = false;
@@ -265,7 +264,7 @@ public class DeploymentEngine implements DeploymentConstants {
             repoListener = new RepositoryListenerImpl(folderName, this);
         }
         try {
-            ((AxisConfigurationImpl) axisConfig).setRepository(axis2repository);
+            axisConfig.setRepository(axis2repository);
             validateSystemPredefinedPhases();
             engageModules();
         } catch (AxisFault axisFault) {
@@ -353,9 +352,9 @@ public class DeploymentEngine implements DeploymentConstants {
         } catch (Exception e) {
             throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.INVALID_PHASE));
         }
-        ((AxisConfigurationImpl) axisConfig).setInPhasesUptoAndIncludingPostDispatch(
+         axisConfig.setInPhasesUptoAndIncludingPostDispatch(
                 phasesinfo.getGlobalInflow());
-        ((AxisConfigurationImpl) axisConfig).setInFaultPhases(phasesinfo.getIN_FaultPhases());
+        axisConfig.setInFaultPhases(phasesinfo.getIN_FaultPhases());
         axisConfig.setGlobalOutPhase(phasesinfo.getGlobalOutPhaseList());
     }
 
@@ -374,7 +373,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     private AxisConfiguration createEngineConfig() {
-        return new AxisConfigurationImpl();
+        return new AxisConfiguration();
     }
 
     private void addServiceGroup(AxisServiceGroup serviceGroup, ArrayList serviceList)
@@ -382,7 +381,7 @@ public class DeploymentEngine implements DeploymentConstants {
         serviceGroup.setParent(axisConfig);
         //engaging globally engage module to this service group
         Iterator itr_global_modules =
-                ((AxisConfigurationImpl) axisConfig).getEngagedModules().iterator();
+                axisConfig.getEngagedModules().iterator();
         while (itr_global_modules.hasNext()) {
             QName qName = (QName) itr_global_modules.next();
             serviceGroup.engageModuleToGroup(qName);
@@ -715,7 +714,7 @@ public class DeploymentEngine implements DeploymentConstants {
     public ModuleDescription buildModule(File modulearchive, AxisConfiguration config) throws DeploymentException {
         ModuleDescription axismodule;
         try {
-            this.setPhasesinfo(((AxisConfigurationImpl) config).getPhasesinfo());
+            this.setPhasesinfo(config.getPhasesinfo());
             currentArchiveFile = new ArchiveFileData(modulearchive, MODULE);
             axismodule = new ModuleDescription();
             axismodule.setModuleClassLoader(currentArchiveFile.getClassLoader());

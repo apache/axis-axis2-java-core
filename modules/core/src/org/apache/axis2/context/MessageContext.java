@@ -22,7 +22,6 @@ import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -705,7 +704,7 @@ public class MessageContext extends AbstractContext {
             }
         }
         AxisConfiguration baseConfig = configurationContext.getAxisConfiguration();
-        moduleConfig = ((AxisConfigurationImpl) baseConfig).getModuleConfig(new QName(moduleName));
+        moduleConfig = ((AxisConfiguration) baseConfig).getModuleConfig(new QName(moduleName));
         if (moduleConfig != null) {
             param = moduleConfig.getParameter(key);
             if (param != null) {

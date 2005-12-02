@@ -32,7 +32,7 @@ import javax.xml.namespace.QName;
 
 public class ParamterAddTest extends TestCase {
 
-    private AxisConfiguration reg = new AxisConfigurationImpl();
+    private AxisConfiguration reg = new AxisConfiguration();
     public void testAddParamterServiceLockedAtAxisConfig(){
         try {
             Parameter para = new ParameterImpl();

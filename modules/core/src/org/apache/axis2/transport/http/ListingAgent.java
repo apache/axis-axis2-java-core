@@ -24,7 +24,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.engine.AxisConfigurationImpl;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.server.AdminAppException;
 
@@ -272,7 +272,7 @@ public class ListingAgent {
 
     private void listModules(HttpServletRequest req, HttpServletResponse res) throws IOException {
         HashMap modules =
-                ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
+                ((AxisConfiguration) configContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         req.getSession().setAttribute(Constants.ERROR_MODULE_MAP,
                 configContext.getAxisConfiguration().getFaultyModules());
@@ -283,7 +283,7 @@ public class ListingAgent {
                                        HttpServletResponse res)
             throws IOException {
         HashMap modules =
-                ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
+                ((AxisConfiguration) configContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         String moduleName = req.getParameter("modules");
         req.getSession().setAttribute(Constants.ENGAGE_STATUS, null);
@@ -306,7 +306,7 @@ public class ListingAgent {
                                           HttpServletResponse res)
             throws IOException {
         HashMap modules =
-                ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
+                ((AxisConfiguration) configContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         String moduleName = req.getParameter("modules");
 
@@ -352,7 +352,7 @@ public class ListingAgent {
                                              HttpServletResponse res)
             throws IOException {
         HashMap modules =
-                ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
+                ((AxisConfiguration) configContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         Iterator services = configContext.getAxisConfiguration().getServiceGroups();
         req.getSession().setAttribute(Constants.SERVICE_GROUP_MAP, services);
@@ -377,7 +377,7 @@ public class ListingAgent {
                                         HttpServletResponse res)
             throws IOException {
         HashMap modules =
-                ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getModules();
+                ((AxisConfiguration) configContext.getAxisConfiguration()).getModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         HashMap services = configContext.getAxisConfiguration().getServices();
         req.getSession().setAttribute(Constants.SERVICE_MAP, services);
@@ -410,7 +410,7 @@ public class ListingAgent {
                                      HttpServletResponse res)
             throws IOException {
         Collection modules =
-                ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getEngagedModules();
+                ((AxisConfiguration) configContext.getAxisConfiguration()).getEngagedModules();
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         res.sendRedirect(LIST_GLOABLLY_ENGAGED_MODULES_JSP_NAME);
     }
@@ -529,7 +529,7 @@ public class ListingAgent {
 
     private void listPhases(HttpServletRequest req, HttpServletResponse res) throws IOException {
         ArrayList phaselist = new ArrayList();
-        PhasesInfo info = ((AxisConfigurationImpl) configContext.getAxisConfiguration()).getPhasesinfo();
+        PhasesInfo info = ((AxisConfiguration) configContext.getAxisConfiguration()).getPhasesinfo();
         phaselist.add(info.getINPhases());
         phaselist.add(info.getIN_FaultPhases());
         phaselist.add(info.getOUTPhases());

@@ -18,15 +18,8 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterInclude;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
@@ -227,9 +220,13 @@ public class ServiceBuilder extends DescriptionBuilder {
                     new QName(MODULEST));
             processOperationModuleRefs(modules, op_descrip);
 
+            //processing Messages
+            Iterator messages = operation.getChildrenWithName(new QName(MESSGES));
+            processMessages(messages, op_descrip);
+
             //setting Operation phase
             if (axisConfig != null) {
-                PhasesInfo info = ((AxisConfigurationImpl) axisConfig).getPhasesinfo();
+                PhasesInfo info = axisConfig.getPhasesinfo();
                 info.setOperationPhases(op_descrip);
             }
 
@@ -242,6 +239,21 @@ public class ServiceBuilder extends DescriptionBuilder {
         return operations;
     }
 
+    private void processMessages(Iterator messages, AxisOperation operation)
+            throws DeploymentException {
+        while (messages.hasNext()) {
+            OMElement messageElement = (OMElement) messages.next();
+            OMAttribute lable = messageElement.getAttribute(new QName(LABEL));
+            if (lable == null) {
+                throw new DeploymentException("message lebel can not be null");
+            }
+            AxisMessage message = new AxisMessage();
+            Iterator paramters = messageElement.getChildrenWithName(new QName(PARAMETER));
+            processParameters(paramters, message, operation);
+            operation.addMessage(message, lable.getAttributeValue().trim());
+        }
+
+    }
 
     protected void processServiceModuleConfig(Iterator moduleConfigs,
                                               ParameterInclude parent, AxisService service)

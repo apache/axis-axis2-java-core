@@ -20,7 +20,6 @@ import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.phaseresolver.PhaseHolder;
 
@@ -39,7 +38,7 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
     public void testPhaseRule() throws Exception {
         //TODO Fix me
         phaserul = new PreDispatchPhaseRuleTest("");
-        axisSytem = new AxisConfigurationImpl();
+        axisSytem = new AxisConfiguration();
         ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
 
         Handler han = null;

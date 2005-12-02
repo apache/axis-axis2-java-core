@@ -53,7 +53,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
 
     protected void setUp() throws Exception {
 
-        engineRegistry = new AxisConfigurationImpl();
+        engineRegistry = new AxisConfiguration();
         engineContext = new ConfigurationContext(engineRegistry);
 
         TransportOutDescription transport = new TransportOutDescription(

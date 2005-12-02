@@ -24,14 +24,14 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.AxisConfigurationImpl;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.util.UUIDGenerator;
 
 import javax.xml.namespace.QName;
 
 public class OperationContextTest extends AbstractTestCase {
 
-    private ConfigurationContext engineCtx = new ConfigurationContext(new AxisConfigurationImpl());
+    private ConfigurationContext engineCtx = new ConfigurationContext(new AxisConfiguration());
 
     public OperationContextTest(String arg0) {
         super(arg0);

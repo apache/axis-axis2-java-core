@@ -18,7 +18,6 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,7 +35,7 @@ public class BadModuleTest extends AbstractTestCase {
         try {
             InputStream in = new FileInputStream(
                     getTestResourceFile("deployment/Badmodule.xml"));
-            AxisConfiguration glabl = new AxisConfigurationImpl();
+            AxisConfiguration glabl = new AxisConfiguration();
             AxisConfigBuilder builder =new AxisConfigBuilder(in,null,glabl);
             builder.populateConfig();
             fail(

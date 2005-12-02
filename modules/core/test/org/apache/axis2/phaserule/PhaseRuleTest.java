@@ -4,7 +4,6 @@ import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.phaseresolver.PhaseHolder;
 
@@ -24,7 +23,7 @@ public class PhaseRuleTest extends AbstractTestCase {
         super.setUp();
         //TODO fix me
         phaserul = new PhaseRuleTest("");
-        axisSytem = new AxisConfigurationImpl();
+        axisSytem = new AxisConfiguration();
         ArrayList inPhase = axisSytem.getInPhasesUptoAndIncludingPostDispatch();
 
         Handler han = null;//(Handler)Class.forName("org.apache.axis2.handlers.AbstractHandler",true, Thread.currentThread().getContextClassLoader()).newInstance();

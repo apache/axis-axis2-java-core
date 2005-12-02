@@ -34,7 +34,7 @@ public class MessageContextTest extends AbstractTestCase {
 
     public void testMesssageContext() throws AxisFault,
             SOAPProcessingException {
-        AxisConfiguration er = new AxisConfigurationImpl();
+        AxisConfiguration er = new AxisConfiguration();
         AxisService servicesDesc = new AxisService();
         servicesDesc.setName(new QName("testService"));
         er.addService(servicesDesc);

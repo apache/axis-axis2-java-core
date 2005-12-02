@@ -1,5 +1,5 @@
 <%@ page import="org.apache.axis2.Constants,
-                 org.apache.axis2.engine.AxisConfigurationImpl,
+                 org.apache.axis2.engine.AxisConfiguration,
                  org.apache.axis2.engine.Handler,
                  org.apache.axis2.engine.Phase,
                  java.util.ArrayList"%>
@@ -32,7 +32,7 @@
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>View Global Execution Chains</h1>
    <%
-            AxisConfigurationImpl axisConfig = (AxisConfigurationImpl)request.getSession().
+            AxisConfiguration axisConfig = (AxisConfiguration)request.getSession().
                     getAttribute(Constants.GLOBAL_HANDLERS);
              if(axisConfig != null ){
                  ArrayList handlers ;

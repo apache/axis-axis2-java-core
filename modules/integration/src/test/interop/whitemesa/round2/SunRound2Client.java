@@ -26,7 +26,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.soap.SOAPEnvelope;
 import test.interop.whitemesa.round2.util.SunRound2ClientUtil;
 
@@ -50,7 +49,7 @@ public class SunRound2Client {
             options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
             options.setSoapAction(soapAction);
 
-            AxisConfiguration axisConfig = new AxisConfigurationImpl();
+            AxisConfiguration axisConfig = new AxisConfiguration();
             ConfigurationContext configCtx = new ConfigurationContext(axisConfig);
             MessageContext msgCtx = new MessageContext(configCtx);
             AxisOperation opDesc = new OutInAxisOperation(new QName(""));

@@ -1,35 +1,24 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.engine.*;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.AxisError;
+import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.phaseresolver.PhaseMetadata;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.phaseresolver.PhaseResolver;
-import org.apache.wsdl.MessageReference;
-import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLExtensibilityAttribute;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLFaultReference;
-import org.apache.wsdl.WSDLFeature;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLProperty;
-import org.apache.wsdl.impl.WSDLOperationImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wsdl.*;
+import org.apache.wsdl.impl.WSDLOperationImpl;
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -48,16 +37,16 @@ import java.util.Map;
 *
 */
 
-public abstract class AxisOperation  implements
+public abstract class AxisOperation implements
         ParameterInclude, DescriptionConstants,
-        WSDLConstants ,WSDLOperation{
+        WSDLConstants, WSDLOperation {
     private Log log = LogFactory.getLog(getClass());
 
     private MessageReceiver messageReceiver;
-    private ArrayList remainingPhasesInFlow;
-    private ArrayList phasesOutFlow;
-    private ArrayList phasesInFaultFlow;
-    private ArrayList phasesOutFaultFlow;
+//    private ArrayList remainingPhasesInFlow;
+//    private ArrayList phasesOutFlow;
+//    private ArrayList phasesInFaultFlow;
+//    private ArrayList phasesOutFaultFlow;
 
     private HashMap moduleConfigmap;
 
@@ -76,25 +65,10 @@ public abstract class AxisOperation  implements
     private ArrayList engagedModules = new ArrayList();
 
 
-
     public AxisOperation(WSDLOperation wsdlopeartion) {
-        this.wsdlopeartion = (WSDLOperationImpl)wsdlopeartion;
+        this.wsdlopeartion = (WSDLOperationImpl) wsdlopeartion;
         this.setMessageExchangePattern(MEP_URI_IN_OUT);
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
-
-        remainingPhasesInFlow = new ArrayList();
-        remainingPhasesInFlow.add(
-                new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
-        Phase messageProcessing = new Phase(PhaseMetadata.PHASE_MESSAGE_PROCESSING);
-        messageProcessing.addHandler(new SOAPProcessingModelChecker());
-        remainingPhasesInFlow.add(messageProcessing);
-
-        phasesOutFlow = new ArrayList();
-        phasesOutFlow.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
-        phasesOutFlow.add(new Phase(PhaseMetadata.PHASE_MESSAGE_OUT));
-
-        phasesInFaultFlow = new ArrayList();
-        phasesOutFaultFlow = new ArrayList();
         modulerefs = new ArrayList();
         moduleConfigmap = new HashMap();
     }
@@ -120,7 +94,7 @@ public abstract class AxisOperation  implements
         if (moduleref == null) {
             return;
         }
-      Iterator module_itr =  engagedModules.iterator();
+        Iterator module_itr = engagedModules.iterator();
         while (module_itr.hasNext()) {
             ModuleDescription module = (ModuleDescription) module_itr.next();
             if (module.getName().equals(moduleref.getName())) {
@@ -142,7 +116,6 @@ public abstract class AxisOperation  implements
 
     /**
      * Method getEngadgedModules
-     *
      */
     public Collection getEngagedModules() {
         return engagedModules;
@@ -157,9 +130,9 @@ public abstract class AxisOperation  implements
         if (param == null) {
             return;
         }
-        if(isParameterLocked(param.getName())){
+        if (isParameterLocked(param.getName())) {
             throw new AxisFault("Parmter is locked can not overide: " + param.getName());
-        } else{
+        } else {
             ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this
                     .getComponentProperty(PARAMETER_KEY);
             paramInclude.addParameter(param);
@@ -180,8 +153,9 @@ public abstract class AxisOperation  implements
     public ArrayList getParameters() {
         ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this
                 .getComponentProperty(PARAMETER_KEY);
-        return  paramInclude.getParameters();
+        return paramInclude.getParameters();
     }
+
     public MessageReceiver getMessageReceiver() {
         return messageReceiver;
     }
@@ -200,7 +174,6 @@ public abstract class AxisOperation  implements
      * This method will simply map the String URI of the Message exchange
      * pattern to a integer. Further in the first lookup it will cash the looked
      * up value so that the subsequent method calls will be extremely efficient.
-     *
      */
     public int getAxisSpecifMEPConstant() {
         if (this.mep != MEP_CONSTANT_INVALID) {
@@ -237,52 +210,18 @@ public abstract class AxisOperation  implements
     }
 
 
-    public ArrayList getPhasesInFaultFlow() {
-        return phasesInFaultFlow;
-    }
+    public abstract ArrayList getPhasesInFaultFlow();
+    public abstract ArrayList getPhasesOutFaultFlow() ;
+    public abstract ArrayList getPhasesOutFlow() ;
+    public abstract ArrayList getRemainingPhasesInFlow() ;
+    public abstract AxisMessage getMessage(String label);
 
+    public abstract void setPhasesInFaultFlow(ArrayList list) ;
+    public abstract void setPhasesOutFaultFlow(ArrayList list) ;
+    public abstract void setPhasesOutFlow(ArrayList list) ;
+    public abstract void setRemainingPhasesInFlow(ArrayList list) ;
+    public abstract void addMessage(AxisMessage message,String label);
 
-    public ArrayList getPhasesOutFaultFlow() {
-        return phasesOutFaultFlow;
-    }
-
-
-    public ArrayList getPhasesOutFlow() {
-        return phasesOutFlow;
-    }
-
-
-    public ArrayList getRemainingPhasesInFlow() {
-        return remainingPhasesInFlow;
-    }
-
-    /**
-     * @param list
-     */
-    public void setPhasesInFaultFlow(ArrayList list) {
-        phasesInFaultFlow = list;
-    }
-
-    /**
-     * @param list
-     */
-    public void setPhasesOutFaultFlow(ArrayList list) {
-        phasesOutFaultFlow = list;
-    }
-
-    /**
-     * @param list
-     */
-    public void setPhasesOutFlow(ArrayList list) {
-        phasesOutFlow = list;
-    }
-
-    /**
-     * @param list
-     */
-    public void setRemainingPhasesInFlow(ArrayList list) {
-        remainingPhasesInFlow = list;
-    }
 
     public void addModule(QName moduleName) {
         modulerefs.add(moduleName);
@@ -303,11 +242,11 @@ public abstract class AxisOperation  implements
     //to check whether a given paramter is locked
     public boolean isParameterLocked(String paramterName) {
         // checking the locked value of parent
-        boolean loscked =  false;
-        if (getParent() !=null) {
-            loscked=    getParent().isParameterLocked(paramterName);
+        boolean loscked = false;
+        if (getParent() != null) {
+            loscked = getParent().isParameterLocked(paramterName);
         }
-        if(loscked){
+        if (loscked) {
             return true;
         } else {
             Parameter parameter = getParameter(paramterName);
@@ -317,14 +256,15 @@ public abstract class AxisOperation  implements
 
     /**
      * Adding module configuration , if there is moduleConfig tag in operation
+     *
      * @param moduleConfiguration
      */
-    public void addModuleConfig(ModuleConfiguration moduleConfiguration){
-        moduleConfigmap.put(moduleConfiguration.getModuleName(),moduleConfiguration);
+    public void addModuleConfig(ModuleConfiguration moduleConfiguration) {
+        moduleConfigmap.put(moduleConfiguration.getModuleName(), moduleConfiguration);
     }
 
-    public ModuleConfiguration getModuleConfig(QName moduleName){
-        return  (ModuleConfiguration)moduleConfigmap.get(moduleName);
+    public ModuleConfiguration getModuleConfig(QName moduleName) {
+        return (ModuleConfiguration) moduleConfigmap.get(moduleName);
     }
 
 
@@ -335,12 +275,13 @@ public abstract class AxisOperation  implements
      * in operationContext.
      * As an exmple if the MEP is IN-OUT then depending on messagelbl operation description
      * should know how to keep them in corret locations
+     *
      * @param msgContext <code>MessageContext</code>
      * @param opContext  <code>OperationContext</code>
      * @throws AxisFault <code>AxisFault</code>
      */
     public abstract void addMessageContext(MessageContext msgContext, OperationContext opContext)
-            throws AxisFault ;
+            throws AxisFault;
 
     public List getInfaults() {
         return wsdlopeartion.getInfaults();
@@ -478,7 +419,7 @@ public abstract class AxisOperation  implements
         return wsdlopeartion.getMetadataBag();
     }
 
-    public void setMetadataBag(Map meMap){
+    public void setMetadataBag(Map meMap) {
         wsdlopeartion.setMetadataBag(meMap);
     }
 
@@ -504,23 +445,24 @@ public abstract class AxisOperation  implements
      *
      * @param msgContext
      */
-    public OperationContext findOperationContext(MessageContext msgContext, ServiceContext serviceContext) throws AxisFault {
-        OperationContext operationContext ;
+    public OperationContext findOperationContext(MessageContext msgContext,
+                                                 ServiceContext serviceContext) throws AxisFault {
+        OperationContext operationContext;
 
         if (null == msgContext.getRelatesTo()) {
             //Its a new incomming message so get the factory to create a new
             // one
-            operationContext =  new OperationContext(this,serviceContext);
+            operationContext = new OperationContext(this, serviceContext);
         } else {
             // So this message is part of an ongoing MEP
             //			operationContext =
             ConfigurationContext configContext = msgContext.getConfigurationContext();
             operationContext =
-                    configContext.getOperationContext( msgContext.getRelatesTo().getValue());
+                    configContext.getOperationContext(msgContext.getRelatesTo().getValue());
 
             if (null == operationContext) {
                 throw new AxisFault(Messages.getMessage("cannotCorrelateMsg",
-                        this.getName().toString(),msgContext.getRelatesTo().getValue()));
+                        this.getName().toString(), msgContext.getRelatesTo().getValue()));
             }
 
         }
@@ -533,13 +475,15 @@ public abstract class AxisOperation  implements
 
     /**
      * This will not create a new operation context if there is no one already.
+     *
      * @param msgContext
      * @return
      * @throws AxisFault
      */
-    public OperationContext findForExistingOperationContext(MessageContext msgContext) throws AxisFault {
-        OperationContext operationContext ;
-        if((operationContext = msgContext.getOperationContext()) != null) {
+    public OperationContext findForExistingOperationContext(
+            MessageContext msgContext) throws AxisFault {
+        OperationContext operationContext;
+        if ((operationContext = msgContext.getOperationContext()) != null) {
             return operationContext;
         }
 
@@ -549,11 +493,12 @@ public abstract class AxisOperation  implements
             // So this message is part of an ongoing MEP
             //			operationContext =
             ConfigurationContext configContext = msgContext.getConfigurationContext();
-            operationContext = configContext.getOperationContext(msgContext.getRelatesTo().getValue());
+            operationContext =
+                    configContext.getOperationContext(msgContext.getRelatesTo().getValue());
 
             if (null == operationContext) {
                 throw new AxisFault(Messages.getMessage("cannotCorrealteMsg",
-                        this.getName().toString(),msgContext.getRelatesTo().getValue()));
+                        this.getName().toString(), msgContext.getRelatesTo().getValue()));
             }
 
         }
@@ -563,7 +508,8 @@ public abstract class AxisOperation  implements
 
     }
 
-    public void registerOperationContext(MessageContext msgContext, OperationContext operationContext) throws AxisFault {
+    public void registerOperationContext(MessageContext msgContext,
+                                         OperationContext operationContext) throws AxisFault {
         msgContext.getConfigurationContext().registerOperationContext(
                 msgContext.getMessageID(), operationContext);
         operationContext.addMessageContext(msgContext);

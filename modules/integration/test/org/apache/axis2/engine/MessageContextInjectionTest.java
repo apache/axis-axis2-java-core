@@ -68,7 +68,7 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
     }
 
     protected void setUp() throws Exception {
-        AxisConfiguration config = new AxisConfigurationImpl();
+        AxisConfiguration config = new AxisConfiguration();
 
         TransportInDescription tIn = new TransportInDescription(new QName(Constants.TRANSPORT_LOCAL));
         config.addTransportIn(tIn);

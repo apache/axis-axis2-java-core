@@ -32,6 +32,8 @@ public interface DeploymentConstants {
     String LISTENERST = "listener";// paramater start tag
     String HANDERST = "handler";
     String MODULEST = "module";
+    String MESSGES = "message";
+    String LABEL = "label";
     String MODULECONFIG = "moduleConfig";
     String HOST_CONFIG = "hostConfiguration";
     String PHASEST = "phase";

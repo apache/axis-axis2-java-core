@@ -26,7 +26,6 @@ import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.wsdl.WSDLConstants;
@@ -176,7 +175,7 @@ public class Call extends InOutMEPClient {
         axisOperationTemplate = new OutInAxisOperation(new QName("TemplateOperation"));
 
         AxisConfiguration axisConfiguration = serviceContext.getConfigurationContext().getAxisConfiguration();
-        PhasesInfo info = ((AxisConfigurationImpl) axisConfiguration).getPhasesinfo();
+        PhasesInfo info = ((AxisConfiguration) axisConfiguration).getPhasesinfo();
         //to set the operation flows
         if (info != null) {
             info.setOperationPhases(axisOperationTemplate);

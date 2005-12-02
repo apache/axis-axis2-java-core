@@ -23,7 +23,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 
 import javax.xml.namespace.QName;
 
@@ -39,7 +38,7 @@ public class ContextHierarchyTest extends TestCase {
     protected void setUp() throws Exception {
         axisOperation = new InOutAxisOperation(new QName("Temp"));
         axisService = new AxisService(new QName("Temp"));
-        axisConfiguration = new AxisConfigurationImpl();
+        axisConfiguration = new AxisConfiguration();
         axisService.addOperation(axisOperation);
         axisConfiguration.addService(axisService);
     }

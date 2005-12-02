@@ -43,13 +43,13 @@ public class ModuleConfigTest extends TestCase {
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
             ar = builder.buildConfigurationContext(repo).getAxisConfiguration();
             ModuleConfiguration moduleConfiguration =
-                    ((AxisConfigurationImpl)ar).getModuleConfig(new QName("testModule"));
+                    ((AxisConfiguration)ar).getModuleConfig(new QName("testModule"));
             assertNotNull(moduleConfiguration);
             Parameter para = moduleConfiguration.getParameter("testModulePara");
             assertNotNull(para);
 
             moduleConfiguration =
-                    ((AxisConfigurationImpl)ar).getModuleConfig(new QName("testModule2"));
+                    ((AxisConfiguration)ar).getModuleConfig(new QName("testModule2"));
             assertNotNull(moduleConfiguration);
             para = moduleConfiguration.getParameter("testModulePara2");
             assertNotNull(para);

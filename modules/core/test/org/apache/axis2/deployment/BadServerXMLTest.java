@@ -17,7 +17,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AbstractTestCase;
-import org.apache.axis2.engine.AxisConfigurationImpl;
+import org.apache.axis2.engine.AxisConfiguration;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -35,7 +35,7 @@ public class BadServerXMLTest extends AbstractTestCase {
         try {
             InputStream in = new FileInputStream(
                     getTestResourceFile("deployment/BadServer.xml"));
-            AxisConfigurationImpl glabl = new AxisConfigurationImpl();
+            AxisConfiguration glabl = new AxisConfiguration();
             AxisConfigBuilder builder =new AxisConfigBuilder(in,null,glabl);
             builder.populateConfig();
             fail(

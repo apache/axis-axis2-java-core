@@ -31,7 +31,7 @@ import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.AxisConfigurationImpl;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.soap.SOAPBody;
@@ -140,7 +140,7 @@ public class SimpleTest extends TestCase {
 
         // Set up Axis configuration
 
-        AxisConfigurationImpl config = new AxisConfigurationImpl();
+        AxisConfiguration config = new AxisConfiguration();
         TransportInDescription tIn = new TransportInDescription(new QName(Constants.TRANSPORT_LOCAL));
         config.addTransportIn(tIn);
 

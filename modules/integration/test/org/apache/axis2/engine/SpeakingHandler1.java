@@ -37,7 +37,7 @@ public class SpeakingHandler1 extends AbstractHandler implements Handler {
         HandlerDescription handlerDesc = new HandlerDescription();
         handlerDesc.setName(new QName("SpeakingHandler1"));
         PhaseRule rule = new PhaseRule();
-        rule.setPhaseName(PhaseMetadata.PHASE_POLICY_DETERMINATION);
+        rule.setPhaseName(PhaseMetadata.PHASE_DISPATCH);
         handlerDesc.setRules(rule);
         handlerDesc.setHandler(this);
         handlerDesc.setName(name);

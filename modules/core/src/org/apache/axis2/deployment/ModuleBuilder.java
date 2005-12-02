@@ -23,7 +23,6 @@ import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
@@ -202,7 +201,7 @@ public class ModuleBuilder extends DescriptionBuilder{
             processOperationModuleRefs(modules, op_descrip);
 
             //setting Operation phase
-            PhasesInfo info = ((AxisConfigurationImpl) axisConfig).getPhasesinfo();
+            PhasesInfo info = axisConfig.getPhasesinfo();
             info.setOperationPhases(op_descrip);
 
             //adding the opeartion

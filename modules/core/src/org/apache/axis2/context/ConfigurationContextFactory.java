@@ -7,7 +7,6 @@ import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurationImpl;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
@@ -83,7 +82,7 @@ public class ConfigurationContextFactory {
             throws DeploymentException {
         try {
             HashMap modules =
-                    ((AxisConfigurationImpl) context.getAxisConfiguration())
+                    ((AxisConfiguration) context.getAxisConfiguration())
                             .getModules();
             Collection col = modules.values();
             for (Iterator iterator = col.iterator(); iterator.hasNext();) {

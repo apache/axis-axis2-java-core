@@ -20,7 +20,10 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
-import org.apache.axis2.engine.*;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.AxisObserver;
+import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
@@ -65,7 +68,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 MessageReceiver msgrecivere = loadMessageReceiver(
                         Thread.currentThread().getContextClassLoader(), msgRev);
                 OMAttribute mepAtt = msgRev.getAttribute(new QName(MEP));
-                ((AxisConfigurationImpl) axisConfiguration).addMessageReceiver(
+                axisConfiguration.addMessageReceiver(
                         mepAtt.getAttributeValue(), msgrecivere);
             }
 
@@ -368,7 +371,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
                 // initilization
                 observer.init();
-                ((AxisConfigurationImpl) axisConfiguration).addObservers(observer);
+                axisConfiguration.addObservers(observer);
 
             } catch (ClassNotFoundException e) {
                 throw new DeploymentException(e);
@@ -411,7 +414,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                         new ModuleConfiguration(new QName(module), parent);
                 Iterator paramters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
                 processParameters(paramters, moduleConfiguration, parent);
-                ((AxisConfigurationImpl) config).addModuleConfig(moduleConfiguration);
+                config.addModuleConfig(moduleConfiguration);
             }
         }
     }
