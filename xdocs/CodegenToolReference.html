@@ -5,81 +5,6 @@
 </head>
 
 <body>
-<h1>Code Generator Wizard - Eclipse Plug-in</h1>
-
-<h2>Introduction</h2>
-
-<p>The Axis2 code generator comes built-in with an <a
-href="http://www.eclipse.org">Eclipse</a> plug-in. This document explains the
-installation and usage of the Axis2 code generator plug-in.</p>
-
-<h2>Installation</h2>
-
-<p>The easiest way to obtain the plug-in would be the binary distribution.
-The full Axis binary distribution contains the compiled version of this
-plug-in under the tools directory.</p>
-
-<p>If one needs to build the plugin from source it is not as trivial as
-running the Maven build. The reason is that the plug-in depends heavily on
-the Eclipse classes, which are only available in an Eclipse environment. The
-recommended procedure is to run the create-project.xml (in the "modules\tool"
-directory of the source distribution) build file which will create two
-folders (the other one for the Service Archiver tool) and copy the necessary
-files to relevant folders. Then Eclipse should be configured to open the
-contents in a PDE project. Please go through the Eclipse documentation to
-learn how to open projects in the PDE format.</p>
-
-<p>Once you've obtained the plug-in just unzip the content of the plug-in
-archive to the eclipse plug-in directory (if it is the zipped-binary version)
-or copy the necessary folders to the eclipse plug-in directory and restart
-Eclipse.</p>
-
-<p><i>Note - This plug-in works on Eclipse version 3.0 and upwards</i></p>
-
-<h2>Operation</h2>
-
-<p>If the plug-in is properly installed you should see a new wizard under the
-"New" section.(use the File -&gt; New -&gt; Other or Ctrl + N )</p>
-
-<p><img src="images/tools/wsdl/wizardSelectionPage.jpg" width="500"
-height="500"></p>
-
-<p>Selecting the wizard and pressing the next button will start the code
-generator wizard. Following is the first wizard page.</p>
-
-<p><img border="0" src="images/tools/wsdl/toolSelectionpage.jpg" width="557"
-height="501"></p>
-
-<p>Selecting the generate code from WSDL option leads to the next page. Note
-that the Java-to-WSDL tool is disabled.</p>
-
-<p><img border="0" src="images/tools/wsdl/WSDLSelectionPage.jpg" width="518"
-height="500"></p>
-
-<p>To move on to the next page the WSDL file location must be given. The
-browse button can be used to easily browse for a file rather than typing the
-whole path.</p>
-
-<p>Once the WSDL file is selected, codegen options are to be selected. By far
-this is the most important page in this wizard, which determines the
-characteristics of the code being generated. Novices need not worry about
-these options since the most common options are defaulted, But advanced users
-will find it very easy to "turn the knobs" using these options.</p>
-
-<p><img border="0" src="images/tools/wsdl/OptionsPage.jpg" width="518"
-height="500"></p>
-
-<p>Once the options are taken care of, only the final step of the code
-generation is left. it is the selection of the output file location.</p>
-
-<p><img border="0" src="images/tools/wsdl/OutputPage.jpg" width="518"
-height="500"></p>
-
-<p>When the output file location is selected, the Finish button will be
-enabled. Pressing the finish button will generate the code and a message box
-will pop up acknowledging the success. Well Done! Now you are ready for Axis2
-Code generation.</p>
-
 <h1>Code Generator Wizard - Command Line Tool</h1>
 
 <h2>Introduction</h2>
@@ -158,6 +83,12 @@ style="border-collapse: collapse" width="100%" id="AutoNumber1">
       <td width="50%">-sd</td>
       <td width="50%">Generates the service descriptor (i.e. server.xml).
         Default is off. only valid with -ss</td>
+    </tr>
+  <tr>
+      <td width="50%">-d</td>
+      <td width="50%">Specifies the Databinding framwork. valid values are xmlbeans,adb and none.
+      Default is xmlbeans.
+</td>
     </tr>
   </tbody>
 </table>
@@ -294,7 +225,10 @@ path.</p>
 <p>Since the users may find altering their ant class path a bit daunting they
 can also follow an easier technique. The code generator main class can be
 invoked directly through the build file.</p>
-<p>Below is an example of a full build.xml needed to run WSDL2Java and generate the Java source files, compile the sources, and build an AAR file ready for deployment: </p>
+
+<p>Below is an example of a full build.xml needed to run WSDL2Java and
+generate the Java source files, compile the sources, and build an AAR file
+ready for deployment:</p>
 <pre class="code">&lt;!DOCTYPE project&gt;
 
 &lt;project name="wsdl2java-example" default="usage" basedir="."&gt;
@@ -450,15 +384,19 @@ invoked directly through the build file.</p>
   &lt;/target&gt;
 
 &lt;/project&gt;
-
 </pre>
 
-<p>The above build.xml depends on a build.properties file which defines 'axis.home', such as:</p>
+<p>The above build.xml depends on a build.properties file which defines
+'axis.home', such as:</p>
+
 <p>axis.home=/home/username/axis2-0.93-bin/</p>
 
-<p>The above build.xml example also assumes three empty directories exist, 'dist', 'lib', and 'src'. </p>
+<p>The above build.xml example also assumes three empty directories exist,
+'dist', 'lib', and 'src'.</p>
 
-<p>Below is a validated WSDL Document following the Document/Literal Style. The name of this file matches the name used in the WSDL2Java ant task above, LoginEndpoint.wsdl</p>
+<p>Below is a validated WSDL Document following the Document/Literal Style.
+The name of this file matches the name used in the WSDL2Java ant task above,
+LoginEndpoint.wsdl</p>
 <pre class="code">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 
 &lt;definitions name="LoginService" targetNamespace="http://login" xmlns:tns="http://login" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://login/types"&gt;
@@ -521,13 +459,25 @@ invoked directly through the build file.</p>
 
   &lt;service name="LoginService"&gt;
     &lt;port name="LoginEndpointPort" binding="tns:LoginEndpointBinding"&gt;
-      &lt;soap:address location="http://localhost:8080/axis2/services/LoginEndpoint"/&gt;&lt;/port&gt;&lt;/service&gt;&lt;/definitions&gt;
-</pre>
-<p>Place the above file, named LoginEndpoint.wsdl, in the directory 'wsdl' below the build.xml file. Run the WSDL2Java command via the ant task defined above, and there will be a directory called 'output' created. This directory contains the WSDL2Java generated source. An important detail is that an XMLBean class file is also generated by WSDL2Java, TypeSystemHolder.class. That file is placed into build/classes by the above ant task and will be needed to compile the generated sources.</p> 
-<p>The next step is to modify the generated Skeleton Java Source file - the Web Service. This file as generated returns null and needs to be updated to contain the business logic.</p> 
+      &lt;soap:address location="http://localhost:8080/axis2/services/LoginEndpoint"/&gt;&lt;/port&gt;&lt;/service&gt;&lt;/definitions&gt;</pre>
 
-<p>After the WSDL2Java command runs the file LoginEndpoint.wsdl, edit the following file:</p> 
-<p>output/org/example/types/LoginEndpointSkeleton.java. You should see the following code:</p> 
+<p>Place the above file, named LoginEndpoint.wsdl, in the directory 'wsdl'
+below the build.xml file. Run the WSDL2Java command via the ant task defined
+above, and there will be a directory called 'output' created. This directory
+contains the WSDL2Java generated source. An important detail is that an
+XMLBean class file is also generated by WSDL2Java, TypeSystemHolder.class.
+That file is placed into build/classes by the above ant task and will be
+needed to compile the generated sources.</p>
+
+<p>The next step is to modify the generated Skeleton Java Source file - the
+Web Service. This file as generated returns null and needs to be updated to
+contain the business logic.</p>
+
+<p>After the WSDL2Java command runs the file LoginEndpoint.wsdl, edit the
+following file:</p>
+
+<p>output/org/example/types/LoginEndpointSkeleton.java. You should see the
+following code:</p>
 <pre class="code">package org.example.types;
     /**
      *  Auto generated java skeleton for the service by the Axis code generator
@@ -547,9 +497,10 @@ invoked directly through the build file.</p>
                 return null;
         }
      
-    }
-</pre>    
-<p>Replace the contents of this file with the following, which uses the complex types generated by WSDL2Java and the example wsdl file:</p> 
+    }</pre>
+
+<p>Replace the contents of this file with the following, which uses the
+complex types generated by WSDL2Java and the example wsdl file:</p>
 <pre class="code">package org.example.types;
 import org.example.types.databinding.login.ReturnWebLoginElementDocument;
 import org.example.types.databinding.login.WebLoginElementDocument.WebLoginElement;
@@ -603,12 +554,23 @@ public class LoginEndpointSkeleton {
     }
  
 }
-
 </pre>
-<p>The next steps assume the axis2.war has been deployed and has expanded in a servlet container. </p> 
-<p>Run the 'jar_wsdl' ant task from the example build.xml, which generates a jar file lib/axis2_example_wsdl.jar in the 'lib' directory under the build.xml . This jar will be used to compile the client, and also will be placed in the servlet container. Next, run the 'aar' ant task from the example build.xml, which generates the deployable axis2 web service. Place dist/LoginEndpoint.aar into axis2/WEB-INF/services . Place lib/axis2_example_wsdl.jar into axis2/WEB-INF/lib . Verify the happy axis page loaded the services correctly - there should be the service 'LoginEndpoint' with the available operation 'webLogin' displayed.</p> 
 
-<p>The last step is to create and run the client. In the src directory create the file org.client.LoginClient.java, with the contents below:</p> 
+<p>The next steps assume the axis2.war has been deployed and has expanded in
+a servlet container.</p>
+
+<p>Run the 'jar_wsdl' ant task from the example build.xml, which generates a
+jar file lib/axis2_example_wsdl.jar in the 'lib' directory under the
+build.xml . This jar will be used to compile the client, and also will be
+placed in the servlet container. Next, run the 'aar' ant task from the
+example build.xml, which generates the deployable axis2 web service. Place
+dist/LoginEndpoint.aar into axis2/WEB-INF/services . Place
+lib/axis2_example_wsdl.jar into axis2/WEB-INF/lib . Verify the happy axis
+page loaded the services correctly - there should be the service
+'LoginEndpoint' with the available operation 'webLogin' displayed.</p>
+
+<p>The last step is to create and run the client. In the src directory create
+the file org.client.LoginClient.java, with the contents below:</p>
 <pre class="code">package org.client;
 
 import org.apache.axis2.AxisFault;
@@ -666,9 +628,10 @@ public class LoginClient {
     }
 }
 
-
 </pre>
-<p>Now run the ant task 'ant runLogin' . The following output should appear: </p> 
+
+<p>Now run the ant task 'ant runLogin' . The following output should
+appear:</p>
 <pre class="code">runLogin:
      [echo] running the webLogin client
      [java] webLogin, firing...
@@ -676,8 +639,8 @@ public class LoginClient {
      [java] Client returned
      [java] WebUserName: joe sixpack
      [java] SOAPSessionId: some_random_string
-     [java] webLogin, completed!!!
-</pre>
+     [java] webLogin, completed!!!</pre>
+
 <p></p>
 
 <h1>Appendix</h1>
