@@ -159,9 +159,8 @@ public class AsynchronousClient {
                 new EndpointReference(url.toString()));
         MessageContext requestContext = ClientUtil.getMessageContext();
         try {
-            options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                    Constants.TRANSPORT_HTTP,
-                    false);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(false);
 
             requestContext.getEnvelope().serializeAndConsume(
                     XMLOutputFactory.newInstance()

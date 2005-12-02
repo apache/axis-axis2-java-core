@@ -42,13 +42,14 @@ public class RESTClient {
 
         Options options = new Options();
         options.setTo(new EndpointReference(toEpr));
-        options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setUseSeparateListener(false);
 
         options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 
         Call call = new Call();
         call.setClientOptions(options);
-        
+
         OMElement result = call.invokeBlocking("echo", getPayload());
 
         try {

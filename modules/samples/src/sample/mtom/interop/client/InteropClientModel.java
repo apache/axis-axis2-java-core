@@ -51,7 +51,7 @@ public class InteropClientModel {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace("http://example.org/mtom/data", "x");
         OMElement data = fac.createOMElement("Data", omNs);
-        
+
         File dataFile = new File(fileName);
         FileDataSource dataSource = new FileDataSource(dataFile);
         expectedDH = new DataHandler(dataSource);
@@ -70,8 +70,8 @@ public class InteropClientModel {
         options.setTo(targetEPR);
         // enabling MTOM in the client side
         options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_FALSE);
-        options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                Constants.TRANSPORT_HTTP, false);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setUseSeparateListener(false);
         call.setClientOptions(options);
 
         return call.invokeBlocking(operationName

@@ -46,9 +46,8 @@ public class EchoBlockingDualClient {
             //The boolean flag informs the axis2 engine to use two separate transport connection
             //to retrieve the response.
             call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-            options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                    Constants.TRANSPORT_HTTP,
-                    true);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(true);
 
             //Blocking Invocation
             OMElement result = call.invokeBlocking("echo",

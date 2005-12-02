@@ -42,12 +42,10 @@ public class TCPClient {
 
         Call call = new Call();
         Options options = new Options();
-            call.setClientOptions(options);
+        call.setClientOptions(options);
         options.setTo(new EndpointReference(toEpr));
-        options.setTransportInfo(Constants.TRANSPORT_TCP,
-                Constants.TRANSPORT_TCP,
-                false);
-        //call.engageModule(new QName(Constants.MODULE_ADDRESSING));
+        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setUseSeparateListener(false);
 
         OMElement result = call.invokeBlocking("echo", getPayload());
 
