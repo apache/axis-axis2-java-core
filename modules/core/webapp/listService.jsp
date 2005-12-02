@@ -85,20 +85,20 @@
                  if (operationsList.size() > 0) {
                 %><br><i>Available operations</i><%
                  } else {
-                %><i> There are no any opeartions specified</i><%
+                %><i> There are no Operations specified</i><%
                  }
                 %><ul><%
                  for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
                      AxisOperation axisOperation = (AxisOperation) iterator1.next();
                 %><li><%=axisOperation.getName().getLocalPart()%></li>
-<%--                 <br>Opeartion EPR : <%=prifix + axisService.getName().getLocalPart() + "/"+ axisOperation.getName().getLocalPart()%>--%>
+<%--                 <br>Operation EPR : <%=prifix + axisService.getName().getLocalPart() + "/"+ axisOperation.getName().getLocalPart()%>--%>
                  <%
                      engagdeModules = null;
                      engagdeModules = axisOperation.getEngagedModules();
                      moduleName = "";
                      if(engagdeModules.size() >0){
                 %>
-                <br><i>Engaged Modules for the opeartion</i><ul>
+                <br><i>Engaged Modules for the Operation</i><ul>
                 <%
                          for (Iterator iterator2 = engagdeModules.iterator(); iterator2.hasNext();) {
                              ModuleDescription moduleDecription = (ModuleDescription) iterator2.next();

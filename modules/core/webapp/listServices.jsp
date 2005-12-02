@@ -58,13 +58,13 @@
             if (operationsList.size() > 0) {
                 %><i>Available operations</i><%
             } else {
-                %><i> There are no any opeartions specified</i><%
+                %><i> There are no Operations specified</i><%
             }
            %><ul><%
             for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
                 AxisOperation axisOperation = (AxisOperation) iterator1.next();
                 %><li><%=axisOperation.getName().getLocalPart()%></li>
-<%--                <br>Opeartion EPR : <%=prifix + axisService.getName().getLocalPart() + "/"+ axisOperation.getName().getLocalPart()%>--%>
+<%--                <br>Operation EPR : <%=prifix + axisService.getName().getLocalPart() + "/"+ axisOperation.getName().getLocalPart()%>--%>
                 <%
             }
            %></ul>

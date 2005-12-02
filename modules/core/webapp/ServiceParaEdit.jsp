@@ -56,24 +56,24 @@
 
                  ArrayList op_paras ;
                  for (Iterator iterator = ops.iterator(); iterator.hasNext();) {
-                     AxisOperation axisOperationon = (AxisOperation) iterator.next();
-                     String opeartionName = axisOperationon.getName().getLocalPart();
+                     AxisOperation axisOperation = (AxisOperation) iterator.next();
+                     String operationName = axisOperation.getName().getLocalPart();
                      %>
                      <tr>
                        <td colspan="2" > &nbsp;&nbsp;&nbsp;&nbsp;</td>
                      </tr>
                      <tr>
-                       <td colspan="2" ><b>Operation : <%=opeartionName%></b></td>
+                       <td colspan="2" ><b>Operation : <%=operationName%></b></td>
                      </tr>
                     <%
-                     op_paras = axisOperationon.getParameters();
+                     op_paras = axisOperation.getParameters();
                      for (int i = 0; i < op_paras.size(); i++) {
                      Parameter parameter = (Parameter) op_paras.get(i);
                      %>
                      <tr>
                      <td><%=parameter.getName()%></td>
                      <td><input type="text" value="<%=parameter.getValue()%>"
-                           name="<%=(opeartionName + "_" + parameter.getName())%>" size="50">
+                           name="<%=(operationName + "_" + parameter.getName())%>" size="50">
                            </td>
                      </tr>
                      <%

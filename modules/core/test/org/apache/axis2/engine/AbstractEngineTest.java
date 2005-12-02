@@ -22,12 +22,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 
 public class AbstractEngineTest extends TestCase {
-//    protected ArrayList executedHandlers = new ArrayList();
-//    protected AxisConfiguration engineRegistry;
-//    protected QName serviceName = new QName("axis/services/NullService");
-//    protected QName opearationName = new QName("NullOperation");
-//    protected AxisService service;
-
     public AbstractEngineTest() {
     }
 

@@ -137,10 +137,10 @@ public class ModuleBuilder extends DescriptionBuilder{
 
 
 
-    private ArrayList processOperations(Iterator opeartinsItr) throws DeploymentException {
+    private ArrayList processOperations(Iterator operationsIterator) throws DeploymentException {
         ArrayList operations = new ArrayList();
-        while (opeartinsItr.hasNext()) {
-            OMElement operation = (OMElement) opeartinsItr.next();
+        while (operationsIterator.hasNext()) {
+            OMElement operation = (OMElement) operationsIterator.next();
 
             // /getting operation name
             OMAttribute op_name_att = operation.getAttribute(

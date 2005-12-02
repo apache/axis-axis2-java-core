@@ -39,7 +39,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     private ArrayList executedHandlers = new ArrayList();
     private AxisConfiguration engineRegistry;
     private QName serviceName = new QName("axis/services/NullService");
-    private QName opearationName = new QName("NullOperation");
+    private QName operationName = new QName("NullOperation");
     private AxisService service;
     private ConfigurationContext engineContext;
     private AxisOperation axisOp;
@@ -62,7 +62,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
 
         TransportInDescription transportIn = new TransportInDescription(
                 new QName("null"));
-        axisOp = new InOutAxisOperation(opearationName);
+        axisOp = new InOutAxisOperation(operationName);
 
         service = new AxisService(serviceName);
         axisOp.setMessageReceiver(new MessageReceiver() {
@@ -94,8 +94,8 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
         mc.setEnvelope(omFac.getDefaultEnvelope());
 
 
-        mc.setWSAAction(opearationName.getLocalPart());
-        mc.setSoapAction(opearationName.getLocalPart());
+        mc.setWSAAction(operationName.getLocalPart());
+        mc.setSoapAction(operationName.getLocalPart());
         System.out.flush();
     }
 

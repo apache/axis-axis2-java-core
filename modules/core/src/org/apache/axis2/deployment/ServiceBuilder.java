@@ -121,9 +121,9 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
 
             //processing operations
-            Iterator opeartinsItr = service_element.getChildrenWithName(
+            Iterator operationsIterator = service_element.getChildrenWithName(
                     new QName(OPRATIONST));
-            ArrayList ops = processOperations(opeartinsItr);
+            ArrayList ops = processOperations(operationsIterator);
             for (int i = 0; i < ops.size(); i++) {
                 AxisOperation operationDesc = (AxisOperation) ops.get(i);
                 ArrayList wsamappings = operationDesc.getWsamappingList();
@@ -147,10 +147,10 @@ public class ServiceBuilder extends DescriptionBuilder {
         return service;
     }
 
-    private ArrayList processOperations(Iterator opeartinsItr) throws AxisFault {
+    private ArrayList processOperations(Iterator operationsIterator) throws AxisFault {
         ArrayList operations = new ArrayList();
-        while (opeartinsItr.hasNext()) {
-            OMElement operation = (OMElement) opeartinsItr.next();
+        while (operationsIterator.hasNext()) {
+            OMElement operation = (OMElement) operationsIterator.next();
 
             // /getting operation name
             OMAttribute op_name_att = operation.getAttribute(
