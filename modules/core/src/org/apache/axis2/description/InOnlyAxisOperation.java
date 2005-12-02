@@ -40,8 +40,8 @@ public class InOnlyAxisOperation extends AxisOperation {
     //this is just to stor the chain , there wont be any usage of this
     private ArrayList outPhase;
 
-    public InOnlyAxisOperation(WSDLOperation wsdlopeartion) {
-        super(wsdlopeartion);
+    public InOnlyAxisOperation(WSDLOperation wsdloperation) {
+        super(wsdloperation);
         createMessage();
     }
 

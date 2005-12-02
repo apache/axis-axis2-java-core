@@ -34,8 +34,8 @@ public class OutOnlyAxisOperation extends AxisOperation {
     //just to keep the inflow , there wont be any usage
     private ArrayList inPhases;
 
-    public OutOnlyAxisOperation(WSDLOperation wsdlopeartion) {
-        super(wsdlopeartion);
+    public OutOnlyAxisOperation(WSDLOperation wsdloperation) {
+        super(wsdloperation);
         createMessage();
     }
 

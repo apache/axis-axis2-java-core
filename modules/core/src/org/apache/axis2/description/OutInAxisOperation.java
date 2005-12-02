@@ -32,8 +32,8 @@ import java.util.HashMap;
  */
 public class OutInAxisOperation extends InOutAxisOperation {
 
-    public OutInAxisOperation(WSDLOperation wsdlopeartion) {
-        super(wsdlopeartion);
+    public OutInAxisOperation(WSDLOperation wsdloperation) {
+        super(wsdloperation);
     }
 
     public OutInAxisOperation() {

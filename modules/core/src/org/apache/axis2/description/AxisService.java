@@ -68,7 +68,7 @@ public class AxisService
 
     private WSDLServiceImpl serviceimpl = null;
 
-    private HashMap wasaction_opeartionmap = null;
+    private HashMap wsaaction_operationmap = null;
 
     //to store module ref at deploy time parsing
     private ArrayList moduleRefs = new ArrayList();
@@ -83,7 +83,7 @@ public class AxisService
 
     public AxisService(WSDLServiceImpl serviceimpl) {
         this.serviceimpl = serviceimpl;
-        this.wasaction_opeartionmap = new HashMap();
+        this.wsaaction_operationmap = new HashMap();
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setServiceInterface(new WSDLInterfaceImpl());
         moduleConfigmap = new HashMap();
@@ -92,7 +92,7 @@ public class AxisService
 
     public AxisService() {
         this.serviceimpl = new WSDLServiceImpl();
-        this.wasaction_opeartionmap = new HashMap();
+        this.wsaaction_operationmap = new HashMap();
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         this.setServiceInterface(new WSDLInterfaceImpl());
         moduleConfigmap = new HashMap();
@@ -150,7 +150,7 @@ public class AxisService
     }
 
     /**
-     * To add a opeartion to a service if a module requird to do so
+     * To add a operation to a service if a module requird to do so
      *
      * @param module
      */
@@ -166,7 +166,7 @@ public class AxisService
                 Parameter paramter = (Parameter) wsamappings.get(j);
                 this.addMapping((String) paramter.getValue(), axisOperation);
             }
-            //this opration is a control opeartion.
+            //this opration is a control operation.
             axisOperation.setControlOperation(true);
             this.addOperation(axisOperation);
         }
@@ -217,16 +217,16 @@ public class AxisService
         String opStr = operationName.getLocalPart();
 
         HashMap allOperations = this.getServiceInterface().getAllOperations();
-        AxisOperation opeartion = (AxisOperation) allOperations.get(opStr);
-        if (opeartion == null) {
-            opeartion = (AxisOperation) wasaction_opeartionmap.get(
+        AxisOperation operation = (AxisOperation) allOperations.get(opStr);
+        if (operation == null) {
+            operation = (AxisOperation) wsaaction_operationmap.get(
                     operationName.getLocalPart());
         }
-        return opeartion;
+        return operation;
     }
 
     /**
-     * To get the WSDL opeartion element in servic einterface
+     * To get the WSDL operation element in service interface
      *
      * @param operationName <code>QName</cde>
      * @return WSDLOperation <code>WSDLOperation</code>
@@ -835,7 +835,7 @@ public class AxisService
      * To add the was action paramater into has map so that was action based dispatch can support
      */
     public void addMapping(String mappingKey, AxisOperation axisOperation) {
-        wasaction_opeartionmap.put(mappingKey, axisOperation);
+        wsaaction_operationmap.put(mappingKey, axisOperation);
     }
 
     /**

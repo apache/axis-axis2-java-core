@@ -74,7 +74,7 @@ public class ListingAgent {
     private static final String VIEW_GLOBAL_HANDLERS_JSP_NAME = "ViewGlobalHandlers.jsp";
     private static final String VIEW_SERVICE_HANDLERS_JSP_NAME = "ViewServiceHandlers.jsp";
 
-    private static final String ENGAGE_TO_OPERATION_JSP_NAME = "enaggingtoanopeartion.jsp";
+    private static final String ENGAGE_TO_OPERATION_JSP_NAME = "engagingtoanoperation.jsp";
     private static final String SERVICE_PARA_EDIT_JSP_NAME = "ServiceParaEdit.jsp";
 
     public ListingAgent(ConfigurationContext configContext) {
@@ -150,7 +150,7 @@ public class ListingAgent {
         } else if (
                 (filePart != null) &&
                         filePart.endsWith(Constants.LIST_OPERATIONS_FOR_THE_SERVICE)) {
-            engageModulesToOpeartion(httpServletRequest, httpServletResponse);
+            engageModulesToOperation(httpServletRequest, httpServletResponse);
             return;
         } else if ((filePart != null) &&
                 filePart.endsWith(Constants.REMOVE_SERVICE)) {
@@ -302,7 +302,7 @@ public class ListingAgent {
         res.sendRedirect(ENGAGING_MODULE_GLOBALLY_JSP_NAME);
     }
 
-    private void engageModulesToOpeartion(HttpServletRequest req,
+    private void engageModulesToOperation(HttpServletRequest req,
                                           HttpServletResponse res)
             throws IOException {
         HashMap modules =

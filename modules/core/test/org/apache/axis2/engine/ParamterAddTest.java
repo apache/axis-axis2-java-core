@@ -66,7 +66,7 @@ public class ParamterAddTest extends TestCase {
         }
     }
 
-     public void testAddParamterOpeartionlockedByAxisConfig(){
+     public void testAddParamterOperationlockedByAxisConfig(){
         try {
             Parameter para = new ParameterImpl();
             para.setValue(null);
@@ -88,7 +88,7 @@ public class ParamterAddTest extends TestCase {
         }
     }
 
-     public void testAddParamterOpeartionLockebyService(){
+     public void testAddParamterOperationLockebyService(){
         try {
             Parameter para = new ParameterImpl();
             para.setValue(null);

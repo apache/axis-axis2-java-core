@@ -75,7 +75,7 @@ public class RegistryTest extends AbstractTestCase {
         testFlowIncludeTest(module);
     }
 
-    public void testOpeartion() throws AxisFault {
+    public void testOperation() throws AxisFault {
         AxisOperation op = new InOutAxisOperation(new QName("op"));
         op.setParent(service);
         testParameteInClude(op);

@@ -27,12 +27,12 @@ import java.util.ArrayList;
 public class ServiceObj {
     private String serviceName;
     private String serviceClass;
-    private ArrayList opeartions;
+    private ArrayList operations;
 
-    public ServiceObj(String serviceName, String serviceClass, ArrayList opeartions) {
+    public ServiceObj(String serviceName, String serviceClass, ArrayList operations) {
         this.serviceName = serviceName;
         this.serviceClass = serviceClass;
-        this.opeartions = opeartions;
+        this.operations = operations;
     }
 
     public String getServiceName() {
@@ -43,8 +43,8 @@ public class ServiceObj {
         return serviceClass;
     }
 
-    public ArrayList getOpeartions() {
-        return opeartions;
+    public ArrayList getOperations() {
+        return operations;
     }
 
     public String toString(){
@@ -53,8 +53,8 @@ public class ServiceObj {
                 "Please Type your service description here\n" +
                 "</description>\n"+
                 "<parameter name=\"ServiceClass\" locked=\"false\">" + serviceClass + "</parameter>\n";
-        for (int i = 0; i < opeartions.size(); i++) {
-            String s = (String) opeartions.get(i);
+        for (int i = 0; i < operations.size(); i++) {
+            String s = (String) operations.get(i);
             String op = "<operation name=\"" + s + "\">\n" +   "</operation>\n";
             serviceXML = serviceXML + op;
         }
