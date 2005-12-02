@@ -6,6 +6,7 @@
   <meta content="">
   <meta content="">
   <meta content="">
+  <meta content="">
   <title>ADB  - Howto</title>
 </head>
 
@@ -136,6 +137,8 @@ depending on the following rules</p>
   <li>All top level elements become classes. This is rather a questioning
     feature but unless classes are generated for the top level elements the
     handling of elements become difficult and messy!</li>
+  <li>SimpleType restrictions are handled by replacing the relevant type with
+    the basetype</li>
 </ol>
 
 <p>Once the code is generated according to the rules it looks like the
@@ -245,6 +248,16 @@ following documents may also be helpful</p>
   <li><a href="adb-codegen-integration.html">ADB and Axis2
   Integration</a></li>
 </ul>
+
+<h2>Known Limitations</h2>
+ADB is meant to be a 'Simple' databinding framework and was not meant to
+compile all types of schemas. The following limitations are the most
+highlighted.
+<ol>
+  <li>Complex Extensions and Restrictions are not supported.</li>
+  <li>Choice (Particle) is not supported</li>
+  <li>SimpleType Unions are not supported</li>
+</ol>
 <hr>
 </body>
 </html>
