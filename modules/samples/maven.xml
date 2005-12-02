@@ -332,8 +332,6 @@
                 <include name="META-INF/**"/>
             </fileset>
         </jar>
-        <copy file="${samples.dir}/SGCCalculator/SGCCalculator.jar"
-            tofile="target/toWar/services/SGCCalculator.aar"/>
 	  <copy toDir="${samples.dir}/SGCCalculator"
             file="script/SGCCalculator/run.bat"/>
         <copy toDir="${samples.dir}/SGCCalculator"
