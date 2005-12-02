@@ -3,6 +3,7 @@
 <%@ page import="org.apache.axis2.context.ServiceGroupContext"%>
 <%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Iterator"%>
+<%@ page import="java.util.Map"%>
 <%--
   Created by IntelliJ IDEA.
   User: Indika Deepal
@@ -22,7 +23,7 @@
     if(sgID !=null && sgContext !=null){
         if(type != null){
             if("VIEW".equals(type)){
-             HashMap perMap = sgContext.getPersistentMap();
+             Map perMap = sgContext.getProperties();
              if(perMap.size()>0){
              %>
              <h4>Persistance properties</h4><ul>
@@ -40,26 +41,6 @@
              } else {
             %>
              <h4>No persistance properties found in the context</h4>
-            <%
-             }
-             HashMap transientMap = sgContext.getNonPersistentMap();
-                          if(perMap.size()>0){
-             %>
-             <h4>Non persistance properties</h4><ul>
-             <%
-                 Iterator itr = transientMap.keySet().iterator();
-                 while (itr.hasNext()) {
-                     String key = (String) itr.next();
-                     Object property =  transientMap.get(key);
-              %>
-                   <li><%=key%> : <%=property.toString()%></li>
-              <%
-                 }
-                 %></ul>
-                 <%
-             } else {
-            %>
-            <h4> No non-persistance properties found in the context</h4>
             <%
              }
             }   else if("DELETE".equals(type)){

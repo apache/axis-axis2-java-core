@@ -1,6 +1,6 @@
 <service name="Version">
     <description>
-        This servics is to get the running Axis version
+        This service is to get the running Axis version
     </description>
     <parameter name="ServiceClass" locked="false">sample.axisversion.Version</parameter>
     <operation name="getVersion">

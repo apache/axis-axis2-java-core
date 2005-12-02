@@ -20,6 +20,7 @@ import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.engine.Phase;
+import org.apache.axis2.engine.Handler;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
@@ -188,8 +189,8 @@ public class PhasesInfo {
         Iterator handlers = phase.getHandlers().iterator();
         while (handlers.hasNext()) {
             try {
-                HandlerDescription handlerDescription = (HandlerDescription) handlers.next();
-                newPhase.addHandler(handlerDescription);
+                Handler handlerDescription = (Handler) handlers.next();
+                newPhase.addHandler(handlerDescription.getHandlerDesc());
             } catch (PhaseException e) {
                 throw new DeploymentException(e);
             }

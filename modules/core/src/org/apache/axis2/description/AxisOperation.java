@@ -94,6 +94,7 @@ public abstract class AxisOperation implements
         if (moduleref == null) {
             return;
         }
+        boolean needToadd = true;
         Iterator module_itr = engagedModules.iterator();
         while (module_itr.hasNext()) {
             ModuleDescription module = (ModuleDescription) module_itr.next();
@@ -101,11 +102,14 @@ public abstract class AxisOperation implements
                 log.info(moduleref.getName().getLocalPart() +
                         " module has alredy engaged to the operation" +
                         "  operation terminated !!!");
-//                return;
+                needToadd = false;
+                // return;
             }
         }
         new PhaseResolver(axisConfig).engageModuleToOperation(this, moduleref);
-        engagedModules.add(moduleref);
+        if (needToadd) {
+            engagedModules.add(moduleref);
+        }
     }
 
     /*
@@ -211,16 +215,24 @@ public abstract class AxisOperation implements
 
 
     public abstract ArrayList getPhasesInFaultFlow();
-    public abstract ArrayList getPhasesOutFaultFlow() ;
-    public abstract ArrayList getPhasesOutFlow() ;
-    public abstract ArrayList getRemainingPhasesInFlow() ;
+
+    public abstract ArrayList getPhasesOutFaultFlow();
+
+    public abstract ArrayList getPhasesOutFlow();
+
+    public abstract ArrayList getRemainingPhasesInFlow();
+
     public abstract AxisMessage getMessage(String label);
 
-    public abstract void setPhasesInFaultFlow(ArrayList list) ;
-    public abstract void setPhasesOutFaultFlow(ArrayList list) ;
-    public abstract void setPhasesOutFlow(ArrayList list) ;
-    public abstract void setRemainingPhasesInFlow(ArrayList list) ;
-    public abstract void addMessage(AxisMessage message,String label);
+    public abstract void setPhasesInFaultFlow(ArrayList list);
+
+    public abstract void setPhasesOutFaultFlow(ArrayList list);
+
+    public abstract void setPhasesOutFlow(ArrayList list);
+
+    public abstract void setRemainingPhasesInFlow(ArrayList list);
+
+    public abstract void addMessage(AxisMessage message, String label);
 
 
     public void addModule(QName moduleName) {

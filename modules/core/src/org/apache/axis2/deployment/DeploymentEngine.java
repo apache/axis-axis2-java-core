@@ -521,6 +521,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 de.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" +
                                         errorWriter.toString();
+                                de.printStackTrace();
                             } catch (AxisFault axisFault) {
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
                                         currentArchiveFile.getName(), axisFault.getMessage()));

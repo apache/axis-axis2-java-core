@@ -124,6 +124,7 @@ public class AxisService
         if (moduleref == null) {
             return;
         }
+        boolean needToadd = true;
         Iterator itr_engageModules = engagedModules.iterator();
         while (itr_engageModules.hasNext()) {
             ModuleDescription module = (ModuleDescription) itr_engageModules.next();
@@ -131,6 +132,7 @@ public class AxisService
                 log.info(moduleref.getName().getLocalPart() +
                         " module has alredy been engaged on the service. " +
                         " Operation terminated !!!");
+                needToadd = false;
 //                return;
             }
         }
@@ -142,7 +144,9 @@ public class AxisService
             AxisOperation axisOperation = (AxisOperation) operations.next();
             axisOperation.engageModule(moduleref, axisConfig);
         }
-        engagedModules.add(moduleref);
+        if (needToadd) {
+            engagedModules.add(moduleref);
+        }
     }
 
     /**

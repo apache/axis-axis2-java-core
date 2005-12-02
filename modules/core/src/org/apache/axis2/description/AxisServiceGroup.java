@@ -143,6 +143,7 @@ public class AxisServiceGroup implements ParameterInclude {
         if (moduleName == null) {
             return;
         }
+        boolean needToadd = true;
         for (Iterator iterator = engagedModules.iterator();
              iterator.hasNext();) {
             QName modu = (QName) iterator.next();
@@ -150,7 +151,8 @@ public class AxisServiceGroup implements ParameterInclude {
                 log.info(moduleName.getLocalPart() +
                         " module has alredy been engaged on the service Group. " +
                         " Operation terminated !!!");
-                //return;
+                needToadd = false;
+//                return;
             }
         }
         Iterator srevice = getServices();
@@ -166,7 +168,9 @@ public class AxisServiceGroup implements ParameterInclude {
                 }
             }
         }
-        addToengagedModules(moduleName);
+        if (needToadd) {
+            addToengagedModules(moduleName);
+        }
     }
 
     public ArrayList getEngagedModules() {
