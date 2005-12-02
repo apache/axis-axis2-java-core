@@ -9,5 +9,4 @@ done
 export AXIS2_CLASSPATH
 echo classpath: $AXIS2_CLASSPATH
 
-java -classpath $AXIS2_CLASSPATH sample.sgccalculator.CalcClient &
-
+java -classpath $AXIS2_CLASSPATH  sample.sgccalculator.CalcClient

@@ -336,6 +336,8 @@
             tofile="target/toWar/services/SGCCalculator.aar"/>
 	  <copy toDir="${samples.dir}/SGCCalculator"
             file="script/SGCCalculator/run.bat"/>
+        <copy toDir="${samples.dir}/SGCCalculator"
+            file="script/SGCCalculator/run.sh"/>
     </goal>
 
     <preGoal name="itest:compile">
