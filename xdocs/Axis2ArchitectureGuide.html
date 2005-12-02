@@ -179,25 +179,26 @@ width="400" height="443" border="0"></p>
 of A. A------&gt;B means the given relationship holds between A and B.)</p>
 
 <p>The two hierarchies are connected as shown in the above figure. The
-Description hierarchy represents the static data, may be loaded from a configuration file that exists throughout the lifetime of
+Description hierarchy represents the static data. This data may be loaded from
+a configuration file that exists throughout the lifetime of
 Axis2. Examples for such data would be deployed Web Services, operations,
 etc. On the other hand, the context hierarchy holds more dynamic information
-about things that has more than one instances (e.g.Message Context).</p>
+about the things that have more than one instances (e.g.Message Context).</p>
 
-<p>These two hierarchies created a model that provides the ability to search
-for key value pairs, when the values are searched at a given level, they are
-searched while moving up in the level until a match is found. In the
+<p>These two hierarchies creates a model that provides the ability to search
+for key value pairs. When the values are searched at a given level, they are
+searched while moving up the hierarchy until a match is found. In the
 resulting model the lower levels overrides the values in the upper levels.
-For and example when a value is looked up at the Message Context and it is
+For an example when a value is looked up at the Message Context and it is
 not found, it would be looked up at the Operation Context etc, up the
 hierarchy. The Search is first done up the hierarchy, and if starting point
 is a Context then it is search in the Description hierarchy as well.</p>
 
-<p>This allows user to declare and override values, and result in very
+<p>This allows the user to declare and override values, result being a very
 flexible configuration model. The flexibility could be the Achilles heel for
 the system, as the search, specially for something that does not exist is
 expensive, yet in the final analysis developers believe that the flexibility
-would serve better in this instants and opt for the flexibility.</p>
+would serve better in this instant.</p>
 
 <table width="955" border="1" cellpadding="2" cellspacing="3">
   <col width="112"><col width="371"><col width="103"><col width="336"><tbody>
@@ -217,11 +218,10 @@ would serve better in this instants and opt for the flexibility.</p>
       <td width="112"><p>Service Group Context</p>
       </td>
       <td width="371"><p>Holds information about a particular usage of the
-        respective service group. The life of a Service Group Context start
-        when a user start to interact with a service that belong to this
-        service group. This can be used to share information between service
-        usages in a single interaction, for services that belong to the same
-        group.</p>
+        respective service group. The life of a Service Group Context starts
+        when a user starts interacting with a service that belong to this
+        service group. This can be used to share information between services(in
+        the same service group) in a single interaction.</p>
       </td>
       <td width="103"><p>ServiceGroup Description</p>
       </td>
@@ -232,7 +232,7 @@ would serve better in this instants and opt for the flexibility.</p>
     <tr>
       <td width="112"><p>Service Context</p>
       </td>
-      <td width="371"><p>This context is available throughout a usage of the
+      <td width="371"><p>This context is available throughout the usage of the
         respective service. This can be used to share information between
         several MEPs that belong to the same service, within a single
         interaction.</p>
@@ -263,20 +263,12 @@ would serve better in this instants and opt for the flexibility.</p>
       <td width="103"><p>Message Description</p>
       </td>
       <td width="336"><p>Do not hold any information as yet, but can be used
-        as future extension point.</p>
+        as a future extension point.</p>
       </td>
     </tr>
   </tbody>
 </table>
 
-<p>&nbsp;</p>
-<p>All context classes implement readObject, writeObject methods that allows
-  to serialize and de-serialize them correctly. Serializing the current
-  Configuration Context object would essentially serialize the whole context
-  hierarchy. To restore it, the user has to fist perform the de-serialization
-  of the ConfigurationContext object. He can restore the description hierarchy
-  by calling the init (axisConfiguration) method of the de-serialized
-  ConfigurationContext object.</p>
 <h2><a name="bmXML"></a>XML Processing Model</h2>
 
 <p>Please refer to the <a href="OMTutorial.html">OM Tutorial</a></p>
@@ -294,34 +286,33 @@ these two Pipes. The two pipes are named <i>In Pipe</i> and <i>Out Pipe</i>,
 and the complex Message Exchange Patterns are constructed by combining these two
 pipes.</p>
 
-<p>Extensibility of the SOAP processing model is provided through the
+<p>Extensibility of the SOAP processing model is provided through 
 Handlers. When a SOAP message is being processed the Handlers that are
 registered would be executed. The Handlers can be registered in global,
 service, or operation scopes and the final handler chain is calculated
 combining the Handlers from all the scopes.</p>
 
-<p>The Handlers act as interceptors and they process the parts of the SOAP
+<p>The Handlers act as interceptors and they process parts of the SOAP
 message and provide add on services. Usually Handlers work on the SOAP
 headers yet they may access or change the SOAP Body as well.</p>
 
 <p>When a SOAP message is being sent through the Client API, an <i>Out Pipe</i> would
-begin, the <i>Out Pipe</i> invokes the Handlers and ends with a Transport
+begin, the <i>Out Pipe</i> invokes the Handlers and end with a Transport
 Sender that sends the SOAP message to the target endpoint. The SOAP message
 is received by a Transport Receiver at the target endpoint, which reads the
-SOAP message and starts the <i>In Pipe</i>. The In Pipe consists of handlers
-that ends with a <a href="#mr">Message Receiver</a>, which consumes the SOAP
+SOAP message and starts the <i>In Pipe</i>. The In Pipe consists of handlers and 
+ends with the <a href="#mr">Message Receiver</a>, which consumes the SOAP
 message.</p>
 
 <p>Above explained processing happens for each and every SOAP message
-exchanged. Processing that follows may decide to give birth for the other
-SOAP messages, in which case the more complex patterns emerge. But Axis2
-always view the SOAP message in terms of processing of a single message where
-as the combination of the messages are layered on top of that basic
-framework.</p>
+exchanged. After processing one message Axis2 may decide to create other
+SOAP messages, in which case more complex message patterns emerge. However Axis2
+always view the SOAP message in terms of processing of a single message. 
+The combination of the messages are layered on top of that basic framework.</p>
 
 <p>The two pipes does not differentiate between the Server and the Client,
 the SOAP Processing Model handles the complexity and provides two abstract
-pipes to the user. Each pipe is a set of Handlers. The different areas or the stages of the
+pipes to the user. The different areas or the stages of the
 pipes are given names, and according to the Axis2 slang those are named
 'Phases'. A Handler always runs inside a Phase, and the Phase provides a
 mechanism to specify the ordering of Handlers. Both Pipes have built in
@@ -329,7 +320,7 @@ Phases, and both define the areas for 'User Phases' which can be defined by
 the user.</p>
 
 <p>Following figure shows the two pipes with their predefined Phases, the
-user defined Phases would be fit in to the User Phases.</p>
+user defined Phases would fit in to the User Phases.</p>
 
 <p><img src="images/archi-guide/phases.png" name="Graphic5" align="bottom"
 width="525" height="226" border="0"></p>
