@@ -10,7 +10,7 @@ First one configuration file is to configure whole system, second one is to
 configure a service and the third one is to configure a module. 
 <ul>
 <li><a href="#global">Global Configuration (axis2.xml)</a></li>
-<li><a href="#service">Service Configuration (service.xml)</a></li>
+<li><a href="#service">Service Configuration (services.xml)</a></li>
 <li><a href="#module">Module Configuration (module.xml)</a></li>
 </ul>
 </p>
@@ -94,6 +94,70 @@ order element and it will be look like below;
          …………………………………….
 &lt;/phaseOrder&gt;   
 </pre></source>
+
+The most interesting thing is that you can add handlers here as well , if you want to add a handler which should go in to that phase you can directly do that by adding a handler element into it . In addition to that there is no any hard coding stuffs for handler  chain in anywhere in Axis2 (at any Axis*) , so all theose configuration are alos done here in phase order element. The complete configuration will look like as follows;
+
+<source><pre>
+&lt;phaseOrder type="inflow""&gt;
+        &lt;!--  System pre defined phases       --"&gt;
+        &lt;phase name="TransportIn"/"&gt;
+        &lt;phase name="PreDispatch"/"&gt;
+        &lt;phase name="Dispatch""&gt;
+            &lt;handler name="AddressingBasedDispatcher"
+                     class="org.apache.axis2.engine.AddressingBasedDispatcher""&gt;
+                &lt;order phase="Dispatch"/"&gt;
+            &lt;/handler"&gt;
+             &lt;handler name="RequestURIBasedDispatcher"
+                     class="org.apache.axis2.engine.RequestURIBasedDispatcher""&gt;
+                &lt;order phase="Dispatch"/"&gt;
+            &lt;/handler"&gt;
+             &lt;handler name="SOAPActionBasedDispatcher"
+                     class="org.apache.axis2.engine.SOAPActionBasedDispatcher""&gt;
+                &lt;order phase="Dispatch"/"&gt;
+            &lt;/handler"&gt;
+             &lt;handler name="SOAPMessageBodyBasedDispatcher"
+                     class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher""&gt;
+                &lt;order phase="Dispatch"/"&gt;
+            &lt;/handler"&gt;
+        &lt;/phase"&gt;
+        &lt;phase name="PostDispatch""&gt;
+             &lt;handler name="DispatchPostConditionsEvaluator"
+                     class="org.apache.axis2.engine.DispatchingChecker""&gt;
+                &lt;order phase="PostDispatch"/"&gt;
+            &lt;/handler"&gt;
+            &lt;handler name="InstanceDispatcher"
+                     class="org.apache.axis2.engine.InstanceDispatcher""&gt;
+                &lt;order phase="PostDispatch"/"&gt;
+            &lt;/handler"&gt;
+            &lt;handler name="SOAPProcessingModelChecker"
+                     class="org.apache.axis2.engine.SOAPProcessingModelChecker""&gt;
+                &lt;order phase="PostDispatch"/"&gt;
+            &lt;/handler"&gt;
+        &lt;/phase"&gt;
+        &lt;!--  System pre defined phases       --"&gt;
+        &lt;!--   After Postdispatch phase module author or or service author can add any phase he want      --"&gt;
+        &lt;phase name="userphase1"/"&gt;
+    &lt;/phaseOrder"&gt;
+    &lt;phaseOrder type="outflow""&gt;
+        &lt;!--      user can add his own phases to this area  --"&gt;
+        &lt;phase name="userphase1"/"&gt;
+        &lt;!--system predefined phase--"&gt;
+        &lt;!--these phase will run irrespective of the service--"&gt;
+        &lt;phase name="PolicyDetermination"/"&gt;
+        &lt;phase name="MessageOut"/"&gt;
+    &lt;/phaseOrder"&gt;
+    &lt;phaseOrder type="INfaultflow""&gt;
+        &lt;!--      user can add his own phases to this area  --"&gt;
+        &lt;phase name="userphase1"/"&gt;
+    &lt;/phaseOrder"&gt;
+    &lt;phaseOrder type="Outfaultflow""&gt;
+        &lt;!--      user can add his own phases to this area  --"&gt;
+        &lt;phase name="userphase1"/"&gt;
+        &lt;phase name="PolicyDetermination"/"&gt;
+        &lt;phase name="MessageOut"/"&gt;
+    &lt;/phaseOrder"&gt;
+</pre></source>
+
 type: the attribute represent type of the flow and which can only be one of the following
 </p>
 <ul>
@@ -155,26 +219,17 @@ class: Represent an Implementation class of observer, and it should be note
 <font color="blue"><b>Service Configuration</b></font>
 <li><a name="service"></a>Writing service.xml</li>
 <p>
-The description of service is specified using service.xml, each service archive 
-file need to have service.xml in order to be a valid service. And which has to be 
+The description of service is specified using services.xml, each service archive 
+file need to have services.xml in order to be a valid service. And which has to be 
 available in META-INF directory of the archive file. 
 <br>
-A very simple service.xml is shown below:
+A very simple services.xml is shown below:
 <source><pre>
-&lt;service name="Name of the service"&gt;
+&lt;service &gt;
     &lt;description&gt; The description of the service  &lt;/description&gt;
 
     &lt;parameter name="ServiceClass"     locked="xsd:false"&gt;org.apache.axis2.sample.echo.EchoImpl&lt;/parameter&gt;
     
-  &lt;inflow&gt;
-        &lt;handler name="logging" class="org.apache.axis2.sample.handlers.LoggingHandler"&gt;
-            &lt;order phase="userphase1" phaseFirst="true"/&gt;
-        &lt;/handler&gt;
-    &lt;/inflow&gt;
-    &lt;outflow/&gt;
-    &lt;INfaultflow&gt;….. &lt;/INfaultflow&gt;
-    &lt;Outfaultflow&gt; ….&lt;/Outfaultflow&gt;
-
     &lt;operation name="echoString"&gt;
         &lt;module ref=" a module name "/&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
@@ -182,8 +237,7 @@ A very simple service.xml is shown below:
   &lt;/service&gt;
 </source></pre>
 
-service name: You can specify the name of the service, if you do not specify the 
-service name then the archive file name will be the name of the service. 
+service name: the service name will be the name of the archive file.
 <br>
 description: This is an optional element if you want to display any description 
 about the service via Axis2 web-admin module then the description can be specified here. 
@@ -194,26 +248,6 @@ service.xml can have any number of top level parameters and all the specified
 parameters will be transformed into service properties in corresponding ServiceDescrption. 
 There is a compulsory parameter in a service.xml called ServiceClass which specify the 
 java class which really does the job and the class will be loaded by MessageReceiver.
-</p>
-<p>
-<b>Flow :</b><br>
-It is possible to add handlers into a flow directly form service.xml rather than 
-engaging a modules and the way of doing that is through flow elements. 
-It is possible to add any number of handlers into a flow and those handlers 
-will be available in corresponding operations flows in the service 
-(inflow consist of two parts, one part is up to post dispatch phase and other 
-part is consisting of operation handlers)  
-<br>
-There are four types of valid flows that can be available in service.xml,
- and the adding the handles into them can be done by following the above procedure. 
-<br>
-Valid flows:
-<ul>
-<li>Inflow</li>
-<li>outflow</li>
-<li>INfaultflow</li>
-<li>Outfaultflow</li>
-</ul>
 </p>
 <p>
 <b>Handler</b><br>
@@ -286,10 +320,29 @@ class: This is an optional attribute which indicate module implementation class,
 <p>
 <b>parameter:</b>
 Module can contains any number of parameters and all the listed parameters in the module.xml will be transformed into corresponding ModuleDescription of the module. 
-</p><p>
-<b>flow:</b>
-Flow concept is exactly the same as service flows. 
-</p><p>
+</p
+<p>
+<b>Flow :</b><br>
+It is possible to add handlers into a flow directly form service.xml rather than 
+engaging a modules and the way of doing that is through flow elements. 
+It is possible to add any number of handlers into a flow and those handlers 
+will be available in corresponding operations flows in the service 
+(inflow consist of two parts, one part is up to post dispatch phase and other 
+part is consisting of operation handlers)  
+<br>
+There are four types of valid flows that can be available in service.xml,
+ and the adding the handles into them can be done by following the above procedure. 
+<br>
+Valid flows:
+<ul>
+<li>Inflow</li>
+<li>outflow</li>
+<li>INfaultflow</li>
+<li>Outfaultflow</li>
+</ul>
+</p>
+
+<p>
 <b>operations</b>
 If a module wants to add an operation when it is engaged into a service it can be done by adding operation tag in module.xml and the way of specifying the operation is same as operation in service.xml.  
 
