@@ -17,8 +17,6 @@
 package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -46,12 +44,9 @@ public abstract class Stub {
     protected ConfigurationContext _configurationContext;
     protected static AxisService _service;
     protected ServiceContext _serviceContext;
-    protected EndpointReference toEPR;
     protected ArrayList modules = new ArrayList();
 
-    protected Options _clientOptions;
-    protected boolean useSeparateListener;
-    protected String listenerTransport =Constants.TRANSPORT_HTTP ;
+    protected Options _clientOptions = new Options();
 
     public void engageModule(String moduleName) {
         this.modules.add(moduleName);
