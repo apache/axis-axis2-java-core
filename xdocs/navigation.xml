@@ -24,6 +24,8 @@
         <item name="Axis2 Configuration Guide" href="axis2config.html"/>
         <item name="Migrating from Axis 1.x" href="migration.html"/>
         <item name="Online Java Docs" href="api.html"/>
+        <item name="ADB How-to" href="adb/adb-howto.html"/>
+        <item name="WS-Security How-to" href="security-module.html"/>
         <item name="Other Tutorials" href="otherTutorials.html"/>
       </item>
       <item name="Get Invloved" href="overview.html">
