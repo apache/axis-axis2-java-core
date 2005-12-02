@@ -92,8 +92,8 @@ public class SchemaGenerator {
 
             /**
              * Schema genertaion done in two stage
-             *  1. Load all the methods and create type for methods paramters (if the paramters are
-             *     Bean then it will create Complex types for those , and if the paramters are simple
+             *  1. Load all the methods and create type for methods parameters (if the parameters are
+             *     Bean then it will create Complex types for those , and if the parameters are simple
              *     type which decribe in SimpleTypeTable nothing will happen)
              *  2. In the next stage for all the methods messages and port types will be
              *     creteated
@@ -107,8 +107,8 @@ public class SchemaGenerator {
 //                jMethod.getAnnotations();
                 JParameter [] paras = jMethod.getParameters();
                 for (int j = 0; j < paras.length; j++) {
-                    JParameter methodParamter = paras[j];
-                    JClass paraType = methodParamter.getType();
+                    JParameter methodParameter = paras[j];
+                    JClass paraType = methodParameter.getType();
                     String classTypeName = paraType.getQualifiedName();
                     if (paraType.isArrayType()) {
                         classTypeName = paraType.getArrayComponentType().getQualifiedName();
@@ -117,7 +117,7 @@ public class SchemaGenerator {
                         }
                     } else {
                         if (!typeTable.isSimpleType(classTypeName)) {
-                            generateSchema(methodParamter.getType());
+                            generateSchema(methodParameter.getType());
                         }
                     }
                     /**
@@ -153,8 +153,8 @@ public class SchemaGenerator {
      * To generate wrapper element , if a method take more than one parameter
      * if the method look like foo(Type1 para1, Type2 para2){}
      * will creat e Wrapper element like
-     * <element name="fooInParameter type="tns:fooInParamterElement"">
-     * <complexType name="fooInParamterElement">
+     * <element name="fooInParameter type="tns:fooInParameterElement"">
+     * <complexType name="fooInParameterElement">
      * <sequnce>
      * <element name="para1" type="tns:Type1">
      * <element name="para2" type="tns:Type2">
@@ -193,15 +193,15 @@ public class SchemaGenerator {
             complexType.setParticle(sequence);
         }
         for (int j = 0; j < paras.length; j++) {
-            JParameter methodParamter = paras[j];
-            String classTypeName = methodParamter.getType().getQualifiedName();
-            boolean isArryType = methodParamter.getType().isArrayType();
+            JParameter methodParameter = paras[j];
+            String classTypeName = methodParameter.getType().getQualifiedName();
+            boolean isArryType = methodParameter.getType().isArrayType();
             if (isArryType) {
-                classTypeName = methodParamter.getType().getArrayComponentType().getQualifiedName();
+                classTypeName = methodParameter.getType().getArrayComponentType().getQualifiedName();
             }
             if (typeTable.isSimpleType(classTypeName)) {
                 XmlSchemaElement elt1 = new XmlSchemaElement();
-                elt1.setName(methodParamter.getSimpleName());
+                elt1.setName(methodParameter.getSimpleName());
                 elt1.setSchemaTypeName(typeTable.getSimpleSchemaTypeName(classTypeName));
                 sequence.getItems().add(elt1);
                 if (isArryType) {
@@ -209,7 +209,7 @@ public class SchemaGenerator {
                 }
             } else {
                 XmlSchemaElement elt1 = new XmlSchemaElement();
-                elt1.setName(methodParamter.getSimpleName());
+                elt1.setName(methodParameter.getSimpleName());
                 elt1.setSchemaTypeName(typeTable.getComplexScheamType(classTypeName));
                 sequence.getItems().add(elt1);
                 if (isArryType) {

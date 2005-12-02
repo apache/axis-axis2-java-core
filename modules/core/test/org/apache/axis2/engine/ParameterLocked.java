@@ -29,7 +29,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-public class ParamterLocked extends TestCase {
+public class ParameterLocked extends TestCase {
 
     AxisConfiguration ar;
     String repo ="./test-resources/deployment/ParaLockedRepo";

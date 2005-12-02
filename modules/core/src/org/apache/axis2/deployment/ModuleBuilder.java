@@ -72,8 +72,8 @@ public class ModuleBuilder extends DescriptionBuilder{
                 }
             }
 
-            //processing Paramters
-            //Processing service level paramters
+            //processing Parameters
+            //Processing service level parameters
             Iterator itr = moduleElement.getChildrenWithName(
                     new QName(PARAMETER));
             processParameters(itr,module,module.getParent());
@@ -173,10 +173,10 @@ public class ModuleBuilder extends DescriptionBuilder{
 //            AxisOperation op_descrip = new AxisOperation();
             op_descrip.setName(new QName(opname));
 
-            //Operation Paramters
-            Iterator paramters = operation.getChildrenWithName(
+            //Operation Parameters
+            Iterator parameters = operation.getChildrenWithName(
                     new QName(PARAMETER));
-            ArrayList wsamapping =   processParameters(paramters,op_descrip,module);
+            ArrayList wsamapping =   processParameters(parameters,op_descrip,module);
             op_descrip.setWsamappingList(wsamapping);
 
 

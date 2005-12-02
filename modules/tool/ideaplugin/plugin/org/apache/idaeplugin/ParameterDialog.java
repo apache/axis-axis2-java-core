@@ -54,10 +54,10 @@ public class ParameterDialog extends JFrame implements ActionListener {
         getContentPane().setBounds(150,150,300,180);
         insets = getInsets();
 
-        paraName = new JLabel("Paramter Name: ");
+        paraName = new JLabel("Parameter Name: ");
         getContentPane().add(paraName);
 
-        paravale = new JLabel("Paramter Value: ");
+        paravale = new JLabel("Parameter Value: ");
         getContentPane().add(paravale);
 
 

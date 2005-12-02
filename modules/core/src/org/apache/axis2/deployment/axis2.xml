@@ -86,7 +86,7 @@
     <module ref="addressing"/>
 
 
-    <!--Configuring module , providing paramters for modules whether they refer or not-->
+    <!--Configuring module , providing parameters for modules whether they refer or not-->
     <!--<moduleConfig name="addressing">-->
     <!--<parameter name="addressingPara" locked="false">N/A</parameter>-->
     <!--</moduleConfig>-->

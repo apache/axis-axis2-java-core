@@ -32,7 +32,7 @@ import java.util.Iterator;
 
 public class AxisServiceGroup implements ParameterInclude {
 
-    //to add and get paramters
+    //to add and get parameters
     protected ParameterInclude paramInclude;
 
     private Log log = LogFactory.getLog(getClass());
@@ -40,7 +40,7 @@ public class AxisServiceGroup implements ParameterInclude {
     // to keep name of the service group
     private String serviceGroupName;
 
-    // to keep the parent of service group , to chcek paramter lock checking and serching
+    // to keep the parent of service group , to chcek parameter lock checking and serching
     private AxisConfiguration parent;
 
     /**
@@ -84,17 +84,17 @@ public class AxisServiceGroup implements ParameterInclude {
         return paramInclude.getParameters();
     }
 
-    public boolean isParameterLocked(String paramterName) {
+    public boolean isParameterLocked(String parameterName) {
         // checking the locked value of parent
         boolean loscked = false;
 
         if (getParent() != null) {
-            loscked = getParent().isParameterLocked(paramterName);
+            loscked = getParent().isParameterLocked(parameterName);
         }
         if (loscked) {
             return true;
         } else {
-            Parameter parameter = getParameter(paramterName);
+            Parameter parameter = getParameter(parameterName);
             return parameter != null && parameter.isLocked();
         }
     }

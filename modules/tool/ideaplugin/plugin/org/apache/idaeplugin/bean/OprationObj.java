@@ -25,14 +25,14 @@ package org.apache.idaeplugin.bean;
 public class OprationObj {
 
     private String OpName ;
-    private String ReturnVale;
-    private Integer paramters;
+    private String ReturnValue;
+    private Integer parameters;
     private Boolean select;
 
-    public OprationObj(String opName, String returnVale, Integer paramters, Boolean select) {
+    public OprationObj(String opName, String returnVale, Integer parameters, Boolean select) {
         OpName = opName;
-        ReturnVale = returnVale;
-        this.paramters = paramters;
+        ReturnValue = returnVale;
+        this.parameters = parameters;
         this.select = select;
     }
 
@@ -45,20 +45,20 @@ public class OprationObj {
         OpName = opName;
     }
 
-    public String getReturnVale() {
-        return ReturnVale;
+    public String getReturnValue() {
+        return ReturnValue;
     }
 
-    public void setReturnVale(String returnVale) {
-        ReturnVale = returnVale;
+    public void setReturnValue(String returnValue) {
+        ReturnValue = returnValue;
     }
 
-    public Integer getParamters() {
-        return paramters;
+    public Integer getParameters() {
+        return parameters;
     }
 
-    public void setParamters(Integer paramters) {
-        this.paramters = paramters;
+    public void setParameters(Integer parameters) {
+        this.parameters = parameters;
     }
 
     public Boolean getSelect() {
@@ -72,8 +72,8 @@ public class OprationObj {
     public void printMe(){
         System.out.println("======== Row =============");
         System.out.println("OpName = " + OpName);
-        System.out.println("paramters = " + paramters);
-        System.out.println("ReturnVale = " + ReturnVale);
+        System.out.println("parameters = " + parameters);
+        System.out.println("ReturnValue = " + ReturnValue);
         System.out.println("select = " + select);
         System.out.println("==========================");
     }

@@ -30,12 +30,12 @@ import java.util.ArrayList;
 
 public class AxisMessage implements ParameterInclude {
 
-    private ParameterInclude paramterinclude;
+    private ParameterInclude parameterinclude;
     private ArrayList operationFlow;
     private AxisOperation parent;
 
     public AxisMessage() {
-        paramterinclude = new ParameterIncludeImpl();
+        parameterinclude = new ParameterIncludeImpl();
         operationFlow = new ArrayList();
     }
 
@@ -46,34 +46,34 @@ public class AxisMessage implements ParameterInclude {
         if (isParameterLocked(param.getName())) {
             throw new AxisFault("Parmter is locked can not overide: " + param.getName());
         } else {
-            paramterinclude.addParameter(param);
+            parameterinclude.addParameter(param);
         }
     }
 
     public Parameter getParameter(String name) {
-        return paramterinclude.getParameter(name);
+        return parameterinclude.getParameter(name);
     }
 
     public ArrayList getParameters() {
-        return paramterinclude.getParameters();
+        return parameterinclude.getParameters();
     }
 
-    public boolean isParameterLocked(String paramterName) {
+    public boolean isParameterLocked(String parameterName) {
         // checking the locked value of parent
         boolean loscked = false;
         if (getParent() != null) {
-            loscked = getParent().isParameterLocked(paramterName);
+            loscked = getParent().isParameterLocked(parameterName);
         }
         if (loscked) {
             return true;
         } else {
-            Parameter parameter = getParameter(paramterName);
+            Parameter parameter = getParameter(parameterName);
             return parameter != null && parameter.isLocked();
         }
     }
 
     public void deserializeParameters(OMElement parameterElement) throws AxisFault {
-        paramterinclude.deserializeParameters(parameterElement);
+        parameterinclude.deserializeParameters(parameterElement);
     }
 
     public ArrayList getMessageFlow() {

@@ -24,25 +24,25 @@ import java.util.ArrayList;
 /**
  * This is to store deployment time data , described by
  * <moduleConfig module="modulename">
- *    <paramter> ....</parameter>
+ *    <parameter> ....</parameter>
  * </moduleConfig>
  *
- * for the initilal stage this just keep set of paramters , but when the time
+ * for the initilal stage this just keep set of parameters , but when the time
  * bean will be store more
  */
 
 public class ModuleConfiguration implements ParameterInclude{
 
     private QName moduleName;
-    private ParameterInclude paramterinclude;
+    private ParameterInclude parameterinclude;
 
-    //to keep the pointer to its parent , only to access paramters
+    //to keep the pointer to its parent , only to access parameters
     private ParameterInclude parent;
 
     public ModuleConfiguration(QName moduleName, ParameterInclude parent) {
         this.moduleName = moduleName;
         this.parent = parent;
-        paramterinclude = new ParameterIncludeImpl();
+        parameterinclude = new ParameterIncludeImpl();
     }
 
     public QName getModuleName() {
@@ -53,34 +53,34 @@ public class ModuleConfiguration implements ParameterInclude{
         if(isParameterLocked(param.getName())){
             throw new AxisFault("Parmter is locked can not overide: " + param.getName());
         } else{
-            paramterinclude.addParameter(param);
+            parameterinclude.addParameter(param);
         }
     }
 
     public Parameter getParameter(String name) {
-        return paramterinclude.getParameter(name);
+        return parameterinclude.getParameter(name);
     }
 
     public ArrayList getParameters() {
-        return paramterinclude.getParameters();
+        return parameterinclude.getParameters();
     }
 
-    public boolean isParameterLocked(String paramterName) {
+    public boolean isParameterLocked(String parameterName) {
         // checking the locked value of parent
         boolean loscked =  false;
         if (parent !=null) {
-            loscked = parent.isParameterLocked(paramterName);
+            loscked = parent.isParameterLocked(parameterName);
         }
         if(loscked){
             return true;
         } else {
-            Parameter parameter = getParameter(paramterName);
+            Parameter parameter = getParameter(parameterName);
             return parameter != null && parameter.isLocked();
         }
     }
 
     public void deserializeParameters(OMElement parameterElement) throws AxisFault {
-        this.paramterinclude.deserializeParameters(parameterElement);
+        this.parameterinclude.deserializeParameters(parameterElement);
     }
 
 }

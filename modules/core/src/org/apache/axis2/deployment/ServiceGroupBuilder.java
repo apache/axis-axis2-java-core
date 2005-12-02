@@ -48,7 +48,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
     public ArrayList populateServiceGroup(AxisServiceGroup axisServiceGroup) throws DeploymentException {
         ArrayList serviceList = new ArrayList();
         try {
-            //Processing service level paramters
+            //Processing service level parameters
             Iterator itr = servcice.getChildrenWithName(
                     new QName(PARAMETER));
             processParameters(itr, axisServiceGroup, axisServiceGroup.getParent());
@@ -105,8 +105,8 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module), parent);
-                Iterator paramters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
-                processParameters(paramters, moduleConfiguration, parent);
+                Iterator parameters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
+                processParameters(parameters, moduleConfiguration, parent);
                 axisService.addModuleConfig(moduleConfiguration);
             }
         }

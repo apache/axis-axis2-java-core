@@ -63,7 +63,7 @@ public class ServiceBuilder extends DescriptionBuilder {
     public AxisService populateService(OMElement service_element) throws DeploymentException {
         try {
 
-            //Processing service level paramters
+            //Processing service level parameters
             Iterator itr = service_element.getChildrenWithName(
                     new QName(PARAMETER));
             processParameters(itr, service, service.getParent());
@@ -128,8 +128,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                 AxisOperation operationDesc = (AxisOperation) ops.get(i);
                 ArrayList wsamappings = operationDesc.getWsamappingList();
                 for (int j = 0; j < wsamappings.size(); j++) {
-                    Parameter paramter = (Parameter) wsamappings.get(j);
-                    service.addMapping((String) paramter.getValue(), operationDesc);
+                    Parameter parameter = (Parameter) wsamappings.get(j);
+                    service.addMapping((String) parameter.getValue(), operationDesc);
                 }
                 service.addOperation(operationDesc);
             }
@@ -197,10 +197,10 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
 
-            //Operation Paramters
-            Iterator paramters = operation.getChildrenWithName(
+            //Operation Parameters
+            Iterator parameters = operation.getChildrenWithName(
                     new QName(PARAMETER));
-            ArrayList wsamappings = processParameters(paramters, op_descrip, service);
+            ArrayList wsamappings = processParameters(parameters, op_descrip, service);
             op_descrip.setWsamappingList(wsamappings);
             // loading the message receivers
             OMElement receiverElement = operation.getFirstChildWithName(
@@ -248,8 +248,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                 throw new DeploymentException("message lebel can not be null");
             }
             AxisMessage message = new AxisMessage();
-            Iterator paramters = messageElement.getChildrenWithName(new QName(PARAMETER));
-            processParameters(paramters, message, operation);
+            Iterator parameters = messageElement.getChildrenWithName(new QName(PARAMETER));
+            processParameters(parameters, message, operation);
             operation.addMessage(message, lable.getAttributeValue().trim());
         }
 
@@ -269,8 +269,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module), parent);
-                Iterator paramters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
-                processParameters(paramters, moduleConfiguration, parent);
+                Iterator parameters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
+                processParameters(parameters, moduleConfiguration, parent);
                 service.addModuleConfig(moduleConfiguration);
             }
         }
@@ -291,8 +291,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module), parent);
-                Iterator paramters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
-                processParameters(paramters, moduleConfiguration, parent);
+                Iterator parameters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
+                processParameters(parameters, moduleConfiguration, parent);
                 operation.addModuleConfig(moduleConfiguration);
             }
         }

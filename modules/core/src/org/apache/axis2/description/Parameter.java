@@ -84,7 +84,7 @@ public interface Parameter {
     public void setParameterType(int type);
 
     /**
-     *  Paramter can be any thing it can be XML element with number of child elements , so if some
+     *  Parameter can be any thing it can be XML element with number of child elements , so if some
      * one wants to access the XML elemet we need to store that , at the deployment time , to store
      * the XMLelment of the parameter can use this method it will store whole
      * <parameter name="ServiceClass1" locked="false">org.apache.axis2.sample.echo.EchoImpl</parameter>
@@ -95,7 +95,7 @@ public interface Parameter {
     public void setParameterElement(OMElement element);
 
     /**
-     *  To get the whole paramter element
+     *  To get the whole parameter element
      * @return <code>OMElement<code>
      */
     public OMElement getParameterElement();

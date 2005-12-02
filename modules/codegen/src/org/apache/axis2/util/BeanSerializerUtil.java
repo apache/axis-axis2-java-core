@@ -233,7 +233,7 @@ public class BeanSerializerUtil {
      */
     public static Object [] deserialize(OMElement response, Object [] javaTypes) throws AxisFault {
         /**
-         * Take the number of paramters in the method and , only take that much of child elements
+         * Take the number of parameters in the method and , only take that much of child elements
          * from the OMElement , other are ignore , as an example
          * if the method is , foo(String a , int b)
          * and if the OMElemet
@@ -268,7 +268,7 @@ public class BeanSerializerUtil {
 //have to check the instnceof
         MultirefHelper helper = new MultirefHelper((OMElement) response.getParent());
         boolean hasRef = false;
-        //to support array . if the paramter type is array , then all the omelemnts with that paramtre name
+        //to support array . if the parameter type is array , then all the omelemnts with that paramtre name
         // has to  get and add to the list
         Class classType;
         while (parts.hasNext() && count < length) {
@@ -330,9 +330,9 @@ public class BeanSerializerUtil {
         int argCount = 0;
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
-//todo if the request paramter has name other than argi (0<i<n) , there should be a
+//todo if the request parameter has name other than argi (0<i<n) , there should be a
 //was to do that , to solve that problem we need to have RPCRequestParameter
-//note that The value of request paramter can either be simple type or JavaBean
+//note that The value of request parameter can either be simple type or JavaBean
             if (SimpleTypeMapper.isSimpleType(arg)) {
                 objects.add("arg" + argCount);
                 objects.add(arg.toString());

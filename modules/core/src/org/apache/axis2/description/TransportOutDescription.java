@@ -83,9 +83,9 @@ public class TransportOutDescription
         return paramInclude.getParameters();
     }
 
-    //to check whether the paramter is locked at any levle
-    public boolean isParameterLocked(String paramterName) {
-        return paramInclude.isParameterLocked(paramterName);
+    //to check whether the parameter is locked at any levle
+    public boolean isParameterLocked(String parameterName) {
+        return paramInclude.isParameterLocked(parameterName);
     }
 
     public void deserializeParameters(OMElement parameterElement) throws AxisFault {

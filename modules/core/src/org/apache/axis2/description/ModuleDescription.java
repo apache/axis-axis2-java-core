@@ -196,17 +196,17 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
         this.parent = parent;
     }
 
-    //to check whether a given paramter is locked
-    public boolean isParameterLocked(String paramterName) {
+    //to check whether a given parameter is locked
+    public boolean isParameterLocked(String parameterName) {
         // checking the locked value of parent
           boolean loscked =  false;
         if (getParent() !=null) {
-            loscked=    getParent().isParameterLocked(paramterName);
+            loscked=    getParent().isParameterLocked(parameterName);
         }
         if(loscked){
             return true;
         } else {
-            Parameter parameter = getParameter(paramterName);
+            Parameter parameter = getParameter(parameterName);
             if(parameter != null && parameter.isLocked()){
                 return true;
             } else {

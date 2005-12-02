@@ -127,14 +127,14 @@ public class HandlerDescription implements ParameterInclude {
         return parameterInclude.getParameters();
     }
 
-    //to check whether the paramter is locked at any levle
-    public boolean isParameterLocked(String paramterName) {
+    //to check whether the parameter is locked at any levle
+    public boolean isParameterLocked(String parameterName) {
         if(parent != null){
-            if(parent.isParameterLocked(paramterName)){
+            if(parent.isParameterLocked(parameterName)){
                 return true;
             }
         }
-        return parameterInclude.isParameterLocked(paramterName);
+        return parameterInclude.isParameterLocked(parameterName);
     }
 
     public void deserializeParameters(OMElement parameterElement) throws AxisFault {

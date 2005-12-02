@@ -137,7 +137,7 @@ public class RPCCall extends Call {
 
     /**
      * This method is used to get OMElement out from an Object array , the object array can contain
-     * either RPCRequestParamter or Object (if it is object that should be either JavaBean or a Simple
+     * either RPCRequestParameter or Object (if it is object that should be either JavaBean or a Simple
      * TypeObject , other types of object can not handle yet)
      * @param opName
      * @param args

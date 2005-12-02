@@ -53,42 +53,42 @@ public class SimpleTypeMapper {
     private static final String FLOAT = "float";
     private static final String CHAR = "char";
 
-    public static Object getSimpleTypeObject(Class paramter, OMElement value) {
-        if (paramter.getName().equals(STRING)) {
+    public static Object getSimpleTypeObject(Class parameter, OMElement value) {
+        if (parameter.getName().equals(STRING)) {
             return value.getText();
-        } else if (paramter.getName().equals(INT)) {
+        } else if (parameter.getName().equals(INT)) {
             return new Integer(value.getText());
-        } else if (paramter.getName().equals(BOOLEAN)) {
+        } else if (parameter.getName().equals(BOOLEAN)) {
             return Boolean.valueOf(value.getText());
-        } else if (paramter.getName().equals(BYTE)) {
+        } else if (parameter.getName().equals(BYTE)) {
             return new Byte(value.getText());
-        } else if (paramter.getName().equals(DOUBLE)) {
+        } else if (parameter.getName().equals(DOUBLE)) {
             return new Double(value.getText());
-        } else if (paramter.getName().equals(SHORT)) {
+        } else if (parameter.getName().equals(SHORT)) {
             return new Short(value.getText());
-        } else if (paramter.getName().equals(LONG)) {
+        } else if (parameter.getName().equals(LONG)) {
             return new Long(value.getText());
-        } else if (paramter.getName().equals(FLOAT)) {
+        } else if (parameter.getName().equals(FLOAT)) {
             return new Float(value.getText());
-        } else if (paramter.getName().equals(CHAR)) {
+        } else if (parameter.getName().equals(CHAR)) {
             return new Character(value.getText().toCharArray()[0]);
-        }  else if (paramter.getName().equals(W_INT)) {
+        }  else if (parameter.getName().equals(W_INT)) {
             return new Integer(value.getText());
-        } else if (paramter.getName().equals(W_BOOLEAN)) {
+        } else if (parameter.getName().equals(W_BOOLEAN)) {
             return Boolean.valueOf(value.getText());
-        } else if (paramter.getName().equals(W_BYTE)) {
+        } else if (parameter.getName().equals(W_BYTE)) {
             return new Byte(value.getText());
-        } else if (paramter.getName().equals(W_DOUBLE)) {
+        } else if (parameter.getName().equals(W_DOUBLE)) {
             return new Double(value.getText());
-        } else if (paramter.getName().equals(W_SHORT)) {
+        } else if (parameter.getName().equals(W_SHORT)) {
             return new Short(value.getText());
-        } else if (paramter.getName().equals(W_LONG)) {
+        } else if (parameter.getName().equals(W_LONG)) {
             return new Long(value.getText());
-        } else if (paramter.getName().equals(W_FLOAT)) {
+        } else if (parameter.getName().equals(W_FLOAT)) {
             return new Float(value.getText());
-        } else if (paramter.getName().equals(W_CHAR)) {
+        } else if (parameter.getName().equals(W_CHAR)) {
             return new Character(value.getText().toCharArray()[0]);
-        } else if (paramter.getName().equals(W_CALANDER)) {
+        } else if (parameter.getName().equals(W_CALANDER)) {
             return makeCalendar(value.getText(),false);
         }else {
             return null;

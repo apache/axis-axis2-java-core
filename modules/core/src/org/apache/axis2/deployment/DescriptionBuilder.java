@@ -178,7 +178,7 @@ public class DescriptionBuilder implements DeploymentConstants{
     }
 
     /**
-     * To get the Paramter object out from the OM
+     * To get the Parameter object out from the OM
      * @param parameters <code>Parameter</code>
      * @param parameterInclude <code>ParameterInclude</code>
      * @param parent <code>ParameterInclude</code>
@@ -207,7 +207,7 @@ public class DescriptionBuilder implements DeploymentConstants{
             }
             parameter.setName(paraName.getAttributeValue());
 
-            //setting paramter Value (the chiled elemnt of the paramter)
+            //setting parameter Value (the chiled elemnt of the parameter)
             OMElement paraValue = parameterElement.getFirstElement();
             if(paraValue !=null){
                 parameter.setValue(parameterElement);
@@ -244,7 +244,7 @@ public class DescriptionBuilder implements DeploymentConstants{
             }
             if(Constants.WSA_ACTION.equals(paraName.getAttributeValue())){
                 wsamapping.add(parameter);
-                // no need to add this paramter , since this is just for mapping
+                // no need to add this parameter , since this is just for mapping
                 continue;
             }
             try {

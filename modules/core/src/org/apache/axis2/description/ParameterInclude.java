@@ -53,7 +53,7 @@ public interface ParameterInclude {
      * to check whether the parameter is locked at any level 
      */
 
-    boolean isParameterLocked(String paramterName);
+    boolean isParameterLocked(String parameterName);
 
      public void  deserializeParameters(OMElement parameterElement) throws AxisFault;
 

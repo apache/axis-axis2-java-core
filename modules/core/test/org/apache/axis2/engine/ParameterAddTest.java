@@ -30,10 +30,10 @@ import javax.xml.namespace.QName;
  * To chcek locked is working corrcetly
  */
 
-public class ParamterAddTest extends TestCase {
+public class ParameterAddTest extends TestCase {
 
     private AxisConfiguration reg = new AxisConfiguration();
-    public void testAddParamterServiceLockedAtAxisConfig(){
+    public void testAddParameterServiceLockedAtAxisConfig(){
         try {
             Parameter para = new ParameterImpl();
             para.setValue(null);
@@ -50,7 +50,7 @@ public class ParamterAddTest extends TestCase {
         }
     }
 
-     public void testAddParamterModuleLockedAtAxisConfig(){
+     public void testAddParameterModuleLockedAtAxisConfig(){
         try {
             Parameter para = new ParameterImpl();
             para.setValue(null);
@@ -66,7 +66,7 @@ public class ParamterAddTest extends TestCase {
         }
     }
 
-     public void testAddParamterOperationlockedByAxisConfig(){
+     public void testAddParameterOperationlockedByAxisConfig(){
         try {
             Parameter para = new ParameterImpl();
             para.setValue(null);
@@ -88,7 +88,7 @@ public class ParamterAddTest extends TestCase {
         }
     }
 
-     public void testAddParamterOperationLockebyService(){
+     public void testAddParameterOperationLockebyService(){
         try {
             Parameter para = new ParameterImpl();
             para.setValue(null);

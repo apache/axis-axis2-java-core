@@ -54,8 +54,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         try {
             OMElement config_element = buildOM();
 
-            //processing Paramters
-            //Processing service level paramters
+            //processing Parameters
+            //Processing service level parameters
             Iterator itr = config_element.getChildrenWithName(
                     new QName(PARAMETER));
             processParameters(itr, axisConfiguration, axisConfiguration);
@@ -194,8 +194,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     transportout.setSender(transportSender);
 
                     //process Parameters
-                    //processing Paramters
-                    //Processing service level paramters
+                    //processing Parameters
+                    //Processing service level parameters
                     Iterator itr = transport.getChildrenWithName(
                             new QName(PARAMETER));
                     processParameters(itr, transportout, axisConfiguration);
@@ -280,8 +280,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 try {
 
                     //process Parameters
-                    //processing Paramters
-                    //Processing service level paramters
+                    //processing Parameters
+                    //Processing service level parameters
                     Iterator itr = transport.getChildrenWithName(
                             new QName(PARAMETER));
                     processParameters(itr, transportIN, axisConfiguration);
@@ -363,8 +363,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 Class observerclass = Class.forName(clasName, true, Thread.currentThread().
                         getContextClassLoader());
                 observer = (AxisObserver) observerclass.newInstance();
-                //processing Paramters
-                //Processing service level paramters
+                //processing Parameters
+                //Processing service level parameters
                 Iterator itr = observerelement.getChildrenWithName(
                         new QName(PARAMETER));
                 processParameters(itr, observer, axisConfiguration);
@@ -412,8 +412,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module), parent);
-                Iterator paramters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
-                processParameters(paramters, moduleConfiguration, parent);
+                Iterator parameters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
+                processParameters(parameters, moduleConfiguration, parent);
                 config.addModuleConfig(moduleConfiguration);
             }
         }

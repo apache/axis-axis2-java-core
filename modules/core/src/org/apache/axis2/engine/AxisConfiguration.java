@@ -318,8 +318,8 @@ public class AxisConfiguration  implements ParameterInclude{
         return parameter != null && parameter.isLocked();
     }
 
-    public void deserializeParameters(OMElement paramters) throws AxisFault {
-        this.paramInclude.deserializeParameters(paramters);
+    public void deserializeParameters(OMElement parameters) throws AxisFault {
+        this.paramInclude.deserializeParameters(parameters);
     }
 
     public AxisServiceGroup getServiceGroup(String serviceNameAndGroupString) {

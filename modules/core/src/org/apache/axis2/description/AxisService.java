@@ -163,8 +163,8 @@ public class AxisService
             AxisOperation axisOperation = copyOperation((AxisOperation) iterator.next());
             ArrayList wsamappings = axisOperation.getWsamappingList();
             for (int j = 0; j < wsamappings.size(); j++) {
-                Parameter paramter = (Parameter) wsamappings.get(j);
-                this.addMapping((String) paramter.getValue(), axisOperation);
+                Parameter parameter = (Parameter) wsamappings.get(j);
+                this.addMapping((String) parameter.getValue(), axisOperation);
             }
             //this opration is a control operation.
             axisOperation.setControlOperation(true);
@@ -851,18 +851,18 @@ public class AxisService
         this.parent = parent;
     }
 
-    //to check whether a given paramter is locked
-    public boolean isParameterLocked(String paramterName) {
+    //to check whether a given parameter is locked
+    public boolean isParameterLocked(String parameterName) {
         // checking the locked value of parent
         boolean loscked = false;
 
         if (getParent() != null) {
-            loscked = getParent().getAxisDescription().isParameterLocked(paramterName);
+            loscked = getParent().getAxisDescription().isParameterLocked(parameterName);
         }
         if (loscked) {
             return true;
         } else {
-            Parameter parameter = getParameter(paramterName);
+            Parameter parameter = getParameter(parameterName);
             return parameter != null && parameter.isLocked();
         }
     }

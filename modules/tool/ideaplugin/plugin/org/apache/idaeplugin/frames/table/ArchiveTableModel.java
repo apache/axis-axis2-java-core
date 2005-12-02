@@ -30,7 +30,7 @@ import java.util.Iterator;
  */
 public class ArchiveTableModel extends AbstractTableModel {
 
-    final String[] columnNames = {"Operation Name", "Return Value", "Paramters ", "Select"};
+    final String[] columnNames = {"Operation Name", "Return Value", "Parameters ", "Select"};
     Object [][] datvalue;
     private HashMap datobjs;
 
@@ -42,8 +42,8 @@ public class ArchiveTableModel extends AbstractTableModel {
         while (itr.hasNext()) {
             OprationObj oprationObj = (OprationObj) itr.next();
             datvalue[count][0]=oprationObj.getOpName();
-            datvalue[count][1]=oprationObj.getReturnVale();
-            datvalue[count][2]=oprationObj.getParamters();
+            datvalue[count][1]=oprationObj.getReturnValue();
+            datvalue[count][2]=oprationObj.getParameters();
             datvalue[count][3]=oprationObj.getSelect();
             count ++;
         }

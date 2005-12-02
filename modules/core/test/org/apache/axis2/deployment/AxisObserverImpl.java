@@ -27,11 +27,11 @@ import java.util.ArrayList;
 
 public class AxisObserverImpl implements AxisObserver{
 
-    ParameterIncludeImpl paramterimpl;
+    ParameterIncludeImpl parameterimpl;
 
     //The initilization code will go here
     public void init() {
-        paramterimpl = new ParameterIncludeImpl();
+        parameterimpl = new ParameterIncludeImpl();
     }
 
     public void update(AxisEvent event) {
@@ -48,12 +48,12 @@ public class AxisObserverImpl implements AxisObserver{
        return null;
     }
 
-    //to check whether the paramter is locked at any levle
-    public boolean isParameterLocked(String paramterName) {
+    //to check whether the parameter is locked at any levle
+    public boolean isParameterLocked(String parameterName) {
         return false;
     }
 
     public void deserializeParameters(OMElement parameterElement) throws AxisFault {
-        this.paramterimpl.deserializeParameters(parameterElement);
+        this.parameterimpl.deserializeParameters(parameterElement);
     }
 }

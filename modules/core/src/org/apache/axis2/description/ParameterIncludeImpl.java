@@ -34,13 +34,13 @@ public class ParameterIncludeImpl implements ParameterInclude {
     /**
      * Field parmeters
      */
-    protected final HashMap parmeters;
+    protected final HashMap parameters;
 
     /**
      * Constructor ParameterIncludeImpl
      */
     public ParameterIncludeImpl() {
-        parmeters = new HashMap();
+        parameters = new HashMap();
     }
 
     /**
@@ -50,7 +50,7 @@ public class ParameterIncludeImpl implements ParameterInclude {
      */
     public void addParameter(Parameter param)  {
         if (param != null) {
-            parmeters.put(param.getName(), param);
+            parameters.put(param.getName(), param);
         }
     }
 
@@ -58,14 +58,14 @@ public class ParameterIncludeImpl implements ParameterInclude {
      * Method getParameter
      *
      * @param name
-     * @return
+     * @return parameter
      */
     public Parameter getParameter(String name) {
-        return (Parameter) parmeters.get(name);
+        return (Parameter) parameters.get(name);
     }
 
     public ArrayList getParameters() {
-        Collection col =  parmeters.values();
+        Collection col =  parameters.values();
         ArrayList para_list = new ArrayList();
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             Parameter parameter = (Parameter) iterator.next();
@@ -74,22 +74,22 @@ public class ParameterIncludeImpl implements ParameterInclude {
         return para_list;
     }
 
-    //to check whether the paramter is locked at any levle
-    public boolean isParameterLocked(String paramterName) {
+    //to check whether the parameter is locked at any levle
+    public boolean isParameterLocked(String parameterName) {
         return false;
     }
 
     /**
-     * At the run time it can be able to change paramters , and system can save at any time and
+     * At the run time it can be able to change parameters , and system can save at any time and
      * to get the original state this method can be used
-     * @param paramters <code>OMElement</code>
+     * @param parameters <code>OMElement</code>
      * @throws org.apache.axis2.AxisFault
      */
-    public void  deserializeParameters(OMElement paramters) throws AxisFault {
-        Iterator parameters = paramters.getChildrenWithName(new QName(DeploymentConstants.PARAMETER));
-        while (parameters.hasNext()) {
+    public void  deserializeParameters(OMElement parameters) throws AxisFault {
+        Iterator iterator = parameters.getChildrenWithName(new QName(DeploymentConstants.PARAMETER));
+        while (iterator.hasNext()) {
             //this is to check whether some one has locked the parmter at the top level
-            OMElement parameterElement = (OMElement) parameters.next();
+            OMElement parameterElement = (OMElement) iterator.next();
 
             Parameter parameter = new ParameterImpl();
             //setting parameterElement
@@ -100,7 +100,7 @@ public class ParameterIncludeImpl implements ParameterInclude {
                     new QName(DeploymentConstants.ATTNAME));
             parameter.setName(paraName.getAttributeValue());
 
-            //setting paramter Value (the chiled elemnt of the paramter)
+            //setting parameter Value (the chiled elemnt of the parameter)
             OMElement paraValue = parameterElement.getFirstElement();
             if(paraValue !=null){
                 parameter.setValue(parameterElement);

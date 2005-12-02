@@ -118,7 +118,7 @@ public class DescriptorFile extends JPanel implements ObjectKeeper, ActionListen
     }
 
     public String getLable() {
-        return "Edit description file add paramters and module references";
+        return "Edit description file add parameters and module references";
     }
 
 }
