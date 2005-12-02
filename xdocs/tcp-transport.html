@@ -1,5 +1,8 @@
 <html>
 <head>
+  <meta content="">
+  <meta content="">
+  <meta content="">
   <meta http-equiv="content-type" content="">
   <title>TCP transport</title>
 </head>
@@ -7,17 +10,17 @@
 <body lang="en">
 <h1>TCP transport</h1>
 
-<p>Axis2 supports TCP as a transport. Axis2 has support for both send
-and receive SOAP Messages via TCP. TCP transports do not have any Application level
-Headers and the SOAP Message that sends should be self contained. This make
-the interaction fast and simple. Yet the main limitation of the TCP transport
-is absence of the request URI, and the Service dispatching should use a
-alternative method. There is two main alternatives methods.</p>
+<p>Axis2 supports TCP as a transport. Axis2 has support for both send and
+receive SOAP Messages via TCP. TCP transports do not have any Application
+level Headers and the SOAP Message that sends should be self contained. This
+make the interaction fast and simple. Yet the main limitation of the TCP
+transport is absence of the request URI, and the Service dispatching should
+use a alternative method. There is two main alternatives methods.</p>
 <ol>
   <li>Use the name space URI of the first child element for the
   dispatching</li>
-  <li>Enable the WS-Addressing, in the case of Alpha release, Addressing
-   is default</li>
+  <li>Enable the WS-Addressing, in the case of Alpha release, Addressing is
+    default</li>
 </ol>
 
 <p>When the TCP request is sent, it is users responsibility either to use
@@ -41,21 +44,22 @@ file in the bin directory of the Binary distribution of TCP Server.</p>
 code segment demonstrate how it can be done.</p>
 <source><pre>OMElement payload = ...
 
-org.apache.axis2.clientapi.Call call = new org.apache.axis2.clientapi.Call(serviceContext);
-call.setTo(targetEPR);
-call.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, false);
+Call call = new Call(serviceContext);
+Options options = new Options();
+options.setTo(targetEPR);
+options.useSeperateListener(false);
+call.setClientOptions(options);
 
 OMElement result =
         (OMElement) call.invokeBlocking("operation", payload);
 call.close();</pre>
 </source>
-<p>The method to note is setTransportInfo that accepts sender transport,
-Listener transport and return path of the TCP Channel need to be
-used. Since the addressing is engage SOAP Message itself contained. Only other option 
-I can think of is to use the URI of
-the first child of the SOAP Body to dispatch the service. The Parameter is of
-the type <a href="faq.html#a2">OMElement</a>, the XML representation of
-Axis2.</p>
+<p>The tranport that should be invoked is inferred from the targetEPR
+(tcp://...) in this case it is TCP and the listener also TCP . Since the
+addressing is engage SOAP Message itself contained. Only other option I can
+think of is to use the URI of the first child of the SOAP Body to dispatch
+the service. The Parameter is of the type <a
+href="faq.html#a2">OMElement</a>, the XML representation of Axis2.</p>
 
 <h2>Sample</h2>
 
@@ -77,7 +81,7 @@ configuration file, two would look like follows.</p>
 effect, this affect the transport Listeners starts by Axis2. (e.g. Listener
 started by the Complete Async interaction)</p>
 <source><pre>&lt;transportReceiver name="tcp" class="org.apache.axis2.transport.tcp.TCPServer"&gt;
-    &lt;parameter name="port" locked="xsd:false"&gt;6060&lt;/parameter&gt;
+    &lt;parameter name="port" locked="false"&gt;6060&lt;/parameter&gt;
 &lt;/transportReceiver&gt;</pre>
 </source>
 <p>Following add the TCPTransport Sender</p>
