@@ -391,7 +391,6 @@
         <ant:mkdir dir="${bin.dist.dir}/bin"/>
         <ant:mkdir dir="${bin.dist.dir}/lib"/>
         <ant:mkdir dir="${bin.dist.dir}/samples"/>
-        <ant:mkdir dir="${bin.dist.dir}/webapps"/>
         <ant:mkdir dir="${bin.dist.dir}/docs/api"/>
 
         <ant:copy todir="${bin.dist.dir}/docs/api">
@@ -413,7 +412,6 @@
                 <ant:exclude name="commons-fileupload-*.jar"/>
             </ant:fileset>
         </ant:copy>
-        <!--<ant:copy file="target/axis2.war" tofile="${bin.dist.dir}/webapps/axis2.war"/>-->
         <ant:copy file="modules/samples/script/build.xml" tofile="${bin.dist.dir}/samples/build.xml"/>
         <ant:copy todir="${bin.dist.dir}/samples">
             <ant:fileset dir="modules/samples/conf/">
