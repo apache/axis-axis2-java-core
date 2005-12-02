@@ -41,7 +41,7 @@
 
 <p>Any architecture is a result of what that architecture should yield, the
 success of an architecture should be evaluated based on the requirements the
-architecture should meet. Let us start our journey in to Axis2 looking at the
+architecture should meet. Let us start our journey into Axis2 looking at the
 requirements that are expected from Axis2.</p>
 
 <h3>Requirement of Axis2</h3>
@@ -54,41 +54,41 @@ delivery is the most basic unit that builds the Web Service interactions.</p>
 
 <p>Each SOAP Node may be written in specific programming language, may it be
 Java, C++, .NET or Perl, the Web Services allow them to inter operate. This
-is possible because, at the wire, each Web Service interaction is done via
+is possible because on the wire each Web Service interaction is done via
 SOAP, which is common to every SOAP Node.</p>
 
 <p><img src="images/archi-guide/soap.gif" name="Graphic1" align="bottom"
 width="691" height="319" border="0"></p>
 
-<p>Web Service middleware handles the complexity in SOAP messaging and let the
-users to work with the programming language they are accustomed to. Axis2
-allows the java users to invoke the Web Services using java representations
+<p>Web Service middleware handles the complexity in SOAP messaging and lets the
+users work with the programming language they are accustomed to. Axis2
+allows java users to invoke Web Services using java representations,
 and handles the SOAP messaging behind the curtain.</p>
 
-<p>Axis2 handles SOAP processing, along with numerous other functionalities
-that make the life of the Web Service developer convenient. Following are the
+<p>Axis2 handles SOAP processing along with numerous other tasks,
+this makes the life of the Web Service developer a whole lot easier. Following are the
 identified requirements:</p>
 <ol>
   <li>
     <p style="margin-bottom: 0in">Provide a framework to process the SOAP
-    messages, the framework should be extensible and the users should be able
+    messages. The framework should be extensible and the users should be able
     to extend the SOAP processing per service or per operation basis. Furthermore
     it should be able to model different Message Exchange Patterns (MEP) using the
     processing framework.</p>
   </li>
-  <li>Ability to deploy the Web Services (with
+  <li>Ability to deploy a Web Services (with
   or without WSDL)</li>
   <li>Provide a Client API that can be used to
-    invoke Web Services, the API should support both the Synchronous and
+    invoke Web Services. This API should support both the Synchronous and
   Asynchronous programming models.</li>
   <li>Ability to configure Axis2 and it's
-  components via the deployment</li>
+  components via deployment.</li>
   <li>Ability to send and receive SOAP messages with different
-  transports</li>
+  transports.</li>
 </ol>
 
-<p>Apart from the above functionalities, performance, both in the terms of
-memory and speed, is a major consideration for Axis2. Axis2 Core Architecture
+<p>Apart from the above functionalities, performance in terms of
+memory and speed is a major consideration for Axis2. Axis2 Core Architecture
 is built on three specifications, WSDL, SOAP and WS-Addressing. Other
 specifications like JAX-RPC and SAAJ are layered on top of the Core
 Architecture. The WS-Policy might join the core specifications in the near
@@ -96,21 +96,21 @@ future.</p>
 
 <h3>Axis2, the Architecture</h3>
 
-<p>Now having look at the requirements of the Axis2 we can direct our
+<p>Now that we have looked at the requirements of the Axis2 we can direct our
 attention to the Architecture.</p>
 
-<p>Axis2 architecture lay out few principals to preserve the uniformity of
-the architecture, they are as follows.</p>
+<p>Axis2 architecture lays out some principals to preserve the uniformity of
+the architecture. They are as follows.</p>
 <ul>
-  <li><p style="margin-bottom: 0in">Axis2 Architecture separates the logic
-    and the states, the code that process the logic is usually stateless.
+  <li><p style="margin-bottom: 0in">Axis2 architecture separates the logic
+    and the states. The code that does the processing is stateless inside Axis2.
     This allows the code to be executed freely by parallel threads.</p>
   </li>
-  <li>All the information is kept in a one information model, this allows
-  the system to be stored and resumed</li>
+  <li>All the information is kept in one information model, this allows
+  the system to be suspended and resumed.</li>
 </ul>
 
-<p>Axis2 architecture is modular, the architecture broke the Axis2 in to
+<p>Axis2 architecture is modular and is broken down into
 seven modules.</p>
 <ol>
   <li><p style="margin-bottom: 0in">Information Model</p>
@@ -136,7 +136,7 @@ width="426" height="189" border="0" align="bottom" usemap="#Graphic2Map">
   </map>
 </p>
 
-<p>Let us look in to the rationale for each Module, and what each does?</p>
+<p>Let us look in to the rationale behind each Module, and what each does.</p>
 
 <p>Axis2 defines a model to handle the information and all the states are
 kept in this model. The model has a hierarchy for the information and the
@@ -144,26 +144,26 @@ system manages the life cycle of the objects in this hierarchy.</p>
 
 <p>Handling the SOAP Message is the most important and the most complex task,
 the efficiency of this is the single most important factor that decides the
-performance. It make sense to delegate this task to a separate module, and
-that module, AXIOM provide a simple API for SOAP and XML info-set  while
+performance. It makes sense to delegate this task to a separate module, and
+that module(AXIOM) provides a simple API for SOAP and XML info-set  while
 hiding the complexities of the efficient XML processing within the
 implementation.</p>
 
 <p>SOAP Processing Model controls the execution of the processing, the model
-defines different phases the execution would walk though, and the user can
+defines different phases the execution would walk through, and the user can
 extend the Processing Model at some specific places.</p>
 
-<p>Axis2 define a transport framework that enables user to use different
-transports, the transports match in to the specific places in the SOAP
-processing model. The implementation provide few common transports and user
-may write new ones if he wishes.</p>
+<p>Axis2 define a transport framework that enables the user to use different
+transports. The transports fit into specific places in the SOAP
+processing model. The implementation provides a few common transports and the user
+may write new ones if and when it is needed.</p>
 
 <p>Axis2 deployment model allows the user to deploy services, configure the
 transports, extend the SOAP Processing model per system basis, per service
 basis, and per operation basis.</p>
 
 <p>Finally Axis2 provides a code generation tool that will generate server
-side and client side code along a test case. The generated code would
+side and client side code along with a test case. The generated code would
 simplify the service deployment and the service invocation. This would make
 the Axis2 easier to use.</p>
 
@@ -216,7 +216,7 @@ would serve better in this instants and opt for the flexibility.</p>
     <tr>
       <td width="112"><p>Service Group Context</p>
       </td>
-      <td width="371"><p>Holds information about a perticular usage of the
+      <td width="371"><p>Holds information about a particular usage of the
         respective service group. The life of a Service Group Context start
         when a user start to interact with a service that belong to this
         service group. This can be used to share information between service
@@ -225,14 +225,14 @@ would serve better in this instants and opt for the flexibility.</p>
       </td>
       <td width="103"><p>ServiceGroup Description</p>
       </td>
-      <td width="336"><p>Holds deployment time information about a perticular
+      <td width="336"><p>Holds deployment time information about a particular
         service group.</p>
       </td>
     </tr>
     <tr>
       <td width="112"><p>Service Context</p>
       </td>
-      <td width="371"><p>This context is avaliable throughout a usage of the
+      <td width="371"><p>This context is available throughout a usage of the
         respective service. This can be used to share information between
         several MEPs that belong to the same service, within a single
         interaction.</p>
@@ -328,7 +328,7 @@ mechanism to specify the ordering of Handlers. Both Pipes have built in
 Phases, and both define the areas for 'User Phases' which can be defined by
 the user.</p>
 
-<p>Following figure shows the two pipes with their pre-defined Phases, the
+<p>Following figure shows the two pipes with their predefined Phases, the
 user defined Phases would be fit in to the User Phases.</p>
 
 <p><img src="images/archi-guide/phases.png" name="Graphic5" align="bottom"
