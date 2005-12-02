@@ -30,7 +30,7 @@ import java.util.Iterator;
  */
 public class ArchiveTableModel extends AbstractTableModel {
 
-    final String[] columnNames = {"Opeartion Name", "Return Value", "Paramters ", "Select"};
+    final String[] columnNames = {"Operation Name", "Return Value", "Paramters ", "Select"};
     Object [][] datvalue;
     private HashMap datobjs;
 

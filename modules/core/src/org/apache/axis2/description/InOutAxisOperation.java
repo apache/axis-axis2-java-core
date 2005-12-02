@@ -39,8 +39,8 @@ public class InOutAxisOperation extends AxisOperation {
     private AxisMessage outFaultMessage;
     private AxisMessage outMessage;
 
-    public InOutAxisOperation(WSDLOperation wsdlopeartion) {
-        super(wsdlopeartion);
+    public InOutAxisOperation(WSDLOperation wsdloperation) {
+        super(wsdloperation);
         createMessages();
     }
 

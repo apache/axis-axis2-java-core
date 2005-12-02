@@ -60,7 +60,7 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
     protected MainFrame parent;
     protected String fileName;
     protected int count = 1;
-    protected HashMap opeartions;
+    protected HashMap operations;
     protected ArrayList servicelsit = new ArrayList();
     protected DescriptorFile disfile;
     protected String sgXMl;
@@ -177,18 +177,18 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
                 ClassLoader classLoader = parent.bean.getClassLoader();
                 Class serCla= Class.forName(fileName,true,classLoader);
                 Method[] methods =  serCla.getDeclaredMethods();
-                opeartions = new HashMap();
+                operations = new HashMap();
                 if(methods.length >0){
                     for (int i = 0; i < methods.length; i++) {
                         Method method = methods[i];
                         OprationObj Operationobj = new OprationObj(method.getName(),
                                 method.getReturnType().toString(),
                                 new Integer(method.getParameterTypes().length),new Boolean(true));
-                        opeartions.put(method.getName() ,Operationobj);
+                        operations.put(method.getName() ,Operationobj);
                     }
                 }
 
-                ArchiveTableModel myModel = new ArchiveTableModel(opeartions);
+                ArchiveTableModel myModel = new ArchiveTableModel(operations);
                 JTable table = new JTable(myModel);
                 tablelbl = new JLabel("Select Operation you want to publish ") ;
                 add(tablelbl);
@@ -210,7 +210,7 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
         } else if(obj == butDone){
 
             ArrayList ops = new ArrayList();
-            Iterator opitr = opeartions.values().iterator();
+            Iterator opitr = operations.values().iterator();
             while (opitr.hasNext()) {
                 OprationObj oprationObj = (OprationObj) opitr.next();
                 if(oprationObj.getSelect().booleanValue()){

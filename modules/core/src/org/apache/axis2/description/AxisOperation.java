@@ -52,7 +52,7 @@ public abstract class AxisOperation implements
 
     private int mep = MEP_CONSTANT_INVALID;
 
-    private WSDLOperationImpl wsdlopeartion;
+    private WSDLOperationImpl wsdloperation;
 
     private AxisService parent;
     private ArrayList wsamappingList;
@@ -65,8 +65,8 @@ public abstract class AxisOperation implements
     private ArrayList engagedModules = new ArrayList();
 
 
-    public AxisOperation(WSDLOperation wsdlopeartion) {
-        this.wsdlopeartion = (WSDLOperationImpl) wsdlopeartion;
+    public AxisOperation(WSDLOperation wsdloperation) {
+        this.wsdloperation = (WSDLOperationImpl) wsdloperation;
         this.setMessageExchangePattern(MEP_URI_IN_OUT);
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
         modulerefs = new ArrayList();
@@ -296,143 +296,143 @@ public abstract class AxisOperation implements
             throws AxisFault;
 
     public List getInfaults() {
-        return wsdlopeartion.getInfaults();
+        return wsdloperation.getInfaults();
     }
 
     public void setInfaults(List infaults) {
-        wsdlopeartion.setInfaults(infaults);
+        wsdloperation.setInfaults(infaults);
     }
 
     public MessageReference getInputMessage() {
-        return wsdlopeartion.getInputMessage();
+        return wsdloperation.getInputMessage();
     }
 
     public void setInputMessage(MessageReference inputMessage) {
-        wsdlopeartion.setInputMessage(inputMessage);
+        wsdloperation.setInputMessage(inputMessage);
     }
 
     public String getMessageExchangePattern() {
-        return wsdlopeartion.getMessageExchangePattern();
+        return wsdloperation.getMessageExchangePattern();
     }
 
     public void setMessageExchangePattern(String messageExchangePattern) {
-        wsdlopeartion.setMessageExchangePattern(messageExchangePattern);
+        wsdloperation.setMessageExchangePattern(messageExchangePattern);
     }
 
     public QName getName() {
-        return wsdlopeartion.getName();
+        return wsdloperation.getName();
     }
 
     public void setName(QName name) {
-        wsdlopeartion.setName(name);
+        wsdloperation.setName(name);
     }
 
     public List getOutfaults() {
-        return wsdlopeartion.getOutfaults();
+        return wsdloperation.getOutfaults();
     }
 
     public void setOutfaults(List outfaults) {
-        wsdlopeartion.setOutfaults(outfaults);
+        wsdloperation.setOutfaults(outfaults);
     }
 
     public MessageReference getOutputMessage() {
-        return wsdlopeartion.getOutputMessage();
+        return wsdloperation.getOutputMessage();
     }
 
     public void setOutputMessage(MessageReference outputMessage) {
-        wsdlopeartion.setOutputMessage(outputMessage);
+        wsdloperation.setOutputMessage(outputMessage);
     }
 
     public boolean isSafe() {
-        return wsdlopeartion.isSafe();
+        return wsdloperation.isSafe();
     }
 
     public void setSafety(boolean safe) {
-        wsdlopeartion.setSafety(safe);
+        wsdloperation.setSafety(safe);
     }
 
     public String getStyle() {
-        return wsdlopeartion.getStyle();
+        return wsdloperation.getStyle();
     }
 
     public void setStyle(String style) {
-        wsdlopeartion.setStyle(style);
+        wsdloperation.setStyle(style);
     }
 
     public String getTargetnamespace() {
-        return wsdlopeartion.getTargetnamespace();
+        return wsdloperation.getTargetnamespace();
     }
 
     public void addInFault(WSDLFaultReference inFault) {
-        wsdlopeartion.addInFault(inFault);
+        wsdloperation.addInFault(inFault);
     }
 
     public void addOutFault(WSDLFaultReference outFault) {
-        wsdlopeartion.addOutFault(outFault);
+        wsdloperation.addOutFault(outFault);
     }
 
     public void addFeature(WSDLFeature feature) {
-        wsdlopeartion.addFeature(feature);
+        wsdloperation.addFeature(feature);
     }
 
     public List getFeatures() {
-        return wsdlopeartion.getFeatures();
+        return wsdloperation.getFeatures();
     }
 
     public void addProperty(WSDLProperty wsdlProperty) {
-        wsdlopeartion.addProperty(wsdlProperty);
+        wsdloperation.addProperty(wsdlProperty);
     }
 
     public List getProperties() {
-        return wsdlopeartion.getProperties();
+        return wsdloperation.getProperties();
     }
 
     public Document getDocumentation() {
-        return wsdlopeartion.getDocumentation();
+        return wsdloperation.getDocumentation();
     }
 
     public void setDocumentation(Document documentation) {
-        wsdlopeartion.setDocumentation(documentation);
+        wsdloperation.setDocumentation(documentation);
     }
 
     public HashMap getComponentProperties() {
-        return wsdlopeartion.getComponentProperties();
+        return wsdloperation.getComponentProperties();
     }
 
     public void setComponentProperties(HashMap properties) {
-        wsdlopeartion.setComponentProperties(properties);
+        wsdloperation.setComponentProperties(properties);
     }
 
     public void setComponentProperty(Object key, Object obj) {
-        wsdlopeartion.setComponentProperty(key, obj);
+        wsdloperation.setComponentProperty(key, obj);
     }
 
     public Object getComponentProperty(Object key) {
-        return wsdlopeartion.getComponentProperty(key);
+        return wsdloperation.getComponentProperty(key);
     }
 
     public void addExtensibilityElement(WSDLExtensibilityElement element) {
-        wsdlopeartion.addExtensibilityElement(element);
+        wsdloperation.addExtensibilityElement(element);
     }
 
     public List getExtensibilityElements() {
-        return wsdlopeartion.getExtensibilityElements();
+        return wsdloperation.getExtensibilityElements();
     }
 
     public void addExtensibleAttributes(WSDLExtensibilityAttribute attribute) {
-        wsdlopeartion.addExtensibleAttributes(attribute);
+        wsdloperation.addExtensibleAttributes(attribute);
     }
 
     public List getExtensibilityAttributes() {
-        return wsdlopeartion.getExtensibilityAttributes();
+        return wsdloperation.getExtensibilityAttributes();
     }
 
     public Map getMetadataBag() {
-        return wsdlopeartion.getMetadataBag();
+        return wsdloperation.getMetadataBag();
     }
 
     public void setMetadataBag(Map meMap) {
-        wsdlopeartion.setMetadataBag(meMap);
+        wsdloperation.setMetadataBag(meMap);
     }
 
 
@@ -531,8 +531,8 @@ public abstract class AxisOperation implements
         }
     }
 
-    public void setWsdlopeartion(WSDLOperationImpl wsdlopeartion) {
-        this.wsdlopeartion = wsdlopeartion;
+    public void setWsdloperation(WSDLOperationImpl wsdloperation) {
+        this.wsdloperation = wsdloperation;
     }
 
     public ArrayList getWsamappingList() {

@@ -125,13 +125,13 @@ public class ServiceBuilder extends DescriptionBuilder {
                     new QName(OPRATIONST));
             ArrayList ops = processOperations(opeartinsItr);
             for (int i = 0; i < ops.size(); i++) {
-                AxisOperation opeartionDesc = (AxisOperation) ops.get(i);
-                ArrayList wsamappings = opeartionDesc.getWsamappingList();
+                AxisOperation operationDesc = (AxisOperation) ops.get(i);
+                ArrayList wsamappings = operationDesc.getWsamappingList();
                 for (int j = 0; j < wsamappings.size(); j++) {
                     Parameter paramter = (Parameter) wsamappings.get(j);
-                    service.addMapping((String) paramter.getValue(), opeartionDesc);
+                    service.addMapping((String) paramter.getValue(), operationDesc);
                 }
-                service.addOperation(opeartionDesc);
+                service.addOperation(operationDesc);
             }
 
             Iterator moduleConfigs = service_element.getChildrenWithName(new QName(MODULECONFIG));
@@ -152,7 +152,7 @@ public class ServiceBuilder extends DescriptionBuilder {
         while (opeartinsItr.hasNext()) {
             OMElement operation = (OMElement) opeartinsItr.next();
 
-            // /getting opeartion name
+            // /getting operation name
             OMAttribute op_name_att = operation.getAttribute(
                     new QName(ATTNAME));
             if (op_name_att == null) {
@@ -187,17 +187,17 @@ public class ServiceBuilder extends DescriptionBuilder {
                 op_descrip.setName(new QName(opname));
                 log.info(Messages.getMessage(DeploymentErrorMsgs.OP_NOT_FOUN_IN_WSDL, opname));
             } else {
-                //craeting opeartion from existing opeartion
+                //craeting operation from existing operation
                 String mep = wsdlOperation.getMessageExchangePattern();
                 if (mep == null) {
                     op_descrip = new InOutAxisOperation(wsdlOperation);
                 } else {
                     op_descrip = AxisOperationFactory.getOperetionDescription(mep);
-                    op_descrip.setWsdlopeartion((WSDLOperationImpl) wsdlOperation);
+                    op_descrip.setWsdloperation((WSDLOperationImpl) wsdlOperation);
                 }
             }
 
-            //Opeartion Paramters
+            //Operation Paramters
             Iterator paramters = operation.getChildrenWithName(
                     new QName(PARAMETER));
             ArrayList wsamappings = processParameters(paramters, op_descrip, service);
@@ -233,7 +233,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             Iterator moduleConfigs = operation.getChildrenWithName(new QName(MODULECONFIG));
             processOperationModuleConfig(moduleConfigs, op_descrip, op_descrip);
 
-            //adding the opeartion
+            //adding the operation
             operations.add(op_descrip);
         }
         return operations;
@@ -278,7 +278,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
     protected void processOperationModuleConfig(Iterator moduleConfigs,
                                                 ParameterInclude parent,
-                                                AxisOperation opeartion)
+                                                AxisOperation operation)
             throws DeploymentException {
         while (moduleConfigs.hasNext()) {
             OMElement moduleConfig = (OMElement) moduleConfigs.next();
@@ -293,7 +293,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                         new ModuleConfiguration(new QName(module), parent);
                 Iterator paramters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
                 processParameters(paramters, moduleConfiguration, parent);
-                opeartion.addModuleConfig(moduleConfiguration);
+                operation.addModuleConfig(moduleConfiguration);
             }
         }
     }

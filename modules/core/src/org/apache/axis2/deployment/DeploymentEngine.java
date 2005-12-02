@@ -423,8 +423,8 @@ public class DeploymentEngine implements DeploymentConstants {
                 axisService.engageModule(module, axisConfig);
             }
 
-            HashMap opeartions = axisService.getOperations();
-            Collection opCol = opeartions.values();
+            HashMap operations = axisService.getOperations();
+            Collection opCol = operations.values();
             for (Iterator iterator = opCol.iterator(); iterator.hasNext();) {
                 AxisOperation opDesc = (AxisOperation) iterator.next();
                 ArrayList modules = opDesc.getModuleRefs();

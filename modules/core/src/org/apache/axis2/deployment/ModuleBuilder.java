@@ -107,8 +107,8 @@ public class ModuleBuilder extends DescriptionBuilder{
             Iterator op_itr = moduleElement.getChildrenWithName(new QName(OPRATIONST));
             ArrayList operations = processOperations(op_itr);
             for (int i = 0; i < operations.size(); i++) {
-                AxisOperation opeartion = (AxisOperation) operations.get(i);
-                module.addOperation(opeartion);
+                AxisOperation operation = (AxisOperation) operations.get(i);
+                module.addOperation(operation);
             }
 
 
@@ -142,7 +142,7 @@ public class ModuleBuilder extends DescriptionBuilder{
         while (opeartinsItr.hasNext()) {
             OMElement operation = (OMElement) opeartinsItr.next();
 
-            // /getting opeartion name
+            // /getting operation name
             OMAttribute op_name_att = operation.getAttribute(
                     new QName(ATTNAME));
             if(op_name_att == null){
@@ -173,7 +173,7 @@ public class ModuleBuilder extends DescriptionBuilder{
 //            AxisOperation op_descrip = new AxisOperation();
             op_descrip.setName(new QName(opname));
 
-            //Opeartion Paramters
+            //Operation Paramters
             Iterator paramters = operation.getChildrenWithName(
                     new QName(PARAMETER));
             ArrayList wsamapping =   processParameters(paramters,op_descrip,module);
@@ -204,7 +204,7 @@ public class ModuleBuilder extends DescriptionBuilder{
             PhasesInfo info = axisConfig.getPhasesinfo();
             info.setOperationPhases(op_descrip);
 
-            //adding the opeartion
+            //adding the operation
             operations.add(op_descrip);
         }
         return operations;

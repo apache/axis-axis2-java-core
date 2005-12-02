@@ -265,7 +265,7 @@ public class DescriptionBuilder implements DeploymentConstants{
 
 
     protected void processOperationModuleRefs(Iterator moduleRefs,
-                                              AxisOperation opeartion)
+                                              AxisOperation operation)
             throws DeploymentException {
         try {
             while (moduleRefs.hasNext()) {
@@ -279,7 +279,7 @@ public class DescriptionBuilder implements DeploymentConstants{
                                 DeploymentErrorMsgs.MODULE_NOT_FOUND,
                                 refName));
                     } else {
-                        opeartion.addModule(new QName(refName));
+                        operation.addModule(new QName(refName));
                     }
                 }
             }

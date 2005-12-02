@@ -51,8 +51,8 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
      */
     private final FlowInclude flowInclude = new FlowIncludeImpl();
 
-    //to store module opeartions , which are suppose to be added to a service if it is engaged to a service
-    private HashMap opeartions;
+    //to store module operations , which are suppose to be added to a service if it is engaged to a service
+    private HashMap operations;
 
     /**
      * Field parameters
@@ -63,7 +63,7 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
      * Constructor ModuleDescription
      */
     public ModuleDescription() {
-        opeartions = new HashMap();
+        operations = new HashMap();
     }
 
     /**
@@ -181,11 +181,11 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     }
 
     public void addOperation(AxisOperation axisOperation) {
-        opeartions.put(axisOperation.getName(), axisOperation);
+        operations.put(axisOperation.getName(), axisOperation);
     }
 
     public HashMap getOperations() {
-        return opeartions;
+        return operations;
     }
 
     public AxisConfiguration getParent() {
