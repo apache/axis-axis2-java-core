@@ -99,7 +99,7 @@
             </target>
 
             <target name="compile.all" depends="pre.compile.test">
-                <xsl:attribute name="if">${jars.ok}</xsl:attribute>
+                <xsl:attribute name="if">jars.ok</xsl:attribute>
                 <javac>
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
                     <xsl:attribute name="srcdir">${src}</xsl:attribute>
@@ -113,7 +113,7 @@
             </target>
 
             <target name="echo.classpath.problem" depends="pre.compile.test">
-                <xsl:attribute name="unless">${jars.ok}</xsl:attribute>
+                <xsl:attribute name="unless">jars.ok</xsl:attribute>
                 <echo message="The class path is not set right!
                                Please make sure the following classes are in the classpath
                                1. XmlBeans
@@ -122,10 +122,10 @@
                 "></echo>
             </target>
             <target name="jar.all" depends="compile.all,echo.classpath.problem">
-                <xsl:attribute name="if">${jars.ok}</xsl:attribute>
+                <xsl:attribute name="if">jars.ok</xsl:attribute>
                 <jar>
                     <xsl:attribute name="basedir">${classes}</xsl:attribute>
-                    <xsl:attribute name="destfile">${bin}</xsl:attribute>
+                    <xsl:attribute name="destfile">${bin}\service.jar</xsl:attribute>
                 </jar>
             </target>
         </project>
