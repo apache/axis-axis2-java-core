@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -79,9 +80,9 @@ public class DeploymentClassLoader extends URLClassLoader {
                  * id the entry name start with /lib and end with .jar
                  * then those entry name will be added to the arraylist
                  */
-                if (entryName != null && (entryName.startsWith("lib/") ||
-                        entryName.startsWith("Lib/")) &&
-                        entryName.endsWith(".jar")) {
+                if (entryName != null &&
+                        entryName.toLowerCase().startsWith("lib/") &&
+                        entryName.toLowerCase().endsWith(".jar")) {
                     lib_jars_list.add(entryName);
                 }
             }
@@ -187,6 +188,10 @@ public class DeploymentClassLoader extends URLClassLoader {
                         return raw;
                     }
                 }
+                try {
+                    zin.close();
+                } catch (IOException ioe) {//already closed
+                }
             } catch (IOException e) {
                 throw e;
             }
@@ -194,6 +199,53 @@ public class DeploymentClassLoader extends URLClassLoader {
         }
         throw new ClassNotFoundException(Messages.getMessage(
                 DeploymentErrorMsgs.CLASS_NOT_FOUND, filename));
+    }
+
+    /*
+     * This override locates resources similar to the way that getBytes() locates classes.
+     * We do not store the bytes from resources in memory, as
+     * the size of resources is generally unpredictable
+     *
+     * @param name
+     * @return inputstream
+     */
+    public InputStream getResourceAsStream(String name) {
+        if (name == null)
+            return null;
+
+        InputStream is = super.getResourceAsStream(name);
+        if (is == null) {
+            for (int i = 0; i < lib_jars_list.size(); i++) {
+                String libjar_name = (String) lib_jars_list.get(i);
+                try {
+                    InputStream in = super.getResourceAsStream(libjar_name);
+                    ZipInputStream zin = new ZipInputStream(in);
+                    ZipEntry entry;
+                    String entryName = "";
+                    while ((entry = zin.getNextEntry()) != null) {
+                        entryName = entry.getName();
+                        if (entryName != null && entryName.equals(name)) {
+                            byte data[] = new byte[2048];
+                            ByteArrayOutputStream out = new ByteArrayOutputStream();
+                            int count;
+                            while ((count = zin.read(data, 0, 2048)) != -1) {
+                                out.write(data, 0, count);
+                            }
+                            byte raw[] = out.toByteArray();
+                            out.close();
+                            zin.close();
+                            return new ByteArrayInputStream(raw);
+                        }
+                    }
+                    try {
+                        zin.close();
+                    } catch (IOException ioe) {//already closed
+                    }
+                } catch (IOException e) {
+                }
+            }
+        }
+        return is;
     }
 }
 
