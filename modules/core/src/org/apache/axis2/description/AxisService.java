@@ -279,9 +279,7 @@ public class AxisService
      * @param classLoader
      */
     public void setClassLoader(ClassLoader classLoader) {
-        if (classLoader != null) {
-            this.setComponentProperty(CLASSLOADER_KEY, classLoader);
-        }
+        this.setComponentProperty(CLASSLOADER_KEY, classLoader);
     }
 
     /*

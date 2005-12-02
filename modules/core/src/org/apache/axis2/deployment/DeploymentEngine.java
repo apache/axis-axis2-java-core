@@ -506,7 +506,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 // AxisService service = archiveReader.generateService(currentArchiveFile.getAbsolutePath());
                                 AxisServiceGroup sericeGroup =
                                         new AxisServiceGroup(axisConfig);
-                                sericeGroup.setServiceGroupClassLoader(axisConfig.getServiceClassLoader());
+                                sericeGroup.setServiceGroupClassLoader(currentArchiveFile.getClassLoader());
                                 ArrayList serviceList = archiveReader.processServiceGroup(
                                         currentArchiveFile.getAbsolutePath(),
                                         this,
