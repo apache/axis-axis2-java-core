@@ -37,7 +37,6 @@ public class DeploymentErrorMsgs {
     public static final String INFLOW_NOT_ALLOWED_IN_TRS_OUT = "inflownotallowedintrout";
     public static final String INSTANTIATION_EXCEPTION = "InstantiationException";
     public static final String INVALID_CONFIG_ATTTRIBUTE = "invalidconfigattribute";
-    public static final String INVALID_ELE_IN_MODULE = "badElementInModuleXML";
     public static final String INVALID_HANDLER = "invalidhandler";
     public static final String INVALID_HANDLER_DIF = "invalidhandlerdif";
     public static final String INVALID_MODULE = "invalidmodule";
