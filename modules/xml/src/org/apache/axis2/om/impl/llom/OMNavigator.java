@@ -95,7 +95,7 @@ public class OMNavigator {
      * get the next node
      *
      * @return OMnode in the sequence of preorder traversal. Note however that an element node is
-     *         treated slightly diffrently. Once the element is passed it returns the same element in the
+     *         treated slightly differently. Once the element is passed it returns the same element in the
      *         next encounter as well
      */
     public OMNode next() {

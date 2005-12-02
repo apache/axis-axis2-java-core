@@ -65,8 +65,8 @@ public class SchemaGenerator {
     }
 
     /**
-     * To generate schema for all the parameters in method , first generate scheam for all diffrent
-     * paramter type and latter refferd them
+     * To generate schema for all the parameters in method , first generate schema for all different
+     * parameter type and later refer to them
      *
      * @return
      * @throws Exception
