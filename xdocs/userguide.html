@@ -134,6 +134,7 @@ sure to prefix the subject of the mail with [Axis2].</p>
   <li><p style="margin-bottom: 0in">AXIOM, a SOAP specific streaming XML
     infoset model for SOAP 1.1/1.2 Messages</p>
   </li>
+  <li>Complete XML infoset support for AXIOM</li>
   <li><p style="margin-bottom: 0in">Support for One-Way Messaging and Request
     Response Messaging</p>
   </li>
@@ -194,8 +195,6 @@ helping out if you're interested &amp; able!</p>
     support</p>
   </li>
   <li><p style="margin-bottom: 0in">Management Interface for Axis2</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Complete XML infoset support for AXIOM</p>
   </li>
   <li><p style="margin-bottom: 0in">Implementation of other transports. e.g.
     JMS..</p>
@@ -703,9 +702,13 @@ channel invocations. First let's see how we can write a client to invoke
 invocation. The client code that you need to write will be as follows.</p>
 <pre>  try {
             OMElement payload = ClientUtil.getEchoOMElement();
-            <font color="#33cc00">Call call = new Call();</font>
-<font color="#33cc00">            call.setTo(targetEPR);</font>
-<font color="#33cc00">            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);</font>
+<font color="#33cc00">			  Options options = new Options();
+ 			  options.setTo(targetEPR);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(false);
+
+            Call call = new Call();
+            call.setClientOptions(options);</font>
 
 <font color="#33cc00">            OMElement result = (OMElement) call.invokeBlocking("echo", payload);</font>
 
@@ -739,8 +742,9 @@ operation as well. The client code will be as follows.</p>
        OMElement payload = ClientUtil.getPingOMElement();
 
        MessageSender msgSender = new MessageSender();
-       msgSender.setTo(targetEPR);
-       msgSender.setSenderTransport(Constants.TRANSPORT_HTTP);
+       
+       Options options = new Options();<br>       msgSender.setClientOptions(options);<br>       options.setTo(targetEPR);
+
        msgSender.send("ping", payload);
 
      } catch (AxisFault axisFault) {
@@ -823,15 +827,16 @@ Non-Blocking API with two transport connections<strong>. The ultimate
 asynchrony!!</strong></p>
 <pre>  try {
             OMElement payload = ClientUtil.getEchoOMElement();
-
-            Call call = new Call();
-            call.setTo(targetEPR);
+            Options options = new Options();<br>            options.setTo(targetEPR);<br>            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
 
             //The boolean flag informs the axis2 engine to use two separate transport connection
-            //to retrieve the response.
-            <font color="#33cc00">call.engageModule(new QName(Constants.MODULE_ADDRESSING));</font>
-            call.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, <font color="#00cc00">true</font>);
+            //to retrieve the response.<br>            options.setUseSeparateListener(true); 
+            
+            Call call = new Call();<br>            call.setClientOptions(options);
+</pre>
 
+ 
+<pre>                  
             //Callback to handle the response
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
@@ -867,15 +872,9 @@ asynchrony!!</strong></p>
         } catch (Exception ex) {
             ex.printStackTrace();
         }</pre>
-
-<p>The three changes that we need do to the EchoNonBlockingClient are shown
-in the "green" color. Since our correlation mechanism is based on addressing
-we need to first "<strong>engage</strong>" the addressing module.<font
-color="#0000ff"> <font color="#000000"><b>"call.engageModule(new
-QName(Constants.MODULE_ADDRESSING));" </b>informs the Axis2 engine to engage
-the addressing module at the client side. The boolean flag (value true) in
-the "<br>
-<b>call.setTransportInfo(...)</b>" method informs the Axis2 engine to use
+<p><font
+color="#0000ff"><font color="#000000">The boolean flag (value true) in
+the "<b>call.setUseSeparateListener(...)</b>" method informs the Axis2 engine to use
 separate transport connections for request and response. Finally
 "<b>call.close()</b>" informs the Axis2 engine to stop the client side
 listener started to retrieve the response.</font></font></p>
