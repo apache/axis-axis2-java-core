@@ -18,7 +18,11 @@ package org.apache.axis2.security;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.oasis.ping.PingPortStub;
-import org.apache.axis2.oasis.ping.databinding.org.xmlsoap.*;
+import org.apache.axis2.oasis.ping.databinding.org.xmlsoap.Ping;
+import org.apache.axis2.oasis.ping.databinding.org.xmlsoap.PingDocument;
+import org.apache.axis2.oasis.ping.databinding.org.xmlsoap.PingResponse;
+import org.apache.axis2.oasis.ping.databinding.org.xmlsoap.PingResponseDocument;
+import org.apache.axis2.oasis.ping.databinding.org.xmlsoap.TicketType;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;
@@ -46,7 +50,7 @@ public class InteropScenarioClient {
 
         //Enable MTOM to those scenarios where they are configured using:
         //<optimizeParts>xpathExpression</optimizeParts>
-        stub._put(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+        stub._getClientOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
 
         PingResponseDocument pingResDoc = stub.Ping(pingDoc);
 
@@ -70,16 +74,16 @@ public class InteropScenarioClient {
 
         //Enable MTOM to those scenarios where they are configured using:
         //<optimizeParts>xpathExpression</optimizeParts>
-        stub._put(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+        stub._getClientOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         
         //Engage the security module
         stub.engageModule("security");
         
         if(outflowConfig !=null){
-        	stub._put(WSSHandlerConstants.OUTFLOW_SECURITY, outflowConfig.getProperty());
+        	stub._getClientOptions().setProperty(WSSHandlerConstants.OUTFLOW_SECURITY, outflowConfig.getProperty());
         }
         if(inflowConfig != null) {
-        	stub._put(WSSHandlerConstants.INFLOW_SECURITY, inflowConfig.getProperty());
+        	stub._getClientOptions().setProperty(WSSHandlerConstants.INFLOW_SECURITY, inflowConfig.getProperty());
         }
         PingResponseDocument pingResDoc = stub.Ping(pingDoc);
 

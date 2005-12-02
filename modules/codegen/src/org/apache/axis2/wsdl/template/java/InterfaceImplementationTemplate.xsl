@@ -53,10 +53,11 @@
            _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory().buildClientConfigurationContext(axis2Home);
             _configurationContext.getAxisConfiguration().addService(_service);
            _serviceContext =_service.getParent().getServiceGroupContext(_configurationContext).getServiceContext(_service.getName().getLocalPart());
+           _clientOptions = new org.apache.axis2.client.Options();
         <!--  Set the soap version depending on the binding. Default is 1.1 so don't set anything for that case-->
         <xsl:if test="$soapVersion='1.2'">
             //Set the soap version
-            setSOAPVersion(SOAP_12);
+            _clientOptions.setSoapVersionURI(org.apache.axis2.soap.SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         </xsl:if>
 
 
@@ -82,7 +83,7 @@
             </xsl:if>
         </xsl:for-each>
 
-
+            _clientOptions = new org.apache.axis2.client.Options();
 
         }
 
@@ -113,21 +114,18 @@
          </xsl:for-each>) throws java.rmi.RemoteException{
 
 		     org.apache.axis2.client.Call _call = new org.apache.axis2.client.Call(_serviceContext);
-             org.apache.axis2.client.Options _options = new org.apache.axis2.client.Options();
-             _call.setClientOptions(_options);
-             _options.setTransportInfo(this.senderTransport,this.listenerTransport,this.useSeparateListener);
+             _call.setClientOptions(_clientOptions);
+             _clientOptions.setListenerTransportProtocol(this.listenerTransport);
+             _clientOptions.setUseSeparateListener(this.useSeparateListener);
 
  		     org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-             _options.setTo(this.toEPR);
-             _options.setSoapAction("<xsl:value-of select="$soapAction"/>");
+             _clientOptions.setTo(this.toEPR);
+             _clientOptions.setSoapAction("<xsl:value-of select="$soapAction"/>");
             
-            if(wsaAction != null) {
-            	_call.getClientOptions().setAction(wsaAction);
-            } else {
-            <xsl:for-each select="input/param[@Action!='']">_call.getClientOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
+            if(_clientOptions.getAction() == null) {
+               <xsl:for-each select="input/param[@Action!='']">_clientOptions.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
 			}
              //set the properties
-            populateProperties(_call);
             populateModules(_call);
 
             org.apache.axis2.soap.SOAPEnvelope env = null;
@@ -213,17 +211,15 @@
             <xsl:if test="$paramCount>0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException{
 
              org.apache.axis2.client.Call _call = new org.apache.axis2.client.Call(_serviceContext);
-             org.apache.axis2.client.Options _options = new org.apache.axis2.client.Options();
-             _call.setClientOptions(_options);
-             _options.setTransportInfo(this.senderTransport,this.listenerTransport,this.useSeparateListener);
+             _call.setClientOptions(_clientOptions);
+             _clientOptions.setListenerTransportProtocol(this.listenerTransport);
+             _clientOptions.setUseSeparateListener(this.useSeparateListener);
  		     org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-             _options.setTo(this.toEPR);
-             _options.setSoapAction("<xsl:value-of select="$soapAction"/>");
+             _clientOptions.setTo(this.toEPR);
+             _clientOptions.setSoapAction("<xsl:value-of select="$soapAction"/>");
             
-            if(wsaAction != null) {
-               _call.getClientOptions().setAction(wsaAction);
-            } else {
-            <xsl:for-each select="input/param[@Action!='']">_call.getClientOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
+           if(_clientOptions.getAction() == null) {
+            <xsl:for-each select="input/param[@Action!='']">_lientOptions.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
 			}
              org.apache.axis2.soap.SOAPEnvelope env = createEnvelope();
              <xsl:choose>
@@ -305,12 +301,11 @@
          org.apache.axis2.client.MessageSender _msgSender = new org.apache.axis2.client.MessageSender(_serviceContext);
             
  		    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-            _msgSender.setTo(this.toEPR);
-            _msgSender.setSoapAction("<xsl:value-of select="$soapAction"/>");
-            if(wsaAction != null) {
-            	_call.getClientOptions().setAction(wsaAction);
-            } else {
-            <xsl:for-each select="input/param[@Action!='']">_call.getClientOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
+          _msgSender.setClientOptions(_clientOptions);
+            _clientOptions.setTo(this.toEPR);
+            _clientOptions.setSoapAction("<xsl:value-of select="$soapAction"/>");
+            if(_clientOptions.getAction() == null) {
+            <xsl:for-each select="input/param[@Action!='']">_clientOptions.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
 			}
           org.apache.axis2.soap.SOAPEnvelope env = null;
             env = createEnvelope();
@@ -356,7 +351,6 @@
             </xsl:choose>
             
             //set the properties
-            populateProperties(_msgSender);
             populateModules(_msgSender);
             
              _messageContext.setEnvelope(env);

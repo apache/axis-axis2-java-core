@@ -59,7 +59,7 @@ public class Options {
      */
     protected TransportOutDescription senderTransport;
     private TransportInDescription listenerTransport;
-    private boolean useSeperateListener = false;
+    private boolean useSeparateListener = false;
     private String listenerTransportProtocol;
     private String senderTrasportProtocol;
 
@@ -215,8 +215,8 @@ public class Options {
         this.listenerTransport = listenerTransport;
     }
 
-    public boolean isUseSeperateListener() {
-        return useSeperateListener;
+    public boolean isUseSeparateListener() {
+        return useSeparateListener;
     }
 
     /**
@@ -225,10 +225,10 @@ public class Options {
      * For e.g., if the transports are different this is true by default.
      * HTTP transport supports both cases while SMTP transport supports only two channel case.
      *
-     * @param useSeperateListener
+     * @param useSeparateListener
      */
-    public void setUseSeperateListener(boolean useSeperateListener) {
-        this.useSeperateListener = useSeperateListener;
+    public void setUseSeparateListener(boolean useSeparateListener) {
+        this.useSeparateListener = useSeparateListener;
     }
 
     public String getAction() {
@@ -303,7 +303,7 @@ public class Options {
     /**
      * Sets transport information to the call. The senarios supported are as follows:
      * <blockquote><pre>
-     * [senderTransport, listenerTransport, useSeperateListener]
+     * [senderTransport, listenerTransport, useSeparateListener]
      * http, http, true
      * http, http, false
      * http,smtp,true
@@ -335,7 +335,7 @@ public class Options {
                 throw new AxisFault(Messages.getMessage("useSeparateListenerLimited"));
             }
         } else {
-            setUseSeperateListener(useSeperateListener);
+            setUseSeparateListener(useSeperateListener);
         }
 
         setListenerTransportProtocol(listenerTransport);

@@ -102,7 +102,7 @@ public class InOutMEPClient extends MEPClient {
         String messageID = String.valueOf("uuid:" + UUIDGenerator.getUUID());
         msgctx.setMessageID(messageID);
         //
-        if (clientOptions.isUseSeperateListener()) {
+        if (clientOptions.isUseSeparateListener()) {
 
             //This mean doing a Request-Response invocation using two channel. If the
             //transport is two way transport (e.g. http) Only one channel is used (e.g. in http cases
@@ -204,7 +204,7 @@ public class InOutMEPClient extends MEPClient {
             String messageID = String.valueOf("uuid:" + UUIDGenerator.getUUID());
             msgctx.setMessageID(messageID);
             ////
-            if (clientOptions.isUseSeperateListener()) {
+            if (clientOptions.isUseSeparateListener()) {
                 //the invocation happen via a separate Channel, so we should set up the
                 //information need to correlated the response message and invoke the call back
 
@@ -268,7 +268,7 @@ public class InOutMEPClient extends MEPClient {
             inferTransportOutDescription(msgCtx);
         }
 
-        if (clientOptions.isUseSeperateListener()) {
+        if (clientOptions.isUseSeparateListener()) {
             //if separate transport is used, start the required listeners
             if (!serviceContext
                     .getConfigurationContext()

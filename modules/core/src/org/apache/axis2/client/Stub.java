@@ -27,6 +27,8 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
@@ -37,70 +39,26 @@ import org.apache.wsdl.WSDLService;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 
 public abstract class Stub {
-
-    public static final int SOAP_11 =0;
-    public static final int SOAP_12 =1;
-
 
     protected ConfigurationContext _configurationContext;
     protected static AxisService _service;
     protected ServiceContext _serviceContext;
     protected EndpointReference toEPR;
 
-    protected boolean doRest=false;
-
-    protected String senderTransport = Constants.TRANSPORT_HTTP;
-    protected String listenerTransport =Constants.TRANSPORT_HTTP ;
-    protected boolean useSeparateListener;
-
     //Default SOAP version is 11
-    protected int soapVersion = SOAP_11;
-    protected HashMap propertyMap = new HashMap();
     protected ArrayList modules = new ArrayList();
 
-    protected String wsaAction;
-    
-    /**
-     *
-     * @param senderTransport
-     * @param listenerTransport
-     * @param useSeparateListener
-     * @throws AxisFault
-     */
-    public void setTransportInfo(String senderTransport,String listenerTransport,boolean useSeparateListener)throws AxisFault{
-        this.senderTransport = senderTransport;
-        this.listenerTransport=listenerTransport;
-        this.useSeparateListener=useSeparateListener;
-    }
+    protected Options _clientOptions;
+               protected boolean useSeparateListener;
+    protected String listenerTransport =Constants.TRANSPORT_HTTP ;
 
-    /**
-     *
-     * @param key
-     * @param value
-     */
-    public void _put(String key,Object value){
-        this.propertyMap.put(key,value);
-    }
-
-
-    /**
-     *
-     * @param key
-     * @return the object
-     */
-    public Object _get(String key){
-        return this.propertyMap.get(key);
-    }
-    
     public void engageModule(String moduleName) {
-    	this.modules.add(moduleName);
+        this.modules.add(moduleName);
     }
-    
+
     /**
      * If _maintainSession is set to true, all the calls can use the same
      * ServiceContext. The user can share information through this
@@ -113,13 +71,13 @@ public abstract class Stub {
     protected Stub() {
     }
 
-    /**
-     * Sets the soap version.
-     * @param soapVersion
-     */
-    public void setSOAPVersion(int soapVersion){
-        this.soapVersion = soapVersion;
-    }
+//    /**
+//     * Sets the soap version.
+//     * @param soapVersion
+//     */
+//    public void setSOAPVersion(int soapVersion){
+//        this.soapVersion = soapVersion;
+//    }
 
 
     public void _setSessionInfo(String key, Object value) throws java.lang.Exception {
@@ -166,7 +124,7 @@ public abstract class Stub {
 
 
     protected SOAPEnvelope createEnvelope() throws SOAPProcessingException {
-        return getFactory(this.soapVersion).getDefaultEnvelope();
+        return getFactory(this._clientOptions.getSoapVersionURI()).getDefaultEnvelope();
     }
 
     protected OMElement getElementFromReader(XMLStreamReader reader) {
@@ -176,16 +134,16 @@ public abstract class Stub {
     }
 
     protected void setValueDoc(SOAPEnvelope env, OMElement value) {
-        setValueDoc(env,value,false);
+        setValueDoc(env, value, false);
     }
 
-    protected void setValueDoc(SOAPEnvelope env, OMElement value,boolean isHeader) {
+    protected void setValueDoc(SOAPEnvelope env, OMElement value, boolean isHeader) {
 
         if (value != null) {
-            if (isHeader){
+            if (isHeader) {
                 SOAPHeader header = env.getHeader();
                 header.addChild(value);
-            }else{
+            } else {
                 SOAPBody body = env.getBody();
                 body.addChild(value);
             }
@@ -196,6 +154,7 @@ public abstract class Stub {
 
     /**
      * A util method that extracts the correct element.
+     *
      * @param env
      * @param type
      * @return the relevant element to be databound
@@ -222,44 +181,36 @@ public abstract class Stub {
     }
 
 
-    protected SOAPFactory getFactory(int soapVersion) {
-        if (soapVersion==SOAP_11){
+    protected SOAPFactory getFactory(String soapNamespaceURI) {
+        String soapVersionURI = _clientOptions.getSoapVersionURI();
+        if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             return OMAbstractFactory.getSOAP11Factory();
-        }else if (soapVersion==SOAP_12){
+        } else if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapVersionURI)) {
             return OMAbstractFactory.getSOAP12Factory();
-        }else{
+        } else {
             throw new RuntimeException("Unknown SOAP version");
         }
     }
 
-    protected void populateProperties(MEPClient client){
-        Iterator keys = this.propertyMap.keySet().iterator();
-        String key;
-        Options clientOptions = client.getClientOptions();
-        while (keys.hasNext()) {
-            key = keys.next().toString();
-            clientOptions.setProperty(key,propertyMap.get(key));
+    protected void populateModules(Call call) throws AxisFault {
+        for (int i = 0; i < modules.size(); i++) {
+            call.engageModule(new QName((String) this.modules.get(i)));
         }
     }
 
-    protected void populateModules(Call call) throws AxisFault {
-    	for(int i = 0; i < modules.size(); i++) {
-    		call.engageModule(new QName((String)this.modules.get(i)));
-    	}
-    }
-    
     protected void populateModules(MessageSender sender) throws AxisFault {
-    	for(int i = 0; i < modules.size(); i++) {
-    		sender.engageModule(new QName((String)this.modules.get(i)));
-    	}
+        for (int i = 0; i < modules.size(); i++) {
+            sender.engageModule(new QName((String) this.modules.get(i)));
+        }
     }
 
-	public String getWsaAction() {
-		return wsaAction;
-	}
+    public Options _getClientOptions() {
+        return _clientOptions;
+    }
 
-	public void setWsaAction(String wsaAction) {
-		this.wsaAction = wsaAction;
-	}
+    public void _setClientOptions(Options _clientOptions) {
+        this._clientOptions = _clientOptions;
+    }
+
 }
 
