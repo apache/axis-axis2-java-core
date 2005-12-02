@@ -36,14 +36,6 @@
                     </fileset>
 
                 </move>
-                <xsl:comment>move the adb stuff to the src too</xsl:comment>
-                <move>
-                    <xsl:attribute name="todir">${src}</xsl:attribute>
-                    <fileset>
-                        <xsl:attribute name="dir">${basedir}</xsl:attribute>
-                        <xsl:attribute name="includes">adb\**\</xsl:attribute>
-                    </fileset>
-                </move>
                 <xsl:comment>move the rest of the stuff to the other folder</xsl:comment>
                 <move>
                     <xsl:attribute name="todir">${other}</xsl:attribute>
@@ -82,6 +74,7 @@
                 <available classname="org.apache.axis2.engine.AxisEngine" property="axis2.available"/>
                 <condition property="jars.ok" >
                     <and>
+
                         <isset property="stax.available"/>
                         <isset property="axis2.available"/>
                     </and>
@@ -98,7 +91,7 @@
             </target>
 
             <target name="compile.all" depends="pre.compile.test">
-                <xsl:attribute name="if">jars.ok</xsl:attribute>
+                <xsl:attribute name="if">${jars.ok}</xsl:attribute>
                 <javac>
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
                     <xsl:attribute name="srcdir">${src}</xsl:attribute>
@@ -112,19 +105,18 @@
             </target>
 
             <target name="echo.classpath.problem" depends="pre.compile.test">
-                <xsl:attribute name="unless">jars.ok</xsl:attribute>
+                <xsl:attribute name="unless">${jars.ok}</xsl:attribute>
                 <echo message="The class path is not set right!
                                Please make sure the following classes are in the classpath
-                               1. XmlBeans
-                               2. Stax
-                               3. Axis2
+                               1. Stax
+                               2. Axis2
                 "></echo>
             </target>
             <target name="jar.all" depends="compile.all,echo.classpath.problem">
-                <xsl:attribute name="if">jars.ok</xsl:attribute>
+                <xsl:attribute name="if">${jars.ok}</xsl:attribute>
                 <jar>
                     <xsl:attribute name="basedir">${classes}</xsl:attribute>
-                    <xsl:attribute name="destfile">${bin}\service.jar</xsl:attribute>
+                    <xsl:attribute name="destfile">${bin}</xsl:attribute>
                 </jar>
             </target>
         </project>

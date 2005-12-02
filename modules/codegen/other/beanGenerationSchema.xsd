@@ -3,7 +3,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="bean">
 		<xs:annotation>
-			<xs:documentation>This schema represents the XML docuement structure the ADBBean template accepts</xs:documentation>
+			<xs:documentation>This schema represents the XML docuement structure java bean writer generates</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
