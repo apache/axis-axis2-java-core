@@ -18,12 +18,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.i18n.Messages;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -109,13 +104,13 @@ public class DeploymentClassLoader extends URLClassLoader {
      */
     protected Class findClass(final String name)
             throws ClassNotFoundException {
-        Class cla ;
+        Class cla;
         try {
-            cla = (Class)loadedClass.get(name);
-            if(cla != null){
+            cla = (Class) loadedClass.get(name);
+            if (cla != null) {
                 return cla;
             }
-            boolean foundClass ;
+            boolean foundClass;
             try {
                 cla = super.findClass(name);
                 loadedClass.put(name, cla);
@@ -125,7 +120,7 @@ public class DeploymentClassLoader extends URLClassLoader {
             }
             if (!foundClass) {
                 try {
-                    byte raw[] = getBytes(name);
+                    byte raw[] = getClassByteCodes(name);
                     cla = defineClass(name, raw, 0, raw.length);
                     loadedClass.put(name, cla);
                     return cla;
@@ -141,8 +136,8 @@ public class DeploymentClassLoader extends URLClassLoader {
             }
 
         } catch (Exception e) {
-             throw new ClassNotFoundException(Messages.getMessage(
-                        DeploymentErrorMsgs.CLASS_NOT_FOUND, name));
+            throw new ClassNotFoundException(Messages.getMessage(
+                    DeploymentErrorMsgs.CLASS_NOT_FOUND, name));
         }
         return null;
     }
@@ -158,24 +153,44 @@ public class DeploymentClassLoader extends URLClassLoader {
      * @return bytt[]
      * @throws java.io.IOException <code>Exception</code>
      */
-    private byte[] getBytes(String filename) throws Exception {
+    private byte[] getClassByteCodes(String filename) throws Exception {
         String completeFileName = filename;
         /**
          * Replacing org.apache. -> org/apache/...
          */
         completeFileName = completeFileName.replace('.', '/').concat(".class");
-        byte raw[] ;
+        byte [] byteCodes = getBytes(completeFileName);
+        if (byteCodes != null) {
+            return byteCodes;
+        } else {
+            throw new ClassNotFoundException(Messages.getMessage(
+                    DeploymentErrorMsgs.CLASS_NOT_FOUND, filename));
+        }
+    }
+
+
+    /**
+     * Read jar file (/lib) one by one , then for each file craete <code>ZipInputStream</code>
+     * that and check to see wether there is any entry eith given name if it found then
+     * Creat ByteArrayOutPutStream and get return that
+     *
+     * @param resourceName : Name of the resource that your are going to use
+     * @return <code>byte[]</code>
+     */
+    private byte[] getBytes(String resourceName) {
+        byte raw[];
+        ZipInputStream zin = null;
         for (int i = 0; i < lib_jars_list.size(); i++) {
             String libjar_name = (String) lib_jars_list.get(i);
-            InputStream in = this.getResourceAsStream(libjar_name);
+            InputStream in = getResourceAsStream(libjar_name);
             try {
-                ZipInputStream zin = new ZipInputStream(in);
+                zin = new ZipInputStream(in);
                 ZipEntry entry;
-                String entryName ;
+                String entryName;
                 while ((entry = zin.getNextEntry()) != null) {
                     entryName = entry.getName();
                     if (entryName != null &&
-                            entryName.endsWith(completeFileName)) {
+                            entryName.endsWith(resourceName)) {
                         byte data[] = new byte[2048];
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
                         int count;
@@ -184,68 +199,49 @@ public class DeploymentClassLoader extends URLClassLoader {
                         }
                         raw = out.toByteArray();
                         out.close();
-                        zin.close();
                         return raw;
                     }
                 }
-                try {
-                    zin.close();
-                } catch (IOException ioe) {//already closed
-                }
             } catch (IOException e) {
-                throw e;
+                return null;
+            } finally {
+                try {
+                    if (zin != null) {
+                        zin.close();
+                    }
+                } catch (IOException e) {
+                    //what to do, better to log
+                }
             }
 
         }
-        throw new ClassNotFoundException(Messages.getMessage(
-                DeploymentErrorMsgs.CLASS_NOT_FOUND, filename));
+        return null;
     }
 
     /*
-     * This override locates resources similar to the way that getBytes() locates classes.
-     * We do not store the bytes from resources in memory, as
-     * the size of resources is generally unpredictable
-     *
-     * @param name
-     * @return inputstream
-     */
+    * This override locates resources similar to the way that getClassByteCodes() locates classes.
+    * We do not store the bytes from resources in memory, as
+    * the size of resources is generally unpredictable
+    *
+    * @param name
+    * @return inputstream
+    */
     public InputStream getResourceAsStream(String name) {
         if (name == null)
             return null;
 
         InputStream is = super.getResourceAsStream(name);
+        //ohh , input stream is null , so need to check whether thats there in lib/*.jar
         if (is == null) {
-            for (int i = 0; i < lib_jars_list.size(); i++) {
-                String libjar_name = (String) lib_jars_list.get(i);
-                try {
-                    InputStream in = super.getResourceAsStream(libjar_name);
-                    ZipInputStream zin = new ZipInputStream(in);
-                    ZipEntry entry;
-                    String entryName = "";
-                    while ((entry = zin.getNextEntry()) != null) {
-                        entryName = entry.getName();
-                        if (entryName != null && entryName.equals(name)) {
-                            byte data[] = new byte[2048];
-                            ByteArrayOutputStream out = new ByteArrayOutputStream();
-                            int count;
-                            while ((count = zin.read(data, 0, 2048)) != -1) {
-                                out.write(data, 0, count);
-                            }
-                            byte raw[] = out.toByteArray();
-                            out.close();
-                            zin.close();
-                            return new ByteArrayInputStream(raw);
-                        }
-                    }
-                    try {
-                        zin.close();
-                    } catch (IOException ioe) {//already closed
-                    }
-                } catch (IOException e) {
-                }
+            byte data[] = getBytes(name);
+            if (data == null) {
+                return null;
+            } else {
+                return new ByteArrayInputStream(data);
             }
+        } else {
+            return is;
         }
-        return is;
     }
 }
 
