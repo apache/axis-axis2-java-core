@@ -336,7 +336,7 @@ public abstract class MEPClient {
             AxisConfiguration axisConfig = this.serviceContext.getConfigurationContext().getAxisConfiguration();
 
             // we have a deprecated method for user to set the transport protocol directly. Lets support that also
-            String senderTrasportProtocol = clientOptions.getSenderTrasportProtocol();
+            String senderTrasportProtocol = clientOptions.getSenderTransportProtocol();
             if (axisConfig != null) {
                 if (senderTrasportProtocol == null || "".equals(senderTrasportProtocol)) {
                     // by this time we have passed all the information we collected via Options to the

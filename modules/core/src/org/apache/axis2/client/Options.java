@@ -39,8 +39,9 @@ import java.util.Map;
  * will be getting parameters using this.
  */
 public class Options {
-
-
+    
+    private Options delegate = null;
+    
     private Map properties = new HashMap();
 
     // ==========================================================================
@@ -61,7 +62,7 @@ public class Options {
     private TransportInDescription listenerTransport;
     private boolean useSeparateListener = false;
     private String listenerTransportProtocol;
-    private String senderTrasportProtocol;
+    private String senderTransportProtocol;
 
     // Addressing specific properties
     private String action;
@@ -83,6 +84,20 @@ public class Options {
     // ==========================================================================
 
     /**
+     * Default constructor
+     */
+    public Options() {
+    }
+
+    /**
+     * Any setting in the delegate always wins. 
+     * @param delegate
+     */
+    public Options(Options delegate) {
+        this.delegate = delegate;
+    }
+
+    /**
      * Properties you need to pass in to the message context must be set via this.
      * If there is a method to the set this property, within this class, its encouraged to use that method,
      * without duplicating stuff or making room for bugs.
@@ -99,10 +114,24 @@ public class Options {
      * @return the value realeted to this key. Null, if not found.
      */
     public Object getProperty(String key) {
+        if (delegate != null) {
+            Object ret = delegate.getProperty(key);
+            if (ret != null) {
+                return ret;
+            }
+        }
         return properties.get(key);
     }
 
     public Map getProperties() {
+        if (delegate != null) {
+            Map properties = delegate.getProperties();
+            if (properties.size() > 0) {
+                HashMap ret = new HashMap(properties);
+                ret.putAll(properties);
+                return ret;
+            }
+        }
         return properties;
     }
 
@@ -119,6 +148,12 @@ public class Options {
     }
 
     public String getSoapVersionURI() {
+        if (delegate != null) {
+            String ret = delegate.getSoapVersionURI();
+            if (ret != null) {
+                return ret;
+            }
+        }
         return soapVersionURI;
     }
 
@@ -127,6 +162,12 @@ public class Options {
     }
 
     public String getSoapAction() {
+        if (delegate != null) {
+            String ret = delegate.getSoapAction();
+            if (ret != null) {
+                return ret;
+            }
+        }
         return soapAction;
     }
 
@@ -141,6 +182,9 @@ public class Options {
      * be returned to the application, irrespective of whether it has a Fault or not.
      */
     public boolean isExceptionToBeThrownOnSOAPFault() {
+        if (delegate != null) {
+            return delegate.isExceptionToBeThrownOnSOAPFault();
+        }
         return isExceptionToBeThrownOnSOAPFault;
     }
 
@@ -164,6 +208,9 @@ public class Options {
      * @return timeOutInMilliSeconds
      */
     public long getTimeOutInMilliSeconds() {
+        if (delegate != null) {
+            return delegate.getTimeOutInMilliSeconds();
+        }
         return timeOutInMilliSeconds;
     }
 
@@ -178,6 +225,12 @@ public class Options {
     }
 
     public TransportListener getListener() {
+        if (delegate != null) {
+            TransportListener ret = delegate.getListener();
+            if (ret != null) {
+                return ret;
+            }
+        }
         return listener;
     }
 
@@ -186,6 +239,12 @@ public class Options {
     }
 
     public TransportOutDescription getSenderTransport() {
+        if (delegate != null) {
+            TransportOutDescription ret = delegate.getSenderTransport();
+            if (ret != null) {
+                return ret;
+            }
+        }
         return senderTransport;
     }
 
@@ -208,6 +267,12 @@ public class Options {
     }
 
     public TransportInDescription getListenerTransport() {
+        if (delegate != null) {
+            TransportInDescription ret = delegate.getListenerTransport();
+            if (ret != null) {
+                return ret;
+            }
+        }
         return listenerTransport;
     }
 
@@ -216,6 +281,9 @@ public class Options {
     }
 
     public boolean isUseSeparateListener() {
+        if (delegate != null) {
+            return delegate.isUseSeparateListener();
+        }
         return useSeparateListener;
     }
 
@@ -232,6 +300,12 @@ public class Options {
     }
 
     public String getAction() {
+        if (delegate != null) {
+            String ret = delegate.getAction();
+            if (ret != null) {
+                return ret;
+            }
+        }
         return action;
     }
 
@@ -240,6 +314,12 @@ public class Options {
     }
 
     public String getMessageId() {
+        if (delegate != null) {
+            String ret = delegate.getMessageId();
+            if (ret != null) {
+                return ret;
+            }
+        }
         return messageId;
     }
 
@@ -248,6 +328,12 @@ public class Options {
     }
 
     public EndpointReference getTo() {
+        if (delegate != null) {
+            EndpointReference ret = delegate.getTo();
+            if (ret != null) {
+                return ret;
+            }
+        }
         return to;
     }
 
@@ -256,6 +342,12 @@ public class Options {
     }
 
     public EndpointReference getFrom() {
+        if (delegate != null) {
+            EndpointReference ret = delegate.getFrom();
+            if (ret != null) {
+                return ret;
+            }
+        }
         return from;
     }
 
@@ -264,6 +356,12 @@ public class Options {
     }
 
     public EndpointReference getReplyTo() {
+        if (delegate != null) {
+            EndpointReference ret = delegate.getReplyTo();
+            if (ret != null) {
+                return ret;
+            }
+        }
         return replyTo;
     }
 
@@ -272,6 +370,12 @@ public class Options {
     }
 
     public EndpointReference getFaultTo() {
+        if (delegate != null) {
+            EndpointReference ret = delegate.getFaultTo();
+            if (ret != null) {
+                return ret;
+            }
+        }
         return faultTo;
     }
 
@@ -280,6 +384,12 @@ public class Options {
     }
 
     public RelatesTo getRelatesTo() {
+        if (delegate != null) {
+            RelatesTo ret = delegate.getRelatesTo();
+            if (ret != null) {
+                return ret;
+            }
+        }
         return relatesTo;
     }
 
@@ -288,6 +398,12 @@ public class Options {
     }
 
     public String getListenerTransportProtocol() {
+        if (delegate != null) {
+            String ret = delegate.getListenerTransportProtocol();
+            if (ret != null) {
+                return ret;
+            }
+        }
         return listenerTransportProtocol;
     }
 
@@ -295,8 +411,14 @@ public class Options {
         this.listenerTransportProtocol = listenerTransportProtocol;
     }
 
-    public String getSenderTrasportProtocol() {
-        return senderTrasportProtocol;
+    public String getSenderTransportProtocol() {
+        if (delegate != null) {
+            String ret = delegate.getSenderTransportProtocol();
+            if (ret != null) {
+                return ret;
+            }
+        }
+        return senderTransportProtocol;
     }
 
 
@@ -339,6 +461,6 @@ public class Options {
         }
 
         setListenerTransportProtocol(listenerTransport);
-        this.senderTrasportProtocol = senderTransport;
+        this.senderTransportProtocol = senderTransport;
     }
 }

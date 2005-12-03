@@ -112,16 +112,14 @@
          </xsl:for-each>) throws java.rmi.RemoteException{
 
 		     org.apache.axis2.client.Call _call = new org.apache.axis2.client.Call(_serviceContext);
-             _call.setClientOptions(_clientOptions);
+             org.apache.axis2.client.Options _options = new org.apache.axis2.client.Options(_clientOptions);
+             _call.setClientOptions(_options);
 
  		     org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-             if(_clientOptions.getSoapAction() == null) {
-               <xsl:for-each select="input/param[@Action!='']">_clientOptions.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
-			 }
+             <xsl:for-each select="input/param[@Action!='']">_options.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
 
-             if(_clientOptions.getAction() == null) {
-               <xsl:for-each select="input/param[@Action!='']">_clientOptions.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
-			 }
+             <xsl:for-each select="input/param[@Action!='']">_options.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
+
              //set the properties
             populateModules(_call);
 
@@ -135,7 +133,7 @@
                   <xsl:choose>
                       <xsl:when test="$style='rpc'">
                // Style is RPC
-              org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_clientOptions.getSoapVersionURI(), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
+              org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_options.getSoapVersionURI(), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
               new String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
               new Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                       </xsl:when>
@@ -160,7 +158,7 @@
                    <xsl:choose>
                    <xsl:when test="$style='rpc'">
                //Style is RPC. No input parameters
-               org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_clientOptions.getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",null,null);
+               org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_options.getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",null,null);
                       </xsl:when>
                      <xsl:when test="$style='doc'">
                //Style is Doc. No input parameters
@@ -208,15 +206,13 @@
             <xsl:if test="$paramCount>0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException{
 
              org.apache.axis2.client.Call _call = new org.apache.axis2.client.Call(_serviceContext);
-             _call.setClientOptions(_clientOptions);
+            org.apache.axis2.client.Options _options = new org.apache.axis2.client.Options(_clientOptions);
+             _call.setClientOptions(_options);
  		     org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-            if(_clientOptions.getSoapAction() == null) {
-             _clientOptions.setSoapAction("<xsl:value-of select="$soapAction"/>");
-            }
+             _options.setSoapAction("<xsl:value-of select="$soapAction"/>");
             
-           if(_clientOptions.getAction() == null) {
-            <xsl:for-each select="input/param[@Action!='']">_lientOptions.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
-			}
+            <xsl:for-each select="input/param[@Action!='']">_options.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
+
              org.apache.axis2.soap.SOAPEnvelope env = createEnvelope();
              <xsl:choose>
              <!-- There are more than 1 parameter in the input-->
@@ -224,7 +220,7 @@
               <xsl:choose>
                <xsl:when test="$style='rpc'">
            // Style is RPC
-           org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_clientOptions.getSoapVersionURI()), env,
+           org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_options.getSoapVersionURI()), env,
             "<xsl:value-of select="@namespace"/>",
             "<xsl:value-of select="@name"/>",
              new String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
@@ -245,7 +241,7 @@
                    <xsl:choose>
                    <xsl:when test="$style='rpc'">
            //Style is RPC. No input parameters
-              org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_clientOptions.getSoapVersionURI()), env,
+              org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_options.getSoapVersionURI()), env,
                 "<xsl:value-of select="@namespace"/>",
                 "<xsl:value-of select="@name"/>",
                 null,
@@ -297,15 +293,12 @@
          org.apache.axis2.client.MessageSender _msgSender = new org.apache.axis2.client.MessageSender(_serviceContext);
             
  		    org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-          _msgSender.setClientOptions(_clientOptions);
+          org.apache.axis2.client.Options _options = new org.apache.axis2.client.Options(_clientOptions);
+          _msgSender.setClientOptions(_options);
 
-          if(_clientOptions.getSoapAction() == null) {
-            _clientOptions.setSoapAction("<xsl:value-of select="$soapAction"/>");
-          }
+          _options.setSoapAction("<xsl:value-of select="$soapAction"/>");
 
-            if(_clientOptions.getAction() == null) {
-            <xsl:for-each select="input/param[@Action!='']">_clientOptions.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
-			}
+          <xsl:for-each select="input/param[@Action!='']">_options.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
           org.apache.axis2.soap.SOAPEnvelope env = null;
             env = createEnvelope();
             <xsl:choose>
@@ -315,7 +308,7 @@
                   <xsl:choose>
                       <xsl:when test="$style='rpc'">
                // Style is RPC
-              org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_clientOptions.getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
+              org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_options.getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",
               new String[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if>"<xsl:value-of select="@name"/>"</xsl:for-each>},
               new Object[]{<xsl:for-each select="input/param[@type!='']"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>});
                       </xsl:when>
@@ -335,7 +328,7 @@
                    <xsl:choose>
                    <xsl:when test="$style='rpc'">
                //Style is RPC. No input parameters
-               org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_clientOptions.getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",null,null);
+               org.apache.axis2.rpc.client.RPCStub.setValueRPC(getFactory(_options.getSoapVersionURI()), env,"<xsl:value-of select="@namespace"/>","<xsl:value-of select="@name"/>",null,null);
                       </xsl:when>
                      <xsl:when test="$style='doc'">
                //Style is Doc. No input parameters
