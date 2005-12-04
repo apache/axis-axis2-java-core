@@ -31,11 +31,11 @@ import org.apache.ideaplugin.frames.Axi2PluginPage;
  * Date: Sep 24, 2005
  * Time: 10:22:08 AM
  */
-public class Axis2PlgingAction extends AnAction {
+public class Axis2PluginAction extends AnAction {
 
     private ImageIcon myIcon;
 
-    public Axis2PlgingAction() {
+    public Axis2PluginAction() {
         super("GC", "Axis2 plugings", null);
     }
 
@@ -49,7 +49,7 @@ public class Axis2PlgingAction extends AnAction {
         Presentation presentation = event.getPresentation();
         if (ActionPlaces.MAIN_TOOLBAR.equals(event.getPlace())) {
             if (myIcon == null) {
-                java.net.URL resource = Axis2PlgingAction.class.getResource("/icons/icon.png");
+                java.net.URL resource = Axis2PluginAction.class.getResource("/icons/icon.png");
                 myIcon = new ImageIcon(resource);
             }
             presentation.setIcon(myIcon);

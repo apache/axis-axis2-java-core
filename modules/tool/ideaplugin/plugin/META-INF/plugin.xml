@@ -32,7 +32,7 @@
     <actions>
         <!-- We use "PluginName.ComponentName.ActionName" notation for "id" to avoid conflicts -->
         <action id="ActionsSample.ActionsPlugin.ServiceArchiveCreator"
-            class="org.apache.ideaplugin.plugin.Axis2PlgingAction"
+            class="org.apache.ideaplugin.plugin.Axis2PluginAction"
             text="Axis2 plugins" description="Service craetion and codegeneration">
             <keyboard-shortcut first-keystroke="alt W" second-keystroke="C" keymap="$default"/>
             <mouse-shortcut keystroke="ctrl alt button2" keymap="$default"/>
