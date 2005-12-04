@@ -41,10 +41,10 @@ public class ClassFileHandler {
             throw new IOException("the location is invalid");
         URL[] urlList = {fileEndpoint.toURL()};
         URLClassPath classLoader = new URLClassPath(urlList);
-        Enumeration enum = classLoader.getResources("");
+        Enumeration enumerator = classLoader.getResources("");
 
-        while (enum.hasMoreElements()) {
-            Object o =  enum.nextElement();
+        while (enumerator.hasMoreElements()) {
+            Object o =  enumerator.nextElement();
             System.out.println("o = " + o);
         }
         return null;

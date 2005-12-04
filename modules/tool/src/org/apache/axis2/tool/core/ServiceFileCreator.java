@@ -2,10 +2,19 @@ package org.apache.axis2.tool.core;
 
 import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
 import org.apache.axis2.wsdl.codegen.writer.ServiceXMLWriter;
-import org.apache.crimson.tree.XmlDocument;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.dom.DOMSource;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -43,28 +52,30 @@ public class ServiceFileCreator {
 
 
     }
-    //todo Fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    private XmlDocument getServiceModel(String serviceName,String className,ArrayList methods){
-        XmlDocument doc = new XmlDocument();
+
+    private Document getServiceModel(String serviceName,String className,ArrayList methods){
+
+        DocumentBuilder builder = null;
+        try {
+            builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        Document doc = builder.newDocument();
+        
         Element rootElement = doc.createElement("interface");
-        addAttribute(doc,"classpackage","", rootElement);
-        addAttribute(doc,"name",className,rootElement);
-        addAttribute(doc,"servicename",serviceName,rootElement);
+        rootElement.setAttribute("classpackage","");
+        rootElement.setAttribute("name",className);
+        rootElement.setAttribute("servicename",serviceName);
         Element methodElement = null;
         int size = methods.size();
         for(int i=0;i<size;i++){
             methodElement = doc.createElement("method");
-            addAttribute(doc,"name",methods.get(i).toString(),methodElement);
+            rootElement.setAttribute("name",methods.get(i).toString());
             rootElement.appendChild(methodElement);
         }
         doc.appendChild(rootElement);
         return doc;
-    }
-    
-    private void addAttribute(XmlDocument document,String AttribName, String attribValue, Element element){
-        Attr attribute = document.createAttribute(AttribName);
-        attribute.setValue(attribValue);
-        element.setAttributeNode(attribute);
     }
     
     /**
@@ -74,13 +85,19 @@ public class ServiceFileCreator {
      * @throws IOException
      * @throws Exception
      */
-    private void writeClass(XmlDocument model, ClassWriter writer,String fileName) throws IOException,Exception {
+    private void writeClass(Document model, ClassWriter writer,String fileName) throws IOException,Exception {
+        
+        Source source = new DOMSource(model);
         ByteArrayOutputStream memoryStream = new ByteArrayOutputStream();
-        model.write(memoryStream);
+        Result result = new StreamResult(memoryStream);
+        Transformer xformer = TransformerFactory.newInstance().newTransformer();
+        xformer.transform(source, result);
+        
+        //TODO: Doesn't really output stuff from the memorystream to file...hmm.
+        
         writer.loadTemplate();
         writer.createOutFile(null,
                  fileName);
-//        writer.writeOutFile(new ByteArrayInputStream(memoryStream.toByteArray()));
     }
     
    

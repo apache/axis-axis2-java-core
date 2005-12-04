@@ -143,12 +143,12 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
 
     public void fillBean(ArchiveBean bean) {
 
-        Enumeration enum =listModellibs.elements();
+        Enumeration enumerator =listModellibs.elements();
         ArrayList libs = new ArrayList();
         URL urllist [] = new URL[listModellibs.size() +1];
         int count = 0;
-        while (enum.hasMoreElements()) {
-            String s = (String) enum.nextElement();
+        while (enumerator.hasMoreElements()) {
+            String s = (String) enumerator.nextElement();
             File file = new File(s);
             if(file.exists()){
                 try {
@@ -167,17 +167,17 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
         }
         ClassLoader cls = new URLClassLoader(urllist,ResourceChooser.class.getClassLoader());
         bean.setClassLoader(cls);
-//        Enumeration enum =listModellibs.elements();
+//        Enumeration enumerator =listModellibs.elements();
 //        ArrayList libs = new ArrayList();
-//        while (enum.hasMoreElements()) {
-//            String s = (String) enum.nextElement();
+//        while (enumerator.hasMoreElements()) {
+//            String s = (String) enumerator.nextElement();
 //            libs.add(s);
 //        }
         bean.setLibs(libs);
-        enum =listModellwsdls.elements();
+        enumerator =listModellwsdls.elements();
         ArrayList wsdls = new ArrayList();
-        while (enum.hasMoreElements()) {
-            String s = (String) enum.nextElement();
+        while (enumerator.hasMoreElements()) {
+            String s = (String) enumerator.nextElement();
             wsdls.add(s);
         }
         bean.setWsdls(wsdls);

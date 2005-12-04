@@ -1,8 +1,8 @@
 package org.apache.axis2.tools.bean;
 
-import org.apache.axis2.wsdl.util.URLProcessor;
 import org.apache.axis2.wsdl.codegen.*;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
+import org.apache.axis2.util.URLProcessor;
 import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.WSDLException;
@@ -135,7 +135,7 @@ public class CodegenBean {
     public WSDLDescription getWOM(String wsdlLocation) throws WSDLException,
             IOException {
         InputStream in = new FileInputStream(new File(wsdlLocation));
-        return WOMBuilderFactory.getBuilder(WOMBuilderFactory.WSDL11).build(in).getDescription();
+        return WOMBuilderFactory.getBuilder(org.apache.axis2.wsdl.WSDLConstants.WSDL_1_1).build(in).getDescription();
     }
 
     public void execute() throws Exception {
