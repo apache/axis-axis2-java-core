@@ -29,7 +29,7 @@ public class ServiceArchiveCreator extends AnAction {
 //        try {
 //            File file = new File(fileName);
 //            urlsToLoadFrom = new URL[]{file.toURL()};
-//            PlugingClassLoader clasloader = new PlugingClassLoader(
+//            PluginClassLoader clasloader = new PluginClassLoader(
 //                    urlsToLoadFrom,contextClasLoader);
 //            contextClasLoader = clasloader;
 //        } catch (MalformedURLException e) {

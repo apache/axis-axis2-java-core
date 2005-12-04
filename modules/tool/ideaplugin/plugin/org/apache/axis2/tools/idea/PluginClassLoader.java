@@ -32,7 +32,7 @@ import java.util.zip.ZipInputStream;
  * Date: Jul 22, 2005
  * Time: 2:25:59 PM
  */
-public class PlugingClassLoader extends URLClassLoader {
+public class PluginClassLoader extends URLClassLoader {
 
     //urls which gives to create the classLoader
     private URL[] urls;
@@ -42,14 +42,14 @@ public class PlugingClassLoader extends URLClassLoader {
 
 
     /**
-     * PlugingClassLoader is exetend form URLClassLoader , and the constructor
+     * PluginClassLoader is exetend form URLClassLoader , and the constructor
      * has not overide the super constroctor , but has done some stuff to find out
      * jar fils inside /lib director
      *
      * @param urls   <code>URL</code>
      * @param parent parent classloader <code>ClassLoader</code>
      */
-    public PlugingClassLoader(URL[] urls, ClassLoader parent) {
+    public PluginClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
         this.urls = urls;
         lib_jars_list = new ArrayList();

@@ -36,7 +36,7 @@ public class Axis2PluginAction extends AnAction {
     private ImageIcon myIcon;
 
     public Axis2PluginAction() {
-        super("GC", "Axis2 plugings", null);
+        super("GC", "Axis2 plugins", null);
     }
 
     public void actionPerformed(AnActionEvent anActionEvent) {
