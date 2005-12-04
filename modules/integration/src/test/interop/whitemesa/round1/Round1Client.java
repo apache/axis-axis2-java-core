@@ -46,7 +46,7 @@ public class Round1Client {
             throw new AxisFault(e);
         }
 
-        String clientHome = "target/test-resources/intregrationRepo";
+        String clientHome = "target/test-resources/integrationRepo";
 
         Options options = new Options();
         options.setTo(new EndpointReference(url.toString()));

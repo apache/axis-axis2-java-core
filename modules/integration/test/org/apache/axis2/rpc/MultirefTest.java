@@ -125,7 +125,7 @@ public class MultirefTest extends TestCase {
         ref.setText("hello Axis2");
         envelope.getBody().addChild(ref);
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
         call.setClientOptions(options);
@@ -166,7 +166,7 @@ public class MultirefTest extends TestCase {
 
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
         call.setClientOptions(options);
@@ -201,7 +201,7 @@ public class MultirefTest extends TestCase {
         ref.setText("10");
         envelope.getBody().addChild(ref);
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
         call.setClientOptions(options);
@@ -245,7 +245,7 @@ public class MultirefTest extends TestCase {
 
 
             RPCCall call =
-                    new RPCCall("target/test-resources/intregrationRepo");
+                    new RPCCall("target/test-resources/integrationRepo");
 
             Options options = new Options();
             call.setClientOptions(options);
@@ -298,7 +298,7 @@ public class MultirefTest extends TestCase {
         envelope.getBody().addChild(om4);
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
         call.setClientOptions(options);
@@ -348,7 +348,7 @@ public class MultirefTest extends TestCase {
         envelope.getBody().addChild(om4);
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
         call.setClientOptions(options);
@@ -401,7 +401,7 @@ public class MultirefTest extends TestCase {
         envelope.getBody().addChild(om4);
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
         call.setClientOptions(options);
@@ -464,7 +464,7 @@ public class MultirefTest extends TestCase {
                 "</reference>";
         envelope.getBody().addChild(getOMelemnt(str, fac));
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
         call.setClientOptions(options);
@@ -518,7 +518,7 @@ public class MultirefTest extends TestCase {
         }
         envelope.getBody().addChild(staxOMBuilder.getDocumentElement());
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
         call.setClientOptions(options);

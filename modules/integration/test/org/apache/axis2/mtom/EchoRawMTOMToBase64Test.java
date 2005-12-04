@@ -100,7 +100,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
     public void testEchoXMLASync() throws Exception {
         OMElement payload = createPayload();
 
-        String clientHome = "target/test-resources/intregrationRepo";
+        String clientHome = "target/test-resources/integrationRepo";
 
         Options clientOptions = new Options();
         clientOptions.setTo(targetEPR);
@@ -147,7 +147,7 @@ public class EchoRawMTOMToBase64Test extends TestCase {
 
             OMElement payload = createPayload();
 
-            String clientHome = "target/test-resources/intregrationRepo";
+            String clientHome = "target/test-resources/integrationRepo";
 
             Options clientOptions = new Options();
             clientOptions.setTo(targetEPR);

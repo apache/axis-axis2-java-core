@@ -82,7 +82,7 @@ public class GroovyServiceTest extends TestCase {
         OMElement payload = getpayLoad();
 
         Call call =
-                new Call("target/test-resources/intregrationRepo");
+                new Call("target/test-resources/integrationRepo");
 
         Options options = new Options();
         options.setTo(targetEPR);

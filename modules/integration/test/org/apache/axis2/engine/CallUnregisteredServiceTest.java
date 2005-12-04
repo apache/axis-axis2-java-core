@@ -63,7 +63,7 @@ public class CallUnregisteredServiceTest extends TestCase {
                             "Isaac Assimov, the foundation Sega"));
             method.addChild(value);
 
-            Call call = new Call("target/test-resources/intregrationRepo");
+            Call call = new Call("target/test-resources/integrationRepo");
             EndpointReference targetEPR =
                     new EndpointReference("http://127.0.0.1:"
                     + (UtilServer.TESTING_PORT)

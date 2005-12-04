@@ -50,7 +50,7 @@ public class InvokerThread extends Thread {
         try {
             log.info("Starting Thread number "+ threadNumber + " .............");
             Call call =
-                    new Call("target/test-resources/intregrationRepo");
+                    new Call("target/test-resources/integrationRepo");
             OMElement payload = TestingUtils.createDummyOMElement();
 
             Options options = new Options();

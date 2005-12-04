@@ -43,7 +43,7 @@ public class MTOMEchoTestMultipleTest extends TestCase {
     }
 
     public void runTest(boolean optimized, int repeat) throws Exception {
-        Call call = new Call("target/test-resources/intregrationRepo");
+        Call call = new Call("target/test-resources/integrationRepo");
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(targetEPR);

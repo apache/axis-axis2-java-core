@@ -40,7 +40,7 @@ public class SunRound2Client {
         Call call = null;
         URL url = null;
         try {
-            call = new Call("target/test-resources/intregrationRepo");
+            call = new Call("target/test-resources/integrationRepo");
             url = new URL(epUrl);
 
             Options options = new Options();

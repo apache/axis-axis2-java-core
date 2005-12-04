@@ -80,7 +80,7 @@ public class ServiceGroupContextTest extends TestCase {
 
         SOAPEnvelope payload = fac.getDefaultEnvelope();
 
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
+        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
 
         Options options = new Options();
         call.setClientOptions(options);

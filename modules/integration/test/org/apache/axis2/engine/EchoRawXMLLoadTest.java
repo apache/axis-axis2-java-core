@@ -116,7 +116,7 @@ public class EchoRawXMLLoadTest extends TestCase implements TestConstants {
         OMElement payload = TestingUtils.createDummyOMElement();
 
         org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
+                new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
 
         Options options = new Options();
         call.setClientOptions(options);

@@ -48,9 +48,9 @@
             tofile="target/test-resources/mail-transport-server-enabledRepository/modules/addressing.mar"/>
 
         <mkdir dir="target/test-resources/MessageContextInjectionRepo"/>
-        <mkdir dir="target/test-resources/intregrationRepo/modules"/>
+        <mkdir dir="target/test-resources/integrationRepo/modules"/>
         <copy file="../addressing/target/addressing.mar"
-              tofile="target/test-resources/intregrationRepo/modules/addressing.mar"/>
+              tofile="target/test-resources/integrationRepo/modules/addressing.mar"/>
 
 
         <!-- Commons transport enabled enabled Repository -->

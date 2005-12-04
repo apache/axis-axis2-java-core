@@ -106,7 +106,7 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
     }
 
     private MyInOutMEPClient getMyInOutMEPClient() throws AxisFault {
-        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/intregrationRepo");
+        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/integrationRepo");
         Options options = new Options();
         inOutMEPClient.setClientOptions(options);
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);

@@ -131,7 +131,7 @@ public class UtilServer {
 
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
         ConfigurationContext sysContext =
-                efac.buildClientConfigurationContext("target/test-resources/intregrationRepo");
+                efac.buildClientConfigurationContext("target/test-resources/integrationRepo");
          ModuleDescription moduleDesc = deploymentEngine.buildModule(file,sysContext.getAxisConfiguration());
         sysContext.getAxisConfiguration().addModule(moduleDesc);
         //sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());

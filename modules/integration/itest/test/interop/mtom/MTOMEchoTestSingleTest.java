@@ -40,7 +40,7 @@ public class MTOMEchoTestSingleTest extends TestCase {
     }
 
     public void runTest(boolean optimized) throws Exception {
-        Call call = new Call("target/test-resources/intregrationRepo");
+        Call call = new Call("target/test-resources/integrationRepo");
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(targetEPR);

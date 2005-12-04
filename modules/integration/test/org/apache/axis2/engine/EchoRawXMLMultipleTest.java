@@ -80,7 +80,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
         for (int i = 0; i < 5; i++) {
             org.apache.axis2.client.Call call =
                     new org.apache.axis2.client.Call(
-                            "target/test-resources/intregrationRepo");
+                            "target/test-resources/integrationRepo");
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
@@ -127,7 +127,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
         for (int i = 0; i < 5; i++) {
             org.apache.axis2.client.Call call =
                     new org.apache.axis2.client.Call(
-                            "target/test-resources/intregrationRepo");
+                            "target/test-resources/integrationRepo");
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
@@ -175,7 +175,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
         for (int i = 0; i < 5; i++) {
             org.apache.axis2.client.Call call =
                     new org.apache.axis2.client.Call(
-                            "target/test-resources/intregrationRepo");
+                            "target/test-resources/integrationRepo");
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
@@ -197,7 +197,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
         for (int i = 0; i < 5; i++) {
             org.apache.axis2.client.Call call =
                     new org.apache.axis2.client.Call(
-                            "target/test-resources/intregrationRepo");
+                            "target/test-resources/integrationRepo");
 
             Options options = new Options();
             call.setClientOptions(options);

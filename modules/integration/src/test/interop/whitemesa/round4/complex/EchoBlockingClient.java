@@ -35,7 +35,7 @@ public class EchoBlockingClient {
         try {
 
 
-            Call call = new Call("target/test-resources/intregrationRepo");
+            Call call = new Call("target/test-resources/integrationRepo");
 
             Options options = new Options();
             call.setClientOptions(options);

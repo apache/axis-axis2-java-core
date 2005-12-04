@@ -81,7 +81,7 @@ public class OneWayRawXMLTest extends TestCase implements TestConstants {
 
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        MessageSender sender = new MessageSender("target/test-resources/intregrationRepo");
+        MessageSender sender = new MessageSender("target/test-resources/integrationRepo");
 
         Options options = new Options();
         sender.setClientOptions(options);

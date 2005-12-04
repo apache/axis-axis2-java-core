@@ -156,7 +156,7 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
             value.setText("Isaac Assimov, the foundation Sega");
             method.addChild(value);
 
-            String clientHome = "target/test-resources/intregrationRepo";
+            String clientHome = "target/test-resources/integrationRepo";
 
             Options options = new Options();
             options.setTransportInfo(Constants.TRANSPORT_HTTP,

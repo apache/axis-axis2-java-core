@@ -40,7 +40,7 @@ public class SunRound3Client {
         Call call = null;
         URL url = null;
         try {
-            call = new Call("target/test-resources/intregrationRepo");
+            call = new Call("target/test-resources/integrationRepo");
             //todo set the path to repository in Call()
             url = new URL(epUrl);
 

@@ -97,7 +97,7 @@ public class RPCCallTest extends TestCase {
 
     public void testEditBean() throws AxisFault {
         configureSystem("editBean");
-        String clientHome = "target/test-resources/intregrationRepo";
+        String clientHome = "target/test-resources/integrationRepo";
 
         Options options = new Options();
         options.setTo(targetEPR);
@@ -159,7 +159,7 @@ public class RPCCallTest extends TestCase {
                 false);
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
         call.setClientOptions(options);
 
         MyBean bean = new MyBean();
@@ -194,7 +194,7 @@ public class RPCCallTest extends TestCase {
                 false);
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
         call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
@@ -214,7 +214,7 @@ public class RPCCallTest extends TestCase {
                 false);
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
         call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
@@ -228,7 +228,7 @@ public class RPCCallTest extends TestCase {
     public void testAdd() throws AxisFault {
         configureSystem("add");
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
         options.setTo(targetEPR);
@@ -248,7 +248,7 @@ public class RPCCallTest extends TestCase {
     public void testDivide() throws AxisFault {
         configureSystem("divide");
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
         call.setClientOptions(options);
@@ -268,7 +268,7 @@ public class RPCCallTest extends TestCase {
     public void testEchoBool() throws AxisFault {
         configureSystem("echoBool");
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
 
         Options options = new Options();
         options.setTo(targetEPR);
@@ -297,7 +297,7 @@ public class RPCCallTest extends TestCase {
                 false);
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
         call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
@@ -317,7 +317,7 @@ public class RPCCallTest extends TestCase {
                 false);
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
         call.setClientOptions(options);
 
         Company com = new Company();
@@ -357,7 +357,7 @@ public class RPCCallTest extends TestCase {
                 false);
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
         call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
@@ -378,7 +378,7 @@ public class RPCCallTest extends TestCase {
                 false);
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
         call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
@@ -401,7 +401,7 @@ public class RPCCallTest extends TestCase {
                 false);
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
         call.setClientOptions(options);
 
         MyBean bean = new MyBean();
@@ -436,7 +436,7 @@ public class RPCCallTest extends TestCase {
                 false);
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
         call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
@@ -460,7 +460,7 @@ public class RPCCallTest extends TestCase {
                 false);
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
         call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
@@ -487,7 +487,7 @@ public class RPCCallTest extends TestCase {
                 false);
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
         call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
@@ -510,7 +510,7 @@ public class RPCCallTest extends TestCase {
                 false);
 
         RPCCall call =
-                new RPCCall("target/test-resources/intregrationRepo");
+                new RPCCall("target/test-resources/integrationRepo");
         call.setClientOptions(options);
 
         OMElement elem = call.invokeBlocking("handleArrayList", getpayLoad());

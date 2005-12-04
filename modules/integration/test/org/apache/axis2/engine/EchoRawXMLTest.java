@@ -81,7 +81,7 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
         OMElement payload = TestingUtils.createDummyOMElement();
 
         org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
+                new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
 
         Options options = new Options();
         call.setClientOptions(options);
@@ -127,7 +127,7 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
         OMElement payload = TestingUtils.createDummyOMElement();
 
         org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
+                new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
 
         Options options = new Options();
         call.setClientOptions(options);
@@ -148,7 +148,7 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
         OMElement payload = TestingUtils.createDummyOMElement();
 
         Call call =
-                new Call("target/test-resources/intregrationRepo");
+                new Call("target/test-resources/integrationRepo");
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(targetEPR);

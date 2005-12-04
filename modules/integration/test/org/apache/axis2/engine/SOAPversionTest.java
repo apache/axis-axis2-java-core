@@ -68,7 +68,7 @@ public class SOAPversionTest extends TestCase implements TestConstants {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
         OMElement payload = createEnvelope();
-        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/intregrationRepo");
+        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/integrationRepo");
         Options options = new Options();
         inOutMEPClient.setClientOptions(options);
         options.setSoapVersionURI(
@@ -91,7 +91,7 @@ public class SOAPversionTest extends TestCase implements TestConstants {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
         OMElement payload = createEnvelope();
-        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/intregrationRepo");
+        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/integrationRepo");
         Options options = new Options();
         inOutMEPClient.setClientOptions(options);
         options.setSoapVersionURI(
@@ -116,7 +116,7 @@ public class SOAPversionTest extends TestCase implements TestConstants {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
         OMElement payload = createEnvelope();
-        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/intregrationRepo");
+        MyInOutMEPClient inOutMEPClient = new MyInOutMEPClient("target/test-resources/integrationRepo");
         Options options = new Options();
         inOutMEPClient.setClientOptions(options);
         options.setSoapVersionURI(

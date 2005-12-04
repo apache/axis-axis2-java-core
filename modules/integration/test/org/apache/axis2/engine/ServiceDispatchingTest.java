@@ -71,7 +71,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
         OMElement payload = TestingUtils.createDummyOMElement();
         org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
+                new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(
@@ -94,7 +94,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
                 fac.createText(value, "Isaac Assimov, the foundation Sega"));
         payload.addChild(value);
         org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
+                new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(
@@ -122,7 +122,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
 
 
         org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call("target/test-resources/intregrationRepo");
+                new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(
