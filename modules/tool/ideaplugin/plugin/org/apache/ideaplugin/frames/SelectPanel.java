@@ -2,7 +2,7 @@ package org.apache.ideaplugin.frames;
 
 import org.apache.ideaplugin.bean.ObjectKeeper;
 import org.apache.ideaplugin.bean.ArchiveBean;
-import org.apache.ideaplugin.bean.OprationObj;
+import org.apache.ideaplugin.bean.OperationObj;
 import org.apache.ideaplugin.bean.ServiceObj;
 import org.apache.ideaplugin.frames.table.ArchiveTableModel;
 
@@ -11,9 +11,6 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.net.URLClassLoader;
-import java.net.URL;
-import java.net.MalformedURLException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -181,10 +178,10 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
                 if(methods.length >0){
                     for (int i = 0; i < methods.length; i++) {
                         Method method = methods[i];
-                        OprationObj Operationobj = new OprationObj(method.getName(),
+                        OperationObj operationobj = new OperationObj(method.getName(),
                                 method.getReturnType().toString(),
                                 new Integer(method.getParameterTypes().length),new Boolean(true));
-                        operations.put(method.getName() ,Operationobj);
+                        operations.put(method.getName() ,operationobj);
                     }
                 }
 
@@ -212,9 +209,9 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
             ArrayList ops = new ArrayList();
             Iterator opitr = operations.values().iterator();
             while (opitr.hasNext()) {
-                OprationObj oprationObj = (OprationObj) opitr.next();
-                if(oprationObj.getSelect().booleanValue()){
-                    ops.add(oprationObj.getOpName());
+                OperationObj operationObj = (OperationObj) opitr.next();
+                if(operationObj.getSelect().booleanValue()){
+                    ops.add(operationObj.getOpName());
                 }
             }
 

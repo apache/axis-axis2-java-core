@@ -22,14 +22,14 @@ package org.apache.ideaplugin.bean;
  * Date: Sep 21, 2005
  * Time: 11:36:02 PM
  */
-public class OprationObj {
+public class OperationObj {
 
     private String OpName ;
     private String ReturnValue;
     private Integer parameters;
     private Boolean select;
 
-    public OprationObj(String opName, String returnVale, Integer parameters, Boolean select) {
+    public OperationObj(String opName, String returnVale, Integer parameters, Boolean select) {
         OpName = opName;
         ReturnValue = returnVale;
         this.parameters = parameters;

@@ -1,6 +1,6 @@
 package org.apache.ideaplugin.frames.table;
 
-import org.apache.ideaplugin.bean.OprationObj;
+import org.apache.ideaplugin.bean.OperationObj;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.HashMap;
@@ -40,11 +40,11 @@ public class ArchiveTableModel extends AbstractTableModel {
         Iterator itr =  dataobjetc.values().iterator();
         int count =0;
         while (itr.hasNext()) {
-            OprationObj oprationObj = (OprationObj) itr.next();
-            datvalue[count][0]=oprationObj.getOpName();
-            datvalue[count][1]=oprationObj.getReturnValue();
-            datvalue[count][2]=oprationObj.getParameters();
-            datvalue[count][3]=oprationObj.getSelect();
+            OperationObj operationObj = (OperationObj) itr.next();
+            datvalue[count][0]=operationObj.getOpName();
+            datvalue[count][1]=operationObj.getReturnValue();
+            datvalue[count][2]=operationObj.getParameters();
+            datvalue[count][3]=operationObj.getSelect();
             count ++;
         }
         this.datobjs = dataobjetc;
@@ -73,7 +73,7 @@ public class ArchiveTableModel extends AbstractTableModel {
         return col >= 3;
     }
     public void setValueAt(Object value, int row, int col) {
-        OprationObj obj = (OprationObj)datobjs.get(getValueAt(row,0));
+        OperationObj obj = (OperationObj)datobjs.get(getValueAt(row,0));
         if(col == 3){
             obj.setSelect((Boolean)value);
         }
