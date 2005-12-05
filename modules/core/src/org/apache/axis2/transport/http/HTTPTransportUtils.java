@@ -18,6 +18,7 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.MIMEHelper;
 import org.apache.axis2.context.ConfigurationContext;
@@ -104,7 +105,7 @@ public class HTTPTransportUtils {
                     //Figure out the char set encoding and create the reader
 
                     //If charset is not specified
-                    if (getCharSetEncoding(contentType) == null) {
+                    if (TransportUtils.getCharSetEncoding(contentType) == null) {
                         xmlreader =
                                 XMLInputFactory
                                         .newInstance()
@@ -117,7 +118,7 @@ public class HTTPTransportUtils {
                                 MessageContext.DEFAULT_CHAR_SET_ENCODING);
                     } else {
                         //get the type of char encoding
-                        String charSetEnc = getCharSetEncoding(contentType);
+                        String charSetEnc = TransportUtils.getCharSetEncoding(contentType);
                         xmlreader =
                                 XMLInputFactory
                                         .newInstance()
@@ -233,44 +234,6 @@ public class HTTPTransportUtils {
         }
     }
 
-    /**
-     * Extracts and returns the character set encoding from the
-     * Content-type header
-     * Example:
-     * Content-Type: text/xml; charset=utf-8
-     *
-     * @param contentType
-     */
-    private static String getCharSetEncoding(String contentType) {
-        int index = contentType.indexOf(HTTPConstants.CHAR_SET_ENCODING);
-        if (index == -1) { //Charset encoding not found in the contect-type header
-            //Using the default UTF-8
-            return MessageContext.DEFAULT_CHAR_SET_ENCODING;
-        }
-
-        //If there are spaces around the '=' sign
-        int indexOfEq = contentType.indexOf("=", index);
-        //There can be situations where "charset" is not the last parameter of the Content-Type header
-        int indexOfSemiColon = contentType.indexOf(";", indexOfEq);
-        String value;
-        if (indexOfSemiColon > 0) {
-            value = (contentType.substring(indexOfEq + 1, indexOfSemiColon));
-        } else {
-            value = (contentType.substring(indexOfEq + 1, contentType.length()))
-                    .trim();
-        }
-
-        //There might be "" around the value - if so remove them
-        value = value.replaceAll("\"", "");
-
-        if ("null".equalsIgnoreCase(value)) {
-            return null;
-        }
-
-        return value.trim();
-
-    }
-
     public static boolean processHTTPGetRequest(
             MessageContext msgContext,
             InputStream in,
@@ -376,7 +339,7 @@ public class HTTPTransportUtils {
         MIMEHelper mimeHelper = new MIMEHelper(inStream, contentTypeString,
                 fileCacheForAttachments, attachmentRepoDir, attachmentSizeThreshold);
 
-        String charSetEncoding = getCharSetEncoding(mimeHelper.getSOAPPartContentType());
+        String charSetEncoding = TransportUtils.getCharSetEncoding(mimeHelper.getSOAPPartContentType());
         XMLStreamReader reader;
         if (charSetEncoding == null || "null".equalsIgnoreCase(charSetEncoding)) {
             reader = XMLInputFactory.newInstance()
