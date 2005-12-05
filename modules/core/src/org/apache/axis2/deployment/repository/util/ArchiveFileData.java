@@ -20,7 +20,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.i18n.Messages;
 
 import java.io.File;
@@ -40,12 +39,6 @@ public class ArchiveFileData {
     private String messgeReceiver;
 //    private String moduleClass;
     private String name;
-
-
-    //To store services in a serviceGroup , if there are wsdl for those servics ,
-    //so wsdl service will be created for each wsdl an those will be temeororaly store
-    //in this table
-    private HashMap service = new HashMap();
 
     private ArrayList deploybleServices = new ArrayList();
 
@@ -118,36 +111,24 @@ public class ArchiveFileData {
             }
         } else {
             if (file != null) {
-                classLoader = Utils.getClassLoader(parent,file);
+                classLoader = Utils.getClassLoader(parent, file);
             }
         }
 
     }
+
     /**
      * to check whthere a given file is  a  jar file
      *
      * @param filename
      * @return boolean
      */
-    public static  boolean isServiceArchiveFile(String filename) {
+    public static boolean isServiceArchiveFile(String filename) {
         return ((filename.endsWith(".jar")) | (filename.endsWith(".aar")));
     }
 
-    public static  boolean isModuleArchiveFile(String filename) {
+    public static boolean isModuleArchiveFile(String filename) {
         return ((filename.endsWith(".jar")) || (filename.endsWith(".mar")));
-    }
-
-
-    public void addService(AxisService servicedesc){
-        service.put(servicedesc.getName().getLocalPart(),servicedesc);
-    }
-
-    public AxisService getService(String serviceName){
-        return (AxisService)service.get(serviceName);
-    }
-
-    public HashMap getService() {
-        return service;
     }
 
     public ArrayList getDeploybleServices() {
