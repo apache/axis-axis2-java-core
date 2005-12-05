@@ -97,9 +97,8 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
         try {
             Options options = new Options();
             options.setTo(targetEPR);
-            options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                    Constants.TRANSPORT_HTTP,
-                    true);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(true);
             options.setAction(operationName.getLocalPart());
             call.setClientOptions(options);
 

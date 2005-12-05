@@ -85,7 +85,9 @@ public class ServiceGroupContextTest extends TestCase {
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(targetEPR);
-        options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setUseSeparateListener(false);
+        
         options.setAction(operationName.getLocalPart());
 
         SOAPEnvelope result = call.invokeBlocking(operationName.getLocalPart(), payload);

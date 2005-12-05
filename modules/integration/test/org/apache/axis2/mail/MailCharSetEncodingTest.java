@@ -130,8 +130,8 @@ public class MailCharSetEncodingTest extends TestCase {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
-            options.setTransportInfo(Constants.TRANSPORT_MAIL,
-                    Constants.TRANSPORT_MAIL, true);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_MAIL);
+            options.setUseSeparateListener(true);
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
                     resultElem = result.getResponseEnvelope();

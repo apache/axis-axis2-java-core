@@ -46,7 +46,8 @@ public class SunRound2Client {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(new EndpointReference(url.toString()));
-            options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(false);
             options.setSoapAction(soapAction);
 
             AxisConfiguration axisConfig = new AxisConfiguration();

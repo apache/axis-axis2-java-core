@@ -88,7 +88,8 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
             Options options = new Options();
             inOutMC.setClientOptions(options);
             options.setTo(targetEPR);
-            options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(false);
 
             MessageContext result =
                     inOutMC.invokeBlocking(

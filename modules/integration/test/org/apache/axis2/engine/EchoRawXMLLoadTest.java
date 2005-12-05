@@ -70,8 +70,6 @@ public class EchoRawXMLLoadTest extends TestCase implements TestConstants {
         UtilServer.stop();
     }
 
-    
-
 //    public void testEchoXMLASync() throws Exception {
 //                OMElement payload = createEnvelope();
 //
@@ -121,9 +119,8 @@ public class EchoRawXMLLoadTest extends TestCase implements TestConstants {
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(targetEPR);
-        options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                Constants.TRANSPORT_HTTP,
-                false);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setUseSeparateListener(false);
 
         OMElement result =
                 call.invokeBlocking(operationName.getLocalPart(),

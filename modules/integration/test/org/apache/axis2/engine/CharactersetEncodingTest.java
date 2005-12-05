@@ -82,9 +82,8 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
             options.setProperty(MessageContext.CHARACTER_SET_ENCODING, "utf-16");
 
             options.setTo(targetEPR);
-            options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                    Constants.TRANSPORT_HTTP, false);
-
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(false);
             OMElement resultElem = call.invokeBlocking(operationName.getLocalPart(), payload);
 
 

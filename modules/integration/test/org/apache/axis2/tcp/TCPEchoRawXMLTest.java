@@ -117,9 +117,8 @@ public class TCPEchoRawXMLTest extends TestCase {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-        options.setTransportInfo(Constants.TRANSPORT_TCP,
-                Constants.TRANSPORT_TCP,
-                false);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_TCP);
+        options.setUseSeparateListener(false);
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
@@ -166,9 +165,8 @@ public class TCPEchoRawXMLTest extends TestCase {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-        options.setTransportInfo(Constants.TRANSPORT_TCP,
-                Constants.TRANSPORT_TCP,
-                false);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_TCP);
+        options.setUseSeparateListener(false);
 
         OMElement result =
                 call.invokeBlocking(operationName.getLocalPart(),
@@ -199,9 +197,8 @@ public class TCPEchoRawXMLTest extends TestCase {
         options.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         options.setAction(operationName.getLocalPart());
-        options.setTransportInfo(Constants.TRANSPORT_TCP,
-                Constants.TRANSPORT_TCP,
-                true);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_TCP);
+        options.setUseSeparateListener(true);
 
         OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), payloadElement);
@@ -221,7 +218,8 @@ public class TCPEchoRawXMLTest extends TestCase {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setAction(operationName.getLocalPart());
-        options.setTransportInfo(Constants.TRANSPORT_TCP, Constants.TRANSPORT_TCP, false);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_TCP);
+        options.setUseSeparateListener(false);
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
 

@@ -25,23 +25,24 @@ import org.apache.axis2.om.OMElement;
 import test.interop.sun.round4.simple.util.SunGroupHClientUtil;
 
 public class EchoBlockingClient {
-    public OMElement sendMsg(SunGroupHClientUtil util,String soapAction){
-        OMElement firstchild=null;
+    public OMElement sendMsg(SunGroupHClientUtil util, String soapAction) {
+        OMElement firstchild = null;
         EndpointReference targetEPR =
-                new EndpointReference("http://soapinterop.java.sun.com:80/round4/grouph/simplerpcenc" );
+                new EndpointReference("http://soapinterop.java.sun.com:80/round4/grouph/simplerpcenc");
         try {
 
 
             Call call = new Call();
-             Options options = new Options();
-        call.setClientOptions(options);
+            Options options = new Options();
+            call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setExceptionToBeThrownOnSOAPFault(false);
-            options.setTransportInfo(Constants.TRANSPORT_HTTP,Constants.TRANSPORT_HTTP,false);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(false);
             options.setSoapAction(soapAction);
             //Blocking invocation
 
-            firstchild = call.invokeBlocking("",util.getEchoOMElement());
+            firstchild = call.invokeBlocking("", util.getEchoOMElement());
 
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();
@@ -51,10 +52,6 @@ public class EchoBlockingClient {
         return firstchild;
 
     }
-
-
-
-
 
 
 }

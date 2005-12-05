@@ -91,9 +91,8 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase implements TestCon
         call.setClientOptions(options);
         options.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-        options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                Constants.TRANSPORT_HTTP,
-                true);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setUseSeparateListener(true);
         options.setAction(operationName.getLocalPart());
 
         OMElement result = call.invokeBlocking(

@@ -46,8 +46,8 @@ import javax.xml.stream.XMLStreamException;
 public class TCPTwoChannelEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("tcp://127.0.0.1:"
-            + (UtilServer.TESTING_PORT)
-            + "/axis/services/EchoXMLService/echoOMElement");
+                    + (UtilServer.TESTING_PORT)
+                    + "/axis/services/EchoXMLService/echoOMElement");
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
     private QName transportName = new QName("http://localhost/my",
@@ -73,7 +73,6 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
     protected void setUp() throws Exception {
         UtilsTCPServer.start();
 
-        
         //create and deploy the service
         service =
                 Utils.createSimpleService(serviceName,
@@ -127,9 +126,8 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
-            options.setTransportInfo(Constants.TRANSPORT_TCP,
-                    Constants.TRANSPORT_TCP,
-                    true);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_TCP);
+            options.setUseSeparateListener(true);
             options.setAction(operationName.getLocalPart());
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {

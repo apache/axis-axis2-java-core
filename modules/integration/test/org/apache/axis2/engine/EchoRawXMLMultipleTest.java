@@ -84,9 +84,8 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
-            options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                    Constants.TRANSPORT_HTTP,
-                    false);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(false);
 
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
@@ -131,9 +130,8 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
-            options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                    Constants.TRANSPORT_HTTP,
-                    true);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(true);
 
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
@@ -179,9 +177,8 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
-            options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                    Constants.TRANSPORT_HTTP,
-                    false);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(false);
 
             OMElement result =
                     call.invokeBlocking(operationName.getLocalPart(),
@@ -190,6 +187,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             call.close();
         }
     }
+
     public void testEchoXMLMultipleDuelSync() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
@@ -202,9 +200,8 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
-            options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                    Constants.TRANSPORT_HTTP,
-                    true);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(true);
 
             OMElement result =
                     call.invokeBlocking(operationName.getLocalPart(),
@@ -213,7 +210,6 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             call.close();
         }
     }
-
 
 
 }

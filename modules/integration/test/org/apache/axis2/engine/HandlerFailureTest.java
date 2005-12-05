@@ -24,8 +24,8 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.integration.UtilServer;
@@ -159,9 +159,8 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
             String clientHome = "target/test-resources/integrationRepo";
 
             Options options = new Options();
-            options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                    Constants.TRANSPORT_HTTP,
-                    false);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(false);
             options.setTo(targetEPR);
 
             Call call = new Call(clientHome);

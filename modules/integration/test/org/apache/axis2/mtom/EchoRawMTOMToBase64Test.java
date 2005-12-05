@@ -104,8 +104,8 @@ public class EchoRawMTOMToBase64Test extends TestCase {
 
         Options clientOptions = new Options();
         clientOptions.setTo(targetEPR);
-        clientOptions.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP,
-                false);
+        clientOptions.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        clientOptions.setUseSeparateListener(false);
 
         Call call = new Call(clientHome);
         call.setClientOptions(clientOptions);
@@ -152,14 +152,14 @@ public class EchoRawMTOMToBase64Test extends TestCase {
             Options clientOptions = new Options();
             clientOptions.setTo(targetEPR);
             clientOptions.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-            clientOptions.setTransportInfo(Constants.TRANSPORT_HTTP,
-                    Constants.TRANSPORT_HTTP, false);
+            clientOptions.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            clientOptions.setUseSeparateListener(false);
             clientOptions.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
             Call call =
-                     new Call(clientHome);
+                    new Call(clientHome);
             call.setClientOptions(clientOptions);
-            
+
             OMElement result = call.invokeBlocking(operationName
                     .getLocalPart(), payload);
 

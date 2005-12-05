@@ -60,26 +60,26 @@ import java.util.Map;
 public class HTTPTransportUtils {
 
     public static void processHTTPPostRequest(
-        MessageContext msgContext,
-        InputStream in,
-        OutputStream out,
-        String contentType,
-        String soapActionHeader,
-        String requestURI,
-        ConfigurationContext configurationContext)
-        throws AxisFault {
+            MessageContext msgContext,
+            InputStream in,
+            OutputStream out,
+            String contentType,
+            String soapActionHeader,
+            String requestURI
+    )
+            throws AxisFault {
         boolean soap11 = false;
         try {
 
             //remove the starting and trailing " from the SOAP Action
             if (soapActionHeader != null
-                && soapActionHeader.startsWith("\"")
-                && soapActionHeader.endsWith("\"")) {
+                    && soapActionHeader.startsWith("\"")
+                    && soapActionHeader.endsWith("\"")) {
 
                 soapActionHeader =
-                    soapActionHeader.substring(
-                        1,
-                        soapActionHeader.length() - 1);
+                        soapActionHeader.substring(
+                                1,
+                                soapActionHeader.length() - 1);
             }
             //fill up the Message Contexts
             msgContext.setWSAAction(soapActionHeader);
@@ -92,8 +92,8 @@ public class HTTPTransportUtils {
             StAXBuilder builder = null;
             if (contentType != null) {
                 if (contentType
-                    .indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED)
-                    > -1) {
+                        .indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED)
+                        > -1) {
                     //It is MTOM
                     builder = selectBuilderForMIME(msgContext, in, contentType);
                     envelope = (SOAPEnvelope) builder.getDocumentElement();
@@ -104,47 +104,47 @@ public class HTTPTransportUtils {
                     //Figure out the char set encoding and create the reader
 
                     //If charset is not specified
-                    if ( getCharSetEncoding(contentType) == null ) {
+                    if (getCharSetEncoding(contentType) == null) {
                         xmlreader =
-                            XMLInputFactory
-                                .newInstance()
-                                .createXMLStreamReader(
-                                in,
-                                MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                                XMLInputFactory
+                                        .newInstance()
+                                        .createXMLStreamReader(
+                                                in,
+                                                MessageContext.DEFAULT_CHAR_SET_ENCODING);
                         //Set the encoding scheme in the message context
                         msgContext.setProperty(
-                            MessageContext.CHARACTER_SET_ENCODING,
-                            MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                                MessageContext.CHARACTER_SET_ENCODING,
+                                MessageContext.DEFAULT_CHAR_SET_ENCODING);
                     } else {
                         //get the type of char encoding
                         String charSetEnc = getCharSetEncoding(contentType);
                         xmlreader =
-                            XMLInputFactory
-                                .newInstance()
-                                .createXMLStreamReader(
-                                in,
-                                charSetEnc);
+                                XMLInputFactory
+                                        .newInstance()
+                                        .createXMLStreamReader(
+                                                in,
+                                                charSetEnc);
 
                         //Setting the value in msgCtx
                         msgContext.setProperty(
-                            MessageContext.CHARACTER_SET_ENCODING,
-                            charSetEnc);
+                                MessageContext.CHARACTER_SET_ENCODING,
+                                charSetEnc);
 
                     }
                     if (contentType
-                        .indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE)
-                        > -1) {
+                            .indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE)
+                            > -1) {
                         soap11 = false;
                         //it is SOAP 1.2
                         builder =
-                            new StAXSOAPModelBuilder(
-                                xmlreader,
-                                SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                                new StAXSOAPModelBuilder(
+                                        xmlreader,
+                                        SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                         envelope = (SOAPEnvelope) builder.getDocumentElement();
                     } else if (
-                        contentType.indexOf(
-                            SOAP11Constants.SOAP_11_CONTENT_TYPE)
-                            > -1) {
+                            contentType.indexOf(
+                                    SOAP11Constants.SOAP_11_CONTENT_TYPE)
+                                    > -1) {
                         soap11 = true;
                         //it is SOAP 1.1
 
@@ -154,7 +154,7 @@ public class HTTPTransportUtils {
                          * Configuration via Deployment
                          */
 
-                        Parameter enable  = msgContext.getParameter(Constants.Configuration.ENABLE_REST);
+                        Parameter enable = msgContext.getParameter(Constants.Configuration.ENABLE_REST);
 
                         if ((soapActionHeader == null
                                 || soapActionHeader.length() == 0)
@@ -174,12 +174,12 @@ public class HTTPTransportUtils {
                             }
                         } else {
                             builder =
-                                new StAXSOAPModelBuilder(
-                                    xmlreader,
-                                    SOAP11Constants
-                                        .SOAP_ENVELOPE_NAMESPACE_URI);
+                                    new StAXSOAPModelBuilder(
+                                            xmlreader,
+                                            SOAP11Constants
+                                                    .SOAP_ENVELOPE_NAMESPACE_URI);
                             envelope =
-                                (SOAPEnvelope) builder.getDocumentElement();
+                                    (SOAPEnvelope) builder.getDocumentElement();
                         }
                     }
 
@@ -188,13 +188,13 @@ public class HTTPTransportUtils {
             }
 
             String charsetEncoding = builder.getDocument().getCharsetEncoding();
-            if(charsetEncoding != null && !"".equals(charsetEncoding) &&
-                    !((String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING))
-                            .equalsIgnoreCase(charsetEncoding)){
+            if (charsetEncoding != null && !"".equals(charsetEncoding) &&
+                    !((String) msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING))
+                            .equalsIgnoreCase(charsetEncoding)) {
                 String faultCode;
-                if(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(envelope.getNamespace().getName())){
-                   faultCode = SOAP12Constants.FAULT_CODE_SENDER;
-                }else {
+                if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(envelope.getNamespace().getName())) {
+                    faultCode = SOAP12Constants.FAULT_CODE_SENDER;
+                } else {
                     faultCode = SOAP11Constants.FAULT_CODE_SENDER;
                 }
                 throw new AxisFault("Character Set Encoding from " +
@@ -204,7 +204,7 @@ public class HTTPTransportUtils {
 
 
             msgContext.setEnvelope(envelope);
-            AxisEngine engine = new AxisEngine(configurationContext);
+            AxisEngine engine = new AxisEngine(msgContext.getConfigurationContext());
             if (envelope.getBody().hasFault()) {
                 engine.receiveFault(msgContext);
             } else {
@@ -223,11 +223,11 @@ public class HTTPTransportUtils {
         } catch (FactoryConfigurationError e) {
             throw new AxisFault(e);
         } catch (UnsupportedEncodingException e) {
-        	throw new AxisFault(e);
+            throw new AxisFault(e);
         } finally {
             if (msgContext.getEnvelope() == null && !soap11) {
                 msgContext.setEnvelope(
-                    new SOAP12Factory().createSOAPEnvelope());
+                        new SOAP12Factory().createSOAPEnvelope());
             }
 
         }
@@ -238,13 +238,14 @@ public class HTTPTransportUtils {
      * Content-type header
      * Example:
      * Content-Type: text/xml; charset=utf-8
+     *
      * @param contentType
      */
     private static String getCharSetEncoding(String contentType) {
         int index = contentType.indexOf(HTTPConstants.CHAR_SET_ENCODING);
-        if(index == -1) { //Charset encoding not found in the contect-type header
-        	//Using the default UTF-8
-        	return MessageContext.DEFAULT_CHAR_SET_ENCODING;
+        if (index == -1) { //Charset encoding not found in the contect-type header
+            //Using the default UTF-8
+            return MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
 
         //If there are spaces around the '=' sign
@@ -262,7 +263,7 @@ public class HTTPTransportUtils {
         //There might be "" around the value - if so remove them
         value = value.replaceAll("\"", "");
 
-        if("null".equalsIgnoreCase(value)){
+        if ("null".equalsIgnoreCase(value)) {
             return null;
         }
 
@@ -271,18 +272,18 @@ public class HTTPTransportUtils {
     }
 
     public static boolean processHTTPGetRequest(
-        MessageContext msgContext,
-        InputStream in,
-        OutputStream out,
-        String contentType,
-        String soapAction,
-        String requestURI,
-        ConfigurationContext configurationContext,
-        Map requestParameters)
-        throws AxisFault {
+            MessageContext msgContext,
+            InputStream in,
+            OutputStream out,
+            String contentType,
+            String soapAction,
+            String requestURI,
+            ConfigurationContext configurationContext,
+            Map requestParameters)
+            throws AxisFault {
         if (soapAction != null
-            && soapAction.startsWith("\"")
-            && soapAction.endsWith("\"")) {
+                && soapAction.startsWith("\"")
+                && soapAction.endsWith("\"")) {
             soapAction = soapAction.substring(1, soapAction.length() - 1);
         }
         msgContext.setWSAAction(soapAction);
@@ -291,9 +292,9 @@ public class HTTPTransportUtils {
         msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
         msgContext.setServerSide(true);
         SOAPEnvelope envelope =
-            HTTPTransportUtils.createEnvelopeFromGetRequest(
-                requestURI,
-                requestParameters);
+                HTTPTransportUtils.createEnvelopeFromGetRequest(
+                        requestURI,
+                        requestParameters);
         if (envelope == null) {
             return false;
         } else {
@@ -306,10 +307,10 @@ public class HTTPTransportUtils {
     }
 
     public static SOAPEnvelope createEnvelopeFromGetRequest(
-        String requestUrl,
-        Map map) {
+            String requestUrl,
+            Map map) {
         String[] values =
-            Utils.parseRequestURLForServiceAndOperation(requestUrl);
+                Utils.parseRequestURLForServiceAndOperation(requestUrl);
 
         if (values[1] != null && values[0] != null) {
             String operation = values[1];
@@ -317,7 +318,7 @@ public class HTTPTransportUtils {
             SOAPEnvelope envelope = soapFactory.getDefaultEnvelope();
 
             OMNamespace omNs =
-                soapFactory.createOMNamespace(values[0], "services");
+                    soapFactory.createOMNamespace(values[0], "services");
             OMNamespace defualtNs = new OMNamespaceImpl("", null);
 
             OMElement opElement = soapFactory.createOMElement(operation, omNs);
@@ -339,81 +340,80 @@ public class HTTPTransportUtils {
     }
 
     public static StAXBuilder selectBuilderForMIME(
-        MessageContext msgContext,
-        InputStream inStream,
-        String contentTypeString)
-        throws OMException,
-			XMLStreamException, FactoryConfigurationError,
-			UnsupportedEncodingException {
+            MessageContext msgContext,
+            InputStream inStream,
+            String contentTypeString)
+            throws OMException,
+            XMLStreamException, FactoryConfigurationError,
+            UnsupportedEncodingException {
         StAXBuilder builder = null;
 
 
         Parameter parameter_cache_attachment = msgContext.getParameter(
                 Constants.Configuration.CACHE_ATTACHMENTS);
-         boolean fileCacheForAttachments ;
-        if(parameter_cache_attachment == null){
+        boolean fileCacheForAttachments;
+        if (parameter_cache_attachment == null) {
             fileCacheForAttachments = false;
-        }  else {
-           fileCacheForAttachments =
-            (Constants
-                .VALUE_TRUE
-                .equals(
-                    parameter_cache_attachment.getValue()));
+        } else {
+            fileCacheForAttachments =
+                    (Constants
+                            .VALUE_TRUE
+                            .equals(
+                            parameter_cache_attachment.getValue()));
         }
         String attachmentRepoDir = null;
         String attachmentSizeThreshold = null;
         Parameter parameter;
         if (fileCacheForAttachments) {
             parameter = msgContext.getParameter(Constants.Configuration.ATTACHMENT_TEMP_DIR);
-            attachmentRepoDir = parameter==null?"":parameter.getValue().toString();
+            attachmentRepoDir = parameter == null ? "" : parameter.getValue().toString();
 
             parameter = msgContext
                     .getParameter(Constants.Configuration.FILE_SIZE_THRESHOLD);
-            attachmentSizeThreshold = parameter==null?"":parameter.getValue().toString();
+            attachmentSizeThreshold = parameter == null ? "" : parameter.getValue().toString();
         }
 
         MIMEHelper mimeHelper = new MIMEHelper(inStream, contentTypeString,
-                fileCacheForAttachments, attachmentRepoDir,attachmentSizeThreshold);
+                fileCacheForAttachments, attachmentRepoDir, attachmentSizeThreshold);
 
         String charSetEncoding = getCharSetEncoding(mimeHelper.getSOAPPartContentType());
         XMLStreamReader reader;
-        if(charSetEncoding == null || "null".equalsIgnoreCase(charSetEncoding)){
-             reader = XMLInputFactory.newInstance()
-                .createXMLStreamReader(
-                        new BufferedReader(new InputStreamReader(mimeHelper
-                                .getSOAPPartInputStream(),
-                                charSetEncoding)));
+        if (charSetEncoding == null || "null".equalsIgnoreCase(charSetEncoding)) {
+            reader = XMLInputFactory.newInstance()
+                    .createXMLStreamReader(
+                            new BufferedReader(new InputStreamReader(mimeHelper
+                                    .getSOAPPartInputStream(),
+                                    charSetEncoding)));
             msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, charSetEncoding);
 
-        }else {
+        } else {
             reader = XMLInputFactory.newInstance()
-                .createXMLStreamReader(
-                        new BufferedReader(new InputStreamReader(mimeHelper
-                                .getSOAPPartInputStream())));
+                    .createXMLStreamReader(
+                            new BufferedReader(new InputStreamReader(mimeHelper
+                                    .getSOAPPartInputStream())));
             msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, MessageContext.UTF_8);
 
         }
 
-
         /*
-		 * put a reference to Attachments in to the message context
-		 */
+           * put a reference to Attachments in to the message context
+           */
         msgContext.setProperty(MTOMConstants.ATTACHMENTS, mimeHelper);
         if (mimeHelper.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
             /*
              * Creates the MTOM specific MTOMStAXSOAPModelBuilder
              */
             builder =
-                new MTOMStAXSOAPModelBuilder(
-                    reader,
-                    mimeHelper,
-                    null);
+                    new MTOMStAXSOAPModelBuilder(
+                            reader,
+                            mimeHelper,
+                            null);
         } else if (
-            mimeHelper.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
+                mimeHelper.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
             builder =
-                new StAXSOAPModelBuilder(
-                    reader,
-                    SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                    new StAXSOAPModelBuilder(
+                            reader,
+                            SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         }
         return builder;
     }
@@ -428,7 +428,7 @@ public class HTTPTransportUtils {
         while (childrenIter.hasNext() && !isOptimized) {
             OMNode node = (OMNode) childrenIter.next();
             if (OMNode.TEXT_NODE == node.getType()
-                && ((OMText) node).isOptimized()) {
+                    && ((OMText) node).isOptimized()) {
                 isOptimized = true;
             } else if (OMNode.ELEMENT_NODE == node.getType()) {
                 isOptimized = isOptimised((OMElement) node);
@@ -440,20 +440,20 @@ public class HTTPTransportUtils {
     public static boolean doWriteMTOM(MessageContext msgContext) {
         boolean enableMTOM = false;
         if (msgContext.getParameter(Constants.Configuration.ENABLE_MTOM)
-            != null) {
+                != null) {
             enableMTOM =
-                Constants.VALUE_TRUE.equals(
-                    msgContext.getParameter(
-                        Constants.Configuration.ENABLE_MTOM).getValue());
-        } else if(msgContext.getProperty(Constants.Configuration.ENABLE_MTOM) != null) {
+                    Constants.VALUE_TRUE.equals(
+                            msgContext.getParameter(
+                                    Constants.Configuration.ENABLE_MTOM).getValue());
+        } else if (msgContext.getProperty(Constants.Configuration.ENABLE_MTOM) != null) {
             enableMTOM =
-                Constants.VALUE_TRUE.equals(
-                    msgContext.getProperty(
-                        Constants.Configuration.ENABLE_MTOM));
+                    Constants.VALUE_TRUE.equals(
+                            msgContext.getProperty(
+                                    Constants.Configuration.ENABLE_MTOM));
         }
 
         boolean forceMIME = Constants.VALUE_TRUE.equals(msgContext.getProperty(Constants.Configuration.FORCE_MIME));
-        if(forceMIME) return true;
+        if (forceMIME) return true;
 
         boolean envelopeContainsOptimise = HTTPTransportUtils.checkEnvelopeForOptimise(
                 msgContext.getEnvelope());
@@ -462,7 +462,7 @@ public class HTTPTransportUtils {
 
     public static boolean isDoingREST(MessageContext msgContext) {
         boolean enableREST = false;
-        
+
         // check whether isDoingRest is already true in the message context
         if (msgContext.isDoingREST()) {
             return true;
@@ -470,15 +470,15 @@ public class HTTPTransportUtils {
 
         Parameter parameter = msgContext.getParameter(Constants.Configuration.ENABLE_REST);
         if (parameter
-            != null) {
+                != null) {
             enableREST =
-                Constants.VALUE_TRUE.equals(
-                    parameter.getValue());
-        } else if(msgContext.getProperty(Constants.Configuration.ENABLE_REST) != null) {
+                    Constants.VALUE_TRUE.equals(
+                            parameter.getValue());
+        } else if (msgContext.getProperty(Constants.Configuration.ENABLE_REST) != null) {
             enableREST =
-                Constants.VALUE_TRUE.equals(
-                    msgContext.getProperty(
-                        Constants.Configuration.ENABLE_REST));
+                    Constants.VALUE_TRUE.equals(
+                            msgContext.getProperty(
+                                    Constants.Configuration.ENABLE_REST));
         }
         msgContext.setDoingREST(enableREST);
         return enableREST;
@@ -489,18 +489,18 @@ public class HTTPTransportUtils {
         boolean restThroughPost = true;
 
         if (msgContext.getParameter(Constants.Configuration.ENABLE_REST_THROUGH_GET)
-            != null) {
+                != null) {
             restThroughPost =
-                Constants.VALUE_TRUE.equals(
-                    msgContext.getParameter(
-                        Constants.Configuration.ENABLE_REST_THROUGH_GET).getValue());
+                    Constants.VALUE_TRUE.equals(
+                            msgContext.getParameter(
+                                    Constants.Configuration.ENABLE_REST_THROUGH_GET).getValue());
             restThroughPost = false;
-        } else if(msgContext.getProperty(Constants.Configuration.ENABLE_REST_THROUGH_GET) != null) {
+        } else if (msgContext.getProperty(Constants.Configuration.ENABLE_REST_THROUGH_GET) != null) {
             restThroughPost =
-                Constants.VALUE_TRUE.equals(
-                    msgContext.getProperty(
-                        Constants.Configuration.ENABLE_REST_THROUGH_GET));
-            restThroughPost =false;
+                    Constants.VALUE_TRUE.equals(
+                            msgContext.getProperty(
+                                    Constants.Configuration.ENABLE_REST_THROUGH_GET));
+            restThroughPost = false;
         }
         msgContext.setRestThroughPOST(!restThroughPost);
         return restThroughPost;

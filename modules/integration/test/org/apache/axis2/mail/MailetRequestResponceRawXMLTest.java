@@ -53,7 +53,7 @@ import javax.xml.stream.XMLStreamException;
 public class MailetRequestResponceRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("axis2-server@127.0.0.1" +
-            "/axis/services/EchoXMLService/echoOMElement");
+                    "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -77,7 +77,7 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
 
     protected void setUp() throws Exception {
         ConfigurationContext configContext = UtilsMailServer.start();
-        
+
 //        configContext.getAxisConfiguration().engageModule(
 //                new QName(Constants.MODULE_ADDRESSING));
         AxisService service =
@@ -107,7 +107,7 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
     public void testEchoXMLCompleteASync() throws Exception {
 
         ConfigurationContext configContext = UtilsMailServer.createClientConfigurationContext();
-        
+
         AxisService service = new AxisService(serviceName);
         AxisOperation axisOperation = new OutInAxisOperation(
                 operationName);
@@ -121,23 +121,21 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
         Utils.resolvePhases(configContext.getAxisConfiguration(), service);
 
 
-
-        ServiceContext serviceContext = Utils.fillContextInformation(axisOperation,  service, configContext);
+        ServiceContext serviceContext = Utils.fillContextInformation(axisOperation, service, configContext);
 
         org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 serviceContext);
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setTransportInfo(Constants.TRANSPORT_MAIL,
-                Constants.TRANSPORT_MAIL,
-                true);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_MAIL);
+        options.setUseSeparateListener(true);
         call.setClientOptions(options);
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
                 try {
                     result.getResponseEnvelope().serializeAndConsume(
-                                    XMLOutputFactory.newInstance()
-                            .createXMLStreamWriter(System.out));
+                            XMLOutputFactory.newInstance()
+                                    .createXMLStreamWriter(System.out));
                 } catch (XMLStreamException e) {
                     reportError(e);
                 } finally {

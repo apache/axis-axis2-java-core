@@ -55,7 +55,7 @@ public class EchoRawXMLChunckedTest extends TestCase implements TestConstants {
     }
 
     protected void setUp() throws Exception {
-       UtilServer.start(CLIENT_HOME);
+        UtilServer.start(CLIENT_HOME);
         service =
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
@@ -67,7 +67,6 @@ public class EchoRawXMLChunckedTest extends TestCase implements TestConstants {
         UtilServer.unDeployService(serviceName);
         UtilServer.stop();
     }
-
 
 //    public void testEchoXMLASync() throws Exception {
 //                OMElement payload = createEnvelope();
@@ -118,8 +117,8 @@ public class EchoRawXMLChunckedTest extends TestCase implements TestConstants {
         call.setClientOptions(clientOptions);
 
         clientOptions.setTo(targetEPR);
-        clientOptions.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP,
-                false);
+        clientOptions.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        clientOptions.setUseSeparateListener(false);
 
         OMElement result =
                 call.invokeBlocking(operationName.getLocalPart(),

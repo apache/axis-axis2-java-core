@@ -11,18 +11,17 @@
                  javax.servlet.ServletContext,
                  javax.servlet.http.HttpServletRequest,
                  javax.servlet.http.HttpServletResponse,
-                 javax.servlet.jsp.JspWriter,
-                 javax.xml.namespace.QName"
+                 javax.xml.namespace.QName,
+                 javax.xml.parsers.SAXParser"
          session="false" %>
-<%@ page import="javax.xml.parsers.SAXParser" %>
 <%@ page import="javax.xml.parsers.SAXParserFactory" %>
 <%@ page import="javax.xml.stream.XMLOutputFactory" %>
 <%@ page import="javax.xml.stream.XMLStreamException" %>
 <%@ page import="java.io.IOException" %>
-
 <%@ page import="java.io.InputStream" %>
 
-<%@ page import="java.io.StringWriter"%>
+<%@ page import="java.io.StringWriter" %>
+
 <%
     /*
     * Copyright 2002,2004 The Apache Software Foundation.
@@ -346,9 +345,8 @@
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
-            options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                    Constants.TRANSPORT_HTTP,
-                    false);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(false);
 
             OMElement result =
                     call.invokeBlocking(operationName.getLocalPart(), payload);

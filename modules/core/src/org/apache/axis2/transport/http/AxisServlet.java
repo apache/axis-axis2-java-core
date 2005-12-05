@@ -183,8 +183,8 @@ public class AxisServlet extends HttpServlet {
                     out,
                     req.getContentType(),
                     req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
-                    req.getRequestURL().toString(),
-                    configContext);
+                    req.getRequestURL().toString()
+            );
 
             Object contextWritten =
                     msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);

@@ -51,7 +51,8 @@ public class Round1Client {
         Options options = new Options();
         options.setTo(new EndpointReference(url.toString()));
         options.setSoapAction(soapAction);
-        options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setUseSeparateListener(false);
 
         Call call = new Call(clientHome);
         call.setClientOptions(options);

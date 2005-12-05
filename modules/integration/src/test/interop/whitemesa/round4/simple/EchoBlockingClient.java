@@ -41,7 +41,8 @@ public class EchoBlockingClient {
             call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setExceptionToBeThrownOnSOAPFault(false);
-            options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_HTTP, false);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(false);
             options.setSoapAction(soapAction);
             //Blocking invocation
 

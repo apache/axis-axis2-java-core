@@ -66,9 +66,8 @@ public class RunnableDeleteQueue extends QueueManager implements Runnable {
             call.setClientOptions(options);
             options.setSoapAction("http://soap.amazon.com");
             options.setTo(new EndpointReference(url));
-            options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                    Constants.TRANSPORT_HTTP,
-                    false);
+            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(false);
             call.invokeNonBlocking(operation, element, specificCallbackObject);
         } catch (AxisFault axisFault) {
             axisFault.printStackTrace();

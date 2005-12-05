@@ -86,9 +86,8 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(targetEPR);
-        options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                Constants.TRANSPORT_HTTP,
-                false);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setUseSeparateListener(false);
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
@@ -132,9 +131,8 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(targetEPR);
-        options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                Constants.TRANSPORT_HTTP,
-                false);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setUseSeparateListener(false);
 
         OMElement result =
                 call.invokeBlocking(operationName.getLocalPart(),
@@ -152,9 +150,8 @@ public class EchoRawXMLTest extends TestCase implements TestConstants {
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(targetEPR);
-        options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                Constants.TRANSPORT_HTTP,
-                false);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setUseSeparateListener(false);
 
         OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), payload);

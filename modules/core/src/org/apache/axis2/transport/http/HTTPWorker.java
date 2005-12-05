@@ -41,10 +41,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.net.SocketException;
 
 public class HTTPWorker implements HttpRequestHandler {
     protected Log log = LogFactory.getLog(getClass().getName());
@@ -148,8 +148,8 @@ public class HTTPWorker implements HttpRequestHandler {
                         baos,
                         request.getContentType(),
                         soapAction,
-                        request.getRequestLine().getUri(),
-                        configurationContext);
+                        request.getRequestLine().getUri()
+                );
             }
 
             OperationContext operationContext = msgContext.getOperationContext();

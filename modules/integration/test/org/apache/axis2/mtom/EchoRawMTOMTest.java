@@ -56,7 +56,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
     private AxisService service;
 
     private OMTextImpl expectedTextData;
-    
+
     private boolean finish = false;
 
     public EchoRawMTOMTest() {
@@ -77,7 +77,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.stop();
-         UtilServer.unDeployClientService();
+        UtilServer.unDeployClientService();
     }
 
     protected OMElement createEnvelope() throws Exception {
@@ -90,7 +90,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
         Image expectedImage;
         expectedImage =
                 new ImageIO()
-                .loadImage(getResourceAsStream("org/apache/axis2/mtom/test.jpg"));
+                        .loadImage(getResourceAsStream("org/apache/axis2/mtom/test.jpg"));
         ImageDataSource dataSource = new ImageDataSource("test.jpg",
                 expectedImage);
         expectedDH = new DataHandler(dataSource);
@@ -100,26 +100,26 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
         return rpcWrapEle;
 
     }
+
     public void testEchoXMLASync() throws Exception {
         OMElement payload = createEnvelope();
 
         org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-                "target/test-resources/integrationRepo" );
+                "target/test-resources/integrationRepo");
 
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(targetEPR);
-        options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                Constants.TRANSPORT_HTTP,
-                false);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setUseSeparateListener(false);
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
                 SOAPEnvelope envelope = result.getResponseEnvelope();
-                
+
                 OMElement ele = (OMElement) envelope.getBody().getFirstElement().getFirstOMChild();
                 OMText binaryNode = (OMText) ele.getFirstOMChild();
-                
+
                 // to the assert equal
                 compareWithCreatedOMText(binaryNode);
                 finish = true;
@@ -145,7 +145,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
         }
         call.close();
     }
-    
+
     public void testEchoXMLSync() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
@@ -158,8 +158,8 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                Constants.TRANSPORT_HTTP, false);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setUseSeparateListener(false);
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
         OMElement result = call.invokeBlocking(operationName
@@ -169,13 +169,13 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
         // OMOutput(XMLOutputFactory.newInstance().createXMLStreamWriter(System.out)));
         OMElement ele = (OMElement) result.getFirstOMChild();
         OMText binaryNode = (OMText) ele.getFirstOMChild();
-        
+
         // to the assert equal
         compareWithCreatedOMText(binaryNode);
-        
+
         // Save the image
         DataHandler actualDH;
-        actualDH = (DataHandler)binaryNode.getDataHandler();
+        actualDH = (DataHandler) binaryNode.getDataHandler();
         Image actualObject = new ImageIO().loadImage(actualDH.getDataSource()
                 .getInputStream());
 //        FileOutputStream imageOutStream = new FileOutputStream("target/testout.jpg");

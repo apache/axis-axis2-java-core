@@ -51,7 +51,7 @@ import javax.xml.stream.XMLStreamException;
 public class MailRequestResponseRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
             new EndpointReference("foo@127.0.0.1" +
-            "/axis/services/EchoXMLService/echoOMElement");
+                    "/axis/services/EchoXMLService/echoOMElement");
     private Log log = LogFactory.getLog(getClass());
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
@@ -64,7 +64,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
     private SOAPEnvelope envelope;
 
     private boolean finish = false;
-     private ConfigurationContext config;
+    private ConfigurationContext config;
 
     public MailRequestResponseRawXMLTest() {
         super(MailRequestResponseRawXMLTest.class.getName());
@@ -76,7 +76,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
 
     protected void setUp() throws Exception {
         ConfigurationContext configContext = UtilsMailServer.start();
-        
+
         SimpleMailListener ml = new SimpleMailListener();
 
 
@@ -132,9 +132,8 @@ public class MailRequestResponseRawXMLTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setTransportInfo(Constants.TRANSPORT_MAIL,
-                Constants.TRANSPORT_MAIL,
-                true);
+        options.setListenerTransportProtocol(Constants.TRANSPORT_MAIL);
+        options.setUseSeparateListener(true);
         call.setClientOptions(options);
 
         Callback callback = new Callback() {
