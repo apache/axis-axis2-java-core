@@ -35,7 +35,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * Class HTTPTransportReceiver
+ * Class TCPServer
  */
 public class TCPServer extends TransportListener implements Runnable {
     private int port = 8000;

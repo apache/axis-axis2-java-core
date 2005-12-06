@@ -42,7 +42,7 @@ import java.util.Map;
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.
  */
-public class JMSSender implements TransportSender {
+public class JMSSender extends JMSTransport implements TransportSender {
     public JMSSender() {
     }
 
@@ -62,6 +62,9 @@ public class JMSSender implements TransportSender {
      * @throws AxisFault
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
+        
+        super.invoke(msgContext);
+        
         JMSConnector connector = null;
         try {
             Object destination = msgContext.getProperty(JMSConstants.DESTINATION);

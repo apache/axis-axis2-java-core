@@ -26,7 +26,7 @@ import java.util.HashMap;
 
 /**
  * JMSTransport is the JMS-specific implemenation of org.apache.axis.client.Transport.
- * It implements the setupMessageContextImpl() function to set JMS-specific message
+ * It implements the invoke() function to set JMS-specific message
  * context fields and transport chains.
  * <p/>
  * There are two
@@ -73,10 +73,10 @@ public class JMSTransport {
      * @param context the context to set up
      * @throws AxisFault if service cannot be found
      */
-    public void setupMessageContextImpl(MessageContext context)
+    public void invoke(MessageContext context)
             throws AxisFault {
         if (log.isDebugEnabled()) {
-            log.debug("Enter: JMSTransport::setupMessageContextImpl");
+            log.debug("Enter: JMSTransport::invoke");
         }
 
         JMSConnector connector = null;
@@ -97,7 +97,7 @@ public class JMSTransport {
         if (endpointAddr != null) {
             try {
                 // performs minimal validation ('jms:/destination?...')
-                jmsurl = new JMSURLHelper(new java.net.URL(endpointAddr));
+                jmsurl = new JMSURLHelper(endpointAddr);
 
                 // lookup the appropriate vendor adapter
                 String vendorId = jmsurl.getVendor();
@@ -105,7 +105,7 @@ public class JMSTransport {
                     vendorId = JMSConstants.JNDI_VENDOR_ID;
 
                 if (log.isDebugEnabled())
-                    log.debug("JMSTransport.setupMessageContextImpl(): endpt=" + endpointAddr +
+                    log.debug("JMSTransport.invoke(): endpt=" + endpointAddr +
                             ", vendor=" + vendorId);
 
                 vendorAdapter = JMSVendorAdapterFactory.getJMSVendorAdapter(vendorId);
@@ -117,7 +117,7 @@ public class JMSTransport {
                 connectorProperties = vendorAdapter.getJMSConnectorProperties(jmsurl);
                 connectionFactoryProperties = vendorAdapter.getJMSConnectionFactoryProperties(jmsurl);
             }
-            catch (java.net.MalformedURLException e) {
+            catch (Exception e) {
                 log.error(Messages.getMessage("malformedURLException00"), e);
                 throw new AxisFault(Messages.getMessage("malformedURLException00"), e);
             }
@@ -154,7 +154,7 @@ public class JMSTransport {
         vendorAdapter.setupMessageContext(context, jmsurl);
 
         if (log.isDebugEnabled()) {
-            log.debug("Exit: JMSTransport::setupMessageContextImpl");
+            log.debug("Exit: JMSTransport::invoke");
         }
     }
 
@@ -201,7 +201,7 @@ public class JMSTransport {
         }
 
         try {
-            JMSURLHelper jmsurl = new JMSURLHelper(new java.net.URL(endpointAddr));
+            JMSURLHelper jmsurl = new JMSURLHelper(endpointAddr);
             String vendorId = jmsurl.getVendor();
 
             JMSVendorAdapter vendorAdapter = null;
@@ -221,7 +221,7 @@ public class JMSTransport {
                     username, password,
                     vendorAdapter);
         }
-        catch (java.net.MalformedURLException e) {
+        catch (Exception e) {
             log.warn(Messages.getMessage("malformedURLException00"), e);
         }
 

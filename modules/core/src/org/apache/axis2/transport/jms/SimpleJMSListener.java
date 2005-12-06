@@ -84,6 +84,10 @@ public class SimpleJMSListener implements MessageListener {
         return connector;
     }
 
+    public ConfigurationContext getSystemContext() {
+       return this.configurationContext;
+   }
+    
     /**
      * This method is called asynchronously whenever a message arrives.
      *

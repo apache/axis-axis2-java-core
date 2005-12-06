@@ -16,6 +16,9 @@
 
 package org.apache.axis2.transport.jms;
 
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
+
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,7 +31,7 @@ import java.util.Vector;
  * The URL must be of the form: "jms:/<destination>?[<property>=<key>&]*"
  */
 public class JMSURLHelper {
-    private URL url;
+    private URI url;
 
     // the only property not in the query string
     private String destination;
@@ -42,18 +45,22 @@ public class JMSURLHelper {
     //application-specific JMS message properties
     private Vector appProperties;
 
-    public JMSURLHelper(java.net.URL url) throws java.net.MalformedURLException {
+    public JMSURLHelper(String url) throws Exception {
+            this(new URI(url), null);
+    }
+
+    public JMSURLHelper(URI url) throws java.net.MalformedURLException {
         this(url, null);
     }
 
-    public JMSURLHelper(java.net.URL url, String[] requiredProperties) throws java.net.MalformedURLException {
+    public JMSURLHelper(URI url, String[] requiredProperties) throws java.net.MalformedURLException {
         this.url = url;
         properties = new HashMap();
         appProperties = new Vector();
 
         // the path should be something like '/SampleQ1'
         // clip the leading '/' if there is one
-        destination = url.getPath();
+        destination = url.getEscapedPath();
         if (destination.startsWith("/"))
             destination = destination.substring(1);
 
@@ -61,20 +68,22 @@ public class JMSURLHelper {
             throw new java.net.MalformedURLException("Missing destination in URL");
 
         // parse the query string and populate the properties table
-        String query = url.getQuery();
-        StringTokenizer st = new StringTokenizer(query, "&;");
-        while (st.hasMoreTokens()) {
-            String keyValue = st.nextToken();
-            int eqIndex = keyValue.indexOf("=");
-            if (eqIndex > 0) {
-                String key = keyValue.substring(0, eqIndex);
-                String value = keyValue.substring(eqIndex + 1);
-                if (key.startsWith(JMSConstants._MSG_PROP_PREFIX)) {
-                    key = key.substring(
-                            JMSConstants._MSG_PROP_PREFIX.length());
-                    addApplicationProperty(key);
+        String query = url.getEscapedQuery();
+        if(query != null) {
+            StringTokenizer st = new StringTokenizer(query, "&;");
+            while (st.hasMoreTokens()) {
+                String keyValue = st.nextToken();
+                int eqIndex = keyValue.indexOf("=");
+                if (eqIndex > 0) {
+                    String key = keyValue.substring(0, eqIndex);
+                    String value = keyValue.substring(eqIndex + 1);
+                    if (key.startsWith(JMSConstants._MSG_PROP_PREFIX)) {
+                        key = key.substring(
+                                JMSConstants._MSG_PROP_PREFIX.length());
+                        addApplicationProperty(key);
+                    }
+                    properties.put(key, value);
                 }
-                properties.put(key, value);
             }
         }
 
