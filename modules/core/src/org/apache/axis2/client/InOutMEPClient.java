@@ -257,12 +257,14 @@ public class InOutMEPClient extends MEPClient {
         AxisConfiguration axisConfig = this.serviceContext.getConfigurationContext().getAxisConfiguration();
         String listenerTransportProtocol = clientOptions.getListenerTransportProtocol();
         if (axisConfig != null) {
-            if (listenerTransportProtocol != null && !"".equals(listenerTransportProtocol)) {
-                TransportInDescription transportIn = axisConfig.getTransportIn(new QName(listenerTransportProtocol));
-                if (transportIn == null) {
-                    throw new AxisFault(Messages.getMessage("unknownTransport", listenerTransportProtocol));
+            if (clientOptions.isUseSeparateListener()) {
+                if (listenerTransportProtocol != null && !"".equals(listenerTransportProtocol)) {
+                    TransportInDescription transportIn = axisConfig.getTransportIn(new QName(listenerTransportProtocol));
+                    if (transportIn == null) {
+                        throw new AxisFault(Messages.getMessage("unknownTransport", listenerTransportProtocol));
+                    }
+                    clientOptions.setListenerTransport(transportIn);
                 }
-                clientOptions.setListenerTransport(transportIn);
             }
 
             inferTransportOutDescription(msgCtx);
@@ -292,12 +294,14 @@ public class InOutMEPClient extends MEPClient {
         if (clientOptions.getSenderTransport() == null) {
             clientOptions.setSenderTransport(inferTransport(msgctx.getTo()));
         }
-        if (clientOptions.getListenerTransport() == null) {
-            clientOptions.setListenerTransport(serviceContext.getConfigurationContext()
-                    .getAxisConfiguration()
-                    .getTransportIn(clientOptions.getSenderTransport().getName()));
+        if (clientOptions.isUseSeparateListener()) {
+            if (clientOptions.getListenerTransport() == null) {
+                clientOptions.setListenerTransport(serviceContext.getConfigurationContext()
+                        .getAxisConfiguration()
+                        .getTransportIn(clientOptions.getSenderTransport().getName()));
+            }
         }
-
+            
         if (msgctx.getTransportIn() == null) {
             msgctx.setTransportIn(clientOptions.getListenerTransport());
         }
@@ -328,7 +332,9 @@ public class InOutMEPClient extends MEPClient {
      * requests sent, the call should be closed only when all are are done.
      */
     public void close() throws AxisFault {
-        ListenerManager.stop(serviceContext.getConfigurationContext(), clientOptions.getListenerTransport().getName().getLocalPart());
+        if(clientOptions.isUseSeparateListener()) {
+            ListenerManager.stop(serviceContext.getConfigurationContext(), clientOptions.getListenerTransport().getName().getLocalPart());
+        }
     }
 
     /**
