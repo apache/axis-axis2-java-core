@@ -23,12 +23,21 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisOperationFactory;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLBindingOperation;
+import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLEndpoint;
 import org.apache.wsdl.WSDLInterface;
@@ -40,15 +49,20 @@ import org.apache.wsdl.extensions.SOAPOperation;
 public class WSDLMEPClientBuilder {
 	private boolean isoneway= false;
 	private WSDLDescription description;
-	private String clienthome;
+	private ConfigurationContext configurationContext;
 	
-	public WSDLMEPClientBuilder(String clienthome){
-		this.clienthome = clienthome;
+	public WSDLMEPClientBuilder(String clienthome) throws AxisFault{
+		try{
+		configurationContext = new ConfigurationContextFactory().buildClientConfigurationContext(clienthome);
+		}catch(DeploymentException e){
+			throw new AxisFault(e);
+		}
 	}
 	
 	public void defineDescription(URL wsdlurl)throws AxisFault{
 		try {
-			WOMBuilder buider = WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1);
+			
+			WOMBuilder buider = WOMBuilderFactory.getBuilder(org.apache.axis2.wsdl.WSDLConstants.WSDL_1_1);
 			WSDLVersionWrapper vw = buider.build(wsdlurl.openStream());
 			description = vw.getDescription();
 		} catch (Exception e) {
@@ -64,12 +78,15 @@ public class WSDLMEPClientBuilder {
 	}
 	
 	public MEPClient createMEPClient(QName servicename, QName endpointname,String operationname) throws AxisFault{
+		if(description == null){
+			throw new AxisFault("You need to call public void defineDescription(URL wsdlurl before this method)");
+		}
 		WSDLService service = findService(servicename);
+		AxisService serviceDesc = new AxisService(service);
+		
 		WSDLEndpoint endpoint = findEndpoint(endpointname,service);
 		EndpointReference toepr = null;
-		String soapAction = "";
 		Options op = new Options();
-		
 		
 		Iterator elements = endpoint.getExtensibilityElements().iterator();
         while (elements.hasNext()) {
@@ -89,7 +106,24 @@ public class WSDLMEPClientBuilder {
         }
 
         WSDLBinding binding = endpoint.getBinding();
+        
+        //let us configure the complete AxisService out of this, not the current the Operation only
+        Iterator bindings = binding.getBindingOperations().values().iterator();
+        while(bindings.hasNext()){
+        	WSDLBindingOperation wsdlbop =(WSDLBindingOperation)bindings.next();
+        	WSDLOperation wsdlop = wsdlbop.getOperation();
+        	AxisOperation axisOp =  AxisOperationFactory.getAxisOperation(findMEP(wsdlop));
+        	axisOp.setName(wsdlop.getName());
+        	serviceDesc.addOperation(axisOp);
+        }
+        
+        //This part is compelte mess .. I think we need to look closly at the ServiceGroups  ..time been this works
+        configurationContext.getAxisConfiguration().addService(serviceDesc);
+        AxisServiceGroup serviceGroup = new AxisServiceGroup(configurationContext.getAxisConfiguration());
+        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configurationContext,serviceGroup);
+        ServiceContext serviceContext =  new ServiceContext(serviceDesc,serviceGroupContext);
 
+        
         WSDLOperation wsdlop = getOperation(operationname,endpoint);
         
         WSDLBindingOperation bop = binding.getBindingOperation(wsdlop.getName());
@@ -104,11 +138,13 @@ public class WSDLMEPClientBuilder {
         }
         
         
-        MEPClient mepclient = new MessageSender(clienthome);
+        
+        
+        MEPClient mepclient = null;
         if(wsdlop.getInputMessage() != null && wsdlop.getOutputMessage() != null && !isoneway){
-        	mepclient = new Call(clienthome);
+        	mepclient = new InOutMEPClient(serviceContext);
         }else if(wsdlop.getInputMessage() != null || isoneway){
-            mepclient = new MessageSender(clienthome);        	
+            mepclient = new InOnlyMEPClient(serviceContext);      	
         }else{
         	throw new AxisFault("Unknown MEP");
         }
@@ -175,4 +211,38 @@ public class WSDLMEPClientBuilder {
 	public void setIsoneway(boolean isoneway) {
 		this.isoneway = isoneway;
 	}
+	
+	
+	private int findMEP(WSDLOperation wsdlOp) throws AxisFault{
+		if(wsdlOp.getInputMessage() == null){
+			throw new AxisFault("Unsupported MEP");
+		}
+		if(wsdlOp.getOutputMessage() == null){
+			return WSDLConstants.MEP_CONSTANT_IN_ONLY;
+		}else{
+			return WSDLConstants.MEP_CONSTANT_IN_OUT;
+		}
+	}
+	
+//	public static void main(String[] args) throws Exception{
+//		WSDLMEPClientBuilder builder = new WSDLMEPClientBuilder("/home/hemapani/tools/axis2-0.93-SNAPSHOT-bin/repository/");
+//		//builder.defineDescription(new URL("http://mssoapinterop.org/asmx/WSDL/InteropTestDocLit.wsdl"));
+//		builder.defineDescription(new File("/home/hemapani/temp/InteropTestDocLit.wsdl").toURL());
+//		InOutMEPClient mepclient = (InOutMEPClient)builder.createMEPClient("echoStruct");
+//		
+//		String message= "<echoStructParam xmlns=\"http://soapinterop.org/xsd\"><varFloat>23.4</varFloat>\"<varInt>35</varInt><varString>Hello1</varString></echoStructParam>";
+//		XMLStreamReader in = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(message.getBytes()));
+//		StAXOMBuilder omb = new StAXOMBuilder(in);
+//		
+//		AxisOperation opDesc = AxisOperationFactory.getAxisOperation(AxisOperationFactory.MEP_CONSTANT_IN_OUT);
+//		opDesc.setName(new QName("http://soapinterop.org","echoStruct"));
+//		MessageContext msgctx= new MessageContext(mepclient.getServiceContext().getConfigurationContext());
+//		
+//		SOAPFactory soapFactory = new SOAP11Factory();
+//		SOAPEnvelope envelope = soapFactory.getDefaultEnvelope();
+//		envelope.getBody().setFirstChild(omb.getDocumentElement());
+//		msgctx.setEnvelope(envelope);
+//		
+//		mepclient.invokeBlocking(opDesc,msgctx);
+//	}
 }

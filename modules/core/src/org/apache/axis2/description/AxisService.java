@@ -66,7 +66,7 @@ public class AxisService
     private String axisServiceName;
     private String fileName = "";
 
-    private WSDLServiceImpl serviceimpl = null;
+    private WSDLService serviceimpl = null;
 
     private HashMap wsaaction_operationmap = null;
 
@@ -81,7 +81,7 @@ public class AxisService
      * Constructor AxisService
      */
 
-    public AxisService(WSDLServiceImpl serviceimpl) {
+    public AxisService(WSDLService serviceimpl) {
         this.serviceimpl = serviceimpl;
         this.wsaaction_operationmap = new HashMap();
         this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
