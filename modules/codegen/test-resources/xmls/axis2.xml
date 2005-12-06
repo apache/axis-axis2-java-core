@@ -20,6 +20,8 @@
     <!-- ================================================= -->
 
     <transportSender name="local" class="org.apache.axis2.transport.local.LocalTransportSender"/>
+    <transportSender name="jms" class="org.apache.axis2.transport.jms.JMSSender"/>
+    
 
     <!-- ================================================= -->
     <!-- Phases  -->
