@@ -23,6 +23,7 @@ import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.wsdl.WSDLBinding;
+import org.apache.wsdl.WSDLBindingMessageReference;
 import org.apache.wsdl.WSDLBindingOperation;
 import org.apache.wsdl.WSDLConstants;
 import org.apache.wsdl.WSDLExtensibilityElement;
@@ -323,18 +324,21 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
     }
 
     protected void foo(WSDLBindingOperation bindingOp) {
-        Iterator extIterator = bindingOp.getInput().getExtensibilityElements()
-                .iterator();
-        while (extIterator.hasNext()) {
-            WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
-            if (ExtensionConstants.SOAP_11_BODY.equals(element.getType()) ||
-                    ExtensionConstants.SOAP_12_BODY.equals(element.getType())) {
-                if (WSDLConstants.WSDL_USE_ENCODED.equals(
-                        ((SOAPBody) element).getUse())) {
-                    throw new RuntimeException(
-                            "The use 'encoded' is not supported!");
-                }
-            }
+        WSDLBindingMessageReference input = bindingOp.getInput();
+        if(input != null){
+			Iterator extIterator = input.getExtensibilityElements()
+	                .iterator();
+	        while (extIterator.hasNext()) {
+	            WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
+	            if (ExtensionConstants.SOAP_11_BODY.equals(element.getType()) ||
+	                    ExtensionConstants.SOAP_12_BODY.equals(element.getType())) {
+	                if (WSDLConstants.WSDL_USE_ENCODED.equals(
+	                        ((SOAPBody) element).getUse())) {
+	                    throw new RuntimeException(
+	                            "The use 'encoded' is not supported!");
+	                }
+	            }
+	        }
         }
     }
 
