@@ -118,7 +118,6 @@ public class TCPEchoRawXMLTest extends TestCase {
         options.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         options.setListenerTransportProtocol(Constants.TRANSPORT_TCP);
-        options.setUseSeparateListener(false);
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
@@ -166,7 +165,6 @@ public class TCPEchoRawXMLTest extends TestCase {
         options.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         options.setListenerTransportProtocol(Constants.TRANSPORT_TCP);
-        options.setUseSeparateListener(false);
 
         OMElement result =
                 call.invokeBlocking(operationName.getLocalPart(),
@@ -219,7 +217,6 @@ public class TCPEchoRawXMLTest extends TestCase {
         options.setTo(targetEPR);
         options.setAction(operationName.getLocalPart());
         options.setListenerTransportProtocol(Constants.TRANSPORT_TCP);
-        options.setUseSeparateListener(false);
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
 

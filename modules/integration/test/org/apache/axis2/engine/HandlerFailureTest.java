@@ -160,7 +160,6 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
 
             Options options = new Options();
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-            options.setUseSeparateListener(false);
             options.setTo(targetEPR);
 
             Call call = new Call(clientHome);

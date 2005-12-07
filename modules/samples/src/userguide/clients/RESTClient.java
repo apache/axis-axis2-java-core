@@ -43,7 +43,6 @@ public class RESTClient {
         Options options = new Options();
         options.setTo(new EndpointReference(toEpr));
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
 
         options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 

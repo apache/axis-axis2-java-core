@@ -160,7 +160,6 @@ public class AsynchronousClient {
         MessageContext requestContext = ClientUtil.getMessageContext();
         try {
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-            options.setUseSeparateListener(false);
 
             requestContext.getEnvelope().serializeAndConsume(
                     XMLOutputFactory.newInstance()

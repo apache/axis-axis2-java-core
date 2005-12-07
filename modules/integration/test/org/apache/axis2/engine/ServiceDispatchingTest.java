@@ -77,8 +77,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         options.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis/services/EchoXMLService/echoOMElement"));
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
-        
+
         OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), payload);
         TestingUtils.campareWithCreatedOMElement(result);
@@ -100,7 +99,6 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         options.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis/services/EchoXMLService/"));
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
         options.setSoapAction("echoOMElement");
         OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), payload);
@@ -127,7 +125,6 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         options.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis/services/"));
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
         OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), payload);
         TestingUtils.campareWithCreatedOMElement(result);

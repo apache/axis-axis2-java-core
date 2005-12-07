@@ -45,7 +45,6 @@ public class TCPClient {
         call.setClientOptions(options);
         options.setTo(new EndpointReference(toEpr));
         options.setListenerTransportProtocol(Constants.TRANSPORT_TCP);
-        options.setUseSeparateListener(false);
 
         OMElement result = call.invokeBlocking("echo", getPayload());
 

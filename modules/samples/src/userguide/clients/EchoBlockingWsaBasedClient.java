@@ -50,7 +50,6 @@ public class EchoBlockingWsaBasedClient {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
 
         //Blocking invocation via wsa mapping
         options.setAction("urn:sample/echo");

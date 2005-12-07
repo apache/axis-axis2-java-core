@@ -85,7 +85,6 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-            options.setUseSeparateListener(false);
 
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
@@ -178,7 +177,6 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-            options.setUseSeparateListener(false);
 
             OMElement result =
                     call.invokeBlocking(operationName.getLocalPart(),

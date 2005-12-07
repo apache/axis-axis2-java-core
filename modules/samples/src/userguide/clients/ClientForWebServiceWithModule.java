@@ -38,7 +38,6 @@ public class ClientForWebServiceWithModule {
             call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-            options.setUseSeparateListener(false);
 
             //Blocking invocation
             OMElement result = call.invokeBlocking("echo",

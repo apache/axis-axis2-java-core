@@ -87,7 +87,6 @@ public class GroovyServiceTest extends TestCase {
         Options options = new Options();
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
         options.setAction(operationName.getLocalPart());
 
         call.setClientOptions(options);

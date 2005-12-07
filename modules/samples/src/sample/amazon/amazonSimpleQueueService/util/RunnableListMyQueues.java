@@ -67,7 +67,6 @@ public class RunnableListMyQueues extends QueueManager implements Runnable {
             options.setSoapAction("http://soap.amazon.com");
             options.setTo(new EndpointReference(url));
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-            options.setUseSeparateListener(false);
 
             call.invokeNonBlocking(operation, element, specificCallbackObject);
         } catch (AxisFault axisFault) {

@@ -346,7 +346,6 @@
             call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-            options.setUseSeparateListener(false);
 
             OMElement result =
                     call.invokeBlocking(operationName.getLocalPart(), payload);

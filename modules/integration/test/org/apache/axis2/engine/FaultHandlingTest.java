@@ -112,7 +112,6 @@ public class FaultHandlingTest extends TestCase implements TestConstants {
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
         return inOutMEPClient;
     }
 

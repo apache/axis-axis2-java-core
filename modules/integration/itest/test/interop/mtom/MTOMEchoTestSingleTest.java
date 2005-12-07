@@ -47,7 +47,6 @@ public class MTOMEchoTestSingleTest extends TestCase {
         options.setProperty(Constants.Configuration.ENABLE_MTOM,
                 Constants.VALUE_TRUE);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
         OMElement resultElem = call.invokeBlocking("EchoTestSingle", BodyElements.bodySingle(optimized));

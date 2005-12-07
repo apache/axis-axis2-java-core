@@ -51,7 +51,6 @@ public class CalcClient {
         Call call = new Call();
         Options options = new Options();
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
         call.setClientOptions(options);
 
         boolean exit = false;

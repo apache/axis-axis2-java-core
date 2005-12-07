@@ -100,7 +100,6 @@ public class AsynchronousClient {
         MessageContext requestContext = ClientUtil.getMessageContext(this);
         try {
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-            options.setUseSeparateListener(false);
             QName opName = new QName("urn:GoogleSearch", "doGoogleSearch");
             AxisOperation opdesc = new OutInAxisOperation(opName);
             //   AxisOperation opdesc = new AxisOperation(new QName("viewVersion"));

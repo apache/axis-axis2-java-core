@@ -83,7 +83,6 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
 
             options.setTo(targetEPR);
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-            options.setUseSeparateListener(false);
             OMElement resultElem = call.invokeBlocking(operationName.getLocalPart(), payload);
 
 

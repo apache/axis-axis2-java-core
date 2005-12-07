@@ -62,7 +62,6 @@ public class RunnableReadQueue extends QueueManager implements Runnable {
             options.setSoapAction("http://soap.amazon.com");
             options.setTo(new EndpointReference(url));
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-            options.setUseSeparateListener(false);
 
             Call call = new Call();
             call.setClientOptions(options);

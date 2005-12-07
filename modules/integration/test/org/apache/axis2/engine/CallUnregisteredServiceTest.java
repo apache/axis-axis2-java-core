@@ -72,7 +72,6 @@ public class CallUnregisteredServiceTest extends TestCase {
             Options options = new Options();
             call.setClientOptions(options);
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-            options.setUseSeparateListener(false);
             options.setTo(targetEPR);
             
             SOAPEnvelope resEnv =

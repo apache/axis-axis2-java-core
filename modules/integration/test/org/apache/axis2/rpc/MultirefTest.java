@@ -131,7 +131,6 @@ public class MultirefTest extends TestCase {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
 
         SOAPEnvelope env = call.invokeBlocking("echoString", envelope);
         assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "hello Axis2");
@@ -173,7 +172,6 @@ public class MultirefTest extends TestCase {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
         SOAPEnvelope env = call.invokeBlocking("add", envelope);
         assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "20");
     }
@@ -207,7 +205,6 @@ public class MultirefTest extends TestCase {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
 
         SOAPEnvelope env = call.invokeBlocking("add", envelope);
         assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "20");
@@ -250,7 +247,6 @@ public class MultirefTest extends TestCase {
             call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-            options.setUseSeparateListener(false);
             call.invokeBlocking("add", envelope);
             fail("This should fail with : " + "org.apache.axis2.AxisFault: Invalid reference :2");
         } catch (AxisFault axisFault) {
@@ -302,7 +298,6 @@ public class MultirefTest extends TestCase {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
         SOAPEnvelope env = call.invokeBlocking("editBean", envelope);
         OMElement response = env.getBody().getFirstElement();
         MyBean resBean = (MyBean) BeanSerializerUtil.deserialize(MyBean.class, response.getFirstElement());
@@ -351,7 +346,6 @@ public class MultirefTest extends TestCase {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
 
         SOAPEnvelope env = call.invokeBlocking("beanOM", envelope);
         OMElement response = env.getBody().getFirstElement();
@@ -403,7 +397,6 @@ public class MultirefTest extends TestCase {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
         SOAPEnvelope env = call.invokeBlocking("omrefs", envelope);
         OMElement response = env.getBody().getFirstElement();
 
@@ -467,7 +460,6 @@ public class MultirefTest extends TestCase {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
         SOAPEnvelope env = call.invokeBlocking("echoEmployee", envelope);
         Employee emp = (Employee) BeanSerializerUtil.deserialize(Employee.class, env.getBody().getFirstElement().getFirstElement());
         assertNotNull(emp);
@@ -520,7 +512,6 @@ public class MultirefTest extends TestCase {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
 
         SOAPEnvelope env = call.invokeBlocking("handleArrayList", envelope);
         assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "abcdefghiklm10");

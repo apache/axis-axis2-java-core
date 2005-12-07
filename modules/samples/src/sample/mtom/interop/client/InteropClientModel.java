@@ -71,7 +71,6 @@ public class InteropClientModel {
         // enabling MTOM in the client side
         options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_FALSE);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
         call.setClientOptions(options);
 
         return call.invokeBlocking(operationName

@@ -87,7 +87,6 @@ public class RESTBasedEchoRawXMLTest extends TestCase implements TestConstants {
         Options options = new Options();
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
         options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 
         call.setClientOptions(options);

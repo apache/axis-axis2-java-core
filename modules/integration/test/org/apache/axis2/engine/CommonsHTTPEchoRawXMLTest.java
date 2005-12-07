@@ -77,7 +77,6 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
@@ -121,7 +120,6 @@ public class CommonsHTTPEchoRawXMLTest extends TestCase implements TestConstants
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(false);
 
         OMElement result =
                 call.invokeBlocking(operationName.getLocalPart(),

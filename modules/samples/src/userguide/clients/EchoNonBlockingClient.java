@@ -46,7 +46,6 @@ public class EchoNonBlockingClient {
             call.setClientOptions(options);
             options.setTo(targetEPR);
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
-            options.setUseSeparateListener(false);
 
             //Callback to handle the response
             Callback callback = new Callback() {
