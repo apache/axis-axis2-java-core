@@ -135,7 +135,7 @@ public class SOAPversionTest extends TestCase implements TestConstants {
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(
-                fac.createText(value, "Isaac Assimov, the foundation Sega"));
+                fac.createText(value, "Isaac Asimov, The Foundation Trilogy"));
         method.addChild(value);
 
         return method;

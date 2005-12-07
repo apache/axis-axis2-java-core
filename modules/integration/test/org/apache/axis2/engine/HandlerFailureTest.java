@@ -153,7 +153,7 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
                     "my");
             OMElement method = fac.createOMElement("echoOMElement", omNs);
             OMElement value = fac.createOMElement("myValue", omNs);
-            value.setText("Isaac Assimov, the foundation Sega");
+            value.setText("Isaac Asimov, The Foundation Trilogy");
             method.addChild(value);
 
             String clientHome = "target/test-resources/integrationRepo";

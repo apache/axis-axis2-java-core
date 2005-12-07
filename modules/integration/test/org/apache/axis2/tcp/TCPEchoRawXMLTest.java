@@ -101,7 +101,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(
-                fac.createText(value, "Isaac Assimov, the foundation Sega"));
+                fac.createText(value, "Isaac Asimov, The Foundation Trilogy"));
         method.addChild(value);
 
         return method;
@@ -185,7 +185,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement payloadElement = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
-        value.setText("Isaac Assimov, the foundation Sega");
+        value.setText("Isaac Asimov, The Foundation Trilogy");
         payloadElement.addChild(value);
 
         org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
@@ -223,7 +223,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
-        value.setText("Isaac Assimov, the foundation Sega");
+        value.setText("Isaac Asimov, The Foundation Trilogy");
         method.addChild(value);
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope envelope = factory.getDefaultEnvelope();

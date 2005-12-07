@@ -60,7 +60,7 @@ public class CallUnregisteredServiceTest extends TestCase {
             OMElement value = fac.createOMElement("myValue", omNs);
             value.addChild(
                     fac.createText(value,
-                            "Isaac Assimov, the foundation Sega"));
+                            "Isaac Asimov, The Foundation Trilogy"));
             method.addChild(value);
 
             Call call = new Call("target/test-resources/integrationRepo");

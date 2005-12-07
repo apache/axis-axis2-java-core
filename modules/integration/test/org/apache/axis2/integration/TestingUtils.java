@@ -29,7 +29,7 @@ public class TestingUtils {
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(
-                fac.createText(value, "Isaac Assimov, the foundation Sega"));
+                fac.createText(value, "Isaac Asimov, The Foundation Trilogy"));
         method.addChild(value);
         return method;
     }
@@ -38,7 +38,7 @@ public class TestingUtils {
         OMElement firstChild = element.getFirstElement();
         TestCase.assertNotNull(firstChild);
         String textValue = firstChild.getText();
-        TestCase.assertEquals(textValue, "Isaac Assimov, the foundation Sega");
+        TestCase.assertEquals(textValue, "Isaac Asimov, The Foundation Trilogy");
     }
 
 }

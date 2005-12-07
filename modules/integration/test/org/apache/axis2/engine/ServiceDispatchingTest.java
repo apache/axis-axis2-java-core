@@ -90,7 +90,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         OMElement payload = fac.createOMElement("echoOMElementRequest", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(
-                fac.createText(value, "Isaac Assimov, the foundation Sega"));
+                fac.createText(value, "Isaac Asimov, The Foundation Trilogy"));
         payload.addChild(value);
         org.apache.axis2.client.Call call =
                 new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
@@ -114,7 +114,7 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         OMElement payload = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(
-                fac.createText(value, "Isaac Assimov, the foundation Sega"));
+                fac.createText(value, "Isaac Asimov, The Foundation Trilogy"));
         payload.addChild(value);
 
 

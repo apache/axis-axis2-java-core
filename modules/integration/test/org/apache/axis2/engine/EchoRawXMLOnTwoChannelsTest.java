@@ -86,7 +86,7 @@ public class EchoRawXMLOnTwoChannelsTest extends TestCase implements TestConstan
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
-        value.setText("Isaac Assimov, the foundation Sega");
+        value.setText("Isaac Asimov, The Foundation Trilogy");
         method.addChild(value);
 
         Call call =
