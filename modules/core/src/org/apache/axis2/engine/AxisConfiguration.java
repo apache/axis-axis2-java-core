@@ -139,15 +139,15 @@ public class AxisConfiguration  implements ParameterInclude{
         add_dispatch.getHandlerDesc().setParent(this);
         dispatch.addHandler(add_dispatch, 0);       
 
+		RequestURIBasedDispatcher uri_diaptch = new RequestURIBasedDispatcher();
+		uri_diaptch.getHandlerDesc().setParent(this);
+		uri_diaptch.initDispatcher();
+		dispatch.addHandler(uri_diaptch, 1);
+
         SOAPActionBasedDispatcher soapActionBased_dispatch = new SOAPActionBasedDispatcher();
         soapActionBased_dispatch.getHandlerDesc().setParent(this);
         soapActionBased_dispatch.initDispatcher();
-        dispatch.addHandler(soapActionBased_dispatch, 1);
-        
-        RequestURIBasedDispatcher uri_diaptch = new RequestURIBasedDispatcher();
-        uri_diaptch.getHandlerDesc().setParent(this);
-        uri_diaptch.initDispatcher();
-        dispatch.addHandler(uri_diaptch, 2);
+        dispatch.addHandler(soapActionBased_dispatch, 2);       
 
         SOAPMessageBodyBasedDispatcher soapMessageBodybased_dispatch =
                 new SOAPMessageBodyBasedDispatcher();
