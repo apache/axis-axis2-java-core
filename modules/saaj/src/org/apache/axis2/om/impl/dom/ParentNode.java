@@ -183,7 +183,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 				this.firstChild.isFirstChild(true);
 			} else {
 				this.lastChild.nextSibling = newDomChild;
-				newDomChild.previousSubling = this.lastChild;
+				newDomChild.previousSibling = this.lastChild;
 			
 				this.lastChild = newDomChild;
 			}
@@ -206,7 +206,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 							DocumentFragmentimpl docFrag = (DocumentFragmentimpl)newChild;
 							this.firstChild = docFrag.firstChild;
 							docFrag.lastChild.nextSibling = refDomChild;
-							refDomChild.previousSubling = docFrag.lastChild.nextSibling; 
+							refDomChild.previousSibling = docFrag.lastChild.nextSibling; 
 							
 						} else {
 							
@@ -214,32 +214,32 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 							this.firstChild = newDomChild;
 							
 							newDomChild.nextSibling = refDomChild;
-							refDomChild.previousSubling = newDomChild;
+							refDomChild.previousSibling = newDomChild;
 							
 							this.firstChild.isFirstChild(true);
 							refDomChild.isFirstChild(false);
-							newDomChild.previousSubling = null; //Just to be sure :-)
+							newDomChild.previousSibling = null; //Just to be sure :-)
 							
 						}
 					} else { //If the refChild is not the fist child
-						ChildNode previousNode = refDomChild.previousSubling;
+						ChildNode previousNode = refDomChild.previousSibling;
 						
 						if(newChild instanceof DocumentFragmentimpl) {
 							//the newChild is a document fragment
 							DocumentFragmentimpl docFrag = (DocumentFragmentimpl)newChild;
 							
 							previousNode.nextSibling = docFrag.firstChild;
-							docFrag.firstChild.previousSubling = previousNode;
+							docFrag.firstChild.previousSibling = previousNode;
 							
 							docFrag.lastChild.nextSibling = refDomChild;
-							refDomChild.previousSubling = docFrag.lastChild;
+							refDomChild.previousSibling = docFrag.lastChild;
 						} else {
 							
 							previousNode.nextSibling = newDomChild;
-							newDomChild.previousSubling = previousNode;
+							newDomChild.previousSibling = previousNode;
 							
 							newDomChild.nextSibling = refDomChild;
-							refDomChild.previousSubling = newDomChild;
+							refDomChild.previousSibling = newDomChild;
 						}
 						
 					}
@@ -305,28 +305,32 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 //					docFrag.firstChild.previousSubling = oldDomChild.previousSubling;
 //					
 				} else {
-					newDomChild.nextSibling = oldDomChild.nextSibling;
-					newDomChild.previousSubling = oldDomChild.previousSubling;
-					
-					oldDomChild.previousSubling.nextSibling = newDomChild;
-					
-					//If the old child is not the last
-					if(oldDomChild.nextSibling != null) {
-						oldDomChild.nextSibling.previousSubling = newDomChild;
+					if(oldDomChild.isFirstChild()) {
+						oldDomChild.detach();
+						this.addChild(newDomChild);
 					} else {
-						this.lastChild = newDomChild;
+						newDomChild.nextSibling = oldDomChild.nextSibling;
+						newDomChild.previousSibling = oldDomChild.previousSibling;
+						
+						oldDomChild.previousSibling.nextSibling = newDomChild;
+						
+						//If the old child is not the last
+						if(oldDomChild.nextSibling != null) {
+							oldDomChild.nextSibling.previousSibling = newDomChild;
+						} else {
+							this.lastChild = newDomChild;
+						}
+						
+						if(newDomChild.parentNode == null) {
+							newDomChild.parentNode = this;
+						}
 					}
-					
-					if(newDomChild.parentNode == null) {
-						newDomChild.parentNode = this;
-					}
-					
 				}
 				found = true;
 				
 				//remove the old child's references to this tree
 				oldDomChild.nextSibling = null;
-				oldDomChild.previousSubling = null;
+				oldDomChild.previousSibling = null;
 				oldDomChild.parentNode = null;
 			}	
 		}
@@ -368,21 +372,21 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 					tempNode.parentNode = null;
 				} else if (this.lastChild == tempNode) {
 					//not the first child, but the last child 
-					ChildNode prevSib = tempNode.previousSubling;
+					ChildNode prevSib = tempNode.previousSibling;
 					prevSib.nextSibling = null;
 					tempNode.parentNode = null;
-					tempNode.previousSubling = null;
+					tempNode.previousSibling = null;
 				} else {
 	
 					ChildNode oldDomChild = (ChildNode)oldChild;
-					ChildNode privChild = oldDomChild.previousSubling;
+					ChildNode privChild = oldDomChild.previousSibling;
 					
 					privChild.nextSibling = oldDomChild.nextSibling;
-					oldDomChild.nextSibling.previousSubling = privChild;
+					oldDomChild.nextSibling.previousSibling = privChild;
 					
 					//Remove old child's references to this tree
 					oldDomChild.nextSibling = null;
-					oldDomChild.previousSubling = null;
+					oldDomChild.previousSibling = null;
 				}
 				//Child found
 				childFound = true;

@@ -489,6 +489,10 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
 		throw new UnsupportedOperationException("TODO");
 	}
 
+
+	public String toString() {
+		return (this.textValue != null)?textValue.toString() : "";
+	}
     
 	
 }

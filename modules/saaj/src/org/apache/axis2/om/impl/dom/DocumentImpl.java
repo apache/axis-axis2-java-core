@@ -15,6 +15,7 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import org.apache.axis2.om.OMConstants;
 import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMDocument;
 import org.apache.axis2.om.OMElement;
@@ -140,14 +141,18 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	
 	public Attr createAttributeNS(String namespaceURI, String qualifiedName)
 			throws DOMException {
-		
-		String localName = DOMUtil.getLocalName(qualifiedName);
-		String prefix = DOMUtil.getPrefix(qualifiedName);
-		
-		this.checkQName(prefix,localName);
-		
-		return new AttrImpl(this,localName,
-				new NamespaceImpl(namespaceURI, prefix));
+		if(!namespaceURI.equals(OMConstants.XMLNS_NS_URI)) {
+			String localName = DOMUtil.getLocalName(qualifiedName);
+			String prefix = DOMUtil.getPrefix(qualifiedName);
+			
+			this.checkQName(prefix,localName);
+			
+			return new AttrImpl(this,localName,
+					new NamespaceImpl(namespaceURI, prefix));
+		} else {
+			//Do nothing since we handle the 'xmlns:' internally
+			return null;
+		}
 	}
 	
 	public CDATASection createCDATASection(String arg0) throws DOMException {
@@ -173,8 +178,10 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 		
 		String localName = DOMUtil.getLocalName(qualifiedName);
 		String prefix = DOMUtil.getPrefix(qualifiedName);
-		
-		this.checkQName(prefix,localName);
+
+		if(ns != null && (prefix != null || "".equals(prefix))) {
+			this.checkQName(prefix,localName);
+		}
 		
 		NamespaceImpl namespace = new NamespaceImpl(ns, prefix);
 		return new ElementImpl(this, localName, namespace);
@@ -226,21 +233,21 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 				} else {
 					newElement = createElementNS(importedNode.getNamespaceURI(),importedNode.getNodeName());
 				}
-				
+				 
 				//Copy element's attributes, if any.
                 NamedNodeMap sourceAttrs = importedNode.getAttributes();
                 if (sourceAttrs != null) {
                     int length = sourceAttrs.getLength();
                     for (int index = 0; index < length; index++) {
                         Attr attr = (Attr)sourceAttrs.item(index);
-                        
-                        Attr newAttr = (Attr) importNode(attr, true);
-                        if(attr.getLocalName() == null) {
+                        if(attr.getNamespaceURI() != null && !attr.getNamespaceURI().equals(OMConstants.XMLNS_NS_URI)) {
+                        	Attr newAttr = (Attr) importNode(attr, true);
+                            newElement.setAttributeNodeNS(newAttr);
+                        } else if(attr.getLocalName() == null) {
+                        	Attr newAttr = (Attr) importNode(attr, true);
                         	newElement.setAttributeNode(newAttr);
-                        } else {
-                        	newElement.setAttributeNodeNS(newAttr);
                         }
-                        
+                     
                     }
                 }
                 newNode = newElement;

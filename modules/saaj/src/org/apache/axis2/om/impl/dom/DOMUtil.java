@@ -48,7 +48,7 @@ class DOMUtil {
 	 * @return
 	 */
 	public static String getLocalName(String qualifiedName) {
-		if(qualifiedName.indexOf(":") > -1) {
+		if(qualifiedName.indexOf(":") > -1 && !qualifiedName.trim().endsWith(":")) {
 			return qualifiedName.split(":")[1];
 		} else  {
 			return qualifiedName;

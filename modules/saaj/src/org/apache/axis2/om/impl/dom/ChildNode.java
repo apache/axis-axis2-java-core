@@ -26,7 +26,7 @@ import org.w3c.dom.Node;
  */
 public abstract class ChildNode extends NodeImpl {
 
-	protected ChildNode previousSubling;
+	protected ChildNode previousSibling;
 	
 	protected ChildNode nextSibling;
 	
@@ -51,10 +51,10 @@ public abstract class ChildNode extends NodeImpl {
 		return this.nextSibling;
 	}
 	public OMNode getPreviousOMSibling() {
-		return this.previousSubling;
+		return this.previousSibling;
 	}
 	public Node getPreviousSibling() {
-		return this.previousSubling;
+		return this.previousSibling;
 	}
 
 	///
@@ -69,7 +69,7 @@ public abstract class ChildNode extends NodeImpl {
 
 	public void setPreviousOMSibling(OMNode node) {
 		if(node instanceof ChildNode)
-			this.previousSubling = (ChildNode)node;
+			this.previousSibling = (ChildNode)node;
 		else
 			throw new OMException("The node is not a " + ChildNode.class);		
 	}
@@ -94,12 +94,17 @@ public abstract class ChildNode extends NodeImpl {
 		if(this.parentNode == null) {
 			throw new OMException("Parent level elements cannot be ditached");
 		} else {
-			if(previousSubling == null) { // This is the first child
-				this.parentNode.setFirstChild(nextSibling);
+			if(previousSibling == null) { // This is the first child
+				if(nextSibling != null) {
+					this.parentNode.setFirstChild(nextSibling);
+				} else {
+					this.parentNode.firstChild = null;
+					this.parentNode.lastChild = null;
+				}
 			} else {
 				((OMNodeEx)this.getPreviousOMSibling()).setNextOMSibling(nextSibling);
 			} if (this.nextSibling != null) {
-				this.nextSibling.setPreviousOMSibling(this.previousSubling);
+				this.nextSibling.setPreviousOMSibling(this.previousSibling);
 			}
 			this.parentNode = null; 
 		}
@@ -122,9 +127,9 @@ public abstract class ChildNode extends NodeImpl {
 		
 		if(sibling instanceof ChildNode) {
 			ChildNode domSibling = (ChildNode)sibling;
-			domSibling.previousSubling = this;
+			domSibling.previousSibling = this;
 			if(this.nextSibling != null) {
-				this.nextSibling.previousSubling = domSibling;
+				this.nextSibling.previousSibling = domSibling;
 			}
 			domSibling.nextSibling = this.nextSibling;
 			this.nextSibling = domSibling;
@@ -142,11 +147,11 @@ public abstract class ChildNode extends NodeImpl {
 		if(sibling instanceof ChildNode) {
 			ChildNode domSibling = (ChildNode)sibling;
 			domSibling.nextSibling = this;
-			if(this.previousSubling != null) {
-				this.previousSubling.nextSibling = domSibling;
+			if(this.previousSibling != null) {
+				this.previousSibling.nextSibling = domSibling;
 			}
-			domSibling.previousSubling = this.previousSubling;
-			this.previousSubling = domSibling;
+			domSibling.previousSibling = this.previousSibling;
+			this.previousSibling = domSibling;
 			
 		} else {
 			throw new OMException("The given child is not of type " + ChildNode.class);

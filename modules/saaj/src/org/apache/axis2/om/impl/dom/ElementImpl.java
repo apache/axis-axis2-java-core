@@ -138,8 +138,15 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	 * @see org.w3c.dom.Node#getNodeName()
 	 */
 	public String getNodeName() {
-		return (this.namespace != null) ? this.namespace.getPrefix() + ":"
-				+ this.localName : this.localName;
+		if(this.namespace != null) {
+			if(this.namespace.getPrefix() == null || "".equals(this.namespace.getPrefix())) {
+				return this.localName;
+			} else {
+				return this.namespace.getPrefix() + ":" + this.localName;
+			}
+		} else {
+			return this.localName;
+		}
 	}
 
 	/**
@@ -177,7 +184,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	 * @see org.w3c.dom.Element#getTagName()
 	 */
 	public String getTagName() {
-		return (this.namespace != null) ? this.namespace.getPrefix() + ":" + this.localName : this.localName;
+		return this.getNodeName();
 	}
 
 	/**
@@ -477,7 +484,21 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	 * Returns whether this element contains any attr or not
 	 */
     public boolean hasAttributes() {
-    	return this.attributes==null?false:this.attributes.getLength()>0;
+    	
+    	boolean flag = false;
+    	if(this.attributes != null) {
+    		flag = (this.attributes.getLength() > 0);
+    	}
+    	
+    	if(!flag) {
+    		if(this.namespaces != null) {
+    			flag = !this.namespaces.isEmpty();
+    		} else if(this.namespace != null) {
+    			flag = true;
+    		}
+    	}
+    	
+    	return flag;
     }
 
 	/* (non-Javadoc)
@@ -540,11 +561,10 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
         if (namespaces == null) {
             this.namespaces = new HashMap(5);
         }
-        if(namespace != null) {
+        if(namespace != null && (namespace.getPrefix() != null || "".equals(namespace.getPrefix()))) {
         	if(!namespace.getPrefix().startsWith(OMConstants.XMLNS_NS_PREFIX)) {
         		namespaces.put(namespace.getPrefix(), namespace);
         	}
-        	
         }
         return namespace;
 	}
@@ -881,7 +901,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
      * @see java.lang.Object#toString()
      */
     public String toString() {
-    	return (this.namespace != null)?namespace.getName():"" + this.localName;
+    	return (this.namespace != null)? namespace.getPrefix() + ":" + this.localName :"" + this.localName;
     }
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.om.OMElement#getChildElements()
@@ -978,11 +998,25 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 			while (nsDecls.hasNext()) {
 				String prefix = (String) nsDecls.next();
 				if(!prefix.equals(OMConstants.XMLNS_NS_PREFIX)){
-					OMNamespace ns = (OMNamespace)this.namespaces.get(prefix);
-					AttrImpl attr = new AttrImpl(this.ownerNode,prefix, ns.getName());
-					attr.setOMNamespace(new NamespaceImpl(OMConstants.XMLNS_NS_URI, OMConstants.XMLNS_NS_PREFIX));
+					OMNamespace ns = (OMNamespace) this.namespaces.get(prefix);
+					AttrImpl attr = new AttrImpl(this.ownerNode, prefix, ns
+							.getName());
+					attr.setOMNamespace(new NamespaceImpl(
+							OMConstants.XMLNS_NS_URI,
+							OMConstants.XMLNS_NS_PREFIX));
 					attributeMap.addItem(attr);
 				}
+			}
+			
+			//Set the default NS attr if any
+			if (this.namespace != null
+					&& (this.namespace.getPrefix() == null || ""
+							.equals(this.namespace.getPrefix()))
+					&& this.namespace.getName() != null) {
+
+				AttrImpl attr = new AttrImpl(this.ownerNode, "xmlns",
+						this.namespace.getName());
+				attributeMap.addItem(attr);
 			}
     	}
     	

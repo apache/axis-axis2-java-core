@@ -372,4 +372,7 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	}    
     
 
+	public String toString() {
+		return (this.namespace == null)?this.attrName: this.namespace.getPrefix() + ":" + this.attrName;
+	}
 }
