@@ -66,7 +66,6 @@ public class UtilsJMSServer {
             String password = null;
             boolean doThreads = true;
                 
-            cfMap.put(JNDIVendorAdapter.CONNECTION_FACTORY_JNDI_NAME, "ConnectionFactory");
             cfMap.put(JNDIVendorAdapter.CONTEXT_FACTORY, "org.activemq.jndi.ActiveMQInitialContextFactory");
             cfMap.put(JNDIVendorAdapter.PROVIDER_URL, "tcp://localhost:61616");
 

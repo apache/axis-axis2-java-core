@@ -38,6 +38,7 @@ public class JNDIVendorAdapter extends JMSVendorAdapter {
     public final static String _CONNECTION_FACTORY_JNDI_NAME = "ConnectionFactoryJNDIName";
     public final static String CONNECTION_FACTORY_JNDI_NAME = JMSConstants.JMS_PROPERTY_PREFIX +
                                                                 _CONNECTION_FACTORY_JNDI_NAME;
+    public final static String CONNECTION_FACTORY_JNDI_VALUE = "ConnectionFactory";
 
     public final static String _DESTINATION = "Destination";
     public final static String DESTINATION = JMSConstants.JMS_PROPERTY_PREFIX +
@@ -69,7 +70,7 @@ public class JNDIVendorAdapter extends JMSVendorAdapter {
             throw new IllegalArgumentException("noCFProps");
         String jndiName = (String) cfProps.get(CONNECTION_FACTORY_JNDI_NAME);
         if (jndiName == null || jndiName.trim().length() == 0)
-            throw new IllegalArgumentException("noCFName");
+            jndiName = CONNECTION_FACTORY_JNDI_VALUE;
 
         Hashtable environment = new Hashtable(cfProps);
 
