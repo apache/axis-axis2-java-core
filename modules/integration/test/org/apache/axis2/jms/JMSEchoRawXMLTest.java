@@ -26,7 +26,12 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilsJMSServer;
@@ -35,6 +40,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -206,47 +212,46 @@ public class JMSEchoRawXMLTest extends TestCase {
 //
 //    }
 //
-//    public void testEchoXMLSyncMC() throws Exception {
-//        ConfigurationContextFactory confac = new ConfigurationContextFactory();
-//        ConfigurationContext configContext = confac.buildClientConfigurationContext(Constants.TESTING_REPOSITORY);
-//
-//        AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
-//        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(Constants.TESTING_REPOSITORY);
-//        Options options = new Options();
-//        call.setClientOptions(options);
-//        options.setTo(targetEPR);
-//        options.setAction(operationName.getLocalPart());
-//        options.setListenerTransportProtocol(Constants.TRANSPORT_TCP);
-//        options.setUseSeparateListener(false);
-//
-//        OMFactory fac = OMAbstractFactory.getOMFactory();
-//
-//        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-//        OMElement method = fac.createOMElement("echoOMElement", omNs);
-//        OMElement value = fac.createOMElement("myValue", omNs);
-//        value.setText("Isaac Assimov, the foundation Sega");
-//        method.addChild(value);
-//        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
-//        SOAPEnvelope envelope = factory.getDefaultEnvelope();
-//        envelope.getBody().addChild(method);
-//
-//        MessageContext requestContext = new MessageContext(configContext);
-//        AxisService srevice = new AxisService(serviceName);
-//        srevice.addOperation(opdesc);
-//        configContext.getAxisConfiguration().addService(srevice);
-//        requestContext.setAxisService(service);
-//        requestContext.setAxisOperation(opdesc);
-//
-//        //  requestContext.setTo(targetEPR);
-//
-//        requestContext.setEnvelope(envelope);
-//        MessageContext res = call.invokeBlocking(opdesc, requestContext);
-//
-//        SOAPEnvelope env = call.invokeBlocking("echoOMElement", envelope);
-////        SOAPEnvelope env=  res.getEnvelope();
-//        env.getBody().serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
-//                System.out));
-//    }
-//
-//
+    public void testEchoXMLSyncMC() throws Exception {
+        ConfigurationContextFactory confac = new ConfigurationContextFactory();
+        ConfigurationContext configContext = confac.buildClientConfigurationContext(Constants.TESTING_REPOSITORY);
+
+        AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
+        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(Constants.TESTING_REPOSITORY);
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(targetEPR);
+        options.setAction(operationName.getLocalPart());
+        options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
+        options.setUseSeparateListener(false);
+        options.setSoapAction("EchoXMLService/echoOMElement");
+        options.getProperties().put(JMSConstants.DESTINATION, "dynamicQueues/FOO.BAR");
+        options.getProperties().put(JMSConstants.WAIT_FOR_RESPONSE, Boolean.TRUE);
+        options.getProperties().put(JMSConstants._TIMEOUT_TIME, new Long(100000));
+
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+
+        OMNamespace omNs = fac.createOMNamespace("http://localhost/axis2/services/EchoXMLService", "my");
+        OMElement method = fac.createOMElement("echoOMElement", omNs);
+        OMElement value = fac.createOMElement("myValue", omNs);
+        value.setText("Isaac Assimov, the foundation Sega");
+        method.addChild(value);
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope envelope = factory.getDefaultEnvelope();
+        envelope.getBody().addChild(method);
+
+        MessageContext requestContext = new MessageContext(configContext);
+        AxisService srevice = new AxisService(serviceName);
+        srevice.addOperation(opdesc);
+        configContext.getAxisConfiguration().addService(srevice);
+        requestContext.setAxisService(service);
+        requestContext.setAxisOperation(opdesc);
+
+        requestContext.setEnvelope(envelope);
+        MessageContext res = call.invokeBlocking(opdesc, requestContext);
+
+        SOAPEnvelope env = call.invokeBlocking("echoOMElement", envelope);
+        env.getBody().serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
+                System.out));
+    }
 }
