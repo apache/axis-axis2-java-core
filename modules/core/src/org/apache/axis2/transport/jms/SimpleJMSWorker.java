@@ -31,15 +31,14 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Factory;
+import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
-import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.jms.BytesMessage;
-import javax.jms.Destination;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
@@ -49,7 +48,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
@@ -105,16 +103,34 @@ public class SimpleJMSWorker implements Runnable {
             return;
         }
 
+        // if the incoming message has a contentType set,
+        // pass it to my new Message
+        String soapAction = null;
+        try {
+            soapAction = message.getStringProperty("SOAPAction");
+        }
+        catch (Exception e) {
+            log.error(Messages.getMessage("exception00"), e);
+            e.printStackTrace();
+            return;
+        }
+
         MessageContext msgContext;
         try {
             TransportOutDescription transportOut =
                     configurationContext.getAxisConfiguration().getTransportOut(
-                            new QName(Constants.TRANSPORT_HTTP));
+                            new QName(Constants.TRANSPORT_JMS));
             msgContext = new MessageContext(
-                    configurationContext,
-                    configurationContext.getAxisConfiguration().getTransportIn(
-                            new QName(Constants.TRANSPORT_HTTP)),
-                    transportOut);
+                    configurationContext);
+            //,
+            //        configurationContext.getAxisConfiguration().getTransportIn(
+            //                new QName(Constants.TRANSPORT_JMS)),
+            //        transportOut);
+            msgContext.setProperty(
+                    Constants.OUT_TRANSPORT_INFO,
+                    new JMSOutTransportInfo(listener.getConnector(), message.getJMSReplyTo()));
+        
+            msgContext.setTransportOut(transportOut);
             msgContext.setServerSide(true);
         } catch (Exception e) {
             log.error(Messages.getMessage("exception00"), e);
@@ -122,15 +138,18 @@ public class SimpleJMSWorker implements Runnable {
             return;
         }
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        msgContext.setProperty(MessageContext.TRANSPORT_OUT, baos);
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        msgContext.setProperty(MessageContext.TRANSPORT_OUT, baos);
         msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
+        if(soapAction != null) {
+            msgContext.setSoapAction(soapAction);
+        }
 
         try {
             processJMSRequest(
                     msgContext,
                     in,
-                    baos,
+//                    baos,
                     contentType
             );
         } catch (Exception e) {
@@ -161,17 +180,17 @@ public class SimpleJMSWorker implements Runnable {
 //            msg.setMessageContext(msgContext);
 //        }
 
-        try {
-            // now we need to send the response
-            Destination destination = message.getJMSReplyTo();
-            if (destination == null)
-                return;
-            JMSEndpoint replyTo = listener.getConnector().createEndpoint(destination);
-            replyTo.send(baos.toByteArray());
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            // now we need to send the response
+//            Destination destination = message.getJMSReplyTo();
+//            if (destination == null)
+//                return;
+//            JMSEndpoint replyTo = listener.getConnector().createEndpoint(destination);
+//            replyTo.send(baos.toByteArray());
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
 //        if (msgContext.getProperty(MessageContext.QUIT_REQUESTED) != null)
 //            // why then, quit!
@@ -184,7 +203,7 @@ public class SimpleJMSWorker implements Runnable {
     public static void processJMSRequest(
             MessageContext msgContext,
             InputStream in,
-            OutputStream out,
+//            OutputStream out,
             String contentType
     )
             throws AxisFault {
@@ -205,7 +224,7 @@ public class SimpleJMSWorker implements Runnable {
 //            msgContext.setWSAAction(soapActionHeader);
 //            msgContext.setSoapAction(soapActionHeader);
 //            msgContext.setTo(new EndpointReference(requestURI));
-            msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
+//            msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
             msgContext.setServerSide(true);
 
             SOAPEnvelope envelope = null;

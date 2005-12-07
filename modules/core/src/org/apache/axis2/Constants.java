@@ -191,6 +191,9 @@ public class Constants {
     public static final String ADDRESSING_REPLY_TO = "WS-Addressing:ReplyTo" ;
     public static final String ADDRESSING_TO = "WS-Addressing:To" ;
 
+    /** Transport Info */
+    public static final String OUT_TRANSPORT_INFO = "OutTransportInfo";
+
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
         public static final String ENABLE_REST_THROUGH_GET="restThroughGet";

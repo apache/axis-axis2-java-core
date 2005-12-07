@@ -124,7 +124,7 @@ public class AxisServlet extends HttpServlet {
                         (SessionContext) sessionContext,
                         configContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_HTTP)),
                         configContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
-        msgContext.setProperty(HTTPConstants.HTTPOutTransportInfo,
+        msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                 new ServletBasedOutTransportInfo(httpServletResponse));
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getTransportHeaders(httpServletRequest));
         msgContext.setProperty(SESSION_ID, httpServletRequest.getSession().getId());

@@ -17,6 +17,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -26,7 +27,6 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.*;
 import org.apache.axis2.transport.TransportSender;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -270,8 +270,8 @@ public class AxisEngine {
         faultContext.setServerSide(true);
         SOAPEnvelope envelope;
 
-        faultContext.setProperty(HTTPConstants.HTTPOutTransportInfo,
-                processingContext.getProperty(HTTPConstants.HTTPOutTransportInfo));
+        faultContext.setProperty(Constants.OUT_TRANSPORT_INFO,
+                processingContext.getProperty(Constants.OUT_TRANSPORT_INFO));
 
         if (processingContext.isSOAP11()) {
             envelope =
@@ -292,7 +292,7 @@ public class AxisEngine {
                 e);
 
         faultContext.setEnvelope(envelope);
-        faultContext.setProperty(HTTPConstants.HTTPOutTransportInfo, processingContext.getProperty(HTTPConstants.HTTPOutTransportInfo));
+        faultContext.setProperty(Constants.OUT_TRANSPORT_INFO, processingContext.getProperty(Constants.OUT_TRANSPORT_INFO));
         return faultContext;
     }
 

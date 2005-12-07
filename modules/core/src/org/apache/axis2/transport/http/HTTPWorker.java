@@ -102,9 +102,9 @@ public class HTTPWorker implements HttpRequestHandler {
             msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getHeaders(request));
             msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
 
-            //This is way to provide Accsess to the transport information to the transport Sender
+            //This is way to provide access to the transport information to the transport Sender
             msgContext.setProperty(
-                    HTTPConstants.HTTPOutTransportInfo,
+                    Constants.OUT_TRANSPORT_INFO,
                     new SimpleHTTPOutTransportInfo(response));
 
             String soapAction = null;

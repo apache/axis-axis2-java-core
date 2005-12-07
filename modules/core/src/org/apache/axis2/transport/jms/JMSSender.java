@@ -17,6 +17,7 @@
 package org.apache.axis2.transport.jms;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMOutputFormat;
@@ -27,8 +28,11 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.transport.AbstractTransportSender;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.transport.OutTransportInfo;
+import org.apache.axis2.transport.http.HTTPTransportUtils;
 
 import javax.jms.Destination;
 import javax.xml.namespace.QName;
@@ -62,23 +66,44 @@ public class JMSSender extends JMSTransport implements TransportSender {
      * @throws AxisFault
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        
-        super.invoke(msgContext);
-        
         JMSConnector connector = null;
+        Destination dest = null;        
+        if (msgContext.isServerSide()) {
+            JMSOutTransportInfo transportInfo =
+                    (JMSOutTransportInfo) msgContext.getProperty(
+                            Constants.OUT_TRANSPORT_INFO);
+            if (transportInfo != null) {
+                connector = transportInfo.getConnector();
+                dest = transportInfo.getDestination();
+            }        
+        }
+        
+        boolean waitForResponse = false;
+        if(connector == null) {
+            if (msgContext.getProperty(JMSConstants.WAIT_FOR_RESPONSE) != null && msgContext.getProperty(JMSConstants.WAIT_FOR_RESPONSE).equals(Boolean.TRUE))
+                waitForResponse =
+                        ((Boolean) msgContext.getProperty(
+                                JMSConstants.WAIT_FOR_RESPONSE)).booleanValue();
+
+            super.invoke(msgContext);
+        }
+        
         try {
-            Object destination = msgContext.getProperty(JMSConstants.DESTINATION);
-            if (destination == null)
-                throw new AxisFault("noDestination");
-
-            connector = (JMSConnector) msgContext.getProperty(JMSConstants.CONNECTOR);
-
             JMSEndpoint endpoint = null;
-            if (destination instanceof String)
-                endpoint = connector.createEndpoint((String) destination);
-            else
-                endpoint = connector.createEndpoint((Destination) destination);
+            if (dest == null) {
+                Object destination = msgContext.getProperty(JMSConstants.DESTINATION);
+                if (destination == null)
+                    throw new AxisFault("noDestination");
 
+                connector = (JMSConnector) msgContext.getProperty(JMSConstants.CONNECTOR);
+
+                if (destination instanceof String)
+                    endpoint = connector.createEndpoint((String) destination);
+                else
+                    endpoint = connector.createEndpoint((Destination) destination);
+            } else {
+                endpoint = connector.createEndpoint(dest);
+            }
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             writeMessage(msgContext, out);
 
@@ -97,11 +122,8 @@ public class JMSSender extends JMSTransport implements TransportSender {
 //                }
 //            }
 
-            boolean waitForResponse = true;
-            if (msgContext.getProperty(JMSConstants.WAIT_FOR_RESPONSE).equals(Boolean.TRUE))
-                waitForResponse =
-                        ((Boolean) msgContext.getProperty(
-                                JMSConstants.WAIT_FOR_RESPONSE)).booleanValue();
+            props.put("contentType", getContentType(msgContext));
+            props.put("SOAPAction", getSOAPAction(msgContext));
             if (waitForResponse) {
                 long timeout = ((Long) msgContext.getProperty(JMSConstants._TIMEOUT_TIME)).longValue();
                 byte[] response = endpoint.call(out.toByteArray(), timeout, props);
@@ -147,10 +169,9 @@ public class JMSSender extends JMSTransport implements TransportSender {
      * for the JMS Messages.
      */
     protected HashMap createApplicationProperties(MessageContext context) {
-        HashMap props = null;
+        HashMap props = new HashMap();
         if (context.getProperty(
                 JMSConstants.JMS_APPLICATION_MSG_PROPS) != null) {
-            props = new HashMap();
             props.putAll((Map) context.getProperty(
                     JMSConstants.JMS_APPLICATION_MSG_PROPS));
         }
@@ -204,4 +225,52 @@ public class JMSSender extends JMSTransport implements TransportSender {
         }
     }
 
+    public String getContentType(MessageContext msgCtx) {
+        OMOutputFormat format = new OMOutputFormat();
+
+        String soapActionString = getSOAPAction(msgCtx);
+
+        String charSetEnc =
+                (String) msgCtx.getProperty(
+                        MessageContext.CHARACTER_SET_ENCODING);
+        if (charSetEnc != null) {
+            format.setCharSetEncoding(charSetEnc);
+        } else {
+            OperationContext opctx = msgCtx.getOperationContext();
+            if (opctx != null) {
+                charSetEnc = (String) opctx.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+            }
+        }
+        /**
+         * If the char set enc is still not found use the default
+         */
+        if (charSetEnc == null) {
+            charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
+        }
+        format.setSOAP11(msgCtx.isSOAP11());
+        format.setCharSetEncoding(charSetEnc);
+        
+        String encoding = format.getCharSetEncoding();
+        String contentType = format.getContentType();
+        if (encoding != null) {
+            contentType += "; charset=" + encoding;
+        }
+
+        // action header is not mandated in SOAP 1.2. So putting it, if available
+        if (!msgCtx.isSOAP11() && soapActionString != null && !"".equals(soapActionString.trim())) {
+            contentType = contentType + ";action=\"" + soapActionString + "\";";
+        }
+        return contentType;
+    }
+
+    private String getSOAPAction(MessageContext msgCtx) {
+        String soapActionString = msgCtx.getSoapAction();
+        if (soapActionString == null || soapActionString.length() == 0) {
+            soapActionString = msgCtx.getWSAAction();
+        }
+        if (soapActionString == null) {
+            soapActionString = "";
+        }
+        return soapActionString;
+    }
 }

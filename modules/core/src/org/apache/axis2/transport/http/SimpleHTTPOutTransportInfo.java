@@ -17,9 +17,10 @@
 package org.apache.axis2.transport.http;
 
 import org.apache.axis2.transport.http.server.SimpleResponse;
+import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.commons.httpclient.Header;
 
-public class SimpleHTTPOutTransportInfo implements HTTPOutTransportInfo {
+public class SimpleHTTPOutTransportInfo implements OutTransportInfo {
     private SimpleResponse outInfo;
     private String encoding;
 

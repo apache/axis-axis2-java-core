@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.transport.http;
+package org.apache.axis2.transport;
 
-public interface HTTPOutTransportInfo {
+public interface OutTransportInfo {
     public abstract void setContentType(String contentType);
 }

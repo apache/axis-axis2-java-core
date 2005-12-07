@@ -33,7 +33,6 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
@@ -73,8 +72,8 @@ public class Utils {
         newmsgCtx.setServiceContext(inMessageContext.getServiceContext());
         newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT,
                 inMessageContext.getProperty(MessageContext.TRANSPORT_OUT));
-        newmsgCtx.setProperty(HTTPConstants.HTTPOutTransportInfo,
-                inMessageContext.getProperty(HTTPConstants.HTTPOutTransportInfo));
+        newmsgCtx.setProperty(Constants.OUT_TRANSPORT_INFO,
+                inMessageContext.getProperty(Constants.OUT_TRANSPORT_INFO));
 
         //Setting the charater set encoding
         newmsgCtx.setProperty(MessageContext.CHARACTER_SET_ENCODING, inMessageContext

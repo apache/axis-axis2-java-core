@@ -16,9 +16,11 @@
 
 package org.apache.axis2.transport.http;
 
+import org.apache.axis2.transport.OutTransportInfo;
+
 import javax.servlet.http.HttpServletResponse;
 
-public class ServletBasedOutTransportInfo implements HTTPOutTransportInfo {
+public class ServletBasedOutTransportInfo implements OutTransportInfo {
     private HttpServletResponse response;
 
     public ServletBasedOutTransportInfo(HttpServletResponse response) {

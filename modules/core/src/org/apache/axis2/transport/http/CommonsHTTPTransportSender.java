@@ -36,6 +36,7 @@ import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HeaderElement;
@@ -236,9 +237,9 @@ public class CommonsHTTPTransportSender
                         (OutputStream) msgContext.getProperty(
                                 MessageContext.TRANSPORT_OUT);
                 if (msgContext.isServerSide()) {
-                    HTTPOutTransportInfo transportInfo =
-                            (HTTPOutTransportInfo) msgContext.getProperty(
-                                    HTTPConstants.HTTPOutTransportInfo);
+                    OutTransportInfo transportInfo =
+                            (OutTransportInfo) msgContext.getProperty(
+                                    Constants.OUT_TRANSPORT_INFO);
                     if (transportInfo != null) {
                         format.setSOAP11(msgContext.isSOAP11());
                         //this is the servlet2.3 way of setting encodings
@@ -246,7 +247,7 @@ public class CommonsHTTPTransportSender
                         String encoding = contentType + "; charset=" + format.getCharSetEncoding();
                         transportInfo.setContentType(encoding);
                     } else {
-                        throw new AxisFault(HTTPConstants.HTTPOutTransportInfo + " does not set");
+                        throw new AxisFault(Constants.OUT_TRANSPORT_INFO + " has not been set");
                     }
                 }
                 format.setDoOptimize(msgContext.isDoingMTOM());
