@@ -37,7 +37,19 @@ public class JNDIVendorAdapter extends JMSVendorAdapter {
 
     public final static String _CONNECTION_FACTORY_JNDI_NAME = "ConnectionFactoryJNDIName";
     public final static String CONNECTION_FACTORY_JNDI_NAME = JMSConstants.JMS_PROPERTY_PREFIX +
-            _CONNECTION_FACTORY_JNDI_NAME;
+                                                                _CONNECTION_FACTORY_JNDI_NAME;
+
+    public final static String _DESTINATION = "Destination";
+    public final static String DESTINATION = JMSConstants.JMS_PROPERTY_PREFIX +
+                                                    _DESTINATION;
+
+    public final static String _USER = "User";
+    public final static String USER = JMSConstants.JMS_PROPERTY_PREFIX +
+                                                    _USER;
+
+    public final static String _PASSWORD = "Password";
+    public final static String PASSWORD = JMSConstants.JMS_PROPERTY_PREFIX +
+                                            _PASSWORD;
 
     private Context context;
 

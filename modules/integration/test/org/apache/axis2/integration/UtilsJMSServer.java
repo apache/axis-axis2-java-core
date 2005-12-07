@@ -99,7 +99,7 @@ public class UtilsJMSServer {
     public static synchronized void stop() {
         try {
             if (count == 1) {
-                receiver.shutdown();
+                receiver.stop();
                 count = 0;
                 System.out.print("Server stopped .....");
             } else {
