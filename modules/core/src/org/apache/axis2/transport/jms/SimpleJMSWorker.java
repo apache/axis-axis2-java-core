@@ -129,7 +129,7 @@ public class SimpleJMSWorker implements Runnable {
             msgContext.setProperty(
                     Constants.OUT_TRANSPORT_INFO,
                     new JMSOutTransportInfo(listener.getConnector(), message.getJMSReplyTo()));
-        
+
             msgContext.setTransportOut(transportOut);
             msgContext.setServerSide(true);
         } catch (Exception e) {
@@ -139,7 +139,7 @@ public class SimpleJMSWorker implements Runnable {
         }
 
         msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
-        if(soapAction != null) {
+        if (soapAction != null) {
             msgContext.setSoapAction(soapAction);
         }
 

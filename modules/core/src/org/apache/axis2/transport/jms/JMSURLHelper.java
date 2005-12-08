@@ -17,9 +17,7 @@
 package org.apache.axis2.transport.jms;
 
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -46,7 +44,7 @@ public class JMSURLHelper {
     private Vector appProperties;
 
     public JMSURLHelper(String url) throws Exception {
-            this(new URI(url), null);
+        this(new URI(url), null);
     }
 
     public JMSURLHelper(URI url) throws java.net.MalformedURLException {
@@ -69,7 +67,7 @@ public class JMSURLHelper {
 
         // parse the query string and populate the properties table
         String query = url.getEscapedQuery();
-        if(query != null) {
+        if (query != null) {
             StringTokenizer st = new StringTokenizer(query, "&;");
             while (st.hasMoreTokens()) {
                 String keyValue = st.nextToken();

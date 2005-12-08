@@ -210,7 +210,7 @@ public abstract class JMSVendorAdapter {
                 mode = javax.jms.DeliveryMode.NON_PERSISTENT;
             context.setProperty(JMSConstants.DELIVERY_MODE, new Integer(mode));
         }
-            
+
         String prio = null;
         if (jmsurl != null)
             prio = jmsurl.getPropertyValue(JMSConstants._PRIORITY);

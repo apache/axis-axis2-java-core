@@ -19,31 +19,25 @@ package org.apache.axis2.transport.jms;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.transport.AbstractTransportSender;
 import org.apache.axis2.transport.TransportSender;
-import org.apache.axis2.transport.OutTransportInfo;
-import org.apache.axis2.transport.http.HTTPTransportUtils;
 
 import javax.jms.Destination;
-import javax.xml.namespace.QName;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.
@@ -84,7 +78,7 @@ public class JMSSender extends JMSTransport implements TransportSender {
         }
 
         boolean waitForResponse = false;
-        if(connector == null) {
+        if (connector == null) {
             if (msgContext.getProperty(JMSConstants.WAIT_FOR_RESPONSE) != null && msgContext.getProperty(JMSConstants.WAIT_FOR_RESPONSE).equals(Boolean.TRUE))
                 waitForResponse =
                         ((Boolean) msgContext.getProperty(
@@ -98,7 +92,7 @@ public class JMSSender extends JMSTransport implements TransportSender {
             if (dest == null) {
                 Object destination = msgContext.getProperty(JMSConstants.DESTINATION);
 
-                if(connector == null) {
+                if (connector == null) {
                     connector = (JMSConnector) msgContext.getProperty(JMSConstants.CONNECTOR);
                 }
                 if (destination == null && msgContext.getTo() != null) {
@@ -113,7 +107,7 @@ public class JMSSender extends JMSTransport implements TransportSender {
                 }
 
 
-                if (destination instanceof String)  {
+                if (destination instanceof String) {
                     endpoint = connector.createEndpoint((String) destination);
                 } else {
                     endpoint = connector.createEndpoint((Destination) destination);
@@ -132,7 +126,7 @@ public class JMSSender extends JMSTransport implements TransportSender {
             props.put("SOAPAction", getSOAPAction(msgContext));
             if (waitForResponse) {
                 long timeout = Options.DEFAULT_TIMEOUT_MILLISECONDS;
-                if(msgContext.getProperty(JMSConstants.TIMEOUT_TIME) != null) {
+                if (msgContext.getProperty(JMSConstants.TIMEOUT_TIME) != null) {
                     timeout = ((Long) msgContext.getProperty(JMSConstants.TIMEOUT_TIME)).longValue();
                 }
                 byte[] response = endpoint.call(out.toByteArray(), timeout, props);

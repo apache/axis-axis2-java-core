@@ -28,7 +28,7 @@ public class JMSOutTransportInfo implements OutTransportInfo {
     JMSOutTransportInfo(JMSConnector connector, Destination dest) {
         this.connector = connector;
         this.dest = dest;
-        
+
     }
 
     public void setContentType(String contentType) {
