@@ -123,10 +123,10 @@ public class JMSConnectorManager {
             while (iter.hasNext()) {
                 // close all connectors in the vendor pool
                 ShareableObjectPool pool = (ShareableObjectPool) iter.next();
-                synchronized (pool) {
-                    java.util.Iterator connectors = pool.getElements().iterator();
-                    while (connectors.hasNext()) {
-                        JMSConnector conn = (JMSConnector) connectors.next();
+                synchronized (pool) {              
+                    Object[] elements = pool.getElements().toArray();
+                    for (int i=0;i<elements.length;i++) {
+                        JMSConnector conn = (JMSConnector) elements[i];
                         try {
                             // shutdown automatically decrements the ref count of a connector before closing it
                             // call reserve() to simulate the checkout
