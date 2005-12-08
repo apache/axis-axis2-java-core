@@ -80,7 +80,7 @@ public class Options {
     // ==========================================================================
     public static final String COPY_PROPERTIES = "CopyProperties";
 
-    private static final int DEFAULT_TIMEOUT_MILLISECONDS = 2000;
+    public static final int DEFAULT_TIMEOUT_MILLISECONDS = 5000;
     // ==========================================================================
 
     /**

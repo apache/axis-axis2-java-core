@@ -18,6 +18,7 @@ package org.apache.axis2.transport.jms;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMOutputFormat;
@@ -137,7 +138,10 @@ public class JMSSender extends JMSTransport implements TransportSender {
             props.put("contentType", getContentType(msgContext));
             props.put("SOAPAction", getSOAPAction(msgContext));
             if (waitForResponse) {
-                long timeout = ((Long) msgContext.getProperty(JMSConstants._TIMEOUT_TIME)).longValue();
+                long timeout = Options.DEFAULT_TIMEOUT_MILLISECONDS; 
+                if(msgContext.getProperty(JMSConstants.TIMEOUT_TIME) != null) {
+                    timeout = ((Long) msgContext.getProperty(JMSConstants.TIMEOUT_TIME)).longValue();
+                }
                 byte[] response = endpoint.call(out.toByteArray(), timeout, props);
                 InputStream in = new ByteArrayInputStream(response);
                 msgContext.setProperty(MessageContext.TRANSPORT_IN, in);
