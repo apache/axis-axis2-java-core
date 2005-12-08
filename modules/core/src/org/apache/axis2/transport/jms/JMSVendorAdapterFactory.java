@@ -30,13 +30,7 @@ public class JMSVendorAdapterFactory {
     private final static String VENDOR_PKG = "org.apache.axis2.transport.jms";
     private static Loader loader = new Loader();
 
-    static {
-//        AxisProperties.setClassDefault(JMSVendorAdapter.class,
-//                VENDOR_PKG + ".JNDIVendorAdapter");
-    }
-
     public static final JMSVendorAdapter getJMSVendorAdapter() throws Exception {
-//        return (JMSVendorAdapter) AxisProperties.newInstance(JMSVendorAdapter.class);
         return (JMSVendorAdapter) Loader.loadClass(VENDOR_PKG + ".JNDIVendorAdapter").newInstance();
     }
 

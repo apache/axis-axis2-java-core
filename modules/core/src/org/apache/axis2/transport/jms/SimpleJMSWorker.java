@@ -138,8 +138,6 @@ public class SimpleJMSWorker implements Runnable {
             return;
         }
 
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        msgContext.setProperty(MessageContext.TRANSPORT_OUT, baos);
         msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
         if(soapAction != null) {
             msgContext.setSoapAction(soapAction);
@@ -149,7 +147,6 @@ public class SimpleJMSWorker implements Runnable {
             processJMSRequest(
                     msgContext,
                     in,
-//                    baos,
                     contentType
             );
         } catch (Exception e) {
@@ -157,74 +154,16 @@ public class SimpleJMSWorker implements Runnable {
             e.printStackTrace();
             return;
         }
-
-//        Message msg = null;
-//        if (contentType != null && !contentType.trim().equals("")) {
-//            msg = new Message(in, true, contentType, null);
-//        } else {
-//            msg = new Message(in);
-//        }
-//
-//        MessageContext msgContext = new MessageContext(server);
-//        msgContext.setRequestMessage(msg);
-//        try {
-//            server.invoke(msgContext);
-//            msg = msgContext.getResponseMessage();
-//        }
-//        catch (AxisFault af) {
-//            msg = new Message(af);
-//            msg.setMessageContext(msgContext);
-//        }
-//        catch (Exception e) {
-//            msg = new Message(new AxisFault(e.toString()));
-//            msg.setMessageContext(msgContext);
-//        }
-
-//        try {
-//            // now we need to send the response
-//            Destination destination = message.getJMSReplyTo();
-//            if (destination == null)
-//                return;
-//            JMSEndpoint replyTo = listener.getConnector().createEndpoint(destination);
-//            replyTo.send(baos.toByteArray());
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-//        if (msgContext.getProperty(MessageContext.QUIT_REQUESTED) != null)
-//            // why then, quit!
-//            try {
-//                listener.shutdown();
-//            } catch (Exception e) {
-//            }
     }
 
     public static void processJMSRequest(
             MessageContext msgContext,
             InputStream in,
-//            OutputStream out,
             String contentType
     )
             throws AxisFault {
         boolean soap11 = false;
         try {
-
-//            //remove the starting and trailing " from the SOAP Action
-//            if (soapActionHeader != null
-//                    && soapActionHeader.startsWith("\"")
-//                    && soapActionHeader.endsWith("\"")) {
-//
-//                soapActionHeader =
-//                        soapActionHeader.substring(
-//                                1,
-//                                soapActionHeader.length() - 1);
-//            }
-//            //fill up the Message Contexts
-//            msgContext.setWSAAction(soapActionHeader);
-//            msgContext.setSoapAction(soapActionHeader);
-//            msgContext.setTo(new EndpointReference(requestURI));
-//            msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
             msgContext.setServerSide(true);
 
             SOAPEnvelope envelope = null;

@@ -122,22 +122,11 @@ public class JMSSender extends JMSTransport implements TransportSender {
                 endpoint = connector.createEndpoint(dest);
             }
             ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            // TODO: How do we fix Attachments?            
             writeMessage(msgContext, out);
 
             HashMap props = createSendProperties(msgContext);
-
-// TODO: How do we fix Attachments?            
-//            // If the request message contains attachments, set
-//            // a contentType property to go in the outgoing message header
-//            String ret = null;
-//            Message message = msgContext.getRequestMessage();
-//            Attachments mAttachments = message.getAttachmentsImpl();
-//            if (mAttachments != null && 0 != mAttachments.getAttachmentCount()) {
-//                String contentType = mAttachments.getContentType();
-//                if (contentType != null && !contentType.trim().equals("")) {
-//                    props.put("contentType", contentType);
-//                }
-//            }
 
             props.put("contentType", getContentType(msgContext));
             props.put("SOAPAction", getSOAPAction(msgContext));
