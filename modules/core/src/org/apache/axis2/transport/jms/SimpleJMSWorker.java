@@ -21,6 +21,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMException;
@@ -117,19 +118,19 @@ public class SimpleJMSWorker implements Runnable {
 
         MessageContext msgContext;
         try {
+            TransportInDescription transportIn =
+                    configurationContext.getAxisConfiguration().getTransportIn(
+                            new QName(Constants.TRANSPORT_JMS));
             TransportOutDescription transportOut =
                     configurationContext.getAxisConfiguration().getTransportOut(
                             new QName(Constants.TRANSPORT_JMS));
             msgContext = new MessageContext(
-                    configurationContext);
-            //,
-            //        configurationContext.getAxisConfiguration().getTransportIn(
-            //                new QName(Constants.TRANSPORT_JMS)),
-            //        transportOut);
+                    configurationContext,
+                    transportIn,
+                    transportOut);
             msgContext.setProperty(
                     Constants.OUT_TRANSPORT_INFO,
-                    new JMSOutTransportInfo(listener.getConnector(), message.getJMSReplyTo()));
-
+                    new JMSOutTransportInfo(message.getJMSReplyTo(), listener.getProperties()));
             msgContext.setTransportOut(transportOut);
             msgContext.setServerSide(true);
         } catch (Exception e) {

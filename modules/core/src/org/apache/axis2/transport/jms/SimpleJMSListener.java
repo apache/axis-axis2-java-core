@@ -242,4 +242,8 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
 
         System.exit(1);
     }
+
+    public HashMap getProperties() {
+        return properties;
+    }
 }

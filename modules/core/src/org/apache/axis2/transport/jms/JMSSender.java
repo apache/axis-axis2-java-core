@@ -24,11 +24,14 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.jms.Destination;
 import java.io.ByteArrayInputStream;
@@ -42,9 +45,24 @@ import java.util.Map;
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.
  */
-public class JMSSender extends JMSTransport implements TransportSender {
+public class JMSSender extends AbstractHandler implements TransportSender {
+
+    protected static Log log =
+            LogFactory.getLog(JMSSender.class.getName());
 
     HashMap params = new HashMap();
+
+    static {
+        // add a shutdown hook to close JMS connections
+        Runtime.getRuntime().addShutdownHook(
+                new Thread() {
+                    public void run() {
+                        JMSSender.closeAllConnectors();
+                    }
+                }
+        );
+    }
+
 
     public JMSSender() {
     }
@@ -66,35 +84,50 @@ public class JMSSender extends JMSTransport implements TransportSender {
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         JMSConnector connector = null;
+        HashMap properties = null;
+
         Destination dest = null;
         if (msgContext.isServerSide()) {
             JMSOutTransportInfo transportInfo =
                     (JMSOutTransportInfo) msgContext.getProperty(
                             Constants.OUT_TRANSPORT_INFO);
             if (transportInfo != null) {
-                connector = transportInfo.getConnector();
                 dest = transportInfo.getDestination();
+                properties = transportInfo.getProperties();
             }
         }
 
+        String endpointAddress = msgContext.getTo().getAddress();
+
         boolean waitForResponse = false;
-        if (connector == null) {
+        if (dest == null) {
             if (msgContext.getProperty(JMSConstants.WAIT_FOR_RESPONSE) != null && msgContext.getProperty(JMSConstants.WAIT_FOR_RESPONSE).equals(Boolean.TRUE))
                 waitForResponse =
                         ((Boolean) msgContext.getProperty(
                                 JMSConstants.WAIT_FOR_RESPONSE)).booleanValue();
-
-            super.invoke(msgContext);
+        } else {
+            if (properties != null) {
+                JMSURLHelper url = null;
+                try {
+                    url = new JMSURLHelper("jms:/" + dest);
+                } catch (Exception e) {
+                    throw AxisFault.makeFault(e);
+                }
+                url.getProperties().putAll(properties);
+                endpointAddress = url.getURLString();
+            }
         }
 
+        setupTransport(msgContext, endpointAddress);
+
+        if (connector == null) {
+            connector = (JMSConnector) msgContext.getProperty(JMSConstants.CONNECTOR);
+        }
         try {
             JMSEndpoint endpoint = null;
             if (dest == null) {
                 Object destination = msgContext.getProperty(JMSConstants.DESTINATION);
 
-                if (connector == null) {
-                    connector = (JMSConnector) msgContext.getProperty(JMSConstants.CONNECTOR);
-                }
                 if (destination == null && msgContext.getTo() != null) {
                     String to = msgContext.getTo().getAddress();
                     if (to != null) {
@@ -258,5 +291,168 @@ public class JMSSender extends JMSTransport implements TransportSender {
             soapActionString = "";
         }
         return soapActionString;
+    }
+
+    /**
+     * Set up any transport-specific derived properties in the message context.
+     *
+     * @param context the context to set up
+     * @throws AxisFault if service cannot be found
+     */
+    public void setupTransport(MessageContext context, String endpointAddr)
+            throws AxisFault {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: JMSTransport::invoke");
+        }
+
+        JMSConnector connector = null;
+        HashMap connectorProperties = null;
+        HashMap connectionFactoryProperties = null;
+
+        JMSVendorAdapter vendorAdapter = null;
+        JMSURLHelper jmsurl = null;
+
+        // a security context is required to create/use JMSConnectors
+        // TODO: Fill username password from context
+        String username = "";
+        String password = "";
+
+        // the presence of an endpoint address indicates whether the client application
+        //  is instantiating the JMSTransport directly (deprecated) or indirectly via JMS URL
+
+        if (endpointAddr != null) {
+            try {
+                // performs minimal validation ('jms:/destination?...')
+                jmsurl = new JMSURLHelper(endpointAddr);
+
+                // lookup the appropriate vendor adapter
+                String vendorId = jmsurl.getVendor();
+                if (vendorId == null)
+                    vendorId = JMSConstants.JNDI_VENDOR_ID;
+
+                if (log.isDebugEnabled())
+                    log.debug("JMSTransport.invoke(): endpt=" + endpointAddr +
+                            ", vendor=" + vendorId);
+
+                vendorAdapter = JMSVendorAdapterFactory.getJMSVendorAdapter(vendorId);
+                if (vendorAdapter == null) {
+                    throw new AxisFault("cannotLoadAdapterClass:" + vendorId);
+                }
+
+                // populate the connector and connection factory properties tables
+                connectorProperties = vendorAdapter.getJMSConnectorProperties(jmsurl);
+                connectionFactoryProperties = vendorAdapter.getJMSConnectionFactoryProperties(jmsurl);
+            }
+            catch (Exception e) {
+                log.error(Messages.getMessage("malformedURLException00"), e);
+                throw new AxisFault(Messages.getMessage("malformedURLException00"), e);
+            }
+        } else {
+            // the JMSTransport was instantiated directly, use the default adapter
+            try {
+                vendorAdapter = JMSVendorAdapterFactory.getJMSVendorAdapter();
+            } catch (Exception e) {
+                throw new AxisFault("cannotLoadAdapterClass");
+            }
+
+            // use the properties passed in to the constructor
+            connectorProperties = params;
+            connectionFactoryProperties = params;
+        }
+
+        try {
+            connector = JMSConnectorManager.getInstance().getConnector(connectorProperties, connectionFactoryProperties,
+                    username, password, vendorAdapter);
+        }
+        catch (Exception e) {
+            log.error(Messages.getMessage("cannotConnectError"), e);
+
+            if (e instanceof AxisFault)
+                throw (AxisFault) e;
+            throw new AxisFault("cannotConnect", e);
+        }
+
+        // store these in the context for later use
+        context.setProperty(JMSConstants.CONNECTOR, connector);
+        context.setProperty(JMSConstants.VENDOR_ADAPTER, vendorAdapter);
+
+        // vendors may populate the message context
+        vendorAdapter.setupMessageContext(context, jmsurl);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: JMSTransport::invoke");
+        }
+    }
+
+    /**
+     * Shuts down the connectors managed by this JMSTransport.
+     */
+    public void shutdown() {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: JMSTransport::shutdown");
+        }
+
+        closeAllConnectors();
+
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: JMSTransport::shutdown");
+        }
+    }
+
+    /**
+     * Closes all JMS connectors
+     */
+    public static void closeAllConnectors() {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: JMSTransport::closeAllConnectors");
+        }
+
+        JMSConnectorManager.getInstance().closeAllConnectors();
+
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: JMSTransport::closeAllConnectors");
+        }
+    }
+
+    /**
+     * Closes JMS connectors that match the specified endpoint address
+     *
+     * @param endpointAddr the JMS endpoint address
+     * @param username
+     * @param password
+     */
+    public static void closeMatchingJMSConnectors(String endpointAddr, String username, String password) {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: JMSTransport::closeMatchingJMSConnectors");
+        }
+
+        try {
+            JMSURLHelper jmsurl = new JMSURLHelper(endpointAddr);
+            String vendorId = jmsurl.getVendor();
+
+            JMSVendorAdapter vendorAdapter = null;
+            if (vendorId == null)
+                vendorId = JMSConstants.JNDI_VENDOR_ID;
+            vendorAdapter = JMSVendorAdapterFactory.getJMSVendorAdapter(vendorId);
+
+            // the vendor adapter may not exist
+            if (vendorAdapter == null)
+                return;
+
+            // determine the set of properties to be used for matching the connection
+            HashMap connectorProps = vendorAdapter.getJMSConnectorProperties(jmsurl);
+            HashMap cfProps = vendorAdapter.getJMSConnectionFactoryProperties(jmsurl);
+
+            JMSConnectorManager.getInstance().closeMatchingJMSConnectors(connectorProps, cfProps,
+                    username, password,
+                    vendorAdapter);
+        }
+        catch (Exception e) {
+            log.warn(Messages.getMessage("malformedURLException00"), e);
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: JMSTransport::closeMatchingJMSConnectors");
+        }
     }
 }

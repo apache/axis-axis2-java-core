@@ -19,16 +19,16 @@ package org.apache.axis2.transport.jms;
 import org.apache.axis2.transport.OutTransportInfo;
 
 import javax.jms.Destination;
+import java.util.HashMap;
 
 public class JMSOutTransportInfo implements OutTransportInfo {
-    JMSConnector connector = null;
     Destination dest = null;
     String contentType = null;
+    HashMap properties = new HashMap();
 
-    JMSOutTransportInfo(JMSConnector connector, Destination dest) {
-        this.connector = connector;
+    JMSOutTransportInfo(Destination dest, HashMap properties) {
         this.dest = dest;
-
+        this.properties.putAll(properties);
     }
 
     public void setContentType(String contentType) {
@@ -38,8 +38,8 @@ public class JMSOutTransportInfo implements OutTransportInfo {
     public Destination getDestination() {
         return dest;
     }
-
-    public JMSConnector getConnector() {
-        return connector;
+    
+    public HashMap getProperties() {
+        return properties;
     }
 }
