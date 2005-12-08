@@ -114,7 +114,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
         options.setAction(serviceName.getLocalPart());
         options.setSoapAction("echoOMElement");
-        options.getProperties().put(JMSConstants.DESTINATION, "dynamicQueues/BAR");
         options.getProperties().put(JMSConstants.WAIT_FOR_RESPONSE, Boolean.TRUE);
         options.getProperties().put(JMSConstants._TIMEOUT_TIME, new Long(100000));
 
@@ -166,7 +165,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
         options.setAction(serviceName.getLocalPart());
         options.setSoapAction("EchoXMLService/echoOMElement");
-        options.getProperties().put(JMSConstants.DESTINATION, "dynamicQueues/BAR");
         options.getProperties().put(JMSConstants.WAIT_FOR_RESPONSE, Boolean.TRUE);
         options.getProperties().put(JMSConstants._TIMEOUT_TIME, new Long(100000));
 
@@ -201,7 +199,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setAction(operationName.getLocalPart());
         options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
         options.setSoapAction("EchoXMLService/echoOMElement");
-        options.getProperties().put(JMSConstants.DESTINATION, "dynamicQueues/BAR");
         options.getProperties().put(JMSConstants.WAIT_FOR_RESPONSE, Boolean.FALSE);
         options.getProperties().put(JMSConstants._TIMEOUT_TIME, new Long(100000));
         options.setUseSeparateListener(true);
@@ -226,7 +223,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setAction(operationName.getLocalPart());
         options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
         options.setSoapAction("EchoXMLService/echoOMElement");
-        options.getProperties().put(JMSConstants.DESTINATION, "dynamicQueues/BAR");
         options.getProperties().put(JMSConstants.WAIT_FOR_RESPONSE, Boolean.TRUE);
         options.getProperties().put(JMSConstants._TIMEOUT_TIME, new Long(100000));
 
