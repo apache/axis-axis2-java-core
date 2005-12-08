@@ -17,6 +17,7 @@
 package org.apache.axis2.transport.jms;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
@@ -34,7 +35,7 @@ import java.util.HashMap;
  * properties are passed in during instantiation and are in turn passed through
  * when creating a connector.
  */
-public class JMSTransport {
+public class JMSTransport extends AbstractHandler {
     protected static Log log =
             LogFactory.getLog(JMSTransport.class.getName());
 
@@ -42,7 +43,6 @@ public class JMSTransport {
 
     private HashMap defaultConnectorProps;
     private HashMap defaultConnectionFactoryProps;
-    private String transportName;
 
     static {
         // add a shutdown hook to close JMS connections
@@ -56,7 +56,6 @@ public class JMSTransport {
     }
 
     public JMSTransport() {
-        transportName = "JMSTransport";
     }
 
     // this cons is provided for clients that instantiate the JMSTransport directly

@@ -43,20 +43,24 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
 
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.
  */
 public class JMSSender extends JMSTransport implements TransportSender {
+
+    HashMap params = new HashMap();
+
     public JMSSender() {
     }
 
-    public void init(HandlerDescription handlerdesc) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
     public void init(ConfigurationContext confContext, TransportOutDescription transportOut) throws AxisFault {
-        //To change body of implemented methods use File | Settings | File Templates.
+        Iterator iterator = transportOut.getParameters().iterator();
+        while (iterator.hasNext()) {
+            Parameter param = (Parameter) iterator.next();
+            params.put(param.getName(), param.getValue());
+        }
     }
 
     /**
@@ -68,7 +72,7 @@ public class JMSSender extends JMSTransport implements TransportSender {
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         JMSConnector connector = null;
-        Destination dest = null;        
+        Destination dest = null;
         if (msgContext.isServerSide()) {
             JMSOutTransportInfo transportInfo =
                     (JMSOutTransportInfo) msgContext.getProperty(
@@ -76,9 +80,9 @@ public class JMSSender extends JMSTransport implements TransportSender {
             if (transportInfo != null) {
                 connector = transportInfo.getConnector();
                 dest = transportInfo.getDestination();
-            }        
+            }
         }
-        
+
         boolean waitForResponse = false;
         if(connector == null) {
             if (msgContext.getProperty(JMSConstants.WAIT_FOR_RESPONSE) != null && msgContext.getProperty(JMSConstants.WAIT_FOR_RESPONSE).equals(Boolean.TRUE))
@@ -88,12 +92,12 @@ public class JMSSender extends JMSTransport implements TransportSender {
 
             super.invoke(msgContext);
         }
-        
+
         try {
             JMSEndpoint endpoint = null;
             if (dest == null) {
                 Object destination = msgContext.getProperty(JMSConstants.DESTINATION);
-                
+
                 if(connector == null) {
                     connector = (JMSConnector) msgContext.getProperty(JMSConstants.CONNECTOR);
                 }
@@ -108,7 +112,7 @@ public class JMSSender extends JMSTransport implements TransportSender {
                     throw new AxisFault("noDestination");
                 }
 
-                
+
                 if (destination instanceof String)  {
                     endpoint = connector.createEndpoint((String) destination);
                 } else {
@@ -138,7 +142,7 @@ public class JMSSender extends JMSTransport implements TransportSender {
             props.put("contentType", getContentType(msgContext));
             props.put("SOAPAction", getSOAPAction(msgContext));
             if (waitForResponse) {
-                long timeout = Options.DEFAULT_TIMEOUT_MILLISECONDS; 
+                long timeout = Options.DEFAULT_TIMEOUT_MILLISECONDS;
                 if(msgContext.getProperty(JMSConstants.TIMEOUT_TIME) != null) {
                     timeout = ((Long) msgContext.getProperty(JMSConstants.TIMEOUT_TIME)).longValue();
                 }
@@ -194,22 +198,6 @@ public class JMSSender extends JMSTransport implements TransportSender {
         return props;
     }
 
-    public QName getName() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public Parameter getParameter(String name) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void cleanup() throws AxisFault {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public HandlerDescription getHandlerDesc() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
     public void cleanUp(MessageContext msgContext) throws AxisFault {
         //To change body of implemented methods use File | Settings | File Templates.
     }
@@ -228,10 +216,10 @@ public class JMSSender extends JMSTransport implements TransportSender {
                 OMOutputFormat format = new OMOutputFormat();
                 //Pick the char set encoding from the msgContext
                 String charSetEnc = (String) msgContext
-						.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                        .getProperty(MessageContext.CHARACTER_SET_ENCODING);
                 format.setDoOptimize(msgContext.isDoingMTOM());
                 format.setCharSetEncoding(charSetEnc);
-				outputMessage.serializeAndConsume(out, format);
+                outputMessage.serializeAndConsume(out, format);
                 out.flush();
             } catch (Exception e) {
                 throw new AxisFault(e);
@@ -265,7 +253,7 @@ public class JMSSender extends JMSTransport implements TransportSender {
         }
         format.setSOAP11(msgCtx.isSOAP11());
         format.setCharSetEncoding(charSetEnc);
-        
+
         String encoding = format.getCharSetEncoding();
         String contentType = format.getContentType();
         if (encoding != null) {
