@@ -199,7 +199,6 @@ public class JMSSender extends JMSTransport implements TransportSender {
     }
 
     public void cleanUp(MessageContext msgContext) throws AxisFault {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void writeMessage(MessageContext msgContext, OutputStream out)

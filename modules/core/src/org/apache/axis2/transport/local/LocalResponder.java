@@ -40,11 +40,10 @@ public class LocalResponder extends AbstractTransportSender {
     }
 
     public OutputStream startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext, OutputStream out) throws AxisFault {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;  
     }
 
     public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext, OutputStream out) throws AxisFault {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     protected OutputStream openTheConnection(EndpointReference epr, MessageContext msgctx) throws AxisFault {
@@ -58,6 +57,5 @@ public class LocalResponder extends AbstractTransportSender {
      * @throws org.apache.axis2.AxisFault
      */
     public void cleanUp(MessageContext msgContext) throws AxisFault {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 }
