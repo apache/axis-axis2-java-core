@@ -51,7 +51,7 @@ import javax.xml.stream.XMLStreamException;
 
 public class JMSEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
-            new EndpointReference("jms:/dynamicQueues/FOO.BAR?ConnectionFactoryJNDIName=ConnectionFactory&java.naming.factory.initial=org.activemq.jndi.ActiveMQInitialContextFactory&java.naming.provider.url=tcp://localhost:61616");
+            new EndpointReference("jms:/dynamicQueues/BAR?ConnectionFactoryJNDIName=ConnectionFactory&java.naming.factory.initial=org.activemq.jndi.ActiveMQInitialContextFactory&java.naming.provider.url=tcp://localhost:61616");
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
 
@@ -112,10 +112,9 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
-        options.setUseSeparateListener(false);
         options.setAction(serviceName.getLocalPart());
         options.setSoapAction("echoOMElement");
-        options.getProperties().put(JMSConstants.DESTINATION, "dynamicQueues/FOO.BAR");
+        options.getProperties().put(JMSConstants.DESTINATION, "dynamicQueues/BAR");
         options.getProperties().put(JMSConstants.WAIT_FOR_RESPONSE, Boolean.TRUE);
         options.getProperties().put(JMSConstants._TIMEOUT_TIME, new Long(100000));
 
@@ -165,10 +164,9 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
-        options.setUseSeparateListener(false);
         options.setAction(serviceName.getLocalPart());
         options.setSoapAction("EchoXMLService/echoOMElement");
-        options.getProperties().put(JMSConstants.DESTINATION, "dynamicQueues/FOO.BAR");
+        options.getProperties().put(JMSConstants.DESTINATION, "dynamicQueues/BAR");
         options.getProperties().put(JMSConstants.WAIT_FOR_RESPONSE, Boolean.TRUE);
         options.getProperties().put(JMSConstants._TIMEOUT_TIME, new Long(100000));
 
@@ -180,38 +178,42 @@ public class JMSEchoRawXMLTest extends TestCase {
         call.close();
     }
 
-//    public void testEchoXMLCompleteSync() throws Exception {
-//        AxisService service =
-//                Utils.createSimpleService(serviceName,
-//                        Echo.class.getName(),
-//                        operationName);
-//
-//        OMFactory fac = OMAbstractFactory.getOMFactory();
-//
-//        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-//        OMElement payloadElement = fac.createOMElement("echoOMElement", omNs);
-//        OMElement value = fac.createOMElement("myValue", omNs);
-//        value.setText("Isaac Asimov, The Foundation Trilogy");
-//        payloadElement.addChild(value);
-//
-//        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-//                serviceContext);
-//        Options options = new Options();
-//        call.setClientOptions(options);
-//        options.setTo(targetEPR);
-//        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-//        options.setAction(operationName.getLocalPart());
-//        options.setListenerTransportProtocol(Constants.TRANSPORT_TCP);
-//        options.setUseSeparateListener(true);
-//
-//        OMElement result = call.invokeBlocking(
-//                operationName.getLocalPart(), payloadElement);
-//        result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
-//                System.out));
-//        call.close();
-//
-//    }
-//
+    public void testEchoXMLCompleteSync() throws Exception {
+        AxisService service =
+                Utils.createSimpleService(serviceName,
+                        Echo.class.getName(),
+                        operationName);
+
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+
+        OMNamespace omNs = fac.createOMNamespace("http://localhost/axis2/services/EchoXMLService", "my");
+        OMElement payloadElement = fac.createOMElement("echoOMElement", omNs);
+        OMElement value = fac.createOMElement("myValue", omNs);
+        value.setText("Isaac Asimov, The Foundation Trilogy");
+        payloadElement.addChild(value);
+
+        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
+                serviceContext);
+        Options options = new Options();
+        call.setClientOptions(options);
+        options.setTo(targetEPR);
+        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
+        options.setAction(operationName.getLocalPart());
+        options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
+        options.setSoapAction("EchoXMLService/echoOMElement");
+        options.getProperties().put(JMSConstants.DESTINATION, "dynamicQueues/BAR");
+        options.getProperties().put(JMSConstants.WAIT_FOR_RESPONSE, Boolean.FALSE);
+        options.getProperties().put(JMSConstants._TIMEOUT_TIME, new Long(100000));
+        options.setUseSeparateListener(true);
+
+        OMElement result = call.invokeBlocking(
+                operationName.getLocalPart(), payloadElement);
+        result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(
+                System.out));
+        call.close();
+
+    }
+
     public void testEchoXMLSyncMC() throws Exception {
         ConfigurationContextFactory confac = new ConfigurationContextFactory();
         ConfigurationContext configContext = confac.buildClientConfigurationContext(Constants.TESTING_REPOSITORY);
@@ -223,9 +225,8 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setTo(targetEPR);
         options.setAction(operationName.getLocalPart());
         options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
-        options.setUseSeparateListener(false);
         options.setSoapAction("EchoXMLService/echoOMElement");
-        options.getProperties().put(JMSConstants.DESTINATION, "dynamicQueues/FOO.BAR");
+        options.getProperties().put(JMSConstants.DESTINATION, "dynamicQueues/BAR");
         options.getProperties().put(JMSConstants.WAIT_FOR_RESPONSE, Boolean.TRUE);
         options.getProperties().put(JMSConstants._TIMEOUT_TIME, new Long(100000));
 

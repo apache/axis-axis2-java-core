@@ -61,7 +61,7 @@ public class UtilsJMSServer {
 
             HashMap connectorMap = new HashMap();
             HashMap cfMap = new HashMap();
-            String destination = "dynamicQueues/FOO.BAR";
+            String destination = "dynamicQueues/BAR";
             String username = null;
             String password = null;
             boolean doThreads = true;

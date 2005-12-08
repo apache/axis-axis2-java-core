@@ -92,15 +92,27 @@ public class JMSSender extends JMSTransport implements TransportSender {
             JMSEndpoint endpoint = null;
             if (dest == null) {
                 Object destination = msgContext.getProperty(JMSConstants.DESTINATION);
-                if (destination == null)
+                
+                if(connector == null) {
+                    connector = (JMSConnector) msgContext.getProperty(JMSConstants.CONNECTOR);
+                }
+                if (destination == null && msgContext.getTo() != null) {
+                    String to = msgContext.getTo().getAddress();
+                    if (to != null) {
+                        JMSURLHelper url = new JMSURLHelper(to);
+                        destination = url.getDestination();
+                    }
+                }
+                if (destination == null) {
                     throw new AxisFault("noDestination");
+                }
 
-                connector = (JMSConnector) msgContext.getProperty(JMSConstants.CONNECTOR);
-
-                if (destination instanceof String)
+                
+                if (destination instanceof String)  {
                     endpoint = connector.createEndpoint((String) destination);
-                else
+                } else {
                     endpoint = connector.createEndpoint((Destination) destination);
+                }
             } else {
                 endpoint = connector.createEndpoint(dest);
             }

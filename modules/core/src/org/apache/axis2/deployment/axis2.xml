@@ -56,6 +56,12 @@
         <parameter name="port" locked="false">6060</parameter>
     </transportReceiver>
 
+    <transportReceiver name="jms" class="org.apache.axis2.transport.jms.SimpleJMSListener">
+        <parameter name="transport.jms.Destination" locked="false">dynamicQueues/FOO</parameter>
+        <parameter name="java.naming.factory.initial" locked="false">org.activemq.jndi.ActiveMQInitialContextFactory</parameter>
+        <parameter name="java.naming.provider.url" locked="false">tcp://localhost:61616</parameter>
+    </transportReceiver>
+
     <!-- ================================================= -->
     <!-- Transport Outs -->
     <!-- ================================================= -->
