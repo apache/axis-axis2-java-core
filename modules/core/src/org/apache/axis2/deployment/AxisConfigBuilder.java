@@ -269,6 +269,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                                         .getContextClassLoader());
                         TransportListener receiver = (TransportListener) receiverClass.newInstance();
                         transportIN.setReceiver(receiver);
+                    } catch (NoClassDefFoundError e) {
+                        log.info(Messages.getMessage("classnotfound", trsClas.getAttributeValue()));
                     } catch (ClassNotFoundException e) {
                         throw new DeploymentException(e);
                     } catch (IllegalAccessException e) {
