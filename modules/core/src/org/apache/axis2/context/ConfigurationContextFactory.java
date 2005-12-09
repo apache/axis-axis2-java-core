@@ -11,12 +11,15 @@ import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
 public class ConfigurationContextFactory {
+    private Log log = LogFactory.getLog(getClass());
 
     /**
      * Builds the configuration for the Server.
@@ -102,10 +105,8 @@ public class ConfigurationContextFactory {
      * Initializes TransportSenders and TransportListeners with appropriate configuration information
      *
      * @param configContext
-     * @throws AxisFault
      */
-    public void initTransports(ConfigurationContext configContext)
-            throws AxisFault {
+    public void initTransports(ConfigurationContext configContext) {
         AxisConfiguration axisConf = configContext.getAxisConfiguration();
 
         //Initzialize Transport Ins
@@ -116,7 +117,12 @@ public class ConfigurationContextFactory {
                     (TransportInDescription) values.next();
             TransportListener listener = transportIn.getReceiver();
             if (listener != null) {
-                listener.init(configContext, transportIn);
+                try {
+                    listener.init(configContext, transportIn);
+                } catch (AxisFault axisFault) {
+                    log.info("Transport-IN initialization error : " +
+                            transportIn.getName().getLocalPart());
+                }
             }
         }
         //Initzialize Transport Outs
@@ -127,7 +133,12 @@ public class ConfigurationContextFactory {
                     (TransportOutDescription) values.next();
             TransportSender sender = transportOut.getSender();
             if (sender != null) {
-                sender.init(configContext, transportOut);
+                try {
+                    sender.init(configContext, transportOut);
+                } catch (AxisFault axisFault) {
+                    log.info("Transport-OUT initialization error : " +
+                            transportOut.getName().getLocalPart());
+                }
             }
         }
 

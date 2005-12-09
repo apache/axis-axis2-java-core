@@ -39,13 +39,21 @@ public class Java2WSDL {
     }
 
     public void generateWSDL() throws Exception {
-        SchemaGenerator sg = new SchemaGenerator(classLoader, className,null,null);
+        SchemaGenerator sg = new SchemaGenerator(classLoader, className, null, null);
         XmlSchema scheam = sg.generateSchema();
         WSDLDescription wommodel = new Java2WOM(
-                sg.getTypeTable(), sg.getMethods(), scheam, className,null,null).generateWOM();
+                sg.getTypeTable(), sg.getMethods(), scheam, simpleClassName(className), null, null).generateWOM();
         WOMWriter womWriter = WOMWriterFactory.createWriter(WSDLConstants.WSDL_1_1);
         womWriter.setdefaultWSDLPrefix("wsdl");
         womWriter.writeWOM(wommodel, out);
 
+    }
+
+    private String simpleClassName(String qualifiedName) {
+        int index = qualifiedName.lastIndexOf(".");
+        if (index > 0) {
+            return qualifiedName.substring(index + 1, qualifiedName.length());
+        }
+        return qualifiedName;
     }
 }

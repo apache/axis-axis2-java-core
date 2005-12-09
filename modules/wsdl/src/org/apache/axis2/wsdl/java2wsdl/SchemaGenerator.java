@@ -243,7 +243,7 @@ public class SchemaGenerator {
             }
             if (typeTable.isSimpleType(classTypeName)) {
                 XmlSchemaElement elt1 = new XmlSchemaElement();
-                elt1.setName(retuenType.getSimpleName());
+                elt1.setName("return");
                 elt1.setSchemaTypeName(typeTable.getSimpleSchemaTypeName(classTypeName));
                 sequence.getItems().add(elt1);
                 if (isArryType) {
@@ -251,7 +251,7 @@ public class SchemaGenerator {
                 }
             } else {
                 XmlSchemaElement elt1 = new XmlSchemaElement();
-                elt1.setName(methodName);
+                elt1.setName("return");
                 elt1.setSchemaTypeName(typeTable.getComplexScheamType(classTypeName));
                 sequence.getItems().add(elt1);
                 if (isArryType) {
@@ -271,9 +271,7 @@ public class SchemaGenerator {
             XmlSchemaSequence sequence = new XmlSchemaSequence();
 
             XmlSchemaElement eltOuter = new XmlSchemaElement();
-//            QName elemntName = new QName(SCHEMA_TARGET_NAMESPASE, simpleName + "Wrapper", SCHEMA_NAMESPASE_PRFIX);
             QName elemntName = new QName(SCHEMA_TARGET_NAMESPASE, simpleName, SCHEMA_NAMESPASE_PRFIX);
-//            eltOuter.setName(simpleName + "Wrapper");
             eltOuter.setName(simpleName);
             eltOuter.setQName(elemntName);
             complexType.setParticle(sequence);
