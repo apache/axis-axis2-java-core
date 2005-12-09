@@ -16,6 +16,11 @@
 
 package org.apache.axis2.om;
 
+import java.io.ByteArrayInputStream;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.custommonkey.xmlunit.Diff;
 import org.w3c.dom.Document;
 
@@ -38,6 +43,27 @@ public class AttrNsTest extends AbstractOMSerializationTest {
         Diff diff = compareXML(document1, document2);
         assertXMLEqual(diff, true);
     }
+    
+
+    /**
+     * Test method to test the XML namespace
+     * @throws Exception
+     */
+	public void testAttr() throws Exception{
+		String xml = "<wsp:Policy xml:base=\"uri:thisBase\" " +
+			"xmlns:wsp=\"http://schemas.xmlsoap.org/ws/2004/09/policy\">" + 
+		"</wsp:Policy>";
+		
+		ByteArrayInputStream bais = new ByteArrayInputStream(xml.getBytes());
+		StAXOMBuilder builder = new StAXOMBuilder(bais);
+		OMElement elem = builder.getDocumentElement();
+		elem.build();
+		assertEquals("Attribute value mismatch", "uri:thisBase", elem.getAttributeValue(new QName(OMConstants.XMLNS_URI,"base")));
+		
+		OMAttribute attr = elem.getAttribute(new QName(OMConstants.XMLNS_URI,"base"));
+		
+		assertEquals("Attribute namespace mismatch", OMConstants.XMLNS_URI, attr.getNamespace().getName());
+	}
 
 
 }

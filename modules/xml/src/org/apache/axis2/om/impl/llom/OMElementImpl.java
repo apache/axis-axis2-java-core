@@ -16,26 +16,36 @@
 
 package org.apache.axis2.om.impl.llom;
 
-import org.apache.axis2.om.*;
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMConstants;
+import org.apache.axis2.om.OMContainer;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMText;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMContainerEx;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.traverse.OMChildElementIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
 import org.apache.axis2.om.impl.llom.util.EmptyIterator;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.util.ElementHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamConstants;
-import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Class OMElementImpl
@@ -361,7 +371,12 @@ public class OMElementImpl extends OMNodeImpl
             if (namespace != null && uri.equalsIgnoreCase(namespace.getName())) {
                 return namespace;
             } else {
-                return null;
+            	//Check whether the given prefix and uri is XML prefix and ns
+            	if(prefix.equals(OMConstants.XMLNS_PREFIX) && uri.equals(OMConstants.XMLNS_URI)) {
+            		return new OMNamespaceImpl(uri, prefix);
+            	} else {
+            		return null;
+            	}
             }
 //            return (OMNamespace) namespaces.get(prefix);
         }

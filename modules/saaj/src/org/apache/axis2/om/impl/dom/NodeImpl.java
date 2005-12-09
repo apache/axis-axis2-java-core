@@ -103,8 +103,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
     }
 
 
-    public String getLocalName()
-    {
+    public String getLocalName() {
         return null; //Override in AttrImpl and ElementImpl
     }
 
@@ -123,8 +122,7 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
     /*
       * Overidden in ElementImpl and AttrImpl
       */
-    public String getPrefix()
-    {
+    public String getPrefix() {
         return null;
     }
 
