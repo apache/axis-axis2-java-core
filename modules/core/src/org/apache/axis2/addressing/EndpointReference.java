@@ -15,44 +15,33 @@
  */
 package org.apache.axis2.addressing;
 
+import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class EndpointReference
- * TODO : Policy has not been integrated to this
+ * Contents of this class differs between WS-A Submission and WS-Final. Without having a
+ * inheritance hierarchy for this small difference, lets have all the properties in the same class.
  */
 public class EndpointReference implements Serializable {
-    /**
-     * Required property. may be a logical address or identifier for the service endpoint
-     */
+
+    // Commons properties
     private String address;
+    private Map referenceParameters;
 
-    /**
-     * Field interfaceName
-     */
-    private QName interfaceName;
-
-    /**
-     * Field referenceProperties
-     */
-    private AnyContentType referenceProperties;
-
-    /**
-     * Field referenceParameters
-     */
-    private AnyContentType referenceParameters;
-
-    /**
-     * Field serviceName
-     */
+    // Properties from WS-A Submission version
+    private Map referenceProperties;
+    private QName portType;
     private ServiceName serviceName;
+    private OMElement policy;
 
-    private OMElement policies;
-
-    private AnyContentType metadata;
+    // Properties from WS-A Final
+    private OMElement metaData;
 
     /**
      * @param address
@@ -78,54 +67,6 @@ public class EndpointReference implements Serializable {
     }
 
     /**
-     * Method getInterfaceName
-     */
-    public QName getInterfaceName() {
-        return interfaceName;
-    }
-
-    /**
-     * Method setInterfaceName
-     *
-     * @param interfaceName
-     */
-    public void setInterfaceName(QName interfaceName) {
-        this.interfaceName = interfaceName;
-    }
-
-    /**
-     * Method getReferenceProperties
-     */
-    public AnyContentType getReferenceProperties() {
-        return referenceProperties;
-    }
-
-    /**
-     * Method setReferenceProperties
-     *
-     * @param referenceProperties
-     */
-    public void setReferenceProperties(AnyContentType referenceProperties) {
-        this.referenceProperties = referenceProperties;
-    }
-
-    /**
-     * Method getReferenceParameters
-     */
-    public AnyContentType getReferenceParameters() {
-        return referenceParameters;
-    }
-
-    /**
-     * Method setReferenceParameters
-     *
-     * @param referenceParameters
-     */
-    public void setReferenceParameters(AnyContentType referenceParameters) {
-        this.referenceParameters = referenceParameters;
-    }
-
-    /**
      * Method getServiceName
      */
     public ServiceName getServiceName() {
@@ -141,27 +82,126 @@ public class EndpointReference implements Serializable {
         this.serviceName = serviceName;
     }
 
-    public OMElement getPolicies() {
-        return policies;
+    public OMElement getPolicy() {
+        return policy;
     }
 
-    public void setPolicies(OMElement policies) {
-        this.policies = policies;
+    public void setPolicy(OMElement policy) {
+        this.policy = policy;
     }
 
-    public AnyContentType getMetadata() {
-        return metadata;
+    /**
+     * This will return a Map of reference parameters with QName as the key and an OMElement
+     * as the value
+     *
+     * @return
+     */
+    public Map getAllReferenceParameters() {
+        return referenceParameters;
     }
 
-    public void setMetadata(AnyContentType metadata) {
-        this.metadata = metadata;
+    /**
+     * Set a Map with QName as the key and an OMElement
+     * as the value
+     *
+     * @param referenceParameters
+     */
+    public void setReferenceParameters(Map referenceParameters) {
+        this.referenceParameters = referenceParameters;
     }
 
+    /**
+     * This will return a Map of reference properties with QName as the key and an OMElement
+     * as the value
+     *
+     * @return
+     */
+    public Map getAllReferenceProperties() {
+        return referenceProperties;
+    }
+
+    /**
+     * Set a Map with QName as the key and an OMElement
+     * as the value
+     *
+     * @param referenceProperties
+     */
+    public void setReferenceProperties(HashMap referenceProperties) {
+        this.referenceProperties = referenceProperties;
+    }
+
+    public QName getPortType() {
+        return portType;
+    }
+
+    public void setPortType(QName portType) {
+        this.portType = portType;
+    }
+
+    public OMElement getMetaData() {
+        return metaData;
+    }
+
+    public void setMetaData(OMElement metaData) {
+        this.metaData = metaData;
+    }
+
+
+    /**
+     *
+     * @param qname
+     * @param value - the text of the OMElement. Remember that this is a convenient method for the user,
+     * which has limited capability. If you want more power use @See EndpointReference#addReferenceParameter(OMElement)
+     */
     public void addReferenceParameter(QName qname, String value) {
-        if (getReferenceParameters() == null) {
-            setReferenceParameters(new AnyContentType());
+        if (qname == null) {
+            return;
         }
-        referenceParameters.addReferenceValue(qname, value);
+        OMElement omElement = OMAbstractFactory.getOMFactory().createOMElement(qname, null);
+        omElement.setText(value);
+        addReferenceParameter(omElement);
+    }
+
+    /**
+     *
+     * @param omElement
+     */
+    public void addReferenceParameter(OMElement omElement) {
+        if (omElement == null) {
+            return;
+        }
+        if (referenceParameters == null) {
+            referenceParameters = new HashMap();
+        }
+        referenceParameters.put(omElement.getQName(), omElement);
+    }
+
+    /**
+     * Remember that reference properties are only supported in WS-A Submission version.
+     * @param qname
+     * @param value
+     */
+    public void addReferenceProperty(QName qname, String value) {
+        if (qname == null) {
+            return;
+        }
+        OMElement omElement = OMAbstractFactory.getOMFactory().createOMElement(qname, null);
+        omElement.setText(value);
+        addReferenceProperty(omElement);
+    }
+
+    /**
+     * Remember that reference properties are only supported in WS-A Submission version.
+     * @param omElement
+     */
+    public void addReferenceProperty(OMElement omElement) {
+        if (omElement == null) {
+            return;
+        }
+        if (referenceProperties == null) {
+            referenceProperties = new HashMap();
+        }
+        referenceProperties.put(omElement.getQName(), omElement);
     }
 
 

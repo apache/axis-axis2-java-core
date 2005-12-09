@@ -16,21 +16,20 @@
 package org.apache.axis2.addressing;
 
 import javax.xml.namespace.QName;
-import java.io.Serializable;
 
 /**
  * Class ServiceName
  */
-public class ServiceName implements Serializable{
+public class ServiceName {
     /**
      * Field name
      */
     private QName name;
 
     /**
-     * Field endpointName
+     * Field portName
      */
-    private String endpointName;
+    private String portName;
 
     /**
      * @param name
@@ -45,7 +44,7 @@ public class ServiceName implements Serializable{
      */
     public ServiceName(QName name, String portName) {
         this.name = name;
-        this.endpointName = portName;
+        this.portName = portName;
     }
 
     /**
@@ -67,20 +66,20 @@ public class ServiceName implements Serializable{
     }
 
     /**
-     * Method getEndpointName
+     * Method getPortName
      *
      * @return
      */
-    public String getEndpointName() {
-        return endpointName;
+    public String getPortName() {
+        return portName;
     }
 
     /**
-     * Method setEndpointName
+     * Method setPortName
      *
-     * @param endpointName
+     * @param portName
      */
-    public void setEndpointName(String endpointName) {
-        this.endpointName = endpointName;
+    public void setPortName(String portName) {
+        this.portName = portName;
     }
 }

@@ -17,8 +17,10 @@
 package org.apache.axis2.addressing;
 
 import junit.framework.TestCase;
+import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
+import java.util.Map;
 
 
 public class EndpointReferenceTypeTest extends TestCase {
@@ -52,28 +54,25 @@ public class EndpointReferenceTypeTest extends TestCase {
 
     public void testGetAndSetPortType() {
         QName portType = new QName("www.someport.com", "port");
-        endpointReference.setInterfaceName(portType);
+        endpointReference.setPortType(portType);
         assertEquals("PortType not set/get properly",
                 portType,
-                endpointReference.getInterfaceName());
+                endpointReference.getPortType());
     }
 
     public void testGetAndSetReferenceProperties() {
-        AnyContentType anyContentType = new AnyContentType();
         for (int i = 0; i < 10; i++) {
-            anyContentType.addReferenceValue(
+            endpointReference.addReferenceProperty(
                     new QName("http://www.opensouce.lk/" + i, "" + i),
                     "value " + i * 100);
         }
-        endpointReference.setReferenceProperties(anyContentType);
 
-        AnyContentType retrievedAnyContentType = endpointReference.getReferenceProperties();
+        Map retrievedReferenceProperties = endpointReference.getAllReferenceProperties();
         for (int i = 0; i < 10; i++) {
-            String value = retrievedAnyContentType.getReferenceValue(
-                    new QName("http://www.opensouce.lk/" + i, "" + i));
+            OMElement referenceProperty = (OMElement) retrievedReferenceProperties.get(new QName("http://www.opensouce.lk/" + i, "" + i));
             assertEquals(
                     "Input value differs from what is taken out from AnyContentType",
-                    value,
+                    referenceProperty.getText(),
                     "value " + i * 100);
         }
 
@@ -82,19 +81,18 @@ public class EndpointReferenceTypeTest extends TestCase {
     public void testGetAndSetReferenceParameters() {
         AnyContentType anyContentType = new AnyContentType();
         for (int i = 0; i < 10; i++) {
-            anyContentType.addReferenceValue(
+            endpointReference.addReferenceParameter(
                     new QName("http://www.opensouce.lk/" + i, "" + i),
                     "value " + i * 50);
         }
-        endpointReference.setReferenceParameters(anyContentType);
 
-        AnyContentType retrievedAnyContentType = endpointReference.getReferenceParameters();
+        Map retrievedReferenceParameters = endpointReference.getAllReferenceParameters();
         for (int i = 0; i < 10; i++) {
-            String value = retrievedAnyContentType.getReferenceValue(
+            OMElement referenceParameter = (OMElement) retrievedReferenceParameters.get(
                     new QName("http://www.opensouce.lk/" + i, "" + i));
             assertEquals(
                     "Input value differs from what is taken out from AnyContentType",
-                    value,
+                    referenceParameter.getText(),
                     "value " + i * 50);
         }
     }
@@ -118,8 +116,8 @@ public class EndpointReferenceTypeTest extends TestCase {
                 serviceName.getName(),
                 retrievedServiceName.getName());
         assertEquals("ServiceName portName has not been get/set properly",
-                serviceName.getEndpointName(),
-                retrievedServiceName.getEndpointName());
+                serviceName.getPortName(),
+                retrievedServiceName.getPortName());
     }
 
 }

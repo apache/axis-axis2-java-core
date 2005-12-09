@@ -19,30 +19,22 @@ package org.apache.axis2.handlers.addressing;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class AddressingInHandler extends AbstractHandler implements AddressingConstants {
+public class AddressingInHandler extends AddressingHandler {
     // this parameter has to be set by the module deployer.
-    private boolean isAddressingOptional = true;
-    protected String addressingNamespace = null;
-
-    private Log logger = LogFactory.getLog(getClass());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         logger.debug("Starting Addressing IN Handler .........");
@@ -254,25 +246,14 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
             if (checkElement(new QName(addressingNamespace, AddressingConstants.EPR_ADDRESS), eprChildElement.getQName())) {
                 epr.setAddress(eprChildElement.getText());
             } else if (checkElement(new QName(addressingNamespace, AddressingConstants.EPR_REFERENCE_PARAMETERS), eprChildElement.getQName())) {
-                AnyContentType anyContentType = new AnyContentType();
-                if (epr.getReferenceParameters() == null) {
-                    epr.setReferenceParameters(anyContentType);
-                }
+
                 Iterator referenceParameters = eprChildElement.getChildElements();
                 while (referenceParameters.hasNext()) {
                     OMElement element = (OMElement) referenceParameters.next();
-                    epr.getReferenceParameters().addReferenceValue(element.getQName(), element.getText());
+                    epr.addReferenceParameter(element);
                 }
             } else if (checkElement(new QName(addressingNamespace, AddressingConstants.Final.WSA_METADATA), eprChildElement.getQName())) {
-                AnyContentType anyContentType = new AnyContentType();
-                if (epr.getMetadata() == null) {
-                    epr.setMetadata(anyContentType);
-                }
-                Iterator metadataChildren = eprChildElement.getChildElements();
-                while (metadataChildren.hasNext()) {
-                    OMElement element = (OMElement) metadataChildren.next();
-                    epr.getMetadata().addReferenceValue(element.getQName(), element.getText());
-                }
+                epr.setMetaData(eprChildElement);
             }
         }
     }

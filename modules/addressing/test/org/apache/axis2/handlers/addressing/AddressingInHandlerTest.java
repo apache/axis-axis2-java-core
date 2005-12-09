@@ -18,7 +18,6 @@ package org.apache.axis2.handlers.addressing;
 
 import junit.framework.TestCase;
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.handlers.util.TestUtil;
@@ -29,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import java.util.Map;
 
 public class AddressingInHandlerTest extends TestCase {
     private Log log = LogFactory.getLog(getClass());
@@ -106,15 +106,15 @@ public class AddressingInHandlerTest extends TestCase {
                             AddressingConstants.Final.WSA_NAMESPACE);
             assertNotNull(messageInformationHeaders);
             assertNotNull(messageInformationHeaders.getTo());
-            assertNotNull(messageInformationHeaders.getTo().getReferenceParameters());
-            AnyContentType referenceParameters = messageInformationHeaders.getTo().getReferenceParameters();
+
+            Map allReferenceParameters = messageInformationHeaders.getTo().getAllReferenceParameters();
+            assertNotNull(allReferenceParameters);
             QName qName = new QName("http://ws.apache.org/namespaces/axis2", "ParamOne", "axis2");
-            assertNotNull(referenceParameters.getReferenceValue(qName));
+            assertNotNull(allReferenceParameters.get(qName));
 
         } catch (Exception e) {
             e.printStackTrace();
-
-            log.info(e.getMessage());
+            log.error(e.getMessage());
             fail(" An Exception has occured " + e.getMessage());
         }
     }

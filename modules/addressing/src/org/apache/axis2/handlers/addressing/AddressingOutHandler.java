@@ -19,12 +19,10 @@ package org.apache.axis2.handlers.addressing;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.ServiceName;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
@@ -34,12 +32,10 @@ import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
+import java.util.Map;
 
-public class AddressingOutHandler
-        extends AbstractHandler
-        implements AddressingConstants {
+public class AddressingOutHandler extends AddressingHandler {
 
-    private boolean isAddressingEnabled = true;
 
     // IN message, if any, has messageId and replyTo and faultTo addresses that needs to be used
     // in the OUT message. User may sometimes override these values, at his discretion .The following
@@ -53,7 +49,7 @@ public class AddressingOutHandler
     public void invoke(MessageContext msgContext) throws AxisFault {
 
 
-        if (!isAddressingEnabled || msgContext.getMessageInformationHeaders() == null) {
+        if (msgContext.getMessageInformationHeaders() == null) {
             return;
         }
 
@@ -109,10 +105,8 @@ public class AddressingOutHandler
                 toHeaderBlock.setText(address);
             }
 
-            AnyContentType referenceParameters = epr.getReferenceParameters();
-            if (referenceParameters != null) {
-                processAnyContentType(referenceParameters, soapHeader);
-            }
+            processReferenceInformation(epr.getAllReferenceParameters(), soapHeader);
+            processReferenceInformation(epr.getAllReferenceProperties(), soapHeader);
 
             addToHeader(epr, soapHeader);
         }
@@ -137,10 +131,7 @@ public class AddressingOutHandler
             // add the service group id as a reference parameter
             String serviceGroupContextId = msgContext.getServiceGroupContextId();
             if (serviceGroupContextId != null && !"".equals(serviceGroupContextId)) {
-                if (epr.getReferenceParameters() == null) {
-                    epr.setReferenceParameters(new AnyContentType());
-                }
-                epr.getReferenceParameters().addReferenceValue(new QName(Constants.AXIS2_NAMESPACE_URI,
+                epr.addReferenceParameter(new QName(Constants.AXIS2_NAMESPACE_URI,
                         Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX), serviceGroupContextId);
             }
             addToSOAPHeader(epr, AddressingConstants.WSA_REPLY_TO, soapHeader);
@@ -222,26 +213,26 @@ public class AddressingOutHandler
         addToHeader(epr, soapHeaderBlock);
 
 
-        AnyContentType referenceParameters = epr.getReferenceParameters();
+        Map referenceParameters = epr.getAllReferenceParameters();
         if (referenceParameters != null) {
             OMElement reference =
                     OMAbstractFactory.getOMFactory().createOMElement(
                             EPR_REFERENCE_PARAMETERS,
                             addressingNamespaceObject);
             soapHeaderBlock.addChild(reference);
-            processAnyContentType(referenceParameters, reference);
+            processReferenceInformation(referenceParameters, reference);
 
         }
 
         if (Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
-            AnyContentType referenceProperties = epr.getReferenceProperties();
+            Map referenceProperties = epr.getAllReferenceProperties();
             if (referenceProperties != null) {
                 OMElement reference =
                         OMAbstractFactory.getOMFactory().createOMElement(
                                 Submission.EPR_REFERENCE_PROPERTIES,
                                 addressingNamespaceObject);
                 soapHeader.addChild(reference);
-                processAnyContentType(referenceParameters, reference);
+                processReferenceInformation(referenceParameters, reference);
             }
 
         }
@@ -250,67 +241,57 @@ public class AddressingOutHandler
 
     private void addToHeader(EndpointReference epr, OMElement parentElement) {
 
+        if (addressingNamespace.equals(Submission.WSA_NAMESPACE)) {
+            QName portType = epr.getPortType();
+            if (portType != null) {
+                OMElement interfaceName =
+                        OMAbstractFactory.getOMFactory().createOMElement(Submission.EPR_PORT_TYPE, addressingNamespaceObject);
+                interfaceName.addChild(
+                        OMAbstractFactory.getOMFactory().createText(
+                                portType.getPrefix() + ":" +
+                                        portType.getLocalPart()));
+                parentElement.addChild(interfaceName);
+            }
 
-        QName interfaceQName = epr.getInterfaceName();
-        if (interfaceQName != null) {
-            OMElement interfaceName =
-                    OMAbstractFactory.getOMFactory().createOMElement(
-                            addressingNamespace.equals(
-                                    Submission.WSA_NAMESPACE) ?
-                                    Submission.EPR_PORT_TYPE : Final.WSA_INTERFACE_NAME,
-                            addressingNamespaceObject);
-            interfaceName.addChild(
-                    OMAbstractFactory.getOMFactory().createText(
-                            interfaceQName.getPrefix() + ":" +
-                                    interfaceQName.getLocalPart()));
-            parentElement.addChild(interfaceName);
-        }
-
-        ServiceName serviceName = epr.getServiceName();
-        if (serviceName != null) {
-            OMElement serviceNameElement =
-                    OMAbstractFactory.getOMFactory().createOMElement(
-                            EPR_SERVICE_NAME,
-                            addressingNamespaceObject);
-            serviceNameElement.addAttribute(
-                    addressingNamespace.equals(Submission.WSA_NAMESPACE) ?
-                            Submission.EPR_SERVICE_NAME_PORT_NAME :
-                            Final.WSA_SERVICE_NAME_ENDPOINT_NAME,
-                    serviceName.getEndpointName(),
-                    addressingNamespaceObject);
-            serviceNameElement.addChild(
-                    OMAbstractFactory.getOMFactory().createText(
-                            serviceName.getName().getPrefix()
-                                    + ":"
-                                    + serviceName.getName().getLocalPart()));
-            parentElement.addChild(serviceNameElement);
+            ServiceName serviceName = epr.getServiceName();
+            if (serviceName != null) {
+                OMElement serviceNameElement =
+                        OMAbstractFactory.getOMFactory().createOMElement(
+                                EPR_SERVICE_NAME,
+                                addressingNamespaceObject);
+                serviceNameElement.addAttribute(Submission.EPR_SERVICE_NAME_PORT_NAME, serviceName.getPortName(),
+                        addressingNamespaceObject);
+                serviceNameElement.addChild(
+                        OMAbstractFactory.getOMFactory().createText(
+                                serviceName.getName().getPrefix()
+                                        + ":"
+                                        + serviceName.getName().getLocalPart()));
+                parentElement.addChild(serviceNameElement);
+            }
         }
 
 
     }
 
 
-    private void processAnyContentType
-            (AnyContentType
-                    referenceValues,
-             OMElement
-                     parentElement) {
-        if (referenceValues != null) {
-            Iterator iterator = referenceValues.getKeys();
+    /**
+     * This will add reference parameters and/or reference properties in to the message
+     *
+     * @param referenceInformation
+     */
+    private void processReferenceInformation(Map referenceInformation, OMElement parent) {
+        if (referenceInformation != null && parent != null) {
+            Iterator iterator = referenceInformation.keySet().iterator();
             while (iterator.hasNext()) {
                 QName key = (QName) iterator.next();
-                String value = referenceValues.getReferenceValue(key);
-                OMElement omElement =
-                        OMAbstractFactory.getOMFactory().createOMElement(key,
-                                parentElement);
+                OMElement omElement = (OMElement) referenceInformation.get(key);
+
                 if (Final.WSA_NAMESPACE.equals(addressingNamespace)) {
-                    omElement.addAttribute(
-                            Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
-                            Final.WSA_TYPE_ATTRIBUTE_VALUE,
+                    omElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE, Final.WSA_TYPE_ATTRIBUTE_VALUE,
                             addressingNamespaceObject);
 
                 }
-                omElement.setText(value);
+                parent.addChild(omElement);
             }
         }
     }

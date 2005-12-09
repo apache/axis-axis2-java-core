@@ -19,7 +19,6 @@ package org.apache.axis2.handlers.addressing;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.ServiceName;
 import org.apache.axis2.context.MessageContext;
@@ -51,7 +50,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
     public void testAddToSOAPHeader() throws Exception {
         EndpointReference replyTo = new EndpointReference("http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous");
         EndpointReference epr = new EndpointReference("http://www.to.org/service/");
-        epr.setInterfaceName(
+        epr.setPortType(
                 new QName("http://www.from.org/service/port/",
                         "Port",
                         "portNS"));
@@ -62,15 +61,13 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
                                 "serviceNS"),
                         "port"));
 
-        AnyContentType anyContentType = new AnyContentType();
         for (int i = 0; i < 5; i++) {
-            anyContentType.addReferenceValue(
+            epr.addReferenceParameter(
                     new QName(Submission.WSA_NAMESPACE, "Reference" + i),
                     "Value " + i * 100);
 
         }
 
-        epr.setReferenceParameters(anyContentType);
 
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
@@ -93,23 +90,18 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
     public void testHeaderCreationFromMsgCtxtInformation() throws Exception {
         msgCtxt = new MessageContext(null);
 
-        AnyContentType referenceValues = new AnyContentType();
-
         EndpointReference epr = new EndpointReference("http://www.from.org/service/");
-        referenceValues.addReferenceValue(new QName("Reference2"),
+        epr.addReferenceParameter(new QName("Reference2"),
                 "Value 200");
-        epr.setReferenceParameters(referenceValues);
         msgCtxt.setFrom(epr);
 
         epr = new EndpointReference("http://www.to.org/service/");
-        referenceValues = new AnyContentType();
-        referenceValues.addReferenceValue(
+        epr.addReferenceParameter(
                 new QName("http://reference.org", "Reference4", "myRef"),
                 "Value 400");
-        referenceValues.addReferenceValue(
+        epr.addReferenceParameter(
                 new QName("http://reference.org", "Reference3", "myRef"),
                 "Value 300");
-        epr.setReferenceParameters(referenceValues);
 
         epr.setServiceName(
                 new ServiceName(
@@ -118,7 +110,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
                                 "serviceNS"),
                         "port"));
 
-        epr.setInterfaceName(
+        epr.setPortType(
                 new QName("http://www.from.org/service/port/",
                         "Port",
                         "portNS"));
