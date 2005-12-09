@@ -88,7 +88,6 @@ public class MailCharSetEncodingTest extends TestCase {
         AxisService service = Utils.createSimpleService(serviceName,
                 Echo.class.getName(), operationName);
         configContext.getAxisConfiguration().addService(service);
-        Utils.resolvePhases(configContext.getAxisConfiguration(), service);
 
         SimpleMailListener ml = new SimpleMailListener();
 
@@ -121,7 +120,6 @@ public class MailCharSetEncodingTest extends TestCase {
             engineRegistry.removeService(serviceName.getLocalPart());
             clientService.addOperation(clientOperation);
             engineRegistry.addService(clientService);
-            Utils.resolvePhases(engineRegistry, clientService);
             clientServiceContext = Utils.fillContextInformation(clientOperation,  clientService, clientConfigContext);
 
             org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(

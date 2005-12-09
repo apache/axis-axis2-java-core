@@ -87,7 +87,6 @@ public class MailOneWayRawXMLTest extends TestCase {
         });
         service.addOperation(axisOperation);
         configContext.getAxisConfiguration().addService(service);
-        Utils.resolvePhases(configContext.getAxisConfiguration(), service);
         ServiceContext serviceContext = Utils.fillContextInformation(axisOperation,  service, configContext);
     }
 
@@ -118,7 +117,6 @@ public class MailOneWayRawXMLTest extends TestCase {
         });
         service.addOperation(axisOperation);
         configContext.getAxisConfiguration().addService(service);
-        Utils.resolvePhases(configContext.getAxisConfiguration(), service);
         ServiceContext serviceContext = Utils.fillContextInformation(axisOperation,  service, configContext);
 
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();

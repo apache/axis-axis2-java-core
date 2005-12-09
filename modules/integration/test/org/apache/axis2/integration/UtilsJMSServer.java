@@ -17,14 +17,12 @@
 package org.apache.axis2.integration;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.transport.jms.SimpleJMSListener;
-import org.apache.axis2.transport.jms.JMSConstants;
-import org.apache.axis2.transport.jms.JNDIVendorAdapter;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.util.Utils;
+import org.apache.axis2.transport.jms.JNDIVendorAdapter;
+import org.apache.axis2.transport.jms.SimpleJMSListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -45,8 +43,6 @@ public class UtilsJMSServer {
 
         receiver.getSystemContext().getAxisConfiguration().addService(service);
 
-        Utils.resolvePhases(receiver.getSystemContext().getAxisConfiguration(),
-                service);
         ServiceGroupContext serviceGroupContext = service.getParent().getServiceGroupContext(receiver.getSystemContext());
 
     }

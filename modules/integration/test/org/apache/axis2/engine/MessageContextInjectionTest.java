@@ -40,7 +40,6 @@ import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.local.LocalTransportReceiver;
 import org.apache.axis2.transport.local.LocalTransportSender;
-import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -91,9 +90,6 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         LocalTransportReceiver.CONFIG_CONTEXT.getAxisConfiguration()
                 .addService(service);
-        Utils.resolvePhases(
-                LocalTransportReceiver.CONFIG_CONTEXT.getAxisConfiguration(),
-                service);
     }
 
     protected void tearDown() throws Exception {

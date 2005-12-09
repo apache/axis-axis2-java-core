@@ -22,7 +22,6 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.transport.tcp.TCPServer;
-import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,9 +40,6 @@ public class UtilsTCPServer {
             throws AxisFault {
 
         receiver.getSystemContext().getAxisConfiguration().addService(service);
-
-        Utils.resolvePhases(receiver.getSystemContext().getAxisConfiguration(),
-                service);
         ServiceGroupContext serviceGroupContext = service.getParent().getServiceGroupContext(receiver.getSystemContext());
 
     }

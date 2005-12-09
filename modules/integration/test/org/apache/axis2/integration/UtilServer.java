@@ -25,7 +25,6 @@ import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.threadpool.ThreadPool;
 
 import javax.xml.namespace.QName;
@@ -40,20 +39,17 @@ public class UtilServer {
     private static ThreadPool tp = null;
                                             
     public static synchronized void deployService(AxisService service) throws AxisFault {
-        receiver.getSystemContext().getAxisConfiguration().addService(service);
-        Utils.resolvePhases(receiver.getSystemContext().getAxisConfiguration(),
-                service);
-//        ServiceGroupContext serviceGroupContext = service.getParent().getServiceGroupContext(receiver.getConfigurationContext());
+        receiver.getConfigurationContext().getAxisConfiguration().addService(service);
     }
 
     public static synchronized void unDeployService(QName service) throws AxisFault {
-        receiver.getSystemContext().getAxisConfiguration().removeService(
+        receiver.getConfigurationContext().getAxisConfiguration().removeService(
                 service.getLocalPart());
     }
 
     public static synchronized void unDeployClientService() throws AxisFault {
-        if(receiver.getSystemContext().getAxisConfiguration() !=null){
-            receiver.getSystemContext().getAxisConfiguration().removeService("AnonymousService");
+        if(receiver.getConfigurationContext().getAxisConfiguration() !=null){
+            receiver.getConfigurationContext().getAxisConfiguration().removeService("AnonymousService");
         }
     }
 
@@ -61,10 +57,10 @@ public class UtilServer {
         start(org.apache.axis2.Constants.TESTING_REPOSITORY);
     }
 
-    public static synchronized void start(String repositry) throws Exception {
+    public static synchronized void start(String repository) throws Exception {
         if (count == 0) {
         	tp = new ThreadPool();
-            ConfigurationContext er = getNewConfigurationContext(repositry);
+            ConfigurationContext er = getNewConfigurationContext(repository);
 
             receiver = new SimpleHTTPServer(er, Constants.TESTING_PORT);
 
@@ -87,9 +83,9 @@ public class UtilServer {
         count++;
     }
 
-    public static ConfigurationContext getNewConfigurationContext(String repositry) throws Exception {
+    public static ConfigurationContext getNewConfigurationContext(String repository) throws Exception {
         ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-        File file = new File(repositry);
+        File file = new File(repository);
         if (!file.exists()) {
             throw new Exception(
                     "repository directory " + file.getAbsolutePath() +
@@ -117,7 +113,7 @@ public class UtilServer {
     }
 
     public static ConfigurationContext getConfigurationContext() {
-        return receiver.getSystemContext();
+        return receiver.getConfigurationContext();
     }
 
     public static ServiceContext createAdressedEnabledClientSide(

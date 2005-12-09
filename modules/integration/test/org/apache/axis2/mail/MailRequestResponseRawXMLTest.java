@@ -91,7 +91,6 @@ public class MailRequestResponseRawXMLTest extends TestCase {
                         Echo.class.getName(),
                         operationName);
         configContext.getAxisConfiguration().addService(service);
-        Utils.resolvePhases(configContext.getAxisConfiguration(), service);
         ServiceContext serviceContext = service.getParent().getServiceGroupContext(configContext).getServiceContext(service.getName().getLocalPart());
     }
 
@@ -124,7 +123,6 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         });
         service.addOperation(axisOperation);
         configContext.getAxisConfiguration().addService(service);
-        Utils.resolvePhases(configContext.getAxisConfiguration(), service);
         ServiceContext serviceContext = service.getParent().getServiceGroupContext(configContext).getServiceContext(service.getName().getLocalPart());
 
         org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(

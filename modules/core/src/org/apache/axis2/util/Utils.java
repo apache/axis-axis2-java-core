@@ -30,7 +30,6 @@ import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.wsdl.WSDLService;
@@ -123,23 +122,6 @@ public class Utils {
                 opName);
     }
 
-    //    public static void addHandlers(Flow flow, Phase phase) throws AxisFault {
-    //        if (flow != null) {
-    //            int handlerCount = flow.getHandlerCount();
-    //            for (int i = 0; i < handlerCount; i++) {
-    //                phase.addHandler(flow.getHandler(i).getHandler());
-    //            }
-    //        }
-    //    }
-    public static void resolvePhases(AxisConfiguration axisconfig,
-                                     AxisService axisService)
-            throws AxisFault, PhaseException {
-        //todo we do not need this
-//        PhaseResolver pr = new PhaseResolver(axisconfig, axisService);
-//        pr.buildchains();
-        // fixing the BUG AXIS2-278
-        // we do not need to  do this , since when adding a service this automatically done
-    }
 
     public static String getParameterValue(Parameter param) {
         if (param == null) {

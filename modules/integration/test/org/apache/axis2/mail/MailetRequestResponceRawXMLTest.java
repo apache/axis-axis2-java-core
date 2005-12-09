@@ -85,7 +85,6 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
                         Echo.class.getName(),
                         operationName);
         configContext.getAxisConfiguration().addService(service);
-        Utils.resolvePhases(configContext.getAxisConfiguration(), service);
     }
 
     protected void tearDown() throws Exception {
@@ -118,7 +117,6 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
         });
         service.addOperation(axisOperation);
         configContext.getAxisConfiguration().addService(service);
-        Utils.resolvePhases(configContext.getAxisConfiguration(), service);
 
 
         ServiceContext serviceContext = Utils.fillContextInformation(axisOperation, service, configContext);
