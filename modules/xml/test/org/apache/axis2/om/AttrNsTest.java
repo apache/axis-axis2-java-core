@@ -65,5 +65,23 @@ public class AttrNsTest extends AbstractOMSerializationTest {
 		assertEquals("Attribute namespace mismatch", OMConstants.XMLNS_URI, attr.getNamespace().getName());
 	}
 
+    /**
+     * Test method to test the XML namespace of an attr without
+     * any other ns declarations in the element
+     * @throws Exception
+     */
+	public void testAttrWithoutElementNS() throws Exception{
+		String xml = "<Policy xml:base=\"uri:thisBase\"></Policy>";
+		
+		ByteArrayInputStream bais = new ByteArrayInputStream(xml.getBytes());
+		StAXOMBuilder builder = new StAXOMBuilder(bais);
+		OMElement elem = builder.getDocumentElement();
+		elem.build();
+		assertEquals("Attribute value mismatch", "uri:thisBase", elem.getAttributeValue(new QName(OMConstants.XMLNS_URI,"base")));
+		
+		OMAttribute attr = elem.getAttribute(new QName(OMConstants.XMLNS_URI,"base"));
+		
+		assertEquals("Attribute namespace mismatch", OMConstants.XMLNS_URI, attr.getNamespace().getName());
+	}
 
 }

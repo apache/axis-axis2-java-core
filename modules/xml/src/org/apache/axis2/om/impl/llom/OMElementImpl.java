@@ -352,9 +352,21 @@ public class OMElementImpl extends OMNodeImpl
      * This can also be used to retrieve the prefix of a known namespace URI
      */
     private OMNamespace findDeclaredNamespace(String uri, String prefix) {
-        if (namespaces == null || uri == null) {
+        
+    	
+    	if(uri == null) {
+    		return null;
+    	}
+    	
+    	//If the prefix is available and uri is available and its the xml namespace
+    	if(prefix != null && prefix.equals(OMConstants.XMLNS_PREFIX) && uri.equals(OMConstants.XMLNS_URI)) {
+    		return new OMNamespaceImpl(uri, prefix);
+    	}
+    	
+    	if (namespaces == null) {
             return null;
         }
+	        
         if (prefix == null || "".equals(prefix)) {
             Iterator namespaceListIterator = namespaces.values().iterator();
             while (namespaceListIterator.hasNext()) {
@@ -371,16 +383,11 @@ public class OMElementImpl extends OMNodeImpl
             if (namespace != null && uri.equalsIgnoreCase(namespace.getName())) {
                 return namespace;
             } else {
-            	//Check whether the given prefix and uri is XML prefix and ns
-            	if(prefix.equals(OMConstants.XMLNS_PREFIX) && uri.equals(OMConstants.XMLNS_URI)) {
-            		return new OMNamespaceImpl(uri, prefix);
-            	} else {
-            		return null;
-            	}
+            	return null;
             }
-//            return (OMNamespace) namespaces.get(prefix);
         }
-    }
+	}
+    
 
     /**
      * Method getAllDeclaredNamespaces
