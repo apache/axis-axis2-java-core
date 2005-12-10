@@ -529,7 +529,7 @@ public class ListingAgent {
 
     private void listPhases(HttpServletRequest req, HttpServletResponse res) throws IOException {
         ArrayList phaselist = new ArrayList();
-        PhasesInfo info = configContext.getAxisConfiguration().getPhasesinfo();
+        PhasesInfo info = configContext.getAxisConfiguration().getPhasesInfo();
         phaselist.add(info.getINPhases());
         phaselist.add(info.getIN_FaultPhases());
         phaselist.add(info.getOUTPhases());

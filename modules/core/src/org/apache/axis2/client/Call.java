@@ -175,7 +175,7 @@ public class Call extends InOutMEPClient {
         axisOperationTemplate = new OutInAxisOperation(new QName("TemplateOperation"));
 
         AxisConfiguration axisConfiguration = serviceContext.getConfigurationContext().getAxisConfiguration();
-        PhasesInfo info = ((AxisConfiguration) axisConfiguration).getPhasesinfo();
+        PhasesInfo info = axisConfiguration.getPhasesInfo();
         //to set the operation flows
         if (info != null) {
             info.setOperationPhases(axisOperationTemplate);

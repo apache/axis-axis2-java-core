@@ -201,7 +201,7 @@ public class ModuleBuilder extends DescriptionBuilder{
             processOperationModuleRefs(modules, op_descrip);
 
             //setting Operation phase
-            PhasesInfo info = axisConfig.getPhasesinfo();
+            PhasesInfo info = axisConfig.getPhasesInfo();
             info.setOperationPhases(op_descrip);
 
             //adding the operation

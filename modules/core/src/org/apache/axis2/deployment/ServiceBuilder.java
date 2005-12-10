@@ -18,7 +18,14 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisOperationFactory;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.description.ModuleConfiguration;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -226,7 +233,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             //setting Operation phase
             if (axisConfig != null) {
-                PhasesInfo info = axisConfig.getPhasesinfo();
+                PhasesInfo info = axisConfig.getPhasesInfo();
                 info.setOperationPhases(op_descrip);
             }
 

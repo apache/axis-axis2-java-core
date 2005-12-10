@@ -29,7 +29,12 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Class AxisConfigurationImpl
@@ -477,12 +482,12 @@ public class AxisConfiguration  implements ParameterInclude{
         return engagedModules.contains(moduleName);
     }
 
-    public PhasesInfo getPhasesinfo() {
+    public PhasesInfo getPhasesInfo() {
         return phasesinfo;
     }
 
-    public void setPhasesinfo(PhasesInfo phasesinfo) {
-        this.phasesinfo = phasesinfo;
+    public void setPhasesinfo(PhasesInfo phasesInfo) {
+        this.phasesinfo = phasesInfo;
     }
 
     public String getRepository() {
