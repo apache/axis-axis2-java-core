@@ -29,7 +29,11 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.*;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAP12Constants;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.util.UUIDGenerator;
 
 import javax.xml.namespace.QName;
@@ -48,6 +52,7 @@ public abstract class MEPClient {
      * Client will pass all the parameters to this invocation using this.
      */
     protected Options clientOptions;
+    private static final String ANONYMOUS_SERVICE = "AnonymousService";
 
     public MEPClient(ServiceContext service, String mep) {
         this.serviceContext = service;
@@ -257,15 +262,15 @@ public abstract class MEPClient {
     /**
      * Assumes the values for the ConfigurationContext and ServiceContext to make the NON WSDL cases simple.
      *
-     * @throws org.apache.axis2.AxisFault
+     * @throws AxisFault
      */
     protected void assumeServiceContext(String clientHome)
             throws AxisFault {
         ConfigurationContext configurationContext =
                 new ConfigurationContextFactory().buildClientConfigurationContext(clientHome);
 
-        QName assumedServiceName = new QName("AnonymousService");
-        AxisService axisService = configurationContext.getAxisConfiguration().getService("AnonymousService");
+        QName assumedServiceName = new QName(ANONYMOUS_SERVICE);
+        AxisService axisService = configurationContext.getAxisConfiguration().getService(ANONYMOUS_SERVICE);
         if (axisService == null) {
             //we will assume a Service and operations
             axisService = new AxisService(assumedServiceName);

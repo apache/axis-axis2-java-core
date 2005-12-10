@@ -64,10 +64,10 @@ public abstract class Stub {
     protected Stub() {
     }
 
-    public void _setSessionInfo(String key, Object value) throws java.lang.Exception {
+    public void _setSessionInfo(String key, Object value) throws Exception {
         if (!_maintainSession) {
             //TODO Comeup with a Exception
-            throw new java.lang.Exception(
+            throw new Exception(
                     "Client is running the session OFF mode: Start session before saving to a session ");
         }
         _configurationContext.getServiceContext(_currentSessionId).setProperty(
@@ -75,10 +75,10 @@ public abstract class Stub {
     }
 
 
-    public Object _getSessionInfo(String key) throws java.lang.Exception {
+    public Object _getSessionInfo(String key) throws Exception {
         if (!_maintainSession) {
             //TODO Comeup with a Exception
-            throw new java.lang.Exception(
+            throw new Exception(
                     "Client is running the session OFF mode: Start session before saving to a session ");
         }
         return _configurationContext.getServiceContext(_currentSessionId)

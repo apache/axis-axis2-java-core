@@ -120,7 +120,7 @@ public class MessageSender extends InOnlyMEPClient {
         AxisService axisService = serviceContext.getAxisService();
 
         AxisConfiguration axisConfiguration = serviceContext.getConfigurationContext().getAxisConfiguration();
-        PhasesInfo info = ((AxisConfiguration) axisConfiguration).getPhasesInfo();
+        PhasesInfo info = axisConfiguration.getPhasesInfo();
         //to set the operation flows
         if (info != null) {
             info.setOperationPhases(axisOperationTemplate);

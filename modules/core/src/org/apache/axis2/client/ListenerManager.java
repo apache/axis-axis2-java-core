@@ -45,7 +45,7 @@ public class ListenerManager {
      * @param configurationContext
      * @throws AxisFault
      */
-    public static synchronized final void makeSureStarted(String transport,
+    public static synchronized void makeSureStarted(String transport,
                                                           ConfigurationContext configurationContext)
             throws AxisFault {
         // If this config context is in the map, that means we already have a listener for that
@@ -74,7 +74,7 @@ public class ListenerManager {
         tsState.waitingCalls++;
     }
 
-    public static synchronized final void stop(ConfigurationContext configurationContext, String transport) throws AxisFault {
+    public static synchronized void stop(ConfigurationContext configurationContext, String transport) throws AxisFault {
         HashMap listeners = (HashMap) configurationContextMap.get(configurationContext);
 
         if (listeners != null) {

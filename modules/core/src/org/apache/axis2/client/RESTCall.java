@@ -29,7 +29,7 @@ public class RESTCall extends Call {
         super();
     }
 
-    public RESTCall(ServiceContext service) throws AxisFault {
+    public RESTCall(ServiceContext service) {
         super(service);
     }
 

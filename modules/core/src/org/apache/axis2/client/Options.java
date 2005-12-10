@@ -256,7 +256,7 @@ public class Options {
      * Sets the transport to be used for sending the SOAP Message
      *
      * @param senderTransport
-     * @throws org.apache.axis2.AxisFault if the transport is not found
+     * @throws AxisFault if the transport is not found
      */
     public void setSenderTransport(String senderTransport, AxisConfiguration axisConfiguration) throws AxisFault {
         this.senderTransport =
