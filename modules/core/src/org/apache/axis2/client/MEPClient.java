@@ -29,11 +29,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPHeader;
+import org.apache.axis2.soap.*;
 import org.apache.axis2.util.UUIDGenerator;
 
 import javax.xml.namespace.QName;
@@ -110,7 +106,7 @@ public abstract class MEPClient {
      */
     protected abstract void configureTransportInformation(MessageContext msgCtxt) throws AxisFault;
 
-    private void extractPropertiesFromOptionsToContexts(MessageContext msgCtx) throws AxisFault {
+    private void extractPropertiesFromOptionsToContexts(MessageContext msgCtx) {
 
         // copy addressing parameters
         msgCtx.setTo(clientOptions.getTo());

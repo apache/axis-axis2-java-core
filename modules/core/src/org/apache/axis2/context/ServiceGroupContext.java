@@ -21,9 +21,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -33,21 +30,20 @@ public class ServiceGroupContext extends AbstractContext {
     private String id;
     private Map serviceContextMap;
     private transient AxisServiceGroup axisServiceGroup;
-    private String axisServiceGroupName =null;
-
+    private String axisServiceGroupName = null;
 
 
     public void init(AxisConfiguration axisConfiguration) throws AxisFault {
-        if (axisServiceGroupName !=null)
+        if (axisServiceGroupName != null)
             axisServiceGroup = axisConfiguration.getServiceGroup(axisServiceGroupName);
     }
 
-    public ServiceGroupContext(ConfigurationContext parent ,AxisServiceGroup axisServiceGroup) {
+    public ServiceGroupContext(ConfigurationContext parent, AxisServiceGroup axisServiceGroup) {
         super(parent);
         this.axisServiceGroup = axisServiceGroup;
         serviceContextMap = new HashMap();
 
-        if (axisServiceGroup !=null)
+        if (axisServiceGroup != null)
             this.axisServiceGroupName = axisServiceGroup.getServiceGroupName();
         fillServiceContexts();
     }
@@ -70,13 +66,13 @@ public class ServiceGroupContext extends AbstractContext {
      * if serviceGroup desc has 2 service init , then two serviceContext will be
      * created
      */
-    private void fillServiceContexts(){
+    private void fillServiceContexts() {
         Iterator services = axisServiceGroup.getServices();
         while (services.hasNext()) {
             AxisService axisService = (AxisService) services.next();
-            ServiceContext serviceContext = new ServiceContext(axisService,this);
+            ServiceContext serviceContext = new ServiceContext(axisService, this);
             String servicNams = axisService.getName().getLocalPart();
-            serviceContextMap.put(servicNams,serviceContext);
+            serviceContextMap.put(servicNams, serviceContext);
         }
     }
 
@@ -84,7 +80,7 @@ public class ServiceGroupContext extends AbstractContext {
         return axisServiceGroup;
     }
 
-    public Iterator getServiceContexts(){
+    public Iterator getServiceContexts() {
         return serviceContextMap.values().iterator();
     }
 }

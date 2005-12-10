@@ -22,16 +22,13 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 /**
  * Well this is never clearly defined, what it does or the lifecycle.
  * So do NOT use this as it might not live up to your expectation.
  */
 public class ServiceContext extends AbstractContext {
-	
+
     private transient AxisService axisService;
 
     private String serviceInstanceID;
@@ -41,21 +38,22 @@ public class ServiceContext extends AbstractContext {
 
     /**
      * Initializes the engine context.
+     *
      * @throws AxisFault
      */
     public void init(AxisConfiguration axisConfiguration) throws AxisFault {
-    	axisService = axisConfiguration.getService(axisServiceName.getLocalPart());
+        axisService = axisConfiguration.getService(axisServiceName.getLocalPart());
     }
-    
+
     public ServiceContext(
-        AxisService serviceConfig,
-        ServiceGroupContext serviceGroupContext) {
+            AxisService serviceConfig,
+            ServiceGroupContext serviceGroupContext) {
         super(serviceGroupContext);
         this.axisService = serviceConfig;
-        
-        if (serviceConfig!=null){
-        	this.axisServiceName = serviceConfig.getName();
-            serviceInstanceID = serviceConfig.getName().getLocalPart(); 
+
+        if (serviceConfig != null) {
+            this.axisServiceName = serviceConfig.getName();
+            serviceInstanceID = serviceConfig.getName().getLocalPart();
         }
 
     }
@@ -69,6 +67,7 @@ public class ServiceContext extends AbstractContext {
 
     /**
      * Sets service instance id.
+     *
      * @param serviceInstanceID
      */
     public void setServiceInstanceID(String serviceInstanceID) {
