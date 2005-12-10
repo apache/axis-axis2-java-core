@@ -94,7 +94,8 @@ public class EndpointReference implements Serializable {
      * This will return a Map of reference parameters with QName as the key and an OMElement
      * as the value
      *
-     * @return
+     * @return - map of the reference parameters, where the key is the QName of the reference parameter
+     *         and the value is an OMElement
      */
     public Map getAllReferenceParameters() {
         return referenceParameters;
@@ -114,7 +115,8 @@ public class EndpointReference implements Serializable {
      * This will return a Map of reference properties with QName as the key and an OMElement
      * as the value
      *
-     * @return
+     * @return - map of the reference parameters, where the key is the QName of the reference parameter
+     *         and the value is an OMElement
      */
     public Map getAllReferenceProperties() {
         return referenceProperties;
@@ -148,10 +150,9 @@ public class EndpointReference implements Serializable {
 
 
     /**
-     *
      * @param qname
      * @param value - the text of the OMElement. Remember that this is a convenient method for the user,
-     * which has limited capability. If you want more power use @See EndpointReference#addReferenceParameter(OMElement)
+     *              which has limited capability. If you want more power use @See EndpointReference#addReferenceParameter(OMElement)
      */
     public void addReferenceParameter(QName qname, String value) {
         if (qname == null) {
@@ -163,7 +164,6 @@ public class EndpointReference implements Serializable {
     }
 
     /**
-     *
      * @param omElement
      */
     public void addReferenceParameter(OMElement omElement) {
@@ -178,6 +178,7 @@ public class EndpointReference implements Serializable {
 
     /**
      * Remember that reference properties are only supported in WS-A Submission version.
+     *
      * @param qname
      * @param value
      */
@@ -192,6 +193,7 @@ public class EndpointReference implements Serializable {
 
     /**
      * Remember that reference properties are only supported in WS-A Submission version.
+     *
      * @param omElement
      */
     public void addReferenceProperty(OMElement omElement) {

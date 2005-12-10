@@ -13,12 +13,24 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wsdl.*;
+import org.apache.wsdl.MessageReference;
+import org.apache.wsdl.WSDLConstants;
+import org.apache.wsdl.WSDLExtensibilityAttribute;
+import org.apache.wsdl.WSDLExtensibilityElement;
+import org.apache.wsdl.WSDLFaultReference;
+import org.apache.wsdl.WSDLFeature;
+import org.apache.wsdl.WSDLOperation;
+import org.apache.wsdl.WSDLProperty;
 import org.apache.wsdl.impl.WSDLOperationImpl;
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -87,7 +99,7 @@ public abstract class AxisOperation implements
      * To ebgage a module it is reuired to use this method
      *
      * @param moduleref
-     * @throws org.apache.axis2.AxisFault
+     * @throws AxisFault
      */
     public final void engageModule(ModuleDescription moduleref,
                                    AxisConfiguration axisConfig) throws AxisFault {

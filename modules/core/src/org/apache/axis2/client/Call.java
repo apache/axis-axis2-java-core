@@ -124,7 +124,7 @@ public class Call extends InOutMEPClient {
      * @param axisop
      * @param toSend   -  data to be sent (OMElement).
      * @param callback
-     * @throws org.apache.axis2.AxisFault
+     * @throws AxisFault
      */
 
     public void invokeNonBlocking(
@@ -146,7 +146,7 @@ public class Call extends InOutMEPClient {
      * @param axisop
      * @param envelope -  data to be sent (SOAPEnvelope).
      * @param callback
-     * @throws org.apache.axis2.AxisFault
+     * @throws AxisFault
      */
 
     public void invokeNonBlocking(

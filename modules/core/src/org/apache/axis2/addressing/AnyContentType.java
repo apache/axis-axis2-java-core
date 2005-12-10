@@ -25,10 +25,6 @@ import java.util.Iterator;
  * Class AnyContentType
  */
 public class AnyContentType implements Serializable {
-    /**
-     * Field anyContentTypeName
-     */
-    private String anyContentTypeName;
 
     /**
      * Field valueHolder
@@ -56,7 +52,6 @@ public class AnyContentType implements Serializable {
      * Method getReferenceValue
      *
      * @param name
-     * @return
      */
     public String getReferenceValue(QName name) {
         return (String) valueHolder.get(name);

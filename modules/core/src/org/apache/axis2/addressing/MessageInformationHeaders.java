@@ -92,8 +92,6 @@ public class MessageInformationHeaders implements Serializable {
 
     /**
      * Method getTo
-     *
-     * @return
      */
     public EndpointReference getTo() {
 
@@ -111,8 +109,6 @@ public class MessageInformationHeaders implements Serializable {
 
     /**
      * Method getFrom
-     *
-     * @return
      */
     public EndpointReference getFrom() {
         return from;
@@ -129,8 +125,6 @@ public class MessageInformationHeaders implements Serializable {
 
     /**
      * Method getReplyTo
-     *
-     * @return
      */
     public EndpointReference getReplyTo() {
 
@@ -148,8 +142,6 @@ public class MessageInformationHeaders implements Serializable {
 
     /**
      * Method getFaultTo
-     *
-     * @return
      */
     public EndpointReference getFaultTo() {
 
@@ -167,8 +159,6 @@ public class MessageInformationHeaders implements Serializable {
 
     /**
      * Method getAction
-     *
-     * @return
      */
     public String getAction() {
         return action;
@@ -185,8 +175,6 @@ public class MessageInformationHeaders implements Serializable {
 
     /**
      * Method getMessageId
-     *
-     * @return
      */
     public String getMessageId() {
         return messageId;
@@ -203,10 +191,8 @@ public class MessageInformationHeaders implements Serializable {
 
     /**
      * Method getRelatesTo
-     *
-     * @return
      */
-    public org.apache.axis2.addressing.RelatesTo getRelatesTo() {
+    public RelatesTo getRelatesTo() {
 
         return relatesTo;
     }
@@ -216,7 +202,7 @@ public class MessageInformationHeaders implements Serializable {
      *
      * @param relatesTo
      */
-    public void setRelatesTo(org.apache.axis2.addressing.RelatesTo relatesTo) {
+    public void setRelatesTo(RelatesTo relatesTo) {
 
         this.relatesTo = relatesTo;
     }

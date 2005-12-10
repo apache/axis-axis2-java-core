@@ -54,8 +54,6 @@ public class RelatesTo implements Serializable{
 
     /**
      * Method getValue
-     *
-     * @return
      */
     public String getValue() {
         return value;
@@ -72,8 +70,6 @@ public class RelatesTo implements Serializable{
 
     /**
      * Method getRelationshipType
-     *
-     * @return
      */
     public String getRelationshipType() {
         return relationshipType;

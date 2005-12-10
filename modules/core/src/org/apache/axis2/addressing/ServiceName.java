@@ -49,8 +49,6 @@ public class ServiceName {
 
     /**
      * Method getName
-     *
-     * @return
      */
     public QName getName() {
         return name;
@@ -67,8 +65,6 @@ public class ServiceName {
 
     /**
      * Method getPortName
-     *
-     * @return
      */
     public String getPortName() {
         return portName;
