@@ -32,6 +32,10 @@ public class HTTPConstants {
     public static final String MEDIA_TYPE_TEXT_XML = "text/xml";
     public static final String MEDIA_TYPE_MULTIPART_RELATED = "multipart/related";
     public static final String MEDIA_TYPE_X_WWW_FORM = "application/x-www-form-urlencoded";
+    public static final String MEDIA_TYPE_APPLICATION_SOAP_XML = "application/soap+xml";
+
+    //public static final String HTTP_GET = "HTTP_GET";
+    //public static final String HTTP_POST = "HTTP_POST";
 
 
     /**

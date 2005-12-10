@@ -448,25 +448,25 @@ public class HTTPTransportUtils {
 
     }
 
-    public static boolean isDoingRESTThoughPost(MessageContext msgContext) {
-        boolean restThroughPost = true;
+    public static boolean isDoingHTTPPost(MessageContext msgContext) {
+        boolean httpPost = true;
 
-        if (msgContext.getParameter(Constants.Configuration.ENABLE_REST_THROUGH_GET)
+        if (msgContext.getParameter(Constants.Configuration.HTTP_METHOD_GET)
                 != null) {
-            restThroughPost =
+            httpPost =
                     Constants.VALUE_TRUE.equals(
                             msgContext.getParameter(
-                                    Constants.Configuration.ENABLE_REST_THROUGH_GET).getValue());
-            restThroughPost = false;
-        } else if (msgContext.getProperty(Constants.Configuration.ENABLE_REST_THROUGH_GET) != null) {
-            restThroughPost =
+                                    Constants.Configuration.HTTP_METHOD_GET).getValue());
+
+        } else if(msgContext.getProperty(Constants.Configuration.HTTP_METHOD_GET) != null) {
+            httpPost =
                     Constants.VALUE_TRUE.equals(
                             msgContext.getProperty(
-                                    Constants.Configuration.ENABLE_REST_THROUGH_GET));
-            restThroughPost = false;
+                                    Constants.Configuration.HTTP_METHOD_GET));
+           
         }
-        msgContext.setRestThroughPOST(!restThroughPost);
-        return restThroughPost;
+        msgContext.setDoingHttpPOST(!httpPost);
+        return httpPost;
 
     }
 }

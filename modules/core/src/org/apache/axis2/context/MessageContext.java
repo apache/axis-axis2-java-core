@@ -829,11 +829,11 @@ public class MessageContext extends AbstractContext {
         doingREST = b;
     }
 
-    public void setRestThroughPOST(boolean b) {
+    public void setDoingHttpPOST(boolean b) {
         doRESTthroughPOST = b;
     }
 
-    public boolean isRestThroughPOST() {
+    public boolean isDoingHttpPOST() {
         return doRESTthroughPOST;
     }
 
