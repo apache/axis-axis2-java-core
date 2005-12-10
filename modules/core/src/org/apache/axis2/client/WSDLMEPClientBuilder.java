@@ -16,11 +16,6 @@
  
 package org.apache.axis2.client;
 
-import java.net.URL;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
@@ -46,6 +41,10 @@ import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.extensions.SOAPAddress;
 import org.apache.wsdl.extensions.SOAPOperation;
 
+import javax.xml.namespace.QName;
+import java.net.URL;
+import java.util.Iterator;
+
 public class WSDLMEPClientBuilder {
 	private boolean isoneway= false;
 	private WSDLDescription description;
@@ -62,7 +61,7 @@ public class WSDLMEPClientBuilder {
 	public void defineDescription(URL wsdlurl)throws AxisFault{
 		try {
 			
-			WOMBuilder buider = WOMBuilderFactory.getBuilder(org.apache.axis2.wsdl.WSDLConstants.WSDL_1_1);
+			WOMBuilder buider = WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1);
 			WSDLVersionWrapper vw = buider.build(wsdlurl.openStream());
 			description = vw.getDescription();
 		} catch (Exception e) {

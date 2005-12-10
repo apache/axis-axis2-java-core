@@ -32,10 +32,10 @@ public class WOMBuilderFactory {
 
     public static WOMBuilder getBuilder(int wsdlDocumentType) throws WSDLException {
 
-        if (wsdlDocumentType == org.apache.axis2.wsdl.WSDLConstants.WSDL_1_1) {
+        if (wsdlDocumentType == WSDLConstants.WSDL_1_1) {
             return new WSDL1ToWOMBuilder();
         }
-        if (wsdlDocumentType == org.apache.axis2.wsdl.WSDLConstants.WSDL_2_0) {
+        if (wsdlDocumentType == WSDLConstants.WSDL_2_0) {
             return new WSDL2ToWOMBuilder();
         }
         throw new WSDLException(WSDLException.INVALID_WSDL,
@@ -66,9 +66,9 @@ public class WOMBuilderFactory {
         //Check the target namespace of the WSDL and determine the WSDL version.
         int version = getWSDLVersion(doc);
 
-        if (version == org.apache.axis2.wsdl.WSDLConstants.WSDL_1_1) {
+        if (version == WSDLConstants.WSDL_1_1) {
             return new WSDL1ToWOMBuilder();
-        } else if (version == org.apache.axis2.wsdl.WSDLConstants.WSDL_2_0) {
+        } else if (version == WSDLConstants.WSDL_2_0) {
             return new WSDL2ToWOMBuilder();
         }
 
@@ -88,10 +88,10 @@ public class WOMBuilderFactory {
         //TODO check weather the namespaces are correct and the / problem too
         if (WSDLConstants.WSDL2_0_NAMESPACE.equals(
                 doc.getDocumentElement().getNamespaceURI())) {
-            return org.apache.axis2.wsdl.WSDLConstants.WSDL_2_0;
+            return WSDLConstants.WSDL_2_0;
         } else if (WSDLConstants.WSDL1_1_NAMESPACE.equals(
                 doc.getDocumentElement().getNamespaceURI())) {
-            return org.apache.axis2.wsdl.WSDLConstants.WSDL_1_1;
+            return WSDLConstants.WSDL_1_1;
         }
 
         throw new WSDLException(WSDLException.OTHER_ERROR,

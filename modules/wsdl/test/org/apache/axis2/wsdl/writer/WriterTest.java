@@ -1,7 +1,6 @@
 package org.apache.axis2.wsdl.writer;
 
 import junit.framework.TestCase;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.wsdl.WSDLDescription;
@@ -27,7 +26,7 @@ public class WriterTest extends TestCase {
 
 
     protected void setUp() throws Exception {
-        WOMBuilder builder = WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1);
+        WOMBuilder builder = WOMBuilderFactory.getBuilder(org.apache.wsdl.WSDLConstants.WSDL_1_1);
 //        this.description = builder.build("test-resources/BookQuote.wsdl").getDescription();
         this.description = builder.build("test-resources/wsat.wsdl").getDescription();
     }

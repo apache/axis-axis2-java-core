@@ -131,4 +131,6 @@ public interface WSDLConstants {
     public static final String WSDL_USE_ENCODED = "encoded";
 
 
+    int WSDL_1_1 = 1;
+    int WSDL_2_0 = 2;
 }

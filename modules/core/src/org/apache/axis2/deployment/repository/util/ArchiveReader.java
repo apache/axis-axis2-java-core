@@ -16,7 +16,14 @@
 
 package org.apache.axis2.deployment.repository.util;
 
-import org.apache.axis2.deployment.*;
+import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.deployment.DeploymentEngine;
+import org.apache.axis2.deployment.DeploymentErrorMsgs;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.DescriptionBuilder;
+import org.apache.axis2.deployment.ModuleBuilder;
+import org.apache.axis2.deployment.ServiceBuilder;
+import org.apache.axis2.deployment.ServiceGroupBuilder;
 import org.apache.axis2.description.AxisDescWSDLComponentFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -24,7 +31,6 @@ import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
@@ -50,7 +56,7 @@ public class ArchiveReader implements DeploymentConstants {
 
     private AxisService processWSDLFile(InputStream in) throws DeploymentException {
         try {
-            WOMBuilder builder = WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1);
+            WOMBuilder builder = WOMBuilderFactory.getBuilder(org.apache.wsdl.WSDLConstants.WSDL_1_1);
             WSDLVersionWrapper wsdlVersionWrapper = builder.build(in,
                     new AxisDescWSDLComponentFactory());
             WSDLDescription womDescription = wsdlVersionWrapper.getDescription();

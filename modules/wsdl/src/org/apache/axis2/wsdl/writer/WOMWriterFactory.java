@@ -1,6 +1,5 @@
 package org.apache.axis2.wsdl.writer;
 
-import org.apache.axis2.wsdl.*;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,12 +16,12 @@ import org.apache.axis2.wsdl.*;
  * limitations under the License.
  */
 
-public class WOMWriterFactory implements WSDLConstants {
+public class WOMWriterFactory {
 
     public static WOMWriter createWriter(int WSDLVersion){
-        if (WSDL_1_1==WSDLVersion){
+        if (org.apache.wsdl.WSDLConstants.WSDL_1_1 ==WSDLVersion){
             return new WOMtoWSDL11Writer();
-        }else if (WSDL_2_0 == WSDLVersion){
+        }else if (org.apache.wsdl.WSDLConstants.WSDL_2_0 == WSDLVersion){
             return new WOMtoWSDL20Writer();
         }else{
             throw new RuntimeException(" Unknown WSDLversion");

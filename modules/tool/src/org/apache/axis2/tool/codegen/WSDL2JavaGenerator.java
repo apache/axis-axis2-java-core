@@ -16,7 +16,6 @@
 package org.apache.axis2.tool.codegen;
 
 import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.wsdl.codegen.CommandLineOption;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
@@ -149,7 +148,7 @@ public class WSDL2JavaGenerator {
                in = new FileInputStream(new File(wsdlURI)); 
            }
          
-        return WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1).build(in).getDescription();
+        return WOMBuilderFactory.getBuilder(org.apache.wsdl.WSDLConstants.WSDL_1_1).build(in).getDescription();
     } catch (FileNotFoundException e) {
        throw e;
     } catch (WSDLException e) {

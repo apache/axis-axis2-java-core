@@ -3,7 +3,6 @@ package org.apache.axis2.wsdl.writer;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilder;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
@@ -57,12 +56,12 @@ public class WOMInputOutputTest extends XMLTestCase {
     public void testInputOutput() throws XMLStreamException {
         try {
             // create the WOM from the given WSDL.
-            WOMBuilder builder = WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1);
+            WOMBuilder builder = WOMBuilderFactory.getBuilder(org.apache.wsdl.WSDLConstants.WSDL_1_1);
             wsdlVersionWrapper = builder.build(testWSDL);
 
             // serialize wom and get the xml.
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            WOMWriter womWriter = WOMWriterFactory.createWriter(WSDLConstants.WSDL_1_1);
+            WOMWriter womWriter = WOMWriterFactory.createWriter(org.apache.wsdl.WSDLConstants.WSDL_1_1);
             womWriter.writeWOM(wsdlVersionWrapper.getDescription(), byteArrayOutputStream);
             String actualWSDL = new String(byteArrayOutputStream.toByteArray());
 

@@ -17,7 +17,7 @@
 package org.apache.wsdl;
 
 
-import org.apache.axis2.wsdl.*;
+import org.apache.axis2.wsdl.WSDLVersionWrapper;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 
 import javax.wsdl.Definition;
@@ -42,7 +42,7 @@ public class WOMBuilderTest extends AbstractTestCase {
         if (null == this.womDescription) {
             String path = getTestResourceFile("InteropTest.wsdl").getAbsolutePath();
 			wsdlVersionWrapper =
-                    WOMBuilderFactory.getBuilder(org.apache.axis2.wsdl.WSDLConstants.WSDL_1_1)
+                    WOMBuilderFactory.getBuilder(WSDLConstants.WSDL_1_1)
                     .build(path);
             this.womDescription = wsdlVersionWrapper.getDescription();
         }

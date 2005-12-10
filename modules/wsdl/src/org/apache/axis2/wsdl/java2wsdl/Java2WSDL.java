@@ -1,6 +1,5 @@
 package org.apache.axis2.wsdl.java2wsdl;
 
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.writer.WOMWriter;
 import org.apache.axis2.wsdl.writer.WOMWriterFactory;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -43,7 +42,7 @@ public class Java2WSDL {
         XmlSchema scheam = sg.generateSchema();
         WSDLDescription wommodel = new Java2WOM(
                 sg.getTypeTable(), sg.getMethods(), scheam, simpleClassName(className), null, null).generateWOM();
-        WOMWriter womWriter = WOMWriterFactory.createWriter(WSDLConstants.WSDL_1_1);
+        WOMWriter womWriter = WOMWriterFactory.createWriter(org.apache.wsdl.WSDLConstants.WSDL_1_1);
         womWriter.setdefaultWSDLPrefix("wsdl");
         womWriter.writeWOM(wommodel, out);
 
