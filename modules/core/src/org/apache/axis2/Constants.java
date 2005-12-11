@@ -210,6 +210,8 @@ public class Constants {
 
         // we need to some times send the message as multipart/related, even if there is no MTOM stuff in the envelope.
         public static final String FORCE_MIME = "ForceMimeBoundary";
+
+        public static final String IS_USING_SEPARATE_LISTENER = "IsUsingSeparateListener";
     }
 
     public static final String VALUE_TRUE = "true";

@@ -43,7 +43,7 @@ public class AddressingInHandler extends AddressingHandler {
             return;
         }
 
-        ArrayList addressingHeaders = null;
+        ArrayList addressingHeaders;
         try {
             addressingHeaders = header.getHeaderBlocksWithNSURI(Submission.WSA_NAMESPACE);
             if (addressingHeaders != null) {
@@ -160,9 +160,9 @@ public class AddressingInHandler extends AddressingHandler {
         Iterator addressingHeadersIt = addressingHeaders.iterator();
         while (addressingHeadersIt.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeadersIt.next();
-            EndpointReference epr = null;
+            EndpointReference epr;
             if (AddressingConstants.WSA_TO.equals(soapHeaderBlock.getLocalName())) {
-                //here the addressing epr overidde what ever already there is 
+                //here the addressing epr overidde what ever already there in the message context
                 epr = new EndpointReference(soapHeaderBlock.getText());
                 messageInformationHeaders.setTo(epr);
 
@@ -173,7 +173,8 @@ public class AddressingInHandler extends AddressingHandler {
             } else if (AddressingConstants.WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
                 epr = messageInformationHeaders.getFrom();
                 if (epr == null) {
-                    epr = new EndpointReference("");
+                    epr = new EndpointReference("");  // I don't know the address now. Let me pass the empty string now and fill this
+                                                      // once I process the Elements under this. 
                     messageInformationHeaders.setFrom(epr);
                 }
                 extractEPRInformation(soapHeaderBlock, epr, addressingNamespace);

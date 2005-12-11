@@ -17,6 +17,7 @@
 package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
@@ -123,6 +124,7 @@ public abstract class MEPClient {
         msgCtx.setWSAAction(clientOptions.getAction());
 
         msgCtx.setSoapAction(clientOptions.getSoapAction());
+        msgCtx.setProperty(Constants.Configuration.IS_USING_SEPARATE_LISTENER, new Boolean(clientOptions.isUseSeparateListener()));
 
         // I'm not setting the properties here. Those will be set, when we create the operation context
 
