@@ -30,8 +30,8 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.om.impl.OMNodeEx;
-import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.OutTransportInfo;
+import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
@@ -40,7 +40,6 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
@@ -195,15 +194,15 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             }
 
             //select the Message Sender depending on the REST status
-            AbstractSender sender = null;
+            AbstractHTTPSender sender = null;
             if (!msgContext.isDoingREST()) {
-                sender = new SOAPSender();
+                sender = new SOAPOverHTTPSender();
             } else {
                 sender = new RESTSender();
             }
 
             sender.setFormat(this.format);
-            sender.transportConfiguration(msgContext, dataout, url,
+            sender.send(msgContext, dataout, url,
                     soapActionString);
 
         } catch (MalformedURLException e) {

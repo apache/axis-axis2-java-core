@@ -6,15 +6,6 @@
  */
 package org.apache.axis2.transport.http;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
@@ -30,11 +21,19 @@ import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-public class SOAPSender extends AbstractSender {
 
-    public void transportConfiguration(MessageContext msgContext,
-                                       OMElement dataout, URL url, String soapActionString)
+public class SOAPOverHTTPSender extends AbstractHTTPSender {
+
+    public void send(MessageContext msgContext,
+                     OMElement dataout, URL url, String soapActionString)
             throws MalformedURLException, AxisFault, IOException {
 
         // execute the HtttpMethodBase - a connection manager can be given for

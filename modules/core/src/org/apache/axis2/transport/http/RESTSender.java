@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 
-public class RESTSender extends AbstractSender {
+public class RESTSender extends AbstractHTTPSender {
 
     private Log log = LogFactory.getLog(getClass());
 
@@ -42,23 +42,22 @@ public class RESTSender extends AbstractSender {
      * By this time, you must have identified that you are doing REST here. Following default values
      * will apply.
      * If the HTTPMethod is not set, I prefer to set it as POST by default.
-     * If the HTTPMethod is POST, default content type will always be text/plain.
      *
      * @param msgContext
      * @param dataout
      * @param url
      * @param soapActionString
      */
-    public void transportConfiguration(MessageContext msgContext,
-                                       OMElement dataout, URL url, String soapActionString) {
+    public void send(MessageContext msgContext,
+                     OMElement dataout, URL url, String soapActionString) {
         try {
             String httpMethod = (String) msgContext.getProperty(Constants.Configuration.HTTP_METHOD);
 
             if (httpMethod != null && Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
-                this.transportConfigurationGET(msgContext, url);
+                this.sendViaGet(msgContext, url);
                 return;
             }
-            this.transportConfigurationPOST(msgContext, dataout, url,
+            this.sendViaPost(msgContext, dataout, url,
                     soapActionString);
 
         } catch (Exception e) {
@@ -66,8 +65,8 @@ public class RESTSender extends AbstractSender {
         }
     }
 
-    public void transportConfigurationPOST(MessageContext msgContext,
-                                           OMElement dataout, URL url, String soapActionString) {
+    private void sendViaPost(MessageContext msgContext,
+                             OMElement dataout, URL url, String soapActionString) {
         //execuite the HtttpMethodBase - a connection manager can be given for
         // handle multiple
         httpClient = new HttpClient();
@@ -187,7 +186,7 @@ public class RESTSender extends AbstractSender {
         }
     }
 
-    private void transportConfigurationGET(MessageContext msgContext, URL url)
+    private void sendViaGet(MessageContext msgContext, URL url)
             throws MalformedURLException, AxisFault, IOException {
 
         String param = getParam(msgContext);
