@@ -56,7 +56,7 @@ package javax.xml.soap;
  * </PRE>
  * To create a <CODE>SOAPHeader</CODE> object to replace the one
  * that was removed, a client uses the method <CODE>
- * SOAPEnvelope.addHeader</CODE>, which creates a new header and
+ * SOAPEnvelope.addHeaderBlock</CODE>, which creates a new header and
  * adds it to the <CODE>SOAPEnvelope</CODE> object. Similarly, the
  * method <CODE>addBody</CODE> creates a new <CODE>SOAPBody</CODE>
  * object and adds it to the <CODE>SOAPEnvelope</CODE> object. The
@@ -67,7 +67,7 @@ package javax.xml.soap;
  * SOAPPart sp = message.getSOAPPart();
  * SOAPEnvelope se = sp.getEnvelope();
  * se.getHeader().detachNode();
- * SOAPHeader sh = se.addHeader();
+ * SOAPHeader sh = se.addHeaderBlock();
  * se.getBody().detachNode();
  * SOAPBody sb = se.addBody();
  * </PRE>

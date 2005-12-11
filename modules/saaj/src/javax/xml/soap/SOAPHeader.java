@@ -35,12 +35,12 @@ import java.util.Iterator;
  * se.getHeader().detachNode();
  * </PRE>
  * A <CODE>SOAPHeader</CODE> object is created with the <CODE>
- * SOAPEnvelope</CODE> method <CODE>addHeader</CODE>. This method,
+ * SOAPEnvelope</CODE> method <CODE>addHeaderBlock</CODE>. This method,
  * which creates a new header and adds it to the envelope, may be
  * called only after the existing header has been removed.
  * <PRE>
  * se.getHeader().detachNode();
- * SOAPHeader sh = se.addHeader();
+ * SOAPHeader sh = se.addHeaderBlock();
  * </PRE>
  * <p/>
  * <P>A <CODE>SOAPHeader</CODE> object can have only <CODE>

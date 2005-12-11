@@ -85,18 +85,20 @@ public class SOAPEnvelopeImpl extends SOAPElement
     /**
      * Convenience method to add a SOAP header to this envelope
      *
-     * @param namespaceURI
      * @param name
+     * @param namespaceURI
      */
-    public SOAPHeaderBlock addHeader(String namespaceURI, String name)
+    public SOAPHeaderBlock addHeaderBlock(String name, String namespaceURI)
             throws OMException {
         // TODO : cache SOAP header and body instead of looking them up?
 
-        SOAPHeader headerContainer = getHeader();
         OMNamespace namespace = factory.createOMNamespace(namespaceURI, null);
-        return factory.createSOAPHeaderBlock(name,
-                                                              namespace,
-                                                              headerContainer);
+        return this.addHeaderBlock(name, namespace);
+    }
+
+    public SOAPHeaderBlock addHeaderBlock(String name, OMNamespace namespace) throws OMException {
+        SOAPHeader headerContainer = getHeader();
+        return factory.createSOAPHeaderBlock(name,namespace,headerContainer);
     }
 
     public void addChild(OMNode child) {

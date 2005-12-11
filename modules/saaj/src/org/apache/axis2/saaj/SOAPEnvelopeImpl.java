@@ -139,7 +139,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements SOAPEnvelope {
     }
 
     /**
-     * method addHeader
+     * method addHeaderBlock
      *
      * @return
      * @throws SOAPException
