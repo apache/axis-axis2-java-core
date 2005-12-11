@@ -28,7 +28,9 @@ import javax.xml.namespace.QName;
 
 public class ContextHierarchyTest extends TestCase {
     private AxisOperation axisOperation;
+
     private AxisService axisService;
+
     private AxisConfiguration axisConfiguration;
 
     public ContextHierarchyTest(String arg0) {
@@ -44,22 +46,21 @@ public class ContextHierarchyTest extends TestCase {
     }
 
     public void testCompleteHiracy() throws AxisFault {
-        ConfigurationContext configurationContext =
-                new ConfigurationContext(axisConfiguration);
-        ServiceGroupContext serviceGroupContext = axisService.getParent().getServiceGroupContext(configurationContext);
-        ServiceContext serviceCOntext =
-                serviceGroupContext.getServiceContext(axisService.getName().getLocalPart());
-        MessageContext msgctx =
-                new MessageContext(configurationContext);
-        OperationContext opContext =
-                axisOperation.findOperationContext(msgctx,
-                        serviceCOntext);
-        msgctx.setServiceContext(serviceCOntext);
+        ConfigurationContext configurationContext = new ConfigurationContext(
+                axisConfiguration);
+        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(
+                configurationContext, axisService.getParent());
+        ServiceContext serviceContext = serviceGroupContext
+                .getServiceContext(axisService.getName().getLocalPart());
+        MessageContext msgctx = new MessageContext(configurationContext);
+        OperationContext opContext = axisOperation.findOperationContext(msgctx,
+                serviceContext);
+        msgctx.setServiceContext(serviceContext);
 
-        //test the complte Hisracy built
+        // test the complte Hisracy built
         assertEquals(msgctx.getParent(), opContext);
-        assertEquals(opContext.getParent(), serviceCOntext);
-        assertEquals(serviceCOntext.getParent(), serviceGroupContext);
+        assertEquals(opContext.getParent(), serviceContext);
+        assertEquals(serviceContext.getParent(), serviceGroupContext);
 
         String key1 = "key1";
         String value1 = "Val1";
@@ -80,13 +81,12 @@ public class ContextHierarchyTest extends TestCase {
     }
 
     public void testDisconntectedHiracy() throws AxisFault {
-        ConfigurationContext configurationContext =
-                new ConfigurationContext(axisConfiguration);
+        ConfigurationContext configurationContext = new ConfigurationContext(
+                axisConfiguration);
 
-        MessageContext msgctx =
-                new MessageContext(configurationContext);
-  
-        //test the complte Hisracy built
+        MessageContext msgctx = new MessageContext(configurationContext);
+
+        // test the complte Hisracy built
         assertEquals(msgctx.getParent(), null);
 
         String key1 = "key1";

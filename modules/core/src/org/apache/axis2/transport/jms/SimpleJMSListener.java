@@ -125,7 +125,7 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
         return connector;
     }
 
-    public ConfigurationContext getSystemContext() {
+    public ConfigurationContext getConfigurationContext() {
         return this.configurationContext;
     }
 

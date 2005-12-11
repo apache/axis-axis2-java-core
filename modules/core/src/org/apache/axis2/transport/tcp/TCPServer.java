@@ -131,7 +131,7 @@ public class TCPServer extends TransportListener implements Runnable {
         }
     }
 
-     public ConfigurationContext getSystemContext() {
+     public ConfigurationContext getConfigurationContext() {
         return this.configContext;
     }
 

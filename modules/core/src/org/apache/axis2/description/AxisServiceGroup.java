@@ -32,7 +32,7 @@ import java.util.Iterator;
 
 public class AxisServiceGroup implements ParameterInclude {
 
-    //to add and get parameters
+    // to add and get parameters
     protected ParameterInclude paramInclude;
 
     private Log log = LogFactory.getLog(getClass());
@@ -40,7 +40,8 @@ public class AxisServiceGroup implements ParameterInclude {
     // to keep name of the service group
     private String serviceGroupName;
 
-    // to keep the parent of service group , to chcek parameter lock checking and serching
+    // to keep the parent of service group , to chcek parameter lock checking
+    // and serching
     private AxisConfiguration parent;
 
     /**
@@ -48,16 +49,16 @@ public class AxisServiceGroup implements ParameterInclude {
      */
     private HashMap services;
 
-    //to store modeule configuration info
+    // to store modeule configuration info
     private HashMap moduleConfigmap;
 
     // to store service Group engagedModules name
     private ArrayList engagedModules;
 
-    //to store module ref at deploy time parsing
+    // to store module ref at deploy time parsing
     private ArrayList mdoulesList = new ArrayList();
 
-    //class loader
+    // class loader
     private ClassLoader serviceGroupClassLoader;
 
     public AxisServiceGroup() {
@@ -99,7 +100,8 @@ public class AxisServiceGroup implements ParameterInclude {
         }
     }
 
-    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
+    public void deserializeParameters(OMElement parameterElement)
+            throws AxisFault {
         this.paramInclude.deserializeParameters(parameterElement);
     }
 
@@ -121,14 +123,15 @@ public class AxisServiceGroup implements ParameterInclude {
 
     /**
      * Adding module configuration , if there is moduleConfig tag in service
-     *
+     * 
      * @param moduleConfiguration
      */
     public void addModuleConfig(ModuleConfiguration moduleConfiguration) {
         if (moduleConfigmap == null) {
             moduleConfigmap = new HashMap();
         }
-        moduleConfigmap.put(moduleConfiguration.getModuleName(), moduleConfiguration);
+        moduleConfigmap.put(moduleConfiguration.getModuleName(),
+                moduleConfiguration);
     }
 
     public ModuleConfiguration getModuleConfig(QName moduleName) {
@@ -139,20 +142,20 @@ public class AxisServiceGroup implements ParameterInclude {
         engagedModules.add(moduleName);
     }
 
-    public void engageModuleToGroup(QName moduleName)  {
+    public void engageModuleToGroup(QName moduleName) {
         if (moduleName == null) {
             return;
         }
         boolean needToadd = true;
-        for (Iterator iterator = engagedModules.iterator();
-             iterator.hasNext();) {
+        for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
             QName modu = (QName) iterator.next();
             if (modu.getLocalPart().equals(moduleName.getLocalPart())) {
-                log.info(moduleName.getLocalPart() +
-                        " module has alredy been engaged on the service Group. " +
-                        " Operation terminated !!!");
+                log
+                        .info(moduleName.getLocalPart()
+                                + " module has alredy been engaged on the service Group. "
+                                + " Operation terminated !!!");
                 needToadd = false;
-//                return;
+                // return;
             }
         }
         Iterator srevice = getServices();
@@ -177,7 +180,6 @@ public class AxisServiceGroup implements ParameterInclude {
         return engagedModules;
     }
 
-
     public Iterator getServices() {
         return services.values().iterator();
     }
@@ -193,8 +195,10 @@ public class AxisServiceGroup implements ParameterInclude {
                 if (moduleDesc != null) {
                     service.engageModule(moduleDesc, axisConfig);
                 } else {
-                    throw new AxisFault("Trying to engage a module which is not " +
-                            "available : " + moduleName.getLocalPart());
+                    throw new AxisFault(
+                            "Trying to engage a module which is not "
+                                    + "available : "
+                                    + moduleName.getLocalPart());
                 }
             }
         }
@@ -222,17 +226,12 @@ public class AxisServiceGroup implements ParameterInclude {
         return mdoulesList;
     }
 
-
     public synchronized void removeService(QName name) throws AxisFault {
         AxisService service = getService(name);
         if (service != null) {
             this.parent.notifyObservers(AxisEvent.SERVICE_DEPLOY, service);
         }
         services.remove(name);
-    }
-
-    public ServiceGroupContext getServiceGroupContext(ConfigurationContext parent) {
-        return new ServiceGroupContext(parent, this);
     }
 
     public ClassLoader getServiceGroupClassLoader() {

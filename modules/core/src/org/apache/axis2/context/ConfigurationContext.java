@@ -229,7 +229,7 @@ public class ConfigurationContext extends AbstractContext {
             if (messageContext.getAxisService() != null) {
                 AxisServiceGroup axisServiceGroup =
                         messageContext.getAxisService().getParent();
-                serviceGroupContext = axisServiceGroup.getServiceGroupContext(this);
+                serviceGroupContext = new ServiceGroupContext (this, axisServiceGroup);
                 serviceContext = serviceGroupContext.getServiceContext(
                         messageContext.getAxisService().getName().
                                 getLocalPart());

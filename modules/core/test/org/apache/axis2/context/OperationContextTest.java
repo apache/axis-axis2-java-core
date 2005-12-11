@@ -31,7 +31,8 @@ import javax.xml.namespace.QName;
 
 public class OperationContextTest extends AbstractTestCase {
 
-    private ConfigurationContext engineCtx = new ConfigurationContext(new AxisConfiguration());
+    private ConfigurationContext configContext = new ConfigurationContext(
+            new AxisConfiguration());
 
     public OperationContextTest(String arg0) {
         super(arg0);
@@ -39,35 +40,33 @@ public class OperationContextTest extends AbstractTestCase {
 
     public void testMEPfindingOnRelatesTO() throws Exception {
 
-        AxisService serviceConfig = new AxisService(new QName("TempSC"));
-        engineCtx.getAxisConfiguration().addService(serviceConfig);
-       ServiceGroupContext sgc =  serviceConfig.getParent().getServiceGroupContext(engineCtx);
+        AxisService axisService = new AxisService(new QName("TempSC"));
+        configContext.getAxisConfiguration().addService(axisService);
+        ServiceGroupContext sgc = new ServiceGroupContext(configContext,
+                axisService.getParent());
 
         ServiceContext sessionContext = sgc.getServiceContext("TempSC");
         MessageContext messageContext1 = this.getBasicMessageContext();
 
-        messageContext1.setMessageID(
-                UUIDGenerator.getUUID());
-        AxisOperation axisOperation = new InOutAxisOperation(
-                new QName("test"));
-        OperationContext operationContext1 = axisOperation.findOperationContext(
-                messageContext1, sessionContext);
+        messageContext1.setMessageID(UUIDGenerator.getUUID());
+        AxisOperation axisOperation = new InOutAxisOperation(new QName("test"));
+        OperationContext operationContext1 = axisOperation
+                .findOperationContext(messageContext1, sessionContext);
 
         MessageContext messageContext2 = this.getBasicMessageContext();
-        messageContext2.setMessageID(
-                UUIDGenerator.getUUID());
+        messageContext2.setMessageID(UUIDGenerator.getUUID());
         messageContext2.getMessageInformationHeaders().setRelatesTo(
                 new RelatesTo(messageContext1.getMessageID()));
-        OperationContext operationContext2 = axisOperation.findOperationContext(
-                messageContext2, sessionContext);
+        OperationContext operationContext2 = axisOperation
+                .findOperationContext(messageContext2, sessionContext);
         assertEquals(operationContext1, operationContext2);
     }
 
     public MessageContext getBasicMessageContext() throws AxisFault {
 
-        return new MessageContext(engineCtx,
-                new TransportInDescription(new QName("axis")),
-                new TransportOutDescription(new QName("axis")));
+        return new MessageContext(configContext, new TransportInDescription(
+                new QName("axis")), new TransportOutDescription(new QName(
+                "axis")));
 
     }
 
