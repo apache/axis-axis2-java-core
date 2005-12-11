@@ -81,8 +81,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
         log.debug("Checking for Operation using WSAAction : " + messageContext.getWSAAction());
         String action = messageContext.getWSAAction();
         if (action != null) {
-            QName operationName = new QName(action);
-            return service.getOperation(operationName);
+            return service.getOperationByAction(action);
         }
         return null;
     }

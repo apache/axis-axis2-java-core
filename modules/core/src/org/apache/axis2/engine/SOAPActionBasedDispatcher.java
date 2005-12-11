@@ -31,41 +31,47 @@ import javax.xml.namespace.QName;
  */
 public class SOAPActionBasedDispatcher extends AbstractDispatcher {
     private Log log = LogFactory.getLog(getClass());
+
     /**
      * Field NAME
      */
-    public static final QName NAME =
-            new QName("http://axis.ws.apache.org",
-                    "SOAPActionBasedDispatcher");
+    public static final QName NAME = new QName("http://axis.ws.apache.org",
+            "SOAPActionBasedDispatcher");
 
     public void initDispatcher() {
         init(new HandlerDescription(NAME));
     }
 
     public AxisOperation findOperation(AxisService service,
-                                       MessageContext messageContext)
-            throws AxisFault {
+            MessageContext messageContext) throws AxisFault {
 
         String action = messageContext.getSoapAction();
         log.debug("Checking for Operation using SOAPAction : " + action);
         if (action != null) {
             AxisOperation op = service.getOperationBySOAPAction(action);
             if (op == null) {
-                op = service.getOperation(new QName(action));
+                op = service.getOperationByAction(action);
             }
-            /* HACK: Please remove this when we add support for custom action uri */
+            /*
+             * HACK: Please remove this when we add support for custom action
+             * uri
+             */
             if (op == null && action.lastIndexOf('/') != -1) {
-                op = service.getOperation(new QName(action.substring(action.lastIndexOf('/'), action.length())));
+                op = service.getOperation(new QName(action.substring(action
+                        .lastIndexOf('/'), action.length())));
             }
             return op;
         }
         return null;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.axis2.engine.AbstractDispatcher#findService(org.apache.axis2.context.MessageContext)
      */
-    public AxisService findService(MessageContext messageContext) throws AxisFault {
+    public AxisService findService(MessageContext messageContext)
+            throws AxisFault {
         log.debug("Checking for Service using SOAPAction is a TODO item");
         return null;
     }

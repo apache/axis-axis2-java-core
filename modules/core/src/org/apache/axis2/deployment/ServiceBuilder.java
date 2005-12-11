@@ -136,7 +136,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 ArrayList wsamappings = operationDesc.getWsamappingList();
                 for (int j = 0; j < wsamappings.size(); j++) {
                     Parameter parameter = (Parameter) wsamappings.get(j);
-                    service.addMapping((String) parameter.getValue(), operationDesc);
+                    service.mapActionToOperation((String) parameter.getValue(), operationDesc);
                 }
                 service.addOperation(operationDesc);
             }

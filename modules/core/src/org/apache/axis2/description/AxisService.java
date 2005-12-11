@@ -46,10 +46,8 @@ import java.util.*;
  * Class AxisService
  */
 public class AxisService
-        //    extends WSDLServiceImpl
-        implements WSDLService,
-        ParameterInclude,
-        FlowInclude,
+// extends WSDLServiceImpl
+        implements WSDLService, ParameterInclude, FlowInclude,
         DescriptionConstants {
 
     private Definition definition = null;
@@ -59,23 +57,25 @@ public class AxisService
     private HashMap moduleConfigmap;
 
     private AxisServiceGroup parent;
-    //to store the wsdl definition , which is build at the deployment time
 
-    //to keep the time that last update time of the service
+    // to store the wsdl definition , which is build at the deployment time
+
+    // to keep the time that last update time of the service
     private long lastupdate;
+
     private String axisServiceName;
+
     private String fileName = "";
 
     private WSDLService serviceimpl = null;
 
     private HashMap wsaaction_operationmap = null;
 
-    //to store module ref at deploy time parsing
+    // to store module ref at deploy time parsing
     private ArrayList moduleRefs = new ArrayList();
 
-    //to store engaged mdodules
+    // to store engaged mdodules
     private ArrayList engagedModules = new ArrayList();
-
 
     /**
      * Constructor AxisService
@@ -100,7 +100,7 @@ public class AxisService
 
     /**
      * Constructor AxisService
-     *
+     * 
      * @param qName
      */
     public AxisService(QName qName) {
@@ -109,34 +109,35 @@ public class AxisService
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.AxisService#addToengagedModules(javax.xml.namespace.QName)
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.AxisService#addToengagedModules(javax.xml.namespace.QName)
+     */
 
     /**
      * To ebgage a module it is reuired to use this method
-     *
+     * 
      * @param moduleref
      */
     public void engageModule(ModuleDescription moduleref,
-                             AxisConfiguration axisConfig) throws AxisFault {
+            AxisConfiguration axisConfig) throws AxisFault {
         if (moduleref == null) {
             return;
         }
         boolean needToadd = true;
         Iterator itr_engageModules = engagedModules.iterator();
         while (itr_engageModules.hasNext()) {
-            ModuleDescription module = (ModuleDescription) itr_engageModules.next();
+            ModuleDescription module = (ModuleDescription) itr_engageModules
+                    .next();
             if (module.getName().equals(moduleref.getName())) {
-                log.info(moduleref.getName().getLocalPart() +
-                        " module has alredy been engaged on the service. " +
-                        " Operation terminated !!!");
+                log.info(moduleref.getName().getLocalPart()
+                        + " module has alredy been engaged on the service. "
+                        + " Operation terminated !!!");
                 needToadd = false;
-//                return;
+                // return;
             }
         }
-//adding module operations
+        // adding module operations
         addModuleOperations(moduleref, axisConfig);
 
         Iterator operations = getOperations().values().iterator();
@@ -151,22 +152,24 @@ public class AxisService
 
     /**
      * To add a operation to a service if a module requird to do so
-     *
+     * 
      * @param module
      */
 
     public void addModuleOperations(ModuleDescription module,
-                                    AxisConfiguration axisConfig) throws AxisFault {
+            AxisConfiguration axisConfig) throws AxisFault {
         HashMap map = module.getOperations();
         Collection col = map.values();
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-            AxisOperation axisOperation = copyOperation((AxisOperation) iterator.next());
+            AxisOperation axisOperation = copyOperation((AxisOperation) iterator
+                    .next());
             ArrayList wsamappings = axisOperation.getWsamappingList();
             for (int j = 0; j < wsamappings.size(); j++) {
                 Parameter parameter = (Parameter) wsamappings.get(j);
-                this.addMapping((String) parameter.getValue(), axisOperation);
+                this.mapActionToOperation((String) parameter.getValue(),
+                        axisOperation);
             }
-            //this opration is a control operation.
+            // this opration is a control operation.
             axisOperation.setControlOperation(true);
             this.addOperation(axisOperation);
         }
@@ -174,14 +177,16 @@ public class AxisService
 
     /**
      * To get a copy from module operation
-     *
+     * 
      * @param axisOperation
      * @return
      * @throws AxisFault
      */
-    private AxisOperation copyOperation(AxisOperation axisOperation) throws AxisFault {
-        AxisOperation operation = AxisOperationFactory.getOperetionDescription(
-                axisOperation.getMessageExchangePattern());
+    private AxisOperation copyOperation(AxisOperation axisOperation)
+            throws AxisFault {
+        AxisOperation operation = AxisOperationFactory
+                .getOperetionDescription(axisOperation
+                        .getMessageExchangePattern());
         operation.setMessageReceiver(axisOperation.getMessageReceiver());
         operation.setName(axisOperation.getName());
         operation.setStyle(axisOperation.getStyle());
@@ -191,7 +196,8 @@ public class AxisService
             operation.addParameter(parameter);
         }
         operation.setWsamappingList(axisOperation.getWsamappingList());
-        operation.setRemainingPhasesInFlow(axisOperation.getRemainingPhasesInFlow());
+        operation.setRemainingPhasesInFlow(axisOperation
+                .getRemainingPhasesInFlow());
         operation.setPhasesInFaultFlow(axisOperation.getPhasesInFaultFlow());
         operation.setPhasesOutFaultFlow(axisOperation.getPhasesOutFaultFlow());
         operation.setPhasesOutFlow(axisOperation.getPhasesOutFlow());
@@ -200,7 +206,7 @@ public class AxisService
 
     /**
      * Method getEngadgedModules
-     *
+     * 
      * @return Collection
      */
     public Collection getEngagedModules() {
@@ -209,7 +215,7 @@ public class AxisService
 
     /**
      * Method getOperation
-     *
+     * 
      * @param operationName
      * @return AxisOperation
      */
@@ -217,18 +223,14 @@ public class AxisService
         String opStr = operationName.getLocalPart();
 
         HashMap allOperations = this.getServiceInterface().getAllOperations();
-        AxisOperation operation = (AxisOperation) allOperations.get(opStr);
-        if (operation == null) {
-            operation = (AxisOperation) wsaaction_operationmap.get(
-                    operationName.getLocalPart());
-        }
-        return operation;
+        return (AxisOperation) allOperations.get(opStr);
     }
 
     /**
      * To get the WSDL operation element in service interface
-     *
-     * @param operationName <code>QName</cde>
+     * 
+     * @param operationName
+     *            <code>QName</cde>
      * @return WSDLOperation <code>WSDLOperation</code>
      */
     public WSDLOperation getWSDLOPOperation(QName operationName) {
@@ -237,14 +239,14 @@ public class AxisService
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.AxisService#addOperation(org.apache.axis2.description.AxisOperation)
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.AxisService#addOperation(org.apache.axis2.description.AxisOperation)
+     */
 
     /**
      * Method addOperation
-     *
+     * 
      * @param axisOperation
      */
     public void addOperation(AxisOperation axisOperation) {
@@ -268,14 +270,14 @@ public class AxisService
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.AxisService#setClassLoader(java.lang.ClassLoader)
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.AxisService#setClassLoader(java.lang.ClassLoader)
+     */
 
     /**
      * Method setClassLoader
-     *
+     * 
      * @param classLoader
      */
     public void setClassLoader(ClassLoader classLoader) {
@@ -283,14 +285,14 @@ public class AxisService
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.AxisService#getClassLoader()
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.AxisService#getClassLoader()
+     */
 
     /**
      * Method getClassLoader
-     *
+     * 
      * @return ClassLoader
      */
     public ClassLoader getClassLoader() {
@@ -298,14 +300,14 @@ public class AxisService
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.AxisService#setContextPath(java.lang.String)
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.AxisService#setContextPath(java.lang.String)
+     */
 
     /**
      * Method setContextPath
-     *
+     * 
      * @param contextPath
      */
     public void setContextPath(String contextPath) {
@@ -315,14 +317,14 @@ public class AxisService
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.AxisService#getContextPath()
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.AxisService#getContextPath()
+     */
 
     /**
      * Method getContextPath
-     *
+     * 
      * @return String
      */
     public String getContextPath() {
@@ -330,14 +332,14 @@ public class AxisService
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.AxisService#setStyle(javax.swing.text.Style)
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.AxisService#setStyle(javax.swing.text.Style)
+     */
 
     /**
      * Method setStyle
-     *
+     * 
      * @param style
      */
     public void setStyle(String style) {
@@ -347,14 +349,14 @@ public class AxisService
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.AxisService#getStyle()
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.AxisService#getStyle()
+     */
 
     /**
      * Method getStyle
-     *
+     * 
      * @return String
      */
     public String getStyle() {
@@ -362,21 +364,21 @@ public class AxisService
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.PhasesInclude#getPhases(java.util.ArrayList,
-    *      int)
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.PhasesInclude#getPhases(java.util.ArrayList,
+     *      int)
+     */
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.ParameterInclude#addParameter(org.apache.axis2.description.Parameter)
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.ParameterInclude#addParameter(org.apache.axis2.description.Parameter)
+     */
 
     /**
      * Method addParameter
-     *
+     * 
      * @param param
      */
     public void addParameter(Parameter param) throws AxisFault {
@@ -385,47 +387,48 @@ public class AxisService
         }
 
         if (isParameterLocked(param.getName())) {
-            throw new AxisFault("Parmter is locked can not overide: " + param.getName());
+            throw new AxisFault("Parmter is locked can not overide: "
+                    + param.getName());
         } else {
-            ParameterIncludeImpl paramInclude =
-                    (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
+            ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this
+                    .getComponentProperty(PARAMETER_KEY);
             paramInclude.addParameter(param);
         }
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.ParameterInclude#getParameter(java.lang.String)
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.ParameterInclude#getParameter(java.lang.String)
+     */
 
     /**
      * Method getParameter
-     *
+     * 
      * @param name
      * @return Parameter
      */
     public Parameter getParameter(String name) {
-        ParameterIncludeImpl paramInclude =
-                (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
+        ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this
+                .getComponentProperty(PARAMETER_KEY);
         return paramInclude.getParameter(name);
     }
 
     public ArrayList getParameters() {
-        ParameterIncludeImpl paramInclude =
-                (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
+        ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this
+                .getComponentProperty(PARAMETER_KEY);
         return paramInclude.getParameters();
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.FlowInclude#getInFlow()
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.FlowInclude#getInFlow()
+     */
 
     /**
      * Method getInFlow
-     *
+     * 
      * @return Flow
      */
     public Flow getInFlow() {
@@ -433,14 +436,14 @@ public class AxisService
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.FlowInclude#setInFlow(org.apache.axis2.description.Flow)
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.FlowInclude#setInFlow(org.apache.axis2.description.Flow)
+     */
 
     /**
      * Method setInFlow
-     *
+     * 
      * @param inFlow
      */
     public void setInFlow(Flow inFlow) {
@@ -450,14 +453,14 @@ public class AxisService
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.FlowInclude#getOutFlow()
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.FlowInclude#getOutFlow()
+     */
 
     /**
      * Method getOutFlow
-     *
+     * 
      * @return Flow
      */
     public Flow getOutFlow() {
@@ -465,14 +468,14 @@ public class AxisService
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.FlowInclude#setOutFlow(org.apache.axis2.description.Flow)
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.FlowInclude#setOutFlow(org.apache.axis2.description.Flow)
+     */
 
     /**
      * Method setOutFlow
-     *
+     * 
      * @param outFlow
      */
     public void setOutFlow(Flow outFlow) {
@@ -482,14 +485,14 @@ public class AxisService
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.FlowInclude#getFaultInFlow()
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.FlowInclude#getFaultInFlow()
+     */
 
     /**
      * Method getFaultInFlow
-     *
+     * 
      * @return Flow
      */
     public Flow getFaultInFlow() {
@@ -497,14 +500,14 @@ public class AxisService
     }
 
     /*
-    * (non-Javadoc)
-    *
-    * @see org.apache.axis2.description.FlowInclude#setFaultInFlow(org.apache.axis2.description.Flow)
-    */
+     * (non-Javadoc)
+     * 
+     * @see org.apache.axis2.description.FlowInclude#setFaultInFlow(org.apache.axis2.description.Flow)
+     */
 
     /**
      * Method setFaultInFlow
-     *
+     * 
      * @param faultFlow
      */
     public void setFaultInFlow(Flow faultFlow) {
@@ -525,7 +528,7 @@ public class AxisService
 
     /**
      * Method getOperations
-     *
+     * 
      * @return HashMap
      */
     public HashMap getOperations() {
@@ -564,21 +567,22 @@ public class AxisService
     }
 
     public AxisOperation getOperation(String ncName) {
-        return (AxisOperation) this.getServiceInterface().getOperations()
-                .get(ncName);
+        return (AxisOperation) this.getServiceInterface().getOperations().get(
+                ncName);
     }
 
     /**
-     * This method will return the operation given particular SOAP Action.
-     * This method should only be called if there is only one Endpoint is defined
-     * for this Service. If more than one Endpoint exists one of them will be picked.
-     * If more than one Operation is found with the given
-     * SOAP Action; null will be ruturned. If no particular Operation is found with
-     * the given SOAP Action; null will be returned.
-     *
-     * @param soapAction SOAP Action defined for the particular Operation
-     * @return A AxisOperation if a unque Operation can be found with the given SOAP Action
-     *         otherwise will return null.
+     * This method will return the operation given particular SOAP Action. This
+     * method should only be called if there is only one Endpoint is defined for
+     * this Service. If more than one Endpoint exists one of them will be
+     * picked. If more than one Operation is found with the given SOAP Action;
+     * null will be ruturned. If no particular Operation is found with the given
+     * SOAP Action; null will be returned.
+     * 
+     * @param soapAction
+     *            SOAP Action defined for the particular Operation
+     * @return A AxisOperation if a unque Operation can be found with the given
+     *         SOAP Action otherwise will return null.
      */
     public AxisOperation getOperationBySOAPAction(String soapAction) {
         if (soapAction == null || soapAction.equals("")) {
@@ -588,44 +592,48 @@ public class AxisService
         if (iterator.hasNext()) {
             WSDLEndpoint endpoint = (WSDLEndpoint) this.getEndpoints().get(
                     iterator.next());
-            return this.getOperationBySOAPAction(soapAction,
-                    endpoint.getName());
+            return this
+                    .getOperationBySOAPAction(soapAction, endpoint.getName());
         }
 
         return null;
 
-
     }
 
-
     /**
-     * This method will return the operation given the particular endpoing and the
-     * particular SOAP Action. If more than one Operation is found with the given
-     * SOAP Action; null will be ruturned. If no particular Operation is found with
-     * the given SOAP Action; null will be returned
-     *
-     * @param endpoint   Particular Enpoint in which the bining is defined with the particular SOAP
-     *                   Action.
-     * @param soapAction SOAP Action defined for the particular Operation
-     * @return A AxisOperation if a unque Operation can be found with the given SOAP Action
-     *         otherwise will return null.
+     * This method will return the operation given the particular endpoing and
+     * the particular SOAP Action. If more than one Operation is found with the
+     * given SOAP Action; null will be ruturned. If no particular Operation is
+     * found with the given SOAP Action; null will be returned
+     * 
+     * @param endpoint
+     *            Particular Enpoint in which the bining is defined with the
+     *            particular SOAP Action.
+     * @param soapAction
+     *            SOAP Action defined for the particular Operation
+     * @return A AxisOperation if a unque Operation can be found with the given
+     *         SOAP Action otherwise will return null.
      */
     public AxisOperation getOperationBySOAPAction(String soapAction,
-                                                  QName endpoint) {
+            QName endpoint) {
         HashMap bindingOperations = this.getEndpoint(endpoint).getBinding()
                 .getBindingOperations();
-        Iterator operationKeySetIterator = bindingOperations.keySet().iterator();
+        Iterator operationKeySetIterator = bindingOperations.keySet()
+                .iterator();
         AxisOperation axisOperation = null;
         int count = 0;
         while (operationKeySetIterator.hasNext()) {
-            WSDLBindingOperation bindingOperation = (WSDLBindingOperation) bindingOperations.get(
-                    operationKeySetIterator.next());
+            WSDLBindingOperation bindingOperation = (WSDLBindingOperation) bindingOperations
+                    .get(operationKeySetIterator.next());
             Iterator extIterator = bindingOperation.getExtensibilityElements()
                     .iterator();
             while (extIterator.hasNext()) {
-                WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
-                if (ExtensionConstants.SOAP_11_OPERATION.equals(element.getType()) ||
-                        ExtensionConstants.SOAP_12_OPERATION.equals(element.getType())) {
+                WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator
+                        .next();
+                if (ExtensionConstants.SOAP_11_OPERATION.equals(element
+                        .getType())
+                        || ExtensionConstants.SOAP_12_OPERATION.equals(element
+                                .getType())) {
                     if (((SOAPOperation) element).getSoapAction().equals(
                             soapAction)) {
                         WSDLOperation op = bindingOperation.getOperation();
@@ -643,38 +651,9 @@ public class AxisService
         return null;
     }
 
-
     /**
-     * This finds the ServiceContext provided that the incomming message that
-     * has have some serviceInstanceID. Currently this will not be added to the
-     * EngineContext's ServiceContextMap.
-     *
-     * @param msgContext
-     * @return ServiceContext
-     */
-    public ServiceContext u(MessageContext msgContext) {
-        // TODO : Fix me. Can't look up a service context in the system context
-        ServiceContext serviceContext;
-        if (null == msgContext.getServiceGroupContextId()) {
-            serviceContext =
-                    new ServiceContext(this, msgContext.getServiceGroupContext());
-            //TODO Once the ServiceContext is bound to an incomming serviceContext ID(like a cookie,reference Property) FIX this
-            //			msgContext.getConfigurationContext().registerServiceContext(serviceContext.getServiceContextID(),
-            // serviceContext);
-        } else {
-            serviceContext =
-                    msgContext.getConfigurationContext()
-                            .getServiceContext(msgContext.getServiceContextID());
-        }
-
-        return serviceContext;
-
-    }
-
-    /**
-     * To get the description about the service
-     * ty67tyuio
-     *
+     * To get the description about the service ty67tyuio
+     * 
      * @return String
      */
     public String getAxisServiceName() {
@@ -683,7 +662,7 @@ public class AxisService
 
     /**
      * Set the description about the service
-     *
+     * 
      * @param axisServiceName
      */
     public void setAxisServiceName(String axisServiceName) {
@@ -704,14 +683,17 @@ public class AxisService
             if (wsdlDefinition != null) {
                 Collection services = wsdlDefinition.getServices().values();
 
-                for (Iterator iterator = services.iterator(); iterator.hasNext();) {
+                for (Iterator iterator = services.iterator(); iterator
+                        .hasNext();) {
                     Service service = (Service) iterator.next();
                     Collection ports = service.getPorts().values();
-                    for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();) {
+                    for (Iterator iterator1 = ports.iterator(); iterator1
+                            .hasNext();) {
                         Port port = (Port) iterator1.next();
                         service.setQName(this.getName());
                         SOAPAddress soapAddress = new SOAPAddressImpl();
-                        soapAddress.setElementType(SOAPConstants.Q_ELEM_SOAP_ADDRESS);
+                        soapAddress
+                                .setElementType(SOAPConstants.Q_ELEM_SOAP_ADDRESS);
                         soapAddress.setLocationURI(PortURL);
                         port.getExtensibilityElements().clear();
                         port.addExtensibilityElement(soapAddress);
@@ -727,7 +709,6 @@ public class AxisService
                 out.write("<wsdl>This service does not have a WSDL</wsdl>");
                 out.flush();
             }
-
 
         } catch (WSDLException e) {
             throw new AxisFault(e);
@@ -832,15 +813,33 @@ public class AxisService
     }
 
     /**
-     * To add the was action paramater into has map so that was action based dispatch can support
+     * Map an action (ala WSA action) to the given operation. This is used by
+     * addressing based dispatching to figure out which operation it is that a
+     * given message is for.
+     * 
+     * @param action
+     *            the action key
+     * @param axisOperation
+     *            the operation to map to
      */
-    public void addMapping(String mappingKey, AxisOperation axisOperation) {
-        wsaaction_operationmap.put(mappingKey, axisOperation);
+    public void mapActionToOperation(String action, AxisOperation axisOperation) {
+        wsaaction_operationmap.put(action, axisOperation);
+    }
+
+    /**
+     * Return the AxisOperation which has been mapped to the given action.
+     * 
+     * @param action
+     *            the action key
+     * @return the corresponding AxisOperation or null if it isn't found
+     */
+    public AxisOperation getOperationByAction(String action) {
+        return (AxisOperation) wsaaction_operationmap.get(action);
     }
 
     /**
      * To get the parent (which is AxisConfiguration in this case)
-     *
+     * 
      * @return <code>AxisConfiguration</code>
      */
     public AxisServiceGroup getParent() {
@@ -851,13 +850,14 @@ public class AxisService
         this.parent = parent;
     }
 
-    //to check whether a given parameter is locked
+    // to check whether a given parameter is locked
     public boolean isParameterLocked(String parameterName) {
         // checking the locked value of parent
         boolean loscked = false;
 
         if (getParent() != null) {
-            loscked = getParent().getAxisDescription().isParameterLocked(parameterName);
+            loscked = getParent().getAxisDescription().isParameterLocked(
+                    parameterName);
         }
         if (loscked) {
             return true;
@@ -867,25 +867,26 @@ public class AxisService
         }
     }
 
-    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
-        ParameterIncludeImpl paramInclude =
-                (ParameterIncludeImpl) this.getComponentProperty(PARAMETER_KEY);
+    public void deserializeParameters(OMElement parameterElement)
+            throws AxisFault {
+        ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this
+                .getComponentProperty(PARAMETER_KEY);
         paramInclude.deserializeParameters(parameterElement);
     }
 
     /**
      * Adding module configuration , if there is moduleConfig tag in service
-     *
+     * 
      * @param moduleConfiguration
      */
     public void addModuleConfig(ModuleConfiguration moduleConfiguration) {
-        moduleConfigmap.put(moduleConfiguration.getModuleName(), moduleConfiguration);
+        moduleConfigmap.put(moduleConfiguration.getModuleName(),
+                moduleConfiguration);
     }
 
     public ModuleConfiguration getModuleConfig(QName moduleName) {
         return (ModuleConfiguration) moduleConfigmap.get(moduleName);
     }
-
 
     public void addModuleref(QName moduleref) {
         moduleRefs.add(moduleref);
@@ -894,6 +895,5 @@ public class AxisService
     public ArrayList getModules() {
         return moduleRefs;
     }
-
 
 }
