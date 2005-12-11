@@ -32,24 +32,28 @@ import java.util.HashMap;
 
 public class UtilsJMSServer {
     private static int count = 0;
+
     private static SimpleJMSListener receiver;
 
     public static final int TESTING_PORT = 5555;
+
     public static final String FAILURE_MESSAGE = "Intentional Failure";
+
     private static Log log = LogFactory.getLog(UtilsJMSServer.class);
 
     public static synchronized void deployService(AxisService service)
             throws AxisFault {
 
-        receiver.getSystemContext().getAxisConfiguration().addService(service);
+        receiver.getConfigurationContext().getAxisConfiguration().addService(service);
 
-        ServiceGroupContext serviceGroupContext = service.getParent().getServiceGroupContext(receiver.getSystemContext());
-
+        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(
+                receiver.getConfigurationContext(), service.getParent());
     }
 
     public static synchronized void unDeployService(QName service)
             throws AxisFault {
-        receiver.getSystemContext().getAxisConfiguration().removeService(service.getLocalPart());
+        receiver.getConfigurationContext().getAxisConfiguration().removeService(
+                service.getLocalPart());
     }
 
     public static synchronized void start() throws Exception {
@@ -61,30 +65,31 @@ public class UtilsJMSServer {
             String username = null;
             String password = null;
             boolean doThreads = true;
-                
-            cfMap.put(JNDIVendorAdapter.CONTEXT_FACTORY, "org.activemq.jndi.ActiveMQInitialContextFactory");
+
+            cfMap.put(JNDIVendorAdapter.CONTEXT_FACTORY,
+                    "org.activemq.jndi.ActiveMQInitialContextFactory");
             cfMap.put(JNDIVendorAdapter.PROVIDER_URL, "tcp://localhost:61616");
 
-            //start JMS server
-            ConfigurationContextFactory erfac =
-                    new ConfigurationContextFactory();
+            // start JMS server
+            ConfigurationContextFactory erfac = new ConfigurationContextFactory();
             File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY);
             System.out.println(file.getAbsoluteFile());
             if (!file.exists()) {
                 throw new Exception("Repository directory does not exist");
             }
 
-             ConfigurationContext er  = erfac.buildConfigurationContext(
-                    file.getAbsolutePath());
+            ConfigurationContext er = erfac.buildConfigurationContext(file
+                    .getAbsolutePath());
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e1) {
                 throw new AxisFault("Thread interuptted", e1);
             }
-            er.getAxisConfiguration().engageModule(
-                    new QName("addressing"));
-            receiver =
-                    new SimpleJMSListener(org.apache.axis2.Constants.TESTING_REPOSITORY, connectorMap, cfMap, destination, username, password, doThreads);
+            er.getAxisConfiguration().engageModule(new QName("addressing"));
+            receiver = new SimpleJMSListener(
+                    org.apache.axis2.Constants.TESTING_REPOSITORY,
+                    connectorMap, cfMap, destination, username, password,
+                    doThreads);
             receiver.start();
 
         }
@@ -101,7 +106,7 @@ public class UtilsJMSServer {
                 count--;
             }
         } catch (Exception e) {
-           log.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 

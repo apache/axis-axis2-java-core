@@ -16,9 +16,10 @@
 
 package org.apache.axis2.processingModel;
 
-//todo
+// todo
 
 import junit.framework.TestCase;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.InOutMEPClient;
@@ -26,6 +27,7 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
@@ -45,8 +47,8 @@ import org.apache.commons.logging.LogFactory;
 public class SoapProcessingModelTest extends TestCase implements TestConstants {
 
     private Log log = LogFactory.getLog(getClass());
-    private AxisService service;
 
+    private AxisService service;
 
     private boolean finish = false;
 
@@ -60,7 +62,8 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        service = Utils.createSimpleService(serviceName, Echo.class.getName(), operationName);
+        service = Utils.createSimpleService(serviceName, Echo.class.getName(),
+                operationName);
         UtilServer.deployService(service);
 
     }
@@ -70,18 +73,20 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
         UtilServer.stop();
     }
 
-
     public void sendMessageWithHeader(SOAPEnvelope envelope) throws AxisFault {
         InOutMEPClient inOutMC = null;
 
         try {
-            ConfigurationContext configContext = Utils.getNewConfigurationContext(org.apache.axis2.Constants.TESTING_REPOSITORY);
+            ConfigurationContext configContext = Utils
+                    .getNewConfigurationContext(org.apache.axis2.Constants.TESTING_REPOSITORY);
 
-            ServiceContext serviceContext =
-                    service.getParent().getServiceGroupContext(configContext).getServiceContext(service.getName().getLocalPart());
+            ServiceContext serviceContext = new ServiceGroupContext(
+                    configContext, service.getParent())
+                    .getServiceContext(service.getName().getLocalPart());
             inOutMC = new InOutMEPClient(serviceContext);
 
-            MessageContext msgctx = new MessageContext(serviceContext.getConfigurationContext());
+            MessageContext msgctx = new MessageContext(serviceContext
+                    .getConfigurationContext());
 
             msgctx.setEnvelope(envelope);
 
@@ -90,10 +95,8 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
             options.setTo(targetEPR);
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
 
-            MessageContext result =
-                    inOutMC.invokeBlocking(
-                            serviceContext.getAxisService().getOperation(operationName),
-                            msgctx);
+            MessageContext result = inOutMC.invokeBlocking(serviceContext
+                    .getAxisService().getOperation(operationName), msgctx);
         } catch (Exception e) {
             e.printStackTrace();
             fail("Exception Occurred !! ." + e.getMessage());
@@ -101,15 +104,16 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
         } finally {
             inOutMC.close();
         }
-//        fail("Fix Me Deepal");
+        // fail("Fix Me Deepal");
     }
 
     public void testSendingMustUnderstandWithNextRole() throws Exception {
         SOAPFactory fac = OMAbstractFactory.getSOAP12Factory();
         SOAPEnvelope envelope = fac.getDefaultEnvelope();
-        OMNamespace headerNs = fac.createOMNamespace("http://dummyHeader", "dh");
-        SOAPHeaderBlock h1 =
-                fac.createSOAPHeaderBlock("DummyHeader", headerNs, envelope.getHeader());
+        OMNamespace headerNs = fac
+                .createOMNamespace("http://dummyHeader", "dh");
+        SOAPHeaderBlock h1 = fac.createSOAPHeaderBlock("DummyHeader", headerNs,
+                envelope.getHeader());
         h1.setMustUnderstand(true);
         h1.addChild(fac.createText("Dummy String"));
         h1.setRole(SOAP12Constants.SOAP_ROLE_NEXT);
@@ -119,23 +123,24 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
 
     }
 
-//    public void testSendingMustUnderstandWithArbitaryRole() throws Exception {
-//        try {
-//            SOAPFactory fac = OMAbstractFactory.getSOAP12Factory();
-//            SOAPEnvelope envelope = fac.getDefaultEnvelope();
-//            OMNamespace headerNs = fac.createOMNamespace("http://dummyHeader", "dh");
-//            SOAPHeaderBlock h1 =
-//                    fac.createSOAPHeaderBlock("DummyHeader", headerNs, envelope.getHeader());
-//            h1.setMustUnderstand(true);
-//            h1.addChild(fac.createText("Dummy String"));
-//            h1.setRole("http://myOwnRole");
-//            OMElement payload = TestingUtils.createDummyOMElement();
-//            envelope.getBody().addChild(payload);
-//            sendMessageWithHeader(envelope);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            assertTrue(e.getMessage().indexOf("Must Understand check failed") > -1);
-//        }
-//    }
+    // public void testSendingMustUnderstandWithArbitaryRole() throws Exception
+    // {
+    // try {
+    // SOAPFactory fac = OMAbstractFactory.getSOAP12Factory();
+    // SOAPEnvelope envelope = fac.getDefaultEnvelope();
+    // OMNamespace headerNs = fac.createOMNamespace("http://dummyHeader", "dh");
+    // SOAPHeaderBlock h1 =
+    // fac.createSOAPHeaderBlock("DummyHeader", headerNs, envelope.getHeader());
+    // h1.setMustUnderstand(true);
+    // h1.addChild(fac.createText("Dummy String"));
+    // h1.setRole("http://myOwnRole");
+    // OMElement payload = TestingUtils.createDummyOMElement();
+    // envelope.getBody().addChild(payload);
+    // sendMessageWithHeader(envelope);
+    //
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // assertTrue(e.getMessage().indexOf("Must Understand check failed") > -1);
+    // }
+    // }
 }

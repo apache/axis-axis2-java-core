@@ -16,7 +16,7 @@
 
 package org.apache.axis2.mail;
 
-//todo
+// todo
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
@@ -28,12 +28,14 @@ import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.ServiceGroupContextTest;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -49,21 +51,26 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 public class MailRequestResponseRawXMLTest extends TestCase {
-    private EndpointReference targetEPR =
-            new EndpointReference("foo@127.0.0.1" +
-                    "/axis/services/EchoXMLService/echoOMElement");
+    private EndpointReference targetEPR = new EndpointReference("foo@127.0.0.1"
+            + "/axis/services/EchoXMLService/echoOMElement");
+
     private Log log = LogFactory.getLog(getClass());
+
     private QName serviceName = new QName("EchoXMLService");
+
     private QName operationName = new QName("echoOMElement");
+
     private QName transportName = new QName("http://localhost/my",
             "NullTransport");
 
     private AxisConfiguration engineRegistry;
+
     private MessageContext mc;
 
     private SOAPEnvelope envelope;
 
     private boolean finish = false;
+
     private ConfigurationContext config;
 
     public MailRequestResponseRawXMLTest() {
@@ -79,19 +86,16 @@ public class MailRequestResponseRawXMLTest extends TestCase {
 
         SimpleMailListener ml = new SimpleMailListener();
 
-
-        ml.init(configContext,
-                configContext.getAxisConfiguration().getTransportIn(
-                        new QName(Constants.TRANSPORT_MAIL)));
+        ml.init(configContext, configContext.getAxisConfiguration()
+                .getTransportIn(new QName(Constants.TRANSPORT_MAIL)));
         ml.start();
-//        configContext.getAxisConfiguration().engageModule(
-//                new QName(Constants.MODULE_ADDRESSING));
-        AxisService service =
-                Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+        // configContext.getAxisConfiguration().engageModule(
+        // new QName(Constants.MODULE_ADDRESSING));
+        AxisService service = Utils.createSimpleService(serviceName, Echo.class
+                .getName(), operationName);
         configContext.getAxisConfiguration().addService(service);
-        ServiceContext serviceContext = service.getParent().getServiceGroupContext(configContext).getServiceContext(service.getName().getLocalPart());
+        ServiceContext serviceContext = new ServiceGroupContext(configContext,
+                service.getParent()).getServiceContext(service.getName().getLocalPart());
     }
 
     protected void tearDown() throws Exception {
@@ -103,8 +107,8 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
-        value.addChild(
-                fac.createText(value, "Isaac Asimov, The Foundation Trilogy"));
+        value.addChild(fac.createText(value,
+                "Isaac Asimov, The Foundation Trilogy"));
         method.addChild(value);
 
         return method;
@@ -112,10 +116,10 @@ public class MailRequestResponseRawXMLTest extends TestCase {
 
     public void testEchoXMLCompleteASync() throws Exception {
 
-        ConfigurationContext configContext = UtilsMailServer.createClientConfigurationContext();
+        ConfigurationContext configContext = UtilsMailServer
+                .createClientConfigurationContext();
         AxisService service = new AxisService(serviceName);
-        AxisOperation axisOperation = new OutInAxisOperation(
-                operationName);
+        AxisOperation axisOperation = new OutInAxisOperation(operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messgeCtx) throws AxisFault {
                 envelope = messgeCtx.getEnvelope();
@@ -123,7 +127,9 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         });
         service.addOperation(axisOperation);
         configContext.getAxisConfiguration().addService(service);
-        ServiceContext serviceContext = service.getParent().getServiceGroupContext(configContext).getServiceContext(service.getName().getLocalPart());
+        ServiceContext serviceContext = new ServiceGroupContext(configContext,
+                service.getParent()).getServiceContext(service.getName()
+                .getLocalPart());
 
         org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 serviceContext);
@@ -137,8 +143,9 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
                 try {
-                    result.getResponseEnvelope().serializeAndConsume(XMLOutputFactory.newInstance()
-                            .createXMLStreamWriter(System.out));
+                    result.getResponseEnvelope().serializeAndConsume(
+                            XMLOutputFactory.newInstance()
+                                    .createXMLStreamWriter(System.out));
                 } catch (XMLStreamException e) {
                     reportError(e);
                 } finally {
@@ -152,8 +159,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
             }
         };
 
-        call.invokeNonBlocking(operationName.getLocalPart(),
-                createEnvelope(),
+        call.invokeNonBlocking(operationName.getLocalPart(), createEnvelope(),
                 callback);
         int index = 0;
         while (!finish) {
@@ -168,88 +174,90 @@ public class MailRequestResponseRawXMLTest extends TestCase {
 
     }
 
-//    public ConfigurationContext createServerConfigurationContext() throws Exception {
-//        ConfigurationContextFactory builder = new ConfigurationContextFactory();
-//        ConfigurationContext configContext =
-//                builder.buildConfigurationContext(
-//                        org.apache.axis2.Constants.TESTING_REPOSITORY);
-//
-//        TransportInDescription transportIn =
-//                new TransportInDescription(new QName(Constants.TRANSPORT_MAIL));
-//        transportIn.addParameter(
-//                new ParameterImpl("transport.mail.pop3.host", "127.0.0.1"));
-//        transportIn.addParameter(
-//                new ParameterImpl("transport.mail.pop3.user", "foo@127.0.0.1"));
-//        transportIn.addParameter(
-//                new ParameterImpl("transport.mail.pop3.password", "axis2"));
-//        transportIn.addParameter(
-//                new ParameterImpl("transport.mail.pop3.port", "1134"));
-//        transportIn.addParameter(
-//                new ParameterImpl("transport.mail.replyToAddress",
-//                        "foo@127.0.0.1"));
-//        transportIn.setReceiver(new SimpleMailListener());
-//        transportIn.getReceiver().init(configContext, transportIn);
-//
-//        TransportOutDescription transportOut =
-//                new TransportOutDescription(
-//                        new QName(Constants.TRANSPORT_MAIL));
-//
-//        transportOut.addParameter(
-//                new ParameterImpl("transport.mail.smtp.host", "127.0.0.1"));
-//        transportOut.addParameter(
-//                new ParameterImpl("transport.mail.smtp.user", "foo"));
-//        transportOut.addParameter(
-//                new ParameterImpl("transport.mail.smtp.password", "axis2"));
-//        transportOut.addParameter(
-//                new ParameterImpl("transport.mail.smtp.port", "1049"));
-//        transportOut.setSender(new MailTransportSender());
-//        transportOut.getSender().init(configContext, transportOut);
-//
-//        configContext.getAxisConfiguration().addTransportIn(transportIn);
-//        configContext.getAxisConfiguration().addTransportOut(transportOut);
-//        return configContext;
-//    }
-//
-//    public ConfigurationContext createClientConfigurationContext() throws Exception {
-//        ConfigurationContextFactory builder = new ConfigurationContextFactory();
-//        ConfigurationContext configContext =
-//                builder.buildConfigurationContext(
-//                        org.apache.axis2.Constants.TESTING_REPOSITORY);
-//
-//        TransportInDescription transportIn =
-//                new TransportInDescription(new QName(Constants.TRANSPORT_MAIL));
-//        transportIn.addParameter(
-//                new ParameterImpl("transport.mail.pop3.host", "127.0.0.1"));
-//        transportIn.addParameter(
-//                new ParameterImpl("transport.mail.pop3.user", "bar@127.0.0.1"));
-//        transportIn.addParameter(
-//                new ParameterImpl("transport.mail.pop3.password", "axis2"));
-//        transportIn.addParameter(
-//                new ParameterImpl("transport.mail.pop3.port", "1134"));
-//        transportIn.addParameter(
-//                new ParameterImpl("transport.mail.replyToAddress",
-//                        "bar@127.0.0.1"));
-//        transportIn.setReceiver(new SimpleMailListener());
-//        transportIn.getReceiver().init(configContext, transportIn);
-//
-//        TransportOutDescription transportOut =
-//                new TransportOutDescription(
-//                        new QName(Constants.TRANSPORT_MAIL));
-//
-//        transportOut.addParameter(
-//                new ParameterImpl("transport.mail.smtp.host", "127.0.0.1"));
-//        transportOut.addParameter(
-//                new ParameterImpl("transport.mail.smtp.user", "bar"));
-//        transportOut.addParameter(
-//                new ParameterImpl("transport.mail.smtp.password", "axis2"));
-//        transportOut.addParameter(
-//                new ParameterImpl("transport.mail.smtp.port", "1049"));
-//        transportOut.setSender(new MailTransportSender());
-//        transportOut.getSender().init(configContext, transportOut);
-//
-//        configContext.getAxisConfiguration().addTransportIn(transportIn);
-//        configContext.getAxisConfiguration().addTransportOut(transportOut);
-//        return configContext;
-//    }
+    // public ConfigurationContext createServerConfigurationContext() throws
+    // Exception {
+    // ConfigurationContextFactory builder = new ConfigurationContextFactory();
+    // ConfigurationContext configContext =
+    // builder.buildConfigurationContext(
+    // org.apache.axis2.Constants.TESTING_REPOSITORY);
+    //
+    // TransportInDescription transportIn =
+    // new TransportInDescription(new QName(Constants.TRANSPORT_MAIL));
+    // transportIn.addParameter(
+    // new ParameterImpl("transport.mail.pop3.host", "127.0.0.1"));
+    // transportIn.addParameter(
+    // new ParameterImpl("transport.mail.pop3.user", "foo@127.0.0.1"));
+    // transportIn.addParameter(
+    // new ParameterImpl("transport.mail.pop3.password", "axis2"));
+    // transportIn.addParameter(
+    // new ParameterImpl("transport.mail.pop3.port", "1134"));
+    // transportIn.addParameter(
+    // new ParameterImpl("transport.mail.replyToAddress",
+    // "foo@127.0.0.1"));
+    // transportIn.setReceiver(new SimpleMailListener());
+    // transportIn.getReceiver().init(configContext, transportIn);
+    //
+    // TransportOutDescription transportOut =
+    // new TransportOutDescription(
+    // new QName(Constants.TRANSPORT_MAIL));
+    //
+    // transportOut.addParameter(
+    // new ParameterImpl("transport.mail.smtp.host", "127.0.0.1"));
+    // transportOut.addParameter(
+    // new ParameterImpl("transport.mail.smtp.user", "foo"));
+    // transportOut.addParameter(
+    // new ParameterImpl("transport.mail.smtp.password", "axis2"));
+    // transportOut.addParameter(
+    // new ParameterImpl("transport.mail.smtp.port", "1049"));
+    // transportOut.setSender(new MailTransportSender());
+    // transportOut.getSender().init(configContext, transportOut);
+    //
+    // configContext.getAxisConfiguration().addTransportIn(transportIn);
+    // configContext.getAxisConfiguration().addTransportOut(transportOut);
+    // return configContext;
+    // }
+    //
+    // public ConfigurationContext createClientConfigurationContext() throws
+    // Exception {
+    // ConfigurationContextFactory builder = new ConfigurationContextFactory();
+    // ConfigurationContext configContext =
+    // builder.buildConfigurationContext(
+    // org.apache.axis2.Constants.TESTING_REPOSITORY);
+    //
+    // TransportInDescription transportIn =
+    // new TransportInDescription(new QName(Constants.TRANSPORT_MAIL));
+    // transportIn.addParameter(
+    // new ParameterImpl("transport.mail.pop3.host", "127.0.0.1"));
+    // transportIn.addParameter(
+    // new ParameterImpl("transport.mail.pop3.user", "bar@127.0.0.1"));
+    // transportIn.addParameter(
+    // new ParameterImpl("transport.mail.pop3.password", "axis2"));
+    // transportIn.addParameter(
+    // new ParameterImpl("transport.mail.pop3.port", "1134"));
+    // transportIn.addParameter(
+    // new ParameterImpl("transport.mail.replyToAddress",
+    // "bar@127.0.0.1"));
+    // transportIn.setReceiver(new SimpleMailListener());
+    // transportIn.getReceiver().init(configContext, transportIn);
+    //
+    // TransportOutDescription transportOut =
+    // new TransportOutDescription(
+    // new QName(Constants.TRANSPORT_MAIL));
+    //
+    // transportOut.addParameter(
+    // new ParameterImpl("transport.mail.smtp.host", "127.0.0.1"));
+    // transportOut.addParameter(
+    // new ParameterImpl("transport.mail.smtp.user", "bar"));
+    // transportOut.addParameter(
+    // new ParameterImpl("transport.mail.smtp.password", "axis2"));
+    // transportOut.addParameter(
+    // new ParameterImpl("transport.mail.smtp.port", "1049"));
+    // transportOut.setSender(new MailTransportSender());
+    // transportOut.getSender().init(configContext, transportOut);
+    //
+    // configContext.getAxisConfiguration().addTransportIn(transportIn);
+    // configContext.getAxisConfiguration().addTransportOut(transportOut);
+    // return configContext;
+    // }
 
 }

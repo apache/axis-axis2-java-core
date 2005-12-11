@@ -30,50 +30,50 @@ import java.io.File;
 
 public class UtilsTCPServer {
     private static int count = 0;
+
     private static TCPServer receiver;
 
     public static final int TESTING_PORT = 5555;
+
     public static final String FAILURE_MESSAGE = "Intentional Failure";
+
     private static Log log = LogFactory.getLog(UtilsTCPServer.class);
 
     public static synchronized void deployService(AxisService service)
             throws AxisFault {
 
-        receiver.getSystemContext().getAxisConfiguration().addService(service);
-        ServiceGroupContext serviceGroupContext = service.getParent().getServiceGroupContext(receiver.getSystemContext());
-
+        receiver.getConfigurationContext().getAxisConfiguration().addService(service);
+        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(
+                receiver.getConfigurationContext(), service.getParent());
     }
 
     public static synchronized void unDeployService(QName service)
             throws AxisFault {
-        receiver.getSystemContext().getAxisConfiguration().removeService(service.getLocalPart());
+        receiver.getConfigurationContext().getAxisConfiguration().removeService(
+                service.getLocalPart());
     }
 
     public static synchronized void start() throws Exception {
         if (count == 0) {
 
-            //start tcp server
+            // start tcp server
 
-            ConfigurationContextFactory erfac =
-                    new ConfigurationContextFactory();
+            ConfigurationContextFactory erfac = new ConfigurationContextFactory();
             File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY);
             System.out.println(file.getAbsoluteFile());
             if (!file.exists()) {
                 throw new Exception("Repository directory does not exist");
             }
 
-             ConfigurationContext er  = erfac.buildConfigurationContext(
-                    file.getAbsolutePath());
+            ConfigurationContext er = erfac.buildConfigurationContext(file
+                    .getAbsolutePath());
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e1) {
                 throw new AxisFault("Thread interuptted", e1);
             }
-            er.getAxisConfiguration().engageModule(
-                    new QName("addressing"));
-            receiver =
-                    new TCPServer(UtilServer.TESTING_PORT,
-                            er);
+            er.getAxisConfiguration().engageModule(new QName("addressing"));
+            receiver = new TCPServer(UtilServer.TESTING_PORT, er);
             receiver.start();
 
         }
@@ -90,7 +90,7 @@ public class UtilsTCPServer {
                 count--;
             }
         } catch (AxisFault e) {
-           log.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 

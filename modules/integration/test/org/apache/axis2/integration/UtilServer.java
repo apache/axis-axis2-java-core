@@ -21,6 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.ModuleDescription;
@@ -32,24 +33,31 @@ import java.io.File;
 
 public class UtilServer {
     private static int count = 0;
+
     private static SimpleHTTPServer receiver;
+
     public static final int TESTING_PORT = 5555;
+
     public static final String FAILURE_MESSAGE = "Intentional Failure";
-    
+
     private static ThreadPool tp = null;
-                                            
-    public static synchronized void deployService(AxisService service) throws AxisFault {
-        receiver.getConfigurationContext().getAxisConfiguration().addService(service);
+
+    public static synchronized void deployService(AxisService service)
+            throws AxisFault {
+        receiver.getConfigurationContext().getAxisConfiguration().addService(
+                service);
     }
 
-    public static synchronized void unDeployService(QName service) throws AxisFault {
-        receiver.getConfigurationContext().getAxisConfiguration().removeService(
-                service.getLocalPart());
+    public static synchronized void unDeployService(QName service)
+            throws AxisFault {
+        receiver.getConfigurationContext().getAxisConfiguration()
+                .removeService(service.getLocalPart());
     }
 
     public static synchronized void unDeployClientService() throws AxisFault {
-        if(receiver.getConfigurationContext().getAxisConfiguration() !=null){
-            receiver.getConfigurationContext().getAxisConfiguration().removeService("AnonymousService");
+        if (receiver.getConfigurationContext().getAxisConfiguration() != null) {
+            receiver.getConfigurationContext().getAxisConfiguration()
+                    .removeService("AnonymousService");
         }
     }
 
@@ -59,16 +67,15 @@ public class UtilServer {
 
     public static synchronized void start(String repository) throws Exception {
         if (count == 0) {
-        	tp = new ThreadPool();
+            tp = new ThreadPool();
             ConfigurationContext er = getNewConfigurationContext(repository);
 
             receiver = new SimpleHTTPServer(er, Constants.TESTING_PORT);
 
             try {
                 receiver.start();
-                System.out.print(
-                        "Server started on port " + Constants.TESTING_PORT +
-                                ".....");
+                System.out.print("Server started on port "
+                        + Constants.TESTING_PORT + ".....");
             } finally {
 
             }
@@ -83,29 +90,28 @@ public class UtilServer {
         count++;
     }
 
-    public static ConfigurationContext getNewConfigurationContext(String repository) throws Exception {
+    public static ConfigurationContext getNewConfigurationContext(
+            String repository) throws Exception {
         ConfigurationContextFactory erfac = new ConfigurationContextFactory();
         File file = new File(repository);
         if (!file.exists()) {
-            throw new Exception(
-                    "repository directory " + file.getAbsolutePath() +
-                            " does not exists");
+            throw new Exception("repository directory "
+                    + file.getAbsolutePath() + " does not exists");
         }
-        return erfac.buildConfigurationContext(
-                file.getAbsolutePath());
+        return erfac.buildConfigurationContext(file.getAbsolutePath());
     }
 
     public static synchronized void stop() {
         if (count == 1) {
             receiver.stop();
-            while(receiver.isRunning()){
+            while (receiver.isRunning()) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {
                 }
             }
             count = 0;
-            //tp.doStop();
+            // tp.doStop();
             System.out.print("Server stopped .....");
         } else {
             count--;
@@ -117,48 +123,46 @@ public class UtilServer {
     }
 
     public static ServiceContext createAdressedEnabledClientSide(
-            AxisService service)
-            throws AxisFault {
+            AxisService service) throws AxisFault {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
-        File file = new File(
-                org.apache.axis2.Constants.TESTING_REPOSITORY +
-                        "/modules/addressing.mar");
+        File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY
+                + "/modules/addressing.mar");
         TestCase.assertTrue(file.exists());
 
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
-        ConfigurationContext sysContext =
-                efac.buildClientConfigurationContext("target/test-resources/integrationRepo");
-         ModuleDescription moduleDesc = deploymentEngine.buildModule(file,sysContext.getAxisConfiguration());
-        sysContext.getAxisConfiguration().addModule(moduleDesc);
-        //sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
+        ConfigurationContext configContext = efac
+                .buildClientConfigurationContext("target/test-resources/integrationRepo");
+        ModuleDescription moduleDesc = deploymentEngine.buildModule(file,
+                configContext.getAxisConfiguration());
+        configContext.getAxisConfiguration().addModule(moduleDesc);
+        // sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
 
-        sysContext.getAxisConfiguration().addService(service);
+        configContext.getAxisConfiguration().addService(service);
 
-        return service.getParent().getServiceGroupContext(sysContext
-        ).getServiceContext(service.getName().getLocalPart());
+        return new ServiceGroupContext(configContext, service.getParent())
+                .getServiceContext(service.getName().getLocalPart());
     }
 
     public static ServiceContext createAdressedEnabledClientSide(
-            AxisService service, String clientHome)
-            throws AxisFault {
+            AxisService service, String clientHome) throws AxisFault {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
-        File file = new File(
-                org.apache.axis2.Constants.TESTING_REPOSITORY +
-                        "/modules/addressing.mar");
+        File file = new File(org.apache.axis2.Constants.TESTING_REPOSITORY
+                + "/modules/addressing.mar");
         TestCase.assertTrue(file.exists());
 
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
-        ConfigurationContext sysContext =
-                efac.buildClientConfigurationContext(clientHome);
-        ModuleDescription moduleDesc = deploymentEngine.buildModule(file,sysContext.getAxisConfiguration());
+        ConfigurationContext configContext = efac
+                .buildClientConfigurationContext(clientHome);
+        ModuleDescription moduleDesc = deploymentEngine.buildModule(file,
+                configContext.getAxisConfiguration());
 
-        sysContext.getAxisConfiguration().addModule(moduleDesc);
-        //sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
+        configContext.getAxisConfiguration().addModule(moduleDesc);
+        // sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
 
-        sysContext.getAxisConfiguration().addService(service);
+        configContext.getAxisConfiguration().addService(service);
 
-        return service.getParent().getServiceGroupContext(sysContext
-        ).getServiceContext(service.getName().getLocalPart());
+        return new ServiceGroupContext(configContext, service.getParent())
+                .getServiceContext(service.getName().getLocalPart());
     }
 
 }
