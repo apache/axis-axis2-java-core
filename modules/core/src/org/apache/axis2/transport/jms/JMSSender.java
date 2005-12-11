@@ -101,10 +101,10 @@ public class JMSSender extends AbstractHandler implements TransportSender {
 
         boolean waitForResponse = false;
         if (dest == null) {
-            if (msgContext.getProperty(JMSConstants.WAIT_FOR_RESPONSE) != null && msgContext.getProperty(JMSConstants.WAIT_FOR_RESPONSE).equals(Boolean.TRUE))
+            if (msgContext.getProperty(Constants.Configuration.IS_USING_SEPARATE_LISTENER) != null && msgContext.getProperty(Constants.Configuration.IS_USING_SEPARATE_LISTENER).equals(Boolean.TRUE))
                 waitForResponse =
-                        ((Boolean) msgContext.getProperty(
-                                JMSConstants.WAIT_FOR_RESPONSE)).booleanValue();
+                        !((Boolean) msgContext.getProperty(
+                                Constants.Configuration.IS_USING_SEPARATE_LISTENER)).booleanValue();
         } else {
             if (properties != null) {
                 JMSURLHelper url = null;

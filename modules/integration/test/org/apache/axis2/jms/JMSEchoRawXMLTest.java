@@ -114,7 +114,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
         options.setAction(serviceName.getLocalPart());
         options.setSoapAction("echoOMElement");
-        options.getProperties().put(JMSConstants.WAIT_FOR_RESPONSE, Boolean.TRUE);
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
@@ -164,7 +163,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
         options.setAction(serviceName.getLocalPart());
         options.setSoapAction("EchoXMLService/echoOMElement");
-        options.getProperties().put(JMSConstants.WAIT_FOR_RESPONSE, Boolean.TRUE);
 
         OMElement result =
                 call.invokeBlocking(operationName.getLocalPart(),
@@ -197,7 +195,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setAction(operationName.getLocalPart());
         options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
         options.setSoapAction("EchoXMLService/echoOMElement");
-        options.getProperties().put(JMSConstants.WAIT_FOR_RESPONSE, Boolean.FALSE);
         options.setUseSeparateListener(true);
 
         OMElement result = call.invokeBlocking(
@@ -220,7 +217,6 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setAction(operationName.getLocalPart());
         options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
         options.setSoapAction("EchoXMLService/echoOMElement");
-        options.getProperties().put(JMSConstants.WAIT_FOR_RESPONSE, Boolean.TRUE);
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
 

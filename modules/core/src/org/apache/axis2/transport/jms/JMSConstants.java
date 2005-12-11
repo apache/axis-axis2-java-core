@@ -36,7 +36,6 @@ public interface JMSConstants {
 
     // abbreviated version of all constants (see below for description of each constant)
     // the short name is used in the JMS URL. the full name is used in the Axis call.
-    final static String _WAIT_FOR_RESPONSE = "waitForResponse";
     final static String _CLIENT_ID = "clientID";
     final static String _VENDOR = "vendor";
     final static String _DOMAIN = "domain";
@@ -64,17 +63,6 @@ public interface JMSConstants {
     final static String _MSG_PROP_PREFIX = "msgProp.";
 
     public static String JMS_PROPERTY_PREFIX = "transport.jms.";
-
-    /**
-     * This is used as a key in the Call properties telling the JMS transport
-     * to wait for a response from the service.  The default value is true.
-     * If false is specified, the message will be delivered without specifying
-     * a ReplyTo.  The client will always return null from invoke unless
-     * a client-side exception is thrown (similar to invokeOneWay in semantics)
-     * The value must be a <code>java.lang.Boolean</code>.
-     * See the javax.jms javadoc for information on this property.
-     */
-    final static String WAIT_FOR_RESPONSE = JMS_PROPERTY_PREFIX + _WAIT_FOR_RESPONSE;
 
     /**
      * <code>JMSConnectorFactory</code> parameter valid for either domain.  This should

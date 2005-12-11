@@ -223,11 +223,6 @@ public abstract class JMSVendorAdapter {
         if (ttl != null)
             context.setProperty(JMSConstants.TIME_TO_LIVE, Long.valueOf(ttl));
 
-        String wait = null;
-        if (jmsurl != null)
-            wait = jmsurl.getPropertyValue(JMSConstants._WAIT_FOR_RESPONSE);
-        if (wait != null)
-            context.setProperty(JMSConstants.WAIT_FOR_RESPONSE, Boolean.valueOf(wait));
         setupApplicationProperties(context, jmsurl);
     }
 
