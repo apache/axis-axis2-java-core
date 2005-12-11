@@ -63,38 +63,6 @@ public class ConfigurationContext extends AbstractContext {
         serviceContextMap.remove(name);
     }
 
-    /**
-     * Initializes the Configuration Context
-     * @param axisConfiguration
-     * @throws AxisFault
-     */
-    public void init(AxisConfiguration axisConfiguration) throws AxisFault {
-        this.axisConfiguration = axisConfiguration;
-        Iterator operationContextIt = operationContextMap.keySet().iterator();
-        while (operationContextIt.hasNext()) {
-            Object key = operationContextIt.next();
-            OperationContext operationContext = (OperationContext) operationContextMap.get(key);
-            if (operationContext != null)
-                operationContext.init(axisConfiguration);
-        }
-        Iterator serviceContextIt = serviceContextMap.keySet().iterator();
-        while (serviceContextIt.hasNext()) {
-            Object key = serviceContextIt.next();
-            ServiceContext serviceContext = (ServiceContext) serviceContextMap.get(key);
-            if (serviceContext != null)
-                serviceContext.init(axisConfiguration);
-        }
-        Iterator serviceGroupContextIt = serviceGroupContextMap.keySet().iterator();
-        while (serviceGroupContextIt.hasNext()) {
-            Object key = serviceGroupContextIt.next();
-            ServiceGroupContext serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(key);
-            if (serviceGroupContext != null)
-                serviceGroupContext.init(axisConfiguration);
-        }
-    }
-
-    /**
-     */
     public AxisConfiguration getAxisConfiguration() {
         return axisConfiguration;
     }

@@ -70,24 +70,6 @@ public class OperationContext extends AbstractContext {
     private QName serviceDescName = null;
 
     /**
-     * Initializes the engine context.
-     * @throws AxisFault
-     */
-
-    public void init(AxisConfiguration axisConfiguration) throws AxisFault {
-        if (operationDescName!=null && serviceDescName!=null){
-            //todo this lead to NPE : Chamikara
-            axisOperation = axisConfiguration.getService(serviceDescName.getLocalPart()).getOperation(operationDescName);
-        }
-
-        Iterator msgContexts =   messageContexts.values().iterator();
-        while (msgContexts.hasNext()) {
-            MessageContext messageContext = (MessageContext) msgContexts.next();
-            messageContext.init(axisConfiguration);
-        }
-    }
-
-    /**
      * Constructs a new OperationContext.
      *
      * @param axisOperation  the AxisOperation whose running instances' state this

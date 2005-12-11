@@ -36,15 +36,6 @@ public class ServiceContext extends AbstractContext {
     private QName axisServiceName = null;
 
 
-    /**
-     * Initializes the engine context.
-     *
-     * @throws AxisFault
-     */
-    public void init(AxisConfiguration axisConfiguration) throws AxisFault {
-        axisService = axisConfiguration.getService(axisServiceName.getLocalPart());
-    }
-
     public ServiceContext(
             AxisService serviceConfig,
             ServiceGroupContext serviceGroupContext) {

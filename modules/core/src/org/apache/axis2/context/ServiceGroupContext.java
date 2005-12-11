@@ -33,11 +33,6 @@ public class ServiceGroupContext extends AbstractContext {
     private String axisServiceGroupName = null;
 
 
-    public void init(AxisConfiguration axisConfiguration) throws AxisFault {
-        if (axisServiceGroupName != null)
-            axisServiceGroup = axisConfiguration.getServiceGroup(axisServiceGroupName);
-    }
-
     public ServiceGroupContext(ConfigurationContext parent, AxisServiceGroup axisServiceGroup) {
         super(parent);
         this.axisServiceGroup = axisServiceGroup;

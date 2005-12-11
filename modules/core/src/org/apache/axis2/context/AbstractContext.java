@@ -33,8 +33,6 @@ public abstract class AbstractContext {
 
     protected AbstractContext parent;
 
-    public abstract void init(AxisConfiguration axisConfiguration) throws AxisFault;
-
     protected AbstractContext(AbstractContext parent) {
         this.properties = new HashMap();
         this.parent = parent;

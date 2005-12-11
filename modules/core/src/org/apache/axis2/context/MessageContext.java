@@ -188,24 +188,6 @@ public class MessageContext extends AbstractContext {
     QName axisOperationName = null;
 
     /**
-     * Initializes Axis Engine Context.
-     *
-     * @throws AxisFault
-     */
-    public void init(AxisConfiguration axisConfiguration) throws AxisFault {
-        if (transportInName != null)
-            transportIn = axisConfiguration.getTransportIn(transportInName);
-        if (transportOutname != null)
-            transportOut = axisConfiguration.getTransportOut(transportOutname);
-        if (serviceGroupId != null)
-            axisServiceGroup = axisConfiguration.getServiceGroup(serviceGroupId);
-        if (serviceDescName != null)
-            axisService = axisConfiguration.getService(serviceDescName.getLocalPart());
-        if (axisOperationName != null)
-            axisOperation = axisService.getOperation(axisOperationName);
-    }
-
-    /**
      * Convenience Constructor. Before calling engine.send() or  engine.receive(), one must send
      * transport in/out
      *
