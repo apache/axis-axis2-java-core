@@ -25,8 +25,6 @@ import org.apache.wsdl.extensions.ExtensionFactory;
 import org.apache.wsdl.impl.WSDLProcessingException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import javax.wsdl.*;
 import javax.wsdl.extensions.ExtensibilityElement;
@@ -53,16 +51,13 @@ public class WSDLPump {
     private static final String XML_SCHEMA_COMPLEX_TYPE_LOCAL_NAME = "complexType";
     private static final String XML_SCHEMA_ELEMENT_LOCAL_NAME = "element";
     private static final String XML_SCHEMA_IMPORT_LOCAL_NAME = "import";
-    private static final String XSD_SCHEMA_QUALIFIED_NAME =XMLSCHEMA_NAMESPACE_PREFIX + ":"+XML_SCHEMA_LOCAL_NAME;
-    private static final String XSD_SEQUENCE_QUALIFIED_NAME =XMLSCHEMA_NAMESPACE_PREFIX + ":"+XML_SCHEMA_SEQUENCE_LOCAL_NAME;
-    private static final String XSD_COMPLEXTYPE_QUALIFIED_NAME = XMLSCHEMA_NAMESPACE_PREFIX + ":"+XML_SCHEMA_COMPLEX_TYPE_LOCAL_NAME;
-    private static final String XSD_ELEMENT_QUALIFIED_NAME = XMLSCHEMA_NAMESPACE_PREFIX + ":"+XML_SCHEMA_ELEMENT_LOCAL_NAME;
 
     private static final String XSD_NAME = "name";
     private static final String XSD_TARGETNAMESPACE = "targetNamespace";
     private static final String XMLNS_AXIS2WRAPPED = "xmlns:axis2wrapped";
     private static final String AXIS2WRAPPED = "axis2wrapped";
     private static final String XSD_TYPE = "type";
+    private static final String XSD_REF = "ref";
     private static final String BOUND_INTERFACE_NAME = "BoundInterface";
 
 
@@ -75,8 +70,6 @@ public class WSDLPump {
     private WSDLComponentFactory wsdlComponentFactory;
 
     private Map declaredNameSpaces=null;
-
-    private List resolvedMultipartMessageList = new LinkedList();
 
     private Map resolvedRpcWrappedElementMap = new HashMap();
     private static final String XSD_ELEMENT_FORM_DEFAULT = "elementFormDefault";
@@ -176,7 +169,7 @@ public class WSDLPump {
             wsdlInterface = this.wsdlComponentFactory.createInterface();
             portType = (PortType) portTypeIterator.next();
             //////////////////////////
-            this.populateInterfaces(wsdlInterface, portType,wsdl4JDefinition);
+            this.populateInterfaces(wsdlInterface, portType);
             /////////////////////////
             this.copyExtensibilityAttribute(portType.getExtensionAttributes(),
                     wsdlInterface);
@@ -234,7 +227,7 @@ public class WSDLPump {
     // FIXME Evaluate a way of injecting features and priperties with a general
     // formatted input
     private void populateInterfaces(WSDLInterface wsdlInterface,
-                                    PortType wsdl4jPortType,Definition wsdl4jDefinition) {
+                                    PortType wsdl4jPortType) {
 
         //Copy the Attribute information items
         //Copied with the Same QName so it will require no Query in Binding
@@ -335,7 +328,7 @@ public class WSDLPump {
         Part part;
         while (!wrappable && parts.hasNext()) {
             part = (Part) parts.next();
-            wrappable = wrappable || (part.getTypeName()!=null);
+            wrappable = (part.getTypeName() != null) || wrappable;
         }
 
 
@@ -597,7 +590,8 @@ public class WSDLPump {
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Now we have the message list to process - Process it
+        // Now we have the message list to process - Process the whole list of messages at once
+        //since
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
         List resolvedMessageQNames = new ArrayList();
         //find the xsd prefix
@@ -607,65 +601,82 @@ public class WSDLPump {
         Document document = getDOMDocumentBuilder().newDocument();
         for (int i = 0; i < keys.length; i++) {
             wsdl4jMessage = (Message)messagesMap.get(keys[i]);
-            if (findWrapppable(wsdl4jMessage)){
-                //This message is wrappabel. However we need to see whether the message is already
-                //resolved!
-                if (!resolvedMessageQNames.contains(wsdl4jMessage.getQName())){
-                    //This message has not been touched before!. So we can go ahead now
-                    Map parts = wsdl4jMessage.getParts();
-                    //add the complex type
-                    String name = wsdl4jMessage.getQName().getLocalPart();
-                    Element newComplexType = document.createElementNS(WSDLPump.XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"+ XML_SCHEMA_COMPLEX_TYPE_LOCAL_NAME);
-                    newComplexType.setAttribute(WSDLPump.XSD_NAME, name);
+            //No need to chack the wrappable
 
-                    Element cmplxContentSequence = document.createElementNS(WSDLPump.XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"+ XML_SCHEMA_SEQUENCE_LOCAL_NAME);
-                    Element child = null;
-                    Iterator iterator = parts.keySet().iterator();
-                    while (iterator.hasNext()) {
-                        Part part = (Part) parts.get(iterator.next());
-                        //the part name
-                        String elementName = part.getName();
-                        //the type name
-                        QName schemaTypeName = part.getTypeName();
-                        child = document.createElementNS(XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"+ XML_SCHEMA_ELEMENT_LOCAL_NAME);
-                        child.setAttribute(WSDLPump.XSD_NAME, elementName);
-                        String prefix;
-                        if (XMLSCHEMA_NAMESPACE_URI.equals(schemaTypeName.getNamespaceURI())){
-                            prefix = xsdPrefix;
+            //This message is wrappabel. However we need to see whether the message is already
+            //resolved!
+            if (!resolvedMessageQNames.contains(wsdl4jMessage.getQName())){
+                //This message has not been touched before!. So we can go ahead now
+                Map parts = wsdl4jMessage.getParts();
+                //add the complex type
+                String name = wsdl4jMessage.getQName().getLocalPart();
+                Element newComplexType = document.createElementNS(WSDLPump.XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"+ XML_SCHEMA_COMPLEX_TYPE_LOCAL_NAME);
+                newComplexType.setAttribute(WSDLPump.XSD_NAME, name);
+
+                Element cmplxContentSequence = document.createElementNS(WSDLPump.XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"+ XML_SCHEMA_SEQUENCE_LOCAL_NAME);
+                Element child;
+                Iterator iterator = parts.keySet().iterator();
+                while (iterator.hasNext()) {
+                    Part part = (Part) parts.get(iterator.next());
+                    //the part name
+                    String elementName = part.getName();
+                    boolean isTyped = true;
+                    //the type name
+                    QName schemaTypeName;
+                    if (part.getTypeName()!=null){
+                        schemaTypeName = part.getTypeName();
+                    }else if (part.getElementName()!=null){
+                        schemaTypeName = part.getElementName();
+                        isTyped = false;
+                    }else{
+                        throw new RuntimeException(" Unqualified Message part!");
+                    }
+
+                    child = document.createElementNS(XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"+ XML_SCHEMA_ELEMENT_LOCAL_NAME);
+
+                    String prefix;
+                    if (XMLSCHEMA_NAMESPACE_URI.equals(schemaTypeName.getNamespaceURI())){
+                        prefix = xsdPrefix;
+                    }else{
+                        //this schema is a third party one. So we need to have an import statement in our generated schema
+                        String uri = schemaTypeName.getNamespaceURI();
+                        if (!namespaceImportsMap.containsKey(uri)){
+                            //create Element for namespace import
+                            Element namespaceImport = document.createElementNS(XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"+ XML_SCHEMA_IMPORT_LOCAL_NAME);
+                            namespaceImport.setAttribute("namespace",uri);
+                            //add this to the map
+                            namespaceImportsMap.put(uri,namespaceImport);
+                            //we also need to associate this uri with a prefix and include that prefix
+                            //in the schema's namspace declarations. So add theis particular namespace to the
+                            //prefix map as well
+                            prefix = getTemporaryNamespacePrefix();
+                            namespacePrefixMap.put(uri,prefix);
                         }else{
-                            //this schema is a third party one. So we need to have an import statement in our generated schema
-                            String uri = schemaTypeName.getNamespaceURI();
-                            if (!namespaceImportsMap.containsKey(uri)){
-                                //create Element for namespace import
-                                Element namespaceImport = document.createElementNS(XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"+ XML_SCHEMA_IMPORT_LOCAL_NAME);
-                                namespaceImport.setAttribute("namespace",uri);
-                                //add this to the map
-                                namespaceImportsMap.put(uri,namespaceImport);
-                                //we also need to associate this uri with a prefix and include that prefix
-                                //in the schema's namspace declarations. So add theis particular namespace to the
-                                //prefix map as well
-                                prefix = getTemporaryNamespacePrefix();
-                                namespacePrefixMap.put(uri,prefix);
-                            }else{
-                                //this URI should be already in the namspace prefix map
-                                prefix = (String)namespacePrefixMap.get(uri);
-                            }
-
-
+                            //this URI should be already in the namspace prefix map
+                            prefix = (String)namespacePrefixMap.get(uri);
                         }
 
-                        child.setAttribute(WSDLPump.XSD_TYPE, prefix +":"+schemaTypeName.getLocalPart());
-                        cmplxContentSequence.appendChild(child);
+
                     }
-                    newComplexType.appendChild(cmplxContentSequence);
-                    //add this newly created complextype to the list
-                    complexTypeElementsMap.put(wsdl4jMessage.getQName(),newComplexType);
-                    resolvedMessageQNames.add(wsdl4jMessage.getQName());
+                    // If it's from a type the element we need to add a name and the type
+                    //if not it's the element reference
+                    if (isTyped){
+                        child.setAttribute(WSDLPump.XSD_NAME, elementName);
+                        child.setAttribute(WSDLPump.XSD_TYPE, prefix +":"+schemaTypeName.getLocalPart());
+                    }else{
+                        child.setAttribute(WSDLPump.XSD_REF, prefix +":"+schemaTypeName.getLocalPart());
+                    }
+                    cmplxContentSequence.appendChild(child);
                 }
+                newComplexType.appendChild(cmplxContentSequence);
+                //add this newly created complextype to the list
+                complexTypeElementsMap.put(wsdl4jMessage.getQName(),newComplexType);
+                resolvedMessageQNames.add(wsdl4jMessage.getQName());
             }
+          
         }
 
-        Element elementDeclaration  = null;
+        Element elementDeclaration;
 
 
         //loop through the input op map and generate the elements
@@ -741,7 +752,7 @@ public class WSDLPump {
                 XMLNS_AXIS2WRAPPED,
                 targetNamespaceUri);
         schemaElement.setAttribute(XSD_TARGETNAMESPACE,targetNamespaceUri);
-        schemaElement.setAttribute(XSD_ELEMENT_FORM_DEFAULT,XSD_UNQUALIFIED); 
+        schemaElement.setAttribute(XSD_ELEMENT_FORM_DEFAULT,XSD_UNQUALIFIED);
 
         Element[] namespaceImports = (Element[])namespaceImportsMap.values().toArray(new Element[namespaceImportsMap.size()]);
         for (int i = 0; i < namespaceImports.length; i++) {
@@ -763,7 +774,7 @@ public class WSDLPump {
         }
 
 
-        System.out.println("schemaElement = " + schemaElement);
+
 
         return schemaElement;
     }
@@ -777,7 +788,6 @@ public class WSDLPump {
      */
     private QName generateReferenceQname(QName outerName,Message wsdl4jMessage,boolean isWrappable) {
         QName referenceQName = null;
-        String xsdPrefix = findSchemaPrefix();
         if (isWrappable) {
             //The schema for this should be already made ! Find the QName from the list
             referenceQName=(QName)resolvedRpcWrappedElementMap.get(outerName.getLocalPart());
@@ -1162,14 +1172,9 @@ public class WSDLPump {
     }
 
     /**
-     *
-     * @return
-     */
-    private String getTemporaryNamespaceUri(){
-        return "urn:tempNs"+nsCount++ ;
-    }
 
-    /**
+
+     /**
      *
      * @return
      */
