@@ -829,14 +829,6 @@ public class MessageContext extends AbstractContext {
         doingREST = b;
     }
 
-    public void setDoingHttpPOST(boolean b) {
-        doRESTthroughPOST = b;
-    }
-
-    public boolean isDoingHttpPOST() {
-        return doRESTthroughPOST;
-    }
-
     public boolean isSOAP11() {
         return isSOAP11;
     }

@@ -6,14 +6,6 @@
  */
 package org.apache.axis2.transport.http;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.MissingResourceException;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -22,354 +14,365 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
-
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 
 public class RESTSender extends AbstractSender {
 
-	public void transportConfiguration(MessageContext msgContext,
-			OMElement dataout, URL url, String soapActionString) {
-		try {
-			msgContext.setDoingHttpPOST(HTTPTransportUtils
-					.isDoingHTTPPost(msgContext));
+    private Log log = LogFactory.getLog(getClass());
 
-			if (!msgContext.isDoingHttpPOST()) {
-				this.transportConfigurationGET(msgContext, url);
-			} else {
-				this.transportConfigurationPOST(msgContext, dataout, url,
-						soapActionString);
-			}
-		} catch (AxisFault e) {
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
-	public void transportConfigurationPOST(MessageContext msgContext,
-			OMElement dataout, URL url, String soapActionString) {
-		//execuite the HtttpMethodBase - a connection manager can be given for
-		// handle multiple
-		httpClient = new HttpClient();
-		//hostConfig handles the socket functions..
-		//HostConfiguration hostConfig = getHostConfiguration(msgContext, url);
+    /**
+     * By this time, you must have identified that you are doing REST here. Following default values
+     * will apply.
+     * If the HTTPMethod is not set, I prefer to set it as POST by default.
+     * If the HTTPMethod is POST, default content type will always be text/plain.
+     *
+     * @param msgContext
+     * @param dataout
+     * @param url
+     * @param soapActionString
+     */
+    public void transportConfiguration(MessageContext msgContext,
+                                       OMElement dataout, URL url, String soapActionString) {
+        try {
+            String httpMethod = (String) msgContext.getProperty(Constants.Configuration.HTTP_METHOD);
 
-		//Get the timeout values set in the runtime
-		getTimeoutValues(msgContext);
+            if (httpMethod != null && Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
+                this.transportConfigurationGET(msgContext, url);
+                return;
+            }
+            this.transportConfigurationPOST(msgContext, dataout, url,
+                    soapActionString);
 
-		// SO_TIMEOUT -- timeout for blocking reads
-		httpClient.getHttpConnectionManager().getParams().setSoTimeout(
-				soTimeout);
-		// timeout for initial connection
-		httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(
-				connectionTimeout);
+        } catch (Exception e) {
+            log.error("Error in extracting transport properties from message context", e);
+        }
+    }
 
-		//todo giving proxy and NTLM support
+    public void transportConfigurationPOST(MessageContext msgContext,
+                                           OMElement dataout, URL url, String soapActionString) {
+        //execuite the HtttpMethodBase - a connection manager can be given for
+        // handle multiple
+        httpClient = new HttpClient();
+        //hostConfig handles the socket functions..
+        //HostConfiguration hostConfig = getHostConfiguration(msgContext, url);
 
-		PostMethod postMethod = new PostMethod(url.toString());
-		String httpContentType;
-		if (msgContext.getProperty(Constants.Configuration.CONTENT_TYPE)!=null){
-			httpContentType = (String)msgContext.getProperty(Constants.Configuration.CONTENT_TYPE);
-		}else{
-			httpContentType = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
-			}
-		
+        //Get the timeout values set in the runtime
+        getTimeoutValues(msgContext);
 
-		msgContext.setProperty(CommonsHTTPTransportSender.HTTP_METHOD,
-				postMethod);
-		String charEncoding = (String) msgContext
-				.getProperty(MessageContext.CHARACTER_SET_ENCODING);
-		if (charEncoding == null) {
-			charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
-		}
+        // SO_TIMEOUT -- timeout for blocking reads
+        httpClient.getHttpConnectionManager().getParams().setSoTimeout(
+                soTimeout);
+        // timeout for initial connection
+        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(
+                connectionTimeout);
 
-		//if POST as application/x-www-form-urlencoded
-		RequestData reqData = null;
-		
-		//System.out.print((String)msgContext.);
-			
-		if(httpContentType.equalsIgnoreCase(HTTPConstants.MEDIA_TYPE_X_WWW_FORM)){
-				reqData = createRequest(msgContext, dataout);
-				postMethod
-					.setPath(url.getPath()
-							+ ((reqData.urlRequest) != null ? ("?" + reqData.urlRequest)
-									: ""));
-				postMethod.setRequestEntity(new AxisRESTRequestEntity(
+        //todo giving proxy and NTLM support
+
+        PostMethod postMethod = new PostMethod(url.toString());
+        String httpContentType;
+        if (msgContext.getProperty(Constants.Configuration.CONTENT_TYPE) != null) {
+            httpContentType = (String) msgContext.getProperty(Constants.Configuration.CONTENT_TYPE);
+        } else {
+            httpContentType = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
+        }
+
+
+        msgContext.setProperty(CommonsHTTPTransportSender.HTTP_METHOD,
+                postMethod);
+        String charEncoding = (String) msgContext
+                .getProperty(MessageContext.CHARACTER_SET_ENCODING);
+        if (charEncoding == null) {
+            charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
+        }
+
+        //if POST as application/x-www-form-urlencoded
+        RequestData reqData;
+
+        //System.out.print((String)msgContext.);
+
+        if (httpContentType.equalsIgnoreCase(HTTPConstants.MEDIA_TYPE_X_WWW_FORM)) {
+            reqData = createRequest(msgContext, dataout);
+            postMethod
+                    .setPath(url.getPath()
+                            + ((reqData.urlRequest) != null ? ("?" + reqData.urlRequest)
+                            : ""));
+            postMethod.setRequestEntity(new AxisRESTRequestEntity(
                     reqData.bodyRequest, charEncoding, msgContext,
                     httpContentType));
 
-		} else {
-			postMethod.setPath(url.getPath());
+        } else {
+            postMethod.setPath(url.getPath());
 
-			postMethod.setRequestEntity(new AxisRequestEntity(dataout,
-					chuncked, msgContext, charEncoding, soapActionString));
-		}
+            postMethod.setRequestEntity(new AxisRequestEntity(dataout,
+                    chuncked, msgContext, charEncoding, soapActionString));
+        }
 
-		if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chuncked) {
-			postMethod.setContentChunked(true);
-		}
-		postMethod
-				.setRequestHeader(HTTPConstants.HEADER_USER_AGENT, "Axis/2.0");
-		if (msgContext.isSOAP11() && !msgContext.isDoingREST()) {
-			postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION,
-					soapActionString);
-		}
-		postMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
-		if (httpVersion != null) {
-			if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
+        if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chuncked) {
+            postMethod.setContentChunked(true);
+        }
+        postMethod
+                .setRequestHeader(HTTPConstants.HEADER_USER_AGENT, "Axis/2.0");
+        if (msgContext.isSOAP11() && !msgContext.isDoingREST()) {
+            postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION,
+                    soapActionString);
+        }
+        postMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
+        if (httpVersion != null) {
+            if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
 
-				httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
-				postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
-						HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
-			} else {
-				// allowing keep-alive for 1.1
-				postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
-						HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
-				postMethod.setRequestHeader(HTTPConstants.HEADER_EXPECT,
-						HTTPConstants.HEADER_EXPECT_100_Continue);
-			}
-		}
+                httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
+                postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
+                        HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
+            } else {
+                // allowing keep-alive for 1.1
+                postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
+                        HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
+                postMethod.setRequestHeader(HTTPConstants.HEADER_EXPECT,
+                        HTTPConstants.HEADER_EXPECT_100_Continue);
+            }
+        }
 
-		/**
-		 * main excecution takes place..
-		 */
+        /**
+         * main excecution takes place..
+         */
 
-		try {
-			HostConfiguration config = this.getHostConfiguration(httpClient,
-					msgContext, url);
+        try {
+            HostConfiguration config = this.getHostConfiguration(httpClient,
+                    msgContext, url);
 
-			this.httpClient.executeMethod(config, postMethod);
+            this.httpClient.executeMethod(config, postMethod);
 
-			if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
-				processResponse(postMethod, msgContext);
-				return;
-			} else if (postMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
-				return;
-			} else if (postMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-				Header contenttypeHheader = postMethod
-						.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+            if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
+                processResponse(postMethod, msgContext);
+                return;
+            } else if (postMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
+                return;
+            } else if (postMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+                Header contenttypeHheader = postMethod
+                        .getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
 
-				if (contenttypeHheader != null) {
-					String value = contenttypeHheader.getValue();
-					if (value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0
-							|| value
-									.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0) {
-						processResponse(postMethod, msgContext);
-						return;
-					}
-				}
-			}
-			throw new AxisFault(Messages.getMessage("transportError", String
-					.valueOf(postMethod.getStatusCode()), postMethod
-					.getResponseBodyAsString()));
-		} catch (AxisFault e) {
-			e.printStackTrace();
-		} catch (HttpException e) {
-			e.printStackTrace();
-		} catch (MissingResourceException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+                if (contenttypeHheader != null) {
+                    String value = contenttypeHheader.getValue();
+                    if (value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0
+                            || value
+                            .indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0) {
+                        processResponse(postMethod, msgContext);
+                        return;
+                    }
+                }
+            }
+            throw new AxisFault(Messages.getMessage("transportError", String
+                    .valueOf(postMethod.getStatusCode()), postMethod
+                    .getResponseBodyAsString()));
+        } catch (Exception e) {
+            log.error("Error in processing POST request", e);
+        }
+    }
 
-	private void transportConfigurationGET(MessageContext msgContext, URL url)
-			throws MalformedURLException, AxisFault, IOException {
+    private void transportConfigurationGET(MessageContext msgContext, URL url)
+            throws MalformedURLException, AxisFault, IOException {
 
-		String param = getParam(msgContext);
-		GetMethod getMethod = new GetMethod();
-			getMethod.setPath(url.getFile() + "?" + param);
-			
-		//Serialization as "application/x-www-form-urlencoded"
+        String param = getParam(msgContext);
+        GetMethod getMethod = new GetMethod();
+        getMethod.setPath(url.getFile() + "?" + param);
 
-		String charEncoding = (String) msgContext
-				.getProperty(MessageContext.CHARACTER_SET_ENCODING);
-		if (charEncoding == null) //Default encoding scheme
-			getMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-					HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset="
-							+ MessageContext.DEFAULT_CHAR_SET_ENCODING);
-		else
-			getMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-					HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset="
-							+ charEncoding);
+        //Serialization as "application/x-www-form-urlencoded"
 
-		this.httpClient = new HttpClient();
+        String charEncoding = (String) msgContext
+                .getProperty(MessageContext.CHARACTER_SET_ENCODING);
+        if (charEncoding == null) //Default encoding scheme
+            getMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
+                    HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset="
+                            + MessageContext.DEFAULT_CHAR_SET_ENCODING);
+        else
+            getMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
+                    HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset="
+                            + charEncoding);
 
-		HostConfiguration hostConfig = this.getHostConfiguration(httpClient,
-				msgContext, url);
-		//this.getHostConfiguration(msgContext, url);
+        this.httpClient = new HttpClient();
 
-		//Get the timeout values set in the runtime
-		getTimeoutValues(msgContext);
+        HostConfiguration hostConfig = this.getHostConfiguration(httpClient,
+                msgContext, url);
+        //this.getHostConfiguration(msgContext, url);
 
-		// SO_TIMEOUT -- timeout for blocking reads
-		httpClient.getHttpConnectionManager().getParams().setSoTimeout(
-				soTimeout);
-		// timeout for initial connection
-		httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(
-				connectionTimeout);
+        //Get the timeout values set in the runtime
+        getTimeoutValues(msgContext);
 
-		/**
-		 * with HostConfiguration
-		 */
-		this.httpClient.executeMethod(hostConfig, getMethod, null);
+        // SO_TIMEOUT -- timeout for blocking reads
+        httpClient.getHttpConnectionManager().getParams().setSoTimeout(
+                soTimeout);
+        // timeout for initial connection
+        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(
+                connectionTimeout);
 
-		if (getMethod.getStatusCode() == HttpStatus.SC_OK) {
-			processResponse(getMethod, msgContext);
-		} else if (getMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
-			return;
-		} else if (getMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+        /**
+         * with HostConfiguration
+         */
+        this.httpClient.executeMethod(hostConfig, getMethod, null);
 
-			Header contenttypeHheader = getMethod
-					.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+        if (getMethod.getStatusCode() == HttpStatus.SC_OK) {
+            processResponse(getMethod, msgContext);
+        } else if (getMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
+            return;
+        } else if (getMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
 
-			String value = contenttypeHheader.getValue();
-			if (value != null) {
-				if (value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0
-						|| value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0) {
-					processResponse(getMethod, msgContext);
-				}
+            Header contenttypeHheader = getMethod
+                    .getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
 
-			}
-		} else {
-			throw new AxisFault(Messages.getMessage("transportError", String
-					.valueOf(getMethod.getStatusCode()), getMethod
-					.getResponseBodyAsString()));
-		}
-	}
+            String value = contenttypeHheader.getValue();
+            if (value != null) {
+                if (value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0
+                        || value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0) {
+                    processResponse(getMethod, msgContext);
+                }
 
-	public String getParam(MessageContext msgContext) {
-		OMElement dataOut;
-		dataOut = msgContext.getEnvelope().getBody().getFirstElement();
-		Iterator iter1 = dataOut.getChildElements();
-		ArrayList paraList = new ArrayList();
+            }
+        } else {
+            throw new AxisFault(Messages.getMessage("transportError", String
+                    .valueOf(getMethod.getStatusCode()), getMethod
+                    .getResponseBodyAsString()));
+        }
+    }
 
-		while (iter1.hasNext()) {
-			OMElement ele = (OMElement) iter1.next();
-			String parameter;
-			parameter = ele.getLocalName() + "=" + ele.getText();
-			paraList.add(parameter);
-		}
+    public String getParam(MessageContext msgContext) {
+        OMElement dataOut;
+        dataOut = msgContext.getEnvelope().getBody().getFirstElement();
+        Iterator iter1 = dataOut.getChildElements();
+        ArrayList paraList = new ArrayList();
 
-		String paraString = "";
-		int count = paraList.size();
-		for (int i = 0; i < count; i++) {
-			String c = (String) paraList.get(i);
-			paraString = paraString + "&" + c;
-		}
-		
-		return paraString;
-	}
+        while (iter1.hasNext()) {
+            OMElement ele = (OMElement) iter1.next();
+            String parameter;
+            parameter = ele.getLocalName() + "=" + ele.getText();
+            paraList.add(parameter);
+        }
 
-	public RequestData createRequest(MessageContext msgContext,
-			OMElement dataout) {
-		//Obtain two strings;one to go in the url and rest to pass in the body
-		// when doing POST in application/x-www-form-urlencoded form.
-		RequestData data = new RequestData();
-		Iterator iter1 = dataout.getChildElements();
-		ArrayList paraList = new ArrayList();
-		ArrayList urlList = new ArrayList();
+        String paraString = "";
+        int count = paraList.size();
+        for (int i = 0; i < count; i++) {
+            String c = (String) paraList.get(i);
+            paraString = paraString + "&" + c;
+        }
 
-		//TODO: s is ALWAYS EMPTY. so what gets added to urllist????
-		String[] s = new String[] {};
-		OMElement bodypara = OMAbstractFactory.getOMFactory().createOMElement(
-				"temp", null);
+        return paraString;
+    }
 
-		while (iter1.hasNext()) {
-			OMElement ele = (OMElement) iter1.next();
-			boolean has = false;
+    public RequestData createRequest(MessageContext msgContext,
+                                     OMElement dataout) {
+        //Obtain two strings;one to go in the url and rest to pass in the body
+        // when doing POST in application/x-www-form-urlencoded form.
+        RequestData data = new RequestData();
+        Iterator iter1 = dataout.getChildElements();
+        ArrayList paraList = new ArrayList();
+        ArrayList urlList = new ArrayList();
 
-			for (int i = 0; i < s.length; i++) {
-				if (s[i].equals(ele.getLocalName())) {
-					has = true;
-					break;
-				}
-			}
-			String parameter1;
+        //TODO: s is ALWAYS EMPTY. so what gets added to urllist????
+        String[] s = new String[]{};
+        OMElement bodypara = OMAbstractFactory.getOMFactory().createOMElement(
+                "temp", null);
 
-			if (has) {
-				parameter1 = ele.getLocalName() + "=" + ele.getText();
-				urlList.add(parameter1);
+        while (iter1.hasNext()) {
+            OMElement ele = (OMElement) iter1.next();
+            boolean has = false;
 
-			} else {
-				bodypara.addChild(ele);
-			}
-		}
+            for (int i = 0; i < s.length; i++) {
+                if (s[i].equals(ele.getLocalName())) {
+                    has = true;
+                    break;
+                }
+            }
+            String parameter1;
 
-		String urlString = "";
-		for (int i = 0; i < urlList.size(); i++) {
-			String c = (String) urlList.get(i);
-			urlString = urlString + "&" + c;
-			data.urlRequest = urlString;
-		}
+            if (has) {
+                parameter1 = ele.getLocalName() + "=" + ele.getText();
+                urlList.add(parameter1);
 
-		Iterator it = bodypara.getChildElements();
-		while (it.hasNext()) {
-			OMElement ele1 = (OMElement) it.next();
-			String parameter2;
-			parameter2 = ele1.getLocalName() + "=" + ele1.getText();
-			paraList.add(parameter2);
-		}
+            } else {
+                bodypara.addChild(ele);
+            }
+        }
 
-		String paraString = "";
-		for (int j = 0; j < paraList.size(); j++) {
-			String b = (String) paraList.get(j);
-			paraString = paraString + "&" + b;
-			data.bodyRequest = paraString;
-		}
-		return data;
-	}
+        String urlString = "";
+        for (int i = 0; i < urlList.size(); i++) {
+            String c = (String) urlList.get(i);
+            urlString = urlString + "&" + c;
+            data.urlRequest = urlString;
+        }
 
-	private class RequestData {
-		private String urlRequest;
+        Iterator it = bodypara.getChildElements();
+        while (it.hasNext()) {
+            OMElement ele1 = (OMElement) it.next();
+            String parameter2;
+            parameter2 = ele1.getLocalName() + "=" + ele1.getText();
+            paraList.add(parameter2);
+        }
 
-		private String bodyRequest;
-	}
+        String paraString = "";
+        for (int j = 0; j < paraList.size(); j++) {
+            String b = (String) paraList.get(j);
+            paraString = paraString + "&" + b;
+            data.bodyRequest = paraString;
+        }
+        return data;
+    }
 
-	public class AxisRESTRequestEntity implements RequestEntity {
+    private class RequestData {
+        private String urlRequest;
 
-		private String charSetEnc;
+        private String bodyRequest;
+    }
 
-		private String postRequestBody;
+    public class AxisRESTRequestEntity implements RequestEntity {
 
-		private MessageContext msgCtxt;
+        private String charSetEnc;
 
-		private String contentType;
+        private String postRequestBody;
 
-		public AxisRESTRequestEntity(String postRequestBody, String charSetEnc,
+        private MessageContext msgCtxt;
+
+        private String contentType;
+
+        public AxisRESTRequestEntity(String postRequestBody, String charSetEnc,
                                      MessageContext msgCtxt, String contentType) {
-			this.postRequestBody = postRequestBody;
-			this.charSetEnc = charSetEnc;
-			this.msgCtxt = msgCtxt;
-			this.contentType = contentType;
-		}
+            this.postRequestBody = postRequestBody;
+            this.charSetEnc = charSetEnc;
+            this.msgCtxt = msgCtxt;
+            this.contentType = contentType;
+        }
 
-		public boolean isRepeatable() {
-			return true;
-		}
+        public boolean isRepeatable() {
+            return true;
+        }
 
-		public void writeRequest(OutputStream output) throws IOException {
-			output.write(postRequestBody.getBytes());
-		}
+        public void writeRequest(OutputStream output) throws IOException {
+            output.write(postRequestBody.getBytes());
+        }
 
-		public long getContentLength() {
-			return this.postRequestBody.getBytes().length;
-		}
+        public long getContentLength() {
+            return this.postRequestBody.getBytes().length;
+        }
 
-		public String getContentType() {
-			return this.contentType;
-		}
+        public String getContentType() {
+            return this.contentType;
+        }
 
-	}
+    }
 }

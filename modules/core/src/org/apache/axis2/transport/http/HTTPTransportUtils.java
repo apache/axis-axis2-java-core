@@ -18,7 +18,6 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.MIMEHelper;
 import org.apache.axis2.context.ConfigurationContext;
@@ -43,6 +42,7 @@ import org.apache.axis2.soap.SOAPProcessingException;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Factory;
+import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.Utils;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -445,28 +445,6 @@ public class HTTPTransportUtils {
         }
         msgContext.setDoingREST(enableREST);
         return enableREST;
-
-    }
-
-    public static boolean isDoingHTTPPost(MessageContext msgContext) {
-        boolean httpPost = true;
-
-        if (msgContext.getParameter(Constants.Configuration.HTTP_METHOD_GET)
-                != null) {
-            httpPost =
-                    Constants.VALUE_TRUE.equals(
-                            msgContext.getParameter(
-                                    Constants.Configuration.HTTP_METHOD_GET).getValue());
-
-        } else if(msgContext.getProperty(Constants.Configuration.HTTP_METHOD_GET) != null) {
-            httpPost =
-                    Constants.VALUE_TRUE.equals(
-                            msgContext.getProperty(
-                                    Constants.Configuration.HTTP_METHOD_GET));
-           
-        }
-        msgContext.setDoingHttpPOST(!httpPost);
-        return httpPost;
 
     }
 }
