@@ -77,7 +77,7 @@ public class ModuleConfigTest extends TestCase {
             Parameter para = moduleConfiguration.getParameter("Servie_module_para");
             assertNotNull(para);
 
-            AxisOperation op = service.getOperation("echoString");
+            AxisOperation op = service.getOperation(new QName("echoString"));
             assertNotNull(op);
 
             moduleConfiguration = op.getModuleConfig(new QName("Op_Module"));

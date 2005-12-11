@@ -85,7 +85,7 @@ public class MessageSender extends InOnlyMEPClient {
         }
 
         AxisOperation axisOp = serviceContext.getAxisService()
-                .getOperation(opName);
+                .getOperation(new QName(opName));
         if (axisOp == null) {
             //todo I just assumed mep is alwas in-out , this has to improve : Deepal
             axisOp = new OutOnlyAxisOperation(new QName(opName));

@@ -66,6 +66,7 @@ public class EnginePausingTest extends TestCase {
             }
         });
         service.addOperation(axisOp);
+        service.mapActionToOperation(operationName.getLocalPart(), axisOp);
 
         mc = new MessageContext(engineContext, transportIn, transportOut);
 

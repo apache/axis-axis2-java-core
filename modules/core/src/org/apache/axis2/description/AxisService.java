@@ -71,6 +71,8 @@ public class AxisService
 
     private HashMap wsaaction_operationmap = null;
 
+    private HashMap operations = new HashMap();
+
     // to store module ref at deploy time parsing
     private ArrayList moduleRefs = new ArrayList();
 
@@ -220,10 +222,7 @@ public class AxisService
      * @return AxisOperation
      */
     public AxisOperation getOperation(QName operationName) {
-        String opStr = operationName.getLocalPart();
-
-        HashMap allOperations = this.getServiceInterface().getAllOperations();
-        return (AxisOperation) allOperations.get(opStr);
+        return (AxisOperation) operations.get(operationName);
     }
 
     /**
@@ -266,7 +265,7 @@ public class AxisService
                         + module.getName().getLocalPart());
             }
         }
-        this.getServiceInterface().setOperation(axisOperation);
+        operations.put(axisOperation.getName(), axisOperation);
     }
 
     /*
@@ -564,11 +563,6 @@ public class AxisService
             }
         }
         return operationList;
-    }
-
-    public AxisOperation getOperation(String ncName) {
-        return (AxisOperation) this.getServiceInterface().getOperations().get(
-                ncName);
     }
 
     /**
