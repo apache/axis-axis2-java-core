@@ -19,7 +19,6 @@
     </hostConfiguration>
 
 
-
     <!--if you want to extract the service archive file and work with that please uncomment this-->
     <!--else , it wont extract archive file or does not take into consideration if someone drop-->
     <!--exploded directory into /service directory-->
@@ -67,7 +66,8 @@
     <transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
         <parameter name="PROTOCOL" locked="false">HTTP/1.1</parameter>
     </transportSender>
-    <transportSender name="https" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
+    <transportSender name="https"
+                     class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
         <parameter name="PROTOCOL" locked="false">HTTP/1.1</parameter>
     </transportSender>
 
@@ -83,7 +83,7 @@
     <!-- ================================================= -->
     <!-- Global Modules  -->
     <!-- ================================================= -->
-   
+
 
     <!--Configuring module , providing parameters for modules whether they refer or not-->
     <!--<moduleConfig name="addressing">-->
@@ -97,28 +97,25 @@
         <!--  System pre defined phases       -->
         <phase name="TransportIn"/>
         <phase name="PreDispatch"/>
-        <phase name="Dispatch">
+        <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="AddressingBasedDispatcher"
                      class="org.apache.axis2.engine.AddressingBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-             <handler name="RequestURIBasedDispatcher"
+
+            <handler name="RequestURIBasedDispatcher"
                      class="org.apache.axis2.engine.RequestURIBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-             <handler name="SOAPActionBasedDispatcher"
+
+            <handler name="SOAPActionBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPActionBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-             <handler name="SOAPMessageBodyBasedDispatcher"
+
+            <handler name="SOAPMessageBodyBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher">
                 <order phase="Dispatch"/>
-            </handler>
-        </phase>
-        <phase name="PostDispatch">
-             <handler name="DispatchPostConditionsEvaluator"
-                     class="org.apache.axis2.engine.DispatchingChecker">
-                <order phase="PostDispatch"/>
             </handler>
             <handler name="InstanceDispatcher"
                      class="org.apache.axis2.engine.InstanceDispatcher">
@@ -133,6 +130,7 @@
         <!--      user can add his own phases to this area  -->
         <phase name="userphase1"/>
         <!--system predefined phase-->
+        <!--these phase will run irrespective of the service-->
         <phase name="PolicyDetermination"/>
         <phase name="MessageOut"/>
     </phaseOrder>

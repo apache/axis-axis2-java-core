@@ -22,11 +22,13 @@ import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.Handler;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
 
 /**
  * MessageContext holds service specific state information.
@@ -144,9 +146,20 @@ public class MessageContext extends AbstractContext {
 
     private String serviceContextID;
 
-    private String pausedPhaseName;
+    /**
+     * The chain of Handlers/Phases for processing this message
+     */
+    private ArrayList executionChain = new ArrayList();
 
-    private QName pausedHandlerName;
+    /**
+     * Index into the execution chain of the currently executing handler
+     */
+    private int currentHandlerIndex;
+
+    /**
+     * Index into the current Phase of the currently executing handler (if any)
+     */
+    private int currentPhaseIndex;
 
     private String soapAction;
 
@@ -243,6 +256,35 @@ public class MessageContext extends AbstractContext {
             this.transportInName = transportIn.getName();
         if (transportOut != null)
             this.transportOutname = transportOut.getName();
+    }
+
+    public void invoke() throws AxisFault {
+        if (currentHandlerIndex == -1) currentHandlerIndex = 0;
+        while (currentHandlerIndex < executionChain.size()) {
+            Handler currentHandler = (Handler) executionChain.get(currentHandlerIndex);
+            currentHandler.invoke(this);
+            if (paused) {
+                break;
+            }
+            currentHandlerIndex++;
+        }
+    }
+
+    public ArrayList getExecutionChain() {
+        return executionChain;
+    }
+
+    /**
+     * Set the execution chain of Handler in this MessageContext.  Doing this causes
+     * the current handler/phase indexes to reset to 0, since we have new Handlers to
+     * execute (this usually only happens at initialization and when a fault occurs).
+     *
+     * @param executionChain
+     */
+    public void setExecutionChain(ArrayList executionChain) {
+        this.executionChain = executionChain;
+        currentHandlerIndex = -1;
+        currentPhaseIndex = 0;
     }
 
     /**
@@ -465,14 +507,15 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
+     * Pause the execution of the current handler chain
      */
-    public void setPausedTrue(QName handlerName) {
+    public void pause() {
         paused = true;
-        this.pausedHandlerName = handlerName;
     }
 
-    public void setPausedFalse() {
+    public void resume() throws AxisFault {
         paused = false;
+        invoke();
     }
 
     /**
@@ -766,25 +809,20 @@ public class MessageContext extends AbstractContext {
         return obj;
     }
 
-    /**
-     * @return Returns QName.
-     */
-    public QName getPausedHandlerName() {
-        return pausedHandlerName;
+    public int getCurrentHandlerIndex() {
+        return currentHandlerIndex;
     }
 
-    /**
-     * @return Returns paused phase name.
-     */
-    public String getPausedPhaseName() {
-        return pausedPhaseName;
+    public void setCurrentHandlerIndex(int currentHandlerIndex) {
+        this.currentHandlerIndex = currentHandlerIndex;
     }
 
-    /**
-     * @param name
-     */
-    public void setPausedPhaseName(String name) {
-        pausedPhaseName = name;
+    public int getCurrentPhaseIndex() {
+        return currentPhaseIndex;
+    }
+
+    public void setCurrentPhaseIndex(int currentPhaseIndex) {
+        this.currentPhaseIndex = currentPhaseIndex;
     }
 
     /**

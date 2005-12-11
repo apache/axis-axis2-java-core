@@ -27,12 +27,7 @@ import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
@@ -42,19 +37,8 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 
 public class DeploymentEngine implements DeploymentConstants {
@@ -358,17 +342,15 @@ public class DeploymentEngine implements DeploymentConstants {
             String phase1 = ((Phase) inPhases.get(0)).getPhaseName();
             String phases = ((Phase) inPhases.get(1)).getPhaseName();
             String phase3 = ((Phase) inPhases.get(2)).getPhaseName();
-            String phase4 = ((Phase) inPhases.get(3)).getPhaseName();
             if (!(phase1.equals(PhaseMetadata.PHASE_TRANSPORTIN) &&
                     phases.equals(PhaseMetadata.PHASE_PRE_DISPATCH) &&
-                    phase3.equals(PhaseMetadata.PHASE_DISPATCH) &&
-                    phase4.equals(PhaseMetadata.PHASE_POST_DISPATCH))) {
+                    phase3.equals(PhaseMetadata.PHASE_DISPATCH))) {
                 throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.INVALID_PHASE));
             }
         } catch (Exception e) {
             throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.INVALID_PHASE));
         }
-         axisConfig.setInPhasesUptoAndIncludingPostDispatch(
+        axisConfig.setInPhasesUptoAndIncludingPostDispatch(
                 phasesinfo.getGlobalInflow());
         axisConfig.setInFaultPhases(phasesinfo.getIN_FaultPhases());
         axisConfig.setGlobalOutPhase(phasesinfo.getGlobalOutPhaseList());

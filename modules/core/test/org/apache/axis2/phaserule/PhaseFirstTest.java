@@ -18,14 +18,12 @@ package org.apache.axis2.phaserule;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.PhaseRule;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseHolder;
+import org.apache.axis2.phaseresolver.PhaseException;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -38,10 +36,6 @@ public class PhaseFirstTest extends TestCase {
         phases.add(p1);
         Phase p2 = new Phase("PhaseB");
         phases.add(p2);
-
-        MessageContext msg = new MessageContext(
-                new ConfigurationContext(new AxisConfiguration()));
-
         PhaseHolder ph = new PhaseHolder(phases);
         HandlerDescription hm = new HandlerDescription();
         hm.setClassName("org.apache.axis2.phaserule.PhaseRuleHandlers");
@@ -65,20 +59,14 @@ public class PhaseFirstTest extends TestCase {
         hm1.setName(new QName("H2"));
         PhaseRule rule1 = new PhaseRule();
         rule1.setPhaseName("PhaseA");
-        rule1.setAfter("H1");
+        rule1.setBefore("H1");
         hm1.setRules(rule1);
-        ph.addHandler(hm1);
-
-        ArrayList handlers = p1.getHandlers();
-        Handler handler = (Handler) handlers.get(0);
-        if (!handler.getName().equals(new QName("PhaseFirstHnadler"))) {
-            fail("Computed Hnadler order is wrong ");
+        try {
+            ph.addHandler(hm1);
+        } catch (PhaseException e) {
+            return;
         }
-        handler = (Handler) handlers.get(1);
-        if (!handler.getName().equals(new QName("Second Handler"))) {
-            fail("Computed Hnadler order is wrong ");
-        }
-        p1.invoke(msg);
+        fail("Succeeded in deploying after PhaseFirst handler!");
     }
 
 }

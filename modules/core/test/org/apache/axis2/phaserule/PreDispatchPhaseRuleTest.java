@@ -105,17 +105,6 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
         hm2.setRules(rule2);
         ph.addHandler(hm2);
 
-        HandlerDescription hm3 = new HandlerDescription();
-        hm3.setClassName("org.apache.axis2.handlers.AbstractHandler");
-        Handler h6 = new PhaseRuleHandlers();
-        h6.init(hm3);
-        hm3.setHandler(h6);
-        hm3.setName(new QName("H4"));
-        PhaseRule rule3 = new PhaseRule();
-        rule3.setPhaseName("PostDispatch");
-        hm3.setRules(rule3);
-        ph.addHandler(hm3);
-
 
         /*ArrayList oh = ph.getOrderHandler();
         for (int i = 0; i < oh.size(); i++) {

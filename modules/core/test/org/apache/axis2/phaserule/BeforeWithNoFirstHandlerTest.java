@@ -71,12 +71,12 @@ public class BeforeWithNoFirstHandlerTest extends TestCase {
 
         ArrayList handlers = p1.getHandlers();
         Handler handler = (Handler) handlers.get(0);
-        if (!handler.getName().equals(new QName("Second"))) {
-            fail("Computed Hnadler order is wrong ");
+        if (handler != h2) {
+            fail("Computed Handler order is wrong ");
         }
         handler = (Handler) handlers.get(1);
-        if (!handler.getName().equals(new QName("First"))) {
-            fail("Computed Hnadler order is wrong ");
+        if (handler != h1) {
+            fail("Computed Handler order is wrong ");
         }
         p1.invoke(msg);
     }

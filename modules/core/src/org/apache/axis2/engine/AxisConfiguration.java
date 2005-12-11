@@ -22,24 +22,18 @@ import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.util.HostConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class AxisConfigurationImpl
  */
-public class AxisConfiguration  implements ParameterInclude{
+public class AxisConfiguration implements ParameterInclude {
     /**
      * To store faulty services
      */
@@ -120,60 +114,48 @@ public class AxisConfiguration  implements ParameterInclude{
         observersList = new ArrayList();
 
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
-        inPhasesUptoAndIncludingPostDispatch.add(
-                new Phase(PhaseMetadata.PHASE_TRANSPORTIN));
-        inPhasesUptoAndIncludingPostDispatch.add(
-                new Phase(PhaseMetadata.PHASE_PRE_DISPATCH));
         systemClassLoader = Thread.currentThread().getContextClassLoader();
         serviceClassLoader = Thread.currentThread().getContextClassLoader();
         moduleClassLoader = Thread.currentThread().getContextClassLoader();
         // setting the dafualt flow , if some one creat AxisConfig programatically
         //  most requird handles will be there in the flow.
 
-        setDefaultGlobalFlow();
+        //todo we need to fix this , we know that we are doing wrong thing here
+        createDefaultChain();
+
     }
 
+    private void createDefaultChain() {
+        Phase transportIN = new Phase("TransportIn");
+        Phase preDispatch = new Phase("PreDispatch");
+        DispatchPhase dispatchPhase = new DispatchPhase();
+        dispatchPhase.setName("Dispatch");
+        AddressingBasedDispatcher abd = new AddressingBasedDispatcher();
+        abd.initDispatcher();
 
-    /**
-     * to set the default global flow if some one create a AxisConfiguration by hand.
-     */
-    private void setDefaultGlobalFlow() {
-        Phase dispatch = new Phase(PhaseMetadata.PHASE_DISPATCH);
-        AddressingBasedDispatcher add_dispatch = new AddressingBasedDispatcher();
-        add_dispatch.initDispatcher();
-        add_dispatch.getHandlerDesc().setParent(this);
-        dispatch.addHandler(add_dispatch, 0);       
+        RequestURIBasedDispatcher rud = new RequestURIBasedDispatcher();
+        rud.initDispatcher();
 
-		RequestURIBasedDispatcher uri_diaptch = new RequestURIBasedDispatcher();
-		uri_diaptch.getHandlerDesc().setParent(this);
-		uri_diaptch.initDispatcher();
-		dispatch.addHandler(uri_diaptch, 1);
+        SOAPActionBasedDispatcher sabd = new SOAPActionBasedDispatcher();
+        sabd.initDispatcher();
 
-        SOAPActionBasedDispatcher soapActionBased_dispatch = new SOAPActionBasedDispatcher();
-        soapActionBased_dispatch.getHandlerDesc().setParent(this);
-        soapActionBased_dispatch.initDispatcher();
-        dispatch.addHandler(soapActionBased_dispatch, 2);       
+        SOAPMessageBodyBasedDispatcher smbd = new SOAPMessageBodyBasedDispatcher();
+        smbd.initDispatcher();
 
-        SOAPMessageBodyBasedDispatcher soapMessageBodybased_dispatch =
-                new SOAPMessageBodyBasedDispatcher();
-        soapMessageBodybased_dispatch.getHandlerDesc().setParent(this);
-        soapMessageBodybased_dispatch.initDispatcher();
-        dispatch.addHandler(soapMessageBodybased_dispatch, 3);
+        InstanceDispatcher id = new InstanceDispatcher();
+        id.init(new HandlerDescription(new QName("InstanceDispatcher")));
 
-        inPhasesUptoAndIncludingPostDispatch.add(dispatch);
 
-        Phase postDispatch = new Phase(PhaseMetadata.PHASE_POST_DISPATCH);
-
-        DispatchingChecker dispatchingChecker = new DispatchingChecker();
-        dispatchingChecker.getHandlerDesc().setParent(this);
-
-        InstanceDispatcher instanceDispatcher = new org.apache.axis2.engine.InstanceDispatcher();
-        instanceDispatcher.getHandlerDesc().setParent(this);
-
-        postDispatch.addHandler(dispatchingChecker, 0);
-        postDispatch.addHandler(instanceDispatcher, 1);
-        inPhasesUptoAndIncludingPostDispatch.add(postDispatch);
+        dispatchPhase.addHandler(abd);
+        dispatchPhase.addHandler(rud);
+        dispatchPhase.addHandler(sabd);
+        dispatchPhase.addHandler(smbd);
+        dispatchPhase.addHandler(id);
+        inPhasesUptoAndIncludingPostDispatch.add(transportIN);
+        inPhasesUptoAndIncludingPostDispatch.add(preDispatch);
+        inPhasesUptoAndIncludingPostDispatch.add(dispatchPhase);
     }
+
 
     public Hashtable getFaultyServices() {
         return faultyServices;
@@ -341,7 +323,7 @@ public class AxisConfiguration  implements ParameterInclude{
 
     //to get the out flow correpodning to the global out flow;
     public ArrayList getGlobalOutPhases() {
-       return this.outPhases;
+        return this.outPhases;
     }
 
     public void setGlobalOutPhase(ArrayList outPhases) {

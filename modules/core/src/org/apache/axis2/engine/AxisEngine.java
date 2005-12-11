@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * There is one engine for the Server and the Client. the send() and receive()
@@ -63,28 +64,14 @@ public class AxisEngine {
      * @see Handler
      */
     public void send(MessageContext msgContext) throws AxisFault {
-        verifyContextBuilt(msgContext);
-
         //find and invoke the Phases
         OperationContext operationContext = msgContext.getOperationContext();
-        ArrayList phases =
-                operationContext.getAxisOperation().getPhasesOutFlow();
-        if (msgContext.isPaused()) {
-            // the message has paused, so rerun them from the position they stoped. The Handler
-            //who paused the Message will be the first one to run
-            //resume fixed, global precalulated phases
-            resumeInvocationPhases(phases, msgContext);
-            ArrayList globaleOutphase = msgContext.getConfigurationContext().
-                    getAxisConfiguration().getGlobalOutPhases();
-            //invoking global phase.
-            invokePhases(globaleOutphase, msgContext);
-        } else {
-            invokePhases(phases, msgContext);
-            ArrayList globaleOutphase = msgContext.getConfigurationContext().
-                    getAxisConfiguration().getGlobalOutPhases();
-            //invoking global phase.
-            invokePhases(globaleOutphase, msgContext);
-        }
+        ArrayList executionChain = operationContext.getAxisOperation().getPhasesOutFlow();
+        msgContext.setExecutionChain((ArrayList) executionChain.clone());
+        msgContext.invoke();
+        msgContext.setExecutionChain((ArrayList)msgContext.getConfigurationContext().
+                getAxisConfiguration().getGlobalOutPhases().clone());
+        msgContext.invoke();
 
         if (!msgContext.isPaused()) {
             //write the Message to the Wire
@@ -106,56 +93,65 @@ public class AxisEngine {
      */
     public void receive(MessageContext msgContext) throws AxisFault {
 
-        ConfigurationContext sysCtx = msgContext.getConfigurationContext();
-        AxisOperation axisOperation;
-        ArrayList preCalculatedPhases =
-                sysCtx
-                        .getAxisConfiguration()
-                        .getInPhasesUptoAndIncludingPostDispatch();
-        ArrayList operationSpecificPhases;
+        ConfigurationContext confContext = msgContext.getConfigurationContext();
+        ArrayList preCalculatedPhases = confContext.getAxisConfiguration()
+                .getInPhasesUptoAndIncludingPostDispatch();
 
-        if (msgContext.isPaused()) {
-            // the message has paused, so rerun them from the position they stoped. The Handler
-            //who paused the Message will be the first one to run
-            //resume fixed, global precalulated phases
-            resumeInvocationPhases(preCalculatedPhases, msgContext);
-            if (msgContext.isPaused()) {
-                return;
-            }
-            verifyContextBuilt(msgContext);
-            //resume operation specific phases
-            OperationContext operationContext =
-                    msgContext.getOperationContext();
-            axisOperation = operationContext.getAxisOperation();
-            operationSpecificPhases =
-                    axisOperation.getRemainingPhasesInFlow();
-            resumeInvocationPhases(operationSpecificPhases, msgContext);
-            if (msgContext.isPaused()) {
-                return;
-            }
-        } else {
-            invokePhases(preCalculatedPhases, msgContext);
-            if (msgContext.isPaused()) {
-                return;
-            }
-
-            verifyContextBuilt(msgContext);   // TODO : Chinthaka remove me. I'm redundant
-            OperationContext operationContext =
-                    msgContext.getOperationContext();
-            axisOperation = operationContext.getAxisOperation();
-            operationSpecificPhases =
-                    axisOperation.getRemainingPhasesInFlow();
-            invokePhases(operationSpecificPhases, msgContext);
-            if (msgContext.isPaused()) {
-                return;
-            }
-        }
+        // Set the initial execution chain in the MessageContext to a *copy* of what
+        // we got above.  This allows individual message processing to change the chain without
+        // affecting later messages.
+        msgContext.setExecutionChain((ArrayList) preCalculatedPhases.clone());
+        msgContext.invoke();
 
         if (msgContext.isServerSide() && !msgContext.isPaused()) {
             // invoke the Message Receivers
-            MessageReceiver receiver =
-                    axisOperation.getMessageReceiver();
+            checkMustUnderstand(msgContext);
+            MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
             receiver.receive(msgContext);
+        }
+    }
+
+    private void checkMustUnderstand(MessageContext msgContext) throws AxisFault {
+        //todo : need to move this to pre-condiftion of the MessageReciver-Phase
+        SOAPEnvelope se = msgContext.getEnvelope();
+        if (se.getHeader() == null) {
+            return;
+        }
+        Iterator hbs = se.getHeader().examineAllHeaderBlocks();
+        while (hbs.hasNext()) {
+            SOAPHeaderBlock hb = (SOAPHeaderBlock) hbs.next();
+
+            // if this header block has been processed or mustUnderstand isn't
+            // turned on then its cool
+            if (hb.isProcessed() || !hb.getMustUnderstand()) {
+                continue;
+            }
+            // if this header block is not targetted to me then its not my
+            // problem. Currently this code only supports the "next" role; we
+            // need to fix this to allow the engine/service to be in one or more
+            // additional roles and then to check that any headers targetted for
+            // that role too have been dealt with.
+
+
+            String role = hb.getRole();
+
+            if (!msgContext.isSOAP11()) {
+                //if must understand and soap 1.2 the Role should be NEXT , if it is null we considerr
+                // it to be NEXT
+                if (role != null && !SOAP12Constants.SOAP_ROLE_NEXT.equals(role)) {
+                    throw new AxisFault("Must Understand check failed", SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND);
+                }
+
+                //TODO what should be do with the Ulitmate Receiver? Axis2 is ultimate Receiver most of the time
+                //should we support that as well
+            } else {
+                //if must understand and soap 1.1 the actor should be NEXT , if it is null we considerr
+                // it to be NEXT
+                if (role != null && !SOAP11Constants.SOAP_ACTOR_NEXT.equals(role)) {
+                    throw new AxisFault("Must Understand check failed", SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND);
+                }
+            }
+
         }
     }
 
@@ -170,16 +166,12 @@ public class AxisEngine {
         //find and execute the Fault Out Flow Handlers
         if (opContext != null) {
             AxisOperation axisOperation = opContext.getAxisOperation();
-            ArrayList phases = axisOperation.getPhasesOutFaultFlow();
-            if (msgContext.isPaused()) {
-                resumeInvocationPhases(phases, msgContext);
-            } else {
-                invokePhases(phases, msgContext);
-            }
+            ArrayList faultExecutionChain = axisOperation.getPhasesOutFaultFlow();
+            msgContext.setExecutionChain((ArrayList) faultExecutionChain.clone());
+            msgContext.invoke();
         }
-        //it is possible that Operation Context is Null as the error occered before the
-        //Dispatcher. We do not run Handlers in that case
 
+        // TODO: Make this clearer - should we have transport senders and messagereceivers as Handlers?
         if (!msgContext.isPaused()) {
             //Actually send the SOAP Fault
             TransportSender sender = msgContext.getTransportOut().getSender();
@@ -195,35 +187,7 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public void receiveFault(MessageContext msgContext) throws AxisFault {
-
-        OperationContext opContext = msgContext.getOperationContext();
-        if (opContext == null) {
-            //If we do not have a OperationContext that means this may be a incoming
-            //Dual Channel response. So try to dispatch the Service
-            ConfigurationContext sysCtx = msgContext.getConfigurationContext();
-            ArrayList phases =
-                    sysCtx
-                            .getAxisConfiguration()
-                            .getInPhasesUptoAndIncludingPostDispatch();
-
-            if (msgContext.isPaused()) {
-                resumeInvocationPhases(phases, msgContext);
-            } else {
-                invokePhases(phases, msgContext);
-            }
-            verifyContextBuilt(msgContext);
-        }
-        opContext = msgContext.getOperationContext();
-        //find and execute the Fault In Flow Handlers
-        if (opContext != null) {
-            AxisOperation axisOperation = opContext.getAxisOperation();
-            ArrayList phases = axisOperation.getPhasesInFaultFlow();
-            if (msgContext.isPaused()) {
-                resumeInvocationPhases(phases, msgContext);
-            } else {
-                invokePhases(phases, msgContext);
-            }
-        }
+        // TODO : rationalize fault handling!
     }
 
     /**
@@ -379,7 +343,7 @@ public class AxisEngine {
         } else if (soapException != null) {
             message = soapException.getMessage();
         } else if (e instanceof AxisFault) {
-            message = ((AxisFault) e).getMessage();
+            message = e.getMessage();
         }
 
         // defaulting to reason, unknown, if no reason is available
@@ -420,50 +384,10 @@ public class AxisEngine {
         }
     }
 
-    private void verifyContextBuilt(MessageContext msgctx) throws AxisFault {
-        if (msgctx.getConfigurationContext() == null) {
-            throw new AxisFault(
-                    Messages.getMessage("cannotBeNullConfigurationContext"));
-        }
-        if (msgctx.getOperationContext() == null) {
-            throw new AxisFault(
-                    Messages.getMessage("cannotBeNullOperationContext"));
-        }
-        if (msgctx.getServiceContext() == null) {
-            throw new AxisFault(
-                    Messages.getMessage("cannotBeNullServiceContext"));
-        }
-    }
 
-    private void invokePhases(ArrayList phases, MessageContext msgctx)
+    public void resume(MessageContext msgctx)
             throws AxisFault {
-        int count = phases.size();
-        for (int i = 0; (i < count && !msgctx.isPaused()); i++) {
-            Phase phase = (Phase) phases.get(i);
-            phase.invoke(msgctx);
-        }
-    }
-
-    public void resumeInvocationPhases(ArrayList phases, MessageContext msgctx)
-            throws AxisFault {
-        msgctx.setPausedFalse();
-        int count = phases.size();
-        boolean foundMatch = false;
-
-        for (int i = 0; i < count && !msgctx.isPaused(); i++) {
-            Phase phase = (Phase) phases.get(i);
-            if (phase.getPhaseName().equals(msgctx.getPausedPhaseName())) {
-                foundMatch = true;
-                phase.invokeStartFromHandler(
-                        msgctx.getPausedHandlerName(),
-                        msgctx);
-            } else {
-                if (foundMatch) {
-                    phase.invoke(msgctx);
-                }
-
-            }
-        }
+        msgctx.resume();
     }
 
     private String getSenderFaultCode(String soapNamespace) {

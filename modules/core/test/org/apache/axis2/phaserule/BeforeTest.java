@@ -70,11 +70,11 @@ public class BeforeTest extends TestCase {
 
         ArrayList handlers = p1.getHandlers();
         Handler handler = (Handler) handlers.get(0);
-        if (!handler.getName().equals(new QName("Second"))) {
+        if (handler != h2) {
             fail("Computed Hnadler order is wrong ");
         }
         handler = (Handler) handlers.get(1);
-        if (!handler.getName().equals(new QName("First"))) {
+        if (handler !=h1) {
             fail("Computed Hnadler order is wrong ");
         }
         p1.invoke(msg);

@@ -31,7 +31,6 @@ import org.apache.axis2.handlers.AbstractHandler;
  * This will then try to find the Contexts of ServiceGroup, Service and the Operation.
  */
 public class InstanceDispatcher extends AbstractHandler {
-    
 
 
     /**
@@ -42,7 +41,7 @@ public class InstanceDispatcher extends AbstractHandler {
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
 
-        if(msgContext.getOperationContext() != null && msgContext.getServiceContext() != null){
+        if (msgContext.getOperationContext() != null && msgContext.getServiceContext() != null) {
             msgContext.setServiceGroupContextId(((ServiceGroupContext) msgContext.getServiceContext().getParent()).getId());
             return;
         }
@@ -50,6 +49,8 @@ public class InstanceDispatcher extends AbstractHandler {
         AxisOperation axisOperation = msgContext.getAxisOperation();
 
         //  1. look up opCtxt using mc.addressingHeaders.relatesTo[0]
+        if (axisOperation == null)
+            return;
         OperationContext operationContext = axisOperation.findForExistingOperationContext(msgContext);
 
         if (operationContext != null) {
@@ -63,7 +64,7 @@ public class InstanceDispatcher extends AbstractHandler {
             return;
 
         } else { //  2. if null, create new opCtxt
-            operationContext =new OperationContext(axisOperation);
+            operationContext = new OperationContext(axisOperation);
 //            operationContext = OperationContextFactory.createOrFindOperationContext(axisOperation.getAxisSpecifMEPConstant(), axisOperation);
             axisOperation.registerOperationContext(msgContext, operationContext);
 

@@ -10,25 +10,27 @@
     <!-- Scenario 4: Client's Configuration:START-->
 
     <parameter name="OutflowSecurity">
-      <action>
-        <items>Signature Encrypt Timestamp</items>
-        <user>alice</user>
-        <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
-        <signatureKeyIdentifier>DirectReference</signatureKeyIdentifier>
-        <encryptionKeyIdentifier>EmbeddedKeyName</encryptionKeyIdentifier>
-        <encryptionSymAlgorithm>http://www.w3.org/2001/04/xmlenc#tripledes-cbc</encryptionSymAlgorithm>
-        <signaturePropFile>interop.properties</signaturePropFile>
-        <EmbeddedKeyCallbackClass>org.apache.axis2.security.PWCallback</EmbeddedKeyCallbackClass>
-        <EmbeddedKeyName>SessionKey</EmbeddedKeyName>
-      </action>
+        <action>
+            <items>Signature Encrypt Timestamp</items>
+            <user>alice</user>
+            <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
+            <signatureKeyIdentifier>DirectReference</signatureKeyIdentifier>
+            <encryptionKeyIdentifier>EmbeddedKeyName</encryptionKeyIdentifier>
+            <encryptionSymAlgorithm>
+                http://www.w3.org/2001/04/xmlenc#tripledes-cbc</encryptionSymAlgorithm>
+            <signaturePropFile>interop.properties</signaturePropFile>
+            <EmbeddedKeyCallbackClass>
+                org.apache.axis2.security.PWCallback</EmbeddedKeyCallbackClass>
+            <EmbeddedKeyName>SessionKey</EmbeddedKeyName>
+        </action>
     </parameter>
 
     <parameter name="InflowSecurity">
-      <action>
-        <items>Signature Encrypt Timestamp</items>
-        <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
-        <signaturePropFile>interop.properties</signaturePropFile>
-      </action>
+        <action>
+            <items>Signature Encrypt Timestamp</items>
+            <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
+            <signaturePropFile>interop.properties</signaturePropFile>
+        </action>
     </parameter>
 
     <!-- Scenario 4: Client's Configuration:END-->
@@ -39,32 +41,29 @@
     <transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
         <parameter name="PROTOCOL" locked="false">HTTP/1.0</parameter>
     </transportSender>
-<phaseOrder type="inflow">
+    <phaseOrder type="inflow">
         <!--  System pre defined phases       -->
         <phase name="TransportIn"/>
         <phase name="PreDispatch"/>
-        <phase name="Dispatch">
+        <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="AddressingBasedDispatcher"
                      class="org.apache.axis2.engine.AddressingBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-             <handler name="RequestURIBasedDispatcher"
+
+            <handler name="RequestURIBasedDispatcher"
                      class="org.apache.axis2.engine.RequestURIBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-             <handler name="SOAPActionBasedDispatcher"
+
+            <handler name="SOAPActionBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPActionBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-             <handler name="SOAPMessageBodyBasedDispatcher"
+
+            <handler name="SOAPMessageBodyBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher">
                 <order phase="Dispatch"/>
-            </handler>
-        </phase>
-        <phase name="PostDispatch">
-             <handler name="DispatchPostConditionsEvaluator"
-                     class="org.apache.axis2.engine.DispatchingChecker">
-                <order phase="PostDispatch"/>
             </handler>
             <handler name="InstanceDispatcher"
                      class="org.apache.axis2.engine.InstanceDispatcher">
@@ -79,6 +78,7 @@
         <!--      user can add his own phases to this area  -->
         <phase name="userphase1"/>
         <!--system predefined phase-->
+        <!--these phase will run irrespective of the service-->
         <phase name="PolicyDetermination"/>
         <phase name="MessageOut"/>
     </phaseOrder>

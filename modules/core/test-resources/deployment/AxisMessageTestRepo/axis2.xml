@@ -51,35 +51,28 @@
         <!--  System pre defined phases       -->
         <phase name="TransportIn"/>
         <phase name="PreDispatch"/>
-        <phase name="Dispatch">
+        <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="AddressingBasedDispatcher"
                      class="org.apache.axis2.engine.AddressingBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
+
             <handler name="RequestURIBasedDispatcher"
                      class="org.apache.axis2.engine.RequestURIBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
+
             <handler name="SOAPActionBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPActionBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
+
             <handler name="SOAPMessageBodyBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-        </phase>
-        <phase name="PostDispatch">
-            <handler name="DispatchPostConditionsEvaluator"
-                     class="org.apache.axis2.engine.DispatchingChecker">
-                <order phase="PostDispatch"/>
-            </handler>
             <handler name="InstanceDispatcher"
                      class="org.apache.axis2.engine.InstanceDispatcher">
-                <order phase="PostDispatch"/>
-            </handler>
-            <handler name="SOAPProcessingModelChecker"
-                     class="org.apache.axis2.engine.SOAPProcessingModelChecker">
                 <order phase="PostDispatch"/>
             </handler>
         </phase>

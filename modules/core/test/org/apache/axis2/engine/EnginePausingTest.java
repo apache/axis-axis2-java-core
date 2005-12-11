@@ -21,12 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
@@ -130,14 +125,14 @@ public class EnginePausingTest extends TestCase {
         mc.setWSAAction("DummyOp");
         AxisEngine engine = new AxisEngine(engineContext);
         engine.receive(mc);
-        assertEquals(executedHandlers.size(), 14);
+        assertEquals(14, executedHandlers.size());
         for (int i = 0; i < 14; i++) {
             assertEquals(((Integer) executedHandlers.get(i)).intValue(),
                     i + 1);
         }
-        engine.receive(mc);
+        engine.resume(mc);
 
-        assertEquals(27,executedHandlers.size());
+        assertEquals(27, executedHandlers.size());
         for (int i = 15; i < 27; i++) {
             assertEquals(((Integer) executedHandlers.get(i)).intValue(),
                     i + 1);
@@ -161,10 +156,9 @@ public class EnginePausingTest extends TestCase {
         }
 
         public void invoke(MessageContext msgContext) throws AxisFault {
-            String paused = "paused";
-            if (pause && msgContext.getProperty(paused) == null) {
-                msgContext.setProperty(paused, "true");
-                msgContext.setPausedTrue(getName());
+            if (pause) {
+                msgContext.pause();
+                pause = false;
             } else {
                 executedHandlers.add(index);
             }

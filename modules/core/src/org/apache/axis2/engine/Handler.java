@@ -58,6 +58,8 @@ public interface Handler extends Serializable {
      */
     public QName getName();
 
+
+
     /**
      * Method getParameter.
      *

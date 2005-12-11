@@ -10,25 +10,25 @@
     <!-- Scenario 3 with MTOM: Client's Configuration:START-->
 
     <parameter name="OutflowSecurity">
-      <action>
-        <items>Signature Encrypt Timestamp</items>
-        <user>alice</user>
-        <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
-        <signaturePropFile>interop.properties</signaturePropFile>
-        <signatureKeyIdentifier>DirectReference</signatureKeyIdentifier>
-        <encryptionKeyIdentifier>SKIKeyIdentifier</encryptionKeyIdentifier>
-        <encryptionUser>bob</encryptionUser>
+        <action>
+            <items>Signature Encrypt Timestamp</items>
+            <user>alice</user>
+            <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
+            <signaturePropFile>interop.properties</signaturePropFile>
+            <signatureKeyIdentifier>DirectReference</signatureKeyIdentifier>
+            <encryptionKeyIdentifier>SKIKeyIdentifier</encryptionKeyIdentifier>
+            <encryptionUser>bob</encryptionUser>
 
-        <optimizeParts>//xenc:EncryptedData/xenc:CipherData/xenc:CipherValue</optimizeParts>
-      </action>
+            <optimizeParts>//xenc:EncryptedData/xenc:CipherData/xenc:CipherValue</optimizeParts>
+        </action>
     </parameter>
 
     <parameter name="InflowSecurity">
-      <action>
-        <items>Signature Encrypt Timestamp</items>
-        <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
-        <signaturePropFile>interop.properties</signaturePropFile>
-      </action>
+        <action>
+            <items>Signature Encrypt Timestamp</items>
+            <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
+            <signaturePropFile>interop.properties</signaturePropFile>
+        </action>
     </parameter>
 
     <!-- Scenario 3 with MTOM: Client's Configuration:END-->
@@ -40,32 +40,29 @@
         <parameter name="PROTOCOL" locked="false">HTTP/1.0</parameter>
     </transportSender>
 
-   <phaseOrder type="inflow">
+    <phaseOrder type="inflow">
         <!--  System pre defined phases       -->
         <phase name="TransportIn"/>
         <phase name="PreDispatch"/>
-        <phase name="Dispatch">
+        <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="AddressingBasedDispatcher"
                      class="org.apache.axis2.engine.AddressingBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-             <handler name="RequestURIBasedDispatcher"
+
+            <handler name="RequestURIBasedDispatcher"
                      class="org.apache.axis2.engine.RequestURIBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-             <handler name="SOAPActionBasedDispatcher"
+
+            <handler name="SOAPActionBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPActionBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-             <handler name="SOAPMessageBodyBasedDispatcher"
+
+            <handler name="SOAPMessageBodyBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher">
                 <order phase="Dispatch"/>
-            </handler>
-        </phase>
-        <phase name="PostDispatch">
-             <handler name="DispatchPostConditionsEvaluator"
-                     class="org.apache.axis2.engine.DispatchingChecker">
-                <order phase="PostDispatch"/>
             </handler>
             <handler name="InstanceDispatcher"
                      class="org.apache.axis2.engine.InstanceDispatcher">
@@ -80,6 +77,7 @@
         <!--      user can add his own phases to this area  -->
         <phase name="userphase1"/>
         <!--system predefined phase-->
+        <!--these phase will run irrespective of the service-->
         <phase name="PolicyDetermination"/>
         <phase name="MessageOut"/>
     </phaseOrder>
@@ -93,7 +91,7 @@
         <phase name="PolicyDetermination"/>
         <phase name="MessageOut"/>
     </phaseOrder>
-    
+
 
 </axisconfig>
 

@@ -19,6 +19,7 @@ package org.apache.axis2.engine;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,7 +31,7 @@ import java.util.Iterator;
 /**
  * A Phase is an ordered collection of Handlers.
  */
-public class Phase {
+public class Phase implements Handler {
     /**
      * Field phaseName
      */
@@ -47,19 +48,9 @@ public class Phase {
     private Log log = LogFactory.getLog(getClass());
 
     /**
-     * to keet info about phase first handler
-     */
-    private Handler phaseFirst = null;
-
-    /**
      * Field phasefirstset
      */
     private boolean phasefirstset;
-
-    /**
-     * to keet info about phase last handler
-     */
-    private Handler phaseLast = null;
 
     /**
      * Field phaselastset
@@ -102,6 +93,18 @@ public class Phase {
         this.phaseName = phaseName;
     }
 
+    public Phase() {
+        this(null);
+    }
+
+    public void checkPreconditions(MessageContext msgContext) throws AxisFault {
+        // Default version does nothing
+    }
+
+    public void checkPostConditions(MessageContext msgContext) throws AxisFault {
+        // Default version does nothing
+    }
+
     /**
      * Method addHandler.
      *
@@ -110,7 +113,7 @@ public class Phase {
      */
     public void addHandler(Handler handler, int index) {
         log.debug(
-                "Handler " + handler.getName() + "Added to place " + 1 +
+                "Handler " + handler.getName() + "Added to place " + index +
                         " At the Phase " +
                         phaseName);
         handlers.add(index, handler);
@@ -122,10 +125,12 @@ public class Phase {
      * @param handler
      */
     public void addHandler(Handler handler) {
-        log.debug(
-                "Handler " + handler.getName() + " Added to the Phase " +
-                        phaseName);
-        handlers.add(handler);
+        log.debug("Handler " + handler.getName() + " added to Phase " + phaseName);
+        if (phaselastset) {
+            handlers.add(handlers.size() - 2, handler); // add before phaseLast
+        } else {
+            handlers.add(handler);
+        }
     }
 
     /**
@@ -134,53 +139,38 @@ public class Phase {
      * @param msgctx
      * @throws org.apache.axis2.AxisFault
      */
-    public void invoke(MessageContext msgctx) throws AxisFault {
+    public final void invoke(MessageContext msgctx) throws AxisFault {
+        if (log.isDebugEnabled()) {
+            log.debug("Checking pre-condition for Phase \"" + phaseName + "\"");
+        }
+        int currentIndex = msgctx.getCurrentPhaseIndex();
+        if (currentIndex == 0)
+            checkPreconditions(msgctx);
+
         if (log.isDebugEnabled()) {
             log.debug("Invoking phase \"" + phaseName + "\"");
         }
-        msgctx.setPausedPhaseName(this.getPhaseName());
-        //If phase first Handler is there then it should run first
-        if (phaseFirst != null) {
-            if (msgctx.isPaused()) {
+
+        while (currentIndex < handlers.size()) {
+            Handler handler = (Handler) handlers.get(currentIndex);
+            log.info("Invoking Handler '"
+                    + handler.getName()
+                    + "' in Phase '"
+                    + phaseName + "'");
+            handler.invoke(msgctx);
+
+            if (msgctx.isPaused())
                 return;
-            } else {
-                log.info("Invoke PhaseFirst handler '"
-                        + phaseFirst.getName()
-                        + "' in Phase '"
-                        + phaseName + "'");
-                phaseFirst.invoke(msgctx);
-            }
+
+            currentIndex++;
+            msgctx.setCurrentPhaseIndex(currentIndex);
         }
-        //Invoking the rest of handler except phaseFirst and phaseLast
-        int indexOfHandlerToExecute = 0;
-        while (indexOfHandlerToExecute < handlers.size()) {
-            if (msgctx.isPaused()) {
-                break;
-            } else {
-                Handler handler = (Handler) handlers.get(
-                        indexOfHandlerToExecute);
-                if (handler != null) {
-                    log.info("Invoking Handler '"
-                            + handler.getName()
-                            + "' in Phase '"
-                            + phaseName + "'");
-                    handler.invoke(msgctx);
-                    //This line should be after the invoke as if the invocation failed this handlers is takn care of and
-                    //no need to revoke agien
-                    indexOfHandlerToExecute++;
-                }
-            }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Checking post-conditions for phase \"" + phaseName + "\"");
         }
-        //If phase last handler is there will invoke that here
-        if (phaseLast != null) {
-            if (!msgctx.isPaused()) {
-                log.info("Invoke PhaseLast handler '"
-                        + phaseLast.getName()
-                        + "' in Phase '"
-                        + phaseName + "'");
-                phaseLast.invoke(msgctx);
-            }
-        }
+        msgctx.setCurrentPhaseIndex(0);
+        checkPostConditions(msgctx);
     }
 
     /**
@@ -238,14 +228,15 @@ public class Phase {
                     " phaseFirst Handler for same phase "
                     + this.getPhaseName());
         } else {
+            handlers.add(0, phaseFirst);
+            phasefirstset = true;
+
+            // TODO: move this error check to where we read the rules
             if (getBeforeAfter(phaseFirst) != ANYWHERE) {
                 throw new PhaseException("Handler with PhaseFirst can not have " +
                         "any before or after proprty error in "
                         + phaseFirst.getName());
-            } else {
-                this.phaseFirst = phaseFirst;
             }
-            phasefirstset = true;
         }
     }
 
@@ -260,15 +251,19 @@ public class Phase {
             throw new PhaseException("PhaseLast already has been set," +
                     " cannot have two PhaseLast Handler for same phase "
                     + this.getPhaseName());
+        }
+        if (handlers.size() == 0) {
+            handlers.add(phaseLast);
         } else {
-            if (getBeforeAfter(phaseLast) != ANYWHERE) {
-                throw new PhaseException("Handler with PhaseLast property " +
-                        "can not have any before or after property error in "
-                        + phaseLast.getName());
-            } else {
-                this.phaseLast = phaseLast;
-            }
-            phaselastset = true;
+            handlers.add(handlers.size() - 1, phaseLast);
+        }
+        phaselastset = true;
+
+        // TODO: Move this check to where we read the rules
+        if (getBeforeAfter(phaseLast) != ANYWHERE) {
+            throw new PhaseException("Handler with PhaseLast property " +
+                    "can not have any before or after property error in "
+                    + phaseLast.getName());
         }
     }
 
@@ -283,7 +278,7 @@ public class Phase {
         while (handlers_itr.hasNext()) {
             Handler hand = (Handler) handlers_itr.next();
             HandlerDescription handlerDesc = hand.getHandlerDesc();
-            if( handler.getName().getLocalPart().equals(handlerDesc.getName().getLocalPart())){
+            if (handler.getName().getLocalPart().equals(handlerDesc.getName().getLocalPart())) {
 //            if (handler.equals(handlerDesc)) {
                 //tryting to add the same handler twice to the phase
                 // this is can happen due to we are allowing service specifc module
@@ -292,67 +287,31 @@ public class Phase {
             }
         }
         if (isOneHanlder) {
+            // TODO : should we allow both phaseFirst and phaseLast to be true for one Handler??
             throw new PhaseException(
                     this.getPhaseName()
                             + "can only have one handler, since there is a "
                             + "handler with both phaseFirst and PhaseLast true ");
-        } else {
-            if (handler.getRules().isPhaseFirst() &&
-                    handler.getRules().isPhaseLast()) {
-                if (handlers.size() > 0) {
-                    throw new PhaseException(
-                            this.getPhaseName()
-                                    + " can not have more than one handler "
-                                    + handler.getName()
-                                    + " is invalid or incorrect phase rules");
-                } else {
-                    handlers.add(handler.getHandler());
-                    isOneHanlder = true;
-                }
-            } else if (handler.getRules().isPhaseFirst()) {
-                setPhaseFirst(handler.getHandler());
-            } else if (handler.getRules().isPhaseLast()) {
-                setPhaseLast(handler.getHandler());
+        }
+
+        if (handler.getRules().isPhaseFirst() &&
+                handler.getRules().isPhaseLast()) {
+            if (handlers.size() > 0) {
+                throw new PhaseException(
+                        this.getPhaseName()
+                                + " can not have more than one handler "
+                                + handler.getName()
+                                + " is invalid or incorrect phase rules");
             } else {
-                insertHandler(handler);
+                handlers.add(handler.getHandler());
+                isOneHanlder = true;
             }
-        }
-    }
-
-    /**
-     * If the user tries to add a handler before the phase first handler, then throw an exception.
-     *
-     * @throws PhaseException
-     */
-    private void validatebefore(Handler handler) throws PhaseException {
-        if (phaseFirst != null) {
-            String phasFirstname = phaseFirst.getHandlerDesc().getName()
-                    .getLocalPart();
-            if (handler.getHandlerDesc().getRules().getBefore().equals(
-                    phasFirstname)) {
-                throw new PhaseException("Trying to insert  a Handler "
-                        + handler.getName()
-                        + " before phaseFirst "
-                        + phasFirstname);
-            }
-        }
-    }
-
-    /**
-     * If the user tries to add a handler after the phase last handler, then throw an exception.
-     *
-     * @throws PhaseException
-     */
-    private void validateafter(Handler handler) throws PhaseException {
-        if (phaseLast != null) {
-            String phaseLastName = phaseLast.getHandlerDesc().getName()
-                    .getLocalPart();
-            if (handler.getName().equals(phaseLastName)) {
-                throw new PhaseException("Try to insert a Handler "
-                        + handler.getName()
-                        + " after phaseLast "
-                        + phaseLastName);
-            }
+        } else if (handler.getRules().isPhaseFirst()) {
+            setPhaseFirst(handler.getHandler());
+        } else if (handler.getRules().isPhaseLast()) {
+            setPhaseLast(handler.getHandler());
+        } else {
+            insertHandler(handler);
         }
     }
 
@@ -361,30 +320,26 @@ public class Phase {
      *
      * @param handler
      */
-    private void insertBefore(Handler handler) {
+    private void insertBefore(Handler handler) throws PhaseException {
         String beforename = handler.getHandlerDesc().getRules().getBefore();
-        if (phaseLast != null) {
-            if (phaseLast.getHandlerDesc().getName().getLocalPart().equals(
-                    beforename)) {
-                handlers.add(handler);
-                return;
-            }
-        }
+
         for (int i = 0; i < handlers.size(); i++) {
             Handler temphandler = (Handler) handlers.get(i);
-            if (temphandler.getHandlerDesc().getName().getLocalPart().equals(
-                    beforename)) {
+            if (temphandler.getName().getLocalPart().equals(beforename)) {
                 if (i == 0) {
+                    if (phasefirstset) {
+                        throw new PhaseException("Can't insert handler before handler '" +
+                                temphandler.getName() + "', which is marked phaseFirst");
+                    }
                     handlers.add(0, handler);
                     return;
-                } else {
-                    handlers.add(i - 1, handler);
-                    return;
                 }
+                handlers.add(i - 1, handler);
             }
         }
+
         //added as last handler
-        handlers.add(handler);
+        addHandler(handler);
     }
 
     /**
@@ -392,27 +347,18 @@ public class Phase {
      *
      * @param handler
      */
-    private void insertAfter(Handler handler) {
+    private void insertAfter(Handler handler) throws PhaseException {
         String afterName = handler.getHandlerDesc().getRules().getAfter();
-        if (phaseFirst != null) {
-            if (phaseFirst.getHandlerDesc().getName().getLocalPart().equals(
-                    afterName)) {
-                handlers.add(0, handler);
-                return;
-            }
-        }
-        int count = handlers.size();
-        for (int i = 0; i < count; i++) {
+
+        for (int i = 0; i < handlers.size(); i++) {
             Handler temphandler = (Handler) handlers.get(i);
-            if (temphandler.getHandlerDesc().getName().getLocalPart().equals(
-                    afterName)) {
-                if (i == count - 1) {
-                    handlers.add(handler);
-                    return;
-                } else {
-                    handlers.add(i + 1, handler);
-                    return;
+            if (temphandler.getName().getLocalPart().equals(afterName)) {
+                if (phaselastset && (i == handlers.size() - 1)) {
+                    throw new PhaseException("Can't insert handler after handler '" +
+                            temphandler.getName() + "', which is marked phaseLast");
                 }
+                handlers.add(i + 1, handler);
+                return;
             }
         }
         if (handlers.size() > 0) {
@@ -432,100 +378,69 @@ public class Phase {
         int before = -1;
         int after = -1;
 
-        /**
-         * if hander.after = PhaseFirts and hnder.before = phaselast then
-         * just add the entery to vector
-         */
-        if ((phaseFirst != null) && (phaseLast != null)) {
-            if ((phaseFirst
-                    .getHandlerDesc()
-                    .getName()
-                    .getLocalPart()
-                    .equals(handler.getHandlerDesc().getRules().getAfter()))
-                    && (phaseLast
-                    .getHandlerDesc()
-                    .getName()
-                    .getLocalPart()
-                    .equals(handler.getHandlerDesc().getRules().getBefore()))) {
-                handlers.add(handler);
-                return;
-            }
-        }
-
-        if (phaseFirst != null
-                && (phaseFirst
-                .getHandlerDesc()
-                .getName()
-                .getLocalPart()
-                .equals(handler.getHandlerDesc().getRules().getAfter()))) {
-            after = 0;
-        }
-        if (phaseLast != null
-                && (phaseLast
-                .getHandlerDesc()
-                .getName()
-                .getLocalPart()
-                .equals(handler.getHandlerDesc().getRules().getBefore()))) {
-            before = handlers.size();
-        }
+        String beforeName = handler.getHandlerDesc().getRules().getBefore();
+        String afterName = handler.getHandlerDesc().getRules().getAfter();
 
         for (int i = 0; i < handlers.size(); i++) {
             Handler temphandler = (Handler) handlers.get(i);
-            if (handler
-                    .getHandlerDesc()
-                    .getRules()
-                    .getAfter()
-                    .equals(
-                            temphandler.getHandlerDesc().getName()
-                                    .getLocalPart())) {
+            if (afterName.equals(temphandler.getName().getLocalPart())) {
                 after = i;
-            } else if (
-                    handler.getHandlerDesc().getRules().getBefore().equals(
-                            temphandler.getHandlerDesc().getName()
-                                    .getLocalPart())) {
-                before = i;
-            }
-            if ((after >= 0) && (before >= 0)) {
-                // no point of continue since both the before and after index has found
-                if (after > before) {
-                    //TODO fix me Deepal , (have to check this)
-                    throw new PhaseException(
-                            "incorrect handler order for " +
-                                    handler.getHandlerDesc().getName());
-                } else {
-                    if (after + 1 <= handlers.size()) {
-                        handlers.add(after + 1, handler);
-                        return;
-                    } else {
-                        handlers.add(after, handler);
-                        return;
-                    }
+            } else {
+                if (beforeName.equals(temphandler.getName().getLocalPart())) {
+                    before = i;
                 }
             }
+            if ((after >= 0) && (before >= 0)) {
+                break;
+            }
         }
-        handlers.add(handler);
+
+        // no point of continue since both the before and after index has found
+        if (after > before) {
+            //TODO fix me Deepal , (have to check this)
+            throw new PhaseException(
+                    "incorrect handler order for " +
+                            handler.getHandlerDesc().getName());
+        }
+
+        if (before == -1 && after == -1) {
+            addHandler(handler);
+            return;
+        }
+
+        if (before == -1) {
+            addHandler(handler);
+            return;
+        }
+
+        if (after == -1) {
+            if (phasefirstset && before == 0) {
+                throw new PhaseException("Can't insert handler before handler '" +
+                        ((Handler) handlers.get(0)).getName() + "', which is marked phaseFirst");
+            }
+        }
+
+        handlers.add(before, handler);
     }
 
-    private void insertHandler(HandlerDescription handler) throws PhaseException {
-        Handler han = handler.getHandler();
-        int type = getBeforeAfter(han);
-        validateafter(han);
-        validatebefore(han);
+    private void insertHandler(HandlerDescription handlerDesc) throws PhaseException {
+        Handler handler = handlerDesc.getHandler();
+        int type = getBeforeAfter(handler);
         switch (type) {
             case BOTH_BEFORE_AFTER: {
-                insertBeforeandAfter(han);
+                insertBeforeandAfter(handler);
                 break;
             }
             case BEFORE: {
-                insertBefore(han);
+                insertBefore(handler);
                 break;
             }
             case AFTER: {
-                insertAfter(han);
+                insertAfter(handler);
                 break;
             }
             case ANYWHERE: {
-                handlers.add(han);
+                addHandler(handler);
                 break;
             }
         }
@@ -537,38 +452,34 @@ public class Phase {
      * @return Returns an ArrayList of Handlers
      */
     public ArrayList getHandlers() {
-        ArrayList phaseHandlers = new ArrayList();
-        if (phaseFirst != null) {
-            phaseHandlers.add(phaseFirst);
-        }
-        for (int i = 0; i < handlers.size(); i++) {
-            Handler handler = (Handler) handlers.get(i);
-            phaseHandlers.add(handler);
-        }
-        if (phaseLast != null) {
-            phaseHandlers.add(phaseLast);
-        }
-        return phaseHandlers;
+        return handlers;
     }
 
-    public void invokeStartFromHandler(QName name, MessageContext msgctx) throws AxisFault {
-        msgctx.setPausedPhaseName(this.getPhaseName());
-        boolean foudMatch = false;
-        ArrayList phaseHandlers = getHandlers();
-        for (int i = 0; i < phaseHandlers.size(); i++) {
-            Handler handler = (Handler) handlers.get(i);
-            if (handler != null && handler.getName().equals(name)) {
-                foudMatch = true;
-            }
+    public void init(HandlerDescription handlerdesc) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-            if (handler != null && foudMatch) {
-                handler.invoke(msgctx);
-            }
-        }
+    public QName getName() {
+        return new QName(phaseName);
+    }
+
+    public Parameter getParameter(String name) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void cleanup() throws AxisFault {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public HandlerDescription getHandlerDesc() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public String toString() {
         return this.getPhaseName();
     }
 
+    public void setName(String phaseName) {
+        this.phaseName = phaseName;
+    }
 }

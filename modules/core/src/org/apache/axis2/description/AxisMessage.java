@@ -31,12 +31,12 @@ import java.util.ArrayList;
 public class AxisMessage implements ParameterInclude {
 
     private ParameterInclude parameterinclude;
-    private ArrayList operationFlow;
+    private ArrayList handlerChain;
     private AxisOperation parent;
 
     public AxisMessage() {
         parameterinclude = new ParameterIncludeImpl();
-        operationFlow = new ArrayList();
+        handlerChain = new ArrayList();
     }
 
     public void addParameter(Parameter param) throws AxisFault {
@@ -77,11 +77,11 @@ public class AxisMessage implements ParameterInclude {
     }
 
     public ArrayList getMessageFlow() {
-        return operationFlow;
+        return handlerChain;
     }
 
     public void setMessageFlow(ArrayList operationFlow) {
-        this.operationFlow = operationFlow;
+        this.handlerChain = operationFlow;
     }
 
     public AxisOperation getParent() {

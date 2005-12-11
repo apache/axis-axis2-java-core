@@ -129,24 +129,21 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         }
     }
 
-
-    private ArrayList getPhaseList(OMElement phaseOrders) {
-        ArrayList phaselist = new ArrayList();
-        Iterator phases = phaseOrders.getChildrenWithName(new QName(PHASE));
-        while (phases.hasNext()) {
-            OMElement phase = (OMElement) phases.next();
-            phaselist.add(phase.getAttribute(new QName(ATTNAME)).getAttributeValue());
-        }
-        return phaselist;
-    }
-
     private ArrayList processPhaseList(OMElement phaseOrders) throws DeploymentException {
         ArrayList phaselist = new ArrayList();
         Iterator phases = phaseOrders.getChildrenWithName(new QName(PHASE));
         while (phases.hasNext()) {
             OMElement phaseelement = (OMElement) phases.next();
             String phaseName = phaseelement.getAttribute(new QName(ATTNAME)).getAttributeValue();
-            Phase phase = new Phase(phaseName);
+            String phaseClass = phaseelement.getAttributeValue(new QName(CLASSNAME));
+            Phase phase;
+            try {
+                phase = getPhase(phaseClass);
+            } catch (Exception e) {
+                throw new DeploymentException("Couldn't find phase class : " + phaseClass, e);
+            }
+            phase.setName(phaseName);
+
             Iterator handlers = phaseelement.getChildrenWithName(new QName(HANDERST));
             while (handlers.hasNext()) {
                 OMElement omElement = (OMElement) handlers.next();
@@ -164,6 +161,15 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         return phaselist;
     }
 
+    private Phase getPhase(String className)
+            throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        if (className == null) {
+            return new Phase();
+        }
+//        Class phaseClass = Class.forName(className);
+        Class phaseClass = axisConfiguration.getSystemClassLoader().loadClass(className);
+        return (Phase) phaseClass.newInstance();
+    }
 
     private void processTransportSenders(Iterator trs_senders) throws DeploymentException {
         while (trs_senders.hasNext()) {

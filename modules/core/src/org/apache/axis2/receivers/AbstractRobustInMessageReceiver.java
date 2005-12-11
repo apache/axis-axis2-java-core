@@ -31,15 +31,6 @@ public abstract class AbstractRobustInMessageReceiver extends AbstractMessageRec
     public abstract void invokeBusinessLogic(MessageContext inMessage) throws AxisFault;
 
     public final void receive(final MessageContext messgeCtx) throws AxisFault {
-        try {
-            invokeBusinessLogic(messgeCtx);
-        } catch (AxisFault e) {
-            AxisEngine engine =
-                new AxisEngine(
-                    messgeCtx.getOperationContext().getServiceContext().getConfigurationContext());
-            MessageContext faultContext = engine.createFaultMessageContext(messgeCtx, e);
-            engine.sendFault(faultContext);
-        }
+        invokeBusinessLogic(messgeCtx);
     }
-
 }

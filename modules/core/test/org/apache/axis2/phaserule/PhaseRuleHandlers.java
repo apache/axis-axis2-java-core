@@ -17,6 +17,7 @@
 package org.apache.axis2.phaserule;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.handlers.AbstractHandler;
@@ -34,11 +35,7 @@ public class PhaseRuleHandlers extends AbstractHandler implements Handler {
     public PhaseRuleHandlers() {
         this.message = "inside service 2";
     }
-
-    public QName getName() {
-        return name;
-    }
-
+  
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.info("I am " + name + " Handler Running :)");
     }
@@ -49,5 +46,9 @@ public class PhaseRuleHandlers extends AbstractHandler implements Handler {
 
     public void setName(QName name) {
         this.name = name;
+    }
+
+    public void init(HandlerDescription handlerdesc) {
+        super.init(handlerdesc);
     }
 }
