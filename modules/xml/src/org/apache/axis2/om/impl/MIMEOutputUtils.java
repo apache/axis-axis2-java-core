@@ -39,7 +39,7 @@ public class MIMEOutputUtils {
         try {
             startWritingMime(outStream, boundary);
 
-            javax.activation.DataHandler dh = new javax.activation.DataHandler(bufferedSoapOutStream,
+            javax.activation.DataHandler dh = new javax.activation.DataHandler(bufferedSoapOutStream.toString(),
                     "text/xml");
             MimeBodyPart rootMimeBodyPart = new MimeBodyPart();
             rootMimeBodyPart.setDataHandler(dh);
