@@ -18,6 +18,7 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
+import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
@@ -85,12 +86,10 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase implements TestCon
         value.setText("Isaac Asimov, The Foundation Trilogy");
         method.addChild(value);
 
-        org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
-                serviceContext);
+        Call call = new Call(serviceContext);
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(targetEPR);
-        call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
         options.setUseSeparateListener(true);
         options.setAction(operationName.getLocalPart());

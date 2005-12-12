@@ -135,7 +135,6 @@ public class UtilServer {
         ModuleDescription moduleDesc = deploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(moduleDesc);
-        // sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
 
         configContext.getAxisConfiguration().addService(service);
 

@@ -547,7 +547,7 @@ public class AxisService
      * @return HashMap
      */
     public HashMap getOperations() {
-        return this.getServiceInterface().getOperations();
+        return operations;
     }
 
     /**
