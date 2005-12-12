@@ -116,8 +116,7 @@
              _call.setClientOptions(_options);
 
  		     org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
-             <xsl:for-each select="input/param[@Action!='']">_options.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
-
+            _options.setSoapAction("<xsl:value-of select="$soapAction"/>");
              <xsl:for-each select="input/param[@Action!='']">_options.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
 
              //set the properties
