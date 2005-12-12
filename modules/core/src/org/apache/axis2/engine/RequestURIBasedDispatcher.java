@@ -47,6 +47,15 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
                                        MessageContext messageContext)
             throws AxisFault {
         log.debug("Checking for Operation using target endpoint uri fragment : " + operationName);
+        EndpointReference toEPR = messageContext.getTo();
+        if (toEPR != null && operationName == null) {
+            String filePart = toEPR.getAddress();
+            String[] values = Utils.parseRequestURLForServiceAndOperation(
+                    filePart);
+            if (values.length >= 2 && values[1] != null) {
+                operationName = new QName(values[1]);
+            }
+        }
         if (operationName != null) {
             return service.getOperation(operationName);
         }
