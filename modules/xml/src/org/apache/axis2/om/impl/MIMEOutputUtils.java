@@ -30,7 +30,7 @@ import java.util.LinkedList;
 
 public class MIMEOutputUtils {
 
-    private static byte[] CRLF = {13, 10};
+    private static String CRLF = "\r\n";
     private Log log = LogFactory.getLog(getClass());
 
     public static void complete(OutputStream outStream,
@@ -39,7 +39,7 @@ public class MIMEOutputUtils {
         try {
             startWritingMime(outStream, boundary);
 
-            javax.activation.DataHandler dh = new javax.activation.DataHandler(bufferedSoapOutStream.toString(),
+            javax.activation.DataHandler dh = new javax.activation.DataHandler(bufferedSoapOutStream,
                     "text/xml");
             MimeBodyPart rootMimeBodyPart = new MimeBodyPart();
             rootMimeBodyPart.setDataHandler(dh);
@@ -50,13 +50,13 @@ public class MIMEOutputUtils {
             rootMimeBodyPart.addHeader("content-transfer-encoding", "binary");
             rootMimeBodyPart.addHeader("content-id","<"+contentId+">");
 
-            writeBodyPart(outStream, rootMimeBodyPart, boundary);
+            writeBodyPart(outStream, rootMimeBodyPart, boundary, charSetEncoding);
 
             Iterator binaryNodeIterator = binaryNodeList.iterator();
             while (binaryNodeIterator.hasNext()) {
                 OMText binaryNode = (OMText) binaryNodeIterator.next();
                 writeBodyPart(outStream, createMimeBodyPart(binaryNode),
-                        boundary);
+                        boundary, charSetEncoding);
             }
             finishWritingMime(outStream);
         } catch (IOException e) {
@@ -105,11 +105,13 @@ public class MIMEOutputUtils {
      * @throws MessagingException
      */
     public static void writeBodyPart(OutputStream outStream,
-                                     MimeBodyPart part, String boundary) throws IOException,
+                                     MimeBodyPart part, 
+                                     String boundary,
+                                     String encoding) throws IOException,
             MessagingException {
-        outStream.write(CRLF);
+        outStream.write(CRLF.getBytes(encoding));
         part.writeTo(outStream);
-        outStream.write(CRLF);
+        outStream.write(CRLF.getBytes(encoding));
         writeMimeBoundary(outStream, boundary);
     }
 

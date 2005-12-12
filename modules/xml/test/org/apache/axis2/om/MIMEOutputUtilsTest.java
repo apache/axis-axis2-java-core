@@ -65,7 +65,7 @@ public class MIMEOutputUtilsTest extends TestCase {
 
         MIMEOutputUtils.startWritingMime(outStream, boundary);
         MimeBodyPart part1 = MIMEOutputUtils.createMimeBodyPart(textData);
-        MIMEOutputUtils.writeBodyPart(outStream, part1, boundary);
+        MIMEOutputUtils.writeBodyPart(outStream, part1, boundary, "UTF-8");
         MimeBodyPart part2 = MIMEOutputUtils.createMimeBodyPart(text);
         MIMEOutputUtils.writeBodyPart(outStream, part2, boundary);
         MIMEOutputUtils.finishWritingMime(outStream);
