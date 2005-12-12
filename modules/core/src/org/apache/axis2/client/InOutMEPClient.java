@@ -111,17 +111,28 @@ public class InOutMEPClient extends MEPClient {
             SyncCallBack callback = new SyncCallBack();
             //this method call two channel non blocking method to do the work and wait on the callbck
             invokeNonBlocking(axisop, msgctx, callback);
-            long index = clientOptions.getTimeOutInMilliSeconds() / 100;
-            while (!callback.isComplete()) {
-                //wait till the reponse arrives
-                if (index-- >= 0) {
+            long timeout = clientOptions.getTimeOutInMilliSeconds();
+            if (timeout < 0) {
+                while (!callback.isComplete()) {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
                         throw new AxisFault(e);
                     }
-                } else {
-                    throw new AxisFault(Messages.getMessage("responseTimeOut"));
+                }
+            } else {
+                long index = timeout / 100;
+                while (!callback.isComplete()) {
+                    //wait till the reponse arrives
+                    if (index-- >= 0) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            throw new AxisFault(e);
+                        }
+                    } else {
+                        throw new AxisFault(Messages.getMessage("responseTimeOut"));
+                    }
                 }
             }
             //process the resule of the invocation
