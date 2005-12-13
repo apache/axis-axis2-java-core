@@ -16,7 +16,7 @@
 
 package org.apache.axis2.soap.impl.llom.builder;
 
-import org.apache.axis2.om.OMAbstractFactory;
+
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.llom.exception.OMBuilderException;
@@ -51,7 +51,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
 
     public SOAP12BuilderHelper(StAXSOAPModelBuilder builder) {
         super(builder);
-        factory = OMAbstractFactory.getSOAP12Factory();
+        factory = builder.getSoapFactory();
     }
 
     public OMElement handleEvent(XMLStreamReader parser,
@@ -233,7 +233,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
             } else if (parent.getLocalName().equals(
                     SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME)) {
                 element =
-                        OMAbstractFactory.getOMFactory().createOMElement(
+                        this.factory.createOMElement(
                                 parser.getLocalName(), null, parent, builder);
                 builder.setProcessingDetailElements(true);
                 detailElementNames = new Vector();
@@ -299,7 +299,7 @@ public class SOAP12BuilderHelper extends SOAPBuilderHelper {
                 if (localNameExist) {
                     detailElementNames.setSize(detailElementLevel);
                     element =
-                            OMAbstractFactory.getOMFactory().createOMElement(
+                            this.factory.createOMElement(
                                     parser.getLocalName(),
                                     null,
                                     parent,

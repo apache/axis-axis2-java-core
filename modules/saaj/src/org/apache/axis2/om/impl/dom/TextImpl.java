@@ -470,6 +470,20 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
         }
     }
 
+    
+//    ///
+//    ///Special clone method to be used in cloneNode
+//    ///
+//    public Text cloneText() {
+//    	return new TextImpl(this.textValue.toString());
+//    }
+//    
+    public Node cloneNode(boolean deep) {
+    	TextImpl textImpl = new TextImpl(this.textValue.toString());
+    	textImpl.setOwnerDocument(this.ownerNode);
+		return textImpl;
+    }
+    
 	/*
 	 * DOM-Level 3 methods
 	 */

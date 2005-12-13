@@ -158,5 +158,18 @@ public abstract class ChildNode extends NodeImpl {
 		}
 		
 	}
+	
+	
+    public Node cloneNode(boolean deep) {
+
+    	ChildNode newnode = (ChildNode) super.cloneNode(deep);
+    	
+        // Need to break the association w/ original kids
+    	newnode.previousSibling = null;
+        newnode.nextSibling     = null;
+        newnode.isFirstChild(false);
+
+    	return newnode;
+    }
 
 }

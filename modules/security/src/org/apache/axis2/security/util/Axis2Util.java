@@ -16,26 +16,28 @@
 
 package org.apache.axis2.security.util;
 
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.security.handler.WSSHandlerConstants;
-import org.apache.axis2.security.trust.TrustException;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.ws.security.SOAPConstants;
-import org.apache.ws.security.WSSecurityException;
-import org.apache.ws.security.util.WSSecurityUtil;
-import org.apache.xml.security.utils.XMLUtils;
-import org.apache.xml.serialize.XMLSerializer;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.impl.dom.DocumentImpl;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
+import org.apache.axis2.security.handler.WSSHandlerConstants;
+import org.apache.axis2.security.trust.TrustException;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
+import org.apache.ws.security.SOAPConstants;
+import org.apache.ws.security.WSSecurityException;
+import org.apache.xml.security.utils.XMLUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Utility class for the Axis2-WSS4J Module
@@ -51,121 +53,27 @@ public class Axis2Util {
 	public static Document getDocumentFromSOAPEnvelope(SOAPEnvelope env)
 			throws WSSecurityException {
 		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-			/**
-			 * There are plans to deprecate the OmNode.serializeAndConsume(XMLStreamWriter)
-			 * method therefore using OMOutoutImpl to serializeAndConsume the env
-			 */
-			env.serialize(baos);
+			env.build();
+			StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(env.getXMLStreamReader(),new SOAP11Factory(), SOAPConstants.SOAP11_CONSTANTS.getEnvelopeURI());
+			SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
+			envelope.build();
 			
-			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setNamespaceAware(true);
-			return factory.newDocumentBuilder().parse(bais);
+			Element envElem = (Element)envelope;
+			return envElem.getOwnerDocument();
+			
 		} catch (Exception e) {
 			throw new WSSecurityException(
 					"Error in converting SOAP Envelope to Document", e);
 		}
 	}
 
-	/**
-	 * Covert a DOM Document containing a SOAP Envelope in to a
-	 * org.apache.axis2.soap.SOAPEnvelope 
-	 * @param doc DOM Document
-	 * @param envelopeNS SOAP Namespace of the the given Envelope
-	 * @return
-	 * @throws Exception
-	 */
-	public static SOAPEnvelope getSOAPEnvelopeFromDocument(Document doc,
-			String envelopeNS) throws WSSecurityException {
-		try {
-			//Set the new SOAPEnvelope
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			XMLUtils.outputDOM(doc, os, true);
-			
-			ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
-			XMLStreamReader reader = XMLInputFactory.newInstance()
-					.createXMLStreamReader(is);
-
-			StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader,
-					envelopeNS);
-			builder.setCache(true);
-
-			return builder.getSOAPEnvelope();
-
-		} catch (Exception e) {
-			throw new WSSecurityException(
-					"Error in converting document to SOAPEnvelope", e);
-		}
-
+	public static SOAPEnvelope getSOAPEnvelopeFromDOOMDocument(DocumentImpl doc) {
+        OMElement docElem = (OMElement)doc.getDocumentElement();
+        StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(docElem.getXMLStreamReader(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        return stAXSOAPModelBuilder.getSOAPEnvelope();
 	}
 	
-	/**
-	 * This is to be used only in the signature situation
-	 * where the security header can be inserted into the original SOAPEnvelope
-	 * rather than replacing the whole envelope
-	 * @param doc
-	 * @param envelopeNS
-	 * @param reqEnv
-	 * @return
-	 * @throws WSSecurityException
-	 */
-	public static SOAPEnvelope getSOAPEnvelopeFromDocument(Document doc,
-			SOAPConstants constants, SOAPEnvelope reqEnv) throws WSSecurityException {
-		
-		//Get holdof the security header
-		Element secElem = WSSecurityUtil.getSecurityHeader(doc,null, constants);
-		
-		//insert the header into the OM-SOAPEnvelope
-		
-		OMElement secOmElem = convertToOMelement(secElem, constants);
-		
-		reqEnv.getHeader().addChild(secOmElem);
-		
-		return reqEnv;
-		
-	}
 	
-	/**
-	 * Converts the given DOM Element to an OMElement
-	 * @param elem
-	 * @param constants
-	 * @return
-	 * @throws WSSecurityException
-	 */
-	private static OMElement convertToOMelement(Element elem, SOAPConstants constants) throws WSSecurityException {
-
-		try {
-			XMLSerializer xmlSer = new XMLSerializer();
-			
-			/*
-			 *When we extract the wsse:Security header by serializing it
-			 *The namespaces declared globally will not be copied into the
-			 *serialized element. Therefore we have to add the missing namespaces 
-			 *in to the element before DOm serialization 
-			 */
-			elem.setAttribute("xmlns:soapenv",constants.getEnvelopeURI());
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			
-			xmlSer.setOutputByteStream(baos);
-			
-			xmlSer.serialize(elem);
-			
-			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-			XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(bais);
-			StAXOMBuilder builder = new StAXOMBuilder(reader);
-			builder.setCache(true);
-			
-			return builder.getDocumentElement();
-			
-		} catch (Exception e) {
-			throw new WSSecurityException(e.getMessage(),e);
-		}
-
-	}
-
 	/**
 	 * This is used to provide the appropriate key to pickup 
 	 * config params from the message context.
@@ -223,7 +131,6 @@ public class Axis2Util {
 	public static Element toDOM(OMElement element) throws TrustException {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	
 			element.serialize(baos);
 			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 	

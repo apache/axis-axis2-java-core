@@ -20,8 +20,10 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLOutputFactory;
 
 import org.apache.axis2.om.OMContainer;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
+import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.om.impl.OMNodeEx;
@@ -39,7 +41,7 @@ import java.io.Writer;
 /**
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
-public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
+public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
 
 
     /**
@@ -198,6 +200,16 @@ public abstract class NodeImpl implements Node, NodeList,OMNodeEx {
         return null;            // default behavior, overriden in ChildNode
     }
 
+//    public Node cloneNode(boolean deep) {
+//    	if(this instanceof OMElement) {
+//    		return (Node)((OMElement)this).cloneOMElement();
+//    	} else if(this instanceof OMText ){
+//    		return ((TextImpl)this).cloneText();
+//    	} else {
+//    		throw new UnsupportedOperationException("Only elements can be cloned right now");
+//    	}
+//    }
+//    
     public Node cloneNode(boolean deep) {
         NodeImpl newnode;
         try {

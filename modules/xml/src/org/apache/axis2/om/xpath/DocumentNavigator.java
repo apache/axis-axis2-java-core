@@ -1,14 +1,25 @@
 package org.apache.axis2.om.xpath;
 
+import java.io.FileInputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMComment;
 import org.apache.axis2.om.OMContainer;
+import org.apache.axis2.om.OMDocument;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMProcessingInstruction;
 import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.impl.llom.OMDocumentImpl;
 import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.jaxen.BaseXPath;
@@ -19,16 +30,6 @@ import org.jaxen.UnsupportedAxisException;
 import org.jaxen.XPath;
 import org.jaxen.saxpath.SAXPathException;
 import org.jaxen.util.SingleObjectIterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-import java.io.FileInputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 
 public class DocumentNavigator extends DefaultNavigator {
     /**
@@ -131,7 +132,7 @@ public class DocumentNavigator extends DefaultNavigator {
      *         else <code>false</code>
      */
     public boolean isDocument(Object object) {
-        return object instanceof OMDocumentImpl;
+        return object instanceof OMDocument;
     }
 
     /**
@@ -347,7 +348,7 @@ public class DocumentNavigator extends DefaultNavigator {
         List nsList = new ArrayList();
         HashSet prefixes = new HashSet();
         for (OMContainer context = (OMContainer) contextNode;
-             context != null && !(context instanceof OMDocumentImpl);
+             context != null && !(context instanceof OMDocument);
              context = ((OMElement) context).getParent()) {
             OMElement element = (OMElement) context;
             ArrayList declaredNS = new ArrayList();
@@ -583,7 +584,7 @@ public class DocumentNavigator extends DefaultNavigator {
      * @see #isDocument(Object)
      */
     public Object getDocumentNode(Object contextNode) {
-        if (contextNode instanceof OMDocumentImpl) {
+        if (contextNode instanceof OMDocument) {
             return contextNode;
         }
         return getDocumentNode(((OMNode) contextNode).getParent());
@@ -658,7 +659,7 @@ public class DocumentNavigator extends DefaultNavigator {
      */
     public Object getParentNode(Object contextNode) throws UnsupportedAxisException {
         if (contextNode == null ||
-                contextNode instanceof OMDocumentImpl) {
+                contextNode instanceof OMDocument) {
             return null;
         } else if (contextNode instanceof OMAttributeEx) {
             return ((OMAttributeEx) contextNode).getParent();

@@ -16,7 +16,6 @@
 
 package org.apache.axis2.soap.impl.llom.builder;
 
-import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.OMNodeEx;
@@ -42,7 +41,7 @@ public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Cons
 
     public SOAP11BuilderHelper(StAXSOAPModelBuilder builder) {
         super(builder);
-        factory = OMAbstractFactory.getSOAP11Factory();
+        factory = builder.getSoapFactory();
     }
 
     public OMElement handleEvent(XMLStreamReader parser,
@@ -104,7 +103,7 @@ public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Cons
                 processAttributes(element);
             } else {
                 element =
-                        OMAbstractFactory.getOMFactory().createOMElement(
+                        factory.createOMElement(
                                 localName, null, parent, builder);
                 processNamespaceData(element, false);
                 processAttributes(element);
@@ -125,7 +124,7 @@ public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Cons
                         "faultactor element should not have children");
             } else {
                 element =
-                        OMAbstractFactory.getOMFactory().createOMElement(
+                        this.factory.createOMElement(
                                 localName, null, parent, builder);
                 processNamespaceData(element, false);
                 processAttributes(element);
@@ -133,7 +132,7 @@ public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Cons
 
         } else if (elementLevel > 5) {
             element =
-                    OMAbstractFactory.getOMFactory().createOMElement(localName,
+                    this.factory.createOMElement(localName,
                             null,
                             parent,
                             builder);

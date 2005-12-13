@@ -340,23 +340,22 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
     	//TODO Error checking
         return (this.namespace == null)?null:this.namespace.getPrefix();
     }
-
-	public Node cloneNode(boolean deep) {
+    
+    public Node cloneNode(boolean deep) {
 
         AttrImpl clone = (AttrImpl) super.cloneNode(deep);
 
-        // take care of case where there are kids
-    	if (!this.hasChildNodes()) {
-
-            clone.attrValue = null;
-
-            for (Node child = (Node) attrValue; child != null; child = child.getNextSibling()) {
-                 clone.appendChild(child.cloneNode(true));
+    	if (clone.attrValue == null) {
+            // Need to break the association w/ original kids
+            clone.attrValue = new TextImpl(this.attrValue.toString());
+            if(this.attrValue.nextSibling != null) {
+            	throw new UnsupportedOperationException("Attribute value can contain only a text node with out any siblings");
             }
-        }
+    	}
         clone.isSpecified(true);
         return clone;
-	}
+    }
+    
 
 	/*
 	 * DOM-Level 3 methods
@@ -375,4 +374,5 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 	public String toString() {
 		return (this.namespace == null)?this.attrName: this.namespace.getPrefix() + ":" + this.attrName;
 	}
+	
 }

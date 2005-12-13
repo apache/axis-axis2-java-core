@@ -32,9 +32,11 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
-import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.OMNodeEx;
+import org.apache.axis2.om.impl.OMOutputImpl;
+import org.apache.axis2.om.impl.dom.factory.OMDOMFactory;
 import org.apache.axis2.om.impl.llom.OMSerializerUtil;
+import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.traverse.OMChildElementIterator;
 import org.apache.axis2.om.impl.llom.util.EmptyIterator;
 import org.apache.axis2.om.util.ElementHelper;
@@ -265,7 +267,8 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 		if(attributes == null) {
 			return "";
 		} else {
-			return ((Attr)attributes.getNamedItem(name)).getValue();
+			Attr attr = ((Attr)attributes.getNamedItem(name));
+			return (attr != null)?attr.getValue():"";
 		}
 	}
 
@@ -619,9 +622,19 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
      * This can also be used to retrieve the prefix of a known namespace URI
      */
     private OMNamespace findDeclaredNamespace(String uri, String prefix) {
-        if (namespaces == null) {
+    	
+    	if(uri == null) {
+    		return null;
+    	}
+    	//If the prefix is available and uri is available and its the xml namespace
+    	if(prefix != null && prefix.equals(OMConstants.XMLNS_PREFIX) && uri.equals(OMConstants.XMLNS_URI)) {
+    		return new NamespaceImpl(uri, prefix);
+    	}
+    	
+    	if (namespaces == null) {
             return null;
         }
+    	   
         if (prefix == null || "".equals(prefix)) {
             Iterator namespaceListIterator = namespaces.values().iterator();
             while (namespaceListIterator.hasNext()) {
@@ -634,7 +647,12 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
             }
             return null;
         } else {
-            return (OMNamespace) namespaces.get(prefix);
+            OMNamespace namespace = (OMNamespace) namespaces.get(prefix);
+            if (namespace != null && uri.equalsIgnoreCase(namespace.getName())) {
+                return namespace;
+            } else {
+            	return null;
+            }
         }
     }
     
@@ -782,7 +800,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	 * @see org.apache.axis2.om.OMElement#setNamespace(org.apache.axis2.om.OMNamespace)
 	 */
 	public void setNamespace(OMNamespace namespace) {
-		this.namespace = namespace;
+			this.namespace = namespace;
 	}
 
 	/**
@@ -976,10 +994,26 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
         return helper.resolveQName(qname);
     }
 
+    /**
+     * This will create a clone which belongs to a new document 
+     * @see org.apache.axis2.om.OMElement#cloneOMElement()
+     */
     public OMElement cloneOMElement() {
-        throw new UnsupportedOperationException("Cloning is not supported yet !!");
+		ElementImpl elem = (ElementImpl)(new StAXOMBuilder(new OMDOMFactory(), this.getXMLStreamReader(true))).getDocumentElement();
+		return elem;
     }
 
+    public Node cloneNode(boolean deep) {
+
+    	ElementImpl newnode = (ElementImpl) super.cloneNode(deep);
+    	// Replicate NamedNodeMap rather than sharing it.
+        if (attributes != null) {
+            newnode.attributes = (AttributeMap) attributes.cloneMap(newnode);
+        }
+    	return newnode;
+
+    }
+    
     /**
      * This will return the set of attributes of this node and the 
      * namespace declarations available
@@ -997,7 +1031,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	    	Iterator nsDecls = this.namespaces.keySet().iterator();
 			while (nsDecls.hasNext()) {
 				String prefix = (String) nsDecls.next();
-				if(!prefix.equals(OMConstants.XMLNS_NS_PREFIX)){
+				if(prefix != null && !"".equals(prefix) && !prefix.equals(OMConstants.XMLNS_NS_PREFIX)){
 					OMNamespace ns = (OMNamespace) this.namespaces.get(prefix);
 					AttrImpl attr = new AttrImpl(this.ownerNode, prefix, ns
 							.getName());
@@ -1014,9 +1048,13 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 							.equals(this.namespace.getPrefix()))
 					&& this.namespace.getName() != null) {
 
-				AttrImpl attr = new AttrImpl(this.ownerNode, "xmlns",
-						this.namespace.getName());
-				attributeMap.addItem(attr);
+				//check if the parent of this element has the same namespace
+				// as the default and if NOT add the attr
+				if(this.parentNode.getNamespaceURI() != this.getNamespaceURI()) {
+					AttrImpl attr = new AttrImpl(this.ownerNode, "xmlns",
+							this.namespace.getName());
+					attributeMap.addItem(attr);
+				}
 			}
     	}
     	
@@ -1048,6 +1086,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     	}
     	
     }
+    
     
 	/*
 	 * DOM-Level 3 methods

@@ -175,4 +175,46 @@ public class AttributeMap extends NamedNodeMapImpl {
         }
         return previous;
 	}
+	
+	
+
+    /**
+     * BORROWED from Xerces impl
+     * Cloning a NamedNodeMap is a DEEP OPERATION; it always clones
+     * all the nodes contained in the map.
+     */
+     
+    public NamedNodeMapImpl cloneMap(NodeImpl ownerNode) {
+        AttributeMap newmap =
+            new AttributeMap((ParentNode) ownerNode);
+        newmap.hasDefaults(hasDefaults());
+        newmap.cloneContent(this);
+        return newmap;
+    } // cloneMap():AttributeMap
+
+    /**
+     * BORROWED from Xerces impl
+     */
+    protected void cloneContent(NamedNodeMapImpl srcmap) {
+        Vector srcnodes = srcmap.nodes;
+        if (srcnodes != null) {
+            int size = srcnodes.size();
+            if (size != 0) {
+                if (nodes == null) {
+                    nodes = new Vector(size);
+                }
+                nodes.setSize(size);
+                for (int i = 0; i < size; ++i) {
+                    NodeImpl n = (NodeImpl) srcnodes.elementAt(i);
+                    NodeImpl clone = (NodeImpl) n.cloneNode(true);
+                    clone.isSpecified(n.isSpecified());
+                    nodes.setElementAt(clone, i);
+                    clone.ownerNode = this.ownerNode.ownerNode;
+                    clone.isOwned(true);
+                }
+            }
+        }
+    } // cloneContent():AttributeMap
+
+
 }

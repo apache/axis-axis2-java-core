@@ -16,17 +16,28 @@
 
 package org.apache.axis2.security;
 
+import java.security.cert.X509Certificate;
+import java.util.Iterator;
+import java.util.Vector;
+
+import javax.security.auth.callback.CallbackHandler;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
+import org.apache.axis2.om.impl.dom.DocumentImpl;
+import org.apache.axis2.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axis2.security.handler.WSDoAllHandler;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.util.Axis2Util;
 import org.apache.axis2.security.util.HandlerParameterDecoder;
-import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.axis2.soap.SOAPHeaderBlock;
+import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.security.SOAPConstants;
@@ -41,15 +52,11 @@ import org.apache.ws.security.util.WSSecurityUtil;
 import org.apache.wsdl.WSDLConstants;
 import org.w3c.dom.Document;
 
-import java.security.cert.X509Certificate;
-import java.util.Iterator;
-import java.util.Vector;
-
-import javax.security.auth.callback.CallbackHandler;
-
 public class WSDoAllReceiver extends WSDoAllHandler {
 
-    protected static Log log = LogFactory.getLog(WSDoAllReceiver.class.getName());
+	private static final long serialVersionUID = 7685802089392898320L;
+	
+	protected static Log log = LogFactory.getLog(WSDoAllReceiver.class.getName());
 
     
     public WSDoAllReceiver() {
@@ -58,7 +65,12 @@ public class WSDoAllReceiver extends WSDoAllHandler {
     }
     
 	public void invoke(MessageContext msgContext) throws AxisFault {
+		
     	boolean doDebug = log.isDebugEnabled();
+		
+		//Set the DOM impl to DOOM
+		String originalDOcumentBuilderFactory = System.getProperty(DocumentBuilderFactory.class.getName());
+		System.setProperty(DocumentBuilderFactory.class.getName(),DocumentBuilderFactoryImpl.class.getName());
 
     	//populate the properties
     	try {
@@ -170,20 +182,18 @@ public class WSDoAllReceiver extends WSDoAllHandler {
                 checkSignatureConfirmation(reqData, wsResult);
             }
             
-            //TODO: Copy the processed headers
-
             /**
              * Set the new SOAPEnvelope
              */
+//         
+//            log.debug("Creating LLOM Structure");
+// 	        OMElement docElem = (OMElement)doc.getDocumentElement();
+//	        StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(docElem.getXMLStreamReader(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+//	        log.debug("Creating LLOM Structure - DONE");
+//			msgContext.setEnvelope((stAXSOAPModelBuilder).getSOAPEnvelope());
             
-            try {
-            	SOAPEnvelope envelope = Axis2Util.getSOAPEnvelopeFromDocument(doc,soapConstants.getEnvelopeURI());
-            	msgContext.setEnvelope(envelope);
-            } catch (WSSecurityException e) {
-            	throw new AxisFault(
-						"WSDoAllReceiver: Error in converting into a SOAPEnvelope",e);            	
-            }
-            
+            msgContext.setEnvelope(Axis2Util.getSOAPEnvelopeFromDOOMDocument((DocumentImpl)doc));
+			
             /*
              * After setting the new current message, probably modified because
              * of decryption, we need to locate the security header. That is, we
@@ -311,12 +321,22 @@ public class WSDoAllReceiver extends WSDoAllHandler {
              if (doDebug) {
                  log.debug("WSDoAllReceiver: exit invoke()");
              }
-             
+
         } catch (WSSecurityException wssEx) {
         	throw new AxisFault(wssEx);
         } finally {
             reqData.clear();
             reqData = null;
+
+            //Reset the document builder factory
+            String docBuilderFactory = System.getProperty("javax.xml.parsers.DocumentBuilderFactory");
+            if(docBuilderFactory != null && docBuilderFactory.equals(DocumentBuilderFactoryImpl.class.getName())) {
+				if(originalDOcumentBuilderFactory != null) {
+					System.getProperties().remove(docBuilderFactory);
+				} else {
+					System.getProperties().remove(docBuilderFactory);
+				}
+            }
         }
         
     }

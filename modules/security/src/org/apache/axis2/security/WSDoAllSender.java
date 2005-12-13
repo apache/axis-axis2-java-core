@@ -16,9 +16,15 @@
 
 package org.apache.axis2.security;
 
+import java.util.Vector;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.om.impl.dom.DocumentImpl;
+import org.apache.axis2.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axis2.security.handler.WSDoAllHandler;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.util.Axis2Util;
@@ -35,23 +41,15 @@ import org.apache.ws.security.util.WSSecurityUtil;
 import org.apache.wsdl.WSDLConstants;
 import org.w3c.dom.Document;
 
-import java.util.Vector;
-
 public class WSDoAllSender extends WSDoAllHandler {
+
+	private static final long serialVersionUID = 3016802164501419165L;
 
 	protected static Log log = LogFactory.getLog(WSDoAllSender.class.getName());
 	
 	/**
-	 * Right now we convert the processed DOM - SOAP Envelope into
-	 * and OM-SOAPEnvelope
-	 * But in the simple case where only the wsse:Security header is inserted into the document
-	 * we can insert only the wsse:Security header into the OM-SOAPEnvelope and preserve the 
-	 * metadata of OM such as base64 MTOM optimization
-	 * 
-	 * TODO: Get this as an option from the user or 
-	 * go through the actions and set it appropriately
-	 * Earlier this handler traversed the actions and at that point we used to
-	 * set this value, but now WSS4J goes through the action vector
+	 * TODO: This is not handled right now since converting to DOOM does not preserve
+	 * the optimization information of the text nodes
 	 */
 	private boolean preserveOriginalEnvelope = false;
 	
@@ -61,6 +59,10 @@ public class WSDoAllSender extends WSDoAllHandler {
     }
 	
 	public void invoke(MessageContext msgContext) throws AxisFault {
+		
+		//Set the DOM impl to DOOM
+		String originalDOcumentBuilderFactory = System.getProperty(DocumentBuilderFactory.class.getName());
+		System.setProperty(DocumentBuilderFactory.class.getName(),DocumentBuilderFactoryImpl.class.getName());
 		
         boolean doDebug = log.isDebugEnabled();
         
@@ -161,7 +163,7 @@ public class WSDoAllSender extends WSDoAllHandler {
             if ((doc = (Document) ((MessageContext)reqData.getMsgContext())
                     .getProperty(WSHandlerConstants.SND_SECURITY)) == null) {
             	try {
-            	doc = Axis2Util.getDocumentFromSOAPEnvelope(msgContext.getEnvelope());
+            		doc = Axis2Util.getDocumentFromSOAPEnvelope(msgContext.getEnvelope());
             	} catch (WSSecurityException wssEx) {
             		throw new AxisFault("WSDoAllReceiver: Error in converting to Document", wssEx);
             	}
@@ -188,7 +190,6 @@ public class WSDoAllSender extends WSDoAllHandler {
                 ((MessageContext)reqData.getMsgContext()).setProperty(WSHandlerConstants.SND_SECURITY,
                         doc);
             } else {
-            	SOAPEnvelope processedEnv = null;
 
     	        String preserve = null;
                 if ((preserve = (String) getOption(WSSHandlerConstants.PRESERVE_ORIGINAL_ENV)) == null) {
@@ -198,16 +199,17 @@ public class WSDoAllSender extends WSDoAllHandler {
                 	this.preserveOriginalEnvelope = "true".equalsIgnoreCase(preserve);
                 }
                 
-            	if(preserveOriginalEnvelope) {
-            		processedEnv = Axis2Util.getSOAPEnvelopeFromDocument(doc,reqData.getSoapConstants(), msgContext.getEnvelope());
-                   // msgContext.getEnvelope().build();
-            	} else {
-            		processedEnv = Axis2Util.getSOAPEnvelopeFromDocument(doc, reqData.getSoapConstants().getEnvelopeURI());
-            	}
-            	msgContext.setEnvelope(processedEnv);
+            	msgContext.setEnvelope((SOAPEnvelope)doc.getDocumentElement());
+            	
             	((MessageContext)reqData.getMsgContext()).setProperty(WSHandlerConstants.SND_SECURITY, null);
             }
     		
+//	        log.debug("Creating LLOM Structure");
+//	        OMElement docElem = (OMElement)doc.getDocumentElement();
+//	        StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(docElem.getXMLStreamReader(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+//	        log.debug("Creating LLOM Structure - DONE");
+//			msgContext.setEnvelope(stAXSOAPModelBuilder.getSOAPEnvelope());
+            msgContext.setEnvelope(Axis2Util.getSOAPEnvelopeFromDOOMDocument((DocumentImpl)doc));
             /**
              * If the optimizeParts parts are set then optimize them
              */
@@ -263,7 +265,17 @@ public class WSDoAllSender extends WSDoAllHandler {
             	reqData.clear();
             	reqData = null;
             }
-        }        
+            
+            //Reset the document builder factory
+            String docBuilderFactory = System.getProperty(DocumentBuilderFactory.class.getName());
+            if(docBuilderFactory != null && docBuilderFactory.equals(DocumentBuilderFactoryImpl.class.getName())) {
+				if(originalDOcumentBuilderFactory != null) {
+					System.getProperties().remove(docBuilderFactory);
+				} else {
+					System.getProperties().remove(docBuilderFactory);
+				}
+            }
+        }     
     }
 }
 

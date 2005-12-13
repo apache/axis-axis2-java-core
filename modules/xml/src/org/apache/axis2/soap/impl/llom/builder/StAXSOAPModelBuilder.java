@@ -428,4 +428,11 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
         return (OMDocument) this.soapMessage;
     }
 
+	/**
+	 * @return Returns the soapFactory.
+	 */
+	protected SOAPFactory getSoapFactory() {
+		return soapFactory;
+	}
+
 }

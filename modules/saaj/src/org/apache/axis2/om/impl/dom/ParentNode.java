@@ -181,6 +181,7 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 				this.lastChild = newDomChild;
 				this.firstChild = newDomChild;
 				this.firstChild.isFirstChild(true);
+				newDomChild.setParent(this);
 			} else {
 				this.lastChild.nextSibling = newDomChild;
 				newDomChild.previousSibling = this.lastChild;
@@ -409,5 +410,28 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 		//TODO isAncestor
 		return true;
 	}
+	
+    public Node cloneNode(boolean deep) {
 
+    	ParentNode newnode = (ParentNode) super.cloneNode(deep);
+
+        // set owner document
+        newnode.ownerNode = ownerNode;
+
+    	// Need to break the association w/ original kids
+    	newnode.firstChild = null;
+    	newnode.lastChild = null;
+
+        // Then, if deep, clone the kids too.
+    	if (deep) {
+            for (ChildNode child = firstChild;
+                 child != null;
+                 child = child.nextSibling) {
+                newnode.appendChild(child.cloneNode(true));
+            }
+        }
+
+    	return newnode;
+
+    }
 }
