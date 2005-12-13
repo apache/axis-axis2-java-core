@@ -52,7 +52,6 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(
                 connectionTimeout);
 
-        //todo giving proxy and NTLM support
 
 
         PostMethod postMethod = new PostMethod(url.toString());
