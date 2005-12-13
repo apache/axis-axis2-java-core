@@ -19,6 +19,7 @@ package org.apache.axis2.deployment;
 import junit.framework.TestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.AxisFault;
 
 public class InvalidServiceTest extends TestCase {
     /**
@@ -31,15 +32,14 @@ public class InvalidServiceTest extends TestCase {
         try {
             String filename = "./target/test-resources/InvalidDeployment";
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
-            er =
-                    builder.buildConfigurationContext(filename)
+            er =builder.buildConfigurationContext(filename)
                     .getAxisConfiguration();
             String msg = (String) er.getFaultyServices().get("invalidService");
             if (msg == null || msg.equals("")) {
                 fail("this must failed gracefully with AxisFault ervice specifi module can not" +
                         "refer system pre defined phases");
             }
-        } catch (DeploymentException e) {
+        } catch (AxisFault e) {
             return;
         }
     }

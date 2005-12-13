@@ -15,8 +15,7 @@
             <user>alice</user>
             <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
             <encryptionKeyIdentifier>SKIKeyIdentifier</encryptionKeyIdentifier>
-            <encryptionSymAlgorithm>
-                http://www.w3.org/2001/04/xmlenc#tripledes-cbc</encryptionSymAlgorithm>
+            <encryptionSymAlgorithm>http://www.w3.org/2001/04/xmlenc#tripledes-cbc</encryptionSymAlgorithm>
             <encryptionUser>bob</encryptionUser>
             <signatureKeyIdentifier>DirectReference</signatureKeyIdentifier>
             <signaturePropFile>interop.properties</signaturePropFile>

@@ -19,6 +19,7 @@ package org.apache.axis2.deployment;
 import junit.framework.TestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -37,7 +38,7 @@ public class SystemPhasesremovedTest extends TestCase {
             fail(
                     "this must failed gracefully with DeploymentException \"Invalid System predefined " +
                     "inphases , phase order dose not\" +\n support\\n recheck axis2.xml\"");
-        } catch (DeploymentException e) {
+        } catch (AxisFault e) {
             log.info(e.getCause());
         }
     }

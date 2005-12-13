@@ -1,13 +1,15 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.FileSystemBasedAxisConfigurationCreteator;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.AxisConfigurationCreator;
 import org.apache.axis2.modules.Module;
+import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
@@ -19,7 +21,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class ConfigurationContextFactory {
+
+
     private Log log = LogFactory.getLog(getClass());
+
+    public ConfigurationContext getConfigurationContext(
+            AxisConfigurationCreator axisConfigurationCreator) throws AxisFault {
+        AxisConfiguration axisConfig = axisConfigurationCreator.getAxisConfiguration();
+        ConfigurationContext configContext = new ConfigurationContext(axisConfig);
+        init(configContext);
+        return configContext;
+    }
 
     /**
      * Builds the configuration for the Server.
@@ -28,23 +40,13 @@ public class ConfigurationContextFactory {
      * @return Returns the built ConfigurationContext.
      * @throws DeploymentException
      */
-    public ConfigurationContext buildConfigurationContext(
-            String repositoryName)
-            throws DeploymentException {
-        ConfigurationContext configurationContext;
-        try {
-            DeploymentEngine deploymentEngine =
-                    new DeploymentEngine(repositoryName);
-            AxisConfiguration configuration = deploymentEngine.load();
-            PhaseResolver phaseResolver = new PhaseResolver(configuration);
-
-            configurationContext = new ConfigurationContext(configuration);
-            phaseResolver.buildTranspotsChains();
-            initModules(configurationContext);
-            initTransports(configurationContext);
-        } catch (AxisFault axisFault) {
-            throw new DeploymentException(axisFault);
-        }
+    public ConfigurationContext buildConfigurationContext(String repositoryName)
+            throws AxisFault {
+        AxisConfigurationCreator repoBasedConfigCreator =
+                new FileSystemBasedAxisConfigurationCreteator(repositoryName, true);
+        AxisConfiguration axisConfig = repoBasedConfigCreator.getAxisConfiguration();
+        ConfigurationContext configurationContext = new ConfigurationContext(axisConfig);
+        init(configurationContext);
         return configurationContext;
     }
 
@@ -55,22 +57,42 @@ public class ConfigurationContextFactory {
      * @return Returns ConfigurationContext.
      * @throws DeploymentException
      */
-    public ConfigurationContext buildClientConfigurationContext(
-            String axis2home)
-            throws DeploymentException {
-        ConfigurationContext configContext;
+    public ConfigurationContext buildClientConfigurationContext(String axis2home)
+            throws AxisFault {
+        AxisConfigurationCreator repoBasedConfigCreator =
+                new FileSystemBasedAxisConfigurationCreteator(axis2home, false);
+        AxisConfiguration axisConfig = repoBasedConfigCreator.getAxisConfiguration();
+        ConfigurationContext configurationContext = new ConfigurationContext(axisConfig);
+        init(configurationContext);
+        return configurationContext;
+    }
+
+
+    /**
+     * To get the default configuration context  , this will return a AxisConfiguration
+     * which is created by fileSystem based AxisConfiguration creator
+     *
+     * @return ConfigurationContext
+     */
+    public ConfigurationContext getDafaultConfigurationContext() {
+        AxisConfiguration axisConfig = new AxisConfiguration();
+        return new ConfigurationContext(axisConfig);
+    }
+
+    /**
+     * To initilizae modules and , create Tranpsorts, this method is bean used
+     */
+    private void init(ConfigurationContext configContext) throws AxisFault {
         try {
-            AxisConfiguration configuration =
-                    new DeploymentEngine().loadClient(axis2home);
-            PhaseResolver phaseResolver = new PhaseResolver(configuration);
-            configContext = new ConfigurationContext(configuration);
+            PhaseResolver phaseResolver = new PhaseResolver(configContext.getAxisConfiguration());
             phaseResolver.buildTranspotsChains();
             initModules(configContext);
             initTransports(configContext);
-        } catch (AxisFault axisFault) {
-            throw new DeploymentException(axisFault);
+        } catch (PhaseException e) {
+            throw new AxisFault(e);
+        } catch (DeploymentException e) {
+            throw new AxisFault(e);
         }
-        return configContext;
     }
 
     /**
@@ -85,7 +107,7 @@ public class ConfigurationContextFactory {
             throws DeploymentException {
         try {
             HashMap modules =
-                    ((AxisConfiguration) context.getAxisConfiguration())
+                    context.getAxisConfiguration()
                             .getModules();
             Collection col = modules.values();
             for (Iterator iterator = col.iterator(); iterator.hasNext();) {

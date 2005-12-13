@@ -16,11 +16,9 @@
             <passwordCallbackClass>org.apache.axis2.security.PWCallback</passwordCallbackClass>
             <signatureKeyIdentifier>DirectReference</signatureKeyIdentifier>
             <encryptionKeyIdentifier>EmbeddedKeyName</encryptionKeyIdentifier>
-            <encryptionSymAlgorithm>
-                http://www.w3.org/2001/04/xmlenc#tripledes-cbc</encryptionSymAlgorithm>
+            <encryptionSymAlgorithm>http://www.w3.org/2001/04/xmlenc#tripledes-cbc</encryptionSymAlgorithm>
             <signaturePropFile>interop.properties</signaturePropFile>
-            <EmbeddedKeyCallbackClass>
-                org.apache.axis2.security.PWCallback</EmbeddedKeyCallbackClass>
+            <EmbeddedKeyCallbackClass>org.apache.axis2.security.PWCallback</EmbeddedKeyCallbackClass>
             <EmbeddedKeyName>SessionKey</EmbeddedKeyName>
         </action>
     </parameter>

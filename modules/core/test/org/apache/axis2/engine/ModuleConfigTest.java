@@ -31,11 +31,11 @@ import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+
 public class ModuleConfigTest extends TestCase {
 
     AxisConfiguration ar;
-    String repo ="./test-resources/deployment/moduleConfig";
-
+    String repo = "./test-resources/deployment/moduleConfig";
 
 
     public void testModuleConfigAtAxisConfig() {
@@ -43,23 +43,23 @@ public class ModuleConfigTest extends TestCase {
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
             ar = builder.buildConfigurationContext(repo).getAxisConfiguration();
             ModuleConfiguration moduleConfiguration =
-                    ((AxisConfiguration)ar).getModuleConfig(new QName("testModule"));
+                    ar.getModuleConfig(new QName("testModule"));
             assertNotNull(moduleConfiguration);
             Parameter para = moduleConfiguration.getParameter("testModulePara");
             assertNotNull(para);
 
             moduleConfiguration =
-                    ((AxisConfiguration)ar).getModuleConfig(new QName("testModule2"));
+                    ar.getModuleConfig(new QName("testModule2"));
             assertNotNull(moduleConfiguration);
             para = moduleConfiguration.getParameter("testModulePara2");
             assertNotNull(para);
-        } catch (DeploymentException e) {
-            fail("This can not fail with this DeploymentException " + e) ;
+        } catch (AxisFault e) {
+            fail("This can not fail with this DeploymentException " + e);
         }
     }
 
 
-     public void testModuleConfigAtService() {
+    public void testModuleConfigAtService() {
         try {
             ConfigurationContextFactory builder = new ConfigurationContextFactory();
             ar = builder.buildConfigurationContext(repo).getAxisConfiguration();
@@ -69,7 +69,7 @@ public class ModuleConfigTest extends TestCase {
             service.setName(new QName("testService"));
             ar.addService(service);
             InputStream in = new FileInputStream(repo + "/service1.xml");
-            ServiceBuilder sbuilder = new ServiceBuilder(in,null,service);
+            ServiceBuilder sbuilder = new ServiceBuilder(in, null, service);
             sbuilder.populateService(sbuilder.buildOM());
 
             ModuleConfiguration moduleConfiguration = service.getModuleConfig(new QName("Servie_module"));
@@ -87,13 +87,13 @@ public class ModuleConfigTest extends TestCase {
 
 
         } catch (DeploymentException e) {
-            fail("This can not fail with this DeploymentException " + e) ;
+            fail("This can not fail with this DeploymentException " + e);
         } catch (FileNotFoundException e) {
-             fail("This can not fail with this FileNotFoundException  " + e) ;
+            fail("This can not fail with this FileNotFoundException  " + e);
         } catch (AxisFault axisFault) {
-            fail("This can not fail with this AxisFault  " + axisFault) ;
+            fail("This can not fail with this AxisFault  " + axisFault);
         } catch (XMLStreamException e) {
-            fail("This can not fail with this AxisFault  " + e) ;
+            fail("This can not fail with this AxisFault  " + e);
         }
-     }
+    }
 }
