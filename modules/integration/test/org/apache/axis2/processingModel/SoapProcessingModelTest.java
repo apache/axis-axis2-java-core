@@ -82,7 +82,7 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
 
             ServiceContext serviceContext = new ServiceGroupContext(
                     configContext, service.getParent())
-                    .getServiceContext(service.getName().getLocalPart());
+                    .getServiceContext(service.getName());
             inOutMC = new InOutMEPClient(serviceContext);
 
             MessageContext msgctx = new MessageContext(serviceContext

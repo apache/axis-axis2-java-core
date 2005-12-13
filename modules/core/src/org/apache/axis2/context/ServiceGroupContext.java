@@ -16,10 +16,8 @@
 
 package org.apache.axis2.context;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.engine.AxisConfiguration;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -66,8 +64,8 @@ public class ServiceGroupContext extends AbstractContext {
         while (services.hasNext()) {
             AxisService axisService = (AxisService) services.next();
             ServiceContext serviceContext = new ServiceContext(axisService, this);
-            String servicNams = axisService.getName().getLocalPart();
-            serviceContextMap.put(servicNams, serviceContext);
+            String serviceName = axisService.getName();
+            serviceContextMap.put(serviceName, serviceContext);
         }
     }
 

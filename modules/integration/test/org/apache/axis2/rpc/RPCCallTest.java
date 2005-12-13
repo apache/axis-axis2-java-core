@@ -136,7 +136,7 @@ public class RPCCallTest extends TestCase {
                         + "/axis/services/EchoXMLService/" + opName);
         String className = "org.apache.axis2.rpc.RPCServiceClass";
         operationName = new QName("http://localhost/my", opName, "req");
-        AxisService service = new AxisService(serviceName);
+        AxisService service = new AxisService(serviceName.getLocalPart());
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
                 className));

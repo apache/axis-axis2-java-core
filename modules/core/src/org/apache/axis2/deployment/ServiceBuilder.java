@@ -18,21 +18,12 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterInclude;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.impl.WSDLOperationImpl;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -92,40 +83,15 @@ public class ServiceBuilder extends DescriptionBuilder {
             } else {
                 OMAttribute serviceNameatt = service_element.getAttribute(
                         new QName(ATTNAME));
-                if(serviceNameatt != null) {
+                if (serviceNameatt != null) {
                     service.setAxisServiceName(serviceNameatt.getAttributeValue());
-                }                
+                }
             }
 
             //processing servicewide modules which required to engage gloabbly
             Iterator moduleRefs = service_element.getChildrenWithName(
                     new QName(MODULEST));
             processModuleRefs(moduleRefs);
-
-            //process INFLOW
-            OMElement inFlow = service_element.getFirstChildWithName(
-                    new QName(INFLOWST));
-            if (inFlow != null) {
-                service.setInFlow(processFlow(inFlow, service));
-            }
-
-            OMElement outFlow = service_element.getFirstChildWithName(
-                    new QName(OUTFLOWST));
-            if (outFlow != null) {
-                service.setOutFlow(processFlow(outFlow, service));
-            }
-
-            OMElement inFaultFlow = service_element.getFirstChildWithName(
-                    new QName(IN_FAILTFLOW));
-            if (inFaultFlow != null) {
-                service.setFaultInFlow(processFlow(inFaultFlow, service));
-            }
-
-            OMElement outFaultFlow = service_element.getFirstChildWithName(
-                    new QName(OUT_FAILTFLOW));
-            if (outFaultFlow != null) {
-                service.setFaultOutFlow(processFlow(outFaultFlow, service));
-            }
 
             //processing operations
             Iterator operationsIterator = service_element.getChildrenWithName(
@@ -180,29 +146,16 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
 
             String opname = op_name_att.getAttributeValue();
-            WSDLOperation wsdlOperation = service.getWSDLOPOperation(new QName(opname));
-//            AxisOperation op_descrip = service.getOperation(new QName(opname));
             AxisOperation op_descrip;
-            if (wsdlOperation == null) {
-                if (mepurl == null) {
-                    // assumed MEP is in-out
-                    op_descrip = new InOutAxisOperation();
-                } else {
-                    op_descrip = AxisOperationFactory.getOperetionDescription(mepurl);
-                }
-//                op_descrip = new AxisOperation();
-                op_descrip.setName(new QName(opname));
-                log.info(Messages.getMessage(DeploymentErrorMsgs.OP_NOT_FOUN_IN_WSDL, opname));
+            if (mepurl == null) {
+                // assumed MEP is in-out
+                op_descrip = new InOutAxisOperation();
             } else {
-                //craeting operation from existing operation
-                String mep = wsdlOperation.getMessageExchangePattern();
-                if (mep == null) {
-                    op_descrip = new InOutAxisOperation(wsdlOperation);
-                } else {
-                    op_descrip = AxisOperationFactory.getOperetionDescription(mep);
-                    op_descrip.setWsdloperation((WSDLOperationImpl) wsdlOperation);
-                }
+                op_descrip = AxisOperationFactory.getOperetionDescription(mepurl);
             }
+//                op_descrip = new AxisOperation();
+            op_descrip.setName(new QName(opname));
+            log.info(Messages.getMessage(DeploymentErrorMsgs.OP_NOT_FOUN_IN_WSDL, opname));
 
             //Operation Parameters
             Iterator parameters = operation.getChildrenWithName(

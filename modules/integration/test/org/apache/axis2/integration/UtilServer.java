@@ -139,7 +139,7 @@ public class UtilServer {
         configContext.getAxisConfiguration().addService(service);
 
         return new ServiceGroupContext(configContext, service.getParent())
-                .getServiceContext(service.getName().getLocalPart());
+                .getServiceContext(service.getName());
     }
 
     public static ServiceContext createAdressedEnabledClientSide(
@@ -161,7 +161,7 @@ public class UtilServer {
         configContext.getAxisConfiguration().addService(service);
 
         return new ServiceGroupContext(configContext, service.getParent())
-                .getServiceContext(service.getName().getLocalPart());
+                .getServiceContext(service.getName());
     }
 
 }

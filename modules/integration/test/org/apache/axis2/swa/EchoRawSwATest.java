@@ -66,7 +66,7 @@ public class EchoRawSwATest extends TestCase {
 
     protected void setUp() throws Exception {
         UtilServer.start(Constants.TESTING_PATH + "MTOM-enabledRepository");
-        service = new AxisService(serviceName);
+        service = new AxisService(serviceName.getLocalPart());
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new ParameterImpl(
                         AbstractMessageReceiver.SERVICE_CLASS, EchoSwA.class

@@ -25,12 +25,7 @@ import org.apache.axis2.databinding.DeserializationContext;
 import org.apache.axis2.databinding.deserializers.SimpleDeserializerFactory;
 import org.apache.axis2.databinding.serializers.CollectionSerializer;
 import org.apache.axis2.databinding.serializers.SimpleSerializer;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
@@ -150,14 +145,17 @@ public class SimpleTest extends TestCase {
 
         LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(config);
 
-        service = new AxisService(new QName("testService"));
+        service = new AxisService("testService");
         service.addParameter(
                 new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
                         Test.class.getName()));
         AxisOperation axisOperation = new InOutAxisOperation(new QName(methodName));
         axisOperation.setMessageReceiver(new RPCInOutMessageReceiver());
-        axisOperation.getMetadataBag().put(RPCInOutMessageReceiver.RPCMETHOD_PROPERTY, method);
         service.addOperation(axisOperation);
+        Parameter paramter = new ParameterImpl();
+        paramter.setName(RPCInOutMessageReceiver.RPCMETHOD_PROPERTY);
+        paramter.setValue(method);
+        axisOperation.addParameter(paramter);
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         LocalTransportReceiver.CONFIG_CONTEXT.getAxisConfiguration()
                 .addService(service);

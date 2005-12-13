@@ -4,7 +4,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLOperation;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -39,11 +38,6 @@ public class InOnlyAxisOperation extends AxisOperation {
 
     //this is just to stor the chain , there wont be any usage of this
     private ArrayList outPhase;
-
-    public InOnlyAxisOperation(WSDLOperation wsdloperation) {
-        super(wsdloperation);
-        createMessage();
-    }
 
     private void createMessage() {
         inMessage = new AxisMessage();

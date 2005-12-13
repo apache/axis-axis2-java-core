@@ -27,8 +27,7 @@ import javax.xml.namespace.QName;
 
 public class RegistryTest extends AbstractTestCase {
     private AxisConfiguration reg = new AxisConfiguration();
-    AxisService service = new AxisService(
-                new QName("Service1"));
+    AxisService service = new AxisService("Service1");
 
     public RegistryTest(String testName) {
         super(testName);
@@ -65,7 +64,6 @@ public class RegistryTest extends AbstractTestCase {
     public void testService() throws AxisFault {
         reg.addService(service);
         testParameteInClude(service);
-        testFlowIncludeTest(service);
     }
 
     public void testModule() throws AxisFault {
@@ -105,7 +103,7 @@ public class RegistryTest extends AbstractTestCase {
 
     public void testHandlers() throws AxisFault {
         Handler handler = new AbstractHandler() {
-            public void invoke(MessageContext msgContext) throws AxisFault {
+            public void invoke(MessageContext msgContext)  {
             }
         };
         handler.init(new HandlerDescription());

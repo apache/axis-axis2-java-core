@@ -26,7 +26,6 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
-import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ public class EnginePausingTest extends TestCase {
     private MessageContext mc;
     private ArrayList executedHandlers;
 
-    public EnginePausingTest(String arg0) throws AxisFault {
+    public EnginePausingTest(String arg0) {
         super(arg0);
         executedHandlers = new ArrayList();
         AxisConfiguration engineRegistry = new AxisConfiguration();
@@ -55,13 +54,12 @@ public class EnginePausingTest extends TestCase {
 
     protected void setUp() throws Exception {
 
-        AxisService service = new AxisService(serviceName);
-        service.setStyle(WSDLService.STYLE_DOC);
+        AxisService service = new AxisService(serviceName.getLocalPart());
         engineContext.getAxisConfiguration().addService(service);
 
         AxisOperation axisOp = new InOutAxisOperation(operationName);
         axisOp.setMessageReceiver(new MessageReceiver() {
-            public void receive(MessageContext messgeCtx) throws AxisFault {
+            public void receive(MessageContext messgeCtx) {
 
             }
         });

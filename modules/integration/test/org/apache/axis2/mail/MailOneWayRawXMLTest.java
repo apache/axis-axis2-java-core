@@ -77,9 +77,10 @@ public class MailOneWayRawXMLTest extends TestCase {
                         new QName(Constants.TRANSPORT_MAIL)));
         ml.start();
 
-        AxisService service = new AxisService(serviceName);
+        AxisService service = new AxisService(serviceName.getLocalPart());
         AxisOperation axisOperation = new OutInAxisOperation(
-                operationName);
+                );
+        axisOperation.setName(operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messgeCtx) throws AxisFault {
                 envelope = messgeCtx.getEnvelope();
@@ -107,9 +108,10 @@ public class MailOneWayRawXMLTest extends TestCase {
     }
 
     public void testOneWay() throws Exception {
-        AxisService service = new AxisService(serviceName);
+        AxisService service = new AxisService(serviceName.getLocalPart());
         AxisOperation axisOperation = new OutInAxisOperation(
-                operationName);
+                );
+        axisOperation.setName(operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messgeCtx) throws AxisFault {
                 envelope = messgeCtx.getEnvelope();

@@ -33,12 +33,7 @@ public class OutOnlyAxisOperation extends AxisOperation {
 
     //just to keep the inflow , there wont be any usage
     private ArrayList inPhases;
-
-    public OutOnlyAxisOperation(WSDLOperation wsdloperation) {
-        super(wsdloperation);
-        createMessage();
-    }
-
+   
     private void createMessage() {
         outMessage = new AxisMessage();
         inFaultMessage = new AxisMessage();

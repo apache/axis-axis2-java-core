@@ -403,7 +403,6 @@ public class DeploymentEngine implements DeploymentConstants {
         Iterator services = serviceList.iterator();
         while (services.hasNext()) {
             AxisService axisService = (AxisService) services.next();
-            Utils.loadServiceProperties(axisService);
             axisService.setFileName(
                     currentArchiveFile.getFile().getAbsolutePath());
             serviceGroup.addService(axisService);
@@ -415,7 +414,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 if (module == null) {
                     throw new DeploymentException(Messages.getMessage(
                             DeploymentErrorMsgs.BAD_MODULE_FROM_SERVICE,
-                            axisService.getName().getLocalPart(),
+                            axisService.getName(),
                             ((QName) list.get(i)).getLocalPart()));
                 }
                 axisService.engageModule(module, axisConfig);
@@ -692,7 +691,6 @@ public class DeploymentEngine implements DeploymentConstants {
 
             ServiceBuilder builder = new ServiceBuilder(serviceInputStream, axisConfig, axisService);
             builder.populateService(builder.buildOM());
-            Utils.loadServiceProperties(axisService);
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
         } catch (XMLStreamException e) {

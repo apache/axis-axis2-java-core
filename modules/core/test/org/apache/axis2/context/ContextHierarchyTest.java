@@ -39,7 +39,7 @@ public class ContextHierarchyTest extends TestCase {
 
     protected void setUp() throws Exception {
         axisOperation = new InOutAxisOperation(new QName("Temp"));
-        axisService = new AxisService(new QName("Temp"));
+        axisService = new AxisService("Temp");
         axisConfiguration = new AxisConfiguration();
         axisService.addOperation(axisOperation);
         axisConfiguration.addService(axisService);
@@ -51,7 +51,7 @@ public class ContextHierarchyTest extends TestCase {
         ServiceGroupContext serviceGroupContext = new ServiceGroupContext(
                 configurationContext, axisService.getParent());
         ServiceContext serviceContext = serviceGroupContext
-                .getServiceContext(axisService.getName().getLocalPart());
+                .getServiceContext(axisService.getName());
         MessageContext msgctx = new MessageContext(configurationContext);
         OperationContext opContext = axisOperation.findOperationContext(msgctx,
                 serviceContext);
@@ -93,7 +93,6 @@ public class ContextHierarchyTest extends TestCase {
         String value1 = "Val1";
         String value2 = "value2";
         String key2 = "key2";
-        String value3 = "value";
 
         configurationContext.setProperty(key1, value1);
         assertEquals(value1, msgctx.getProperty(key1));

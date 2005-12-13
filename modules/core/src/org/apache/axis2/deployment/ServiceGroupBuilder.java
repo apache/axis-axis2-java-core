@@ -74,8 +74,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
                 } else {
                     AxisService axisService = (AxisService) wsdlServices.get(serviceName);
                     if (axisService == null) {
-                        axisService = new AxisService(new QName(serviceName));
-                        axisService.setName(new QName(serviceName));
+                        axisService = new AxisService(serviceName);
                     }
                     // the service that has to be deploy
                     axisService.setParent(axisServiceGroup);
@@ -88,7 +87,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
         } catch (AxisFault e) {
             throw new DeploymentException(e);
         }
-     return serviceList;
+        return serviceList;
     }
 
     protected void processServiceModuleConfig(Iterator moduleConfigs,

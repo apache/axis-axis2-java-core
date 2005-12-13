@@ -179,7 +179,7 @@ public class XMLBeansSchemaUtility implements SchemaUtility {
 
             // create PortType with class name
             PortType portType = new PortTypeImpl();
-            portType.setQName(axisService.getName());
+            portType.setQName(new QName(axisService.getName()));
             definition.addPortType(portType);
             portType.setUndefined(false);
 

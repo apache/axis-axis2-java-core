@@ -20,7 +20,6 @@ import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Flow;
 import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
@@ -53,13 +52,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
             assertNotNull(service.getName());
             //no style for the service
             //   assertEquals(service.getStyle(),"rpc");
-
-            Flow flow = service.getFaultInFlow();
-            assertTrue(flow.getHandlerCount() > 0);
-            flow = service.getInFlow();
-            assertTrue(flow.getHandlerCount() > 0);
-            flow = service.getOutFlow();
-            assertTrue(flow.getHandlerCount() > 0);
+            //no need the following since
             assertNotNull(service.getParameter("para2"));
 
             AxisOperation op = service.getOperation(new QName("opname"));

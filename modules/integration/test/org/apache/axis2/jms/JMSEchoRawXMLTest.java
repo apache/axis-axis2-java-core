@@ -230,7 +230,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         envelope.getBody().addChild(method);
 
         MessageContext requestContext = new MessageContext(configContext);
-        AxisService srevice = new AxisService(serviceName);
+        AxisService srevice = new AxisService(serviceName.getLocalPart());
         srevice.addOperation(opdesc);
         configContext.getAxisConfiguration().addService(srevice);
         requestContext.setAxisService(service);

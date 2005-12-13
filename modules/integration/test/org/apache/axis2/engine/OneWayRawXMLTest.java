@@ -55,7 +55,7 @@ public class OneWayRawXMLTest extends TestCase implements TestConstants {
     protected void setUp() throws Exception {
         UtilServer.start();
 
-        AxisService service = new AxisService(serviceName);
+        AxisService service = new AxisService(serviceName.getLocalPart());
         AxisOperation axisOperation = new OutInAxisOperation(
                 operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {

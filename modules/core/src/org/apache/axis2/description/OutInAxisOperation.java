@@ -3,7 +3,6 @@ package org.apache.axis2.description;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.wsdl.WSDLOperation;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
@@ -32,16 +31,12 @@ import java.util.HashMap;
  */
 public class OutInAxisOperation extends InOutAxisOperation {
 
-    public OutInAxisOperation(WSDLOperation wsdloperation) {
-        super(wsdloperation);
+    public OutInAxisOperation(QName name) {
+        super(name);
     }
 
     public OutInAxisOperation() {
-        super();
-    }
-
-    public OutInAxisOperation(QName name) {
-        super(name);
+        super();   
     }
 
     public void addMessageContext(MessageContext msgContext, OperationContext opContext) throws AxisFault {

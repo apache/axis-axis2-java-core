@@ -184,7 +184,7 @@ public class AxisConfiguration implements ParameterInclude {
      */
     public synchronized void addService(AxisService service) throws AxisFault {
         AxisServiceGroup axisServiceGroup = new AxisServiceGroup();
-        axisServiceGroup.setServiceGroupName(service.getName().getLocalPart());
+        axisServiceGroup.setServiceGroupName(service.getName());
         axisServiceGroup.setParent(this);
         axisServiceGroup.addService(service);
         addServiceGroup(axisServiceGroup);
@@ -196,15 +196,15 @@ public class AxisConfiguration implements ParameterInclude {
         AxisService description;
         while (services.hasNext()) {
             description = (AxisService) services.next();
-            if (allservices.get(description.getName().getLocalPart()) != null) {
+            if (allservices.get(description.getName()) != null) {
                 throw new AxisFault("Two services can not have same name, a service with " +
-                        description.getName().getLocalPart() + " alredy exist in the system");
+                        description.getName() + " alredy exist in the system");
             }
         }
         services = axisServiceGroup.getServices();
         while (services.hasNext()) {
             description = (AxisService) services.next();
-            allservices.put(description.getName().getLocalPart(), description);
+            allservices.put(description.getName(), description);
             notifyObservers(AxisEvent.SERVICE_DEPLOY, description);
         }
         Iterator enModule = engagedModules.iterator();
@@ -454,7 +454,7 @@ public class AxisConfiguration implements ParameterInclude {
             Iterator servics = axisServiceGroup.getServices();
             while (servics.hasNext()) {
                 AxisService axisService = (AxisService) servics.next();
-                allservices.put(axisService.getName().getLocalPart(), axisService);
+                allservices.put(axisService.getName(), axisService);
             }
         }
         return allservices;

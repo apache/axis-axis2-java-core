@@ -31,7 +31,7 @@
         static{
 
            //creating the Service
-           _service = new org.apache.axis2.description.AxisService(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>","<xsl:value-of select="@servicename"/>"));
+           _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>");
 
            //creating the operations
            org.apache.axis2.description.AxisOperation __operation;
@@ -51,7 +51,7 @@
 		    //creating the configuration
            _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory().buildClientConfigurationContext(axis2Home);
            _configurationContext.getAxisConfiguration().addService(_service);
-           _serviceContext =new org.apache.axis2.context.ServiceGroupContext(_configurationContext, _service.getParent()).getServiceContext(_service.getName().getLocalPart());
+           _serviceContext =new org.apache.axis2.context.ServiceGroupContext(_configurationContext, _service.getParent()).getServiceContext(_service.getName());
            _clientOptions.setTo(new org.apache.axis2.addressing.EndpointReference(targetEndpoint));
 
         <!--  Set the soap version depending on the binding. Default is 1.1 so don't set anything for that case-->

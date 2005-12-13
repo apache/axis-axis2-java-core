@@ -119,11 +119,7 @@ public class ClientUtil {
         ConfigurationContextFactory fac = new ConfigurationContextFactory();
         ConfigurationContext configContext = fac.buildClientConfigurationContext(
                 "doGoogleSearch");
-        try {
-            msgContext = new MessageContext(configContext);
-        } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();
-        }
+        msgContext = new MessageContext(configContext);
         msgContext.setEnvelope(envelope);
         return msgContext;
     }

@@ -17,14 +17,12 @@
 package org.apache.axis2.receivers;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLService;
@@ -45,7 +43,6 @@ public class RawXMLINOnlyMessageReceiver
     /**
      * Field scope
      */
-    private String scope;
 
     /**
      * Field method
@@ -55,13 +52,11 @@ public class RawXMLINOnlyMessageReceiver
     /**
      * Field classLoader
      */
-    private ClassLoader classLoader;
 
     /**
      * Constructor RawXMLProvider
      */
     public RawXMLINOnlyMessageReceiver() {
-        scope = Constants.APPLICATION_SCOPE;
     }
 
     public void invokeBusinessLogic(MessageContext msgContext)
@@ -97,8 +92,7 @@ public class RawXMLINOnlyMessageReceiver
                 OMElement methodElement = msgContext.getEnvelope().getBody()
                         .getFirstElement();
 
-                OMElement parmeter = null;
-                SOAPEnvelope envelope = null;
+                OMElement parmeter;
 
                 String style = msgContext.getOperationContext()
                         .getAxisOperation()
@@ -108,17 +102,17 @@ public class RawXMLINOnlyMessageReceiver
                     parmeter = methodElement;
                     Object[] parms = new Object[]{parmeter};
                     //Need not have a return here
-                     method.invoke(obj, parms);
+                    method.invoke(obj, parms);
 
                 } else if (WSDLService.STYLE_RPC.equals(style)) {
                     parmeter = methodElement.getFirstElement();
                     Object[] parms = new Object[]{parmeter};
 
                     // invoke the WebService
-                     method.invoke(obj, parms);
+                    method.invoke(obj, parms);
 
                 } else {
-                    throw new AxisFault(Messages.getMessage("unknownStyle",style));
+                    throw new AxisFault(Messages.getMessage("unknownStyle", style));
                 }
             } else {
                 throw new AxisFault(Messages.getMessage("rawXmlProivdeIsLimited"));

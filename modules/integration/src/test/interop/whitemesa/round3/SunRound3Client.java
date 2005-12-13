@@ -54,7 +54,7 @@ public class SunRound3Client {
             ConfigurationContext configCtx = new ConfigurationContext(axisConfig);
             MessageContext msgCtx = new MessageContext(configCtx);
 
-            AxisOperation opDesc = new OutInAxisOperation(new QName(""));
+            AxisOperation opDesc = new OutInAxisOperation();
             SOAPEnvelope requestEnvilope = util.getEchoSoapEnvelope();
             msgCtx.setEnvelope(requestEnvilope);
             MessageContext resMsgCtx = call.invokeBlocking(opDesc, msgCtx);

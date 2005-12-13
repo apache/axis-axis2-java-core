@@ -16,14 +16,7 @@
 
 package org.apache.axis2.deployment.repository.util;
 
-import org.apache.axis2.deployment.DeploymentConstants;
-import org.apache.axis2.deployment.DeploymentEngine;
-import org.apache.axis2.deployment.DeploymentErrorMsgs;
-import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.deployment.DescriptionBuilder;
-import org.apache.axis2.deployment.ModuleBuilder;
-import org.apache.axis2.deployment.ServiceBuilder;
-import org.apache.axis2.deployment.ServiceGroupBuilder;
+import org.apache.axis2.deployment.*;
 import org.apache.axis2.description.AxisDescWSDLComponentFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -76,8 +69,8 @@ public class ArchiveReader implements DeploymentConstants {
                 // description we read in as we will be replacing them anyway.
                 WSDLServiceImpl serviceimpl = (WSDLServiceImpl)
                         womDescription.getServices().get(iterator.next());
-                AxisService service = new AxisService(serviceimpl);
-                service.setName(serviceimpl.getName());
+                AxisService service = new AxisService();
+                service.setName(serviceimpl.getName().getLocalPart());
                 service.setWSDLDefinition(wsdlVersionWrapper.getDefinition());
                 return service;
 //                depengine.getCurrentFileItem().addService(service);
@@ -115,7 +108,7 @@ public class ArchiveReader implements DeploymentConstants {
                     if (fileName.endsWith(".wsdl") || fileName.endsWith(".WSDL")) {
                         InputStream in = new FileInputStream(file1);
                         AxisService service = processWSDLFile(in);
-                        servicesMap.put(service.getName().getLocalPart(), service);
+                        servicesMap.put(service.getName(), service);
                         try {
                             in.close();
                         } catch (IOException e) {
@@ -150,7 +143,7 @@ public class ArchiveReader implements DeploymentConstants {
                         }
                         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
                         AxisService service = processWSDLFile(in);
-                        servicesMap.put(service.getName().getLocalPart(), service);
+                        servicesMap.put(service.getName(), service);
                     }
                 }
                 try {
@@ -182,7 +175,6 @@ public class ArchiveReader implements DeploymentConstants {
                                          AxisConfiguration axisConfig)
             throws DeploymentException {
         // get attribute values
-        boolean foundServiceXML = false;
         if (!extractService) {
             ZipInputStream zin;
             try {
@@ -190,19 +182,16 @@ public class ArchiveReader implements DeploymentConstants {
                 ZipEntry entry;
                 while ((entry = zin.getNextEntry()) != null) {
                     if (entry.getName().equals(SERVICEXML)) {
-                        foundServiceXML = true;
                         axisServiceGroup.setServiceGroupName(DescriptionBuilder.getShortFileName(
                                 engine.getCurrentFileItem().getName()));
                         return buildServiceGroup(zin, engine, axisServiceGroup, wsdls, axisConfig);
                     }
                 }
                 //    zin.close();
-                if (!foundServiceXML) {
-                    throw new DeploymentException(
-                            Messages.getMessage(
-                                    DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND,
-                                    filename));
-                }
+                throw new DeploymentException(
+                        Messages.getMessage(
+                                DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND,
+                                filename));
             } catch (Exception e) {
                 throw new DeploymentException(e);
             }
@@ -226,7 +215,6 @@ public class ArchiveReader implements DeploymentConstants {
                         Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND));
             }
         }
-        return null;
     }
 
     private ArrayList buildServiceGroup(InputStream zin, DeploymentEngine engine,
@@ -243,8 +231,7 @@ public class ArchiveReader implements DeploymentConstants {
                     DescriptionBuilder.getShortFileName(engine.getCurrentFileItem().getName()));
             if (axisService == null) {
                 axisService = new AxisService(
-                        new QName(DescriptionBuilder.getShortFileName(
-                                engine.getCurrentFileItem().getName())));
+                        DescriptionBuilder.getShortFileName(engine.getCurrentFileItem().getName()));
             }
             axisService.setParent(axisServiceGroup);
             axisService.setClassLoader(engine.getCurrentFileItem().getClassLoader());

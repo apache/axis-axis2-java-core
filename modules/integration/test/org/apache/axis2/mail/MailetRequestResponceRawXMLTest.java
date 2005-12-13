@@ -107,9 +107,9 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
 
         ConfigurationContext configContext = UtilsMailServer.createClientConfigurationContext();
 
-        AxisService service = new AxisService(serviceName);
-        AxisOperation axisOperation = new OutInAxisOperation(
-                operationName);
+        AxisService service = new AxisService(serviceName.getLocalPart());
+        AxisOperation axisOperation = new OutInAxisOperation();
+        axisOperation.setName(operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messgeCtx) throws AxisFault {
                 envelope = messgeCtx.getEnvelope();

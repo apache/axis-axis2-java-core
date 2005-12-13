@@ -19,11 +19,7 @@ package org.apache.axis2.context;
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.util.UUIDGenerator;
 
@@ -40,7 +36,7 @@ public class OperationContextTest extends AbstractTestCase {
 
     public void testMEPfindingOnRelatesTO() throws Exception {
 
-        AxisService axisService = new AxisService(new QName("TempSC"));
+        AxisService axisService = new AxisService("TempSC");
         configContext.getAxisConfiguration().addService(axisService);
         ServiceGroupContext sgc = new ServiceGroupContext(configContext,
                 axisService.getParent());

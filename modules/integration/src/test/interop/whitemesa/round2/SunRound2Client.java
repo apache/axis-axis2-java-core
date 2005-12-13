@@ -52,7 +52,7 @@ public class SunRound2Client {
             AxisConfiguration axisConfig = new AxisConfiguration();
             ConfigurationContext configCtx = new ConfigurationContext(axisConfig);
             MessageContext msgCtx = new MessageContext(configCtx);
-            AxisOperation opDesc = new OutInAxisOperation(new QName(""));
+            AxisOperation opDesc = new OutInAxisOperation();
             SOAPEnvelope requestEnvilope = util.getEchoSoapEnvelope();
             msgCtx.setEnvelope(requestEnvilope);
             MessageContext responseMCtx = call.invokeBlocking(opDesc, msgCtx);

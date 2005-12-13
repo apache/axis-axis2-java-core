@@ -57,8 +57,6 @@ public class MessageWithServerTest extends TestCase {
                 operationName);
 
 
-        service.setInFlow(new MockFlow("service inflow", 4));
-        service.setOutFlow(new MockFlow("service outflow", 5));
         //service.setFaultInFlow(new MockFlow("service faultflow", 1));
 
         ModuleDescription m1 = new ModuleDescription(
@@ -69,7 +67,8 @@ public class MessageWithServerTest extends TestCase {
         service.engageModule(m1,engineRegistry);
 
         AxisOperation axisOperation = new OutInAxisOperation(
-                operationName);
+                );
+        axisOperation.setName(operationName);
         service.addOperation(axisOperation);
 
         UtilServer.deployService(service);

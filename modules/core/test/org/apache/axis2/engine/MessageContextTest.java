@@ -25,8 +25,6 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPProcessingException;
 
-import javax.xml.namespace.QName;
-
 public class MessageContextTest extends AbstractTestCase {
     public MessageContextTest(String testName) {
         super(testName);
@@ -36,7 +34,7 @@ public class MessageContextTest extends AbstractTestCase {
             SOAPProcessingException {
         AxisConfiguration er = new AxisConfiguration();
         AxisService servicesDesc = new AxisService();
-        servicesDesc.setName(new QName("testService"));
+        servicesDesc.setName("testService");
         er.addService(servicesDesc);
 
         ConfigurationContext engineContext = new ConfigurationContext(er);

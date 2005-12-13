@@ -13,24 +13,13 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wsdl.MessageReference;
 import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLExtensibilityAttribute;
-import org.apache.wsdl.WSDLExtensibilityElement;
-import org.apache.wsdl.WSDLFaultReference;
-import org.apache.wsdl.WSDLFeature;
-import org.apache.wsdl.WSDLOperation;
-import org.apache.wsdl.WSDLProperty;
-import org.apache.wsdl.impl.WSDLOperationImpl;
-import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -51,20 +40,21 @@ import java.util.Map;
 
 public abstract class AxisOperation implements
         ParameterInclude, DescriptionConstants,
-        WSDLConstants, WSDLOperation {
+        WSDLConstants {
+
+    public static final String STYLE_RPC = "rpc";
+    public static final String STYLE_DOC = "doc";
+    public static final String STYLE_MSG = "msg";
+
     private Log log = LogFactory.getLog(getClass());
 
     private MessageReceiver messageReceiver;
-//    private ArrayList remainingPhasesInFlow;
-//    private ArrayList phasesOutFlow;
-//    private ArrayList phasesInFaultFlow;
-//    private ArrayList phasesOutFaultFlow;
 
     private HashMap moduleConfigmap;
 
     private int mep = MEP_CONSTANT_INVALID;
 
-    private WSDLOperationImpl wsdloperation;
+    //  private WSDLOperationImpl wsdloperation;
 
     private AxisService parent;
     private ArrayList wsamappingList;
@@ -76,17 +66,20 @@ public abstract class AxisOperation implements
     //to store engaged modules
     private ArrayList engagedModules = new ArrayList();
 
+    //todo need to change name to String
+    private QName name;
+    //to store mepURL
+    private String mepURI;
 
-    public AxisOperation(WSDLOperation wsdloperation) {
-        this.wsdloperation = (WSDLOperationImpl) wsdloperation;
-        this.setMessageExchangePattern(MEP_URI_IN_OUT);
-        this.setComponentProperty(PARAMETER_KEY, new ParameterIncludeImpl());
-        modulerefs = new ArrayList();
-        moduleConfigmap = new HashMap();
-    }
+    private ParameterInclude parameterInclude;
+
+    private String style = STYLE_DOC;
 
     public AxisOperation() {
-        this(new WSDLOperationImpl());
+        mepURI = MEP_URI_IN_OUT;
+        parameterInclude = new ParameterIncludeImpl();
+        modulerefs = new ArrayList();
+        moduleConfigmap = new HashMap();
     }
 
     public AxisOperation(QName name) {
@@ -149,9 +142,7 @@ public abstract class AxisOperation implements
         if (isParameterLocked(param.getName())) {
             throw new AxisFault("Parmter is locked can not overide: " + param.getName());
         } else {
-            ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this
-                    .getComponentProperty(PARAMETER_KEY);
-            paramInclude.addParameter(param);
+            parameterInclude.addParameter(param);
         }
     }
 
@@ -161,15 +152,11 @@ public abstract class AxisOperation implements
      * @param name Name of the parameter
      */
     public Parameter getParameter(String name) {
-        ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this
-                .getComponentProperty(PARAMETER_KEY);
-        return paramInclude.getParameter(name);
+        return parameterInclude.getParameter(name);
     }
 
     public ArrayList getParameters() {
-        ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this
-                .getComponentProperty(PARAMETER_KEY);
-        return paramInclude.getParameters();
+        return parameterInclude.getParameters();
     }
 
     public MessageReceiver getMessageReceiver() {
@@ -177,9 +164,7 @@ public abstract class AxisOperation implements
     }
 
     public void deserializeParameters(OMElement parameterElement) throws AxisFault {
-        ParameterIncludeImpl paramInclude = (ParameterIncludeImpl) this
-                .getComponentProperty(PARAMETER_KEY);
-        paramInclude.deserializeParameters(parameterElement);
+        parameterInclude.deserializeParameters(parameterElement);
     }
 
     public void setMessageReceiver(MessageReceiver messageReceiver) {
@@ -223,6 +208,14 @@ public abstract class AxisOperation implements
         this.mep = temp;
         return this.mep;
 
+    }
+
+    public String getMessageExchangePattern() {
+        return mepURI;
+    }
+
+    public void setMessageExchangePattern(String mepURI) {
+        this.mepURI = mepURI;
     }
 
 
@@ -307,146 +300,14 @@ public abstract class AxisOperation implements
     public abstract void addMessageContext(MessageContext msgContext, OperationContext opContext)
             throws AxisFault;
 
-    public List getInfaults() {
-        return wsdloperation.getInfaults();
-    }
-
-    public void setInfaults(List infaults) {
-        wsdloperation.setInfaults(infaults);
-    }
-
-    public MessageReference getInputMessage() {
-        return wsdloperation.getInputMessage();
-    }
-
-    public void setInputMessage(MessageReference inputMessage) {
-        wsdloperation.setInputMessage(inputMessage);
-    }
-
-    public String getMessageExchangePattern() {
-        return wsdloperation.getMessageExchangePattern();
-    }
-
-    public void setMessageExchangePattern(String messageExchangePattern) {
-        wsdloperation.setMessageExchangePattern(messageExchangePattern);
-    }
 
     public QName getName() {
-        return wsdloperation.getName();
+        return name;
     }
 
     public void setName(QName name) {
-        wsdloperation.setName(name);
+        this.name = name;
     }
-
-    public List getOutfaults() {
-        return wsdloperation.getOutfaults();
-    }
-
-    public void setOutfaults(List outfaults) {
-        wsdloperation.setOutfaults(outfaults);
-    }
-
-    public MessageReference getOutputMessage() {
-        return wsdloperation.getOutputMessage();
-    }
-
-    public void setOutputMessage(MessageReference outputMessage) {
-        wsdloperation.setOutputMessage(outputMessage);
-    }
-
-    public boolean isSafe() {
-        return wsdloperation.isSafe();
-    }
-
-    public void setSafety(boolean safe) {
-        wsdloperation.setSafety(safe);
-    }
-
-    public String getStyle() {
-        return wsdloperation.getStyle();
-    }
-
-    public void setStyle(String style) {
-        wsdloperation.setStyle(style);
-    }
-
-    public String getTargetnamespace() {
-        return wsdloperation.getTargetnamespace();
-    }
-
-    public void addInFault(WSDLFaultReference inFault) {
-        wsdloperation.addInFault(inFault);
-    }
-
-    public void addOutFault(WSDLFaultReference outFault) {
-        wsdloperation.addOutFault(outFault);
-    }
-
-    public void addFeature(WSDLFeature feature) {
-        wsdloperation.addFeature(feature);
-    }
-
-    public List getFeatures() {
-        return wsdloperation.getFeatures();
-    }
-
-    public void addProperty(WSDLProperty wsdlProperty) {
-        wsdloperation.addProperty(wsdlProperty);
-    }
-
-    public List getProperties() {
-        return wsdloperation.getProperties();
-    }
-
-    public Document getDocumentation() {
-        return wsdloperation.getDocumentation();
-    }
-
-    public void setDocumentation(Document documentation) {
-        wsdloperation.setDocumentation(documentation);
-    }
-
-    public HashMap getComponentProperties() {
-        return wsdloperation.getComponentProperties();
-    }
-
-    public void setComponentProperties(HashMap properties) {
-        wsdloperation.setComponentProperties(properties);
-    }
-
-    public void setComponentProperty(Object key, Object obj) {
-        wsdloperation.setComponentProperty(key, obj);
-    }
-
-    public Object getComponentProperty(Object key) {
-        return wsdloperation.getComponentProperty(key);
-    }
-
-    public void addExtensibilityElement(WSDLExtensibilityElement element) {
-        wsdloperation.addExtensibilityElement(element);
-    }
-
-    public List getExtensibilityElements() {
-        return wsdloperation.getExtensibilityElements();
-    }
-
-    public void addExtensibleAttributes(WSDLExtensibilityAttribute attribute) {
-        wsdloperation.addExtensibleAttributes(attribute);
-    }
-
-    public List getExtensibilityAttributes() {
-        return wsdloperation.getExtensibilityAttributes();
-    }
-
-    public Map getMetadataBag() {
-        return wsdloperation.getMetadataBag();
-    }
-
-    public void setMetadataBag(Map meMap) {
-        wsdloperation.setMetadataBag(meMap);
-    }
-
 
     /**
      * This method is responsible for finding a MEPContext for an incomming
@@ -543,10 +404,6 @@ public abstract class AxisOperation implements
         }
     }
 
-    public void setWsdloperation(WSDLOperationImpl wsdloperation) {
-        this.wsdloperation = wsdloperation;
-    }
-
     public ArrayList getWsamappingList() {
         return wsamappingList;
     }
@@ -563,5 +420,12 @@ public abstract class AxisOperation implements
         this.controlOperation = controlOperation;
     }
 
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
 
 }

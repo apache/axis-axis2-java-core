@@ -34,7 +34,7 @@ import org.apache.axis2.security.handler.config.OutflowConfiguration;
  */
 public class InteropScenarioClient {
 
-    
+
     public void invokeWithStaticConfig(String clientRepo, String url) throws Exception {
         TicketType ticket = TicketType.Factory.newInstance();
         ticket.setId("My ticket Id");
@@ -75,10 +75,10 @@ public class InteropScenarioClient {
         //Enable MTOM to those scenarios where they are configured using:
         //<optimizeParts>xpathExpression</optimizeParts>
         stub._getClientOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        
+
         //Engage the security module
         stub.engageModule("security");
-        
+
         if(outflowConfig !=null){
         	stub._getClientOptions().setProperty(WSSHandlerConstants.OUTFLOW_SECURITY, outflowConfig.getProperty());
         }

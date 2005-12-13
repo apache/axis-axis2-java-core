@@ -122,11 +122,7 @@ public class ClientUtil {
         } catch (DeploymentException e) {
             e.printStackTrace();
         }
-        try {
-            msgContext = new MessageContext(configContext);
-        } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();
-        }
+        msgContext = new MessageContext(configContext);
         msgContext.setEnvelope(reqEnv);
         return msgContext;
     }

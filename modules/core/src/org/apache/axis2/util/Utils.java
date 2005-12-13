@@ -20,12 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.MessageInformationHeaders;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
@@ -87,10 +82,10 @@ public class Utils {
     }
 
     public static AxisService createSimpleService(QName serviceName,
-                                                         MessageReceiver messageReceiver,
-                                                         String className,
-                                                         QName opName) throws AxisFault {
-        AxisService service = new AxisService(serviceName);
+                                                  MessageReceiver messageReceiver,
+                                                  String className,
+                                                  QName opName) throws AxisFault {
+        AxisService service = new AxisService(serviceName.getLocalPart());
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(
                 new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
@@ -114,8 +109,8 @@ public class Utils {
     //    }
 
     public static AxisService createSimpleService(QName serviceName,
-                                                         String className,
-                                                         QName opName) throws AxisFault {
+                                                  String className,
+                                                  QName opName) throws AxisFault {
         return createSimpleService(serviceName,
                 new RawXMLINOutMessageReceiver(),
                 className,
@@ -134,9 +129,10 @@ public class Utils {
 
     /**
      * Break a full path into pieces
+     *
      * @param path
      * @return an array where element [0] always contains the service, and element 1, if not null, contains
-     * the path after the first element. all ? parameters are discarded.
+     *         the path after the first element. all ? parameters are discarded.
      */
     public static String[] parseRequestURLForServiceAndOperation(
             String path) {
@@ -149,10 +145,10 @@ public class Utils {
             int serviceStart = index + Constants.REQUEST_URL_PREFIX.length();
             service = path.substring(serviceStart + 1);
             int queryIndex = service.indexOf('?');
-            if(queryIndex>0) {
-                service = service.substring(0,queryIndex);
+            if (queryIndex > 0) {
+                service = service.substring(0, queryIndex);
             }
-            int operationIndex= service.indexOf('/');
+            int operationIndex = service.indexOf('/');
             if (operationIndex > 0) {
                 values[0] = service.substring(0, operationIndex);
                 values[1] = service.substring(operationIndex + 1);

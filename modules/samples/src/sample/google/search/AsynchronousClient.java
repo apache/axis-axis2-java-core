@@ -101,7 +101,8 @@ public class AsynchronousClient {
         try {
             options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
             QName opName = new QName("urn:GoogleSearch", "doGoogleSearch");
-            AxisOperation opdesc = new OutInAxisOperation(opName);
+            AxisOperation opdesc = new OutInAxisOperation();
+            opdesc.setName(opName);
             //   AxisOperation opdesc = new AxisOperation(new QName("viewVersion"));
             call.invokeNonBlocking(opdesc,
                     requestContext,

@@ -25,11 +25,7 @@ import org.apache.axis2.util.threadpool.ThreadPool;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -120,6 +116,7 @@ public class ConfigurationContext extends AbstractContext {
 
     /**
      * Returns the thread factory.
+     *
      * @return Returns configuration specific thread pool
      */
     public ThreadFactory getThreadPool() {
@@ -131,14 +128,15 @@ public class ConfigurationContext extends AbstractContext {
 
     /**
      * Sets the thread factory.
+     *
      * @param pool
      */
-    public void setThreadPool(ThreadFactory pool) throws AxisFault{
-    	  if (threadPool == null) {
-			threadPool = pool;
-		} else {
-			throw new AxisFault("Thread pool already set.");
-		}
+    public void setThreadPool(ThreadFactory pool) throws AxisFault {
+        if (threadPool == null) {
+            threadPool = pool;
+        } else {
+            throw new AxisFault("Thread pool already set.");
+        }
 
     }
 
@@ -186,8 +184,7 @@ public class ConfigurationContext extends AbstractContext {
         if (!isNull(serviceGroupContextId) && serviceGroupContextMap.get(serviceGroupContextId) != null) {
             // SGC is already there
             serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
-            serviceContext = serviceGroupContext.getServiceContext(messageContext.getAxisService().getName().
-                    getLocalPart());
+            serviceContext = serviceGroupContext.getServiceContext(messageContext.getAxisService().getName());
         } else {
             // either the key is null or no SGC is found from the give key
             if (isNull(serviceGroupContextId)) {
@@ -197,10 +194,9 @@ public class ConfigurationContext extends AbstractContext {
             if (messageContext.getAxisService() != null) {
                 AxisServiceGroup axisServiceGroup =
                         messageContext.getAxisService().getParent();
-                serviceGroupContext = new ServiceGroupContext (this, axisServiceGroup);
+                serviceGroupContext = new ServiceGroupContext(this, axisServiceGroup);
                 serviceContext = serviceGroupContext.getServiceContext(
-                        messageContext.getAxisService().getName().
-                                getLocalPart());
+                        messageContext.getAxisService().getName());
                 //set the serviceGroupContextID
                 serviceGroupContext.setId(serviceGroupContextId);
                 this.registerServiceGroupContext(serviceGroupContext);
@@ -224,8 +220,8 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
-    public ServiceGroupContext getServiceGroupContext(String serviceGroupContextId){
-        if(serviceGroupContextMap != null){
+    public ServiceGroupContext getServiceGroupContext(String serviceGroupContextId) {
+        if (serviceGroupContextMap != null) {
             return (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
         }
         return null;
@@ -237,10 +233,11 @@ public class ConfigurationContext extends AbstractContext {
 
     /**
      * Gets all service groups in the system.
+     *
      * @return Returns hashmap of ServiceGroupContexts.
      */
-    public HashMap getServiceGroupContexts(){
-        return (HashMap)serviceGroupContextMap;
+    public HashMap getServiceGroupContexts() {
+        return (HashMap) serviceGroupContextMap;
     }
 
 }

@@ -21,22 +21,15 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
-import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
 
 public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
     private MessageContext mc;
-    private ArrayList executedHandlers = new ArrayList();
     private AxisConfiguration engineRegistry;
     private QName serviceName = new QName("axis/services/NullService");
     private QName operationName = new QName("NullOperation");
@@ -64,7 +57,7 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
                 new QName("null"));
         axisOp = new InOutAxisOperation(operationName);
 
-        service = new AxisService(serviceName);
+        service = new AxisService(serviceName.getLocalPart());
         axisOp.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messgeCtx) throws AxisFault {
                 // TODO Auto-generated method stub
@@ -72,7 +65,6 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
             }
         });
         engineRegistry.addService(service);
-        service.setStyle(WSDLService.STYLE_DOC);
         service.addOperation(axisOp);
 
         mc =

@@ -109,9 +109,10 @@ public class MailCharSetEncodingTest extends TestCase {
                 engineRegistry = clientConfigContext.getAxisConfiguration();
             }
             AxisService clientService = new AxisService(
-                    serviceName);
+                    serviceName.getLocalPart());
             AxisOperation clientOperation = new OutInAxisOperation(
-                    operationName);
+                    );
+            clientOperation.setName(operationName);
             clientOperation.setMessageReceiver(new MessageReceiver() {
                 public void receive(MessageContext messgeCtx) throws AxisFault {
                     envelope = messgeCtx.getEnvelope();

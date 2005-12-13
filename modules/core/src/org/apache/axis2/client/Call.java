@@ -172,7 +172,8 @@ public class Call extends InOutMEPClient {
 
         super.assumeServiceContext(clientHome);
         AxisService axisService = serviceContext.getAxisService();
-        axisOperationTemplate = new OutInAxisOperation(new QName("TemplateOperation"));
+        axisOperationTemplate = new OutInAxisOperation();
+        axisOperationTemplate.setName(new QName("TemplateOperation"));
 
         AxisConfiguration axisConfiguration = serviceContext.getConfigurationContext().getAxisConfiguration();
         PhasesInfo info = axisConfiguration.getPhasesInfo();

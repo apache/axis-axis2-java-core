@@ -131,11 +131,6 @@ public class MessageContext extends AbstractContext {
     private boolean serverSide;
 
     /**
-     * Field messageID
-     */
-    private String messageID;
-
-    /**
      * Field newThreadRequired
      */
     private boolean newThreadRequired = false;
@@ -167,8 +162,6 @@ public class MessageContext extends AbstractContext {
     private boolean doingMTOM = false;
     //Are we doing REST now?
     private boolean doingREST = false;
-    //Rest through GET of HTTP
-    private boolean doRESTthroughPOST = true;
 
     private boolean isSOAP11 = true;
 
@@ -183,7 +176,7 @@ public class MessageContext extends AbstractContext {
 
     String serviceGroupId = null;
 
-    QName serviceDescName = null;
+    String axisServiceName = null;
 
     QName axisOperationName = null;
 
@@ -192,19 +185,16 @@ public class MessageContext extends AbstractContext {
      * transport in/out
      *
      * @param engineContext
-     * @throws AxisFault
      */
 
-    public MessageContext(ConfigurationContext engineContext)
-            throws AxisFault {
+    public MessageContext(ConfigurationContext engineContext) {
         this(engineContext, null, null, null);
     }
 
     public MessageContext(
             ConfigurationContext engineContext,
             TransportInDescription transportIn,
-            TransportOutDescription transportOut)
-            throws AxisFault {
+            TransportOutDescription transportOut) {
         this(engineContext, null, transportIn, transportOut);
         this.transportInName = transportIn.getName();
         this.transportOutname = transportOut.getName();
@@ -214,15 +204,13 @@ public class MessageContext extends AbstractContext {
      * @param sessionContext
      * @param transportIn
      * @param transportOut
-     * @throws AxisFault
      */
 
     public MessageContext(
             ConfigurationContext engineContext,
             SessionContext sessionContext,
             TransportInDescription transportIn,
-            TransportOutDescription transportOut)
-            throws AxisFault {
+            TransportOutDescription transportOut) {
         super(null);
 
         if (sessionContext == null) {
@@ -681,8 +669,8 @@ public class MessageContext extends AbstractContext {
      * @return Parameter <code>Parameter</code>
      */
     public Parameter getModuleParameter(String key, String moduleName, HandlerDescription handler) {
-        Parameter param = null;
-        ModuleConfiguration moduleConfig = null;
+        Parameter param;
+        ModuleConfiguration moduleConfig;
         if (getAxisOperation() != null) {
             AxisOperation opDesc = getAxisOperation();
             moduleConfig = opDesc.getModuleConfig(new QName(moduleName));
@@ -729,7 +717,7 @@ public class MessageContext extends AbstractContext {
             }
         }
         AxisConfiguration baseConfig = configurationContext.getAxisConfiguration();
-        moduleConfig = ((AxisConfiguration) baseConfig).getModuleConfig(new QName(moduleName));
+        moduleConfig = baseConfig.getModuleConfig(new QName(moduleName));
         if (moduleConfig != null) {
             param = moduleConfig.getParameter(key);
             if (param != null) {
@@ -879,7 +867,7 @@ public class MessageContext extends AbstractContext {
     public void setAxisService(AxisService axisService) {
         this.axisService = axisService;
         if (axisService != null)
-            this.serviceDescName = axisService.getName();
+            this.axisServiceName = axisService.getName();
     }
 
     public AxisServiceGroup getAxisServiceGroup() {

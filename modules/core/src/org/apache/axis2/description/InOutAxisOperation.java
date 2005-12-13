@@ -4,7 +4,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.wsdl.WSDLConstants;
-import org.apache.wsdl.WSDLOperation;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -34,15 +33,11 @@ import java.util.HashMap;
  */
 public class InOutAxisOperation extends AxisOperation {
 
+
     private AxisMessage inMessage;
     private AxisMessage inFaultMessage;
     private AxisMessage outFaultMessage;
     private AxisMessage outMessage;
-
-    public InOutAxisOperation(WSDLOperation wsdloperation) {
-        super(wsdloperation);
-        createMessages();
-    }
 
     private void createMessages() {
         inMessage = new AxisMessage();
@@ -50,6 +45,7 @@ public class InOutAxisOperation extends AxisOperation {
         outFaultMessage = new AxisMessage();
         outMessage = new AxisMessage();
     }
+
 
     public InOutAxisOperation() {
         super();

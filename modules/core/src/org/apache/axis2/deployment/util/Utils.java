@@ -2,7 +2,6 @@ package org.apache.axis2.deployment.util;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.engine.Handler;
@@ -74,37 +73,6 @@ public class Utils {
             }
         }
         return null;
-    }
-
-    /**
-     * This method is used to fill the axis service , it dose loading service class and also the provider class
-     * and it will also load the service handlers
-     *
-     * @param axisService
-     * @throws org.apache.axis2.AxisFault
-     */
-    public static void loadServiceProperties(AxisService axisService) throws AxisFault {
-        Flow inflow = axisService.getInFlow();
-        ClassLoader cls = axisService.getClassLoader();
-        if (inflow != null) {
-            addFlowHandlers(inflow, cls);
-        }
-
-        Flow outFlow = axisService.getOutFlow();
-        if (outFlow != null) {
-            addFlowHandlers(outFlow, cls);
-        }
-
-        Flow faultInFlow = axisService.getFaultInFlow();
-        if (faultInFlow != null) {
-            addFlowHandlers(faultInFlow, cls);
-        }
-
-        Flow faultOutFlow = axisService.getFaultOutFlow();
-        if (faultOutFlow != null) {
-            addFlowHandlers(faultOutFlow, cls);
-        }
-        // axisService.setClassLoader(currentArchiveFile.getClassLoader());
     }
 
     public static void addFlowHandlers(Flow flow, ClassLoader clsLoader) throws AxisFault {

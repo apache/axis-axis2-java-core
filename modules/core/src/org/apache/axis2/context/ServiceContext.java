@@ -16,10 +16,8 @@
 
 package org.apache.axis2.context;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
 
@@ -33,8 +31,6 @@ public class ServiceContext extends AbstractContext {
 
     private String serviceInstanceID;
 
-    private QName axisServiceName = null;
-
 
     public ServiceContext(
             AxisService serviceConfig,
@@ -43,8 +39,7 @@ public class ServiceContext extends AbstractContext {
         this.axisService = serviceConfig;
 
         if (serviceConfig != null) {
-            this.axisServiceName = serviceConfig.getName();
-            serviceInstanceID = serviceConfig.getName().getLocalPart();
+            serviceInstanceID = serviceConfig.getName();
         }
 
     }

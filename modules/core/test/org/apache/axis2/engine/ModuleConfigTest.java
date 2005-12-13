@@ -66,7 +66,7 @@ public class ModuleConfigTest extends TestCase {
 
 
             AxisService service = new AxisService();
-            service.setName(new QName("testService"));
+            service.setName("testService");
             ar.addService(service);
             InputStream in = new FileInputStream(repo + "/service1.xml");
             ServiceBuilder sbuilder = new ServiceBuilder(in, null, service);

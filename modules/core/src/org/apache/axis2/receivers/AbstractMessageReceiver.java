@@ -30,7 +30,6 @@ import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPFactory;
 
-import javax.xml.namespace.QName;
 
 public abstract class AbstractMessageReceiver implements MessageReceiver {
     public static final String SERVICE_CLASS = "ServiceClass";
@@ -46,40 +45,40 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      * @throws AxisFault
      */
     protected Object makeNewServiceObject(MessageContext msgContext)
-        throws AxisFault {
+            throws AxisFault {
         try {
 
             String nsURI = msgContext.getEnvelope().getNamespace().getName();
             if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
                 fac = OMAbstractFactory.getSOAP12Factory();
             } else if (
-                SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
+                    SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
                 fac = OMAbstractFactory.getSOAP11Factory();
             } else {
                 throw new AxisFault(Messages.getMessage("invalidSOAPversion"));
             }
 
             AxisService service =
-                msgContext
-                    .getOperationContext()
-                    .getServiceContext()
-                    .getAxisService();
+                    msgContext
+                            .getOperationContext()
+                            .getServiceContext()
+                            .getAxisService();
             ClassLoader classLoader = service.getClassLoader();
             Parameter implInfoParam = service.getParameter(SERVICE_CLASS);
             if (implInfoParam != null) {
                 Class implClass =
-                    Class.forName(
-                        ((String) implInfoParam.getValue()).trim(),
-                        true,
-                        classLoader);
+                        Class.forName(
+                                ((String) implInfoParam.getValue()).trim(),
+                                true,
+                                classLoader);
                 return implClass.newInstance();
             } else {
                 throw new AxisFault(
-                    Messages.getMessage(
-                        "paramIsNotSpecified",
-                        "SERVICE_CLASS"));
+                        Messages.getMessage(
+                                "paramIsNotSpecified",
+                                "SERVICE_CLASS"));
             }
-            
+
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
@@ -93,37 +92,37 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      * @throws AxisFault
      */
     protected Object getTheImplementationObject(MessageContext msgContext)
-        throws AxisFault {
+            throws AxisFault {
         AxisService service =
-            msgContext
-                .getOperationContext()
-                .getServiceContext()
-                .getAxisService();
+                msgContext
+                        .getOperationContext()
+                        .getServiceContext()
+                        .getAxisService();
 
         Parameter scopeParam = service.getParameter(SCOPE);
-        QName serviceName = service.getName();
+        String serviceName = service.getName();
         if (scopeParam != null
-            && Constants.SESSION_SCOPE.equals(scopeParam.getValue())) {
+                && Constants.SESSION_SCOPE.equals(scopeParam.getValue())) {
             SessionContext sessionContext = msgContext.getSessionContext();
             synchronized (sessionContext) {
                 Object obj =
-                    sessionContext.getProperty(serviceName.getLocalPart());
+                        sessionContext.getProperty(serviceName);
                 if (obj == null) {
                     obj = makeNewServiceObject(msgContext);
-                    sessionContext.setProperty(serviceName.getLocalPart(), obj);
+                    sessionContext.setProperty(serviceName, obj);
                 }
                 return obj;
             }
         } else if (
-            scopeParam != null
-                && Constants.APPLICATION_SCOPE.equals(scopeParam.getValue())) {
+                scopeParam != null
+                        && Constants.APPLICATION_SCOPE.equals(scopeParam.getValue())) {
             ConfigurationContext globalContext = msgContext.getConfigurationContext();
             synchronized (globalContext) {
                 Object obj =
-                    globalContext.getProperty(serviceName.getLocalPart());
+                        globalContext.getProperty(serviceName);
                 if (obj == null) {
                     obj = makeNewServiceObject(msgContext);
-                    globalContext.setProperty(serviceName.getLocalPart(), obj);
+                    globalContext.setProperty(serviceName, obj);
                 }
                 return obj;
             }
@@ -135,6 +134,6 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     public SOAPFactory getSOAPFactory() {
         return fac;
     }
-    
+
 
 }

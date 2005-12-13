@@ -35,7 +35,6 @@ import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.engine.ServiceGroupContextTest;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
@@ -94,8 +93,6 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         AxisService service = Utils.createSimpleService(serviceName, Echo.class
                 .getName(), operationName);
         configContext.getAxisConfiguration().addService(service);
-        ServiceContext serviceContext = new ServiceGroupContext(configContext,
-                service.getParent()).getServiceContext(service.getName().getLocalPart());
     }
 
     protected void tearDown() throws Exception {
@@ -118,8 +115,9 @@ public class MailRequestResponseRawXMLTest extends TestCase {
 
         ConfigurationContext configContext = UtilsMailServer
                 .createClientConfigurationContext();
-        AxisService service = new AxisService(serviceName);
-        AxisOperation axisOperation = new OutInAxisOperation(operationName);
+        AxisService service = new AxisService(serviceName.getLocalPart());
+        AxisOperation axisOperation = new OutInAxisOperation();
+        axisOperation.setName(operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messgeCtx) throws AxisFault {
                 envelope = messgeCtx.getEnvelope();
@@ -129,7 +127,7 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         configContext.getAxisConfiguration().addService(service);
         ServiceContext serviceContext = new ServiceGroupContext(configContext,
                 service.getParent()).getServiceContext(service.getName()
-                .getLocalPart());
+        );
 
         org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 serviceContext);

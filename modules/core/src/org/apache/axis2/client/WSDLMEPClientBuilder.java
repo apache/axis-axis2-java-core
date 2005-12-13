@@ -70,7 +70,7 @@ public class WSDLMEPClientBuilder {
 	}
 	
 	public MEPClient createMEPClient(QName endpointname,String operationname) throws AxisFault{
-		return createMEPClient(null,endpointname,operationname);
+        return createMEPClient(null,endpointname,operationname);
 	}
 	public MEPClient createMEPClient(String operationname) throws AxisFault{
 		return createMEPClient(null,null,operationname);
@@ -81,7 +81,7 @@ public class WSDLMEPClientBuilder {
 			throw new AxisFault("You need to call public void defineDescription(URL wsdlurl before this method)");
 		}
 		WSDLService service = findService(servicename);
-		AxisService serviceDesc = new AxisService(service);
+		AxisService serviceDesc = new AxisService();
 		
 		WSDLEndpoint endpoint = findEndpoint(endpointname,service);
 		EndpointReference toepr = null;

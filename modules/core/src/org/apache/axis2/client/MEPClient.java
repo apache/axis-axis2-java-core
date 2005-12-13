@@ -16,19 +16,10 @@
 
 package org.apache.axis2.client;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.TransportOutDescription;
@@ -36,12 +27,12 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPHeader;
+import org.apache.axis2.soap.*;
 import org.apache.axis2.util.UUIDGenerator;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the super class for all the MEPClients.
@@ -145,7 +136,7 @@ public abstract class MEPClient {
     }
 
     protected void addUserAddedSOAPHeaders(MessageContext msgCtx,
-            Options options) {
+                                           Options options) {
         if (soapHeaderList != null && soapHeaderList.size() > 0
                 && msgCtx.getEnvelope() != null) {
             SOAPFactory soapFactory;
@@ -168,7 +159,7 @@ public abstract class MEPClient {
 
     /**
      * Prepares the SOAPEnvelope using the payload.
-     * 
+     *
      * @param toSend
      * @return
      * @throws AxisFault
@@ -189,7 +180,7 @@ public abstract class MEPClient {
     /**
      * Infers the transport by looking at the URL. The URL can be http:// tcp://
      * mail:// local://.
-     * 
+     *
      * @param epr
      * @return
      * @throws AxisFault
@@ -216,7 +207,7 @@ public abstract class MEPClient {
         if (transport != null) {
             return serviceContext.getConfigurationContext()
                     .getAxisConfiguration().getTransportOut(
-                            new QName(transport));
+                    new QName(transport));
 
         } else {
             throw new AxisFault(Messages.getMessage("cannotInferTransport"));
@@ -226,7 +217,7 @@ public abstract class MEPClient {
 
     /**
      * Creates SOAPEvelope(in terms of version) from the values set.
-     * 
+     *
      * @return
      * @throws AxisFault
      */
@@ -259,7 +250,7 @@ public abstract class MEPClient {
      * deployment and known to Axis Engine). If not, an exception will be
      * thrown. To be enabled, the modules are added to the
      * AXIS2_REPOSITORY/modules directory.
-     * 
+     *
      * @param name
      * @throws AxisFault
      */
@@ -292,24 +283,22 @@ public abstract class MEPClient {
     /**
      * Assumes the values for the ConfigurationContext and ServiceContext to
      * make the NON WSDL cases simple.
-     * 
+     *
      * @throws AxisFault
      */
     protected void assumeServiceContext(String clientHome) throws AxisFault {
         ConfigurationContext configurationContext = new ConfigurationContextFactory()
                 .buildClientConfigurationContext(clientHome);
 
-        QName assumedServiceName = new QName(ANONYMOUS_SERVICE);
         AxisService axisService = configurationContext.getAxisConfiguration()
                 .getService(ANONYMOUS_SERVICE);
         if (axisService == null) {
             // we will assume a Service and operations
-            axisService = new AxisService(assumedServiceName);
+            axisService = new AxisService(ANONYMOUS_SERVICE);
         }
         configurationContext.getAxisConfiguration().addService(axisService);
         serviceContext = new ServiceGroupContext(configurationContext,
-                axisService.getParent()).getServiceContext(assumedServiceName
-                .getLocalPart());
+                axisService.getParent()).getServiceContext(ANONYMOUS_SERVICE);
     }
 
     public Options getClientOptions() {
@@ -319,7 +308,7 @@ public abstract class MEPClient {
     /**
      * User will set all the options and parameters for this invocation using
      * this.
-     * 
+     *
      * @param clientOptions
      * @see Options for more details.
      */
@@ -333,7 +322,7 @@ public abstract class MEPClient {
      * only one text. <code><pre>
      *    &lt;HeaderBlockName&gt;your text&lt;/HeaderBlockName&gt;
      * </pre></code>. A more flexible way is to use addSOAPHeader(OMElement).
-     * 
+     *
      * @param soapHeaderQName
      * @param soapHeaderText
      */
@@ -349,7 +338,7 @@ public abstract class MEPClient {
 
     /**
      * Allows users to add a SOAP header block.
-     * 
+     *
      * @param soapHeaderBlock
      */
     public void addSOAPHeader(OMElement soapHeaderBlock) {
@@ -392,7 +381,7 @@ public abstract class MEPClient {
                     clientOptions
                             .setSenderTransport(axisConfig
                                     .getTransportOut(new QName(
-                                            senderTrasportProtocol)));
+                                    senderTrasportProtocol)));
                 }
             }
             if (this.clientOptions.getSenderTransport() == null) {

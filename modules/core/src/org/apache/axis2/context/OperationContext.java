@@ -18,13 +18,7 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.AxisConfiguration;
 
-import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -57,17 +51,12 @@ public class OperationContext extends AbstractContext {
     // AxisOperation must be one of the 8 predefined ones in WSDL 2.0.
     private transient AxisOperation axisOperation;
 
-    private int operationMEP;
 
     private boolean isComplete = false;
 
     // this is the global MessageID -> OperationContext map which is stored in
     // the EngineContext. We're caching it here for faster acccess.
     private Map operationContextMap;
-
-    private QName operationDescName = null;
-
-    private QName serviceDescName = null;
 
     /**
      * Constructs a new OperationContext.
@@ -82,26 +71,14 @@ public class OperationContext extends AbstractContext {
         super(serviceContext);
         this.messageContexts = new HashMap();
         this.axisOperation = axisOperation;
-        this.operationMEP = axisOperation.getAxisSpecifMEPConstant();
         this.operationContextMap = getServiceContext().getConfigurationContext()
                 .getOperationContextMap();
-
-        operationDescName = axisOperation.getName();
-        AxisService axisService = axisOperation.getParent();
-        if (axisService !=null)
-            serviceDescName = axisService.getName();
     }
 
     public OperationContext(AxisOperation axisOperation) {
         super(null);
         this.messageContexts = new HashMap();
         this.axisOperation = axisOperation;
-        this.operationMEP = axisOperation.getAxisSpecifMEPConstant();
-
-        operationDescName = axisOperation.getName();
-        AxisService axisService = axisOperation.getParent();
-        if (axisService !=null)
-            serviceDescName = axisService.getName();
     }
 
     /**
@@ -138,8 +115,8 @@ public class OperationContext extends AbstractContext {
      * @param msgContext
      */
     public synchronized void addMessageContext(MessageContext msgContext) throws AxisFault {
-        if(axisOperation != null){
-            axisOperation.addMessageContext(msgContext,this);
+        if (axisOperation != null) {
+            axisOperation.addMessageContext(msgContext, this);
         }
     }
 
@@ -156,7 +133,6 @@ public class OperationContext extends AbstractContext {
     /**
      * Checks to see if the MEP is complete. i.e. whether all the messages that
      * are associated with the MEP has arrived and MEP is complete.
-     *
      */
     public boolean isComplete() {
         return isComplete;
@@ -177,7 +153,7 @@ public class OperationContext extends AbstractContext {
      * being complete due to the optional nature of the MEP.
      */
     public void cleanup() {
-        Iterator msgContexts =   messageContexts.values().iterator();
+        Iterator msgContexts = messageContexts.values().iterator();
         while (msgContexts.hasNext()) {
             MessageContext messageContext = (MessageContext) msgContexts.next();
             if (null != messageContext && operationContextMap != null) {

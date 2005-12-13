@@ -302,7 +302,7 @@ public class HTTPTransportReceiver {
                 operations = axisService.getOperations();
                 operationsList = operations.values();
 
-                temp += "<h3>" + axisService.getName().getLocalPart() +
+                temp += "<h3>" + axisService.getName() +
                         "</h3>";
                 if (operationsList.size() > 0) {
                     temp += "Available operations <ul>";

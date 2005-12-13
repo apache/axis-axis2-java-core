@@ -79,7 +79,7 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(
                 config);
 
-        AxisService service = new AxisService(serviceName);
+        AxisService service = new AxisService(serviceName.getLocalPart());
         service.addParameter(
                 new ParameterImpl(AbstractMessageReceiver.SERVICE_CLASS,
                         MessageContextEnabledEcho.class.getName()));

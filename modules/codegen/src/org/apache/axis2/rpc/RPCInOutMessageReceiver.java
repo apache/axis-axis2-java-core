@@ -51,7 +51,9 @@ public class RPCInOutMessageReceiver extends AbstractInOutSyncMessageReceiver {
          */
         OperationContext oc = inMessage.getOperationContext();
         AxisOperation axisOperation = oc.getAxisOperation();
-        RPCMethod method = (RPCMethod)axisOperation.getMetadataBag().get(RPCMETHOD_PROPERTY);
+        //soryy , I removed WSDL infor from AxisOperation
+//        RPCMethod method = (RPCMethod)axisOperation.getMetadataBag().get(RPCMETHOD_PROPERTY);
+        RPCMethod method = (RPCMethod) axisOperation.getParameter(RPCMETHOD_PROPERTY).getValue();
         if (method == null) {
             throw new AxisFault("Couldn't find RPCMethod in AxisOperation");
         }
@@ -71,7 +73,7 @@ public class RPCInOutMessageReceiver extends AbstractInOutSyncMessageReceiver {
         arguments = new Object [method.getNumInParams()];
         Iterator params = method.getInParams();
         for (int i = 0; i < arguments.length; i++) {
-            RPCParameter param = (RPCParameter)params.next();
+            RPCParameter param = (RPCParameter) params.next();
             arguments[i] = param.getValue(values);
         }
 

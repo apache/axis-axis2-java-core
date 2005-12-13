@@ -65,7 +65,8 @@ public class Round1Client {
 
 
         QName opName = new QName("");
-        AxisOperation opDesc = new OutInAxisOperation(opName);
+        AxisOperation opDesc = new OutInAxisOperation();
+        opDesc.setName(opName);
         MessageContext retMsgCtx = call.invokeBlocking(opDesc, msgCtx);
         //SOAPEnvelope responseEnvelop = replyContext.getEnvelope();
         retEnv = retMsgCtx.getEnvelope();

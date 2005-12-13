@@ -166,7 +166,8 @@ public class AsynchronousClient {
                             .createXMLStreamWriter
                             (System.out));
             QName opName = new QName("urn:GoogleSearch", "doGoogleSearch");
-            AxisOperation opdesc = new OutInAxisOperation(opName);
+            AxisOperation opdesc = new OutInAxisOperation();
+            opdesc.setName(opName);
             call.invokeNonBlocking(opdesc,
                     requestContext,
                     new ClientCallbackHandler());

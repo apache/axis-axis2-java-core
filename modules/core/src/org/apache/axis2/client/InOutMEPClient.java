@@ -226,7 +226,7 @@ public class InOutMEPClient extends MEPClient {
                 // Note that this will only change the replyTo Address property in the replyTo EPR
                 EndpointReference replyToFromTransport = ListenerManager.replyToEPR(
                         serviceContext.getConfigurationContext(),
-                        serviceContext.getAxisService().getName().getLocalPart()
+                        serviceContext.getAxisService().getName()
                                 + "/"
                                 + axisop.getName().getLocalPart(),
                         clientOptions.getListenerTransport().getName().getLocalPart());
@@ -312,7 +312,7 @@ public class InOutMEPClient extends MEPClient {
                         .getTransportIn(clientOptions.getSenderTransport().getName()));
             }
         }
-            
+
         if (msgctx.getTransportIn() == null) {
             msgctx.setTransportIn(clientOptions.getListenerTransport());
         }

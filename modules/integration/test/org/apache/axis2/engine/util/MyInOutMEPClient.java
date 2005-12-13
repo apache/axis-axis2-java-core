@@ -37,7 +37,8 @@ public class MyInOutMEPClient extends Call {
         AxisOperation axisConfig =
                 getServiceContext().getAxisService().getOperation(new QName(axisop));
         if (axisConfig == null) {
-            axisConfig = new OutInAxisOperation(new QName(axisop));
+            axisConfig = new OutInAxisOperation();
+            axisConfig.setName(new QName(axisop));
             axisConfig.setRemainingPhasesInFlow(axisOperationTemplate.getRemainingPhasesInFlow());
             axisConfig.setPhasesOutFlow(axisOperationTemplate.getPhasesOutFlow());
             axisConfig.setPhasesInFaultFlow(axisOperationTemplate.getPhasesInFaultFlow());
@@ -57,7 +58,8 @@ public class MyInOutMEPClient extends Call {
         AxisOperation axisConfig =
                 getServiceContext().getAxisService().getOperation(new QName(axisop));
         if (axisConfig == null) {
-            axisConfig = new OutInAxisOperation(new QName(axisop));
+            axisConfig = new OutInAxisOperation();
+            axisConfig.setName(new QName(axisop));
             axisConfig.setRemainingPhasesInFlow(axisOperationTemplate.getRemainingPhasesInFlow());
             axisConfig.setPhasesOutFlow(axisOperationTemplate.getPhasesOutFlow());
             axisConfig.setPhasesInFaultFlow(axisOperationTemplate.getPhasesInFaultFlow());

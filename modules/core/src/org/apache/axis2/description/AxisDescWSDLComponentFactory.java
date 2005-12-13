@@ -20,22 +20,7 @@ import org.apache.wsdl.WSDLService;
 import org.apache.wsdl.WSDLTypes;
 import org.apache.wsdl.extensions.ExtensionFactory;
 import org.apache.wsdl.extensions.impl.ExtensionFactoryImpl;
-import org.apache.wsdl.impl.MessageReferenceImpl;
-import org.apache.wsdl.impl.WSDLBindingFaultImpl;
-import org.apache.wsdl.impl.WSDLBindingImpl;
-import org.apache.wsdl.impl.WSDLBindingMessageReferenceImpl;
-import org.apache.wsdl.impl.WSDLBindingOperationImpl;
-import org.apache.wsdl.impl.WSDLDescriptionImpl;
-import org.apache.wsdl.impl.WSDLEndpointImpl;
-import org.apache.wsdl.impl.WSDLExtensibilityAttributeImpl;
-import org.apache.wsdl.impl.WSDLFaultReferenceImpl;
-import org.apache.wsdl.impl.WSDLFeatureImpl;
-import org.apache.wsdl.impl.WSDLImportImpl;
-import org.apache.wsdl.impl.WSDLIncludeImpl;
-import org.apache.wsdl.impl.WSDLInterfaceImpl;
-import org.apache.wsdl.impl.WSDLOperationImpl;
-import org.apache.wsdl.impl.WSDLPropertyImpl;
-import org.apache.wsdl.impl.WSDLTypesImpl;
+import org.apache.wsdl.impl.*;
 
 public class AxisDescWSDLComponentFactory implements WSDLComponentFactory {
 
@@ -46,7 +31,7 @@ public class AxisDescWSDLComponentFactory implements WSDLComponentFactory {
 
 
     public WSDLService createService() {
-        return new AxisService();
+        return new WSDLServiceImpl();
     }
 
 
