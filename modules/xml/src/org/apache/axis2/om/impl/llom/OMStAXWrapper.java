@@ -782,7 +782,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     }
 
     /**
-     * Not implemented yet
+     * nextTag - returns the next tag
      *
      * @return
      * @throws org.apache.axis2.om.impl.llom.exception.OMStreamingException
@@ -790,9 +790,20 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @throws XMLStreamException
      */
     public int nextTag() throws XMLStreamException {
-        throw new UnsupportedOperationException();
+        int eventType = next();
+        while((eventType == XMLStreamConstants.CHARACTERS && isWhiteSpace()) // skip whitespace
+            || (eventType == XMLStreamConstants.CDATA && isWhiteSpace()) // skip whitespace
+            || eventType == XMLStreamConstants.SPACE
+            || eventType == XMLStreamConstants.PROCESSING_INSTRUCTION
+            || eventType == XMLStreamConstants.COMMENT) {
+            eventType = next();
+         }
+         if (eventType != XMLStreamConstants.START_ELEMENT && eventType != XMLStreamConstants.END_ELEMENT) {
+             throw new XMLStreamException("expected start or end tag", getLocation());
+         }
+         return eventType;    
     }
-
+    
     /**
      * @return
      * @throws XMLStreamException
