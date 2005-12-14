@@ -329,16 +329,18 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
     public int getTextCharacters(int i, char[] chars, int i1, int i2)
             throws XMLStreamException {
         int returnLength = 0;
-        if (hasText()) {
-            if (parser != null) {
-                try {
-                    returnLength = parser.getTextCharacters(i, chars, i1, i2);
-                } catch (XMLStreamException e) {
-                    throw new OMStreamingException(e);
-                }
+        if (parser != null) {
+            try {
+                returnLength = parser.getTextCharacters(i, chars, i1, i2);
+            } catch (XMLStreamException e) {
+                throw new OMStreamingException(e);
             }
-
-            // Note - this has no relevant method in the OM
+        } else {
+            if (hasText()) {
+                OMText textNode = (OMText) lastNode;
+                String str = textNode.getText();
+                str.getChars(i, i + i2, chars, i1);
+            }
         }
         return returnLength;
     }
@@ -973,7 +975,7 @@ public class OMStAXWrapper implements XMLStreamReader, XMLStreamConstants {
      * @return
      */
     public Location getLocation() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     /**
