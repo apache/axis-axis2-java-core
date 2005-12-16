@@ -36,7 +36,7 @@ public class PhaseMetadata {
     // OUTFLOW
     public static final String PHASE_MESSAGE_OUT = "MessageOut";
     public static final String PHASE_DISPATCH = "Dispatch";
-    public static final String PHASE_TRANSPORT_OUT = "MessageOut";
+    public static final String PHASE_TRANSPORT_OUT = "TransportOut";
 
     /**
      * todo  I think thi shas to be change
