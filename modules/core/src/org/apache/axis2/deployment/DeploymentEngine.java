@@ -201,7 +201,6 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private void addNewModule(ModuleDescription modulemetadata) throws AxisFault {
 
-        // currentArchiveFile.setClassLoader();
         Flow inflow = modulemetadata.getInFlow();
         ClassLoader moduleClassLoader = modulemetadata.getModuleClassLoader();
 
@@ -514,7 +513,6 @@ public class DeploymentEngine implements DeploymentConstants {
                                 HashMap wsdlservice = archiveReader.processWSDLs(currentArchiveFile,
                                         this);
 
-                                // AxisService service = archiveReader.generateService(currentArchiveFile.getAbsolutePath());
                                 AxisServiceGroup sericeGroup = new AxisServiceGroup(axisConfig);
 
                                 sericeGroup.setServiceGroupClassLoader(
@@ -629,9 +627,6 @@ public class DeploymentEngine implements DeploymentConstants {
      * are exist , or they have deployed
      */
     private void engageModules() throws AxisFault {
-
-        // ArrayList modules = DeploymentData.getInstance().getModuleRefs();
-        // PhaseResolver resolver = new PhaseResolver(axisConfig);
         for (Iterator iterator = modulelist.iterator(); iterator.hasNext();) {
             QName name = (QName) iterator.next();
 
@@ -773,7 +768,6 @@ public class DeploymentEngine implements DeploymentConstants {
                         serviceName = getAxisServiceName(wsInfo.getFileName());
 
                         // todo fix me deepal
-                        // axisConfig.removeService(new QName(serviceName));
                         log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
                                 wsInfo.getFileName()));
                     }

@@ -18,7 +18,7 @@ public class InOnlyAxisOperation extends AxisOperation {
     private AxisMessage inMessage;
     private AxisMessage outFaultMessage;
 
-    // this is just to stor the chain , there wont be any usage of this
+    // this is just to store the chain , we don't use it
     private ArrayList outPhase;
 
     public InOnlyAxisOperation() {

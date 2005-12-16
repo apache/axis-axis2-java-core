@@ -64,7 +64,7 @@ public class AxisEngine {
 
     private void checkMustUnderstand(MessageContext msgContext) throws AxisFault {
 
-        // todo : need to move this to pre-condiftion of the MessageReciver-Phase
+        // todo : need to move this to pre-condition of the MessageReceiver Phase
         SOAPEnvelope se = msgContext.getEnvelope();
 
         if (se.getHeader() == null) {
@@ -166,9 +166,6 @@ public class AxisEngine {
             envelope = OMAbstractFactory.getSOAP12Factory().getDefaultFaultEnvelope();
         }
 
-        // TODO do we need to set old Headers back?
-        // body.addFault(new AxisFault(e.getMessage(), e));
-        // body.getFault().setException(new AxisFault(e));
         extractFaultInformationFromMessageContext(processingContext, envelope.getBody().getFault(),
                 e);
         faultContext.setEnvelope(envelope);

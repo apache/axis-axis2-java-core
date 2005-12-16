@@ -190,7 +190,6 @@ public class PhasesInfo {
 
             if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phaseName)
                     || PhaseMetadata.PHASE_MESSAGE_OUT.equals(phaseName)) {
-
                 // todo pls check this
             } else {
                 oprationOUTPhases.add(copyPhase(phase));

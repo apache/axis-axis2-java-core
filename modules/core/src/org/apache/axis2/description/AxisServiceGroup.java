@@ -140,8 +140,6 @@ public class AxisServiceGroup implements ParameterInclude {
                         + " module has alredy been engaged on the service Group. "
                         + " Operation terminated !!!");
                 needToadd = false;
-
-                // return;
             }
         }
 
@@ -151,7 +149,7 @@ public class AxisServiceGroup implements ParameterInclude {
         if (module != null) {
             while (srevice.hasNext()) {
 
-                // engagin per each service
+                // engaging each service
                 AxisService axisService = (AxisService) srevice.next();
 
                 try {

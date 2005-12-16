@@ -178,7 +178,6 @@ public class ModuleBuilder extends DescriptionBuilder {
 
             String opname = op_name_att.getAttributeValue();
 
-//          AxisOperation op_descrip = new AxisOperation();
             op_descrip.setName(new QName(opname));
 
             // Operation Parameters

@@ -94,15 +94,11 @@ public class ArchiveReader implements DeploymentConstants {
             serviceList.add(service);
 
             return serviceList;
-
-//          engine.getCurrentFileItem().getDeploybleServices().add(axisService);
         } else if (SERVICE_GROUP_ELEMENT.equals(rootelementName)) {
             ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(services, wsdlServices,
                     axisConfig);
-
             return groupBuilder.populateServiceGroup(axisServiceGroup);
         }
-
         return null;
     }
 
@@ -220,8 +216,6 @@ public class ArchiveReader implements DeploymentConstants {
                         return buildServiceGroup(zin, engine, axisServiceGroup, wsdls, axisConfig);
                     }
                 }
-
-                // zin.close();
                 throw new DeploymentException(
                         Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND, filename));
             } catch (Exception e) {
@@ -260,14 +254,6 @@ public class ArchiveReader implements DeploymentConstants {
                     new AxisDescWSDLComponentFactory());
             WSDLDescription womDescription = wsdlVersionWrapper.getDescription();
 
-            // removing binding
-            //            Map bindings = wsdlVersionWrapper.getDefinition().getBindings();
-            //            Iterator binfingIterator = bindings.keySet().iterator();
-            //            while (binfingIterator.hasNext()) {
-            //                Object o = binfingIterator.next();
-            //                bindings.remove(o) ;
-            //
-            //            }
             Iterator iterator = womDescription.getServices().keySet().iterator();
 
             if (iterator.hasNext()) {
@@ -282,8 +268,6 @@ public class ArchiveReader implements DeploymentConstants {
                 service.setWSDLDefinition(wsdlVersionWrapper.getDefinition());
 
                 return service;
-
-//              depengine.getCurrentFileItem().addService(service);
             }
         } catch (WSDLException e) {
             throw new DeploymentException(e);

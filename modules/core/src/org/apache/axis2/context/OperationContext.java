@@ -41,9 +41,6 @@ import java.util.Map;
 public class OperationContext extends AbstractContext {
     private boolean isComplete = false;
 
-    // the in and out messages that may be present
-    //    private MessageContext inMessageContext;
-    //    private MessageContext outMessageContext;
     // the AxisOperation of which this is a running instance. The MEP of this
     // AxisOperation must be one of the 8 predefined ones in WSDL 2.0.
     private transient AxisOperation axisOperation;

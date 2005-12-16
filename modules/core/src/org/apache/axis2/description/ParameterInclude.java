@@ -27,8 +27,6 @@ import java.util.ArrayList;
  */
 public interface ParameterInclude {
 
-    // parameters
-
     /**
      * Method addParameter
      *

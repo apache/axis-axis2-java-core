@@ -82,7 +82,7 @@ public class ParameterIncludeImpl implements ParameterInclude {
 
             parameter.setName(paraName.getAttributeValue());
 
-            // setting parameter Value (the chiled elemnt of the parameter)
+            // setting parameter Value (the chiled element of the parameter)
             OMElement paraValue = parameterElement.getFirstElement();
 
             if (paraValue != null) {

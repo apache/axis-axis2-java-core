@@ -82,7 +82,7 @@ public class Utils {
 
                 urls.add(file.toURL());
 
-                // if lib is simple
+                // lower case directory name
                 File libfiles = new File(file, "lib");
 
                 if (libfiles.exists()) {
@@ -99,7 +99,7 @@ public class Utils {
                     }
                 }
 
-                // if lib is capital
+                // upper case directory name
                 libfiles = new File(file, "Lib");
 
                 if (libfiles.exists()) {

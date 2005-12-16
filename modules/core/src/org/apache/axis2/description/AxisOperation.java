@@ -48,7 +48,6 @@ public abstract class AxisOperation
     private QName name;
     private ParameterInclude parameterInclude;
 
-    // private WSDLOperationImpl wsdloperation;
     private AxisService parent;
     private ArrayList wsamappingList;
 
@@ -138,8 +137,6 @@ public abstract class AxisOperation
                         + " module has alredy engaged to the operation"
                         + "  operation terminated !!!");
                 needToadd = false;
-
-                // return;
             }
         }
 
@@ -170,7 +167,6 @@ public abstract class AxisOperation
         } else {
 
             // So this message is part of an ongoing MEP
-            // operationContext =
             ConfigurationContext configContext = msgContext.getConfigurationContext();
 
             operationContext =
@@ -213,13 +209,12 @@ public abstract class AxisOperation
 
         if (null == msgContext.getRelatesTo()) {
 
-            // Its a new incomming message so get the factory to create a new
+            // Its a new incoming message so get the factory to create a new
             // one
             operationContext = new OperationContext(this, serviceContext);
         } else {
 
             // So this message is part of an ongoing MEP
-            // operationContext =
             ConfigurationContext configContext = msgContext.getConfigurationContext();
 
             operationContext =

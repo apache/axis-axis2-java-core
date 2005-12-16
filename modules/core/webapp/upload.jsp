@@ -72,7 +72,6 @@
                             String fileName = item.getName();
                             String fileExtesion =fileName;
                             fileExtesion =fileExtesion.toLowerCase();
-//                            fileName = fileName.toLowerCase();
                             if (!(fileExtesion.endsWith(".jar")||fileExtesion.endsWith(".aar"))){
                                 throw new Exception(" Wrong file type! ");
                             }

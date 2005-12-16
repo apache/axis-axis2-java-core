@@ -52,8 +52,6 @@ public class DescriptionBuilder implements DeploymentConstants {
     protected Log log = LogFactory.getLog(getClass());
     protected AxisConfiguration axisConfig;
 
-//  protected DeploymentEngine engine;
-
     protected InputStream des_inputStream;
 
     public DescriptionBuilder() {

@@ -22,14 +22,10 @@ package org.apache.axis2.description;
  */
 public class PhaseRule {
 
-    // can be either name of phase or handler
-
     /**
      * Field after
      */
     private String after;
-
-    // can be either name of phase or handler
 
     /**
      * Field before

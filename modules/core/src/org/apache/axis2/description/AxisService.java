@@ -51,7 +51,6 @@ public class AxisService
     private Log log = LogFactory.getLog(getClass());
     private String fileName = "";
 
-//  private WSDLService serviceimpl = null;
     private HashMap operationsAliasesMap = null;
     private HashMap operations = new HashMap();
 
@@ -244,8 +243,6 @@ public class AxisService
                         + " module has alredy been engaged on the service. "
                         + " Operation terminated !!!");
                 needToadd = false;
-
-                // return;
             }
         }
 
@@ -439,8 +436,6 @@ public class AxisService
         operation = (AxisOperation) operationsAliasesMap.get(soapAction);
 
         return operation;
-
-        // todo do we need to improve thise ?
     }
 
     /**

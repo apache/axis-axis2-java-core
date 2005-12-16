@@ -243,26 +243,4 @@ public class WSDLMEPClientBuilder {
     public void setIsoneway(boolean isoneway) {
         this.isoneway = isoneway;
     }
-
-//  public static void main(String[] args) throws Exception{
-//          WSDLMEPClientBuilder builder = new WSDLMEPClientBuilder("/home/hemapani/tools/axis2-0.93-SNAPSHOT-bin/repository/");
-//          //builder.defineDescription(new URL("http://mssoapinterop.org/asmx/WSDL/InteropTestDocLit.wsdl"));
-//          builder.defineDescription(new File("/home/hemapani/temp/InteropTestDocLit.wsdl").toURL());
-//          InOutMEPClient mepclient = (InOutMEPClient)builder.createMEPClient("echoStruct");
-//          
-//          String message= "<echoStructParam xmlns=\"http://soapinterop.org/xsd\"><varFloat>23.4</varFloat>\"<varInt>35</varInt><varString>Hello1</varString></echoStructParam>";
-//          XMLStreamReader in = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(message.getBytes()));
-//          StAXOMBuilder omb = new StAXOMBuilder(in);
-//          
-//          AxisOperation opDesc = AxisOperationFactory.getAxisOperation(AxisOperationFactory.MEP_CONSTANT_IN_OUT);
-//          opDesc.setName(new QName("http://soapinterop.org","echoStruct"));
-//          MessageContext msgctx= new MessageContext(mepclient.getServiceContext().getConfigurationContext());
-//          
-//          SOAPFactory soapFactory = new SOAP11Factory();
-//          SOAPEnvelope envelope = soapFactory.getDefaultEnvelope();
-//          envelope.getBody().setFirstChild(omb.getDocumentElement());
-//          msgctx.setEnvelope(envelope);
-//          
-//          mepclient.invokeBlocking(opDesc,msgctx);
-//  }
 }

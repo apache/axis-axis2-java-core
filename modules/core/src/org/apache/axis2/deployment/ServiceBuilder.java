@@ -223,10 +223,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             if (op_mep_att != null) {
                 mepurl = op_mep_att.getAttributeValue();
-
-                // todo value has to be validate
-                // todo
-                // op_descrip.setMessageExchangePattern(mep);
+                // todo value has to be validated
             }
 
             String opname = op_name_att.getAttributeValue();
@@ -240,7 +237,6 @@ public class ServiceBuilder extends DescriptionBuilder {
                 op_descrip = AxisOperationFactory.getOperetionDescription(mepurl);
             }
 
-//          op_descrip = new AxisOperation();
             op_descrip.setName(new QName(opname));
             log.info(Messages.getMessage(DeploymentErrorMsgs.OP_NOT_FOUN_IN_WSDL, opname));
 

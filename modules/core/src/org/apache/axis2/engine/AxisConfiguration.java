@@ -81,24 +81,10 @@ public class AxisConfiguration implements ParameterInclude {
     private ArrayList inPhasesUptoAndIncludingPostDispatch;
     protected HashMap messagReceivers;
 
-    // ///////////////////// From AxisGlobal /////////////////////////////////////
-
     private ClassLoader moduleClassLoader;
     private HashMap moduleConfigmap;
     private ArrayList outFaultPhases;
-
-    /**
-     * Field phases
-     */
-
-    // private ArrayList inPhases;
     private ArrayList outPhases;
-
-    // ///////////////////// From AxisGlobal /////////////////////////////////////
-
-    /**
-     * Field paramInclude
-     */
     protected final ParameterInclude paramInclude;
     protected PhasesInfo phasesinfo;
     private ClassLoader serviceClassLoader;
@@ -130,7 +116,6 @@ public class AxisConfiguration implements ParameterInclude {
         createDefaultChain();
     }
 
-    // //////////////////////// Form Axis Global
     public void addMessageReceiver(String key, MessageReceiver messageReceiver) {
         messagReceivers.put(key, messageReceiver);
     }

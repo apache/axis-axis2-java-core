@@ -59,7 +59,7 @@ public class SchedulerTask implements Runnable {
     }
 
     private void checkRepositary() {
-        ((RepositoryListenerImpl) wsListener).startListent();
+        ((RepositoryListenerImpl) wsListener).startListener();
     }
 
     /**

@@ -141,8 +141,6 @@ public class MessageInformationHeaders implements Serializable {
         return replyTo;
     }
 
-    // ------------------- Setters and Getters --------------------------------------
-
     /**
      * Method getTo
      */
@@ -216,6 +214,4 @@ public class MessageInformationHeaders implements Serializable {
     public void setTo(EndpointReference to) {
         this.to = to;
     }
-
-    // --------------------------------------------------------------------------------------------
 }

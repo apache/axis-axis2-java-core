@@ -105,8 +105,6 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     public void init() {
         wsInfoList.init();
         checkModules();
-
-//      checkServices();
         deEngine.doDeploy();
     }
 
@@ -141,9 +139,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     /**
      * this is the actual method that is call from scheduler
      */
-    public void startListent() {
-
-        // checkModules();
+    public void startListener() {
         checkServices();
         update();
     }
@@ -154,81 +150,4 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     public void update() {
         wsInfoList.update();
     }
-
-//  private void searchExplodedDir(String rootDirName){
-//      File rootDir = new File(rootDirName);
-//      File [] fileList = rootDir.listFiles();
-//      if (fileList !=null) {
-//          for (int i = 0; i < fileList.length; i++) {
-//              File file = fileList[i];
-//              if(file.isDirectory()){
-//                  wsInfoList.addWSInfoItem(file, SERVICE);
-//              }
-//          }
-//      }
-//  }
-
-    /**
-     * To delete a given directory with its all childerns
-     * @param dir
-     * @return boolean
-     */
-//  private boolean deleteDir(File dir) {
-//      if (dir.isDirectory()) {
-//          String[] children = dir.list();
-//          for (int i=0; i<children.length; i++) {
-//              boolean success = deleteDir(new File(dir, children[i]));
-//              if (!success) {
-//                  return false;
-//              }
-//          }
-//      }
-//      // The directory is now empty so delete it
-//      return dir.delete();
-//  }
-
-    /**
-     * Will extarct given file , into same dirctory with the name of archive file (removing file
-     * extension)
-     * @param infile  <code>java.io.File</code>   Archive file
-     * @param outdirctory <code>java.io.File</code>  output file
-     */
-//  public void extarctServiceArchive(File infile , File outdirctory ) {
-//      try{
-//          BufferedOutputStream dest;
-//          FileInputStream fis = new  FileInputStream(infile);
-//          ZipInputStream zis = new
-//                  ZipInputStream(new BufferedInputStream(fis));
-//          ZipEntry entry;
-//
-//          outdirctory.mkdir();
-//          File outFile ;
-//          String outPath =  outdirctory.getAbsolutePath() + "/";
-//          while((entry = zis.getNextEntry()) != null) {
-//              int count;
-//              byte data[] = new byte[BUFFER];
-//              // write the files to the disk
-//              outFile = new File(outPath + entry.getName());
-//              if(entry.isDirectory()){
-//                  if(!outFile.exists()){
-//                      outFile.mkdir();
-//                  }
-//                  continue;
-//              }
-//              FileOutputStream fos = new
-//                      FileOutputStream(outFile);
-//              dest = new
-//                      BufferedOutputStream(fos, BUFFER);
-//              while ((count = zis.read(data, 0, BUFFER))
-//                      != -1) {
-//                  dest.write(data, 0, count);
-//              }
-//              dest.flush();
-//              dest.close();
-//          }
-//          zis.close();
-//      } catch(Exception e) {
-//          log.error(e);
-//      }
-//  }
 }

@@ -40,15 +40,8 @@ import java.util.Map;
  */
 public class Options {
 
-    // ==========================================================================
-    // ==========================================================================
-    // Constants
-    // ==========================================================================
     public static final String COPY_PROPERTIES = "CopyProperties";
     public static final int DEFAULT_TIMEOUT_MILLISECONDS = 5000;
-
-    // ==========================================================================
-
     private Options delegate = null;
     private Map properties = new HashMap();
 

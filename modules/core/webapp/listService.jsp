@@ -128,7 +128,6 @@
                     <%
                        }
                    }
-                //   request.getSession().removeAttribute(Constants.SERVICE_MAP);
                    status = true;
                }if(!status){
                     %> There seems to be no services listed! Try hitting refresh <%

@@ -37,7 +37,6 @@ public class ArchiveFileData {
     private ClassLoader classLoader;
     private String messgeReceiver;
 
-//  private String moduleClass;
     private String name;
     private int type;
 
@@ -108,7 +107,6 @@ public class ArchiveFileData {
     public void setClassLoader(boolean extractArichive, ClassLoader parent) throws AxisFault {
         if (!extractArichive) {
 
-            // has to be craeted taking that file to the account
             if (file != null) {
                 URL[] urlsToLoadFrom;
 
