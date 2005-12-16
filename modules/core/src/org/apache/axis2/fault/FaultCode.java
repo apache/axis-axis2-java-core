@@ -23,9 +23,6 @@ import org.apache.axis2.soap.SOAPFaultValue;
 
 import javax.xml.namespace.QName;
 
-/**
- * created 31-Oct-2005 13:08:33
- */
 public class FaultCode extends AbstractFaultCode {
     String value;
 

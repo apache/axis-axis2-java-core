@@ -37,7 +37,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
     /**
      * Field NAME
      */
-    public static final QName NAME = new QName("http://axis.ws.apache.org",
+    public static final QName NAME = new QName("http://ws.apache.org/axis2/",
             "RequestURIBasedDispatcher");
     private Log log = LogFactory.getLog(getClass());
     String serviceName = null;

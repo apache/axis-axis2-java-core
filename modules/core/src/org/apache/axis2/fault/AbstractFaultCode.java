@@ -22,7 +22,6 @@ import javax.xml.namespace.QName;
 /**
  * both FaultCodes and Subcodes implement this. They only really vary in how values are handled;
  * subcodes must have qnames; faultcodes are simple strings.
- * created 31-Oct-2005 14:20:40
  */
 public abstract class AbstractFaultCode {
 

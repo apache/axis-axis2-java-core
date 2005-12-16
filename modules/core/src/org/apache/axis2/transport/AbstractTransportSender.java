@@ -48,7 +48,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
     /**
      * Field NAME
      */
-    public static final QName NAME = new QName("http://axis.ws.apache.org", "TransportSender");
+    public static final QName NAME = new QName("http://ws.apache.org/axis2/", "TransportSender");
 
     /**
      * Field log
