@@ -2,7 +2,7 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.deployment.FileSystemBasedAxisConfigurationCreteator;
+import org.apache.axis2.deployment.FileSystemConfigurationCreator;
 import org.apache.axis2.description.ModuleDescription;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
@@ -32,7 +32,7 @@ public class ConfigurationContextFactory {
      */
     public ConfigurationContext buildClientConfigurationContext(String axis2home) throws AxisFault {
         AxisConfigurationCreator repoBasedConfigCreator =
-                new FileSystemBasedAxisConfigurationCreteator(axis2home, false);
+                new FileSystemConfigurationCreator(axis2home, false);
         AxisConfiguration axisConfig = repoBasedConfigCreator.getAxisConfiguration();
         ConfigurationContext configurationContext = new ConfigurationContext(axisConfig);
 
@@ -50,7 +50,7 @@ public class ConfigurationContextFactory {
      */
     public ConfigurationContext buildConfigurationContext(String repositoryName) throws AxisFault {
         AxisConfigurationCreator repoBasedConfigCreator =
-                new FileSystemBasedAxisConfigurationCreteator(repositoryName, true);
+                new FileSystemConfigurationCreator(repositoryName, true);
         AxisConfiguration axisConfig = repoBasedConfigCreator.getAxisConfiguration();
         ConfigurationContext configurationContext = new ConfigurationContext(axisConfig);
 

@@ -22,7 +22,7 @@ import org.apache.axis2.engine.AxisConfigurationCreator;
 *
 */
 
-public class FileSystemBasedAxisConfigurationCreteator implements AxisConfigurationCreator {
+public class FileSystemConfigurationCreator implements AxisConfigurationCreator {
 
     /**
      * To check whether need to create a service side or client side
@@ -30,7 +30,7 @@ public class FileSystemBasedAxisConfigurationCreteator implements AxisConfigurat
     private boolean isServer;
     private String repoLocation;
 
-    public FileSystemBasedAxisConfigurationCreteator(String repoLocation, boolean isServer) {
+    public FileSystemConfigurationCreator(String repoLocation, boolean isServer) {
         this.repoLocation = repoLocation;
         this.isServer = isServer;
     }
