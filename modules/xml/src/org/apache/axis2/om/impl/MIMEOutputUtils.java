@@ -25,22 +25,23 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 public class MIMEOutputUtils {
 
-    private static String CRLF = "\r\n";
+    private static byte[] CRLF =  { 13, 10 };
     private Log log = LogFactory.getLog(getClass());
 
     public static void complete(OutputStream outStream,
-                                OutputStream bufferedSoapOutStream, LinkedList binaryNodeList,
+                                StringWriter writer, LinkedList binaryNodeList,
                                 String boundary, String contentId, String charSetEncoding,String SOAPContentType) {
         try {
             startWritingMime(outStream, boundary);
 
-            javax.activation.DataHandler dh = new javax.activation.DataHandler(bufferedSoapOutStream.toString(),
-                    "text/xml");
+            javax.activation.DataHandler dh = new javax.activation.DataHandler(writer.toString(),
+                    "text/xml; charset=" + charSetEncoding);
             MimeBodyPart rootMimeBodyPart = new MimeBodyPart();
             rootMimeBodyPart.setDataHandler(dh);
             
@@ -50,13 +51,13 @@ public class MIMEOutputUtils {
             rootMimeBodyPart.addHeader("content-transfer-encoding", "binary");
             rootMimeBodyPart.addHeader("content-id","<"+contentId+">");
 
-            writeBodyPart(outStream, rootMimeBodyPart, boundary, charSetEncoding);
+            writeBodyPart(outStream, rootMimeBodyPart, boundary);
 
             Iterator binaryNodeIterator = binaryNodeList.iterator();
             while (binaryNodeIterator.hasNext()) {
                 OMText binaryNode = (OMText) binaryNodeIterator.next();
                 writeBodyPart(outStream, createMimeBodyPart(binaryNode),
-                        boundary, charSetEncoding);
+                        boundary);
             }
             finishWritingMime(outStream);
         } catch (IOException e) {
@@ -106,12 +107,11 @@ public class MIMEOutputUtils {
      */
     public static void writeBodyPart(OutputStream outStream,
                                      MimeBodyPart part, 
-                                     String boundary,
-                                     String encoding) throws IOException,
+                                     String boundary) throws IOException,
             MessagingException {
-        outStream.write(CRLF.getBytes(encoding));
+        outStream.write(CRLF);
         part.writeTo(outStream);
-        outStream.write(CRLF.getBytes(encoding));
+        outStream.write(CRLF);
         writeMimeBoundary(outStream, boundary);
     }
 

@@ -251,10 +251,10 @@ public abstract class AbstractHTTPSender {
             for (int i = 0; i < headers.length; i++) {
                 NameValuePair charsetEnc = headers[i]
                         .getParameterByName(HTTPConstants.CHAR_SET_ENCODING);
+                OperationContext opContext = msgContext
+                        .getOperationContext();
                 if (headers[i].getName().equalsIgnoreCase(
                         HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED)) {
-                    OperationContext opContext = msgContext
-                            .getOperationContext();
                     if (opContext != null) {
                         opContext.setProperty(
                                 HTTPConstants.MTOM_RECIVED_CONTENT_TYPE, header
@@ -262,7 +262,7 @@ public abstract class AbstractHTTPSender {
                     }
                 } else if (charsetEnc != null) {
 
-                    msgContext.setProperty(
+                    opContext.setProperty(
                             MessageContext.CHARACTER_SET_ENCODING, charsetEnc
                             .getValue()); //change to the value, which is text/xml or application/xml+soap
                 }

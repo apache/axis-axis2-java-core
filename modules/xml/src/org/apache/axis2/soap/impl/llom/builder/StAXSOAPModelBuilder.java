@@ -106,6 +106,9 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
         soapFactory = OMAbstractFactory.getDefaultSOAPFactory();
         isTempSOAPFactory = true;
         soapMessage = soapFactory.createSOAPMessage(this);
+        if(parser.getCharacterEncodingScheme() != null) {
+            document.setCharsetEncoding(parser.getCharacterEncodingScheme());
+        }
         identifySOAPVersion(soapVersion);
         parseHeaders();
     }

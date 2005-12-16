@@ -27,6 +27,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.LinkedList;
 
 
@@ -39,7 +40,7 @@ public class OMOutputImpl {
     private XMLStreamWriter xmlWriter;
     private OutputStream outStream;
     private LinkedList binaryNodeList = new LinkedList();
-    private ByteArrayOutputStream bufferedSoapOutStream;
+    private StringWriter bufferedSOAPBody;
     private OMOutputFormat format = new OMOutputFormat();
 
     public OMOutputImpl(XMLStreamWriter xmlWriter) {
@@ -66,9 +67,8 @@ public class OMOutputImpl {
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
         if (format.isOptimized()) {
-            bufferedSoapOutStream = new ByteArrayOutputStream();
-            xmlWriter = factory.createXMLStreamWriter(bufferedSoapOutStream,
-                    format.getCharSetEncoding());
+            bufferedSOAPBody = new StringWriter();
+            xmlWriter = factory.createXMLStreamWriter(bufferedSOAPBody);
         } else {
             xmlWriter = factory.createXMLStreamWriter(outStream,
                     format.getCharSetEncoding());
@@ -86,7 +86,7 @@ public class OMOutputImpl {
             }
             MIMEOutputUtils.complete(
                     outStream,
-                    bufferedSoapOutStream,
+                    bufferedSOAPBody,
                     binaryNodeList,
                     format.getMimeBoundary(),
                     format.getRootContentId(),

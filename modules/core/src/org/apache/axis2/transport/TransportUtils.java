@@ -66,6 +66,9 @@ public class TransportUtils {
 
             String charSetEnc = (String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
             if(charSetEnc == null) {
+                charSetEnc = (String)opContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+            }
+            if(charSetEnc == null) {
             	charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
             }
             

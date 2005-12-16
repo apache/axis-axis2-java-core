@@ -55,6 +55,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.io.PushbackInputStream;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -340,27 +342,23 @@ public class HTTPTransportUtils {
                 fileCacheForAttachments, attachmentRepoDir, attachmentSizeThreshold);
 
         String charSetEncoding = TransportUtils.getCharSetEncoding(mimeHelper.getSOAPPartContentType());
-        XMLStreamReader reader;
+        XMLStreamReader streamReader;
         if (charSetEncoding == null || "null".equalsIgnoreCase(charSetEncoding)) {
-            reader = XMLInputFactory.newInstance()
-                    .createXMLStreamReader(
-                            new BufferedReader(new InputStreamReader(mimeHelper
-                                    .getSOAPPartInputStream(),
-                                    charSetEncoding)));
-            msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, charSetEncoding);
-
-        } else {
-            reader = XMLInputFactory.newInstance()
-                    .createXMLStreamReader(
-                            new BufferedReader(new InputStreamReader(mimeHelper
-                                    .getSOAPPartInputStream())));
-            msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, MessageContext.UTF_8);
-
+            charSetEncoding = MessageContext.UTF_8;
         }
 
+        try {
+            streamReader = XMLInputFactory.newInstance()
+                    .createXMLStreamReader(
+                            getReader(mimeHelper.getSOAPPartInputStream(), charSetEncoding));
+        } catch (IOException e) {
+            throw new XMLStreamException(e);
+        }
+        msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, charSetEncoding);
+
         /*
-           * put a reference to Attachments in to the message context
-           */
+         * put a reference to Attachments in to the message context
+         */
         msgContext.setProperty(MTOMConstants.ATTACHMENTS, mimeHelper);
         if (mimeHelper.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
             /*
@@ -368,17 +366,63 @@ public class HTTPTransportUtils {
              */
             builder =
                     new MTOMStAXSOAPModelBuilder(
-                            reader,
+                            streamReader,
                             mimeHelper,
                             null);
-        } else if (
-                mimeHelper.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
+        } else if (mimeHelper.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
             builder =
                     new StAXSOAPModelBuilder(
-                            reader,
+                            streamReader,
                             SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         }
         return builder;
+    }
+    
+    private static final int BOM_SIZE = 4;
+
+    /**
+     * Use the BOM Mark to identify the encoding to be used. Fall back to default encoding specified 
+     * 
+     * @param is
+     * @param charSetEncoding
+     * @return
+     * @throws IOException
+     */
+    private static Reader getReader(InputStream is, String charSetEncoding) throws IOException {
+        PushbackInputStream is2 = new PushbackInputStream(is, BOM_SIZE);
+
+        String encoding;
+        byte bom[] = new byte[BOM_SIZE];
+        int n, unread;
+        n = is2.read(bom, 0, bom.length);
+
+        if ((bom[0] == (byte) 0xEF) && (bom[1] == (byte) 0xBB) &&
+                (bom[2] == (byte) 0xBF)) {
+            encoding = "UTF-8";
+            unread = n - 3;
+        } else if ((bom[0] == (byte) 0xFE) && (bom[1] == (byte) 0xFF)) {
+            encoding = "UTF-16BE";
+            unread = n - 2;
+        } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE)) {
+            encoding = "UTF-16LE";
+            unread = n - 2;
+        } else if ((bom[0] == (byte) 0x00) && (bom[1] == (byte) 0x00) &&
+                (bom[2] == (byte) 0xFE) && (bom[3] == (byte) 0xFF)) {
+            encoding = "UTF-32BE";
+            unread = n - 4;
+        } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE) &&
+                (bom[2] == (byte) 0x00) && (bom[3] == (byte) 0x00)) {
+            encoding = "UTF-32LE";
+            unread = n - 4;
+        } else {
+            // Unicode BOM mark not found, unread all bytes
+            encoding = charSetEncoding;
+            unread = n;
+        }
+        if (unread > 0) is2.unread(bom, (n - unread), unread);
+
+        return new BufferedReader(new InputStreamReader(is2,
+                encoding));
     }
 
     public static boolean checkEnvelopeForOptimise(SOAPEnvelope envelope) {
