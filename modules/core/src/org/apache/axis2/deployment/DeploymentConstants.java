@@ -23,7 +23,7 @@ package org.apache.axis2.deployment;
 public interface DeploymentConstants {
     public static String META_INF = "META-INF";
     public static final String SERVICE_WSDL_NAME = "service.wsdl";
-    int SERVICE = 0;                // if it is a servise
+    int SERVICE = 0;                // if it is a service
     int MODULE = 1;                // if it is a module
     String SERVICEXML = "META-INF/services.xml";
     String SERVICE_WSDL_WITH_FOLDER = "META-INF/service.wsdl";
@@ -45,7 +45,7 @@ public interface DeploymentConstants {
     String TRANSPORTSENDER = "transportSender";
     String TRANSPORTRECEIVER = "transportReceiver";
 
-    // for serviemetadat
+    // for servicemetadata
     String STYLENAME = "style";
     String SERVICE_PATH = "/services/";
     String SERVICE_GROUP_ELEMENT = "serviceGroup";
@@ -64,7 +64,6 @@ public interface DeploymentConstants {
     String ORDER = "order";           // to resolve the order tag
     String OPRATIONST = "operation";       // operation start tag
 
-    // String FOLDE_NAME = "D:/Axis 2.0/projects/Deployement/test-data";
     String MODULE_PATH = "/modules/";
     String MESSAGERECEIVER = "messageReceiver";
     String MEP = "mep";
@@ -90,7 +89,7 @@ public interface DeploymentConstants {
     String ATTNAME = "name";
     String ATTLOCKED = "locked";
 
-    // for operatiins
+    // for operations
     String ATQNAME = "name";
     String AFTER = "after";
 }

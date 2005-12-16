@@ -194,18 +194,6 @@ public class SimpleHTTPServer extends TransportListener {
     }
 
     /**
-     * stop the server if not already told to.
-     *
-     * @throws Throwable
-     */
-
-    // todo : Deepal , this is not the properway to handle , pls fix
-    //    protected void finalize() throws Throwable {
-    //        stop();
-    //        super.finalize();
-    //    }
-
-    /**
      * Start this server as a NON-daemon.
      */
     public void start() throws AxisFault {

@@ -82,12 +82,12 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             processModuleRefs(moduleitr);
 
-            // Proccessing Transport Sennders
+            // Proccessing Transport Senders
             Iterator trs_senders = config_element.getChildrenWithName(new QName(TRANSPORTSENDER));
 
             processTransportSenders(trs_senders);
 
-            // Proccessing Transport Recivers
+            // Proccessing Transport Receivers
             Iterator trs_Reivers = config_element.getChildrenWithName(new QName(TRANSPORTRECEIVER));
 
             processTransportReceivers(trs_Reivers);
@@ -205,7 +205,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
                 processParameters(itr, observer, axisConfiguration);
 
-                // initilization
+                // initialization
                 observer.init();
                 axisConfiguration.addObservers(observer);
             } catch (ClassNotFoundException e) {
@@ -288,7 +288,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             TransportInDescription transportIN;
             OMElement transport = (OMElement) trs_senders.next();
 
-            // getting trsnport Name
+            // getting transport Name
             OMAttribute trsName = transport.getAttribute(new QName(ATTNAME));
 
             if (trsName != null) {
@@ -296,7 +296,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
                 transportIN = new TransportInDescription(new QName(name));
 
-                // tranport impl class
+                // transport impl class
                 OMAttribute trsClas = transport.getAttribute(new QName(CLASSNAME));
 
                 if (trsClas != null) {
@@ -373,7 +373,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             TransportOutDescription transportout;
             OMElement transport = (OMElement) trs_senders.next();
 
-            // getting trsnport Name
+            // getting transport Name
             OMAttribute trsName = transport.getAttribute(new QName(ATTNAME));
 
             if (trsName != null) {
@@ -381,7 +381,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
                 transportout = new TransportOutDescription(new QName(name));
 
-                // tranport impl class
+                // transport impl class
                 OMAttribute trsClas = transport.getAttribute(new QName(CLASSNAME));
 
                 if (trsClas == null) {
@@ -459,7 +459,6 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             return new Phase();
         }
 
-//      Class phaseClass = Class.forName(className);
         Class phaseClass = axisConfiguration.getSystemClassLoader().loadClass(className);
 
         return (Phase) phaseClass.newInstance();

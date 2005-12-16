@@ -34,11 +34,6 @@ public class OptionsParser {
     String args[] = null;
     Vector usedArgs = null;
 
-    // ////////////////////////////////////////////////////////////////////////
-    // SOASS (Start of Axis Specific Stuff)
-    // EOASS
-    // ////////////////////////////////////////////////////////////////////////
-
     /**
      * Constructor - just pass in the <b>args</b> from the command line.
      */

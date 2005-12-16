@@ -131,8 +131,7 @@ public class TransportUtils {
     public static String getCharSetEncoding(String contentType) {
         int index = contentType.indexOf(HTTPConstants.CHAR_SET_ENCODING);
 
-        if (index == -1) {    // Charset encoding not found in the contect-type header
-
+        if (index == -1) {    // Charset encoding not found in the content-type header
             // Using the default UTF-8
             return MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }

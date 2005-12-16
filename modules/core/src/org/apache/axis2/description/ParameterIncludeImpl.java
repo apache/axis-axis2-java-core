@@ -136,7 +136,7 @@ public class ParameterIncludeImpl implements ParameterInclude {
         return para_list;
     }
 
-    // to check whether the parameter is locked at any levle
+    // to check whether the parameter is locked at any level
     public boolean isParameterLocked(String parameterName) {
         return false;
     }

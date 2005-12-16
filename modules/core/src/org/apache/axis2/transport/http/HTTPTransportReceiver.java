@@ -176,17 +176,6 @@ public class HTTPTransportReceiver {
 
                             break;
 
-                            // case END_OF_LINE :
-                            // if (buf[i] == '\n') {
-                            // state = END;
-                            // break;
-                            // } else {
-                            // state = BEFORE_SEPERATOR;
-                            // str.append(buf[i]);
-                            // }
-                            // break;
-                            // case END:
-                            // break;
                         default :
                             throw new AxisFault("Error Occured Unknown state " + state);
                     }
@@ -236,7 +225,6 @@ public class HTTPTransportReceiver {
     protected int readLine(InputStream is, byte[] b) throws java.io.IOException {
         int count = 0, c;
 
-        // System.out.println("inside here");
         if (lastRead == -1) {
             c = is.read();
         } else {

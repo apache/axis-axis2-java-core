@@ -87,7 +87,6 @@ public class ListenerManager {
             try {
                 return new ServerSocket(port + i);
             } catch (IOException e) {
-
                 // What I'm gonna do here. Try again.
             }
         }

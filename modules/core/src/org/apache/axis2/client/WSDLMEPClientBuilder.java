@@ -115,7 +115,7 @@ public class WSDLMEPClientBuilder {
             serviceDesc.addOperation(axisOp);
         }
 
-        // This part is compelte mess .. I think we need to look closly at the ServiceGroups  ..time been this works
+        // TODO: This part is compelte mess .. I think we need to look closly at the ServiceGroups  ..time been this works
         configurationContext.getAxisConfiguration().addService(serviceDesc);
 
         AxisServiceGroup serviceGroup =

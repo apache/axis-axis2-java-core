@@ -134,8 +134,6 @@ public class SMTPWorker extends Thread {
                     mail.addFrom(mailFrom);
                 } catch (MessagingException e) {
                     log.info(e.getMessage());
-
-                    // TODO Auto-generated catch block
                 }
             }
 
@@ -147,8 +145,6 @@ public class SMTPWorker extends Thread {
         } else if (input.startsWith("RCPT")) {
             String domain = MailSrvConstants.SERVER_DOMAIN;
 
-            // System.out.println("RCPT:" + input);
-            // temp += input + "\n"; TODO Check this
             int start = input.indexOf("<") + 1;
             int end;
 
@@ -176,8 +172,6 @@ public class SMTPWorker extends Thread {
                 receivers.add(toStr);
             } catch (MessagingException e) {
                 log.info(e.getMessage());
-
-                // TODO Auto-generated catch block
             }
 
             return MailSrvConstants.RCPT_OK;
@@ -208,8 +202,6 @@ public class SMTPWorker extends Thread {
                 }
             } catch (MessagingException e) {
                 log.info(e.getMessage());
-
-                // TODO Auto-generated catch block
             }
 
             return null;

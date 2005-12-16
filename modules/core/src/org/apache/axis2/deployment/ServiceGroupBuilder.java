@@ -61,7 +61,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
             processServiceModuleConfig(moduleConfigs, axisServiceGroup.getParent(),
                     axisServiceGroup);
 
-            // processing servicewide modules which required to engage gloabbly
+            // processing servicewide modules which required to engage gloabally
             Iterator moduleRefs = servcice.getChildrenWithName(new QName(MODULEST));
 
             processModuleRefs(moduleRefs, axisServiceGroup);
@@ -83,7 +83,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
                         axisService = new AxisService(serviceName);
                     }
 
-                    // the service that has to be deploy
+                    // the service that has to be deployed
                     axisService.setParent(axisServiceGroup);
                     axisService.setClassLoader(axisServiceGroup.getServiceGroupClassLoader());
 

@@ -75,7 +75,7 @@ public class AxisConfiguration implements ParameterInclude {
      */
     private Hashtable faultyServices;
 
-    // to store hots configuration if any
+    // to store host configuration if any
     HostConfiguration hostConfiguration;
     private ArrayList inFaultPhases;
     private ArrayList inPhasesUptoAndIncludingPostDispatch;
@@ -109,8 +109,8 @@ public class AxisConfiguration implements ParameterInclude {
         serviceClassLoader = Thread.currentThread().getContextClassLoader();
         moduleClassLoader = Thread.currentThread().getContextClassLoader();
 
-        // setting the dafualt flow , if some one creat AxisConfig programatically
-        // most requird handles will be there in the flow.
+        // setting the default flow , if some one creating AxisConfig programatically
+        // most required handles will be there in the flow.
 
         // todo we need to fix this , we know that we are doing wrong thing here
         createDefaultChain();
@@ -385,7 +385,7 @@ public class AxisConfiguration implements ParameterInclude {
         return (ModuleDescription) modules.get(name);
     }
 
-    // the class loder that become the paranet of all the moduels
+    // the class loder that become the parent of all the modules
     public ClassLoader getModuleClassLoader() {
         return this.moduleClassLoader;
     }
@@ -441,7 +441,7 @@ public class AxisConfiguration implements ParameterInclude {
         return (AxisService) allservices.get(name);
     }
 
-    // the class loder that become the paranet of all the services
+    // the class loder that become the parent of all the services
     public ClassLoader getServiceClassLoader() {
         return this.serviceClassLoader;
     }

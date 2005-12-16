@@ -99,7 +99,7 @@ public class AxisEngine {
                             SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND);
                 }
 
-                // TODO what should be do with the Ulitmate Receiver? Axis2 is ultimate Receiver most of the time
+                // TODO what should be do with the Ultimate Receiver? Axis2 is ultimate Receiver most of the time
                 // should we support that as well
             } else {
 
@@ -228,7 +228,6 @@ public class AxisEngine {
                 soapException = (SOAPProcessingException) e.getCause();
             }
         } else {
-
             // we have recd an instance of just the Exception class
         }
 
@@ -339,7 +338,6 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public void receiveFault(MessageContext msgContext) throws AxisFault {
-
         // TODO : rationalize fault handling!
     }
 

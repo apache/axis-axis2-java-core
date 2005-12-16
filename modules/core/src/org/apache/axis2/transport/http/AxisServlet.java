@@ -149,7 +149,6 @@ public class AxisServlet extends HttpServlet {
             Object contextWritten =
                     msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
 
-            // Getting the
             res.setContentType("text/xml; charset="
                     + msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING));
 
@@ -194,7 +193,6 @@ public class AxisServlet extends HttpServlet {
             lister = new ListingAgent(configContext);
             context.setAttribute(CONFIGURATION_CONTEXT, configContext);
 
-//          servletContext = getServletContext();
         } catch (Exception e) {
             throw new ServletException(e);
         }

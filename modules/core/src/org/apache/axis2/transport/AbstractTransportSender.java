@@ -119,7 +119,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         }
 
         // TODO fix this, we do not set the value if the operation context is
-        // not avalible
+        // not available
         if (msgContext.getOperationContext() != null) {
             msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN,
                     Constants.VALUE_TRUE);

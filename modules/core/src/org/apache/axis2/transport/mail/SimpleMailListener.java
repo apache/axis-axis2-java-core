@@ -168,8 +168,6 @@ public class SimpleMailListener extends TransportListener implements Runnable {
      */
     public void run() {
 
-        // log.info(Message.getMessage("start00", "SimpleMailListner", host + ":" +
-        // port)); TODO Issue #1 CT 07-Feb-2005.
         // Accept and process requests from the socket
         if (!stopped) {
             String logMessage = "Mail listner is being setup to listen to the address " + user
@@ -208,18 +206,13 @@ public class SimpleMailListener extends TransportListener implements Runnable {
                 Thread.sleep(3000);
             } catch (Exception e) {
 
-                // log.debug(Messages.getMessage("exception00"), e); TODO Issue
-                // #1 CT 07-Feb-2005.
                 log.debug("An error occured when running the mail listner." + e.getMessage(), e);
 
                 break;
             }
         }
 
-        log.info("Mail listner has been stoped.");
-
-        // log.info(Messages.getMessage("quit00", "SimpleMailListner")); TODO Issue #1
-        // CT 07-Feb-2005.
+        log.info("Mail listener has been stoped.");
     }
 
     /**
@@ -272,9 +265,6 @@ public class SimpleMailListener extends TransportListener implements Runnable {
          * socket is closing.
          */
         stopped = true;
-
-        // log.info(Messages.getMessage("quit00", "SimpleMailListner")); TODO Issue #1
-        // CT 07-Feb-2005.
         log.info("Quiting the mail listner");
     }
 
@@ -287,8 +277,6 @@ public class SimpleMailListener extends TransportListener implements Runnable {
      * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
      */
     public EndpointReference getReplyToEPR(String serviceName) throws AxisFault {
-
-        // TODO Auto-generated method stub
         return new EndpointReference(replyTo + "/services/" + serviceName);
     }
 

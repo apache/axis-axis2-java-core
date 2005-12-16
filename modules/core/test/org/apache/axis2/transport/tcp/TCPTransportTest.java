@@ -29,45 +29,11 @@ import java.io.InputStream;
 public class TCPTransportTest extends TestCase {
     public TCPTransportTest(String arg0) {
         super(arg0);
-        // TODO Auto-generated constructor stub
     }
 
     public void testTransportSender() throws AxisFault {
-//        Thread thead = new Thread(new Runnable() {
-//            public void run() {
-//               try {
-//                     ServerSocket serverSocket = new ServerSocket(45678);
-//                        Socket s = serverSocket.accept();
-//                        assertNotNull(createSOAPEnvelope(s.getInputStream()));
-//                } catch (AxisFault e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                } catch (IOException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        thead.start();
-//
-//        TCPTransportSender ts = new TCPTransportSender();
-//        MessageContext msgctx = new MessageContext(null, null, null, null);
-//        msgctx.setTo(new EndpointReference(AddressingConstants.WSA_TO,"http://127.0.0.1:45679"));
-//        
-//        msgctx.setEnvelope(createSOAPEnvelope(Thread.currentThread().getContextClassLoader().getResourceAsStream("org/apache/axis2/transport/sample.xml")));
-//        ts.invoke(msgctx);
-
-
     }
     
-//    public void testTransportReceiver(){
-//        ConfigurationContext configContext = new ConfigurationContext(new AxisConfigurationImpl());
-//        AxisService serviceDesc = new AxisService(new QName("TempService"));
-//        AxisOperation opDesc = new AxisOperation();
-//        TCPServer tcpServer = new TCPServer();
-//    }
-    
-
     public SOAPEnvelope createSOAPEnvelope(InputStream in) throws AxisFault {
         try {
             XMLStreamReader xmlreader =

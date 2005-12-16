@@ -309,7 +309,6 @@ public class InOutMEPClient extends MEPClient {
 
             msgctx.setMessageID(messageID);
 
-            // //
             if (clientOptions.isUseSeparateListener()) {
 
                 // the invocation happen via a separate Channel, so we should set up the

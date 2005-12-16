@@ -56,13 +56,10 @@ public interface AddressingConstants {
         public static final String WSA_POLICIES = "Policies";
         public static final String WSA_METADATA = "Metadata";
 
-        // ==================================================================================
-
         public static final String WSA_INTERFACE_NAME = "InterfaceName";
     }
 
 
-    // ======================================================================
     public interface Submission {
 
         // ====================== Addressing Submission Version Constants ===================
@@ -72,8 +69,6 @@ public interface AddressingConstants {
         public static final String WSA_ANONYMOUS_URL =
                 "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous";
         public static final String EPR_SERVICE_NAME_PORT_NAME = "PortName";
-
-        // ==================================================================================
 
         public static final String EPR_REFERENCE_PROPERTIES = "ReferenceProperties";
         public static final String EPR_PORT_TYPE = "PortType";

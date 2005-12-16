@@ -131,7 +131,7 @@ public class TransportInDescription implements ParameterInclude {
         return receiver;
     }
 
-    // to check whether the parameter is locked at any levle
+    // to check whether the parameter is locked at any level
     public boolean isParameterLocked(String parameterName) {
         return paramInclude.isParameterLocked(parameterName);
     }

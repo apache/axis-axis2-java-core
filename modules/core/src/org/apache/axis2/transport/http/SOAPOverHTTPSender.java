@@ -37,9 +37,6 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         // handle multiple
         httpClient = new HttpClient();
 
-        // hostConfig handles the socket functions..
-        // HostConfiguration hostConfig = getHostConfiguration(msgContext, url);
-
         // Get the timeout values set in the runtime
         getTimeoutValues(msgContext);
 
@@ -179,7 +176,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
         public void writeRequest(OutputStream out) throws IOException {
             try {
-                if (doingMTOM) {    // chagened ..
+                if (doingMTOM) {    
                     if (chuncked) {
                         this.handleOMOutput(out, doingMTOM);
                     } else {
@@ -213,7 +210,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
         public long getContentLength() {
             try {
-                if (doingMTOM) {    // chagened
+                if (doingMTOM) {    
                     if (chuncked) {
                         return -1;
                     } else {

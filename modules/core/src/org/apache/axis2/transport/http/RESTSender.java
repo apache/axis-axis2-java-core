@@ -155,8 +155,6 @@ public class RESTSender extends AbstractHTTPSender {
 
         HostConfiguration hostConfig = this.getHostConfiguration(httpClient, msgContext, url);
 
-        // this.getHostConfiguration(msgContext, url);
-
         // Get the timeout values set in the runtime
         getTimeoutValues(msgContext);
 
@@ -196,12 +194,9 @@ public class RESTSender extends AbstractHTTPSender {
     private void sendViaPost(MessageContext msgContext, OMElement dataout, URL url,
                              String soapActionString) {
 
-        // execuite the HtttpMethodBase - a connection manager can be given for
+        // execute the HtttpMethodBase - a connection manager can be given for
         // handle multiple
         httpClient = new HttpClient();
-
-        // hostConfig handles the socket functions..
-        // HostConfiguration hostConfig = getHostConfiguration(msgContext, url);
 
         // Get the timeout values set in the runtime
         getTimeoutValues(msgContext);
@@ -234,7 +229,6 @@ public class RESTSender extends AbstractHTTPSender {
         // if POST as application/x-www-form-urlencoded
         RequestData reqData;
 
-        // System.out.print((String)msgContext.);
         if (httpContentType.equalsIgnoreCase(HTTPConstants.MEDIA_TYPE_X_WWW_FORM)) {
             reqData = createRequest(msgContext, dataout);
             postMethod.setPath(url.getPath() + ((reqData.urlRequest) != null

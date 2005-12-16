@@ -25,6 +25,4 @@ public interface AxisObserver extends ParameterInclude {
     void init();
 
     void update(AxisEvent event);
-
-    // there can be parameters for the Observers
 }

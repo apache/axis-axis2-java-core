@@ -114,9 +114,6 @@ public class POP3Worker extends Thread {
 
                     m.writeTo(socket.getOutputStream());
 
-                    // System.out.println("\n\n\n\n ========This is the mail========");
-                    // m.writeTo(System.out);//socket.getOutputStream());
-                    // System.out.println("\n\n\n\n ========This is the mail========");
                     socket.getOutputStream().write(CR_LF_DOT_CR_LF);    // This is a bit of a hack to get it working. Have to find a bette way to handle this.
                     socket.getOutputStream().flush();
                 } catch (NumberFormatException e) {
@@ -160,7 +157,6 @@ public class POP3Worker extends Thread {
             printWriter.println(MailSrvConstants.OK + " POP3 server ready");
 
             String s;
-            String ps;    // ProcessedString
 
             while (!doneProcess) {
                 s = bufferedReader.readLine();

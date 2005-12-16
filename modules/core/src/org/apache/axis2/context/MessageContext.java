@@ -514,7 +514,7 @@ public class MessageContext extends AbstractContext {
             return obj;
         }
 
-        // The context hirachy might not have constructed fully, the check should
+        // The context hierarchy might not have constructed fully, the check should
         // look for the disconnected grandparents
         // Search in Operation Context
         if (operationContext != null) {

@@ -168,7 +168,6 @@ public class DeploymentEngine implements DeploymentConstants {
                         try {
                             out.close();
                         } catch (IOException e) {
-
                             // ignore
                         }
                     }
@@ -176,7 +175,6 @@ public class DeploymentEngine implements DeploymentConstants {
                     try {
                         in.close();
                     } catch (IOException e) {
-
                         // ignore
                     }
                 }
@@ -226,7 +224,6 @@ public class DeploymentEngine implements DeploymentConstants {
             Utils.addFlowHandlers(faultOutFlow, moduleClassLoader);
         }
 
-//      modulemetadata.setModuleClassLoader(currentArchiveFile.getClassLoader());
         axisConfig.addModule(modulemetadata);
         log.info(Messages.getMessage(DeploymentErrorMsgs.ADDING_NEW_MODULE));
     }
@@ -373,7 +370,6 @@ public class DeploymentEngine implements DeploymentConstants {
                 Utils.addFlowHandlers(faultOutFlow, moduleClassLoader);
             }
 
-//          loadModuleClass(axismodule);
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
         }

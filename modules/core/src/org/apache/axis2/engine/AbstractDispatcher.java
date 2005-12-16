@@ -73,7 +73,6 @@ public abstract class AbstractDispatcher extends AbstractHandler {
      */
     public abstract AxisService findService(MessageContext messageContext) throws AxisFault;
 
-    // just to put the parent
     public abstract void initDispatcher();
 
     /**
@@ -92,7 +91,6 @@ public abstract class AbstractDispatcher extends AbstractHandler {
                 }
 
                 msgctx.setAxisService(axisService);
-
                 // TODO Chinthaka : set the Service Group Context to the message Context
             }
         }

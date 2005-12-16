@@ -211,11 +211,6 @@ public class HTTPTransportUtils {
                     } else if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
                         soap11 = true;
 
-                        // it is SOAP 1.1
-
-//                      msgContext.getProperty(
-//                          Constants.Configuration.ENABLE_REST);
-
                         /**
                          * Configuration via Deployment
                          */
@@ -277,8 +272,6 @@ public class HTTPTransportUtils {
         } catch (SOAPProcessingException e) {
             throw new AxisFault(e);
         } catch (AxisFault e) {
-
-            // rethrow
             throw e;
         } catch (OMException e) {
             throw new AxisFault(e);

@@ -39,8 +39,6 @@ public interface Module {
     // initialize the module
     public void init(AxisConfiguration axisSystem) throws AxisFault;
 
-    // TODO figure out how to get the engage() concept done
-    // public void engage(ExecutionChain exeChain) throws AxisFault;
     // shutdown the module
     public void shutdown(AxisConfiguration axisSystem) throws AxisFault;
 }

@@ -114,7 +114,5 @@ public class TCPTransportSender extends AbstractTransportSender {
     protected void writeTransportHeaders(Writer out, URL url, MessageContext msgContext,
                                          int contentLength)
             throws IOException {
-
-        // TCP no headers   :)
     }
 }

@@ -85,8 +85,6 @@ public abstract class AbstractHTTPSender {
             domain = split[1];
             passwd = split[2];
 
-            //
-
             OMElement proxyParamElement = proxyParam.getParameterElement();
             Iterator ite = proxyParamElement.getAllAttributes();
 
@@ -340,7 +338,7 @@ public abstract class AbstractHTTPSender {
 
         public void writeRequest(OutputStream out) throws IOException {
             try {
-                if (doingMTOM) {    // chagened ..
+                if (doingMTOM) {    
                     if (chuncked) {
                         this.handleOMOutput(out, doingMTOM);
                     } else {
@@ -374,7 +372,7 @@ public abstract class AbstractHTTPSender {
 
         public long getContentLength() {
             try {
-                if (doingMTOM) {    // chagened
+                if (doingMTOM) {    
                     if (chuncked) {
                         return -1;
                     } else {

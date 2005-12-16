@@ -70,7 +70,6 @@ public class LocalTransportSender extends AbstractTransportSender {
     protected OutputStream openTheConnection(EndpointReference epr, MessageContext msgContext)
             throws AxisFault {
 
-        // out = new PipedOutputStream();
         out = new ByteArrayOutputStream();
 
         return out;

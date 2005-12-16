@@ -96,7 +96,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
 
-            // processing servicewide modules which required to engage gloabbly
+            // processing servicewide modules which required to engage gloabally
             Iterator moduleRefs = service_element.getChildrenWithName(new QName(MODULEST));
 
             processModuleRefs(moduleRefs);
@@ -256,7 +256,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 op_descrip.setMessageReceiver(messageReceiver);
             } else {
 
-                // setting default message reciver
+                // setting default message receiver
                 MessageReceiver msgReceiver = loadDefaultMessageReceiver();
 
                 op_descrip.setMessageReceiver(msgReceiver);

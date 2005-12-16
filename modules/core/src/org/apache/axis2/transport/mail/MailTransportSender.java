@@ -40,13 +40,7 @@ public class MailTransportSender extends AbstractTransportSender {
     public MailTransportSender() {
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.apache.axis2.transport.TransportSender#cleanUp()
-     */
     public void cleanUp(MessageContext msgContext) throws AxisFault {
-
-        // TODO Auto-generated method stub
     }
 
     public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,

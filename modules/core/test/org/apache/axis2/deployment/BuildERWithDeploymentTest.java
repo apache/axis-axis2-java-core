@@ -50,9 +50,6 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
             assertNotNull(cl);
             Class.forName("org.apache.axis2.Echo2", true, cl);
             assertNotNull(service.getName());
-            //no style for the service
-            //   assertEquals(service.getStyle(),"rpc");
-            //no need the following since
             assertNotNull(service.getParameter("para2"));
 
             AxisOperation op = service.getOperation(new QName("opname"));

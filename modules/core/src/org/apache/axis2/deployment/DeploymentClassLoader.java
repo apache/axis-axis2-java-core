@@ -206,8 +206,7 @@ public class DeploymentClassLoader extends URLClassLoader {
                         zin.close();
                     }
                 } catch (IOException e) {
-
-                    // what to do, better to log
+                    // TODO: what to do, better to log
                 }
             }
         }

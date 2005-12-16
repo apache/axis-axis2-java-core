@@ -69,7 +69,6 @@ public abstract class MEPClient {
      */
     public void addSOAPHeader(OMElement soapHeaderBlock) {
         if (soapHeaderBlock == null) {
-
             // what are you trying to do here. You wanna set null to a header ??
             return;
         }
@@ -201,7 +200,7 @@ public abstract class MEPClient {
         AxisConfiguration axisConf =
                 serviceContext.getConfigurationContext().getAxisConfiguration();
 
-        // if it is already engeged do not engege it agaien
+        // if it is already engeged do not engage it again
         if (!axisConf.isEngaged(name)) {
             axisConf.engageModule(name);
         }
@@ -224,7 +223,7 @@ public abstract class MEPClient {
         msgCtx.setProperty(Constants.Configuration.IS_USING_SEPARATE_LISTENER,
                 new Boolean(clientOptions.isUseSeparateListener()));
 
-        // I'm not setting the properties here. Those will be set, when we
+        // we are not setting the properties here. Those will be set, when we
         // create the operation context
     }
 
@@ -266,9 +265,8 @@ public abstract class MEPClient {
     protected void inferTransportOutDescription(MessageContext msgCtx) throws AxisFault {
 
         // user can set the transport by giving a TransportOutDescription or we
-        // will deduce that from the
-        // to epr information
-        // if user has not set the TransportOutDescription, lets infer that
+        // will deduce that from the "to" epr information, if user has not set the 
+        // TransportOutDescription, lets infer that
         if (clientOptions.getSenderTransport() == null) {
             AxisConfiguration axisConfig =
                     this.serviceContext.getConfigurationContext().getAxisConfiguration();
@@ -281,8 +279,7 @@ public abstract class MEPClient {
                 if ((senderTrasportProtocol == null) || "".equals(senderTrasportProtocol)) {
 
                     // by this time we have passed all the information we
-                    // collected via Options to the
-                    // message context
+                    // collected via Options to the message context
                     clientOptions.setSenderTransport(inferTransport(msgCtx.getTo()));
                 } else {
 

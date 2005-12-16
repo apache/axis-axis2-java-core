@@ -128,11 +128,6 @@ public class Phase implements Handler {
             HandlerDescription handlerDesc = hand.getHandlerDesc();
 
             if (handler.getName().getLocalPart().equals(handlerDesc.getName().getLocalPart())) {
-
-//              if (handler.equals(handlerDesc)) {
-                // tryting to add the same handler twice to the phase
-                // this is can happen due to we are allowing service specifc module
-                // to add hndlers into gloal chain
                 return;
             }
         }
@@ -188,12 +183,12 @@ public class Phase implements Handler {
 
     public void cleanup() throws AxisFault {
 
-        // To change body of implemented methods use File | Settings | File Templates.
+        // Default version does nothing
     }
 
     public void init(HandlerDescription handlerdesc) {
 
-        // To change body of implemented methods use File | Settings | File Templates.
+        // Default version does nothing
     }
 
     /**
@@ -397,8 +392,6 @@ public class Phase implements Handler {
         return this.getPhaseName();
     }
 
-    // ////////////////////////////////////////////////////////////// FROM PhaseMetaData //////////
-
     /**
      * Method getBeforeAfter.
      *
@@ -432,7 +425,7 @@ public class Phase implements Handler {
     }
 
     public HandlerDescription getHandlerDesc() {
-        return null;    // To change body of implemented methods use File | Settings | File Templates.
+        return null;    
     }
 
     /**
@@ -449,7 +442,7 @@ public class Phase implements Handler {
     }
 
     public Parameter getParameter(String name) {
-        return null;    // To change body of implemented methods use File | Settings | File Templates.
+        return null;    
     }
 
     /**

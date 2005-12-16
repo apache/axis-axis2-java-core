@@ -45,7 +45,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
             "AddressingBasedDispatcher");
     private Log log = LogFactory.getLog(getClass());
 
-    // TODO this logic needed to be improved, as the Dispatching is almost garentnee to fail
+    // TODO this logic needed to be improved, as the Dispatching is almost guaranteed to fail
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
         log.debug("Checking for Operation using WSAAction : " + messageContext.getWSAAction());
@@ -59,7 +59,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
         return null;
     }
 
-    // TODO this logic needed to be improved, as the Dispatching is almost garentnee to fail
+    // TODO this logic needed to be improved, as the Dispatching is almost guaranteed to fail
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
         AxisService service = null;

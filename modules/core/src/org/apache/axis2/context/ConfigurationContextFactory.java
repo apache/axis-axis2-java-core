@@ -109,7 +109,7 @@ public class ConfigurationContextFactory {
     public void initTransports(ConfigurationContext configContext) {
         AxisConfiguration axisConf = configContext.getAxisConfiguration();
 
-        // Initzialize Transport Ins
+        // Initialize Transport Ins
         HashMap transportIns = axisConf.getTransportsIn();
         Iterator values = transportIns.values().iterator();
 
@@ -127,7 +127,7 @@ public class ConfigurationContextFactory {
             }
         }
 
-        // Initzialize Transport Outs
+        // Initialize Transport Outs
         HashMap transportOuts = axisConf.getTransportsOut();
 
         values = transportOuts.values().iterator();

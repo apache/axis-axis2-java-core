@@ -57,7 +57,7 @@ public class ContextHierarchyTest extends TestCase {
                 serviceContext);
         msgctx.setServiceContext(serviceContext);
 
-        // test the complte Hisracy built
+        // test the complte Hierarchy built
         assertEquals(msgctx.getParent(), opContext);
         assertEquals(opContext.getParent(), serviceContext);
         assertEquals(serviceContext.getParent(), serviceGroupContext);
@@ -86,7 +86,7 @@ public class ContextHierarchyTest extends TestCase {
 
         MessageContext msgctx = new MessageContext(configurationContext);
 
-        // test the complte Hisracy built
+        // test the complete Hierarchy built
         assertEquals(msgctx.getParent(), null);
 
         String key1 = "key1";

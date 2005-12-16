@@ -93,14 +93,6 @@ public class Utils {
         return newmsgCtx;
     }
 
-    // public static ServiceContext createServiceContext(
-    // AxisService service,
-    // ConfigurationContext engineContext)
-    // throws AxisFault {
-    // ServiceContext serviceContext = new ServiceContext(service, engineContext);
-    // createExecutionChains(serviceContext);
-    // return serviceContext;
-    // }
     public static AxisService createSimpleService(QName serviceName, String className, QName opName)
             throws AxisFault {
         return createSimpleService(serviceName, new RawXMLINOutMessageReceiver(), className,
@@ -165,8 +157,6 @@ public class Utils {
 
         // 2. if null, create new opCtxt
         OperationContext operationContext = new OperationContext(axisOperation);
-
-//      OperationContext operationContext = OperationContextFactory.createOrFindOperationContext(axisOperation.getAxisSpecifMEPConstant(), axisOperation);
 
         // fill the service group context and service context info
         return fillServiceContextAndServiceGroupContext(axisService, configurationContext);

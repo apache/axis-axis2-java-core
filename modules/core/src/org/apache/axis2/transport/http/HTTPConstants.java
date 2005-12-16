@@ -32,9 +32,6 @@ public class HTTPConstants {
     public static final String MEDIA_TYPE_APPLICATION_XML = "application/xml";
     public static final String MEDIA_TYPE_APPLICATION_SOAP_XML = "application/soap+xml";
 
-    // public static final String HTTP_GET = "HTTP_GET";
-    // public static final String HTTP_POST = "HTTP_POST";
-
     /**
      * Field REQUEST_URI
      */
@@ -300,7 +297,7 @@ public class HTTPConstants {
     /**
      * Field HEADER_CONNECTION_KEEPALIVE
      */
-    public static final String HEADER_CONNECTION_KEEPALIVE = "Keep-Alive".intern();    // The default don't send.
+    public static final String HEADER_CONNECTION_KEEPALIVE = "Keep-Alive".intern();    
 
     /**
      * Field HEADER_CONNECTION_CLOSE
@@ -388,8 +385,6 @@ public class HTTPConstants {
      * Default content encoding chatset
      */
     public static final String HTTP_ELEMENT_CHARSET = "US-ASCII";
-
-    // HTTP prefix
 
     /**
      * Field HTTP[]

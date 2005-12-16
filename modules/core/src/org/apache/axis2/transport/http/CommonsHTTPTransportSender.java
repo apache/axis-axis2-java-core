@@ -66,7 +66,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
     protected OMElement outputMessage;
 
     public CommonsHTTPTransportSender() {
-    }    // default
+    }    
 
     public void cleanUp(MessageContext msgContext) throws AxisFault {
         HttpMethod httpMethod = (HttpMethod) msgContext.getProperty(HTTP_METHOD);

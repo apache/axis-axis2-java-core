@@ -197,7 +197,7 @@ public class ModuleBuilder extends DescriptionBuilder {
                 op_descrip.setMessageReceiver(messageReceiver);
             } else {
 
-                // setting default message reciver
+                // setting default message receiver
                 MessageReceiver msgReceiver = loadDefaultMessageReceiver();
 
                 op_descrip.setMessageReceiver(msgReceiver);
