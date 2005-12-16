@@ -284,15 +284,6 @@ public class PhaseResolver {
                     HandlerDescription metadata = flow.getHandler(j);
 
                     phaseHolder.addHandler(metadata);
-
-                    // commented the following code to provide ability to add service module to global
-                    // chain
-                    //                    if (!PhaseValidator.isSystemPhases(metadata.getRules().getPhaseName())) {
-                    //                        phaseHolder.addHandler(metadata);
-                    //                    } else {
-                    //                        throw new PhaseException(Messages.getMessage(DeploymentErrorMsgs.SERVICE_MODULE_CAN_NOT_REFER_GLOBAL_PHASE,
-                    //                                metadata.getRules().getPhaseName()));
-                    //                    }
                 }
             }
         }
