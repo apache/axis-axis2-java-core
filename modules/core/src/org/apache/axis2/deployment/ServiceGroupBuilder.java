@@ -1,18 +1,19 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 
 package org.apache.axis2.deployment;
 
@@ -32,10 +33,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class ServiceGroupBuilder extends DescriptionBuilder {
-
+    private AxisConfiguration axisConfig;
     private OMElement servcice;
     private HashMap wsdlServices;
-    private AxisConfiguration axisConfig;
 
     public ServiceGroupBuilder(OMElement servcice, HashMap wsdlServices,
                                AxisConfiguration axisConfig) {
@@ -45,70 +45,59 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
         super.axisConfig = axisConfig;
     }
 
-    public ArrayList populateServiceGroup(AxisServiceGroup axisServiceGroup) throws DeploymentException {
+    public ArrayList populateServiceGroup(AxisServiceGroup axisServiceGroup)
+            throws DeploymentException {
         ArrayList serviceList = new ArrayList();
+
         try {
-            //Processing service level parameters
-            Iterator itr = servcice.getChildrenWithName(
-                    new QName(PARAMETER));
+
+            // Processing service level parameters
+            Iterator itr = servcice.getChildrenWithName(new QName(PARAMETER));
+
             processParameters(itr, axisServiceGroup, axisServiceGroup.getParent());
 
             Iterator moduleConfigs = servcice.getChildrenWithName(new QName(MODULECONFIG));
-            processServiceModuleConfig(moduleConfigs, axisServiceGroup.getParent(), axisServiceGroup);
 
-            //processing servicewide modules which required to engage gloabbly
-            Iterator moduleRefs = servcice.getChildrenWithName(
-                    new QName(MODULEST));
+            processServiceModuleConfig(moduleConfigs, axisServiceGroup.getParent(),
+                    axisServiceGroup);
+
+            // processing servicewide modules which required to engage gloabbly
+            Iterator moduleRefs = servcice.getChildrenWithName(new QName(MODULEST));
+
             processModuleRefs(moduleRefs, axisServiceGroup);
 
             Iterator serviceitr = servcice.getChildrenWithName(new QName(SERVICE_ELEMENT));
+
             while (serviceitr.hasNext()) {
                 OMElement service = (OMElement) serviceitr.next();
-
-                OMAttribute serviceNameatt = service.getAttribute(
-                        new QName(ATTNAME));
+                OMAttribute serviceNameatt = service.getAttribute(new QName(ATTNAME));
                 String serviceName = serviceNameatt.getAttributeValue();
+
                 if (serviceName == null) {
-                    throw new DeploymentException(Messages.getMessage(
-                            DeploymentErrorMsgs.SERVICE_NAME_ERROR));
+                    throw new DeploymentException(
+                            Messages.getMessage(DeploymentErrorMsgs.SERVICE_NAME_ERROR));
                 } else {
                     AxisService axisService = (AxisService) wsdlServices.get(serviceName);
+
                     if (axisService == null) {
                         axisService = new AxisService(serviceName);
                     }
+
                     // the service that has to be deploy
                     axisService.setParent(axisServiceGroup);
                     axisService.setClassLoader(axisServiceGroup.getServiceGroupClassLoader());
+
                     ServiceBuilder serviceBuilder = new ServiceBuilder(axisConfig, axisService);
                     AxisService as = serviceBuilder.populateService(service);
+
                     serviceList.add(as);
                 }
             }
         } catch (AxisFault e) {
             throw new DeploymentException(e);
         }
-        return serviceList;
-    }
 
-    protected void processServiceModuleConfig(Iterator moduleConfigs,
-                                              ParameterInclude parent, AxisServiceGroup axisService)
-            throws DeploymentException {
-        while (moduleConfigs.hasNext()) {
-            OMElement moduleConfig = (OMElement) moduleConfigs.next();
-            OMAttribute moduleName_att = moduleConfig.getAttribute(
-                    new QName(ATTNAME));
-            if (moduleName_att == null) {
-                throw new DeploymentException(Messages.getMessage(
-                        DeploymentErrorMsgs.INVALID_MODULE_CONFIG));
-            } else {
-                String module = moduleName_att.getAttributeValue();
-                ModuleConfiguration moduleConfiguration =
-                        new ModuleConfiguration(new QName(module), parent);
-                Iterator parameters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
-                processParameters(parameters, moduleConfiguration, parent);
-                axisService.addModuleConfig(moduleConfiguration);
-            }
-        }
+        return serviceList;
     }
 
     /**
@@ -122,13 +111,14 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
         try {
             while (moduleRefs.hasNext()) {
                 OMElement moduleref = (OMElement) moduleRefs.next();
-                OMAttribute moduleRefAttribute = moduleref.getAttribute(
-                        new QName(REF));
+                OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(REF));
+
                 if (moduleRefAttribute != null) {
                     String refName = moduleRefAttribute.getAttributeValue();
+
                     if (axisConfig.getModule(new QName(refName)) == null) {
-                        throw new DeploymentException(Messages.getMessage(
-                                DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
+                        throw new DeploymentException(
+                                Messages.getMessage(DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
                     } else {
                         axisServiceGroup.addModuleref(new QName(refName));
                     }
@@ -139,4 +129,25 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
         }
     }
 
+    protected void processServiceModuleConfig(Iterator moduleConfigs, ParameterInclude parent,
+                                              AxisServiceGroup axisService)
+            throws DeploymentException {
+        while (moduleConfigs.hasNext()) {
+            OMElement moduleConfig = (OMElement) moduleConfigs.next();
+            OMAttribute moduleName_att = moduleConfig.getAttribute(new QName(ATTNAME));
+
+            if (moduleName_att == null) {
+                throw new DeploymentException(
+                        Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE_CONFIG));
+            } else {
+                String module = moduleName_att.getAttributeValue();
+                ModuleConfiguration moduleConfiguration =
+                        new ModuleConfiguration(new QName(module), parent);
+                Iterator parameters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
+
+                processParameters(parameters, moduleConfiguration, parent);
+                axisService.addModuleConfig(moduleConfiguration);
+            }
+        }
+    }
 }

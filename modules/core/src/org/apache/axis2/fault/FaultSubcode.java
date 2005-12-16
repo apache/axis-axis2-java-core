@@ -1,18 +1,20 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+
 package org.apache.axis2.fault;
 
 import org.apache.axis2.om.OMException;
@@ -25,9 +27,7 @@ import javax.xml.namespace.QName;
  * OM-neutral representation of a SOAP1.2 fault code for use in AxisFaults
  * created 28-Oct-2005 16:52:29
  */
-
 public class FaultSubcode extends AbstractFaultCode {
-
 
     /**
      * in a subcode this can be an arbitrary qname.
@@ -45,6 +45,31 @@ public class FaultSubcode extends AbstractFaultCode {
     }
 
     /**
+     * Recursively construct from fault information
+     *
+     * @param source
+     */
+    public FaultSubcode(SOAPFaultSubCode source) {
+        SOAPFaultValue value = source.getValue();
+        String text = value.getText();
+        QName qname = source.resolveQName(text);
+
+        if (qname != null) {
+            setValue(qname);
+        } else {
+
+            // what to do here?
+            throw new OMException("No QName from " + text);
+        }
+
+        SOAPFaultSubCode subCode = source.getSubCode();
+
+        if (subCode != null) {
+            setSubcode(new FaultSubcode(subCode));
+        }
+    }
+
+    /**
      * Constructor to fill in subcodes
      *
      * @param value   fault value (may be null)
@@ -55,26 +80,16 @@ public class FaultSubcode extends AbstractFaultCode {
         this.value = value;
     }
 
-
     /**
-     * Recursively construct from fault information
+     * Returns a string representation of the object.
+     * This only stringifies the base fault
      *
-     * @param source
+     * @return a string representation of the object.
      */
-    public FaultSubcode(SOAPFaultSubCode source) {
-        SOAPFaultValue value = source.getValue();
-        String text = value.getText();
-        QName qname = source.resolveQName(text);
-        if (qname != null) {
-            setValue(qname);
-        } else {
-            //what to do here?
-            throw new OMException("No QName from " + text);
-        }
-        SOAPFaultSubCode subCode = source.getSubCode();
-        if (subCode != null) {
-            setSubcode(new FaultSubcode(subCode));
-        }
+    public String toString() {
+        return (value != null)
+                ? value.toString()
+                : "[undefined fault]";
     }
 
     /**
@@ -93,16 +108,5 @@ public class FaultSubcode extends AbstractFaultCode {
      */
     public void setValue(QName value) {
         this.value = value;
-    }
-
-
-    /**
-     * Returns a string representation of the object.
-     * This only stringifies the base fault
-     *
-     * @return a string representation of the object.
-     */
-    public String toString() {
-        return value != null ? value.toString() : "[undefined fault]";
     }
 }

@@ -1,18 +1,19 @@
 /*
- * Copyright 2001, 2002,2004 The Apache Software Foundation.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2001, 2002,2004 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 
 package org.apache.axis2.transport.jms;
 
@@ -37,7 +38,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 
-
 /**
  * SimpleJMSListener implements the javax.jms.MessageListener interface. Its
  * basic purpose is listen asynchronously for messages and to pass them off
@@ -48,72 +48,112 @@ import java.util.Properties;
  * for production code, but for demos, debugging, and performance profiling.
  */
 public class SimpleJMSListener extends TransportListener implements MessageListener {
-    protected static Log log =
-            LogFactory.getLog(SimpleJMSListener.class.getName());
+    protected static Log log = LogFactory.getLog(SimpleJMSListener.class.getName());
 
     // Do we use (multiple) threads to process incoming messages?
     private boolean doThreads = true;
-
+    protected ConfigurationContext configurationContext;
     private JMSConnector connector;
+    private String destination;
     private JMSEndpoint endpoint;
     private HashMap properties;
-    private String destination;
-    protected ConfigurationContext configurationContext;
 
     public SimpleJMSListener() {
-
     }
 
-    public void init(ConfigurationContext axisConf, TransportInDescription transprtIn) throws AxisFault {
+    public SimpleJMSListener(String repositoryDirectory, HashMap connectorMap, HashMap cfMap,
+                             String destination, String username, String password,
+                             boolean doThreads)
+            throws Exception {
+        ConfigurationContextFactory erfac = new ConfigurationContextFactory();
+
+        this.configurationContext = erfac.buildConfigurationContext(repositoryDirectory);
+        this.doThreads = doThreads;
+        initListener(connectorMap, cfMap, username, password, destination);
+    }
+
+    public static final HashMap createCFMap(OptionsParser optionsParser) throws IOException {
+        String cfFile = optionsParser.isValueSet('c');
+
+        if (cfFile == null) {
+            return null;
+        }
+
+        Properties cfProps = new Properties();
+
+        cfProps.load(new BufferedInputStream(new FileInputStream(cfFile)));
+
+        HashMap cfMap = new HashMap(cfProps);
+
+        return cfMap;
+    }
+
+    public static final HashMap createConnectorMap(
+            org.apache.axis2.util.OptionsParser optionsParser) {
+        HashMap connectorMap = new HashMap();
+
+        if (optionsParser.isFlagSet('t') > 0) {
+
+            // queue is default so only setup map if topic domain is required
+            connectorMap.put(JMSConstants.DOMAIN, JMSConstants.DOMAIN_TOPIC);
+        }
+
+        return connectorMap;
+    }
+
+    public void init(ConfigurationContext axisConf, TransportInDescription transprtIn)
+            throws AxisFault {
         try {
             this.configurationContext = axisConf;
+
             HashMap params = new HashMap();
             Iterator iterator = transprtIn.getParameters().iterator();
+
             while (iterator.hasNext()) {
                 Parameter param = (Parameter) iterator.next();
+
                 params.put(param.getName(), param.getValue());
             }
-            String user = null, password = null, destination = null;
+
+            String user = null,
+                    password = null,
+                    destination = null;
+
             if (transprtIn.getParameter(JNDIVendorAdapter.USER) != null) {
                 user = (String) transprtIn.getParameter(JNDIVendorAdapter.USER).getValue();
             }
+
             if (transprtIn.getParameter(JNDIVendorAdapter.PASSWORD) != null) {
                 password = (String) transprtIn.getParameter(JNDIVendorAdapter.PASSWORD).getValue();
             }
+
             if (transprtIn.getParameter(JNDIVendorAdapter.DESTINATION) != null) {
-                destination = (String) transprtIn.getParameter(JNDIVendorAdapter.DESTINATION).getValue();
+                destination =
+                        (String) transprtIn.getParameter(JNDIVendorAdapter.DESTINATION).getValue();
             }
+
             initListener(params, params, user, password, destination);
         } catch (Exception e1) {
             throw new AxisFault(e1);
         }
     }
 
-    public SimpleJMSListener(String repositoryDirectory, HashMap connectorMap, HashMap cfMap,
-                             String destination, String username,
-                             String password, boolean doThreads)
+    private void initListener(HashMap connectorMap, HashMap cfMap, String username,
+                              String password, String destination)
             throws Exception {
-        ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-        this.configurationContext = erfac.buildConfigurationContext(repositoryDirectory);
-        this.doThreads = doThreads;
-
-        initListener(connectorMap, cfMap, username, password, destination);
-    }
-
-    private void initListener(HashMap connectorMap, HashMap cfMap, String username, String password, String destination) throws Exception {
         try {
+
             // create a JMS connector using the default vendor adapter
             JMSVendorAdapter adapter = JMSVendorAdapterFactory.getJMSVendorAdapter();
-            this.connector = JMSConnectorFactory.createServerConnector(connectorMap,
-                    cfMap,
-                    username,
-                    password,
-                    adapter);
+
+            this.connector = JMSConnectorFactory.createServerConnector(connectorMap, cfMap,
+                    username, password, adapter);
             this.properties = new HashMap(connectorMap);
             this.properties.putAll(cfMap);
             this.destination = destination;
         } catch (Exception e) {
             log.error(Messages.getMessage("exception00"), e);
+
             throw e;
         }
 
@@ -121,12 +161,21 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
         endpoint = connector.createEndpoint(destination);
     }
 
-    protected JMSConnector getConnector() {
-        return connector;
-    }
+    public static void main(String[] args) throws Exception {
+        OptionsParser optionsParser = new OptionsParser(args);
 
-    public ConfigurationContext getConfigurationContext() {
-        return this.configurationContext;
+        // first check if we should print usage
+        if ((optionsParser.isFlagSet('?') > 0) || (optionsParser.isFlagSet('h') > 0)) {
+            printUsage();
+        }
+
+        SimpleJMSListener listener = new SimpleJMSListener(optionsParser.isValueSet('r'),
+                createConnectorMap(optionsParser),
+                createCFMap(optionsParser), optionsParser.isValueSet('d'),
+                optionsParser.getUser(), optionsParser.getPassword(),
+                optionsParser.isFlagSet('s') > 0);
+
+        listener.start();
     }
 
     /**
@@ -136,93 +185,25 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
      */
     public void onMessage(javax.jms.Message message) {
         try {
+
             // pass off the message to a worker as a BytesMessage
-            SimpleJMSWorker worker = new SimpleJMSWorker(configurationContext, this, (BytesMessage) message);
+            SimpleJMSWorker worker = new SimpleJMSWorker(configurationContext, this,
+                    (BytesMessage) message);
 
             // do we allow multi-threaded workers?
             if (doThreads) {
                 Thread t = new Thread(worker);
+
                 t.start();
             } else {
                 worker.run();
             }
-        }
-        catch (ClassCastException cce) {
+        } catch (ClassCastException cce) {
             log.error(Messages.getMessage("exception00"), cce);
             cce.printStackTrace();
+
             return;
         }
-    }
-
-    public void start() {
-        try {
-            endpoint.registerListener(this, properties);
-        } catch (Exception e) {
-            log.error(Messages.getMessage("exception00"), e);
-            e.printStackTrace();
-        }
-        connector.start();
-    }
-
-    public void stop() throws AxisFault {
-        try {
-            endpoint.unregisterListener(this);
-            connector.stop();
-            connector.shutdown();
-        } catch (Exception e) {
-            log.error(Messages.getMessage("exception00"), e);
-            e.printStackTrace();
-        }
-    }
-
-    public EndpointReference getReplyToEPR(String serviceName) throws AxisFault {
-        try {
-            JMSURLHelper url = new JMSURLHelper("jms:/" + destination);
-            url.getProperties().putAll(properties);
-            return new EndpointReference(url.getURLString());
-        } catch (Exception e) {
-            log.error(Messages.getMessage("exception00"), e);
-            throw AxisFault.makeFault(e);
-        }
-    }
-
-    public static final HashMap createConnectorMap(org.apache.axis2.util.OptionsParser optionsParser) {
-        HashMap connectorMap = new HashMap();
-        if (optionsParser.isFlagSet('t') > 0) {
-            //queue is default so only setup map if topic domain is required
-            connectorMap.put(JMSConstants.DOMAIN, JMSConstants.DOMAIN_TOPIC);
-        }
-        return connectorMap;
-    }
-
-    public static final HashMap createCFMap(OptionsParser optionsParser)
-            throws IOException {
-        String cfFile = optionsParser.isValueSet('c');
-        if (cfFile == null)
-            return null;
-
-        Properties cfProps = new Properties();
-        cfProps.load(new BufferedInputStream(new FileInputStream(cfFile)));
-        HashMap cfMap = new HashMap(cfProps);
-        return cfMap;
-    }
-
-    public static void main(String[] args) throws Exception {
-        OptionsParser optionsParser = new OptionsParser(args);
-
-        // first check if we should print usage
-        if ((optionsParser.isFlagSet('?') > 0) || (optionsParser.isFlagSet('h') > 0))
-            printUsage();
-
-        SimpleJMSListener listener = new SimpleJMSListener(
-                optionsParser.isValueSet('r'),
-                createConnectorMap(optionsParser),
-                createCFMap(optionsParser),
-                optionsParser.isValueSet('d'),
-                optionsParser.getUser(),
-                optionsParser.getPassword(),
-                optionsParser.isFlagSet('s') > 0);
-        listener.start();
     }
 
     public static void printUsage() {
@@ -239,11 +220,54 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
         System.out.println();
         System.out.println("       -s single-threaded listener");
         System.out.println("          [absence of option => multithreaded]");
-
         System.exit(1);
+    }
+
+    public void start() {
+        try {
+            endpoint.registerListener(this, properties);
+        } catch (Exception e) {
+            log.error(Messages.getMessage("exception00"), e);
+            e.printStackTrace();
+        }
+
+        connector.start();
+    }
+
+    public void stop() throws AxisFault {
+        try {
+            endpoint.unregisterListener(this);
+            connector.stop();
+            connector.shutdown();
+        } catch (Exception e) {
+            log.error(Messages.getMessage("exception00"), e);
+            e.printStackTrace();
+        }
+    }
+
+    public ConfigurationContext getConfigurationContext() {
+        return this.configurationContext;
+    }
+
+    protected JMSConnector getConnector() {
+        return connector;
     }
 
     public HashMap getProperties() {
         return properties;
+    }
+
+    public EndpointReference getReplyToEPR(String serviceName) throws AxisFault {
+        try {
+            JMSURLHelper url = new JMSURLHelper("jms:/" + destination);
+
+            url.getProperties().putAll(properties);
+
+            return new EndpointReference(url.getURLString());
+        } catch (Exception e) {
+            log.error(Messages.getMessage("exception00"), e);
+
+            throw AxisFault.makeFault(e);
+        }
     }
 }

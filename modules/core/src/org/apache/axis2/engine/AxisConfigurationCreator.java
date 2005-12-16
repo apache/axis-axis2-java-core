@@ -21,10 +21,11 @@ import org.apache.axis2.AxisFault;
 */
 
 public interface AxisConfigurationCreator {
+
     /**
      * Configurationcontextfactory will call this method to get the AxisConfiguration
      *
      * @return AxisConfigurationCreator
      */
-    AxisConfiguration getAxisConfiguration() throws AxisFault ;
+    AxisConfiguration getAxisConfiguration() throws AxisFault;
 }

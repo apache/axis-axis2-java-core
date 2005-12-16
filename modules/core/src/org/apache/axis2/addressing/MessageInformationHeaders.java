@@ -1,18 +1,20 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+
 package org.apache.axis2.addressing;
 
 import org.apache.axis2.om.OMElement;
@@ -27,14 +29,25 @@ import java.util.ArrayList;
 public class MessageInformationHeaders implements Serializable {
 
     /**
-     * The address of the intended receiver of the message. This is mandatory
+     * Field action
      */
-    private EndpointReference to;
+    private String action;
+
+    /**
+     * identifies the intended receiver for faults related to the message
+     */
+    private EndpointReference faultTo;
 
     /**
      * Reference of the endpoint where the message originated from
      */
     private EndpointReference from;
+
+    /**
+     * Field messageId
+     */
+    private String messageId;
+    private ArrayList referenceParameters;
 
     /**
      * Pair of values that indicate how this message related to another message
@@ -47,22 +60,12 @@ public class MessageInformationHeaders implements Serializable {
     private EndpointReference replyTo;
 
     /**
-     * identifies the intended receiver for faults related to the message
+     * The address of the intended receiver of the message. This is mandatory
      */
-    private EndpointReference faultTo;
+    private EndpointReference to;
 
-    /**
-     * Field action
-     */
-    private String action;
-
-    /**
-     * Field messageId
-     */
-    private String messageId;
-
-    private ArrayList referenceParameters;
-
+    public MessageInformationHeaders() {
+    }
 
     /**
      * Addressing Header MUST have a to and an action
@@ -70,13 +73,17 @@ public class MessageInformationHeaders implements Serializable {
      * @param wsaTo
      * @param action
      */
-    public MessageInformationHeaders(EndpointReference wsaTo,
-                                               String action) {
+    public MessageInformationHeaders(EndpointReference wsaTo, String action) {
         this.to = wsaTo;
         this.action = action;
     }
 
-    public MessageInformationHeaders() {
+    public void addReferenceParameter(OMElement referenceParameter) {
+        if (referenceParameters == null) {
+            referenceParameters = new ArrayList(5);
+        }
+
+        referenceParameters.add(referenceParameter);
     }
 
     /**
@@ -88,23 +95,18 @@ public class MessageInformationHeaders implements Serializable {
         throw new UnsupportedOperationException();
     }
 
-    // ------------------- Setters and Getters --------------------------------------
-
     /**
-     * Method getTo
+     * Method getAction
      */
-    public EndpointReference getTo() {
-
-        return to;
+    public String getAction() {
+        return action;
     }
 
     /**
-     * Method setTo
-     *
-     * @param to
+     * Method getFaultTo
      */
-    public void setTo(EndpointReference to) {
-        this.to = to;
+    public EndpointReference getFaultTo() {
+        return faultTo;
     }
 
     /**
@@ -115,53 +117,37 @@ public class MessageInformationHeaders implements Serializable {
     }
 
     /**
-     * Method setFrom
-     *
-     * @param from
+     * Method getMessageId
      */
-    public void setFrom(EndpointReference from) {
-        this.from = from;
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public ArrayList getReferenceParameters() {
+        return referenceParameters;
+    }
+
+    /**
+     * Method getRelatesTo
+     */
+    public RelatesTo getRelatesTo() {
+        return relatesTo;
     }
 
     /**
      * Method getReplyTo
      */
     public EndpointReference getReplyTo() {
-
         return replyTo;
     }
 
-    /**
-     * Method setReplyTo
-     *
-     * @param replyTo
-     */
-    public void setReplyTo(EndpointReference replyTo) {
-        this.replyTo = replyTo;
-    }
+    // ------------------- Setters and Getters --------------------------------------
 
     /**
-     * Method getFaultTo
+     * Method getTo
      */
-    public EndpointReference getFaultTo() {
-
-        return faultTo;
-    }
-
-    /**
-     * Method setFaultTo
-     *
-     * @param faultTo
-     */
-    public void setFaultTo(EndpointReference faultTo) {
-        this.faultTo = faultTo;
-    }
-
-    /**
-     * Method getAction
-     */
-    public String getAction() {
-        return action;
+    public EndpointReference getTo() {
+        return to;
     }
 
     /**
@@ -174,10 +160,21 @@ public class MessageInformationHeaders implements Serializable {
     }
 
     /**
-     * Method getMessageId
+     * Method setFaultTo
+     *
+     * @param faultTo
      */
-    public String getMessageId() {
-        return messageId;
+    public void setFaultTo(EndpointReference faultTo) {
+        this.faultTo = faultTo;
+    }
+
+    /**
+     * Method setFrom
+     *
+     * @param from
+     */
+    public void setFrom(EndpointReference from) {
+        this.from = from;
     }
 
     /**
@@ -189,12 +186,8 @@ public class MessageInformationHeaders implements Serializable {
         this.messageId = messageId;
     }
 
-    /**
-     * Method getRelatesTo
-     */
-    public RelatesTo getRelatesTo() {
-
-        return relatesTo;
+    public void setReferenceParameters(ArrayList referenceParameters) {
+        this.referenceParameters = referenceParameters;
     }
 
     /**
@@ -203,23 +196,25 @@ public class MessageInformationHeaders implements Serializable {
      * @param relatesTo
      */
     public void setRelatesTo(RelatesTo relatesTo) {
-
         this.relatesTo = relatesTo;
     }
 
-    public ArrayList getReferenceParameters() {
-        return referenceParameters;
+    /**
+     * Method setReplyTo
+     *
+     * @param replyTo
+     */
+    public void setReplyTo(EndpointReference replyTo) {
+        this.replyTo = replyTo;
     }
 
-    public void setReferenceParameters(ArrayList referenceParameters) {
-        this.referenceParameters = referenceParameters;
-    }
-
-    public void addReferenceParameter(OMElement referenceParameter) {
-        if (referenceParameters == null) {
-            referenceParameters = new ArrayList(5);
-        }
-        referenceParameters.add(referenceParameter);
+    /**
+     * Method setTo
+     *
+     * @param to
+     */
+    public void setTo(EndpointReference to) {
+        this.to = to;
     }
 
     // --------------------------------------------------------------------------------------------

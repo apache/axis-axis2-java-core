@@ -1,4 +1,5 @@
 package org.apache.axis2.transport.http;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -25,72 +26,45 @@ public class HttpTransportProperties {
     protected HttpVersion httpVersion;
     protected String protocol;
 
-    public HttpTransportProperties(){}
-
-    public void setChunked(boolean chunked){
-        this.chunked = chunked;
-    }
-    public void setHttpVersion(HttpVersion httpVerion){
-        this.httpVersion = httpVerion;
-    }
-    public void setProtocol(String protocol){
-        this.protocol = protocol;
+    public HttpTransportProperties() {
     }
 
-    public boolean getChunked(){
+    public boolean getChunked() {
         return chunked;
     }
-    public HttpVersion getHttpVersion(){
+
+    public HttpVersion getHttpVersion() {
         return httpVersion;
     }
-    public String getProtocol(){
+
+    public String getProtocol() {
         return protocol;
     }
 
-    public class ProxyProperties {
-        protected String proxyHostName;
-        protected int proxyPort = -1;
+    public void setChunked(boolean chunked) {
+        this.chunked = chunked;
+    }
 
-        protected String userName;
+    public void setHttpVersion(HttpVersion httpVerion) {
+        this.httpVersion = httpVerion;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public class ProxyProperties {
+        protected int proxyPort = -1;
         protected String domain;
         protected String passWord;
-        
-        public ProxyProperties() {}
+        protected String proxyHostName;
+        protected String userName;
 
-        public void setUserName(String userName){
-            this.userName = userName;
-        }
-        public void setDomain(String domain){
-            this.domain = domain;
-        }
-        public void setPassWord(String passWord){
-            this.passWord = passWord;
-        }
-
-        public void setProxyName(String proxyHostName){
-            this.proxyHostName = proxyHostName;
-        }
-        public void setProxyPort(int proxyPort){
-            this.proxyPort = proxyPort;
-        }
-
-        public String getProxyHostName(){
-            return proxyHostName;
-        }
-        public int getProxyPort(){
-            return proxyPort;
-        }
-
-        public String getUserName() {
-            if (userName.equals("") || userName == null) {
-                return "anonymous";
-            } else {
-                return userName;
-            }
+        public ProxyProperties() {
         }
 
         public String getDomain() {
-            if (domain.equals("") || domain == null) {
+            if (domain.equals("") || (domain == null)) {
                 return "anonymous";
             } else {
                 return domain;
@@ -98,14 +72,47 @@ public class HttpTransportProperties {
         }
 
         public String getPassWord() {
-            if (passWord.equals("") || passWord == null) {
+            if (passWord.equals("") || (passWord == null)) {
                 return "anonymous";
             } else {
                 return passWord;
             }
         }
 
+        public String getProxyHostName() {
+            return proxyHostName;
+        }
+
+        public int getProxyPort() {
+            return proxyPort;
+        }
+
+        public String getUserName() {
+            if (userName.equals("") || (userName == null)) {
+                return "anonymous";
+            } else {
+                return userName;
+            }
+        }
+
+        public void setDomain(String domain) {
+            this.domain = domain;
+        }
+
+        public void setPassWord(String passWord) {
+            this.passWord = passWord;
+        }
+
+        public void setProxyName(String proxyHostName) {
+            this.proxyHostName = proxyHostName;
+        }
+
+        public void setProxyPort(int proxyPort) {
+            this.proxyPort = proxyPort;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
     }
-
-
 }

@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -31,85 +32,34 @@ import java.util.ArrayList;
 */
 
 public class Utils {
-
-    public static ClassLoader getClassLoader(ClassLoader parent, File file) throws DeploymentException {
-        URLClassLoader classLoader;
-        if (file != null) {
-            try {
-                ArrayList urls = new ArrayList();
-                urls.add(file.toURL());
-                //if lib is simple
-                File libfiles = new File(file, "lib");
-                if (libfiles.exists()) {
-                    urls.add(libfiles.toURL());
-                    File jarfiles [] = libfiles.listFiles();
-                    for (int i = 0; i < jarfiles.length; i++) {
-                        File jarfile = jarfiles[i];
-                        if (jarfile.getName().endsWith(".jar")) {
-                            urls.add(jarfile.toURL());
-                        }
-                    }
-                }
-                //if lib is capital
-                libfiles = new File(file, "Lib");
-                if (libfiles.exists()) {
-                    urls.add(libfiles.toURL());
-                    File jarfiles [] = libfiles.listFiles();
-                    for (int i = 0; i < jarfiles.length; i++) {
-                        File jarfile = jarfiles[i];
-                        if (jarfile.getName().endsWith(".jar")) {
-                            urls.add(jarfile.toURL());
-                        }
-                    }
-                }
-                URL urllist [] = new URL[urls.size()];
-                for (int i = 0; i < urls.size(); i++) {
-                    urllist[i] = (URL) urls.get(i);
-                }
-                classLoader = new URLClassLoader(urllist, parent);
-                return classLoader;
-            } catch (MalformedURLException e) {
-                throw new DeploymentException(e);
-            }
-        }
-        return null;
-    }
-
     public static void addFlowHandlers(Flow flow, ClassLoader clsLoader) throws AxisFault {
         int count = flow.getHandlerCount();
+
         for (int j = 0; j < count; j++) {
             HandlerDescription handlermd = flow.getHandler(j);
             Class handlerClass;
             Handler handler;
+
             handlerClass = getHandlerClass(handlermd.getClassName(), clsLoader);
+
             try {
                 handler = (Handler) handlerClass.newInstance();
                 handler.init(handlermd);
                 handlermd.setHandler(handler);
-
             } catch (InstantiationException e) {
                 throw new AxisFault(e);
             } catch (IllegalAccessException e) {
                 throw new AxisFault(e);
             }
-
         }
     }
 
-    private static Class getHandlerClass(String className, ClassLoader loader1) throws AxisFault {
-        Class handlerClass;
-        try {
-            handlerClass = Class.forName(className, true, loader1);
-        } catch (ClassNotFoundException e) {
-            throw new AxisFault(e.getMessage());
-        }
-        return handlerClass;
-    }
-
-    public static void loadHandler(ClassLoader loader1, HandlerDescription desc) throws DeploymentException {
+    public static void loadHandler(ClassLoader loader1, HandlerDescription desc)
+            throws DeploymentException {
         String handlername = desc.getClassName();
         Handler handler;
         Class handlerClass;
+
         try {
             handlerClass = Class.forName(handlername, true, loader1);
             handler = (Handler) handlerClass.newInstance();
@@ -120,5 +70,78 @@ public class Utils {
         } catch (Exception e) {
             throw new DeploymentException(e);
         }
+    }
+
+    public static ClassLoader getClassLoader(ClassLoader parent, File file)
+            throws DeploymentException {
+        URLClassLoader classLoader;
+
+        if (file != null) {
+            try {
+                ArrayList urls = new ArrayList();
+
+                urls.add(file.toURL());
+
+                // if lib is simple
+                File libfiles = new File(file, "lib");
+
+                if (libfiles.exists()) {
+                    urls.add(libfiles.toURL());
+
+                    File jarfiles[] = libfiles.listFiles();
+
+                    for (int i = 0; i < jarfiles.length; i++) {
+                        File jarfile = jarfiles[i];
+
+                        if (jarfile.getName().endsWith(".jar")) {
+                            urls.add(jarfile.toURL());
+                        }
+                    }
+                }
+
+                // if lib is capital
+                libfiles = new File(file, "Lib");
+
+                if (libfiles.exists()) {
+                    urls.add(libfiles.toURL());
+
+                    File jarfiles[] = libfiles.listFiles();
+
+                    for (int i = 0; i < jarfiles.length; i++) {
+                        File jarfile = jarfiles[i];
+
+                        if (jarfile.getName().endsWith(".jar")) {
+                            urls.add(jarfile.toURL());
+                        }
+                    }
+                }
+
+                URL urllist[] = new URL[urls.size()];
+
+                for (int i = 0; i < urls.size(); i++) {
+                    urllist[i] = (URL) urls.get(i);
+                }
+
+                classLoader = new URLClassLoader(urllist, parent);
+
+                return classLoader;
+            } catch (MalformedURLException e) {
+                throw new DeploymentException(e);
+            }
+        }
+
+        return null;
+    }
+
+    private static Class getHandlerClass(String className, ClassLoader loader1) throws AxisFault {
+        Class handlerClass;
+
+        try {
+            handlerClass = Class.forName(className, true, loader1);
+        } catch (ClassNotFoundException e) {
+            throw new AxisFault(e.getMessage());
+        }
+
+        return handlerClass;
     }
 }

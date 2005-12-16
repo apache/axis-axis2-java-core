@@ -1,24 +1,25 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -27,20 +28,11 @@ import java.util.ArrayList;
  * represent the deployment information about the handler
  */
 public class HandlerDescription implements ParameterInclude {
-    /**
-     * Field parameterInclude
-     */
-    private final ParameterInclude parameterInclude;
 
     /**
-     * Field name
+     * Field className
      */
-    private QName name;
-
-    /**
-     * Field rules
-     */
-    private PhaseRule rules;
+    private String className;
 
     /**
      * Field handler
@@ -48,11 +40,20 @@ public class HandlerDescription implements ParameterInclude {
     private Handler handler;
 
     /**
-     * Field className
+     * Field name
      */
-    private String className;
+    private QName name;
 
+    /**
+     * Field parameterInclude
+     */
+    private final ParameterInclude parameterInclude;
     private ParameterInclude parent;
+
+    /**
+     * Field rules
+     */
+    private PhaseRule rules;
 
     /**
      * Constructor HandlerDescription
@@ -73,46 +74,41 @@ public class HandlerDescription implements ParameterInclude {
     }
 
     /**
+     * @param param
+     */
+    public void addParameter(Parameter param) throws AxisFault {
+        if (isParameterLocked(param.getName())) {
+            throw new AxisFault("Parmter is locked can not overide: " + param.getName());
+        } else {
+            parameterInclude.addParameter(param);
+        }
+    }
+
+    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
+        this.parameterInclude.deserializeParameters(parameterElement);
+    }
+
+    /**
+     * Method getClassName
+     *
+     * @return
+     */
+    public String getClassName() {
+        return className;
+    }
+
+    /**
+     * @return
+     */
+    public Handler getHandler() {
+        return handler;
+    }
+
+    /**
      * @return
      */
     public QName getName() {
         return name;
-    }
-
-    /**
-     * Method getRules
-     *
-     * @return
-     */
-    public PhaseRule getRules() {
-        return rules;
-    }
-
-    /**
-     * Method setRules
-     *
-     * @param rules
-     */
-    public void setRules(PhaseRule rules) {
-        this.rules = rules;
-    }
-
-    /**
-     * @param name
-     */
-    public void setName(QName name) {
-        this.name = name;
-    }
-
-    /**
-     * @param param
-     */
-    public void addParameter(Parameter param) throws AxisFault{
-        if(isParameterLocked(param.getName())){
-            throw new AxisFault("Parmter is locked can not overide: " + param.getName());
-        } else{
-            parameterInclude.addParameter(param);
-        }
     }
 
     /**
@@ -127,41 +123,28 @@ public class HandlerDescription implements ParameterInclude {
         return parameterInclude.getParameters();
     }
 
-    //to check whether the parameter is locked at any levle
-    public boolean isParameterLocked(String parameterName) {
-        if(parent != null){
-            if(parent.isParameterLocked(parameterName)){
-                return true;
-            }
-        }
-        return parameterInclude.isParameterLocked(parameterName);
-    }
-
-    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
-        this.parameterInclude.deserializeParameters(parameterElement);
+    public ParameterInclude getParent() {
+        return parent;
     }
 
     /**
-     * @return
-     */
-    public Handler getHandler() {
-        return handler;
-    }
-
-    /**
-     * @param handler
-     */
-    public void setHandler(Handler handler) {
-        this.handler = handler;
-    }
-
-    /**
-     * Method getClassName
+     * Method getRules
      *
      * @return
      */
-    public String getClassName() {
-        return className;
+    public PhaseRule getRules() {
+        return rules;
+    }
+
+    // to check whether the parameter is locked at any levle
+    public boolean isParameterLocked(String parameterName) {
+        if (parent != null) {
+            if (parent.isParameterLocked(parameterName)) {
+                return true;
+            }
+        }
+
+        return parameterInclude.isParameterLocked(parameterName);
     }
 
     /**
@@ -173,11 +156,30 @@ public class HandlerDescription implements ParameterInclude {
         this.className = className;
     }
 
-    public ParameterInclude getParent() {
-        return parent;
+    /**
+     * @param handler
+     */
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
+
+    /**
+     * @param name
+     */
+    public void setName(QName name) {
+        this.name = name;
     }
 
     public void setParent(ParameterInclude parent) {
         this.parent = parent;
+    }
+
+    /**
+     * Method setRules
+     *
+     * @param rules
+     */
+    public void setRules(PhaseRule rules) {
+        this.rules = rules;
     }
 }

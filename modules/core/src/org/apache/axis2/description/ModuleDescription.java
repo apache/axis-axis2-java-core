@@ -1,25 +1,26 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
+import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -36,28 +37,26 @@ import java.util.HashMap;
  */
 public class ModuleDescription implements FlowInclude, ParameterInclude {
 
-    private Module module;
-    /**
-     * Field name
-     */
-    private QName name;
-
-    private AxisConfiguration parent;
-
-    private ClassLoader moduleClassLoader;
-
     /**
      * Field flowInclude
      */
     private final FlowInclude flowInclude = new FlowIncludeImpl();
 
-    //to store module operations , which are suppose to be added to a service if it is engaged to a service
-    private HashMap operations;
-
     /**
      * Field parameters
      */
     private final ParameterInclude parameters = new ParameterIncludeImpl();
+    private Module module;
+    private ClassLoader moduleClassLoader;
+
+    /**
+     * Field name
+     */
+    private QName name;
+
+    // to store module operations , which are suppose to be added to a service if it is engaged to a service
+    private HashMap operations;
+    private AxisConfiguration parent;
 
     /**
      * Constructor ModuleDescription
@@ -74,6 +73,25 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     public ModuleDescription(QName name) {
         this();
         this.name = name;
+    }
+
+    public void addOperation(AxisOperation axisOperation) {
+        operations.put(axisOperation.getName(), axisOperation);
+    }
+
+    /**
+     * @param param
+     */
+    public void addParameter(Parameter param) throws AxisFault {
+        if (isParameterLocked(param.getName())) {
+            throw new AxisFault("Parmter is locked can not overide: " + param.getName());
+        } else {
+            parameters.addParameter(param);
+        }
+    }
+
+    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
+        this.parameters.deserializeParameters(parameterElement);
     }
 
     /**
@@ -97,8 +115,69 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     /**
      * @return
      */
+    public Module getModule() {
+        return module;
+    }
+
+    public ClassLoader getModuleClassLoader() {
+        return moduleClassLoader;
+    }
+
+    /**
+     * @return
+     */
+    public QName getName() {
+        return name;
+    }
+
+    public HashMap getOperations() {
+        return operations;
+    }
+
+    /**
+     * @return
+     */
     public Flow getOutFlow() {
         return flowInclude.getOutFlow();
+    }
+
+    /**
+     * @param name
+     * @return
+     */
+    public Parameter getParameter(String name) {
+        return parameters.getParameter(name);
+    }
+
+    public ArrayList getParameters() {
+        return parameters.getParameters();
+    }
+
+    public AxisConfiguration getParent() {
+        return parent;
+    }
+
+    // to check whether a given parameter is locked
+    public boolean isParameterLocked(String parameterName) {
+
+        // checking the locked value of parent
+        boolean loscked = false;
+
+        if (getParent() != null) {
+            loscked = getParent().isParameterLocked(parameterName);
+        }
+
+        if (loscked) {
+            return true;
+        } else {
+            Parameter parameter = getParameter(parameterName);
+
+            if ((parameter != null) && parameter.isLocked()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     /**
@@ -123,40 +202,14 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     }
 
     /**
-     * @param outFlow
+     * @param module
      */
-    public void setOutFlow(Flow outFlow) {
-        flowInclude.setOutFlow(outFlow);
+    public void setModule(Module module) {
+        this.module = module;
     }
 
-    /**
-     * @param param
-     */
-    public void addParameter(Parameter param)throws AxisFault{
-        if(isParameterLocked(param.getName())){
-            throw new AxisFault("Parmter is locked can not overide: " + param.getName());
-        } else{
-            parameters.addParameter(param);
-        }
-    }
-
-    /**
-     * @param name
-     * @return
-     */
-    public Parameter getParameter(String name) {
-        return parameters.getParameter(name);
-    }
-
-    public ArrayList getParameters() {
-        return parameters.getParameters();
-    }
-
-    /**
-     * @return
-     */
-    public QName getName() {
-        return name;
+    public void setModuleClassLoader(ClassLoader moduleClassLoader) {
+        this.moduleClassLoader = moduleClassLoader;
     }
 
     /**
@@ -167,64 +220,13 @@ public class ModuleDescription implements FlowInclude, ParameterInclude {
     }
 
     /**
-     * @return
+     * @param outFlow
      */
-    public Module getModule() {
-        return module;
-    }
-
-    /**
-     * @param module
-     */
-    public void setModule(Module module) {
-        this.module = module;
-    }
-
-    public void addOperation(AxisOperation axisOperation) {
-        operations.put(axisOperation.getName(), axisOperation);
-    }
-
-    public HashMap getOperations() {
-        return operations;
-    }
-
-    public AxisConfiguration getParent() {
-        return parent;
+    public void setOutFlow(Flow outFlow) {
+        flowInclude.setOutFlow(outFlow);
     }
 
     public void setParent(AxisConfiguration parent) {
         this.parent = parent;
     }
-
-    //to check whether a given parameter is locked
-    public boolean isParameterLocked(String parameterName) {
-        // checking the locked value of parent
-          boolean loscked =  false;
-        if (getParent() !=null) {
-            loscked=    getParent().isParameterLocked(parameterName);
-        }
-        if(loscked){
-            return true;
-        } else {
-            Parameter parameter = getParameter(parameterName);
-            if(parameter != null && parameter.isLocked()){
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
-    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
-        this.parameters.deserializeParameters(parameterElement);
-    }
-
-    public ClassLoader getModuleClassLoader() {
-        return moduleClassLoader;
-    }
-
-    public void setModuleClassLoader(ClassLoader moduleClassLoader) {
-        this.moduleClassLoader = moduleClassLoader;
-    }
-
 }

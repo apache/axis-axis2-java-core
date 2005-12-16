@@ -1,18 +1,19 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 
 package org.apache.axis2.transport.local;
 
@@ -39,7 +40,6 @@ import java.io.InputStreamReader;
 
 public class LocalTransportReceiver {
     public static ConfigurationContext CONFIG_CONTEXT;
-
     private ConfigurationContext confContext;
     private LocalTransportSender sender;
 
@@ -52,30 +52,28 @@ public class LocalTransportReceiver {
         this.sender = sender;
     }
 
-    public void processMessage(InputStream in,
-                               EndpointReference to) throws AxisFault {
+    public void processMessage(InputStream in, EndpointReference to) throws AxisFault {
         try {
-            TransportInDescription tIn =
-                confContext.getAxisConfiguration().getTransportIn(
+            TransportInDescription tIn = confContext.getAxisConfiguration().getTransportIn(
                     new QName(Constants.TRANSPORT_LOCAL));
-            TransportOutDescription tOut =
-                confContext.getAxisConfiguration().getTransportOut(
+            TransportOutDescription tOut = confContext.getAxisConfiguration().getTransportOut(
                     new QName(Constants.TRANSPORT_LOCAL));
+
             tOut.setSender(new LocalResponder(sender));
 
             MessageContext msgCtx = new MessageContext(confContext, tIn, tOut);
+
             msgCtx.setTo(to);
             msgCtx.setServerSide(true);
-
             msgCtx.setProperty(MessageContext.TRANSPORT_OUT, sender.getResponse());
 
-            XMLStreamReader reader =
-                XMLInputFactory.newInstance().createXMLStreamReader(
+            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(
                     new BufferedReader(new InputStreamReader(in)));
-
             StAXBuilder builder = new StAXSOAPModelBuilder(reader, null);
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
+
             msgCtx.setEnvelope(envelope);
+
             AxisEngine engine = new AxisEngine(confContext);
 
             if (envelope.getBody().hasFault()) {
@@ -89,5 +87,4 @@ public class LocalTransportReceiver {
             throw new AxisFault(e);
         }
     }
-
 }

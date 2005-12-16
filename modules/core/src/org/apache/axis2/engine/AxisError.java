@@ -1,9 +1,7 @@
 package org.apache.axis2.engine;
 
 public class AxisError extends RuntimeException {
-
     public AxisError() {
-
     }
 
     /**
@@ -20,6 +18,4 @@ public class AxisError extends RuntimeException {
     public AxisError(String message, Throwable cause) {
         super(message, cause);
     }
-
-
 }

@@ -1,18 +1,19 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 
 package org.apache.axis2.transport;
 
@@ -34,67 +35,69 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 
 public class TransportUtils {
-   public static SOAPEnvelope createSOAPMessage(MessageContext msgContext, String soapNamespaceURI) throws AxisFault {
+    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext, String soapNamespaceURI)
+            throws AxisFault {
+        InputStream inStream = (InputStream) msgContext.getProperty(MessageContext.TRANSPORT_IN);
 
-        InputStream inStream = (InputStream) msgContext.getProperty(
-                MessageContext.TRANSPORT_IN);
         msgContext.setProperty(MessageContext.TRANSPORT_IN, null);
-        //this inputstram is set by the TransportSender represents a two way transport or
-        //by a Transport Recevier
+
+        // this inputstram is set by the TransportSender represents a two way transport or
+        // by a Transport Recevier
         if (inStream == null) {
             throw new AxisFault(Messages.getMessage("inputstreamNull"));
         }
+
         return createSOAPMessage(msgContext, inStream, soapNamespaceURI);
     }
 
-    private static SOAPEnvelope createSOAPMessage(MessageContext msgContext,
-                                                 InputStream inStream, String soapNamespaceURI)
+    private static SOAPEnvelope createSOAPMessage(MessageContext msgContext, InputStream inStream,
+                                                  String soapNamespaceURI)
             throws AxisFault {
         try {
             Object contentType = null;
             OperationContext opContext = msgContext.getOperationContext();
+
             if (opContext != null) {
-                contentType =
-                        opContext.getProperty(
-                                HTTPConstants.MTOM_RECIVED_CONTENT_TYPE);
+                contentType = opContext.getProperty(HTTPConstants.MTOM_RECIVED_CONTENT_TYPE);
             } else {
                 throw new AxisFault(Messages.getMessage("cannotBeNullOperationContext"));
             }
 
             StAXBuilder builder = null;
             SOAPEnvelope envelope = null;
+            String charSetEnc =
+                    (String) msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
 
-            String charSetEnc = (String)msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
-            if(charSetEnc == null) {
-                charSetEnc = (String)opContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+            if (charSetEnc == null) {
+                charSetEnc = (String) opContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
             }
-            if(charSetEnc == null) {
-            	charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
+
+            if (charSetEnc == null) {
+                charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
             }
-            
-			if (contentType != null) {
+
+            if (contentType != null) {
                 msgContext.setDoingMTOM(true);
-                builder =
-                        HTTPTransportUtils.selectBuilderForMIME(msgContext,
-                                inStream,
-                                (String) contentType);
+                builder = HTTPTransportUtils.selectBuilderForMIME(msgContext, inStream,
+                        (String) contentType);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             } else if (msgContext.isDoingREST()) {
                 XMLStreamReader xmlreader =
-                        XMLInputFactory.newInstance().createXMLStreamReader(
-                                inStream,charSetEnc);
+                        XMLInputFactory.newInstance().createXMLStreamReader(inStream, charSetEnc);
                 SOAPFactory soapFactory = new SOAP11Factory();
+
                 builder = new StAXOMBuilder(xmlreader);
                 builder.setOmbuilderFactory(soapFactory);
                 envelope = soapFactory.getDefaultEnvelope();
                 envelope.getBody().addChild(builder.getDocumentElement());
             } else {
                 XMLStreamReader xmlreader =
-                        XMLInputFactory.newInstance().createXMLStreamReader(
-                        		inStream,charSetEnc);
+                        XMLInputFactory.newInstance().createXMLStreamReader(inStream, charSetEnc);
+
                 builder = new StAXSOAPModelBuilder(xmlreader, soapNamespaceURI);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             }
+
             return envelope;
         } catch (Exception e) {
             throw new AxisFault(e);
@@ -111,24 +114,27 @@ public class TransportUtils {
      */
     public static String getCharSetEncoding(String contentType) {
         int index = contentType.indexOf(HTTPConstants.CHAR_SET_ENCODING);
-        if (index == -1) { //Charset encoding not found in the contect-type header
-            //Using the default UTF-8
+
+        if (index == -1) {    // Charset encoding not found in the contect-type header
+
+            // Using the default UTF-8
             return MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
 
-        //If there are spaces around the '=' sign
+        // If there are spaces around the '=' sign
         int indexOfEq = contentType.indexOf("=", index);
-        //There can be situations where "charset" is not the last parameter of the Content-Type header
+
+        // There can be situations where "charset" is not the last parameter of the Content-Type header
         int indexOfSemiColon = contentType.indexOf(";", indexOfEq);
         String value;
+
         if (indexOfSemiColon > 0) {
             value = (contentType.substring(indexOfEq + 1, indexOfSemiColon));
         } else {
-            value = (contentType.substring(indexOfEq + 1, contentType.length()))
-                    .trim();
+            value = (contentType.substring(indexOfEq + 1, contentType.length())).trim();
         }
 
-        //There might be "" around the value - if so remove them
+        // There might be "" around the value - if so remove them
         value = value.replaceAll("\"", "");
 
         if ("null".equalsIgnoreCase(value)) {
@@ -136,6 +142,5 @@ public class TransportUtils {
         }
 
         return value.trim();
-
     }
 }

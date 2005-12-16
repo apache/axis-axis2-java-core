@@ -1,18 +1,19 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 
 package org.apache.axis2.deployment;
 
@@ -46,7 +47,8 @@ public class DeploymentErrorMsgs {
     public static final String INVALID_PHASE = "invalidphase";
     public static final String INVALID_SERVICE = "invalidservice";
     public static final String INVALID_STORAGE_CLASS = "invalid_storage";
-    public static final String MODULE_CANNOTHAVE_BOTH_NAME_AND_REF = "modulecannothavrbothnameandref";
+    public static final String MODULE_CANNOTHAVE_BOTH_NAME_AND_REF =
+            "modulecannothavrbothnameandref";
     public static final String MODULE_NOT_FOUND = "modulenotfound";
     public static final String MODULE_VAL_FAILED = "modulevalfailed";
     public static final String MODULEXML_NOT_FOUND_FOR_THE_MODULE = "modulexmlnotfound";
@@ -55,12 +57,14 @@ public class DeploymentErrorMsgs {
     public static final String OBSERVER_ERROR = "obsererror";
     public static final String OP_NOT_FOUN_IN_WSDL = "opnotfoundinwsdl";
     public static final String OPERATION_PROCESS_ERROR = "op_error";
-    public static final String OUTFLOW_NOT_ALLOWED_IN_TRS_IN = "outflownotallowedintrin";
+    public static final String OUTFLOW_NOT_ALLOWED_IN_TRS_IN =
+            "outflownotallowedintrin";
     public static final String PARAMETER_LOCKED = "parameterlockederror";
     public static final String PATH_TO_CONFIG_CAN_NOT_B_NULL = "pathtoconfigcanotnull";
     public static final String PHASE_DOES_NOT_SPECIFED = "phasedosenotspecified";
     public static final String REPO_CAN_NOT_BE_NULL = "repocannotbebull";
-    public static final String SERVICE_MODULE_CAN_NOT_REFER_GLOBAL_PHASE = "servicemodulecannothaveglobal";
+    public static final String SERVICE_MODULE_CAN_NOT_REFER_GLOBAL_PHASE =
+            "servicemodulecannothaveglobal";
     public static final String SERVICE_NAME_ERROR = "servicenameeror";
     public static final String SERVICE_REMOVED = "serviceremoved";
     public static final String SERVICE_XML_NOT_FOUND = "servicexmlnotfound";

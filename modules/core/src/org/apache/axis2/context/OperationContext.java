@@ -1,18 +1,19 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 
 package org.apache.axis2.context;
 
@@ -38,25 +39,25 @@ import java.util.Map;
  * creation in the OperationContexFactory.
  */
 public class OperationContext extends AbstractContext {
-
-
-    private HashMap messageContexts;
+    private boolean isComplete = false;
 
     // the in and out messages that may be present
-//    private MessageContext inMessageContext;
-
-//    private MessageContext outMessageContext;
-
+    //    private MessageContext inMessageContext;
+    //    private MessageContext outMessageContext;
     // the AxisOperation of which this is a running instance. The MEP of this
     // AxisOperation must be one of the 8 predefined ones in WSDL 2.0.
     private transient AxisOperation axisOperation;
-
-
-    private boolean isComplete = false;
+    private HashMap messageContexts;
 
     // this is the global MessageID -> OperationContext map which is stored in
     // the EngineContext. We're caching it here for faster acccess.
     private Map operationContextMap;
+
+    public OperationContext(AxisOperation axisOperation) {
+        super(null);
+        this.messageContexts = new HashMap();
+        this.axisOperation = axisOperation;
+    }
 
     /**
      * Constructs a new OperationContext.
@@ -66,44 +67,12 @@ public class OperationContext extends AbstractContext {
      * @param serviceContext the parent ServiceContext representing any state related to
      *                       the set of all operations of the service.
      */
-    public OperationContext(AxisOperation axisOperation,
-                            ServiceContext serviceContext) {
+    public OperationContext(AxisOperation axisOperation, ServiceContext serviceContext) {
         super(serviceContext);
         this.messageContexts = new HashMap();
         this.axisOperation = axisOperation;
-        this.operationContextMap = getServiceContext().getConfigurationContext()
-                .getOperationContextMap();
-    }
-
-    public OperationContext(AxisOperation axisOperation) {
-        super(null);
-        this.messageContexts = new HashMap();
-        this.axisOperation = axisOperation;
-    }
-
-    /**
-     * @return Returns the axisOperation.
-     */
-    public AxisOperation getAxisOperation() {
-        return axisOperation;
-    }
-
-    /**
-     * Returns the ServiceContext in which this OperationContext lives.
-     *
-     * @return parent ServiceContext
-     */
-    public ServiceContext getServiceContext() {
-        return (ServiceContext) parent;
-    }
-
-    /**
-     * Returns the EngineContext in which the parent ServiceContext lives.
-     *
-     * @return parent ServiceContext's parent EngineContext
-     */
-    public ConfigurationContext getEngineContext() {
-        return ((ServiceContext) parent).getConfigurationContext();
+        this.operationContextMap =
+                getServiceContext().getConfigurationContext().getOperationContextMap();
     }
 
     /**
@@ -121,13 +90,63 @@ public class OperationContext extends AbstractContext {
     }
 
     /**
+     * Removes the pointers to this <code>OperationContext</code> in the
+     * <code>EngineContext</code>'s OperationContextMap so that this
+     * <code>OperationContext</code> will eventually get garbage collected
+     * along with the <code>MessageContext</code>'s it contains. Note that if
+     * the caller wants to make sure its safe to clean up this OperationContext
+     * he should call isComplete() first. However, in cases like IN_OPTIONAL_OUT
+     * and OUT_OPTIONAL_IN, it is possibe this will get called without the MEP
+     * being complete due to the optional nature of the MEP.
+     */
+    public void cleanup() {
+        Iterator msgContexts = messageContexts.values().iterator();
+
+        while (msgContexts.hasNext()) {
+            MessageContext messageContext = (MessageContext) msgContexts.next();
+
+            if ((null != messageContext) && (operationContextMap != null)) {
+                operationContextMap.remove(messageContext.getMessageID());
+            }
+        }
+    }
+
+    /**
+     * @return Returns the axisOperation.
+     */
+    public AxisOperation getAxisOperation() {
+        return axisOperation;
+    }
+
+    /**
+     * Returns the EngineContext in which the parent ServiceContext lives.
+     *
+     * @return parent ServiceContext's parent EngineContext
+     */
+    public ConfigurationContext getEngineContext() {
+        return ((ServiceContext) parent).getConfigurationContext();
+    }
+
+    /**
      * @param messageLabel
      * @return
      * @throws AxisFault
      */
-
     public MessageContext getMessageContext(String messageLabel) throws AxisFault {
         return (MessageContext) messageContexts.get(messageLabel);
+    }
+
+    public HashMap getMessageContexts() {
+        return messageContexts;
+    }
+
+    /**
+     * Returns the ServiceContext in which this OperationContext lives.
+     *
+     * @return parent ServiceContext
+     */
+    public ServiceContext getServiceContext() {
+        return (ServiceContext) parent;
     }
 
     /**
@@ -142,35 +161,9 @@ public class OperationContext extends AbstractContext {
         isComplete = complete;
     }
 
-    /**
-     * Removes the pointers to this <code>OperationContext</code> in the
-     * <code>EngineContext</code>'s OperationContextMap so that this
-     * <code>OperationContext</code> will eventually get garbage collected
-     * along with the <code>MessageContext</code>'s it contains. Note that if
-     * the caller wants to make sure its safe to clean up this OperationContext
-     * he should call isComplete() first. However, in cases like IN_OPTIONAL_OUT
-     * and OUT_OPTIONAL_IN, it is possibe this will get called without the MEP
-     * being complete due to the optional nature of the MEP.
-     */
-    public void cleanup() {
-        Iterator msgContexts = messageContexts.values().iterator();
-        while (msgContexts.hasNext()) {
-            MessageContext messageContext = (MessageContext) msgContexts.next();
-            if (null != messageContext && operationContextMap != null) {
-                operationContextMap.remove(messageContext.getMessageID());
-            }
-        }
-
-    }
-
     public void setParent(AbstractContext context) {
         super.setParent(context);
-        this.operationContextMap = getServiceContext().getConfigurationContext()
-                .getOperationContextMap();
+        this.operationContextMap =
+                getServiceContext().getConfigurationContext().getOperationContextMap();
     }
-
-    public HashMap getMessageContexts() {
-        return messageContexts;
-    }
-
 }

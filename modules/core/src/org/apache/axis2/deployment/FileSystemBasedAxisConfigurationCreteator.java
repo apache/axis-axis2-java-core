@@ -3,6 +3,7 @@ package org.apache.axis2.deployment;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurationCreator;
+
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -23,11 +24,11 @@ import org.apache.axis2.engine.AxisConfigurationCreator;
 
 public class FileSystemBasedAxisConfigurationCreteator implements AxisConfigurationCreator {
 
-    private String repoLocation;
     /**
      * To check whether need to create a service side or client side
      */
     private boolean isServer;
+    private String repoLocation;
 
     public FileSystemBasedAxisConfigurationCreteator(String repoLocation, boolean isServer) {
         this.repoLocation = repoLocation;
@@ -41,11 +42,12 @@ public class FileSystemBasedAxisConfigurationCreteator implements AxisConfigurat
      * @return
      * @throws AxisFault
      */
-
     public AxisConfiguration getAxisConfiguration() throws AxisFault {
         DeploymentEngine deploymentEngine;
+
         if (isServer) {
             deploymentEngine = new DeploymentEngine(repoLocation);
+
             return deploymentEngine.load();
         } else {
             return new DeploymentEngine().loadClient(repoLocation);

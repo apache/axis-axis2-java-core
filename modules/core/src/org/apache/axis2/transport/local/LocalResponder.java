@@ -13,6 +13,8 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+
+
 package org.apache.axis2.transport.local;
 
 import org.apache.axis2.AxisFault;
@@ -32,24 +34,6 @@ public class LocalResponder extends AbstractTransportSender {
         this.sender = sender;
     }
 
-    public OutputStream startSendWithToAddress(MessageContext msgContext, OutputStream out) throws AxisFault {
-        return out;
-    }
-
-    public void finalizeSendWithToAddress(MessageContext msgContext, OutputStream out) throws AxisFault {
-    }
-
-    public OutputStream startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext, OutputStream out) throws AxisFault {
-        return null;  
-    }
-
-    public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext, OutputStream out) throws AxisFault {
-    }
-
-    protected OutputStream openTheConnection(EndpointReference epr, MessageContext msgctx) throws AxisFault {
-        return sender.getResponse();
-    }
-
     /**
      * Clean up
      *
@@ -57,5 +41,30 @@ public class LocalResponder extends AbstractTransportSender {
      * @throws org.apache.axis2.AxisFault
      */
     public void cleanUp(MessageContext msgContext) throws AxisFault {
+    }
+
+    public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
+                                                                   OutputStream out)
+            throws AxisFault {
+    }
+
+    public void finalizeSendWithToAddress(MessageContext msgContext, OutputStream out)
+            throws AxisFault {
+    }
+
+    protected OutputStream openTheConnection(EndpointReference epr, MessageContext msgctx)
+            throws AxisFault {
+        return sender.getResponse();
+    }
+
+    public OutputStream startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
+                                                                        OutputStream out)
+            throws AxisFault {
+        return null;
+    }
+
+    public OutputStream startSendWithToAddress(MessageContext msgContext, OutputStream out)
+            throws AxisFault {
+        return out;
     }
 }

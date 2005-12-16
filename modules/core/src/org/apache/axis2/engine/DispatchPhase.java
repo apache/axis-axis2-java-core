@@ -6,6 +6,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
 
 import java.util.ArrayList;
+
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -26,48 +27,45 @@ import java.util.ArrayList;
 */
 
 public class DispatchPhase extends Phase {
+    public DispatchPhase() {
+    }
 
     public DispatchPhase(String phaseName) {
         super(phaseName);
     }
 
-    public DispatchPhase() {
-
-    }
-
     public void checkPostConditions(MessageContext msgContext) throws AxisFault {
-
         EndpointReference toEPR = msgContext.getTo();
+
         if (msgContext.getAxisService() == null) {
-            throw new AxisFault(
-                    "Service Not found EPR is " +
-                            ((toEPR != null) ? toEPR.getAddress() : ""));
+            throw new AxisFault("Service Not found EPR is " + ((toEPR != null)
+                    ? toEPR.getAddress()
+                    : ""));
         } else if (msgContext.getAxisOperation() == null) {
-            throw new AxisFault(
-                    "Operation Not found EPR is " +
-                            ((toEPR != null) ? toEPR.getAddress() : "") +
-                            " and WSA Action = " +
-                            msgContext.getWSAAction());
+            throw new AxisFault("Operation Not found EPR is " + ((toEPR != null)
+                    ? toEPR.getAddress()
+                    : "") + " and WSA Action = " + msgContext.getWSAAction());
         }
-        
+
         if (msgContext.getOperationContext() == null) {
-            throw new AxisFault(
-                    Messages.getMessage("cannotBeNullOperationContext"));
+            throw new AxisFault(Messages.getMessage("cannotBeNullOperationContext"));
         }
+
         if (msgContext.getServiceContext() == null) {
-            throw new AxisFault(
-                    Messages.getMessage("cannotBeNullServiceContext"));
+            throw new AxisFault(Messages.getMessage("cannotBeNullServiceContext"));
         }
-        if (msgContext.getAxisOperation() == null && msgContext.getOperationContext() != null) {
+
+        if ((msgContext.getAxisOperation() == null) && (msgContext.getOperationContext() != null)) {
             msgContext.setAxisOperation(msgContext.getOperationContext().getAxisOperation());
         }
 
-        if (msgContext.getAxisService() == null && msgContext.getServiceContext() != null) {
+        if ((msgContext.getAxisService() == null) && (msgContext.getServiceContext() != null)) {
             msgContext.setAxisService(msgContext.getServiceContext().getAxisService());
         }
 
         // TODO : do post-dispatch execution chain setup...
         ArrayList operationChain = msgContext.getAxisOperation().getRemainingPhasesInFlow();
+
         msgContext.setExecutionChain(operationChain);
     }
 }

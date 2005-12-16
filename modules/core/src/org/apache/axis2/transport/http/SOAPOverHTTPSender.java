@@ -1,9 +1,9 @@
 /*
- * Created on Nov 28, 2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+* Created on Nov 28, 2005
+*
+* TODO To change the template for this generated file go to
+* Window - Preferences - Java - Code Style - Code Templates
+*/
 package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
@@ -29,68 +29,61 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-
 public class SOAPOverHTTPSender extends AbstractHTTPSender {
-
-    public void send(MessageContext msgContext,
-                     OMElement dataout, URL url, String soapActionString)
+    public void send(MessageContext msgContext, OMElement dataout, URL url, String soapActionString)
             throws MalformedURLException, AxisFault, IOException {
 
         // execute the HtttpMethodBase - a connection manager can be given for
         // handle multiple
         httpClient = new HttpClient();
-        //hostConfig handles the socket functions..
-        //HostConfiguration hostConfig = getHostConfiguration(msgContext, url);
 
-        //Get the timeout values set in the runtime
+        // hostConfig handles the socket functions..
+        // HostConfiguration hostConfig = getHostConfiguration(msgContext, url);
+
+        // Get the timeout values set in the runtime
         getTimeoutValues(msgContext);
 
         // SO_TIMEOUT -- timeout for blocking reads
-        httpClient.getHttpConnectionManager().getParams().setSoTimeout(
-                soTimeout);
+        httpClient.getHttpConnectionManager().getParams().setSoTimeout(soTimeout);
+
         // timeout for initial connection
-        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(
-                connectionTimeout);
-
-
+        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(connectionTimeout);
 
         PostMethod postMethod = new PostMethod(url.toString());
 
-        msgContext.setProperty(CommonsHTTPTransportSender.HTTP_METHOD,
-                postMethod);
+        msgContext.setProperty(CommonsHTTPTransportSender.HTTP_METHOD, postMethod);
+
         String charEncoding =
-                (String) msgContext.getProperty(
-                        MessageContext.CHARACTER_SET_ENCODING);
+                (String) msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+
         if (charEncoding == null) {
             charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
 
         postMethod.setPath(url.getPath());
-
-        postMethod.setRequestEntity(new AxisSOAPRequestEntity(dataout, chuncked,
-                msgContext, charEncoding, soapActionString));
+        postMethod.setRequestEntity(new AxisSOAPRequestEntity(dataout, chuncked, msgContext,
+                charEncoding, soapActionString));
 
         if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chuncked) {
             postMethod.setContentChunked(true);
         }
-        postMethod
-                .setRequestHeader(HTTPConstants.HEADER_USER_AGENT, "Axis/2.0");
 
+        postMethod.setRequestHeader(HTTPConstants.HEADER_USER_AGENT, "Axis/2.0");
 
         if (msgContext.isSOAP11()) {
-            postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION,
-                    soapActionString);
-        }else{
-
+            postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapActionString);
+        } else {
         }
+
         postMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
+
         if (httpVersion != null) {
             if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
-
                 httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
                 postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
                         HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
             } else {
+
                 // allowing keep-alive for 1.1
                 postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
                         HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
@@ -100,63 +93,52 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         }
 
         /*
-           * main excecution takes place..
-           */
-
-        HostConfiguration config = this.getHostConfiguration(httpClient,
-                msgContext, url);
-
+         *   main excecution takes place..
+         */
+        HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
 
         this.httpClient.executeMethod(config, postMethod);
+
         /*
-           * Execution is over
-           */
+         *   Execution is over
+         */
         if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
             processResponse(postMethod, msgContext);
+
             return;
         } else if (postMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
             return;
         } else if (postMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-            Header contentTypeHeader = postMethod
-                    .getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+            Header contentTypeHeader =
+                    postMethod.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
 
             if (contentTypeHeader != null) {
                 String value = contentTypeHeader.getValue();
-                if (value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0
-                        || value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0) {
+
+                if ((value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0)
+                        || (value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0)) {
                     processResponse(postMethod, msgContext);
+
                     return;
                 }
             }
         }
-        throw new AxisFault(Messages.getMessage("transportError", String
-                .valueOf(postMethod.getStatusCode()), postMethod
-                .getResponseBodyAsString()));
 
+        throw new AxisFault(Messages.getMessage("transportError",
+                String.valueOf(postMethod.getStatusCode()), postMethod.getResponseBodyAsString()));
     }
 
     public class AxisSOAPRequestEntity implements RequestEntity {
-
-        private String charSetEnc;
-
-        private OMElement element;
-
-        private boolean chuncked;
-
-        private byte[] bytes;
-
         private boolean doingMTOM = false;
-
+        private byte[] bytes;
+        private String charSetEnc;
+        private boolean chuncked;
+        private OMElement element;
+        private MessageContext msgCtxt;
         private String soapActionString;
 
-        private MessageContext msgCtxt;
-
-        public AxisSOAPRequestEntity(
-                OMElement element,
-                boolean chuncked,
-                MessageContext msgCtxt,
-                String charSetEncoding,
-                String soapActionString) {
+        public AxisSOAPRequestEntity(OMElement element, boolean chuncked, MessageContext msgCtxt,
+                                     String charSetEncoding, String soapActionString) {
             this.element = element;
             this.chuncked = chuncked;
             this.msgCtxt = msgCtxt;
@@ -165,8 +147,9 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
             this.soapActionString = soapActionString;
         }
 
-        public boolean isRepeatable() {
-            return true;
+        private void handleOMOutput(OutputStream out, boolean doingMTOM) throws XMLStreamException {
+            format.setDoOptimize(doingMTOM);
+            element.serializeAndConsume(out, format);
         }
 
         public byte[] writeBytes() throws AxisFault {
@@ -175,14 +158,16 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
                 if (!doingMTOM) {
                     OMOutputFormat format2 = new OMOutputFormat();
+
                     format2.setCharSetEncoding(charSetEnc);
                     element.serializeAndConsume(bytesOut, format2);
-                    return bytesOut.toByteArray();
 
+                    return bytesOut.toByteArray();
                 } else {
                     format.setCharSetEncoding(charSetEnc);
                     format.setDoOptimize(true);
                     element.serializeAndConsume(bytesOut, format);
+
                     return bytesOut.toByteArray();
                 }
             } catch (XMLStreamException e) {
@@ -192,24 +177,18 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
             }
         }
 
-        private void handleOMOutput(OutputStream out, boolean doingMTOM)
-                throws XMLStreamException {
-            format.setDoOptimize(doingMTOM);
-            element.serializeAndConsume(out, format);
-        }
-
         public void writeRequest(OutputStream out) throws IOException {
             try {
-                if (doingMTOM) { //chagened ..
+                if (doingMTOM) {    // chagened ..
                     if (chuncked) {
                         this.handleOMOutput(out, doingMTOM);
                     } else {
                         if (bytes == null) {
                             bytes = writeBytes();
                         }
+
                         out.write(bytes);
                     }
-
                 } else {
                     if (chuncked) {
                         this.handleOMOutput(out, doingMTOM);
@@ -217,9 +196,11 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
                         if (bytes == null) {
                             bytes = writeBytes();
                         }
+
                         out.write(bytes);
                     }
                 }
+
                 out.flush();
             } catch (XMLStreamException e) {
                 throw new AxisFault(e);
@@ -232,13 +213,14 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
         public long getContentLength() {
             try {
-                if (doingMTOM) {    //chagened
+                if (doingMTOM) {    // chagened
                     if (chuncked) {
                         return -1;
                     } else {
                         if (bytes == null) {
                             bytes = writeBytes();
                         }
+
                         return bytes.length;
                     }
                 } else {
@@ -248,6 +230,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
                         if (bytes == null) {
                             bytes = writeBytes();
                         }
+
                         return bytes.length;
                     }
                 }
@@ -257,18 +240,24 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         }
 
         public String getContentType() {
-
             String encoding = format.getCharSetEncoding();
             String contentType = format.getContentType();
+
             if (encoding != null) {
                 contentType += "; charset=" + encoding;
             }
 
             // action header is not mandated in SOAP 1.2. So putting it, if available
-            if (!msgCtxt.isSOAP11() && soapActionString != null && !"".equals(soapActionString.trim())) {
+            if (!msgCtxt.isSOAP11() && (soapActionString != null)
+                    && !"".equals(soapActionString.trim())) {
                 contentType = contentType + ";action=\"" + soapActionString + "\";";
             }
+
             return contentType;
+        }
+
+        public boolean isRepeatable() {
+            return true;
         }
     }
 }

@@ -1,18 +1,19 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 
 package org.apache.axis2.engine;
 
@@ -28,6 +29,14 @@ import java.io.Serializable;
  * Interface Handler
  */
 public interface Handler extends Serializable {
+
+    /**
+     * Method cleanup.
+     *
+     * @throws AxisFault
+     */
+    public void cleanup() throws AxisFault;
+
     /**
      * Method init.
      *
@@ -50,6 +59,12 @@ public interface Handler extends Serializable {
      */
     public void invoke(MessageContext msgContext) throws AxisFault;
 
+    /**
+     * Gets the HandlerDescription of a handler. This is used as an input to get phaseRule of a handler.
+     *
+     * @return Returns HandlerDescription.
+     */
+    public HandlerDescription getHandlerDesc();
 
     /**
      * Method getName.
@@ -58,8 +73,6 @@ public interface Handler extends Serializable {
      */
     public QName getName();
 
-
-
     /**
      * Method getParameter.
      *
@@ -67,18 +80,4 @@ public interface Handler extends Serializable {
      * @return Returns Parameter.
      */
     public Parameter getParameter(String name);
-
-    /**
-     * Method cleanup.
-     *
-     * @throws AxisFault
-     */
-    public void cleanup() throws AxisFault;
-
-    /**
-     * Gets the HandlerDescription of a handler. This is used as an input to get phaseRule of a handler. 
-     *
-     * @return Returns HandlerDescription.
-     */
-    public HandlerDescription getHandlerDesc();
 }

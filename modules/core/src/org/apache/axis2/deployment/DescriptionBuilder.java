@@ -1,18 +1,19 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 
 package org.apache.axis2.deployment;
 
@@ -47,20 +48,20 @@ import java.util.Iterator;
 /**
  * To do the common tasks for all *Builder class
  */
-public class DescriptionBuilder implements DeploymentConstants{
-
+public class DescriptionBuilder implements DeploymentConstants {
     protected Log log = LogFactory.getLog(getClass());
-    protected InputStream des_inputStream;
     protected AxisConfiguration axisConfig;
-//    protected DeploymentEngine engine;
 
-    public DescriptionBuilder(InputStream serviceInputStream,
-                              AxisConfiguration axisConfig) {
-        this.des_inputStream = serviceInputStream;
-        this.axisConfig = axisConfig;
-    }
+//  protected DeploymentEngine engine;
+
+    protected InputStream des_inputStream;
 
     public DescriptionBuilder() {
+    }
+
+    public DescriptionBuilder(InputStream serviceInputStream, AxisConfiguration axisConfig) {
+        this.des_inputStream = serviceInputStream;
+        this.axisConfig = axisConfig;
     }
 
     /**
@@ -69,6 +70,7 @@ public class DescriptionBuilder implements DeploymentConstants{
      *
      * @return OMElement <code>OMElement</code>
      * @throws javax.xml.stream.XMLStreamException
+     *
      */
     public OMElement buildOM() throws XMLStreamException {
         XMLStreamReader xmlReader =
@@ -76,76 +78,147 @@ public class DescriptionBuilder implements DeploymentConstants{
         OMFactory fac = OMAbstractFactory.getOMFactory();
         StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
         OMElement element = staxOMBuilder.getDocumentElement();
+
         element.build();
+
         return element;
     }
 
+    protected MessageReceiver loadDefaultMessageReceiver() throws DeploymentException {
+        MessageReceiver receiver;
+        String defaultMessageReceiver =
+                "org.apache.axis2.receivers.RawXMLINOutMessageReceiver";
+
+        try {
+
+            /**
+             * Setting default Message Recive as Message Receiver
+             */
+            ClassLoader loader1 = Thread.currentThread().getContextClassLoader();
+            Class messageReceiver = Class.forName(defaultMessageReceiver, true, loader1);
+
+            receiver = ((MessageReceiver) messageReceiver.newInstance());
+        } catch (ClassNotFoundException e) {
+            throw new DeploymentException(
+                    Messages.getMessage(
+                            DeploymentErrorMsgs.ERROR_IN_LOADING_MR, "ClassNotFoundException",
+                            defaultMessageReceiver));
+        } catch (IllegalAccessException e) {
+            throw new DeploymentException(
+                    Messages.getMessage(
+                            DeploymentErrorMsgs.ERROR_IN_LOADING_MR, "IllegalAccessException",
+                            defaultMessageReceiver));
+        } catch (InstantiationException e) {
+            throw new DeploymentException(
+                    Messages.getMessage(
+                            DeploymentErrorMsgs.ERROR_IN_LOADING_MR, "InstantiationException",
+                            defaultMessageReceiver));
+        }
+
+        return receiver;
+    }
+
+    protected MessageReceiver loadMessageReceiver(ClassLoader loader, OMElement reciverElement)
+            throws DeploymentException {
+        OMAttribute recieverName = reciverElement.getAttribute(new QName(CLASSNAME));
+        String className = recieverName.getAttributeValue();
+        MessageReceiver receiver = null;
+
+        try {
+            Class messageReceiver;
+
+            if ((className != null) && !"".equals(className)) {
+                messageReceiver = Class.forName(className, true, loader);
+                receiver = (MessageReceiver) messageReceiver.newInstance();
+            }
+        } catch (ClassNotFoundException e) {
+            throw new DeploymentException(
+                    Messages.getMessage(
+                            DeploymentErrorMsgs.ERROR_IN_LOADING_MR, "ClassNotFoundException", className));
+        } catch (IllegalAccessException e) {
+            throw new DeploymentException(
+                    Messages.getMessage(
+                            DeploymentErrorMsgs.ERROR_IN_LOADING_MR, "IllegalAccessException", className));
+        } catch (InstantiationException e) {
+            throw new DeploymentException(
+                    Messages.getMessage(
+                            DeploymentErrorMsgs.ERROR_IN_LOADING_MR, "InstantiationException", className));
+        }
+
+        return receiver;
+    }
 
     /**
      * To process Flow elements in services.xml
-     * @param flowelement       <code>OMElement</code>
+     *
+     * @param flowelement <code>OMElement</code>
      * @return
-     * @throws DeploymentException  <code>DeploymentException</code>
+     * @throws DeploymentException <code>DeploymentException</code>
      */
     protected Flow processFlow(OMElement flowelement, ParameterInclude parent)
             throws DeploymentException {
         Flow flow = new FlowImpl();
-        if(flowelement == null){
+
+        if (flowelement == null) {
             return flow;
         }
-        Iterator handlers = flowelement.getChildrenWithName(
-                new QName(HANDERST));
+
+        Iterator handlers = flowelement.getChildrenWithName(new QName(HANDERST));
+
         while (handlers.hasNext()) {
-            OMElement  handlerElement =  (OMElement)handlers.next();
-            flow.addHandler(processHandler(handlerElement,parent));
+            OMElement handlerElement = (OMElement) handlers.next();
+
+            flow.addHandler(processHandler(handlerElement, parent));
         }
+
         return flow;
     }
 
     /**
-     *  To process Handler element
-     * @param handler_element    <code>OMElement</code>
+     * To process Handler element
+     *
+     * @param handler_element <code>OMElement</code>
      * @return
-     * @throws DeploymentException    <code>DeploymentException</code>
+     * @throws DeploymentException <code>DeploymentException</code>
      */
-    protected HandlerDescription processHandler(OMElement handler_element,
-                                                ParameterInclude parent)
+    protected HandlerDescription processHandler(OMElement handler_element, ParameterInclude parent)
             throws DeploymentException {
         HandlerDescription handler = new HandlerDescription();
 
-        //Setting Handler name
-        OMAttribute name_attribute = handler_element.getAttribute(
-                new QName(ATTNAME));
-        if(name_attribute == null){
-            throw new DeploymentException(Messages.getMessage(
-                    DeploymentErrorMsgs.INVALID_HANDLER,"Name missing"));
+        // Setting Handler name
+        OMAttribute name_attribute = handler_element.getAttribute(new QName(ATTNAME));
+
+        if (name_attribute == null) {
+            throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.INVALID_HANDLER,
+                    "Name missing"));
         } else {
             handler.setName(new QName(name_attribute.getAttributeValue()));
         }
 
-        //Setting Handler Class name
-        OMAttribute class_attribute = handler_element.getAttribute(
-                new QName(CLASSNAME));
-        if(class_attribute == null){
-            throw new DeploymentException((Messages.getMessage(
-                    DeploymentErrorMsgs.INVALID_HANDLER,"class name missing")));
+        // Setting Handler Class name
+        OMAttribute class_attribute = handler_element.getAttribute(new QName(CLASSNAME));
+
+        if (class_attribute == null) {
+            throw new DeploymentException((Messages.getMessage(DeploymentErrorMsgs.INVALID_HANDLER,
+                    "class name missing")));
         } else {
             handler.setClassName(class_attribute.getAttributeValue());
         }
 
-        //processing phase Rules (order)
-        OMElement order_element = handler_element.getFirstChildWithName(
-                new QName(ORDER));
-        if(order_element == null){
-            throw new DeploymentException((Messages.getMessage(
-                    DeploymentErrorMsgs.INVALID_HANDLER,
+        // processing phase Rules (order)
+        OMElement order_element = handler_element.getFirstChildWithName(new QName(ORDER));
+
+        if (order_element == null) {
+            throw new DeploymentException((Messages.getMessage(DeploymentErrorMsgs.INVALID_HANDLER,
                     "phase rule does not specify")));
         } else {
             Iterator order_itr = order_element.getAllAttributes();
+
             while (order_itr.hasNext()) {
                 OMAttribute orderAttribute = (OMAttribute) order_itr.next();
-                String name  = orderAttribute.getQName().getLocalPart();
+                String name = orderAttribute.getQName().getLocalPart();
                 String value = orderAttribute.getAttributeValue();
+
                 if (AFTER.equals(name)) {
                     handler.getRules().setAfter(value);
                 } else if (BEFORE.equals(name)) {
@@ -154,6 +227,7 @@ public class DescriptionBuilder implements DeploymentConstants{
                     handler.getRules().setPhaseName(value);
                 } else if (PHASEFIRST.equals(name)) {
                     String boolval = getValue(value);
+
                     if (boolval.equals("true")) {
                         handler.getRules().setPhaseFirst(true);
                     } else if (boolval.equals("false")) {
@@ -161,96 +235,131 @@ public class DescriptionBuilder implements DeploymentConstants{
                     }
                 } else if (PHASELAST.equals(name)) {
                     String boolval = getValue(value);
+
                     if (boolval.equals("true")) {
                         handler.getRules().setPhaseLast(true);
                     } else if (boolval.equals("false")) {
                         handler.getRules().setPhaseLast(false);
                     }
                 }
-
             }
-            Iterator parameters = handler_element.getChildrenWithName(
-                    new QName(PARAMETER));
-            processParameters(parameters,handler,parent);
+
+            Iterator parameters = handler_element.getChildrenWithName(new QName(PARAMETER));
+
+            processParameters(parameters, handler, parent);
         }
+
         handler.setParent(parent);
+
         return handler;
+    }
+
+    protected void processOperationModuleRefs(Iterator moduleRefs, AxisOperation operation)
+            throws DeploymentException {
+        try {
+            while (moduleRefs.hasNext()) {
+                OMElement moduleref = (OMElement) moduleRefs.next();
+                OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(REF));
+
+                if (moduleRefAttribute != null) {
+                    String refName = moduleRefAttribute.getAttributeValue();
+
+                    if (axisConfig.getModule(new QName(refName)) == null) {
+                        throw new DeploymentException(
+                                Messages.getMessage(DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
+                    } else {
+                        operation.addModule(new QName(refName));
+                    }
+                }
+            }
+        } catch (AxisFault axisFault) {
+            throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.MODULE_NOT_FOUND,
+                    axisFault.getMessage()));
+        }
     }
 
     /**
      * To get the Parameter object out from the OM
-     * @param parameters <code>Parameter</code>
+     *
+     * @param parameters       <code>Parameter</code>
      * @param parameterInclude <code>ParameterInclude</code>
-     * @param parent <code>ParameterInclude</code>
-     * return : will return parameters , wchih name is WSA-Mapping , since we need to treat them
-     * separately
+     * @param parent           <code>ParameterInclude</code>
+     *                         return : will return parameters , wchih name is WSA-Mapping , since we need to treat them
+     *                         separately
      */
-    protected ArrayList processParameters(Iterator parameters,
-                                          ParameterInclude parameterInclude,
-                                          ParameterInclude parent )
+    protected ArrayList processParameters(Iterator parameters, ParameterInclude parameterInclude,
+                                          ParameterInclude parent)
             throws DeploymentException {
         ArrayList wsamapping = new ArrayList();
-        while (parameters.hasNext()) {
-            //this is to check whether some one has locked the parmter at the top level
-            OMElement parameterElement = (OMElement) parameters.next();
 
+        while (parameters.hasNext()) {
+
+            // this is to check whether some one has locked the parmter at the top level
+            OMElement parameterElement = (OMElement) parameters.next();
             Parameter parameter = new ParameterImpl();
-            //setting parameterElement
+
+            // setting parameterElement
             parameter.setParameterElement(parameterElement);
 
-            //setting parameter Name
-            OMAttribute paraName = parameterElement.getAttribute(
-                    new QName(ATTNAME));
-            if(paraName == null ){
+            // setting parameter Name
+            OMAttribute paraName = parameterElement.getAttribute(new QName(ATTNAME));
+
+            if (paraName == null) {
                 throw new DeploymentException(
                         Messages.getMessage(DeploymentErrorMsgs.BAD_PARA_ARGU));
             }
+
             parameter.setName(paraName.getAttributeValue());
 
-            //setting parameter Value (the chiled elemnt of the parameter)
+            // setting parameter Value (the chiled elemnt of the parameter)
             OMElement paraValue = parameterElement.getFirstElement();
-            if(paraValue !=null){
+
+            if (paraValue != null) {
                 parameter.setValue(parameterElement);
                 parameter.setParameterType(Parameter.OM_PARAMETER);
             } else {
                 String paratextValue = parameterElement.getText();
+
                 parameter.setValue(paratextValue);
                 parameter.setParameterType(Parameter.TEXT_PARAMETER);
             }
 
-            //setting locking attribute
-            OMAttribute paraLocked = parameterElement.getAttribute(
-                    new QName(ATTLOCKED));
+            // setting locking attribute
+            OMAttribute paraLocked = parameterElement.getAttribute(new QName(ATTLOCKED));
             Parameter parentpara = null;
-            if (parent !=null) {
+
+            if (parent != null) {
                 parentpara = parent.getParameter(parameter.getName());
             }
-            if (paraLocked !=null) {
+
+            if (paraLocked != null) {
                 String lockedValue = paraLocked.getAttributeValue();
-                if("true".equals(lockedValue)){
+
+                if ("true".equals(lockedValue)) {
+
                     // if the parameter is locked at some level parameter value replace by that
-                    if (parent!=null &&
-                            parent.isParameterLocked(parameter.getName())){
-                        throw new DeploymentException(Messages.getMessage(
-                                DeploymentErrorMsgs.CONFIG_NOT_FOUND,
-                                parameter.getName()));
-                    } else{
+                    if ((parent != null) && parent.isParameterLocked(parameter.getName())) {
+                        throw new DeploymentException(
+                                Messages.getMessage(
+                                        DeploymentErrorMsgs.CONFIG_NOT_FOUND, parameter.getName()));
+                    } else {
                         parameter.setLocked(true);
                     }
-
                 } else {
                     parameter.setLocked(false);
                 }
             }
-            if(Constants.WSA_ACTION.equals(paraName.getAttributeValue())){
+
+            if (Constants.WSA_ACTION.equals(paraName.getAttributeValue())) {
                 wsamapping.add(parameter);
+
                 // no need to add this parameter , since this is just for mapping
                 continue;
             }
+
             try {
-                if(parent !=null){
-                    if(parentpara == null ||
-                            !parent.isParameterLocked(parameter.getName())){
+                if (parent != null) {
+                    if ((parentpara == null) || !parent.isParameterLocked(parameter.getName())) {
                         parameterInclude.addParameter(parameter);
                     }
                 } else {
@@ -260,101 +369,9 @@ public class DescriptionBuilder implements DeploymentConstants{
                 throw new DeploymentException(axisFault);
             }
         }
+
         return wsamapping;
     }
-
-
-    protected void processOperationModuleRefs(Iterator moduleRefs,
-                                              AxisOperation operation)
-            throws DeploymentException {
-        try {
-            while (moduleRefs.hasNext()) {
-                OMElement moduleref = (OMElement) moduleRefs.next();
-                OMAttribute moduleRefAttribute = moduleref.getAttribute(
-                        new QName(REF));
-                if (moduleRefAttribute !=null) {
-                    String refName = moduleRefAttribute.getAttributeValue();
-                    if(axisConfig.getModule(new QName(refName)) == null) {
-                        throw new DeploymentException(Messages.getMessage(
-                                DeploymentErrorMsgs.MODULE_NOT_FOUND,
-                                refName));
-                    } else {
-                        operation.addModule(new QName(refName));
-                    }
-                }
-            }
-        }catch (AxisFault axisFault) {
-            throw new DeploymentException(Messages.getMessage(
-                    DeploymentErrorMsgs.MODULE_NOT_FOUND,
-                    axisFault.getMessage()));
-        }
-    }
-
-    protected MessageReceiver loadMessageReceiver(ClassLoader loader,
-                                                  OMElement reciverElement)
-            throws DeploymentException {
-        OMAttribute recieverName = reciverElement.getAttribute(
-                new QName(CLASSNAME));
-        String className = recieverName.getAttributeValue();
-        MessageReceiver receiver = null;
-        try{
-            Class messageReceiver ;
-            if (className != null &&!"".equals(className)) {
-                messageReceiver = Class.forName(className,true,loader);
-                receiver = (MessageReceiver) messageReceiver.newInstance();
-            }
-        } catch (ClassNotFoundException e) {
-            throw new DeploymentException(Messages.getMessage(
-                    DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
-                    "ClassNotFoundException",
-                    className));
-        } catch (IllegalAccessException e) {
-            throw new DeploymentException(Messages.getMessage(
-                    DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
-                    "IllegalAccessException",
-                    className));
-        } catch (InstantiationException e) {
-            throw new DeploymentException(Messages.getMessage(
-                    DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
-                    "InstantiationException",
-                    className));
-        }
-        return receiver;
-    }
-
-    protected MessageReceiver loadDefaultMessageReceiver()
-            throws DeploymentException {
-        MessageReceiver receiver;
-        String defaultMessageReceiver =
-                "org.apache.axis2.receivers.RawXMLINOutMessageReceiver";
-        try {
-            /**
-             * Setting default Message Recive as Message Receiver
-             */
-            ClassLoader loader1 = Thread.currentThread()
-                    .getContextClassLoader();
-            Class messageReceiver =
-                    Class.forName(defaultMessageReceiver,true,loader1);
-            receiver = ((MessageReceiver) messageReceiver.newInstance());
-        } catch (ClassNotFoundException e) {
-            throw new DeploymentException(Messages.getMessage(
-                    DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
-                    "ClassNotFoundException",
-                    defaultMessageReceiver));
-        } catch (IllegalAccessException e) {
-            throw new DeploymentException(Messages.getMessage(
-                    DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
-                    "IllegalAccessException",
-                    defaultMessageReceiver));
-        } catch (InstantiationException e) {
-            throw new DeploymentException(Messages.getMessage(
-                    DeploymentErrorMsgs.ERROR_IN_LOADING_MR,
-                    "InstantiationException",
-                    defaultMessageReceiver));
-        }
-        return receiver;
-    }
-
 
     /**
      * This method is used to retrive service name form the arechive file name
@@ -367,13 +384,15 @@ public class DescriptionBuilder implements DeploymentConstants{
         char seperator = '.';
         String value;
         int index = fileName.lastIndexOf(seperator);
+
         if (index > 0) {
             value = fileName.substring(0, index);
+
             return value;
         }
+
         return fileName;
     }
-
 
     /**
      * this method is to get the value of attribue
@@ -383,15 +402,15 @@ public class DescriptionBuilder implements DeploymentConstants{
      */
     protected String getValue(String in) {
         char seperator = ':';
-        String value ;
+        String value;
         int index = in.indexOf(seperator);
+
         if (index > 0) {
             value = in.substring(index + 1, in.length());
+
             return value;
         }
+
         return in;
     }
-
-
-
 }

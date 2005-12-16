@@ -1,25 +1,26 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 
 package org.apache.axis2.description;
 
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import java.util.Iterator;
  * Class ParameterIncludeImpl
  */
 public class ParameterIncludeImpl implements ParameterInclude {
+
     /**
      * Field parmeters
      */
@@ -48,9 +50,66 @@ public class ParameterIncludeImpl implements ParameterInclude {
      *
      * @param param
      */
-    public void addParameter(Parameter param)  {
+    public void addParameter(Parameter param) {
         if (param != null) {
             parameters.put(param.getName(), param);
+        }
+    }
+
+    /**
+     * At the run time it can be able to change parameters , and system can save at any time and
+     * to get the original state this method can be used
+     *
+     * @param parameters <code>OMElement</code>
+     * @throws org.apache.axis2.AxisFault
+     */
+    public void deserializeParameters(OMElement parameters) throws AxisFault {
+        Iterator iterator =
+                parameters.getChildrenWithName(new QName(DeploymentConstants.PARAMETER));
+
+        while (iterator.hasNext()) {
+
+            // this is to check whether some one has locked the parmter at the top level
+            OMElement parameterElement = (OMElement) iterator.next();
+            Parameter parameter = new ParameterImpl();
+
+            // setting parameterElement
+            parameter.setParameterElement(parameterElement);
+
+            // setting parameter Name
+            OMAttribute paraName =
+                    parameterElement.getAttribute(new QName(DeploymentConstants.ATTNAME));
+
+            parameter.setName(paraName.getAttributeValue());
+
+            // setting parameter Value (the chiled elemnt of the parameter)
+            OMElement paraValue = parameterElement.getFirstElement();
+
+            if (paraValue != null) {
+                parameter.setValue(parameterElement);
+                parameter.setParameterType(Parameter.OM_PARAMETER);
+            } else {
+                String paratextValue = parameterElement.getText();
+
+                parameter.setValue(paratextValue);
+                parameter.setParameterType(Parameter.TEXT_PARAMETER);
+            }
+
+            // setting locking attribute
+            OMAttribute paraLocked =
+                    parameterElement.getAttribute(new QName(DeploymentConstants.ATTLOCKED));
+
+            if (paraLocked != null) {
+                String lockedValue = paraLocked.getAttributeValue();
+
+                if ("true".equals(lockedValue)) {
+                    parameter.setLocked(true);
+                } else {
+                    parameter.setLocked(false);
+                }
+            }
+
+            addParameter(parameter);
         }
     }
 
@@ -65,63 +124,20 @@ public class ParameterIncludeImpl implements ParameterInclude {
     }
 
     public ArrayList getParameters() {
-        Collection col =  parameters.values();
+        Collection col = parameters.values();
         ArrayList para_list = new ArrayList();
+
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             Parameter parameter = (Parameter) iterator.next();
+
             para_list.add(parameter);
         }
+
         return para_list;
     }
 
-    //to check whether the parameter is locked at any levle
+    // to check whether the parameter is locked at any levle
     public boolean isParameterLocked(String parameterName) {
         return false;
-    }
-
-    /**
-     * At the run time it can be able to change parameters , and system can save at any time and
-     * to get the original state this method can be used
-     * @param parameters <code>OMElement</code>
-     * @throws org.apache.axis2.AxisFault
-     */
-    public void  deserializeParameters(OMElement parameters) throws AxisFault {
-        Iterator iterator = parameters.getChildrenWithName(new QName(DeploymentConstants.PARAMETER));
-        while (iterator.hasNext()) {
-            //this is to check whether some one has locked the parmter at the top level
-            OMElement parameterElement = (OMElement) iterator.next();
-
-            Parameter parameter = new ParameterImpl();
-            //setting parameterElement
-            parameter.setParameterElement(parameterElement);
-
-            //setting parameter Name
-            OMAttribute paraName = parameterElement.getAttribute(
-                    new QName(DeploymentConstants.ATTNAME));
-            parameter.setName(paraName.getAttributeValue());
-
-            //setting parameter Value (the chiled elemnt of the parameter)
-            OMElement paraValue = parameterElement.getFirstElement();
-            if(paraValue !=null){
-                parameter.setValue(parameterElement);
-                parameter.setParameterType(Parameter.OM_PARAMETER);
-            } else {
-                String paratextValue = parameterElement.getText();
-                parameter.setValue(paratextValue);
-                parameter.setParameterType(Parameter.TEXT_PARAMETER);
-            }
-            //setting locking attribute
-            OMAttribute paraLocked = parameterElement.getAttribute(
-                    new QName(DeploymentConstants.ATTLOCKED));
-            if (paraLocked !=null) {
-                String lockedValue = paraLocked.getAttributeValue();
-                if("true".equals(lockedValue)){
-                    parameter.setLocked(true);
-                } else {
-                    parameter.setLocked(false);
-                }
-            }
-            addParameter(parameter);
-        }
     }
 }

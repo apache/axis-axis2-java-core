@@ -1,18 +1,19 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 
 package org.apache.axis2.deployment;
 
@@ -20,82 +21,76 @@ package org.apache.axis2.deployment;
  * DeployCons interface is to keep constent value required for Deployemnt
  */
 public interface DeploymentConstants {
-    int SERVICE = 0; // if it is a servise
-    int MODULE = 1; // if it is a module
-
-    public static String META_INF ="META-INF";
-    String SERVICEXML = "META-INF/services.xml";
+    public static String META_INF = "META-INF";
     public static final String SERVICE_WSDL_NAME = "service.wsdl";
+    int SERVICE = 0;                // if it is a servise
+    int MODULE = 1;                // if it is a module
+    String SERVICEXML = "META-INF/services.xml";
     String SERVICE_WSDL_WITH_FOLDER = "META-INF/service.wsdl";
-    String MODULEXML = "META-INF/module.xml";
-    String PARAMETER = "parameter";// paramater start tag
-    String LISTENERST = "listener";// paramater start tag
-    String HANDERST = "handler";
-    String MODULEST = "module";
-    String MESSGES = "message";
-    String LABEL = "label";
-    String MODULECONFIG = "moduleConfig";
-    String HOST_CONFIG = "hostConfiguration";
-    String PHASEST = "phase";
     String PHASE_ORDER = "phaseOrder";
-    String TYPEMAPPINGST = "typeMapping";// typeMapping start tag
-    String BEANMAPPINGST = "beanMapping";// beanMapping start tag
-    String OPRATIONST = "operation";// operation start tag
-    String INFLOWST = "inflow";// inflow start tag
-    String OUTFLOWST = "outflow";// outflowr start tag
-    String IN_FAILTFLOW = "INfaultflow";// faultflow start tag
-    String OUT_FAILTFLOW = "Outfaultflow";// faultflow start tag
-
-    // String FOLDE_NAME = "D:/Axis 2.0/projects/Deployement/test-data";
-    String MODULE_PATH = "/modules/";
-    String SERVICE_PATH = "/services/";
-
-    // for jws file extension
-    String JWS_EXTENSION = ".jws";
-
-    String SERVICETAG = "service";
-    String AXIS2CONFIG = "axisconfig";
+    String PHASEST = "phase";
+    String PARAMETER = "parameter";      // paramater start tag
+    String MODULEXML = "META-INF/module.xml";
+    String MODULEST = "module";
+    String MODULECONFIG = "moduleConfig";
+    String MESSGES = "message";
+    String LISTENERST = "listener";       // paramater start tag
+    String LABEL = "label";
+    String HOST_CONFIG = "hostConfiguration";
+    String HANDERST = "handler";
+    String TYPEMAPPINGST = "typeMapping";    // typeMapping start tag
+    String TYPE = "type";
+    String TRANSPORTTAG = "transport";
+    String TRANSPORTSTAG = "transports";
+    String TRANSPORTSENDER = "transportSender";
+    String TRANSPORTRECEIVER = "transportReceiver";
 
     // for serviemetadat
     String STYLENAME = "style";
+    String SERVICE_PATH = "/services/";
+    String SERVICE_GROUP_ELEMENT = "serviceGroup";
+
+    // element in a services.xml
+    String SERVICE_ELEMENT = "service";
+    String SERVICETAG = "service";
+
+    // for handlers
+    String REF = "ref";
+    String PHASELAST = "phaseLast";
+    String PHASEFIRST = "phaseFirst";
+    String PHASE = "phase";
+    String OUT_FAILTFLOW = "Outfaultflow";    // faultflow start tag
+    String OUTFLOWST = "outflow";         // outflowr start tag
+    String ORDER = "order";           // to resolve the order tag
+    String OPRATIONST = "operation";       // operation start tag
+
+    // String FOLDE_NAME = "D:/Axis 2.0/projects/Deployement/test-data";
+    String MODULE_PATH = "/modules/";
+    String MESSAGERECEIVER = "messageReceiver";
+    String MEP = "mep";
+
+    // for jws file extension
+    String JWS_EXTENSION = ".jws";
+    String IN_FAILTFLOW = "INfaultflow";    // faultflow start tag
+    String INFLOWST = "inflow";         // inflow start tag
+    String HOTUPDATE = "hotupdate";
+    String HOTDEPLOYMENT = "hotdeployment";
+    String EXTRACTSERVICEARCHIVE = "extractServiceArchive";
+    String DISPATCH_ORDER = "dispatchOrder";
+    String DISPATCHER = "dispatcher";
+    String DESCRIPTION = "description";
     String CONTEXTPATHNAME = "contextPath";
+    String CLASSNAME = "class";
+    String BEFORE = "before";
+    String BEANMAPPINGST = "beanMapping";    // beanMapping start tag
+    String AXIS2CONFIG = "axisconfig";
+    String ATUSE = "use";
 
     // for parameters
     String ATTNAME = "name";
     String ATTLOCKED = "locked";
-    String TYPE = "type";
 
     // for operatiins
     String ATQNAME = "name";
-    String ATUSE = "use";
-    String MEP = "mep";
-
-    //for handlers
-    String REF = "ref";
-    String CLASSNAME = "class";
-    String BEFORE = "before";
     String AFTER = "after";
-    String PHASE = "phase";
-    String PHASEFIRST = "phaseFirst";
-    String PHASELAST = "phaseLast";
-    String ORDER = "order";  // to resolve the order tag
-    String DESCRIPTION = "description";
-
-    String TRANSPORTSTAG = "transports";
-    String TRANSPORTTAG = "transport";
-    String TRANSPORTSENDER = "transportSender";
-    String TRANSPORTRECEIVER = "transportReceiver";
-
-    String MESSAGERECEIVER = "messageReceiver";
-
-
-    String HOTDEPLOYMENT = "hotdeployment";
-    String HOTUPDATE = "hotupdate";
-    String EXTRACTSERVICEARCHIVE = "extractServiceArchive";
-    String DISPATCH_ORDER ="dispatchOrder";
-    String DISPATCHER ="dispatcher";
-
-    //element in a services.xml
-    String SERVICE_ELEMENT ="service";
-    String SERVICE_GROUP_ELEMENT ="serviceGroup";
 }

@@ -17,11 +17,11 @@ public class MailAddress extends Address {
         return this.mailAddy.equals(addr);
     }
 
-    public String getType() {
-        return "text/plain";
-    }
-
     public String toString() {
         return this.mailAddy;
+    }
+
+    public String getType() {
+        return "text/plain";
     }
 }

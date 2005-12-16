@@ -5,31 +5,31 @@ package org.apache.axis2.client.async;
  * asynchronous invocation.
  */
 public abstract class Callback {
+
     /**
      * Field complete
      */
     private boolean complete = false;
 
-
     /**
      * This method is invoked by Axis Engine once the asynchronous operation has completed sucessfully.
-     *     
+     *
      * @param result
      */
     public abstract void onComplete(AsyncResult result);
 
     /**
-     * This method is called by Axis Engine if the asynchronous operation fails. 
+     * This method is called by Axis Engine if the asynchronous operation fails.
      *
      * @param e
      */
     public abstract void reportError(Exception e);
 
     /**
-     * Returns true if the asynchronous operation has completed, false otherwise. Typically this is 
+     * Returns true if the asynchronous operation has completed, false otherwise. Typically this is
      * used for polling. e.g.
      * <code>
-     *      <pre>
+     * <pre>
      *          while(!callback.isComplete()){
      *             Thread.sleep(1000);
      *          }

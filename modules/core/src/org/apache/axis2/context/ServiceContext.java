@@ -1,18 +1,19 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 
 package org.apache.axis2.context;
 
@@ -26,22 +27,30 @@ import javax.xml.namespace.QName;
  * So do NOT use this as it might not live up to your expectation.
  */
 public class ServiceContext extends AbstractContext {
-
     private transient AxisService axisService;
-
     private String serviceInstanceID;
 
-
-    public ServiceContext(
-            AxisService serviceConfig,
-            ServiceGroupContext serviceGroupContext) {
+    public ServiceContext(AxisService serviceConfig, ServiceGroupContext serviceGroupContext) {
         super(serviceGroupContext);
         this.axisService = serviceConfig;
 
         if (serviceConfig != null) {
             serviceInstanceID = serviceConfig.getName();
         }
+    }
 
+    public OperationContext createOperationContext(QName name) {
+        AxisOperation axisOp = axisService.getOperation(name);
+
+        return new OperationContext(axisOp, this);
+    }
+
+    public AxisService getAxisService() {
+        return axisService;
+    }
+
+    public ConfigurationContext getConfigurationContext() {
+        return (ConfigurationContext) parent.getParent();
     }
 
     /**
@@ -57,20 +66,8 @@ public class ServiceContext extends AbstractContext {
      * @param serviceInstanceID
      */
     public void setServiceInstanceID(String serviceInstanceID) {
-        //todo we do not need this , this ID should equal to serviceName
+
+        // todo we do not need this , this ID should equal to serviceName
         this.serviceInstanceID = serviceInstanceID;
-    }
-
-    public AxisService getAxisService() {
-        return axisService;
-    }
-
-    public ConfigurationContext getConfigurationContext() {
-        return (ConfigurationContext) parent.getParent();
-    }
-
-    public OperationContext createOperationContext(QName name) {
-        AxisOperation axisOp = axisService.getOperation(name);
-        return new OperationContext(axisOp, this);
     }
 }

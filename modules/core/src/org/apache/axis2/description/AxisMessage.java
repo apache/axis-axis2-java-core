@@ -4,6 +4,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.om.OMElement;
 
 import java.util.ArrayList;
+
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -27,11 +28,9 @@ import java.util.ArrayList;
  * This class represent the messages in WSDL , and there can be message element in services.xml
  * those will be representd by this class
  */
-
 public class AxisMessage implements ParameterInclude {
-
-    private ParameterInclude parameterinclude;
     private ArrayList handlerChain;
+    private ParameterInclude parameterinclude;
     private AxisOperation parent;
 
     public AxisMessage() {
@@ -43,32 +42,11 @@ public class AxisMessage implements ParameterInclude {
         if (param == null) {
             return;
         }
+
         if (isParameterLocked(param.getName())) {
             throw new AxisFault("Parmter is locked can not overide: " + param.getName());
         } else {
             parameterinclude.addParameter(param);
-        }
-    }
-
-    public Parameter getParameter(String name) {
-        return parameterinclude.getParameter(name);
-    }
-
-    public ArrayList getParameters() {
-        return parameterinclude.getParameters();
-    }
-
-    public boolean isParameterLocked(String parameterName) {
-        // checking the locked value of parent
-        boolean loscked = false;
-        if (getParent() != null) {
-            loscked = getParent().isParameterLocked(parameterName);
-        }
-        if (loscked) {
-            return true;
-        } else {
-            Parameter parameter = getParameter(parameterName);
-            return parameter != null && parameter.isLocked();
         }
     }
 
@@ -80,12 +58,38 @@ public class AxisMessage implements ParameterInclude {
         return handlerChain;
     }
 
-    public void setMessageFlow(ArrayList operationFlow) {
-        this.handlerChain = operationFlow;
+    public Parameter getParameter(String name) {
+        return parameterinclude.getParameter(name);
+    }
+
+    public ArrayList getParameters() {
+        return parameterinclude.getParameters();
     }
 
     public AxisOperation getParent() {
         return parent;
+    }
+
+    public boolean isParameterLocked(String parameterName) {
+
+        // checking the locked value of parent
+        boolean loscked = false;
+
+        if (getParent() != null) {
+            loscked = getParent().isParameterLocked(parameterName);
+        }
+
+        if (loscked) {
+            return true;
+        } else {
+            Parameter parameter = getParameter(parameterName);
+
+            return (parameter != null) && parameter.isLocked();
+        }
+    }
+
+    public void setMessageFlow(ArrayList operationFlow) {
+        this.handlerChain = operationFlow;
     }
 
     public void setParent(AxisOperation parent) {

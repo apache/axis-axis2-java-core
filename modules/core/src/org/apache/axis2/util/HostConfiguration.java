@@ -1,4 +1,5 @@
 package org.apache.axis2.util;
+
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -18,10 +19,9 @@ package org.apache.axis2.util;
 *
 */
 
-
 //to keep infor getting from axis2.xml
-public class HostConfiguration {
 
+public class HostConfiguration {
     private String ip;
     private int port;
 

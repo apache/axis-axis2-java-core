@@ -1,24 +1,25 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.engine.Phase;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.transport.TransportListener;
 
@@ -28,12 +29,15 @@ import java.util.ArrayList;
 /**
  * Represents a incoming transport deployed in AXis2
  */
-public class TransportInDescription
-        implements ParameterInclude {
+public class TransportInDescription implements ParameterInclude {
+
     /**
-     * Field paramInclude
+     * Field flowInclude
      */
-    protected final ParameterInclude paramInclude;
+    private Flow faultFlow;
+
+    // to store handler Fault in inFlow
+    private Phase faultPhase;
 
     /**
      * Field phasesInclude
@@ -43,25 +47,20 @@ public class TransportInDescription
      * Field flowInclude
      */
     private Flow inFlow;
-    /**
-     * Field flowInclude
-     */
-    private Flow faultFlow;
 
+    // to store handler in inFlow
+    private Phase inPhase;
 
     /**
      * Field name
      */
     protected QName name;
 
-
+    /**
+     * Field paramInclude
+     */
+    protected final ParameterInclude paramInclude;
     protected TransportListener receiver;
-
-    //to store handler in inFlow
-    private Phase inPhase;
-    //to store handler Fault in inFlow
-    private Phase faultPhase;
-
 
     /**
      * Constructor AxisTransport
@@ -73,6 +72,42 @@ public class TransportInDescription
         this.name = name;
         inPhase = new Phase(PhaseMetadata.TRANSPORT_PHASE);
         faultPhase = new Phase(PhaseMetadata.TRANSPORT_PHASE);
+    }
+
+    /**
+     * Method addParameter
+     *
+     * @param param
+     */
+    public void addParameter(Parameter param) throws AxisFault {
+        paramInclude.addParameter(param);
+    }
+
+    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
+        this.paramInclude.deserializeParameters(parameterElement);
+    }
+
+    public Flow getFaultFlow() {
+        return faultFlow;
+    }
+
+    public Phase getFaultPhase() {
+        return faultPhase;
+    }
+
+    public Flow getInFlow() {
+        return inFlow;
+    }
+
+    public Phase getInPhase() {
+        return inPhase;
+    }
+
+    /**
+     * @return
+     */
+    public QName getName() {
+        return name;
     }
 
     /**
@@ -89,29 +124,32 @@ public class TransportInDescription
         return paramInclude.getParameters();
     }
 
-    //to check whether the parameter is locked at any levle
+    /**
+     * @return
+     */
+    public TransportListener getReceiver() {
+        return receiver;
+    }
+
+    // to check whether the parameter is locked at any levle
     public boolean isParameterLocked(String parameterName) {
         return paramInclude.isParameterLocked(parameterName);
     }
 
-    public void deserializeParameters(OMElement parameterElement) throws AxisFault {
-        this.paramInclude.deserializeParameters(parameterElement);
+    public void setFaultFlow(Flow faultFlow) {
+        this.faultFlow = faultFlow;
     }
 
-    /**
-     * Method addParameter
-     *
-     * @param param
-     */
-    public void addParameter(Parameter param) throws AxisFault{
-        paramInclude.addParameter(param);
+    public void setFaultPhase(Phase faultPhase) {
+        this.faultPhase = faultPhase;
     }
 
-    /**
-     * @return
-     */
-    public QName getName() {
-        return name;
+    public void setInFlow(Flow inFlow) {
+        this.inFlow = inFlow;
+    }
+
+    public void setInPhase(Phase inPhase) {
+        this.inPhase = inPhase;
     }
 
     /**
@@ -121,50 +159,10 @@ public class TransportInDescription
         this.name = name;
     }
 
-    public Flow getInFlow() {
-        return inFlow;
-    }
-
-    public void setInFlow(Flow inFlow) {
-        this.inFlow = inFlow;
-    }
-
-    public Flow getFaultFlow() {
-        return faultFlow;
-    }
-
-    public void setFaultFlow(Flow faultFlow) {
-        this.faultFlow = faultFlow;
-    }
-
-    /**
-     * @return
-     */
-    public TransportListener getReceiver() {
-        return receiver;
-    }
-
     /**
      * @param receiver
      */
     public void setReceiver(TransportListener receiver) {
         this.receiver = receiver;
     }
-
-    public Phase getInPhase() {
-        return inPhase;
-    }
-
-    public void setInPhase(Phase inPhase) {
-        this.inPhase = inPhase;
-    }
-
-    public Phase getFaultPhase() {
-        return faultPhase;
-    }
-
-    public void setFaultPhase(Phase faultPhase) {
-        this.faultPhase = faultPhase;
-    }
-
 }

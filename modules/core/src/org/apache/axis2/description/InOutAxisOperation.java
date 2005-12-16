@@ -8,23 +8,6 @@ import org.apache.wsdl.WSDLConstants;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
-/*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-*
-*/
 
 /**
  * Author: Deepal Jayasinghe
@@ -32,20 +15,10 @@ import java.util.HashMap;
  * Time: 2:07:15 PM
  */
 public class InOutAxisOperation extends AxisOperation {
-
-
-    private AxisMessage inMessage;
     private AxisMessage inFaultMessage;
+    private AxisMessage inMessage;
     private AxisMessage outFaultMessage;
     private AxisMessage outMessage;
-
-    private void createMessages() {
-        inMessage = new AxisMessage();
-        inFaultMessage = new AxisMessage();
-        outFaultMessage = new AxisMessage();
-        outMessage = new AxisMessage();
-    }
-
 
     public InOutAxisOperation() {
         super();
@@ -55,6 +28,51 @@ public class InOutAxisOperation extends AxisOperation {
     public InOutAxisOperation(QName name) {
         super(name);
         createMessages();
+    }
+
+    public void addMessage(AxisMessage message, String label) {
+        if (WSDLConstants.MESSAGE_LABEL_OUT_VALUE.equals(label)) {
+            outMessage = message;
+        } else if (WSDLConstants.MESSAGE_LABEL_IN_VALUE.equals(label)) {
+            inMessage = message;
+        } else {
+            throw new UnsupportedOperationException("Not yet implemented");
+        }
+    }
+
+    public void addMessageContext(MessageContext msgContext, OperationContext opContext)
+            throws AxisFault {
+        HashMap mep = opContext.getMessageContexts();
+        MessageContext immsgContext = (MessageContext) mep.get(MESSAGE_LABEL_IN_VALUE);
+        MessageContext outmsgContext = (MessageContext) mep.get(MESSAGE_LABEL_OUT_VALUE);
+
+        if ((immsgContext != null) && (outmsgContext != null)) {
+            throw new AxisFault("Invalid messge addition , operation context completed");
+        }
+
+        if (immsgContext == null) {
+            mep.put(MESSAGE_LABEL_IN_VALUE, msgContext);
+        } else {
+            mep.put(MESSAGE_LABEL_OUT_VALUE, msgContext);
+            opContext.setComplete(true);
+        }
+    }
+
+    private void createMessages() {
+        inMessage = new AxisMessage();
+        inFaultMessage = new AxisMessage();
+        outFaultMessage = new AxisMessage();
+        outMessage = new AxisMessage();
+    }
+
+    public AxisMessage getMessage(String label) {
+        if (WSDLConstants.MESSAGE_LABEL_OUT_VALUE.equals(label)) {
+            return outMessage;
+        } else if (WSDLConstants.MESSAGE_LABEL_IN_VALUE.equals(label)) {
+            return inMessage;
+        } else {
+            throw new UnsupportedOperationException("Not yet implemented");
+        }
     }
 
     public ArrayList getPhasesInFaultFlow() {
@@ -73,16 +91,6 @@ public class InOutAxisOperation extends AxisOperation {
         return inMessage.getMessageFlow();
     }
 
-    public AxisMessage getMessage(String label) {
-        if (WSDLConstants.MESSAGE_LABEL_OUT_VALUE.equals(label)) {
-            return outMessage;
-        } else if (WSDLConstants.MESSAGE_LABEL_IN_VALUE.equals(label)) {
-            return inMessage;
-        } else {
-            throw new UnsupportedOperationException("Not yet implemented");
-        }
-    }
-
     public void setPhasesInFaultFlow(ArrayList list) {
         inFaultMessage.setMessageFlow(list);
     }
@@ -97,30 +105,5 @@ public class InOutAxisOperation extends AxisOperation {
 
     public void setRemainingPhasesInFlow(ArrayList list) {
         inMessage.setMessageFlow(list);
-    }
-
-    public void addMessage(AxisMessage message, String label) {
-        if (WSDLConstants.MESSAGE_LABEL_OUT_VALUE.equals(label)) {
-            outMessage = message;
-        } else if (WSDLConstants.MESSAGE_LABEL_IN_VALUE.equals(label)) {
-            inMessage = message;
-        } else {
-            throw new UnsupportedOperationException("Not yet implemented");
-        }
-    }
-
-    public void addMessageContext(MessageContext msgContext, OperationContext opContext) throws AxisFault {
-        HashMap mep = opContext.getMessageContexts();
-        MessageContext immsgContext = (MessageContext) mep.get(MESSAGE_LABEL_IN_VALUE);
-        MessageContext outmsgContext = (MessageContext) mep.get(MESSAGE_LABEL_OUT_VALUE);
-        if (immsgContext != null && outmsgContext != null) {
-            throw new AxisFault("Invalid messge addition , operation context completed");
-        }
-        if (immsgContext == null) {
-            mep.put(MESSAGE_LABEL_IN_VALUE, msgContext);
-        } else {
-            mep.put(MESSAGE_LABEL_OUT_VALUE, msgContext);
-            opContext.setComplete(true);
-        }
     }
 }
