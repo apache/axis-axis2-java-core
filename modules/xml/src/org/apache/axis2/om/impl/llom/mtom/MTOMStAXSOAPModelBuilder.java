@@ -23,7 +23,9 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.impl.MTOMConstants;
 import org.apache.axis2.om.impl.OMNodeEx;
+import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.SOAPMessage;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 import java.io.UnsupportedEncodingException;
@@ -33,7 +35,7 @@ import javax.activation.DataHandler;
 import javax.xml.stream.XMLStreamReader;
 
 public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder implements MTOMConstants {
-
+	
     /**
      * <code>mimeHelper</code> handles deffered parsing of incoming MIME
      * Messages
@@ -125,6 +127,7 @@ public class MTOMStAXSOAPModelBuilder extends StAXSOAPModelBuilder implements MT
             OMElement node;
             if (lastNode == null) {
                 node = constructNode(null, elementName, true);
+                setSOAPEnvelope(node);
             } else if (lastNode.isComplete()) {
                 node =
                         constructNode((OMElement) lastNode.getParent(),

@@ -114,6 +114,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setProperty(MessageContext.CHARACTER_SET_ENCODING, MessageContext.UTF_16);
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {

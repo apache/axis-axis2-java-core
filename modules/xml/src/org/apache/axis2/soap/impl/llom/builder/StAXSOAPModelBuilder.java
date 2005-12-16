@@ -201,9 +201,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
         String elementName = parser.getLocalName();
         if (lastNode == null) {
             node = constructNode(null, elementName, true);
-            soapMessage.setSOAPEnvelope((SOAPEnvelope) node);
-            soapMessage.setXMLVersion(parser.getVersion());
-            soapMessage.setCharsetEncoding(parser.getCharacterEncodingScheme());
+            setSOAPEnvelope(node);
         } else if (lastNode.isComplete()) {
             node =
                     constructNode((OMElement) lastNode.getParent(),
@@ -221,6 +219,12 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
         log.info("Build the OMElelment " + node.getLocalName() +
                 "By the StaxSOAPModelBuilder");
         return node;
+    }
+
+    protected void setSOAPEnvelope(OMElement node) {
+        soapMessage.setSOAPEnvelope((SOAPEnvelope) node);
+        soapMessage.setXMLVersion(parser.getVersion());
+        soapMessage.setCharsetEncoding(parser.getCharacterEncodingScheme());
     }
 
     /**
