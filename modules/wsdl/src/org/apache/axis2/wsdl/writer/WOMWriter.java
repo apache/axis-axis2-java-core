@@ -25,8 +25,8 @@ import java.io.OutputStream;
 public interface WOMWriter {
 
     /**
-     * Writes a WOM to the given output stream.
-     * @param wsdlWrapper, A wrapper for both the wsdl object models. Contains references to WOM and
+     * Writes a WOM to the given output stream. 
+     * @param wsdlWrapper A wrapper for both the wsdl object models. Contains references to WOM and
      * the standard WSDL definition class
      * @param out the output stream
      */
@@ -34,8 +34,8 @@ public interface WOMWriter {
 
 
     /**
-     * Write a WSDLDescription directly. The version wrapper may not be available at some instances
-     * and the user might need to serailize the decription directly 
+     * Writes a WSDLDescription directly. The version wrapper may not be available in some instances
+     * and the user may need to serialize the WSDL Description directly . 
      * @param wsdlDescription
      * @param out
      * @throws WriterException

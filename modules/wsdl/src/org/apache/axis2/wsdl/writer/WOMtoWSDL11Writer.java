@@ -187,7 +187,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
     }
 
     /**
-     * Find the SOAPns prefix
+     * Finds the SOAPns prefix
      *
      * @param wsdlDescription
      */
@@ -254,8 +254,8 @@ public class WOMtoWSDL11Writer implements WOMWriter {
     }
 
     /**
-     * Write the messages. This is somewhat tricky when the message names and parts
-     * have to be guessed
+     * Writes the messages. This is somewhat tricky when the message names and parts
+     * have to be guessed.
      *
      * @param desc
      */
@@ -342,9 +342,10 @@ public class WOMtoWSDL11Writer implements WOMWriter {
 
     /**
      * Our simple rule in the 'guessing game' for the message and it's parts.
-     * message name is the localpart of the QName suffixed by MESSAGE_NAME_SUFFIX
-     * partname is just 'part1' (wouldn't matter!)
-     * element reference is again the localpart of the QName but prefixed with the target namespaces prefix
+     * Message name is the localpart of the QName suffixed by MESSAGE_NAME_SUFFIX
+     * Partname is just 'part1' (wouldn't matter!)
+     * Element reference is again the localpart of the QName but prefixed with the target 
+     * namespaces prefix.
      */
 
     private void populateMessageSymbol(QName reference) {
@@ -398,7 +399,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
     }
 
     /**
-     * Write porttypes
+     * Writes port types.
      *
      * @param desc
      * @throws IOException
@@ -439,7 +440,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
     }
 
     /**
-     * Write the operation
+     * Writes the operation.
      *
      * @param wsdlInterface
      */
@@ -650,7 +651,7 @@ public class WOMtoWSDL11Writer implements WOMWriter {
     }
 
     /**
-     * Samething as the WSDL11 message. A simple abstraction
+     * Same as the WSDL11 message. A simple abstraction.
      */
     private class WSDL11MessagePart {
         private String name;
