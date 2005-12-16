@@ -35,7 +35,6 @@ import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.soap.impl.llom.soap12.SOAP12Factory;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.transport.http.HTTPTransportUtils;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -86,7 +85,7 @@ public class SimpleJMSWorker implements Runnable {
                 if (contentType.indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
 
                     // It is MTOM
-                    builder = HTTPTransportUtils.selectBuilderForMIME(msgContext, in, contentType);
+                    builder = TransportUtils.selectBuilderForMIME(msgContext, in, contentType);
                     envelope = (SOAPEnvelope) builder.getDocumentElement();
                 } else {
                     Reader reader = new InputStreamReader(in);

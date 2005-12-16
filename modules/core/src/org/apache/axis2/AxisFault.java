@@ -51,14 +51,14 @@ import java.util.ListIterator;
  *      a SOAP1.1 fault is created, spurious information can be discarded.
  *      Mapping
  *      <pre>
- *      SOAP1.2              SOAP1.1
- *      node                 faultactor
- *      reason(0).text       faultstring
- *      faultcode.value      faultcode
- *      faultcode.subcode    (discarded)
- *      detail               detail
- *      role                 (discarded)
- *      </pre>
+ *           SOAP1.2              SOAP1.1
+ *           node                 faultactor
+ *           reason(0).text       faultstring
+ *           faultcode.value      faultcode
+ *           faultcode.subcode    (discarded)
+ *           detail               detail
+ *           role                 (discarded)
+ *           </pre>
  */
 public class AxisFault extends RemoteException {
 

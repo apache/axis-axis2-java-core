@@ -20,7 +20,6 @@ package org.apache.axis2.transport.http;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.attachments.MIMEHelper;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
@@ -30,11 +29,9 @@ import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
-import org.apache.axis2.om.impl.MTOMConstants;
 import org.apache.axis2.om.impl.llom.OMNamespaceImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXBuilder;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.om.impl.llom.mtom.MTOMStAXSOAPModelBuilder;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -50,19 +47,15 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PushbackInputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Map;
 
 public class HTTPTransportUtils {
-    private static final int BOM_SIZE = 4;
 
     public static boolean checkEnvelopeForOptimise(SOAPEnvelope envelope) {
         return isOptimised(envelope);
@@ -179,7 +172,7 @@ public class HTTPTransportUtils {
                 if (contentType.indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
 
                     // It is MTOM
-                    builder = selectBuilderForMIME(msgContext, in, contentType);
+                    builder = TransportUtils.selectBuilderForMIME(msgContext, in, contentType);
                     envelope = (SOAPEnvelope) builder.getDocumentElement();
                 } else {
                     Reader reader = new InputStreamReader(in);
@@ -300,125 +293,6 @@ public class HTTPTransportUtils {
                 msgContext.setEnvelope(new SOAP12Factory().createSOAPEnvelope());
             }
         }
-    }
-
-    public static StAXBuilder selectBuilderForMIME(MessageContext msgContext, InputStream inStream,
-                                                   String contentTypeString)
-            throws OMException, XMLStreamException, FactoryConfigurationError,
-            UnsupportedEncodingException {
-        StAXBuilder builder = null;
-        Parameter parameter_cache_attachment =
-                msgContext.getParameter(Constants.Configuration.CACHE_ATTACHMENTS);
-        boolean fileCacheForAttachments;
-
-        if (parameter_cache_attachment == null) {
-            fileCacheForAttachments = false;
-        } else {
-            fileCacheForAttachments =
-                    (Constants.VALUE_TRUE.equals(parameter_cache_attachment.getValue()));
-        }
-
-        String attachmentRepoDir = null;
-        String attachmentSizeThreshold = null;
-        Parameter parameter;
-
-        if (fileCacheForAttachments) {
-            parameter =
-                    msgContext.getParameter(Constants.Configuration.ATTACHMENT_TEMP_DIR);
-            attachmentRepoDir = (parameter == null)
-                    ? ""
-                    : parameter.getValue().toString();
-            parameter =
-                    msgContext.getParameter(Constants.Configuration.FILE_SIZE_THRESHOLD);
-            attachmentSizeThreshold = (parameter == null)
-                    ? ""
-                    : parameter.getValue().toString();
-        }
-
-        MIMEHelper mimeHelper = new MIMEHelper(inStream, contentTypeString,
-                fileCacheForAttachments, attachmentRepoDir,
-                attachmentSizeThreshold);
-        String charSetEncoding =
-                TransportUtils.getCharSetEncoding(mimeHelper.getSOAPPartContentType());
-        XMLStreamReader streamReader;
-
-        if ((charSetEncoding == null) || "null".equalsIgnoreCase(charSetEncoding)) {
-            charSetEncoding = MessageContext.UTF_8;
-        }
-
-        try {
-            streamReader = XMLInputFactory.newInstance().createXMLStreamReader(
-                    getReader(mimeHelper.getSOAPPartInputStream(), charSetEncoding));
-        } catch (IOException e) {
-            throw new XMLStreamException(e);
-        }
-
-        msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, charSetEncoding);
-
-        /*
-         * put a reference to Attachments in to the message context
-         */
-        msgContext.setProperty(MTOMConstants.ATTACHMENTS, mimeHelper);
-
-        if (mimeHelper.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
-
-            /*
-             * Creates the MTOM specific MTOMStAXSOAPModelBuilder
-             */
-            builder = new MTOMStAXSOAPModelBuilder(streamReader, mimeHelper, null);
-        } else if (mimeHelper.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
-            builder = new StAXSOAPModelBuilder(streamReader,
-                    SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-        }
-
-        return builder;
-    }
-
-    /**
-     * Use the BOM Mark to identify the encoding to be used. Fall back to default encoding specified
-     *
-     * @param is
-     * @param charSetEncoding
-     * @return
-     * @throws IOException
-     */
-    private static Reader getReader(InputStream is, String charSetEncoding) throws IOException {
-        PushbackInputStream is2 = new PushbackInputStream(is, BOM_SIZE);
-        String encoding;
-        byte bom[] = new byte[BOM_SIZE];
-        int n, unread;
-
-        n = is2.read(bom, 0, bom.length);
-
-        if ((bom[0] == (byte) 0xEF) && (bom[1] == (byte) 0xBB) && (bom[2] == (byte) 0xBF)) {
-            encoding = "UTF-8";
-            unread = n - 3;
-        } else if ((bom[0] == (byte) 0xFE) && (bom[1] == (byte) 0xFF)) {
-            encoding = "UTF-16BE";
-            unread = n - 2;
-        } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE)) {
-            encoding = "UTF-16LE";
-            unread = n - 2;
-        } else if ((bom[0] == (byte) 0x00) && (bom[1] == (byte) 0x00) && (bom[2] == (byte) 0xFE)
-                && (bom[3] == (byte) 0xFF)) {
-            encoding = "UTF-32BE";
-            unread = n - 4;
-        } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE) && (bom[2] == (byte) 0x00)
-                && (bom[3] == (byte) 0x00)) {
-            encoding = "UTF-32LE";
-            unread = n - 4;
-        } else {
-
-            // Unicode BOM mark not found, unread all bytes
-            encoding = charSetEncoding;
-            unread = n;
-        }
-
-        if (unread > 0) {
-            is2.unread(bom, (n - unread), unread);
-        }
-
-        return new BufferedReader(new InputStreamReader(is2, encoding));
     }
 
     public static boolean isDoingREST(MessageContext msgContext) {
