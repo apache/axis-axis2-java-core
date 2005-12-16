@@ -15,10 +15,6 @@
  */
 package org.apache.axis2.tool.service.eclipse.util;
 
-/**
- * @author Ajith
- *
- */
 public interface SettingsConstants {
    //#####################################################
    static final String PREF_CLASS_FILE_LOCATION = "CLASS_FILE_LOCATION" ;

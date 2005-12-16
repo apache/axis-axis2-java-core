@@ -27,7 +27,6 @@ import java.io.ObjectStreamException;
  * concept of the non-positive integers. The value space of 
  * nonPositiveInteger is the infinite set {...,-2,-1,0}. 
  *
- * @author Chris Haddad <haddadc@apache.org
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#nonPositiveInteger">XML Schema 3.3.14</a>
  */
 public class NonPositiveInteger extends BigInteger {

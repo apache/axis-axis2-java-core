@@ -17,8 +17,6 @@ package org.apache.axis2.om.impl.dom;
 
 /**
  * Utility class for the OM-DOM implementation
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 class DOMUtil {
 

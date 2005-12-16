@@ -29,7 +29,6 @@ import java.io.IOException;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author : Eran Chinthaka (chinthaka@apache.org)
  */
 
 public class OMElementCloneTest extends XMLTestCase {

@@ -19,8 +19,6 @@ package org.apache.axis2.databinding.schema.types;
 
 /**
  * Custom class for supporting XSD data type Entity
- * 
- * @author Davanum Srinivas <dims@yahoo.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#ENTITY">XML Schema 3.3.11 ENTITY</a>
  */
 public class Entity extends NCName {

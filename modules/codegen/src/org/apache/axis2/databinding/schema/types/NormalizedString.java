@@ -21,7 +21,6 @@ package org.apache.axis2.databinding.schema.types;
  * normalizedString represents white space normalized strings.
  * The base type of normalizedString is string.
  *
- * @author Chris Haddad <chaddad@cobia.net>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#normalizedString">XML Schema Part 2: Datatypes 3.3.1</a>
  */
 public class NormalizedString extends Object implements java.io.Serializable {

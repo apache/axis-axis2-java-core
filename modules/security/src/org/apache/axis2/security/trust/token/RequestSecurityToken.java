@@ -23,10 +23,6 @@ import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
 
 
-/**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public abstract class RequestSecurityToken extends CompositeToken {
 
 	protected TokenType tokenTypeElement;

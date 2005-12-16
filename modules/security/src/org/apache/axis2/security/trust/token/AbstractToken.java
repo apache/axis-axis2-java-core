@@ -30,10 +30,6 @@ import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
 import org.w3c.dom.Node;
 
-/**
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public abstract class AbstractToken {
 	
 	protected abstract QName getToken();

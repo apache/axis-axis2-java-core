@@ -20,7 +20,6 @@ package org.apache.axis2.databinding.schema.types;
  * token represents tokenized strings.
  * The base type of token is normalizedString.
  *
- * @author Chris Haddad <chaddad@cobia.net>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#token">XML Schema 3.3.2</a>
  */
 public class Token extends NormalizedString {

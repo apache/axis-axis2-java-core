@@ -26,7 +26,7 @@ import org.apache.axis2.util.XMLChar;
  * is the set of tokens that match the Nmtoken production
  * in [XML 1.0 (Second Edition)].
  * The base type of NMTOKEN is token.
- * @author Chris Haddad <chaddad@cobia.net>
+ *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#nmtoken">XML Schema 3.3.4</a>
  */
 public class NMToken extends Token {

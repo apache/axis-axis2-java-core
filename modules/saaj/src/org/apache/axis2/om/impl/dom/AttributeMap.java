@@ -21,11 +21,6 @@ import java.util.Vector;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 
-/**
- * 
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class AttributeMap extends NamedNodeMapImpl {
 
 	/**

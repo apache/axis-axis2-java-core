@@ -26,8 +26,6 @@ import javax.xml.namespace.QName;
 
 /**
  * Implementation of org.w3c.dom.NodeList
- *  
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class NodeListImpl implements NodeList  {
 	

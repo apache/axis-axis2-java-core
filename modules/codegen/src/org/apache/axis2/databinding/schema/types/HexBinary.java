@@ -20,8 +20,6 @@ import java.io.ByteArrayOutputStream;
 
 /**
  * Custom class for supporting primitive XSD data type hexBinary.
- *
- * @author Davanum Srinivas <dims@yahoo.com>
  */
 public class HexBinary extends Object implements java.io.Serializable{
 

@@ -51,7 +51,6 @@ import org.w3c.dom.TypeInfo;
 /**
  * Implementation of the org.w3c.dom.Element and org.apache.axis2.om.Element
  * interfaces.
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class ElementImpl extends ParentNode implements Element,OMElement, OMConstants {
 	

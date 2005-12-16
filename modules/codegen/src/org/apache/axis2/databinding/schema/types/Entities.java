@@ -20,7 +20,6 @@ import java.util.StringTokenizer;
 /**
  * Custom class for supporting XSD data type Entities
  * 
- * @author Davanum Srinivas <dims@yahoo.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#ENTITIES">XML Schema 3.3.12 ENTITIES</a>
  */
 public class Entities extends NCName {

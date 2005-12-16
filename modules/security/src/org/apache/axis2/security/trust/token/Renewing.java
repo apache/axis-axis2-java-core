@@ -22,10 +22,6 @@ import org.apache.axis2.om.OMText;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
 
-/**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class Renewing extends AbstractToken {
 
     public static final QName TOKEN = new QName(Constants.WST_NS,

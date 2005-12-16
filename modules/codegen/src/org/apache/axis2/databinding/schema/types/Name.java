@@ -24,7 +24,6 @@ import org.apache.axis2.util.XMLChar;
  * the set of all strings which match the Name production
  * of [XML 1.0 (Second Edition)].
  * The base type of Name is token.
- * @author Chris Haddad <chaddad@cobia.net>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#Name">XML Schema 3.3.6</a>
  */
 public class Name extends Token {

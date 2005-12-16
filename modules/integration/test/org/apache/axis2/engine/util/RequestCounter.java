@@ -17,7 +17,6 @@ import org.apache.axis2.context.MessageContext;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author : Eran Chinthaka (chinthaka@apache.org)
  */
 
 public class RequestCounter {

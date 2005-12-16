@@ -22,7 +22,6 @@ import java.util.Random;
 /**
  * Custom class for supporting primitive XSD data type nonNegativeInteger
  *
- * @author Russell Butek <butek@us.ibm.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#nonNegativeInteger">XML Schema 3.3.20</a>
  */
 public class NonNegativeInteger extends BigInteger {

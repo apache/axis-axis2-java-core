@@ -22,10 +22,6 @@ import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
 import org.apache.ws.security.message.token.SecurityTokenReference;
 
-/**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class CancelRequestSecurityToken extends RequestSecurityToken {
 
 	CancelTarget cancelTarget;

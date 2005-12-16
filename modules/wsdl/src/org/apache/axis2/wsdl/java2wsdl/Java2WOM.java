@@ -36,8 +36,6 @@ import java.util.Iterator;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-* @author : Deepal Jayasinghe (deepal@apache.org)
-*
 */
 
 public class Java2WOM {
@@ -59,7 +57,7 @@ public class Java2WOM {
             SchemaGenerator.TARGET_NAMESPACE = targentNamespece;
         }
         if (targetNamespecheprefix != null && !targetNamespecheprefix.trim().equals("")) {
-            SchemaGenerator.TARGET_NAMESPACE_PRFIX = targetNamespecheprefix;
+            SchemaGenerator.TARGET_NAMESPACE_PREFIX = targetNamespecheprefix;
         }
 
     }
@@ -77,7 +75,7 @@ public class Java2WOM {
         womDescription = wsdlComponentFactory.createDescription();
         HashMap namspaseMap = new HashMap();
         namspaseMap.put("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
-        namspaseMap.put(SchemaGenerator.TARGET_NAMESPACE_PRFIX, SchemaGenerator.TARGET_NAMESPACE);
+        namspaseMap.put(SchemaGenerator.TARGET_NAMESPACE_PREFIX, SchemaGenerator.TARGET_NAMESPACE);
         namspaseMap.put("ns1", "http://org.apache.axis2/xsd");
         namspaseMap.put("xs", "http://www.w3.org/2001/XMLSchema");
         womDescription.setNamespaces(namspaseMap);
@@ -88,9 +86,9 @@ public class Java2WOM {
         womDescription.addInterface(portType);
 
         QName bindingName = new QName(SchemaGenerator.TARGET_NAMESPACE, serviceName + "Binding"
-                , SchemaGenerator.TARGET_NAMESPACE_PRFIX);
+                , SchemaGenerator.TARGET_NAMESPACE_PREFIX);
         //generating binding
-        WSDLBinding binding = genareteBinding(wsdlComponentFactory,
+        WSDLBinding binding = generateBinding(wsdlComponentFactory,
                 portType,
                 bindingName,
                 "document", "literal", "http://schemas.xmlsoap.org/soap/http",
@@ -117,7 +115,7 @@ public class Java2WOM {
 
         WSDLInterface portType = womDescription.createInterface();
         portType.setName(new QName(serviceName + "Port"));
-//        womDescription.addInterface(portType);
+
         //adding message refs
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
@@ -144,7 +142,7 @@ public class Java2WOM {
         return portType;
     }
 
-    private WSDLBinding genareteBinding(WSDLComponentFactory wsdlComponentFactory,
+    private WSDLBinding generateBinding(WSDLComponentFactory wsdlComponentFactory,
                                         WSDLDescription womDescription,
                                         WSDLInterface portType, QName bindingName,
                                         JMethod metods[],
@@ -216,7 +214,7 @@ public class Java2WOM {
     }
 
 
-    private WSDLBinding genareteBinding(WSDLComponentFactory wsdlComponentFactory,
+    private WSDLBinding generateBinding(WSDLComponentFactory wsdlComponentFactory,
                                         WSDLInterface portType, QName bindingName,
                                         String style,
                                         String use,

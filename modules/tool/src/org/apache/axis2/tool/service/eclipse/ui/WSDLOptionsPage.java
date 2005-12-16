@@ -39,12 +39,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-/**
- * @author Ajith
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 public class WSDLOptionsPage extends AbstractServiceWizardPage {
 
     private static final String SERVICE_WSDL_DEFAULT_NAME = "service.wsdl";

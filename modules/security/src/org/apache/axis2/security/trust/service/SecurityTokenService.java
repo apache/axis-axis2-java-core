@@ -20,8 +20,6 @@ import org.apache.axis2.om.OMElement;
 
 /**
  * SecurityTokenService
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class SecurityTokenService {
 	

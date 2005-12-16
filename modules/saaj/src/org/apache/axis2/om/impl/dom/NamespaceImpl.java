@@ -17,9 +17,6 @@ package org.apache.axis2.om.impl.dom;
 
 import org.apache.axis2.om.OMNamespace;
 
-/**
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class NamespaceImpl implements OMNamespace {
 
 	private String nsUri;

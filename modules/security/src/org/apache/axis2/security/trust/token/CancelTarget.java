@@ -25,10 +25,6 @@ import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.message.token.SecurityTokenReference;
 
-/**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class CancelTarget extends CompositeToken {
 
     public static final QName TOKEN = new QName(Constants.WST_NS, Constants.LN.CANCEL_TARGET, Constants.WST_PREFIX);

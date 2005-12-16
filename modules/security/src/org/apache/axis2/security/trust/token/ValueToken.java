@@ -24,7 +24,6 @@ import org.apache.axis2.security.trust.TrustException;
  * value in the element
  * Example:
  * 	<wsu:Created>...</wsu:Created>
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public abstract class ValueToken extends AbstractToken {
 	

@@ -21,10 +21,6 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
 
-/**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class Created extends ValueToken {
 
 

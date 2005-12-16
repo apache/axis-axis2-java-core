@@ -34,15 +34,6 @@ import java.util.Arrays;
  * <code>MASK_VALID</code>), yields the same results as calling the
  * convenience methods. There is one exception: check the comments
  * for the <code>isValid</code> method for details.
- *
- * @author Glenn Marcy, IBM
- * @author Andy Clark, IBM
- * @author Eric Ye, IBM
- * @author Arnaud  Le Hors, IBM
- * @author Michael Glavassevich, IBM
- * @author Rahul Srivastava, Sun Microsystems Inc.
- *
- * @version $Id: XMLChar.java,v 1.16 2004/03/25 04:03:22 mrglavas Exp $
  */
 public class XMLChar {
 

@@ -24,10 +24,6 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
 
-/**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class IssueRequestSecurityToken extends RequestSecurityToken {
 
 	private AppliesTo appliesTo;
@@ -37,9 +33,6 @@ public class IssueRequestSecurityToken extends RequestSecurityToken {
 	private KeySize keySize;
 	private Renewing renewing;
 	
-	/**
-	 * @param requestType
-	 */
 	public IssueRequestSecurityToken() {
 		super(Constants.REQ_TYPE.ISSUE_SECURITY_TOKEN);
 	}

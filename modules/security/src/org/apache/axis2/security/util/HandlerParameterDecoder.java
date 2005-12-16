@@ -33,8 +33,6 @@ import javax.xml.namespace.QName;
 
  </code>
  * 
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class HandlerParameterDecoder {
 

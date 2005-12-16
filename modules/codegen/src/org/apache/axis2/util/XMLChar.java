@@ -31,14 +31,6 @@ package org.apache.axis2.util;
  * convenience methods. There is one exception: check the comments
  * for the <code>isValid</code> method for details.
  *
- * @author Glenn Marcy, IBM
- * @author Andy Clark, IBM
- * @author Eric Ye, IBM
- * @author Arnaud  Le Hors, IBM
- * @author Rahul Srivastava, Sun Microsystems Inc.
- *
- * Note  - Salvaged from Axis1 code base
- *
  */
 public class XMLChar {
 

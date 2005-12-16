@@ -23,7 +23,6 @@ import org.apache.axis2.util.XMLChar;
  * NCName represents XML "non-colonized" Names
  * The base type of NCName is Name.
  *
- * @author Chris Haddad <chaddad@cobia.net>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#NCName">XML Schema 3.3.7</a>
  * @see <A href="http://www.w3.org/TR/1999/REC-xml-names-19990114/#NT-NCName">NCName Production</a>
  */

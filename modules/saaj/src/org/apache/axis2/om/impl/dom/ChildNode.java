@@ -21,9 +21,6 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.w3c.dom.Node;
 
-/**
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public abstract class ChildNode extends NodeImpl {
 
 	protected ChildNode previousSibling;

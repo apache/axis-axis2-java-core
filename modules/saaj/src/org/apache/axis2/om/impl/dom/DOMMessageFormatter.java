@@ -23,11 +23,6 @@ import java.util.PropertyResourceBundle;
 
 /**
  * Used to format DOM error messages, using the system locale.
- * 
- * @xerces.internal
- *
- * @author Sandy Gao, IBM
- * @version $Id: DOMMessageFormatter.java,v 1.7 2004/10/05 17:12:51 mrglavas Exp $
  */
 public class DOMMessageFormatter {
     public static final String DOM_DOMAIN = "http://www.w3.org/dom/DOMTR";

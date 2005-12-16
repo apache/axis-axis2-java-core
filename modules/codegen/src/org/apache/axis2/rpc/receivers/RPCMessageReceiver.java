@@ -12,12 +12,11 @@
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
 * limitations under the License.
-*
-* @author : Deepal Jayasinghe (deepal@apache.org)
-*
-* Reflection based MessageReciver , request qill be processed by looking at the method signature
+*/
+
+/*
+* Reflection based RPCMessageReceiver , request will be processed by looking at the method signature
 * of the invocation method
-*
 */
 
 package org.apache.axis2.rpc.receivers;

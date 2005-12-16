@@ -36,9 +36,6 @@ import java.io.InputStream;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-/**
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class TextImpl extends CharacterImpl implements Text, OMText {
 
 	

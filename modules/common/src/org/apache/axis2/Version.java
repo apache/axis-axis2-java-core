@@ -23,8 +23,6 @@ import org.apache.axis2.i18n.Messages;
  * <p/>
  * The messages referenced here are automatically kept up-to-date by the
  * build.xml.
- *
- * @author Glen Daniels (gdaniels@apache.org)
  */
 public class Version {
     /**

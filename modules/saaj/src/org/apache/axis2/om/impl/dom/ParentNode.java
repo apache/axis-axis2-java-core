@@ -30,9 +30,6 @@ import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public abstract class ParentNode extends ChildNode implements OMContainerEx {
 
 

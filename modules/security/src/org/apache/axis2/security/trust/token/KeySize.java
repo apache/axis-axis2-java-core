@@ -21,10 +21,6 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
 
-/**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class KeySize extends ValueToken {
  
 	public static final QName TOKEN = new QName(Constants.WST_NS,Constants.LN.KEY_SIZE,Constants.WST_PREFIX);

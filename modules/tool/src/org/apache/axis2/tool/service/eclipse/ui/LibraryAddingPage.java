@@ -17,11 +17,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 
-/**
- * @author Ajith
- *
-
- */
 public class LibraryAddingPage extends AbstractServiceWizardPage {
     
     private Label libraryNameLabel;

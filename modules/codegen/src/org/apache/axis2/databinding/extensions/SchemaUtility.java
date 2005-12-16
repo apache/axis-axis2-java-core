@@ -20,7 +20,6 @@ import javax.wsdl.Definition;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author : Eran Chinthaka (chinthaka@apache.org)
  */
 
 public interface SchemaUtility {

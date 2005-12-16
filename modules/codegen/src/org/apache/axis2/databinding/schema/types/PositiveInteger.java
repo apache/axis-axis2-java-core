@@ -27,7 +27,6 @@ import java.io.ObjectStreamException;
  * This results in the standard mathematical concept of the positive integer numbers. The value space
  * of positiveInteger is the infinite set {1,2,...}. 
  *
- * @author Chris Haddad <haddadc@apache.org>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#positiveInteger">XML Schema 3.3.25</a>
  */
 public class PositiveInteger extends NonNegativeInteger {

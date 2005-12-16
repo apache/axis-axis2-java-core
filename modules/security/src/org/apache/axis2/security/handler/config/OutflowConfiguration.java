@@ -31,8 +31,6 @@ import java.util.Iterator;
 /**
  * This is the representation of the outflow configurations of the security
  * module
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class OutflowConfiguration {
 

@@ -33,12 +33,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 
-/**
- * @author Ajith
- *         <p/>
- *         TODO To change the template for this generated type comment go to Window -
- *         Preferences - Java - Code Style - Code Templates
- */
 public class ServiceArchiveWizard extends Wizard implements INewWizard {
 
     private ClassFileLocationPage classFileLocationPage;

@@ -21,8 +21,6 @@ import org.w3c.dom.DOMException;
 /**
  * This implements the OMText operations which are to be
  * inherited by TextImpl, CommentImpl, CDATASectionImpl
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public abstract class CharacterImpl extends ChildNode implements CharacterData {
 

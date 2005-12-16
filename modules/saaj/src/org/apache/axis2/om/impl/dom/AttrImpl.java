@@ -34,7 +34,6 @@ import org.w3c.dom.TypeInfo;
 /**
  * Implementation of <code>org.w3c.dom.Attr</code> and 
  * <code>org.apache.axis2.om.OMAttribute</code>
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 

@@ -20,7 +20,6 @@ import java.math.BigInteger;
 /**
  * Custom class for supporting primitive XSD data type UnsignedLong
  *
- * @author Chris Haddad <chaddad@cobia.net>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#unsignedLong">XML Schema 3.3.21</a>
  */
 public class UnsignedLong extends java.lang.Number {

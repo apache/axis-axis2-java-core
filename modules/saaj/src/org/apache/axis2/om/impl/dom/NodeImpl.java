@@ -38,9 +38,6 @@ import org.w3c.dom.UserDataHandler;
 import java.io.OutputStream;
 import java.io.Writer;
 
-/**
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public abstract class NodeImpl implements Node, NodeList,OMNodeEx, Cloneable {
 
 

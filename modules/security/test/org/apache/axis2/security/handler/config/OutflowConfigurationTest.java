@@ -24,8 +24,6 @@ import junit.framework.TestCase;
 
 /**
  * Tests the org.apache.axis2.security.handler.config.OutflowConfiguration
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class OutflowConfigurationTest extends TestCase {
 

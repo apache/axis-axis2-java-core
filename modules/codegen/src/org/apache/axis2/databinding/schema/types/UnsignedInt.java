@@ -21,7 +21,6 @@ package org.apache.axis2.databinding.schema.types;
 /**
  * Custom class for supporting primitive XSD data type UnsignedInt
  *
- * @author Chris Haddad <chaddad@cobia.net>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#unsignedInt">XML Schema 3.3.22</a>
  */
 public class UnsignedInt extends java.lang.Number {

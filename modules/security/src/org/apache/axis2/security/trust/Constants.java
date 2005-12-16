@@ -17,8 +17,6 @@ package org.apache.axis2.security.trust;
 
 /**
  * Constants of the WS-Trust implementation
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- *
  */
 public interface Constants {
 	

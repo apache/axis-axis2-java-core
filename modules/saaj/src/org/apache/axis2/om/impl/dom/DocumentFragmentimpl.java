@@ -23,9 +23,6 @@ import org.w3c.dom.Node;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-/**
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class DocumentFragmentimpl extends ParentNode implements
 		DocumentFragment {
 

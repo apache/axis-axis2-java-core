@@ -18,8 +18,6 @@ package org.apache.axis2.security.handler;
 
 /**
  * Constants specific to the Axis2 security module
- *  
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public interface WSSHandlerConstants {
 

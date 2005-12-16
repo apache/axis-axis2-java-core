@@ -24,10 +24,6 @@ import java.util.ResourceBundle;
 
 /**
  * Proxy that sniffs and shows HTTP messages and responses, both SOAP and plain HTTP.
- *
- * @author Doug Davis
- * @author Steve Loughran
- * @author Stefano Mazzocchi
  */
 
 public class HTTPTracer extends JFrame {

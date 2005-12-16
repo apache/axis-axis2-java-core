@@ -20,18 +20,10 @@ import javax.xml.namespace.QName;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.security.trust.TrustException;
 
-/**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class RequestSecurityTokenResponse extends CompositeToken {
 
-	/**
-	 * 
-	 */
 	public RequestSecurityTokenResponse() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -40,7 +32,6 @@ public class RequestSecurityTokenResponse extends CompositeToken {
 	 */
 	public RequestSecurityTokenResponse(OMElement elem) throws TrustException {
 		super(elem);
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)

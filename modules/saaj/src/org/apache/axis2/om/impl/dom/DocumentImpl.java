@@ -47,9 +47,6 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.OutputStream;
 import java.util.Hashtable;
 
-/**
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class DocumentImpl extends ParentNode implements Document, OMDocument {
 
 	

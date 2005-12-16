@@ -31,8 +31,6 @@ import org.apache.axis2.security.trust.token.RequestSecurityTokenResponse;
 
 /**
  * Client to interact with a given SecurityTokenService
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class STSClient {
 

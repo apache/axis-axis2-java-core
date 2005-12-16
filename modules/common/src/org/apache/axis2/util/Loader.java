@@ -26,8 +26,6 @@ import java.net.URL;
 /**
  * Load resources (or images) from various sources.
  * <p/>
- *
- * @author Davanum Srinivas (dims@yahoo.com).
  */
 public class Loader {
     private static Log log = LogFactory.getLog(Loader.class.getName());

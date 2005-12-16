@@ -19,10 +19,6 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.security.trust.TrustException;
 
-/**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public abstract class CompositeToken extends AbstractToken {
 
 	public CompositeToken() {

@@ -24,10 +24,6 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.security.trust.Constants;
 import org.apache.axis2.security.trust.TrustException;
 
-/**
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class AppliesTo extends CompositeToken {
 
 	public static final QName TOKEN = new QName(Constants.WSP.NS, Constants.WSP.APPLIESTO_LN, Constants.WSP.PREFIX);

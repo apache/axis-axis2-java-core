@@ -25,8 +25,6 @@ import org.w3c.dom.Node;
  * 
  * Most of the implementation is taken from 
  * From org.apache.xerces.dom.NamedNodeMapImpl
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class NamedNodeMapImpl implements NamedNodeMap {
 
