@@ -47,7 +47,7 @@ public class Options {
     // Parameters that can be set via Options
     // ==========================================================================
     private String soapVersionURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-    private String soapAction = "";
+    private String soapAction;
     private boolean isExceptionToBeThrownOnSOAPFault = true;
     private long timeOutInMilliSeconds = DEFAULT_TIMEOUT_MILLISECONDS;
     private boolean useSeparateListener = false;
@@ -258,7 +258,7 @@ public class Options {
             }
         }
 
-        return soapAction;
+        return (soapAction != null)?soapAction:"";
     }
 
     public String getSoapVersionURI() {
