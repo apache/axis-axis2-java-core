@@ -28,6 +28,7 @@ import org.apache.axis2.soap.SOAPFaultReason;
 import org.apache.axis2.soap.SOAPFaultText;
 import org.apache.axis2.soap.SOAPFaultValue;
 import org.apache.axis2.soap.SOAPProcessingException;
+import org.w3c.dom.Element;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -111,14 +112,21 @@ public class SOAP11BuilderHelper extends SOAPBuilderHelper implements SOAP11Cons
 
         } else if (elementLevel == 5) {
 
-            if (parent.getLocalName().equals(SOAP_FAULT_CODE_LOCAL_NAME)) {
+        	String parentTagName = "";
+        	if(parent instanceof Element) {
+        		parentTagName = ((Element)parent).getTagName();
+        	} else {
+        		parentTagName = parent.getLocalName();
+        	}
+        	
+            if (parentTagName.equals(SOAP_FAULT_CODE_LOCAL_NAME)) {
                 throw new OMBuilderException(
                         "faultcode element should not have children");
-            } else if (parent.getLocalName().equals(
+            } else if (parentTagName.equals(
                     SOAP_FAULT_STRING_LOCAL_NAME)) {
                 throw new OMBuilderException(
                         "faultstring element should not have children");
-            } else if (parent.getLocalName().equals(
+            } else if (parentTagName.equals(
                     SOAP_FAULT_ACTOR_LOCAL_NAME)) {
                 throw new OMBuilderException(
                         "faultactor element should not have children");
