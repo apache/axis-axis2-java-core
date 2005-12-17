@@ -38,7 +38,7 @@
 	</wsdl:binding>
 	<wsdl:service name="PerfSoapService">
 		<wsdl:port name="Performance" binding="impl:PerformanceSoapBinding">
-			<wsdlsoap:address location="http://localhost:8080/axis2/services/Performance"/>
+			<wsdlsoap:address location="http://localhost:8080/axis2/services/PerfPortType"/>
 		</wsdl:port>
 	</wsdl:service>
 </wsdl:definitions>
