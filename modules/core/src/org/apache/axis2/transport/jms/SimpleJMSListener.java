@@ -57,6 +57,8 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
     private String destination;
     private JMSEndpoint endpoint;
     private HashMap properties;
+    private String user = null;
+    private String password = null;
 
     public SimpleJMSListener() {
     }
@@ -69,35 +71,29 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
 
         this.configurationContext = erfac.buildConfigurationContext(repositoryDirectory);
         this.doThreads = doThreads;
-        initListener(connectorMap, cfMap, username, password, destination);
+        this.properties = new HashMap(connectorMap);
+        this.properties.putAll(cfMap);
+        this.destination = destination;
     }
 
     public static final HashMap createCFMap(OptionsParser optionsParser) throws IOException {
         String cfFile = optionsParser.isValueSet('c');
-
         if (cfFile == null) {
             return null;
         }
-
         Properties cfProps = new Properties();
-
         cfProps.load(new BufferedInputStream(new FileInputStream(cfFile)));
-
         HashMap cfMap = new HashMap(cfProps);
-
         return cfMap;
     }
 
     public static final HashMap createConnectorMap(
             org.apache.axis2.util.OptionsParser optionsParser) {
         HashMap connectorMap = new HashMap();
-
         if (optionsParser.isFlagSet('t') > 0) {
-
             // queue is default so only setup map if topic domain is required
             connectorMap.put(JMSConstants.DOMAIN, JMSConstants.DOMAIN_TOPIC);
         }
-
         return connectorMap;
     }
 
@@ -115,10 +111,6 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
                 params.put(param.getName(), param.getValue());
             }
 
-            String user = null,
-                    password = null,
-                    destination = null;
-
             if (transprtIn.getParameter(JNDIVendorAdapter.USER) != null) {
                 user = (String) transprtIn.getParameter(JNDIVendorAdapter.USER).getValue();
             }
@@ -132,28 +124,21 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
                         (String) transprtIn.getParameter(JNDIVendorAdapter.DESTINATION).getValue();
             }
 
-            initListener(params, params, user, password, destination);
+            this.properties = new HashMap(params);
         } catch (Exception e1) {
             throw new AxisFault(e1);
         }
     }
 
-    private void initListener(HashMap connectorMap, HashMap cfMap, String username,
-                              String password, String destination)
+    private void startListener()
             throws Exception {
         try {
-
             // create a JMS connector using the default vendor adapter
             JMSVendorAdapter adapter = JMSVendorAdapterFactory.getJMSVendorAdapter();
-
-            this.connector = JMSConnectorFactory.createServerConnector(connectorMap, cfMap,
-                    username, password, adapter);
-            this.properties = new HashMap(connectorMap);
-            this.properties.putAll(cfMap);
-            this.destination = destination;
+            this.connector = JMSConnectorFactory.createServerConnector(properties, properties,
+                    user, password, adapter);
         } catch (Exception e) {
             log.error(Messages.getMessage("exception00"), e);
-
             throw e;
         }
 
@@ -185,7 +170,6 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
      */
     public void onMessage(javax.jms.Message message) {
         try {
-
             // pass off the message to a worker as a BytesMessage
             SimpleJMSWorker worker = new SimpleJMSWorker(configurationContext, this,
                     (BytesMessage) message);
@@ -193,7 +177,6 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
             // do we allow multi-threaded workers?
             if (doThreads) {
                 Thread t = new Thread(worker);
-
                 t.start();
             } else {
                 worker.run();
@@ -225,6 +208,7 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
 
     public void start() {
         try {
+            startListener();
             endpoint.registerListener(this, properties);
         } catch (Exception e) {
             log.error(Messages.getMessage("exception00"), e);
@@ -260,13 +244,10 @@ public class SimpleJMSListener extends TransportListener implements MessageListe
     public EndpointReference getReplyToEPR(String serviceName) throws AxisFault {
         try {
             JMSURLHelper url = new JMSURLHelper("jms:/" + destination);
-
             url.getProperties().putAll(properties);
-
             return new EndpointReference(url.getURLString());
         } catch (Exception e) {
             log.error(Messages.getMessage("exception00"), e);
-
             throw AxisFault.makeFault(e);
         }
     }
