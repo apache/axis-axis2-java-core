@@ -142,62 +142,6 @@ public class Java2WOM {
         return portType;
     }
 
-    private WSDLBinding generateBinding(WSDLComponentFactory wsdlComponentFactory,
-                                        WSDLDescription womDescription,
-                                        WSDLInterface portType, QName bindingName,
-                                        JMethod metods[],
-                                        String style,
-                                        String use,
-                                        String trsportURI,
-                                        String namespeceURI) {
-        WSDLBinding binding = wsdlComponentFactory.createBinding();
-        binding.setBoundInterface(portType);
-        binding.setName(bindingName);
-        womDescription.addBinding(binding);
-
-        SOAPBindingImpl soapbindingImpl = new SOAPBindingImpl();
-        soapbindingImpl.setStyle(style);
-        soapbindingImpl.setTransportURI(trsportURI);
-        binding.addExtensibilityElement(soapbindingImpl);
-        for (int i = 0; i < metods.length; i++) {
-            JMethod jmethod = metods[i];
-            //creating WSDLOperation     for the binding
-            WSDLBindingOperation bindingoperation = wsdlComponentFactory.createWSDLBindingOperation();
-            String methodName = jmethod.getSimpleName();
-            bindingoperation.setName(new QName(methodName));
-            bindingoperation.setOperation(portType.getOperation(methodName));
-            binding.addBindingOperation(bindingoperation);
-
-            SOAPOperationImpl soapOpimpl = new SOAPOperationImpl();
-            soapOpimpl.setStyle(style);
-            //to do heve to set a proper SOAPAction
-            soapOpimpl.setSoapAction(jmethod.getSimpleName());
-            bindingoperation.addExtensibilityElement(soapOpimpl);
-
-            //creating imput message
-            WSDLBindingMessageReference inMessage = wsdlComponentFactory.createWSDLBindingMessageReference();
-            inMessage.setDirection(org.apache.wsdl.WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
-            bindingoperation.setInput(inMessage);
-            SOAPBodyImpl requestSoapbody = new SOAPBodyImpl();
-            requestSoapbody.setUse(use);
-            //todo need to fix this
-            requestSoapbody.setNamespaceURI(namespeceURI);
-            inMessage.addExtensibilityElement(requestSoapbody);
-
-            if (!jmethod.getReturnType().isVoidType()) {
-                WSDLBindingMessageReference outMessage = wsdlComponentFactory.createWSDLBindingMessageReference();
-
-                outMessage.setDirection(org.apache.wsdl.WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
-                bindingoperation.setOutput(outMessage);
-                SOAPBodyImpl resSoapbody = new SOAPBodyImpl();
-                resSoapbody.setUse(use);
-                resSoapbody.setNamespaceURI(namespeceURI);
-                outMessage.addExtensibilityElement(resSoapbody);
-            }
-        }
-        return binding;
-    }
-
     public WSDLService generateService(WSDLComponentFactory wsdlComponentFactory,
                                        WSDLDescription womDescription,
                                        WSDLBinding binding, String ServiceName) {

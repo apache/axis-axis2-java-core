@@ -24,6 +24,24 @@ public class ConfigurationContextFactory {
     private Log log = LogFactory.getLog(getClass());
 
     /**
+     * To create a AxisConfiguration depending on the user requiremnt , this method can be used.
+     * First create a AxisConfigurationCreator object giving necessary parameters into it.
+     * Depending on the implementation getAxisConfiguration(); will give the AxisConfiguration and
+     * using the ConfigurationContext will be created and return that.
+     *
+     * @param axisConfigurationCreator
+     * @return
+     * @throws AxisFault
+     */
+    public ConfigurationContext getConfigurationContext(
+            AxisConfigurationCreator axisConfigurationCreator) throws AxisFault {
+        AxisConfiguration axisConfig = axisConfigurationCreator.getAxisConfiguration();
+        ConfigurationContext configContext = new ConfigurationContext(axisConfig);
+        init(configContext);
+        return configContext;
+    }
+
+    /**
      * Builds the configuration for the client.
      *
      * @param axis2home the value can be null and resolves to the default axis2.xml file
@@ -33,12 +51,7 @@ public class ConfigurationContextFactory {
     public ConfigurationContext buildClientConfigurationContext(String axis2home) throws AxisFault {
         AxisConfigurationCreator repoBasedConfigCreator =
                 new FileSystemConfigurationCreator(axis2home, false);
-        AxisConfiguration axisConfig = repoBasedConfigCreator.getAxisConfiguration();
-        ConfigurationContext configurationContext = new ConfigurationContext(axisConfig);
-
-        init(configurationContext);
-
-        return configurationContext;
+        return getConfigurationContext(repoBasedConfigCreator);
     }
 
     /**
@@ -51,12 +64,8 @@ public class ConfigurationContextFactory {
     public ConfigurationContext buildConfigurationContext(String repositoryName) throws AxisFault {
         AxisConfigurationCreator repoBasedConfigCreator =
                 new FileSystemConfigurationCreator(repositoryName, true);
-        AxisConfiguration axisConfig = repoBasedConfigCreator.getAxisConfiguration();
-        ConfigurationContext configurationContext = new ConfigurationContext(axisConfig);
+        return getConfigurationContext(repoBasedConfigCreator);
 
-        init(configurationContext);
-
-        return configurationContext;
     }
 
     /**
@@ -145,17 +154,6 @@ public class ConfigurationContextFactory {
                 }
             }
         }
-    }
-
-    public ConfigurationContext getConfigurationContext(
-            AxisConfigurationCreator axisConfigurationCreator)
-            throws AxisFault {
-        AxisConfiguration axisConfig = axisConfigurationCreator.getAxisConfiguration();
-        ConfigurationContext configContext = new ConfigurationContext(axisConfig);
-
-        init(configContext);
-
-        return configContext;
     }
 
     /**
