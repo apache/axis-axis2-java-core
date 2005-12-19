@@ -71,14 +71,14 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
 
                 if (!file.isDirectory()) {
                     if (ArchiveFileData.isModuleArchiveFile(file.getName())) {
-                        wsInfoList.addWSInfoItem(file, MODULE);
+                        wsInfoList.addWSInfoItem(file, TYPE_MODULE);
                     }
                 } else {
                     if ("lib".equals(file.getName()) || "Lib".equals(file.getName())) {
 
                         // this is a lib file no need to take this as a sevice
                     } else {
-                        wsInfoList.addWSInfoItem(file, MODULE);
+                        wsInfoList.addWSInfoItem(file, TYPE_MODULE);
                     }
                 }
             }
@@ -122,14 +122,14 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
 
                 if (!file.isDirectory()) {
                     if (ArchiveFileData.isServiceArchiveFile(file.getName())) {
-                        wsInfoList.addWSInfoItem(file, SERVICE);
+                        wsInfoList.addWSInfoItem(file, TYPE_SERVICE);
                     }
                 } else {
                     if ("lib".equals(file.getName()) || "Lib".equals(file.getName())) {
 
                         // this is a lib file no need to take this as a sevice
                     } else {
-                        wsInfoList.addWSInfoItem(file, SERVICE);
+                        wsInfoList.addWSInfoItem(file, TYPE_SERVICE);
                     }
                 }
             }

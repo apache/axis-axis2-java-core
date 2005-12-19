@@ -52,25 +52,25 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
         try {
 
             // Processing service level parameters
-            Iterator itr = servcice.getChildrenWithName(new QName(PARAMETER));
+            Iterator itr = servcice.getChildrenWithName(new QName(TAG_PARAMETER));
 
             processParameters(itr, axisServiceGroup, axisServiceGroup.getParent());
 
-            Iterator moduleConfigs = servcice.getChildrenWithName(new QName(MODULECONFIG));
+            Iterator moduleConfigs = servcice.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
 
             processServiceModuleConfig(moduleConfigs, axisServiceGroup.getParent(),
                     axisServiceGroup);
 
             // processing servicewide modules which required to engage gloabally
-            Iterator moduleRefs = servcice.getChildrenWithName(new QName(MODULEST));
+            Iterator moduleRefs = servcice.getChildrenWithName(new QName(TAG_MODULE));
 
             processModuleRefs(moduleRefs, axisServiceGroup);
 
-            Iterator serviceitr = servcice.getChildrenWithName(new QName(SERVICE_ELEMENT));
+            Iterator serviceitr = servcice.getChildrenWithName(new QName(TAG_SERVICE));
 
             while (serviceitr.hasNext()) {
                 OMElement service = (OMElement) serviceitr.next();
-                OMAttribute serviceNameatt = service.getAttribute(new QName(ATTNAME));
+                OMAttribute serviceNameatt = service.getAttribute(new QName(ATTRIBUTE_NAME));
                 String serviceName = serviceNameatt.getAttributeValue();
 
                 if (serviceName == null) {
@@ -111,7 +111,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
         try {
             while (moduleRefs.hasNext()) {
                 OMElement moduleref = (OMElement) moduleRefs.next();
-                OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(REF));
+                OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(TAG_REFERENCE));
 
                 if (moduleRefAttribute != null) {
                     String refName = moduleRefAttribute.getAttributeValue();
@@ -134,7 +134,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
             throws DeploymentException {
         while (moduleConfigs.hasNext()) {
             OMElement moduleConfig = (OMElement) moduleConfigs.next();
-            OMAttribute moduleName_att = moduleConfig.getAttribute(new QName(ATTNAME));
+            OMAttribute moduleName_att = moduleConfig.getAttribute(new QName(ATTRIBUTE_NAME));
 
             if (moduleName_att == null) {
                 throw new DeploymentException(
@@ -143,7 +143,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module), parent);
-                Iterator parameters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
+                Iterator parameters = moduleConfig.getChildrenWithName(new QName(TAG_PARAMETER));
 
                 processParameters(parameters, moduleConfiguration, parent);
                 axisService.addModuleConfig(moduleConfiguration);

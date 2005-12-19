@@ -18,78 +18,56 @@
 package org.apache.axis2.deployment;
 
 /**
- * DeployCons interface is to keep constent value required for Deployemnt
+ * Constants used during service/module deployment
  */
 public interface DeploymentConstants {
     public static String META_INF = "META-INF";
-    public static final String SERVICE_WSDL_NAME = "service.wsdl";
-    int SERVICE = 0;                // if it is a service
-    int MODULE = 1;                // if it is a module
-    String SERVICEXML = "META-INF/services.xml";
-    String SERVICE_WSDL_WITH_FOLDER = "META-INF/service.wsdl";
-    String PHASE_ORDER = "phaseOrder";
-    String PHASEST = "phase";
-    String PARAMETER = "parameter";      // paramater start tag
-    String MODULEXML = "META-INF/module.xml";
-    String MODULEST = "module";
-    String MODULECONFIG = "moduleConfig";
-    String MESSGES = "message";
-    String LISTENERST = "listener";       // paramater start tag
-    String LABEL = "label";
-    String HOST_CONFIG = "hostConfiguration";
-    String HANDERST = "handler";
-    String TYPEMAPPINGST = "typeMapping";    // typeMapping start tag
-    String TYPE = "type";
-    String TRANSPORTTAG = "transport";
-    String TRANSPORTSTAG = "transports";
-    String TRANSPORTSENDER = "transportSender";
-    String TRANSPORTRECEIVER = "transportReceiver";
+    public static String SERVICES_XML = "META-INF/services.xml";
+    public static String MODULE_XML = "META-INF/module.xml";
+    public static String SERVICE_PATH = "/services/";
+    public static String MODULE_PATH = "/modules/";
 
-    // for servicemetadata
-    String STYLENAME = "style";
-    String SERVICE_PATH = "/services/";
-    String SERVICE_GROUP_ELEMENT = "serviceGroup";
+    int TYPE_SERVICE = 0;                // is it a service
+    int TYPE_MODULE = 1;                // is it a module
+    
+    String TAG_PHASE_ORDER = "phaseOrder";
+    String TAG_PHASE = "phase";
+    String TAG_PARAMETER = "parameter";     
+    String TAG_MODULE = "module";
+    String TAG_MODULE_CONFIG = "moduleConfig";
+    String TAG_MESSAGE = "message";
+    String TAG_LISTENER = "listener";     
+    String TAG_LABEL = "label";
+    String TAG_HOST_CONFIG = "hostConfiguration";
+    String TAG_HANDLER = "handler";
+    String TAG_TYPE = "type";
+    String TAG_TRANSPORT_SENDER = "transportSender";
+    String TAG_TRANSPORT_RECEIVER = "transportReceiver";
+    String TAG_SERVICE_GROUP = "serviceGroup";
+    String TAG_SERVICE = "service";
+    String TAG_REFERENCE = "ref";
+    String TAG_PHASE_LAST = "phaseLast";
+    String TAG_PHASE_FIRST = "phaseFirst";
+    String TAG_ORDER = "order";           // to resolve the order tag
+    String TAG_OPERATION = "operation";       // operation start tag
+    String TAG_MESSAGE_RECEIVER = "messageReceiver";
+    String TAG_MEP = "mep";
 
-    // element in a services.xml
-    String SERVICE_ELEMENT = "service";
-    String SERVICETAG = "service";
-
-    // for handlers
-    String REF = "ref";
-    String PHASELAST = "phaseLast";
-    String PHASEFIRST = "phaseFirst";
-    String PHASE = "phase";
-    String OUT_FAILTFLOW = "Outfaultflow";    // faultflow start tag
-    String OUTFLOWST = "outflow";         // outflowr start tag
-    String ORDER = "order";           // to resolve the order tag
-    String OPRATIONST = "operation";       // operation start tag
-
-    String MODULE_PATH = "/modules/";
-    String MESSAGERECEIVER = "messageReceiver";
-    String MEP = "mep";
-
-    // for jws file extension
-    String JWS_EXTENSION = ".jws";
-    String IN_FAILTFLOW = "INfaultflow";    // faultflow start tag
-    String INFLOWST = "inflow";         // inflow start tag
-    String HOTUPDATE = "hotupdate";
-    String HOTDEPLOYMENT = "hotdeployment";
-    String EXTRACTSERVICEARCHIVE = "extractServiceArchive";
-    String DISPATCH_ORDER = "dispatchOrder";
-    String DISPATCHER = "dispatcher";
-    String DESCRIPTION = "description";
-    String CONTEXTPATHNAME = "contextPath";
-    String CLASSNAME = "class";
-    String BEFORE = "before";
-    String BEANMAPPINGST = "beanMapping";    // beanMapping start tag
-    String AXIS2CONFIG = "axisconfig";
-    String ATUSE = "use";
+    String TAG_FLOW_OUT_FAULT = "Outfaultflow";    // faultflow start tag
+    String TAG_FLOW_OUT = "outflow";         // outflow start tag
+    String TAG_FLOW_IN_FAULT = "INfaultflow";    // faultflow start tag
+    String TAG_FLOW_IN = "inflow";         // inflow start tag
+    String TAG_HOT_UPDATE = "hotupdate";
+    String TAG_HOT_DEPLOYMENT = "hotdeployment";
+    String TAG_EXTRACT_SERVICE_ARCHIVE = "extractServiceArchive";
+    String TAG_DISPATCH_ORDER = "dispatchOrder";
+    String TAG_DISPATCHER = "dispatcher";
+    String TAG_DESCRIPTION = "description";
+    String TAG_CLASS_NAME = "class";
+    String TAG_AFTER = "after";
+    String TAG_BEFORE = "before";
 
     // for parameters
-    String ATTNAME = "name";
-    String ATTLOCKED = "locked";
-
-    // for operations
-    String ATQNAME = "name";
-    String AFTER = "after";
+    String ATTRIBUTE_NAME = "name";
+    String ATTRIBUTE_LOCKED = "locked";
 }

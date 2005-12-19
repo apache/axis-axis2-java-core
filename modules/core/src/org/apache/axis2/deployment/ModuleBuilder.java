@@ -70,7 +70,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             OMElement moduleElement = buildOM();
 
             // Setting Module Name
-            OMAttribute moduleNameAtt = moduleElement.getAttribute(new QName(ATTNAME));
+            OMAttribute moduleNameAtt = moduleElement.getAttribute(new QName(ATTRIBUTE_NAME));
 
             if (moduleNameAtt != null) {
                 String moduleName = moduleNameAtt.getAttributeValue();
@@ -81,7 +81,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             }
 
             // Setting Module Class , if it is there
-            OMAttribute moduleClassAtt = moduleElement.getAttribute(new QName(CLASSNAME));
+            OMAttribute moduleClassAtt = moduleElement.getAttribute(new QName(TAG_CLASS_NAME));
 
             if (moduleClassAtt != null) {
                 String moduleClass = moduleClassAtt.getAttributeValue();
@@ -93,37 +93,37 @@ public class ModuleBuilder extends DescriptionBuilder {
 
             // processing Parameters
             // Processing service level parameters
-            Iterator itr = moduleElement.getChildrenWithName(new QName(PARAMETER));
+            Iterator itr = moduleElement.getChildrenWithName(new QName(TAG_PARAMETER));
 
             processParameters(itr, module, module.getParent());
 
             // process INFLOW
-            OMElement inFlow = moduleElement.getFirstChildWithName(new QName(INFLOWST));
+            OMElement inFlow = moduleElement.getFirstChildWithName(new QName(TAG_FLOW_IN));
 
             if (inFlow != null) {
                 module.setInFlow(processFlow(inFlow, module));
             }
 
-            OMElement outFlow = moduleElement.getFirstChildWithName(new QName(OUTFLOWST));
+            OMElement outFlow = moduleElement.getFirstChildWithName(new QName(TAG_FLOW_OUT));
 
             if (outFlow != null) {
                 module.setOutFlow(processFlow(outFlow, module));
             }
 
-            OMElement inFaultFlow = moduleElement.getFirstChildWithName(new QName(IN_FAILTFLOW));
+            OMElement inFaultFlow = moduleElement.getFirstChildWithName(new QName(TAG_FLOW_IN_FAULT));
 
             if (inFaultFlow != null) {
                 module.setFaultInFlow(processFlow(inFaultFlow, module));
             }
 
-            OMElement outFaultFlow = moduleElement.getFirstChildWithName(new QName(OUT_FAILTFLOW));
+            OMElement outFaultFlow = moduleElement.getFirstChildWithName(new QName(TAG_FLOW_OUT_FAULT));
 
             if (outFaultFlow != null) {
                 module.setFaultOutFlow(processFlow(outFaultFlow, module));
             }
 
             // processing Operations
-            Iterator op_itr = moduleElement.getChildrenWithName(new QName(OPRATIONST));
+            Iterator op_itr = moduleElement.getChildrenWithName(new QName(TAG_OPERATION));
             ArrayList operations = processOperations(op_itr);
 
             for (int i = 0; i < operations.size(); i++) {
@@ -143,7 +143,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             OMElement operation = (OMElement) operationsIterator.next();
 
             // /getting operation name
-            OMAttribute op_name_att = operation.getAttribute(new QName(ATTNAME));
+            OMAttribute op_name_att = operation.getAttribute(new QName(ATTRIBUTE_NAME));
 
             if (op_name_att == null) {
                 throw new DeploymentException(
@@ -152,7 +152,7 @@ public class ModuleBuilder extends DescriptionBuilder {
                                         DeploymentErrorMsgs.INVALID_OP, "operation name missing")));
             }
 
-            OMAttribute op_mep_att = operation.getAttribute(new QName(MEP));
+            OMAttribute op_mep_att = operation.getAttribute(new QName(TAG_MEP));
             String mepURL = null;
             AxisOperation op_descrip;
 
@@ -181,14 +181,14 @@ public class ModuleBuilder extends DescriptionBuilder {
             op_descrip.setName(new QName(opname));
 
             // Operation Parameters
-            Iterator parameters = operation.getChildrenWithName(new QName(PARAMETER));
+            Iterator parameters = operation.getChildrenWithName(new QName(TAG_PARAMETER));
             ArrayList wsamapping = processParameters(parameters, op_descrip, module);
 
             op_descrip.setWsamappingList(wsamapping);
 
             // setting the mep of the operation
             // loading the message recivers
-            OMElement receiverElement = operation.getFirstChildWithName(new QName(MESSAGERECEIVER));
+            OMElement receiverElement = operation.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVER));
 
             if (receiverElement != null) {
                 MessageReceiver messageReceiver =
@@ -204,7 +204,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             }
 
             // Process Module Refs
-            Iterator modules = operation.getChildrenWithName(new QName(MODULEST));
+            Iterator modules = operation.getChildrenWithName(new QName(TAG_MODULE));
 
             processOperationModuleRefs(modules, op_descrip);
 

@@ -64,13 +64,13 @@ public class WSInfoList implements DeploymentConstants {
      */
     public void addWSInfoItem(File file, int type) {
         switch (type) {
-            case SERVICE : {
+            case TYPE_SERVICE : {
                 if (!isFileExist(file.getName())) {    // checking whether the file is already deployed
-                    WSInfo wsInfo = new WSInfo(file.getName(), file.lastModified(), SERVICE);
+                    WSInfo wsInfo = new WSInfo(file.getName(), file.lastModified(), TYPE_SERVICE);
 
                     jarList.add(wsInfo);
 
-                    ArchiveFileData archiveFileData = new ArchiveFileData(file, SERVICE);
+                    ArchiveFileData archiveFileData = new ArchiveFileData(file, TYPE_SERVICE);
 
                     deployer.addWSToDeploy(archiveFileData);    // inform that new web service is deployed
                 } else {
@@ -81,11 +81,11 @@ public class WSInfoList implements DeploymentConstants {
                             tempWSInfo.setLastModifiedDate(file.lastModified());
 
                             WSInfo wsInfo = new WSInfo(tempWSInfo.getFileName(),
-                                    tempWSInfo.getLastModifiedDate(), SERVICE);
+                                    tempWSInfo.getLastModifiedDate(), TYPE_SERVICE);
 
                             deployer.addWSToUndeploy(wsInfo);           // add entry to undeploy list
 
-                            ArchiveFileData archiveFileData = new ArchiveFileData(file, SERVICE);
+                            ArchiveFileData archiveFileData = new ArchiveFileData(file, TYPE_SERVICE);
 
                             deployer.addWSToDeploy(archiveFileData);    // add entry to deploylist
                         }
@@ -95,13 +95,13 @@ public class WSInfoList implements DeploymentConstants {
                 break;
             }
 
-            case MODULE : {
+            case TYPE_MODULE : {
                 if (!isFileExist(file.getName())) {                     // checking whether the file is already deployed
-                    WSInfo wsInfo = new WSInfo(file.getName(), file.lastModified(), MODULE);
+                    WSInfo wsInfo = new WSInfo(file.getName(), file.lastModified(), TYPE_MODULE);
 
                     jarList.add(wsInfo);
 
-                    ArchiveFileData archiveFileData = new ArchiveFileData(file, MODULE);
+                    ArchiveFileData archiveFileData = new ArchiveFileData(file, TYPE_MODULE);
 
                     deployer.addWSToDeploy(archiveFileData);    // inform that new web service is deployed
                 } 
@@ -142,7 +142,7 @@ public class WSInfoList implements DeploymentConstants {
         while (iter.hasNext()) {
             WSInfo fileitem = (WSInfo) iter.next();
 
-            if (fileitem.getType() == MODULE) {
+            if (fileitem.getType() == TYPE_MODULE) {
                 continue;
             }
 

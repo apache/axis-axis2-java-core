@@ -118,7 +118,7 @@ public class DescriptionBuilder implements DeploymentConstants {
 
     protected MessageReceiver loadMessageReceiver(ClassLoader loader, OMElement reciverElement)
             throws DeploymentException {
-        OMAttribute recieverName = reciverElement.getAttribute(new QName(CLASSNAME));
+        OMAttribute recieverName = reciverElement.getAttribute(new QName(TAG_CLASS_NAME));
         String className = recieverName.getAttributeValue();
         MessageReceiver receiver = null;
 
@@ -161,7 +161,7 @@ public class DescriptionBuilder implements DeploymentConstants {
             return flow;
         }
 
-        Iterator handlers = flowelement.getChildrenWithName(new QName(HANDERST));
+        Iterator handlers = flowelement.getChildrenWithName(new QName(TAG_HANDLER));
 
         while (handlers.hasNext()) {
             OMElement handlerElement = (OMElement) handlers.next();
@@ -184,7 +184,7 @@ public class DescriptionBuilder implements DeploymentConstants {
         HandlerDescription handler = new HandlerDescription();
 
         // Setting Handler name
-        OMAttribute name_attribute = handler_element.getAttribute(new QName(ATTNAME));
+        OMAttribute name_attribute = handler_element.getAttribute(new QName(ATTRIBUTE_NAME));
 
         if (name_attribute == null) {
             throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.INVALID_HANDLER,
@@ -194,7 +194,7 @@ public class DescriptionBuilder implements DeploymentConstants {
         }
 
         // Setting Handler Class name
-        OMAttribute class_attribute = handler_element.getAttribute(new QName(CLASSNAME));
+        OMAttribute class_attribute = handler_element.getAttribute(new QName(TAG_CLASS_NAME));
 
         if (class_attribute == null) {
             throw new DeploymentException((Messages.getMessage(DeploymentErrorMsgs.INVALID_HANDLER,
@@ -204,7 +204,7 @@ public class DescriptionBuilder implements DeploymentConstants {
         }
 
         // processing phase Rules (order)
-        OMElement order_element = handler_element.getFirstChildWithName(new QName(ORDER));
+        OMElement order_element = handler_element.getFirstChildWithName(new QName(TAG_ORDER));
 
         if (order_element == null) {
             throw new DeploymentException((Messages.getMessage(DeploymentErrorMsgs.INVALID_HANDLER,
@@ -217,13 +217,13 @@ public class DescriptionBuilder implements DeploymentConstants {
                 String name = orderAttribute.getQName().getLocalPart();
                 String value = orderAttribute.getAttributeValue();
 
-                if (AFTER.equals(name)) {
+                if (TAG_AFTER.equals(name)) {
                     handler.getRules().setAfter(value);
-                } else if (BEFORE.equals(name)) {
+                } else if (TAG_BEFORE.equals(name)) {
                     handler.getRules().setBefore(value);
-                } else if (PHASE.equals(name)) {
+                } else if (TAG_PHASE.equals(name)) {
                     handler.getRules().setPhaseName(value);
-                } else if (PHASEFIRST.equals(name)) {
+                } else if (TAG_PHASE_FIRST.equals(name)) {
                     String boolval = getValue(value);
 
                     if (boolval.equals("true")) {
@@ -231,7 +231,7 @@ public class DescriptionBuilder implements DeploymentConstants {
                     } else if (boolval.equals("false")) {
                         handler.getRules().setPhaseFirst(false);
                     }
-                } else if (PHASELAST.equals(name)) {
+                } else if (TAG_PHASE_LAST.equals(name)) {
                     String boolval = getValue(value);
 
                     if (boolval.equals("true")) {
@@ -242,7 +242,7 @@ public class DescriptionBuilder implements DeploymentConstants {
                 }
             }
 
-            Iterator parameters = handler_element.getChildrenWithName(new QName(PARAMETER));
+            Iterator parameters = handler_element.getChildrenWithName(new QName(TAG_PARAMETER));
 
             processParameters(parameters, handler, parent);
         }
@@ -257,7 +257,7 @@ public class DescriptionBuilder implements DeploymentConstants {
         try {
             while (moduleRefs.hasNext()) {
                 OMElement moduleref = (OMElement) moduleRefs.next();
-                OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(REF));
+                OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(TAG_REFERENCE));
 
                 if (moduleRefAttribute != null) {
                     String refName = moduleRefAttribute.getAttributeValue();
@@ -300,7 +300,7 @@ public class DescriptionBuilder implements DeploymentConstants {
             parameter.setParameterElement(parameterElement);
 
             // setting parameter Name
-            OMAttribute paraName = parameterElement.getAttribute(new QName(ATTNAME));
+            OMAttribute paraName = parameterElement.getAttribute(new QName(ATTRIBUTE_NAME));
 
             if (paraName == null) {
                 throw new DeploymentException(
@@ -323,7 +323,7 @@ public class DescriptionBuilder implements DeploymentConstants {
             }
 
             // setting locking attribute
-            OMAttribute paraLocked = parameterElement.getAttribute(new QName(ATTLOCKED));
+            OMAttribute paraLocked = parameterElement.getAttribute(new QName(ATTRIBUTE_LOCKED));
             Parameter parentpara = null;
 
             if (parent != null) {

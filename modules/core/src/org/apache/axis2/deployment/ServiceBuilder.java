@@ -67,13 +67,13 @@ public class ServiceBuilder extends DescriptionBuilder {
         try {
 
             // Processing service level parameters
-            Iterator itr = service_element.getChildrenWithName(new QName(PARAMETER));
+            Iterator itr = service_element.getChildrenWithName(new QName(TAG_PARAMETER));
 
             processParameters(itr, service, service.getParent());
 
             // process service description
             OMElement descriptionElement =
-                    service_element.getFirstChildWithName(new QName(DESCRIPTION));
+                    service_element.getFirstChildWithName(new QName(TAG_DESCRIPTION));
 
             if (descriptionElement != null) {
                 OMElement descriptionValue = descriptionElement.getFirstElement();
@@ -89,7 +89,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                     service.setAxisServiceName(descriptionElement.getText());
                 }
             } else {
-                OMAttribute serviceNameatt = service_element.getAttribute(new QName(ATTNAME));
+                OMAttribute serviceNameatt = service_element.getAttribute(new QName(ATTRIBUTE_NAME));
 
                 if (serviceNameatt != null) {
                     service.setAxisServiceName(serviceNameatt.getAttributeValue());
@@ -97,13 +97,13 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
 
             // processing servicewide modules which required to engage gloabally
-            Iterator moduleRefs = service_element.getChildrenWithName(new QName(MODULEST));
+            Iterator moduleRefs = service_element.getChildrenWithName(new QName(TAG_MODULE));
 
             processModuleRefs(moduleRefs);
 
             // processing operations
             Iterator operationsIterator =
-                    service_element.getChildrenWithName(new QName(OPRATIONST));
+                    service_element.getChildrenWithName(new QName(TAG_OPERATION));
             ArrayList ops = processOperations(operationsIterator);
 
             for (int i = 0; i < ops.size(); i++) {
@@ -119,7 +119,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 service.addOperation(operationDesc);
             }
 
-            Iterator moduleConfigs = service_element.getChildrenWithName(new QName(MODULECONFIG));
+            Iterator moduleConfigs = service_element.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
 
             processServiceModuleConfig(moduleConfigs, service, service);
         } catch (XMLStreamException e) {
@@ -137,14 +137,14 @@ public class ServiceBuilder extends DescriptionBuilder {
             throws DeploymentException {
         while (messages.hasNext()) {
             OMElement messageElement = (OMElement) messages.next();
-            OMAttribute lable = messageElement.getAttribute(new QName(LABEL));
+            OMAttribute lable = messageElement.getAttribute(new QName(TAG_LABEL));
 
             if (lable == null) {
                 throw new DeploymentException("message lebel can not be null");
             }
 
             AxisMessage message = new AxisMessage();
-            Iterator parameters = messageElement.getChildrenWithName(new QName(PARAMETER));
+            Iterator parameters = messageElement.getChildrenWithName(new QName(TAG_PARAMETER));
 
             processParameters(parameters, message, operation);
             operation.addMessage(message, lable.getAttributeValue().trim());
@@ -161,7 +161,7 @@ public class ServiceBuilder extends DescriptionBuilder {
         try {
             while (moduleRefs.hasNext()) {
                 OMElement moduleref = (OMElement) moduleRefs.next();
-                OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(REF));
+                OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(TAG_REFERENCE));
 
                 if (moduleRefAttribute != null) {
                     String refName = moduleRefAttribute.getAttributeValue();
@@ -184,7 +184,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             throws DeploymentException {
         while (moduleConfigs.hasNext()) {
             OMElement moduleConfig = (OMElement) moduleConfigs.next();
-            OMAttribute moduleName_att = moduleConfig.getAttribute(new QName(ATTNAME));
+            OMAttribute moduleName_att = moduleConfig.getAttribute(new QName(ATTRIBUTE_NAME));
 
             if (moduleName_att == null) {
                 throw new DeploymentException(
@@ -193,7 +193,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module), parent);
-                Iterator parameters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
+                Iterator parameters = moduleConfig.getChildrenWithName(new QName(TAG_PARAMETER));
 
                 processParameters(parameters, moduleConfiguration, parent);
                 operation.addModuleConfig(moduleConfiguration);
@@ -208,7 +208,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             OMElement operation = (OMElement) operationsIterator.next();
 
             // /getting operation name
-            OMAttribute op_name_att = operation.getAttribute(new QName(ATTNAME));
+            OMAttribute op_name_att = operation.getAttribute(new QName(ATTRIBUTE_NAME));
 
             if (op_name_att == null) {
                 throw new DeploymentException(
@@ -218,7 +218,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
 
             // setting the mep of the operation
-            OMAttribute op_mep_att = operation.getAttribute(new QName(MEP));
+            OMAttribute op_mep_att = operation.getAttribute(new QName(TAG_MEP));
             String mepurl = null;
 
             if (op_mep_att != null) {
@@ -241,13 +241,13 @@ public class ServiceBuilder extends DescriptionBuilder {
             log.info(Messages.getMessage(DeploymentErrorMsgs.OP_NOT_FOUN_IN_WSDL, opname));
 
             // Operation Parameters
-            Iterator parameters = operation.getChildrenWithName(new QName(PARAMETER));
+            Iterator parameters = operation.getChildrenWithName(new QName(TAG_PARAMETER));
             ArrayList wsamappings = processParameters(parameters, op_descrip, service);
 
             op_descrip.setWsamappingList(wsamappings);
 
             // loading the message receivers
-            OMElement receiverElement = operation.getFirstChildWithName(new QName(MESSAGERECEIVER));
+            OMElement receiverElement = operation.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVER));
 
             if (receiverElement != null) {
                 MessageReceiver messageReceiver = loadMessageReceiver(service.getClassLoader(),
@@ -263,12 +263,12 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
 
             // Process Module Refs
-            Iterator modules = operation.getChildrenWithName(new QName(MODULEST));
+            Iterator modules = operation.getChildrenWithName(new QName(TAG_MODULE));
 
             processOperationModuleRefs(modules, op_descrip);
 
             // processing Messages
-            Iterator messages = operation.getChildrenWithName(new QName(MESSGES));
+            Iterator messages = operation.getChildrenWithName(new QName(TAG_MESSAGE));
 
             processMessages(messages, op_descrip);
 
@@ -279,7 +279,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 info.setOperationPhases(op_descrip);
             }
 
-            Iterator moduleConfigs = operation.getChildrenWithName(new QName(MODULECONFIG));
+            Iterator moduleConfigs = operation.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
 
             processOperationModuleConfig(moduleConfigs, op_descrip, op_descrip);
 
@@ -295,7 +295,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             throws DeploymentException {
         while (moduleConfigs.hasNext()) {
             OMElement moduleConfig = (OMElement) moduleConfigs.next();
-            OMAttribute moduleName_att = moduleConfig.getAttribute(new QName(ATTNAME));
+            OMAttribute moduleName_att = moduleConfig.getAttribute(new QName(ATTRIBUTE_NAME));
 
             if (moduleName_att == null) {
                 throw new DeploymentException(
@@ -304,7 +304,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module), parent);
-                Iterator parameters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
+                Iterator parameters = moduleConfig.getChildrenWithName(new QName(TAG_PARAMETER));
 
                 processParameters(parameters, moduleConfiguration, parent);
                 service.addModuleConfig(moduleConfiguration);

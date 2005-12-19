@@ -60,54 +60,54 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             // processing Parameters
             // Processing service level parameters
-            Iterator itr = config_element.getChildrenWithName(new QName(PARAMETER));
+            Iterator itr = config_element.getChildrenWithName(new QName(TAG_PARAMETER));
 
             processParameters(itr, axisConfiguration, axisConfiguration);
 
             // process MessageReciver
-            Iterator msgRecives = config_element.getChildrenWithName(new QName(MESSAGERECEIVER));
+            Iterator msgRecives = config_element.getChildrenWithName(new QName(TAG_MESSAGE_RECEIVER));
 
             while (msgRecives.hasNext()) {
                 OMElement msgRev = (OMElement) msgRecives.next();
                 MessageReceiver msgrecivere =
                         loadMessageReceiver(Thread.currentThread().getContextClassLoader(), msgRev);
-                OMAttribute mepAtt = msgRev.getAttribute(new QName(MEP));
+                OMAttribute mepAtt = msgRev.getAttribute(new QName(TAG_MEP));
 
                 axisConfiguration.addMessageReceiver(mepAtt.getAttributeValue(), msgrecivere);
             }
 
             // Process Module refs
             Iterator moduleitr =
-                    config_element.getChildrenWithName(new QName(DeploymentConstants.MODULEST));
+                    config_element.getChildrenWithName(new QName(DeploymentConstants.TAG_MODULE));
 
             processModuleRefs(moduleitr);
 
             // Proccessing Transport Senders
-            Iterator trs_senders = config_element.getChildrenWithName(new QName(TRANSPORTSENDER));
+            Iterator trs_senders = config_element.getChildrenWithName(new QName(TAG_TRANSPORT_SENDER));
 
             processTransportSenders(trs_senders);
 
             // Proccessing Transport Receivers
-            Iterator trs_Reivers = config_element.getChildrenWithName(new QName(TRANSPORTRECEIVER));
+            Iterator trs_Reivers = config_element.getChildrenWithName(new QName(TAG_TRANSPORT_RECEIVER));
 
             processTransportReceivers(trs_Reivers);
 
             // Process Observers
-            Iterator obs_ittr = config_element.getChildrenWithName(new QName(LISTENERST));
+            Iterator obs_ittr = config_element.getChildrenWithName(new QName(TAG_LISTENER));
 
             processObservers(obs_ittr);
 
             // processing Phase orders
-            Iterator phaserders = config_element.getChildrenWithName(new QName(PHASE_ORDER));
+            Iterator phaseorders = config_element.getChildrenWithName(new QName(TAG_PHASE_ORDER));
 
-            processPhaseOrders(phaserders);
+            processPhaseOrders(phaseorders);
 
-            Iterator moduleConfigs = config_element.getChildrenWithName(new QName(MODULECONFIG));
+            Iterator moduleConfigs = config_element.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
 
             processModuleConfig(moduleConfigs, axisConfiguration, axisConfiguration);
 
             // setting host configuration
-            OMElement hostElement = config_element.getFirstChildWithName(new QName(HOST_CONFIG));
+            OMElement hostElement = config_element.getFirstChildWithName(new QName(TAG_HOST_CONFIG));
 
             if (hostElement != null) {
                 processHostCongiguration(hostElement, axisConfiguration);
@@ -142,7 +142,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             throws DeploymentException {
         while (moduleConfigs.hasNext()) {
             OMElement moduleConfig = (OMElement) moduleConfigs.next();
-            OMAttribute moduleName_att = moduleConfig.getAttribute(new QName(ATTNAME));
+            OMAttribute moduleName_att = moduleConfig.getAttribute(new QName(ATTRIBUTE_NAME));
 
             if (moduleName_att == null) {
                 throw new DeploymentException(
@@ -151,7 +151,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
                         new ModuleConfiguration(new QName(module), parent);
-                Iterator parameters = moduleConfig.getChildrenWithName(new QName(PARAMETER));
+                Iterator parameters = moduleConfig.getChildrenWithName(new QName(TAG_PARAMETER));
 
                 processParameters(parameters, moduleConfiguration, parent);
                 config.addModuleConfig(moduleConfiguration);
@@ -167,7 +167,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
     protected void processModuleRefs(Iterator moduleRefs) {
         while (moduleRefs.hasNext()) {
             OMElement moduleref = (OMElement) moduleRefs.next();
-            OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(REF));
+            OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(TAG_REFERENCE));
             String refName = moduleRefAttribute.getAttributeValue();
 
             engine.addModule(new QName(refName));
@@ -183,7 +183,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         while (oservers.hasNext()) {
             OMElement observerelement = (OMElement) oservers.next();
             AxisObserver observer;
-            OMAttribute trsClas = observerelement.getAttribute(new QName(CLASSNAME));
+            OMAttribute trsClas = observerelement.getAttribute(new QName(TAG_CLASS_NAME));
             String clasName;
 
             if (trsClas != null) {
@@ -201,7 +201,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
                 // processing Parameters
                 // Processing service level parameters
-                Iterator itr = observerelement.getChildrenWithName(new QName(PARAMETER));
+                Iterator itr = observerelement.getChildrenWithName(new QName(TAG_PARAMETER));
 
                 processParameters(itr, observer, axisConfiguration);
 
@@ -220,13 +220,13 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
     private ArrayList processPhaseList(OMElement phaseOrders) throws DeploymentException {
         ArrayList phaselist = new ArrayList();
-        Iterator phases = phaseOrders.getChildrenWithName(new QName(PHASE));
+        Iterator phases = phaseOrders.getChildrenWithName(new QName(TAG_PHASE));
 
         while (phases.hasNext()) {
             OMElement phaseelement = (OMElement) phases.next();
             String phaseName =
-                    phaseelement.getAttribute(new QName(ATTNAME)).getAttributeValue();
-            String phaseClass = phaseelement.getAttributeValue(new QName(CLASSNAME));
+                    phaseelement.getAttribute(new QName(ATTRIBUTE_NAME)).getAttributeValue();
+            String phaseClass = phaseelement.getAttributeValue(new QName(TAG_CLASS_NAME));
             Phase phase;
 
             try {
@@ -237,7 +237,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             phase.setName(phaseName);
 
-            Iterator handlers = phaseelement.getChildrenWithName(new QName(HANDERST));
+            Iterator handlers = phaseelement.getChildrenWithName(new QName(TAG_HANDLER));
 
             while (handlers.hasNext()) {
                 OMElement omElement = (OMElement) handlers.next();
@@ -269,15 +269,15 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
         while (phaserders.hasNext()) {
             OMElement phaseOrders = (OMElement) phaserders.next();
-            String flowType = phaseOrders.getAttribute(new QName(TYPE)).getAttributeValue();
+            String flowType = phaseOrders.getAttribute(new QName(TAG_TYPE)).getAttributeValue();
 
-            if (INFLOWST.equals(flowType)) {
+            if (TAG_FLOW_IN.equals(flowType)) {
                 info.setINPhases(processPhaseList(phaseOrders));
-            } else if (IN_FAILTFLOW.equals(flowType)) {
+            } else if (TAG_FLOW_IN_FAULT.equals(flowType)) {
                 info.setIN_FaultPhases(processPhaseList(phaseOrders));
-            } else if (OUTFLOWST.equals(flowType)) {
+            } else if (TAG_FLOW_OUT.equals(flowType)) {
                 info.setOUTPhases(processPhaseList(phaseOrders));
-            } else if (OUT_FAILTFLOW.equals(flowType)) {
+            } else if (TAG_FLOW_OUT_FAULT.equals(flowType)) {
                 info.setOUT_FaultPhases(processPhaseList(phaseOrders));
             }
         }
@@ -289,7 +289,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             OMElement transport = (OMElement) trs_senders.next();
 
             // getting transport Name
-            OMAttribute trsName = transport.getAttribute(new QName(ATTNAME));
+            OMAttribute trsName = transport.getAttribute(new QName(ATTRIBUTE_NAME));
 
             if (trsName != null) {
                 String name = trsName.getAttributeValue();
@@ -297,7 +297,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 transportIN = new TransportInDescription(new QName(name));
 
                 // transport impl class
-                OMAttribute trsClas = transport.getAttribute(new QName(CLASSNAME));
+                OMAttribute trsClas = transport.getAttribute(new QName(TAG_CLASS_NAME));
 
                 if (trsClas != null) {
                     try {
@@ -324,12 +324,12 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     // process Parameters
                     // processing Parameters
                     // Processing service level parameters
-                    Iterator itr = transport.getChildrenWithName(new QName(PARAMETER));
+                    Iterator itr = transport.getChildrenWithName(new QName(TAG_PARAMETER));
 
                     processParameters(itr, transportIN, axisConfiguration);
 
                     // process INFLOW
-                    OMElement inFlow = transport.getFirstChildWithName(new QName(INFLOWST));
+                    OMElement inFlow = transport.getFirstChildWithName(new QName(TAG_FLOW_IN));
 
                     if (inFlow != null) {
                         throw new DeploymentException(
@@ -337,21 +337,21 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                                         DeploymentErrorMsgs.INFLOW_NOT_ALLOWED_IN_TRS_OUT, name));
                     }
 
-                    OMElement outFlow = transport.getFirstChildWithName(new QName(OUTFLOWST));
+                    OMElement outFlow = transport.getFirstChildWithName(new QName(TAG_FLOW_OUT));
 
                     if (outFlow != null) {
                         transportIN.setInFlow(processFlow(outFlow, axisConfiguration));
                     }
 
                     OMElement inFaultFlow =
-                            transport.getFirstChildWithName(new QName(IN_FAILTFLOW));
+                            transport.getFirstChildWithName(new QName(TAG_FLOW_IN_FAULT));
 
                     if (inFaultFlow != null) {
                         transportIN.setFaultFlow(processFlow(inFaultFlow, axisConfiguration));
                     }
 
                     OMElement outFaultFlow =
-                            transport.getFirstChildWithName(new QName(OUT_FAILTFLOW));
+                            transport.getFirstChildWithName(new QName(TAG_FLOW_OUT_FAULT));
 
                     if (outFaultFlow != null) {
                         throw new DeploymentException(
@@ -374,7 +374,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             OMElement transport = (OMElement) trs_senders.next();
 
             // getting transport Name
-            OMAttribute trsName = transport.getAttribute(new QName(ATTNAME));
+            OMAttribute trsName = transport.getAttribute(new QName(ATTRIBUTE_NAME));
 
             if (trsName != null) {
                 String name = trsName.getAttributeValue();
@@ -382,7 +382,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 transportout = new TransportOutDescription(new QName(name));
 
                 // transport impl class
-                OMAttribute trsClas = transport.getAttribute(new QName(CLASSNAME));
+                OMAttribute trsClas = transport.getAttribute(new QName(TAG_CLASS_NAME));
 
                 if (trsClas == null) {
                     throw new DeploymentException(
@@ -403,12 +403,12 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     // process Parameters
                     // processing Parameters
                     // Processing service level parameters
-                    Iterator itr = transport.getChildrenWithName(new QName(PARAMETER));
+                    Iterator itr = transport.getChildrenWithName(new QName(TAG_PARAMETER));
 
                     processParameters(itr, transportout, axisConfiguration);
 
                     // process INFLOW
-                    OMElement inFlow = transport.getFirstChildWithName(new QName(INFLOWST));
+                    OMElement inFlow = transport.getFirstChildWithName(new QName(TAG_FLOW_IN));
 
                     if (inFlow != null) {
                         throw new DeploymentException(
@@ -416,14 +416,14 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                                         DeploymentErrorMsgs.INFLOW_NOT_ALLOWED_IN_TRS_OUT, name));
                     }
 
-                    OMElement outFlow = transport.getFirstChildWithName(new QName(OUTFLOWST));
+                    OMElement outFlow = transport.getFirstChildWithName(new QName(TAG_FLOW_OUT));
 
                     if (outFlow != null) {
                         transportout.setOutFlow(processFlow(outFlow, axisConfiguration));
                     }
 
                     OMElement inFaultFlow =
-                            transport.getFirstChildWithName(new QName(IN_FAILTFLOW));
+                            transport.getFirstChildWithName(new QName(TAG_FLOW_IN_FAULT));
 
                     if (inFaultFlow != null) {
                         throw new DeploymentException(
@@ -432,7 +432,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     }
 
                     OMElement outFaultFlow =
-                            transport.getFirstChildWithName(new QName(OUT_FAILTFLOW));
+                            transport.getFirstChildWithName(new QName(TAG_FLOW_OUT_FAULT));
 
                     if (outFaultFlow != null) {
                         transportout.setFaultFlow(processFlow(outFaultFlow, axisConfiguration));

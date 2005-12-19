@@ -74,7 +74,7 @@ public class ArchiveReader implements DeploymentConstants {
 
         rootelementName = services.getLocalName();
 
-        if (SERVICE_ELEMENT.equals(rootelementName)) {
+        if (TAG_SERVICE.equals(rootelementName)) {
             AxisService axisService = (AxisService) wsdlServices.get(
                     DescriptionBuilder.getShortFileName(
                             engine.getCurrentFileItem().getName()));
@@ -94,7 +94,7 @@ public class ArchiveReader implements DeploymentConstants {
             serviceList.add(service);
 
             return serviceList;
-        } else if (SERVICE_GROUP_ELEMENT.equals(rootelementName)) {
+        } else if (TAG_SERVICE_GROUP.equals(rootelementName)) {
             ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(services, wsdlServices,
                     axisConfig);
             return groupBuilder.populateServiceGroup(axisServiceGroup);
@@ -208,7 +208,7 @@ public class ArchiveReader implements DeploymentConstants {
                 ZipEntry entry;
 
                 while ((entry = zin.getNextEntry()) != null) {
-                    if (entry.getName().equals(SERVICEXML)) {
+                    if (entry.getName().equals(SERVICES_XML)) {
                         axisServiceGroup.setServiceGroupName(
                                 DescriptionBuilder.getShortFileName(
                                         engine.getCurrentFileItem().getName()));
@@ -222,7 +222,7 @@ public class ArchiveReader implements DeploymentConstants {
                 throw new DeploymentException(e);
             }
         } else {
-            File file = new File(filename, SERVICEXML);
+            File file = new File(filename, SERVICES_XML);
 
             if (file.exists()) {
                 InputStream in;
@@ -387,7 +387,7 @@ public class ArchiveReader implements DeploymentConstants {
                 ZipEntry entry;
 
                 while ((entry = zin.getNextEntry()) != null) {
-                    if (entry.getName().equals(MODULEXML)) {
+                    if (entry.getName().equals(MODULE_XML)) {
                         foundmoduleXML = true;
 
                         ModuleBuilder builder = new ModuleBuilder(zin, module, axisConfig);
@@ -414,7 +414,7 @@ public class ArchiveReader implements DeploymentConstants {
                 throw new DeploymentException(e);
             }
         } else {
-            File file = new File(filename, MODULEXML);
+            File file = new File(filename, MODULE_XML);
 
             if (file.exists()) {
                 InputStream in;

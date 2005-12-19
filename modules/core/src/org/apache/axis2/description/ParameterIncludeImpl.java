@@ -65,7 +65,7 @@ public class ParameterIncludeImpl implements ParameterInclude {
      */
     public void deserializeParameters(OMElement parameters) throws AxisFault {
         Iterator iterator =
-                parameters.getChildrenWithName(new QName(DeploymentConstants.PARAMETER));
+                parameters.getChildrenWithName(new QName(DeploymentConstants.TAG_PARAMETER));
 
         while (iterator.hasNext()) {
 
@@ -78,7 +78,7 @@ public class ParameterIncludeImpl implements ParameterInclude {
 
             // setting parameter Name
             OMAttribute paraName =
-                    parameterElement.getAttribute(new QName(DeploymentConstants.ATTNAME));
+                    parameterElement.getAttribute(new QName(DeploymentConstants.ATTRIBUTE_NAME));
 
             parameter.setName(paraName.getAttributeValue());
 
@@ -97,7 +97,7 @@ public class ParameterIncludeImpl implements ParameterInclude {
 
             // setting locking attribute
             OMAttribute paraLocked =
-                    parameterElement.getAttribute(new QName(DeploymentConstants.ATTLOCKED));
+                    parameterElement.getAttribute(new QName(DeploymentConstants.ATTRIBUTE_LOCKED));
 
             if (paraLocked != null) {
                 String lockedValue = paraLocked.getAttributeValue();

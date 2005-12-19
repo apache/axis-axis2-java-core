@@ -335,7 +335,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
         try {
             this.setPhasesinfo(config.getPhasesInfo());
-            currentArchiveFile = new ArchiveFileData(modulearchive, MODULE);
+            currentArchiveFile = new ArchiveFileData(modulearchive, TYPE_MODULE);
             axismodule = new ModuleDescription();
             axismodule.setModuleClassLoader(currentArchiveFile.getClassLoader());
 
@@ -416,7 +416,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                     ClassLoader classLoader, AxisConfiguration axisConfig)
             throws DeploymentException {
         try {
-            currentArchiveFile = new ArchiveFileData(SERVICE, "");
+            currentArchiveFile = new ArchiveFileData(TYPE_SERVICE, "");
             currentArchiveFile.setClassLoader(classLoader);
 
             ServiceBuilder builder = new ServiceBuilder(serviceInputStream, axisConfig,
@@ -498,7 +498,7 @@ public class DeploymentEngine implements DeploymentConstants {
                     StringWriter errorWriter = new StringWriter();
 
                     switch (type) {
-                        case SERVICE :
+                        case TYPE_SERVICE :
                             currentArchiveFile.setClassLoader(explodedDir,
                                     axisConfig.getServiceClassLoader());
                             archiveReader = new ArchiveReader();
@@ -561,7 +561,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
                             break;
 
-                        case MODULE :
+                        case TYPE_MODULE :
                             currentArchiveFile.setClassLoader(explodedDir,
                                     axisConfig.getModuleClassLoader());
                             archiveReader = new ArchiveReader();
@@ -760,7 +760,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 for (int i = 0; i < wsToUnDeploy.size(); i++) {
                     WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
 
-                    if (wsInfo.getType() == SERVICE) {
+                    if (wsInfo.getType() == TYPE_SERVICE) {
                         serviceName = getAxisServiceName(wsInfo.getFileName());
 
                         // todo fix me deepal
@@ -903,8 +903,8 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     private void setDeploymentFeatures() {
         String value;
-        Parameter parahotdeployment = axisConfig.getParameter(HOTDEPLOYMENT);
-        Parameter parahotupdate = axisConfig.getParameter(HOTUPDATE);
+        Parameter parahotdeployment = axisConfig.getParameter(TAG_HOT_DEPLOYMENT);
+        Parameter parahotupdate = axisConfig.getParameter(TAG_HOT_UPDATE);
 
         if (parahotdeployment != null) {
             value = (String) parahotdeployment.getValue();
