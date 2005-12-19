@@ -58,7 +58,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class XMLBeansExtension extends AbstractDatabindProcessingExtension {
+public class XMLBeansExtension extends AbstractDBProcessingExtension {
     public static final String SCHEMA_FOLDER = "schemas";
 
     public static String MAPPINGS = "mappings";

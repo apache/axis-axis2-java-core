@@ -16,7 +16,6 @@
 
 package org.apache.axis2.wsdl.codegen.writer;
 
-import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 
 import java.io.File;
@@ -25,7 +24,7 @@ import java.util.Map;
 
 public class DatabindingSupportClassWriter extends ClassWriter {
 
-    private String databindingFramework = ConfigPropertyFileLoader.getDefaultDBFramworkName();
+    private String databindingFramework = ConfigPropertyFileLoader.getDefaultDBFrameworkName();
 
     public DatabindingSupportClassWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);

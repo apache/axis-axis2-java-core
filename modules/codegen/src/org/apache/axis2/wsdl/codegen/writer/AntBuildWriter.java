@@ -25,7 +25,7 @@ import java.util.Iterator;
 
 public class AntBuildWriter extends ClassWriter{
 
-    private String databindingFramework = ConfigPropertyFileLoader.getDefaultDBFramworkName();
+    private String databindingFramework = ConfigPropertyFileLoader.getDefaultDBFrameworkName();
 
      public AntBuildWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);

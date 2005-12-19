@@ -23,7 +23,7 @@ public class ConfigPropertyFileLoader {
     private static Map databindingFrameworkNameToExtensionMap;
 
     private static String defaultLanguage;
-    private static String defaultDBFramworkName;
+    private static String defaultDBFrameworkName;
 
     private static final String CODE_GEN_KEY_PREFIX = "codegen.extension";
     private static final String THIRD_PARTY_SCHEMA_KEY_PREFIX = "codegen.thirdparty.schema";
@@ -91,7 +91,7 @@ public class ConfigPropertyFileLoader {
             if (tempString==null || !databindingFrameworkNameToExtensionMap.containsKey(tempString)) {
                 throw new Exception("Unknown framework specified for default!");
             }
-            defaultDBFramworkName = tempString;
+            defaultDBFrameworkName = tempString;
             //load the third party schema names
             tempString = props.getProperty(THIRD_PARTY_SCHEMA_KEY_PREFIX);
             if (tempString!=null){
@@ -224,7 +224,7 @@ public class ConfigPropertyFileLoader {
      * get the default DB framwork name
      * @return
      */
-    public static String getDefaultDBFramworkName() {
-        return defaultDBFramworkName;
+    public static String getDefaultDBFrameworkName() {
+        return defaultDBFrameworkName;
     }
 }

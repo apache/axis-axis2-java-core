@@ -19,7 +19,7 @@ import java.util.Map;
  * limitations under the License.
  */
 
-public abstract class AbstractDatabindProcessingExtension extends AbstractCodeGenerationExtension{
+public abstract class AbstractDBProcessingExtension extends AbstractCodeGenerationExtension{
 
     /**
      * Method to test whether the passed in framework name is

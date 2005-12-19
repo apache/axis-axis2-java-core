@@ -40,7 +40,7 @@ import java.util.Vector;
  * Work in progress to test simple DataBinding with the XmlSchema lib
  *
  */
-public class SimpleDBExtension extends AbstractDatabindProcessingExtension {
+public class SimpleDBExtension extends AbstractDBProcessingExtension {
     public static final String ADB_PACKAGE_NAME_PREFIX = "adb.";
 
     public void init(CodeGenConfiguration configuration) {

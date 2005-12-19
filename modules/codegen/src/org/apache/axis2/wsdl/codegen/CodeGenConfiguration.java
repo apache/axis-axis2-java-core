@@ -32,7 +32,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     
     //get the defaults for these from the property file
     private String outputLanguage = ConfigPropertyFileLoader.getDefaultLanguage();
-    private String databindingType = ConfigPropertyFileLoader.getDefaultDBFramworkName();
+    private String databindingType = ConfigPropertyFileLoader.getDefaultDBFrameworkName();
     private boolean advancedCodeGenEnabled = false;
 
 
