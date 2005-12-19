@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMConstants;
+import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
@@ -612,7 +613,12 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	}
 
     public OMNamespace findNamespaceURI(String prefix) {
-        return (OMNamespace)this.namespaces.get(prefix);
+        OMNamespace ns = (OMNamespace) this.namespaces.get(prefix);
+        if (ns == null && this.parentNode instanceof OMElement) {
+            // try with the parent
+            ns = ((OMElement) this.parentNode).findNamespaceURI(prefix);
+        }
+        return ns;
     }
 
     /**
@@ -1062,11 +1068,14 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     
     /**
      * return the namespace uri, given the prefix
+     * if its not found at the this element it will 
+     * search the parent
      * @param prefix
      * @return namespace
      */
     public String getNamespaceURI(String prefix) {
-    	return ((OMNamespace)this.namespaces.get(prefix)).getName();
+    	OMNamespace ns = this.findNamespaceURI(prefix);
+    	return (ns != null) ? ns.getName() : null;
     }
     
     /**
@@ -1083,7 +1092,6 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     	} else {
     		return false;
     	}
-    	
     }
     
     

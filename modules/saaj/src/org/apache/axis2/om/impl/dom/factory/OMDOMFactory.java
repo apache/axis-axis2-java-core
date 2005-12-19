@@ -241,7 +241,7 @@ public class OMDOMFactory implements OMFactory {
 	}
 	
 	public DocumentImpl getDocument() {
-		return this.document;
+		return (DocumentImpl)this.createOMDocument();
 	}
 
 

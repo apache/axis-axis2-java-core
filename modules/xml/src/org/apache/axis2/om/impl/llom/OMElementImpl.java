@@ -331,9 +331,6 @@ public class OMElementImpl extends OMNodeImpl
             }
         }
 
-//        if (namespace == null && uri != null && prefix != null) {
-//            namespace = declareNamespace(uri, prefix);
-//        }
         return namespace;
     }
 
@@ -343,7 +340,7 @@ public class OMElementImpl extends OMNodeImpl
             // try with the parent
             ns = ((OMElement) this.parent).findNamespaceURI(prefix);
         }
-        return ns;  //To change body of implemented methods use File | Settings | File Templates.
+        return ns;
     }
 
     /**

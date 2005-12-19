@@ -42,4 +42,12 @@ public class ScenarioST1Test extends InteropTestBase {
 		return SCENARIO_ST1_SERVICE_REPOSITORY;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.security.InteropTestBase#useSOAP12()
+	 */
+	protected boolean isUseSOAP12InStaticConfigTest() {
+		// TODO TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
 }

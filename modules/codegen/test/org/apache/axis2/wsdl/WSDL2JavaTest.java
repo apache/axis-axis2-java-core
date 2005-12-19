@@ -39,7 +39,7 @@ public class WSDL2JavaTest extends TestCase{
     public static final String OUTPUT_LOCATION_PREFIX = "/test";
     private static int folderCount = 0;
     // public static final String OUTPUT_LOCATION_BASE = "C:\\GeneratedCode\\test4\\src";
-    public static final String WSDL_BASE_DIR = "./test-resources/";
+    public static final String WSDL_BASE_DIR = "test-resources/";
     public static final String CLASSES_DIR = "/target/classes/";
     private String[] moduleNames={"xml","common","core"};
     private static final String MODULE_PATH_PREFIX = "../modules/";

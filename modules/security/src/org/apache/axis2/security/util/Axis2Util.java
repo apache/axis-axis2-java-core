@@ -24,16 +24,17 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.axis2.om.DOOMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.trust.TrustException;
 import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
-import org.apache.ws.security.SOAPConstants;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.xml.security.utils.XMLUtils;
 import org.w3c.dom.Document;
@@ -54,7 +55,19 @@ public class Axis2Util {
 			throws WSSecurityException {
 		try {
 			env.build();
-			StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(env.getXMLStreamReader(),new SOAP11Factory(), SOAPConstants.SOAP11_CONSTANTS.getEnvelopeURI());
+			
+			//Check the namespace and find SOAP version and factory
+			String nsURI = null;
+			SOAPFactory factory;
+			if(env.getNamespace().getName().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+				nsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+				factory = DOOMAbstractFactory.getSOAP11Factory();
+			} else {
+				nsURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+				factory = DOOMAbstractFactory.getSOAP11Factory();
+			}
+			
+			StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(env.getXMLStreamReader(),factory, nsURI);
 			SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
 			envelope.build();
 			
@@ -69,7 +82,7 @@ public class Axis2Util {
 
 	public static SOAPEnvelope getSOAPEnvelopeFromDOOMDocument(DocumentImpl doc) {
         OMElement docElem = (OMElement)doc.getDocumentElement();
-        StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(docElem.getXMLStreamReader(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(docElem.getXMLStreamReader(), null);
         return stAXSOAPModelBuilder.getSOAPEnvelope();
 	}
 	

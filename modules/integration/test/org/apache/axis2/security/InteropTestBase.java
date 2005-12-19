@@ -113,23 +113,23 @@ public abstract class InteropTestBase extends TestCase {
 	 * Do test
 	 */
     public void testInteropWithConfigFiles() {
-//    	try {
-//    		InteropScenarioClient client = new InteropScenarioClient();
-//    		client.invokeWithStaticConfig(Constants.TESTING_PATH + getClientRepo(),targetEpr);
-//    	} catch (Exception e) {
-//    		e.printStackTrace();
-//    		fail("Error in introperating with " + targetEpr + ", client configuration: " + getClientRepo());
-//    	}
+    	try {
+    		InteropScenarioClient client = new InteropScenarioClient(this.isUseSOAP12InStaticConfigTest());
+    		client.invokeWithStaticConfig(Constants.TESTING_PATH + getClientRepo(),targetEpr);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		fail("Error in introperating with " + targetEpr + ", client configuration: " + getClientRepo());
+    	}
     }
 
     public void testInteropWithDynamicConfig() {
-//    	try {
-//    		InteropScenarioClient client = new InteropScenarioClient();
-//    		client.invokeWithGivenConfig(Constants.TESTING_PATH + DEFAULT_CLIENT_REPOSITORY,targetEpr,getOutflowConfiguration(), getInflowConfiguration());
-//    	} catch (Exception e) {
-//    		e.printStackTrace();
-//    		fail("Error in introperating with " + targetEpr + ", client configuration: " + getClientRepo());
-//    	}
+    	try {
+    		InteropScenarioClient client = new InteropScenarioClient(this.isUseSOAP12InStaticConfigTest());
+    		client.invokeWithGivenConfig(Constants.TESTING_PATH + DEFAULT_CLIENT_REPOSITORY,targetEpr,getOutflowConfiguration(), getInflowConfiguration());
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		fail("Error in introperating with " + targetEpr + ", client configuration: " + getClientRepo());
+    	}
 
     }
     
@@ -140,4 +140,6 @@ public abstract class InteropTestBase extends TestCase {
     protected abstract String getClientRepo();
     
     protected abstract String getServiceRepo();
+    
+    protected abstract boolean isUseSOAP12InStaticConfigTest();
 }

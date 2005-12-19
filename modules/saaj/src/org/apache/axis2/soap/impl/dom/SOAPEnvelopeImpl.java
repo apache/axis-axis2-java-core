@@ -61,6 +61,7 @@ public class SOAPEnvelopeImpl extends SOAPElement implements SOAPEnvelope,
 	public SOAPEnvelopeImpl(OMNamespace ns, SOAPFactory factory) {
 		super(((DOMSOAPFactory) factory).getDocument(),
 				SOAPConstants.SOAPENVELOPE_LOCAL_NAME, ns);
+		this.getOwnerDocument().appendChild(this);
 		this.factory = factory;
 	}
 

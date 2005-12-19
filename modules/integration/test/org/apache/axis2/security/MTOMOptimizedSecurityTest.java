@@ -58,5 +58,12 @@ public class MTOMOptimizedSecurityTest extends InteropTestBase {
 	protected String getServiceRepo() {
 		return MTOM_SEC_SERVICE_REPOSITORY;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.security.InteropTestBase#useSOAP12()
+	 */
+	protected boolean isUseSOAP12InStaticConfigTest() {
+		return true;
+	}
 	
 }

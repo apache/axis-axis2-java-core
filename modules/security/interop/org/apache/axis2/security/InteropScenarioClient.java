@@ -26,6 +26,8 @@ import org.apache.axis2.oasis.ping.databinding.org.xmlsoap.TicketType;
 import org.apache.axis2.security.handler.WSSHandlerConstants;
 import org.apache.axis2.security.handler.config.InflowConfiguration;
 import org.apache.axis2.security.handler.config.OutflowConfiguration;
+import org.apache.axis2.soap.SOAP11Constants;
+import org.apache.axis2.soap.SOAP12Constants;
 
 
 /**
@@ -34,7 +36,14 @@ import org.apache.axis2.security.handler.config.OutflowConfiguration;
  */
 public class InteropScenarioClient {
 
-
+	String soapNsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+	
+	public InteropScenarioClient(boolean useSOAP12InStaticConfigTest) {
+		if(useSOAP12InStaticConfigTest) {
+			soapNsURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+		}
+	}
+	
     public void invokeWithStaticConfig(String clientRepo, String url) throws Exception {
         TicketType ticket = TicketType.Factory.newInstance();
         ticket.setId("My ticket Id");
@@ -51,7 +60,8 @@ public class InteropScenarioClient {
         //Enable MTOM to those scenarios where they are configured using:
         //<optimizeParts>xpathExpression</optimizeParts>
         stub._getClientOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-
+        stub._getClientOptions().setSoapVersionURI(soapNsURI);
+        
         PingResponseDocument pingResDoc = stub.Ping(pingDoc);
 
         PingResponse pingRes = pingResDoc.getPingResponse();
@@ -66,16 +76,16 @@ public class InteropScenarioClient {
         Ping ping = Ping.Factory.newInstance();
         ping.setText("Testing axis2-wss4j module");
         ping.setTicket(ticket);
-
+        
         PingDocument pingDoc = PingDocument.Factory.newInstance();
         pingDoc.setPing(ping);
 
         PingPortStub stub = new PingPortStub(clientRepo,url);
-
+        
         //Enable MTOM to those scenarios where they are configured using:
         //<optimizeParts>xpathExpression</optimizeParts>
         stub._getClientOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-
+        
         //Engage the security module
         stub.engageModule("security");
 
