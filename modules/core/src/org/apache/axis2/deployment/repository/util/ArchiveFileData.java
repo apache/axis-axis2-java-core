@@ -28,8 +28,8 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * ArchiveFileData = Hot Deployment File Item , to store infromation of the module or servise
- * item to be deploy
+ * ArchiveFileData = Hot Deployment File Item, stores infromation about the module or service
+ * item to be deployed
  */
 public class ArchiveFileData {
     private File file = null;

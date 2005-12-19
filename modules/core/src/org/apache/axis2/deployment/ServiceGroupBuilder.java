@@ -34,12 +34,12 @@ import java.util.Iterator;
 
 public class ServiceGroupBuilder extends DescriptionBuilder {
     private AxisConfiguration axisConfig;
-    private OMElement servcice;
+    private OMElement serviceElement;
     private HashMap wsdlServices;
 
-    public ServiceGroupBuilder(OMElement servcice, HashMap wsdlServices,
+    public ServiceGroupBuilder(OMElement service, HashMap wsdlServices,
                                AxisConfiguration axisConfig) {
-        this.servcice = servcice;
+        this.serviceElement = service;
         this.wsdlServices = wsdlServices;
         this.axisConfig = axisConfig;
         super.axisConfig = axisConfig;
@@ -52,21 +52,21 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
         try {
 
             // Processing service level parameters
-            Iterator itr = servcice.getChildrenWithName(new QName(TAG_PARAMETER));
+            Iterator itr = serviceElement.getChildrenWithName(new QName(TAG_PARAMETER));
 
             processParameters(itr, axisServiceGroup, axisServiceGroup.getParent());
 
-            Iterator moduleConfigs = servcice.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
+            Iterator moduleConfigs = serviceElement.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
 
             processServiceModuleConfig(moduleConfigs, axisServiceGroup.getParent(),
                     axisServiceGroup);
 
             // processing servicewide modules which required to engage gloabally
-            Iterator moduleRefs = servcice.getChildrenWithName(new QName(TAG_MODULE));
+            Iterator moduleRefs = serviceElement.getChildrenWithName(new QName(TAG_MODULE));
 
             processModuleRefs(moduleRefs, axisServiceGroup);
 
-            Iterator serviceitr = servcice.getChildrenWithName(new QName(TAG_SERVICE));
+            Iterator serviceitr = serviceElement.getChildrenWithName(new QName(TAG_SERVICE));
 
             while (serviceitr.hasNext()) {
                 OMElement service = (OMElement) serviceitr.next();
@@ -101,7 +101,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
     }
 
     /**
-     * To get the list og modules that is requird to be engage globally
+     * To get the list of modules that is required to be engaged globally
      *
      * @param moduleRefs <code>java.util.Iterator</code>
      * @throws DeploymentException <code>DeploymentException</code>

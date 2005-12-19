@@ -47,9 +47,9 @@ public class AxisConfigBuilder extends DescriptionBuilder {
     private AxisConfiguration axisConfiguration;
     private DeploymentEngine engine;
 
-    public AxisConfigBuilder(InputStream serviceInputSteram, DeploymentEngine engine,
+    public AxisConfigBuilder(InputStream serviceInputStream, DeploymentEngine engine,
                              AxisConfiguration axisConfiguration) {
-        super(serviceInputSteram, axisConfiguration);
+        super(serviceInputStream, axisConfiguration);
         this.axisConfiguration = axisConfiguration;
         this.engine = engine;
     }

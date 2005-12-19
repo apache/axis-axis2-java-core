@@ -44,9 +44,9 @@ public class ModuleBuilder extends DescriptionBuilder {
     private AxisConfiguration axisConfig;
     private ModuleDescription module;
 
-    public ModuleBuilder(InputStream serviceInputSteram, ModuleDescription module,
+    public ModuleBuilder(InputStream serviceInputStream, ModuleDescription module,
                          AxisConfiguration axisConfig) {
-        super(serviceInputSteram, axisConfig);
+        super(serviceInputStream, axisConfig);
         this.axisConfig = axisConfig;
         this.module = module;
     }
@@ -166,7 +166,7 @@ public class ModuleBuilder extends DescriptionBuilder {
                 op_descrip = new InOnlyAxisOperation();
             } else {
                 try {
-                    op_descrip = AxisOperationFactory.getOperetionDescription(mepURL);
+                    op_descrip = AxisOperationFactory.getOperationDescription(mepURL);
                 } catch (AxisFault axisFault) {
                     throw new DeploymentException(
                             Messages.getMessage(

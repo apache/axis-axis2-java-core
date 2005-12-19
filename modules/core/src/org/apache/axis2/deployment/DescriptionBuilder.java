@@ -52,13 +52,13 @@ public class DescriptionBuilder implements DeploymentConstants {
     protected Log log = LogFactory.getLog(getClass());
     protected AxisConfiguration axisConfig;
 
-    protected InputStream des_inputStream;
+    protected InputStream descriptionStream;
 
     public DescriptionBuilder() {
     }
 
     public DescriptionBuilder(InputStream serviceInputStream, AxisConfiguration axisConfig) {
-        this.des_inputStream = serviceInputStream;
+        this.descriptionStream = serviceInputStream;
         this.axisConfig = axisConfig;
     }
 
@@ -72,7 +72,7 @@ public class DescriptionBuilder implements DeploymentConstants {
      */
     public OMElement buildOM() throws XMLStreamException {
         XMLStreamReader xmlReader =
-                XMLInputFactory.newInstance().createXMLStreamReader(des_inputStream);
+                XMLInputFactory.newInstance().createXMLStreamReader(descriptionStream);
         OMFactory fac = OMAbstractFactory.getOMFactory();
         StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
         OMElement element = staxOMBuilder.getDocumentElement();
@@ -84,8 +84,7 @@ public class DescriptionBuilder implements DeploymentConstants {
 
     protected MessageReceiver loadDefaultMessageReceiver() throws DeploymentException {
         MessageReceiver receiver;
-        String defaultMessageReceiver =
-                "org.apache.axis2.receivers.RawXMLINOutMessageReceiver";
+        String defaultMessageReceiver = DEFAULT_MESSAGE_RECEIVER;
 
         try {
 
@@ -99,17 +98,17 @@ public class DescriptionBuilder implements DeploymentConstants {
         } catch (ClassNotFoundException e) {
             throw new DeploymentException(
                     Messages.getMessage(
-                            DeploymentErrorMsgs.ERROR_IN_LOADING_MR, "ClassNotFoundException",
+                            DeploymentErrorMsgs.ERROR_IN_LOADING_MESSAGE_RECEIVER, "ClassNotFoundException",
                             defaultMessageReceiver));
         } catch (IllegalAccessException e) {
             throw new DeploymentException(
                     Messages.getMessage(
-                            DeploymentErrorMsgs.ERROR_IN_LOADING_MR, "IllegalAccessException",
+                            DeploymentErrorMsgs.ERROR_IN_LOADING_MESSAGE_RECEIVER, "IllegalAccessException",
                             defaultMessageReceiver));
         } catch (InstantiationException e) {
             throw new DeploymentException(
                     Messages.getMessage(
-                            DeploymentErrorMsgs.ERROR_IN_LOADING_MR, "InstantiationException",
+                            DeploymentErrorMsgs.ERROR_IN_LOADING_MESSAGE_RECEIVER, "InstantiationException",
                             defaultMessageReceiver));
         }
 
@@ -132,15 +131,15 @@ public class DescriptionBuilder implements DeploymentConstants {
         } catch (ClassNotFoundException e) {
             throw new DeploymentException(
                     Messages.getMessage(
-                            DeploymentErrorMsgs.ERROR_IN_LOADING_MR, "ClassNotFoundException", className));
+                            DeploymentErrorMsgs.ERROR_IN_LOADING_MESSAGE_RECEIVER, "ClassNotFoundException", className));
         } catch (IllegalAccessException e) {
             throw new DeploymentException(
                     Messages.getMessage(
-                            DeploymentErrorMsgs.ERROR_IN_LOADING_MR, "IllegalAccessException", className));
+                            DeploymentErrorMsgs.ERROR_IN_LOADING_MESSAGE_RECEIVER, "IllegalAccessException", className));
         } catch (InstantiationException e) {
             throw new DeploymentException(
                     Messages.getMessage(
-                            DeploymentErrorMsgs.ERROR_IN_LOADING_MR, "InstantiationException", className));
+                            DeploymentErrorMsgs.ERROR_IN_LOADING_MESSAGE_RECEIVER, "InstantiationException", className));
         }
 
         return receiver;
@@ -198,7 +197,7 @@ public class DescriptionBuilder implements DeploymentConstants {
 
         if (class_attribute == null) {
             throw new DeploymentException((Messages.getMessage(DeploymentErrorMsgs.INVALID_HANDLER,
-                    "class name missing")));
+                    "class name is missing")));
         } else {
             handler.setClassName(class_attribute.getAttributeValue());
         }
@@ -208,7 +207,7 @@ public class DescriptionBuilder implements DeploymentConstants {
 
         if (order_element == null) {
             throw new DeploymentException((Messages.getMessage(DeploymentErrorMsgs.INVALID_HANDLER,
-                    "phase rule does not specify")));
+                    "phase rule has not been specified")));
         } else {
             Iterator order_itr = order_element.getAllAttributes();
 
@@ -226,17 +225,17 @@ public class DescriptionBuilder implements DeploymentConstants {
                 } else if (TAG_PHASE_FIRST.equals(name)) {
                     String boolval = getValue(value);
 
-                    if (boolval.equals("true")) {
+                    if (boolval.equals(BOOLEAN_TRUE)) {
                         handler.getRules().setPhaseFirst(true);
-                    } else if (boolval.equals("false")) {
+                    } else if (boolval.equals(BOOLEAN_FALSE)) {
                         handler.getRules().setPhaseFirst(false);
                     }
                 } else if (TAG_PHASE_LAST.equals(name)) {
                     String boolval = getValue(value);
 
-                    if (boolval.equals("true")) {
+                    if (boolval.equals(BOOLEAN_TRUE)) {
                         handler.getRules().setPhaseLast(true);
-                    } else if (boolval.equals("false")) {
+                    } else if (boolval.equals(BOOLEAN_FALSE)) {
                         handler.getRules().setPhaseLast(false);
                     }
                 }
@@ -300,19 +299,19 @@ public class DescriptionBuilder implements DeploymentConstants {
             parameter.setParameterElement(parameterElement);
 
             // setting parameter Name
-            OMAttribute paraName = parameterElement.getAttribute(new QName(ATTRIBUTE_NAME));
+            OMAttribute paramName = parameterElement.getAttribute(new QName(ATTRIBUTE_NAME));
 
-            if (paraName == null) {
+            if (paramName == null) {
                 throw new DeploymentException(
-                        Messages.getMessage(DeploymentErrorMsgs.BAD_PARA_ARGU));
+                        Messages.getMessage(DeploymentErrorMsgs.BAD_PARAMETER_ARGUMENT));
             }
 
-            parameter.setName(paraName.getAttributeValue());
+            parameter.setName(paramName.getAttributeValue());
 
             // setting parameter Value (the chiled elemnt of the parameter)
-            OMElement paraValue = parameterElement.getFirstElement();
+            OMElement paramValue = parameterElement.getFirstElement();
 
-            if (paraValue != null) {
+            if (paramValue != null) {
                 parameter.setValue(parameterElement);
                 parameter.setParameterType(Parameter.OM_PARAMETER);
             } else {
@@ -323,17 +322,17 @@ public class DescriptionBuilder implements DeploymentConstants {
             }
 
             // setting locking attribute
-            OMAttribute paraLocked = parameterElement.getAttribute(new QName(ATTRIBUTE_LOCKED));
-            Parameter parentpara = null;
+            OMAttribute paramLocked = parameterElement.getAttribute(new QName(ATTRIBUTE_LOCKED));
+            Parameter parentParam = null;
 
             if (parent != null) {
-                parentpara = parent.getParameter(parameter.getName());
+                parentParam = parent.getParameter(parameter.getName());
             }
 
-            if (paraLocked != null) {
-                String lockedValue = paraLocked.getAttributeValue();
+            if (paramLocked != null) {
+                String lockedValue = paramLocked.getAttributeValue();
 
-                if ("true".equals(lockedValue)) {
+                if (BOOLEAN_TRUE.equals(lockedValue)) {
 
                     // if the parameter is locked at some level parameter value replace by that
                     if ((parent != null) && parent.isParameterLocked(parameter.getName())) {
@@ -348,7 +347,7 @@ public class DescriptionBuilder implements DeploymentConstants {
                 }
             }
 
-            if (Constants.WSA_ACTION.equals(paraName.getAttributeValue())) {
+            if (Constants.WSA_ACTION.equals(paramName.getAttributeValue())) {
                 wsamapping.add(parameter);
 
                 // no need to add this parameter , since this is just for mapping
@@ -357,7 +356,7 @@ public class DescriptionBuilder implements DeploymentConstants {
 
             try {
                 if (parent != null) {
-                    if ((parentpara == null) || !parent.isParameterLocked(parameter.getName())) {
+                    if ((parentParam == null) || !parent.isParameterLocked(parameter.getName())) {
                         parameterInclude.addParameter(parameter);
                     }
                 } else {
@@ -379,7 +378,7 @@ public class DescriptionBuilder implements DeploymentConstants {
      * @return String
      */
     public static String getShortFileName(String fileName) {
-        char seperator = '.';
+        char seperator = SEPARATOR_DOT;
         String value;
         int index = fileName.lastIndexOf(seperator);
 
@@ -399,7 +398,7 @@ public class DescriptionBuilder implements DeploymentConstants {
      * @return String
      */
     protected String getValue(String in) {
-        char seperator = ':';
+        char seperator = SEPARATOR_COLON;
         String value;
         int index = in.indexOf(seperator);
 

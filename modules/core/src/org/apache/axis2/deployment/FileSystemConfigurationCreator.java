@@ -30,24 +30,26 @@ public class FileSystemConfigurationCreator implements AxisConfigurationCreator 
     private boolean isServer;
     private String repoLocation;
 
+    /**
+     * Load an AxisConfiguration from the repository directory specified
+     * 
+     * @param repoLocation
+     * @param isServer
+     */
     public FileSystemConfigurationCreator(String repoLocation, boolean isServer) {
         this.repoLocation = repoLocation;
         this.isServer = isServer;
     }
 
     /**
-     * First create a Deployment engine and using that , crate an AxisConfiguration , and the
-     * Deployment Engine is totally file system dependent.
+     * First create a Deployment engine, use that to create an AxisConfiguration
      *
-     * @return
+     * @return Axis Configuration
      * @throws AxisFault
      */
     public AxisConfiguration getAxisConfiguration() throws AxisFault {
-        DeploymentEngine deploymentEngine;
-
         if (isServer) {
-            deploymentEngine = new DeploymentEngine(repoLocation);
-
+            DeploymentEngine deploymentEngine = new DeploymentEngine(repoLocation);
             return deploymentEngine.load();
         } else {
             return new DeploymentEngine().loadClient(repoLocation);

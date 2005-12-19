@@ -120,16 +120,16 @@ public class ArchiveReader implements DeploymentConstants {
             int BUFFER = 2048;
 
             if (axis2repository == null) {
-                String userHome = System.getProperty("user.home");
+                String userHome = System.getProperty(DeploymentConstants.PROPERTY_USER_HOME);
                 File userHomedir = new File(userHome);
-                File repository = new File(userHomedir, ".axis2home");
+                File repository = new File(userHomedir, DIRECTORY_AXIS2_HOME);
 
-                modules = new File(repository, "modules");
+                modules = new File(repository, DIRECTORY_MODULES);
             } else {
-                modules = new File(axis2repository, "modules");
+                modules = new File(axis2repository, DIRECTORY_MODULES);
             }
 
-            String modulearchiveName = moduleName + ".mar";
+            String modulearchiveName = moduleName + SUFFIX_MAR;
 
             modulearchiveFile = new File(modules, modulearchiveName);
 
@@ -138,16 +138,16 @@ public class ArchiveReader implements DeploymentConstants {
             }
 
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            InputStream in = cl.getResourceAsStream("modules/" + moduleName + ".mar");
+            InputStream in = cl.getResourceAsStream(RESOURCE_MODULES + moduleName + SUFFIX_MAR);
 
             if (in == null) {
-                in = cl.getResourceAsStream("modules/" + moduleName + ".jar");
+                in = cl.getResourceAsStream(RESOURCE_MODULES + moduleName + SUFFIX_JAR);
             }
 
             if (in == null) {
                 throw new DeploymentException(
                         Messages.getMessage(
-                                DeploymentErrorMsgs.MODULEXML_NOT_FOUND_FOR_THE_MODULE, moduleName));
+                                DeploymentErrorMsgs.MODULE_XML_MISSING, moduleName));
             } else {
                 if (!modules.exists()) {
                     modules.mkdirs();
@@ -237,7 +237,7 @@ public class ArchiveReader implements DeploymentConstants {
                             Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND, e.getMessage()));
                 } catch (XMLStreamException e) {
                     throw new DeploymentException(
-                            Messages.getMessage(DeploymentErrorMsgs.XTZX_EXCEPTION, e.getMessage()));
+                            Messages.getMessage(DeploymentErrorMsgs.XML_STREAM_EXCEPTION, e.getMessage()));
                 }
             } else {
                 throw new DeploymentException(
@@ -298,16 +298,14 @@ public class ArchiveReader implements DeploymentConstants {
                 if (!meta_inf.exists()) {
                     throw new DeploymentException(
                             Messages.getMessage(
-                                    DeploymentErrorMsgs.NO_META_INF, serviceFile.getName()));
+                                    DeploymentErrorMsgs.META_INF_MISSING, serviceFile.getName()));
                 }
 
                 File files[] = meta_inf.listFiles();
 
                 for (int i = 0; i < files.length; i++) {
                     File file1 = files[i];
-                    String fileName = file1.getName();
-
-                    if (fileName.endsWith(".wsdl") || fileName.endsWith(".WSDL")) {
+                    if (file1.getName().toLowerCase().endsWith(SUFFIX_WSDL)) {
                         InputStream in = new FileInputStream(file1);
                         AxisService service = processWSDLFile(in);
 
@@ -337,11 +335,10 @@ public class ArchiveReader implements DeploymentConstants {
                 ByteArrayOutputStream out;
 
                 while ((entry = zin.getNextEntry()) != null) {
-                    String entryName = entry.getName();
+                    String entryName = entry.getName().toLowerCase();
 
-                    if ((entryName.startsWith(META_INF) || entryName.startsWith(
-                            META_INF.toLowerCase())) && (entryName.endsWith(
-                            ".wsdl") || entryName.endsWith(".WSDL"))) {
+                    if (entryName.startsWith(META_INF.toLowerCase()) 
+                            && entryName.endsWith(SUFFIX_WSDL)) {
                         out = new ByteArrayOutputStream();
 
                         while ((read = zin.read(buf)) > 0) {
@@ -408,7 +405,7 @@ public class ArchiveReader implements DeploymentConstants {
                 if (!foundmoduleXML) {
                     throw new DeploymentException(
                             Messages.getMessage(
-                                    DeploymentErrorMsgs.MODULEXML_NOT_FOUND_FOR_THE_MODULE, filename));
+                                    DeploymentErrorMsgs.MODULE_XML_MISSING, filename));
                 }
             } catch (Exception e) {
                 throw new DeploymentException(e);
@@ -437,7 +434,7 @@ public class ArchiveReader implements DeploymentConstants {
             } else {
                 throw new DeploymentException(
                         Messages.getMessage(
-                                DeploymentErrorMsgs.MODULEXML_NOT_FOUND_FOR_THE_MODULE, filename));
+                                DeploymentErrorMsgs.MODULE_XML_MISSING, filename));
             }
         }
     }

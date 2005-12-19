@@ -70,4 +70,23 @@ public interface DeploymentConstants {
     // for parameters
     String ATTRIBUTE_NAME = "name";
     String ATTRIBUTE_LOCKED = "locked";
+    String PROPERTY_USER_HOME = "user.home";
+    String DIRECTORY_MODULES = "modules";
+    String DIRECTORY_AXIS2_HOME = ".axis2home";
+    String RESOURCE_MODULES = "modules/";
+    String SUFFIX_MAR = ".mar";
+    String SUFFIX_JAR = ".jar";
+    String SUFFIX_WSDL = ".wsdl";
+    /**
+     * Resource that contains the configuration
+     */
+    String AXIS2_CONFIGURATION_RESOURCE =
+            "org/apache/axis2/deployment/axis2.xml";
+    String SERVER_XML_FILE = "axis2.xml";
+    String DIRECTORY_SERVICES = "services";
+    String DEFAULT_MESSAGE_RECEIVER = "org.apache.axis2.receivers.RawXMLINOutMessageReceiver";
+    String BOOLEAN_TRUE = "true";
+    String BOOLEAN_FALSE = "false";
+    char SEPARATOR_DOT = '.';
+    char SEPARATOR_COLON = ':';
 }

@@ -59,12 +59,6 @@ import java.util.List;
 
 public class DeploymentEngine implements DeploymentConstants {
 
-    /**
-     * Resource that contains the configuration
-     */
-    protected static final String AXIS2_CONFIGURATION_RESOURCE =
-            "org/apache/axis2/deployment/axis2.xml";
-    protected static final String SERVER_XML_FILE = "axis2.xml";
     private Log log = LogFactory.getLog(getClass());
     private boolean hotUpdate = true;    // to do hot update or not
     private boolean hotDeployment = true;    // to do hot deployment or not
@@ -122,7 +116,7 @@ public class DeploymentEngine implements DeploymentConstants {
             throws DeploymentException {
         if ((repositoryName == null) || repositoryName.trim().equals("")) {
             throw new DeploymentException(
-                    Messages.getMessage(DeploymentErrorMsgs.REPO_CAN_NOT_BE_NULL));
+                    Messages.getMessage(DeploymentErrorMsgs.REPOSITORY_CANNOT_BE_NULL));
         }
 
         this.folderName = repositoryName;
@@ -132,8 +126,8 @@ public class DeploymentEngine implements DeploymentConstants {
         if (!repository.exists()) {
             repository.mkdirs();
 
-            File services = new File(repository, "services");
-            File modules = new File(repository, "modules");
+            File services = new File(repository, DIRECTORY_SERVICES);
+            File modules = new File(repository, DIRECTORY_MODULES);
 
             modules.mkdirs();
             services.mkdirs();
@@ -379,27 +373,6 @@ public class DeploymentEngine implements DeploymentConstants {
         return axismodule;
     }
 
-    /*
-     *  public AxisService deployService(ClassLoader classLoder, InputStream serviceStream, String servieName) throws DeploymentException {
-     * AxisService service = null;
-     * try {
-     * currentArchiveFileile = new ArchiveFileData(SERVICE, servieName);
-     * currentArchiveFileile.setClassLoader(classLoder);
-     * service = new AxisService();
-     * DeploymentParser schme = new DeploymentParser(serviceStream, this);
-     * schme.parseServiceXML(service);
-     * service = loadServiceProperties(service);
-     * } catch (XMLStreamException e) {
-     * throw  new DeploymentException(e.getMessage());
-     * } catch (PhaseException e) {
-     * throw  new DeploymentException(e.getMessage());
-     * } catch (AxisFault axisFault) {
-     * throw  new DeploymentException(axisFault.getMessage());
-     * }
-     * return service;
-     * }
-     */
-
     /**
      * This method is used to fill a axisservice object using services.xml , first it should create
      * an axisservice object using WSDL and then fill that using given servic.xml and load all the requed
@@ -441,8 +414,8 @@ public class DeploymentEngine implements DeploymentConstants {
         if (!repository.exists()) {
             repository.mkdirs();
 
-            File services = new File(repository, "services");
-            File modules = new File(repository, "modules");
+            File services = new File(repository, DIRECTORY_SERVICES);
+            File modules = new File(repository, DIRECTORY_MODULES);
 
             modules.mkdirs();
             services.mkdirs();
@@ -609,7 +582,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             break;
                     }
                 } catch (AxisFault axisFault) {
-                    log.info(Messages.getMessage(DeploymentErrorMsgs.SETTING_CL,
+                    log.info(Messages.getMessage(DeploymentErrorMsgs.ERROR_SETTING_CLIENT_HOME,
                             axisFault.getMessage()));
                 }
             }
@@ -633,7 +606,7 @@ public class DeploymentEngine implements DeploymentConstants {
     public AxisConfiguration load() throws DeploymentException {
         if (engineConfigName == null) {
             throw new DeploymentException(
-                    Messages.getMessage(DeploymentErrorMsgs.PATH_TO_CONFIG_CAN_NOT_B_NULL));
+                    Messages.getMessage(DeploymentErrorMsgs.PATH_TO_CONFIG_CANNOT_BE_NULL));
         }
 
         File tempfile = new File(engineConfigName);
@@ -663,7 +636,7 @@ public class DeploymentEngine implements DeploymentConstants {
             validateSystemPredefinedPhases();
             engageModules();
         } catch (AxisFault axisFault) {
-            log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VAL_FAILED,
+            log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VALIDATION_FAILED,
                     axisFault.getMessage()));
 
             throw new DeploymentException(axisFault);
@@ -729,7 +702,7 @@ public class DeploymentEngine implements DeploymentConstants {
             validateSystemPredefinedPhases();
             engageModules();
         } catch (AxisFault axisFault) {
-            log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VAL_FAILED,
+            log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VALIDATION_FAILED,
                     axisFault.getMessage()));
 
             throw new DeploymentException(axisFault);
@@ -879,7 +852,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
         axisConfig.setSystemClassLoader(sysClassLoader);
 
-        File services = new File(axis2repo, "services");
+        File services = new File(axis2repo, DIRECTORY_SERVICES);
 
         if (services.exists()) {
             axisConfig.setServiceClassLoader(
@@ -888,7 +861,7 @@ public class DeploymentEngine implements DeploymentConstants {
             axisConfig.setServiceClassLoader(axisConfig.getSystemClassLoader());
         }
 
-        File modules = new File(axis2repo, "modules");
+        File modules = new File(axis2repo, DIRECTORY_MODULES);
 
         if (modules.exists()) {
             axisConfig.setModuleClassLoader(Utils.getClassLoader(axisConfig.getSystemClassLoader(),

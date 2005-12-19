@@ -18,29 +18,29 @@
 package org.apache.axis2.deployment.listener;
 
 /**
- * RepositoryListener is listening to a specific folder whether the folder is
- * update eg: remove , added or modified files
+ * RepositoryListener listens to a specific directory for updates.
+ * eg: addition, removal or modification of files
  */
 public interface RepositoryListener {
 
     /**
-     * this method is to check whether new module is added (or modules)
+     * this method is to check whether new module has been added
      */
     void checkModules();
 
     /**
-     * this method is to check whether new service is added (or services)
+     * this method is to check whether new service has been added 
      */
     void checkServices();
 
     /**
-     * this is to Initialize the Deployment , this only call when the Axis engine start up
-     * Then it should deploy all the WS and modules , and should initialize the WSInfoList
+     * this is to initialize the Deployment, this is invoked during Axis engine start up
+     * at which point it should deploy all the services and modules, and initialize the WSInfoList
      */
     void init();
 
     /**
-     * If new services or modules(service or module) are added then this method will call
+     * If new services or modules are added then this method will invoked
      */
     void update();
 }

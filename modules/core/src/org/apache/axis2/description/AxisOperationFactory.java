@@ -83,7 +83,7 @@ public class AxisOperationFactory implements WSDLConstants {
         return abOpdesc;
     }
 
-    public static AxisOperation getOperetionDescription(String mepURI) throws AxisFault {
+    public static AxisOperation getOperationDescription(String mepURI) throws AxisFault {
         AxisOperation abOpdesc;
 
         if (MEP_URI_IN_ONLY.equals(mepURI)) {

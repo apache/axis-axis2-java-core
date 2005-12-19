@@ -28,37 +28,35 @@ import java.io.File;
 
 public class RepositoryListenerImpl implements RepositoryListener, DeploymentConstants {
     protected Log log = LogFactory.getLog(getClass());
-    private DeploymentEngine deEngine;
+    private DeploymentEngine deploymentEngine;
 
     /**
      * The parent directory of the modules and services directories
-     * taht the listentner should listent
      */
     private String folderName;
 
     /**
-     * Referance to a WSInfoList
+     * Reference to a WSInfoList
      */
     private WSInfoList wsInfoList;
 
     /**
-     * This constructor take two argumnets folder name and referance to Deployment Engine
-     * Fisrt it initilize the syetm , by loading all the modules in the /modules directory
-     * and also create a WSInfoList to keep infor about available modules and services
+     * This constructor takes two arguments, a folder name and a reference to Deployment Engine
+     * Fisrt it initilize the system, by loading all the modules in the /modules directory
+     * and also creates a WSInfoList to store information about available modules and services
      *
-     * @param folderName    path to parent directory that the listener should listent
-     * @param deploy_engine refearnce to engine registry  inorder to inform the updates
+     * @param folderName    path to parent directory that the listener should listen to
+     * @param deploymentEngine reference to engine registry for updates
      */
-    public RepositoryListenerImpl(String folderName, DeploymentEngine deploy_engine) {
+    public RepositoryListenerImpl(String folderName, DeploymentEngine deploymentEngine) {
         this.folderName = folderName;
-        wsInfoList = new WSInfoList(deploy_engine);
-        this.deEngine = deploy_engine;
+        wsInfoList = new WSInfoList(deploymentEngine);
+        this.deploymentEngine = deploymentEngine;
         init();
     }
 
     /**
-     * this method ask serachWS to serch for the folder to caheck
-     * for updates
+     * Find a list of modules in this folder and add to wsInfoList
      */
     public void checkModules() {
         String modulepath = folderName + MODULE_PATH;
@@ -74,10 +72,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
                         wsInfoList.addWSInfoItem(file, TYPE_MODULE);
                     }
                 } else {
-                    if ("lib".equals(file.getName()) || "Lib".equals(file.getName())) {
-
-                        // this is a lib file no need to take this as a sevice
-                    } else {
+                    if (!"lib".equalsIgnoreCase(file.getName())) {
                         wsInfoList.addWSInfoItem(file, TYPE_MODULE);
                     }
                 }
@@ -86,13 +81,12 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     }
 
     /**
-     * this method ask serachWS to serch for the folder to caheck
-     * for updates
+     * Find a list of services in this folder and add to wsInfoList
      */
     public void checkServices() {
         String modulepath = folderName + SERVICE_PATH;
 
-        searchWS(modulepath);
+        findServicesInDirectory(modulepath);
         update();
     }
 
@@ -105,14 +99,14 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     public void init() {
         wsInfoList.init();
         checkModules();
-        deEngine.doDeploy();
+        deploymentEngine.doDeploy();
     }
 
     /**
      * This method is to search a given folder  for jar files
      * and added them to a list wich is in the WSInfolist class
      */
-    private void searchWS(String folderName) {
+    private void findServicesInDirectory(String folderName) {
         File root = new File(folderName);
         File[] files = root.listFiles();
 
@@ -125,10 +119,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
                         wsInfoList.addWSInfoItem(file, TYPE_SERVICE);
                     }
                 } else {
-                    if ("lib".equals(file.getName()) || "Lib".equals(file.getName())) {
-
-                        // this is a lib file no need to take this as a sevice
-                    } else {
+                    if (!"lib".equalsIgnoreCase(file.getName())) {
                         wsInfoList.addWSInfoItem(file, TYPE_SERVICE);
                     }
                 }
@@ -137,7 +128,7 @@ public class RepositoryListenerImpl implements RepositoryListener, DeploymentCon
     }
 
     /**
-     * this is the actual method that is call from scheduler
+     * this is the actual method that is invoked from the scheduler
      */
     public void startListener() {
         checkServices();

@@ -189,7 +189,7 @@ public class AxisService
      */
     private AxisOperation copyOperation(AxisOperation axisOperation) throws AxisFault {
         AxisOperation operation =
-                AxisOperationFactory.getOperetionDescription(axisOperation.getMessageExchangePattern());
+                AxisOperationFactory.getOperationDescription(axisOperation.getMessageExchangePattern());
 
         operation.setMessageReceiver(axisOperation.getMessageReceiver());
         operation.setName(axisOperation.getName());

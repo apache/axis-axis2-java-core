@@ -54,9 +54,9 @@ public class ServiceBuilder extends DescriptionBuilder {
         super.axisConfig = axisConfig;
     }
 
-    public ServiceBuilder(InputStream serviceInputSteram, AxisConfiguration axisConfig,
+    public ServiceBuilder(InputStream serviceInputStream, AxisConfiguration axisConfig,
                           AxisService service) {
-        super(serviceInputSteram, axisConfig);
+        super(serviceInputStream, axisConfig);
         this.service = service;
     }
 
@@ -234,11 +234,10 @@ public class ServiceBuilder extends DescriptionBuilder {
                 // assumed MEP is in-out
                 op_descrip = new InOutAxisOperation();
             } else {
-                op_descrip = AxisOperationFactory.getOperetionDescription(mepurl);
+                op_descrip = AxisOperationFactory.getOperationDescription(mepurl);
             }
 
             op_descrip.setName(new QName(opname));
-            log.info(Messages.getMessage(DeploymentErrorMsgs.OP_NOT_FOUN_IN_WSDL, opname));
 
             // Operation Parameters
             Iterator parameters = operation.getChildrenWithName(new QName(TAG_PARAMETER));
