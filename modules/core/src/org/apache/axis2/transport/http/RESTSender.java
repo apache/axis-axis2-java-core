@@ -238,11 +238,11 @@ public class RESTSender extends AbstractHTTPSender {
                     charEncoding, msgContext, httpContentType));
         } else {
             postMethod.setPath(url.getPath());
-            postMethod.setRequestEntity(new AxisRequestEntity(dataout, chuncked, msgContext,
+            postMethod.setRequestEntity(new AxisRequestEntity(dataout, chunked, msgContext,
                     charEncoding, soapActionString));
         }
 
-        if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chuncked) {
+        if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
             postMethod.setContentChunked(true);
         }
 

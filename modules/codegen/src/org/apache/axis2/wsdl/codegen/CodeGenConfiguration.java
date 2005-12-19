@@ -29,8 +29,10 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private WSDLDescription wom;
     private CommandLineOptionParser parser;
     private File outputLocation;
+    
+    //get the defaults for these from the property file
     private String outputLanguage = ConfigPropertyFileLoader.getDefaultLanguage();
-    private int databindingType = XSLTConstants.DataBindingTypes.XML_BEANS; //default is XML beans
+    private String databindingType = ConfigPropertyFileLoader.getDefaultDBFramworkName();
     private boolean advancedCodeGenEnabled = false;
 
 
@@ -41,14 +43,46 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private boolean writeTestCase = false;
     private boolean writeMessageReceiver = true;
     private String packageName = XSLTConstants.DEFAULT_PACKAGE_NAME;
+    private boolean wrapClasses = false;
 
-
+    /**
+     * A hashmap to hang the property objects
+     */
     private Map policyMap = new HashMap();
 
+ /*
+ * A hashmap of properties that may be populated on the way. extensions can populate it
+ * This can be used to keep non specific information
+ */
+    private Map configurationProperties = new HashMap();
+    /**
+     * get the wrap classes flag
+     * @return
+     */
+    public boolean isWrapClasses() {
+        return wrapClasses;
+    }
+
+    /**
+     * set the wrap classes flag
+     * @param wrapClasses
+     */
+    public void setWrapClasses(boolean wrapClasses) {
+        this.wrapClasses = wrapClasses;
+    }
+
+    /**
+     * gets the policy map
+     * @return
+     */
     public Map getPolicyMap() {
         return policyMap;
     }
 
+    /**
+     * sets the policy map
+     * @param policyMap
+     */
     public void setPolicyMap(Map policyMap) {
         this.policyMap = policyMap;
     }
@@ -60,64 +94,83 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     */
     private  int codeGenerationStyle = XSLTConstants.CodegenStyle.AUTOMATIC;
 
-    /*
-    * A hashmap of properties that may be populated on the way. extensions can populate it
-    *
-    */
-    private Map configurationProperties = new HashMap();
 
+
+    /**
+     * put a property into the configuration
+     * @param key
+     * @param value
+     */
     public void put(Object key, Object value){
         configurationProperties.put(key,value);
     }
 
+    /**
+     * get the property from the configuration
+     * @param key
+     * @return
+     */
     public Object get(Object key){
        return configurationProperties.get(key);
     }
 
+    /**
+     * Get the whole property object
+     * @return
+     */
     public Map getProperties(){
         return configurationProperties;
     }
     private TypeMapper typeMapper;
 
-
+    /**
+     *
+     * @return
+     */
     public int getCodeGenerationStyle() {
         return codeGenerationStyle;
     }
 
+    /**
+     *
+     * @param codeGenerationStyle
+     */
     public void setCodeGenerationStyle(int codeGenerationStyle) {
         this.codeGenerationStyle = codeGenerationStyle;
     }
 
+    /**
+     *
+     * @return
+     */
     public TypeMapper getTypeMapper() {
         return typeMapper;
     }
 
+    /**
+     *
+     * @param typeMapper
+     */
     public void setTypeMapper(TypeMapper typeMapper) {
         this.typeMapper = typeMapper;
     }
 
-    public int getDatabindingType() {
+    /**
+     *
+     * @return
+     */
+    public String getDatabindingType() {
         return databindingType;
     }
 
-    public void setDatabindingType(int databindingType) {
+    /**
+     *
+     * @param databindingType
+     */
+    public void setDatabindingType(String databindingType) {
         this.databindingType = databindingType;
     }
 
-    public void setDatabindingType(String databindingType) {
-        if (Databinding.XML_BEANS.equalsIgnoreCase(databindingType)) {
-            this.databindingType = XSLTConstants.DataBindingTypes.XML_BEANS;
-        } else if (Databinding.JAXB.equalsIgnoreCase(databindingType)) {
-            this.databindingType = XSLTConstants.DataBindingTypes.JAXB;
-        } else if (Databinding.ADB.equalsIgnoreCase(databindingType)) {
-            this.databindingType = XSLTConstants.DataBindingTypes.ADB;
-        }else if (Databinding.NONE.equalsIgnoreCase(databindingType)) {
-            this.databindingType = XSLTConstants.DataBindingTypes.NONE;
-        } else {
-             //set to none by default
-             this.databindingType = XSLTConstants.DataBindingTypes.NONE;
-        }
-    }
 
     /**
      * @param wom
@@ -129,6 +182,11 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.parser = parser;
     }
 
+    /**
+     * Constructor for the configuration. populate the values using the options map
+     * @param wom
+     * @param optionMap
+     */
     public CodeGenConfiguration(WSDLDescription wom, Map optionMap) {
         this.wom = wom;
 

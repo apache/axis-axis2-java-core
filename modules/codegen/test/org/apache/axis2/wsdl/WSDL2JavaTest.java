@@ -376,7 +376,11 @@ public class WSDL2JavaTest extends TestCase{
                 CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
                 new CommandLineOption(CommandLineOptionConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
                         new String[0]));
-
+         // db is xmlbeans option is on
+        optionMap.put(
+                CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION,
+                new CommandLineOption(CommandLineOptionConstants.DATA_BINDING_TYPE_OPTION,
+                        new String[]{TestConstants.Databinding.XML_BEANS}));
         //todo Make this work
         //test case option is on
 //        optionMap.put(

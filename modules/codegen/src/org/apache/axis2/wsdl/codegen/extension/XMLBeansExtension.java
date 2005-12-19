@@ -58,8 +58,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class XMLBeansExtension extends AbstractCodeGenerationExtension {
-    private static final String DEFAULT_STS_NAME = "axis2";
+public class XMLBeansExtension extends AbstractDatabindProcessingExtension {
     public static final String SCHEMA_FOLDER = "schemas";
 
     public static String MAPPINGS = "mappings";
@@ -67,7 +66,6 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
     public static String MESSAGE = "message";
     public static String JAVA_NAME = "javaclass";
 
-    private File typeMappingFile;
     public static final String MAPPING_FOLDER = "Mapping";
     public static final String MAPPER_FILE_NAME = "mapper";
 
@@ -79,7 +77,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
     public void engage() {
 
         //test the databinding type. If not just fall through
-        if (configuration.getDatabindingType() != XSLTConstants.DataBindingTypes.XML_BEANS) {
+        if (testFallthrough(configuration.getDatabindingType())) {
             return;
         }
 
@@ -106,7 +104,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             List processedSchemas = new ArrayList();
 
             WSDLExtensibilityElement extensiblityElt;
-            SchemaTypeSystem sts = null;
+            SchemaTypeSystem sts;
             Vector xmlObjectsVector = new Vector();
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
@@ -183,7 +181,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             SchemaType type;
             for (int j = 0; j < schemaType.length; j++) {
                 type = schemaType[j];
-                mapper.addTypeMapping(type.getDocumentElementName(),
+                mapper.addTypeMappingName(type.getDocumentElementName(),
                         type.getFullJavaName());
             }
             //set the type mapper to the config
@@ -205,7 +203,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
             typeMappingFolder.mkdir();
         }
 
-        this.typeMappingFile = File.createTempFile(MAPPER_FILE_NAME, ".xml", typeMappingFolder);
+        File typeMappingFile = File.createTempFile(MAPPER_FILE_NAME, ".xml", typeMappingFolder);
         BufferedWriter out = new BufferedWriter(new FileWriter(typeMappingFile));
         out.write("<" + MAPPINGS + ">");
 
@@ -270,7 +268,7 @@ public class XMLBeansExtension extends AbstractCodeGenerationExtension {
     private Element[] loadAdditionalSchemas() {
         //load additional schemas
         String[] schemaNames = ConfigPropertyFileLoader.getThirdPartySchemaNames();
-        Element[] schemaElements = null;
+        Element[] schemaElements;
 
         try {
             ArrayList additionalSchemaElements = new ArrayList();

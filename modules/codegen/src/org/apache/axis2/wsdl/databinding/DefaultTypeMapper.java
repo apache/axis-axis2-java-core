@@ -17,7 +17,9 @@
 
 package org.apache.axis2.wsdl.databinding;
 
-
+/**
+ * The default type mapper. This type mapper has no default configurations
+ */
 public class DefaultTypeMapper extends TypeMappingAdapter {
 
     public DefaultTypeMapper() {

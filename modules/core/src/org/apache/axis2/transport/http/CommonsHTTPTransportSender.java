@@ -30,10 +30,8 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMOutputFormat;
-import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.axis2.transport.TransportSender;
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.logging.Log;
@@ -50,8 +48,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
     protected static final String PROXY_HOST_NAME = "proxy_host";
     protected static final String PROXY_PORT = "proxy_port";
     public static final String HTTP_METHOD = "HTTP_METHOD";
-    private static final String ANONYMOUS = "anonymous";
-    private boolean chuncked = false;
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
 
     /**
@@ -60,10 +56,10 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
     protected TransportOutDescription proxyOutSetting = null;
     protected Log log = LogFactory.getLog(getClass().getName());
     protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
-    protected OMOutputFormat format = new OMOutputFormat();
+
+    private boolean  chunked = false;
+
     int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
-    protected HttpClient httpClient;
-    protected OMElement outputMessage;
 
     public CommonsHTTPTransportSender() {
     }    
@@ -94,7 +90,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                 if ((transferEncoding != null)
                         && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(
                         transferEncoding.getValue())) {
-                    this.chuncked = true;
+                     chunked = true;
                 }
             } else if (HTTPConstants.HEADER_PROTOCOL_10.equals(version.getValue())) {
                 httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
@@ -124,8 +120,10 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
         }
     }
 
-    public synchronized void invoke(MessageContext msgContext) throws AxisFault {
+   
+    public void invoke(MessageContext msgContext) throws AxisFault {
         try {
+            OMOutputFormat format = new OMOutputFormat();
             String charSetEnc =
                     (String) msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
 
@@ -185,9 +183,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                 dataOut = msgContext.getEnvelope();
             }
 
-            // TODO timeout, configuration
             if (epr != null) {
-                writeMessageWithCommons(msgContext, epr, dataOut);
+                writeMessageWithCommons(msgContext, epr, dataOut,format);
             } else {
                 OutputStream out =
                         (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
@@ -212,7 +209,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                 }
 
                 format.setDoOptimize(msgContext.isDoingMTOM());
-                ((OMNodeEx) dataOut).serializeAndConsume(out, format);
+                dataOut.serializeAndConsume(out, format);
             }
 
             if (msgContext.getOperationContext() != null) {
@@ -229,7 +226,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
     }
 
     public void writeMessageWithCommons(MessageContext msgContext, EndpointReference toURL,
-                                        OMElement dataout)
+                                        OMElement dataout,OMOutputFormat format)
             throws AxisFault {
         try {
             URL url = new URL(toURL.getAddress());
@@ -244,7 +241,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             }
 
             // select the Message Sender depending on the REST status
-            AbstractHTTPSender sender = null;
+            AbstractHTTPSender sender;
 
             if (!msgContext.isDoingREST()) {
                 sender = new SOAPOverHTTPSender();
@@ -252,7 +249,9 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                 sender = new RESTSender();
             }
 
-            sender.setFormat(this.format);
+            sender.setChunked(chunked);
+            sender.setFormat(format);
+
             sender.send(msgContext, dataout, url, soapActionString);
         } catch (MalformedURLException e) {
             throw new AxisFault(e);

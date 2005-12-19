@@ -31,21 +31,7 @@ public interface CommandLineOptionConstants {
     public static final String GENERATE_TEST_CASE_OPTION = "t";
     public static final String DATA_BINDING_TYPE_OPTION = "d";
 
-
     public static final String INVALID_OPTION = "INVALID_OPTION";
 
-    public interface LanguageNames {
-        public static final String JAVA = "java";
-        public static final String C_SHARP = "cs";
-        public static final String VB_DOT_NET = "vb";
-        public static final String C_PLUS_PLUS = "cpp";
 
-    }
-    
-    public interface Databinding {
-    	public static final String XML_BEANS = "xmlbeans";
-    	public static final String JAXB = "jaxb";
-    	public static final String ADB = "adb";
-        public static final String NONE = "none";
-    }
 }

@@ -1,7 +1,7 @@
 package org.apache.axis2.wsdl.codegen.writer;
 
 import org.apache.axis2.util.FileWriter;
-import org.apache.axis2.wsdl.codegen.XSLTConstants;
+import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,7 +25,7 @@ import java.util.Iterator;
 
 public class AntBuildWriter extends ClassWriter{
 
-    int databindingFramework = 0;
+    private String databindingFramework = ConfigPropertyFileLoader.getDefaultDBFramworkName();
 
      public AntBuildWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);
@@ -36,7 +36,7 @@ public class AntBuildWriter extends ClassWriter{
         this.language = language;
     }
 
-    public void setDatabindingFramework(int databindingFramework) {
+    public void setDatabindingFramework(String databindingFramework) {
         this.databindingFramework = databindingFramework;
     }
 
@@ -59,22 +59,7 @@ public class AntBuildWriter extends ClassWriter{
         String propertyValue;
         String templateName = null;
         Iterator keys = languageSpecificPropertyMap.keySet().iterator();
-        String databindString;
 
-        //set the correct databinding type string
-        switch(this.databindingFramework)  {
-            case XSLTConstants.DataBindingTypes.XML_BEANS:
-                databindString = "xmlbeans";
-                break;
-            case XSLTConstants.DataBindingTypes.JAXB:
-                databindString = "jaxb";
-                break;
-            case XSLTConstants.DataBindingTypes.ADB:
-                databindString = "adb";
-                break;
-            default:
-                databindString = "default";
-        }
 
         while (keys.hasNext()) {
             //check for template entries
@@ -83,7 +68,7 @@ public class AntBuildWriter extends ClassWriter{
                 // check if the class name is there
                 propertyValue = languageSpecificPropertyMap.get(key).toString();
                 if (propertyValue.startsWith(ownClazzName)){
-                    if (key.indexOf(databindString)!=-1){
+                    if (key.indexOf(databindingFramework)!=-1){
                         templateName = propertyValue.substring(propertyValue.indexOf(SEPERATOR_STRING)+1) ;
                         break;
                     }

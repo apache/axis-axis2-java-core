@@ -61,7 +61,9 @@
 			<arg file="${work.dir}"/>
 			<arg value="-p"/>
 			<arg value="org.apache.axis2.oasis.ping"/>
-		</java>
+            <arg value="-d"/>
+			<arg value="xmlbeans"/>
+        </java>
 
 		<!-- move/copy schema stuff into class.dir -->
     	<ant:move todir="${class.dir}">

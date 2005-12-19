@@ -20,22 +20,36 @@ import javax.xml.namespace.QName;
 import java.util.HashMap;
 
 public abstract class TypeMappingAdapter implements TypeMapper {
+
+    //todo get this from a constant
     protected static final String XSD_SCHEMA_URL = "http://www.w3.org/2001/XMLSchema";
-    //hashmap that contains the type mappings
-    protected HashMap map = new HashMap();
+
+    //hashmap that contains the type mapping names
+    protected HashMap qName2NameMap = new HashMap();
+
+    //hashmap that contains the type mapping objects
+    protected HashMap qName2ObjectMap = new HashMap();
+
     //counter variable to generate unique parameter ID's
     protected int counter = 0;
+
+
     //Upper limit for the paramete count
     protected static final int UPPER_PARAM_LIMIT = 1000;
     private static final String PARAMETER_NAME_SUFFIX = "param";
 
+
+
+
     /**
-     * @see TypeMapper#getTypeMapping(javax.xml.namespace.QName)
+     * Behavior of this method is such that when the type mapping is not found
+     * it returns the  default type mapping from the constant
+     * @see TypeMapper#getTypeMappingName(javax.xml.namespace.QName)
      */
-    public String getTypeMapping(QName qname) {
+    public String getTypeMappingName(QName qname) {
        
         if ((qname != null)) {
-            Object o = map.get(qname);
+            Object o = qName2NameMap.get(qname);
             if (o != null) {
                 return (String) o;
             } else {
@@ -57,13 +71,35 @@ public abstract class TypeMappingAdapter implements TypeMapper {
     }
 
     /**
-     * @see TypeMapper#addTypeMapping(javax.xml.namespace.QName, Object)
+     * @see TypeMapper#addTypeMappingName(javax.xml.namespace.QName,String)
      */
-    public void addTypeMapping(QName qname, Object value) {
-        map.put(qname, value);
+    public void addTypeMappingName(QName qname, String value) {
+        qName2NameMap.put(qname, value);
     }
 
+    /**
+     * @see TypeMapper#getTypeMappingObject(javax.xml.namespace.QName)
+     * @param qname
+     * @return object represneting a specific form of the XSD compilation
+     */
+    public Object getTypeMappingObject(QName qname) {
+        return qName2ObjectMap.get(qname);
+    }
+
+    /**
+     * @see TypeMapper#addTypeMappingObject(javax.xml.namespace.QName, Object)
+     * @param qname
+     * @param value
+     */
+    public void addTypeMappingObject(QName qname, Object value) {
+        qName2ObjectMap.put(qname,value);
+    }
+
+    /**
+     *
+     * @return
+     */
     public HashMap getAllTypeMappings() {
-        return map;
+        return qName2NameMap;
     }
 }

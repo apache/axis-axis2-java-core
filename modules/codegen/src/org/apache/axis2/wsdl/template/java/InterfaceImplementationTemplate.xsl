@@ -90,7 +90,7 @@
      <xsl:for-each select="method">
          <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
          <xsl:variable name="style"><xsl:value-of select="@style"></xsl:value-of></xsl:variable>
-        <xsl:variable name="dbsupportclassname"><xsl:value-of select="@dbsupportname"></xsl:value-of></xsl:variable>
+         <xsl:variable name="dbsupportclassname"><xsl:value-of select="@dbsupportname"></xsl:value-of></xsl:variable>
          <xsl:variable name="soapAction"><xsl:value-of select="@soapaction"></xsl:value-of></xsl:variable>
          <xsl:variable name="fullsupporterclassname"><xsl:value-of select="$dbpackage"/>.<xsl:value-of select="$dbsupportclassname"/></xsl:variable>
          <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
@@ -117,6 +117,8 @@
 
  		     org.apache.axis2.context.MessageContext _messageContext = getMessageContext();
             _options.setSoapAction("<xsl:value-of select="$soapAction"/>");
+             <!-- see whether this makes sense
+                this is not implemented in the emitter properly-->
              <xsl:for-each select="input/param[@Action!='']">_options.setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
 
              //set the properties

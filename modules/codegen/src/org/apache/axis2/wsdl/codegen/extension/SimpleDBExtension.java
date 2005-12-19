@@ -17,7 +17,6 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.databinding.schema.SchemaCompiler;
@@ -41,7 +40,7 @@ import java.util.Vector;
  * Work in progress to test simple DataBinding with the XmlSchema lib
  *
  */
-public class SimpleDBExtension extends AbstractCodeGenerationExtension {
+public class SimpleDBExtension extends AbstractDatabindProcessingExtension {
     public static final String ADB_PACKAGE_NAME_PREFIX = "adb.";
 
     public void init(CodeGenConfiguration configuration) {
@@ -50,7 +49,7 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
 
     public void engage() {
         //test the databinding type. If not just fall through
-        if (configuration.getDatabindingType() != XSLTConstants.DataBindingTypes.ADB) {
+        if (testFallthrough(configuration.getDatabindingType())) {
             return;
         }
         try {
@@ -65,7 +64,7 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
             }
 
             List typesArray = typesList.getExtensibilityElements();
-            WSDLExtensibilityElement extensiblityElt = null;
+            WSDLExtensibilityElement extensiblityElt;
             Vector xmlSchemaTypeVector = new Vector();
             XmlSchemaCollection schemaColl = new XmlSchemaCollection();
             for (int i = 0; i < typesArray.size(); i++) {
@@ -111,7 +110,7 @@ public class SimpleDBExtension extends AbstractCodeGenerationExtension {
             QName qNameKey;
             while (processedkeys.hasNext()) {
                 qNameKey =(QName)processedkeys.next();
-                mapper.addTypeMapping(qNameKey,processedMap.get(qNameKey));
+                mapper.addTypeMappingName(qNameKey,processedMap.get(qNameKey).toString());
             }
 
             //set the type mapper to the config

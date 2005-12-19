@@ -17,23 +17,16 @@
 package org.apache.axis2.tool.ant;
 
 import org.apache.axis2.util.URLProcessor;
-import org.apache.axis2.wsdl.WSDLVersionWrapper;
-import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CommandLineOption;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionParser;
+import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
-import org.apache.wsdl.WSDLDescription;
 
-import javax.wsdl.WSDLException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +35,7 @@ public class AntCodegenTask extends Task {
     private String WSDLFileName = null;
     private String output = ".";
     private String packageName = URLProcessor.DEFAULT_PACKAGE;
-    private String language = CommandLineOptionConstants.LanguageNames.JAVA;
+    private String language = ConfigPropertyFileLoader.getDefaultLanguage();
 
     private boolean asyncOnly = false;
     private boolean syncOnly = false;
@@ -139,13 +132,6 @@ public class AntCodegenTask extends Task {
         return optionMap;
     }
 
-    private WSDLDescription getWOM(String wsdlLocation)
-        throws WSDLException, IOException {
-        InputStream in = new FileInputStream(new File(wsdlLocation));
-        WSDLVersionWrapper wsdlvWrap =
-            WOMBuilderFactory.getBuilder(org.apache.wsdl.WSDLConstants.WSDL_1_1).build(in);
-        return wsdlvWrap.getDescription();
-    }
 
     private String[] getStringArray(String value) {
         String[] values = new String[1];

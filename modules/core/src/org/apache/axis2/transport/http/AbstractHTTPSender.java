@@ -45,7 +45,7 @@ public abstract class AbstractHTTPSender {
     protected static final String ANONYMOUS = "anonymous";
     protected static final String PROXY_HOST_NAME = "proxy_host";
     protected static final String PROXY_PORT = "proxy_port";
-    protected boolean chuncked = false;
+    protected boolean chunked = false;
     protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
     protected Log log = LogFactory.getLog(getClass().getName());
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
@@ -57,6 +57,10 @@ public abstract class AbstractHTTPSender {
     protected OMOutputFormat format = new OMOutputFormat();
     int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
     protected HttpClient httpClient;
+
+    public void setChunked(boolean chunked) {
+        this.chunked = chunked;
+    }
 
     /**
      * Helper method to Proxy and NTLM authentication

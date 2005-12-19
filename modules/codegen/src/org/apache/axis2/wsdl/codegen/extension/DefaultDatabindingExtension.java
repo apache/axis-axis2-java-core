@@ -22,7 +22,7 @@ import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 
-public class DefaultDatabindingExtension extends AbstractCodeGenerationExtension {
+public class DefaultDatabindingExtension extends AbstractDatabindProcessingExtension{
     private CodeGenConfiguration configuration;
     public void init(CodeGenConfiguration configuration) {
         this.configuration = configuration;
@@ -30,7 +30,7 @@ public class DefaultDatabindingExtension extends AbstractCodeGenerationExtension
 
     public void engage() throws CodeGenerationException {
         TypeMapper mappper = configuration.getTypeMapper();
-        if (configuration.getDatabindingType() == XSLTConstants.DataBindingTypes.NONE){
+        if (!testFallthrough(configuration.getDatabindingType())){
             configuration.setTypeMapper(new DefaultTypeMapper());
         }else{
             if (mappper==null){

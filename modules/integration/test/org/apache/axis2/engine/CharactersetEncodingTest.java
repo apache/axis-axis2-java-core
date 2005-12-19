@@ -49,7 +49,7 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
     }
 
     protected void setUp() throws Exception {
-        UtilServer.start(Constants.TESTING_PATH + "chuncked-enabledRepository");
+        UtilServer.start(Constants.TESTING_PATH + "chunked-enabledRepository");
 
         service =
                 Utils.createSimpleService(serviceName,
@@ -76,7 +76,7 @@ public class CharactersetEncodingTest extends TestCase implements TestConstants 
             payload.addChild(text);
 
             Call call = new Call(
-                    Constants.TESTING_PATH + "chuncked-enabledRepository");
+                    Constants.TESTING_PATH + "chunked-enabledRepository");
             Options options = new Options();
             call.setClientOptions(options);
             options.setProperty(MessageContext.CHARACTER_SET_ENCODING, "utf-16");

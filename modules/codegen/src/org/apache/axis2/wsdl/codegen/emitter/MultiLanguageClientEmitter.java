@@ -387,22 +387,32 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     protected void writeDatabindingSupporters(WSDLBinding axisBinding) throws Exception {
         Collection col = axisBinding.getBoundInterface().getOperations()
                 .values();
+        Document databindingSupporterModel;
 
+        //create a writer here. The writer is reusable when writing multiple classes
+        ClassWriter databindingSupportWriter = new DatabindingSupportClassWriter(
+                this.configuration.getOutputLocation(),
+                this.configuration.getOutputLanguage(),
+                this.configuration.getDatabindingType());
         String portTypeName = axisBinding.getBoundInterface().getName().getLocalPart();
-        for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-            //Note -  there will be a supporter generated per method and will contain the methods to serilize and
-            //deserailize the relevant objects
 
-            WSDLOperation operation = (WSDLOperation) iterator.next();
-            WSDLBindingOperation bindingop = axisBinding.getBindingOperation(operation.getName());
-            Document databindingSupporterModel = createDOMDocumentforSerialization(
-                    operation,portTypeName, bindingop);
-            ClassWriter databindingSupportWriter = new DatabindingSupportClassWriter(
-                    this.configuration.getOutputLocation(),
-                    this.configuration.getOutputLanguage(),
-                    this.configuration.getDatabindingType());
+        //if wrapped generate one class that has all the conversion methods
+        if (configuration.isWrapClasses()){
+            databindingSupporterModel = createDOMDocumentforSerialization(portTypeName,col.iterator(),axisBinding);
             writeClass(databindingSupporterModel, databindingSupportWriter);
+        } else{
+            for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+                //Note -  there will be a supporter generated per method and will contain the methods to serilize and
+                //deserailize the relevant objects
+
+                WSDLOperation operation = (WSDLOperation) iterator.next();
+                WSDLBindingOperation bindingop = axisBinding.getBindingOperation(operation.getName());
+                databindingSupporterModel = createDOMDocumentforSerialization(
+                        operation,portTypeName, bindingop);
+                writeClass(databindingSupporterModel, databindingSupportWriter);
+            }
         }
+
 
     }
 
@@ -417,7 +427,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         //Write the service xml in a folder with the
         Document skeletonModel = createDOMDocumentForAntBuild(
                 axisInterface, axisBinding);
-        
+
 
         AntBuildWriter antBuildWriter = new AntBuildWriter(
                 this.configuration.getOutputLocation(),
@@ -577,7 +587,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                         "name",
                         this.mapper.getParameterName(name),
                         param);
-                String typeMapping = this.mapper.getTypeMapping(name);
+                String typeMapping = this.mapper.getTypeMappingName(name);
                 String typeMappingStr = typeMapping == null ? "" : typeMapping;
                 addAttribute(doc, "type", typeMappingStr, param);
                 addAttribute(doc,"location",location,param);
@@ -605,7 +615,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                     param);
 
             //todo modify the code here to unwrap if requested
-            String typeMapping = this.mapper.getTypeMapping(
+            String typeMapping = this.mapper.getTypeMappingName(
                     inputMessage.getElementQName());
             addAttribute(doc, "type", typeMapping == null ? "" : typeMapping, param);
 
@@ -662,7 +672,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         if (outputMessage!=null){
             parameterName =  this.mapper.getParameterName(
                     outputMessage.getElementQName()) ;
-            String typeMapping = this.mapper.getTypeMapping(
+            String typeMapping = this.mapper.getTypeMappingName(
                     operation.getOutputMessage().getElementQName());
             typeMappingStr = typeMapping == null ? "" : typeMapping;
 
@@ -771,15 +781,15 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-         * Creates the DOM tree for the interface creation. Uses the interface
-         * @param wsdlInterface
-         * @param axisBinding
-         */
-        protected Document createDOMDocumentForAntBuild(WSDLInterface wsdlInterface, WSDLBinding axisBinding) {
+     * Creates the DOM tree for the interface creation. Uses the interface
+     * @param wsdlInterface
+     * @param axisBinding
+     */
+    protected Document createDOMDocumentForAntBuild(WSDLInterface wsdlInterface, WSDLBinding axisBinding) {
 
-            Document doc = getEmptyDocument();
-            Element rootElement = doc.createElement("ant");
-            String localPart = reformatName(wsdlInterface.getName().getLocalPart(),false);
+        Document doc = getEmptyDocument();
+        Element rootElement = doc.createElement("ant");
+        String localPart = reformatName(wsdlInterface.getName().getLocalPart(),false);
         String packageName = configuration.getPackageName();
         String[] dotSeparatedValues = packageName.split("\\.");
         addAttribute(doc,
@@ -787,14 +797,14 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 dotSeparatedValues[0],
                 rootElement);
 
-            addAttribute(doc,
-                    "name",
-                    localPart,
-                    rootElement);
-            doc.appendChild(rootElement);
-            return doc;
+        addAttribute(doc,
+                "name",
+                localPart,
+                rootElement);
+        doc.appendChild(rootElement);
+        return doc;
 
-        }
+    }
 
     /**
      * Creates the DOM tree for the interface creation. Uses the interface
@@ -1020,12 +1030,27 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     }
 
+    protected Document createDOMDocumentforSerialization(
+            String portTypeName,Iterator operationsInterator,WSDLBinding axisBinding) {
+        Document doc = getEmptyDocument();
+        while (operationsInterator.hasNext()) {
+            WSDLOperation operation = (WSDLOperation) operationsInterator.next();
+            WSDLBindingOperation bindingop = axisBinding.getBindingOperation(operation.getName());
+            doc.appendChild(createDOMElementforSerializationForOperation(doc,operation,portTypeName,bindingop));
+        }
 
+        return doc;
+    }
 
     protected Document createDOMDocumentforSerialization(
             WSDLOperation operation, String portTypeName, WSDLBindingOperation bindingOperation) {
-
         Document doc = getEmptyDocument();
+        doc.appendChild(createDOMElementforSerializationForOperation(doc,operation,portTypeName,bindingOperation));
+        return doc;
+    }
+
+    protected Element createDOMElementforSerializationForOperation(
+            Document doc,WSDLOperation operation, String portTypeName, WSDLBindingOperation bindingOperation) {
         Element rootElement = doc.createElement("class");
         addAttribute(doc,
                 "package",
@@ -1089,9 +1114,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
             rootElement.appendChild((Element)iterator.next());
         }
 
-        doc.appendChild(rootElement);
-
-        return doc;
+        return rootElement;
     }
 
     /**
@@ -1200,13 +1223,14 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     protected void addEndpoints(Document doc,
                                 Element rootElement,
                                 HashMap endpointMap) throws Exception{
-        Map endpointPolicyMap = configuration.getPolicyMap();
+       // Map endpointPolicyMap = configuration.getPolicyMap();
         Object[] endpoints = endpointMap.values().toArray();
         WSDLEndpoint endpoint;
         Element endpointElement;
         Text text;
         for (int i = 0; i < endpoints.length; i++) {
             endpoint = (WSDLEndpoint) endpoints[i];
+
             //attach the policy for this endpoint here
 //            String policyFileResourceName = null;
 //            Policy policy =  (Policy)endpointPolicyMap.get(endpoint.getName());

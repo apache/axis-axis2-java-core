@@ -30,6 +30,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class SOAPOverHTTPSender extends AbstractHTTPSender {
+
+
     public void send(MessageContext msgContext, OMElement dataout, URL url, String soapActionString)
             throws MalformedURLException, AxisFault, IOException {
 
@@ -58,10 +60,10 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         }
 
         postMethod.setPath(url.getPath());
-        postMethod.setRequestEntity(new AxisSOAPRequestEntity(dataout, chuncked, msgContext,
+        postMethod.setRequestEntity(new AxisSOAPRequestEntity(dataout, chunked, msgContext,
                 charEncoding, soapActionString));
 
-        if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chuncked) {
+        if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
             postMethod.setContentChunked(true);
         }
 

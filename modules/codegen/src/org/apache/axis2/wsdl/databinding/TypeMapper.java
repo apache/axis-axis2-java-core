@@ -22,31 +22,52 @@ import javax.xml.namespace.QName;
 
 public interface TypeMapper {
 
-    // Default class name is the
+    /**
+     * Default class name is the OMElement ?
+     */
     public static final String DEFAULT_CLASS_NAME = OMElement.class.getName();
 
     /**
-     * Get the type mapping class
+     * Get the type mapping class name
      *
      * @param qname name of the XML element to be mapped
-     * @return a class that represents the particualr type
+     * @return a string that represents the particular type
      */
-    public String getTypeMapping(QName qname);
+    public String getTypeMappingName(QName qname);
+
+    /**
+     * Get the type mapping Object
+     *
+     * @param qname name of the XML element to be mapped
+     * @return an Object that represents the particular class in a pre specified form.
+     * it can be a specific format to the databinding framework used
+     * This allows tight integrations with the databinding framework, allowing the emitter
+     * to write the databinding classes in his own way
+     *
+     */
+    public Object getTypeMappingObject(QName qname);
 
     /**
      * Get the parameter name
-     *
      * @param qname name of the XML element to get a parameter
      * @return a unique parameter name
      */
     public String getParameterName(QName qname);
 
     /**
-     * Adds a type mapping to the type mapper
-     *
+     * Adds a type mapping name to the type mapper
+     * @see #getTypeMappingName(javax.xml.namespace.QName)
      * @param qname
      * @param value
      */
-    public void addTypeMapping(QName qname, Object value);
+    public void addTypeMappingName(QName qname, String value);
 
+    /**
+     * Adds a type mapping object to the type mapper
+     *
+     * @see #getTypeMappingObject(javax.xml.namespace.QName)
+     * @param qname the xml Qname that this type refers to
+     * @param value the type mapping object
+     */
+     public void addTypeMappingObject(QName qname, Object value);
 }

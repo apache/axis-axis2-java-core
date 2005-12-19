@@ -17,16 +17,22 @@ public class ConfigPropertyFileLoader {
     private static String[] extensionClassNames;
     private static String[] thirdPartySchemaNames;
     private static String[] languageTypes;
+    private static String[] databindingFrameworkNames;
     private static Map languageEmitterMap;
-    private static String defaultLanguage;
     private static Map languageSpecificPropertiesMap;
+    private static Map databindingFrameworkNameToExtensionMap;
 
+    private static String defaultLanguage;
+    private static String defaultDBFramworkName;
 
-    private static final String CODE_GEN_KEY = "codegen.extension";
-    private static final String THIRD_PARTY_SCHEMA_KEY = "codegen.thirdparty.schema";
-    private static final String LANGUAGE_TYPE_KEY = "codegen.languages";
+    private static final String CODE_GEN_KEY_PREFIX = "codegen.extension";
+    private static final String THIRD_PARTY_SCHEMA_KEY_PREFIX = "codegen.thirdparty.schema";
+    private static final String LANGUAGE_TYPE_KEY_PREFIX = "codegen.languages";
     private static final String DEFAULT_LANGUAGE_TYPE_KEY = "codegen.languages.default";
     private static final String EMITTER_CLASS_KEY = "codegen.emitters";
+    private static final String DATA_BINDING_FRAMEWORK_NAME_KEY = "codegen.databinding.frameworks";
+    private static final String DATA_BINDING_FRAMEWORK_DEFAULT_NAME_KEY = "codegen.databinding.frameworks.default";
+    private static final String DATA_BINDING_FRAMEWORK_EXTENSION_NAME_KEY = "codegen.databinding.extensions";
 
     /* Note - Should be a non regular expression character. If not it should be properly escaped */
     private static final String SEPERATOR_CHAR = ",";
@@ -45,19 +51,56 @@ public class ConfigPropertyFileLoader {
             //create a new map for the lang specific properties
             languageSpecificPropertiesMap = new HashMap();
 
-            String tempString = props.getProperty(CODE_GEN_KEY);
+            //create a new map for the databinding frameworks and their extensions
+            databindingFrameworkNameToExtensionMap = new HashMap();
+
+            //load the extension class names
+            String tempString = props.getProperty(CODE_GEN_KEY_PREFIX);
             if (tempString!=null){
                 extensionClassNames = tempString.split(SEPERATOR_CHAR);
 
             }
 
-            tempString = props.getProperty(THIRD_PARTY_SCHEMA_KEY);
+            //load the data binding framework names
+            tempString = props.getProperty(DATA_BINDING_FRAMEWORK_NAME_KEY);
+            if (tempString!=null){
+                databindingFrameworkNames = tempString.split(SEPERATOR_CHAR);
+            }
+
+
+            //populate the data binding framework name to extension name map
+            tempString = props.getProperty(DATA_BINDING_FRAMEWORK_EXTENSION_NAME_KEY);
+            if (tempString!=null){
+                String[] frameworkExtensionNames = tempString.split(SEPERATOR_CHAR);
+
+                try {
+                    for (int i = 0; i < frameworkExtensionNames.length; i++) {
+                        databindingFrameworkNameToExtensionMap.put(databindingFrameworkNames[i],frameworkExtensionNames[i]);
+                    }
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    throw new Exception("Number of frameworks and extension names do not match!");
+                }
+
+            }
+
+            //load the default framework name
+            tempString = props.getProperty(DATA_BINDING_FRAMEWORK_DEFAULT_NAME_KEY);
+
+            System.out.println("tempString = " + tempString);
+
+            if (tempString==null || !databindingFrameworkNameToExtensionMap.containsKey(tempString)) {
+                throw new Exception("Unknown framework specified for default!");
+            }
+            defaultDBFramworkName = tempString;
+            //load the third party schema names
+            tempString = props.getProperty(THIRD_PARTY_SCHEMA_KEY_PREFIX);
             if (tempString!=null){
                 thirdPartySchemaNames = tempString.split(SEPERATOR_CHAR);
 
             }
 
-            tempString = props.getProperty(LANGUAGE_TYPE_KEY);
+            //load the language names
+            tempString = props.getProperty(LANGUAGE_TYPE_KEY_PREFIX);
             if (tempString!=null){
                 languageTypes = tempString.split(SEPERATOR_CHAR);
 
@@ -76,6 +119,7 @@ public class ConfigPropertyFileLoader {
                 }
             }
 
+            // load the default language
             tempString = props.getProperty(DEFAULT_LANGUAGE_TYPE_KEY);
             if (null==tempString || !languageEmitterMap.containsKey(tempString) ){
                 throw new Exception("Unknown Language specified for default!");
@@ -106,32 +150,81 @@ public class ConfigPropertyFileLoader {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }catch (Exception e){
-            throw new RuntimeException("Unknown Exception in loading the property file",e);
+            throw new RuntimeException("Exception while loading the property file",e);
         }
 
     }
 
+    /**
+     * get the extension class names
+     * @return
+     */
     public static String[] getExtensionClassNames() {
         return extensionClassNames;
     }
 
+    /**
+     * get the third party schema names list
+     * @return
+     */
     public static String[] getThirdPartySchemaNames() {
         return thirdPartySchemaNames;
     }
 
+    /**
+     * get the language type names
+     * @return
+     */
     public static String[] getLanguageTypes() {
         return languageTypes;
     }
 
+    /**
+     * get the emitter names map keyd with the language name
+     * @return
+     */
     public static Map getLanguageEmitterMap() {
         return languageEmitterMap;
     }
 
+    /**
+     * get the default language name
+     * @return
+     */
     public static String getDefaultLanguage() {
         return defaultLanguage;
     }
 
+    /**
+     * get the language specific properties
+     * @return
+     */
     public static Map getLanguageSpecificPropertiesMap() {
         return languageSpecificPropertiesMap;
+    }
+
+    /**
+     * get the databinding framework names
+     * @return
+     */
+    public static String[] getDatabindingFrameworkNames() {
+        return databindingFrameworkNames;
+    }
+
+    /**
+     * get the extensions map for the databinding frameworks
+     * the entries are keys by the framework name
+     * @return
+     */
+    public static Map getDatabindingFrameworkNameToExtensionMap() {
+        return databindingFrameworkNameToExtensionMap;
+    }
+
+    /**
+     * get the default DB framwork name
+     * @return
+     */
+    public static String getDefaultDBFramworkName() {
+        return defaultDBFramworkName;
     }
 }

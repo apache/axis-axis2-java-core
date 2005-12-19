@@ -27,9 +27,9 @@
         <mkdir dir="target/toWar/services/"/>
 
         <!-- Create Chuncked enabled Repository -->
-        <mkdir dir="target/test-resources/chuncked-enabledRepository"/>
+        <mkdir dir="target/test-resources/chunked-enabledRepository"/>
         <copy file="test/org/apache/axis2/engine/chuncking-enabled-axis2.xml"
-            tofile="target/test-resources/chuncked-enabledRepository/axis2.xml"/>
+            tofile="target/test-resources/chunked-enabledRepository/axis2.xml"/>
 
         <!-- Create Mail Client transport enabled Repository -->
         <mkdir dir="target/test-resources/mail-transport-client-enabledRepository"/>

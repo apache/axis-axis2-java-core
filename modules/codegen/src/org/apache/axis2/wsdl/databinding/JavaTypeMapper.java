@@ -16,17 +16,16 @@
 
 package org.apache.axis2.wsdl.databinding;
 
-import javax.xml.namespace.QName;
 
-
+/**
+ * The java type mapper can do without any default configuration
+ * However if any such default type mappings are needed, they can be
+ * put inside the constructor
+ */
 public class JavaTypeMapper extends TypeMappingAdapter {
 
     public JavaTypeMapper() {
     }
 
 
-
-    public String toString() {
-        return this.map.toString();
-    }
 }

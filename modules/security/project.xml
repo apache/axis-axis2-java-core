@@ -187,6 +187,11 @@
                 <module>true</module>
             </properties>
         </dependency>
+         <dependency>
+            <groupId>ws-commons</groupId>
+            <artifactId>XmlSchema</artifactId>
+            <version>${XmlSchema.version}</version>
+        </dependency>
     </dependencies>
 
     <reports/>

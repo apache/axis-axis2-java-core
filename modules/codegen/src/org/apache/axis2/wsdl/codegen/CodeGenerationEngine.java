@@ -35,8 +35,8 @@ public class CodeGenerationEngine {
 
     private CodeGenConfiguration configuration;
 
-    public CodeGenerationEngine(CodeGenConfiguration config) throws CodeGenerationException{
-        this.configuration = config;
+    public CodeGenerationEngine(CodeGenConfiguration configuration) throws CodeGenerationException{
+        this.configuration = configuration;
         loadExtensions();
     }
 
@@ -50,7 +50,7 @@ public class CodeGenerationEngine {
             throw new CodeGenerationException("Invalid WSDL Location ", e1);
         }
 
-        this.configuration = new CodeGenConfiguration(wom, parser);
+        configuration = new CodeGenConfiguration(wom, parser);
         loadExtensions();
     }
 
@@ -66,24 +66,26 @@ public class CodeGenerationEngine {
     }
 
     private void addExtension(CodeGenExtension ext){
-        ext.init(this.configuration);
-        this.moduleEndpoints.add(ext);
+        ext.init(configuration);
+        moduleEndpoints.add(ext);
     }
+
+
     public void generate() throws CodeGenerationException {
         try {
-            for (int i = 0; i < this.moduleEndpoints.size(); i++) {
-                ((CodeGenExtension) this.moduleEndpoints.get(i)).engage();
+            for (int i = 0; i < moduleEndpoints.size(); i++) {
+                ((CodeGenExtension) moduleEndpoints.get(i)).engage();
             }
 
             Emitter emitter;
             TypeMapper mapper = configuration.getTypeMapper();
 
             Map emitterMap = ConfigPropertyFileLoader.getLanguageEmitterMap();
-            String className = emitterMap.get(this.configuration.getOutputLanguage()).toString();
+            String className = emitterMap.get(configuration.getOutputLanguage()).toString();
             if (className!=null){
                 
                 emitter = (Emitter)getObjectFromClassName(className);
-                emitter.setCodeGenConfiguration(this.configuration);
+                emitter.setCodeGenConfiguration(configuration);
                 emitter.setMapper(mapper);
 
             }else{
@@ -91,7 +93,7 @@ public class CodeGenerationEngine {
             }
 
 
-            if (this.configuration.isServerSide()){
+            if (configuration.isServerSide()){
                 emitter.emitSkeleton();
             }else{
                 emitter.emitStub();
@@ -125,7 +127,7 @@ public class CodeGenerationEngine {
      */
     private Object getObjectFromClassName(String className) throws CodeGenerationException{
         try {
-            Class extensionClass = this.getClass().getClassLoader().loadClass(className);
+            Class extensionClass = getClass().getClassLoader().loadClass(className);
             return extensionClass.newInstance();
         } catch (ClassNotFoundException e) {
             throw new CodeGenerationException("Extension class loading problem",e);
