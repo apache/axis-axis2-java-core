@@ -10,7 +10,6 @@ import com.ibm.wsdl.PortTypeImpl;
 import com.ibm.wsdl.TypesImpl;
 import com.ibm.wsdl.extensions.schema.SchemaImpl;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.databinding.extensions.SchemaUtility;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.om.OMElement;

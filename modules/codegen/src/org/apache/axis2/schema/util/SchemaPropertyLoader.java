@@ -1,7 +1,7 @@
 package org.apache.axis2.schema.util;
 
-import org.apache.axis2.schema.writer.BeanWriter;
 import org.apache.axis2.schema.typemap.TypeMap;
+import org.apache.axis2.schema.writer.BeanWriter;
 
 import java.util.Properties;
 /*

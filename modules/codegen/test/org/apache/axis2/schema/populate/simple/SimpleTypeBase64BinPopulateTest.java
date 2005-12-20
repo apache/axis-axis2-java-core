@@ -1,6 +1,5 @@
 package org.apache.axis2.schema.populate.simple;
 
-import org.apache.axis2.schema.types.URI;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

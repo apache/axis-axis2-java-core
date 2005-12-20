@@ -21,7 +21,12 @@ import org.apache.axis2.om.OMElement;
 
 import javax.xml.namespace.QName;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.TimeZone;
 
 public class SimpleTypeMapper {
 

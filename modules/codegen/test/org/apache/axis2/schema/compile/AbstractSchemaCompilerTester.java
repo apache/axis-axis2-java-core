@@ -1,10 +1,10 @@
 package org.apache.axis2.schema.compile;
 
 import junit.framework.TestCase;
+import org.apache.axis2.schema.CompilerOptions;
+import org.apache.axis2.schema.SchemaCompiler;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.axis2.schema.SchemaCompiler;
-import org.apache.axis2.schema.CompilerOptions;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;

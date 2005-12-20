@@ -2,20 +2,13 @@ package org.apache.axis2.schema.populate;
 
 import junit.framework.TestCase;
 
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.namespace.QName;
-
-
-
-import java.io.ByteArrayInputStream;
-import java.beans.Introspector;
+import javax.xml.stream.XMLStreamReader;
 import java.beans.BeanInfo;
+import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.ByteArrayInputStream;
 import java.lang.reflect.Method;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

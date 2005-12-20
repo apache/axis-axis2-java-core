@@ -1,8 +1,11 @@
 package org.apache.axis2.schema;
 
 import javax.xml.namespace.QName;
-import java.util.*;
-import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

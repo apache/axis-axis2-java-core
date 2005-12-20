@@ -5,8 +5,8 @@ import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

@@ -1,12 +1,5 @@
 package org.apache.axis2.schema.populate.simple;
 
-import junit.framework.TestCase;
-
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
-import java.io.ByteArrayInputStream;
-import java.lang.reflect.Method;
-
 import org.apache.axis2.schema.types.Month;
 import org.apache.axis2.schema.util.ConverterUtil;
 /*

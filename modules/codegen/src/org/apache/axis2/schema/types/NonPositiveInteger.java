@@ -15,9 +15,9 @@
  */
 package org.apache.axis2.schema.types;
 
+import java.io.ObjectStreamException;
 import java.math.BigInteger;
 import java.util.Random;
-import java.io.ObjectStreamException;
 
 /**
  * Custom class for supporting primitive XSD data type nonPositiveInteger

@@ -17,8 +17,6 @@
 package org.apache.axis2.databinding;
 
 import junit.framework.TestCase;
-import org.apache.axis2.databinding.deserializers.BeanDeserializer;
-import org.apache.axis2.databinding.metadata.BeanManager;
 import org.apache.axis2.databinding.metadata.ElementDesc;
 import org.apache.axis2.databinding.metadata.TypeDesc;
 import org.apache.axis2.om.OMAbstractFactory;

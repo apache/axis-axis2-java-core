@@ -1,13 +1,11 @@
 package org.apache.axis2.schema;
 
-import org.w3c.dom.Document;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.xml.sax.SAXException;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.w3c.dom.Document;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.IOException;
 /*

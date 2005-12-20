@@ -17,11 +17,8 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.Map;
 
 public abstract class AbstractCodeGenerationExtension implements CodeGenExtension {
     protected Log log = LogFactory.getLog(this.getClass());

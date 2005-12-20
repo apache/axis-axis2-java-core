@@ -1,6 +1,5 @@
 package org.apache.axis2.schema.populate.derived;
 
-import org.apache.axis2.schema.types.UnsignedLong;
 import org.apache.axis2.schema.types.UnsignedShort;
 import org.apache.axis2.schema.util.ConverterUtil;
 

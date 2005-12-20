@@ -16,12 +16,11 @@
 
 package org.apache.axis2.wsdl.codegen.writer;
 
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.FileWriter;
-import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.XSLTTemplateProcessor;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
-import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
@@ -29,7 +28,6 @@ import org.w3c.dom.Document;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
 

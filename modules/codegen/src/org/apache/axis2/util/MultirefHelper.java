@@ -17,11 +17,11 @@
 
 package org.apache.axis2.util;
 
-import org.apache.axis2.om.OMElement;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.om.OMAttribute;
+import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
 
 import javax.xml.namespace.QName;

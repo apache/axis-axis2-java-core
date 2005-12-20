@@ -1,6 +1,5 @@
 package org.apache.axis2.schema.populate.simple;
 
-import org.apache.axis2.schema.types.HexBinary;
 import org.apache.axis2.schema.types.MonthDay;
 import org.apache.axis2.schema.util.ConverterUtil;
 /*

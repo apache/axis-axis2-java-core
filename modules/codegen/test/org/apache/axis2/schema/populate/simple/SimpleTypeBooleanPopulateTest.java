@@ -1,8 +1,5 @@
 package org.apache.axis2.schema.populate.simple;
 
-import java.beans.BeanInfo;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

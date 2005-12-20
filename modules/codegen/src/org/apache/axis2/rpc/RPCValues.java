@@ -16,9 +16,9 @@
 package org.apache.axis2.rpc;
 
 import javax.xml.namespace.QName;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * RPCValues

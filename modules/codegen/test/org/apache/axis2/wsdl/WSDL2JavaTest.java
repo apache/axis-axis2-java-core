@@ -16,6 +16,7 @@
 
 package org.apache.axis2.wsdl;
 
+import junit.framework.TestCase;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.CommandLineOption;
@@ -30,8 +31,6 @@ import org.apache.tools.ant.types.Path;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 public class WSDL2JavaTest extends TestCase{
 

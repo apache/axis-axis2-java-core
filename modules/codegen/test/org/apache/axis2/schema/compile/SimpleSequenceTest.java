@@ -1,6 +1,5 @@
 package org.apache.axis2.schema.compile;
 
-import org.apache.axis2.schema.compile.AbstractSchemaCompilerTester;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

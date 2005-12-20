@@ -1,13 +1,38 @@
 package org.apache.axis2.schema;
 
-import org.apache.ws.commons.schema.*;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.schema.writer.BeanWriter;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
+import org.apache.axis2.schema.writer.BeanWriter;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaAll;
+import org.apache.ws.commons.schema.XmlSchemaAny;
+import org.apache.ws.commons.schema.XmlSchemaAnyAttribute;
+import org.apache.ws.commons.schema.XmlSchemaAttribute;
+import org.apache.ws.commons.schema.XmlSchemaChoice;
+import org.apache.ws.commons.schema.XmlSchemaComplexContent;
+import org.apache.ws.commons.schema.XmlSchemaComplexContentExtension;
+import org.apache.ws.commons.schema.XmlSchemaComplexContentRestriction;
+import org.apache.ws.commons.schema.XmlSchemaComplexType;
+import org.apache.ws.commons.schema.XmlSchemaContent;
+import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaImport;
+import org.apache.ws.commons.schema.XmlSchemaObject;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.XmlSchemaObjectTable;
+import org.apache.ws.commons.schema.XmlSchemaParticle;
+import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSimpleType;
+import org.apache.ws.commons.schema.XmlSchemaSimpleTypeContent;
+import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
+import org.apache.ws.commons.schema.XmlSchemaType;
 
 import javax.xml.namespace.QName;
-import java.util.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

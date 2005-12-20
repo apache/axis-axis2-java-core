@@ -1,8 +1,8 @@
 package org.apache.axis2.schema;
 
 import java.io.File;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

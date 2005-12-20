@@ -1,6 +1,5 @@
 package org.apache.axis2.schema.populate.simple;
 
-import org.apache.axis2.schema.types.YearMonth;
 import org.apache.axis2.schema.types.Year;
 import org.apache.axis2.schema.util.ConverterUtil;
 /*
