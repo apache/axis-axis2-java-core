@@ -19,7 +19,7 @@
             <tr>
                  <td colspan="2" ><b>
            <%
-                 String servicName =  axisService.getName().getLocalPart();
+                 String servicName =  axisService.getName();
                  %>Service Parameters :: <%=servicName%>
                  </b></td>
              </tr>

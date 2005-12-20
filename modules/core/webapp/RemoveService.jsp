@@ -25,8 +25,8 @@
                        Collection col = services.values();
                        for (Iterator iterator = col.iterator(); iterator.hasNext();) {
                            AxisService axisServices = (AxisService) iterator.next();
-                   %> <option value="<%=axisServices.getName().getLocalPart()%>">
-                           <%=axisServices.getName().getLocalPart()%></option> <%
+                   %> <option value="<%=axisServices.getName()%>">
+                           <%=axisServices.getName()%></option> <%
                        }
                            %>
                   </td>

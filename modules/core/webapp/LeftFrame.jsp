@@ -154,7 +154,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="removeService">Undeploy axisService</a>
+         <a href="removeService">Undeploy Service</a>
        </td>
     </tr>
     <tr>
@@ -175,7 +175,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="listContexts">View Hierachy</a>
+         <a href="listContexts">View Hierarchy</a>
        </td>
     </tr>
 </table>

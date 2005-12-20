@@ -26,7 +26,7 @@
                  serviceName = axisService.getName().getLocalPart();
      %><hr><h2><font color="blue"><a href="<%=prifix + axisService.getName().getLocalPart()%>?wsdl"><%=serviceName%></a></font></h2>
 <font color="blue">Service EPR : <font color="black"><%=prifix + axisService.getName().getLocalPart()%></font>
-    <h4>Service Description : <font color="black"><%=axisService.getAxisServiceName()%></h4>
+    <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
     <%
         Collection engagdeModules = axisService.getEngagedModules();
         String moduleName = "";

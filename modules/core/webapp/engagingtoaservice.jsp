@@ -53,7 +53,7 @@
                 Collection serviceCol =  services.values();
                 for (Iterator iterator = serviceCol.iterator(); iterator.hasNext();) {
                     AxisService axisService = (AxisService)iterator.next();
-                    String serviceName = axisService.getName().getLocalPart();
+                    String serviceName = axisService.getName();
             %> <option  align="left" value="<%=serviceName%>"><%=serviceName%></option>
              <%
                 }

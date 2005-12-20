@@ -20,7 +20,7 @@
     <%
         while (axisServiceIter.hasNext()){
             AxisService axisService = (AxisService) axisServiceIter.next();
-            String serviceName = axisService.getName().getLocalPart();
+            String serviceName = axisService.getName();
     %>
     <li><font color="blue"><a href="listGroupService.jsp?serviceName=<%=serviceName%>">
         <%=serviceName%></a></font></li>
