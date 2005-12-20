@@ -1,19 +1,18 @@
 /*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
+ * Copyright 2004,2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.apache.axis2.context;
 
@@ -52,19 +51,19 @@ public class MessageContext extends AbstractContext {
     public static final String TRANSPORT_IN = "TRANSPORT_IN";
 
     /**
-     * Field  CHARACTER_SET_ENCODING
+     * Field CHARACTER_SET_ENCODING
      */
     public static final String CHARACTER_SET_ENCODING = "CHARACTER_SET_ENCODING";
 
     /**
-     * Field UTF_8.
-     * This is the 'utf-8' value for CHARACTER_SET_ENCODING property.
+     * Field UTF_8. This is the 'utf-8' value for CHARACTER_SET_ENCODING
+     * property.
      */
     public static final String UTF_8 = "UTF-8";
 
     /**
-     * Field UTF_16.
-     * This is the 'utf-16' value for CHARACTER_SET_ENCODING property.
+     * Field UTF_16. This is the 'utf-16' value for CHARACTER_SET_ENCODING
+     * property.
      */
     public static final String UTF_16 = "utf-16";
 
@@ -74,19 +73,22 @@ public class MessageContext extends AbstractContext {
     public static final String TRANSPORT_SUCCEED = "TRANSPORT_SUCCEED";
 
     /**
-     * Field DEFAULT_CHAR_SET_ENCODING.
-     * This is the default value for CHARACTER_SET_ENCODING property.
+     * Field DEFAULT_CHAR_SET_ENCODING. This is the default value for
+     * CHARACTER_SET_ENCODING property.
      */
     public static final String DEFAULT_CHAR_SET_ENCODING = UTF_8;
 
-    //to keep a ref to figure out which path your are in the execution (send or receive)
+    // to keep a ref to figure out which path your are in the execution (send or
+    // receive)
     public int FLOW = IN_FLOW;
 
     /**
      * Field processingFault
      */
     private boolean processingFault = false;
+
     private boolean paused = false;
+
     public boolean outPutWritten = false;
 
     /**
@@ -95,12 +97,13 @@ public class MessageContext extends AbstractContext {
     private boolean newThreadRequired = false;
 
     /**
-     * Addressing Information for Axis 2
-     * Following Properties will be kept inside this, these fields will be initially filled by
-     * the transport. Then later a addressing handler will make relevant changes to this, if addressing
-     * information is present in the SOAP header.
+     * Addressing Information for Axis 2 Following Properties will be kept
+     * inside this, these fields will be initially filled by the transport. Then
+     * later a addressing handler will make relevant changes to this, if
+     * addressing information is present in the SOAP header.
      */
     private MessageInformationHeaders messageInformationHeaders = new MessageInformationHeaders();
+
     private boolean isSOAP11 = true;
 
     /**
@@ -113,14 +116,23 @@ public class MessageContext extends AbstractContext {
 
     // Are we doing MTOM now?
     private boolean doingMTOM = false;
+
     QName transportInName = null;
+
     QName transportOutname = null;
+
     String serviceGroupId = null;
+
     String axisServiceName = null;
+
     QName axisOperationName = null;
+
     private transient AxisOperation axisOperation;
+
     private transient AxisService axisService;
+
     private transient AxisServiceGroup axisServiceGroup;
+
     private ConfigurationContext configurationContext;
 
     /**
@@ -146,6 +158,7 @@ public class MessageContext extends AbstractContext {
      * Field inFaultFlow
      */
     private boolean inFaultFlow;
+
     private OperationContext operationContext;
 
     /**
@@ -157,8 +170,11 @@ public class MessageContext extends AbstractContext {
      * Field serverSide
      */
     private boolean serverSide;
+
     private ServiceContext serviceContext;
+
     private String serviceContextID;
+
     private ServiceGroupContext serviceGroupContext;
 
     /**
@@ -170,23 +186,25 @@ public class MessageContext extends AbstractContext {
      * Field sessionContext
      */
     private final SessionContext sessionContext;
+
     private String soapAction;
+
     private transient TransportInDescription transportIn;
+
     private transient TransportOutDescription transportOut;
 
-    /**
-     * Convenience Constructor. Before calling engine.send() or  engine.receive(), one must send
-     * transport in/out
-     *
-     * @param engineContext
-     */
-    public MessageContext(ConfigurationContext engineContext) {
-        this(engineContext, null, null, null);
+    public MessageContext() {
+        this(null, null, null, null);
     }
 
-    public MessageContext(ConfigurationContext engineContext, TransportInDescription transportIn,
-                          TransportOutDescription transportOut) {
-        this(engineContext, null, transportIn, transportOut);
+    public MessageContext(ConfigurationContext configContext) {
+        this(configContext, null, null, null);
+    }
+
+    public MessageContext(ConfigurationContext configContext,
+            TransportInDescription transportIn,
+            TransportOutDescription transportOut) {
+        this(configContext, null, transportIn, transportOut);
         this.transportInName = transportIn.getName();
         this.transportOutname = transportOut.getName();
     }
@@ -196,9 +214,9 @@ public class MessageContext extends AbstractContext {
      * @param transportIn
      * @param transportOut
      */
-    public MessageContext(ConfigurationContext engineContext, SessionContext sessionContext,
-                          TransportInDescription transportIn,
-                          TransportOutDescription transportOut) {
+    public MessageContext(ConfigurationContext configContext,
+            SessionContext sessionContext, TransportInDescription transportIn,
+            TransportOutDescription transportOut) {
         super(null);
 
         if (sessionContext == null) {
@@ -209,7 +227,7 @@ public class MessageContext extends AbstractContext {
 
         this.transportIn = transportIn;
         this.transportOut = transportOut;
-        this.configurationContext = engineContext;
+        this.configurationContext = configContext;
 
         if (transportIn != null) {
             this.transportInName = transportIn.getName();
@@ -288,30 +306,35 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * Retrieves both module specific configuration parameters as well as other parameters.
-     * The order of search is as follows:
+     * Retrieves both module specific configuration parameters as well as other
+     * parameters. The order of search is as follows:
      * <ol>
-     * <li> Search in module configurations inside corresponding operation descripton if its there </li>
+     * <li> Search in module configurations inside corresponding operation
+     * descripton if its there </li>
      * <li> Search in corresponding operation if its there </li>
-     * <li> Search in module configurations inside corresponding service description if its there </li>
+     * <li> Search in module configurations inside corresponding service
+     * description if its there </li>
      * <li> Next search in Corresponding Service description if its there </li>
      * <li> Next search in module configurations inside axisConfiguration </li>
      * <li> Search in AxisConfiguration for parameters </li>
-     * <li> Next get the corresponding module and search for the parameters </li>
+     * <li> Next get the corresponding module and search for the parameters
+     * </li>
      * <li> Search in HandlerDescription for the parameter </li>
      * </ol>
-     * <p/>
-     * and the way of specifing module configuration is as follows
-     * <moduleConfig name="addressing">
-     * <parameter name="addressingPara" locked="false">N/A</parameter>
-     * </moduleConfig>
-     *
-     * @param key        : Parameter Name
-     * @param moduleName : Name of the module
-     * @param handler    <code>HandlerDescription</code>
+     * <p/> and the way of specifing module configuration is as follows
+     * <moduleConfig name="addressing"> <parameter name="addressingPara"
+     * locked="false">N/A</parameter> </moduleConfig>
+     * 
+     * @param key :
+     *            Parameter Name
+     * @param moduleName :
+     *            Name of the module
+     * @param handler
+     *            <code>HandlerDescription</code>
      * @return Parameter <code>Parameter</code>
      */
-    public Parameter getModuleParameter(String key, String moduleName, HandlerDescription handler) {
+    public Parameter getModuleParameter(String key, String moduleName,
+            HandlerDescription handler) {
         Parameter param;
         ModuleConfiguration moduleConfig;
 
@@ -358,7 +381,8 @@ public class MessageContext extends AbstractContext {
         if (getAxisServiceGroup() != null) {
             AxisServiceGroup axisServiceDesc = getAxisServiceGroup();
 
-            moduleConfig = axisServiceDesc.getModuleConfig(new QName(moduleName));
+            moduleConfig = axisServiceDesc
+                    .getModuleConfig(new QName(moduleName));
 
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);
@@ -375,7 +399,8 @@ public class MessageContext extends AbstractContext {
             }
         }
 
-        AxisConfiguration baseConfig = configurationContext.getAxisConfiguration();
+        AxisConfiguration baseConfig = configurationContext
+                .getAxisConfiguration();
 
         moduleConfig = baseConfig.getModuleConfig(new QName(moduleName));
 
@@ -413,8 +438,8 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * Retrieves configuration descriptor parameters at any level. The order of search is
-     * as follows:
+     * Retrieves configuration descriptor parameters at any level. The order of
+     * search is as follows:
      * <ol>
      * <li> Search in operation description if it exists </li>
      * <li> If parameter is not found or if operationContext is null, search in
@@ -422,7 +447,7 @@ public class MessageContext extends AbstractContext {
      * <li> If parameter is not found or if axisService is null, search in
      * AxisConfiguration </li>
      * </ol>
-     *
+     * 
      * @param key
      * @return Parameter <code>Parameter</code>
      */
@@ -460,7 +485,8 @@ public class MessageContext extends AbstractContext {
         }
 
         if (configurationContext != null) {
-            AxisConfiguration baseConfig = configurationContext.getAxisConfiguration();
+            AxisConfiguration baseConfig = configurationContext
+                    .getAxisConfiguration();
 
             param = baseConfig.getParameter(key);
         }
@@ -469,16 +495,19 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * Retrieves a property. The order of search is as follows:
-     * <p/>
+     * Retrieves a property. The order of search is as follows: <p/>
      * <ol>
      * <li> Search in OperationContext, </li>
-     * <li> If OperationContext is null or if property is not found, search in ServiceContext,</li>
-     * <li> If ServiceContext is null or if property is not found, search in ServiceGroupContext,</li>
-     * <li> If ServiceGroupContext is null or if property is not found, search in ConfigurationContext.</li>
+     * <li> If OperationContext is null or if property is not found, search in
+     * ServiceContext,</li>
+     * <li> If ServiceContext is null or if property is not found, search in
+     * ServiceGroupContext,</li>
+     * <li> If ServiceGroupContext is null or if property is not found, search
+     * in ConfigurationContext.</li>
      * </ol>
-     *
-     * @param key property Name
+     * 
+     * @param key
+     *            property Name
      * @return Object
      */
     public Object getProperty(String key) {
@@ -490,7 +519,8 @@ public class MessageContext extends AbstractContext {
             return obj;
         }
 
-        // The context hierarchy might not have constructed fully, the check should
+        // The context hierarchy might not have constructed fully, the check
+        // should
         // look for the disconnected grandparents
         // Search in Operation Context
         if (operationContext != null) {
@@ -724,9 +754,11 @@ public class MessageContext extends AbstractContext {
 
         String soapNamespaceURI = envelope.getNamespace().getName();
 
-        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespaceURI)) {
+        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI
+                .equals(soapNamespaceURI)) {
             isSOAP11 = false;
-        } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespaceURI)) {
+        } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI
+                .equals(soapNamespaceURI)) {
             isSOAP11 = true;
         } else {
             throw new AxisFault(
@@ -735,10 +767,11 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * Set the execution chain of Handler in this MessageContext.  Doing this causes
-     * the current handler/phase indexes to reset to 0, since we have new Handlers to
-     * execute (this usually only happens at initialization and when a fault occurs).
-     *
+     * Set the execution chain of Handler in this MessageContext. Doing this
+     * causes the current handler/phase indexes to reset to 0, since we have new
+     * Handlers to execute (this usually only happens at initialization and when
+     * a fault occurs).
+     * 
      * @param executionChain
      */
     public void setExecutionChain(ArrayList executionChain) {
@@ -847,7 +880,8 @@ public class MessageContext extends AbstractContext {
     public void setServiceContext(ServiceContext context) {
         serviceContext = context;
 
-        if ((operationContext != null) && (operationContext.getParent() != null)) {
+        if ((operationContext != null)
+                && (operationContext.getParent() != null)) {
             operationContext.setParent(context);
         }
 
@@ -856,7 +890,7 @@ public class MessageContext extends AbstractContext {
 
     /**
      * Sets the service context id.
-     *
+     * 
      * @param serviceContextID
      */
     public void setServiceContextID(String serviceContextID) {
@@ -918,7 +952,7 @@ public class MessageContext extends AbstractContext {
         messageInformationHeaders.setMessageId(messageID);
     }
 
-    //to get the flow inwhich the execution chain below
+    // to get the flow inwhich the execution chain below
     public int getFLOW() {
         return FLOW;
     }
