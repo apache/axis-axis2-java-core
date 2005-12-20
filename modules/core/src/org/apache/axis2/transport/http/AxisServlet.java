@@ -183,16 +183,29 @@ public class AxisServlet extends HttpServlet {
      */
     public void init(ServletConfig config) throws ServletException {
         try {
+            configContext = initConfigContext(config);
+            lister = new ListingAgent(configContext);
+            context.setAttribute(CONFIGURATION_CONTEXT, configContext);
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+    }
+
+    /**
+     * Initialize the Axis configuration context
+     *
+     * @param config Servlet configuration
+     * @throws ServletException
+     */
+    protected ConfigurationContext initConfigContext(ServletConfig config) throws ServletException {
+        try {
             ServletContext context = config.getServletContext();
             String repoDir = context.getRealPath("/WEB-INF");
             ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-
-            configContext = erfac.buildConfigurationContext(repoDir);
+            ConfigurationContext configContext = erfac.buildConfigurationContext(repoDir);
             configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
             configContext.setRootDir(new File(context.getRealPath("/WEB-INF")));
-            lister = new ListingAgent(configContext);
-            context.setAttribute(CONFIGURATION_CONTEXT, configContext);
-
+            return configContext;
         } catch (Exception e) {
             throw new ServletException(e);
         }
