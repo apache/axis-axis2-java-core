@@ -55,7 +55,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     <td >
-      <a href="listServciceGroups">Available ServiceGroups</a>
+      <a href="listServciceGroups">Available Service Groups</a>
     </td>
  </tr>
  <tr>

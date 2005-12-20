@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 
-public class BeanSerializerUtil {
+public class BeanUtil {
 
     /**
      * To Serilize Bean object this method is used, this will create an object array using given
@@ -312,7 +312,7 @@ public class BeanSerializerUtil {
                     } else if (SimpleTypeMapper.isArrayList(classType)) {
                         retObjs[count] = SimpleTypeMapper.getArrayList(omElement);
                     } else {
-                        retObjs[count] = BeanSerializerUtil.deserialize(classType, omElement);
+                        retObjs[count] = BeanUtil.deserialize(classType, omElement);
                     }
                 }
             }

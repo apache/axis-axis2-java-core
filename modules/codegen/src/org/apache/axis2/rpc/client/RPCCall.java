@@ -25,7 +25,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.databinding.utils.BeanSerializerUtil;
+import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -77,7 +77,7 @@ public class RPCCall extends Call {
         opDesc = createOpDescAndFillInFlowInformation(opDesc, opName.getLocalPart(),
                 WSDLConstants.MEP_CONSTANT_IN_OUT);
         opDesc.setParent(getServiceContext().getAxisService());
-        MessageContext msgctx = prepareTheSOAPEnvelope(BeanSerializerUtil.getOMElement(opName, args));
+        MessageContext msgctx = prepareTheSOAPEnvelope(BeanUtil.getOMElement(opName, args));
 
         this.lastResponseMsgCtx = super.invokeBlocking(opDesc, msgctx);
         SOAPEnvelope resEnvelope = lastResponseMsgCtx.getEnvelope();
@@ -106,10 +106,10 @@ public class RPCCall extends Call {
         opDesc = createOpDescAndFillInFlowInformation(opDesc, opName.getLocalPart(),
                 WSDLConstants.MEP_CONSTANT_IN_OUT);
         opDesc.setParent(getServiceContext().getAxisService());
-        MessageContext msgctx = prepareTheSOAPEnvelope(BeanSerializerUtil.getOMElement(opName, args));
+        MessageContext msgctx = prepareTheSOAPEnvelope(BeanUtil.getOMElement(opName, args));
         this.lastResponseMsgCtx = super.invokeBlocking(opDesc, msgctx);
         SOAPEnvelope resEnvelope = lastResponseMsgCtx.getEnvelope();
-        return BeanSerializerUtil.deserialize(resEnvelope.getBody().getFirstElement(), returnTypes);
+        return BeanUtil.deserialize(resEnvelope.getBody().getFirstElement(), returnTypes);
     }
 
     /**
@@ -130,7 +130,7 @@ public class RPCCall extends Call {
         AxisOperation opDesc =
                 getServiceContext().getAxisService().getOperation(opName);
         opDesc = createOpDescAndFillInFlowInformation(opDesc, opName.getLocalPart(), WSDLConstants.MEP_CONSTANT_IN_OUT);
-        MessageContext msgctx = prepareTheSOAPEnvelope(BeanSerializerUtil.getOMElement(opName, args));
+        MessageContext msgctx = prepareTheSOAPEnvelope(BeanUtil.getOMElement(opName, args));
         //call the underline implementation
         super.invokeNonBlocking(opDesc, msgctx, callback);
     }

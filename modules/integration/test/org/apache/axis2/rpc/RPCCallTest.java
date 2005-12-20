@@ -19,7 +19,7 @@ package org.apache.axis2.rpc;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.databinding.utils.BeanSerializerUtil;
+import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
@@ -121,7 +121,7 @@ public class RPCCallTest extends TestCase {
 
         OMElement response = call.invokeBlocking(operationName, args.toArray());
 //        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
-        MyBean resBean = (MyBean) BeanSerializerUtil.deserialize(MyBean.class, response.getFirstElement());
+        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
         call.close();
@@ -171,7 +171,7 @@ public class RPCCallTest extends TestCase {
 
 
         OMElement response = call.invokeBlocking(operationName, args.toArray());
-        MyBean resBean = (MyBean) BeanSerializerUtil.deserialize(MyBean.class, response.getFirstElement());
+        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
 //        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 100);

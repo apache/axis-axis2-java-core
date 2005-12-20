@@ -21,17 +21,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.Handler;
 import org.apache.axis2.soap.SOAP11Constants;
 import org.apache.axis2.soap.SOAP12Constants;
 import org.apache.axis2.soap.SOAPEnvelope;
@@ -43,6 +34,11 @@ import java.util.ArrayList;
  * MessageContext holds service specific state information.
  */
 public class MessageContext extends AbstractContext {
+
+    public final static int IN_FLOW = 1;
+
+    public final static int OUT_FLOW = 2;
+
     public static final String TRANSPORT_HEADERS = "TRANSPORT_HEADERS";
 
     /**
@@ -82,6 +78,9 @@ public class MessageContext extends AbstractContext {
      * This is the default value for CHARACTER_SET_ENCODING property.
      */
     public static final String DEFAULT_CHAR_SET_ENCODING = UTF_8;
+
+    //to keep a ref to figure out which path your are in the execution (send or receive)
+    public int FLOW = IN_FLOW;
 
     /**
      * Field processingFault
@@ -221,34 +220,11 @@ public class MessageContext extends AbstractContext {
         }
     }
 
-    public void invoke() throws AxisFault {
-        if (currentHandlerIndex == -1) {
-            currentHandlerIndex = 0;
-        }
-
-        while (currentHandlerIndex < executionChain.size()) {
-            Handler currentHandler = (Handler) executionChain.get(currentHandlerIndex);
-
-            currentHandler.invoke(this);
-
-            if (paused) {
-                break;
-            }
-
-            currentHandlerIndex++;
-        }
-    }
-
     /**
      * Pause the execution of the current handler chain
      */
     public void pause() {
         paused = true;
-    }
-
-    public void resume() throws AxisFault {
-        paused = false;
-        invoke();
     }
 
     public AxisOperation getAxisOperation() {
@@ -660,6 +636,10 @@ public class MessageContext extends AbstractContext {
         return paused;
     }
 
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
     /**
      * @return Returns boolean.
      */
@@ -936,5 +916,14 @@ public class MessageContext extends AbstractContext {
 
     public void setWSAMessageId(String messageID) {
         messageInformationHeaders.setMessageId(messageID);
+    }
+
+    //to get the flow inwhich the execution chain below
+    public int getFLOW() {
+        return FLOW;
+    }
+
+    public void setFLOW(int FLOW) {
+        this.FLOW = FLOW;
     }
 }

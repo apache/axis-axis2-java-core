@@ -330,7 +330,7 @@ public class ADBPullParser implements XMLStreamReader {
         } else if (object instanceof OMElement) {
             childPullParser = ((OMElement) object).getXMLStreamReader();
         } else {
-            childPullParser = BeanSerializerUtil.getPullParser(object, qname);
+            childPullParser = BeanUtil.getPullParser(object, qname);
         }
         return childPullParser;
     }

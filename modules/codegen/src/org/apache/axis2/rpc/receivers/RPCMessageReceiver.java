@@ -22,7 +22,7 @@
 package org.apache.axis2.rpc.receivers;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.databinding.utils.BeanSerializerUtil;
+import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
@@ -119,11 +119,11 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
     private Object[] processRequest(OMElement methodElement) throws AxisFault {
         Class[] parameters = method.getParameterTypes();
-        return   BeanSerializerUtil.deserialize(methodElement,parameters);
+        return   BeanUtil.deserialize(methodElement,parameters);
     }
 
     private OMElement getResponseElement(QName resname, Object [] objs){
-        return BeanSerializerUtil.getOMElement(resname,objs);
+        return BeanUtil.getOMElement(resname,objs);
     }
 
     private void processResponse(Object resObject, OMElement bodyContent, OMNamespace ns, SOAPEnvelope envelope) {
@@ -142,7 +142,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                 bodyContent = getSOAPFactory().createOMElement(
                         method.getName() + "Response", ns);
                 // Java Beans
-                XMLStreamReader xr = BeanSerializerUtil.getPullParser(resObject,
+                XMLStreamReader xr = BeanUtil.getPullParser(resObject,
                         new QName(RETURN_WRAPPER));
                 StAXOMBuilder stAXOMBuilder =
                         OMXMLBuilderFactory.createStAXOMBuilder(

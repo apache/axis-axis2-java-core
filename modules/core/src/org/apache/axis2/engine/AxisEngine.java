@@ -26,15 +26,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFault;
-import org.apache.axis2.soap.SOAPFaultCode;
-import org.apache.axis2.soap.SOAPFaultDetail;
-import org.apache.axis2.soap.SOAPFaultReason;
-import org.apache.axis2.soap.SOAPHeaderBlock;
-import org.apache.axis2.soap.SOAPProcessingException;
+import org.apache.axis2.soap.*;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -317,7 +309,8 @@ public class AxisEngine {
         // we got above.  This allows individual message processing to change the chain without
         // affecting later messages.
         msgContext.setExecutionChain((ArrayList) preCalculatedPhases.clone());
-        msgContext.invoke();
+        msgContext.setFLOW(MessageContext.IN_FLOW);
+        invoke(msgContext);
 
         if (msgContext.isServerSide() && !msgContext.isPaused()) {
 
@@ -331,6 +324,70 @@ public class AxisEngine {
     }
 
     /**
+     * Take the execution chain from the msgContext , and then take the current Index
+     * and invoke all the phases in the arraylist
+     * if the msgContext is pauesd then the execution will be breaked
+     *
+     * @param msgContext
+     * @throws AxisFault
+     */
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        if (msgContext.getCurrentHandlerIndex() == -1) {
+            msgContext.setCurrentHandlerIndex(0);
+        }
+        int currentHandlerIndex;
+        while (msgContext.getCurrentHandlerIndex() < msgContext.getExecutionChain().size()) {
+            //todo : This might cause for performance drawback
+            Handler currentHandler = (Handler) msgContext.getExecutionChain().
+                    get(msgContext.getCurrentHandlerIndex());
+            currentHandler.invoke(msgContext);
+
+            if (msgContext.isPaused()) {
+                break;
+            }
+            msgContext.setCurrentHandlerIndex(msgContext.getCurrentHandlerIndex() + 1);
+        }
+    }
+
+    /**
+     * If the msgConetext is puased and try to invoke then
+     * first invoke the phase list and after the message receiver
+     *
+     * @param msgContext
+     * @throws AxisFault
+     */
+    public void resumeReceive(MessageContext msgContext) throws AxisFault {
+        //invoke the phases
+        invoke(msgContext);
+        //invoking the MR
+        if (msgContext.isServerSide() && !msgContext.isPaused()) {
+            // invoke the Message Receivers
+            checkMustUnderstand(msgContext);
+            MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
+            receiver.receive(msgContext);
+        }
+    }
+
+    /**
+     * To resume the invocation at the send path , this is neened since it is require to call
+     * TranportSender at the end
+     *
+     * @param msgContext
+     */
+    public void resumeSend(MessageContext msgContext) throws AxisFault {
+        //invoke the phases
+        invoke(msgContext);
+        //Invoking Tarnsport Sender
+        if (!msgContext.isPaused()) {
+            // write the Message to the Wire
+            TransportOutDescription transportOut = msgContext.getTransportOut();
+            TransportSender sender = transportOut.getSender();
+            sender.invoke(msgContext);
+        }
+    }
+
+
+    /**
      * This is invoked when a SOAP Fault is received from a Other SOAP Node
      * Receives a SOAP fault from another SOAP node.
      *
@@ -342,7 +399,12 @@ public class AxisEngine {
     }
 
     public void resume(MessageContext msgctx) throws AxisFault {
-        msgctx.resume();
+        msgctx.setPaused(false);
+        if (msgctx.getFLOW() == MessageContext.IN_FLOW) {
+            resumeReceive(msgctx);
+        } else {
+            resumeSend(msgctx);
+        }
     }
 
     /**
@@ -361,13 +423,14 @@ public class AxisEngine {
         // find and invoke the Phases
         OperationContext operationContext = msgContext.getOperationContext();
         ArrayList executionChain = operationContext.getAxisOperation().getPhasesOutFlow();
-
-        msgContext.setExecutionChain((ArrayList) executionChain.clone());
-        msgContext.invoke();
-        msgContext
-                .setExecutionChain((ArrayList) msgContext.getConfigurationContext()
-                        .getAxisConfiguration().getGlobalOutPhases().clone());
-        msgContext.invoke();
+        //rather than having two steps added both oparation and global chain together
+        ArrayList outPhases = new ArrayList();
+        outPhases.addAll((ArrayList) executionChain.clone());
+        outPhases.addAll((ArrayList) msgContext.getConfigurationContext()
+                .getAxisConfiguration().getGlobalOutPhases().clone());
+        msgContext.setExecutionChain(outPhases);
+        msgContext.setFLOW(MessageContext.OUT_FLOW);
+        invoke(msgContext);
 
         if (!msgContext.isPaused()) {
 
@@ -394,7 +457,8 @@ public class AxisEngine {
             ArrayList faultExecutionChain = axisOperation.getPhasesOutFaultFlow();
 
             msgContext.setExecutionChain((ArrayList) faultExecutionChain.clone());
-            msgContext.invoke();
+            msgContext.setFLOW(MessageContext.OUT_FLOW);
+            invoke(msgContext);
         }
 
         // TODO: Make this clearer - should we have transport senders and messagereceivers as Handlers?
@@ -405,12 +469,6 @@ public class AxisEngine {
 
             sender.invoke(msgContext);
         }
-    }
-
-    private String getReceiverFaultCode(String soapNamespace) {
-        return SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespace)
-                ? SOAP12Constants.FAULT_CODE_RECEIVER
-                : SOAP11Constants.FAULT_CODE_RECEIVER;
     }
 
     private String getSenderFaultCode(String soapNamespace) {

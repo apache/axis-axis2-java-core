@@ -18,7 +18,7 @@
 package org.apache.axis2.databinding.utils;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.databinding.utils.BeanSerializerUtil;
+import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
@@ -124,7 +124,7 @@ public class MultirefHelper {
                 return  valobj;
             }
             else {
-                Object obj = BeanSerializerUtil.deserialize(javatype,val,this);
+                Object obj = BeanUtil.deserialize(javatype,val,this);
                 objectmap.put(id,obj);
                 return obj;
             }

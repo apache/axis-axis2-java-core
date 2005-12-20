@@ -19,7 +19,7 @@ package org.apache.axis2.rpc;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.databinding.utils.BeanSerializerUtil;
+import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
@@ -298,7 +298,7 @@ public class MultirefTest extends TestCase {
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
         SOAPEnvelope env = call.invokeBlocking("editBean", envelope);
         OMElement response = env.getBody().getFirstElement();
-        MyBean resBean = (MyBean) BeanSerializerUtil.deserialize(MyBean.class, response.getFirstElement());
+        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
         call.close();
@@ -347,7 +347,7 @@ public class MultirefTest extends TestCase {
 
         SOAPEnvelope env = call.invokeBlocking("beanOM", envelope);
         OMElement response = env.getBody().getFirstElement();
-        MyBean resBean = (MyBean) BeanSerializerUtil.deserialize(MyBean.class, response.getFirstElement());
+        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
         call.close();
@@ -401,7 +401,7 @@ public class MultirefTest extends TestCase {
         ArrayList args = new ArrayList();
         args.add(boolean.class);
 
-        Object [] resBean = BeanSerializerUtil.deserialize(response, args.toArray());
+        Object [] resBean = BeanUtil.deserialize(response, args.toArray());
         assertNotNull(resBean);
         assertEquals(((Boolean) resBean[0]).booleanValue(), true);
         call.close();
@@ -459,7 +459,7 @@ public class MultirefTest extends TestCase {
         options.setTo(targetEPR);
         options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
         SOAPEnvelope env = call.invokeBlocking("echoEmployee", envelope);
-        Employee emp = (Employee) BeanSerializerUtil.deserialize(Employee.class, env.getBody().getFirstElement().getFirstElement());
+        Employee emp = (Employee) BeanUtil.deserialize(Employee.class, env.getBody().getFirstElement().getFirstElement());
         assertNotNull(emp);
     }
 
