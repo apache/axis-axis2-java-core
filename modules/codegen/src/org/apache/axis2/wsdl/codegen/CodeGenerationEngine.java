@@ -60,7 +60,6 @@ public class CodeGenerationEngine {
         for (int i = 0; i < extensions.length; i++) {
             //load the Extension class
             addExtension((CodeGenExtension)getObjectFromClassName(extensions[i]));
-
         }
 
     }
@@ -78,20 +77,23 @@ public class CodeGenerationEngine {
             }
 
             Emitter emitter;
+
+
             TypeMapper mapper = configuration.getTypeMapper();
             if (mapper==null){
-                //this shouldn't happen
+                // this check is redundant here. The default databinding extension should
+                // have already figured this out and thrown an error message. However in case the
+                // users mess with the config it is safe to keep this check in order to throw
+                // a meaningful error message
                 throw new CodeGenerationException("No proper databinding has taken place");
             }
-            
+
             Map emitterMap = ConfigPropertyFileLoader.getLanguageEmitterMap();
             String className = emitterMap.get(configuration.getOutputLanguage()).toString();
             if (className!=null){
-                
                 emitter = (Emitter)getObjectFromClassName(className);
                 emitter.setCodeGenConfiguration(configuration);
                 emitter.setMapper(mapper);
-
             }else{
                 throw new Exception("Emitter class not found!");
             }
