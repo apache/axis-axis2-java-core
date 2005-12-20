@@ -19,6 +19,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.OMContainerEx;
+import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
 import org.w3c.dom.DOMException;
@@ -96,11 +97,17 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 	}
 	
 	public OMNode getFirstOMChild() {
-		return this.firstChild;
+        while ((firstChild == null) && !done) {
+            buildNext();
+        }
+        return firstChild;
 	}
 	
 	public void setFirstChild(OMNode omNode) {
-		this.firstChild = (ChildNode) omNode;
+        if (firstChild != null) {
+            ((OMNodeEx) omNode).setParent(this);
+        }
+        this.firstChild = (ChildNode)omNode;
 	}
 	
 	
@@ -113,10 +120,13 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 	}
 	
 	public Node getFirstChild() {
-		return this.firstChild;
+		return (Node)this.getFirstOMChild();
 	}
 	
 	public Node getLastChild() {
+		if(!this.done) {
+			this.build();
+		}
 		return this.lastChild;
 	}
 			
