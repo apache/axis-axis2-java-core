@@ -185,7 +185,7 @@ public class AxisServlet extends HttpServlet {
         try {
             configContext = initConfigContext(config);
             lister = new ListingAgent(configContext);
-            context.setAttribute(CONFIGURATION_CONTEXT, configContext);
+            config.getServletContext().setAttribute(CONFIGURATION_CONTEXT, configContext);
         } catch (Exception e) {
             throw new ServletException(e);
         }
