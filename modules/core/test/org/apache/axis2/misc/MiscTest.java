@@ -18,7 +18,6 @@ package org.apache.axis2.misc;
 
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.SessionContext;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -31,13 +30,7 @@ public class MiscTest extends AbstractTestCase {
         super(testName);
     }
 
-    public void testSessionContext() {
-        SessionContext sc = new SessionContext(null);
-        String key = "Hello";
-        Object val = new Object();
-        sc.setProperty(key, val);
-        assertEquals(sc.getProperty(key), val);
-    }
+    
 
 
     public void testAxisFault() {

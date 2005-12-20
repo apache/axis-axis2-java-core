@@ -219,7 +219,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
 
         axisConfig.addModule(modulemetadata);
-        log.info(Messages.getMessage(DeploymentErrorMsgs.ADDING_NEW_MODULE));
+        log.debug(Messages.getMessage(DeploymentErrorMsgs.ADDING_NEW_MODULE));
     }
 
     private void addServiceGroup(AxisServiceGroup serviceGroup, ArrayList serviceList)
@@ -493,7 +493,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                         axisConfig);
 
                                 addServiceGroup(sericeGroup, serviceList);
-                                log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
+                                log.debug(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
                                         currentArchiveFile.getName()));
                             } catch (DeploymentException de) {
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,

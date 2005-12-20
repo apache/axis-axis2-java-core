@@ -217,8 +217,6 @@ public class RESTSender extends AbstractHTTPSender {
             httpContentType = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
         }
 
-        msgContext.setProperty(CommonsHTTPTransportSender.HTTP_METHOD, postMethod);
-
         String charEncoding =
                 (String) msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
 

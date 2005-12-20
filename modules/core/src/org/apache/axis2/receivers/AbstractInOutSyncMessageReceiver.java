@@ -32,6 +32,7 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
 
     public final void receive(MessageContext msgContext) throws AxisFault {
         MessageContext outMsgContext = Utils.createOutMessageContext(msgContext);
+        outMsgContext.getOperationContext().addMessageContext(outMsgContext);
 
         invokeBusinessLogic(msgContext, outMsgContext);
 

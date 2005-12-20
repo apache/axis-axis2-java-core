@@ -120,6 +120,8 @@ public class InOutMEPClient extends MEPClient {
             ListenerManager.stop(serviceContext.getConfigurationContext(),
                     clientOptions.getListenerTransport().getName().getLocalPart());
         }
+
+
     }
 
     protected void configureTransportInformation(MessageContext msgCtx) throws AxisFault {
@@ -371,33 +373,33 @@ public class InOutMEPClient extends MEPClient {
 
         engine.send(msgctx);
 
-        // create the response
-        MessageContext response = new MessageContext(msgctx.getConfigurationContext(),
+        // create the responseMessageContext
+        MessageContext responseMessageContext = new MessageContext(msgctx.getConfigurationContext(),
                 msgctx.getSessionContext(), msgctx.getTransportIn(),
                 msgctx.getTransportOut());
 
-        response.setProperty(MessageContext.TRANSPORT_IN,
+        responseMessageContext.setProperty(MessageContext.TRANSPORT_IN,
                 msgctx.getProperty(MessageContext.TRANSPORT_IN));
-        msgctx.getAxisOperation().registerOperationContext(response, msgctx.getOperationContext());
-        response.setServerSide(false);
-        response.setServiceContext(msgctx.getServiceContext());
-        response.setServiceGroupContext(msgctx.getServiceGroupContext());
+        msgctx.getAxisOperation().registerOperationContext(responseMessageContext, msgctx.getOperationContext());
+        responseMessageContext.setServerSide(false);
+        responseMessageContext.setServiceContext(msgctx.getServiceContext());
+        responseMessageContext.setServiceGroupContext(msgctx.getServiceGroupContext());
 
-        // If request is REST we assume the response is REST, so set the variable
-        response.setDoingREST(msgctx.isDoingREST());
+        // If request is REST we assume the responseMessageContext is REST, so set the variable
+        responseMessageContext.setDoingREST(msgctx.isDoingREST());
 
-        SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(response,
+        SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(responseMessageContext,
                 msgctx.getEnvelope().getNamespace().getName());
 
         if (resenvelope != null) {
-            response.setEnvelope(resenvelope);
+            responseMessageContext.setEnvelope(resenvelope);
             engine = new AxisEngine(msgctx.getConfigurationContext());
-            engine.receive(response);
+            engine.receive(responseMessageContext);
         } else {
             throw new AxisFault(Messages.getMessage("blockingInvocationExpectsResponse"));
         }
 
-        return response;
+        return responseMessageContext;
     }
 
     /**

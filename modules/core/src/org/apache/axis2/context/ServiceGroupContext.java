@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class ServiceGroupContext extends AbstractContext {
-    private String axisServiceGroupName = null;
+    private String axisServiceGroupName;
     private transient AxisServiceGroup axisServiceGroup;
     private String id;
     private Map serviceContextMap;

@@ -50,6 +50,10 @@ public class ConfigurationContext extends AbstractContext {
         this.axisConfiguration = axisConfiguration;
     }
 
+    protected void finalize() throws Throwable {
+        super.finalize();    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
     /**
      * Searches for a ServiceGroupContext in the map with given id as the key.
      * <pre>

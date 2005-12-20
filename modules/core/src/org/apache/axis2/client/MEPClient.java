@@ -221,7 +221,7 @@ public abstract class MEPClient {
         msgCtx.setWSAAction(clientOptions.getAction());
         msgCtx.setSoapAction(clientOptions.getSoapAction());
         msgCtx.setProperty(Constants.Configuration.IS_USING_SEPARATE_LISTENER,
-                new Boolean(clientOptions.isUseSeparateListener()));
+                Boolean.valueOf(clientOptions.isUseSeparateListener()));
 
         // we are not setting the properties here. Those will be set, when we
         // create the operation context

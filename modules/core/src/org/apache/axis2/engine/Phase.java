@@ -369,7 +369,7 @@ public class Phase implements Handler {
         while (currentIndex < handlers.size()) {
             Handler handler = (Handler) handlers.get(currentIndex);
 
-            log.info("Invoking Handler '" + handler.getName() + "' in Phase '" + phaseName + "'");
+            log.debug("Invoking Handler '" + handler.getName() + "' in Phase '" + phaseName + "'");
             handler.invoke(msgctx);
 
             if (msgctx.isPaused()) {

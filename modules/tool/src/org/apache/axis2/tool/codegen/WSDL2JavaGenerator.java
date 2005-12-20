@@ -15,7 +15,6 @@
  */
 package org.apache.axis2.tool.codegen;
 
-import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
 import org.apache.axis2.wsdl.builder.WOMBuilderFactory;
 import org.apache.axis2.wsdl.codegen.CommandLineOption;
 import org.apache.axis2.wsdl.codegen.CommandLineOptionConstants;
@@ -42,22 +41,7 @@ public class WSDL2JavaGenerator {
      */
     private String mapLanguagesWithCombo(String UILangValue)
     {
-       if (UIConstants.JAVA.equals(UILangValue))
-       {
-          return CommandLineOptionConstants.LanguageNames.JAVA;
-       }
-       else if (UIConstants.C_SHARP.equals(UILangValue))
-       {
-          return CommandLineOptionConstants.LanguageNames.C_SHARP;
-       }
-       else if (UIConstants.C_PLUS_PLUS.equals(UILangValue))
-       {
-          return CommandLineOptionConstants.LanguageNames.C_PLUS_PLUS;
-       }
-       else
-       {
-          return null;
-       }
+       return UILangValue; // TODO : Ajith please fix this.
     }
     /**
      * Creates a list of parameters for the code generator based on the decisions made by the user on the OptionsPage

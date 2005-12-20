@@ -43,18 +43,19 @@ public class InOutAxisOperation extends AxisOperation {
     public void addMessageContext(MessageContext msgContext, OperationContext opContext)
             throws AxisFault {
         HashMap mep = opContext.getMessageContexts();
-        MessageContext immsgContext = (MessageContext) mep.get(MESSAGE_LABEL_IN_VALUE);
+        MessageContext inMsgContext = (MessageContext) mep.get(MESSAGE_LABEL_IN_VALUE);
         MessageContext outmsgContext = (MessageContext) mep.get(MESSAGE_LABEL_OUT_VALUE);
 
-        if ((immsgContext != null) && (outmsgContext != null)) {
+        if ((inMsgContext != null) && (outmsgContext != null)) {
             throw new AxisFault("Invalid messge addition , operation context completed");
         }
 
-        if (immsgContext == null) {
+        if (inMsgContext == null) {
             mep.put(MESSAGE_LABEL_IN_VALUE, msgContext);
         } else {
             mep.put(MESSAGE_LABEL_OUT_VALUE, msgContext);
             opContext.setComplete(true);
+            opContext.cleanup();
         }
     }
 

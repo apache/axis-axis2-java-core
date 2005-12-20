@@ -16,8 +16,6 @@
 
 package org.apache.axis2.soap.impl.llom.builder;
 
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMDocument;
 import org.apache.axis2.om.OMElement;
@@ -26,17 +24,11 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
-import org.apache.axis2.soap.SOAP11Constants;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPConstants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPHeader;
-import org.apache.axis2.soap.SOAPMessage;
-import org.apache.axis2.soap.SOAPProcessingException;
+import org.apache.axis2.soap.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * Class StAXSOAPModelBuilder
@@ -149,10 +141,10 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
         if(isTempSOAPFactory) {
 	        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(namespaceName)) {
 	            soapFactory = OMAbstractFactory.getSOAP12Factory();
-	            log.info("Starting Process SOAP 1.2 message");
+	            log.info("Starting to process SOAP 1.2 message");
 	        } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(namespaceName)) {
 	            soapFactory = OMAbstractFactory.getSOAP11Factory();
-	            log.info("Starting Process SOAP 1.1 message");
+	            log.info("Starting to pocess SOAP 1.1 message");
 	
 	        } else {
 	            throw new SOAPProcessingException("Only SOAP 1.1 or SOAP 1.2 messages are supported in the" +
@@ -216,7 +208,7 @@ public class StAXSOAPModelBuilder extends StAXOMBuilder {
         }
 
 
-        log.info("Build the OMElelment " + node.getLocalName() +
+        log.debug("Build the OMElelment " + node.getLocalName() +
                 "By the StaxSOAPModelBuilder");
         return node;
     }

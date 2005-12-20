@@ -50,8 +50,6 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
         PostMethod postMethod = new PostMethod(url.toString());
 
-        msgContext.setProperty(CommonsHTTPTransportSender.HTTP_METHOD, postMethod);
-
         String charEncoding =
                 (String) msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
 
