@@ -90,19 +90,6 @@ public class AttrImpl extends NodeImpl implements OMAttribute, Attr {
 		this.namespace = (NamespaceImpl)namespace;
 	}
 	
-	public AttrImpl(String localName, OMNamespace ns, String value) {
-		this.attrName = localName;
-		this.attrValue = new TextImpl((DocumentImpl)this.getOwnerDocument(),value);
-		this.namespace = (NamespaceImpl)ns;
-	}
-	
-	public AttrImpl(String name, String value) {
-		this.attrName = name;
-		this.attrValue = new TextImpl((DocumentImpl)this.getOwnerDocument(),value);
-	}
-	
-
-	
 	///
 	///org.w3c.dom.Node methods
 	///

@@ -157,9 +157,8 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 		throw new UnsupportedOperationException("TODO");
 	}
 	
-	public Comment createComment(String arg0) {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+	public Comment createComment(String data) {
+		return new CommentImpl(this, data);
 	}
 	
 	public DocumentFragment createDocumentFragment() {

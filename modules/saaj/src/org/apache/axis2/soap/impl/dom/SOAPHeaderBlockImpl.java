@@ -21,6 +21,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.dom.AttrImpl;
+import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
 import org.apache.axis2.om.impl.dom.NamespaceImpl;
 import org.apache.axis2.om.impl.dom.ParentNode;
@@ -72,10 +73,10 @@ public abstract class SOAPHeaderBlockImpl  extends ElementImpl implements SOAPHe
         if (omAttribute != null) {
             omAttribute.setAttributeValue(attrValue);
         } else {
-            OMAttribute attribute = new AttrImpl(attributeName,
-                    new NamespaceImpl(soapEnvelopeNamespaceURI,
-                            SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX),
-                    attrValue);
+            OMAttribute attribute = new AttrImpl(this.ownerNode, attributeName,
+					new NamespaceImpl(soapEnvelopeNamespaceURI,
+							SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX),
+					attrValue);
             this.addAttribute(attribute);
         }
     }

@@ -28,6 +28,7 @@ import org.apache.axis2.om.OMProcessingInstruction;
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.dom.AttrImpl;
+import org.apache.axis2.om.impl.dom.CommentImpl;
 import org.apache.axis2.om.impl.dom.DocumentFragmentimpl;
 import org.apache.axis2.om.impl.dom.DocumentImpl;
 import org.apache.axis2.om.impl.dom.ElementImpl;
@@ -222,7 +223,7 @@ public class OMDOMFactory implements OMFactory {
     }
 	
 	public OMAttribute createOMAttribute(String localName, OMNamespace ns, String value) {
-		return new AttrImpl(localName,ns, value);
+		return new AttrImpl(this.getDocument() ,localName,ns, value);
 	}
 
 	public OMDocType createOMDocType(OMContainer parent, String content) {
@@ -236,8 +237,9 @@ public class OMDOMFactory implements OMFactory {
 	}
 
 	public OMComment createOMComment(OMContainer parent, String content) {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+		CommentImpl comment = new CommentImpl((DocumentImpl)((ElementImpl)parent).getOwnerDocument(), content);
+		parent.addChild(comment);
+		return comment;
 	}
 	
 	public DocumentImpl getDocument() {

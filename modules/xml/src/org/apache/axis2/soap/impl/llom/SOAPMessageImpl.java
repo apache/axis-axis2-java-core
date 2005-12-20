@@ -56,11 +56,6 @@ public class SOAPMessageImpl extends OMDocumentImpl implements SOAPMessage {
         throw new UnsupportedOperationException("This is not allowed. Use set SOAPEnvelope instead");
     }
 
-    public void addChild(OMNode child) {
-        throw new UnsupportedOperationException("Can not add normal children to SOAP envelope. Use setSOAPEnvelope()");
-    }
-
-
     public void setFirstChild(OMNode firstChild) {
         throw new UnsupportedOperationException("This is not allowed. Use set SOAPEnvelope instead");
     }

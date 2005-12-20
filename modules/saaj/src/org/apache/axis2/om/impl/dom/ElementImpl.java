@@ -21,12 +21,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMConstants;
-import org.apache.axis2.om.OMContainer;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNamespace;
@@ -300,13 +300,14 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 
 		if(namespaceURI == OMConstants.XMLNS_NS_URI) {
 			OMNamespace ns = this.findNamespaceURI(localName);
-			AttrImpl namespaceAttr = new AttrImpl(localName, ns.getName());
+			AttrImpl namespaceAttr = new AttrImpl(this.ownerNode, localName, ns.getName());
 			NamespaceImpl xmlNs = new NamespaceImpl(OMConstants.XMLNS_NS_URI);
 			namespaceAttr.setOMNamespace(xmlNs);
 			return namespaceAttr;
 		}
 		
-		return (this.attributes == null)?null:(Attr)this.attributes.getNamedItemNS(namespaceURI,localName);
+		return (this.attributes == null) ? null : (Attr) this.attributes
+				.getNamedItemNS(namespaceURI, localName);
 
 	}
 
@@ -1094,6 +1095,16 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
     	}
     }
     
+    
+    public OMNode getNextOMSibling() throws OMException {
+        while (!done) {
+            int token = builder.next();
+            if(token == XMLStreamConstants.END_DOCUMENT) {
+                throw new OMException();
+            }
+        }
+        return super.getNextOMSibling();
+    }
     
 	/*
 	 * DOM-Level 3 methods

@@ -42,10 +42,13 @@ public abstract class ChildNode extends NodeImpl {
 	}
 	
 	public OMNode getNextOMSibling() throws OMException {
-		return this.nextSibling;
+        while ((nextSibling == null) && !this.parentNode.done) {
+            this.parentNode.buildNext();
+        }
+        return nextSibling;
 	}
 	public Node getNextSibling() {
-		return this.nextSibling;
+		return (Node)this.getNextOMSibling();
 	}
 	public OMNode getPreviousOMSibling() {
 		return this.previousSibling;

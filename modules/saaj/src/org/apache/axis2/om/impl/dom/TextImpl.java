@@ -363,7 +363,7 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
                     contentID = omOutput.getNextContentId();
                 }
                 // send binary as MTOM optimised
-                this.attribute = new AttrImpl("href",
+                this.attribute = new AttrImpl(this.ownerNode, "href",
                         new NamespaceImpl("", ""), "cid:" + getContentID());
                 this.serializeStartpart(omOutput);
                 omOutput.writeOptimized(this);
@@ -468,13 +468,6 @@ public class TextImpl extends CharacterImpl implements Text, OMText {
     }
 
     
-//    ///
-//    ///Special clone method to be used in cloneNode
-//    ///
-//    public Text cloneText() {
-//    	return new TextImpl(this.textValue.toString());
-//    }
-//    
     public Node cloneNode(boolean deep) {
     	TextImpl textImpl = new TextImpl(this.textValue.toString());
     	textImpl.setOwnerDocument(this.ownerNode);

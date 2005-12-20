@@ -48,7 +48,7 @@ public abstract class SOAPFaultTextImpl extends SOAPElement implements SOAPFault
     public void setLang(String lang) {
         //langAttr = new OMAttributeImpl(SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_LOCAL_NAME, parent.getNamespace(), lang);
         langAttr =
-                new AttrImpl(
+                new AttrImpl(this.ownerNode, 
                         SOAP12Constants.SOAP_FAULT_TEXT_LANG_ATTR_LOCAL_NAME,
                         langNamespace,
                         lang);

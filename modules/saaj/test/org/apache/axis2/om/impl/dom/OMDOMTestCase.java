@@ -16,12 +16,6 @@
 
 package org.apache.axis2.om.impl.dom;
 
-import org.apache.axis2.om.OMFactory;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.impl.dom.factory.DOMSOAPFactory;
-import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
-
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,6 +25,13 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axis2.om.OMFactory;
+import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
+import org.apache.axis2.soap.impl.dom.factory.DOMSOAPFactory;
+import org.apache.axis2.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 
 public class OMDOMTestCase extends AbstractTestCase{
 
@@ -57,7 +58,7 @@ public class OMDOMTestCase extends AbstractTestCase{
         XMLStreamReader parser = XMLInputFactory.newInstance()
                 .createXMLStreamReader(
                         new FileReader(getTestResourceFile(fileName)));
-        builder = new StAXSOAPModelBuilder(parser, new DOMSOAPFactory(), null);
+        builder = new StAXSOAPModelBuilder(parser, new SOAP11Factory(), null);
         return builder;
     }
     

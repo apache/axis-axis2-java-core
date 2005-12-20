@@ -101,7 +101,7 @@ public abstract class CharacterImpl extends ChildNode implements CharacterData {
 	 * Returns the value of the data
 	 */
 	public String getData() throws DOMException {
-		return this.textValue.toString();
+		return (this.textValue != null) ? this.textValue.toString() : "";
 	}
 	
 	/**
