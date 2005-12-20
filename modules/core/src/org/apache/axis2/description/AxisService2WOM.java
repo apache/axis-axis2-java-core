@@ -72,12 +72,12 @@ public class AxisService2WOM {
         WSDLDescription womDescription;
         WSDLComponentFactory wsdlComponentFactory = new WSDLDescriptionImpl();
         womDescription = wsdlComponentFactory.createDescription();
-        HashMap namspaseMap = new HashMap();
-        namspaseMap.put("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
-        namspaseMap.put(SchemaGenerator.TARGET_NAMESPACE_PREFIX, SchemaGenerator.TARGET_NAMESPACE);
-        namspaseMap.put("ns1", "http://org.apache.axis2/xsd");
-        namspaseMap.put("xs", "http://www.w3.org/2001/XMLSchema");
-        womDescription.setNamespaces(namspaseMap);
+        HashMap namespaceMap = new HashMap();
+        namespaceMap.put("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
+        namespaceMap.put(SchemaGenerator.TARGET_NAMESPACE_PREFIX, SchemaGenerator.TARGET_NAMESPACE);
+        namespaceMap.put("ns1", "http://org.apache.axis2/xsd");
+        namespaceMap.put("xs", "http://www.w3.org/2001/XMLSchema");
+        womDescription.setNamespaces(namespaceMap);
         womDescription.setTargetNameSpace(SchemaGenerator.TARGET_NAMESPACE);
 
         //generating port type

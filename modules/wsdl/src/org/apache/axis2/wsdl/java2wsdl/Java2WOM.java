@@ -73,12 +73,12 @@ public class Java2WOM {
         WSDLDescription womDescription;
         WSDLComponentFactory wsdlComponentFactory = new WSDLDescriptionImpl();
         womDescription = wsdlComponentFactory.createDescription();
-        HashMap namspaseMap = new HashMap();
-        namspaseMap.put("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
-        namspaseMap.put(SchemaGenerator.TARGET_NAMESPACE_PREFIX, SchemaGenerator.TARGET_NAMESPACE);
-        namspaseMap.put("ns1", "http://org.apache.axis2/xsd");
-        namspaseMap.put("xs", "http://www.w3.org/2001/XMLSchema");
-        womDescription.setNamespaces(namspaseMap);
+        HashMap namspaceMap = new HashMap();
+        namspaceMap.put("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
+        namspaceMap.put(SchemaGenerator.TARGET_NAMESPACE_PREFIX, SchemaGenerator.TARGET_NAMESPACE);
+        namspaceMap.put("ns1", "http://org.apache.axis2/xsd");
+        namspaceMap.put("xs", "http://www.w3.org/2001/XMLSchema");
+        womDescription.setNamespaces(namspaceMap);
         womDescription.setTargetNameSpace(SchemaGenerator.TARGET_NAMESPACE);
 
         //generating port type
