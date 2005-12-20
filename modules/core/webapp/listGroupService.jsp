@@ -36,13 +36,13 @@
 <font color="blue">Service EPR : <font color="black"><%=prifix + axisService.getName()%></font>
     <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
     <%
-        Collection engagdeModules = axisService.getEngagedModules();
+        Collection engagedModules = axisService.getEngagedModules();
         String moduleName;
-        if (engagdeModules.size() > 0) {
+        if (engagedModules.size() > 0) {
     %>
     <i>Engaged Modules for the axisService</i><ul>
     <%
-        for (Iterator iteratorm = engagdeModules.iterator(); iteratorm.hasNext();) {
+        for (Iterator iteratorm = engagedModules.iterator(); iteratorm.hasNext();) {
             ModuleDescription axisOperation = (ModuleDescription) iteratorm.next();
             moduleName = axisOperation.getName().getLocalPart();
     %><li><%=moduleName%></li>
@@ -60,12 +60,12 @@
         AxisOperation axisOperation = (AxisOperation) iterator1.next();
 %><li><%=axisOperation.getName().getLocalPart()%></li>
     <%
-        engagdeModules = axisOperation.getEngagedModules();
-        if (engagdeModules.size() > 0) {
+        engagedModules = axisOperation.getEngagedModules();
+        if (engagedModules.size() > 0) {
     %>
     <br><i>Engaged Modules for the Operation</i><ul>
     <%
-        for (Iterator iterator2 = engagdeModules.iterator(); iterator2.hasNext();) {
+        for (Iterator iterator2 = engagedModules.iterator(); iterator2.hasNext();) {
             ModuleDescription moduleDecription = (ModuleDescription) iterator2.next();
             moduleName = moduleDecription.getName().getLocalPart();
     %><li><%=moduleName%></li><br><%

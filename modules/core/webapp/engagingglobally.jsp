@@ -35,7 +35,7 @@
 %>
 <h1>Engage Module Globally</h1>
 <p>To engage a module on all services across the system, select a module from the combo box below and click on the "Engage" button. Any module that needs to place handlers into the pre-dispatch phase needs to be engaged globally.</p>
-<form method="get" name="engaginModule" action="engagingglobally">
+<form method="get" name="selectModuleForm" action="engagingglobally">
 <table border="0" width="100%" cellspacing="1" cellpadding="1">
 <tr>
 <td width="15%">Select a Module :</td>
