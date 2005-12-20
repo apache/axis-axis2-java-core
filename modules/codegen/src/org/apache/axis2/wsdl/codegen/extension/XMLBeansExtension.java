@@ -78,10 +78,6 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
     public static final String MAPPER_FILE_NAME = "mapper";
 
 
-    public void init(CodeGenConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
     public void engage() {
 
         //test the databinding type. If not just fall through

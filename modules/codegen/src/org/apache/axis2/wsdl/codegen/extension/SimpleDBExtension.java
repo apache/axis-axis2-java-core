@@ -41,11 +41,8 @@ import java.util.Vector;
  *
  */
 public class SimpleDBExtension extends AbstractDBProcessingExtension {
-    public static final String ADB_PACKAGE_NAME_PREFIX = "adb.";
 
-    public void init(CodeGenConfiguration configuration) {
-        this.configuration = configuration;
-    }
+    public static final String ADB_PACKAGE_NAME_PREFIX = "adb.";
 
     public void engage() {
         //test the databinding type. If not just fall through

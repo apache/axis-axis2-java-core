@@ -22,11 +22,7 @@ import org.apache.wsdl.WSDLBinding;
 
 public class PackageFinder extends AbstractCodeGenerationExtension {
 
-    public void init(CodeGenConfiguration configuration) {
-        this.configuration = configuration;
-
-    }
-
+  
     public void engage() {
         String packageName = this.configuration.getPackageName();
         if (packageName == null) {

@@ -1,6 +1,35 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
-    <xsl:template match="/bean">
+
+     <!-- cater for the multiple classes - wrappped mode -->
+    <xsl:template match="/beans">
+        <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
+        /**
+        * <xsl:value-of select="$name"/>.java
+        *
+        * This file was auto-generated from WSDL
+        * by the Apache Axis2 version: #axisVersion# #today#
+        */
+
+        package <xsl:value-of select="@package"/>;
+
+        /**
+        *  <xsl:value-of select="$name"/> wrapped bean classes
+        */
+        public class <xsl:value-of select="$name"/>{
+
+        <xsl:apply-templates/>
+
+        }
+    </xsl:template>
+
+    <!--cater for the multiple classes - unwrappped mode -->
+    <xsl:template match="/">
+        <xsl:apply-templates/>
+    </xsl:template>
+
+
+    <xsl:template match="bean">
         /**
         * <xsl:value-of select="@name"/>.java
         *

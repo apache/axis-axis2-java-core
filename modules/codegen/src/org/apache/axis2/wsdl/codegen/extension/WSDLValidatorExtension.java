@@ -31,10 +31,7 @@ import java.util.Iterator;
 public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
     private static String TARGETNAMESPACE_STRING = "targetNamespace";
 
-    public void init(CodeGenConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
+  
     public void engage() throws CodeGenerationException {
         //WSDLDescription wom = this.configuration.getWom();
         WSDLTypes typesList = configuration.getWom().getTypes();

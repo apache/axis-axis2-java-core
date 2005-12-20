@@ -44,9 +44,6 @@ public class AxisBindingBuilder extends AbstractCodeGenerationExtension implemen
     public AxisBindingBuilder() {
     }
 
-    public void init(CodeGenConfiguration configuration) {
-        this.configuration = configuration;
-    }
 
     public void engage() {
         WSDLDescription wom = this.configuration.getWom();

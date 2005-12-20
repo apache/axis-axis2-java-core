@@ -7,7 +7,6 @@ import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 /*
@@ -32,21 +31,19 @@ import java.util.Map;
  */
 public interface BeanWriter {
 
-    /**
-     * Initialize this writer
-     * @param rootDir  - The directory to be written into
-     * @throws IOException
-     */
-    public void init(File rootDir) throws IOException ;
 
     /**
      *  Init the write with compiler options
      * @param options
      * @throws IOException
      */
-    public void init(CompilerOptions options) throws IOException ;
+    public void init(CompilerOptions options) throws SchemaCompilationException;
 
-
+    /**
+     * Writes a wrapped class. This will have effect only if the CompilerOptions wrapclassses
+     * returns true
+     */
+     public void writeBatch() throws SchemaCompilationException;
 
     /**
      * Write a complex type
@@ -67,6 +64,8 @@ public interface BeanWriter {
      * @throws SchemaCompilationException
      */
     public String write(XmlSchemaElement element, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException;
+
+
 
     /**
      * Write a simple type

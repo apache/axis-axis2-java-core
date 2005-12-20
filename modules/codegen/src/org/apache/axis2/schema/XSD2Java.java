@@ -70,8 +70,13 @@ public class XSD2Java {
                 outputFolder.mkdirs();
             }
 
-            SchemaCompiler compiler = new SchemaCompiler(new CompilerOptions().setOutputLocation(
-                    outputFolder));
+            CompilerOptions compilerOptions = new CompilerOptions();
+            compilerOptions.setOutputLocation(outputFolder);
+            //##############################
+             compilerOptions.setWrapClasses(true);
+            //##############################
+
+            SchemaCompiler compiler = new SchemaCompiler(compilerOptions);
             compiler.compile(currentSchema);
 
         } catch (Exception e) {

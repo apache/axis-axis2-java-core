@@ -47,6 +47,13 @@ public class XSLTUtils {
         element.setAttributeNode(attribute);
     }
 
+    public static Element getElement(Document document,
+                                      String elementName) {
+         return document.createElement(elementName);
+          
+      }
+
+
     /**
      * Utility method to add an attribute to a given element
      * @param document

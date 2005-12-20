@@ -24,13 +24,13 @@ import java.util.Properties;
  * Loads the properties  for the schema compiler
  */
 public class SchemaPropertyLoader {
-    private  static  String beanTemplate = null;
+    private  static  String unwrappedBeanTemplate = null;
     private  static  BeanWriter beanWriterInstance = null;
     private  static  TypeMap typeMapperInstance = null;
 
     private static final String SCHEMA_COMPILER_PROPERTIES = "/org/apache/axis2/schema/schema-compile.properties";
     private static final String BEAN_WRITER_KEY = "schema.bean.writer.class";
-    private static final String BEAN_WRITER_TEMPLATE_KEY = "schema.bean.writer.template";
+    private static final String BEAN_WRITER_UNWRAPPED_TEMPLATE_KEY = "schema.bean.writer.template.wrapped";
     private static final String BEAN_WRITER_TYPEMAP_KEY = "schema.bean.typemap";
 
     static{
@@ -49,7 +49,7 @@ public class SchemaPropertyLoader {
                  typeMapperInstance = (TypeMap)Class.forName(typeMapperClassName).newInstance();
             }
 
-            beanTemplate = props.getProperty(BEAN_WRITER_TEMPLATE_KEY);
+            unwrappedBeanTemplate = props.getProperty(BEAN_WRITER_UNWRAPPED_TEMPLATE_KEY);
             
         } catch (Exception e) {
            throw new RuntimeException(e);
@@ -58,8 +58,8 @@ public class SchemaPropertyLoader {
 
     }
 
-    public static String getBeanTemplate() {
-        return beanTemplate;
+    public static String getUnwrappedBeanTemplate() {
+        return unwrappedBeanTemplate;
     }
 
     public static BeanWriter getBeanWriterInstance() {

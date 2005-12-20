@@ -1,35 +1,6 @@
 package org.apache.axis2.schema.util;
 
-import org.apache.axis2.schema.types.Day;
-import org.apache.axis2.schema.types.Duration;
-import org.apache.axis2.schema.types.Entities;
-import org.apache.axis2.schema.types.Entity;
-import org.apache.axis2.schema.types.HexBinary;
-import org.apache.axis2.schema.types.IDRef;
-import org.apache.axis2.schema.types.IDRefs;
-import org.apache.axis2.schema.types.Id;
-import org.apache.axis2.schema.types.Language;
-import org.apache.axis2.schema.types.Month;
-import org.apache.axis2.schema.types.MonthDay;
-import org.apache.axis2.schema.types.NCName;
-import org.apache.axis2.schema.types.NMToken;
-import org.apache.axis2.schema.types.NMTokens;
-import org.apache.axis2.schema.types.Name;
-import org.apache.axis2.schema.types.NegativeInteger;
-import org.apache.axis2.schema.types.NonNegativeInteger;
-import org.apache.axis2.schema.types.NonPositiveInteger;
-import org.apache.axis2.schema.types.NormalizedString;
-import org.apache.axis2.schema.types.Notation;
-import org.apache.axis2.schema.types.PositiveInteger;
-import org.apache.axis2.schema.types.Time;
-import org.apache.axis2.schema.types.Token;
-import org.apache.axis2.schema.types.URI;
-import org.apache.axis2.schema.types.UnsignedByte;
-import org.apache.axis2.schema.types.UnsignedInt;
-import org.apache.axis2.schema.types.UnsignedLong;
-import org.apache.axis2.schema.types.UnsignedShort;
-import org.apache.axis2.schema.types.Year;
-import org.apache.axis2.schema.types.YearMonth;
+import org.apache.axis2.schema.types.*;
 import sun.misc.BASE64Decoder;
 
 import javax.xml.namespace.QName;
@@ -37,11 +8,7 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

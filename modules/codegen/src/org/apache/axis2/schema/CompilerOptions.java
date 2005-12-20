@@ -30,8 +30,37 @@ public class CompilerOptions {
     /**
      * Generated output file
      */
-    File outputLocation;
-    String packageName=null;
+    private File outputLocation;
+    private String packageName=null;
+
+    /**
+     * This flag tells the databinder to either write the output or
+     * not. if this is set to true it will write the output at once.
+     * if not  ???
+     */
+    private boolean writeOutput = false;
+
+    /**
+     * This flag determines whether the generated classes are wrapped or not
+     * if the wrapper flag is true, then only a single file will be generated
+     */
+    private boolean wrapClasses = false;
+
+    public boolean isWriteOutput() {
+        return writeOutput;
+    }
+
+    public void setWriteOutput(boolean writeOutput) {
+        this.writeOutput = writeOutput;
+    }
+
+    public boolean isWrapClasses() {
+        return wrapClasses;
+    }
+
+    public void setWrapClasses(boolean wrapClasses) {
+        this.wrapClasses = wrapClasses;
+    }
 
     public String getPackageName() {
         return packageName;

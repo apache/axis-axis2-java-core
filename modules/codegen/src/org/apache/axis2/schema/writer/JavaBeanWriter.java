@@ -15,15 +15,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,46 +46,66 @@ import java.util.Map;
  */
 public class JavaBeanWriter implements BeanWriter{
 
+    public static final String WRAPPED_DATABINDING_CLASS_NAME="WrappedDatabinder";
+
     private String javaBeanTemplateName = null;
     private boolean templateLoaded = false;
     private Templates templateCache;
 
     private List namesList;
     private static int count = 0;
+    private boolean wrapClasses;
 
     private String packageName=null;
-
-
-
     private File rootDir;
 
+    private Document globalWrappedDocument;
     /**
      * Default constructor
      */
     public JavaBeanWriter(){
     }
 
-    public void init(CompilerOptions options) throws IOException {
-        init(options.getOutputLocation());
-        this.packageName = options.getPackageName();
+    public void init(CompilerOptions options) throws SchemaCompilationException {
+        try {
+            initWithFile(options.getOutputLocation());
+            this.packageName = options.getPackageName();
+            this.wrapClasses = options.isWrapClasses();
+
+            //if the wrap mode is set then create a global document to keep the wrapped
+            //element models
+            if (options.isWrapClasses()){
+                globalWrappedDocument = XSLTUtils.getDocument();
+                Element rootElement = XSLTUtils.getElement(globalWrappedDocument,"beans");
+                globalWrappedDocument.appendChild(rootElement);
+                XSLTUtils.addAttribute(globalWrappedDocument,"name",WRAPPED_DATABINDING_CLASS_NAME,rootElement);
+                XSLTUtils.addAttribute(globalWrappedDocument,"package",packageName,rootElement);
+            }
+        } catch (IOException e) {
+            throw new SchemaCompilationException(e);
+        } catch (ParserConfigurationException e) {
+            throw new SchemaCompilationException(e); //todo need to put correct error messages
+        }
     }
 
     /**
-     * @see BeanWriter#init(java.io.File)
-     * @param rootDir
-     * @throws IOException
+     *
+     * @param element
+     * @param typeMap
+     * @param metainf
+     * @return
+     * @throws SchemaCompilationException
      */
-    public void init(File rootDir) throws IOException{
-        if (rootDir ==null){
-            this.rootDir = new File(".");
-        }else if (!rootDir.isDirectory()){
-            throw new IOException("Root location needs to be a directory!");
-        } else{
-            this.rootDir = rootDir;
+    public String write(XmlSchemaElement element, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException{
+
+        try {
+            QName qName = element.getQName();
+            return process(qName, metainf, typeMap, true);
+        } catch (Exception e) {
+            throw new SchemaCompilationException(e);
         }
 
-        namesList = new ArrayList();
-        javaBeanTemplateName = SchemaPropertyLoader.getBeanTemplate();
+
     }
     /**
      * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaComplexType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
@@ -114,6 +131,54 @@ public class JavaBeanWriter implements BeanWriter{
     }
 
     /**
+     * @see org.apache.axis2.schema.writer.BeanWriter#writeBatch()
+     * @throws Exception
+     */
+    public void writeBatch() throws SchemaCompilationException{
+        try {
+            if (wrapClasses){
+
+                OutputStream out = createOutFile(packageName,WRAPPED_DATABINDING_CLASS_NAME);
+                //parse with the template and create the files
+                parse(globalWrappedDocument,out);
+            }
+        } catch (Exception e) {
+            throw new SchemaCompilationException(e);
+        }
+    }
+
+    /**
+     * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaSimpleType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
+     * @param simpleType
+     * @param typeMap
+     * @param metainf
+     * @return
+     * @throws SchemaCompilationException
+     */
+    public String write(XmlSchemaSimpleType simpleType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
+        throw new SchemaCompilationException("Not implemented yet");
+    }
+    /**
+     * @see BeanWriter#init(java.io.File)
+     * @param rootDir
+     * @throws IOException
+     */
+    private void initWithFile(File rootDir) throws IOException{
+        if (rootDir ==null){
+            this.rootDir = new File(".");
+        }else if (!rootDir.isDirectory()){
+            throw new IOException("Root location needs to be a directory!");
+        } else{
+            this.rootDir = rootDir;
+        }
+
+        namesList = new ArrayList();
+        javaBeanTemplateName = SchemaPropertyLoader.getUnwrappedBeanTemplate();
+    }
+
+
+
+    /**
      * A util method that holds common code
      * for the complete schema that the generated XML complies to
      * look under other/beanGenerationSchema.xsd
@@ -127,31 +192,77 @@ public class JavaBeanWriter implements BeanWriter{
     private String process(QName qName, BeanWriterMetaInfoHolder metainf, Map typeMap, boolean isElement) throws Exception {
 
         String nameSpaceFromURL = URLProcessor.getNameSpaceFromURL(qName.getNamespaceURI());
-        String packageName = this.packageName==null?
-                     nameSpaceFromURL :
-                     this.packageName +nameSpaceFromURL;
 
-        
+        String packageName = this.packageName==null?
+                nameSpaceFromURL :
+                this.packageName +nameSpaceFromURL;
 
         String originalName = qName.getLocalPart();
         String className = getNonConflictingName(this.namesList,originalName);
-
+        String fullyqualifiedClassName = null;
         ArrayList propertyNames = new ArrayList();
 
         if (!templateLoaded){
             loadTemplate();
         }
 
-        //create the model
-        Document model= XSLTUtils.getDocument();
+        if (wrapClasses){
+            globalWrappedDocument.getDocumentElement().appendChild(
+                    getBeanElement(globalWrappedDocument, className, originalName, packageName, qName, isElement, metainf, propertyNames, typeMap)
+            );
+            //now the fully qualified class name needs to have the name of the including class as well
+            fullyqualifiedClassName = packageName + "."+ WRAPPED_DATABINDING_CLASS_NAME +"." + className;
+        }else{
+            //create the model
+            Document model= XSLTUtils.getDocument();
+            //make the XML
+            model.appendChild(getBeanElement(model, className, originalName, packageName, qName, isElement, metainf, propertyNames, typeMap));
+            //create the file
+            OutputStream out = createOutFile(packageName,className);
+            //parse with the template and create the files
+            parse(model,out);
+            fullyqualifiedClassName = packageName + "." + className;
+        }
 
-        //make the XML
-        Element rootElt = XSLTUtils.addChildElement(model,"bean",model);
+        //return the fully qualified class name
+        return fullyqualifiedClassName;
+
+    }
+
+
+
+
+    /**
+     *
+     * @param model
+     * @param className
+     * @param originalName
+     * @param packageName
+     * @param qName
+     * @param isElement
+     * @param metainf
+     * @param propertyNames
+     * @param typeMap
+     * @return
+     * @throws SchemaCompilationException
+     */
+    private Element getBeanElement(
+            Document model, String className, String originalName,
+            String packageName, QName qName, boolean isElement,
+            BeanWriterMetaInfoHolder metainf, ArrayList propertyNames, Map typeMap
+    ) throws SchemaCompilationException {
+
+        Element rootElt = XSLTUtils.getElement(model,"bean");
         XSLTUtils.addAttribute(model,"name",className,rootElt);
         XSLTUtils.addAttribute(model,"originalName",originalName,rootElt);
         XSLTUtils.addAttribute(model,"package",packageName,rootElt);
         XSLTUtils.addAttribute(model,"nsuri",qName.getNamespaceURI(),rootElt);
         XSLTUtils.addAttribute(model,"nsprefix",qName.getPrefix(),rootElt);
+
+        if (!wrapClasses){
+            XSLTUtils.addAttribute(model,"unwrapped","yes",rootElt);
+        }
+
         if (!isElement){
             XSLTUtils.addAttribute(model,"type","yes",rootElt);
         }
@@ -164,7 +275,7 @@ public class JavaBeanWriter implements BeanWriter{
             XSLTUtils.addAttribute(model,"extension",metainf.getExtensionClassName(),rootElt);
         }
         // go in the loop and add the part elements
-        QName[] qNames = null;
+        QName[] qNames;
         if (metainf.isOrdered()){
             qNames = metainf.getOrderedQNameArray();
         }else{
@@ -178,7 +289,7 @@ public class JavaBeanWriter implements BeanWriter{
             String xmlName = name.getLocalPart();
             XSLTUtils.addAttribute(model,"name",xmlName,property);
 
-            String javaName = "";
+            String javaName;
             if (JavaUtils.isJavaKeyword(xmlName)){
                 javaName = JavaUtils.makeNonJavaKeyword(xmlName);
             }else{
@@ -217,6 +328,7 @@ public class JavaBeanWriter implements BeanWriter{
                 XSLTUtils.addAttribute(model,"anyAtt","yes",property);
             }
             if (metainf.getArrayStatusForQName(name)){
+
                 XSLTUtils.addAttribute(model,"array","yes",property);
                 XSLTUtils.addAttribute(
                         model,
@@ -240,26 +352,10 @@ public class JavaBeanWriter implements BeanWriter{
             }
         }
 
-        //create the file
-        OutputStream out = createOutFile(packageName,className);
-        //parse with the template and create the files
-        parse(model,out);
-        //return the fully qualified class name
-        return packageName+"."+className;
-
+        return rootElt;
     }
 
-    /**
-     * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaSimpleType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
-     * @param simpleType
-     * @param typeMap
-     * @param metainf
-     * @return
-     * @throws SchemaCompilationException
-     */
-    public String write(XmlSchemaSimpleType simpleType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
-        throw new SchemaCompilationException("Not implemented yet");
-    }
+
 
     /**
      * gets a non conflicting java name
@@ -280,25 +376,6 @@ public class JavaBeanWriter implements BeanWriter{
         return nameToReturn;
     }
 
-    /**
-     *
-     * @param element
-     * @param typeMap
-     * @param metainf
-     * @return
-     * @throws SchemaCompilationException
-     */
-    public String write(XmlSchemaElement element, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException{
-
-        try {
-            QName qName = element.getQName();
-            return process(qName, metainf, typeMap, true);
-        } catch (Exception e) {
-            throw new SchemaCompilationException(e);
-        }
-
-
-    }
 
 
 
@@ -360,4 +437,6 @@ public class JavaBeanWriter implements BeanWriter{
         outStream.close();
 
     }
+
+
 }

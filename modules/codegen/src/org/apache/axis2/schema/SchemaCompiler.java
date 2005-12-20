@@ -3,36 +3,10 @@ package org.apache.axis2.schema;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaAll;
-import org.apache.ws.commons.schema.XmlSchemaAny;
-import org.apache.ws.commons.schema.XmlSchemaAnyAttribute;
-import org.apache.ws.commons.schema.XmlSchemaAttribute;
-import org.apache.ws.commons.schema.XmlSchemaChoice;
-import org.apache.ws.commons.schema.XmlSchemaComplexContent;
-import org.apache.ws.commons.schema.XmlSchemaComplexContentExtension;
-import org.apache.ws.commons.schema.XmlSchemaComplexContentRestriction;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaContent;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaImport;
-import org.apache.ws.commons.schema.XmlSchemaObject;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
-import org.apache.ws.commons.schema.XmlSchemaObjectTable;
-import org.apache.ws.commons.schema.XmlSchemaParticle;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaSimpleType;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeContent;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
-import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.*;
 
 import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -53,6 +27,7 @@ import java.util.Map;
  * Schema compiler for ADB. Based on WS-Commons schema object model.
  */
 public class SchemaCompiler {
+
 
     private CompilerOptions options;
     private HashMap processedTypemap;
@@ -83,31 +58,29 @@ public class SchemaCompiler {
      * @param options
      */
     public SchemaCompiler(CompilerOptions options) throws SchemaCompilationException {
-        try {
-            if (options==null){
-                //create an empty options object
-                this.options = new CompilerOptions();
-            }else{
-                this.options = options;
-            }
 
-            this.processedTypemap = new HashMap();
-            this.processedElementMap = new HashMap();
-            this.simpleTypesMap = new HashMap();
-            this.processedElementList = new ArrayList();
-            this.processedAnonymousComplexTypesMap = new HashMap();
-            this.changedTypeMap = new HashMap();
-
-            //load the writer
-            this.writer = SchemaPropertyLoader.getBeanWriterInstance();
-            this.writer.init(this.options);
-
-            //laod the base types
-            baseSchemaTypeMap =SchemaPropertyLoader.getTypeMapperInstance().getTypeMap();
-
-        } catch (IOException e) {
-            throw new SchemaCompilationException(e);
+        if (options==null){
+            //create an empty options object
+            this.options = new CompilerOptions();
+        }else{
+            this.options = options;
         }
+
+        this.processedTypemap = new HashMap();
+        this.processedElementMap = new HashMap();
+        this.simpleTypesMap = new HashMap();
+        this.processedElementList = new ArrayList();
+        this.processedAnonymousComplexTypesMap = new HashMap();
+        this.changedTypeMap = new HashMap();
+
+        //load the writer a nd initiliaze the base type
+        this.writer = SchemaPropertyLoader.getBeanWriterInstance();
+        this.writer.init(this.options);
+
+        //load the base types
+        baseSchemaTypeMap =SchemaPropertyLoader.getTypeMapperInstance().getTypeMap();
+
+
     }
 
     /**
@@ -164,14 +137,23 @@ public class SchemaCompiler {
             processElement((XmlSchemaElement)xmlSchemaElement1Iterator.next(),true);
         }
 
-        //Now re-iterate through the elements and write them
+
         Iterator xmlSchemaElement2Iterator = elements.getValues();
+
+        // re-iterate through the elements and write them one by one
+        // if the mode is unwrap this process will not really write the
+        // classes but will accumilate the models for a final single shot
+        // write
         while (xmlSchemaElement2Iterator.hasNext()) {
             //this is the set of outer elements so we need to generate classes
             writeElement((XmlSchemaElement)xmlSchemaElement2Iterator.next());
         }
 
+        if (options.isWrapClasses()){
+            writer.writeBatch();
+        }
     }
+
 
     /**
      *  Writes the element
@@ -179,6 +161,7 @@ public class SchemaCompiler {
      * @throws SchemaCompilationException
      */
     private void writeElement(XmlSchemaElement xsElt) throws SchemaCompilationException{
+
         if (this.processedElementMap.containsKey(xsElt.getQName())){
             return;
         }
@@ -195,12 +178,12 @@ public class SchemaCompiler {
                 //this means the schema type actually returns a different QName
                 if (changedTypeMap.containsKey(qName)){
                     metainf.registerMapping(xsElt.getQName(),
-                        (QName)changedTypeMap.get(qName),
-                        className);
+                            (QName)changedTypeMap.get(qName),
+                            className);
                 }else{
-                     metainf.registerMapping(xsElt.getQName(),
-                        qName,
-                        className);
+                    metainf.registerMapping(xsElt.getQName(),
+                            qName,
+                            className);
                 }
 
 
@@ -212,6 +195,8 @@ public class SchemaCompiler {
                 metainf = (BeanWriterMetaInfoHolder)this.processedAnonymousComplexTypesMap.get(xsElt);
                 metainf.setAnonymous(true);
             }
+
+
             String writtenClassName = writer.write(xsElt,processedTypemap,metainf);
             processedElementMap.put(xsElt.getQName(),writtenClassName);
         }
@@ -241,7 +226,7 @@ public class SchemaCompiler {
         //The processing element logic seems to be quite simple. Look at the relevant schema type
         //for each and every element and process that accordingly.
         //this means that any unused type definitions would not be generated!
-        if (processedElementList.contains(xsElt.getQName())){
+        if (isOuter && processedElementList.contains(xsElt.getQName())){
             return;
         }
 
@@ -257,7 +242,7 @@ public class SchemaCompiler {
         //There can be instances where the SchemaType is null but the schemaTypeName is not
         //this specifically happens with xsd:anyType.
         if (!isOuter){
-            String className = findClassName(xsElt.getSchemaTypeName(),isArray);
+            String className = findClassName(xsElt.getSchemaTypeName(),isArray(xsElt));
             this.processedElementMap.put(xsElt.getQName(),className);
         }
         this.processedElementList.add(xsElt.getQName());
@@ -270,6 +255,7 @@ public class SchemaCompiler {
      * @return
      */
     private String findClassName(QName qName,boolean isArray) {
+
         //find the class name
         String className;
         if (processedTypemap.containsKey(qName)) {
@@ -281,6 +267,8 @@ public class SchemaCompiler {
         }else{
             // We seem to have failed in finding a class name for the
             //contained schema type. We better set the default then
+            //however it's better if the default can be set through the
+            //property file
             className = OMElement.class.getName();
         }
         if (isArray){
@@ -588,6 +576,7 @@ public class SchemaCompiler {
     private boolean isArray(XmlSchemaParticle particle) throws SchemaCompilationException{
         long minOccurs = particle.getMinOccurs();
         long maxOccurs = particle.getMaxOccurs();
+
         if (maxOccurs < minOccurs){
             throw new SchemaCompilationException();
         }else{
