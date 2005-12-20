@@ -18,11 +18,11 @@
 package org.apache.axis2.rpc;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.databinding.utils.BeanSerializerUtil;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.util.BeanSerializerUtil;
 
 import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
@@ -153,7 +153,7 @@ public class RPCServiceClass {
         ArrayList tems= new ArrayList();
         for (int i = 0; i < pss.size(); i++) {
             OMElement omElement = (OMElement) pss.get(i);
-            Person  p =(Person)BeanSerializerUtil.deserialize(Person.class,omElement);
+            Person  p =(Person) BeanSerializerUtil.deserialize(Person.class,omElement);
             tems.add(p);
         }
         com.setPersons(tems);

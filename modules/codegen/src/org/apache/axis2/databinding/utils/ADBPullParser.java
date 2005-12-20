@@ -3,7 +3,6 @@ package org.apache.axis2.databinding.utils;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
-import org.apache.axis2.util.BeanSerializerUtil;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.util;
+package org.apache.axis2.databinding.utils;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

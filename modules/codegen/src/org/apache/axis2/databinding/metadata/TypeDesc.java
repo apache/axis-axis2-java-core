@@ -16,7 +16,7 @@
 
 package org.apache.axis2.databinding.metadata;
 
-import org.apache.axis2.util.MethodCache;
+import org.apache.axis2.databinding.utils.MethodCache;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;

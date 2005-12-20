@@ -17,7 +17,7 @@
 
 package org.apache.axis2.rpc.client;
 
-import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
+import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 
 import javax.xml.namespace.QName;
 

@@ -22,6 +22,8 @@
 package org.apache.axis2.rpc.receivers;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.databinding.utils.BeanSerializerUtil;
+import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.DependencyManager;
@@ -32,7 +34,6 @@ import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.util.BeanSerializerUtil;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;

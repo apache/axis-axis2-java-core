@@ -14,17 +14,17 @@
 * limitations under the License.
 *
 */
-package org.apache.axis2.util;
+package org.apache.axis2.databinding.utils;
 
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.utils.ADBPullParser;
+import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.axis2.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis2.rpc.receivers.SimpleTypeMapper;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;

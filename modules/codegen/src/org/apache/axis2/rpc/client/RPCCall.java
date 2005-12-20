@@ -25,7 +25,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.util.BeanSerializerUtil;
+import org.apache.axis2.databinding.utils.BeanSerializerUtil;
 import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;

@@ -15,7 +15,7 @@
 *
 */
 
-package org.apache.axis2.rpc.receivers;
+package org.apache.axis2.databinding.typemapping;
 
 import org.apache.axis2.om.OMElement;
 
