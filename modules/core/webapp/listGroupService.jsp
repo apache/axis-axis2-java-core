@@ -6,8 +6,12 @@
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="include/adminheader.jsp">
-</jsp:include>
+<html>
+<head><title>List Services</title>
+    <link href="css/axis-style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Available services</h1>
 <%String IP = request.getRequestURL().toString();
     int lastindex = IP.lastIndexOf('/');
@@ -33,8 +37,8 @@
     <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>
     <%
         Collection engagdeModules = axisService.getEngagedModules();
-        String moduleName ;
-        if(engagdeModules.size() >0){
+        String moduleName;
+        if (engagdeModules.size() > 0) {
     %>
     <i>Engaged Modules for the axisService</i><ul>
     <%
@@ -55,7 +59,6 @@
     for (Iterator iterator1 = operationsList.iterator(); iterator1.hasNext();) {
         AxisOperation axisOperation = (AxisOperation) iterator1.next();
 %><li><%=axisOperation.getName().getLocalPart()%></li>
-    <%--                 <br>Operation EPR : <%=prifix + axisService.getName().getLocalPart() + "/"+ axisOperation.getName().getLocalPart()%>--%>
     <%
         engagdeModules = axisOperation.getEngagedModules();
         if (engagdeModules.size() > 0) {
@@ -76,3 +79,5 @@
         }
     %>
     <jsp:include page="include/adminfooter.jsp"></jsp:include>
+</body>
+</html>
