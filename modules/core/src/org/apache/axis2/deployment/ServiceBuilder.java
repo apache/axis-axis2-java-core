@@ -19,14 +19,8 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterInclude;
+import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -84,15 +78,15 @@ public class ServiceBuilder extends DescriptionBuilder {
                     descriptionValue.build();
                     descriptionValue.serialize(writer);
                     writer.flush();
-                    service.setAxisServiceName(writer.toString());
+                    service.setServiceDescription(writer.toString());
                 } else {
-                    service.setAxisServiceName(descriptionElement.getText());
+                    service.setServiceDescription(descriptionElement.getText());
                 }
             } else {
                 OMAttribute serviceNameatt = service_element.getAttribute(new QName(ATTRIBUTE_NAME));
 
                 if (serviceNameatt != null) {
-                    service.setAxisServiceName(serviceNameatt.getAttributeValue());
+                    service.setServiceDescription(serviceNameatt.getAttributeValue());
                 }
             }
 
@@ -130,6 +124,12 @@ public class ServiceBuilder extends DescriptionBuilder {
                             DeploymentErrorMsgs.OPERATION_PROCESS_ERROR, axisFault.getMessage()));
         }
 
+        //todo this is not the right way pls improve this : Deepal
+        try {
+            Utils.fillAxisService(service);
+        } catch (Exception e) {
+            log.info("Error in generating scheam:" + e.getMessage());
+        }
         return service;
     }
 

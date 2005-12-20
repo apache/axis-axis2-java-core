@@ -686,12 +686,10 @@ public class MessageContext extends AbstractContext {
     }
 
     public void setAxisOperation(AxisOperation axisOperation) {
-        this.axisOperation = axisOperation;
-        this.axisOperationName = axisOperation.getName();
-
         if (axisOperation != null) {
             this.axisOperationName = axisOperation.getName();
         }
+        this.axisOperation = axisOperation;
     }
 
     public void setAxisService(AxisService axisService) {

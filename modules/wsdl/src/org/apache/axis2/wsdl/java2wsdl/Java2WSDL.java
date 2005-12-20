@@ -35,6 +35,7 @@ public class Java2WSDL {
         this.classLoader = classLoader;
     }
 
+
     public void generateWSDL() throws Exception {
         SchemaGenerator sg = new SchemaGenerator(classLoader, className, null, null);
         XmlSchema scheam = sg.generateSchema();

@@ -2,7 +2,7 @@ package org.apache.axis2.wsdl.java2wsdl;
 
 import org.apache.axis2.wsdl.java2wsdl.bytecode.MethodTable;
 import org.apache.ws.commons.schema.*;
-import org.apache.xmlbeans.impl.jam.*;
+import org.codehaus.jam.*;
 
 import javax.xml.namespace.QName;
 import java.util.Hashtable;
@@ -26,13 +26,14 @@ import java.util.Hashtable;
 */
 
 public class SchemaGenerator {
+
     private ClassLoader classLoader;
     private String className;
-    Hashtable prefixmap;
-    XmlSchemaCollection schemaCollection;
-    XmlSchema schema;
-    TypeTable typeTable;
+    private XmlSchema schema;
+    private TypeTable typeTable;
+    // to keep loadded method using JAM
     private JMethod methods [];
+    //to store byte code method using Axis 1.x codes
     private MethodTable methodTable;
 
     public static String METHOD_REQUEST_WRAPPER = "Request";
@@ -54,11 +55,10 @@ public class SchemaGenerator {
         if (scheamtargetNamespacePrefix != null && !scheamtargetNamespacePrefix.trim().equals("")) {
             SCHEMA_NAMESPASE_PRFIX = scheamtargetNamespacePrefix;
         }
-
-        prefixmap = new Hashtable();
+        Hashtable prefixmap = new Hashtable();
         prefixmap.put(SCHEMA_NAMESPASE_PRFIX, SCHEMA_TARGET_NAMESPASE);
 
-        schemaCollection = new XmlSchemaCollection();
+        XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
 
         schema = new XmlSchema(SCHEMA_TARGET_NAMESPASE, schemaCollection);
         schema.setElementFormDefault(new XmlSchemaForm(XmlSchemaForm.QUALIFIED));
@@ -111,6 +111,9 @@ public class SchemaGenerator {
 
             for (int i = 0; i < methods.length; i++) {
                 JMethod jMethod = methods[i];
+                //no need to think abt this method , since that is system config method
+                if (jMethod.getSimpleName().equals("init"))
+                    continue;
 
                 //it can easily get the annotations
 //                jMethod.getAnnotations();
@@ -174,6 +177,8 @@ public class SchemaGenerator {
     private void generateWrapperElements(JMethod methods[]) {
         for (int i = 0; i < methods.length; i++) {
             JMethod method = methods[i];
+            if (method.getSimpleName().equals("init"))
+                continue;
             genereteWrapperElementforMethod(method);
         }
     }
@@ -200,7 +205,10 @@ public class SchemaGenerator {
         if (paras.length > 0) {
             complexType.setParticle(sequence);
         }
-        String parameterNames [] = methodTable.getParameterNames(methodName);
+        String parameterNames [] = null;
+        if (paras.length > 0) {
+            parameterNames = methodTable.getParameterNames(methodName);
+        }
         for (int j = 0; j < paras.length; j++) {
             JParameter methodParameter = paras[j];
             String paraName = methodParameter.getSimpleName();
@@ -315,7 +323,6 @@ public class SchemaGenerator {
                     elt1.setSchemaTypeName(typeTable.getSimpleSchemaTypeName(propertyName));
                     sequence.getItems().add(elt1);
                     if (isArryType) {
-                        //todo pls check this with Ajith
                         elt1.setMaxOccurs(Long.MAX_VALUE);
 //                        elt1.setMinOccurs(2);
                     }

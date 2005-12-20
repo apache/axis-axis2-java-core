@@ -63,7 +63,8 @@ public class ArchiveReader implements DeploymentConstants {
     private Log log = LogFactory.getLog(getClass());
 
     private ArrayList buildServiceGroup(InputStream zin, DeploymentEngine engine,
-                                        AxisServiceGroup axisServiceGroup, HashMap wsdlServices, AxisConfiguration axisConfig)
+                                        AxisServiceGroup axisServiceGroup, HashMap wsdlServices,
+                                        AxisConfiguration axisConfig)
             throws XMLStreamException, DeploymentException {
         DescriptionBuilder builder;
         String rootelementName;
@@ -89,6 +90,7 @@ public class ArchiveReader implements DeploymentConstants {
 
             ServiceBuilder serviceBuilder = new ServiceBuilder(axisConfig, axisService);
             AxisService service = serviceBuilder.populateService(services);
+
             ArrayList serviceList = new ArrayList();
 
             serviceList.add(service);

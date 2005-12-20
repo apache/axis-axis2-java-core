@@ -1,6 +1,7 @@
-package org.apache.axis2.wsdl.java2wsdl;
+package org.apache.axis2.description;
 
 import org.apache.axis2.wsdl.builder.WSDLComponentFactory;
+import org.apache.axis2.wsdl.java2wsdl.SchemaGenerator;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.wsdl.*;
 import org.apache.wsdl.extensions.ExtensionConstants;
@@ -12,7 +13,6 @@ import org.apache.wsdl.extensions.impl.SOAPOperationImpl;
 import org.apache.wsdl.impl.WSDLDescriptionImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.codehaus.jam.JMethod;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -36,22 +36,21 @@ import java.util.Iterator;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
+* @author : Deepal Jayasinghe (deepal@apache.org)
+*
 */
 
-public class Java2WOM {
+public class AxisService2WOM {
 
-    private TypeTable table;
-    private JMethod method [];
     private XmlSchema schema;
-    private String serviceName;
+    private AxisService axisService;
 
-    public Java2WOM(TypeTable table, JMethod[] method, XmlSchema schema, String serviceName,
-                    String targentNamespece,
-                    String targetNamespecheprefix) {
-        this.table = table;
-        this.method = method;
+
+    public AxisService2WOM(XmlSchema schema, AxisService service,
+                           String targentNamespece,
+                           String targetNamespecheprefix) {
         this.schema = schema;
-        this.serviceName = serviceName;
+        this.axisService = service;
 
         if (targentNamespece != null && !targentNamespece.trim().equals("")) {
             SchemaGenerator.TARGET_NAMESPACE = targentNamespece;
@@ -85,7 +84,7 @@ public class Java2WOM {
         WSDLInterface portType = generatePortType(womDescription, wsdlComponentFactory, documentElement);
         womDescription.addInterface(portType);
 
-        QName bindingName = new QName(SchemaGenerator.TARGET_NAMESPACE, serviceName + "Binding"
+        QName bindingName = new QName(SchemaGenerator.TARGET_NAMESPACE, axisService.getName() + "Binding"
                 , SchemaGenerator.TARGET_NAMESPACE_PREFIX);
         //generating binding
         WSDLBinding binding = generateBinding(wsdlComponentFactory,
@@ -95,16 +94,16 @@ public class Java2WOM {
                 "http://www.org.apache.axis2");
         womDescription.addBinding(binding);
 
-        //generating service
-        WSDLService service = generateService(wsdlComponentFactory, womDescription, binding, serviceName);
+        //generating axisService
+        WSDLService service = generateService(wsdlComponentFactory, binding,
+                axisService.getName());
         womDescription.addService(service);
         return womDescription;
     }
 
-
-    public WSDLInterface generatePortType(WSDLDescription womDescription,
-                                          WSDLComponentFactory wsdlComponentFactory,
-                                          Element documentElement) {
+    private WSDLInterface generatePortType(WSDLDescription womDescription,
+                                           WSDLComponentFactory wsdlComponentFactory,
+                                           Element documentElement) {
         WSDLTypes wsdlTypes = wsdlComponentFactory.createTypes();
         ExtensionFactory extensionFactory = wsdlComponentFactory.createExtensionFactory();
         org.apache.wsdl.extensions.Schema schemaExtensibilityElement =
@@ -115,37 +114,38 @@ public class Java2WOM {
         womDescription.setTypes(wsdlTypes);
 
         WSDLInterface portType = womDescription.createInterface();
-        portType.setName(new QName(serviceName + "Port"));
+        portType.setName(new QName(axisService.getName() + "Port"));
 
-        //adding message refs
-        for (int i = 0; i < method.length; i++) {
-            JMethod jmethod = method[i];
-            //creating WSDLOperation
-            WSDLOperation operation = womDescription.createOperation();
-            operation.setName(new QName(jmethod.getSimpleName()));
 
-            MessageReference messageRefinput = wsdlComponentFactory.createMessageReference();
-            QName typeName = table.getComplexScheamType(jmethod.getSimpleName() +
-                    SchemaGenerator.METHOD_REQUEST_WRAPPER);
-            messageRefinput.setElementQName(typeName);
-            messageRefinput.setDirection(org.apache.wsdl.WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
-            operation.setInputMessage(messageRefinput);
-            portType.setOperation(operation);
+        Iterator operations = axisService.getOperations().values().iterator();
+        while (operations.hasNext()) {
+            AxisOperation axisOperation = (AxisOperation) operations.next();
+            WSDLOperation wsdlOperation = womDescription.createOperation();
+            wsdlOperation.setName(axisOperation.getName());
 
-            if (!jmethod.getReturnType().isVoidType()) {
-                MessageReference messageRefiout = wsdlComponentFactory.createMessageReference();
-                messageRefiout.setElementQName(table.getQNamefortheType(jmethod.getSimpleName() +
-                        SchemaGenerator.METHOD_RESPONSE_WRAPPER));
-                messageRefiout.setDirection(org.apache.wsdl.WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
-                operation.setOutputMessage(messageRefiout);
+            AxisMessage inaxisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            if (inaxisMessage != null) {
+                MessageReference messageRefinput = wsdlComponentFactory.createMessageReference();
+                messageRefinput.setElementQName(inaxisMessage.getElementQName());
+                messageRefinput.setDirection(org.apache.wsdl.WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+                wsdlOperation.setInputMessage(messageRefinput);
             }
+
+            AxisMessage outaxisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+            if (outaxisMessage != null) {
+                MessageReference messageRefout = wsdlComponentFactory.createMessageReference();
+                messageRefout.setElementQName(outaxisMessage.getElementQName());
+                messageRefout.setDirection(org.apache.wsdl.WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+                wsdlOperation.setOutputMessage(messageRefout);
+            }
+            portType.setOperation(wsdlOperation);
+
         }
         return portType;
     }
 
-    public WSDLService generateService(WSDLComponentFactory wsdlComponentFactory,
-                                       WSDLDescription womDescription,
-                                       WSDLBinding binding, String ServiceName) {
+    private WSDLService generateService(WSDLComponentFactory wsdlComponentFactory,
+                                        WSDLBinding binding, String ServiceName) {
         WSDLService service = wsdlComponentFactory.createService();
         service.setName(new QName(ServiceName));
         WSDLEndpoint endpoints = wsdlComponentFactory.createEndpoint();
@@ -218,3 +218,4 @@ public class Java2WOM {
 
 
 }
+

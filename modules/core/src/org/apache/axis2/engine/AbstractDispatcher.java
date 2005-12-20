@@ -87,7 +87,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
 
             if (axisService != null) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Found AxisService : " + axisService.getAxisServiceName());
+                    log.debug("Found AxisService : " + axisService.getServiceDescription());
                 }
 
                 msgctx.setAxisService(axisService);

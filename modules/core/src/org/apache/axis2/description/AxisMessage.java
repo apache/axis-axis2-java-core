@@ -2,7 +2,10 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.om.OMElement;
+import org.apache.wsdl.MessageReference;
+import org.apache.wsdl.impl.MessageReferenceImpl;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 /*
@@ -30,10 +33,14 @@ public class AxisMessage implements ParameterInclude {
     private ArrayList handlerChain;
     private ParameterInclude parameterinclude;
     private AxisOperation parent;
+    //to keep data in WSDL message refference and to keep the Java2WSDL data
+    // such as SchemaElementName , direction etc.
+    private MessageReference messageReference;
 
     public AxisMessage() {
         parameterinclude = new ParameterIncludeImpl();
         handlerChain = new ArrayList();
+        messageReference = new MessageReferenceImpl();
     }
 
     public void addParameter(Parameter param) throws AxisFault {
@@ -92,5 +99,21 @@ public class AxisMessage implements ParameterInclude {
 
     public void setParent(AxisOperation parent) {
         this.parent = parent;
+    }
+
+    public String getDirection() {
+        return messageReference.getDirection();
+    }
+
+    public void setDirection(String direction) {
+        messageReference.setDirection(direction);
+    }
+
+    public QName getElementQName() {
+        return messageReference.getElementQName();
+    }
+
+    public void setElementQName(QName element) {
+        messageReference.setElementQName(element);
     }
 }

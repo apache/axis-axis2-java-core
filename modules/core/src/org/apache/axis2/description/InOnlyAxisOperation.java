@@ -51,6 +51,7 @@ public class InOnlyAxisOperation extends AxisOperation {
 
     private void createMessage() {
         inMessage = new AxisMessage();
+        inMessage.setDirection(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
         inFaultMessage = new AxisMessage();
         outFaultMessage = new AxisMessage();
         outPhase = new ArrayList();

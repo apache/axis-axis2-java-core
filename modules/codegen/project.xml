@@ -139,6 +139,14 @@
             </properties>
             <url>http://www.ibiblio.org/maven/xmlunit/jars/</url>
         </dependency>
+         <dependency>
+            <groupId>annogen</groupId>
+            <artifactId>annogen</artifactId>
+            <version>${annogen.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
     </dependencies>
 
     <reports/>

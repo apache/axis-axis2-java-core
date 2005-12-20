@@ -22,8 +22,12 @@ import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.wsdl.writer.WOMWriter;
+import org.apache.axis2.wsdl.writer.WOMWriterFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.wsdl.WSDLDescription;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
@@ -33,19 +37,14 @@ import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Class AxisService
  */
 public class AxisService
-
-//extends WSDLServiceImpl
         implements ParameterInclude, DescriptionConstants {
     private Definition definition = null;
     private Log log = LogFactory.getLog(getClass());
@@ -59,7 +58,7 @@ public class AxisService
 
     // to store engaged mdodules
     private ArrayList engagedModules = new ArrayList();
-    private String axisServiceName;
+    private String serviceDescription;
 
     // to store the wsdl definition , which is build at the deployment time
     // to keep the time that last update time of the service
@@ -69,6 +68,9 @@ public class AxisService
     private ParameterInclude paramterInclude;
     private AxisServiceGroup parent;
     private ClassLoader serviceClassLoader;
+
+    //to keep the XMLScheam getting either from WSDL or java2wsdl
+    private XmlSchema schema;
 
     /**
      * Constructor AxisService
@@ -301,6 +303,8 @@ public class AxisService
 
                 WSDLFactory.newInstance().newWSDLWriter().writeWSDL(wsdlDefinition, out);
                 out.flush();
+
+
             } else {
                 WSDLFactory.newInstance().newWSDLWriter().writeWSDL(wsdlDefinition, out);
                 out.write("<wsdl>This service does not have a WSDL</wsdl>");
@@ -313,13 +317,27 @@ public class AxisService
         }
     }
 
+    public void printWSDL(OutputStream out) throws AxisFault {
+        //todo : This is a tempory hack pls imporve me : Deepal
+        AxisService2WOM axisService2WOM = new AxisService2WOM(getSchema(), this, null, null);
+        try {
+            WSDLDescription desc = axisService2WOM.generateWOM();
+            WOMWriter womWriter = WOMWriterFactory.createWriter(org.apache.wsdl.WSDLConstants.WSDL_1_1);
+            womWriter.setdefaultWSDLPrefix("wsdl");
+            womWriter.writeWOM(desc, out);
+
+        } catch (Exception e) {
+            throw new AxisFault(e);
+        }
+    }
+
     /**
-     * To get the description about the service ty67tyuio
+     * To get the description about the service which is sepcified in services.xml
      *
      * @return String
      */
-    public String getAxisServiceName() {
-        return axisServiceName;
+    public String getServiceDescription() {
+        return serviceDescription;
     }
 
     /*
@@ -518,12 +536,12 @@ public class AxisService
     }
 
     /**
-     * Set the description about the service
+     * Set the description about the service wchih is specified in services.xml
      *
-     * @param axisServiceName
+     * @param serviceDescription
      */
-    public void setAxisServiceName(String axisServiceName) {
-        this.axisServiceName = axisServiceName;
+    public void setServiceDescription(String serviceDescription) {
+        this.serviceDescription = serviceDescription;
     }
 
     /*
@@ -562,5 +580,13 @@ public class AxisService
 
     public void setWSDLDefinition(Definition difDefinition) {
         this.definition = difDefinition;
+    }
+
+    public XmlSchema getSchema() {
+        return schema;
+    }
+
+    public void setSchema(XmlSchema schema) {
+        this.schema = schema;
     }
 }

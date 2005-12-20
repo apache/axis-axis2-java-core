@@ -101,6 +101,12 @@
                 <module>true</module>
             </properties>
         </dependency>
+        <!--added this to support to keep WSDL information in AxisService-->
+         <dependency>
+            <groupId>ws-commons</groupId>
+            <artifactId>XmlSchema</artifactId>
+            <version>${XmlSchema.version}</version>
+        </dependency>
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
@@ -137,6 +143,16 @@
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-activation</artifactId>
             <version>${geronimo.spec.activation.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <!--for java2wsdl generation we use JAM , so there should be a dependency on the annogen jar or-->
+        <!--XML Beans-->
+         <dependency>
+            <groupId>annogen</groupId>
+            <artifactId>annogen</artifactId>
+            <version>${annogen.version}</version>
             <properties>
                 <module>true</module>
             </properties>

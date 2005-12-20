@@ -85,6 +85,9 @@ public class Constants {
      */
     public static final String TRANSPORT_HTTP = "http";
 
+    //Parameter name of Service impl class
+    public static final String SERVICE_CLASS = "ServiceClass";
+
     /**
      * Field REQUEST_URL_PREFIX
      */

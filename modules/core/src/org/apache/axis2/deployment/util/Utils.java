@@ -1,11 +1,16 @@
 package org.apache.axis2.deployment.util;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.wsdl.java2wsdl.SchemaGenerator;
+import org.apache.axis2.wsdl.java2wsdl.TypeTable;
+import org.apache.wsdl.WSDLConstants;
+import org.codehaus.jam.JMethod;
 
+import javax.xml.namespace.QName;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -141,5 +146,41 @@ public class Utils {
         }
 
         return handlerClass;
+    }
+
+    /**
+     * This guy will create a AxisService using java replection
+     */
+    public static void fillAxisService(AxisService axisService) throws Exception {
+        Parameter implInfoParam = axisService.getParameter(Constants.SERVICE_CLASS);
+        String serviceClass = (String) implInfoParam.getValue();
+        ClassLoader serviceClassLoader = axisService.getClassLoader();
+        SchemaGenerator schemaGenerator = new SchemaGenerator(serviceClassLoader,
+                serviceClass, null, null);
+        axisService.setSchema(schemaGenerator.generateSchema());
+
+        JMethod [] method = schemaGenerator.getMethods();
+        TypeTable table = schemaGenerator.getTypeTable();
+
+        for (int i = 0; i < method.length; i++) {
+            JMethod jmethod = method[i];
+            String opName = jmethod.getSimpleName();
+            AxisOperation operation = axisService.getOperation(new QName(opName));
+            if (operation != null) {
+                AxisMessage inMessage = operation.getMessage(
+                        WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                if (inMessage != null) {
+                    inMessage.setElementQName(table.getComplexScheamType(jmethod.getSimpleName() +
+                            SchemaGenerator.METHOD_REQUEST_WRAPPER));
+                }
+                if (!jmethod.getReturnType().isVoidType()) {
+                    AxisMessage outMessage = operation.getMessage(
+                            WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                    outMessage.setElementQName(table.getQNamefortheType(jmethod.getSimpleName() +
+                            SchemaGenerator.METHOD_RESPONSE_WRAPPER));
+                }
+            }
+
+        }
     }
 }
