@@ -70,7 +70,7 @@ public class AxisOperationFactory implements WSDLConstants {
             }
 
             case MEP_CONSTANT_ROBUST_OUT_ONLY : {
-                abOpdesc = new OutInAxisOperation();
+                abOpdesc = new RobustOutOnlyAxisOperation();
 
                 break;
             }

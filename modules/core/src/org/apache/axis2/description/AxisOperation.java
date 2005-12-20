@@ -1,6 +1,15 @@
 package org.apache.axis2.description;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.client.OperationClient;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -14,12 +23,6 @@ import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wsdl.WSDLConstants;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 
 public abstract class AxisOperation
         implements ParameterInclude, DescriptionConstants, WSDLConstants {
@@ -408,5 +411,11 @@ public abstract class AxisOperation
 
     public void setWsamappingList(ArrayList wsamappingList) {
         this.wsamappingList = wsamappingList;
+    }
+    /**
+     * 
+     */
+    public OperationClient createClient (ServiceContext sc, Options options){
+        throw new UnsupportedOperationException ("The MEP you are using (" + mepURI + ") has not implemented createClient().");
     }
 }

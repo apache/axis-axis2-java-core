@@ -437,7 +437,7 @@ public class AxisConfiguration implements ParameterInclude {
      * @return Returns AxisService.
      * @throws AxisFault
      */
-    public AxisService getService(String name) throws AxisFault {
+    public AxisService getService(String name) {
         return (AxisService) allservices.get(name);
     }
 
