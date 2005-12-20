@@ -24,7 +24,7 @@ file has the following important properties</p>
   <li>schema.bean.writer.class
     <p>This is the writer class. This is used by the schema compiler to write
     the beans and should implement the
-    <strong>org.apache.axis2.databinding.schema.writer.BeanWriter</strong>
+    <strong>org.apache.axis2.schema.writer.BeanWriter</strong>
     inteface. The schema compiler delegates the bean writing task to the
     specified instance of the BeanWriter.</p>
   </li>
@@ -37,7 +37,7 @@ file has the following important properties</p>
   <li>schema.bean.typemap
     <p>This is the type map to be used by the schema compiler. it should be
     an implementation of the
-    <strong>org.apache.axis2.databinding.schema.typemap</strong> interface.
+    <strong>org.apache.axis2.schema.typemap</strong> interface.
     The default typemap implementation encapsulates a hashmap with type QName
     to Class name string mapping.</p>
   </li>
@@ -52,7 +52,7 @@ compiler, would love to have plain java beans. This can infact be done by
 simply changing the template used.</p>
 
 <p>The template for plain java beans is already available in the
-<strong>org.apache.axis2.databinding.schema.template </strong>package. To
+<strong>org.apache.axis2.schema.template </strong>package. To
 make this work replace the
 <strong>/org/apache/axis2/databinding/schema/template/ADBBeanTemplate.xsl
 </strong>with the
@@ -74,14 +74,14 @@ to be written.</p>
   <li>The BeanWriter
     <p>Implement the BeanWriter interface for this class. A nice example is
     the
-    <strong>org.apache.axis2.databinding.schema.writer.JavaBeanWriter</strong>
+    <strong>org.apache.axis2.schema.writer.JavaBeanWriter</strong>
     which has a lot of reusable code. Infact if the language is OOP based
     (such as C# or even C++), one would even be able to extend the
     JavaBeanWriter itself.</p>
   </li>
   <li>The TypeMap
     <p>Implement the TypeMap interface for this class. The
-    <strong>org.apache.axis2.databinding.schema.typemap.JavaTypeMap</strong>
+    <strong>org.apache.axis2.schema.typemap.JavaTypeMap</strong>
     class is a simple implementation for the typemap where the QName to class
     name strings are kept inside a hashmap instance. This technique is fairly
     sufficient and only the type names would need to change to support
