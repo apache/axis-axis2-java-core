@@ -192,9 +192,10 @@ public class SimpleTest extends TestCase {
         SOAPEnvelope respEnv = call.invokeBlocking("echoArray", env);
         assertNotNull("No response envelope!", respEnv);
 
+        RPCInOutMessageReceiver receiver = new RPCInOutMessageReceiver();
         // Got a response envelope, let's deserialize it back to Java
         DeserializationContext dserContext = new DeserializationContext();
-        values = dserContext.deserializeRPCElement(method, respEnv.getBody().getFirstElement());
+        values = receiver.deserializeRPCElement(dserContext, method, respEnv.getBody().getFirstElement());
 
         Object ret = method.getResponseParameter().getValue(values);
         assertNotNull("No return parameter value", ret);

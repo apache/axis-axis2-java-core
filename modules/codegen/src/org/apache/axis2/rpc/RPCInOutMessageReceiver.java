@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.databinding.DeserializationContext;
+import org.apache.axis2.databinding.Deserializer;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -28,8 +29,11 @@ import org.apache.axis2.soap.SOAPBody;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPFactory;
 
+import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  *
@@ -65,7 +69,7 @@ public class RPCInOutMessageReceiver extends AbstractInOutSyncMessageReceiver {
         DeserializationContext dserContext = new DeserializationContext();
         RPCValues values = null;
         try {
-            values = dserContext.deserializeRPCElement(method, rpcElement);
+            values = deserializeRPCElement(dserContext, method, rpcElement);
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
@@ -107,5 +111,53 @@ public class RPCInOutMessageReceiver extends AbstractInOutSyncMessageReceiver {
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
+    }
+
+    public RPCValues deserializeRPCElement(DeserializationContext dserContext,
+                                           RPCMethod method,
+                                           OMElement rpcElement)
+            throws Exception {
+        RPCValues values = new RPCValues();
+
+        // Run each argument (sub-element) through the appropriate deser
+        Iterator args = rpcElement.getChildElements();
+        Map elementCounts = new HashMap();
+        while (args.hasNext()) {
+            OMElement arg = (OMElement) args.next();
+            QName qname = arg.getQName();
+            RPCParameter param = method.getParameter(qname);
+            if (param == null) {
+                // unknown parameter.  Fault or continue depending on
+                // strictness configuration.
+                continue;
+            }
+            Integer count = (Integer)elementCounts.get(qname);
+            if (count == null) count = new Integer(0);
+            elementCounts.put(qname, new Integer(count.intValue() + 1));
+            Deserializer dser = param.getDeserializer(count.intValue(), values);
+            // Got a recognized param, so feed this through the deserializer
+            try {
+                dserContext.deserialize(arg.getXMLStreamReader(), dser);
+            } catch (Exception e) {
+                throw AxisFault.makeFault(e);
+            }
+        }
+
+        // OK, now we're done with the children.  If this is SOAP 1.2, we're
+        // finished.  If it's SOAP 1.1, there may be multirefs which still
+        // need to be deserialized after the RPC element.
+        if (dserContext.isIncomplete()) {
+            try {
+                dserContext.processRest(rpcElement);
+            } catch (Exception e) {
+                throw AxisFault.makeFault(e);
+            }
+
+            if (dserContext.isIncomplete()) {
+                throw new AxisFault("Unresolved multirefs!");
+            }
+        }
+
+        return values;
     }
 }
