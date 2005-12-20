@@ -73,14 +73,15 @@ public class XSD2Java {
             CompilerOptions compilerOptions = new CompilerOptions();
             compilerOptions.setOutputLocation(outputFolder);
             //##############################
-             compilerOptions.setWrapClasses(true);
+            // compilerOptions.setPackageName("adb");
+            //  compilerOptions.setWrapClasses(true);
             //##############################
 
             SchemaCompiler compiler = new SchemaCompiler(compilerOptions);
             compiler.compile(currentSchema);
 
         } catch (Exception e) {
-           throw new RuntimeException("Compiler caused an exception",e);
+            throw new RuntimeException("Compiler caused an exception",e);
         }
     }
 }
