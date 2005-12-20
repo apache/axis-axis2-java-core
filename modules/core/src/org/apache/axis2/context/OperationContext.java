@@ -80,11 +80,13 @@ public class OperationContext extends AbstractContext {
      *
      * @param msgContext
      */
-    public synchronized void addMessageContext(MessageContext msgContext) throws AxisFault {
+    public void addMessageContext(MessageContext msgContext) throws AxisFault {
         if (axisOperation != null) {
             axisOperation.addMessageContext(msgContext, this);
+            touch();
         }
     }
+
 
     /**
      * Removes the pointers to this <code>OperationContext</code> in the

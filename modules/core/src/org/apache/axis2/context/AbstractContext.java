@@ -19,6 +19,7 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.client.Options;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,6 +28,8 @@ import java.util.Map;
  * This is the top most level of the Context hierachy and is a bag of properties.
  */
 public abstract class AbstractContext {
+    protected long lastTouchedTime;
+
     protected AbstractContext parent;
     protected Map properties;
 
@@ -108,5 +111,25 @@ public abstract class AbstractContext {
      */
     public void setProperty(String key, Object value) {
         properties.put(key, value);
+    }
+
+    /**
+     * ServiceContext and ServiceGroupContext are not getting automatically garbage collected. And there
+     * is no specific way for some one to go and make it garbage collectable.
+     * So the current solution is to make them time out. So the logic is that, there is a timer task
+     * in each and every service group which will check for the last touched time. And if it has not
+     * been touched for some time, the timer task will remove it from the memory.
+     * The touching logic happens like this. Whenever there is a call to addMessageContext in the operationContext
+     * it will go and update operationCOntext -> serviceContext -> serviceGroupContext.
+     */
+    protected void touch() {
+        lastTouchedTime = new Date().getTime();
+        if (parent != null) {
+            parent.touch();
+        }
+    }
+
+    public long getLastTouchedTime() {
+        return lastTouchedTime;
     }
 }

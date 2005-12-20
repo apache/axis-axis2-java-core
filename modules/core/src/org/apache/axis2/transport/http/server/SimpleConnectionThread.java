@@ -40,7 +40,7 @@ import java.io.InterruptedIOException;
  * Simple HTTP connection thread.
  */
 public class SimpleConnectionThread implements Runnable {
-    private static final Log LOG =
+    private static final Log log =
             LogFactory.getLog(SimpleConnectionThread.class);
     public static final String DEFAULT_CONTENT_CHARSET = "ISO-8859-1";
     private SimpleHttpServerConnection conn = null;
@@ -51,7 +51,7 @@ public class SimpleConnectionThread implements Runnable {
 
     public SimpleConnectionThread(final String name, final SimpleHttpServerConnection conn,
                                   final SimpleConnSet connpool, final HttpRequestHandler handler)
-            throws IOException {
+            {
 
         // super(tg, name);
         if (conn == null) {
@@ -100,10 +100,11 @@ public class SimpleConnectionThread implements Runnable {
                 }
             } while (this.conn.isKeepAlive());
         } catch (InterruptedIOException e) {
+            log.error("Can not run SimpleConnectionThread ", e);
         }
         catch (IOException e) {
-            if (!this.stopped && !Thread.interrupted() && LOG.isDebugEnabled()) {
-                LOG.debug("[" + this.name + "] I/O error: " + e.getMessage());
+            if (!this.stopped && !Thread.interrupted() && log.isDebugEnabled()) {
+                log.debug("[" + this.name + "] I/O error: " + e.getMessage());
             }
         } finally {
             destroy();

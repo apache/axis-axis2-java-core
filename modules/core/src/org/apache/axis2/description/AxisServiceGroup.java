@@ -92,7 +92,7 @@ public class AxisServiceGroup implements ParameterInclude {
         paramInclude.addParameter(param);
     }
 
-    public synchronized void addService(AxisService service) throws AxisFault {
+    public void addService(AxisService service) throws AxisFault {
         service.setParent(this);
 
         AxisConfiguration axisConfig = getParent();
@@ -165,7 +165,7 @@ public class AxisServiceGroup implements ParameterInclude {
         }
     }
 
-    public synchronized void removeService(QName name) throws AxisFault {
+    public void removeService(QName name) throws AxisFault {
         AxisService service = getService(name);
 
         if (service != null) {

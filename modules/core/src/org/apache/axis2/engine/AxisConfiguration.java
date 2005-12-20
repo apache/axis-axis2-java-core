@@ -21,16 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ModuleDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.ParameterIncludeImpl;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.util.HostConfiguration;
 import org.apache.commons.logging.Log;
@@ -126,7 +117,7 @@ public class AxisConfiguration implements ParameterInclude {
      * @param module
      * @throws AxisFault
      */
-    public synchronized void addModule(ModuleDescription module) throws AxisFault {
+    public void addModule(ModuleDescription module) throws AxisFault {
         module.setParent(this);
         modules.put(module.getName(), module);
     }
@@ -172,7 +163,7 @@ public class AxisConfiguration implements ParameterInclude {
         addServiceGroup(axisServiceGroup);
     }
 
-    public void addServiceGroup(AxisServiceGroup axisServiceGroup) throws AxisFault {
+    public synchronized void addServiceGroup(AxisServiceGroup axisServiceGroup) throws AxisFault {
         Iterator services = axisServiceGroup.getServices();
 
         axisServiceGroup.setParent(this);
@@ -213,7 +204,7 @@ public class AxisConfiguration implements ParameterInclude {
      * @param transport
      * @throws AxisFault
      */
-    public synchronized void addTransportIn(TransportInDescription transport) throws AxisFault {
+    public void addTransportIn(TransportInDescription transport) throws AxisFault {
         transportsIn.put(transport.getName(), transport);
     }
 
@@ -223,7 +214,7 @@ public class AxisConfiguration implements ParameterInclude {
      * @param transport
      * @throws AxisFault
      */
-    public synchronized void addTransportOut(TransportOutDescription transport) throws AxisFault {
+    public void addTransportOut(TransportOutDescription transport) throws AxisFault {
         transportsOut.put(transport.getName(), transport);
     }
 

@@ -2,7 +2,7 @@
 <%@ page import="org.apache.axis2.context.ConfigurationContext"%>
 <%@ page import="org.apache.axis2.context.ServiceContext"%>
 <%@ page import="org.apache.axis2.context.ServiceGroupContext"%>
-<%@ page import="java.util.HashMap"%>
+<%@ page import="java.util.Hashtable"%>
 <%@ page import="java.util.Iterator"%>
 <%--
   Created by IntelliJ IDEA.
@@ -18,7 +18,7 @@
     ConfigurationContext configContext = (ConfigurationContext)request.getSession().getAttribute(
             Constants.CONFIG_CONTEXT);
 
-    HashMap serviceGroupContextsMap = configContext.getServiceGroupContexts();
+    Hashtable serviceGroupContextsMap = configContext.getServiceGroupContexts();
     Iterator serviceGroupContext = serviceGroupContextsMap.keySet().iterator();
     if(serviceGroupContextsMap.size() >0){
     %>

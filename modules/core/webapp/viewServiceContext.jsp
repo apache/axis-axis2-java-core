@@ -2,7 +2,7 @@
 <%@ page import="org.apache.axis2.context.ConfigurationContext" %>
 <%@ page import="org.apache.axis2.context.ServiceContext" %>
 <%@ page import="org.apache.axis2.context.ServiceGroupContext" %>
-<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Hashtable" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.Map" %>
 <%--
@@ -18,7 +18,7 @@
 <h1>Runing Context hierachy</h1>
 <%
     ConfigurationContext configContext = (ConfigurationContext) request.getSession().getAttribute(Constants.CONFIG_CONTEXT);
-    HashMap serviceGroupContextsMap = configContext.getServiceGroupContexts();
+    Hashtable serviceGroupContextsMap = configContext.getServiceGroupContexts();
     String type = request.getParameter("TYPE");
     String sgID = request.getParameter("PID");
     String ID = request.getParameter("ID");

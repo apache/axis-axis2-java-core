@@ -20,14 +20,16 @@ package org.apache.axis2.context;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.util.SGContextGarbageCollector;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
 
-import javax.xml.namespace.QName;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
+import java.util.Timer;
 
 /**
  * This contains all the configuration information for Axis2.
@@ -39,8 +41,8 @@ public class ConfigurationContext extends AbstractContext {
      * <code>OperationContext</code> mapping.
      */
     private final Map operationContextMap = new HashMap();
-    private final Map serviceContextMap = new HashMap();
-    private final Map serviceGroupContextMap = new HashMap();
+    private final Map serviceContextMap = new Hashtable();
+    private Hashtable serviceGroupContextMap = new Hashtable();
     private transient AxisConfiguration axisConfiguration;
     private File rootDir;
     private transient ThreadFactory threadPool;
@@ -48,6 +50,15 @@ public class ConfigurationContext extends AbstractContext {
     public ConfigurationContext(AxisConfiguration axisConfiguration) {
         super(null);
         this.axisConfiguration = axisConfiguration;
+        startTimerTaskToTimeOutSGCtxt();
+    }
+
+    private void startTimerTaskToTimeOutSGCtxt() {
+        int delay = 5000;   // delay for 5 sec.
+        int period = 3000;  // repeat every 3 sec.
+        Timer timer = new Timer();
+
+        timer.schedule(new SGContextGarbageCollector(serviceGroupContextMap, 5 * 1000), delay, period);
     }
 
     protected void finalize() throws Throwable {
@@ -127,25 +138,13 @@ public class ConfigurationContext extends AbstractContext {
         this.operationContextMap.put(messageID, mepContext);
     }
 
-    /**
-     * Registers a ServiceContext with a given service ID.
-     */
-    public synchronized void registerServiceContext(String serviceInstanceID,
-                                                    ServiceContext serviceContext) {
-        this.serviceContextMap.put(serviceInstanceID, serviceContext);
-    }
-
-    public void registerServiceGroupContext(ServiceGroupContext serviceGroupContext) {
+    public synchronized void registerServiceGroupContext(ServiceGroupContext serviceGroupContext) {
         String id = serviceGroupContext.getId();
 
         if (serviceGroupContextMap.get(id) == null) {
             serviceGroupContextMap.put(id, serviceGroupContext);
             serviceGroupContext.setParent(this);
         }
-    }
-
-    public synchronized void removeService(QName name) {
-        serviceContextMap.remove(name);
     }
 
     public AxisConfiguration getAxisConfiguration() {
@@ -201,8 +200,8 @@ public class ConfigurationContext extends AbstractContext {
      *
      * @return Returns hashmap of ServiceGroupContexts.
      */
-    public HashMap getServiceGroupContexts() {
-        return (HashMap) serviceGroupContextMap;
+    public Hashtable getServiceGroupContexts() {
+        return serviceGroupContextMap;
     }
 
     /**
