@@ -79,7 +79,11 @@ public class CodeGenerationEngine {
 
             Emitter emitter;
             TypeMapper mapper = configuration.getTypeMapper();
-
+            if (mapper==null){
+                //this shouldn't happen
+                throw new CodeGenerationException("No proper databinding has taken place");
+            }
+            
             Map emitterMap = ConfigPropertyFileLoader.getLanguageEmitterMap();
             String className = emitterMap.get(configuration.getOutputLanguage()).toString();
             if (className!=null){

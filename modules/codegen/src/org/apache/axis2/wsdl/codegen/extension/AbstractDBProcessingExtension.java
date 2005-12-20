@@ -30,8 +30,10 @@ public abstract class AbstractDBProcessingExtension extends AbstractCodeGenerati
      */
     protected boolean testFallthrough(String dbFrameworkName){
         Map extensionsMap = ConfigPropertyFileLoader.getDatabindingFrameworkNameToExtensionMap();
-        String mappedExtension=extensionsMap.get(dbFrameworkName).toString();
-        return !(getClass().getName().equals(mappedExtension));
+        Object mappedExtension=extensionsMap.get(dbFrameworkName);
+        if(mappedExtension == null) 
+            return true;
+        return !(getClass().getName().equals(mappedExtension.toString()));
     }
 
 }
