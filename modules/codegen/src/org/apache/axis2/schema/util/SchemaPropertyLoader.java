@@ -2,6 +2,7 @@ package org.apache.axis2.schema.util;
 
 import org.apache.axis2.schema.typemap.TypeMap;
 import org.apache.axis2.schema.writer.BeanWriter;
+import org.apache.axis2.schema.SchemaCompiler;
 
 import java.util.Properties;
 /*
@@ -37,7 +38,7 @@ public class SchemaPropertyLoader {
         try {
             //load the properties
             Properties props = new Properties();
-            props.load(Object.class.getResourceAsStream(SCHEMA_COMPILER_PROPERTIES));
+            props.load(SchemaCompiler.class.getResourceAsStream(SCHEMA_COMPILER_PROPERTIES));
 
             String beanWriterClassName =  props.getProperty(BEAN_WRITER_KEY);
             if (beanWriterClassName!=null){
