@@ -70,7 +70,7 @@ public abstract class SOAPHeaderBlockImpl extends OMElementImpl
     protected void setAttribute(String attributeName,
                                 String attrValue,
                                 String soapEnvelopeNamespaceURI) {
-        OMAttribute omAttribute = this.getFirstAttribute(
+        OMAttribute omAttribute = this.getAttribute(
                 new QName(soapEnvelopeNamespaceURI, attributeName));
         if (omAttribute != null) {
             omAttribute.setAttributeValue(attrValue);
@@ -91,7 +91,7 @@ public abstract class SOAPHeaderBlockImpl extends OMElementImpl
      */
     protected String getAttribute(String attrName,
                                   String soapEnvelopeNamespaceURI) {
-        OMAttribute omAttribute = this.getFirstAttribute(
+        OMAttribute omAttribute = this.getAttribute(
                 new QName(soapEnvelopeNamespaceURI, attrName));
         return (omAttribute != null)
                 ? omAttribute.getAttributeValue()

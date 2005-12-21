@@ -113,7 +113,7 @@ public class AddressingInHandler extends AddressingHandler {
                     .WSA_TYPE_ATTRIBUTE_VALUE
                     .equals(
                             soapHeaderBlock
-                                    .getFirstAttribute(
+                                    .getAttribute(
                                             new QName(
                                                     Final.WSA_NAMESPACE,
                                                     Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE))
@@ -204,7 +204,7 @@ public class AddressingInHandler extends AddressingHandler {
             } else if (AddressingConstants.WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
                 String address = soapHeaderBlock.getText();
                 OMAttribute relationshipType =
-                        soapHeaderBlock.getFirstAttribute(
+                        soapHeaderBlock.getAttribute(
                                 new QName(AddressingConstants.WSA_RELATES_TO_RELATIONSHIP_TYPE));
                 String relationshipTypeDefaultValue =
                         Submission.WSA_NAMESPACE.equals(addressingNamespace)

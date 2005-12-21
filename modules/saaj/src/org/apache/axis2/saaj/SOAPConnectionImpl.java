@@ -103,7 +103,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
         while (childIter.hasNext()) {
             OMElement child = (OMElement) childIter.next();
             //check if there is an href attribute
-            OMAttribute hrefAttr = (OMAttribute) child.getFirstAttribute(new QName("href"));
+            OMAttribute hrefAttr = (OMAttribute) child.getAttribute(new QName("href"));
             String hrefContentId = validateHref(hrefAttr);
 
             if (hrefContentId != null) {//This is an element referencing an attachment!

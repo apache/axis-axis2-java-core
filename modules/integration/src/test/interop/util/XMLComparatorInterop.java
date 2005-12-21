@@ -193,7 +193,7 @@ public class XMLComparatorInterop {
         Iterator attributes = elementOne.getAllAttributes();
         while (attributes.hasNext()) {
             OMAttribute omAttribute = (OMAttribute) attributes.next();
-            OMAttribute attr = elementTwo.getFirstAttribute(omAttribute.getQName());
+            OMAttribute attr = elementTwo.getAttribute(omAttribute.getQName());
             if (attr == null) {
                 return false;
             }

@@ -112,7 +112,7 @@ public class XMLComparator {
         Iterator attributes = elementOne.getAllAttributes();
         while (attributes.hasNext()) {
             OMAttribute omAttribute = (OMAttribute) attributes.next();
-            OMAttribute attr = elementTwo.getFirstAttribute(
+            OMAttribute attr = elementTwo.getAttribute(
                     omAttribute.getQName());
             if (attr == null) {
                 throw new XMLComparisonException(

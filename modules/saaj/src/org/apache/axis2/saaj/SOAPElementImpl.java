@@ -230,7 +230,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
     public String getAttributeValue(Name name) {
         //This method is waiting on the finalization of the name for a method
         //in OMElement that returns a OMAttribute from an input QName
-        return omElement.getFirstAttribute(
+        return omElement.getAttribute(
                 new QName(name.getURI(),
                         name.getLocalName(),
                         name.getPrefix()))
@@ -332,7 +332,7 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
     public boolean removeAttribute(Name name) {
         //get the OMAttribute with the given Name first, and call a removeAttribute(OMAttribute)
         //method on the omElement datamember this SOAPElement has in it.
-        org.apache.axis2.om.OMAttribute attr = omElement.getFirstAttribute(
+        org.apache.axis2.om.OMAttribute attr = omElement.getAttribute(
                 new QName(name.getURI(),
                         name.getLocalName(),
                         name.getPrefix()));

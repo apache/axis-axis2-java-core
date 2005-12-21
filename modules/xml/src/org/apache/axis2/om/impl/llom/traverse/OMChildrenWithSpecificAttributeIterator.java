@@ -80,7 +80,7 @@ public class OMChildrenWithSpecificAttributeIterator
             // check the current node for the criteria
             if (currentChild instanceof OMElement) {
                 OMAttribute attr =
-                        ((OMElement) currentChild).getFirstAttribute(
+                        ((OMElement) currentChild).getAttribute(
                                 attributeName);
                 if ((attr != null)
                         && attr.getAttributeValue().equalsIgnoreCase(attributeValue)) {

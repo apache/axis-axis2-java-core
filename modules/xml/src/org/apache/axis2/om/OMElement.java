@@ -106,15 +106,6 @@ public interface OMElement extends OMNode, OMContainer {
      */
     public Iterator getAllDeclaredNamespaces() throws OMException;
 
-
-    /**
-     * This will search for an attribute with a given QName within this Element
-     *
-     * @param qname The attribute name to match.
-     * @return The attribute, if found, or <tt>null</tt> otherwise.
-     */
-    public OMAttribute getFirstAttribute(QName qname);
-
     /**
      * This will return a List of OMAttributes.
      * <p/>

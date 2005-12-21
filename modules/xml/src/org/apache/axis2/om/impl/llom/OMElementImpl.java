@@ -409,16 +409,6 @@ public class OMElementImpl extends OMNodeImpl
     }
 
     /**
-     * This will help to search for an attribute with a given QName within this Element
-     */
-    public OMAttribute getFirstAttribute(QName qname) {
-        if (attributes == null) {
-            return null;
-        }
-        return (OMAttribute) attributes.get(qname);
-    }
-
-    /**
      * This will return a List of OMAttributes
      *
      * @return iterator

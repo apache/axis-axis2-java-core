@@ -417,7 +417,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	 */
 	public void setAttributeNS(String namespaceURI, String qualifiedName, String value) throws DOMException {
 		
-		if(namespaceURI != null) {
+		if(namespaceURI != null && !"".equals(namespaceURI)) {
 			if(namespaceURI.equals(OMConstants.XMLNS_NS_URI)) {
 				this.declareNamespace(value, DOMUtil.getLocalName(qualifiedName));
 			} else {
@@ -693,20 +693,6 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
    */
 	public OMXMLParserWrapper getBuilder() {
 		return this.builder;
-	}
-
-
-	/**
-	 * Returns the first attribute of the set of attributes if there
-	 * are any attributes. Otherwise returns null
-	 * @see org.apache.axis2.om.OMElement#getFirstAttribute(javax.xml.namespace.QName)
-	 */
-	public OMAttribute getFirstAttribute(QName qname) {
-		if(this.attributes == null) {
-			return null;
-		} else {
-			return (AttrImpl)this.attributes.getItem(0);
-		}
 	}
 
 	/**
