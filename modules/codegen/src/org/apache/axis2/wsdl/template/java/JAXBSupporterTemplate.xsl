@@ -100,8 +100,6 @@
 		org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
 			(org.apache.axis2.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(reader)) ;
 		org.apache.axis2.om.OMElement documentElement = builder.getDocumentElement();
-		//Building the element is needed to avoid certain stream errors!
-		documentElement.build();
 		return documentElement;
 	  } catch(Exception e) {
         	System.err.println("Exception encountered in echoStringDatabindingSupporter.toOM(). Returning null");

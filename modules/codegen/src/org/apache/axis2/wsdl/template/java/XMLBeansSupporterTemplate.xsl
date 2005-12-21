@@ -35,10 +35,10 @@
         org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
         (org.apache.axis2.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
         org.apache.axis2.om.OMElement documentElement = builder.getDocumentElement();
-        ///////Building the element is needed to avoid certain stream errors!
-        documentElement.build();
-        //////////////////////////////
-        <xsl:if test="$base64">optimizeContent(documentElement,qNameArray);</xsl:if>
+
+        <xsl:if test="$base64">
+        optimizeContent(documentElement,qNameArray);
+        </xsl:if>
         return documentElement;
         }
             </xsl:if>
@@ -50,10 +50,6 @@
         <xsl:for-each select="param">
             <xsl:if test="@type!=''">
                 if (<xsl:value-of select="@type"/>.class.equals(type)){
-                //////////////////////////////////////////////////
-                /////////// Temporary hack to solve some streaming problems
-                param.build();
-                /////////////////////////////////////////////////
                 return <xsl:value-of select="@type"/>.Factory.parse(param.getXMLStreamReader()) ;
                 }
             </xsl:if>
