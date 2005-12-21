@@ -132,7 +132,7 @@
                             "<xsl:value-of select="$propertyName"/>",<xsl:value-of select="$varName"/>
                         </xsl:when>
                         <xsl:otherwise>
-                            "<xsl:value-of select="$propertyName"/>",org.apache.axis2.schema.util.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
+                            "<xsl:value-of select="$propertyName"/>",org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:for-each>};
@@ -147,7 +147,7 @@
                             null,<xsl:value-of select="$varName"/>
                         </xsl:when>
                         <xsl:otherwise>
-                            new javax.xml.namespace.QName("<xsl:value-of select="$propertyName"/>"),org.apache.axis2.schema.util.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
+                            new javax.xml.namespace.QName("<xsl:value-of select="$propertyName"/>"),org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:for-each>
@@ -171,7 +171,7 @@
                     return org.apache.axis2.databinding.utils.ADBPullParser.createPullParser(MY_QNAME,
                     new Object[]{
                     org.apache.axis2.databinding.utils.ADBPullParser.ELEMENT_TEXT,
-                    org.apache.axis2.schema.util.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
+                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
                     },
                     new Object[]{});
 
@@ -246,7 +246,7 @@
                             // call the converter utility  to convert and set the array
                             object.set<xsl:value-of select="$javaName"/>(
                             (<xsl:value-of select="$propertyType"/>)
-                            org.apache.axis2.schema.util.ConverterUtil.convertToArray(
+                            org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
                             <xsl:value-of select="$basePropertyType"/>.class,
                             <xsl:value-of select="$listName"/>));
 
@@ -278,7 +278,7 @@
                             // call the converter utility  to convert and set the array
                             object.set<xsl:value-of select="$javaName"/>(
                             (<xsl:value-of select="$propertyType"/>)
-                            org.apache.axis2.schema.util.ConverterUtil.convertToArray(
+                            org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
                             <xsl:value-of select="$basePropertyType"/>.class,
                             <xsl:value-of select="$listName"/>));
                             count++;
@@ -296,7 +296,7 @@
                 <xsl:otherwise>
                     String content = reader.getElementText();
                     object.set<xsl:value-of select="$javaName"/>(
-                    org.apache.axis2.schema.util.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
+                    org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
                     count++;
                 </xsl:otherwise>
             </xsl:choose>

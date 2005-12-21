@@ -1,4 +1,4 @@
-package org.apache.axis2.schema.util;
+package org.apache.axis2.databinding.utils;
 
 import org.apache.axis2.schema.types.*;
 import sun.misc.BASE64Decoder;

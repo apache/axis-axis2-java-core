@@ -1,6 +1,6 @@
 package org.apache.axis2.schema.populate.simple;
 
-import org.apache.axis2.schema.util.ConverterUtil;
+import org.apache.axis2.databinding.utils.ConverterUtil;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
