@@ -19,12 +19,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.i18n.Messages;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -37,6 +32,8 @@ public class DeploymentClassLoader extends URLClassLoader {
     // To keep jar files inside /lib directory in the main jar
     private ArrayList lib_jars_list;
     private HashMap loadedClass;
+    //to set the loading ordere parent first or child first : default is child first
+    private boolean parentFirst = false;
 
     // urls which gives to create the classLoader
     private URL[] urls;
@@ -74,32 +71,26 @@ public class DeploymentClassLoader extends URLClassLoader {
      */
     protected Class findClass(final String name) throws ClassNotFoundException {
         Class cla;
-
-        try {
-            cla = (Class) loadedClass.get(name);
-
-            if (cla != null) {
-                return cla;
-            }
-
+        cla = (Class) loadedClass.get(name);
+        if (cla != null) {
+            //the class is already in the loaded class list so no need to load it again
+            return cla;
+        }
+        if (parentFirst) {
+            //if parent first is true then first it is require to check in the parent
             boolean foundClass;
-
             try {
                 cla = super.findClass(name);
                 loadedClass.put(name, cla);
-
                 return cla;
             } catch (ClassNotFoundException e) {
                 foundClass = false;
             }
-
             if (!foundClass) {
                 try {
                     byte raw[] = getClassByteCodes(name);
-
                     cla = defineClass(name, raw, 0, raw.length);
                     loadedClass.put(name, cla);
-
                     return cla;
                 } catch (Exception e) {
                     foundClass = false;
@@ -107,16 +98,26 @@ public class DeploymentClassLoader extends URLClassLoader {
                     foundClass = false;
                 }
             }
-
             if (!foundClass) {
                 throw new ClassNotFoundException(
                         Messages.getMessage(DeploymentErrorMsgs.CLASS_NOT_FOUND, name));
             }
-        } catch (Exception e) {
-            throw new ClassNotFoundException(
-                    Messages.getMessage(DeploymentErrorMsgs.CLASS_NOT_FOUND, name));
+        } else {
+            try {
+                byte raw[] = getClassByteCodes(name);
+                cla = defineClass(name, raw, 0, raw.length);
+                loadedClass.put(name, cla);
+                return cla;
+            } catch (ClassFormatError e) {
+                throw e;
+            } catch (Exception e) {
+                // no need to do any thing
+            }
+            // finding in parent
+            cla = super.findClass(name);
+            loadedClass.put(name, cla);
+            return cla;
         }
-
         return null;
     }
 
@@ -125,7 +126,6 @@ public class DeploymentClassLoader extends URLClassLoader {
      * will be added to the arraylit (only the name of the jar file)
      */
     private void findLibJars() {
-
         /**
          * though the URL array can contains one or more urls , I have only consider the
          * first one , that is this classLoader is only for Axis2 stuff and the classloader
@@ -138,10 +138,8 @@ public class DeploymentClassLoader extends URLClassLoader {
             ZipInputStream zin = new ZipInputStream(new FileInputStream(file));
             ZipEntry entry;
             String entryName;
-
             while ((entry = zin.getNextEntry()) != null) {
                 entryName = entry.getName();
-
                 /**
                  * id the entry name start with /lib and end with .jar
                  * then those entry name will be added to the arraylist
@@ -151,7 +149,6 @@ public class DeploymentClassLoader extends URLClassLoader {
                     lib_jars_list.add(entryName);
                 }
             }
-
             zin.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -169,32 +166,26 @@ public class DeploymentClassLoader extends URLClassLoader {
     private byte[] getBytes(String resourceName) {
         byte raw[];
         ZipInputStream zin = null;
-
         for (int i = 0; i < lib_jars_list.size(); i++) {
             String libjar_name = (String) lib_jars_list.get(i);
-            InputStream in = getResourceAsStream(libjar_name);
-
+            // seince we are trying to get jar file , we need for sure that all the
+            // libs are in parent class loader not in child class loader
+            InputStream in = super.getResourceAsStream(libjar_name);
             try {
                 zin = new ZipInputStream(in);
-
                 ZipEntry entry;
                 String entryName;
-
                 while ((entry = zin.getNextEntry()) != null) {
                     entryName = entry.getName();
-
                     if ((entryName != null) && entryName.endsWith(resourceName)) {
                         byte data[] = new byte[2048];
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
                         int count;
-
                         while ((count = zin.read(data, 0, 2048)) != -1) {
                             out.write(data, 0, count);
                         }
-
                         raw = out.toByteArray();
                         out.close();
-
                         return raw;
                     }
                 }
@@ -232,9 +223,7 @@ public class DeploymentClassLoader extends URLClassLoader {
          * Replacing org.apache. -> org/apache/...
          */
         completeFileName = completeFileName.replace('.', '/').concat(".class");
-
         byte[] byteCodes = getBytes(completeFileName);
-
         if (byteCodes != null) {
             return byteCodes;
         } else {
@@ -255,20 +244,29 @@ public class DeploymentClassLoader extends URLClassLoader {
         if (name == null) {
             return null;
         }
-
-        InputStream is = super.getResourceAsStream(name);
-
-        // ohh , input stream is null , so need to check whether thats there in lib/*.jar
-        if (is == null) {
-            byte data[] = getBytes(name);
-
-            if (data == null) {
-                return null;
+        if (parentFirst) {
+            InputStream is = super.getResourceAsStream(name);
+            // ohh , input stream is null , so need to check whether thats there in lib/*.jar
+            if (is == null) {
+                byte data[] = getBytes(name);
+                if (data == null) {
+                    return null;
+                } else {
+                    return new ByteArrayInputStream(data);
+                }
             } else {
-                return new ByteArrayInputStream(data);
+                return is;
             }
         } else {
-            return is;
+            byte data[] = getBytes(name);
+            if (data != null) {
+                return new ByteArrayInputStream(data);
+            }
+            return super.getResourceAsStream(name);
         }
+    }
+
+    public void setParentFirst(boolean parentFirst) {
+        this.parentFirst = parentFirst;
     }
 }

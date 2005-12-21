@@ -16,31 +16,6 @@
 
 package org.apache.axis2.deployment;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.wsdl.Binding;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.Definition;
-import javax.wsdl.Input;
-import javax.wsdl.Message;
-import javax.wsdl.Operation;
-import javax.wsdl.Output;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
-import javax.wsdl.Types;
-import javax.wsdl.WSDLException;
-import javax.wsdl.extensions.ExtensibilityElement;
-import javax.wsdl.extensions.schema.Schema;
-import javax.wsdl.extensions.soap.SOAPBinding;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
@@ -55,11 +30,23 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import javax.wsdl.*;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.schema.Schema;
+import javax.wsdl.extensions.soap.SOAPBinding;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Map;
+
 /**
  * AxisServiceBuilder builds an AxisService using a WSDL document which is feed
  * as a javax.wsdl.Definition or as an InputStream. If there are multiple
  * javax.wsdl.Service elements in the WSDL, the first is picked.
- * 
+ *
  * @author Sanka Samaranayake (sanka@apache.org)
  */
 public class AxisServiceBuilder {
@@ -68,16 +55,16 @@ public class AxisServiceBuilder {
             throws WSDLException {
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         reader.setFeature("javax.wsdl.importDocuments", true);
-        
+
         Document doc;
 
         try {
             doc = XMLUtils.newDocument(wsdlInputStream);
-        
+
         } catch (ParserConfigurationException e) {
             throw new WSDLException(WSDLException.PARSER_ERROR,
                     "Parser Configuration Error", e);
-        
+
         } catch (SAXException e) {
             throw new WSDLException(WSDLException.PARSER_ERROR,
                     "Parser SAX Error", e);
@@ -172,7 +159,7 @@ public class AxisServiceBuilder {
         Iterator ports = service.getPorts().values().iterator();
         Port port;
         Binding binding;
-        
+
         while (ports.hasNext()) {
             port = (Port) ports.next();
             binding = port.getBinding();

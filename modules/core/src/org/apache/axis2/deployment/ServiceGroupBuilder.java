@@ -18,6 +18,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.ModuleConfiguration;
@@ -81,6 +82,8 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
 
                     if (axisService == null) {
                         axisService = new AxisService(serviceName);
+                    } else {
+                        axisService.setWsdlfound(true);
                     }
 
                     // the service that has to be deployed
@@ -89,7 +92,14 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
 
                     ServiceBuilder serviceBuilder = new ServiceBuilder(axisConfig, axisService);
                     AxisService as = serviceBuilder.populateService(service);
-
+                    if (!as.isWsdlfound()) {
+                        //trying to generate WSDL for the service using JAM  and Java refelection
+                        try {
+                            Utils.fillAxisService(as);
+                        } catch (Exception e) {
+                            log.info("Error in scheam generating :" + e.getMessage());
+                        }
+                    }
                     serviceList.add(as);
                 }
             }

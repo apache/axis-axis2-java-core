@@ -109,13 +109,11 @@ public class ArchiveFileData {
 
             if (file != null) {
                 URL[] urlsToLoadFrom;
-
                 try {
                     if (!file.exists()) {
                         throw new AxisFault(Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND,
                                 file.getAbsolutePath()));
                     }
-
                     urlsToLoadFrom = new URL[]{file.toURL()};
                     classLoader = new DeploymentClassLoader(urlsToLoadFrom, parent);
                 } catch (Exception e) {

@@ -72,6 +72,9 @@ public class AxisService
     //to keep the XMLScheam getting either from WSDL or java2wsdl
     private XmlSchema schema;
 
+    //wsdl is there for this service or not (in side META-INF)
+    private boolean wsdlfound = false;
+
     /**
      * Constructor AxisService
      */
@@ -588,5 +591,13 @@ public class AxisService
 
     public void setSchema(XmlSchema schema) {
         this.schema = schema;
+    }
+
+    public boolean isWsdlfound() {
+        return wsdlfound;
+    }
+
+    public void setWsdlfound(boolean wsdlfound) {
+        this.wsdlfound = wsdlfound;
     }
 }

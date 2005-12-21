@@ -19,7 +19,6 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
@@ -123,13 +122,6 @@ public class ServiceBuilder extends DescriptionBuilder {
                     Messages.getMessage(
                             DeploymentErrorMsgs.OPERATION_PROCESS_ERROR, axisFault.getMessage()));
         }
-
-        //todo this is not the right way pls improve this : Deepal
-        try {
-            Utils.fillAxisService(service);
-        } catch (Exception e) {
-            log.info("Error in generating scheam:" + e.getMessage());
-        }
         return service;
     }
 
@@ -223,21 +215,20 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             if (op_mep_att != null) {
                 mepurl = op_mep_att.getAttributeValue();
-                // todo value has to be validated
             }
 
             String opname = op_name_att.getAttributeValue();
             AxisOperation op_descrip;
-
-            if (mepurl == null) {
-
-                // assumed MEP is in-out
-                op_descrip = new InOutAxisOperation();
-            } else {
-                op_descrip = AxisOperationFactory.getOperationDescription(mepurl);
+            op_descrip = service.getOperation(new QName(opname));
+            if (op_descrip == null) {
+                if (mepurl == null) {
+                    // assumed MEP is in-out
+                    op_descrip = new InOutAxisOperation();
+                } else {
+                    op_descrip = AxisOperationFactory.getOperationDescription(mepurl);
+                }
+                op_descrip.setName(new QName(opname));
             }
-
-            op_descrip.setName(new QName(opname));
 
             // Operation Parameters
             Iterator parameters = operation.getChildrenWithName(new QName(TAG_PARAMETER));
