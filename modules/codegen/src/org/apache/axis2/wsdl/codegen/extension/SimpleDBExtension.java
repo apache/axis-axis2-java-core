@@ -92,8 +92,11 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
                 }
             }
             //call the schema compiler
-            CompilerOptions options = new CompilerOptions().setOutputLocation(configuration.getOutputLocation());
+            CompilerOptions options = new CompilerOptions();
+            options.setOutputLocation(configuration.getOutputLocation());
             options.setPackageName(ADB_PACKAGE_NAME_PREFIX);
+            options.setWrapClasses(configuration.isWrapClasses());
+
 
             SchemaCompiler schemaCompiler = new SchemaCompiler(options);
             schemaCompiler

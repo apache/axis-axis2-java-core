@@ -46,7 +46,6 @@
             <xsl:variable name="returntype"><xsl:value-of select="output/param/@type"/></xsl:variable>
             <xsl:variable name="returnvariable"><xsl:value-of select="output/param/@name"/></xsl:variable>
             <xsl:variable name="namespace"><xsl:value-of select="@namespace"/></xsl:variable>
-            <xsl:variable name="dbsupportname"><xsl:value-of select="@dbsupportname"/></xsl:variable>
 
             <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
             <xsl:variable name="style"><xsl:value-of select="@style"/></xsl:variable>
@@ -64,44 +63,9 @@
 
             <xsl:choose>
                 <xsl:when test="$style='rpc'">
-                    //rpc style
-                    <xsl:variable name="inputparamcount"><xsl:value-of select="count(input/param)"/></xsl:variable>
-                    <xsl:for-each select="input/param">
-                        <xsl:if test="@type!=''">
 
-                            org.apache.axis2.om.OMElement firstChild = (org.apache.axis2.om.OMElement)msgContext.getEnvelope().getBody().getFirstChild();
-                            if(null == firstChild)
-                            throw new org.apache.axis2.AxisFault("Wrapper Element Not Found for the axisOperation of RPC style");
-                            java.util.Iterator children = firstChild.getChildren();
-                            org.apache.xmlbeans.XmlObject[] params = new org.apache.xmlbeans.XmlObject[<xsl:value-of select="$inputparamcount"/>];
-                            int count = 0;
-                            while(children.hasNext() &amp;&amp; count &lt; <xsl:value-of select="$inputparamcount"/>){
-                            params[count] = org.soapinterop.databinding.echoStringDatabindingSupporter.fromOM((org.apache.axis2.om.OMElement)children.next(), <xsl:value-of select="@type"/>.class);
-                            count++;
-                            }
-                            if(count!= <xsl:value-of select="$inputparamcount"/>)
-                            throw new org.apache.axis2.AxisFault("Parts mismatch in the message");
+                    //rpc style  -- this needs to be filled
 
-                        </xsl:if>
-                    </xsl:for-each>
-
-                    <xsl:if test="$returntype!=''">
-                        <xsl:value-of select="$returnvariable"/> =</xsl:if> skel.<xsl:value-of select="@name"/>(
-                    <xsl:for-each select="input/param">
-                        <xsl:if test="@type!=''">
-                            (<xsl:value-of select="@type"/>)params[<xsl:value-of select="position()-1"/>]<xsl:if test="position()!=$inputparamcount">,</xsl:if>
-                        </xsl:if>
-                    </xsl:for-each>);
-                    //Create a default envelop
-                    envelope = getSOAPFactory().getDefaultEnvelope();
-                    org.apache.axis2.om.OMNamespace ns = getSOAPFactory().createOMNamespace("<xsl:value-of select="$namespace"/>", "<xsl:value-of select="$name"/>Responce");
-                    org.apache.axis2.om.OMElement responseMethodName = getSOAPFactory().createOMElement(methodName + "Response", ns);
-                    //Create a Omelement of the result if a result exist
-                    <xsl:if test="$returntype!=''">
-                        responseMethodName.setFirstChild(<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$dbsupportname"/>.toOM(<xsl:value-of select="$returnvariable"/>));
-                    </xsl:if>
-
-                    envelope.getBody().setFirstChild(responseMethodName);
                 </xsl:when>
                 <xsl:when test="$style='doc'">
                     //doc style
@@ -110,7 +74,7 @@
                     <xsl:choose>
                         <xsl:when test="$paramCount &gt; 0"> skel.<xsl:value-of select="@name"/>(
                             <xsl:for-each select="input/param[@location='body']">
-                                <xsl:if test="@type!=''">(<xsl:value-of select="@type"/>)<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$dbsupportname"/>.fromOM((org.apache.axis2.om.OMElement)msgContext.getEnvelope().getBody().getFirstElement().detach(), <xsl:value-of select="@type"/>.class)<xsl:if test="position() &gt; 1">,</xsl:if></xsl:if>
+                                <xsl:if test="@type!=''">(<xsl:value-of select="@type"/>)fromOM((org.apache.axis2.om.OMElement)msgContext.getEnvelope().getBody().getFirstElement().detach(), <xsl:value-of select="@type"/>.class)<xsl:if test="position() &gt; 1">,</xsl:if></xsl:if>
                             </xsl:for-each>);
                         </xsl:when>
                         <xsl:otherwise>skel.<xsl:value-of select="@name"/>();</xsl:otherwise>
@@ -121,7 +85,7 @@
                     envelope = getSOAPFactory().getDefaultEnvelope();
                     //Create a Omelement of the result if a result exist
 
-                    <xsl:if test="$returntype!=''">envelope.getBody().setFirstChild(<xsl:value-of select="$dbsupportpackage"/>.<xsl:value-of select="$dbsupportname"/>.toOM(<xsl:value-of select="$returnvariable"/>));
+                    <xsl:if test="$returntype!=''">envelope.getBody().setFirstChild(toOM(<xsl:value-of select="$returnvariable"/>));
                     </xsl:if>
                 </xsl:when>
 
@@ -148,6 +112,117 @@
         <xsl:for-each select="method"/>
         }
 
+        <!-- generate the databind supporters-->
+        //<xsl:apply-templates/>
+
+        }
+    </xsl:template>
+
+     <!-- #################################################################################  -->
+    <!-- ############################   xmlbeans template   ##############################  -->
+    <xsl:template match="databinders[@dbtype='xmlbeans']">
+
+        <xsl:variable name="base64"><xsl:value-of select="base64Elements/name"/></xsl:variable>
+        <xsl:if test="$base64">
+            private static javax.xml.namespace.QName[] qNameArray = {
+            <xsl:for-each select="base64Elements/name">
+                <xsl:if test="position()>1">,</xsl:if>new javax.xml.namespace.QName("<xsl:value-of select="@ns-url"/>","<xsl:value-of select="@localName"/>")
+            </xsl:for-each>
+            };
+        </xsl:if>
+
+        <xsl:for-each select="param">
+            <xsl:if test="@type!=''">
+                public  org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
+                org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
+                (org.apache.axis2.om.OMAbstractFactory.getOMFactory(),new org.apache.axis2.util.StreamWrapper(param.newXMLStreamReader())) ;
+
+                <xsl:choose>
+                    <xsl:when test="$base64">
+                         org.apache.axis2.om.OMElement documentElement = builder.getDocumentElement();
+                         optimizeContent(documentElement,qNameArray);
+                         return documentElement;
+                    </xsl:when>
+                    <xsl:otherwise>
+                        return  builder.getDocumentElement();
+                    </xsl:otherwise>
+                </xsl:choose>
+
+                }
+            </xsl:if>
+
+        </xsl:for-each>
+
+        public org.apache.xmlbeans.XmlObject fromOM(org.apache.axis2.om.OMElement param,
+        java.lang.Class type){
+        try{
+        <xsl:for-each select="param">
+            <xsl:if test="@type!=''">
+                if (<xsl:value-of select="@type"/>.class.equals(type)){
+                return <xsl:value-of select="@type"/>.Factory.parse(param.getXMLStreamReader()) ;
+                }
+            </xsl:if>
+        </xsl:for-each>
+        }catch(java.lang.Exception e){
+        throw new RuntimeException("Data binding error",e);
+        }
+        return null;
+        }
+
+    </xsl:template>
+
+    <!-- #################################################################################  -->
+    <!-- ############################   ADB template   ##############################  -->
+    <xsl:template match="databinders[@dbtype='adb']">
+
+         <xsl:variable name="base64"><xsl:value-of select="base64Elements/name"/></xsl:variable>
+         <xsl:if test="$base64">
+             private static javax.xml.namespace.QName[] qNameArray = {
+             <xsl:for-each select="base64Elements/name">
+                 <xsl:if test="position()>1">,</xsl:if>new javax.xml.namespace.QName("<xsl:value-of select="@ns-url"/>","<xsl:value-of select="@localName"/>")
+             </xsl:for-each>
+             };
+         </xsl:if>
+
+         <xsl:for-each select="param">
+             <xsl:if test="@type!=''">
+                 <!-- consider all the types to ADBbeans. So no instanceof check -->
+                 public  org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
+                 org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
+                 (org.apache.axis2.om.OMAbstractFactory.getOMFactory(), param.getPullParser(null));
+                 return builder.getDocumentElement();
+                 }
+             </xsl:if>
+         </xsl:for-each>
+
+         public  java.lang.Object fromOM(org.apache.axis2.om.OMElement param,
+         java.lang.Class type){
+              Object obj;
+             try {
+                 java.lang.reflect.Method parseMethod = type.getMethod("parse",new Class[]{javax.xml.stream.XMLStreamReader.class});
+                 obj = null;
+                 if (parseMethod!=null){
+                     obj = parseMethod.invoke(null,new Object[]{param.getXMLStreamReader()});
+                 }else{
+                     //oops! we don't know how to deal with this. Perhaps the reflective one is a good choice here
+                 }
+             } catch (Exception e) {
+                  throw new RuntimeException(e);
+             }
+
+             return obj;
+         }
+
+     </xsl:template>
+    <!-- #################################################################################  -->
+    <!-- ############################   none template!!!   ##############################  -->
+    <xsl:template match="databinders[@dbtype='none']">
+        public  org.apache.axis2.om.OMElement fromOM(org.apache.axis2.om.OMElement param, java.lang.Class type){
+           return param;
+        }
+
+        public  org.apache.axis2.om.OMElement  toOM(org.apache.axis2.om.OMElement param){
+            return param;
         }
     </xsl:template>
 </xsl:stylesheet>

@@ -29,7 +29,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private WSDLDescription wom;
     private CommandLineOptionParser parser;
     private File outputLocation;
-    
+
     //get the defaults for these from the property file
     private String outputLanguage = ConfigPropertyFileLoader.getDefaultLanguage();
     private String databindingType = ConfigPropertyFileLoader.getDefaultDBFrameworkName();
@@ -45,16 +45,30 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private String packageName = XSLTConstants.DEFAULT_PACKAGE_NAME;
     private boolean wrapClasses = false;
 
+    private boolean generateAll = false;
+
+
+
     /**
      * A hashmap to hang the property objects
      */
     private Map policyMap = new HashMap();
 
- /*
- * A hashmap of properties that may be populated on the way. extensions can populate it
- * This can be used to keep non specific information
- */
+    /*
+    * A hashmap of properties that may be populated on the way. extensions can populate it
+    * This can be used to keep non specific information
+    */
     private Map configurationProperties = new HashMap();
+
+
+    public boolean isGenerateAll() {
+        return generateAll;
+    }
+
+    public void setGenerateAll(boolean generateAll) {
+        this.generateAll = generateAll;
+    }
+
     /**
      * get the wrap classes flag
      * @return
@@ -111,7 +125,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
      * @return
      */
     public Object get(Object key){
-       return configurationProperties.get(key);
+        return configurationProperties.get(key);
     }
 
     /**
@@ -201,9 +215,9 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         //check and create the directories
         if (this.outputLocation.exists()){
             if (this.outputLocation.isFile()){
-               throw  new RuntimeException("The specified output location is not a directory!"); 
+                throw  new RuntimeException("The specified output location is not a directory!");
             }
-         }else{
+        }else{
             this.outputLocation.mkdirs();
         }
 
@@ -243,6 +257,12 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
                 DATA_BINDING_TYPE_OPTION);
         if(dataBindingOption != null){
             setDatabindingType(dataBindingOption.getOptionValue());
+        }
+
+        CommandLineOption wrapClassesOption = (CommandLineOption) optionMap.get(
+                WRAP_CLASSES_OPTION);
+        if(wrapClassesOption != null){
+            wrapClasses = true;
         }
     }
 

@@ -24,7 +24,6 @@ import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.codegen.writer.AntBuildWriter;
 import org.apache.axis2.wsdl.codegen.writer.CallbackHandlerWriter;
 import org.apache.axis2.wsdl.codegen.writer.ClassWriter;
-import org.apache.axis2.wsdl.codegen.writer.DatabindingSupportClassWriter;
 import org.apache.axis2.wsdl.codegen.writer.InterfaceImplementationWriter;
 import org.apache.axis2.wsdl.codegen.writer.InterfaceWriter;
 import org.apache.axis2.wsdl.codegen.writer.MessageReceiverWriter;
@@ -126,9 +125,10 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
             }
 
             // Call the emit stub method to generate the client side too
-            // Do we need to enforce this here ?????
-            // Perhaps we can introduce a flag to determine this!
-            emitStub();
+            if (configuration.isGenerateAll()){
+                 emitStub();
+            }
+
 
         } catch (Exception e) {
             throw new CodeGenerationException(e);
@@ -204,6 +204,11 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 writeServiceXml(axisBinding.getBoundInterface(), axisBinding);
                 //write a MessageReceiver for this particular service.
                 writeMessageReceiver(axisBinding);
+                //write the ant build if not asked for all
+                if (!configuration.isGenerateAll()){
+                  writeAntBuild(axisBinding.getBoundInterface(),axisBinding);
+                }
+
             }
         }
     }
@@ -235,6 +240,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         for (Iterator iterator = interfaceCollection.iterator(); iterator.hasNext();) {
             //Write the interfaces
             WSDLInterface axisInterface = (WSDLInterface) iterator.next();
+            //note that this case we do not care about the wrapping flag
             writeInterface(axisInterface, null);
             //write the call back handlers
             writeCallBackHandlers(axisInterface, null);
@@ -270,15 +276,17 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 axisService = checkService(wom, axisService);
                 //write the inteface
                 //feed the binding information also
-                writeInterface(axisBinding.getBoundInterface(), axisBinding);
+                //note that we do not create this interface if the user switched on the wrap classes mode
+                if (!configuration.isWrapClasses()){
+                    writeInterface(axisBinding.getBoundInterface(), axisBinding);
+                }
                 //write the call back handlers
                 writeCallBackHandlers(axisBinding.getBoundInterface(), axisBinding);
                 //write interface implementations
                 writeInterfaceImplementation(axisBinding, axisService);
                 //write the test classes
                 writeTestClasses(axisBinding);
-                //write the databinding supporters
-                writeDatabindingSupporters(axisBinding);
+
                 //write a dummy implementation call for the tests to run.
                 //writeTestSkeletonImpl(axisBinding);
                 //write a testservice.xml that will load the dummy skeleton impl for testing
@@ -369,11 +377,13 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
      * @throws Exception
      */
     protected void writeInterface(WSDLInterface axisInterface, WSDLBinding axisBinding) throws Exception {
+
         Document interfaceModel = createDOMDocumentForInterface(axisInterface, axisBinding);
         InterfaceWriter interfaceWriter =
                 new InterfaceWriter(this.configuration.getOutputLocation(),
                         this.configuration.getOutputLanguage());
         writeClass(interfaceModel, interfaceWriter);
+
     }
 
 
@@ -396,43 +406,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     }
 
-    /**
-     * Writes the skeleton
-     *
-     * @param axisBinding
-     * @throws Exception
-     */
-    protected void writeDatabindingSupporters(WSDLBinding axisBinding) throws Exception {
-        Collection col = axisBinding.getBoundInterface().getOperations()
-                .values();
-        Document databindingSupporterModel;
 
-        //create a writer here. The writer is reusable when writing multiple classes
-        ClassWriter databindingSupportWriter = new DatabindingSupportClassWriter(
-                this.configuration.getOutputLocation(),
-                this.configuration.getOutputLanguage(),
-                this.configuration.getDatabindingType());
-        String portTypeName = axisBinding.getBoundInterface().getName().getLocalPart();
-
-        //if wrapped generate one class that has all the conversion methods
-        if (configuration.isWrapClasses()){
-            databindingSupporterModel = createDOMDocumentforSerialization(portTypeName,col.iterator(),axisBinding);
-            writeClass(databindingSupporterModel, databindingSupportWriter);
-        } else{
-            for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-                //Note -  there will be a supporter generated per method and will contain the methods to serilize and
-                //deserailize the relevant objects
-
-                WSDLOperation operation = (WSDLOperation) iterator.next();
-                WSDLBindingOperation bindingop = axisBinding.getBindingOperation(operation.getName());
-                databindingSupporterModel = createDOMDocumentforSerialization(
-                        operation,portTypeName, bindingop);
-                writeClass(databindingSupporterModel, databindingSupportWriter);
-            }
-        }
-
-
-    }
 
     /**
      * Writes the Ant build
@@ -792,9 +766,11 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(boundInterface, doc, rootElement, binding);
+
+        /////////////////////////
+        rootElement.appendChild(createDOMElementforDatabinders(doc,binding));
+        /////////////////////////
         doc.appendChild(rootElement);
-
-
         return doc;
     }
 
@@ -1048,61 +1024,34 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     }
 
-    protected Document createDOMDocumentforSerialization(
-            String portTypeName,Iterator operationsInterator,WSDLBinding axisBinding) {
-        Document doc = getEmptyDocument();
-        while (operationsInterator.hasNext()) {
-            WSDLOperation operation = (WSDLOperation) operationsInterator.next();
-            WSDLBindingOperation bindingop = axisBinding.getBindingOperation(operation.getName());
-            doc.appendChild(createDOMElementforSerializationForOperation(doc,operation,portTypeName,bindingop));
-        }
 
-        return doc;
-    }
 
-    protected Document createDOMDocumentforSerialization(
-            WSDLOperation operation, String portTypeName, WSDLBindingOperation bindingOperation) {
-        Document doc = getEmptyDocument();
-        doc.appendChild(createDOMElementforSerializationForOperation(doc,operation,portTypeName,bindingOperation));
-        return doc;
-    }
+    protected Element createDOMElementforDatabinders(
+            Document doc, WSDLBinding binding) {
+        //First Iterate through the operations and find the relevant fromOM and toOM methods to be generated
+        Map bindingOperationsMap =  binding.getBindingOperations();
 
-    protected Element createDOMElementforSerializationForOperation(
-            Document doc,WSDLOperation operation, String portTypeName, WSDLBindingOperation bindingOperation) {
-        Element rootElement = doc.createElement("class");
-        addAttribute(doc,
-                "package",
-                configuration.getPackageName() +
-                        DATABINDING_PACKAGE_NAME_SUFFIX,
-                rootElement);
-        String localPart = reformatName(operation.getName().getLocalPart(),false);
-        portTypeName = reformatName(portTypeName,false);
-        addAttribute(doc,
-                "name",
-                portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
-                rootElement);
-        addAttribute(doc, "methodname", localPart, rootElement);
-        addAttribute(doc,
-                "namespace",
-                operation.getName().getNamespaceURI(),
-                rootElement);
-
-        //Add the parameters to a map with their type as the key
-        //this step is needed to remove repetitions
         Map parameterMap = new HashMap();
-        Element inputParamElement = getInputParamElement(doc, operation);
+        Iterator operationsIterator =  bindingOperationsMap.values().iterator();
+        while (operationsIterator.hasNext()) {
+            WSDLBindingOperation bindingOperation = (WSDLBindingOperation) operationsIterator.next();
+            //Add the parameters to a map with their type as the key
+            //this step is needed to remove repetitions
 
-        if (inputParamElement!=null){
-            parameterMap.put(inputParamElement.getAttribute("type"),inputParamElement);
-        }
+            //process the input and output parameters
+            Element inputParamElement = getInputParamElement(doc, bindingOperation.getOperation());
+            if (inputParamElement!=null){
+                parameterMap.put(inputParamElement.getAttribute("type"),inputParamElement);
+            }
+            Element outputParamElement = getOutputParamElement(doc, bindingOperation.getOperation());
+            if (outputParamElement!=null){
+                parameterMap.put(outputParamElement.getAttribute("type"),outputParamElement);
+            }
 
-        Element outputParamElement = getOutputParamElement(doc, operation);
-        if (outputParamElement!=null){
-            parameterMap.put(outputParamElement.getAttribute("type"),outputParamElement);
-        }
-        Element newChild;
+            //todo process the exceptions
 
-        if (bindingOperation!=null) {
+            //process the header parameters
+            Element newChild;
             List headerParameterQNameList= new ArrayList();
             addHeaderOperations(headerParameterQNameList,bindingOperation,true);
             List parameterElementList = getParameterElementList(doc,headerParameterQNameList, "header");
@@ -1120,7 +1069,11 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 newChild = (Element) parameterElementList.get(i);
                 parameterMap.put(newChild.getAttribute("type"),newChild);
             }
+
         }
+
+        Element rootElement = doc.createElement("databinders");
+        addAttribute(doc,"dbtype",configuration.getDatabindingType(),rootElement);
 
         //add the names of the elements that have base 64 content
         //if the base64 name list is missing then this whole step is skipped
@@ -1131,6 +1084,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
             rootElement.appendChild((Element)iterator.next());
         }
+
 
         return rootElement;
     }
@@ -1191,16 +1145,21 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 "callbackname",
                 localPart + CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
+        //add the wrap classes flag
+        if (configuration.isWrapClasses()){
+            addAttribute(doc,
+                    "wrapped",
+                    "yes",
+                    rootElement);
+        }
+
+        //todo fix this
         addAttribute(doc,
                 "dbsupportpackage",
                 configuration.getPackageName() +
                         DATABINDING_PACKAGE_NAME_SUFFIX,
                 rootElement);
-        addAttribute(doc,
-                "dbsupportpackage",
-                configuration.getPackageName() +
-                        DATABINDING_PACKAGE_NAME_SUFFIX,
-                rootElement);
+
         //add SOAP version
         addSoapVersion(binding,doc,rootElement);
         //add the end point
@@ -1209,6 +1168,13 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         fillSyncAttributes(doc, rootElement);
         //load the operations
         loadOperations(boundInterface, doc, rootElement, binding);
+
+        //add the databind supporters. Now the databind supporters are completly contained inside
+        //the stubs implementation and not visible outside
+        rootElement.appendChild(
+                createDOMElementforDatabinders(doc,binding));
+
+
         doc.appendChild(rootElement);
 
         return doc;
@@ -1241,7 +1207,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     protected void addEndpoints(Document doc,
                                 Element rootElement,
                                 HashMap endpointMap) throws Exception{
-       // Map endpointPolicyMap = configuration.getPolicyMap();
+        // Map endpointPolicyMap = configuration.getPolicyMap();
         Object[] endpoints = endpointMap.values().toArray();
         WSDLEndpoint endpoint;
         Element endpointElement;

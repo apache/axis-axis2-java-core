@@ -48,7 +48,7 @@ public class WSDL2Code {
         System.out.println(
                 "-sd : Generate service descriptor (i.e. axis2.xml). Default is off.Valid with -ss ");
         System.out.println(
-                "-d <databinding> : valid databinding(s) are adb and xmlbeans. Default is xmlbeans");
+                "-d <databinding> : valid databinding(s) are adb and xmlbeans. Default is adb");
         System.exit(0);
     }
 

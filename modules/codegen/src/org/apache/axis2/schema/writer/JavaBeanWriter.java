@@ -79,7 +79,12 @@ public class JavaBeanWriter implements BeanWriter{
                 Element rootElement = XSLTUtils.getElement(globalWrappedDocument,"beans");
                 globalWrappedDocument.appendChild(rootElement);
                 XSLTUtils.addAttribute(globalWrappedDocument,"name",WRAPPED_DATABINDING_CLASS_NAME,rootElement);
-                XSLTUtils.addAttribute(globalWrappedDocument,"package",packageName,rootElement);
+                String tempPackageName = null;
+                if (packageName.endsWith(".")){
+                     tempPackageName = this.packageName.substring(0, this.packageName.lastIndexOf("."));
+                }
+
+                XSLTUtils.addAttribute(globalWrappedDocument,"package",tempPackageName,rootElement);
             }
         } catch (IOException e) {
             throw new SchemaCompilationException(e);
@@ -206,12 +211,14 @@ public class JavaBeanWriter implements BeanWriter{
             loadTemplate();
         }
 
+        //if wrapped then do not write the classes now but add the models to a global document. However in order to write the
+        //global class that is generated, one needs to call the writeBatch() method
         if (wrapClasses){
             globalWrappedDocument.getDocumentElement().appendChild(
                     getBeanElement(globalWrappedDocument, className, originalName, packageName, qName, isElement, metainf, propertyNames, typeMap)
             );
             //now the fully qualified class name needs to have the name of the including class as well
-            fullyqualifiedClassName = packageName + "."+ WRAPPED_DATABINDING_CLASS_NAME +"." + className;
+            fullyqualifiedClassName = (this.packageName==null?"":this.packageName)+ WRAPPED_DATABINDING_CLASS_NAME +"." + className;
         }else{
             //create the model
             Document model= XSLTUtils.getDocument();
