@@ -114,17 +114,10 @@ public class BeanUtil {
             Iterator elements = beanElement.getChildren();
             while (elements.hasNext()) {
                 OMElement parts = (OMElement) elements.next();
-//                if parts/@href != null then need to find element with id and deserialize. before that first check wheher already have in hashtable
+                // if parts/@href != null then need to find element with id and deserialize. 
+                // before that first check whether we already have it in the hashtable
                 String partsLocalName = parts.getLocalName();
                 PropertyDescriptor prty = (PropertyDescriptor) properties.get(partsLocalName.toLowerCase());
-//                if (prty == null) {
-/**
- * I think this can be happen , that is because there is a method whcih take Man
- * object and request can contain a Employee object (which extend Man) , there for
- * Employee may have more field than Man , so no need to thow an exception
- */
-//                    throw new AxisFault("User Error , In vaild bean ! prty does not exist " + "set" +
-//                            partsLocalName);
                 if (prty != null) {
                     Class parameters = prty.getPropertyType();
                     if (prty.equals("class"))
@@ -134,16 +127,12 @@ public class BeanUtil {
                     if (SimpleTypeMapper.isSimpleType(parameters)) {
                         partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
                     } else if (SimpleTypeMapper.isArrayList(parameters)) {
-                        //todo : Deepal , the array handling is compltely wrong , this has to be
-                        // imroved
+                        //todo : Deepal , the array handling is completely wrong , this has to be
+                        // improved
                         partObj = SimpleTypeMapper.getArrayList((OMElement) parts.getParent(), prty.getName());
                     } else {
                         partObj = deserialize(parameters, parts);
                     }
-//                    Object partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
-//                    if (partObj == null) {
-//                        partObj = deserialize(parameters, parts);
-//                    }
                     Object [] parms = new Object[]{partObj};
                     prty.getWriteMethod().invoke(beanObj, parms);
                 }
@@ -262,8 +251,8 @@ public class BeanUtil {
  * </foo>
  */
         Iterator parts = response.getChildren();
-//to handle multirefs
-//have to check the instnceof
+        //to handle multirefs
+        //have to check the instanceof
         MultirefHelper helper = new MultirefHelper((OMElement) response.getParent());
         boolean hasRef = false;
         //to support array . if the parameter type is array , then all the omelemnts with that paramtre name
@@ -278,7 +267,7 @@ public class BeanUtil {
                 continue;
             }
             classType = (Class) javaTypes[count];
-//handling refs
+            //handling refs
             OMAttribute omatribute = MultirefHelper.processRefAtt(omElement);
             String ref = null;
             if (omatribute != null) {
@@ -294,8 +283,6 @@ public class BeanUtil {
                     } else {
                         retObjs[count] = omElement;
                     }
-//                    throw new AxisFault("The method take OMElenent as argument , and the body contains" +
-//                            "refs , encounter processing error ");
                 } else
                     retObjs[count] = omElement;
             } else {
@@ -328,9 +315,9 @@ public class BeanUtil {
         int argCount = 0;
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
-//todo if the request parameter has name other than argi (0<i<n) , there should be a
-//was to do that , to solve that problem we need to have RPCRequestParameter
-//note that The value of request parameter can either be simple type or JavaBean
+            //todo if the request parameter has name other than argi (0<i<n) , there should be a
+            //way to do that , to solve that problem we need to have RPCRequestParameter
+            //note that The value of request parameter can either be simple type or JavaBean
             if (SimpleTypeMapper.isSimpleType(arg)) {
                 objects.add("arg" + argCount);
                 objects.add(arg.toString());

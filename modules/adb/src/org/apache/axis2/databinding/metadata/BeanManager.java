@@ -98,7 +98,7 @@ public class BeanManager {
                 isCollection = true;
             } else {
                 type = propDesc.getPropertyType();
-                // TODO : notice if this is a supported collection type
+                // TODO : check if this is a supported collection type
             }
 
             if (isCollection && elDesc.getMaxOccurs() == 0)
