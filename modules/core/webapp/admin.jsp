@@ -32,5 +32,5 @@
   %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Welcome to the Axis2 administration system!</h1>
-<p>The Axis2 administration system can be used to check on the health of your Axis2 deployment as well as to change any parameters at run time. Other than changing of parameters the web interface also has the ability upload new services into Axis2[Service hot deployment.].</p>
+<p>The Axis2 administration system can be used to check on the health of your Axis2 deployment as well as to change any parameters at run time. Other than changing of parameters the web interface also has the ability to upload new services into Axis2[Service hot deployment.].</p>
 <jsp:include page="include/adminfooter.jsp"></jsp:include>
