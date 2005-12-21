@@ -20,16 +20,16 @@ package org.apache.axis2.context;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.util.SGContextGarbageCollector;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
 
 import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Timer;
 
 /**
  * This contains all the configuration information for Axis2.
@@ -47,17 +47,12 @@ public class ConfigurationContext extends AbstractContext {
     private File rootDir;
     private transient ThreadFactory threadPool;
 
+    // current time out interval is 30 secs. Need to make this configurable
+    private long serviceGroupContextTimoutInterval = 30 * 1000;
+
     public ConfigurationContext(AxisConfiguration axisConfiguration) {
         super(null);
         this.axisConfiguration = axisConfiguration;
-    }
-
-    private void startTimerTaskToTimeOutSGCtxt() {
-        int delay = 5000;   // delay for 5 sec.
-        int period = 3000;  // repeat every 3 sec.
-        Timer timer = new Timer();
-
-        timer.schedule(new SGContextGarbageCollector(serviceGroupContextMap, 5 * 1000), delay, period);
     }
 
     protected void finalize() throws Throwable {
@@ -88,11 +83,11 @@ public class ConfigurationContext extends AbstractContext {
         ServiceContext serviceContext;
 
         if (!isNull(serviceGroupContextId)
-                && (serviceGroupContextMap.get(serviceGroupContextId) != null)) {
+                && (getServiceGroupContext(serviceGroupContextId) != null)) {
 
             // SGC is already there
             serviceGroupContext =
-                    (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
+                    getServiceGroupContext(serviceGroupContextId);
             serviceContext =
                     serviceGroupContext.getServiceContext(messageContext.getAxisService().getName());
         } else {
@@ -142,8 +137,12 @@ public class ConfigurationContext extends AbstractContext {
 
         if (serviceGroupContextMap.get(id) == null) {
             serviceGroupContextMap.put(id, serviceGroupContext);
+            serviceGroupContext.touch();
             serviceGroupContext.setParent(this);
         }
+
+        // this is the best time to clean up the SGCtxts that are not being used anymore
+        cleanupServiceGroupContexts();
     }
 
     public AxisConfiguration getAxisConfiguration() {
@@ -186,9 +185,13 @@ public class ConfigurationContext extends AbstractContext {
         return (ServiceContext) this.serviceContextMap.get(serviceInstanceID);
     }
 
-    public ServiceGroupContext getServiceGroupContext(String serviceGroupContextId) {
+    public synchronized ServiceGroupContext getServiceGroupContext(String serviceGroupContextId) {
         if (serviceGroupContextMap != null) {
-            return (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
+            ServiceGroupContext serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
+            if (serviceGroupContext != null) {
+                serviceGroupContext.touch();
+            }
+            return serviceGroupContext;
         }
 
         return null;
@@ -244,6 +247,20 @@ public class ConfigurationContext extends AbstractContext {
             threadPool = pool;
         } else {
             throw new AxisFault("Thread pool already set.");
+        }
+    }
+
+    private void cleanupServiceGroupContexts() {
+        synchronized (serviceGroupContextMap) {
+            long currentTime = new Date().getTime();
+            Iterator sgCtxtMapKeyIter = serviceGroupContextMap.keySet().iterator();
+            while (sgCtxtMapKeyIter.hasNext()) {
+                String sgCtxtId = (String) sgCtxtMapKeyIter.next();
+                ServiceGroupContext serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(sgCtxtId);
+                if ((currentTime - serviceGroupContext.getLastTouchedTime()) > serviceGroupContextTimoutInterval) {
+                    sgCtxtMapKeyIter.remove();
+                }
+            }
         }
     }
 }
