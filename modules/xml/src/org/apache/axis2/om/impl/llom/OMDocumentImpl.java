@@ -16,32 +16,32 @@
 
 package org.apache.axis2.om.impl.llom;
 
+import java.io.OutputStream;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axis2.om.OMDocument;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
-import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.OMOutputFormat;
+import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMContainerEx;
 import org.apache.axis2.om.impl.OMNodeEx;
 import org.apache.axis2.om.impl.OMOutputImpl;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenIterator;
 import org.apache.axis2.om.impl.llom.traverse.OMChildrenQNameIterator;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import java.util.Iterator;
-import java.io.OutputStream;
-import java.io.IOException;
-
 /**
  * Class OMDocumentImpl
  */
 public class OMDocumentImpl implements OMDocument, OMContainerEx {
     /**
-     * Field rootElement
+     * Field documentElement
      */
-    protected OMElement rootElement;
+    protected OMElement documentElement;
 
     /**
      * Field firstChild
@@ -85,11 +85,11 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * @param rootElement
+     * @param documentElement
      * @param parserWrapper
      */
-    public OMDocumentImpl(OMElement rootElement, OMXMLParserWrapper parserWrapper) {
-        this.rootElement = rootElement;
+    public OMDocumentImpl(OMElement documentElement, OMXMLParserWrapper parserWrapper) {
+        this.documentElement = documentElement;
         this.parserWrapper = parserWrapper;
     }
 
@@ -101,24 +101,24 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
     }
 
     /**
-     * Method getRootElement
+     * Method getDocumentElement
      *
      * @return om element
      */
     public OMElement getOMDocumentElement() {
-        while (rootElement == null) {
+        while (documentElement == null) {
             parserWrapper.next();
         }
-        return rootElement;
+        return documentElement;
     }
 
     /**
-     * Method setRootElement
+     * Method setDocumentElement
      *
-     * @param rootElement
+     * @param documentElement
      */
-    public void setOMDocumentElement(OMElement rootElement) {
-        this.rootElement = rootElement;
+    public void setOMDocumentElement(OMElement documentElement) {
+        this.documentElement = documentElement;
     }
 
     /**
@@ -157,9 +157,9 @@ public class OMDocumentImpl implements OMDocument, OMContainerEx {
      */
     public void addChild(OMNode child) {
     	if(child instanceof OMElement) {
-    		if(this.rootElement == null) {
+    		if(this.documentElement == null) {
     			addChild((OMNodeImpl) child);
-    			this.rootElement = (OMElement)child;
+    			this.documentElement = (OMElement)child;
     		} else {
     			throw new OMException("Document element already exists");
     		}

@@ -237,7 +237,14 @@ public class OMDOMFactory implements OMFactory {
 	}
 
 	public OMComment createOMComment(OMContainer parent, String content) {
-		CommentImpl comment = new CommentImpl((DocumentImpl)((ElementImpl)parent).getOwnerDocument(), content);
+		DocumentImpl doc = null;
+		if(parent instanceof DocumentImpl) {
+			doc = (DocumentImpl)parent;
+		} else {
+			doc = (DocumentImpl)((ParentNode)parent).getOwnerDocument();
+		}
+		
+		CommentImpl comment = new CommentImpl(doc, content);
 		parent.addChild(comment);
 		return comment;
 	}

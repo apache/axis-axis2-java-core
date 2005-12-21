@@ -15,6 +15,10 @@
  */
 package org.apache.axis2.om.impl.dom;
 
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
 import org.apache.axis2.om.OMNode;
@@ -26,10 +30,6 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
 
 public abstract class ParentNode extends ChildNode implements OMContainerEx {
 
@@ -165,20 +165,18 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 		}
 		
 		if(this instanceof Document) {
-			if(this.firstChild != null) {
+			if(((DocumentImpl)this).documentElement != null && !(newDomChild instanceof CommentImpl)) {
 				//Throw exception since there cannot be two document elements
 				throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
 						DOMMessageFormatter.formatMessage(
 								DOMMessageFormatter.DOM_DOMAIN,
 								"HIERARCHY_REQUEST_ERR", null));
-			} else {
-				this.firstChild = newDomChild;
-				newDomChild.isFirstChild(true);
-				this.lastChild = newDomChild;
+			} else if(newDomChild instanceof ElementImpl) {
 				if(newDomChild.parentNode == null) {
 					newDomChild.parentNode = this;
 				}
-				return newDomChild;
+				//set the document element
+				((DocumentImpl)this).documentElement = (ElementImpl)newDomChild;
 			}
 		}
 		
@@ -309,9 +307,6 @@ public abstract class ParentNode extends ChildNode implements OMContainerEx {
 					ChildNode child = (ChildNode)docFrag.getFirstChild();
 					child.parentNode = this;
 					this.replaceChild(child, oldChild);
-//					DocumentFragmentimpl docFrag = (DocumentFragmentimpl)newDomChild;
-//					docFrag.firstChild.previousSubling = oldDomChild.previousSubling;
-//					
 				} else {
 					if(oldDomChild.isFirstChild()) {
 						oldDomChild.detach();

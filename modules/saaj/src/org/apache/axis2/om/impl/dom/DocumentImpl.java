@@ -56,6 +56,8 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
     
     private String charEncoding;
     
+    protected ElementImpl documentElement;
+    
 	/**
 	 * @param ownerDocument
 	 */
@@ -380,10 +382,10 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 		 * We'r sure that only an element can be the first child 
 		 * of a Document
 		 */
-		if(this.firstChild == null && !this.done) {
+		if(this.documentElement == null && !this.done) {
 			this.build();
 		}
-		return (OMElement)this.firstChild;
+		return this.documentElement;
 	}
 	
 	/**
@@ -392,11 +394,7 @@ public class DocumentImpl extends ParentNode implements Document, OMDocument {
 	 */
 	public Element getDocumentElement() {
 		
-		if(this.firstChild == null && !this.done) {
-			this.build();
-		}
-			
-		return (Element)this.firstChild;
+		return (Element)this.getOMDocumentElement();
 	}
 	
     /**
