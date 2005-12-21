@@ -46,12 +46,12 @@ public class ClassReader extends ByteArrayInputStream {
     private Map attrMethods;
 
     /**
-     * load the bytecode for a given class, by using the class's defining
+     * Loads the bytecode for a given class, by using the class's defining
      * classloader and assuming that for a class named P.C, the bytecodes are
      * in a resource named /P/C.class.
      *
      * @param c the class of interest
-     * @return a byte array containing the bytecode
+     * @return Returns a byte array containing the bytecode
      * @throws IOException
      */
     protected static byte[] getBytes(Class c) throws IOException {
@@ -144,21 +144,21 @@ public class ClassReader extends ByteArrayInputStream {
 
 
     /**
-     * @return the next unsigned 16 bit value
+     * @return Returns the next unsigned 16 bit value.
      */
     protected final int readShort() {
         return (read() << 8) | read();
     }
 
     /**
-     * @return the next signed 32 bit value
+     * @return Returns the next signed 32 bit value.
      */
     protected final int readInt() {
         return (read() << 24) | (read() << 16) | (read() << 8) | read();
     }
 
     /**
-     * skip n bytes in the input stream.
+     * Skips n bytes in the input stream.
      */
     protected void skipFully(int n) throws IOException {
         while (n > 0) {
@@ -342,7 +342,7 @@ public class ClassReader extends ByteArrayInputStream {
     }
 
     /**
-     * read an attributes array.  the elements of a class file that
+     * Reads an attributes array.  The elements of a class file that
      * can contain attributes are: fields, methods, the class itself,
      * and some other types of attributes.
      */
@@ -385,7 +385,7 @@ public class ClassReader extends ByteArrayInputStream {
     }
 
     /**
-     * read a code attribute
+     * Reads a code attribute.
      *
      * @throws IOException
      */

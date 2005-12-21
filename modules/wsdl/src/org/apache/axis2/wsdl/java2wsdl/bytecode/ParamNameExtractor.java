@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- * This class retieves function parameter names from bytecode built with
+ * This class retrieves function parameter names from bytecode built with
  * debugging symbols.  Used as a last resort when creating WSDL.
  *
  * @author <a href="mailto:tomj@macromedia.com">Tom Jordahl</a>
@@ -19,7 +19,7 @@ public class ParamNameExtractor {
     protected static Log log = LogFactory.getLog(ParamNameExtractor.class.getName());
 
     /**
-     * Retrieve a list of function parameter names from a method
+     * Retrieves a list of function parameter names from a method. 
      * Returns null if unable to read parameter names (i.e. bytecode not
      * built with debug).
      */

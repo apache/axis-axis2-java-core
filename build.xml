@@ -146,6 +146,7 @@
       source="1.4"
       classpathref="classpath">
       <include name="addressing/src/**/*.java"/>
+      <include name="adb/src/**/*.java"/>
       <include name="codegen/src/**/*.java"/>
       <include name="common/src/**/*.java"/>
       <include name="core/src/**/*.java"/>

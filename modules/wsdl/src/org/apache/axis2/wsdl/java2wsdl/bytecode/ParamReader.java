@@ -31,7 +31,7 @@ public class ParamReader
     private Class[] paramTypes;
 
     /**
-     * process a class file, given it's class.  We'll use the defining
+     * Processes a class file, given it's class.  We'll use the defining
      * classloader to locate the bytecode.
      *
      * @param c
@@ -42,7 +42,7 @@ public class ParamReader
     }
 
     /**
-     * process the given class bytes directly.
+     * Processes the given class bytes directly.
      *
      * @param b
      * @throws IOException
@@ -107,13 +107,13 @@ public class ParamReader
     }
 
     /**
-     * return the names of the declared parameters for the given constructor.
+     * Returns the names of the declared parameters for the given constructor.
      * If we cannot determine the names, return null.  The returned array will
      * have one name per parameter.  The length of the array will be the same
      * as the length of the Class[] array returned by Constructor.getParameterTypes().
      *
      * @param ctor
-     * @return String[] array of names, one per parameter, or null
+     * @return Returns String[] array of names, one per parameter, or null
      */
     public String[] getParameterNames(Constructor ctor) {
         paramTypes = ctor.getParameterTypes();
@@ -121,13 +121,13 @@ public class ParamReader
     }
 
     /**
-     * return the names of the declared parameters for the given method.
+     * Returns the names of the declared parameters for the given method.
      * If we cannot determine the names, return null.  The returned array will
      * have one name per parameter.  The length of the array will be the same
      * as the length of the Class[] array returned by Method.getParameterTypes().
      *
      * @param method
-     * @return String[] array of names, one per parameter, or null
+     * @return Returns String[] array of names, one per parameter, or null
      */
     public String[] getParameterNames(Method method) {
         paramTypes = method.getParameterTypes();
@@ -187,7 +187,7 @@ public class ParamReader
     }
 
     /**
-     * this is invoked when a LocalVariableTable attribute is encountered.
+     * This is invoked when a LocalVariableTable attribute is encountered.
      *
      * @throws IOException
      */
