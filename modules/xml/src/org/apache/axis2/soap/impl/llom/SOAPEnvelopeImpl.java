@@ -16,6 +16,7 @@
 
 package org.apache.axis2.soap.impl.llom;
 
+import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMConstants;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMException;
@@ -23,14 +24,8 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.soap.SOAP12Constants;
-import org.apache.axis2.soap.SOAPBody;
-import org.apache.axis2.soap.SOAPConstants;
-import org.apache.axis2.soap.SOAPEnvelope;
-import org.apache.axis2.soap.SOAPFactory;
-import org.apache.axis2.soap.SOAPHeader;
-import org.apache.axis2.soap.SOAPHeaderBlock;
-import org.apache.axis2.soap.SOAPProcessingException;
+import org.apache.axis2.soap.*;
+import org.apache.axis2.soap.impl.llom.factory.SOAPLinkedListImplFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -73,13 +68,24 @@ public class SOAPEnvelopeImpl extends SOAPElement
      */
     public SOAPHeader getHeader() throws OMException {
         SOAPHeader header =
-                (SOAPHeader)getFirstChildWithName(
+                (SOAPHeader) getFirstChildWithName(
                         new QName(SOAPConstants.HEADER_LOCAL_NAME));
         if (builder == null && header == null) {
+            inferFactory();
             header = factory.createSOAPHeader(this);
             addChild(header);
         }
         return header;
+    }
+
+    private void inferFactory() {
+        if (factory instanceof SOAPLinkedListImplFactory && ns != null) {
+            if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(ns.getName())) {
+                factory = OMAbstractFactory.getSOAP12Factory();
+            } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(ns.getName())) {
+                factory = OMAbstractFactory.getSOAP11Factory();
+            }
+        }
     }
 
     /**
@@ -92,13 +98,16 @@ public class SOAPEnvelopeImpl extends SOAPElement
             throws OMException {
         // TODO : cache SOAP header and body instead of looking them up?
 
+
         OMNamespace namespace = factory.createOMNamespace(namespaceURI, null);
         return this.addHeaderBlock(name, namespace);
     }
 
     public SOAPHeaderBlock addHeaderBlock(String name, OMNamespace namespace) throws OMException {
         SOAPHeader headerContainer = getHeader();
-        return factory.createSOAPHeaderBlock(name,namespace,headerContainer);
+        inferFactory();
+        
+        return factory.createSOAPHeaderBlock(name, namespace, headerContainer);
     }
 
     public void addChild(OMNode child) {

@@ -50,7 +50,6 @@ public class ConfigurationContext extends AbstractContext {
     public ConfigurationContext(AxisConfiguration axisConfiguration) {
         super(null);
         this.axisConfiguration = axisConfiguration;
-        startTimerTaskToTimeOutSGCtxt();
     }
 
     private void startTimerTaskToTimeOutSGCtxt() {
