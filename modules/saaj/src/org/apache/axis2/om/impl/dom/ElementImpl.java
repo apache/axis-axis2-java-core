@@ -1106,6 +1106,14 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
         return super.getNextOMSibling();
     }
     
+	public void discard() throws OMException {
+        if (done) {
+            this.detach();
+        } else {
+            builder.discard(this);
+        }
+	}    
+	
 	/*
 	 * DOM-Level 3 methods
 	 */

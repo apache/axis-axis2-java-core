@@ -112,8 +112,7 @@ public abstract class ChildNode extends NodeImpl {
 	}
 	
 	public void discard() throws OMException {
-		//TODO
-		throw new UnsupportedOperationException("TODO");
+		throw new UnsupportedOperationException("Cannot discard this node");
 	}
 	
 	/**
