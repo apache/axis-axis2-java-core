@@ -38,18 +38,18 @@ public class WSDLVersionWrapper {
     }
 
     /**
-     * Returns the WSDL 1.1 Definition
+     * Returns the WSDL 1.1 Definition.
      *
-     * @return <code>DEfinition</code>
+     * @return Returns <code>Definition</code>
      */
     public Definition getDefinition() {
         return definition;
     }
 
     /**
-     * Returns a WOM description
+     * Returns a WOM description.
      *
-     * @return <code>WSDLDescription</code>
+     * @return Returns <code>WSDLDescription</code>
      */
     public WSDLDescription getDescription() {
         return description;

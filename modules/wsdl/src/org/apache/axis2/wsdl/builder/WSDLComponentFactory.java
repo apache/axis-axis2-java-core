@@ -41,7 +41,7 @@ public interface WSDLComponentFactory {
     public WSDLEndpoint createEndpoint();
 
     /**
-     * @return A new instance of type <code>WSDLFault</code>
+     * @return A new instance of type <code>WSDLFaultReference</code>
      */
     public WSDLFaultReference createFaultReference();
 

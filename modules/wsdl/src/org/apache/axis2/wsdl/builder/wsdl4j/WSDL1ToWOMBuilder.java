@@ -37,10 +37,10 @@ import java.io.InputStream;
 public class WSDL1ToWOMBuilder implements WOMBuilder {
 
     /**
-     * Buils a WOM and a WSDL4J object model from given the URI of the WSDL file and
-     * will be returned as a wrapper object WSDLVersionWrapper.
+     * Builds a WOM and a WSDL4J object model given the URI of the WSDL file and
+     * returns a wrapper object WSDLVersionWrapper.
      * @param in InputStream from which the WSDL document can be read in.
-     * @return WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1
+     * @return Returns WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1
      * object models.
      * @throws WSDLException
      */
@@ -49,10 +49,10 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
     }
 
     /**
-     * Buils a WOM and a WSDL4J object model from given the URI of the WSDL file and
-     * will be returned as a wrapper object WSDLVersionWrapper. A WSDL Component Factory
+     * Builds a WOM and a WSDL4J object model given the URI of the WSDL file and
+     * returns a wrapper object WSDLVersionWrapper. A WSDL Component Factory
      * can be passed into the builder using which the WOM component can be built out of.
-     * For example: The Enigne uses the WOM's components in the context hierarchy but
+     * For example: The Engine uses the WOM's components in the context hierarchy but
      * those are extended components.
      * (<code>AxisService</code> extends <code>WSDLService</code>.)
      * So when deployment build the WOM it would prefer to get a <code>AxisService</code>
@@ -61,7 +61,7 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
      * @param in InputStream from which the WSDL document can be read in.
      * @param wsdlComponentFactory The ComponentFactory that will be used to create the
      * WOm components out of.
-     * @return WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1
+     * @return Returns WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1
      * object models.
      * @throws WSDLException
      */
@@ -84,10 +84,10 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
 
 
     /**
-     * Buils a WOM and a WSDL4J object model from given the URI of the WSDL file and
-     * will be returned as a wrapper object WSDLVersionWrapper.
+     * Builds a WOM and a WSDL4J object model given the URI of the WSDL file and
+     * returns a wrapper object WSDLVersionWrapper.
      * @param uri URI pointing to the WSDL document.
-     * @return WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1
+     * @return Returns WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1
      * object models.
      * @throws WSDLException
      */
@@ -96,10 +96,10 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
     }
 
     /**
-     * Buils a WOM and a WSDL4J object model from given the URI of the WSDL file and
-     * will be returned as a wrapper object WSDLVersionWrapper. A WSDL Component Factory
-     * can be passed into the builder using which the WOM component can be built out of.
-     * For example: The Enigne uses the WOM's components in the context hierarchy but
+     * Builds a WOM and a WSDL4J object model given the URI of the WSDL file and
+     * returns a wrapper object WSDLVersionWrapper. A WSDL Component Factory
+     * can be passed into the builder using which the WOM component can be built.
+     * For example: The Engine uses the WOM's components in the context hierarchy but
      * those are extended components.
      * (<code>AxisService</code> extends <code>WSDLService</code>.)
      * So when deployment build the WOM it would prefer to get a <code>AxisService</code>
@@ -108,7 +108,7 @@ public class WSDL1ToWOMBuilder implements WOMBuilder {
      * @param uri URI pointing to the WSDL document.
      * @param wsdlComponentFactory The ComponentFactory that will be used to create the
      * WOm components out of.
-     * @return WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1
+     * @return Returns WSDLVersionWrapper which contains both the WSDL 2.0 and WSDL 1.1
      * object models.
      * @throws WSDLException
      */
