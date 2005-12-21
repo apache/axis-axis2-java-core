@@ -44,13 +44,15 @@ public class AxisService2WOM {
 
     private XmlSchema schema;
     private AxisService axisService;
+    private String url;
 
 
     public AxisService2WOM(XmlSchema schema, AxisService service,
                            String targentNamespece,
-                           String targetNamespecheprefix) {
+                           String targetNamespecheprefix, String serviceURL) {
         this.schema = schema;
         this.axisService = service;
+        url = serviceURL;
 
         if (targentNamespece != null && !targentNamespece.trim().equals("")) {
             SchemaGenerator.TARGET_NAMESPACE = targentNamespece;
@@ -96,7 +98,7 @@ public class AxisService2WOM {
 
         //generating axisService
         WSDLService service = generateService(wsdlComponentFactory, binding,
-                axisService.getName());
+                axisService.getName(), url);
         womDescription.addService(service);
         return womDescription;
     }
@@ -145,14 +147,14 @@ public class AxisService2WOM {
     }
 
     private WSDLService generateService(WSDLComponentFactory wsdlComponentFactory,
-                                        WSDLBinding binding, String ServiceName) {
+                                        WSDLBinding binding, String ServiceName, String URL) {
         WSDLService service = wsdlComponentFactory.createService();
         service.setName(new QName(ServiceName));
         WSDLEndpoint endpoints = wsdlComponentFactory.createEndpoint();
         endpoints.setBinding(binding);
         endpoints.setName(new QName(ServiceName + "PortType"));
         SOAPAddressImpl address = new SOAPAddressImpl();
-        address.setLocationURI("http://127.0.0.1:8080:/axis2/services/" + ServiceName);
+        address.setLocationURI(URL);
         endpoints.addExtensibilityElement(address);
         service.setEndpoint(endpoints);
         return service;

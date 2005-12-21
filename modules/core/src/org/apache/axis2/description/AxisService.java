@@ -320,9 +320,9 @@ public class AxisService
         }
     }
 
-    public void printWSDL(OutputStream out) throws AxisFault {
+    public void printWSDL(OutputStream out, String serviceURL) throws AxisFault {
         //todo : This is a tempory hack pls imporve me : Deepal
-        AxisService2WOM axisService2WOM = new AxisService2WOM(getSchema(), this, null, null);
+        AxisService2WOM axisService2WOM = new AxisService2WOM(getSchema(), this, null, null, serviceURL);
         try {
             WSDLDescription desc = axisService2WOM.generateWOM();
             WOMWriter womWriter = WOMWriterFactory.createWriter(org.apache.wsdl.WSDLConstants.WSDL_1_1);
