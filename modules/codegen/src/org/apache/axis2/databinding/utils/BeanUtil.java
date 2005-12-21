@@ -18,7 +18,6 @@ package org.apache.axis2.databinding.utils;
 
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.databinding.utils.ADBPullParser;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMAttribute;

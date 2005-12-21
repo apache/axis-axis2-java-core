@@ -27,7 +27,6 @@
 	import org.apache.axis2.deployment.DeploymentEngine;
 	import org.apache.axis2.description.AxisService;
 	import org.apache.axis2.engine.AxisConfiguration;
-	import org.apache.axis2.wsdl.codegen.Constants;
 	import org.apache.axis2.om.OMAbstractFactory;
 	import org.apache.axis2.om.OMElement;
 	import org.apache.axis2.om.OMFactory;
@@ -44,6 +43,7 @@
     
     private static int count = 0;
 	private static SimpleHTTPServer server;
+    private static int TEST_PORT = 5555;
 	
 	public void setUp() throws Exception {
 		if (count == 0) {
@@ -62,7 +62,7 @@
 			ConfigurationContext configurationContext = new ConfigurationContext(
 					axisConfig);
 			ServerSocket serverSoc = null;
-			serverSoc = new ServerSocket(Constants.TEST_PORT);
+			serverSoc = new ServerSocket(TEST_PORT);
 			server = new SimpleHTTPServer(
 					configurationContext, serverSoc);
 			Thread thread = new Thread(server);
@@ -71,7 +71,7 @@
 			try {
 				thread.start();
 				System.out.print("Server started on port "
-						+ Constants.TEST_PORT + ".....");
+						+ TEST_PORT + ".....");
 			} finally {
 
 			}
