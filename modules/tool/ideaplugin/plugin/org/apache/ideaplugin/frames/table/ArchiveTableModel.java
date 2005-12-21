@@ -34,10 +34,10 @@ public class ArchiveTableModel extends AbstractTableModel {
     Object [][] datvalue;
     private HashMap datobjs;
 
-    public ArchiveTableModel(HashMap dataobjetc) {
-        int size = dataobjetc.size();
+    public ArchiveTableModel(HashMap dataobject) {
+        int size = dataobject.size();
         datvalue = new Object[size][4];
-        Iterator itr =  dataobjetc.values().iterator();
+        Iterator itr =  dataobject.values().iterator();
         int count =0;
         while (itr.hasNext()) {
             OperationObj operationObj = (OperationObj) itr.next();
@@ -47,7 +47,7 @@ public class ArchiveTableModel extends AbstractTableModel {
             datvalue[count][3]=operationObj.getSelect();
             count ++;
         }
-        this.datobjs = dataobjetc;
+        this.datobjs = dataobject;
     }
     public int getColumnCount() {
         return columnNames.length;

@@ -50,7 +50,7 @@ public class BeanUtil {
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(beanObject.getClass());
             PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();
-            ArrayList objetc = new ArrayList();
+            ArrayList object = new ArrayList();
             for (int i = 0; i < propDescs.length; i++) {
                 PropertyDescriptor propDesc = propDescs[i];
                 Class ptype = propDesc.getPropertyType();
@@ -59,8 +59,8 @@ public class BeanUtil {
                 }
                 if (SimpleTypeMapper.isSimpleType(ptype)) {
                     Object value = propDesc.getReadMethod().invoke(beanObject, null);
-                    objetc.add(propDesc.getName());
-                    objetc.add(value.toString());
+                    object.add(propDesc.getName());
+                    object.add(value.toString());
                 } else if (SimpleTypeMapper.isArrayList(ptype)) {
                     Object value = propDesc.getReadMethod().invoke(beanObject, null);
                     ArrayList objList = (ArrayList) value;
@@ -71,22 +71,22 @@ public class BeanUtil {
                         for (int j = 0; j < objList.size(); j++) {
                             Object o = objList.get(j);
                             if(SimpleTypeMapper.isSimpleType(o)){
-                                objetc.add(propDesc.getName());
-                                objetc.add(o);
+                                object.add(propDesc.getName());
+                                object.add(o);
                             } else {
-                                objetc.add(new QName(propDesc.getName()));
-                                objetc.add(o);
+                                object.add(new QName(propDesc.getName()));
+                                object.add(o);
                             }
                         }
 
                     }
                 } else {
-                    objetc.add(new QName(propDesc.getName()));
+                    object.add(new QName(propDesc.getName()));
                     Object value = propDesc.getReadMethod().invoke(beanObject, null);
-                    objetc.add(value);
+                    object.add(value);
                 }
             }
-            return ADBPullParser.createPullParser(beanName, objetc.toArray(), null);
+            return ADBPullParser.createPullParser(beanName, object.toArray(), null);
             // TODO : Deepal fix this. I added another parameter to the above method in the ADBPullPrser
             // to get the attributes array. For the time being I passed null. Pass attributes array here.
 
