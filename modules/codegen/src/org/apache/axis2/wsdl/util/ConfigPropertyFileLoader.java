@@ -33,6 +33,7 @@ public class ConfigPropertyFileLoader {
     private static final String DATA_BINDING_FRAMEWORK_NAME_KEY = "codegen.databinding.frameworks";
     private static final String DATA_BINDING_FRAMEWORK_DEFAULT_NAME_KEY = "codegen.databinding.frameworks.default";
     private static final String DATA_BINDING_FRAMEWORK_EXTENSION_NAME_KEY = "codegen.databinding.extensions";
+    public static final String CODEGEN_CONFIG_PROPERTIES = "/org/apache/axis2/wsdl/codegen/codegen-config.properties";
 
     /* Note - Should be a non regular expression character. If not it should be properly escaped */
     private static final String SEPERATOR_CHAR = ",";
@@ -40,9 +41,9 @@ public class ConfigPropertyFileLoader {
     static{
         try {
 
-            InputStream stream =ConfigPropertyFileLoader.class.getResourceAsStream("/org/apache/axis2/wsdl/codegen/codegen-config.properties");
+            InputStream stream =ConfigPropertyFileLoader.class.getResourceAsStream(CODEGEN_CONFIG_PROPERTIES);
             if (stream ==null) {
-                URL url = ConfigPropertyFileLoader.class.getResource("/org/apache/axis2/wsdl/codegen/codegen-config.properties");
+                URL url = ConfigPropertyFileLoader.class.getResource(CODEGEN_CONFIG_PROPERTIES);
                 stream = new FileInputStream(url.toString());
             }
             Properties props = new Properties();

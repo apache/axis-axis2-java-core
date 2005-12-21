@@ -76,6 +76,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
 
     public static final String MAPPING_FOLDER = "Mapping";
     public static final String MAPPER_FILE_NAME = "mapper";
+    public static final String SCHEMA_PATH = "/org/apache/axis2/wsdl/codegen/schema/";
 
 
     public void engage() {
@@ -280,7 +281,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             for (int i = 0; i < schemaNames.length; i++) {
                 //the location for the third party schema;s is hardcoded
                 if (!"".equals(schemaNames[i].trim())){
-                    InputStream schemaStream = this.getClass().getResourceAsStream("/org/apache/axis2/wsdl/codegen/schema/" + schemaNames[i]);
+                    InputStream schemaStream = this.getClass().getResourceAsStream(SCHEMA_PATH + schemaNames[i]);
                     Document doc = documentBuilder.parse(schemaStream);
                     additionalSchemaElements.add(doc.getDocumentElement());
                 }
