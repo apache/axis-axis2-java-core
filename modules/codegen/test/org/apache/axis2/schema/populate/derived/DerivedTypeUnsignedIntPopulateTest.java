@@ -1,6 +1,6 @@
 package org.apache.axis2.schema.populate.derived;
 
-import org.apache.axis2.schema.types.UnsignedInt;
+import org.apache.axis2.databinding.types.UnsignedInt;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 
 /*

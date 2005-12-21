@@ -24,7 +24,7 @@ import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMOutputFormat;
 import org.apache.axis2.om.OMXMLParserWrapper;
 import org.apache.axis2.om.impl.OMOutputImpl;
-import org.apache.axis2.om.impl.dom.util.XMLChar;
+import org.apache.axis2.util.XMLChar;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;

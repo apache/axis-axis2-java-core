@@ -1,6 +1,6 @@
 package org.apache.axis2.schema.populate.derived;
 
-import org.apache.axis2.schema.types.NegativeInteger;
+import org.apache.axis2.databinding.types.NegativeInteger;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 
 /*

@@ -2,7 +2,7 @@ package org.apache.axis2.schema.typemap;
 
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.schema.SchemaConstants;
-import org.apache.axis2.schema.types.*;
+import org.apache.axis2.databinding.types.*;
 
 import javax.xml.namespace.QName;
 import java.math.BigDecimal;
