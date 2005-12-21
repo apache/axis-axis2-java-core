@@ -86,8 +86,6 @@ public class ConfigPropertyFileLoader {
             //load the default framework name
             tempString = props.getProperty(DATA_BINDING_FRAMEWORK_DEFAULT_NAME_KEY);
 
-            System.out.println("tempString = " + tempString);
-
             if (tempString==null || !databindingFrameworkNameToExtensionMap.containsKey(tempString)) {
                 throw new Exception("Unknown framework specified for default!");
             }
