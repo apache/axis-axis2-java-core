@@ -63,6 +63,7 @@
 			<arg value="org.apache.axis2.oasis.ping"/>
             <arg value="-d"/>
 			<arg value="xmlbeans"/>
+            <arg value="-g"/>
         </java>
 
 		<!-- move/copy schema stuff into class.dir -->

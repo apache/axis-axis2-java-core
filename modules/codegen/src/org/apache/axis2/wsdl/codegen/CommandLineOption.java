@@ -97,7 +97,8 @@ public class CommandLineOption implements CommandLineOptionConstants {
                 (GENERATE_TEST_CASE_OPTION).equalsIgnoreCase(optionType) ||
                 (STUB_LANGUAGE_OPTION).equalsIgnoreCase(optionType) ||
                 (DATA_BINDING_TYPE_OPTION).equalsIgnoreCase(optionType)||
-                (WRAP_CLASSES_OPTION).equalsIgnoreCase(optionType))
+                (WRAP_CLASSES_OPTION).equalsIgnoreCase(optionType) ||
+                (GENERATE_ALL_OPTION).equalsIgnoreCase(optionType))
                 ;
     }
 }

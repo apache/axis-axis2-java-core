@@ -264,6 +264,12 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         if(wrapClassesOption != null){
             wrapClasses = true;
         }
+
+         CommandLineOption generateAllOption = (CommandLineOption) optionMap.get(
+                GENERATE_ALL_OPTION);
+        if(generateAllOption != null){
+            generateAll = true;
+        }
     }
 
 

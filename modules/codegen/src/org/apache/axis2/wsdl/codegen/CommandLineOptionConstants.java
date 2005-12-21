@@ -31,6 +31,7 @@ public interface CommandLineOptionConstants {
     public static final String GENERATE_TEST_CASE_OPTION = "t";
     public static final String DATA_BINDING_TYPE_OPTION = "d";
     public static final String WRAP_CLASSES_OPTION = "w";
+    public static final String GENERATE_ALL_OPTION = "g";
 
     public static final String INVALID_OPTION = "INVALID_OPTION";
 
