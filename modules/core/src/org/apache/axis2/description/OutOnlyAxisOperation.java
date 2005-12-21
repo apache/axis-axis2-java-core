@@ -111,7 +111,7 @@ public class OutOnlyAxisOperation extends AxisOperation {
      * call execute() to execute the client. Note that the execute method's
      * block parameter is ignored by this client and also the setMessageReceiver
      * method cannot be used.
-     * 
+     *
      * @param sc
      *            The service context for this client to live within. Cannot be
      *            null.
@@ -155,7 +155,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
      * Sets the options that should be used for this particular client. This
      * resets the entire set of options to use the new options - so you'd lose
      * any option cascading that may have been set up.
-     * 
+     *
      * @param options
      *            the options
      */
@@ -167,7 +167,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
      * Return the options used by this client. If you want to set a single
      * option, then the right way is to do getOptions() and set specific
      * options.
-     * 
+     *
      * @return the options, which will never be null.
      */
     public Options getOptions() {
@@ -178,7 +178,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
      * Add a message context to the client for processing. This method must not
      * process the message - it only records it in the MEP client. Processing
      * only occurs when execute() is called.
-     * 
+     *
      * @param mc
      *            the message context
      * @throws AxisFault
@@ -196,7 +196,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
     /**
      * Return a message from the client - will return null if the requested
      * message is not available.
-     * 
+     *
      * @param messageLabel
      *            the message label of the desired message context
      * @return the desired message context or null if its not available.
@@ -217,7 +217,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
      * notification that a message has been received by it. Exactly when its
      * executed and under what conditions is a function of the specific MEP
      * client.
-     * 
+     *
      * @param mr
      *            the message receiver
      */
@@ -233,7 +233,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
      * MEP, then if the Out message has been set, then executing the client asks
      * it to send the message and get the In message, possibly using a different
      * thread.
-     * 
+     *
      * @param block
      *            Indicates whether execution should block or return ASAP. What
      *            block means is of course a function of the specific MEP
@@ -247,7 +247,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
                     "MEP is already completed- need to reset() before re-executing.");
         }
         ConfigurationContext cc = sc.getConfigurationContext();
-        
+
         // copy interesting info from options to message context.
         ClientUtils.copyInfoFromOptionsToMessageContext(options, mc);
 
@@ -279,7 +279,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
      * Reset the MEP client to a clean status after the MEP has completed. This
      * is how you can reuse a MEP client. NOTE: this does not reset the options;
      * only the internal state so the client can be used again.
-     * 
+     *
      * @throws AxisFault
      *             if reset is called before the MEP client has completed an
      *             interaction.

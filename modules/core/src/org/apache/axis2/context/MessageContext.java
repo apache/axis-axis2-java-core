@@ -202,8 +202,8 @@ public class MessageContext extends AbstractContext {
     }
 
     public MessageContext(ConfigurationContext configContext,
-            TransportInDescription transportIn,
-            TransportOutDescription transportOut) {
+                          TransportInDescription transportIn,
+                          TransportOutDescription transportOut) {
         this(configContext, null, transportIn, transportOut);
         this.transportInName = transportIn.getName();
         this.transportOutname = transportOut.getName();
@@ -215,8 +215,8 @@ public class MessageContext extends AbstractContext {
      * @param transportOut
      */
     public MessageContext(ConfigurationContext configContext,
-            SessionContext sessionContext, TransportInDescription transportIn,
-            TransportOutDescription transportOut) {
+                          SessionContext sessionContext, TransportInDescription transportIn,
+                          TransportOutDescription transportOut) {
         super(null);
 
         if (sessionContext == null) {
@@ -324,17 +324,16 @@ public class MessageContext extends AbstractContext {
      * <p/> and the way of specifing module configuration is as follows
      * <moduleConfig name="addressing"> <parameter name="addressingPara"
      * locked="false">N/A</parameter> </moduleConfig>
-     * 
-     * @param key :
-     *            Parameter Name
+     *
+     * @param key        :
+     *                   Parameter Name
      * @param moduleName :
-     *            Name of the module
-     * @param handler
-     *            <code>HandlerDescription</code>
+     *                   Name of the module
+     * @param handler    <code>HandlerDescription</code>
      * @return Parameter <code>Parameter</code>
      */
     public Parameter getModuleParameter(String key, String moduleName,
-            HandlerDescription handler) {
+                                        HandlerDescription handler) {
         Parameter param;
         ModuleConfiguration moduleConfig;
 
@@ -447,7 +446,7 @@ public class MessageContext extends AbstractContext {
      * <li> If parameter is not found or if axisService is null, search in
      * AxisConfiguration </li>
      * </ol>
-     * 
+     *
      * @param key
      * @return Parameter <code>Parameter</code>
      */
@@ -505,9 +504,8 @@ public class MessageContext extends AbstractContext {
      * <li> If ServiceGroupContext is null or if property is not found, search
      * in ConfigurationContext.</li>
      * </ol>
-     * 
-     * @param key
-     *            property Name
+     *
+     * @param key property Name
      * @return Object
      */
     public Object getProperty(String key) {
@@ -771,7 +769,7 @@ public class MessageContext extends AbstractContext {
      * causes the current handler/phase indexes to reset to 0, since we have new
      * Handlers to execute (this usually only happens at initialization and when
      * a fault occurs).
-     * 
+     *
      * @param executionChain
      */
     public void setExecutionChain(ArrayList executionChain) {
@@ -884,13 +882,17 @@ public class MessageContext extends AbstractContext {
                 && (operationContext.getParent() != null)) {
             operationContext.setParent(context);
         }
-
+        //setting configcontext using configuration context in service context
+        if (configurationContext == null) {
+            //setting configcontext
+            configurationContext = context.getConfigurationContext();
+        }
         this.setAxisService(context.getAxisService());
     }
 
     /**
      * Sets the service context id.
-     * 
+     *
      * @param serviceContextID
      */
     public void setServiceContextID(String serviceContextID) {

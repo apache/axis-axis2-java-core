@@ -109,7 +109,7 @@ public class ArchiveReader implements DeploymentConstants {
             int BUFFER = 2048;
 
             if (axis2repository == null) {
-                String userHome = System.getProperty(DeploymentConstants.PROPERTY_USER_HOME);
+                String userHome = System.getProperty(DeploymentConstants.PROPERTY_TEMP_DIR);
                 File userHomedir = new File(userHome);
                 File repository = new File(userHomedir, DIRECTORY_AXIS2_HOME);
 

@@ -70,7 +70,8 @@ public interface DeploymentConstants {
     // for parameters
     String ATTRIBUTE_NAME = "name";
     String ATTRIBUTE_LOCKED = "locked";
-    String PROPERTY_USER_HOME = "user.home";
+
+    String PROPERTY_TEMP_DIR = "java.io.tmpdir";
     String DIRECTORY_MODULES = "modules";
     String DIRECTORY_AXIS2_HOME = ".axis2home";
     String RESOURCE_MODULES = "modules/";

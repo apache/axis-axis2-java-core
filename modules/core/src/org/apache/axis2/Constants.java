@@ -72,6 +72,8 @@ public class Constants {
      */
     public static final String APPLICATION_SCOPE = "application";
 
+    public static final String AXIS2_HOME = "axis2home";
+
     /**
      * Field TRANSPORT_TCP
      */

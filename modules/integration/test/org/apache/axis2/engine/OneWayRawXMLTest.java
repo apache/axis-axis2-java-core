@@ -22,6 +22,9 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.MessageSender;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -81,13 +84,18 @@ public class OneWayRawXMLTest extends TestCase implements TestConstants {
 
         OMElement payload = TestingUtils.createDummyOMElement();
 
-        MessageSender sender = new MessageSender("target/test-resources/integrationRepo");
+//        MessageSender sender = new MessageSender("target/test-resources/integrationRepo");
+        ConfigurationContextFactory factory = new ConfigurationContextFactory();
+        ConfigurationContext configContext =
+                factory.buildClientConfigurationContext("target/test-resources/integrationRepo");
+        ServiceClient sender = new ServiceClient(configContext);
 
         Options options = new Options();
-        sender.setClientOptions(options);
+        sender.setOptions(options);
+//        sender.setClientOptions(options);
         options.setTo(targetEPR);
-
-        sender.send(operationName.getLocalPart(), payload);
+        sender.fireAndForget(payload);
+//        sender.send(operationName.getLocalPart(), payload);
         int index = 0;
         while (envelope == null) {
             Thread.sleep(4000);
