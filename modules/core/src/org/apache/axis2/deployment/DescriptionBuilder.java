@@ -45,6 +45,7 @@ import java.util.Iterator;
  * To do the common tasks for all *Builder class
  */
 public class DescriptionBuilder implements DeploymentConstants {
+
     protected Log log = LogFactory.getLog(getClass());
     protected AxisConfiguration axisConfig;
 

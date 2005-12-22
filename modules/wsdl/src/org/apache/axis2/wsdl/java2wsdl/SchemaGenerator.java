@@ -1,6 +1,8 @@
 package org.apache.axis2.wsdl.java2wsdl;
 
 import org.apache.axis2.wsdl.java2wsdl.bytecode.MethodTable;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.*;
 import org.codehaus.jam.*;
 
@@ -27,6 +29,7 @@ import java.util.Hashtable;
 
 public class SchemaGenerator {
 
+    protected Log log = LogFactory.getLog(getClass());
     private ClassLoader classLoader;
     private String className;
     private XmlSchema schema;
@@ -69,7 +72,7 @@ public class SchemaGenerator {
             Class clazz = Class.forName(className, true, loader);
             methodTable = new MethodTable(clazz);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("Error in loading service impl class for byte code reading : " + e.getMessage());
         }
     }
 
