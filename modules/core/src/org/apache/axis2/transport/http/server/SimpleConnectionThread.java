@@ -74,16 +74,14 @@ public class SimpleConnectionThread implements Runnable {
     }
 
     public synchronized void destroy() {
-        if (this.stopped) {
-            return;
-        }
-
-        this.stopped = true;
-
         if (conn != null) {
             conn.close();
+            this.connpool.removeConnection(this.conn);
             conn = null;
         }
+        this.stopped = true;
+
+
 
         // interrupt();
     }
@@ -108,7 +106,6 @@ public class SimpleConnectionThread implements Runnable {
             }
         } finally {
             destroy();
-            this.connpool.removeConnection(this.conn);
         }
     }
 }

@@ -51,7 +51,7 @@ public class SimpleHttpServer implements Runnable {
     private ThreadFactory threadPool = null;
     private boolean stopped = false;
     private HttpRequestHandler requestHandler = null;
-    private SimpleConnSet connections = new SimpleConnSet();
+    private SimpleConnSet connectionsPool = new SimpleConnSet();
     private Thread t;
     private ThreadGroup tg;
 
@@ -152,7 +152,7 @@ public class SimpleHttpServer implements Runnable {
             }
         }
 
-        this.connections.shutdown();
+        this.connectionsPool.shutdown();
     }
 
     public void run() {
@@ -169,9 +169,9 @@ public class SimpleHttpServer implements Runnable {
 
                     SimpleHttpServerConnection conn = new SimpleHttpServerConnection(socket);
 
-                    this.connections.addConnection(conn);
+                    this.connectionsPool.addConnection(conn);
                     this.threadPool.execute(new SimpleConnectionThread(this.testname + " thread "
-                            + this.count, conn, this.connections, this.requestHandler));
+                            + this.count, conn, this.connectionsPool, this.requestHandler));
                 } catch (IOException e) {
                     LOG.debug("I/O error: " + e.getMessage());
                 }
