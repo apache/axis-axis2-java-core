@@ -16,11 +16,10 @@
 
 package org.apache.axis2.engine;
 
-//todo
-
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Call;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
@@ -31,16 +30,8 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class ServiceDispatchingTest extends TestCase implements TestConstants {
-
-    private Log log = LogFactory.getLog(getClass());
-
-    private AxisService service;
-
-    private boolean finish = false;
 
     public ServiceDispatchingTest() {
         super(ServiceDispatchingTest.class.getName());
@@ -52,10 +43,9 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
 
     protected void setUp() throws Exception {
         UtilServer.start();
-        service =
-                Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+        AxisService service = Utils.createSimpleService(serviceName,
+                Echo.class.getName(),
+                operationName);
         UtilServer.deployService(service);
 
     }
@@ -68,15 +58,14 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
 
 
     public void testDispatchWithURLOnly() throws Exception {
-        SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
         OMElement payload = TestingUtils.createDummyOMElement();
-        org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
+        Call call =
+                new Call("target/test-resources/integrationRepo");
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis/services/EchoXMLService/echoOMElement"));
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), payload);
@@ -92,13 +81,13 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         value.addChild(
                 fac.createText(value, "Isaac Asimov, The Foundation Trilogy"));
         payload.addChild(value);
-        org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
+        Call call =
+                new Call("target/test-resources/integrationRepo");
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis/services/EchoXMLService/"));
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setSoapAction("echoOMElement");
         OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), payload);
@@ -118,13 +107,13 @@ public class ServiceDispatchingTest extends TestCase implements TestConstants {
         payload.addChild(value);
 
 
-        org.apache.axis2.client.Call call =
-                new org.apache.axis2.client.Call("target/test-resources/integrationRepo");
+        Call call =
+                new Call("target/test-resources/integrationRepo");
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(
                 new EndpointReference("http://127.0.0.1:5555/axis/services/"));
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         OMElement result = call.invokeBlocking(
                 operationName.getLocalPart(), payload);
         TestingUtils.campareWithCreatedOMElement(result);

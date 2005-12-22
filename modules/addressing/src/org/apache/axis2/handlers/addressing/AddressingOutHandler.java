@@ -20,9 +20,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.addressing.ServiceName;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -39,23 +39,12 @@ import java.util.Map;
 public class AddressingOutHandler extends AddressingHandler {
 
 
-    // IN message, if any, has messageId and replyTo and faultTo addresses that needs to be used
-    // in the OUT message. User may sometimes override these values, at his discretion .The following
-    // boolean variable will create room for that.
-    private boolean overrideINMessageInformation = false;
-
     OMNamespace addressingNamespaceObject;
     String addressingNamespace;
 
 
     public void invoke(MessageContext msgContext) throws AxisFault {
 
-
-        if (msgContext.getMessageInformationHeaders() == null) {
-            return;
-        }
-
-        // first check whether current message context can be used to determin the addressing version to be used
         Object addressingVersionFromCurrentMsgCtxt = msgContext.getProperty(WS_ADDRESSING_VERSION);
         if (addressingVersionFromCurrentMsgCtxt != null) {
             // since we support only two addressing versions I can avoid multiple  ifs here.
@@ -86,8 +75,7 @@ public class AddressingOutHandler extends AddressingHandler {
                         addressingNamespace, WSA_DEFAULT_PREFIX);
 
 
-        MessageInformationHeaders messageInformationHeaders =
-                msgContext.getMessageInformationHeaders();
+        Options messageContextOptions = msgContext.getOptions();
         SOAPEnvelope envelope = msgContext.getEnvelope();
         SOAPHeader soapHeader = envelope.getHeader();
 
@@ -98,7 +86,7 @@ public class AddressingOutHandler extends AddressingHandler {
         envelope.declareNamespace(addressingNamespaceObject);
 
         // processing WSA To
-        EndpointReference epr = messageInformationHeaders.getTo();
+        EndpointReference epr = messageContextOptions.getTo();
         if (epr != null && !isAddressingHeaderAlreadyAvailable(WSA_TO, envelope)) {
 
             String address = epr.getAddress();
@@ -114,14 +102,14 @@ public class AddressingOutHandler extends AddressingHandler {
         }
 
         // processing WSA Action
-        String action = messageInformationHeaders.getAction();
+        String action = messageContextOptions.getAction();
         if (action != null && !isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope)) {
             processStringInfo(action, WSA_ACTION, envelope);
         }
 
         // processing WSA replyTo
         if (!isAddressingHeaderAlreadyAvailable(WSA_REPLY_TO, envelope)) {
-            epr = messageInformationHeaders.getReplyTo();
+            epr = messageContextOptions.getReplyTo();
             if (epr == null) {//optional
                 // setting anonymous URI. Defaulting to Final.
                 String anonymousURI = Final.WSA_ANONYMOUS_URL;
@@ -139,23 +127,23 @@ public class AddressingOutHandler extends AddressingHandler {
             addToSOAPHeader(epr, AddressingConstants.WSA_REPLY_TO, envelope);
         }
 
-        epr = messageInformationHeaders.getFrom();
+        epr = messageContextOptions.getFrom();
         if (epr != null) {//optional
             addToSOAPHeader(epr, AddressingConstants.WSA_FROM, envelope);
         }
 
-        epr = messageInformationHeaders.getFaultTo();
+        epr = messageContextOptions.getFaultTo();
         if (epr != null) {//optional
             addToSOAPHeader(epr, AddressingConstants.WSA_FAULT_TO, envelope);
         }
 
-        String messageID = messageInformationHeaders.getMessageId();
+        String messageID = messageContextOptions.getMessageId();
         if (messageID != null && !isAddressingHeaderAlreadyAvailable(WSA_MESSAGE_ID, envelope)) {//optional
             processStringInfo(messageID, WSA_MESSAGE_ID, envelope);
         }
 
         if (!isAddressingHeaderAlreadyAvailable(WSA_RELATES_TO, envelope)) {
-            RelatesTo relatesTo = messageInformationHeaders.getRelatesTo();
+            RelatesTo relatesTo = messageContextOptions.getRelatesTo();
             OMElement relatesToHeader = null;
 
             if (relatesTo != null) {

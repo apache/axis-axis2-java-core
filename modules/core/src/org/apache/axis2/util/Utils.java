@@ -20,22 +20,15 @@ package org.apache.axis2.util;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.MessageInformationHeaders;
+import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.PhaseRule;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
@@ -58,23 +51,23 @@ public class Utils {
     }
 
     public static MessageContext createOutMessageContext(MessageContext inMessageContext)
-            throws AxisFault {
+            {
         MessageContext newmsgCtx = new MessageContext(inMessageContext.getConfigurationContext(),
                 inMessageContext.getSessionContext(),
                 inMessageContext.getTransportIn(),
                 inMessageContext.getTransportOut());
-        MessageInformationHeaders oldMessageInfoHeaders =
-                inMessageContext.getMessageInformationHeaders();
+        Options oldOptions =
+                inMessageContext.getOptions();
 
         newmsgCtx.setMessageID(UUIDGenerator.getUUID());
-        newmsgCtx.setTo(oldMessageInfoHeaders.getReplyTo());
-        newmsgCtx.setFaultTo(oldMessageInfoHeaders.getFaultTo());
-        newmsgCtx.setFrom(oldMessageInfoHeaders.getTo());
+        newmsgCtx.setTo(oldOptions.getReplyTo());
+        newmsgCtx.setFaultTo(oldOptions.getFaultTo());
+        newmsgCtx.setFrom(oldOptions.getTo());
         newmsgCtx.setRelatesTo(
-                new org.apache.axis2.addressing.RelatesTo(
-                        oldMessageInfoHeaders.getMessageId(),
+                new RelatesTo(
+                        oldOptions.getMessageId(),
                         AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
-        newmsgCtx.setWSAAction(oldMessageInfoHeaders.getAction());
+        newmsgCtx.setWSAAction(oldOptions.getAction());
         newmsgCtx.setOperationContext(inMessageContext.getOperationContext());
         newmsgCtx.setServiceContext(inMessageContext.getServiceContext());
         newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT,
@@ -119,7 +112,7 @@ public class Utils {
 
     public static void extractServiceGroupAndServiceInfo(String filePart,
                                                          MessageContext messageContext)
-            throws AxisFault {
+            {
         String[] values = parseRequestURLForServiceAndOperation(filePart);
         String serviceNameAndGroup = values[0];
 
@@ -152,8 +145,7 @@ public class Utils {
 
     public static ServiceContext fillContextInformation(AxisOperation axisOperation,
                                                         AxisService axisService, ConfigurationContext configurationContext)
-            throws AxisFault {
-        MessageContext msgContext;
+            {
 
         // 2. if null, create new opCtxt
         OperationContext operationContext = new OperationContext(axisOperation);
@@ -164,7 +156,7 @@ public class Utils {
 
     private static ServiceContext fillServiceContextAndServiceGroupContext(AxisService axisService,
                                                                            ConfigurationContext configurationContext)
-            throws AxisFault {
+            {
         String serviceGroupContextId = UUIDGenerator.getUUID();
         ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configurationContext,
                 axisService.getParent());
@@ -187,7 +179,7 @@ public class Utils {
 
         // TODO. This is kind of brittle. Any service with the name /services would cause fun.
         int index = path.lastIndexOf(Constants.REQUEST_URL_PREFIX);
-        String service = null;
+        String service;
 
         if (-1 != index) {
             int serviceStart = index + Constants.REQUEST_URL_PREFIX.length();

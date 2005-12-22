@@ -99,7 +99,7 @@ public class AsynchronousClient {
 
         MessageContext requestContext = ClientUtil.getMessageContext(this);
         try {
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             QName opName = new QName("urn:GoogleSearch", "doGoogleSearch");
             AxisOperation opdesc = new OutInAxisOperation();
             opdesc.setName(opName);

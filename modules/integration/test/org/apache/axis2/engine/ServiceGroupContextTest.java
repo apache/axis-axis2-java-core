@@ -84,7 +84,7 @@ public class ServiceGroupContextTest extends TestCase {
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         options.setAction(operationName.getLocalPart());
 

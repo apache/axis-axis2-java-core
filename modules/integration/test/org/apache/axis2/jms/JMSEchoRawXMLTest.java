@@ -20,17 +20,16 @@ package org.apache.axis2.jms;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.transport.jms.JMSConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisService;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
@@ -39,8 +38,8 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.soap.SOAPEnvelope;
+import org.apache.axis2.soap.SOAPFactory;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -111,7 +110,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-        options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
+        options.setTransportInProtocol(Constants.TRANSPORT_JMS);
         options.setAction(serviceName.getLocalPart());
         options.setSoapAction("echoOMElement");
 
@@ -160,7 +159,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
-        options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
+        options.setTransportInProtocol(Constants.TRANSPORT_JMS);
         options.setAction(serviceName.getLocalPart());
         options.setSoapAction("EchoXMLService/echoOMElement");
 
@@ -193,7 +192,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         options.setTo(targetEPR);
         call.engageModule(new QName(Constants.MODULE_ADDRESSING));
         options.setAction(operationName.getLocalPart());
-        options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
+        options.setTransportInProtocol(Constants.TRANSPORT_JMS);
         options.setSoapAction("EchoXMLService/echoOMElement");
         options.setUseSeparateListener(true);
 
@@ -215,7 +214,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setAction(operationName.getLocalPart());
-        options.setListenerTransportProtocol(Constants.TRANSPORT_JMS);
+        options.setTransportInProtocol(Constants.TRANSPORT_JMS);
         options.setSoapAction("EchoXMLService/echoOMElement");
 
         OMFactory fac = OMAbstractFactory.getOMFactory();

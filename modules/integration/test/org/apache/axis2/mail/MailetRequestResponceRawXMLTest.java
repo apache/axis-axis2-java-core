@@ -125,7 +125,7 @@ public class MailetRequestResponceRawXMLTest extends TestCase {
                 serviceContext);
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_MAIL);
+        options.setTransportInProtocol(Constants.TRANSPORT_MAIL);
         options.setUseSeparateListener(true);
         call.setClientOptions(options);
         Callback callback = new Callback() {

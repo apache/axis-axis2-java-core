@@ -76,7 +76,7 @@ public class RunnableCreateQueue extends QueueManager implements Runnable {
             Options options = new Options();
             options.setTo(new EndpointReference(url));
             options.setSoapAction("http://soap.amazon.com");
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             call.setClientOptions(options);
             call.invokeNonBlocking(operation, element, specificCallbackObject);
         } catch (AxisFault axisFault) {

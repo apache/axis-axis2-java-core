@@ -28,6 +28,7 @@ import java.util.Map;
  * This is the top most level of the Context hierachy and is a bag of properties.
  */
 public abstract class AbstractContext {
+
     protected long lastTouchedTime;
 
     protected AbstractContext parent;
@@ -132,4 +133,5 @@ public abstract class AbstractContext {
     public long getLastTouchedTime() {
         return lastTouchedTime;
     }
+
 }

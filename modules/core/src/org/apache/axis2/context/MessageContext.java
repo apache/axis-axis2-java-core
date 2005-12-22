@@ -18,8 +18,8 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.soap.SOAP11Constants;
@@ -33,6 +33,8 @@ import java.util.ArrayList;
  * MessageContext holds service specific state information.
  */
 public class MessageContext extends AbstractContext {
+
+    protected Options options;
 
     public final static int IN_FLOW = 1;
 
@@ -96,14 +98,6 @@ public class MessageContext extends AbstractContext {
      */
     private boolean newThreadRequired = false;
 
-    /**
-     * Addressing Information for Axis 2 Following Properties will be kept
-     * inside this, these fields will be initially filled by the transport. Then
-     * later a addressing handler will make relevant changes to this, if
-     * addressing information is present in the SOAP header.
-     */
-    private MessageInformationHeaders messageInformationHeaders = new MessageInformationHeaders();
-
     private boolean isSOAP11 = true;
 
     /**
@@ -154,11 +148,6 @@ public class MessageContext extends AbstractContext {
      */
     private SOAPEnvelope envelope;
 
-    /**
-     * Field inFaultFlow
-     */
-    private boolean inFaultFlow;
-
     private OperationContext operationContext;
 
     /**
@@ -187,10 +176,6 @@ public class MessageContext extends AbstractContext {
      */
     private final SessionContext sessionContext;
 
-    private String soapAction;
-
-    private transient TransportInDescription transportIn;
-
     private transient TransportOutDescription transportOut;
 
     public MessageContext() {
@@ -205,7 +190,7 @@ public class MessageContext extends AbstractContext {
                           TransportInDescription transportIn,
                           TransportOutDescription transportOut) {
         this(configContext, null, transportIn, transportOut);
-        this.transportInName = transportIn.getName();
+        this.options.setTransportInDescription(transportIn);
         this.transportOutname = transportOut.getName();
     }
 
@@ -219,23 +204,22 @@ public class MessageContext extends AbstractContext {
                           TransportOutDescription transportOut) {
         super(null);
 
+        options = new Options();
+
         if (sessionContext == null) {
             this.sessionContext = new SessionContext(null);
         } else {
             this.sessionContext = sessionContext;
         }
 
-        this.transportIn = transportIn;
+        setTransportIn(transportIn);
         this.transportOut = transportOut;
         this.configurationContext = configContext;
-
-        if (transportIn != null) {
-            this.transportInName = transportIn.getName();
-        }
 
         if (transportOut != null) {
             this.transportOutname = transportOut.getName();
         }
+
     }
 
     /**
@@ -284,26 +268,23 @@ public class MessageContext extends AbstractContext {
      * @return Returns EndpointReference.
      */
     public EndpointReference getFaultTo() {
-        return messageInformationHeaders.getFaultTo();
+        return options.getFaultTo();
     }
 
     /**
      * @return Returns EndpointReference.
      */
     public EndpointReference getFrom() {
-        return messageInformationHeaders.getFrom();
+        return options.getFrom();
     }
 
     /**
      * @return Returns message id.
      */
     public String getMessageID() {
-        return messageInformationHeaders.getMessageId();
+        return options.getMessageId();
     }
 
-    public MessageInformationHeaders getMessageInformationHeaders() {
-        return messageInformationHeaders;
-    }
 
     /**
      * Retrieves both module specific configuration parameters as well as other
@@ -547,14 +528,14 @@ public class MessageContext extends AbstractContext {
      * @return Returns RelatesTo.
      */
     public RelatesTo getRelatesTo() {
-        return messageInformationHeaders.getRelatesTo();
+        return options.getRelatesTo();
     }
 
     /**
      * @return Returns EndpointReference.
      */
     public EndpointReference getReplyTo() {
-        return messageInformationHeaders.getReplyTo();
+        return options.getReplyTo();
     }
 
     /**
@@ -590,21 +571,21 @@ public class MessageContext extends AbstractContext {
      * @return Returns soap action.
      */
     public String getSoapAction() {
-        return soapAction;
+        return options.getSoapAction();
     }
 
     /**
      * @return Returns EndpointReference.
      */
     public EndpointReference getTo() {
-        return messageInformationHeaders.getTo();
+        return options.getTo();
     }
 
     /**
      * @return Returns TransportInDescription.
      */
     public TransportInDescription getTransportIn() {
-        return transportIn;
+        return options.getTransportInDescription();
     }
 
     /**
@@ -615,11 +596,11 @@ public class MessageContext extends AbstractContext {
     }
 
     public String getWSAAction() {
-        return messageInformationHeaders.getAction();
+        return options.getAction();
     }
 
     public String getWSAMessageId() {
-        return messageInformationHeaders.getMessageId();
+        return options.getMessageId();
     }
 
     /**
@@ -634,13 +615,6 @@ public class MessageContext extends AbstractContext {
      */
     public boolean isDoingREST() {
         return doingREST;
-    }
-
-    /**
-     * @return Returns boolean.
-     */
-    public boolean isInFaultFlow() {
-        return inFaultFlow;
     }
 
     /**
@@ -782,28 +756,21 @@ public class MessageContext extends AbstractContext {
      * @param reference
      */
     public void setFaultTo(EndpointReference reference) {
-        messageInformationHeaders.setFaultTo(reference);
+        options.setFaultTo(reference);
     }
 
     /**
      * @param reference
      */
     public void setFrom(EndpointReference reference) {
-        messageInformationHeaders.setFrom(reference);
+        options.setFrom(reference);
     }
 
     /**
-     * @param b
+     * @param messageId
      */
-    public void setInFaultFlow(boolean b) {
-        inFaultFlow = b;
-    }
-
-    /**
-     * @param string
-     */
-    public void setMessageID(String string) {
-        messageInformationHeaders.setMessageId(string);
+    public void setMessageID(String messageId) {
+        options.setMessageId(messageId);
     }
 
     /**
@@ -848,14 +815,14 @@ public class MessageContext extends AbstractContext {
      * @param reference
      */
     public void setRelatesTo(RelatesTo reference) {
-        messageInformationHeaders.setRelatesTo(reference);
+        options.setRelatesTo(reference);
     }
 
     /**
      * @param referance
      */
     public void setReplyTo(EndpointReference referance) {
-        messageInformationHeaders.setReplyTo(referance);
+        options.setReplyTo(referance);
     }
 
     /**
@@ -908,27 +875,27 @@ public class MessageContext extends AbstractContext {
     }
 
     /**
-     * @param string
+     * @param soapAction
      */
-    public void setSoapAction(String string) {
-        soapAction = string;
+    public void setSoapAction(String soapAction) {
+        options.setSoapAction(soapAction);
     }
 
     /**
      * @param referance
      */
     public void setTo(EndpointReference referance) {
-        messageInformationHeaders.setTo(referance);
+        options.setTo(referance);
     }
 
     /**
      * @param in
      */
     public void setTransportIn(TransportInDescription in) {
-        transportIn = in;
+        options.setTransportInDescription(in);
 
         if (in != null) {
-            this.transportInName = in.getName();
+            this.options.setTransportInProtocol(in.getName().getLocalPart());
         }
     }
 
@@ -947,11 +914,11 @@ public class MessageContext extends AbstractContext {
      * Method getExecutionChain
      */
     public void setWSAAction(String actionURI) {
-        messageInformationHeaders.setAction(actionURI);
+        options.setAction(actionURI);
     }
 
     public void setWSAMessageId(String messageID) {
-        messageInformationHeaders.setMessageId(messageID);
+        options.setMessageId(messageID);
     }
 
     // to get the flow inwhich the execution chain below
@@ -961,5 +928,14 @@ public class MessageContext extends AbstractContext {
 
     public void setFLOW(int FLOW) {
         this.FLOW = FLOW;
+    }
+
+    public Options getOptions() {
+        return options;
+    }
+
+    public void setOptions(Options options) {
+        this.options = options;
+        this.properties = options.getProperties();
     }
 }

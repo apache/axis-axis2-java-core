@@ -3,13 +3,13 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.transport.http.HttpTransportProperties;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
@@ -86,7 +86,7 @@ public class EchoRawRuntimeProxyTest extends TestCase {
         call.setClientOptions(options);
         options.setProperty(HTTPConstants.PROXY, proxyproperties);
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         OMElement result =
                 call.invokeBlocking(operationName.getLocalPart(),

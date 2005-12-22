@@ -72,7 +72,7 @@ public class PostTest extends TestCase implements TestConstants {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
             options.setProperty(HTTPConstants.HTTP_CONTENT_TYPE, "application/x-www-form-urlencoded");
 

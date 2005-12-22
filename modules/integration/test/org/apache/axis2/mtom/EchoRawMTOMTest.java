@@ -19,15 +19,13 @@ package org.apache.axis2.mtom;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.attachments.utils.ImageDataSource;
 import org.apache.axis2.attachments.utils.ImageIO;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
@@ -113,7 +111,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setProperty(MessageContext.CHARACTER_SET_ENCODING, MessageContext.UTF_16);
 
         Callback callback = new Callback() {
@@ -164,7 +162,7 @@ public class EchoRawMTOMTest extends TestCase implements TestConstants {
         //options.setProperty(HTTPConstants.SO_TIMEOUT,new Integer(Integer.MAX_VALUE));
         options.setTo(targetEPR);
         options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
         OMElement result = call.invokeBlocking(operationName

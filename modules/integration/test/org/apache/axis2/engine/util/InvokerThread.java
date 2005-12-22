@@ -54,7 +54,7 @@ public class InvokerThread extends Thread {
 
             Options options = new Options();
             options.setTo(targetEPR);
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             call.setClientOptions(options);
 
             OMElement result =

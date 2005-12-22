@@ -19,11 +19,11 @@ package org.apache.axis2.rpc;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOutAxisOperation;
@@ -100,7 +100,7 @@ public class RPCCallTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         RPCCall call = new RPCCall(clientHome);
         call.setClientOptions(options);
@@ -151,7 +151,7 @@ public class RPCCallTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         RPCCall call =
                 new RPCCall("target/test-resources/integrationRepo");
@@ -184,7 +184,7 @@ public class RPCCallTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         RPCCall call =
                 new RPCCall("target/test-resources/integrationRepo");
@@ -202,7 +202,7 @@ public class RPCCallTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         RPCCall call =
                 new RPCCall("target/test-resources/integrationRepo");
@@ -223,7 +223,7 @@ public class RPCCallTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         call.setClientOptions(options);
         ArrayList args = new ArrayList();
         args.add("100");
@@ -242,7 +242,7 @@ public class RPCCallTest extends TestCase {
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ArrayList args = new ArrayList();
         args.add("10");
@@ -259,7 +259,7 @@ public class RPCCallTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         call.setClientOptions(options);
 
         ArrayList args = new ArrayList();
@@ -276,7 +276,7 @@ public class RPCCallTest extends TestCase {
         Options options = new Options();
 
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         RPCCall call =
                 new RPCCall("target/test-resources/integrationRepo");
@@ -294,7 +294,7 @@ public class RPCCallTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         RPCCall call =
                 new RPCCall("target/test-resources/integrationRepo");
@@ -332,7 +332,7 @@ public class RPCCallTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         RPCCall call =
                 new RPCCall("target/test-resources/integrationRepo");
@@ -351,7 +351,7 @@ public class RPCCallTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         RPCCall call =
                 new RPCCall("target/test-resources/integrationRepo");
@@ -372,7 +372,7 @@ public class RPCCallTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         RPCCall call =
                 new RPCCall("target/test-resources/integrationRepo");
@@ -405,7 +405,7 @@ public class RPCCallTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         RPCCall call =
                 new RPCCall("target/test-resources/integrationRepo");
@@ -427,7 +427,7 @@ public class RPCCallTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         RPCCall call =
                 new RPCCall("target/test-resources/integrationRepo");
@@ -452,7 +452,7 @@ public class RPCCallTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         RPCCall call =
                 new RPCCall("target/test-resources/integrationRepo");
@@ -473,7 +473,7 @@ public class RPCCallTest extends TestCase {
 
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         RPCCall call =
                 new RPCCall("target/test-resources/integrationRepo");

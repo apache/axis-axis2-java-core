@@ -16,7 +16,7 @@ public class RESTSearchClient {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(new EndpointReference(epr));
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
             options.setProperty(Constants.Configuration.ENABLE_REST_THROUGH_GET, Constants.VALUE_TRUE);
 

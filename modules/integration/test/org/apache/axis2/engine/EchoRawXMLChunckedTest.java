@@ -117,7 +117,7 @@ public class EchoRawXMLChunckedTest extends TestCase implements TestConstants {
         call.setClientOptions(clientOptions);
 
         clientOptions.setTo(targetEPR);
-        clientOptions.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        clientOptions.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         OMElement result =
                 call.invokeBlocking(operationName.getLocalPart(),

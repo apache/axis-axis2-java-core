@@ -19,7 +19,7 @@ package org.apache.axis2.handlers.addressing;
 import junit.framework.TestCase;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.MessageInformationHeaders;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.handlers.util.TestUtil;
 import org.apache.axis2.soap.SOAPEnvelope;
 import org.apache.axis2.soap.SOAPHeader;
@@ -60,27 +60,28 @@ public class AddressingInHandlerTest extends TestCase {
                     testFileName);
 
             SOAPHeader header = ((SOAPEnvelope) omBuilder.getDocumentElement()).getHeader();
-            MessageInformationHeaders messageInformationHeaders =
+            Options options =
                     inHandler.extractCommonAddressingParameters(header,
-                            null,
+                            new Options(),
                             header.getHeaderBlocksWithNSURI(
                                     AddressingConstants.Submission.WSA_NAMESPACE),
                             AddressingConstants.Submission.WSA_NAMESPACE);
 
-            if (messageInformationHeaders == null) {
+            if (options == null) {
                 fail(
                         "Addressing Information Headers have not been retrieved properly");
             }
             assertEquals("action header is not correct",
-                    messageInformationHeaders.getAction(),
+                    options.getAction(),
                     action);
             assertEquals("action header is not correct",
-                    messageInformationHeaders.getMessageId().trim(),
+                    options.getMessageId().trim(),
                     messageID.trim());
 
-            assertFromEPR(messageInformationHeaders.getFrom());
+            assertFromEPR(options.getFrom());
 
         } catch (Exception e) {
+            e.printStackTrace();
             log.info(e.getMessage());
             fail(" An Exception has occured " + e.getMessage());
         }
@@ -98,16 +99,16 @@ public class AddressingInHandlerTest extends TestCase {
                     wsaFinalTestFile);
             inHandler.addressingNamespace = AddressingConstants.Final.WSA_NAMESPACE;
             SOAPHeader header = ((SOAPEnvelope) omBuilder.getDocumentElement()).getHeader();
-            MessageInformationHeaders messageInformationHeaders =
+            Options options =
                     inHandler.extractCommonAddressingParameters(header,
-                            null,
+                            new Options(),
                             header.getHeaderBlocksWithNSURI(
                                     AddressingConstants.Final.WSA_NAMESPACE),
                             AddressingConstants.Final.WSA_NAMESPACE);
-            assertNotNull(messageInformationHeaders);
-            assertNotNull(messageInformationHeaders.getTo());
+            assertNotNull(options);
+            assertNotNull(options.getTo());
 
-            Map allReferenceParameters = messageInformationHeaders.getTo().getAllReferenceParameters();
+            Map allReferenceParameters = options.getTo().getAllReferenceParameters();
             assertNotNull(allReferenceParameters);
             QName qName = new QName("http://ws.apache.org/namespaces/axis2", "ParamOne", "axis2");
             assertNotNull(allReferenceParameters.get(qName));

@@ -90,7 +90,7 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends TestCase implements TestCon
         Options options = new Options();
         call.setClientOptions(options);
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setUseSeparateListener(true);
         options.setAction(operationName.getLocalPart());
 

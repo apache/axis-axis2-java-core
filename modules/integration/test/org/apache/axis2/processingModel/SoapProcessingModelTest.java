@@ -19,7 +19,6 @@ package org.apache.axis2.processingModel;
 // todo
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.InOutMEPClient;
@@ -93,7 +92,7 @@ public class SoapProcessingModelTest extends TestCase implements TestConstants {
             Options options = new Options();
             inOutMC.setClientOptions(options);
             options.setTo(targetEPR);
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
             MessageContext result = inOutMC.invokeBlocking(serviceContext
                     .getAxisService().getOperation(operationName), msgctx);

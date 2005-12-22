@@ -74,7 +74,7 @@ public class SOAPversionTest extends TestCase implements TestConstants {
         options.setSoapVersionURI(
                 SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         SOAPEnvelope result =
                 inOutMEPClient.invokeBlockingWithEnvelopeOut(
@@ -95,7 +95,7 @@ public class SOAPversionTest extends TestCase implements TestConstants {
         options.setSoapVersionURI(
                 SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         SOAPEnvelope result =
                 inOutMEPClient.invokeBlockingWithEnvelopeOut(
@@ -119,7 +119,7 @@ public class SOAPversionTest extends TestCase implements TestConstants {
                 SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
         options.setTo(targetEPR);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         SOAPEnvelope result =
                 inOutMEPClient.invokeBlockingWithEnvelopeOut(

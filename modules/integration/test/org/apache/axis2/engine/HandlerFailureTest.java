@@ -159,7 +159,7 @@ public class HandlerFailureTest extends TestCase implements TestConstants {
             String clientHome = "target/test-resources/integrationRepo";
 
             Options options = new Options();
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setTo(targetEPR);
 
             Call call = new Call(clientHome);

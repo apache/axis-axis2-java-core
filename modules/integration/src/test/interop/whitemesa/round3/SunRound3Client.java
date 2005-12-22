@@ -29,7 +29,6 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.soap.SOAPEnvelope;
 import test.interop.whitemesa.round3.util.SunRound3ClientUtil;
 
-import javax.xml.namespace.QName;
 import java.net.URL;
 
 public class SunRound3Client {
@@ -47,7 +46,7 @@ public class SunRound3Client {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(new EndpointReference(url.toString()));
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setSoapAction(soapAction);
 
             AxisConfiguration axisConfig = new AxisConfiguration();

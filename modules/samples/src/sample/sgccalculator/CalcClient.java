@@ -50,7 +50,7 @@ public class CalcClient {
         System.out.println("===============================================================================");
         Call call = new Call();
         Options options = new Options();
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         call.setClientOptions(options);
 
         boolean exit = false;

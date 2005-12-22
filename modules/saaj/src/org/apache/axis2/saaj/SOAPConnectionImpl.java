@@ -59,7 +59,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
 
             Options options = new Options();
             options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setTo(
                     new EndpointReference(url.toString()));
             call.setClientOptions(options);

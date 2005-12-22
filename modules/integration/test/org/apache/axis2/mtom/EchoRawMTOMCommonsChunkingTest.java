@@ -104,7 +104,7 @@ public class EchoRawMTOMCommonsChunkingTest extends TestCase implements TestCons
         call.setClientOptions(options);
         options.setTo(targetEPR);
         options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         OMElement result = call.invokeBlocking(operationName

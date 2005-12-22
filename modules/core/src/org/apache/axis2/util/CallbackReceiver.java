@@ -27,7 +27,7 @@ public class CallbackReceiver implements MessageReceiver {
     }
 
     public void receive(MessageContext messgeCtx) throws AxisFault {
-        RelatesTo relatesTO = messgeCtx.getMessageInformationHeaders().getRelatesTo();
+        RelatesTo relatesTO = messgeCtx.getOptions().getRelatesTo();
         String messageID = relatesTO.getValue();
         Callback callback = (Callback) callbackStore.get(messageID);
         AsyncResult result = new AsyncResult(messgeCtx);

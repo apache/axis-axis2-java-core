@@ -57,8 +57,5 @@ public class MessageContextTest extends AbstractTestCase {
 
         msgctx.setReplyTo(null);
         assertNull(msgctx.getReplyTo());
-
-        msgctx.setMessageID(null);
-        assertNull(msgctx.getMessageID());
     }
 }

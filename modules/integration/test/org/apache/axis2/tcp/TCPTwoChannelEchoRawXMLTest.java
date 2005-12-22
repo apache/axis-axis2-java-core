@@ -126,7 +126,7 @@ public class TCPTwoChannelEchoRawXMLTest extends TestCase {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
-            options.setListenerTransportProtocol(Constants.TRANSPORT_TCP);
+            options.setTransportInProtocol(Constants.TRANSPORT_TCP);
             options.setUseSeparateListener(true);
             options.setAction(operationName.getLocalPart());
             Callback callback = new Callback() {

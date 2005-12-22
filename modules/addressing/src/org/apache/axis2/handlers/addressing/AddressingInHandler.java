@@ -20,8 +20,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.om.OMAttribute;
@@ -48,19 +48,19 @@ public class AddressingInHandler extends AddressingHandler {
             addressingHeaders = header.getHeaderBlocksWithNSURI(Submission.WSA_NAMESPACE);
             if (addressingHeaders != null) {
                 addressingNamespace = Submission.WSA_NAMESPACE;
-                extractAddressingSubmissionInformationFromHeaders(
+                extractCommonAddressingParameters(
                         header,
-                        msgContext.getMessageInformationHeaders(),
-                        addressingHeaders);
+                        msgContext.getOptions(),
+                        addressingHeaders, Submission.WSA_NAMESPACE);
             } else {
                 addressingHeaders = header.getHeaderBlocksWithNSURI(Final.WSA_NAMESPACE);
                 if (addressingHeaders != null) {
                     addressingNamespace = Final.WSA_NAMESPACE;
-                    extractAddressingFinalInformationFromHeaders(
+                    extractCommonAddressingParameters(
                             header,
-                            msgContext.getMessageInformationHeaders(),
-                            addressingHeaders);
-                    extractReferenceParameters(header, msgContext.getMessageInformationHeaders());
+                            msgContext.getOptions(),
+                            addressingHeaders, Final.WSA_NAMESPACE);
+                    extractReferenceParameters(header, msgContext.getOptions());
 
                 } else {
                     // Addressing headers are not present in the SOAP message
@@ -101,61 +101,28 @@ public class AddressingInHandler extends AddressingHandler {
      * here this will check for header blocks with the above attribute and will put them in message information header collection
      *
      * @param header
-     * @param messageInformationHeaders
+     * @param messageContextOptions
      */
     private void extractReferenceParameters(
             SOAPHeader header,
-            MessageInformationHeaders messageInformationHeaders) {
+            Options messageContextOptions) {
         Iterator headerBlocks = header.getChildren();
         while (headerBlocks.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) headerBlocks.next();
-            if (Final
-                    .WSA_TYPE_ATTRIBUTE_VALUE
-                    .equals(
-                            soapHeaderBlock
-                                    .getAttribute(
-                                            new QName(
-                                                    Final.WSA_NAMESPACE,
-                                                    Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE))
-                                    .getAttributeValue())) {
-                messageInformationHeaders.addReferenceParameter(soapHeaderBlock);
+            if (Final.WSA_TYPE_ATTRIBUTE_VALUE.equals(soapHeaderBlock.getAttribute(
+                                            new QName(Final.WSA_NAMESPACE,
+                                                    Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE)).getAttributeValue())) {
+                messageContextOptions.addReferenceParameter(soapHeaderBlock);
             }
         }
     }
 
-    private void extractAddressingFinalInformationFromHeaders(
+    protected Options extractCommonAddressingParameters(
             SOAPHeader header,
-            MessageInformationHeaders messageInformationHeaders,
-            ArrayList addressingHeaders)
-            throws AddressingException {
-        extractCommonAddressingParameters(
-                header,
-                messageInformationHeaders,
-                addressingHeaders,
-                Final.WSA_NAMESPACE);
-    }
-
-    private void extractAddressingSubmissionInformationFromHeaders(
-            SOAPHeader header,
-            MessageInformationHeaders messageInformationHeaders,
-            ArrayList addressingHeaders)
-            throws AddressingException {
-        extractCommonAddressingParameters(
-                header,
-                messageInformationHeaders,
-                addressingHeaders,
-                Submission.WSA_NAMESPACE);
-    }
-
-    public MessageInformationHeaders extractCommonAddressingParameters(
-            SOAPHeader header,
-            MessageInformationHeaders messageInformationHeaders,
+            Options messageContextOptions,
             ArrayList addressingHeaders,
             String addressingNamespace)
             throws AddressingException {
-        if (messageInformationHeaders == null) {
-            messageInformationHeaders = new MessageInformationHeaders();
-        }
 
         Iterator addressingHeadersIt = addressingHeaders.iterator();
         while (addressingHeadersIt.hasNext()) {
@@ -164,42 +131,42 @@ public class AddressingInHandler extends AddressingHandler {
             if (AddressingConstants.WSA_TO.equals(soapHeaderBlock.getLocalName())) {
                 //here the addressing epr overidde what ever already there in the message context
                 epr = new EndpointReference(soapHeaderBlock.getText());
-                messageInformationHeaders.setTo(epr);
+                messageContextOptions.setTo(epr);
 
                 // check for reference parameters
                 extractToEprReferenceParameters(epr, header);
                 soapHeaderBlock.setProcessed();
 
             } else if (AddressingConstants.WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
-                epr = messageInformationHeaders.getFrom();
+                epr = messageContextOptions.getFrom();
                 if (epr == null) {
                     epr = new EndpointReference("");  // I don't know the address now. Let me pass the empty string now and fill this
                                                       // once I process the Elements under this. 
-                    messageInformationHeaders.setFrom(epr);
+                    messageContextOptions.setFrom(epr);
                 }
                 extractEPRInformation(soapHeaderBlock, epr, addressingNamespace);
                 soapHeaderBlock.setProcessed();
             } else if (AddressingConstants.WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName())) {
-                epr = messageInformationHeaders.getReplyTo();
+                epr = messageContextOptions.getReplyTo();
                 if (epr == null) {
                     epr = new EndpointReference("");
-                    messageInformationHeaders.setReplyTo(epr);
+                    messageContextOptions.setReplyTo(epr);
                 }
                 extractEPRInformation(soapHeaderBlock, epr, addressingNamespace);
                 soapHeaderBlock.setProcessed();
             } else if (AddressingConstants.WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName())) {
-                epr = messageInformationHeaders.getFaultTo();
+                epr = messageContextOptions.getFaultTo();
                 if (epr == null) {
                     epr = new EndpointReference("");
-                    messageInformationHeaders.setFaultTo(epr);
+                    messageContextOptions.setFaultTo(epr);
                 }
                 extractEPRInformation(soapHeaderBlock, epr, addressingNamespace);
                 soapHeaderBlock.setProcessed();
             } else if (AddressingConstants.WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
-                messageInformationHeaders.setMessageId(soapHeaderBlock.getText());
+                messageContextOptions.setMessageId(soapHeaderBlock.getText());
                 soapHeaderBlock.setProcessed();
             } else if (AddressingConstants.WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
-                messageInformationHeaders.setAction(soapHeaderBlock.getText());
+                messageContextOptions.setAction(soapHeaderBlock.getText());
                 soapHeaderBlock.setProcessed();
             } else if (AddressingConstants.WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
                 String address = soapHeaderBlock.getText();
@@ -216,13 +183,12 @@ public class AddressingInHandler extends AddressingHandler {
                                 relationshipType == null
                                         ? relationshipTypeDefaultValue
                                         : relationshipType.getAttributeValue());
-                messageInformationHeaders.setRelatesTo(relatesTo);
+                messageContextOptions.setRelatesTo(relatesTo);
                 soapHeaderBlock.setProcessed();
 
             }
         }
-
-        return messageInformationHeaders;
+        return messageContextOptions;
     }
 
     private void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header) {

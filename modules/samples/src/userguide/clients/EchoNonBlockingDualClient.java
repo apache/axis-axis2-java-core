@@ -44,7 +44,7 @@ public class EchoNonBlockingDualClient {
 
             Options options = new Options();
             options.setTo(targetEPR);
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(true);
 
             Call call = new Call();

@@ -47,7 +47,7 @@ public class Client {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/SecureService"));
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
 
             //Blocking invocation

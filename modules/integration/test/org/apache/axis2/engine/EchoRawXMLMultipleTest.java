@@ -84,7 +84,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
@@ -129,7 +129,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(true);
 
             Callback callback = new Callback() {
@@ -176,7 +176,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
             OMElement result =
                     call.invokeBlocking(operationName.getLocalPart(),
@@ -198,7 +198,7 @@ public class EchoRawXMLMultipleTest extends TestCase implements TestConstants {
             Options options = new Options();
             call.setClientOptions(options);
             options.setTo(targetEPR);
-            options.setListenerTransportProtocol(Constants.TRANSPORT_HTTP);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(true);
 
             OMElement result =

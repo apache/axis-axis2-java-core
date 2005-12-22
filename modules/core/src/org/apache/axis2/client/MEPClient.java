@@ -18,7 +18,6 @@
 package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
@@ -206,27 +205,6 @@ public abstract class MEPClient {
         }
     }
 
-    private void extractPropertiesFromOptionsToContexts(MessageContext msgCtx) {
-
-        // copy addressing parameters
-        msgCtx.setTo(clientOptions.getTo());
-        msgCtx.setFrom(clientOptions.getFrom());
-        msgCtx.setFaultTo(clientOptions.getFaultTo());
-        msgCtx.setReplyTo(clientOptions.getReplyTo());
-        msgCtx.setRelatesTo(clientOptions.getRelatesTo());
-        msgCtx.setMessageID(((clientOptions.getMessageId() == null)
-                || "".equals(clientOptions.getMessageId()))
-                ? UUIDGenerator.getUUID()
-                : clientOptions.getMessageId());
-        msgCtx.setWSAAction(clientOptions.getAction());
-        msgCtx.setSoapAction(clientOptions.getSoapAction());
-        msgCtx.setProperty(Constants.Configuration.IS_USING_SEPARATE_LISTENER,
-                Boolean.valueOf(clientOptions.isUseSeparateListener()));
-
-        // we are not setting the properties here. Those will be set, when we
-        // create the operation context
-    }
-
     /**
      * Infers the transport by looking at the URL. The URL can be http:// tcp:/
      * mail:// local://.
@@ -332,8 +310,12 @@ public abstract class MEPClient {
 
         // now its the time to put the parameters set by the user in to the
         // correct places and to the
-        // operation context.
-        extractPropertiesFromOptionsToContexts(msgCtx);
+        // if there is no message id still, set a new one.
+        String messageId = clientOptions.getMessageId();
+        if (messageId == null || "".equals(messageId)) {
+            clientOptions.setMessageId(UUIDGenerator.getUUID());
+        }
+        msgCtx.setOptions(clientOptions);
 
         // check user has put any SOAPHeader using the call MEPClient methods
         // and add them, if any, to the

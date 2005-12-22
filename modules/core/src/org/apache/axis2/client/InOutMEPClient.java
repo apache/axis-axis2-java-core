@@ -95,15 +95,15 @@ public class InOutMEPClient extends MEPClient {
         }
 
         if (clientOptions.isUseSeparateListener()) {
-            if (clientOptions.getListenerTransport() == null) {
-                clientOptions.setListenerTransport(
+            if (clientOptions.getTransportInDescription() == null) {
+                clientOptions.setTransportInDescription(
                         serviceContext.getConfigurationContext().getAxisConfiguration().getTransportIn(
                                 clientOptions.getSenderTransport().getName()));
             }
         }
 
         if (msgctx.getTransportIn() == null) {
-            msgctx.setTransportIn(clientOptions.getListenerTransport());
+            msgctx.setTransportIn(clientOptions.getTransportInDescription());
         }
 
         if (msgctx.getTransportOut() == null) {
@@ -118,7 +118,7 @@ public class InOutMEPClient extends MEPClient {
     public void close() throws AxisFault {
         if (clientOptions.isUseSeparateListener()) {
             ListenerManager.stop(serviceContext.getConfigurationContext(),
-                    clientOptions.getListenerTransport().getName().getLocalPart());
+                    clientOptions.getTransportInDescription().getName().getLocalPart());
         }
 
 
@@ -127,7 +127,7 @@ public class InOutMEPClient extends MEPClient {
     protected void configureTransportInformation(MessageContext msgCtx) throws AxisFault {
         AxisConfiguration axisConfig =
                 this.serviceContext.getConfigurationContext().getAxisConfiguration();
-        String listenerTransportProtocol = clientOptions.getListenerTransportProtocol();
+        String listenerTransportProtocol = clientOptions.getTransportInProtocol();
 
         if (axisConfig != null) {
             if (clientOptions.isUseSeparateListener()) {
@@ -140,7 +140,7 @@ public class InOutMEPClient extends MEPClient {
                                 listenerTransportProtocol));
                     }
 
-                    clientOptions.setListenerTransport(transportIn);
+                    clientOptions.setTransportInDescription(transportIn);
                 }
             }
 
@@ -155,7 +155,7 @@ public class InOutMEPClient extends MEPClient {
                 throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));
             }
 
-            ListenerManager.makeSureStarted(clientOptions.getListenerTransportProtocol(),
+            ListenerManager.makeSureStarted(clientOptions.getTransportInProtocol(),
                     serviceContext.getConfigurationContext());
         }
     }
@@ -247,7 +247,7 @@ public class InOutMEPClient extends MEPClient {
             operationContext.setProperties(clientOptions.getProperties());
 
             // Send the SOAP Message and receive a response
-            MessageContext response = send(msgctx, clientOptions.getListenerTransport());
+            MessageContext response = send(msgctx, clientOptions.getTransportInDescription());
 
             // check for a fault and return the result
             SOAPEnvelope resenvelope = response.getEnvelope();
@@ -325,7 +325,7 @@ public class InOutMEPClient extends MEPClient {
                                 .replyToEPR(serviceContext.getConfigurationContext(),
                                         serviceContext.getAxisService().getName() + "/"
                                                 + axisop.getName().getLocalPart(), clientOptions
-                                        .getListenerTransport().getName().getLocalPart());
+                                        .getTransportInDescription().getName().getLocalPart());
 
                 if (msgctx.getReplyTo() == null) {
                     msgctx.setReplyTo(replyToFromTransport);
@@ -422,7 +422,7 @@ public class InOutMEPClient extends MEPClient {
             try {
 
                 // send the request and wait for reponse
-                MessageContext response = send(msgctx, clientOptions.getListenerTransport());
+                MessageContext response = send(msgctx, clientOptions.getTransportInDescription());
 
                 // call the callback
                 SOAPEnvelope resenvelope = response.getEnvelope();
