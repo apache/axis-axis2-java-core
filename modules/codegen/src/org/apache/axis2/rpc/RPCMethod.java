@@ -45,7 +45,7 @@ public class RPCMethod {
         public boolean hasNext() {
             if (cache != null) return true;
             while (idx < params.size()) {
-                RPCParameter param = (RPCParameter)params.get(idx);
+                RPCParameter param = (RPCParameter) params.get(idx);
                 idx++;
                 if (param.mode != badMode) {
                     cache = param;
@@ -93,7 +93,7 @@ public class RPCMethod {
     }
 
     public RPCParameter getParameter(QName qname) {
-        return (RPCParameter)parameters.get(qname);
+        return (RPCParameter) parameters.get(qname);
     }
 
     public Method getJavaMethod() {

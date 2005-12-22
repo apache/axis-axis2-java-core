@@ -19,7 +19,7 @@ import java.util.Map;
  * limitations under the License.
  */
 
-public abstract class AbstractDBProcessingExtension extends AbstractCodeGenerationExtension{
+public abstract class AbstractDBProcessingExtension extends AbstractCodeGenerationExtension {
 
     /**
      * Method to test whether the passed in framework name is
@@ -28,9 +28,9 @@ public abstract class AbstractDBProcessingExtension extends AbstractCodeGenerati
      * @param dbFrameworkName
      * @return
      */
-    protected boolean testFallthrough(String dbFrameworkName){
+    protected boolean testFallthrough(String dbFrameworkName) {
         Map extensionsMap = ConfigPropertyFileLoader.getDatabindingFrameworkNameToExtensionMap();
-        String mappedExtension=extensionsMap.get(dbFrameworkName)!=null?extensionsMap.get(dbFrameworkName).toString():"";
+        String mappedExtension = extensionsMap.get(dbFrameworkName) != null ? extensionsMap.get(dbFrameworkName).toString() : "";
         return !(getClass().getName().equals(mappedExtension));
     }
 

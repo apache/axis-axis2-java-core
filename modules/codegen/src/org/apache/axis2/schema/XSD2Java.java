@@ -29,44 +29,44 @@ public class XSD2Java {
     /**
      * for now the arguments this main method accepts is the source schema and the output
      * location
+     *
      * @param args
      */
     public static void main(String[] args) {
-        if (args.length!=2){
+        if (args.length != 2) {
             // printout the options
             System.out.println("Argument1 - Source schema file name");
             System.out.println("Argument2 - Output folder name");
-        } else{
-            compile(args[0],args[1]);
+        } else {
+            compile(args[0], args[1]);
         }
 
     }
 
     /**
-     *
      * @param xsdName
      * @param outputLocation
      */
-    private static void compile(String xsdName,String outputLocation) {
+    private static void compile(String xsdName, String outputLocation) {
         try {
             //load the current Schema through a file
             //first read the file into a DOM
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             documentBuilderFactory.setNamespaceAware(true);
 
-            DocumentBuilder builder =  documentBuilderFactory.newDocumentBuilder();
+            DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
             Document doc = builder.parse(new File(xsdName));
 
             //now read it to a schema
-            XmlSchemaCollection schemaCol =  new XmlSchemaCollection();
-            XmlSchema currentSchema = schemaCol.read(doc,null);
+            XmlSchemaCollection schemaCol = new XmlSchemaCollection();
+            XmlSchema currentSchema = schemaCol.read(doc, null);
 
             File outputFolder = new File(outputLocation);
-            if (outputFolder.exists()){
-                if (outputFolder.isFile())  {
+            if (outputFolder.exists()) {
+                if (outputFolder.isFile()) {
                     throw new IOException("specified location is not a folder!");
                 }
-            }else{
+            } else {
                 outputFolder.mkdirs();
             }
 
@@ -81,7 +81,7 @@ public class XSD2Java {
             compiler.compile(currentSchema);
 
         } catch (Exception e) {
-            throw new RuntimeException("Compiler caused an exception",e);
+            throw new RuntimeException("Compiler caused an exception", e);
         }
     }
 }

@@ -16,7 +16,6 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
-import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.wsdl.WSDLBinding;
 import org.apache.wsdl.WSDLDescription;
 import org.apache.wsdl.WSDLExtensibilityAttribute;
@@ -50,14 +49,14 @@ public class AxisBindingBuilder extends AbstractCodeGenerationExtension implemen
         Map bindingMap = wom.getBindings();
         Vector bindingVector = new Vector();
 
-        if (bindingMap==null || bindingMap.isEmpty()) {
+        if (bindingMap == null || bindingMap.isEmpty()) {
             log.info(" bindings are not present in the original document");
             //just fall through
-        }else{
+        } else {
             Collection bindingCollection = bindingMap.values();
             for (Iterator iterator = bindingCollection.iterator(); iterator.hasNext();) {
 
-                WSDLBinding binding = (WSDLBinding)iterator.next();
+                WSDLBinding binding = (WSDLBinding) iterator.next();
 
                 WSDLBinding newBinding = wom.createBinding();
                 newBinding.setName(AXIS_BINDING_QNAME);
@@ -85,7 +84,7 @@ public class AxisBindingBuilder extends AbstractCodeGenerationExtension implemen
             //drop all the bindings and add the new ones
             wom.getBindings().clear();
             for (int i = 0; i < bindingVector.size(); i++) {
-                wom.addBinding ((WSDLBinding) bindingVector.get(i));
+                wom.addBinding((WSDLBinding) bindingVector.get(i));
             }
 
         }

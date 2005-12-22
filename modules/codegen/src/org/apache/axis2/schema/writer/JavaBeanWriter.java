@@ -20,7 +20,11 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,9 +48,9 @@ import java.util.Map;
 /**
  * Java Bean writer for the schema compiler.
  */
-public class JavaBeanWriter implements BeanWriter{
+public class JavaBeanWriter implements BeanWriter {
 
-    public static final String WRAPPED_DATABINDING_CLASS_NAME="WrappedDatabinder";
+    public static final String WRAPPED_DATABINDING_CLASS_NAME = "WrappedDatabinder";
 
     private String javaBeanTemplateName = null;
     private boolean templateLoaded = false;
@@ -56,14 +60,15 @@ public class JavaBeanWriter implements BeanWriter{
     private static int count = 0;
     private boolean wrapClasses;
 
-    private String packageName=null;
+    private String packageName = null;
     private File rootDir;
 
     private Document globalWrappedDocument;
+
     /**
      * Default constructor
      */
-    public JavaBeanWriter(){
+    public JavaBeanWriter() {
     }
 
     public void init(CompilerOptions options) throws SchemaCompilationException {
@@ -74,17 +79,17 @@ public class JavaBeanWriter implements BeanWriter{
 
             //if the wrap mode is set then create a global document to keep the wrapped
             //element models
-            if (options.isWrapClasses()){
+            if (options.isWrapClasses()) {
                 globalWrappedDocument = XSLTUtils.getDocument();
-                Element rootElement = XSLTUtils.getElement(globalWrappedDocument,"beans");
+                Element rootElement = XSLTUtils.getElement(globalWrappedDocument, "beans");
                 globalWrappedDocument.appendChild(rootElement);
-                XSLTUtils.addAttribute(globalWrappedDocument,"name",WRAPPED_DATABINDING_CLASS_NAME,rootElement);
+                XSLTUtils.addAttribute(globalWrappedDocument, "name", WRAPPED_DATABINDING_CLASS_NAME, rootElement);
                 String tempPackageName = null;
-                if (packageName.endsWith(".")){
-                     tempPackageName = this.packageName.substring(0, this.packageName.lastIndexOf("."));
+                if (packageName.endsWith(".")) {
+                    tempPackageName = this.packageName.substring(0, this.packageName.lastIndexOf("."));
                 }
 
-                XSLTUtils.addAttribute(globalWrappedDocument,"package",tempPackageName,rootElement);
+                XSLTUtils.addAttribute(globalWrappedDocument, "package", tempPackageName, rootElement);
             }
         } catch (IOException e) {
             throw new SchemaCompilationException(e);
@@ -94,14 +99,13 @@ public class JavaBeanWriter implements BeanWriter{
     }
 
     /**
-     *
      * @param element
      * @param typeMap
      * @param metainf
      * @return
      * @throws SchemaCompilationException
      */
-    public String write(XmlSchemaElement element, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException{
+    public String write(XmlSchemaElement element, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
 
         try {
             QName qName = element.getQName();
@@ -112,12 +116,14 @@ public class JavaBeanWriter implements BeanWriter{
 
 
     }
+
     /**
-     * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaComplexType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      * @param complexType
      * @param typeMap
      * @param metainf
      * @throws org.apache.axis2.schema.SchemaCompilationException
+     *
+     * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaComplexType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      */
     public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
 
@@ -126,9 +132,9 @@ public class JavaBeanWriter implements BeanWriter{
             QName qName = complexType.getQName();
             return process(qName, metainf, typeMap, false);
 
-        }catch (SchemaCompilationException e) {
+        } catch (SchemaCompilationException e) {
             throw e;
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new SchemaCompilationException(e);
         }
 
@@ -136,16 +142,16 @@ public class JavaBeanWriter implements BeanWriter{
     }
 
     /**
-     * @see org.apache.axis2.schema.writer.BeanWriter#writeBatch()
      * @throws Exception
+     * @see BeanWriter#writeBatch()
      */
-    public void writeBatch() throws SchemaCompilationException{
+    public void writeBatch() throws SchemaCompilationException {
         try {
-            if (wrapClasses){
+            if (wrapClasses) {
 
-                OutputStream out = createOutFile(packageName,WRAPPED_DATABINDING_CLASS_NAME);
+                OutputStream out = createOutFile(packageName, WRAPPED_DATABINDING_CLASS_NAME);
                 //parse with the template and create the files
-                parse(globalWrappedDocument,out);
+                parse(globalWrappedDocument, out);
             }
         } catch (Exception e) {
             throw new SchemaCompilationException(e);
@@ -153,27 +159,28 @@ public class JavaBeanWriter implements BeanWriter{
     }
 
     /**
-     * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaSimpleType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      * @param simpleType
      * @param typeMap
      * @param metainf
      * @return
      * @throws SchemaCompilationException
+     * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaSimpleType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      */
     public String write(XmlSchemaSimpleType simpleType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
         throw new SchemaCompilationException("Not implemented yet");
     }
+
     /**
-     * @see BeanWriter#init(java.io.File)
      * @param rootDir
      * @throws IOException
+     * @see BeanWriter#init(java.io.File)
      */
-    private void initWithFile(File rootDir) throws IOException{
-        if (rootDir ==null){
+    private void initWithFile(File rootDir) throws IOException {
+        if (rootDir == null) {
             this.rootDir = new File(".");
-        }else if (!rootDir.isDirectory()){
+        } else if (!rootDir.isDirectory()) {
             throw new IOException("Root location needs to be a directory!");
-        } else{
+        } else {
             this.rootDir = rootDir;
         }
 
@@ -182,11 +189,11 @@ public class JavaBeanWriter implements BeanWriter{
     }
 
 
-
     /**
      * A util method that holds common code
      * for the complete schema that the generated XML complies to
      * look under other/beanGenerationSchema.xsd
+     *
      * @param qName
      * @param metainf
      * @param typeMap
@@ -198,36 +205,36 @@ public class JavaBeanWriter implements BeanWriter{
 
         String nameSpaceFromURL = URLProcessor.getNameSpaceFromURL(qName.getNamespaceURI());
 
-        String packageName = this.packageName==null?
+        String packageName = this.packageName == null ?
                 nameSpaceFromURL :
-                this.packageName +nameSpaceFromURL;
+                this.packageName + nameSpaceFromURL;
 
         String originalName = qName.getLocalPart();
-        String className = getNonConflictingName(this.namesList,originalName);
+        String className = getNonConflictingName(this.namesList, originalName);
         String fullyqualifiedClassName = null;
         ArrayList propertyNames = new ArrayList();
 
-        if (!templateLoaded){
+        if (!templateLoaded) {
             loadTemplate();
         }
 
         //if wrapped then do not write the classes now but add the models to a global document. However in order to write the
         //global class that is generated, one needs to call the writeBatch() method
-        if (wrapClasses){
+        if (wrapClasses) {
             globalWrappedDocument.getDocumentElement().appendChild(
                     getBeanElement(globalWrappedDocument, className, originalName, packageName, qName, isElement, metainf, propertyNames, typeMap)
             );
             //now the fully qualified class name needs to have the name of the including class as well
-            fullyqualifiedClassName = (this.packageName==null?"":this.packageName)+ WRAPPED_DATABINDING_CLASS_NAME +"." + className;
-        }else{
+            fullyqualifiedClassName = (this.packageName == null ? "" : this.packageName) + WRAPPED_DATABINDING_CLASS_NAME + "." + className;
+        } else {
             //create the model
-            Document model= XSLTUtils.getDocument();
+            Document model = XSLTUtils.getDocument();
             //make the XML
             model.appendChild(getBeanElement(model, className, originalName, packageName, qName, isElement, metainf, propertyNames, typeMap));
             //create the file
-            OutputStream out = createOutFile(packageName,className);
+            OutputStream out = createOutFile(packageName, className);
             //parse with the template and create the files
-            parse(model,out);
+            parse(model, out);
             fullyqualifiedClassName = packageName + "." + className;
         }
 
@@ -237,10 +244,7 @@ public class JavaBeanWriter implements BeanWriter{
     }
 
 
-
-
     /**
-     *
      * @param model
      * @param className
      * @param originalName
@@ -259,102 +263,102 @@ public class JavaBeanWriter implements BeanWriter{
             BeanWriterMetaInfoHolder metainf, ArrayList propertyNames, Map typeMap
     ) throws SchemaCompilationException {
 
-        Element rootElt = XSLTUtils.getElement(model,"bean");
-        XSLTUtils.addAttribute(model,"name",className,rootElt);
-        XSLTUtils.addAttribute(model,"originalName",originalName,rootElt);
-        XSLTUtils.addAttribute(model,"package",packageName,rootElt);
-        XSLTUtils.addAttribute(model,"nsuri",qName.getNamespaceURI(),rootElt);
-        XSLTUtils.addAttribute(model,"nsprefix",qName.getPrefix(),rootElt);
+        Element rootElt = XSLTUtils.getElement(model, "bean");
+        XSLTUtils.addAttribute(model, "name", className, rootElt);
+        XSLTUtils.addAttribute(model, "originalName", originalName, rootElt);
+        XSLTUtils.addAttribute(model, "package", packageName, rootElt);
+        XSLTUtils.addAttribute(model, "nsuri", qName.getNamespaceURI(), rootElt);
+        XSLTUtils.addAttribute(model, "nsprefix", qName.getPrefix(), rootElt);
 
-        if (!wrapClasses){
-            XSLTUtils.addAttribute(model,"unwrapped","yes",rootElt);
+        if (!wrapClasses) {
+            XSLTUtils.addAttribute(model, "unwrapped", "yes", rootElt);
         }
 
-        if (!isElement){
-            XSLTUtils.addAttribute(model,"type","yes",rootElt);
+        if (!isElement) {
+            XSLTUtils.addAttribute(model, "type", "yes", rootElt);
         }
 
-        if (metainf.isAnonymous()){
-            XSLTUtils.addAttribute(model,"anon","yes",rootElt);
+        if (metainf.isAnonymous()) {
+            XSLTUtils.addAttribute(model, "anon", "yes", rootElt);
         }
 
-        if (metainf.isExtension()){
-            XSLTUtils.addAttribute(model,"extension",metainf.getExtensionClassName(),rootElt);
+        if (metainf.isExtension()) {
+            XSLTUtils.addAttribute(model, "extension", metainf.getExtensionClassName(), rootElt);
         }
         // go in the loop and add the part elements
         QName[] qNames;
-        if (metainf.isOrdered()){
+        if (metainf.isOrdered()) {
             qNames = metainf.getOrderedQNameArray();
-        }else{
+        } else {
             qNames = metainf.getQNameArray();
         }
 
         QName name;
         for (int i = 0; i < qNames.length; i++) {
-            Element property = XSLTUtils.addChildElement(model,"property",rootElt);
+            Element property = XSLTUtils.addChildElement(model, "property", rootElt);
             name = qNames[i];
             String xmlName = name.getLocalPart();
-            XSLTUtils.addAttribute(model,"name",xmlName,property);
+            XSLTUtils.addAttribute(model, "name", xmlName, property);
 
             String javaName;
-            if (JavaUtils.isJavaKeyword(xmlName)){
+            if (JavaUtils.isJavaKeyword(xmlName)) {
                 javaName = JavaUtils.makeNonJavaKeyword(xmlName);
-            }else{
-                javaName = JavaUtils.xmlNameToJava(xmlName,false);
+            } else {
+                javaName = JavaUtils.xmlNameToJava(xmlName, false);
             }
 
-            javaName = getNonConflictingName(propertyNames,javaName);
-            XSLTUtils.addAttribute(model,"name",xmlName,property);
-            XSLTUtils.addAttribute(model,"javaname",javaName,property);
+            javaName = getNonConflictingName(propertyNames, javaName);
+            XSLTUtils.addAttribute(model, "name", xmlName, property);
+            XSLTUtils.addAttribute(model, "javaname", javaName, property);
             String javaClassNameForElement = metainf.getClassNameForQName(name);
 
             String shortTypeName = "";
-            if (metainf.getSchemaQNameForQName(name)!=null){
+            if (metainf.getSchemaQNameForQName(name) != null) {
                 shortTypeName = metainf.getSchemaQNameForQName(name).getLocalPart();
             }
 
-            if (javaClassNameForElement==null){
+            if (javaClassNameForElement == null) {
                 throw new SchemaCompilationException("Type missing!");
             }
-            XSLTUtils.addAttribute(model,"type",javaClassNameForElement,property);
-            if (typeMap.containsKey(metainf.getSchemaQNameForQName(name))){
-                XSLTUtils.addAttribute(model,"ours","yes",property); //todo introduce a better name for this
+            XSLTUtils.addAttribute(model, "type", javaClassNameForElement, property);
+            if (typeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
+                XSLTUtils.addAttribute(model, "ours", "yes", property); //todo introduce a better name for this
             }
 
-            if (metainf.getAttributeStatusForQName(name)){
-                XSLTUtils.addAttribute(model,"attribute","yes",property);
+            if (metainf.getAttributeStatusForQName(name)) {
+                XSLTUtils.addAttribute(model, "attribute", "yes", property);
             }
 
-            XSLTUtils.addAttribute(model,"shorttypename",shortTypeName,property);
+            XSLTUtils.addAttribute(model, "shorttypename", shortTypeName, property);
 
-            if (metainf.getAnyStatusForQName(name)){
-                XSLTUtils.addAttribute(model,"any","yes",property);
+            if (metainf.getAnyStatusForQName(name)) {
+                XSLTUtils.addAttribute(model, "any", "yes", property);
             }
 
-            if (metainf.getAnyAttributeStatusForQName(name)){
-                XSLTUtils.addAttribute(model,"anyAtt","yes",property);
+            if (metainf.getAnyAttributeStatusForQName(name)) {
+                XSLTUtils.addAttribute(model, "anyAtt", "yes", property);
             }
-            if (metainf.getArrayStatusForQName(name)){
+            if (metainf.getArrayStatusForQName(name)) {
 
-                XSLTUtils.addAttribute(model,"array","yes",property);
+                XSLTUtils.addAttribute(model, "array", "yes", property);
                 XSLTUtils.addAttribute(
                         model,
                         "arrayBaseType",
-                        javaClassNameForElement.substring(0,javaClassNameForElement.indexOf("[")),
+                        javaClassNameForElement.substring(0, javaClassNameForElement.indexOf("[")),
                         property);
 
 
                 long minOccurs = metainf.getMinOccurs(name);
 
-                if (minOccurs >0){
-                    XSLTUtils.addAttribute(model,"minOccurs",minOccurs +"",property);
+                if (minOccurs > 0) {
+                    XSLTUtils.addAttribute(model, "minOccurs", minOccurs + "", property);
                 }
 
                 long maxOccurs = metainf.getMaxOccurs(name);
-                if (maxOccurs==Long.MAX_VALUE){
-                    XSLTUtils.addAttribute(model,"unbound","yes",property);
-                }else{
-                    XSLTUtils.addAttribute(model,"maxOccurs",maxOccurs +"",property);
+                if (maxOccurs == Long.MAX_VALUE) {
+                    XSLTUtils.addAttribute(model, "unbound", "yes", property);
+                } else {
+                    XSLTUtils.addAttribute(model, "maxOccurs", maxOccurs + "", property);
                 }
             }
         }
@@ -363,19 +367,19 @@ public class JavaBeanWriter implements BeanWriter{
     }
 
 
-
     /**
      * gets a non conflicting java name
+     *
      * @param listOfNames
      * @param nameBase
      * @return
      */
-    private String getNonConflictingName(List listOfNames,String nameBase){
+    private String getNonConflictingName(List listOfNames, String nameBase) {
         String nameToReturn = nameBase;
-        if (JavaUtils.isJavaKeyword(nameToReturn)){
+        if (JavaUtils.isJavaKeyword(nameToReturn)) {
             nameToReturn = JavaUtils.makeNonJavaKeyword(nameToReturn);
         }
-        while (listOfNames.contains(nameToReturn)){
+        while (listOfNames.contains(nameToReturn)) {
             nameToReturn = nameToReturn + count++;
         }
 
@@ -384,30 +388,26 @@ public class JavaBeanWriter implements BeanWriter{
     }
 
 
-
-
-
     /**
-     *  A bit of code from the old code generator. We are better off using the template
+     * A bit of code from the old code generator. We are better off using the template
      * engines and such stuff that's already there. But the class writers are hard to be
      * reused so some code needs to be repeated (atleast a bit)
-     *
      */
-    private  void loadTemplate() throws SchemaCompilationException {
+    private void loadTemplate() throws SchemaCompilationException {
 
         //first get the language specific property map
         Class clazz = this.getClass();
         InputStream xslStream;
         String templateName = javaBeanTemplateName;
-        if (templateName!=null){
+        if (templateName != null) {
             try {
                 xslStream = clazz.getResourceAsStream(templateName);
                 templateCache = TransformerFactory.newInstance().newTemplates(new StreamSource(xslStream));
                 templateLoaded = true;
             } catch (TransformerConfigurationException e) {
-                throw new SchemaCompilationException("Error loading the template",e);
+                throw new SchemaCompilationException("Error loading the template", e);
             }
-        }else{
+        } else {
             throw new SchemaCompilationException("template for this writer is not found");
         }
     }
@@ -435,7 +435,7 @@ public class JavaBeanWriter implements BeanWriter{
      * @param documentStream
      * @throws Exception
      */
-    private void parse(Document doc,OutputStream outStream) throws Exception {
+    private void parse(Document doc, OutputStream outStream) throws Exception {
 
         XSLTTemplateProcessor.parse(outStream,
                 doc,

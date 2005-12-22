@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 public abstract class AbstractCodeGenerationExtension implements CodeGenExtension {
 
     protected Log log = LogFactory.getLog(this.getClass());
-    
+
     protected CodeGenConfiguration configuration;
 
     public void init(CodeGenConfiguration configuration) {

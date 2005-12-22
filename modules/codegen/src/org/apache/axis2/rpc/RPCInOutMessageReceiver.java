@@ -31,9 +31,9 @@ import org.apache.axis2.soap.SOAPFactory;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  *
@@ -131,7 +131,7 @@ public class RPCInOutMessageReceiver extends AbstractInOutSyncMessageReceiver {
                 // strictness configuration.
                 continue;
             }
-            Integer count = (Integer)elementCounts.get(qname);
+            Integer count = (Integer) elementCounts.get(qname);
             if (count == null) count = new Integer(0);
             elementCounts.put(qname, new Integer(count.intValue() + 1));
             Deserializer dser = param.getDeserializer(count.intValue(), values);

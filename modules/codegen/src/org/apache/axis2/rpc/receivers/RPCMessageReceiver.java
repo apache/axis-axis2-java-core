@@ -22,9 +22,9 @@
 package org.apache.axis2.rpc.receivers;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.databinding.utils.BeanUtil;
-import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
+import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -102,11 +102,11 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             SOAPEnvelope envelope = getSOAPFactory().getDefaultEnvelope();
             OMElement bodyContent = null;
 
-            if(resObject instanceof Object[]){
-                QName resName = new QName("http://soapenc/",  method.getName() + "Response", "res");
-                OMElement bodyChild = getResponseElement(resName,(Object[])resObject);
+            if (resObject instanceof Object[]) {
+                QName resName = new QName("http://soapenc/", method.getName() + "Response", "res");
+                OMElement bodyChild = getResponseElement(resName, (Object[]) resObject);
                 envelope.getBody().addChild(bodyChild);
-            }   else {
+            } else {
                 processResponse(resObject, bodyContent, ns, envelope);
             }
 
@@ -119,19 +119,19 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
     private Object[] processRequest(OMElement methodElement) throws AxisFault {
         Class[] parameters = method.getParameterTypes();
-        return   BeanUtil.deserialize(methodElement,parameters);
+        return BeanUtil.deserialize(methodElement, parameters);
     }
 
-    private OMElement getResponseElement(QName resname, Object [] objs){
-        return BeanUtil.getOMElement(resname,objs);
+    private OMElement getResponseElement(QName resname, Object [] objs) {
+        return BeanUtil.getOMElement(resname, objs);
     }
 
     private void processResponse(Object resObject, OMElement bodyContent, OMNamespace ns, SOAPEnvelope envelope) {
         if (resObject != null) {
             //todo first check to see where the desrilizer for the return object
             //simple type
-            if(resObject instanceof OMElement){
-                bodyContent=(OMElement)resObject;
+            if (resObject instanceof OMElement) {
+                bodyContent = (OMElement) resObject;
             } else if (SimpleTypeMapper.isSimpleType(resObject)) {
                 bodyContent = getSOAPFactory().createOMElement(
                         method.getName() + "Response", ns);

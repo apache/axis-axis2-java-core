@@ -30,5 +30,5 @@ public class InterfaceWriter extends ClassWriter {
         this.language = language;
     }
 
-    
+
 }

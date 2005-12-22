@@ -57,8 +57,8 @@ public class RPCParameter extends ElementDesc {
         }
     }
 
-    public static final int MODE_IN    = 0;
-    public static final int MODE_OUT   = 1;
+    public static final int MODE_IN = 0;
+    public static final int MODE_OUT = 1;
     public static final int MODE_INOUT = 2;
 
     int mode;

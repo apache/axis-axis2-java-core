@@ -29,5 +29,5 @@ public class MessageReceiverWriter extends ClassWriter {
         this.language = language;
     }
 
-    
+
 }

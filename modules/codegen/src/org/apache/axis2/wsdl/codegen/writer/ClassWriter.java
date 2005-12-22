@@ -31,8 +31,8 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
 
-public abstract class ClassWriter {        
-    
+public abstract class ClassWriter {
+
     private static Log log = LogFactory.getLog(ClassWriter.class);
 
     protected File outputFileLocation = null;
@@ -59,22 +59,22 @@ public abstract class ClassWriter {
     /**
      * Load the template
      */
-    public void loadTemplate() throws CodeGenerationException{
+    public void loadTemplate() throws CodeGenerationException {
         // the default behavior for the class writers is to use the property map from the languge specific types
         // The properties are arranged in the following order
         // <lang-name>.* .template=<write-class>,<template-name>
 
         //first get the language specific property map
         Class clazz = this.getClass();
-        Map languageSpecificPropertyMap = (Map)ConfigPropertyFileLoader.getLanguageSpecificPropertiesMap().get(this.language);
-        if (languageSpecificPropertyMap==null){
+        Map languageSpecificPropertyMap = (Map) ConfigPropertyFileLoader.getLanguageSpecificPropertiesMap().get(this.language);
+        if (languageSpecificPropertyMap == null) {
             throw new CodeGenerationException("No language specific properties!!!");
         }
 
         String templateName = findTemplate(languageSpecificPropertyMap);
-        if (templateName!=null){
+        if (templateName != null) {
             this.xsltStream = clazz.getResourceAsStream(templateName);
-        }else{
+        } else {
             throw new CodeGenerationException("template for this writer is not found");
         }
 
@@ -84,7 +84,7 @@ public abstract class ClassWriter {
     protected String findTemplate(Map languageSpecificPropertyMap) {
         //search through the proprty names to find the template relevant to this class
 
-        String ownClazzName =  this.getClass().getName();
+        String ownClazzName = this.getClass().getName();
         String key;
         String propertyValue;
         String templateName = null;
@@ -93,12 +93,12 @@ public abstract class ClassWriter {
         while (keys.hasNext()) {
             //check for template entries
             key = keys.next().toString();
-            if (key.endsWith(TEMPLATE_SUFFIX)){
+            if (key.endsWith(TEMPLATE_SUFFIX)) {
                 // check if the class name is there
                 propertyValue = languageSpecificPropertyMap.get(key).toString();
-                if (propertyValue.startsWith(ownClazzName)){
+                if (propertyValue.startsWith(ownClazzName)) {
                     //bingo! we found the right template
-                    templateName = propertyValue.substring(propertyValue.indexOf(SEPERATOR_STRING)+1) ;
+                    templateName = propertyValue.substring(propertyValue.indexOf(SEPERATOR_STRING) + 1);
                     break;
                 }
             }
@@ -121,7 +121,7 @@ public abstract class ClassWriter {
                 getFileExtensionForLanguage(language));
         //set the existing flag
         fileExists = outputFile.exists();
-        if (!fileExists){
+        if (!fileExists) {
             this.stream = new FileOutputStream(outputFile);
         } else {
             log.info(Messages.getMessage("fileExistsNoOverwrite", outputFile.toString()));
@@ -130,18 +130,19 @@ public abstract class ClassWriter {
 
     /**
      * Find the file name extension
+     *
      * @param language
      * @return extension
      */
-    protected String getFileExtensionForLanguage(String language){
-        Map languageSpecificPropertyMap = (Map)ConfigPropertyFileLoader.getLanguageSpecificPropertiesMap().get(this.language);
+    protected String getFileExtensionForLanguage(String language) {
+        Map languageSpecificPropertyMap = (Map) ConfigPropertyFileLoader.getLanguageSpecificPropertiesMap().get(this.language);
         Iterator keys = languageSpecificPropertyMap.keySet().iterator();
         String key;
         String extension = null;
         while (keys.hasNext()) {
             //check for template entries
             key = keys.next().toString();
-            if (key.endsWith(EXTENSION_SUFFIX)){
+            if (key.endsWith(EXTENSION_SUFFIX)) {
                 extension = languageSpecificPropertyMap.get(key).toString();
                 //add a . to the front
                 extension = "." + extension;
@@ -158,7 +159,7 @@ public abstract class ClassWriter {
      * @throws Exception
      */
     public void parse(Document doc) throws Exception {
-        if (!fileExists){
+        if (!fileExists) {
             XSLTTemplateProcessor.parse(this.stream,
                     doc,
                     this.xsltStream);

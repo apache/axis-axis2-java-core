@@ -35,7 +35,7 @@ public class RPCValues {
     }
 
     public void setIndexedValue(QName paramName, int index, Object value) {
-        ArrayList coll = (ArrayList)values.get(paramName);
+        ArrayList coll = (ArrayList) values.get(paramName);
         if (coll == null) {
             coll = new ArrayList();
             values.put(paramName, coll);

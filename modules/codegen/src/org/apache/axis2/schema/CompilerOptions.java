@@ -31,7 +31,7 @@ public class CompilerOptions {
      * Generated output file
      */
     private File outputLocation;
-    private String packageName=null;
+    private String packageName = null;
 
     /**
      * This flag tells the databinder to either write the output or
@@ -69,9 +69,9 @@ public class CompilerOptions {
     public CompilerOptions setPackageName(String packageName) {
         //validate the package name
         //should be ***.***.***. type value
-        if (packageName!=null && testValue(packageName)){
-           this.packageName = packageName;
-        }else{
+        if (packageName != null && testValue(packageName)) {
+            this.packageName = packageName;
+        } else {
             throw new RuntimeException("Unsupported value!");
         }
 
@@ -87,9 +87,9 @@ public class CompilerOptions {
         return this;
     }
 
-    private boolean testValue(String wordToMatch){
-         Pattern pat = Pattern.compile("^(\\w+\\.)+$");
-         Matcher m= pat.matcher(wordToMatch);
-         return m.matches();
+    private boolean testValue(String wordToMatch) {
+        Pattern pat = Pattern.compile("^(\\w+\\.)+$");
+        Matcher m = pat.matcher(wordToMatch);
+        return m.matches();
     }
 }

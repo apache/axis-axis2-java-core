@@ -48,7 +48,6 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private boolean generateAll = false;
 
 
-
     /**
      * A hashmap to hang the property objects
      */
@@ -71,6 +70,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     /**
      * get the wrap classes flag
+     *
      * @return
      */
     public boolean isWrapClasses() {
@@ -79,6 +79,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     /**
      * set the wrap classes flag
+     *
      * @param wrapClasses
      */
     public void setWrapClasses(boolean wrapClasses) {
@@ -87,6 +88,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     /**
      * gets the policy map
+     *
      * @return
      */
     public Map getPolicyMap() {
@@ -95,6 +97,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     /**
      * sets the policy map
+     *
      * @param policyMap
      */
     public void setPolicyMap(Map policyMap) {
@@ -106,39 +109,41 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     * absent, switches to the interface. The user however, can switch to the interface or the binding
     * modes explicitly by specifying this parameter
     */
-    private  int codeGenerationStyle = XSLTConstants.CodegenStyle.AUTOMATIC;
-
+    private int codeGenerationStyle = XSLTConstants.CodegenStyle.AUTOMATIC;
 
 
     /**
      * put a property into the configuration
+     *
      * @param key
      * @param value
      */
-    public void put(Object key, Object value){
-        configurationProperties.put(key,value);
+    public void put(Object key, Object value) {
+        configurationProperties.put(key, value);
     }
 
     /**
      * get the property from the configuration
+     *
      * @param key
      * @return
      */
-    public Object get(Object key){
+    public Object get(Object key) {
         return configurationProperties.get(key);
     }
 
     /**
      * Get the whole property object
+     *
      * @return
      */
-    public Map getProperties(){
+    public Map getProperties() {
         return configurationProperties;
     }
+
     private TypeMapper typeMapper;
 
     /**
-     *
      * @return
      */
     public int getCodeGenerationStyle() {
@@ -146,7 +151,6 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     /**
-     *
      * @param codeGenerationStyle
      */
     public void setCodeGenerationStyle(int codeGenerationStyle) {
@@ -154,7 +158,6 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     /**
-     *
      * @return
      */
     public TypeMapper getTypeMapper() {
@@ -162,7 +165,6 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     /**
-     *
      * @param typeMapper
      */
     public void setTypeMapper(TypeMapper typeMapper) {
@@ -170,7 +172,6 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     /**
-     *
      * @return
      */
     public String getDatabindingType() {
@@ -178,7 +179,6 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     /**
-     *
      * @param databindingType
      */
     public void setDatabindingType(String databindingType) {
@@ -198,6 +198,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     /**
      * Constructor for the configuration. populate the values using the options map
+     *
      * @param wom
      * @param optionMap
      */
@@ -206,18 +207,18 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
         String outputLocation = "."; //default output directory is the current working directory
         CommandLineOption clo =
-                ((CommandLineOption)optionMap.get(OUTPUT_LOCATION_OPTION));
+                ((CommandLineOption) optionMap.get(OUTPUT_LOCATION_OPTION));
         if (clo != null) {
             outputLocation = clo.getOptionValue();
         }
         this.outputLocation = new File(outputLocation);
 
         //check and create the directories
-        if (this.outputLocation.exists()){
-            if (this.outputLocation.isFile()){
-                throw  new RuntimeException("The specified output location is not a directory!");
+        if (this.outputLocation.exists()) {
+            if (this.outputLocation.isFile()) {
+                throw new RuntimeException("The specified output location is not a directory!");
             }
-        }else{
+        } else {
             this.outputLocation.mkdirs();
         }
 
@@ -255,23 +256,22 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
         CommandLineOption dataBindingOption = (CommandLineOption) optionMap.get(
                 DATA_BINDING_TYPE_OPTION);
-        if(dataBindingOption != null){
+        if (dataBindingOption != null) {
             setDatabindingType(dataBindingOption.getOptionValue());
         }
 
         CommandLineOption wrapClassesOption = (CommandLineOption) optionMap.get(
                 WRAP_CLASSES_OPTION);
-        if(wrapClassesOption != null){
+        if (wrapClassesOption != null) {
             wrapClasses = true;
         }
 
-         CommandLineOption generateAllOption = (CommandLineOption) optionMap.get(
+        CommandLineOption generateAllOption = (CommandLineOption) optionMap.get(
                 GENERATE_ALL_OPTION);
-        if(generateAllOption != null){
+        if (generateAllOption != null) {
             generateAll = true;
         }
     }
-
 
 
     /**

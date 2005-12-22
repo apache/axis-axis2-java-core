@@ -16,23 +16,21 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
-import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
-import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 
-public class DefaultDatabindingExtension extends AbstractDBProcessingExtension{
+public class DefaultDatabindingExtension extends AbstractDBProcessingExtension {
 
-  
+
     public void engage() throws CodeGenerationException {
         TypeMapper mappper = configuration.getTypeMapper();
-        if (testFallthrough(configuration.getDatabindingType())){
+        if (testFallthrough(configuration.getDatabindingType())) {
             //if it's fall through for the default databinding extension and a mapper has
             //not yet being set, then there's a problem.
             //Hence check the mapper status here
 
-            if (mappper==null){
+            if (mappper == null) {
                 //this shouldn't happen
                 throw new CodeGenerationException("No proper databinding has taken place");
             }

@@ -20,9 +20,9 @@ import java.io.FileOutputStream;
  * limitations under the License.
  */
 
-public class PolicyFileWriter extends ClassWriter{
+public class PolicyFileWriter extends ClassWriter {
 
-     public PolicyFileWriter(File outputFileLocation) {
+    public PolicyFileWriter(File outputFileLocation) {
         this.outputFileLocation = outputFileLocation;
     }
 
@@ -34,7 +34,7 @@ public class PolicyFileWriter extends ClassWriter{
                 ".xml");
         //set the existing flag
         fileExists = outputFile.exists();
-        if (!fileExists){
+        if (!fileExists) {
             this.stream = new FileOutputStream(outputFile);
         }
     }

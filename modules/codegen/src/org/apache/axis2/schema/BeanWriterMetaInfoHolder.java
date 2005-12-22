@@ -1,7 +1,11 @@
 package org.apache.axis2.schema;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -27,7 +31,6 @@ import java.util.*;
 public class BeanWriterMetaInfoHolder {
 
 
-
     private boolean ordered = false;
     private boolean anonymous = false;
     private boolean extension = false;
@@ -41,6 +44,7 @@ public class BeanWriterMetaInfoHolder {
 
     /**
      * get the anon status
+     *
      * @return
      */
     public boolean isAnonymous() {
@@ -49,6 +53,7 @@ public class BeanWriterMetaInfoHolder {
 
     /**
      * Set the anonymous flag
+     *
      * @param anonymous
      */
     public void setAnonymous(boolean anonymous) {
@@ -58,6 +63,7 @@ public class BeanWriterMetaInfoHolder {
     /**
      * set the extensions base class name. Valid only when the isExtension
      * retruns true
+     *
      * @param extensionClassName
      * @return
      */
@@ -68,6 +74,7 @@ public class BeanWriterMetaInfoHolder {
     /**
      * set the extensions base class name. Valid only when the isExtension
      * retruns true
+     *
      * @param extensionClassName
      */
     public void setExtensionClassName(String extensionClassName) {
@@ -76,6 +83,7 @@ public class BeanWriterMetaInfoHolder {
 
     /**
      * get the extension status
+     *
      * @return
      */
     public boolean isExtension() {
@@ -84,6 +92,7 @@ public class BeanWriterMetaInfoHolder {
 
     /**
      * set the extension status
+     *
      * @param extension
      */
     public void setExtension(boolean extension) {
@@ -92,6 +101,7 @@ public class BeanWriterMetaInfoHolder {
 
     /**
      * ge the ordered statu
+     *
      * @return
      */
     public boolean isOrdered() {
@@ -101,6 +111,7 @@ public class BeanWriterMetaInfoHolder {
     /**
      * set the ordered flag. this marks whether the
      * items are ordered or not
+     *
      * @param ordered
      */
     public void setOrdered(boolean ordered) {
@@ -109,89 +120,98 @@ public class BeanWriterMetaInfoHolder {
 
     /**
      * Register a mapping
+     *
      * @param qName
      * @param schemaName
      * @param javaClassName
      */
-    public void registerMapping(QName qName,QName schemaName,String javaClassName){
-        registerMapping(qName,schemaName,javaClassName,SchemaConstants.ELEMENT_TYPE);
+    public void registerMapping(QName qName, QName schemaName, String javaClassName) {
+        registerMapping(qName, schemaName, javaClassName, SchemaConstants.ELEMENT_TYPE);
     }
 
     /**
      * Register a mapping
+     *
      * @param qName
      * @param schemaName
      * @param javaClassName
      * @param type
      */
-    public void registerMapping(QName qName,QName schemaName,String javaClassName,Integer type){
-        this.elementToJavaClassMap.put(qName,javaClassName);
-        this.elementToSchemaQNameMap.put(qName,schemaName);
-        this.specialTypeFlagMap.put(qName,type);
+    public void registerMapping(QName qName, QName schemaName, String javaClassName, Integer type) {
+        this.elementToJavaClassMap.put(qName, javaClassName);
+        this.elementToSchemaQNameMap.put(qName, schemaName);
+        this.specialTypeFlagMap.put(qName, type);
 
     }
 
     /**
      * Get the schema name for the given QName
+     *
      * @param eltQName
      * @return
      */
-    public QName getSchemaQNameForQName(QName eltQName){
-        return (QName)this.elementToSchemaQNameMap.get(eltQName);
+    public QName getSchemaQNameForQName(QName eltQName) {
+        return (QName) this.elementToSchemaQNameMap.get(eltQName);
     }
 
     /**
      * get the class name for the QName
+     *
      * @param eltQName
      * @return
      */
-    public String getClassNameForQName(QName eltQName){
-        return (String)this.elementToJavaClassMap.get(eltQName);
+    public String getClassNameForQName(QName eltQName) {
+        return (String) this.elementToJavaClassMap.get(eltQName);
     }
 
     /**
      * Get whether a given QName is an attribute
+     *
      * @param qName
      * @return
      */
-    public boolean getAttributeStatusForQName(QName qName){
+    public boolean getAttributeStatusForQName(QName qName) {
         Integer attribState = (Integer) specialTypeFlagMap.get(qName);
         return attribState != null && attribState.equals(SchemaConstants.ATTRIBUTE_TYPE);
     }
 
     /**
      * Get whether a given QName represents a anyType
+     *
      * @param qName
      * @return
      */
-    public boolean getAnyStatusForQName(QName qName){
+    public boolean getAnyStatusForQName(QName qName) {
         Integer anyState = (Integer) specialTypeFlagMap.get(qName);
         return anyState != null && anyState.equals(SchemaConstants.ANY_TYPE);
     }
 
     /**
-     *  Get whether a given QName refers to an array
+     * Get whether a given QName refers to an array
+     *
      * @param qName
      * @return
      */
-    public boolean getArrayStatusForQName(QName qName){
+    public boolean getArrayStatusForQName(QName qName) {
         Integer anyState = (Integer) specialTypeFlagMap.get(qName);
         return anyState != null && anyState.equals(SchemaConstants.ANY_ARRAY_TYPE);
     }
 
     /**
      * Get whether a given QName has the any attribute status
+     *
      * @param qName
      * @return
      */
-    public boolean getAnyAttributeStatusForQName(QName qName){
+    public boolean getAnyAttributeStatusForQName(QName qName) {
         Integer anyState = (Integer) specialTypeFlagMap.get(qName);
         return anyState != null && anyState.equals(SchemaConstants.ANY_ATTRIBUTE_TYPE);
     }
+
     /**
-     *  Clears the whole set of tables.
+     * Clears the whole set of tables.
      */
-    public void clearTables(){
+    public void clearTables() {
         this.elementToJavaClassMap.clear();
         this.elementToSchemaQNameMap.clear();
         this.elementToSchemaQNameMap.clear();
@@ -204,84 +224,91 @@ public class BeanWriterMetaInfoHolder {
 
     /**
      * add the maxOccurs associated with a QName
+     *
      * @param qName
      * @param minOccurs
      */
-    public void addMinOccurs(QName qName, long minOccurs){
-        this.qNameMinOccursCountMap.put(qName,new Long(minOccurs));
+    public void addMinOccurs(QName qName, long minOccurs) {
+        this.qNameMinOccursCountMap.put(qName, new Long(minOccurs));
     }
 
     /**
      * register a QName for the order
+     *
      * @param qName
      * @param index
      */
-    public void registerQNameIndex(QName qName, int index){
-        this.qNameOrderMap.put(new Integer(index),qName);
+    public void registerQNameIndex(QName qName, int index) {
+        this.qNameOrderMap.put(new Integer(index), qName);
     }
 
     /**
      * Add the minOccurs associated with a QName
+     *
      * @param qName
      * @return
      */
-    public long getMinOccurs(QName qName){
-        Long l =(Long) this.qNameMinOccursCountMap.get(qName);
-        return l!=null?l.longValue():1; //default for min is 1
+    public long getMinOccurs(QName qName) {
+        Long l = (Long) this.qNameMinOccursCountMap.get(qName);
+        return l != null ? l.longValue() : 1; //default for min is 1
     }
 
     /**
      * get the maxOccurs associated with a QName
+     *
      * @param qName
      * @return
      */
-    public long getMaxOccurs(QName qName){
-        Long l =(Long) this.qNameMaxOccursCountMap.get(qName);
-        return l!=null?l.longValue():1; //default for max is 1
+    public long getMaxOccurs(QName qName) {
+        Long l = (Long) this.qNameMaxOccursCountMap.get(qName);
+        return l != null ? l.longValue() : 1; //default for max is 1
     }
 
     /**
      * Add the maxOccurs associated with a QName
+     *
      * @param qName
      * @param maxOccurs
      */
-    public void addMaxOccurs(QName qName, long maxOccurs){
-        this.qNameMaxOccursCountMap.put(qName,new Long(maxOccurs));
+    public void addMaxOccurs(QName qName, long maxOccurs) {
+        this.qNameMaxOccursCountMap.put(qName, new Long(maxOccurs));
     }
 
     /**
-     * @deprecated Use #getQNameArray
      * @return
+     * @deprecated Use #getQNameArray
      */
-    public Iterator getElementQNameIterator(){
+    public Iterator getElementQNameIterator() {
         return elementToJavaClassMap.keySet().iterator();
     }
 
     /**
      * get the QName array - may not be ordered
+     *
      * @return
      */
-    public QName[] getQNameArray(){
-        Set keySet =elementToJavaClassMap.keySet();
-        return (QName[])keySet.toArray(new QName[keySet.size()]);
+    public QName[] getQNameArray() {
+        Set keySet = elementToJavaClassMap.keySet();
+        return (QName[]) keySet.toArray(new QName[keySet.size()]);
     }
 
     /**
      * Get the ordered QName array - useful in sequences where the order needs to be preserved
      * Note - #registerQNameIndex needs to be called if this is to work properly!
+     *
      * @return
      */
-    public QName[] getOrderedQNameArray(){
+    public QName[] getOrderedQNameArray() {
         //get the keys of the order map
         Set set = qNameOrderMap.keySet();
         int count = set.size();
-        Integer[] keys =(Integer[]) set.toArray(new Integer[count]);
+        Integer[] keys = (Integer[]) set.toArray(new Integer[count]);
         Arrays.sort(keys);
 
         //Now refill the Ordered QName Array
         QName[] returnQNames = new QName[count];
         for (int i = 0; i < keys.length; i++) {
-            returnQNames[i] = (QName)qNameOrderMap.get(keys[i]);
+            returnQNames[i] = (QName) qNameOrderMap.get(keys[i]);
 
         }
         return returnQNames;

@@ -63,7 +63,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public abstract class  MultiLanguageClientEmitter implements Emitter {
+public abstract class MultiLanguageClientEmitter implements Emitter {
 
     private Log log = LogFactory.getLog(getClass());
 
@@ -106,6 +106,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     public void setCodeGenConfiguration(CodeGenConfiguration configuration) {
         this.configuration = configuration;
     }
+
     /**
      * @see org.apache.axis2.wsdl.codegen.emitter.Emitter#emitSkeleton()
      */
@@ -114,19 +115,19 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
             //get the interface
             WSDLDescription wom = this.configuration.getWom();
             int codegenStyle = this.configuration.getCodeGenerationStyle();
-            if (codegenStyle== XSLTConstants.CodegenStyle.INTERFACE){
+            if (codegenStyle == XSLTConstants.CodegenStyle.INTERFACE) {
                 emitSkeletonInterface(wom);
-            }else if (codegenStyle== XSLTConstants.CodegenStyle.BINDING){
+            } else if (codegenStyle == XSLTConstants.CodegenStyle.BINDING) {
                 emitSkeletonBinding(wom);
-            }else if (codegenStyle==XSLTConstants.CodegenStyle.AUTOMATIC){
+            } else if (codegenStyle == XSLTConstants.CodegenStyle.AUTOMATIC) {
                 emitSkeletonAutomatic(wom);
-            }else{
+            } else {
                 throw new Exception("Unknown code generation style!!! " + codegenStyle);
             }
 
             // Call the emit stub method to generate the client side too
-            if (configuration.isGenerateAll()){
-                 emitStub();
+            if (configuration.isGenerateAll()) {
+                emitStub();
             }
 
 
@@ -134,6 +135,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
             throw new CodeGenerationException(e);
         }
     }
+
     /**
      * @see org.apache.axis2.wsdl.codegen.emitter.Emitter#emitStub()
      */
@@ -142,13 +144,13 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
             //get the interface
             WSDLDescription wom = this.configuration.getWom();
             int codegenStyle = this.configuration.getCodeGenerationStyle();
-            if (codegenStyle== XSLTConstants.CodegenStyle.INTERFACE){
+            if (codegenStyle == XSLTConstants.CodegenStyle.INTERFACE) {
                 emitStubInterface(wom);
-            }else if (codegenStyle== XSLTConstants.CodegenStyle.BINDING){
+            } else if (codegenStyle == XSLTConstants.CodegenStyle.BINDING) {
                 emitStubBinding(wom);
-            }else if (codegenStyle==XSLTConstants.CodegenStyle.AUTOMATIC){
+            } else if (codegenStyle == XSLTConstants.CodegenStyle.AUTOMATIC) {
                 emitStubAutomatic(wom);
-            }else{
+            } else {
                 throw new Exception("Unknown code generation style!!! " + codegenStyle);
             }
 
@@ -159,15 +161,16 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     /**
      * Emit the skeleton with inteface only
+     *
      * @param wom
      */
-    private void emitSkeletonInterface(WSDLDescription wom) throws Exception{
+    private void emitSkeletonInterface(WSDLDescription wom) throws Exception {
 
         Map interfaces = wom.getWsdlInterfaces();
 
         //loop through the wsdlInterfaces to generate the interface code
         //theoretically the interface should be the base for the interfaces
-        Collection interfaceCollection =interfaces.values();
+        Collection interfaceCollection = interfaces.values();
         for (Iterator iterator = interfaceCollection.iterator(); iterator.hasNext();) {
             WSDLInterface axisInteface = (WSDLInterface) iterator.next();
             //write skeleton
@@ -183,20 +186,21 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     /**
      * Emit the skelton with binding
+     *
      * @param wom
      */
-    private void emitSkeletonBinding(WSDLDescription wom) throws Exception{
+    private void emitSkeletonBinding(WSDLDescription wom) throws Exception {
         Map bindings = wom.getBindings();
-        if (bindings==null || bindings.isEmpty()){
+        if (bindings == null || bindings.isEmpty()) {
             //asking for a code generation with a binding when a binding is
             //not present should be the cause of an Exception !
             throw new Exception("Cannot find a binding!!");
 
-        }else{
+        } else {
             WSDLBinding axisBinding;
             Collection bindingCollection = bindings.values();
             for (Iterator iterator = bindingCollection.iterator(); iterator.hasNext();) {
-                axisBinding  =  (WSDLBinding)iterator.next();
+                axisBinding = (WSDLBinding) iterator.next();
 
                 //write skeleton
                 writeSkeleton(axisBinding.getBoundInterface(), axisBinding);
@@ -205,8 +209,8 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 //write a MessageReceiver for this particular service.
                 writeMessageReceiver(axisBinding);
                 //write the ant build if not asked for all
-                if (!configuration.isGenerateAll()){
-                  writeAntBuild(axisBinding.getBoundInterface(),axisBinding);
+                if (!configuration.isGenerateAll()) {
+                    writeAntBuild(axisBinding.getBoundInterface(), axisBinding);
                 }
 
             }
@@ -215,28 +219,31 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     /**
      * Skeleton emission - Automatic mode
+     *
      * @param wom
      */
-    private void emitSkeletonAutomatic(WSDLDescription wom) throws Exception{
+    private void emitSkeletonAutomatic(WSDLDescription wom) throws Exception {
         Map bindings = wom.getBindings();
-        if (bindings==null || bindings.isEmpty()){
+        if (bindings == null || bindings.isEmpty()) {
             //No binding is present.use the interface mode
             emitSkeletonInterface(wom);
-        }else{
+        } else {
             //use the binding mode
             emitSkeletonBinding(wom);
         }
 
     }
+
     /**
      * Emits the stub code with the interfaces only
+     *
      * @param wom
      * @throws Exception
      */
-    private void emitStubInterface(WSDLDescription wom) throws Exception{
+    private void emitStubInterface(WSDLDescription wom) throws Exception {
         Map interfaces = wom.getWsdlInterfaces();
         //loop through the wsdlInterfaces to generate the interface code
-        Collection interfaceCollection =interfaces.values();
+        Collection interfaceCollection = interfaces.values();
         for (Iterator iterator = interfaceCollection.iterator(); iterator.hasNext();) {
             //Write the interfaces
             WSDLInterface axisInterface = (WSDLInterface) iterator.next();
@@ -256,28 +263,29 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     /**
      * Emit the stubcode with bindings
+     *
      * @param wom
      * @throws Exception
      */
-    private void emitStubBinding(WSDLDescription wom) throws Exception{
+    private void emitStubBinding(WSDLDescription wom) throws Exception {
         Map bindings = wom.getBindings();
-        if (bindings==null || bindings.isEmpty()){
+        if (bindings == null || bindings.isEmpty()) {
             //asking for a code generation with a binding when a binding is
             //not present should be the cause of an Exception !
             throw new Exception("Cannot find a binding!!");
-        }else{
-            WSDLBinding axisBinding ;
+        } else {
+            WSDLBinding axisBinding;
             WSDLService axisService = null;
             Collection bindingCollection = bindings.values();
             for (Iterator iterator = bindingCollection.iterator(); iterator.hasNext();) {
 
-                axisBinding  =  (WSDLBinding)iterator.next();
+                axisBinding = (WSDLBinding) iterator.next();
                 //Check the service
                 axisService = checkService(wom, axisService);
                 //write the inteface
                 //feed the binding information also
                 //note that we do not create this interface if the user switched on the wrap classes mode
-                if (!configuration.isWrapClasses()){
+                if (!configuration.isWrapClasses()) {
                     writeInterface(axisBinding.getBoundInterface(), axisBinding);
                 }
                 //write the call back handlers
@@ -292,7 +300,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 //write a testservice.xml that will load the dummy skeleton impl for testing
                 //writeTestServiceXML(axisBinding);
                 //write an ant build file
-                writeAntBuild(axisBinding.getBoundInterface(),axisBinding);
+                writeAntBuild(axisBinding.getBoundInterface(), axisBinding);
             }
         }
     }
@@ -300,14 +308,15 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     /**
      * emit the stubcode with the automatic mode. Look for the binding and if present
      * emit the skeleton with the binding. Else go for the interface
+     *
      * @param wom
      */
-    private void emitStubAutomatic(WSDLDescription wom) throws Exception{
+    private void emitStubAutomatic(WSDLDescription wom) throws Exception {
         Map bindings = wom.getBindings();
-        if (bindings==null || bindings.isEmpty()){
+        if (bindings == null || bindings.isEmpty()) {
             //No binding is not present.use the interface mode
             emitStubInterface(wom);
-        }else{
+        } else {
             //use the binding mode
             emitStubBinding(wom);
         }
@@ -316,9 +325,10 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     /**
      * Check the service for compatibility. Am incompatible service consists of
      * multiple services ATM
+     *
      * @param wom
      * @param axisService
-     * @return  the WSDLService object
+     * @return the WSDLService object
      */
     private WSDLService checkService(WSDLDescription wom, WSDLService axisService) {
         Map services = wom.getServices();
@@ -332,8 +342,6 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         }
         return axisService;
     }
-
-
 
 
     /**
@@ -354,7 +362,6 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     }
 
 
-
     /**
      *
      */
@@ -372,6 +379,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     /**
      * Writes the interfaces
+     *
      * @param axisInterface
      * @param axisBinding
      * @throws Exception
@@ -405,7 +413,6 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
 
     }
-
 
 
     /**
@@ -479,7 +486,6 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     }
 
 
-
     /**
      * A resusable method for the implementation of interface and implementation writing
      *
@@ -499,8 +505,6 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     }
 
 
-
-
     private Document getEmptyDocument() {
         try {
             DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -512,6 +516,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     /**
      * Generating the model for the callbacks
+     *
      * @param boundInterface
      * @param axisBinding
      */
@@ -525,7 +530,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 rootElement);
         addAttribute(doc,
                 "name",
-                reformatName(boundInterface.getName().getLocalPart(),false) +
+                reformatName(boundInterface.getName().getLocalPart(), false) +
                         CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
         addAttribute(doc,
@@ -534,13 +539,12 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 rootElement);
 
         //TODO JAXRPC mapping support should be considered
-        this.loadOperations(boundInterface, doc, rootElement,axisBinding);
+        this.loadOperations(boundInterface, doc, rootElement, axisBinding);
         //this.loadOperations(boundInterface, doc, rootElement, "on", "Complete");
 
         doc.appendChild(rootElement);
         return doc;
     }
-
 
 
     /**
@@ -554,23 +558,20 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                                       WSDLOperation operation, List headerParameterQNameList) {
         Element inputElt = doc.createElement("input");
         Element param = getInputParamElement(doc, operation);
-        if (param!=null){
+        if (param != null) {
             inputElt.appendChild(param);
         }
-        List parameterElementList = getParameterElementList(doc,headerParameterQNameList, "header");
+        List parameterElementList = getParameterElementList(doc, headerParameterQNameList, "header");
         for (int i = 0; i < parameterElementList.size(); i++) {
-            inputElt.appendChild((Element)parameterElementList.get(i));
+            inputElt.appendChild((Element) parameterElementList.get(i));
         }
         return inputElt;
     }
 
 
-
-
-
-    private List getParameterElementList(Document doc, List parameters, String location){
+    private List getParameterElementList(Document doc, List parameters, String location) {
         List parameterElementList = new ArrayList();
-        if (parameters!=null && !parameters.isEmpty()) {
+        if (parameters != null && !parameters.isEmpty()) {
             int count = parameters.size();
             for (int i = 0; i < count; i++) {
                 Element param = doc.createElement("param");
@@ -582,7 +583,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 String typeMapping = this.mapper.getTypeMappingName(name);
                 String typeMappingStr = typeMapping == null ? "" : typeMapping;
                 addAttribute(doc, "type", typeMappingStr, param);
-                addAttribute(doc,"location",location,param);
+                addAttribute(doc, "location", location, param);
                 parameterElementList.add(param);
             }
 
@@ -591,7 +592,6 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     }
 
     /**
-     *
      * @param doc
      * @param operation
      * @return the parameter element
@@ -600,7 +600,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                                          WSDLOperation operation) {
         Element param = doc.createElement("param");
         MessageReference inputMessage = operation.getInputMessage();
-        if (inputMessage!=null){
+        if (inputMessage != null) {
             addAttribute(doc,
                     "name",
                     this.mapper.getParameterName(inputMessage.getElementQName()),
@@ -612,21 +612,20 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
             addAttribute(doc, "type", typeMapping == null ? "" : typeMapping, param);
 
             //add an extra attribute to say whether the type mapping is the default
-            if (TypeMapper.DEFAULT_CLASS_NAME.equals(typeMapping)){
-                addAttribute(doc,"default","yes",param);
+            if (TypeMapper.DEFAULT_CLASS_NAME.equals(typeMapping)) {
+                addAttribute(doc, "default", "yes", param);
             }
 
             //add this as a body parameter
-            addAttribute(doc,"location","body",param);
+            addAttribute(doc, "location", "body", param);
             Iterator iter = inputMessage.getExtensibilityAttributes().iterator();
-            while(iter.hasNext()){
+            while (iter.hasNext()) {
                 WSDLExtensibilityAttribute att = (WSDLExtensibilityAttribute) iter.next();
                 addAttribute(doc, att.getKey().getLocalPart(), att.getValue().toString(), param);
             }
-        }else{
+        } else {
             param = null;
         }
-
 
 
         return param;
@@ -643,12 +642,12 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                                        WSDLOperation operation, List headerParameterQNameList) {
         Element outputElt = doc.createElement("output");
         Element param = getOutputParamElement(doc, operation);
-        if (param!=null){
+        if (param != null) {
             outputElt.appendChild(param);
         }
-        List outputElementList = getParameterElementList(doc,headerParameterQNameList, "header");
+        List outputElementList = getParameterElementList(doc, headerParameterQNameList, "header");
         for (int i = 0; i < outputElementList.size(); i++) {
-            outputElt.appendChild((Element)outputElementList.get(i));
+            outputElt.appendChild((Element) outputElementList.get(i));
         }
         return outputElt;
     }
@@ -661,30 +660,28 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         String typeMappingStr;
         String parameterName;
 
-        if (outputMessage!=null){
-            parameterName =  this.mapper.getParameterName(
-                    outputMessage.getElementQName()) ;
+        if (outputMessage != null) {
+            parameterName = this.mapper.getParameterName(
+                    outputMessage.getElementQName());
             String typeMapping = this.mapper.getTypeMappingName(
                     operation.getOutputMessage().getElementQName());
             typeMappingStr = typeMapping == null ? "" : typeMapping;
 
-        }else{
-            parameterName = "" ;
+        } else {
+            parameterName = "";
             typeMappingStr = "";
         }
-        addAttribute(doc,"name",parameterName,param);
-        addAttribute(doc,"type", typeMappingStr, param);
+        addAttribute(doc, "name", parameterName, param);
+        addAttribute(doc, "type", typeMappingStr, param);
         //add an extra attribute to say whether the type mapping is the default
-        if (TypeMapper.DEFAULT_CLASS_NAME.equals(typeMappingStr)){
-            addAttribute(doc,"default","yes",param);
+        if (TypeMapper.DEFAULT_CLASS_NAME.equals(typeMappingStr)) {
+            addAttribute(doc, "default", "yes", param);
         }
         //add this as a body parameter
-        addAttribute(doc,"location","body",param);
+        addAttribute(doc, "location", "body", param);
 
         return param;
     }
-
-
 
 
     protected Document createDOMDocumentForServiceXML(WSDLInterface boundInterface,
@@ -692,7 +689,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
-        String localPart = reformatName(boundInterface.getName().getLocalPart(),false);
+        String localPart = reformatName(boundInterface.getName().getLocalPart(), false);
         if (forTesting) {
             addAttribute(doc,
                     "package",
@@ -712,7 +709,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
             //name
             addAttribute(doc,
                     "package",
-                    SERVICE_XML_OUTPUT_FOLDER_NAME+localPart,
+                    SERVICE_XML_OUTPUT_FOLDER_NAME + localPart,
                     rootElement);
             addAttribute(doc,
                     "classpackage",
@@ -730,7 +727,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 localPart + MESSAGE_RECEIVER_SUFFIX,
                 rootElement);
         fillSyncAttributes(doc, rootElement);
-        loadOperations(boundInterface, doc, rootElement,axisBinding);
+        loadOperations(boundInterface, doc, rootElement, axisBinding);
         doc.appendChild(rootElement);
 
         return doc;
@@ -746,7 +743,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 "package",
                 configuration.getPackageName(),
                 rootElement);
-        String localPart = reformatName(boundInterface.getName().getLocalPart(),false);
+        String localPart = reformatName(boundInterface.getName().getLocalPart(), false);
         addAttribute(doc,
                 "name",
                 localPart + MESSAGE_RECEIVER_SUFFIX,
@@ -768,7 +765,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         loadOperations(boundInterface, doc, rootElement, binding);
 
         /////////////////////////
-        rootElement.appendChild(createDOMElementforDatabinders(doc,binding));
+        rootElement.appendChild(createDOMElementforDatabinders(doc, binding));
         /////////////////////////
         doc.appendChild(rootElement);
         return doc;
@@ -776,6 +773,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     /**
      * Creates the DOM tree for the interface creation. Uses the interface
+     *
      * @param wsdlInterface
      * @param axisBinding
      */
@@ -783,7 +781,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("ant");
-        String localPart = reformatName(wsdlInterface.getName().getLocalPart(),false);
+        String localPart = reformatName(wsdlInterface.getName().getLocalPart(), false);
         String packageName = configuration.getPackageName();
         String[] dotSeparatedValues = packageName.split("\\.");
         addAttribute(doc,
@@ -802,6 +800,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     /**
      * Creates the DOM tree for the interface creation. Uses the interface
+     *
      * @param wsdlInterface
      * @param axisBinding
      */
@@ -809,7 +808,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
-        String localPart = reformatName(wsdlInterface.getName().getLocalPart(),false);
+        String localPart = reformatName(wsdlInterface.getName().getLocalPart(), false);
         addAttribute(doc,
                 "package",
                 configuration.getPackageName(),
@@ -825,7 +824,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                         CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
         fillSyncAttributes(doc, rootElement);
-        loadOperations(wsdlInterface, doc, rootElement,axisBinding);
+        loadOperations(wsdlInterface, doc, rootElement, axisBinding);
         doc.appendChild(rootElement);
         return doc;
 
@@ -834,6 +833,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     /**
      * Create the model for the skeleton
+     *
      * @param boundInterface
      * @param axisBinding
      * @return documentModel for the skeleton
@@ -842,7 +842,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
-        String localpart = reformatName(boundInterface.getName().getLocalPart(),false);
+        String localpart = reformatName(boundInterface.getName().getLocalPart(), false);
         addAttribute(doc,
                 "package",
                 configuration.getPackageName(),
@@ -858,7 +858,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                         CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
         fillSyncAttributes(doc, rootElement);
-        loadOperations(boundInterface, doc, rootElement,axisBinding);
+        loadOperations(boundInterface, doc, rootElement, axisBinding);
         doc.appendChild(rootElement);
         return doc;
 
@@ -877,6 +877,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     /**
      * Loads operations based on the interface
+     *
      * @param boundInterface
      * @param doc
      * @param rootElement
@@ -889,7 +890,6 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
 
     /**
-     *
      * @param boundInterface
      * @param doc
      * @param rootElement
@@ -901,10 +901,10 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                                 WSDLBinding binding) {
 
         Collection col = boundInterface.getOperations().values();
-        String portTypeName = reformatName(boundInterface.getName().getLocalPart(),false);
+        String portTypeName = reformatName(boundInterface.getName().getLocalPart(), false);
 
-        Element methodElement ;
-        WSDLOperation operation ;
+        Element methodElement;
+        WSDLOperation operation;
 
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
 
@@ -913,7 +913,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
             operation = (WSDLOperation) iterator.next();
             methodElement = doc.createElement("method");
-            String localPart = reformatName(operation.getName().getLocalPart(),false);
+            String localPart = reformatName(operation.getName().getLocalPart(), false);
             addAttribute(doc, "name", localPart, methodElement);
             addAttribute(doc,
                     "namespace",
@@ -934,10 +934,10 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 WSDLBindingOperation bindingOperation =
                         binding.getBindingOperation(operation.getName());
                 // todo This can be a prob !!!!!
-                if (bindingOperation!=null){
+                if (bindingOperation != null) {
                     addSOAPAction(doc, methodElement, bindingOperation);
-                    addHeaderOperations(soapHeaderInputParameterList,bindingOperation,true);
-                    addHeaderOperations(soapHeaderOutputParameterList,bindingOperation,false);
+                    addHeaderOperations(soapHeaderInputParameterList, bindingOperation, true);
+                    addHeaderOperations(soapHeaderOutputParameterList, bindingOperation, false);
                 }
             }
 
@@ -949,18 +949,18 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         }
     }
 
-    private void addHeaderOperations(List soapHeaderParameterQNameList, WSDLBindingOperation bindingOperation,boolean input) {
+    private void addHeaderOperations(List soapHeaderParameterQNameList, WSDLBindingOperation bindingOperation, boolean input) {
         Iterator extIterator;
-        if (input){
-            extIterator = bindingOperation.getInput()==null?null:bindingOperation.getInput().getExtensibilityElements().iterator();
-        }else{
-            extIterator = bindingOperation.getOutput()==null?null: bindingOperation.getOutput().getExtensibilityElements().iterator();
+        if (input) {
+            extIterator = bindingOperation.getInput() == null ? null : bindingOperation.getInput().getExtensibilityElements().iterator();
+        } else {
+            extIterator = bindingOperation.getOutput() == null ? null : bindingOperation.getOutput().getExtensibilityElements().iterator();
         }
 
-        while (extIterator!=null && extIterator.hasNext()) {
+        while (extIterator != null && extIterator.hasNext()) {
             WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
             if (ExtensionConstants.SOAP_11_HEADER.equals(element.getType())) {
-                SOAPHeader header = (SOAPHeader)element;
+                SOAPHeader header = (SOAPHeader) element;
                 soapHeaderParameterQNameList.add(header.getElement());
             }
         }
@@ -972,12 +972,12 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                                WSDLBindingOperation binding) {
         List extensibilityElements = binding.getExtensibilityElements();
         boolean actionAdded = false;
-        if (extensibilityElements!=null && !extensibilityElements.isEmpty()){
+        if (extensibilityElements != null && !extensibilityElements.isEmpty()) {
             Iterator extIterator = extensibilityElements.iterator();
             while (extIterator.hasNext()) {
                 WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
                 if (ExtensionConstants.SOAP_11_OPERATION.equals(element.getType())
-                        || ExtensionConstants.SOAP_12_OPERATION.equals(element.getType()) ) {
+                        || ExtensionConstants.SOAP_12_OPERATION.equals(element.getType())) {
                     addAttribute(doc,
                             "soapaction",
                             ((SOAPOperation) element).getSoapAction(),
@@ -993,7 +993,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     protected Document createDOMDocumentForTestCase(WSDLBinding binding) {
         WSDLInterface boundInterface = binding.getBoundInterface();
-        String localPart = reformatName(boundInterface.getName().getLocalPart(),false);
+        String localPart = reformatName(boundInterface.getName().getLocalPart(), false);
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("class");
         addAttribute(doc,
@@ -1025,14 +1025,13 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     }
 
 
-
     protected Element createDOMElementforDatabinders(
             Document doc, WSDLBinding binding) {
         //First Iterate through the operations and find the relevant fromOM and toOM methods to be generated
-        Map bindingOperationsMap =  binding.getBindingOperations();
+        Map bindingOperationsMap = binding.getBindingOperations();
 
         Map parameterMap = new HashMap();
-        Iterator operationsIterator =  bindingOperationsMap.values().iterator();
+        Iterator operationsIterator = bindingOperationsMap.values().iterator();
         while (operationsIterator.hasNext()) {
             WSDLBindingOperation bindingOperation = (WSDLBindingOperation) operationsIterator.next();
             //Add the parameters to a map with their type as the key
@@ -1040,40 +1039,40 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
             //process the input and output parameters
             Element inputParamElement = getInputParamElement(doc, bindingOperation.getOperation());
-            if (inputParamElement!=null){
-                parameterMap.put(inputParamElement.getAttribute("type"),inputParamElement);
+            if (inputParamElement != null) {
+                parameterMap.put(inputParamElement.getAttribute("type"), inputParamElement);
             }
             Element outputParamElement = getOutputParamElement(doc, bindingOperation.getOperation());
-            if (outputParamElement!=null){
-                parameterMap.put(outputParamElement.getAttribute("type"),outputParamElement);
+            if (outputParamElement != null) {
+                parameterMap.put(outputParamElement.getAttribute("type"), outputParamElement);
             }
 
             //todo process the exceptions
 
             //process the header parameters
             Element newChild;
-            List headerParameterQNameList= new ArrayList();
-            addHeaderOperations(headerParameterQNameList,bindingOperation,true);
-            List parameterElementList = getParameterElementList(doc,headerParameterQNameList, "header");
+            List headerParameterQNameList = new ArrayList();
+            addHeaderOperations(headerParameterQNameList, bindingOperation, true);
+            List parameterElementList = getParameterElementList(doc, headerParameterQNameList, "header");
 
             for (int i = 0; i < parameterElementList.size(); i++) {
                 newChild = (Element) parameterElementList.get(i);
-                parameterMap.put(newChild.getAttribute("type"),newChild);
+                parameterMap.put(newChild.getAttribute("type"), newChild);
             }
 
             headerParameterQNameList.clear();
             parameterElementList.clear();
-            addHeaderOperations(headerParameterQNameList,bindingOperation,false);
-            parameterElementList = getParameterElementList(doc,headerParameterQNameList, "header");
+            addHeaderOperations(headerParameterQNameList, bindingOperation, false);
+            parameterElementList = getParameterElementList(doc, headerParameterQNameList, "header");
             for (int i = 0; i < parameterElementList.size(); i++) {
                 newChild = (Element) parameterElementList.get(i);
-                parameterMap.put(newChild.getAttribute("type"),newChild);
+                parameterMap.put(newChild.getAttribute("type"), newChild);
             }
 
         }
 
         Element rootElement = doc.createElement("databinders");
-        addAttribute(doc,"dbtype",configuration.getDatabindingType(),rootElement);
+        addAttribute(doc, "dbtype", configuration.getDatabindingType(), rootElement);
 
         //add the names of the elements that have base 64 content
         //if the base64 name list is missing then this whole step is skipped
@@ -1082,7 +1081,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         //Now run through the parameters and add them to the root element
         Collection parameters = parameterMap.values();
         for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
-            rootElement.appendChild((Element)iterator.next());
+            rootElement.appendChild((Element) iterator.next());
         }
 
 
@@ -1091,28 +1090,30 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     /**
      * Get the base64 types. If not available this will be empty!!!
+     *
      * @param doc
      * @return element
      */
-    private Element getBase64Elements(Document doc){
+    private Element getBase64Elements(Document doc) {
         Element root = doc.createElement("base64Elements");
         Element elt;
         QName qname;
         //this is a list of QNames
-        List list = (List)configuration.getProperties().get(XSLTConstants.BASE_64_PROPERTY_KEY);
-        if (list!=null && !list.isEmpty()){
+        List list = (List) configuration.getProperties().get(XSLTConstants.BASE_64_PROPERTY_KEY);
+        if (list != null && !list.isEmpty()) {
             int count = list.size();
             for (int i = 0; i < count; i++) {
-                qname = (QName)list.get(i);
-                elt = doc.createElement("name") ;
-                addAttribute(doc,"ns-url",qname.getNamespaceURI(),elt);
-                addAttribute(doc,"localName",qname.getLocalPart(),elt);
+                qname = (QName) list.get(i);
+                elt = doc.createElement("name");
+                addAttribute(doc, "ns-url", qname.getNamespaceURI(), elt);
+                addAttribute(doc, "localName", qname.getLocalPart(), elt);
                 root.appendChild(elt);
             }
         }
 
         return root;
     }
+
     /**
      * Creates the DOM tree for implementations
      *
@@ -1123,7 +1124,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
             WSDLBinding binding, WSDLService service) throws Exception {
         WSDLInterface boundInterface = binding.getBoundInterface();
         HashMap endpoints = new HashMap(1);
-        if (service!=null){
+        if (service != null) {
             endpoints = service.getEndpoints();
         }
 
@@ -1133,7 +1134,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 "package",
                 configuration.getPackageName(),
                 rootElement);
-        String localPart = reformatName(boundInterface.getName().getLocalPart(),false);
+        String localPart = reformatName(boundInterface.getName().getLocalPart(), false);
         addAttribute(doc, "name", localPart + STUB_SUFFIX, rootElement);
         addAttribute(doc, "servicename", localPart, rootElement);
         addAttribute(doc,
@@ -1146,7 +1147,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 localPart + CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
         //add the wrap classes flag
-        if (configuration.isWrapClasses()){
+        if (configuration.isWrapClasses()) {
             addAttribute(doc,
                     "wrapped",
                     "yes",
@@ -1161,7 +1162,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                 rootElement);
 
         //add SOAP version
-        addSoapVersion(binding,doc,rootElement);
+        addSoapVersion(binding, doc, rootElement);
         //add the end point
         addEndpoints(doc, rootElement, endpoints);
         //set the sync/async attributes
@@ -1172,7 +1173,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
         //add the databind supporters. Now the databind supporters are completly contained inside
         //the stubs implementation and not visible outside
         rootElement.appendChild(
-                createDOMElementforDatabinders(doc,binding));
+                createDOMElementforDatabinders(doc, binding));
 
 
         doc.appendChild(rootElement);
@@ -1182,23 +1183,25 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     }
 
-    protected void addSoapVersion(WSDLBinding binding,Document doc,Element rootElement){
+    protected void addSoapVersion(WSDLBinding binding, Document doc, Element rootElement) {
         //loop through the extensibility elements to get to the bindings element
         List extensibilityElementsList = binding.getExtensibilityElements();
         int count = extensibilityElementsList.size();
         for (int i = 0; i < count; i++) {
-            WSDLExtensibilityElement extElement =  (WSDLExtensibilityElement)extensibilityElementsList.get(i);
-            if (ExtensionConstants.SOAP_11_BINDING.equals(extElement.getType())){
-                addAttribute(doc,"soap-version", "1.1",rootElement);
+            WSDLExtensibilityElement extElement = (WSDLExtensibilityElement) extensibilityElementsList.get(i);
+            if (ExtensionConstants.SOAP_11_BINDING.equals(extElement.getType())) {
+                addAttribute(doc, "soap-version", "1.1", rootElement);
                 break;
-            }else if (ExtensionConstants.SOAP_12_BINDING.equals(extElement.getType())){
-                addAttribute(doc,"soap-version", "1.2",rootElement);
+            } else if (ExtensionConstants.SOAP_12_BINDING.equals(extElement.getType())) {
+                addAttribute(doc, "soap-version", "1.2", rootElement);
                 break;
             }
         }
     }
+
     /**
      * Add the endpoint to the document
+     *
      * @param doc
      * @param rootElement
      * @param endpointMap
@@ -1206,7 +1209,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     protected void addEndpoints(Document doc,
                                 Element rootElement,
-                                HashMap endpointMap) throws Exception{
+                                HashMap endpointMap) throws Exception {
         // Map endpointPolicyMap = configuration.getPolicyMap();
         Object[] endpoints = endpointMap.values().toArray();
         WSDLEndpoint endpoint;
@@ -1231,11 +1234,11 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
             while (iterator.hasNext()) {
                 WSDLExtensibilityElement element = (WSDLExtensibilityElement) iterator.next();
                 if (ExtensionConstants.SOAP_11_ADDRESS.equals(element.getType()) ||
-                        ExtensionConstants.SOAP_12_ADDRESS.equals(element.getType())){
+                        ExtensionConstants.SOAP_12_ADDRESS.equals(element.getType())) {
                     address = (org.apache.wsdl.extensions.SOAPAddress) element;
                 }
             }
-            text = doc.createTextNode(address!=null?address.getLocationURI():"");
+            text = doc.createTextNode(address != null ? address.getLocationURI() : "");
 //            if (policyFileResourceName!=null){
 //                addAttribute(doc,"policyRef",policyFileResourceName,endpointElement);
 //            }
@@ -1248,7 +1251,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
     /**
      * Commented for now for the
      * @param policy
-     * @return  the file name and the package of this policy
+     * @return the file name and the package of this policy
      */
 //    private String processPolicy(Policy policy,String name) throws Exception{
 //        PolicyFileWriter writer = new PolicyFileWriter(configuration.getOutputLocation());
@@ -1265,6 +1268,7 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
 
     /**
      * Utility method to add an attribute to a given element
+     *
      * @param document
      * @param AttribName
      * @param attribValue
@@ -1274,28 +1278,27 @@ public abstract class  MultiLanguageClientEmitter implements Emitter {
                                 String AttribName,
                                 String attribValue,
                                 Element element) {
-        XSLTUtils.addAttribute(document,AttribName,attribValue,element);
+        XSLTUtils.addAttribute(document, AttribName, attribValue, element);
     }
 
 
     /**
-     *
      * @param word
      * @return character removed string
      */
     protected String reformatName(String word) {
-        return reformatName(word,true);
+        return reformatName(word, true);
     }
+
     /**
-     *
      * @param word
      * @return character removed string
      */
     protected String reformatName(String word, boolean decapitalizaFirst) {
-        if (JavaUtils.isJavaKeyword(word)){
+        if (JavaUtils.isJavaKeyword(word)) {
             return JavaUtils.makeNonJavaKeyword(word);
-        }else{
-            return JavaUtils.xmlNameToJava(word,decapitalizaFirst);
+        } else {
+            return JavaUtils.xmlNameToJava(word, decapitalizaFirst);
         }
     }
 

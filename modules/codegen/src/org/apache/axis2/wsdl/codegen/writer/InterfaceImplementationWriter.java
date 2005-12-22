@@ -29,7 +29,5 @@ public class InterfaceImplementationWriter extends ClassWriter {
         this.language = language;
     }
 
-    
-
 
 }

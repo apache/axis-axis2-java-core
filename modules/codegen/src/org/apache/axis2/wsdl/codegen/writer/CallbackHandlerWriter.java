@@ -29,5 +29,5 @@ public class CallbackHandlerWriter extends ClassWriter {
         this.language = language;
     }
 
-    
+
 }

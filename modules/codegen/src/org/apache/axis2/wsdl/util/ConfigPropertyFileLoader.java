@@ -38,11 +38,11 @@ public class ConfigPropertyFileLoader {
     /* Note - Should be a non regular expression character. If not it should be properly escaped */
     private static final String SEPERATOR_CHAR = ",";
 
-    static{
+    static {
         try {
 
-            InputStream stream =ConfigPropertyFileLoader.class.getResourceAsStream(CODEGEN_CONFIG_PROPERTIES);
-            if (stream ==null) {
+            InputStream stream = ConfigPropertyFileLoader.class.getResourceAsStream(CODEGEN_CONFIG_PROPERTIES);
+            if (stream == null) {
                 URL url = ConfigPropertyFileLoader.class.getResource(CODEGEN_CONFIG_PROPERTIES);
                 stream = new FileInputStream(url.toString());
             }
@@ -57,26 +57,25 @@ public class ConfigPropertyFileLoader {
 
             //load the extension class names
             String tempString = props.getProperty(CODE_GEN_KEY_PREFIX);
-            if (tempString!=null){
+            if (tempString != null) {
                 extensionClassNames = tempString.split(SEPERATOR_CHAR);
 
             }
 
             //load the data binding framework names
             tempString = props.getProperty(DATA_BINDING_FRAMEWORK_NAME_KEY);
-            if (tempString!=null){
+            if (tempString != null) {
                 databindingFrameworkNames = tempString.split(SEPERATOR_CHAR);
             }
 
-
             //populate the data binding framework name to extension name map
             tempString = props.getProperty(DATA_BINDING_FRAMEWORK_EXTENSION_NAME_KEY);
-            if (tempString!=null){
+            if (tempString != null) {
                 String[] frameworkExtensionNames = tempString.split(SEPERATOR_CHAR);
 
                 try {
                     for (int i = 0; i < frameworkExtensionNames.length; i++) {
-                        databindingFrameworkNameToExtensionMap.put(databindingFrameworkNames[i],frameworkExtensionNames[i]);
+                        databindingFrameworkNameToExtensionMap.put(databindingFrameworkNames[i], frameworkExtensionNames[i]);
                     }
                 } catch (ArrayIndexOutOfBoundsException e) {
                     throw new Exception("Number of frameworks and extension names do not match!");
@@ -87,32 +86,32 @@ public class ConfigPropertyFileLoader {
             //load the default framework name
             tempString = props.getProperty(DATA_BINDING_FRAMEWORK_DEFAULT_NAME_KEY);
 
-            if (tempString==null || !databindingFrameworkNameToExtensionMap.containsKey(tempString)) {
+            if (tempString == null || !databindingFrameworkNameToExtensionMap.containsKey(tempString)) {
                 throw new Exception("Unknown framework specified for default!");
             }
             defaultDBFrameworkName = tempString;
             //load the third party schema names
             tempString = props.getProperty(THIRD_PARTY_SCHEMA_KEY_PREFIX);
-            if (tempString!=null){
+            if (tempString != null) {
                 thirdPartySchemaNames = tempString.split(SEPERATOR_CHAR);
 
             }
 
             //load the language names
             tempString = props.getProperty(LANGUAGE_TYPE_KEY_PREFIX);
-            if (tempString!=null){
+            if (tempString != null) {
                 languageTypes = tempString.split(SEPERATOR_CHAR);
 
                 //load the language emitter map
                 tempString = props.getProperty(EMITTER_CLASS_KEY);
-                if (tempString==null){
+                if (tempString == null) {
                     throw new Exception("No emitters found");
-                }else{
+                } else {
                     String[] tempClassNames = tempString.split(SEPERATOR_CHAR);
                     //populate the map
                     languageEmitterMap = new HashMap();
                     for (int i = 0; i < tempClassNames.length; i++) {
-                        languageEmitterMap.put(languageTypes[i],tempClassNames[i]);
+                        languageEmitterMap.put(languageTypes[i], tempClassNames[i]);
                     }
 
                 }
@@ -120,7 +119,7 @@ public class ConfigPropertyFileLoader {
 
             // load the default language
             tempString = props.getProperty(DEFAULT_LANGUAGE_TYPE_KEY);
-            if (null==tempString || !languageEmitterMap.containsKey(tempString) ){
+            if (null == tempString || !languageEmitterMap.containsKey(tempString)) {
                 throw new Exception("Unknown Language specified for default!");
             }
             defaultLanguage = tempString;
@@ -130,32 +129,33 @@ public class ConfigPropertyFileLoader {
             //
             String languageType;
             String tempkey;
-            HashMap langSpecificMap ;
+            HashMap langSpecificMap;
             for (int i = 0; i < languageTypes.length; i++) {
                 languageType = languageTypes[i];
                 langSpecificMap = new HashMap();
                 Enumeration keyEnum = props.keys();
                 while (keyEnum.hasMoreElements()) {
                     tempkey = keyEnum.nextElement().toString();
-                    if (tempkey.startsWith(languageType+".")){
-                        langSpecificMap.put(tempkey,props.get(tempkey));
+                    if (tempkey.startsWith(languageType + ".")) {
+                        langSpecificMap.put(tempkey, props.get(tempkey));
                     }
                 }
                 //now add this to the lang specific properties map
-                languageSpecificPropertiesMap.put(languageType,langSpecificMap);
+                languageSpecificPropertiesMap.put(languageType, langSpecificMap);
             }
 
 
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }catch (Exception e){
-            throw new RuntimeException("Exception while loading the property file",e);
+        } catch (Exception e) {
+            throw new RuntimeException("Exception while loading the property file", e);
         }
 
     }
 
     /**
      * get the extension class names
+     *
      * @return
      */
     public static String[] getExtensionClassNames() {
@@ -164,6 +164,7 @@ public class ConfigPropertyFileLoader {
 
     /**
      * get the third party schema names list
+     *
      * @return
      */
     public static String[] getThirdPartySchemaNames() {
@@ -172,6 +173,7 @@ public class ConfigPropertyFileLoader {
 
     /**
      * get the language type names
+     *
      * @return
      */
     public static String[] getLanguageTypes() {
@@ -180,6 +182,7 @@ public class ConfigPropertyFileLoader {
 
     /**
      * get the emitter names map keyd with the language name
+     *
      * @return
      */
     public static Map getLanguageEmitterMap() {
@@ -188,6 +191,7 @@ public class ConfigPropertyFileLoader {
 
     /**
      * get the default language name
+     *
      * @return
      */
     public static String getDefaultLanguage() {
@@ -196,6 +200,7 @@ public class ConfigPropertyFileLoader {
 
     /**
      * get the language specific properties
+     *
      * @return
      */
     public static Map getLanguageSpecificPropertiesMap() {
@@ -204,6 +209,7 @@ public class ConfigPropertyFileLoader {
 
     /**
      * get the databinding framework names
+     *
      * @return
      */
     public static String[] getDatabindingFrameworkNames() {
@@ -213,6 +219,7 @@ public class ConfigPropertyFileLoader {
     /**
      * get the extensions map for the databinding frameworks
      * the entries are keys by the framework name
+     *
      * @return
      */
     public static Map getDatabindingFrameworkNameToExtensionMap() {
@@ -221,6 +228,7 @@ public class ConfigPropertyFileLoader {
 
     /**
      * get the default DB framwork name
+     *
      * @return
      */
     public static String getDefaultDBFrameworkName() {

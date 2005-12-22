@@ -26,7 +26,7 @@ import org.apache.axis2.soap.SOAPEnvelope;
 public class RPCStub extends Stub {
     /**
      * TODO: Make this method non-static and fix the xsl's that generate code to "extend" RPCStub when appropriate.
-     * 
+     *
      * @param factory
      * @param env
      * @param methodNamespaceURI
@@ -35,11 +35,11 @@ public class RPCStub extends Stub {
      * @param values
      */
     public static void setValueRPC(OMFactory factory,
-                               SOAPEnvelope env,
-                               String methodNamespaceURI,
-                               String methodName,
-                               String[] paramNames,
-                               Object[] values) {
+                                   SOAPEnvelope env,
+                                   String methodNamespaceURI,
+                                   String methodName,
+                                   String[] paramNames,
+                                   Object[] values) {
         SOAPBody body = env.getBody();
 
         OMNamespace methodNamespace = factory.createOMNamespace(methodNamespaceURI,

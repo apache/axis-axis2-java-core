@@ -39,15 +39,14 @@ public abstract class TypeMappingAdapter implements TypeMapper {
     private static final String PARAMETER_NAME_SUFFIX = "param";
 
 
-
-
     /**
      * Behavior of this method is such that when the type mapping is not found
      * it returns the  default type mapping from the constant
+     *
      * @see TypeMapper#getTypeMappingName(javax.xml.namespace.QName)
      */
     public String getTypeMappingName(QName qname) {
-       
+
         if ((qname != null)) {
             Object o = qName2NameMap.get(qname);
             if (o != null) {
@@ -78,25 +77,24 @@ public abstract class TypeMappingAdapter implements TypeMapper {
     }
 
     /**
-     * @see TypeMapper#getTypeMappingObject(javax.xml.namespace.QName)
      * @param qname
      * @return object represneting a specific form of the XSD compilation
+     * @see TypeMapper#getTypeMappingObject(javax.xml.namespace.QName)
      */
     public Object getTypeMappingObject(QName qname) {
         return qName2ObjectMap.get(qname);
     }
 
     /**
-     * @see TypeMapper#addTypeMappingObject(javax.xml.namespace.QName, Object)
      * @param qname
      * @param value
+     * @see TypeMapper#addTypeMappingObject(javax.xml.namespace.QName, Object)
      */
     public void addTypeMappingObject(QName qname, Object value) {
-        qName2ObjectMap.put(qname,value);
+        qName2ObjectMap.put(qname, value);
     }
 
     /**
-     *
      * @return
      */
     public HashMap getAllTypeMappings() {

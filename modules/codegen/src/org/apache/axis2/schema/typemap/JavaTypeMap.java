@@ -1,8 +1,37 @@
 package org.apache.axis2.schema.typemap;
 
+import org.apache.axis2.databinding.types.Day;
+import org.apache.axis2.databinding.types.Duration;
+import org.apache.axis2.databinding.types.Entities;
+import org.apache.axis2.databinding.types.Entity;
+import org.apache.axis2.databinding.types.HexBinary;
+import org.apache.axis2.databinding.types.IDRef;
+import org.apache.axis2.databinding.types.IDRefs;
+import org.apache.axis2.databinding.types.Id;
+import org.apache.axis2.databinding.types.Language;
+import org.apache.axis2.databinding.types.Month;
+import org.apache.axis2.databinding.types.MonthDay;
+import org.apache.axis2.databinding.types.NCName;
+import org.apache.axis2.databinding.types.NMToken;
+import org.apache.axis2.databinding.types.NMTokens;
+import org.apache.axis2.databinding.types.Name;
+import org.apache.axis2.databinding.types.NegativeInteger;
+import org.apache.axis2.databinding.types.NonNegativeInteger;
+import org.apache.axis2.databinding.types.NonPositiveInteger;
+import org.apache.axis2.databinding.types.NormalizedString;
+import org.apache.axis2.databinding.types.Notation;
+import org.apache.axis2.databinding.types.PositiveInteger;
+import org.apache.axis2.databinding.types.Time;
+import org.apache.axis2.databinding.types.Token;
+import org.apache.axis2.databinding.types.URI;
+import org.apache.axis2.databinding.types.UnsignedByte;
+import org.apache.axis2.databinding.types.UnsignedInt;
+import org.apache.axis2.databinding.types.UnsignedLong;
+import org.apache.axis2.databinding.types.UnsignedShort;
+import org.apache.axis2.databinding.types.Year;
+import org.apache.axis2.databinding.types.YearMonth;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.schema.SchemaConstants;
-import org.apache.axis2.databinding.types.*;
 
 import javax.xml.namespace.QName;
 import java.math.BigDecimal;
@@ -29,14 +58,14 @@ import java.util.Map;
  * Most code from Axis 1 Codebase
  */
 public class JavaTypeMap implements TypeMap {
-    
+
     public Map getTypeMap() {
         return typeMap;
     }
 
-    private static Map typeMap =  new HashMap();
+    private static Map typeMap = new HashMap();
 
-    static{
+    static {
         // If SOAP 1.1 over the wire, map wrapper classes to XSD primitives.
         addTypemapping(SchemaConstants.XSD_STRING, java.lang.String.class.getName());
 
@@ -55,11 +84,11 @@ public class JavaTypeMap implements TypeMap {
         //anytype is mapped to the OMElement instead of the java.lang.Object
         addTypemapping(SchemaConstants.XSD_ANYTYPE, OMElement.class.getName());
 
-         //Qname maps to  jax rpc QName class
+        //Qname maps to  jax rpc QName class
         addTypemapping(SchemaConstants.XSD_QNAME, javax.xml.namespace.QName.class.getName());
 
         //xsd Date is mapped to the java.util.date!
-        addTypemapping(SchemaConstants.XSD_DATE,  java.util.Date.class.getName());
+        addTypemapping(SchemaConstants.XSD_DATE, java.util.Date.class.getName());
 
         // Mapping for xsd:time.  Map to Axis type Time
         addTypemapping(SchemaConstants.XSD_TIME, Time.class.getName());
@@ -74,7 +103,7 @@ public class JavaTypeMap implements TypeMap {
         addTypemapping(SchemaConstants.XSD_DAY, Day.class.getName());
         addTypemapping(SchemaConstants.XSD_MONTHDAY, MonthDay.class.getName());
 
-         // xsd:token
+        // xsd:token
         addTypemapping(SchemaConstants.XSD_TOKEN, Token.class.getName());
 
         // a xsd:normalizedString
@@ -96,7 +125,7 @@ public class JavaTypeMap implements TypeMap {
         addTypemapping(SchemaConstants.XSD_NONNEGATIVEINTEGER, NonNegativeInteger.class.getName());
 
         // a xsd:negativeInteger
-        addTypemapping(SchemaConstants.XSD_NEGATIVEINTEGER, NegativeInteger.class.getName() );
+        addTypemapping(SchemaConstants.XSD_NEGATIVEINTEGER, NegativeInteger.class.getName());
 
         // a xsd:positiveInteger
         addTypemapping(SchemaConstants.XSD_POSITIVEINTEGER, PositiveInteger.class.getName());
@@ -110,11 +139,11 @@ public class JavaTypeMap implements TypeMap {
         // a xsd:NCName
         addTypemapping(SchemaConstants.XSD_NCNAME, NCName.class.getName());
 
-         // a xsd:ID
+        // a xsd:ID
         addTypemapping(SchemaConstants.XSD_ID, Id.class.getName());
 
         // a xml:lang
-       // addTypemapping(SchemaConstants.XML_LANG,Language.class.getName());
+        // addTypemapping(SchemaConstants.XML_LANG,Language.class.getName());
 
         // a xsd:language
         addTypemapping(SchemaConstants.XSD_LANGUAGE, Language.class.getName());
@@ -141,16 +170,16 @@ public class JavaTypeMap implements TypeMap {
         addTypemapping(SchemaConstants.XSD_IDREFS, IDRefs.class.getName());
 
         // a xsd:Duration
-        addTypemapping(SchemaConstants.XSD_DURATION, Duration.class.getName() );
+        addTypemapping(SchemaConstants.XSD_DURATION, Duration.class.getName());
 
         // a xsd:anyURI
-        addTypemapping(SchemaConstants.XSD_ANYURI, URI.class.getName() );
-
+        addTypemapping(SchemaConstants.XSD_ANYURI, URI.class.getName());
 
 
     }
-    private static void addTypemapping(QName name,String str) {
-        typeMap.put( name,str);
+
+    private static void addTypemapping(QName name, String str) {
+        typeMap.put(name, str);
     }
 
 

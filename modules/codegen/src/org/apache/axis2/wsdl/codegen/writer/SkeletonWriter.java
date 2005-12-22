@@ -30,6 +30,5 @@ public class SkeletonWriter extends ClassWriter {
         this.language = language;
     }
 
-   
 
 }

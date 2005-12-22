@@ -23,7 +23,6 @@ import javax.xml.namespace.QName;
 public class SchemaConstants {
 
 
-
     public static final String URI_DEFAULT_SCHEMA_XSD = "http://www.w3.org/2001/XMLSchema";
     public static final QName XSD_STRING = new QName(URI_DEFAULT_SCHEMA_XSD, "string");
     public static final QName XSD_BOOLEAN = new QName(URI_DEFAULT_SCHEMA_XSD, "boolean");
@@ -85,5 +84,5 @@ public class SchemaConstants {
     public static final Integer ANY_ATTRIBUTE_TYPE = new Integer(3);
     public static final Integer ANY_ARRAY_TYPE = new Integer(4);
 
-   
+
 }

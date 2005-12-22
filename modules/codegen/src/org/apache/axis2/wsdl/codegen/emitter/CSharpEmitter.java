@@ -22,7 +22,7 @@ import org.apache.axis2.wsdl.databinding.TypeMapper;
 
 public class CSharpEmitter extends MultiLanguageClientEmitter {
 
-    public CSharpEmitter(){
+    public CSharpEmitter() {
     }
 
     public CSharpEmitter(CodeGenConfiguration configuration) {

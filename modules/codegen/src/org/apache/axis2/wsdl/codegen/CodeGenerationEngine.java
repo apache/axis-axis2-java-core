@@ -35,7 +35,7 @@ public class CodeGenerationEngine {
 
     private CodeGenConfiguration configuration;
 
-    public CodeGenerationEngine(CodeGenConfiguration configuration) throws CodeGenerationException{
+    public CodeGenerationEngine(CodeGenConfiguration configuration) throws CodeGenerationException {
         this.configuration = configuration;
         loadExtensions();
     }
@@ -54,17 +54,17 @@ public class CodeGenerationEngine {
         loadExtensions();
     }
 
-    private void loadExtensions() throws CodeGenerationException{
+    private void loadExtensions() throws CodeGenerationException {
 
         String[] extensions = ConfigPropertyFileLoader.getExtensionClassNames();
         for (int i = 0; i < extensions.length; i++) {
             //load the Extension class
-            addExtension((CodeGenExtension)getObjectFromClassName(extensions[i]));
+            addExtension((CodeGenExtension) getObjectFromClassName(extensions[i]));
         }
 
     }
 
-    private void addExtension(CodeGenExtension ext){
+    private void addExtension(CodeGenExtension ext) {
         ext.init(configuration);
         moduleEndpoints.add(ext);
     }
@@ -80,7 +80,7 @@ public class CodeGenerationEngine {
 
 
             TypeMapper mapper = configuration.getTypeMapper();
-            if (mapper==null){
+            if (mapper == null) {
                 // this check is redundant here. The default databinding extension should
                 // have already figured this out and thrown an error message. However in case the
                 // users mess with the config it is safe to keep this check in order to throw
@@ -90,23 +90,23 @@ public class CodeGenerationEngine {
 
             Map emitterMap = ConfigPropertyFileLoader.getLanguageEmitterMap();
             String className = emitterMap.get(configuration.getOutputLanguage()).toString();
-            if (className!=null){
-                emitter = (Emitter)getObjectFromClassName(className);
+            if (className != null) {
+                emitter = (Emitter) getObjectFromClassName(className);
                 emitter.setCodeGenConfiguration(configuration);
                 emitter.setMapper(mapper);
-            }else{
+            } else {
                 throw new Exception("Emitter class not found!");
             }
 
 
-            if (configuration.isServerSide()){
+            if (configuration.isServerSide()) {
                 emitter.emitSkeleton();
-            }else{
+            } else {
                 emitter.emitStub();
             }
 
         } catch (ClassCastException e) {
-            throw new CodeGenerationException("Non emitter class found!",e);
+            throw new CodeGenerationException("Non emitter class found!", e);
 
         } catch (Exception e) {
             throw new CodeGenerationException(e);
@@ -128,19 +128,20 @@ public class CodeGenerationEngine {
 
     /**
      * gets a object from the class
+     *
      * @param className
      * @return
      */
-    private Object getObjectFromClassName(String className) throws CodeGenerationException{
+    private Object getObjectFromClassName(String className) throws CodeGenerationException {
         try {
             Class extensionClass = getClass().getClassLoader().loadClass(className);
             return extensionClass.newInstance();
         } catch (ClassNotFoundException e) {
-            throw new CodeGenerationException("Extension class loading problem",e);
+            throw new CodeGenerationException("Extension class loading problem", e);
         } catch (InstantiationException e) {
-            throw new CodeGenerationException("Extension class instantiation problem",e);
+            throw new CodeGenerationException("Extension class instantiation problem", e);
         } catch (IllegalAccessException e) {
-            throw new CodeGenerationException("Illegal extension!",e);
+            throw new CodeGenerationException("Illegal extension!", e);
         } catch (Exception e) {
             throw new CodeGenerationException(e);
         }

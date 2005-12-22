@@ -23,8 +23,8 @@ import org.apache.axis2.wsdl.databinding.TypeMapper;
 public interface Emitter {
 
     public void setCodeGenConfiguration(CodeGenConfiguration configuration);
-    
-    public void setMapper(TypeMapper mapper) ;
+
+    public void setMapper(TypeMapper mapper);
 
     public void emitStub() throws CodeGenerationException;
 

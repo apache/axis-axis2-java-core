@@ -19,7 +19,7 @@ package org.apache.axis2.schema;
  * A simeple extension from the java.lang.exception to serve as the schema compilers
  * Exception
  */
-public class SchemaCompilationException extends Exception{
+public class SchemaCompilationException extends Exception {
 
     public SchemaCompilationException() {
     }

@@ -1,8 +1,8 @@
 package org.apache.axis2.schema.util;
 
+import org.apache.axis2.schema.SchemaCompiler;
 import org.apache.axis2.schema.typemap.TypeMap;
 import org.apache.axis2.schema.writer.BeanWriter;
-import org.apache.axis2.schema.SchemaCompiler;
 
 import java.util.Properties;
 /*
@@ -25,35 +25,35 @@ import java.util.Properties;
  * Loads the properties  for the schema compiler
  */
 public class SchemaPropertyLoader {
-    private  static  String unwrappedBeanTemplate = null;
-    private  static  BeanWriter beanWriterInstance = null;
-    private  static  TypeMap typeMapperInstance = null;
+    private static String unwrappedBeanTemplate = null;
+    private static BeanWriter beanWriterInstance = null;
+    private static TypeMap typeMapperInstance = null;
 
     private static final String SCHEMA_COMPILER_PROPERTIES = "/org/apache/axis2/schema/schema-compile.properties";
     private static final String BEAN_WRITER_KEY = "schema.bean.writer.class";
     private static final String BEAN_WRITER_UNWRAPPED_TEMPLATE_KEY = "schema.bean.writer.template.wrapped";
     private static final String BEAN_WRITER_TYPEMAP_KEY = "schema.bean.typemap";
 
-    static{
+    static {
         try {
             //load the properties
             Properties props = new Properties();
             props.load(SchemaCompiler.class.getResourceAsStream(SCHEMA_COMPILER_PROPERTIES));
 
-            String beanWriterClassName =  props.getProperty(BEAN_WRITER_KEY);
-            if (beanWriterClassName!=null){
-                 beanWriterInstance = (BeanWriter)Class.forName(beanWriterClassName).newInstance();
+            String beanWriterClassName = props.getProperty(BEAN_WRITER_KEY);
+            if (beanWriterClassName != null) {
+                beanWriterInstance = (BeanWriter) Class.forName(beanWriterClassName).newInstance();
             }
 
-            String typeMapperClassName =  props.getProperty(BEAN_WRITER_TYPEMAP_KEY);
-            if (typeMapperClassName !=null){
-                 typeMapperInstance = (TypeMap)Class.forName(typeMapperClassName).newInstance();
+            String typeMapperClassName = props.getProperty(BEAN_WRITER_TYPEMAP_KEY);
+            if (typeMapperClassName != null) {
+                typeMapperInstance = (TypeMap) Class.forName(typeMapperClassName).newInstance();
             }
 
             unwrappedBeanTemplate = props.getProperty(BEAN_WRITER_UNWRAPPED_TEMPLATE_KEY);
-            
+
         } catch (Exception e) {
-           throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
 
 

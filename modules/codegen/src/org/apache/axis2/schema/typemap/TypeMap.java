@@ -19,7 +19,6 @@ import java.util.Map;
 
 /**
  * This is a  typemapper for the bean writer
- * 
  */
 public interface TypeMap {
 

@@ -59,7 +59,7 @@ public class RPCRequestElement extends OMElementImpl {
                 parameter.serialize(context, value);
             } catch (Exception e) {
                 throw new XMLStreamException("Couldn't serialize RPCParameter",
-                                             e);
+                        e);
             }
         }
         writer.writeEndElement();

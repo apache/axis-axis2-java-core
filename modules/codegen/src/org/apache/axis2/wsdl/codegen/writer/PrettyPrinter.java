@@ -32,6 +32,7 @@ public class PrettyPrinter {
 
     /**
      * Pretty print contents of the java source file
+     *
      * @param file
      */
     public static void prettify(File file) {

@@ -33,6 +33,7 @@ public class XSLTUtils {
 
     /**
      * Utility method to add an attribute to a given element
+     *
      * @param document
      * @param AttribName
      * @param attribValue
@@ -48,14 +49,15 @@ public class XSLTUtils {
     }
 
     public static Element getElement(Document document,
-                                      String elementName) {
-         return document.createElement(elementName);
-          
-      }
+                                     String elementName) {
+        return document.createElement(elementName);
+
+    }
 
 
     /**
      * Utility method to add an attribute to a given element
+     *
      * @param document
      * @param attribName
      * @param attribValue

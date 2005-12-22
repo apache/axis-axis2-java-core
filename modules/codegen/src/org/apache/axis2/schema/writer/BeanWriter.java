@@ -33,7 +33,8 @@ public interface BeanWriter {
 
 
     /**
-     *  Init the write with compiler options
+     * Init the write with compiler options
+     *
      * @param options
      * @throws IOException
      */
@@ -43,20 +44,22 @@ public interface BeanWriter {
      * Writes a wrapped class. This will have effect only if the CompilerOptions wrapclassses
      * returns true
      */
-     public void writeBatch() throws SchemaCompilationException;
+    public void writeBatch() throws SchemaCompilationException;
 
     /**
      * Write a complex type
+     *
      * @param complexType
      * @param typeMap
      * @param metainf
      * @return
      * @throws SchemaCompilationException
      */
-    public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException ;
+    public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException;
 
     /**
      * Write a element
+     *
      * @param element
      * @param typeMap
      * @param metainf
@@ -66,9 +69,9 @@ public interface BeanWriter {
     public String write(XmlSchemaElement element, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException;
 
 
-
     /**
      * Write a simple type
+     *
      * @param simpleType
      * @param typeMap
      * @param metainf

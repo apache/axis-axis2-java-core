@@ -23,11 +23,11 @@ import java.util.Map;
  * limitations under the License.
  */
 
-public class AntBuildWriter extends ClassWriter{
+public class AntBuildWriter extends ClassWriter {
 
     private String databindingFramework = ConfigPropertyFileLoader.getDefaultDBFrameworkName();
 
-     public AntBuildWriter(String outputFileLocation) {
+    public AntBuildWriter(String outputFileLocation) {
         this.outputFileLocation = new File(outputFileLocation);
     }
 
@@ -43,18 +43,18 @@ public class AntBuildWriter extends ClassWriter{
     public void createOutFile(String packageName, String fileName) throws Exception {
         File outputFile = FileWriter.createClassFile(outputFileLocation,
                 "",
-                packageName.replaceAll("\\.","_")+"build",
+                packageName.replaceAll("\\.", "_") + "build",
                 ".xml");
         //set the existing flag
         fileExists = outputFile.exists();
-        if (!fileExists){
+        if (!fileExists) {
             this.stream = new FileOutputStream(outputFile);
         }
     }
 
-     //overridden to get the correct behavior
+    //overridden to get the correct behavior
     protected String findTemplate(Map languageSpecificPropertyMap) {
-        String ownClazzName =  this.getClass().getName();
+        String ownClazzName = this.getClass().getName();
         String key;
         String propertyValue;
         String templateName = null;
@@ -64,12 +64,12 @@ public class AntBuildWriter extends ClassWriter{
         while (keys.hasNext()) {
             //check for template entries
             key = keys.next().toString();
-            if (key.endsWith(TEMPLATE_SUFFIX)){
+            if (key.endsWith(TEMPLATE_SUFFIX)) {
                 // check if the class name is there
                 propertyValue = languageSpecificPropertyMap.get(key).toString();
-                if (propertyValue.startsWith(ownClazzName)){
-                    if (key.indexOf(databindingFramework)!=-1){
-                        templateName = propertyValue.substring(propertyValue.indexOf(SEPERATOR_STRING)+1) ;
+                if (propertyValue.startsWith(ownClazzName)) {
+                    if (key.indexOf(databindingFramework) != -1) {
+                        templateName = propertyValue.substring(propertyValue.indexOf(SEPERATOR_STRING) + 1);
                         break;
                     }
                 }

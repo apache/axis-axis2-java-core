@@ -18,7 +18,6 @@ package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.schema.CompilerOptions;
 import org.apache.axis2.schema.SchemaCompiler;
-import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -38,7 +37,6 @@ import java.util.Vector;
 
 /**
  * Work in progress to test simple DataBinding with the XmlSchema lib
- *
  */
 public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
@@ -67,14 +65,13 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
             for (int i = 0; i < typesArray.size(); i++) {
                 extensiblityElt = (WSDLExtensibilityElement) typesArray.get(i);
 
-
                 //add the namespace map here. it is absolutely needed
                 Map nsMap = configuration.getWom().getNamespaces();
                 Iterator keys = nsMap.keySet().iterator();
                 String key;
                 while (keys.hasNext()) {
                     key = (String) keys.next();
-                    schemaColl.mapNamespace(key,(String)nsMap.get(key));
+                    schemaColl.mapNamespace(key, (String) nsMap.get(key));
                 }
                 Schema schema;
 
@@ -83,8 +80,8 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
                     Stack importedSchemaStack = schema.getImportedSchemaStack();
                     //compile these schemas
                     while (!importedSchemaStack.isEmpty()) {
-                        Element el = (Element)importedSchemaStack.pop();
-                        if (el!=null){
+                        Element el = (Element) importedSchemaStack.pop();
+                        if (el != null) {
                             XmlSchema thisSchema = schemaColl.read(el);
                             xmlSchemaTypeVector.add(thisSchema);
                         }
@@ -109,8 +106,8 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
             Iterator processedkeys = processedMap.keySet().iterator();
             QName qNameKey;
             while (processedkeys.hasNext()) {
-                qNameKey =(QName)processedkeys.next();
-                mapper.addTypeMappingName(qNameKey,processedMap.get(qNameKey).toString());
+                qNameKey = (QName) processedkeys.next();
+                mapper.addTypeMappingName(qNameKey, processedMap.get(qNameKey).toString());
             }
 
             //set the type mapper to the config

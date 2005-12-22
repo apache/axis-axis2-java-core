@@ -56,10 +56,10 @@ public class RPCResponseElement extends OMElementImpl {
             RPCParameter parameter = (RPCParameter) outParams.next();
             try {
                 parameter.serialize(context,
-                                    values.getValue(parameter.getQName()));
+                        values.getValue(parameter.getQName()));
             } catch (Exception e) {
                 throw new XMLStreamException("Couldn't serialize RPCParameter",
-                                             e);
+                        e);
             }
         }
         writer.writeEndElement();

@@ -16,7 +16,6 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
-import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.wsdl.WSDLExtensibilityElement;
 import org.apache.wsdl.WSDLTypes;
@@ -31,7 +30,7 @@ import java.util.Iterator;
 public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
     private static String TARGETNAMESPACE_STRING = "targetNamespace";
 
-  
+
     public void engage() throws CodeGenerationException {
         //WSDLDescription wom = this.configuration.getWom();
         WSDLTypes typesList = configuration.getWom().getTypes();
@@ -49,26 +48,26 @@ public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
                 //first check whether the schema include only a single import statement.
                 //As per the nature of WSDL if the schema has a single import ONLY, then the
                 //schema element need not contain a target namespace.
-                NodeList importNodeList =  schemaElement.getElementsByTagNameNS(schemaElement.getNamespaceURI(),"import");
+                NodeList importNodeList = schemaElement.getElementsByTagNameNS(schemaElement.getNamespaceURI(), "import");
                 NodeList allNodes = schemaElement.getElementsByTagName("*");
                 //checking the number of child elements and the number of import elements should get us what we need
-                if (importNodeList.getLength()==1 && allNodes.getLength()==1){
+                if (importNodeList.getLength() == 1 && allNodes.getLength() == 1) {
                     return;
                 }
 
 
                 NamedNodeMap attributes = schemaElement.getAttributes();
                 for (int i = 0; i < attributes.getLength(); i++) {
-                    
+
                     if (TARGETNAMESPACE_STRING.equalsIgnoreCase(
-                            attributes.item(i).getNodeName())){
+                            attributes.item(i).getNodeName())) {
                         targetnamespaceFound = true;
                         break;
                     }
                 }
                 if (!targetnamespaceFound)
                     throw new CodeGenerationException(
-                            "Invalid WSDL: The WSDL Types Schema does not define a targetNamespace in "+schema.getName() );
+                            "Invalid WSDL: The WSDL Types Schema does not define a targetNamespace in " + schema.getName());
             }
 
         }

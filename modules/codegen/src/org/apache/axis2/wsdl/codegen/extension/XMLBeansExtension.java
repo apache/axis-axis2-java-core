@@ -17,7 +17,6 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import com.ibm.wsdl.util.xml.DOM2Writer;
-import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.XSLTConstants;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
@@ -131,9 +130,9 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
                     schemaFolder.mkdir();
                     //compile these schemas
                     while (!importedSchemaStack.isEmpty()) {
-                        Element element = (Element)importedSchemaStack.pop();
+                        Element element = (Element) importedSchemaStack.pop();
                         String tagetNamespace = element.getAttribute("targetNamespace");
-                        if (!processedSchemas.contains(tagetNamespace)){
+                        if (!processedSchemas.contains(tagetNamespace)) {
 
                             // we are not using DOM toString method here, as it seems it depends on the
                             // JDK version that is being used.
@@ -280,7 +279,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             DocumentBuilder documentBuilder = getNamespaceAwareDocumentBuilder();
             for (int i = 0; i < schemaNames.length; i++) {
                 //the location for the third party schema;s is hardcoded
-                if (!"".equals(schemaNames[i].trim())){
+                if (!"".equals(schemaNames[i].trim())) {
                     InputStream schemaStream = this.getClass().getResourceAsStream(SCHEMA_PATH + schemaNames[i]);
                     Document doc = documentBuilder.parse(schemaStream);
                     additionalSchemaElements.add(doc.getDocumentElement());
@@ -328,25 +327,25 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
 
     protected void foo(WSDLBindingOperation bindingOp) {
         WSDLBindingMessageReference input = bindingOp.getInput();
-        if(input != null){
-			Iterator extIterator = input.getExtensibilityElements()
-	                .iterator();
-	        while (extIterator.hasNext()) {
-	            WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
-	            if (ExtensionConstants.SOAP_11_BODY.equals(element.getType()) ||
-	                    ExtensionConstants.SOAP_12_BODY.equals(element.getType())) {
-	                if (WSDLConstants.WSDL_USE_ENCODED.equals(
-	                        ((SOAPBody) element).getUse())) {
-	                    throw new RuntimeException(
-	                            "The use 'encoded' is not supported!");
-	                }
-	            }
-	        }
+        if (input != null) {
+            Iterator extIterator = input.getExtensibilityElements()
+                    .iterator();
+            while (extIterator.hasNext()) {
+                WSDLExtensibilityElement element = (WSDLExtensibilityElement) extIterator.next();
+                if (ExtensionConstants.SOAP_11_BODY.equals(element.getType()) ||
+                        ExtensionConstants.SOAP_12_BODY.equals(element.getType())) {
+                    if (WSDLConstants.WSDL_USE_ENCODED.equals(
+                            ((SOAPBody) element).getUse())) {
+                        throw new RuntimeException(
+                                "The use 'encoded' is not supported!");
+                    }
+                }
+            }
         }
     }
 
     private XmlObject[] convertToXMLObjectArray(Vector vec) {
-        return (XmlObject[])vec.toArray(new XmlObject[vec.size()]);
+        return (XmlObject[]) vec.toArray(new XmlObject[vec.size()]);
     }
 
     /**
