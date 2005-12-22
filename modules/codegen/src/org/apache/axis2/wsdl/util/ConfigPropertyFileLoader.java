@@ -14,6 +14,9 @@ import java.util.Properties;
  */
 public class ConfigPropertyFileLoader {
 
+
+
+    private static String dbSupporterTemplateName;
     private static String[] extensionClassNames;
     private static String[] thirdPartySchemaNames;
     private static String[] languageTypes;
@@ -25,6 +28,7 @@ public class ConfigPropertyFileLoader {
     private static String defaultLanguage;
     private static String defaultDBFrameworkName;
 
+
     private static final String CODE_GEN_KEY_PREFIX = "codegen.extension";
     private static final String THIRD_PARTY_SCHEMA_KEY_PREFIX = "codegen.thirdparty.schema";
     private static final String LANGUAGE_TYPE_KEY_PREFIX = "codegen.languages";
@@ -33,6 +37,7 @@ public class ConfigPropertyFileLoader {
     private static final String DATA_BINDING_FRAMEWORK_NAME_KEY = "codegen.databinding.frameworks";
     private static final String DATA_BINDING_FRAMEWORK_DEFAULT_NAME_KEY = "codegen.databinding.frameworks.default";
     private static final String DATA_BINDING_FRAMEWORK_EXTENSION_NAME_KEY = "codegen.databinding.extensions";
+    private static final String DATA_BINDING_TEMPLATE_NAME_KEY = "codegen.databinding.supporter.template";
     public static final String CODEGEN_CONFIG_PROPERTIES = "/org/apache/axis2/wsdl/codegen/codegen-config.properties";
 
     /* Note - Should be a non regular expression character. If not it should be properly escaped */
@@ -96,6 +101,10 @@ public class ConfigPropertyFileLoader {
                 thirdPartySchemaNames = tempString.split(SEPERATOR_CHAR);
 
             }
+            //the db supporter template name
+            dbSupporterTemplateName = props.getProperty(DATA_BINDING_TEMPLATE_NAME_KEY);
+
+
 
             //load the language names
             tempString = props.getProperty(LANGUAGE_TYPE_KEY_PREFIX);
@@ -152,7 +161,9 @@ public class ConfigPropertyFileLoader {
         }
 
     }
-
+    public static String getDbSupporterTemplateName() {
+        return dbSupporterTemplateName;
+    }
     /**
      * get the extension class names
      *

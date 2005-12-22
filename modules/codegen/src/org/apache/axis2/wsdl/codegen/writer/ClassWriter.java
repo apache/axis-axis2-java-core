@@ -20,6 +20,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.FileWriter;
 import org.apache.axis2.util.XSLTTemplateProcessor;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.wsdl.codegen.XSLTIncludeResolver;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -162,7 +163,8 @@ public abstract class ClassWriter {
         if (!fileExists) {
             XSLTTemplateProcessor.parse(this.stream,
                     doc,
-                    this.xsltStream);
+                    this.xsltStream,
+                    new XSLTIncludeResolver());
             this.stream.flush();
             this.stream.close();
             if ("java".equals(language) && outputFile != null) {

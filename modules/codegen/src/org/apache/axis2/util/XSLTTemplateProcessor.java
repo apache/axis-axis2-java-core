@@ -25,6 +25,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -76,6 +77,8 @@ public class XSLTTemplateProcessor {
 
     }
 
+
+
     /**
      * @param out
      * @param document
@@ -91,6 +94,32 @@ public class XSLTTemplateProcessor {
         Source xsltSource = new StreamSource(xsltStream);
         Transformer transformer = TransformerFactory.newInstance()
                 .newTransformer(xsltSource);
+        parse(out, document, transformer);
+
+    }
+
+    /**
+     * @param out
+     * @param document
+     * @param xsltStream
+     * @throws TransformerFactoryConfigurationError
+     *
+     * @throws TransformerException
+     */
+    public static void parse(OutputStream out,
+                             Document document,
+                             InputStream xsltStream,
+                             URIResolver customResolver)
+            throws TransformerFactoryConfigurationError, TransformerException {
+        Source xsltSource = new StreamSource(xsltStream);
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        if (customResolver!=null){
+             transformerFactory.setURIResolver(customResolver);
+        }
+       
+        Transformer transformer = transformerFactory
+                .newTransformer(xsltSource);
+
         parse(out, document, transformer);
 
     }

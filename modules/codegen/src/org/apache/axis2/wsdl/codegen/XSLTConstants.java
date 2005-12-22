@@ -17,23 +17,15 @@
 package org.apache.axis2.wsdl.codegen;
 
 import javax.xml.namespace.QName;
-
+ //todo rename this
 public interface XSLTConstants {
     String DEFAULT_PACKAGE_NAME = "codegen";
     QName BASE_64_CONTENT_QNAME = new QName("http://www.w3.org/2001/XMLSchema", "base64Binary");
     QName XMIME_CONTENT_TYPE_QNAME = new QName("http://www.w3.org/2004/06/xmlmime", "contentType");
     String BASE_64_PROPERTY_KEY = "base64map";
 
+    String XSLT_INCLUDE_DATABIND_SUPPORTER_HREF = "databindsupporter"; 
 
-    public interface DataBindingTypes {
-
-        public static final int NONE = 0;
-        public static final int XML_BEANS = 1;
-        public static final int JAXB = 2;
-        public static final int ADB = 3;
-        public static final int USER = 4;
-
-    }
 
     public interface CodegenStyle {
         public static final int AUTOMATIC = 0;
