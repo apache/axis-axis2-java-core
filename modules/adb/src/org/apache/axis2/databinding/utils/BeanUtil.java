@@ -64,13 +64,13 @@ public class BeanUtil {
                 } else if (SimpleTypeMapper.isArrayList(ptype)) {
                     Object value = propDesc.getReadMethod().invoke(beanObject, null);
                     ArrayList objList = (ArrayList) value;
-                    if(objList!=null && objList.size()>0 ){
+                    if (objList != null && objList.size() > 0) {
                         //this was given error , when the array.size = 0
                         // and if the array contain simple type , then the ADBPullParser asked
                         // PullParser from That simpel type
                         for (int j = 0; j < objList.size(); j++) {
                             Object o = objList.get(j);
-                            if(SimpleTypeMapper.isSimpleType(o)){
+                            if (SimpleTypeMapper.isSimpleType(o)) {
                                 object.add(propDesc.getName());
                                 object.add(o);
                             } else {
@@ -96,11 +96,24 @@ public class BeanUtil {
         }
     }
 
+    /**
+     * to get the pull parser for a given bean object , generate the wrpper elemnet using class name
+     *
+     * @param beanObject
+     */
+    public static Object getPullParser(Object beanObject) {
+        String className = beanObject.getClass().getName();
+        if (className.indexOf(".") > 0) {
+            className = className.substring(className.lastIndexOf('.') + 1, className.length());
+        }
+        return getPullParser(beanObject, new QName(className));
+    }
+
     public static Object deserialize(Class beanClass, OMElement beanElement) throws AxisFault {
         Object beanObj;
         try {
-            if(SimpleTypeMapper.isSimpleType(beanClass)){
-                return  SimpleTypeMapper.getSimpleTypeObject(beanClass,beanElement);
+            if (SimpleTypeMapper.isSimpleType(beanClass)) {
+                return SimpleTypeMapper.getSimpleTypeObject(beanClass, beanElement);
             }
             HashMap properties = new HashMap();
             BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
