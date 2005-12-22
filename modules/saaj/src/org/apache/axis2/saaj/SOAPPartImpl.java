@@ -17,7 +17,7 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.soap.impl.llom.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.util.SessionUtils;
+import org.apache.axis2.util.SessionUtils2;
 import org.w3c.dom.*;
 
 import javax.xml.soap.MimeHeaders;
@@ -45,7 +45,7 @@ public class SOAPPartImpl extends SOAPPart {
                         boolean isBodyStream) throws SOAPException {
 
         setMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
-                SessionUtils.generateSessionId());
+                SessionUtils2.generateSessionId());
         setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, "text/xml");
         StAXSOAPModelBuilder stAXSOAPModelBuilder;
 

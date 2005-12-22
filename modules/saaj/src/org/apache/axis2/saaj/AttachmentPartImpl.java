@@ -2,7 +2,7 @@ package org.apache.axis2.saaj;
 
 import org.apache.axis2.om.OMText;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.util.SessionUtils;
+import org.apache.axis2.util.SessionUtils2;
 
 import javax.activation.DataHandler;
 import javax.activation.UnsupportedDataTypeException;
@@ -18,7 +18,7 @@ public class AttachmentPartImpl extends AttachmentPart {
      * Bulds a new <code>AttachmentPart</code>.
      */
     public AttachmentPartImpl() {
-        setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, SessionUtils.generateSessionId());
+        setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, SessionUtils2.generateSessionId());
     }
     
     /**
@@ -28,7 +28,7 @@ public class AttachmentPartImpl extends AttachmentPart {
      */
     public AttachmentPartImpl(javax.activation.DataHandler dh) {
     	setMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
-    			SessionUtils.generateSessionId());
+    			SessionUtils2.generateSessionId());
     	dataHandler = dh;
     	if(dh != null) {
     		setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, dh.getContentType());

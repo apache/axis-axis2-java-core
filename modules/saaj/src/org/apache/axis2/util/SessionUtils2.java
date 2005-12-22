@@ -20,7 +20,7 @@ import java.util.Random;
 /**
  * Code borrowed from AuthenticatorBase.java for generating a secure id's.
  */
-public class SessionUtils {
+public class SessionUtils2 {
 
     /**
      * The number of random bytes to include when generating a

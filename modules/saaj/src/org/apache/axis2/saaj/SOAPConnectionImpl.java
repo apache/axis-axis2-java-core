@@ -24,7 +24,7 @@ import org.apache.axis2.om.OMAttribute;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNode;
 import org.apache.axis2.om.OMText;
-import org.apache.axis2.util.SessionUtils;
+import org.apache.axis2.util.SessionUtils2;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -136,7 +136,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
                 DataHandler actualDH = (DataHandler) binaryNode.getDataHandler();
                 if (actualDH != null) {
                     AttachmentPart ap = soapMsg.createAttachmentPart(actualDH);
-                    String contentId = SessionUtils.generateSessionId();
+                    String contentId = SessionUtils2.generateSessionId();
                     ap.setContentId(contentId);
                     ap.setContentType(actualDH.getContentType());
                     OMElement parent = (OMElement) child.getParent();
