@@ -1,9 +1,3 @@
-/*
-* Created on Jan 28, 2005
-*
-* TODO To change the template for this generated file go to Window -
-* Preferences - Java - Code Style - Code Templates
-*/
 package org.apache.axis2.transport.mail.server;
 
 public class MailSrvConstants {
