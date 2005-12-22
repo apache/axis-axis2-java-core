@@ -184,16 +184,23 @@
              };
          </xsl:if>
 
-         <xsl:for-each select="param">
-             <xsl:if test="@type!=''">
-                 <!-- consider all the types to ADBbeans. So no instanceof check -->
-                 public  org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
-                 org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
-                 (org.apache.axis2.om.OMAbstractFactory.getOMFactory(), param.getPullParser(null));
-                 return builder.getDocumentElement();
-                 }
-             </xsl:if>
-         </xsl:for-each>
+        <xsl:for-each select="param">
+                    <xsl:if test="@type!=''">
+
+                        public  org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
+                            if (param instanceof org.apache.axis2.databinding.ADBBean){
+                                org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
+                                (org.apache.axis2.om.OMAbstractFactory.getOMFactory(), param.getPullParser(null));
+                                return builder.getDocumentElement();
+                            }else{
+                               <!-- treat this as a plain bean. use the reflective bean converter -->
+                               <!-- todo finish this once the bean serializer has the necessary methods -->
+                                retrun null;
+                            }
+                        }
+                    </xsl:if>
+                </xsl:for-each>
+
 
          public  java.lang.Object fromOM(org.apache.axis2.om.OMElement param,
          java.lang.Class type){
@@ -205,6 +212,7 @@
                      obj = parseMethod.invoke(null,new Object[]{param.getXMLStreamReader()});
                  }else{
                      //oops! we don't know how to deal with this. Perhaps the reflective one is a good choice here
+                    <!-- todo finish this once the bean serializer has the necessary methods -->
                  }
              } catch (Exception e) {
                   throw new RuntimeException(e);

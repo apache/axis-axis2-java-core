@@ -457,11 +457,17 @@
 
          <xsl:for-each select="param">
              <xsl:if test="@type!=''">
-                 <!-- consider all the types to ADBbeans. So no instanceof check -->
+
                  public  org.apache.axis2.om.OMElement  toOM(<xsl:value-of select="@type"/> param){
-                 org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
-                 (org.apache.axis2.om.OMAbstractFactory.getOMFactory(), param.getPullParser(null));
-                 return builder.getDocumentElement();
+                     if (param instanceof org.apache.axis2.databinding.ADBBean){
+                         org.apache.axis2.om.impl.llom.builder.StAXOMBuilder builder = new org.apache.axis2.om.impl.llom.builder.StAXOMBuilder
+                         (org.apache.axis2.om.OMAbstractFactory.getOMFactory(), param.getPullParser(null));
+                         return builder.getDocumentElement();
+                     }else{
+                        <!-- treat this as a plain bean. use the reflective bean converter -->
+                        //todo finish this onece the bean serializer has the necessary methods
+                         retrun null;
+                     }
                  }
              </xsl:if>
          </xsl:for-each>

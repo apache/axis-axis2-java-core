@@ -29,6 +29,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -59,12 +60,15 @@ public class JavaBeanWriter implements BeanWriter {
 
     private List namesList;
     private static int count = 0;
-    private boolean wrapClasses;
+    private boolean wrapClasses = false;
+    private boolean writeClasses=false;
 
     private String packageName = null;
     private File rootDir;
 
     private Document globalWrappedDocument;
+
+    private Map modelMap = new HashMap();
 
     /**
      * Default constructor
@@ -72,11 +76,31 @@ public class JavaBeanWriter implements BeanWriter {
     public JavaBeanWriter() {
     }
 
+    /**
+     * This returns a map of Qnames vs DOMDocument models. One can use this method to
+     * obtain the raw DOMmodels used to write the classes.
+     * This has no meaning when the classes are supposed to be wrapped  so the
+     *
+     * @see org.apache.axis2.schema.writer.BeanWriter#getModelMap()
+     * @return
+     * @throws SchemaCompilationException
+     */
+    public Map getModelMap(){
+        return modelMap;
+    }
+
     public void init(CompilerOptions options) throws SchemaCompilationException {
         try {
             initWithFile(options.getOutputLocation());
-            this.packageName = options.getPackageName();
-            this.wrapClasses = options.isWrapClasses();
+            packageName = options.getPackageName();
+            writeClasses = options.isWriteOutput();
+            if (!writeClasses){
+                wrapClasses = false;
+            }else{
+                wrapClasses = options.isWrapClasses();
+            }
+            System.out.println("writeClasses = " + writeClasses);
+
 
             //if the wrap mode is set then create a global document to keep the wrapped
             //element models
@@ -212,7 +236,10 @@ public class JavaBeanWriter implements BeanWriter {
 
         String originalName = qName.getLocalPart();
         String className = getNonConflictingName(this.namesList, originalName);
-        String fullyqualifiedClassName = null;
+
+        String packagePrefix;
+
+        String fullyqualifiedClassName;
         ArrayList propertyNames = new ArrayList();
 
         if (!templateLoaded) {
@@ -225,19 +252,28 @@ public class JavaBeanWriter implements BeanWriter {
             globalWrappedDocument.getDocumentElement().appendChild(
                     getBeanElement(globalWrappedDocument, className, originalName, packageName, qName, isElement, metainf, propertyNames, typeMap)
             );
-            //now the fully qualified class name needs to have the name of the including class as well
-            fullyqualifiedClassName = (this.packageName == null ? "" : this.packageName) + WRAPPED_DATABINDING_CLASS_NAME + "." + className;
+            packagePrefix =  (this.packageName == null ? "" : this.packageName) + WRAPPED_DATABINDING_CLASS_NAME;
+
         } else {
             //create the model
             Document model = XSLTUtils.getDocument();
             //make the XML
             model.appendChild(getBeanElement(model, className, originalName, packageName, qName, isElement, metainf, propertyNames, typeMap));
-            //create the file
-            File out = createOutFile(packageName, className);
-            //parse with the template and create the files
-            parse(model, out);
-            fullyqualifiedClassName = packageName + "." + className;
+
+            if (writeClasses){
+                //create the file
+                File out = createOutFile(packageName, className);
+                //parse with the template and create the files
+                parse(model, out);
+            }
+
+            //add the model to the model map
+            modelMap.put(qName,model);
+
+            packagePrefix = packageName ;
         }
+
+        fullyqualifiedClassName = packagePrefix + (packagePrefix.endsWith(".")?"":".") + className;
 
         //return the fully qualified class name
         return fullyqualifiedClassName;

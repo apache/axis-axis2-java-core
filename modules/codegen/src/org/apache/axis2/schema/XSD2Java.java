@@ -74,7 +74,8 @@ public class XSD2Java {
             compilerOptions.setOutputLocation(outputFolder);
             //##############################
             // compilerOptions.setPackageName("adb");
-            //  compilerOptions.setWrapClasses(true);
+             compilerOptions.setWrapClasses(false);
+             compilerOptions.setWriteOutput(true);
             //##############################
 
             SchemaCompiler compiler = new SchemaCompiler(compilerOptions);

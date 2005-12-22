@@ -36,7 +36,7 @@ public class CompilerOptions {
     /**
      * This flag tells the databinder to either write the output or
      * not. if this is set to true it will write the output at once.
-     * if not  ???
+     * if not the outputter will populate the 
      */
     private boolean writeOutput = false;
 

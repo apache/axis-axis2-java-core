@@ -78,6 +78,10 @@ public class SchemaCompiler {
         return processedElementMap;
     }
 
+    public Map getProcessedModelMap() {
+        return writer.getModelMap();
+    }
+
     /**
      * Constructor - Accepts a options bean
      *

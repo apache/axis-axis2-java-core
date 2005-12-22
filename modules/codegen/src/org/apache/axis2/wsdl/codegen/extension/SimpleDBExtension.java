@@ -90,10 +90,13 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
             }
             //call the schema compiler
             CompilerOptions options = new CompilerOptions();
-            options.setOutputLocation(configuration.getOutputLocation());
-            options.setPackageName(ADB_PACKAGE_NAME_PREFIX);
-            options.setWrapClasses(configuration.isWrapClasses());
 
+            //set the default options
+            setDefaultOptions(options);
+            
+
+            //todo allow the user to override the default options here
+            //perhaps by allowing -Eparameters
 
             SchemaCompiler schemaCompiler = new SchemaCompiler(options);
             schemaCompiler
@@ -101,13 +104,27 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
-            //get the processed element map and transfer it to the type mapper
-            Map processedMap = schemaCompiler.getProcessedElementMap();
-            Iterator processedkeys = processedMap.keySet().iterator();
-            QName qNameKey;
-            while (processedkeys.hasNext()) {
-                qNameKey = (QName) processedkeys.next();
-                mapper.addTypeMappingName(qNameKey, processedMap.get(qNameKey).toString());
+
+            if (options.isWriteOutput()){
+                //get the processed element map and transfer it to the type mapper
+                Map processedMap = schemaCompiler.getProcessedElementMap();
+                Iterator processedkeys = processedMap.keySet().iterator();
+                QName qNameKey;
+                while (processedkeys.hasNext()) {
+                    qNameKey = (QName) processedkeys.next();
+                    mapper.addTypeMappingName(qNameKey, processedMap.get(qNameKey).toString());
+                }
+
+            }else{
+                //get the processed model map and transfer it to the type mapper
+                //since the options mentiond that its
+                Map processedModelMap = schemaCompiler.getProcessedModelMap();
+                Iterator processedkeys = processedModelMap.keySet().iterator();
+                QName qNameKey;
+                while (processedkeys.hasNext()) {
+                    qNameKey = (QName) processedkeys.next();
+                    mapper.addTypeMappingObject(qNameKey, processedModelMap.get(qNameKey));
+                }
             }
 
             //set the type mapper to the config
@@ -118,5 +135,28 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
             throw new RuntimeException(e);
         }
 
+    }
+
+    private void setDefaultOptions(CompilerOptions options) {
+        /// these options need to be taken from the command line
+        options.setOutputLocation(configuration.getOutputLocation());
+        options.setPackageName(ADB_PACKAGE_NAME_PREFIX);
+
+        options.setWrapClasses(configuration.isWrapClasses());
+        options.setWriteOutput(true);
+
+        //todo this needs to be attended to later
+        //default setting is to set the wrap status depending on whether it's
+        //the server side or the client side
+//        if (configuration.isServerSide()){
+//            //for the serverside we generate unwrapped  by default
+//            options.setWrapClasses(false);
+//            //for the serverside we write the output
+//            options.setWriteOutput(true);
+//        }else{
+//            options.setWrapClasses(configuration.isWrapClasses());
+//            options.setWriteOutput(true);
+//            //options.setWriteOutput(false);
+//        }
     }
 }

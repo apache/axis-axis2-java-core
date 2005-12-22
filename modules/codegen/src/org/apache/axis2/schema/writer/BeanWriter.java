@@ -47,6 +47,12 @@ public interface BeanWriter {
     public void writeBatch() throws SchemaCompilationException;
 
     /**
+     * Gets a map of models. this is useful for tight integrations where the internal workings
+     * of the schema compiler may be exposed.
+     */
+    public Map getModelMap();
+
+    /**
      * Write a complex type
      *
      * @param complexType

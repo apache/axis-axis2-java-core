@@ -327,6 +327,7 @@
             <fileset dir="modules/common/target/classes"/>
             <fileset dir="modules/addressing/target/classes"/>
             <fileset dir="modules/codegen/target/classes"/> 
+            <fileset dir="modules/adb/target/classes"/>
             <fileset dir="modules/addressing/target/">
                 <include name="modules/addressing.mar"/>
             </fileset>
@@ -504,6 +505,7 @@
                 <ant:pathelement location="modules/tool/src"/>
                 <ant:pathelement location="modules/wsdl/src"/>
                 <ant:pathelement location="modules/xml/src"/>
+                <ant:pathelement location="modules/adb/src"/> 
             </ant:sourcepath>
             <ant:classpath>
               <ant:fileset dir="target/lib">
