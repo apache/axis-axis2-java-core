@@ -8,6 +8,7 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.util.XSLTTemplateProcessor;
 import org.apache.axis2.util.XSLTUtils;
+import org.apache.axis2.wsdl.codegen.writer.PrettyPrinter;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
@@ -149,7 +150,7 @@ public class JavaBeanWriter implements BeanWriter {
         try {
             if (wrapClasses) {
 
-                OutputStream out = createOutFile(packageName, WRAPPED_DATABINDING_CLASS_NAME);
+                File out = createOutFile(packageName, WRAPPED_DATABINDING_CLASS_NAME);
                 //parse with the template and create the files
                 parse(globalWrappedDocument, out);
             }
@@ -232,7 +233,7 @@ public class JavaBeanWriter implements BeanWriter {
             //make the XML
             model.appendChild(getBeanElement(model, className, originalName, packageName, qName, isElement, metainf, propertyNames, typeMap));
             //create the file
-            OutputStream out = createOutFile(packageName, className);
+            File out = createOutFile(packageName, className);
             //parse with the template and create the files
             parse(model, out);
             fullyqualifiedClassName = packageName + "." + className;
@@ -420,30 +421,28 @@ public class JavaBeanWriter implements BeanWriter {
      * @param fileName
      * @throws Exception
      */
-    private OutputStream createOutFile(String packageName, String fileName) throws Exception {
-        File outputFile = org.apache.axis2.util.FileWriter.createClassFile(this.rootDir,
+    private File createOutFile(String packageName, String fileName) throws Exception {
+        return org.apache.axis2.util.FileWriter.createClassFile(this.rootDir,
                 packageName,
                 fileName,
                 ".java");
-        return new FileOutputStream(outputFile);
-
     }
 
     /**
      * Writes the output file
      *
-     * @param documentStream
+     * @param doc
+     * @param outputFile
      * @throws Exception
      */
-    private void parse(Document doc, OutputStream outStream) throws Exception {
-
+    private void parse(Document doc, File outputFile) throws Exception {
+        OutputStream outStream = new FileOutputStream(outputFile);
         XSLTTemplateProcessor.parse(outStream,
                 doc,
                 this.templateCache.newTransformer());
         outStream.flush();
         outStream.close();
 
+        PrettyPrinter.prettify(outputFile);
     }
-
-
 }
