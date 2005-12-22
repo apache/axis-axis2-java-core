@@ -88,7 +88,7 @@
 
             /**
             * Auto generated setter method
-            * @param param<xsl:value-of select="$javaName"/>
+            * @param param <xsl:value-of select="$javaName"/>
             */
             public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
             <!--Add the validation code. For now we only add the validation code for arrays-->
