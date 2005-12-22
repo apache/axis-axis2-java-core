@@ -19,13 +19,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.FlowImpl;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ParameterInclude;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -36,6 +30,7 @@ import org.apache.axis2.om.OMFactory;
 import org.apache.axis2.om.impl.llom.builder.StAXOMBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -43,6 +38,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -82,37 +78,42 @@ public class DescriptionBuilder implements DeploymentConstants {
         return element;
     }
 
-    protected MessageReceiver loadDefaultMessageReceiver() throws DeploymentException {
-        MessageReceiver receiver;
-        String defaultMessageReceiver = DEFAULT_MESSAGE_RECEIVER;
-
-        try {
-
-            /**
-             * Setting default Message Recive as Message Receiver
-             */
-            ClassLoader loader1 = Thread.currentThread().getContextClassLoader();
-            Class messageReceiver = Class.forName(defaultMessageReceiver, true, loader1);
-
-            receiver = ((MessageReceiver) messageReceiver.newInstance());
-        } catch (ClassNotFoundException e) {
-            throw new DeploymentException(
-                    Messages.getMessage(
-                            DeploymentErrorMsgs.ERROR_IN_LOADING_MESSAGE_RECEIVER, "ClassNotFoundException",
-                            defaultMessageReceiver));
-        } catch (IllegalAccessException e) {
-            throw new DeploymentException(
-                    Messages.getMessage(
-                            DeploymentErrorMsgs.ERROR_IN_LOADING_MESSAGE_RECEIVER, "IllegalAccessException",
-                            defaultMessageReceiver));
-        } catch (InstantiationException e) {
-            throw new DeploymentException(
-                    Messages.getMessage(
-                            DeploymentErrorMsgs.ERROR_IN_LOADING_MESSAGE_RECEIVER, "InstantiationException",
-                            defaultMessageReceiver));
+    /**
+     * to load default message receivers , in this case first try to search in Axiservice for the
+     * given mepURL , if it not found will search in AixsConfiguration for the given mepURL
+     *
+     * @param mepURL  : can be null
+     * @param service :  This can be null <code>AxisService</code>
+     */
+    protected MessageReceiver loadDefaultMessageReceiver(String mepURL, AxisService service) {
+        MessageReceiver messageReceiver;
+        if (mepURL == null) {
+            mepURL = WSDLConstants.MEP_URI_IN_OUT;
         }
+        if (service != null) {
+            messageReceiver = service.getMessageReceiver(mepURL);
+            if (messageReceiver != null)
+                return messageReceiver;
+        }
+        return axisConfig.getMessageReceiver(mepURL);
+    }
 
-        return receiver;
+    /**
+     * To process default message recivers specify either in axis2.xml or services.xml
+     *
+     * @param messageReceivers
+     */
+    protected HashMap processMessageReceivers(OMElement messageReceivers) throws DeploymentException {
+        HashMap mr_mep = new HashMap();
+        Iterator msgRecives = messageReceivers.getChildrenWithName(new QName(TAG_MESSAGE_RECEIVER));
+        while (msgRecives.hasNext()) {
+            OMElement msgRev = (OMElement) msgRecives.next();
+            MessageReceiver msgrecivere =
+                    loadMessageReceiver(Thread.currentThread().getContextClassLoader(), msgRev);
+            OMAttribute mepAtt = msgRev.getAttribute(new QName(TAG_MEP));
+            mr_mep.put(mepAtt.getAttributeValue(), msgrecivere);
+        }
+        return mr_mep;
     }
 
     protected MessageReceiver loadMessageReceiver(ClassLoader loader, OMElement reciverElement)

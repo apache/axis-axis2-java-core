@@ -51,6 +51,7 @@ public interface DeploymentConstants {
     String TAG_ORDER = "order";           // to resolve the order tag
     String TAG_OPERATION = "operation";       // operation start tag
     String TAG_MESSAGE_RECEIVER = "messageReceiver";
+    String TAG_MESSAGE_RECEIVERS = "messageReceivers";
     String TAG_MEP = "mep";
 
     String TAG_FLOW_OUT_FAULT = "Outfaultflow";    // faultflow start tag
@@ -85,7 +86,6 @@ public interface DeploymentConstants {
             "org/apache/axis2/deployment/axis2.xml";
     String SERVER_XML_FILE = "axis2.xml";
     String DIRECTORY_SERVICES = "services";
-    String DEFAULT_MESSAGE_RECEIVER = "org.apache.axis2.receivers.RawXMLINOutMessageReceiver";
     String BOOLEAN_TRUE = "true";
     String BOOLEAN_FALSE = "false";
     char SEPARATOR_DOT = '.';

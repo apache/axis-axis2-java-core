@@ -18,7 +18,6 @@
 package org.apache.axis2.receivers;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.DependencyManager;
@@ -45,20 +44,9 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
     protected Log log = LogFactory.getLog(getClass());
 
     /**
-     * Field classLoader
-     */
-    private ClassLoader classLoader;
-
-    /**
-     * Field scope
-     */
-    private String scope;
-
-    /**
      * Constructor RawXMLProvider
      */
     public RawXMLINOutMessageReceiver() {
-        scope = Constants.APPLICATION_SCOPE;
     }
 
     public Method findOperation(AxisOperation op, Class ImplClass) {
@@ -97,12 +85,12 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
                 String style =
                         msgContext.getOperationContext().getAxisOperation().getStyle();
                 Class[]  parameters = method.getParameterTypes();
-                Object[] args = null;
+                Object[] args;
 
                 if ((parameters == null) || (parameters.length == 0)) {
                     args = new Object[0];
                 } else if (parameters.length == 1) {
-                    OMElement omElement = null;
+                    OMElement omElement;
 
                     if (WSDLService.STYLE_DOC.equals(style)) {
                         omElement = msgContext.getEnvelope().getBody().getFirstElement();
@@ -133,7 +121,7 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
                 }
 
                 OMElement result = (OMElement) method.invoke(obj, args);
-                OMElement bodyContent = null;
+                OMElement bodyContent;
 
                 if (WSDLService.STYLE_RPC.equals(style)) {
                     OMNamespace ns = getSOAPFactory().createOMNamespace("http://soapenc/", "res");

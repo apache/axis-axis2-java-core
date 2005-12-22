@@ -71,6 +71,9 @@ public class Constants {
      * Field APPLICATION_SCOPE
      */
     public static final String APPLICATION_SCOPE = "application";
+    public static final String SOAP_SESSION_SCOPE = "SOAPSession";
+    public static final String TRANSPORT_SESSION_SCOPE = "TransportSession";
+    public static final String REQUEST_SCOPE = "Request";
 
     public static final String AXIS2_HOME = "axis2home";
 
@@ -175,6 +178,8 @@ public class Constants {
     public static final String ADDRESSING_MESSAGE_ID = "WS-Addressing:MessageId";
     public static final String ADDRESSING_FROM = "WS-Addressing:From";
     public static final String ADDRESSING_FAULT_TO = "WS-Addressing:FaultTo";
+
+    //See
 
     /**
      * Addressing Constants

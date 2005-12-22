@@ -31,6 +31,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -94,6 +95,18 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             processModuleRefs(moduleRefs);
 
+            //processing Default Message receivers
+            OMElement messageReceiver = service_element.getFirstChildWithName(
+                    new QName(TAG_MESSAGE_RECEIVERS));
+            if (messageReceiver != null) {
+                HashMap mrs = processMessageReceivers(messageReceiver);
+                Iterator keys = mrs.keySet().iterator();
+                while (keys.hasNext()) {
+                    String key = (String) keys.next();
+                    service.addMessageReceiver(key, (MessageReceiver) mrs.get(key));
+                }
+            }
+
             // processing operations
             Iterator operationsIterator =
                     service_element.getChildrenWithName(new QName(TAG_OPERATION));
@@ -105,7 +118,6 @@ public class ServiceBuilder extends DescriptionBuilder {
 
                 for (int j = 0; j < wsamappings.size(); j++) {
                     Parameter parameter = (Parameter) wsamappings.get(j);
-
                     service.mapActionToOperation((String) parameter.getValue(), operationDesc);
                 }
 
@@ -113,7 +125,6 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
 
             Iterator moduleConfigs = service_element.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
-
             processServiceModuleConfig(moduleConfigs, service, service);
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
@@ -245,10 +256,8 @@ public class ServiceBuilder extends DescriptionBuilder {
 
                 op_descrip.setMessageReceiver(messageReceiver);
             } else {
-
                 // setting default message receiver
-                MessageReceiver msgReceiver = loadDefaultMessageReceiver();
-
+                MessageReceiver msgReceiver = loadDefaultMessageReceiver(null, service);
                 op_descrip.setMessageReceiver(msgReceiver);
             }
 

@@ -23,25 +23,22 @@ import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
+import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.util.HostConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class AxisConfigurationImpl
  */
 public class AxisConfiguration implements ParameterInclude {
-    private Log log = LogFactory.getLog(getClass());
 
+    private Log log = LogFactory.getLog(getClass());
     /**
      * Field modules
      */
@@ -58,19 +55,18 @@ public class AxisConfiguration implements ParameterInclude {
     /**
      * Field engagedModules
      */
-    protected final List engagedModules;
+    private final List engagedModules;
     private Hashtable faultyModules;
-
     /**
      * To store faulty services
      */
     private Hashtable faultyServices;
 
     // to store host configuration if any
-    HostConfiguration hostConfiguration;
+    private HostConfiguration hostConfiguration;
     private ArrayList inFaultPhases;
     private ArrayList inPhasesUptoAndIncludingPostDispatch;
-    protected HashMap messagReceivers;
+    private HashMap messageReceivers;
 
     private ClassLoader moduleClassLoader;
     private HashMap moduleConfigmap;
@@ -88,7 +84,7 @@ public class AxisConfiguration implements ParameterInclude {
         moduleConfigmap = new HashMap();
         paramInclude = new ParameterIncludeImpl();
         engagedModules = new ArrayList();
-        messagReceivers = new HashMap();
+        messageReceivers = new HashMap();
         outPhases = new ArrayList();
         inFaultPhases = new ArrayList();
         outFaultPhases = new ArrayList();
@@ -105,10 +101,21 @@ public class AxisConfiguration implements ParameterInclude {
 
         // todo we need to fix this , we know that we are doing wrong thing here
         createDefaultChain();
+        //setting default message receivers
+        addDefaultMessageReceivers();
     }
 
-    public void addMessageReceiver(String key, MessageReceiver messageReceiver) {
-        messagReceivers.put(key, messageReceiver);
+    public void addMessageReceiver(String mepURL, MessageReceiver messageReceiver) {
+        messageReceivers.put(mepURL, messageReceiver);
+    }
+
+    /**
+     * This is required if we are going to create AxisConfiguration programatically
+     * in that case , no dafault message recivers will there be in the system
+     */
+    private void addDefaultMessageReceivers() {
+        addMessageReceiver("http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
+        addMessageReceiver("http://www.w3.org/2004/08/wsdl/in-out", new RawXMLINOutMessageReceiver());
     }
 
     /**
@@ -362,8 +369,8 @@ public class AxisConfiguration implements ParameterInclude {
         return inPhasesUptoAndIncludingPostDispatch;
     }
 
-    public MessageReceiver getMessageReceiver(String key) {
-        return (MessageReceiver) messagReceivers.get(key);
+    public MessageReceiver getMessageReceiver(String mepURL) {
+        return (MessageReceiver) messageReceivers.get(mepURL);
     }
 
     /**
@@ -426,7 +433,6 @@ public class AxisConfiguration implements ParameterInclude {
      *
      * @param name
      * @return Returns AxisService.
-     * @throws AxisFault
      */
     public AxisService getService(String name) {
         return (AxisService) allservices.get(name);

@@ -20,11 +20,7 @@ package org.apache.axis2.deployment;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisObserver;
 import org.apache.axis2.engine.MessageReceiver;
@@ -41,6 +37,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 public class AxisConfigBuilder extends DescriptionBuilder {
@@ -65,17 +62,15 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             processParameters(itr, axisConfiguration, axisConfiguration);
 
             // process MessageReciver
-            Iterator msgRecives = config_element.getChildrenWithName(new QName(TAG_MESSAGE_RECEIVER));
-
-            while (msgRecives.hasNext()) {
-                OMElement msgRev = (OMElement) msgRecives.next();
-                MessageReceiver msgrecivere =
-                        loadMessageReceiver(Thread.currentThread().getContextClassLoader(), msgRev);
-                OMAttribute mepAtt = msgRev.getAttribute(new QName(TAG_MEP));
-
-                axisConfiguration.addMessageReceiver(mepAtt.getAttributeValue(), msgrecivere);
+            OMElement messageReceiver = config_element.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVERS));
+            if (messageReceiver != null) {
+                HashMap mrs = processMessageReceivers(messageReceiver);
+                Iterator keys = mrs.keySet().iterator();
+                while (keys.hasNext()) {
+                    String key = (String) keys.next();
+                    axisConfig.addMessageReceiver(key, (MessageReceiver) mrs.get(key));
+                }
             }
-
             // Process Module refs
             Iterator moduleitr =
                     config_element.getChildrenWithName(new QName(DeploymentConstants.TAG_MODULE));

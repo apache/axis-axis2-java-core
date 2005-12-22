@@ -69,7 +69,7 @@ public class ModuleConfigTest extends TestCase {
             service.setName("testService");
             ar.addService(service);
             InputStream in = new FileInputStream(repo + "/service1.xml");
-            ServiceBuilder sbuilder = new ServiceBuilder(in, null, service);
+            ServiceBuilder sbuilder = new ServiceBuilder(in, new AxisConfiguration(), service);
             sbuilder.populateService(sbuilder.buildOM());
 
             ModuleConfiguration moduleConfiguration = service.getModuleConfig(new QName("Servie_module"));

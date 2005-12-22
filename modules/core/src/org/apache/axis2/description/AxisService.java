@@ -20,7 +20,9 @@ package org.apache.axis2.description;
 import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.wsdl.writer.WOMWriter;
 import org.apache.axis2.wsdl.writer.WOMWriterFactory;
@@ -75,6 +77,12 @@ public class AxisService
     //wsdl is there for this service or not (in side META-INF)
     private boolean wsdlfound = false;
 
+    //to store the scope of the service
+    private String scope;
+
+    //to store default message receivers
+    private HashMap messageReceivers;
+
     /**
      * Constructor AxisService
      */
@@ -82,6 +90,9 @@ public class AxisService
         this.paramterInclude = new ParameterIncludeImpl();
         this.operationsAliasesMap = new HashMap();
         moduleConfigmap = new HashMap();
+        //by dafault service scop is TranportSession
+        scope = Constants.TRANSPORT_SESSION_SCOPE;
+        messageReceivers = new HashMap();
     }
 
     /**
@@ -90,6 +101,14 @@ public class AxisService
     public AxisService(String name) {
         this();
         this.name = name;
+    }
+
+    public void addMessageReceiver(String mepURL, MessageReceiver messageReceiver) {
+        messageReceivers.put(mepURL, messageReceiver);
+    }
+
+    public MessageReceiver getMessageReceiver(String mepURL) {
+        return (MessageReceiver) messageReceivers.get(mepURL);
     }
 
     /**
@@ -590,6 +609,7 @@ public class AxisService
     }
 
     public void setSchema(XmlSchema schema) {
+        //todo : need to support multiple schemas
         this.schema = schema;
     }
 
@@ -599,5 +619,18 @@ public class AxisService
 
     public void setWsdlfound(boolean wsdlfound) {
         this.wsdlfound = wsdlfound;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        if (Constants.APPLICATION_SCOPE.equals(scope) ||
+                Constants.TRANSPORT_SESSION_SCOPE.equals(scope) ||
+                Constants.SOAP_SESSION_SCOPE.equals(scope) ||
+                Constants.REQUEST_SCOPE.equals(scope)) {
+            this.scope = scope;
+        }
     }
 }
