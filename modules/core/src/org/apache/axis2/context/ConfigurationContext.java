@@ -18,18 +18,16 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.util.SessionUtils;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
 
 import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This contains all the configuration information for Axis2.
@@ -41,7 +39,6 @@ public class ConfigurationContext extends AbstractContext {
      * <code>OperationContext</code> mapping.
      */
     private final Map operationContextMap = new HashMap();
-    private final Map serviceContextMap = new Hashtable();
     private Hashtable serviceGroupContextMap = new Hashtable();
     private transient AxisConfiguration axisConfiguration;
     private File rootDir;
@@ -77,6 +74,7 @@ public class ConfigurationContext extends AbstractContext {
             MessageContext messageContext)
             throws AxisFault {
         String serviceGroupContextId = messageContext.getServiceGroupContextId();
+        SessionContext sessionContext = messageContext.getSessionContext();
 
         // by this time service group context id must have a value. Either from transport or from addressing
         ServiceGroupContext serviceGroupContext;
@@ -89,7 +87,7 @@ public class ConfigurationContext extends AbstractContext {
             serviceGroupContext =
                     getServiceGroupContext(serviceGroupContextId);
             serviceContext =
-                    serviceGroupContext.getServiceContext(messageContext.getAxisService().getName());
+                    serviceGroupContext.getServiceContext(messageContext.getAxisService());
         } else {
 
             // either the key is null or no SGC is found from the give key
@@ -102,17 +100,32 @@ public class ConfigurationContext extends AbstractContext {
                 AxisServiceGroup axisServiceGroup = messageContext.getAxisService().getParent();
 
                 serviceGroupContext = new ServiceGroupContext(this, axisServiceGroup);
-                serviceContext = serviceGroupContext.getServiceContext(
-                        messageContext.getAxisService().getName());
+                serviceContext = serviceGroupContext.getServiceContext(messageContext.getAxisService());
 
                 // set the serviceGroupContextID
                 serviceGroupContext.setId(serviceGroupContextId);
-                this.registerServiceGroupContext(serviceGroupContext);
             } else {
                 throw new AxisFault("AxisService Not found yet");
             }
         }
 
+        /**
+         * 1. Check the max scope of the service gruop , if it is grater than TarnsportSession
+         *    then need to store in configurationContext
+         * 2. Else need to store in SessionContext , and need to store both service context and
+         *    service group context
+         */
+        String maxScope = SessionUtils.calculateMaxScopeForServiceGroup(serviceGroupContext.getDescription());
+        if (Constants.APPLICATION_SCOPE.equals(maxScope)) {
+            //todo : needed to add to two tables
+            registerServiceGroupContext(serviceGroupContext);
+        } else if (Constants.TRANSPORT_SESSION_SCOPE.equals(maxScope)) {
+            //todo : needed to add to two tables
+            registerServiceGroupContext(serviceGroupContext);
+        } else {
+            sessionContext.addServiceGroupContext(serviceGroupContext, serviceGroupContextId);
+            sessionContext.addServiceContext(serviceContext);
+        }
         // when you come here operation context MUST already been assigned to the message context
         messageContext.getOperationContext().setParent(serviceContext);
         messageContext.setServiceContext(serviceContext);
@@ -176,18 +189,10 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
-    /**
-     * Gets the ServiceContext for a service id.
-     *
-     * @param serviceInstanceID
-     */
-    public ServiceContext getServiceContext(String serviceInstanceID) {
-        return (ServiceContext) this.serviceContextMap.get(serviceInstanceID);
-    }
-
     public synchronized ServiceGroupContext getServiceGroupContext(String serviceGroupContextId) {
         if (serviceGroupContextMap != null) {
-            ServiceGroupContext serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
+            ServiceGroupContext serviceGroupContext = (ServiceGroupContext)
+                    serviceGroupContextMap.get(serviceGroupContextId);
             if (serviceGroupContext != null) {
                 serviceGroupContext.touch();
             }

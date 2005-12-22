@@ -27,11 +27,17 @@ import javax.xml.namespace.QName;
  * So do NOT use this as it might not live up to your expectation.
  */
 public class ServiceContext extends AbstractContext {
+
     private transient AxisService axisService;
     private String serviceInstanceID;
+    private ServiceGroupContext serviceGroupContext;
+
+    //to store service implementation class , to handler session
+    private Object serviceImpl;
 
     public ServiceContext(AxisService serviceConfig, ServiceGroupContext serviceGroupContext) {
         super(serviceGroupContext);
+        this.serviceGroupContext = serviceGroupContext;
         this.axisService = serviceConfig;
 
         if (serviceConfig != null) {
@@ -69,5 +75,17 @@ public class ServiceContext extends AbstractContext {
 
         // todo we do not need this , this ID should equal to serviceName
         this.serviceInstanceID = serviceInstanceID;
+    }
+
+    public Object getServiceImpl() {
+        return serviceImpl;
+    }
+
+    public void setServiceImpl(Object serviceImpl) {
+        this.serviceImpl = serviceImpl;
+    }
+
+    public ServiceGroupContext getServiceGroupContext() {
+        return serviceGroupContext;
     }
 }

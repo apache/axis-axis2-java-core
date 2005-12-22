@@ -75,7 +75,7 @@ public class SimpleHTTPServer extends TransportListener {
      *
      * @param systemContext
      */
-    public SimpleHTTPServer(ConfigurationContext systemContext, int port) throws IOException {
+    public SimpleHTTPServer(ConfigurationContext systemContext, int port) {
         this(systemContext, port, null);
     }
 
@@ -95,9 +95,7 @@ public class SimpleHTTPServer extends TransportListener {
      * @param systemContext
      * @param pool
      */
-    public SimpleHTTPServer(ConfigurationContext systemContext, int port, ThreadFactory pool)
-            throws IOException {
-
+    public SimpleHTTPServer(ConfigurationContext systemContext, int port, ThreadFactory pool) {
         // If a threadPool is not passed-in the threadpool
         // from the ConfigurationContext
         // is used. This is a bit tricky, and might cause a

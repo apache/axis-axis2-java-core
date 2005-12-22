@@ -52,7 +52,7 @@
         //creating the configuration
         _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory().buildClientConfigurationContext(axis2Home);
         _configurationContext.getAxisConfiguration().addService(_service);
-        _serviceContext =new org.apache.axis2.context.ServiceGroupContext(_configurationContext, _service.getParent()).getServiceContext(_service.getName());
+        _serviceContext =new org.apache.axis2.context.ServiceGroupContext(_configurationContext, _service.getParent()).getServiceContext(_service);
         _clientOptions.setTo(new org.apache.axis2.addressing.EndpointReference(targetEndpoint));
 
         <!--  Set the soap version depending on the binding. Default is 1.1 so don't set anything for that case-->

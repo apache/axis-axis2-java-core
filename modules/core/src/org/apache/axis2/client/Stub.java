@@ -80,8 +80,8 @@ public abstract class Stub {
             throw new Exception(
                     "Client is running the session OFF mode: Start session before saving to a session ");
         }
-
-        return _configurationContext.getServiceContext(_currentSessionId).getProperty(key);
+        return null;
+//        return _configurationContext.getServiceContext(_currentSessionId).getProperty(key);
     }
 
     public void _setClientOptions(Options _clientOptions) {
@@ -95,8 +95,7 @@ public abstract class Stub {
             throw new Exception(
                     "Client is running the session OFF mode: Start session before saving to a session ");
         }
-
-        _configurationContext.getServiceContext(_currentSessionId).setProperty(key, value);
+//        _configurationContext.getServiceContext(_currentSessionId).setProperty(key, value);
     }
 
     public void _startSession() {

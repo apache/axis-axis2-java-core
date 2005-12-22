@@ -18,13 +18,19 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
+
+import java.util.HashMap;
 
 /**
  * All the engine components are stateless across the executions and all the states should be kept in the
  * Contexts, there are three context Global, Session and Message.
  */
 public class SessionContext extends AbstractContext {
+
+    private HashMap serviceContextMap = new HashMap();
+    private HashMap serviceGroupContextMap = new HashMap();
 
     /**
      * @param parent
@@ -35,4 +41,21 @@ public class SessionContext extends AbstractContext {
 
     public void init(AxisConfiguration axisConfiguration) throws AxisFault {
     }
+
+    public ServiceContext getServiceContext(AxisService axisService) {
+        return (ServiceContext) serviceContextMap.get(axisService.getName());
+    }
+
+    public void addServiceContext(ServiceContext serviceContext) {
+        serviceContextMap.put(serviceContext.getAxisService().getName(), serviceContext);
+    }
+
+    public void addServiceGroupContext(ServiceGroupContext serviceGroupContext, String serviceGroupID) {
+        serviceGroupContextMap.put(serviceGroupID, serviceGroupContext);
+    }
+
+    public ServiceGroupContext getServiceGroupContext(String serviceGroupID) {
+        return (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupID);
+    }
+
 }

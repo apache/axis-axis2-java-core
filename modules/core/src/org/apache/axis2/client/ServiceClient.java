@@ -97,8 +97,6 @@ public class ServiceClient {
 
     /**
      * If the AxisService is null this will create an AnonymousService
-     *
-     * @return
      */
     private AxisService createAnonymousService() {
         // since I have not been created with real service metadata, let's
@@ -128,7 +126,7 @@ public class ServiceClient {
     /**
      * Create the service context for myself
      */
-    private void createServiceContext() {
+    private void createServiceContext() throws AxisFault {
         if (axisService == null) {
             axisService = getAxisService();
         }
@@ -136,7 +134,7 @@ public class ServiceClient {
         // for myself as I'll need that later for stuff that I gotta do
         ServiceGroupContext sgc = new ServiceGroupContext(configContext,
                 getAxisService().getParent());
-        serviceContext = sgc.getServiceContext(getAxisService().getName());
+        serviceContext = sgc.getServiceContext(getAxisService());
     }
 
     /**
@@ -175,7 +173,6 @@ public class ServiceClient {
      *
      * @param headerName
      * @param headerText
-     * @see addHeader(OMElement)
      */
     public void addStringHeader(QName headerName, String headerText) {
         OMElement omElement = OMAbstractFactory.getOMFactory().createOMElement(
@@ -250,7 +247,7 @@ public class ServiceClient {
         mepClient.execute(true);
     }
 
-    public OMElement sendReceive(OMElement elem) {
+    public OMElement sendReceive(OMElement elem) throws AxisFault {
         if (serviceContext == null) {
             createServiceContext();
         }
@@ -262,7 +259,7 @@ public class ServiceClient {
                 "ServiceClient.sendReceive() is not yet implemented");
     }
 
-    public void sendReceiveNonblocking(OMElement elem, Callback callback) {
+    public void sendReceiveNonblocking(OMElement elem, Callback callback) throws AxisFault {
         if (serviceContext == null) {
             createServiceContext();
         }
@@ -286,7 +283,7 @@ public class ServiceClient {
      * @return a MEP client configured to talk to the given operation or null if
      *         the operation name is not found.
      */
-    public OperationClient createClient(QName operation) {
+    public OperationClient createClient(QName operation) throws AxisFault {
         AxisOperation axisOp = getAxisService().getOperation(operation);
         if (serviceContext == null) {
             createServiceContext();

@@ -844,7 +844,6 @@ public class MessageContext extends AbstractContext {
      */
     public void setServiceContext(ServiceContext context) {
         serviceContext = context;
-
         if ((operationContext != null)
                 && (operationContext.getParent() != null)) {
             operationContext.setParent(context);
@@ -853,6 +852,10 @@ public class MessageContext extends AbstractContext {
         if (configurationContext == null) {
             //setting configcontext
             configurationContext = context.getConfigurationContext();
+        }
+        if (serviceGroupContext == null) {
+            //setting service group context
+            serviceGroupContext = context.getServiceGroupContext();
         }
         this.setAxisService(context.getAxisService());
     }

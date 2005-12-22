@@ -18,11 +18,10 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.Constants;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.handlers.AbstractHandler;
 
 /**
@@ -47,6 +46,8 @@ public class InstanceDispatcher extends AbstractHandler {
 
             return;
         }
+        //trying to get service context from Session context
+        fillContextsFromSessionContetxt(msgContext);
 
         AxisOperation axisOperation = msgContext.getAxisOperation();
 
@@ -70,16 +71,43 @@ public class InstanceDispatcher extends AbstractHandler {
             msgContext.setServiceContext(serviceContext);
             msgContext.setServiceGroupContext(serviceGroupContext);
             msgContext.setServiceGroupContextId(serviceGroupContext.getId());
-
-            return;
         } else {    // 2. if null, create new opCtxt
             operationContext = new OperationContext(axisOperation);
 
             axisOperation.registerOperationContext(msgContext, operationContext);
-
-            // fill the service group context and service context info
-            msgContext.getConfigurationContext().fillServiceContextAndServiceGroupContext(
-                    msgContext);
+            if (msgContext.getServiceContext() != null) {
+                // no need to added to configuration conetxt , since we are happy in
+                //  storing in session context
+                operationContext.setParent(msgContext.getServiceContext());
+            } else {
+                // fill the service group context and service context info
+                msgContext.getConfigurationContext().fillServiceContextAndServiceGroupContext(
+                        msgContext);
+            }
         }
     }
+
+    private void fillContextsFromSessionContetxt(MessageContext msgContext) throws AxisFault {
+        AxisService service = msgContext.getAxisService();
+        if (service == null) {
+            throw new AxisFault("AxisService Not found yet");
+        }
+        SessionContext sessionContext = msgContext.getSessionContext();
+        String serviceGroupContextId = msgContext.getServiceGroupContextId();
+        if (serviceGroupContextId != null) {
+            //setting service group context which is teken from session context
+            msgContext.setServiceGroupContext(
+                    sessionContext.getServiceGroupContext(serviceGroupContextId));
+        }
+        String scope = service.getScope();
+
+        if (Constants.TRANSPORT_SESSION_SCOPE.equals(scope)) {
+            ServiceContext sreviceContext = sessionContext.getServiceContext(service);
+            //found the serviceContext from session context , so adding that into msgContext
+            if (sreviceContext != null) {
+                msgContext.setServiceContext(sreviceContext);
+            }
+        }
+    }
+
 }

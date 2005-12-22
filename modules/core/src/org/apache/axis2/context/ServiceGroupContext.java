@@ -17,6 +17,8 @@
 
 package org.apache.axis2.context;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 
@@ -25,7 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class ServiceGroupContext extends AbstractContext {
-    private String axisServiceGroupName;
+
     private transient AxisServiceGroup axisServiceGroup;
     private String id;
     private Map serviceContextMap;
@@ -34,29 +36,6 @@ public class ServiceGroupContext extends AbstractContext {
         super(parent);
         this.axisServiceGroup = axisServiceGroup;
         serviceContextMap = new HashMap();
-
-        if (axisServiceGroup != null) {
-            this.axisServiceGroupName = axisServiceGroup.getServiceGroupName();
-        }
-
-        fillServiceContexts();
-    }
-
-    /**
-     * This will create one ServiceContext per each serviceDesc in descrpition
-     * if serviceGroup desc has 2 service init , then two serviceContext will be
-     * created
-     */
-    private void fillServiceContexts() {
-        Iterator services = axisServiceGroup.getServices();
-
-        while (services.hasNext()) {
-            AxisService axisService = (AxisService) services.next();
-            ServiceContext serviceContext = new ServiceContext(axisService, this);
-            String serviceName = axisService.getName();
-
-            serviceContextMap.put(serviceName, serviceContext);
-        }
     }
 
     public AxisServiceGroup getDescription() {
@@ -67,9 +46,34 @@ public class ServiceGroupContext extends AbstractContext {
         return id;
     }
 
-    // if the service name is foo:bar , you should pass only bar
-    public ServiceContext getServiceContext(String serviceName) {
-        return (ServiceContext) serviceContextMap.get(serviceName);
+    /**
+     * At each time you ask for a service context this will create a new one by
+     * passing AxisService into it , and no need to store service context inside serviceGroup
+     * context as well
+     *
+     * @param service
+     * @return
+     * @throws AxisFault
+     */
+    public ServiceContext getServiceContext(AxisService service) throws AxisFault {
+        AxisService axisService = axisServiceGroup.getService(service.getName());
+        if (axisService == null) {
+            throw new AxisFault("Invalid service " + service.getName() + " not belong to " +
+                    "service group " + axisServiceGroup.getServiceGroupName());
+        }
+        String scope = axisService.getScope();
+        ServiceContext serviceContext;
+        if (Constants.APPLICATION_SCOPE.equals(scope) || Constants.SOAP_SESSION_SCOPE.equals(scope)) {
+            //since the session scope is longer that trasport or request we need to store that some where
+            serviceContext = (ServiceContext) serviceContextMap.get(service.getName());
+            if (serviceContext == null) {
+                serviceContext = new ServiceContext(service, this);
+            }
+            serviceContextMap.put(service.getName(), serviceContext);
+        } else {
+            serviceContext = new ServiceContext(service, this);
+        }
+        return serviceContext;
     }
 
     public Iterator getServiceContexts() {

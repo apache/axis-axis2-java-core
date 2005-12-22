@@ -66,7 +66,6 @@ public class HTTPWorker implements HttpRequestHandler {
             if (configurationContext == null) {
                 throw new AxisFault(Messages.getMessage("cannotBeNullConfigurationContext"));
             }
-
             InputStream inStream = request.getBody();
             TransportOutDescription transportOut =
                     configurationContext.getAxisConfiguration().getTransportOut(

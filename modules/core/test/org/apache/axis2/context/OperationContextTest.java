@@ -45,7 +45,7 @@ public class OperationContextTest extends AbstractTestCase {
         ServiceGroupContext sgc = new ServiceGroupContext(configContext,
                 axisService.getParent());
 
-        ServiceContext sessionContext = sgc.getServiceContext("TempSC");
+        ServiceContext sessionContext = sgc.getServiceContext(axisService);
         MessageContext messageContext1 = this.getBasicMessageContext();
 
         messageContext1.setMessageID(UUIDGenerator.getUUID());

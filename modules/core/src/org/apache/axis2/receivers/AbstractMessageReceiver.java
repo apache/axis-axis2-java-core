@@ -18,10 +18,8 @@
 package org.apache.axis2.receivers;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.MessageReceiver;
@@ -85,40 +83,16 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      * @throws AxisFault
      */
     protected Object getTheImplementationObject(MessageContext msgContext) throws AxisFault {
-        AxisService service =
-                msgContext.getOperationContext().getServiceContext().getAxisService();
-        Parameter scopeParam = service.getParameter(SCOPE);
-        String serviceName = service.getName();
-
-        if ((scopeParam != null) && Constants.SESSION_SCOPE.equals(scopeParam.getValue())) {
-            SessionContext sessionContext = msgContext.getSessionContext();
-
-            synchronized (sessionContext) {
-                Object obj = sessionContext.getProperty(serviceName);
-
-                if (obj == null) {
-                    obj = makeNewServiceObject(msgContext);
-                    sessionContext.setProperty(serviceName, obj);
-                }
-
-                return obj;
-            }
-        } else if ((scopeParam != null)
-                && Constants.APPLICATION_SCOPE.equals(scopeParam.getValue())) {
-            ConfigurationContext globalContext = msgContext.getConfigurationContext();
-
-            synchronized (globalContext) {
-                Object obj = globalContext.getProperty(serviceName);
-
-                if (obj == null) {
-                    obj = makeNewServiceObject(msgContext);
-                    globalContext.setProperty(serviceName, obj);
-                }
-
-                return obj;
-            }
+        ServiceContext serviceContext = msgContext.getOperationContext().getServiceContext();
+        Object serviceimpl = serviceContext.getServiceImpl();
+        if (serviceimpl != null) {
+            // since service impl is there in service context , take that from there
+            return serviceimpl;
         } else {
-            return makeNewServiceObject(msgContext);
+            // create a new service impl class for that service
+            serviceimpl = makeNewServiceObject(msgContext);
+            serviceContext.setServiceImpl(serviceimpl);
+            return serviceimpl;
         }
     }
 }

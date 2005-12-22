@@ -145,7 +145,7 @@ public abstract class MEPClient {
 
         configurationContext.getAxisConfiguration().addService(axisService);
         serviceContext = new ServiceGroupContext(configurationContext,
-                axisService.getParent()).getServiceContext(ANONYMOUS_SERVICE);
+                axisService.getParent()).getServiceContext(axisService);
     }
 
     /**

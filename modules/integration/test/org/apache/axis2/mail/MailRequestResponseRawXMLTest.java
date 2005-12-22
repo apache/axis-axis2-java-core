@@ -32,7 +32,6 @@ import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -59,18 +58,9 @@ public class MailRequestResponseRawXMLTest extends TestCase {
 
     private QName operationName = new QName("echoOMElement");
 
-    private QName transportName = new QName("http://localhost/my",
-            "NullTransport");
-
-    private AxisConfiguration engineRegistry;
-
-    private MessageContext mc;
-
-    private SOAPEnvelope envelope;
-
     private boolean finish = false;
 
-    private ConfigurationContext config;
+    private SOAPEnvelope envelope;
 
     public MailRequestResponseRawXMLTest() {
         super(MailRequestResponseRawXMLTest.class.getName());
@@ -119,15 +109,14 @@ public class MailRequestResponseRawXMLTest extends TestCase {
         AxisOperation axisOperation = new OutInAxisOperation();
         axisOperation.setName(operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
-            public void receive(MessageContext messgeCtx) throws AxisFault {
+            public void receive(MessageContext messgeCtx) {
                 envelope = messgeCtx.getEnvelope();
             }
         });
         service.addOperation(axisOperation);
         configContext.getAxisConfiguration().addService(service);
         ServiceContext serviceContext = new ServiceGroupContext(configContext,
-                service.getParent()).getServiceContext(service.getName()
-        );
+                service.getParent()).getServiceContext(service);
 
         org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(
                 serviceContext);

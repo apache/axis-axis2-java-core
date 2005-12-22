@@ -165,7 +165,7 @@ public class AxisServiceGroup implements ParameterInclude {
         }
     }
 
-    public void removeService(QName name) throws AxisFault {
+    public void removeService(String name) throws AxisFault {
         AxisService service = getService(name);
 
         if (service != null) {
@@ -203,7 +203,7 @@ public class AxisServiceGroup implements ParameterInclude {
         return parent;
     }
 
-    public AxisService getService(QName name) throws AxisFault {
+    public AxisService getService(String name) throws AxisFault {
         return (AxisService) services.get(name);
     }
 

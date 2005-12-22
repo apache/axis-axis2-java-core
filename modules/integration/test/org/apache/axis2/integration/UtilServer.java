@@ -40,7 +40,7 @@ public class UtilServer {
 
     public static final String FAILURE_MESSAGE = "Intentional Failure";
 
-    private static ThreadPool tp = null;
+//    private static ThreadPool tp = null;
 
     public static synchronized void deployService(AxisService service)
             throws AxisFault {
@@ -67,7 +67,6 @@ public class UtilServer {
 
     public static synchronized void start(String repository) throws Exception {
         if (count == 0) {
-            tp = new ThreadPool();
             ConfigurationContext er = getNewConfigurationContext(repository);
 
             receiver = new SimpleHTTPServer(er, Constants.TESTING_PORT);
@@ -139,7 +138,7 @@ public class UtilServer {
         configContext.getAxisConfiguration().addService(service);
 
         return new ServiceGroupContext(configContext, service.getParent())
-                .getServiceContext(service.getName());
+                .getServiceContext(service);
     }
 
     public static ServiceContext createAdressedEnabledClientSide(
@@ -161,7 +160,7 @@ public class UtilServer {
         configContext.getAxisConfiguration().addService(service);
 
         return new ServiceGroupContext(configContext, service.getParent())
-                .getServiceContext(service.getName());
+                .getServiceContext(service);
     }
 
 }
