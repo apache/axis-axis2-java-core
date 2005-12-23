@@ -951,7 +951,7 @@ public class ElementImpl extends ParentNode implements Element,OMElement, OMCons
 	 */
     public String getLocalName()
     {
-    	return this.namespace != null ? this.localName : null;
+    	return this.localName;
     }
     
     /**
