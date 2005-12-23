@@ -29,14 +29,14 @@ public interface DeploymentConstants {
 
     int TYPE_SERVICE = 0;                // is it a service
     int TYPE_MODULE = 1;                // is it a module
-    
+
     String TAG_PHASE_ORDER = "phaseOrder";
     String TAG_PHASE = "phase";
-    String TAG_PARAMETER = "parameter";     
+    String TAG_PARAMETER = "parameter";
     String TAG_MODULE = "module";
     String TAG_MODULE_CONFIG = "moduleConfig";
     String TAG_MESSAGE = "message";
-    String TAG_LISTENER = "listener";     
+    String TAG_LISTENER = "listener";
     String TAG_LABEL = "label";
     String TAG_HOST_CONFIG = "hostConfiguration";
     String TAG_HANDLER = "handler";
@@ -70,6 +70,7 @@ public interface DeploymentConstants {
 
     // for parameters
     String ATTRIBUTE_NAME = "name";
+    String ATTRIBUTE_SCOPE = "scope";
     String ATTRIBUTE_LOCKED = "locked";
 
     String PROPERTY_TEMP_DIR = "java.io.tmpdir";

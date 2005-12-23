@@ -90,6 +90,12 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
 
+            //processin Service Scop
+            String sessionScope = service_element.getAttributeValue(new QName(ATTRIBUTE_SCOPE));
+            if (sessionScope != null) {
+                service.setScope(sessionScope);
+            }
+
             // processing servicewide modules which required to engage gloabally
             Iterator moduleRefs = service_element.getChildrenWithName(new QName(TAG_MODULE));
 

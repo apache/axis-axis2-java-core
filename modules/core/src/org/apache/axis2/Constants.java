@@ -70,7 +70,7 @@ public class Constants {
     /**
      * Field APPLICATION_SCOPE
      */
-    public static final String APPLICATION_SCOPE = "application";
+    public static final String APPLICATION_SCOPE = "Application";
     public static final String SOAP_SESSION_SCOPE = "SOAPSession";
     public static final String TRANSPORT_SESSION_SCOPE = "TransportSession";
     public static final String REQUEST_SCOPE = "Request";
