@@ -32,12 +32,13 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.UserDataHandler;
 
 /**
  * Class NodeImpl
  */
 public class NodeImpl implements Node {
-	
+
     /**
      * Field omNode
      */
@@ -224,6 +225,54 @@ public class NodeImpl implements Node {
             return (iter.hasNext());
         }
         return false;
+    }
+
+    public String getBaseURI() {
+        return null;  
+    }
+
+    public short compareDocumentPosition(org.w3c.dom.Node other) throws DOMException {
+        return 0;  
+    }
+
+    public String getTextContent() throws DOMException {
+        return null;  
+    }
+
+    public void setTextContent(String textContent) throws DOMException {
+        
+    }
+
+    public boolean isSameNode(org.w3c.dom.Node other) {
+        return false;  
+    }
+
+    public String lookupPrefix(String namespaceURI) {
+        return null;  
+    }
+
+    public boolean isDefaultNamespace(String namespaceURI) {
+        return false;  
+    }
+
+    public String lookupNamespaceURI(String prefix) {
+        return null;  
+    }
+
+    public boolean isEqualNode(org.w3c.dom.Node arg) {
+        return false;  
+    }
+
+    public Object getFeature(String feature, String version) {
+        return null;  
+    }
+
+    public Object setUserData(String key, Object data, UserDataHandler handler) {
+        return null;  
+    }
+
+    public Object getUserData(String key) {
+        return null;  
     }
 
     /**
@@ -444,17 +493,17 @@ public class NodeImpl implements Node {
         Iterator iter = ((OMElement) omNode).getChildren();
         NodeListImpl list = new NodeListImpl();
         while (iter.hasNext()) {
-        	Object omChild =  iter.next();
-        	if(omChild instanceof OMText){
-        		OMText omTextChild = (OMText)omChild;
-        		TextImpl textChild = new TextImpl(omTextChild);
-        		list.addNode(textChild);
-        	}else{
-        		OMNode omNodeChild = (OMNode)omChild;
-        		Node nodeChild = new NodeImpl(omNodeChild);
-        		list.addNode(nodeChild);
-        	}
-            
+            Object omChild =  iter.next();
+            if(omChild instanceof OMText){
+                OMText omTextChild = (OMText)omChild;
+                TextImpl textChild = new TextImpl(omTextChild);
+                list.addNode(textChild);
+            }else{
+                OMNode omNodeChild = (OMNode)omChild;
+                Node nodeChild = new NodeImpl(omNodeChild);
+                list.addNode(nodeChild);
+            }
+
         }
         return list;
     }

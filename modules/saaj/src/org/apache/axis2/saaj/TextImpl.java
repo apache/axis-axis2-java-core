@@ -111,6 +111,18 @@ public class TextImpl extends NodeImpl implements Text {
         return tailText;
     }
 
+    public boolean isElementContentWhitespace() {
+        return false;  
+    }
+
+    public String getWholeText() {
+        return null;  
+    }
+
+    public org.w3c.dom.Text replaceWholeText(String content) throws DOMException {
+        return null;  
+    }
+
 
     public int getLength() {
 

@@ -324,8 +324,8 @@
 
 	<!-- Copying the DOM3 stuff to the endorsed dir -->
         <mkdir dir="target/test-resources/endorsed"/>
-	<copy file="${maven.repo.local}/xerces/jars/xercesImpl-2.6.2.jar" todir="target/test-resources/endorsed"/>
-	<copy file="${maven.repo.local}/xerces/jars/xmlParserAPIs-2.6.2.jar" todir="target/test-resources/endorsed"/>
+	<copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar" todir="target/test-resources/endorsed"/>
+	<copy file="${maven.repo.local}/xml-apis/jars/xml-apis-${xml_apis.version}.jar" todir="target/test-resources/endorsed"/>
 
 
 	<!-- Scenario ST1 -->

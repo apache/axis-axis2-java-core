@@ -20,6 +20,7 @@ import org.apache.axis2.om.impl.OMNodeEx;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.TypeInfo;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
@@ -602,6 +603,22 @@ public class SOAPElementImpl extends NodeImpl implements SOAPElement {
             }
         }
         return false;
+    }
+
+    public TypeInfo getSchemaTypeInfo() {
+        return null;  
+    }
+
+    public void setIdAttribute(String name, boolean isId) throws DOMException {
+        
+    }
+
+    public void setIdAttributeNS(String namespaceURI, String localName, boolean isId) throws DOMException {
+        
+    }
+
+    public void setIdAttributeNode(Attr idAttr, boolean isId) throws DOMException {
+        
     }
 
     /**

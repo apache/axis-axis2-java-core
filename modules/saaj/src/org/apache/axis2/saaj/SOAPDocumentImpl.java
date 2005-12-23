@@ -107,6 +107,62 @@ public class SOAPDocumentImpl implements Document {
         return delegate.getElementById(elementId);
     }
 
+    public String getInputEncoding() {
+        return null;  
+    }
+
+    public String getXmlEncoding() {
+        return null;  
+    }
+
+    public boolean getXmlStandalone() {
+        return false;  
+    }
+
+    public void setXmlStandalone(boolean xmlStandalone) throws DOMException {
+        
+    }
+
+    public String getXmlVersion() {
+        return null;  
+    }
+
+    public void setXmlVersion(String xmlVersion) throws DOMException {
+        
+    }
+
+    public boolean getStrictErrorChecking() {
+        return false;  
+    }
+
+    public void setStrictErrorChecking(boolean strictErrorChecking) {
+        
+    }
+
+    public String getDocumentURI() {
+        return null;  
+    }
+
+    public void setDocumentURI(String documentURI) {
+        
+    }
+
+    public Node adoptNode(Node source) throws DOMException {
+        return null;  
+    }
+
+    public DOMConfiguration getDomConfig() {
+        return null;  
+    }
+
+    public void normalizeDocument() {
+        
+    }
+
+    public Node renameNode(Node n, String namespaceURI, String qualifiedName) throws DOMException {
+        return null;  
+    }
+
 
     /**
      * @param name
@@ -230,6 +286,54 @@ public class SOAPDocumentImpl implements Document {
 
     public boolean hasAttributes() {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+    }
+
+    public String getBaseURI() {
+        return null;  
+    }
+
+    public short compareDocumentPosition(Node other) throws DOMException {
+        return 0;  
+    }
+
+    public String getTextContent() throws DOMException {
+        return null;  
+    }
+
+    public void setTextContent(String textContent) throws DOMException {
+        
+    }
+
+    public boolean isSameNode(Node other) {
+        return false;  
+    }
+
+    public String lookupPrefix(String namespaceURI) {
+        return null;  
+    }
+
+    public boolean isDefaultNamespace(String namespaceURI) {
+        return false;  
+    }
+
+    public String lookupNamespaceURI(String prefix) {
+        return null;  
+    }
+
+    public boolean isEqualNode(Node arg) {
+        return false;  
+    }
+
+    public Object getFeature(String feature, String version) {
+        return null;  
+    }
+
+    public Object setUserData(String key, Object data, UserDataHandler handler) {
+        return null;  
+    }
+
+    public Object getUserData(String key) {
+        return null;  
     }
 
     public boolean hasChildNodes() {

@@ -18,6 +18,7 @@ package org.apache.axis2.saaj;
 import org.apache.axis2.om.OMAttribute;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.TypeInfo;
 
 public class AttrImpl extends NodeImpl implements Attr {
 
@@ -88,6 +89,14 @@ public class AttrImpl extends NodeImpl implements Attr {
      */
     public Element getOwnerElement() {
         return ownerElement;
+    }
+
+    public TypeInfo getSchemaTypeInfo() {
+        return null;  
+    }
+
+    public boolean isId() {
+        return false;  
     }
 
     /**

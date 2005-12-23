@@ -333,6 +333,30 @@ public class SOAPPartImpl extends SOAPPart {
         return document.getElementById(elementId);
     }
 
+    public String getInputEncoding() {
+        return null;  
+    }
+
+    public String getXmlEncoding() {
+        return null;  
+    }
+
+    public boolean getXmlStandalone() {
+        return false;  
+    }
+
+    public void setXmlStandalone(boolean xmlStandalone) throws DOMException {
+        
+    }
+
+    public String getXmlVersion() {
+        return null;  
+    }
+
+    public void setXmlVersion(String xmlVersion) throws DOMException {
+        
+    }
+
     /////////////////////////////////////////////////////////////
 
     public String getEncoding() {
@@ -361,6 +385,14 @@ public class SOAPPartImpl extends SOAPPart {
         throw new UnsupportedOperationException("Not yet implemented. 74");
     }
 
+    public String getDocumentURI() {
+        return null;  
+    }
+
+    public void setDocumentURI(String documentURI) {
+        
+    }
+
 
     public String getVersion() {
         throw new UnsupportedOperationException("Not yet implemented. 75");
@@ -375,6 +407,18 @@ public class SOAPPartImpl extends SOAPPart {
     public Node adoptNode(Node node)
             throws DOMException {
         throw new UnsupportedOperationException("Not yet implemented.77");
+    }
+
+    public DOMConfiguration getDomConfig() {
+        return null;  
+    }
+
+    public void normalizeDocument() {
+        
+    }
+
+    public Node renameNode(Node n, String namespaceURI, String qualifiedName) throws DOMException {
+        return null;  
     }
 
     /**
@@ -480,5 +524,53 @@ public class SOAPPartImpl extends SOAPPart {
     public boolean hasAttributes() {
         return document.hasAttributes();
     }
-    
+
+    public String getBaseURI() {
+        return null;  
+    }
+
+    public short compareDocumentPosition(Node other) throws DOMException {
+        return 0;  
+    }
+
+    public String getTextContent() throws DOMException {
+        return null;  
+    }
+
+    public void setTextContent(String textContent) throws DOMException {
+        
+    }
+
+    public boolean isSameNode(Node other) {
+        return false;  
+    }
+
+    public String lookupPrefix(String namespaceURI) {
+        return null;  
+    }
+
+    public boolean isDefaultNamespace(String namespaceURI) {
+        return false;  
+    }
+
+    public String lookupNamespaceURI(String prefix) {
+        return null;  
+    }
+
+    public boolean isEqualNode(Node arg) {
+        return false;  
+    }
+
+    public Object getFeature(String feature, String version) {
+        return null;  
+    }
+
+    public Object setUserData(String key, Object data, UserDataHandler handler) {
+        return null;  
+    }
+
+    public Object getUserData(String key) {
+        return null;  
+    }
+
 }

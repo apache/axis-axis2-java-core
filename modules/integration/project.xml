@@ -233,16 +233,16 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xmlParserAPIs</artifactId>
-            <version>2.6.2</version>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>${xml_apis.version}</version>
             <properties>
                 <module>true</module>
             </properties>
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
-            <artifactId>xmlParserAPIs</artifactId>
+            <artifactId>xercesImpl</artifactId>
             <version>${xerces.version}</version>
             <properties>
                 <module>true</module>

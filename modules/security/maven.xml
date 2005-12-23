@@ -30,8 +30,8 @@
 	<copy file="${maven.repo.local}/opensaml/jars/opensaml-1.0.1.jar" todir="target/classes/lib"/>
 	<copy file="${maven.repo.local}/wss4j/jars/wss4j-SNAPSHOT.jar" todir="target/classes/lib"/>
 	<copy file="${maven.repo.local}/jaxen/jars/jaxen-1.1-beta-7.jar" todir="target/classes/lib"/>
-	<copy file="${maven.repo.local}/xerces/jars/xmlParserAPIs-2.6.2.jar" todir="target/classes/lib"/>
-	<copy file="${maven.repo.local}/xerces/jars/xercesImpl-2.6.2.jar" todir="target/classes/lib"/>
+	<copy file="${maven.repo.local}/xml-apis/jars/xml-apis-${xml_apis.version}.jar" todir="target/classes/lib"/>
+	<copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar" todir="target/classes/lib"/>
 
 
         <jar jarfile="target/security.mar" basedir="target/classes">

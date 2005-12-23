@@ -53,7 +53,7 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     protected void finalize() throws Throwable {
-        super.finalize();    //To change body of overridden methods use File | Settings | File Templates.
+        super.finalize(); 
     }
 
     /**
