@@ -118,7 +118,7 @@ public class ClientUtil {
         ConfigurationContextFactory fac = new ConfigurationContextFactory();
         ConfigurationContext configContext = null;
         try {
-            configContext = fac.buildClientConfigurationContext("Search");
+            configContext = fac.buildConfigurationContext("Search");
         } catch (DeploymentException e) {
             e.printStackTrace();
         }

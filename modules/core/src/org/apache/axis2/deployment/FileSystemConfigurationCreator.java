@@ -37,6 +37,9 @@ public class FileSystemConfigurationCreator implements AxisConfigurationCreator 
      * @param isServer
      */
     public FileSystemConfigurationCreator(String repoLocation, boolean isServer) {
+        if (repoLocation == null) {
+            repoLocation = AxisConfiguration.getAxis2HomeDirectory();
+        }
         this.repoLocation = repoLocation;
         this.isServer = isServer;
     }

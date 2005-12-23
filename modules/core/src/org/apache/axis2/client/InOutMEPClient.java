@@ -62,7 +62,7 @@ public class InOutMEPClient extends MEPClient {
      * <blockquote><pre>
      * ConfigurationContextFactory efac = new ConfigurationContextFactory();
      * // Replace the null with your client repository if any
-     * ConfigurationContext sysContext = efac.buildClientConfigurationContext(null);
+     * ConfigurationContext sysContext = efac.buildConfigurationContext(null);
      * // above line "null" may be a file name if you know the client repssitory
      * <p/>
      * //create new service

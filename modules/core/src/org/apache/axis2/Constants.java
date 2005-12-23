@@ -70,12 +70,13 @@ public class Constants {
     /**
      * Field APPLICATION_SCOPE
      */
-    public static final String APPLICATION_SCOPE = "application";
-    public static final String SOAP_SESSION_SCOPE = "soapsession";
-    public static final String TRANSPORT_SESSION_SCOPE = "transportsession";
-    public static final String REQUEST_SCOPE = "request";
+    public static final String SCOPE_APPLICATION = "application";
+    public static final String SCOPES_SOAP_SESSION = "soapsession";
+    public static final String SCOPE_TRANSPORT_SESSION = "transportsession";
+    public static final String SCOPE_REQUEST = "request";
 
-    public static final String AXIS2_HOME = "axis2home";
+    public static final String HOME_AXIS2 = "axis2.home";
+    public static final String HOME_USER = "user.home";
 
     /**
      * Field TRANSPORT_TCP

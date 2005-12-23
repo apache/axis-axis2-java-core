@@ -120,7 +120,7 @@ public class ServiceClient {
     private ConfigurationContext createDefaultConfigurationContext()
             throws AxisFault {
         return new ConfigurationContextFactory()
-                .buildClientConfigurationContext(null);
+                .buildConfigurationContext(null);
     }
 
     /**

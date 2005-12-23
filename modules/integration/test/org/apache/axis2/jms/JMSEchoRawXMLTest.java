@@ -206,7 +206,7 @@ public class JMSEchoRawXMLTest extends TestCase {
 
     public void testEchoXMLSyncMC() throws Exception {
         ConfigurationContextFactory confac = new ConfigurationContextFactory();
-        ConfigurationContext configContext = confac.buildClientConfigurationContext(Constants.TESTING_REPOSITORY);
+        ConfigurationContext configContext = confac.buildConfigurationContext(Constants.TESTING_REPOSITORY);
 
         AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
         org.apache.axis2.client.Call call = new org.apache.axis2.client.Call(Constants.TESTING_REPOSITORY);

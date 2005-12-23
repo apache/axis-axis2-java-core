@@ -108,7 +108,7 @@ public class InstanceDispatcher extends AbstractHandler {
         }
         String scope = service.getScope();
 
-        if (Constants.TRANSPORT_SESSION_SCOPE.equals(scope)) {
+        if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope)) {
             ServiceContext sreviceContext = sessionContext.getServiceContext(service);
             //found the serviceContext from session context , so adding that into msgContext
             if (sreviceContext != null) {

@@ -130,7 +130,7 @@ public class UtilServer {
 
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
         ConfigurationContext configContext = efac
-                .buildClientConfigurationContext("target/test-resources/integrationRepo");
+                .buildConfigurationContext("target/test-resources/integrationRepo");
         ModuleDescription moduleDesc = deploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(moduleDesc);
@@ -150,7 +150,7 @@ public class UtilServer {
 
         ConfigurationContextFactory efac = new ConfigurationContextFactory();
         ConfigurationContext configContext = efac
-                .buildClientConfigurationContext(clientHome);
+                .buildConfigurationContext(clientHome);
         ModuleDescription moduleDesc = deploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
 

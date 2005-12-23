@@ -116,10 +116,10 @@ public class ConfigurationContext extends AbstractContext {
              *    service group context
              */
             String maxScope = SessionUtils.calculateMaxScopeForServiceGroup(serviceGroupContext.getDescription());
-            if (Constants.APPLICATION_SCOPE.equals(maxScope)) {
+            if (Constants.SCOPE_APPLICATION.equals(maxScope)) {
                 //todo : needed to add to two tables
                 registerServiceGroupContext(serviceGroupContext);
-            } else if (Constants.SOAP_SESSION_SCOPE.equals(maxScope)) {
+            } else if (Constants.SCOPES_SOAP_SESSION.equals(maxScope)) {
                 //todo : needed to add to two tables
                 registerServiceGroupContext(serviceGroupContext);
             } else {

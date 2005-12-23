@@ -117,7 +117,7 @@ public class ClientUtil {
                 getOMElement(omFactory, defNs, "oe", "xsd:string", "latin1"));
 
         ConfigurationContextFactory fac = new ConfigurationContextFactory();
-        ConfigurationContext configContext = fac.buildClientConfigurationContext(
+        ConfigurationContext configContext = fac.buildConfigurationContext(
                 "doGoogleSearch");
         msgContext = new MessageContext(configContext);
         msgContext.setEnvelope(envelope);

@@ -43,24 +43,7 @@ public class ConfigurationContextFactory {
     }
 
     /**
-     * Builds the configuration for the client.
-     *
-     * @param axis2home the value can be null and resolves to the default axis2.xml file
-     * @return Returns ConfigurationContext.
-     * @throws DeploymentException
-     */
-    public ConfigurationContext buildClientConfigurationContext(String axis2home) throws AxisFault {
-        if (axis2home == null) {
-            // if user has set the axis2 home variable try to get that from System properties
-            axis2home = System.getProperty(Constants.AXIS2_HOME);
-        }
-        AxisConfigurationCreator repoBasedConfigCreator =
-                new FileSystemConfigurationCreator(axis2home, false);
-        return getConfigurationContext(repoBasedConfigCreator);
-    }
-
-    /**
-     * Builds the configuration for the Server.
+     * Builds the configuration 
      *
      * @param repositoryName
      * @return Returns the built ConfigurationContext.

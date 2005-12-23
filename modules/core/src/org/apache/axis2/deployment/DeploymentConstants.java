@@ -75,7 +75,7 @@ public interface DeploymentConstants {
 
     String PROPERTY_TEMP_DIR = "java.io.tmpdir";
     String DIRECTORY_MODULES = "modules";
-    String DIRECTORY_AXIS2_HOME = ".axis2home";
+    String DIRECTORY_AXIS2_HOME = ".axis2";
     String RESOURCE_MODULES = "modules/";
     String SUFFIX_MAR = ".mar";
     String SUFFIX_JAR = ".jar";

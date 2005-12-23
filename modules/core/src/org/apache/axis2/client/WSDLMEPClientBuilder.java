@@ -54,7 +54,7 @@ public class WSDLMEPClientBuilder {
     public WSDLMEPClientBuilder(String clienthome) throws AxisFault {
         try {
             configurationContext =
-                    new ConfigurationContextFactory().buildClientConfigurationContext(clienthome);
+                    new ConfigurationContextFactory().buildConfigurationContext(clienthome);
         } catch (DeploymentException e) {
             throw new AxisFault(e);
         }

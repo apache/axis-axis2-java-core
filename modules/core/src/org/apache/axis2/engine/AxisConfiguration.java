@@ -18,7 +18,9 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentEngine;
+import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
@@ -552,5 +554,17 @@ public class AxisConfiguration implements ParameterInclude {
 
     public void setSystemClassLoader(ClassLoader classLoader) {
         this.systemClassLoader = classLoader;
+    }
+    
+    public static String getAxis2HomeDirectory() {
+        // if user has set the axis2 home variable try to get that from System properties
+        String axis2home = System.getProperty(Constants.HOME_AXIS2);
+        if(axis2home == null) {
+            axis2home = System.getProperty(Constants.HOME_USER);
+            if(axis2home != null){
+                axis2home = axis2home + '/' + DeploymentConstants.DIRECTORY_AXIS2_HOME;
+            }
+        }
+        return axis2home;
     }
 }

@@ -87,7 +87,7 @@ public class OneWayRawXMLTest extends TestCase implements TestConstants {
 //        MessageSender sender = new MessageSender("target/test-resources/integrationRepo");
         ConfigurationContextFactory factory = new ConfigurationContextFactory();
         ConfigurationContext configContext =
-                factory.buildClientConfigurationContext("target/test-resources/integrationRepo");
+                factory.buildConfigurationContext("target/test-resources/integrationRepo");
         ServiceClient sender = new ServiceClient(configContext);
 
         Options options = new Options();

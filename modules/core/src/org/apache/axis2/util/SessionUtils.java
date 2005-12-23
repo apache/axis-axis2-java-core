@@ -50,13 +50,13 @@ public class SessionUtils {
      * @return integer
      */
     private static int getScopeIntValue(String scope) {
-        if (Constants.REQUEST_SCOPE.equals(scope)) {
+        if (Constants.SCOPE_REQUEST.equals(scope)) {
             return 1;
-        } else if (Constants.TRANSPORT_SESSION_SCOPE.equals(scope)) {
+        } else if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope)) {
             return 2;
-        } else if (Constants.SOAP_SESSION_SCOPE.equals(scope)) {
+        } else if (Constants.SCOPES_SOAP_SESSION.equals(scope)) {
             return 3;
-        } else if (Constants.APPLICATION_SCOPE.equals(scope)) {
+        } else if (Constants.SCOPE_APPLICATION.equals(scope)) {
             return 4;
         } else {
             return 2;
@@ -72,19 +72,19 @@ public class SessionUtils {
     private static String getScopeString(int scope) {
         switch (scope) {
             case 1 : {
-                return Constants.REQUEST_SCOPE;
+                return Constants.SCOPE_REQUEST;
             }
             case 2 : {
-                return Constants.TRANSPORT_SESSION_SCOPE;
+                return Constants.SCOPE_TRANSPORT_SESSION;
             }
             case 3 : {
-                return Constants.SOAP_SESSION_SCOPE;
+                return Constants.SCOPES_SOAP_SESSION;
             }
             case 4 : {
-                return Constants.APPLICATION_SCOPE;
+                return Constants.SCOPE_APPLICATION;
             }
             default : {
-                return Constants.TRANSPORT_SESSION_SCOPE;
+                return Constants.SCOPE_TRANSPORT_SESSION;
             }
         }
     }
